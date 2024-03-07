@@ -42,7 +42,6 @@
 
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 
-NSString * const ZMTransportSessionNewRequestAvailableNotification = @"ZMTransportSessionNewRequestAvailable";
 NSString * const ZMTransportSessionReachabilityIsEnabled = @"ZMTransportSessionReachabilityIsEnabled";
 
 static NSString * const TaskTimerKey = @"task";
@@ -238,15 +237,21 @@ static NSInteger const DefaultMaximumRequests = 6;
                                                                           group:group
                                                                         backoff:nil
                                                              initialAccessToken:initialAccessToken];
+
+        self.remoteMonitoring = [[RemoteMonitoring alloc] initWithLevel:LevelInfo];
+
         ZM_WEAK(self);
         self.requestLoopDetection = [[RequestLoopDetection alloc] initWithTriggerCallback:^(NSString * _Nonnull path) {
             ZM_STRONG(self);
+
+            [self.remoteMonitoring log:[NSString stringWithFormat:@"Request loop detected for %@", path]
+                                 error:nil];
             if(self.requestLoopDetectionCallback != nil) {
                 self.requestLoopDetectionCallback(path);
             }
         }];
 
-        self.remoteMonitoring = [[RemoteMonitoring alloc] initWithLevel: LevelInfo];
+
 
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(renewReachabilityObserverToken)
@@ -505,8 +510,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 + (void)notifyNewRequestsAvailable:(id<NSObject>)sender
 {
-    NOT_USED(sender);
-    [[NSNotificationCenter defaultCenter] postNotificationName:ZMTransportSessionNewRequestAvailableNotification object:self];
+    [ZMRequestAvailableNotification notifyNewRequestsAvailable:sender];
 }
 
 - (ZMTransportResponse *)transportResponseFromURLResponse:(NSURLResponse *)URLResponse data:(NSData *)data error:(NSError *)error apiVersion:(int)apiVersion;

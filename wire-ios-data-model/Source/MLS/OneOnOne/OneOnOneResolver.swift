@@ -21,6 +21,8 @@ import Foundation
 // sourcery: AutoMockable
 public protocol OneOnOneResolverInterface {
 
+    func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws
+
     @discardableResult
     func resolveOneOnOneConversation(
         with userID: QualifiedID,
@@ -29,7 +31,7 @@ public protocol OneOnOneResolverInterface {
 
 }
 
-public enum OneOnOneResolverError: Error {
+enum OneOnOneResolverError: Error {
 
     case migratorNotFound
 
@@ -52,6 +54,10 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         self.init(migrator: mlsService.map(OneOnOneMigrator.init))
     }
 
+    public convenience init(mlsService: MLSServiceInterface) {
+        self.init(migrator: OneOnOneMigrator(mlsService: mlsService))
+    }
+
     public init(
         protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
         migrator: OneOnOneMigratorInterface? = nil
@@ -62,14 +68,31 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     // MARK: - Methods
 
+    public func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws {
+        let usersIDs = try await fetchUserIdsWithOneOnOneConversation(in: context)
+
+        await withTaskGroup(of: Void.self) { group in
+            for userID in usersIDs {
+                group.addTask {
+                    do {
+                        try await self.resolveOneOnOneConversation(with: userID, in: context)
+                    } catch {
+                        // skip conversation migration for this user
+                        WireLogger.conversation.error("resolve 1-1 conversation with userID \(userID) failed!")
+                    }
+                }
+            }
+        }
+    }
+
     @discardableResult
     public func resolveOneOnOneConversation(
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
-        WireLogger.conversation.debug("resolving one on one with user: \(userID)")
+        WireLogger.conversation.debug("resolving 1-1 conversation with user: \(userID)")
 
-        let messageProtocol = await protocolSelector.getProtocolForUser(
+        let messageProtocol = try await protocolSelector.getProtocolForUser(
             with: userID,
             in: context
         )
@@ -84,13 +107,12 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
                 else {
                     return
                 }
-
                 conversation.isForcedReadOnly = true
             }
             return .archivedAsReadOnly
 
         case .mls:
-            WireLogger.conversation.debug("should resolve to mls one on one")
+            WireLogger.conversation.debug("should resolve to mls 1-1 conversation")
 
             guard let migrator else {
                 throw OneOnOneResolverError.migratorNotFound
@@ -104,7 +126,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             return .migratedToMLSGroup(identifier: mlsGroupIdentifier)
 
         case .proteus:
-            WireLogger.conversation.debug("should resolve to proteus one on one")
+            WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
             return .noAction
 
         // This should never happen:
@@ -117,4 +139,22 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         }
     }
 
+    // MARK: Helpers
+
+    private func fetchUserIdsWithOneOnOneConversation(in context: NSManagedObjectContext) async throws -> [QualifiedID] {
+        try await context.perform {
+            let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+            request.predicate = ZMUser.predicateForUsersWithOneOnOneConversation()
+
+            return try context
+                .fetch(request)
+                .compactMap { user in
+                    guard let userID = user.qualifiedID else {
+                        WireLogger.conversation.error("required to have a user's qualifiedID to resolve 1-1 conversation!")
+                        return nil
+                    }
+                    return userID
+                }
+        }
+    }
 }

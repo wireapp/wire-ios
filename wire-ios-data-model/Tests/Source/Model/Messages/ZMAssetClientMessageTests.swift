@@ -826,7 +826,7 @@ extension ZMAssetClientMessageTests {
 
     func sampleImageProperties(_ format: ZMImageFormat) -> ZMIImageProperties {
         let mult = format == .medium ? 100 : 1
-        return ZMIImageProperties(size: CGSize(width: CGFloat(300*mult), height: CGFloat(100*mult)), length: UInt(100*mult), mimeType: "image/jpeg")!
+        return ZMIImageProperties(size: CGSize(width: CGFloat(300 * mult), height: CGFloat(100 * mult)), length: UInt(100 * mult), mimeType: "image/jpeg")!
     }
 
     func createV2AssetClientMessageWithSampleImageAndEncryptionKeys(_ storeOriginal: Bool, storeEncrypted: Bool, storeProcessed: Bool, imageData: Data? = nil) throws -> ZMAssetClientMessage {
@@ -982,7 +982,7 @@ extension ZMAssetClientMessageTests {
         let dataPayload = [
             "info": genericMessageData!.base64String(),
             "id": thumbnailId
-            ] as [String: Any]
+        ] as [String: Any]
 
         let payload = self.payloadForMessage(in: conversation, type: EventConversationAddOTRAsset, data: dataPayload)
         let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
@@ -1011,7 +1011,7 @@ extension ZMAssetClientMessageTests {
         let nonce = UUID.create()
         let thumbnailId = "uuid"
         let imageMetadata = WireProtos.Asset.ImageMetaData(width: 4235, height: 324)
-        let original  = WireProtos.Asset.Original(withSize: 12321, mimeType: "image/jpeg", name: nil, imageMetaData: imageMetadata)
+        let original = WireProtos.Asset.Original(withSize: 12321, mimeType: "image/jpeg", name: nil, imageMetaData: imageMetadata)
         let asset = WireProtos.Asset(original: original, preview: nil)
 
         let genericMessage = GenericMessage(content: asset, nonce: nonce)
@@ -1020,7 +1020,7 @@ extension ZMAssetClientMessageTests {
         let dataPayload = [
             "info": genericMessageData!.base64String(),
             "id": thumbnailId
-            ] as [String: Any]
+        ] as [String: Any]
 
         let payload = self.payloadForMessage(in: conversation, type: EventConversationAddOTRAsset, data: dataPayload)
         let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!

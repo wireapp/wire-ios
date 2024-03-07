@@ -174,7 +174,7 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         let rangeStart = 3
         let rangeLength = 10
-        let prekeyIds: CountableRange<UInt16> = UInt16(rangeStart)..<UInt16(rangeStart+rangeLength)
+        let prekeyIds: CountableRange<UInt16> = UInt16(rangeStart)..<UInt16(rangeStart + rangeLength)
 
         // WHEN
         var prekeys: [(id: UInt16, prekey: String)] = []
@@ -188,7 +188,7 @@ extension EncryptionSessionsDirectoryTests {
             var prekeyRetrievedId: UInt16 = 0
             let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self), prekeyData.count, &prekeyRetrievedId) }
             XCTAssertEqual(result, CBOX_SUCCESS)
-            XCTAssertEqual(Int(prekeyRetrievedId), i+rangeStart)
+            XCTAssertEqual(Int(prekeyRetrievedId), i + rangeStart)
             XCTAssertEqual(prekeyRetrievedId, id)
         }
     }

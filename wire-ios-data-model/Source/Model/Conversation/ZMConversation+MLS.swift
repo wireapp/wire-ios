@@ -24,7 +24,7 @@ extension ZMConversation {
     // MARK: Keys
 
     @objc
-    static let messageProtocolKey = "messageProtocol"
+    public static let messageProtocolKey = "messageProtocol"
 
     @objc
     static let mlsGroupIdKey = "mlsGroupID"
@@ -149,7 +149,7 @@ extension ZMConversation {
 
             guard let value = value else { return nil }
             guard let status = MLSVerificationStatus(rawValue: value) else {
-                fatalError("failed to init MLSVerificationStatus from rawValue: \(value)")
+                return nil
             }
             return status
         }

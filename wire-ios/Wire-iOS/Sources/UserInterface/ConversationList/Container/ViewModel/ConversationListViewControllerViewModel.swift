@@ -25,7 +25,11 @@ typealias Completion = () -> Void
 typealias ResultHandler = (_ succeeded: Bool) -> Void
 
 protocol ConversationListContainerViewModelDelegate: AnyObject {
-    init(viewModel: ConversationListViewController.ViewModel)
+
+    func conversationListViewControllerViewModel(
+        _ viewModel: ConversationListViewController.ViewModel,
+        didUpdate selfUserStatus: UserStatus
+    )
 
     func scrollViewDidScroll(scrollView: UIScrollView!)
 
@@ -43,8 +47,6 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
     func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool
 }
 
-extension ConversationListViewController: ConversationListContainerViewModelDelegate {}
-
 extension ConversationListViewController {
     final class ViewModel: NSObject {
         weak var viewController: ConversationListContainerViewModelDelegate? {
@@ -58,35 +60,53 @@ extension ConversationListViewController {
         }
 
         let account: Account
+
+        private(set) var selfUserStatus: UserStatus {
+            didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: selfUserStatus) }
+        }
+
         let selfUser: SelfUserType
         let conversationListType: ConversationListHelperType.Type
         let userSession: UserSession
+        private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
 
         var selectedConversation: ZMConversation?
 
         private var initialSyncObserverToken: Any?
+        private var userObservationToken: NSObjectProtocol?
         /// observer tokens which are assigned when viewDidLoad
-        var allConversationsObserverToken: Any?
-        var connectionRequestsObserverToken: Any?
+        var allConversationsObserverToken: NSObjectProtocol?
+        var connectionRequestsObserverToken: NSObjectProtocol?
 
         var actionsController: ConversationActionController?
 
-        init(account: Account,
-             selfUser: SelfUserType,
-             conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
-             userSession: UserSession) {
+        init(
+            account: Account,
+            selfUser: SelfUserType,
+            conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
+            userSession: UserSession,
+            isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+        ) {
             self.account = account
             self.selfUser = selfUser
             self.conversationListType = conversationListType
             self.userSession = userSession
+            self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
+            selfUserStatus = .init(user: selfUser, isE2EICertified: false)
+            super.init()
+
+            updateE2EICertifiedStatus()
         }
     }
 }
 
 extension ConversationListViewController.ViewModel {
+
     func setupObservers() {
+
         if let userSession = ZMUserSession.shared() {
             initialSyncObserverToken = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
+            userObservationToken = userSession.addUserObserver(self, for: selfUser)
         }
 
         updateObserverTokensForActiveTeam()
@@ -129,10 +149,16 @@ extension ConversationListViewController.ViewModel {
 
             selfUser.fetchMarketingConsent(in: userSession, completion: {[weak self] result in
                 switch result {
-                case .failure:
-                    self?.viewController?.showNewsletterSubscriptionDialogIfNeeded(completionHandler: { marketingConsent in
-                        selfUser.setMarketingConsent(to: marketingConsent, in: userSession, completion: { _ in })
-                    })
+                case .failure(let error):
+                    switch error {
+                    case ConsentRequestError.notAvailable:
+                        // don't show the alert there is no consent to show
+                        break
+                    default:
+                        self?.viewController?.showNewsletterSubscriptionDialogIfNeeded(completionHandler: { marketingConsent in
+                            selfUser.setMarketingConsent(to: marketingConsent, in: userSession, completion: { _ in })
+                        })
+                    }
                 case .success:
                     // The user already gave a marketing consent, no need to ask for it again.
                     return
@@ -173,9 +199,35 @@ extension ConversationListViewController.ViewModel {
         return true
     }
 
+    private func updateE2EICertifiedStatus() {
+        Task { @MainActor in
+            do {
+                selfUserStatus.isE2EICertified = try await isSelfUserE2EICertifiedUseCase.invoke()
+            } catch {
+                WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
+            }
+        }
+    }
+}
+
+extension ConversationListViewController.ViewModel: UserObserving {
+
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+        if changeInfo.nameChanged {
+            selfUserStatus.name = changeInfo.user.name ?? ""
+        }
+        if changeInfo.trustLevelChanged {
+            selfUserStatus.isProteusVerified = changeInfo.user.isVerified
+            updateE2EICertifiedStatus()
+        }
+        if changeInfo.availabilityChanged {
+            selfUserStatus.availability = changeInfo.user.availability
+        }
+    }
 }
 
 extension ConversationListViewController.ViewModel: ZMInitialSyncCompletionObserver {
+
     func initialSyncCompleted() {
         requestMarketingConsentIfNeeded()
     }

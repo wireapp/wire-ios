@@ -102,7 +102,7 @@ extension UIImage {
 
         let options = [
             kCGImageSourceShouldCache: kCFBooleanTrue
-            ] as CFDictionary
+        ] as CFDictionary
 
         guard let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, options) as? [CFString: Any] else {
             return .zero

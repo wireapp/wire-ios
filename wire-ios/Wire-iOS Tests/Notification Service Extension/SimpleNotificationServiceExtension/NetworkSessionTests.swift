@@ -69,7 +69,7 @@ final class NetworkSessionTests: XCTestCase {
     }
 
     var successResponse: (Data, URLResponse) {
-        let response =  HTTPURLResponse(
+        let response = HTTPURLResponse(
             url: URL(string: "wire.com")!,
             statusCode: 200,
             httpVersion: "",
@@ -186,6 +186,8 @@ final class MockCookieStorage: CookieProvider {
     var isAuthenticated: Bool = true
 
     func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest) {}
+
+    func deleteKeychainItems() { }
 
 }
 

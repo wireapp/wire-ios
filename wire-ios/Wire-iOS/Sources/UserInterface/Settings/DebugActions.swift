@@ -133,7 +133,7 @@ enum DebugActions {
 
         func sendNext(count: Int) {
             userSession.enqueue {
-                try! conversation.appendText(content: "Message #\(count+1), series \(nonce)")
+                try! conversation.appendText(content: "Message #\(count + 1), series \(nonce)")
             }
             guard count + 1 < amount else { return }
             DispatchQueue.main.asyncAfter(
@@ -145,9 +145,15 @@ enum DebugActions {
         sendNext(count: 0)
     }
 
+    static func triggerResyncResources(_ type: SettingsCellDescriptorType) {
+        ZMUserSession.shared()?.syncManagedObjectContext.performGroupedBlock {
+            ZMUserSession.shared()?.requestResyncResources()
+        }
+    }
+
     static func triggerSlowSync(_ type: SettingsCellDescriptorType) {
         ZMUserSession.shared()?.syncManagedObjectContext.performGroupedBlock {
-            ZMUserSession.shared()?.requestSlowSync()
+            ZMUserSession.shared()?.syncStatus.forceSlowSync()
         }
     }
 

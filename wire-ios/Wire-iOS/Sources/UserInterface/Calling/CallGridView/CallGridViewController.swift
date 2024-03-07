@@ -180,7 +180,7 @@ final class CallGridViewController: SpinnerCapableViewController {
             pageIndicator.centerXAnchor.constraint(equalTo: view.safeTrailingAnchor, constant: -22)
         ])
 
-        pageIndicator.transform = pageIndicator.transform.rotated(by: .pi/2)
+        pageIndicator.transform = pageIndicator.transform.rotated(by: .pi / 2)
     }
 
     @objc func didChangePage(sender: UIPageControl) {

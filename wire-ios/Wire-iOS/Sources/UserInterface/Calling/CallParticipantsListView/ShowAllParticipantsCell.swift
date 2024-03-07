@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireCommonComponents
@@ -30,10 +29,10 @@ final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
     typealias Participants = L10n.Localizable.Call.Participants
     typealias ViewColors = SemanticColors.View
 
-    let participantIconView = UIImageView()
-    let titleLabel = UILabel()
-    let accessoryIconView = UIImageView()
-    var contentStackView: UIStackView!
+    private let participantIconView = UIImageView()
+    private let titleLabel = UILabel()
+    private let accessoryIconView = UIImageView()
+    private var contentStackView: UIStackView!
 
     var sectionName: String?
     var obfuscatedSectionName: String?
@@ -110,10 +109,10 @@ final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
     private func configureColors() {
         let iconTintColor = SemanticColors.Icon.foregroundDefault
 
-        participantIconView.setTemplateIcon(.person, size: .tiny)
+        participantIconView.image = Asset.Images.contactsFilled.image.withRenderingMode(.alwaysTemplate)
         participantIconView.tintColor = iconTintColor
 
-        accessoryIconView.setTemplateIcon(.disclosureIndicator, size: 12)
+        accessoryIconView.image = Asset.Images.rightChevron.image.withRenderingMode(.alwaysTemplate)
         accessoryIconView.tintColor = iconTintColor
 
         titleLabel.textColor = SemanticColors.Label.textDefault
@@ -121,18 +120,13 @@ final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
 
     // MARK: - Accessibility
 
-    private func setupAccessibility(with rowType: ParticipantsRowType) {
+    private func setupAccessibility(totalParticipantsCount: Int) {
         isAccessibilityElement = true
         accessibilityIdentifier = identifier
-
-        guard case let .showAll(count) = rowType else {
-            return
-        }
         accessibilityTraits = .button
-        accessibilityLabel = Participants.showAll(count)
+        accessibilityLabel = Participants.showAll(totalParticipantsCount)
         accessibilityHint = L10n.Accessibility.ConversationDetails.ShowParticipantsButton.hint
     }
-
 }
 
 // MARK: - CallParticipantsListCellConfigurable
@@ -148,15 +142,15 @@ extension ShowAllParticipantsCell: CallParticipantsListCellConfigurable {
     }
 }
 
-extension ShowAllParticipantsCell: ParticipantsCellConfigurable {
+extension ShowAllParticipantsCell {
+
     func configure(
-        with rowType: ParticipantsRowType,
+        totalParticipantsCount: Int,
         conversation: GroupDetailsConversationType,
         showSeparator: Bool
     ) {
-        guard case let .showAll(count) = rowType else { preconditionFailure() }
-        titleLabel.text = Participants.showAll(count)
+        titleLabel.text = Participants.showAll(totalParticipantsCount)
         cellIdentifier = "cell.call.show_all_participants"
-        setupAccessibility(with: rowType)
+        setupAccessibility(totalParticipantsCount: totalParticipantsCount)
     }
 }

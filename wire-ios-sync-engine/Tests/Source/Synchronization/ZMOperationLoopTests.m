@@ -42,21 +42,17 @@
     self.mockUpdateEventProcessor = [[MockUpdateEventProcessor alloc] init];
     self.mockRequestCancellation = [[MockRequestCancellation alloc] init];
 
-    self.applicationStatusDirectory = [[ApplicationStatusDirectory alloc] initWithManagedObjectContext:self.syncMOC
-                                                                                         cookieStorage:self.cookieStorage
-                                                                                   requestCancellation:self.mockRequestCancellation
-                                                                                           application:self.application
-                                                                                 lastEventIDRepository:self.lastEventIDRepository
-                                                                                             analytics:nil];
-    
-    self.syncStatus = self.applicationStatusDirectory.syncStatus;
-    self.callEventStatus = self.applicationStatusDirectory.callEventStatus;
-    self.pushNotificationStatus = self.applicationStatusDirectory.pushNotificationStatus;
-        
+    self.operationStatus = [[OperationStatus alloc] init];
+    self.syncStatus = [[SyncStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository];
+    self.callEventStatus = [[CallEventStatus alloc] init];
+    self.pushNotificationStatus = [[PushNotificationStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository];
     self.sut = [[ZMOperationLoop alloc] initWithTransportSession:self.mockTransportSesssion
                                                  requestStrategy:self.mockRequestStrategy
                                             updateEventProcessor:self.mockUpdateEventProcessor
-                                      applicationStatusDirectory:self.applicationStatusDirectory
+                                                 operationStatus:self.operationStatus
+                                                      syncStatus:self.syncStatus
+                                          pushNotificationStatus:self.pushNotificationStatus
+                                                 callEventStatus:self.callEventStatus
                                                            uiMOC:self.uiMOC
                                                          syncMOC:self.syncMOC];
     self.pushChannelObserverToken = [NotificationInContext addObserverWithName:ZMOperationLoop.pushChannelStateChangeNotificationName
@@ -119,7 +115,10 @@
     ZMOperationLoop *op = [[ZMOperationLoop alloc] initWithTransportSession:self.mockTransportSesssion
                                                             requestStrategy:self.mockRequestStrategy
                                                        updateEventProcessor:self.mockUpdateEventProcessor
-                                                 applicationStatusDirectory:self.applicationStatusDirectory
+                                                            operationStatus:self.operationStatus
+                                                                 syncStatus:self.syncStatus
+                                                     pushNotificationStatus:self.pushNotificationStatus
+                                                            callEventStatus:self.callEventStatus
                                                                       uiMOC:self.uiMOC
                                                                     syncMOC:self.syncMOC];
     WaitForAllGroupsToBeEmpty(0.5);

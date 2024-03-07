@@ -129,7 +129,7 @@ class BaseAccountView: UIView {
           imageViewContainer.leadingAnchor.constraint(equalTo: leadingAnchor, constant: containerInset),
           imageViewContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -containerInset),
           widthAnchor.constraint(lessThanOrEqualToConstant: 128)
-        ])
+            ])
 
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTap(_:)))
         self.addGestureRecognizer(tapGesture)
