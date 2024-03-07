@@ -54,7 +54,7 @@ import WireDataModel
     ) {
         NotificationInContext(name: self.name, context: context.notificationContext, userInfo: [
             errorKey: error as Any,
-            clientObjectIDsKey: clients.objectIDs,
+            clientObjectIDsKey: clients.map(\.objectID).filter { !$0.isTemporaryID },
             typeKey: type
         ]).post()
     }
@@ -77,15 +77,5 @@ import WireDataModel
     @objc
     public static func notifyDeletionFailed(error: NSError, context: NSManagedObjectContext) {
         self.notify(type: .deletionFailed, context: context, error: error)
-    }
-}
-
-extension Array where Element: NSManagedObject {
-
-    var objectIDs: [NSManagedObjectID] {
-        return self.compactMap { obj in
-            guard !obj.objectID.isTemporaryID else { return nil }
-            return obj.objectID
-        }
     }
 }
