@@ -27,8 +27,8 @@ enum AppState: Equatable {
     case unauthenticated(error: NSError?)
     case blacklisted(reason: BlacklistReason)
     case jailbroken
-    case pendingCertificateUpdate
-    case pendingCertificateEnroll
+    case certificateUpdateRequired
+    case certificateEnrollmentRequired
     case databaseFailure(reason: Error)
     case migrating
     case loading(account: Account, from: Account?)
