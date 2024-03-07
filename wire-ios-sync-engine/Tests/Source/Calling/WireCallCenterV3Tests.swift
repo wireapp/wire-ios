@@ -650,10 +650,30 @@ class WireCallCenterV3Tests: MessagingTest {
         }
     }
 
+    /// No call to `setUpMLSConference` must be made.
+    /// `syncMOC.mlsService` is set to `nil` so that any call would fail.
     func testThatItAnswersACall_oneToOne_mls() throws {
+        // given
+        oneOnOneConversation.messageProtocol = .mls
+        oneOnOneConversation.mlsGroupID = .random()
+        syncMOC.performAndWait { syncMOC.mlsService = nil }
+        sut.handleIncomingCall(conversationId: oneOnOneConversationID,
+                               messageTime: Date(),
+                               client: AVSClient(userId: otherUserID, clientId: otherUserClientID),
+                               isVideoCall: true,
+                               shouldRing: true,
+                               conversationType: .oneToOne)
 
-        throw XCTSkip("TODO")
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
+        try checkThatItPostsNotification(expectedCallState: .answered(degraded: false), expectedCallerId: otherUserID, expectedConversationId: oneOnOneConversationID) {
+            // when
+            _ = try sut.answerCall(conversation: oneOnOneConversation, video: false)
+
+            // then
+            XCTAssertEqual(mockAVSWrapper.answerCallArguments?.callType, AVSCallType.normal)
+            XCTAssertNil(mockAVSWrapper.setVideoStateArguments)
+        }
     }
 
     func testThatItAnswersACall_oneToOne_video() throws {
