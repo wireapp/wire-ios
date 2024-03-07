@@ -1142,7 +1142,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    private func updateOrEnrollCertificateIfNeeded() async {
+    private func requestCertificateUpdateOrEnrollIfNeeded() async {
         guard let userSession = activeUserSession else { return }
 
         if await userSession.needsToUpdateCertificate {
