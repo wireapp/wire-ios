@@ -57,8 +57,8 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidFailToLoadDatabase(error: Error)
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
     func sessionManagerDidBlacklistJailbrokenDevice()
-    func sessionManagerWillUpdateCertificate()
-    func sessionManagerWillEnrollCertificate()
+    func sessionManagerRequireCertificateUpdate()
+    func sessionManagerRequireCertificateEnrollment()
     func sessionManagerDidUpdateCertificate(for activeSession: UserSession?)
 
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?)
