@@ -822,10 +822,21 @@ class WireCallCenterV3Tests: MessagingTest {
         }
     }
 
+    /// No call to `setUpMLSConference` must be made.
+    /// `syncMOC.mlsService` is set to `nil` so that any call would fail.
     func testThatItStartsACall_oneToOne_mls() throws {
+        // given
+        oneOnOneConversation.messageProtocol = .mls
+        oneOnOneConversation.mlsGroupID = .random()
+        syncMOC.performAndWait { syncMOC.mlsService = nil }
+        try checkThatItPostsNotification(expectedCallState: .outgoing(degraded: false), expectedCallerId: selfUserID, expectedConversationId: oneOnOneConversationID) {
+            // when
+            try sut.startCall(in: oneOnOneConversation, isVideo: false)
 
-        throw XCTSkip("TODO")
-
+            // then
+            XCTAssertEqual(mockAVSWrapper.startCallArguments?.conversationType, AVSConversationType.oneToOne)
+            XCTAssertEqual(mockAVSWrapper.startCallArguments?.callType, AVSCallType.normal)
+        }
     }
 
     func testThatItStartsACall_conference_normal() throws {
