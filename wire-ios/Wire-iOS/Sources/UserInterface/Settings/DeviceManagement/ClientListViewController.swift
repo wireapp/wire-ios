@@ -560,7 +560,7 @@ final class ClientListViewController: UIViewController,
     }
 
     private func updateAllClients() {
-        guard let selfUser = ZMUser.selfUser(), let selfClient = selfUser.selfClient() else {
+        guard let selfUser = ZMUser.selfUser() else {
             return
         }
         Task {
