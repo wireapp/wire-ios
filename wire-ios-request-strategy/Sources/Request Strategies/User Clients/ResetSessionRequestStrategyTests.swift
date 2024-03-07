@@ -52,8 +52,6 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
             let otherUser = self.createUser()
             let otherClient = self.createClient(user: otherUser)
             let conversation = self.setupOneToOneConversation(with: otherUser)
-            let conversationID = conversation.remoteIdentifier!.transportString()
-            let conversationDomain = conversation.domain!
             otherClient.needsToNotifyOtherUserAboutSessionReset = true
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
 
