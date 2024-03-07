@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-import UIKit
+import SwiftUI
 import WireSyncEngine
 import WireCommonComponents
-import SwiftUI
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -76,7 +75,7 @@ final class ClientListViewController: UIViewController,
     var selfClient: UserClient?
     let detailedView: Bool
     var credentials: ZMEmailCredentials?
-    var clientsObserverToken: Any?
+    var clientsObserverToken: NSObjectProtocol?
     var userObserverToken: NSObjectProtocol?
 
     var leftBarButtonItem: UIBarButtonItem? {

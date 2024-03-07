@@ -61,9 +61,9 @@ struct DeviceDetailsBottomView: View {
                 }
             } label: {
                 Text(L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.title)
-                .padding(.all, ViewConstants.Padding.standard)
-                .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
-                .font(FontSpec.normalRegularFont.swiftUIFont.bold())
+                    .padding(.all, ViewConstants.Padding.standard)
+                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                    .font(FontSpec.normalRegularFont.swiftUIFont.bold())
             }
             Spacer()
         }
