@@ -123,7 +123,7 @@ extension ConversationViewControllerSnapshotTests {
     func testThatGuestsBarControllerIsVisibleIfServicesArePresent() {
         // given
         mockConversation.teamRemoteIdentifier = team?.remoteIdentifier
-        mockConversation.add(participants: [serviceUser])
+        mockConversation.addParticipantAndUpdateConversationState(user: serviceUser)
 
         UIColor.setAccentOverride(.strongLimeGreen)
 
@@ -142,7 +142,7 @@ extension ConversationViewControllerSnapshotTests {
         otherUser.membership?.setTeamRole(.partner)
 
         mockConversation.teamRemoteIdentifier = team?.remoteIdentifier
-        mockConversation.add(participants: [serviceUser])
+        mockConversation.addParticipantAndUpdateConversationState(user: serviceUser)
 
         UIColor.setAccentOverride(.strongLimeGreen)
 

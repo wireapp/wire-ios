@@ -36,6 +36,7 @@ public protocol FeatureRepositoryInterface {
     func fetchDigitalSignature() -> Feature.DigitalSignature
     func storeDigitalSignature(_ digitalSignature: Feature.DigitalSignature)
     func fetchMLS() -> Feature.MLS
+    func fetchMLS() async -> Feature.MLS
     func storeMLS(_ mls: Feature.MLS)
     func fetchE2EI() -> Feature.E2EI
     func storeE2EI(_ e2ei: Feature.E2EI)
@@ -277,23 +278,38 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     // MARK: - MLS
 
+    public func fetchMLS() async -> Feature.MLS {
+        let (status, configData) = await context.perform {
+            let feature = Feature.fetch(name: .mls, context: self.context)
+            return (feature?.status, feature?.config)
+        }
+
+        return makeMLS(status: status, configData: configData)
+    }
+
     public func fetchMLS() -> Feature.MLS {
-        guard
-            let feature = Feature.fetch(name: .mls, context: context),
-            let featureConfig = feature.config
-        else {
+        let (status, configData) = context.performAndWait {
+            let feature = Feature.fetch(name: .mls, context: context)
+            return (feature?.status, feature?.config)
+        }
+
+        return makeMLS(status: status, configData: configData)
+    }
+
+    private func makeMLS(status: Feature.Status?, configData: Data?) -> Feature.MLS {
+        guard let status, let configData else {
             return .init()
         }
 
         var config = Feature.MLS.Config()
 
         do {
-            config = try decoder.decode(Feature.MLS.Config.self, from: featureConfig)
+            config = try decoder.decode(Feature.MLS.Config.self, from: configData)
         } catch {
             logger.error("failed to decode Feature.MLS.Config: \(error)")
         }
 
-        return .init(status: feature.status, config: config)
+        return .init(status: status, config: config)
     }
 
     public func storeMLS(_ mls: Feature.MLS) {
