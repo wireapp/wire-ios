@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,18 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
+import WireDataModel
 
-class ConversationEncryptionProtocolCell: DetailsCollectionViewCell {
+// sourcery: AutoMockable
+public protocol GetMLSFeatureUseCaseProtocol {
+    func invoke() -> Feature.MLS
+    func invoke() async -> Feature.MLS
+}
 
-    let label: UILabel = {
-        let label = DynamicFontLabel(fontSpec: .normalRegularFont, color: SemanticColors.Label.textDefault)
-        label.textAlignment = .right
-        return label
-    }()
+public struct GetMLSFeatureUseCase: GetMLSFeatureUseCaseProtocol {
 
-    override func setUp() {
-        super.setUp()
-        contentStackView.insertArrangedSubview(label, at: contentStackView.arrangedSubviews.count)
+    private let featureRepository: FeatureRepositoryInterface
+
+    public init(featureRepository: FeatureRepositoryInterface) {
+        self.featureRepository = featureRepository
+    }
+
+    public func invoke() -> Feature.MLS {
+        featureRepository.fetchMLS()
+    }
+
+    public func invoke() async -> Feature.MLS {
+        await featureRepository.fetchMLS()
     }
 }
