@@ -73,10 +73,10 @@ public enum LocalNotificationContentType: Equatable {
 
         switch message.content {
         case .location:
-            self =  .location
+            self = .location
 
         case .knock:
-            self =  .knock
+            self = .knock
 
         case .image:
             self = .image

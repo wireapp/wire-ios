@@ -45,7 +45,7 @@ public class ManagedObjectObserverToken: NSObject {
         block: @escaping (NotificationInContext) -> Void
     ) {
         self.object = object
-        self.token =  NotificationInContext.addObserver(
+        self.token = NotificationInContext.addObserver(
             name: name,
             context: managedObjectContext.notificationContext,
             object: object,

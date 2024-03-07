@@ -47,7 +47,6 @@ extension AuthenticationCoordinator: LoginDelegate {
 
     /// Invoked when we have provided correct credentials and have an opportunity to import backup
     func authenticationReadyToImportBackup(existingAccount: Bool) {
-        addedAccount = !existingAccount
         eventResponderChain.handleEvent(ofType: .backupReady(existingAccount))
     }
 

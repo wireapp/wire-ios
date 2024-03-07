@@ -162,7 +162,7 @@ extension Notification.Name {
 extension SyncStatus {
 
     public func finishCurrentSyncPhase(phase: SyncPhase) {
-        precondition(phase == currentSyncPhase, "Finished syncPhase does not match currentPhase")
+        precondition(phase == currentSyncPhase, "Finished syncPhase does not match currentPhase '\(currentSyncPhase)'!")
 
         zmLog.debug("finished sync phase: \(phase)")
         log("finished sync phase")
@@ -243,7 +243,7 @@ extension SyncStatus {
     @objc(completedFetchingNotificationStreamFetchBeganAt:)
     public func completedFetchingNotificationStream(fetchBeganAt: Date?) {
         if currentSyncPhase == .fetchingMissedEvents &&
-           pushChannelEstablishedDate < fetchBeganAt {
+            pushChannelEstablishedDate < fetchBeganAt {
 
             // Only complete the .fetchingMissedEvents phase if the push channel was
             // established before we initiated the notification stream fetch.
@@ -289,10 +289,10 @@ extension SyncStatus {
             let data = try JSONEncoder().encode(info)
             let jsonString = String(data: data, encoding: .utf8)
             let message = "SYNC_STATUS: \(jsonString ?? self.description)"
-            RemoteMonitoring.remoteLogger?.log(message: message, error: nil, attributes: nil, level: .debug)
+            WireLogger.sync.info(message)
         } catch {
             let message = "SYNC_STATUS: \(self.description)"
-            RemoteMonitoring.remoteLogger?.log(message: message, error: nil, attributes: nil, level: .error)
+            WireLogger.sync.error(message)
         }
     }
 }

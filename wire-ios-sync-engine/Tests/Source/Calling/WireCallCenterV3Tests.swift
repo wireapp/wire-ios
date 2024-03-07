@@ -1956,11 +1956,60 @@ extension WireCallCenterV3Tests {
         XCTAssertTrue(mockAVSWrapper.didCallEndCall)
     }
 
+    func test_SystemMessageIsAppended_WhenProtocolChangesToMLS() throws {
+        // Given
+        groupConversation.messageProtocol = .mls
+        let changeInfo = ConversationChangeInfo(object: groupConversation)
+        changeInfo.changedKeys = [ZMConversation.messageProtocolKey]
+
+        // When
+        sut.conversationDidChange(changeInfo)
+
+        // Then
+        let lastMessage = try XCTUnwrap(groupConversation.lastMessage)
+        XCTAssertTrue(lastMessage.isSystem)
+        let systemMessageData = try XCTUnwrap(lastMessage.systemMessageData)
+        XCTAssertEqual(systemMessageData.systemMessageType, .mlsMigrationOngoingCall)
+    }
+
     func test_CallIsClosed_WhenConversationIsDeleted() throws {
         // Given
         groupConversation.isDeletedRemotely = true
         let changeInfo = ConversationChangeInfo(object: groupConversation)
         changeInfo.changedKeys = [#keyPath(ZMConversation.isDeletedRemotely)]
+
+        // When
+        sut.conversationDidChange(changeInfo)
+
+        // Then
+        XCTAssertTrue(mockAVSWrapper.didCallEndCall)
+    }
+
+    func test_CallIsClosed_WhenMlsConversationIsDegraded() throws {
+        // Given
+        let conversationID = try XCTUnwrap(groupConversationID)
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = .random()
+        groupConversation.mlsVerificationStatus = .degraded
+
+        let mlsService = MockMLSServiceInterface()
+        syncMOC.performAndWait {
+            syncMOC.mlsService = mlsService
+        }
+
+        let didLeaveSubconversation = customExpectation(description: "didLeaveSubconversation")
+        mlsService.leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockMethod = { _, _, _ in
+            didLeaveSubconversation.fulfill()
+        }
+
+        let changeInfo = ConversationChangeInfo(object: groupConversation)
+        changeInfo.changedKeys = ["mlsVerificationStatus"]
+        let clients = [
+            AVSClient(userId: selfUserID, clientId: UUID().transportString()),
+            AVSClient(userId: otherUserID, clientId: UUID().transportString())
+        ]
+
+        sut.callSnapshots = callSnapshot(conversationId: conversationID, clients: clients)
 
         // When
         sut.conversationDidChange(changeInfo)

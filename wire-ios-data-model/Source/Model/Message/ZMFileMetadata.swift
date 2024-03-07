@@ -33,7 +33,7 @@ open class ZMFileMetadata: NSObject {
     required public init(fileURL: URL, thumbnail: Data? = nil, name: String? = nil) {
         self.fileURL = fileURL
         self.thumbnail = thumbnail?.count > 0 ? thumbnail : nil
-        let endName = name ?? (fileURL.lastPathComponent.isEmpty ? "unnamed" :  fileURL.lastPathComponent)
+        let endName = name ?? (fileURL.lastPathComponent.isEmpty ? "unnamed" : fileURL.lastPathComponent)
 
         self.filename = endName.removingExtremeCombiningCharacters
         super.init()

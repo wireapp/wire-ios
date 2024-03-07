@@ -267,8 +267,9 @@ final class ConversationListItemView: UIView {
             title = AvailabilityStringBuilder.titleForUser(
                 name: connectedUser.name ?? "",
                 availability: connectedUser.availability,
-                isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
-                isVerified: connectedUser.isVerified,
+                isE2EICertified: false,
+                isProteusVerified: false,
+                appendYouSuffix: false,
                 style: .list
             )
             if connectedUser.availability != .none {

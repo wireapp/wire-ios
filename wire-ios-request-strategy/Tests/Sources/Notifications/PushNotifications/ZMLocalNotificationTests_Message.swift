@@ -501,7 +501,7 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
             team.name = "Wire Amazing Team"
             team.remoteIdentifier = UUID.create()
             let user = ZMUser.selfUser(in: self.syncMOC)
-            _ = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
             user.teamIdentifier = team.remoteIdentifier
 
             // when
@@ -785,7 +785,7 @@ extension ZMLocalNotificationTests_Message {
             let team = Team.insertNewObject(in: self.syncMOC)
             team.name = "Wire Amazing Team"
             let user = ZMUser.selfUser(in: self.syncMOC)
-            _ = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
 
             // WHEN
             let note = self.textNotification(self.oneOnOneConversation, sender: self.sender, text: "Hello", isEphemeral: false)!
@@ -847,7 +847,7 @@ extension ZMLocalNotificationTests_Message {
             team.name = "Wire Amazing Team"
 
             let user = ZMUser.selfUser(in: self.syncMOC)
-            _ = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
 
             // When
             let note = self.textNotification(self.oneOnOneConversation, sender: self.sender, text: "Hello", isEphemeral: false)!
