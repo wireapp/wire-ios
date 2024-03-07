@@ -33,19 +33,25 @@ import WireDataModel
     private static let typeKey = "notificationType"
     private static let errorKey = "error"
 
-    @objc public static func addObserver(context: NSManagedObjectContext, block: @escaping (ZMClientUpdateNotificationType, [NSManagedObjectID], NSError?) -> Void) -> NSObjectProtocol {
+    @objc public static func addObserver(
+        context: NSManagedObjectContext,
+        block: @escaping (ZMClientUpdateNotificationType, [NSManagedObjectID], NSError?) -> Void
+    ) -> NSObjectProtocol {
         return NotificationInContext.addObserver(name: self.name,
                                                  context: context.notificationContext) { note in
             guard let type = note.userInfo[self.typeKey] as? ZMClientUpdateNotificationType else { return }
             let clientObjectIDs = (note.userInfo[self.clientObjectIDsKey] as? [NSManagedObjectID]) ?? []
             let error = note.userInfo[self.errorKey] as? NSError
-            // print("##>## A")
             block(type, clientObjectIDs, error)
-            // print("##>## B")
         }
     }
 
-    static func notify(type: ZMClientUpdateNotificationType, context: NSManagedObjectContext, clients: [UserClient] = [], error: NSError? = nil) {
+    static func notify(
+        type: ZMClientUpdateNotificationType,
+        context: NSManagedObjectContext,
+        clients: [UserClient] = [],
+        error: NSError? = nil
+    ) {
         NotificationInContext(name: self.name, context: context.notificationContext, userInfo: [
             errorKey: error as Any,
             clientObjectIDsKey: clients.objectIDs,
@@ -70,9 +76,7 @@ import WireDataModel
 
     @objc
     public static func notifyDeletionFailed(error: NSError, context: NSManagedObjectContext) {
-        // print("##>## 0")
         self.notify(type: .deletionFailed, context: context, error: error)
-        // print("##>## 1")
     }
 }
 

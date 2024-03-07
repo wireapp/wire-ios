@@ -56,10 +56,6 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         self.e2eiCertificateEnrollment = e2eiCertificateEnrollment
     }
 
-    deinit {
-        print("##>## DeviceDetailsViewActionsHandler.deinit")
-    }
-
     @MainActor
     func enrollClient() async throws -> String {
         do {
@@ -72,35 +68,25 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     @MainActor
     func removeDevice() async -> Bool {
-        print("##>## removeDevice() 0")
-        let result = await withCheckedContinuation { [weak self] continuation in
-            guard let self = self else {
-                return // TODO: continuation
+        return await withCheckedContinuation {[weak self] continuation in
+            guard let self else {
+                return continuation.resume(returning: false)
             }
-            // (Continuation)[https://developer.apple.com/documentation/swift/checkedcontinuation]
-            // Using the same continuation twice results in a crash.
-            var optionalContinuation: CheckedContinuation<Bool, Never>? = continuation
+
             clientRemovalObserver = ClientRemovalObserver(
                 userClientToDelete: userClient,
                 delegate: self,
-                credentials: credentials,
-                completion: { [weak self] error in
-                    defer {
-                        if optionalContinuation == nil {
-                            print("##>## why?")
-                        }
-                        optionalContinuation = nil
-                    }
-                    optionalContinuation?.resume(returning: error == nil)
-                    if let error = error {
-                        self?.logger.error(error.localizedDescription)
-                    }
+                credentials: credentials
+            ) { [logger] error in
+                if let error {
+                    logger.error("failed to remove client: \(String(reflecting: error))")
+                    continuation.resume(returning: false)
+                } else {
+                    continuation.resume(returning: true)
                 }
-            )
+            }
             clientRemovalObserver?.startRemoval()
         }
-        print("##>## removeDevice() 1")
-        return result
     }
 
     func resetSession() {

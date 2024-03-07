@@ -120,10 +120,6 @@ final class RequestPasswordController {
         self.okAction = okAction
     }
 
-    deinit {
-        print("RequestPasswordController.deinit")
-    }
-
     @objc
     func passwordTextFieldChanged(_ textField: UITextField) {
         guard let passwordField = alertController.textFields?[0] else { return }

@@ -384,9 +384,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                 self.managedObjectContext?.delete(managedObject)
                 self.managedObjectContext?.saveOrRollback()
             }
-            // print("##>## 4")
             clientUpdateStatus?.failedToDeleteClient(managedObject as! UserClient, error: error)
-            // print("##>## 5")
             return false
         } else if keysToParse.contains(UserClient.needsToUploadMLSPublicKeysKey) {
             return false

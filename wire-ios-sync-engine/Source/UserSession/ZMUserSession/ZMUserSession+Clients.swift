@@ -68,27 +68,20 @@ extension ZMUserSession {
     @objc(addClientUpdateObserver:)
     public func addClientUpdateObserver(_ observer: ClientUpdateObserver) -> NSObjectProtocol {
 
-        print("##>## ZMClientUpdateNotification.addObserver")
-        return ZMClientUpdateNotification.addObserver(context: managedObjectContext) { [weak self, weak observer] (type, clientObjectIDs, error) in
-            print("##>## notify")
+        return ZMClientUpdateNotification.addObserver(context: managedObjectContext) { [weak self, weak observer] type, clientObjectIDs, error in
             self?.managedObjectContext.performGroupedBlock {
-
                 switch type {
                 case .fetchCompleted:
-                    print("##>## .fetchCompleted")
-                    let clients = clientObjectIDs.compactMap({ self?.managedObjectContext.object(with: $0) as? UserClient })
+                    let clients = clientObjectIDs.compactMap { self?.managedObjectContext.object(with: $0) as? UserClient }
                     observer?.finishedFetching(clients)
                 case .fetchFailed:
-                    print("##>## .fetchFailed")
                     if let error = error {
                         observer?.failedToFetchClients(error)
                     }
                 case .deletionCompleted:
-                    print("##>## .deletionCompleted")
                     let remainingClients = clientObjectIDs.compactMap { self?.managedObjectContext.object(with: $0) as? UserClient }
                     observer?.finishedDeleting(remainingClients)
                 case .deletionFailed:
-                    print("##>## .deletionFailed \(self!) \(observer!)")
                     if let error = error {
                         observer?.failedToDeleteClients(error)
                     }
