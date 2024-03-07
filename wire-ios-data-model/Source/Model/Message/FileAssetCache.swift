@@ -33,6 +33,480 @@ extension NSManagedObjectContext {
     }
 }
 
+// MARK: - File asset cache
+
+/// A file cache
+///
+/// This class is NOT thread safe. However, the only problematic operation is deleting.
+/// Any thread can read objects that are never deleted without any problem. Objects purged
+/// from the cache folder by the OS are not a problem as the OS will terminate the app
+/// before purging the cache.
+
+@objcMembers
+open class FileAssetCache: NSObject {
+
+    private let fileCache: FileCache
+
+    var cache: Cache {
+        return fileCache
+    }
+
+    /// Creates an asset cache.
+
+    public init(location: URL? = nil) {
+        fileCache = FileCache(name: "files", location: location)
+        super.init()
+    }
+
+    open func assetData(_ key: String) -> Data? {
+        return cache.assetData(key)
+    }
+
+    // MARK: - Team logo
+
+    open func hasDataOnDisk(
+        for team: Team,
+        format: ZMImageFormat,
+        encrypted: Bool
+    ) -> Bool {
+        guard let key = Self.cacheKeyForAsset(
+            for: team,
+            format: format,
+            encrypted: encrypted
+        ) else {
+            return false
+        }
+
+        return cache.hasDataForKey(key)
+    }
+
+    /// Returns the team logo image asset data for a team.
+    ///
+    /// This will probably cause I/O.
+    ///
+    /// - Parameters:
+    ///   - team: the team of the logo image
+    ///   - format: the format of the image
+    ///   - encrypted: encrypted or not
+    ///
+    /// - Returns: the image data
+
+    open func assetData(
+        for team: Team,
+        format: ZMImageFormat,
+        encrypted: Bool
+    ) -> Data? {
+        guard let key = Self.cacheKeyForAsset(
+            for: team,
+            format: format,
+            encrypted: encrypted
+        ) else {
+            return nil
+        }
+
+        return cache.assetData(key)
+    }
+
+    /// Sets the image asset data for a team.
+    ///
+    /// This will cause I/O.
+    ///
+    /// - Parameters:
+    ///   - team: the team of the logo image
+    ///   - format: the format of the image
+    ///   - encrypted: encrypted or not
+    ///   - data: the image data
+
+    open func storeAssetData(
+        for team: Team,
+        format: ZMImageFormat,
+        encrypted: Bool,
+        data: Data
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            for: team,
+            format: format,
+            encrypted: encrypted
+        ) else {
+            return
+        }
+
+        cache.storeAssetData(
+            data,
+            key: key,
+            createdAt: Date()
+        )
+    }
+
+    /// Deletes the image data for a given message.
+    ///
+    /// This will cause I/O.
+    ///
+    /// - Parameters:
+    ///   - team: the team of the logo image
+    ///   - format: the format of the image
+    ///   - encrypted: encrypted or not
+
+    open func deleteAssetData(
+        for team: Team,
+        format: ZMImageFormat,
+        encrypted: Bool
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            for: team,
+            format: format,
+            encrypted: encrypted
+        ) else {
+            return
+        }
+
+        cache.deleteAssetData(key)
+    }
+
+    public static func cacheKeyForAsset(
+        for team: Team,
+        format: ZMImageFormat,
+        encrypted: Bool = false
+    ) -> String? {
+        return cacheKeyForAsset(
+            for: team,
+            identifier: StringFromImageFormat(format),
+            encrypted: encrypted
+        )
+    }
+
+    public static func cacheKeyForAsset(
+        for team: Team,
+        identifier: String? = nil,
+        encrypted: Bool = false
+    ) -> String? {
+        guard
+            let teamID = team.remoteIdentifier?.uuidString,
+            let assetID = team.pictureAssetId
+        else {
+            return nil
+        }
+
+        let key = [teamID, assetID, identifier, encrypted ? "encrypted" : nil]
+            .compactMap { $0 }
+            .joined(separator: "_")
+
+        return key.data(using: .utf8)?
+            .zmSHA256Digest()
+            .zmHexEncodedString()
+    }
+
+    // MARK: - Conversation message
+
+    open func hasDataOnDisk(_ message: ZMConversationMessage, format: ZMImageFormat, encrypted: Bool) -> Bool {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: format,
+            encrypted: encrypted
+        ) else {
+            return false
+        }
+
+        return cache.hasDataForKey(key)
+    }
+
+    open func hasDataOnDisk(
+        _ message: ZMConversationMessage,
+        encrypted: Bool
+    ) -> Bool {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            encrypted: encrypted
+        ) else {
+            return false
+        }
+
+        return cache.hasDataForKey(key)
+    }
+
+    /// Returns the image asset data for a given message.
+    ///
+    /// This will probably cause I/O.
+
+    open func assetData(
+        _ message: ZMConversationMessage,
+        format: ZMImageFormat,
+        encrypted: Bool
+    ) -> Data? {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: format,
+            encrypted: encrypted
+        ) else {
+            return nil
+        }
+
+        return cache.assetData(key)
+    }
+
+    /// Returns the asset data for a given message.
+    ///
+    /// This will probably cause I/O.
+
+    open func assetData(
+        _ message: ZMConversationMessage,
+        encrypted: Bool
+    ) -> Data? {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            encrypted: encrypted
+        ) else {
+            return nil
+        }
+
+        return cache.assetData(key)
+    }
+
+    /// Returns the asset URL for a given message.
+
+    open func accessAssetURL(_ message: ZMConversationMessage) -> URL? {
+        guard let key = Self.cacheKeyForAsset(message) else {
+            return nil
+        }
+
+        return cache.assetURL(key)
+    }
+
+    /// Returns the asset URL for a given message.
+
+    open func accessRequestURL(_ message: ZMConversationMessage) -> URL? {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            identifier: "request"
+        ) else {
+            return nil
+        }
+
+        return cache.assetURL(key)
+    }
+
+    /// Sets the image asset data for a given message.
+    ///
+    /// This will cause I/O.
+
+    open func storeAssetData(
+        _ message: ZMConversationMessage,
+        format: ZMImageFormat,
+        encrypted: Bool,
+        data: Data
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: format,
+            encrypted: encrypted
+        ) else {
+            return
+        }
+
+        cache.storeAssetData(
+            data,
+            key: key,
+            createdAt: message.serverTimestamp ?? Date()
+        )
+    }
+
+    /// Sets the asset data for a given message.
+    ///
+    /// This will cause I/O.
+
+    open func storeAssetData(
+        _ message: ZMConversationMessage,
+        encrypted: Bool,
+        data: Data
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            encrypted: encrypted
+        ) else {
+            return
+        }
+
+        cache.storeAssetData(
+            data,
+            key: key,
+            createdAt: message.serverTimestamp ?? Date()
+        )
+    }
+
+    /// Sets the request data for a given message and returns the asset url.
+    ///
+    /// This will cause I/O.
+
+    open func storeRequestData(
+        _ message: ZMConversationMessage,
+        data: Data
+    ) -> URL? {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            identifier: "request"
+        ) else {
+            return nil
+        }
+
+        cache.storeAssetData(
+            data,
+            key: key,
+            createdAt: message.serverTimestamp ?? Date()
+        )
+
+        return accessRequestURL(message)
+    }
+
+    /// Deletes the request data for a given message.
+    ///
+    /// This will cause I/O.
+
+    open func deleteRequestData(_ message: ZMConversationMessage) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            identifier: "request"
+        ) else {
+            return
+        }
+
+        cache.deleteAssetData(key)
+    }
+
+    /// Deletes the image data for a given message.
+    ///
+    /// This will cause I/O.
+
+    open func deleteAssetData(
+        _ message: ZMConversationMessage,
+        format: ZMImageFormat,
+        encrypted: Bool
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: format,
+            encrypted: encrypted
+        ) else {
+            return
+        }
+
+        cache.deleteAssetData(key)
+    }
+
+    /// Deletes the data for a given message.
+    ///
+    /// This will cause I/O.
+
+    open func deleteAssetData(
+        _ message: ZMConversationMessage,
+        identifier: String? = nil,
+        encrypted: Bool
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            identifier: identifier,
+            encrypted: encrypted
+        ) else {
+            return
+        }
+
+        cache.deleteAssetData(key)
+    }
+
+    /// Deletes all associated data for a given message.
+    ///
+    /// This will cause I/O.
+
+    open func deleteAssetData(_ message: ZMConversationMessage) {
+        if message.imageMessageData != nil {
+            let imageFormats: [ZMImageFormat] = [.medium, .original, .preview]
+
+            imageFormats.forEach { format in
+                deleteAssetData(
+                    message,
+                    format: format,
+                    encrypted: false
+                )
+
+                deleteAssetData(
+                    message,
+                    format: format,
+                    encrypted: true
+                )
+            }
+        }
+
+        if message.fileMessageData != nil {
+            deleteAssetData(
+                message,
+                encrypted: false
+            )
+
+            deleteAssetData(
+                message,
+                encrypted: true
+            )
+        }
+    }
+
+    public static func cacheKeyForAsset(
+        _ message: ZMConversationMessage,
+        format: ZMImageFormat,
+        encrypted: Bool = false
+    ) -> String? {
+        return cacheKeyForAsset(
+            message,
+            identifier: StringFromImageFormat(format),
+            encrypted: encrypted
+        )
+    }
+
+    public static func cacheKeyForAsset(
+        _ message: ZMConversationMessage,
+        identifier: String? = nil,
+        encrypted: Bool = false
+    ) -> String? {
+        guard
+            let messageId = message.nonce?.transportString(),
+            let senderId = message.sender?.remoteIdentifier?.transportString(),
+            let conversationId = message.conversation?.remoteIdentifier?.transportString()
+        else {
+            return nil
+        }
+
+        let key = [messageId, senderId, conversationId, identifier, encrypted ? "encrypted" : nil]
+            .compactMap { $0 }
+            .joined(separator: "_")
+
+        return key.data(using: .utf8)?
+            .zmSHA256Digest()
+            .zmHexEncodedString()
+    }
+
+    public func deleteAssetsOlderThan(_ date: Date) {
+        do {
+            try cache.deleteAssetsOlderThan(date)
+        } catch let error {
+            zmLog.error("Error trying to delete assets older than \(date): \(error)")
+        }
+    }
+
+}
+
+// MARK: - Testing
+public extension FileAssetCache {
+    /// Deletes all existing caches. After calling this method, existing caches should not be used anymore.
+    /// This is intended for testing
+    func wipeCaches() {
+        fileCache.wipeCaches()
+    }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+private func convertToOptionalFileAttributeKeyDictionary(_ input: [String: Any]?) -> [FileAttributeKey: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (FileAttributeKey(rawValue: key), value) })
+}
+
 /// A file cache
 /// This class is NOT thread safe. However, the only problematic operation is deleting.
 /// Any thread can read objects that are never deleted without any problem.
@@ -190,219 +664,4 @@ private struct FileCache: Cache {
             return creationDate < date
         }
     }
-}
-
-// MARK: - File asset cache
-/// A file cache
-/// This class is NOT thread safe. However, the only problematic operation is deleting.
-/// Any thread can read objects that are never deleted without any problem.
-/// Objects purged from the cache folder by the OS are not a problem as the
-/// OS will terminate the app before purging the cache.
-@objcMembers open class FileAssetCache: NSObject {
-
-    fileprivate let fileCache: FileCache
-
-    var cache: Cache {
-        return fileCache
-    }
-
-    /// Creates an asset cache
-    public init(location: URL? = nil) {
-        self.fileCache = FileCache(name: "files", location: location)
-
-        super.init()
-    }
-
-    open func assetData(_ key: String) -> Data? {
-        return cache.assetData(key)
-    }
-
-    /// Returns the team logo image asset data for a team. This will probably cause I/O
-    ///
-    /// - Parameters:
-    ///   - team: the team of the logo image
-    ///   - format: the format of the image
-    ///   - encrypted: encrypted or not
-    /// - Returns: the image data
-    open func assetData(for team: Team, format: ZMImageFormat, encrypted: Bool) -> Data? {
-        guard let key = type(of: self).cacheKeyForAsset(for: team, format: format, encrypted: encrypted) else { return nil }
-        return self.cache.assetData(key)
-    }
-
-    /// Returns the image asset data for a given message. This will probably cause I/O
-    open func assetData(_ message: ZMConversationMessage, format: ZMImageFormat, encrypted: Bool) -> Data? {
-        guard let key = type(of: self).cacheKeyForAsset(message, format: format, encrypted: encrypted) else { return nil }
-        return self.cache.assetData(key)
-    }
-
-    /// Returns the asset data for a given message. This will probably cause I/O
-    open func assetData(_ message: ZMConversationMessage, encrypted: Bool) -> Data? {
-        guard let key = type(of: self).cacheKeyForAsset(message, encrypted: encrypted) else { return nil }
-        return self.cache.assetData(key)
-    }
-
-    /// Returns the asset URL for a given message
-    open func accessAssetURL(_ message: ZMConversationMessage) -> URL? {
-        guard let key = type(of: self).cacheKeyForAsset(message) else { return nil }
-        return self.cache.assetURL(key)
-    }
-
-    /// Returns the asset URL for a given message
-    open func accessRequestURL(_ message: ZMConversationMessage) -> URL? {
-        guard let key = type(of: self).cacheKeyForAsset(message, identifier: "request") else { return nil }
-        return cache.assetURL(key)
-    }
-
-    open func hasDataOnDisk(for team: Team, format: ZMImageFormat, encrypted: Bool) -> Bool {
-        guard let key = type(of: self).cacheKeyForAsset(for: team, format: format, encrypted: encrypted) else { return false }
-        return cache.hasDataForKey(key)
-    }
-
-    open func hasDataOnDisk(_ message: ZMConversationMessage, format: ZMImageFormat, encrypted: Bool) -> Bool {
-        guard let key = type(of: self).cacheKeyForAsset(message, format: format, encrypted: encrypted) else { return false }
-        return cache.hasDataForKey(key)
-    }
-
-    open func hasDataOnDisk(_ message: ZMConversationMessage, encrypted: Bool) -> Bool {
-        guard let key = type(of: self).cacheKeyForAsset(message, encrypted: encrypted) else { return false }
-        return cache.hasDataForKey(key)
-    }
-
-    /// Sets the image asset data for a team. This will cause I/O
-    ///
-    /// - Parameters:
-    ///   - team: the team of the logo image
-    ///   - format: the format of the image
-    ///   - encrypted: encrypted or not
-    ///   - data: the image data
-    open func storeAssetData(for team: Team,
-                             format: ZMImageFormat,
-                             encrypted: Bool,
-                             data: Data) {
-        guard let key = type(of: self).cacheKeyForAsset(for: team, format: format, encrypted: encrypted) else { return }
-        self.cache.storeAssetData(data, key: key, createdAt: Date())
-    }
-
-    /// Sets the image asset data for a given message. This will cause I/O
-    open func storeAssetData(_ message: ZMConversationMessage, format: ZMImageFormat, encrypted: Bool, data: Data) {
-        guard let key = type(of: self).cacheKeyForAsset(message, format: format, encrypted: encrypted) else { return }
-        self.cache.storeAssetData(data, key: key, createdAt: message.serverTimestamp ?? Date())
-    }
-
-    /// Sets the asset data for a given message. This will cause I/O
-    open func storeAssetData(_ message: ZMConversationMessage, encrypted: Bool, data: Data) {
-        guard let key = type(of: self).cacheKeyForAsset(message, encrypted: encrypted) else { return }
-        self.cache.storeAssetData(data, key: key, createdAt: message.serverTimestamp ?? Date())
-    }
-
-    /// Sets the request data for a given message and returns the asset url. This will cause I/O
-    open func storeRequestData(_ message: ZMConversationMessage, data: Data) -> URL? {
-        guard let key = type(of: self).cacheKeyForAsset(message, identifier: "request") else { return nil }
-        cache.storeAssetData(data, key: key, createdAt: message.serverTimestamp ?? Date())
-        return accessRequestURL(message)
-    }
-
-    /// Deletes the request data for a given message. This will cause I/O
-    open func deleteRequestData(_ message: ZMConversationMessage) {
-        guard let key = type(of: self).cacheKeyForAsset(message, identifier: "request") else { return }
-        cache.deleteAssetData(key)
-    }
-
-    /// Deletes the image data for a given message. This will cause I/O
-    ///
-    /// - Parameters:
-    ///   - team: the team of the logo image
-    ///   - format: the format of the image
-    ///   - encrypted: encrypted or not
-    open func deleteAssetData(for team: Team, format: ZMImageFormat, encrypted: Bool) {
-        guard let key = type(of: self).cacheKeyForAsset(for: team, format: format, encrypted: encrypted) else { return }
-        cache.deleteAssetData(key)
-    }
-
-    /// Deletes the image data for a given message. This will cause I/O
-    open func deleteAssetData(_ message: ZMConversationMessage, format: ZMImageFormat, encrypted: Bool) {
-        guard let key = type(of: self).cacheKeyForAsset(message, format: format, encrypted: encrypted) else { return }
-        cache.deleteAssetData(key)
-    }
-
-    /// Deletes the data for a given message. This will cause I/O
-    open func deleteAssetData(_ message: ZMConversationMessage, identifier: String? = nil, encrypted: Bool) {
-        guard let key = type(of: self).cacheKeyForAsset(message, identifier: identifier, encrypted: encrypted) else { return }
-        self.cache.deleteAssetData(key)
-    }
-
-    /// Deletes all associated data for a given message. This will cause I/O
-    open func deleteAssetData(_ message: ZMConversationMessage) {
-
-        if message.imageMessageData != nil {
-            let imageFormats: [ZMImageFormat] = [.medium, .original, .preview]
-
-            imageFormats.forEach({ format in
-                deleteAssetData(message, format: format, encrypted: false)
-                deleteAssetData(message, format: format, encrypted: true)
-            })
-        }
-
-        if message.fileMessageData != nil {
-            deleteAssetData(message, encrypted: false)
-            deleteAssetData(message, encrypted: true)
-        }
-    }
-
-    public func deleteAssetsOlderThan(_ date: Date) {
-        do {
-            try cache.deleteAssetsOlderThan(date)
-        } catch let error {
-            zmLog.error("Error trying to delete assets older than \(date): \(error)")
-        }
-    }
-
-    public static func cacheKeyForAsset(_ message: ZMConversationMessage, format: ZMImageFormat, encrypted: Bool = false) -> String? {
-        return cacheKeyForAsset(message, identifier: StringFromImageFormat(format), encrypted: encrypted)
-    }
-
-    public static func cacheKeyForAsset(_ message: ZMConversationMessage, identifier: String? = nil, encrypted: Bool = false) -> String? {
-        guard let messageId = message.nonce?.transportString(),
-              let senderId = message.sender?.remoteIdentifier?.transportString(),
-              let conversationId = message.conversation?.remoteIdentifier?.transportString()
-        else {
-            return nil
-        }
-
-        let key = [messageId, senderId, conversationId, identifier, encrypted ? "encrypted" : nil].compactMap({ $0 }).joined(separator: "_")
-
-        return key.data(using: .utf8)?.zmSHA256Digest().zmHexEncodedString()
-    }
-
-    // MARK: - Team cache key
-
-    public static func cacheKeyForAsset(for team: Team, format: ZMImageFormat, encrypted: Bool = false) -> String? {
-        return cacheKeyForAsset(for: team, identifier: StringFromImageFormat(format), encrypted: encrypted)
-    }
-
-    public static func cacheKeyForAsset(for team: Team, identifier: String? = nil, encrypted: Bool = false) -> String? {
-        guard let teamID = team.remoteIdentifier?.uuidString, let assetID = team.pictureAssetId else {
-            return nil
-        }
-
-        let key = [teamID, assetID, identifier, encrypted ? "encrypted" : nil].compactMap({ $0 }).joined(separator: "_")
-
-        return key.data(using: .utf8)?.zmSHA256Digest().zmHexEncodedString()
-    }
-
-}
-
-// MARK: - Testing
-public extension FileAssetCache {
-    /// Deletes all existing caches. After calling this method, existing caches should not be used anymore.
-    /// This is intended for testing
-    func wipeCaches() {
-        fileCache.wipeCaches()
-    }
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToOptionalFileAttributeKeyDictionary(_ input: [String: Any]?) -> [FileAttributeKey: Any]? {
-	guard let input = input else { return nil }
-	return Dictionary(uniqueKeysWithValues: input.map { key, value in (FileAttributeKey(rawValue: key), value) })
 }
