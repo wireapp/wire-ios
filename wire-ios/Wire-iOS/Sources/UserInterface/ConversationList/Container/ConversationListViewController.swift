@@ -176,6 +176,8 @@ final class ConversationListViewController: UIViewController {
 
         ZClientViewController.shared?.notifyUserOfDisabledAppLockIfNeeded()
 
+        viewModel.updateE2EICertifiedStatus()
+
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
 

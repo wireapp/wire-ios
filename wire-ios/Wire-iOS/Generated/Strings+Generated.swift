@@ -2325,6 +2325,16 @@ internal enum L10n {
           /// Conversation options
           internal static let title = L10n.tr("Localizable", "conversation.create.options.title", fallback: "Conversation options")
         }
+        internal enum ProtocolSelection {
+          /// MLS
+          internal static let mls = L10n.tr("Localizable", "conversation.create.protocol_selection.mls", fallback: "MLS")
+          /// MLS (default)
+          internal static let mlsDefault = L10n.tr("Localizable", "conversation.create.protocol_selection.mls_default", fallback: "MLS (default)")
+          /// Proteus
+          internal static let proteus = L10n.tr("Localizable", "conversation.create.protocol_selection.proteus", fallback: "Proteus")
+          /// Proteus (default)
+          internal static let proteusDefault = L10n.tr("Localizable", "conversation.create.protocol_selection.proteus_default", fallback: "Proteus (default)")
+        }
         internal enum Receipts {
           /// When this is on, people can see when their messages in this conversation are read.
           internal static let subtitle = L10n.tr("Localizable", "conversation.create.receipts.subtitle", fallback: "When this is on, people can see when their messages in this conversation are read.")
