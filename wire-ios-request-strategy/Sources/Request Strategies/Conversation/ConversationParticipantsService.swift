@@ -132,7 +132,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
 
         case .mixed:
 
-            guard let mlsParticipantsService else {
+            if mlsParticipantsService == nil {
                 throw ConversationParticipantsError.missingMLSParticipantsService
             }
 
