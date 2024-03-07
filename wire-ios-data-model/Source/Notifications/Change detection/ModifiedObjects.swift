@@ -26,11 +26,18 @@ struct ModifiedObjects {
     let deleted: Set<ZMManagedObject>
 
     var updatedAndRefreshed: Set<ZMManagedObject> {
-        return updated.union(refreshed)
+        updated.union(refreshed)
     }
 
     var allObjects: Set<ZMManagedObject> {
-        return [updated, refreshed, inserted, deleted].reduce(Set()) { $0.union($1) }
+        [
+            updated,
+            refreshed,
+            inserted,
+            deleted
+        ].reduce(into: .init()) { partialResult, set in
+            partialResult.formUnion(set)
+        }
     }
 
     init?(notification: Notification) {
