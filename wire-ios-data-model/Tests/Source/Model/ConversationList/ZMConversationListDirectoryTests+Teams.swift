@@ -118,11 +118,3 @@ final class ZMConversationListDirectoryTests_Teams: ZMBaseManagedObjectTest {
     }
 
 }
-
-fileprivate extension ZMConversationList {
-
-    var setValue: Set<ZMConversation> {
-        return Set(self as! [ZMConversation])
-    }
-
-}

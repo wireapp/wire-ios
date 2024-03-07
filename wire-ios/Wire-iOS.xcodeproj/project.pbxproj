@@ -87,7 +87,6 @@
 		06E89AFE25C82C51008E3846 /* UnlockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E89AFD25C82C50008E3846 /* UnlockViewController.swift */; };
 		06E89B0025C82CA9008E3846 /* PasscodeTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E89AFF25C82CA9008E3846 /* PasscodeTextField.swift */; };
 		06F2664223881A0D006BD21F /* LabelIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F2664123881A0D006BD21F /* LabelIndicator.swift */; };
-		06F9864125CBD9C7005572C5 /* AttributedStringOperators.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870534001DD6265100A7F822 /* AttributedStringOperators.swift */; };
 		06F9864225CBEEE6005572C5 /* StyleKitIcon+Const.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CBBEB924CED5C9006543D4 /* StyleKitIcon+Const.swift */; };
 		06F9864425CBFA6E005572C5 /* UIButton+SetIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F9864325CBFA6E005572C5 /* UIButton+SetIcon.swift */; };
 		06F9864525CC1440005572C5 /* UIStackView+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D58191FF2091CEBF003BA7EC /* UIStackView+Helper.swift */; };
@@ -9083,7 +9082,6 @@
 				06717E5E2865188000AF442C /* SemanticColors.swift in Sources */,
 				06F9864525CC1440005572C5 /* UIStackView+Helper.swift in Sources */,
 				BF6EC90A1EB1FD0C009D9A69 /* ExtensionBackupExcluder.swift in Sources */,
-				06F9864125CBD9C7005572C5 /* AttributedStringOperators.swift in Sources */,
 				A955D3D923F5791100304851 /* String+URL.swift in Sources */,
 				D3095761283CEB1C00CEC620 /* MediaShareRestrictionManager.swift in Sources */,
 				06E89B0025C82CA9008E3846 /* PasscodeTextField.swift in Sources */,
