@@ -15,7 +15,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import UserNotifications
 import WireDataModel
 import WireSyncEngine
@@ -85,7 +85,8 @@ extension ConversationListViewController {
             selfUser: SelfUserType,
             conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
             userSession: UserSession,
-            isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+            isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
+            notificationCenter: NotificationCenter = .default
         ) {
             self.account = account
             self.selfUser = selfUser
@@ -96,6 +97,12 @@ extension ConversationListViewController {
             super.init()
 
             updateE2EICertifiedStatus()
+            notificationCenter.addObserver(
+                self,
+                selector: #selector(handleApplicationDidBecomeActiveNotification(_:)),
+                name: UIApplication.didBecomeActiveNotification,
+                object: nil
+            )
         }
     }
 }
@@ -199,7 +206,7 @@ extension ConversationListViewController.ViewModel {
         return true
     }
 
-    private func updateE2EICertifiedStatus() {
+    func updateE2EICertifiedStatus() {
         Task { @MainActor in
             do {
                 selfUserStatus.isE2EICertified = try await isSelfUserE2EICertifiedUseCase.invoke()
@@ -230,6 +237,16 @@ extension ConversationListViewController.ViewModel: ZMInitialSyncCompletionObser
 
     func initialSyncCompleted() {
         requestMarketingConsentIfNeeded()
+    }
+}
+
+// MARK: - Observing UIApplication Life Cycle
+
+extension ConversationListViewController.ViewModel {
+
+    @objc
+    private func handleApplicationDidBecomeActiveNotification(_ notification: Notification) {
+        updateE2EICertifiedStatus()
     }
 }
 

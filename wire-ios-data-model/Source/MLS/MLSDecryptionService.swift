@@ -154,33 +154,39 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             }
 
             return results
-        } catch {
+        } catch CoreCryptoError.CryptoError(let error) {
             WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)")
 
             switch error {
+
             // Received messages targeting a future epoch, we might have lost messages.
-            case CryptoError.WrongEpoch: throw MLSMessageDecryptionError.wrongEpoch
+            case .WrongEpoch: throw MLSMessageDecryptionError.wrongEpoch
 
             // Message arrive in future epoch, it has been buffered and will be consumed later.
-            case CryptoError.BufferedFutureMessage: return []
+            case .BufferedFutureMessage: return []
 
             // Received already sent or received message, can safely be ignored.
-            case CryptoError.DuplicateMessage: return []
+            case .DuplicateMessage: return []
 
             // Received self commit, any pending self commit has now been merged
-            case CryptoError.SelfCommitIgnored: return []
+            case .SelfCommitIgnored: return []
 
             // Received stale commit, this commit is targeting a past epoch and we have already consumed it
-            case CryptoError.StaleCommit: return []
+            case .StaleCommit: return []
 
             // Received stale proposal, this proposal is targeting a past epoch and we have already consumed it
-            case CryptoError.StaleProposal: return []
+            case .StaleProposal: return []
 
             // Message arrive in an unmerged group, it has been buffered and will be consumed later.
-            case CryptoError.UnmergedPendingGroup: return []
+            case .UnmergedPendingGroup: return []
+
             default:
                 throw MLSMessageDecryptionError.failedToDecryptMessage
             }
+        } catch {
+            WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)")
+
+            throw MLSMessageDecryptionError.failedToDecryptMessage
         }
     }
 
