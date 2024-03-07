@@ -61,6 +61,12 @@ final class UserSessionMock: UserSession {
     var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
     var mockConversationList: ZMConversationList?
 
+    func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
+        let mock = MockGetMLSFeatureUseCaseProtocol()
+        mock.invoke_MockValue = .init(status: .disabled, config: .init())
+        return mock
+    }
+
     convenience init(mockUser: MockZMEditableUser) {
         self.init(
             selfUser: mockUser,
