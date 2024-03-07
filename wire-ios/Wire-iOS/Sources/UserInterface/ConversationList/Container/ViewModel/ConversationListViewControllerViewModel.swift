@@ -244,7 +244,8 @@ extension ConversationListViewController.ViewModel: ZMInitialSyncCompletionObser
 
 extension ConversationListViewController.ViewModel {
 
-    @objc private func handleApplicationDidBecomeActiveNotification(_ notification: Notification) {
+    @objc
+    private func handleApplicationDidBecomeActiveNotification(_ notification: Notification) {
         updateE2EICertifiedStatus()
     }
 }
