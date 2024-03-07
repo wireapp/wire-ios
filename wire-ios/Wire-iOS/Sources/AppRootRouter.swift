@@ -202,9 +202,9 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showBlacklisted(reason: reason, completion: completionBlock)
         case .jailbroken:
             showJailbroken(completion: completionBlock)
-        case .pendingCertificateUpdate:
+        case .certificateUpdateRequired:
             showCertificateUpdateRequest(completion: completionBlock)
-        case .pendingCertificateEnroll:
+        case .certificateEnrollmentRequired:
             showCertificateEnrollRequest(completion: completionBlock)
         case .databaseFailure(let error):
             showDatabaseLoadingFailure(error: error, completion: completionBlock)

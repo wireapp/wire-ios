@@ -836,7 +836,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 self.performPostUnlockActionsIfPossible(for: session)
                 Task {
-                    await self.updateOrEnrollCertificateIfNeeded()
+                    await self.requestCertificateUpdateOrEnrollIfNeeded()
                 }
             }
         }
@@ -1147,9 +1147,9 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         if await userSession.needsToUpdateCertificate {
             if await userSession.selfClientCertificateProvider.hasCertificate {
-                delegate?.sessionManagerWillUpdateCertificate()
+                delegate?.sessionManagerRequireCertificateUpdate()
             } else {
-                delegate?.sessionManagerWillEnrollCertificate()
+                delegate?.sessionManagerRequireCertificateEnrollment()
             }
         }
     }
@@ -1411,7 +1411,7 @@ extension SessionManager {
             if session.isLoggedIn {
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 Task {
-                    await self.updateOrEnrollCertificateIfNeeded()
+                    await self.requestCertificateUpdateOrEnrollIfNeeded()
                 }
             }
         }

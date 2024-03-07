@@ -47,9 +47,9 @@ enum AppState: Equatable {
             return reason1 == reason2
         case (jailbroken, jailbroken):
             return true
-        case (pendingCertificateUpdate, pendingCertificateUpdate):
+        case (certificateUpdateRequired, certificateUpdateRequired):
             return true
-        case (pendingCertificateEnroll, pendingCertificateEnroll):
+        case (certificateEnrollmentRequired, certificateEnrollmentRequired):
             return true
         case (databaseFailure, databaseFailure):
             return true
@@ -185,12 +185,12 @@ extension AppStateCalculator: SessionManagerDelegate {
         transition(to: .jailbroken)
     }
 
-    func sessionManagerWillUpdateCertificate() {
-        transition(to: .pendingCertificateUpdate)
+    func sessionManagerRequireCertificateUpdate() {
+        transition(to: .certificateUpdateRequired)
     }
 
-    func sessionManagerWillEnrollCertificate() {
-        transition(to: .pendingCertificateEnroll)
+    func sessionManagerRequireCertificateEnrollment() {
+        transition(to: .certificateEnrollmentRequired)
     }
 
     func sessionManagerDidUpdateCertificate(for activeSession: UserSession?) {

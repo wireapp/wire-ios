@@ -423,31 +423,31 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         mock()
     }
 
-    // MARK: - sessionManagerWillUpdateCertificate
+    // MARK: - sessionManagerRequireCertificateUpdate
 
-    public var sessionManagerWillUpdateCertificate_Invocations: [Void] = []
-    public var sessionManagerWillUpdateCertificate_MockMethod: (() -> Void)?
+    public var sessionManagerRequireCertificateUpdate_Invocations: [Void] = []
+    public var sessionManagerRequireCertificateUpdate_MockMethod: (() -> Void)?
 
-    public func sessionManagerWillUpdateCertificate() {
-        sessionManagerWillUpdateCertificate_Invocations.append(())
+    public func sessionManagerRequireCertificateUpdate() {
+        sessionManagerRequireCertificateUpdate_Invocations.append(())
 
-        guard let mock = sessionManagerWillUpdateCertificate_MockMethod else {
-            fatalError("no mock for `sessionManagerWillUpdateCertificate`")
+        guard let mock = sessionManagerRequireCertificateUpdate_MockMethod else {
+            fatalError("no mock for `sessionManagerRequireCertificateUpdate`")
         }
 
         mock()
     }
 
-    // MARK: - sessionManagerWillEnrollCertificate
+    // MARK: - sessionManagerRequireCertificateEnrollment
 
-    public var sessionManagerWillEnrollCertificate_Invocations: [Void] = []
-    public var sessionManagerWillEnrollCertificate_MockMethod: (() -> Void)?
+    public var sessionManagerRequireCertificateEnrollment_Invocations: [Void] = []
+    public var sessionManagerRequireCertificateEnrollment_MockMethod: (() -> Void)?
 
-    public func sessionManagerWillEnrollCertificate() {
-        sessionManagerWillEnrollCertificate_Invocations.append(())
+    public func sessionManagerRequireCertificateEnrollment() {
+        sessionManagerRequireCertificateEnrollment_Invocations.append(())
 
-        guard let mock = sessionManagerWillEnrollCertificate_MockMethod else {
-            fatalError("no mock for `sessionManagerWillEnrollCertificate`")
+        guard let mock = sessionManagerRequireCertificateEnrollment_MockMethod else {
+            fatalError("no mock for `sessionManagerRequireCertificateEnrollment`")
         }
 
         mock()
