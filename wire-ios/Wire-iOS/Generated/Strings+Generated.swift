@@ -4930,8 +4930,12 @@ internal enum L10n {
         internal enum E2ei {
           /// Your team now uses end-to-end identity to make Wire's usage more secure.
           /// 
-          ///  Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device.
-          internal static let subtitle = L10n.tr("Localizable", "registration.signin.e2ei.subtitle", fallback: "Your team now uses end-to-end identity to make Wire's usage more secure.\n\n Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device.")
+          ///  Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device. 
+          /// 
+          ///  [Learn more about end-to-end identity](%@)
+          internal static func subtitle(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "registration.signin.e2ei.subtitle", String(describing: p1), fallback: "Your team now uses end-to-end identity to make Wire's usage more secure.\n\n Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device. \n\n [Learn more about end-to-end identity](%@)")
+          }
           /// End-to-end identity certificate
           internal static let title = L10n.tr("Localizable", "registration.signin.e2ei.title", fallback: "End-to-end identity certificate")
           internal enum Error {

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import UIKit
 
 typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
 
@@ -28,7 +29,7 @@ class EnrollE2EIdentityStepDescription: AuthenticationStepDescription {
     let backButton: BackButtonDescription? = nil
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String
-    let subtext: String?
+    let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription? = nil
 
@@ -39,7 +40,7 @@ class EnrollE2EIdentityStepDescription: AuthenticationStepDescription {
         )
         secondaryView = nil
         headline = E2ei.title
-        subtext = E2ei.subtitle
+        subtext = .markdown(from: E2ei.subtitle(URL.wr_e2eiLearnMore), style: .login)
     }
 
 }

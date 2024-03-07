@@ -50,7 +50,7 @@ protocol AuthenticationStepDescription {
     var backButton: BackButtonDescription? { get }
     var mainView: ViewDescriptor & ValueSubmission { get }
     var headline: String { get }
-    var subtext: String? { get }
+    var subtext: NSAttributedString? { get }
     var secondaryView: AuthenticationSecondaryViewDescription? { get }
     var footerView: AuthenticationFooterViewDescription? { get }
     func shouldSkipFromNavigation() -> Bool
