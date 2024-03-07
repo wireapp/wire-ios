@@ -195,9 +195,9 @@ public protocol UserSession: AnyObject {
     )
 
     func classification(
-        with users: [UserType],
+        users: [UserType],
         conversationDomain: String?
-    ) -> SecurityClassification
+    ) -> SecurityClassification?
 
     var maxVideoLength: TimeInterval { get }
 
@@ -213,8 +213,23 @@ public protocol UserSession: AnyObject {
     var networkState: ZMNetworkState { get }
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
+    var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol { get }
+    var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol { get }
 
     var selfUserClient: UserClient? { get }
+
+    var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol { get }
+
+    var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol { get }
+
+    var e2eiFeature: Feature.E2EI { get }
+
+    var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol { get }
+
+    var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol { get }
+
+    func fetchAllClients()
+
 }
 
 extension ZMUserSession: UserSession {
@@ -238,12 +253,8 @@ extension ZMUserSession: UserSession {
     }
 
     public var isAppLockActive: Bool {
-        get {
-            appLockController.isActive
-        }
-        set {
-            appLockController.isActive = newValue
-        }
+        get { appLockController.isActive }
+        set { appLockController.isActive = newValue }
     }
 
     public var isAppLockAvailable: Bool {
@@ -473,22 +484,20 @@ extension ZMUserSession: UserSession {
         )
     }
 
-    public func classification(
-        with users: [UserType],
-        conversationDomain: String?
-    ) -> SecurityClassification {
-        guard isSelfClassified else { return .none }
+    public var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
+        IsUserE2EICertifiedUseCase(
+            schedule: .immediate,
+            coreCryptoProvider: coreCryptoProvider,
+            featureRepository: FeatureRepository(context: syncContext),
+            featureRepositoryContext: syncContext
+        )
+    }
 
-        if let conversationDomain = conversationDomain,
-           classifiedDomainsFeature.config.domains.contains(conversationDomain) == false {
-            return .notClassified
-        }
-
-        let isClassified = users.allSatisfy {
-            classification(with: $0) == .classified
-        }
-
-        return isClassified ? .classified : .notClassified
+    public var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
+        IsSelfUserE2EICertifiedUseCase(
+            context: syncContext,
+            isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase
+        )
     }
 }
 

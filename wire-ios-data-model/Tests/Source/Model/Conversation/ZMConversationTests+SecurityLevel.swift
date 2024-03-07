@@ -29,7 +29,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             let userConnection = ZMConnection.insertNewSentConnection(to: user)
             userConnection.status = .accepted
             userClient.user = user
-            user.name = "createdUser \(i+1)"
+            user.name = "createdUser \(i + 1)"
             return user
         }
     }
@@ -400,7 +400,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         self.creationCounter += 1
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         let client = UserClient.insertNewObject(in: moc)
-        client.user  = user
+        client.user = user
         if userIsTrusted {
             selfClient.trustClient(client)
         } else {
@@ -725,6 +725,44 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
             // THEN
             XCTAssertEqual(conversation.securityLevel, .notSecure)
+        }
+    }
+
+    func testItMarksMLSConversationAsNotVerifiedAfterResendMessage() async throws {
+        // GIVEN
+        let conversation = await syncMOC.perform {
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.conversationType = .group
+            conversation.messageProtocol = .mls
+            conversation.mlsVerificationStatus = .degraded
+
+            return conversation
+        }
+
+        let message = try await syncMOC.perform {
+            return try XCTUnwrap(
+                try conversation.appendText(content: "foo") as? ZMOTRMessage
+            )
+        }
+
+        await syncMOC.perform {
+            XCTAssertEqual(message.deliveryState, .failedToSend)
+            XCTAssertTrue(message.isExpired)
+            XCTAssertTrue(message.causedSecurityLevelDegradation)
+        }
+
+        // WHEN
+        try await uiMOC.perform {
+            let uiConversation = try XCTUnwrap(try self.uiMOC.existingObject(with: conversation.objectID) as? ZMConversation)
+            uiConversation.acknowledgePrivacyWarning(withResendIntent: true)
+        }
+
+        await syncMOC.perform {
+            self.syncMOC.refreshAllObjects()
+
+            // THEN
+            XCTAssertFalse(message.isExpired)
+            XCTAssertEqual(conversation.mlsVerificationStatus, .notVerified)
         }
     }
 

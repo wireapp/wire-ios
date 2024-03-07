@@ -23,6 +23,7 @@ import XCTest
 final class OneOnOneResolverTests: XCTestCase {
 
     private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
     private var sut: OneOnOneResolver!
 
@@ -36,6 +37,7 @@ final class OneOnOneResolverTests: XCTestCase {
         try await super.setUp()
 
         coreDataStackHelper = CoreDataStackHelper()
+        modelHelper = ModelHelper()
 
         mockCoreDataStack = try await coreDataStackHelper.createStack()
         mockProtocolSelector = MockActorOneOnOneProtocolSelector()
@@ -51,6 +53,7 @@ final class OneOnOneResolverTests: XCTestCase {
 
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
+        modelHelper = nil
 
         try await super.tearDown()
     }
@@ -77,11 +80,17 @@ final class OneOnOneResolverTests: XCTestCase {
         await mockMigrator.setMigrateToMLSUserIDIn_MockValue(.random())
 
         await viewContext.perform { [self] in
-            let userA = createUser(in: viewContext)
-            createConnection(status: .accepted, to: userA, in: viewContext)
+            let userA = modelHelper.createUser(
+                domain: "local@domain.com",
+                in: viewContext
+            )
+            modelHelper.createConnection(status: .accepted, to: userA, in: viewContext)
 
-            let userB = createUser(in: viewContext)
-            createConnection(status: .accepted, to: userB, in: viewContext)
+            let userB = modelHelper.createUser(
+                domain: "local@domain.com",
+                in: viewContext
+            )
+            modelHelper.createConnection(status: .accepted, to: userB, in: viewContext)
         }
 
         // When
@@ -101,10 +110,16 @@ final class OneOnOneResolverTests: XCTestCase {
         await mockMigrator.setMigrateToMLSUserIDIn_MockValue(.random())
 
         await viewContext.perform { [self] in
-            _ = createUser(in: viewContext)
+            modelHelper.createUser(
+                domain: "local@domain.com",
+                in: viewContext
+            )
 
-            let userB = createUser(in: viewContext)
-            createConnection(status: .accepted, to: userB, in: viewContext)
+            let userB = modelHelper.createUser(
+                domain: "local@domain.com",
+                in: viewContext
+            )
+            modelHelper.createConnection(status: .accepted, to: userB, in: viewContext)
         }
 
         // When
@@ -124,12 +139,17 @@ final class OneOnOneResolverTests: XCTestCase {
         await mockMigrator.setMigrateToMLSUserIDIn_MockValue(.random())
 
         await viewContext.perform { [self] in
-            let userA = createUser(in: viewContext)
-            userA.domain = nil
-            createConnection(status: .accepted, to: userA, in: viewContext)
+            let userA = modelHelper.createUser(
+                domain: nil,
+                in: viewContext
+            )
+            modelHelper.createConnection(status: .accepted, to: userA, in: viewContext)
 
-            let userB = createUser(in: viewContext)
-            createConnection(status: .accepted, to: userB, in: viewContext)
+            let userB = modelHelper.createUser(
+                domain: "local@domain.com",
+                in: viewContext
+            )
+            modelHelper.createConnection(status: .accepted, to: userB, in: viewContext)
         }
 
         // When
@@ -149,11 +169,17 @@ final class OneOnOneResolverTests: XCTestCase {
         await mockMigrator.setMigrateToMLSUserIDIn_MockError(MockOneOnOneResolverError.failed)
 
         await viewContext.perform { [self] in
-            let userA = createUser(in: viewContext)
-            createConnection(status: .accepted, to: userA, in: viewContext)
+            let userA = modelHelper.createUser(
+                domain: "local@domain.com",
+                in: viewContext
+            )
+            modelHelper.createConnection(status: .accepted, to: userA, in: viewContext)
 
-            let userB = createUser(in: viewContext)
-            createConnection(status: .accepted, to: userB, in: viewContext)
+            let userB = modelHelper.createUser(
+                domain: "local@domain.com",
+                in: viewContext
+            )
+            modelHelper.createConnection(status: .accepted, to: userB, in: viewContext)
         }
 
         // When
@@ -204,11 +230,12 @@ final class OneOnOneResolverTests: XCTestCase {
         let userID: QualifiedID = .random()
 
         let conversation = await viewContext.perform { [self] in
-            let user = createUser(in: viewContext)
-            user.remoteIdentifier = userID.uuid
-            user.domain = userID.domain
+            let user = modelHelper.createUser(
+                qualifiedID: userID,
+                in: viewContext
+            )
 
-            let (_, conversation) = createConnection(
+            let (_, conversation) = modelHelper.createConnection(
                 status: .pending,
                 to: user,
                 in: viewContext
@@ -232,41 +259,10 @@ final class OneOnOneResolverTests: XCTestCase {
             XCTAssertTrue(conversation.isForcedReadOnly)
         }
     }
-
-    // MARK: - Helpers
-
-    @discardableResult
-    private func createUser(in context: NSManagedObjectContext) -> ZMUser {
-        let user = ZMUser.insertNewObject(in: context)
-        user.remoteIdentifier = UUID()
-        user.domain = "local@domain.com"
-        return user
-    }
-
-    @discardableResult
-    private func createConnection(
-        status: ZMConnectionStatus,
-        to user: ZMUser,
-        in context: NSManagedObjectContext
-    ) -> (ZMConnection, ZMConversation) {
-        let connection = ZMConnection.insertNewObject(in: context)
-        connection.to = user
-        connection.status = status
-        connection.message = "Connect to me"
-        connection.lastUpdateDate = .now
-
-        let conversation = ZMConversation.insertNewObject(in: context)
-        conversation.conversationType = .connection
-        conversation.remoteIdentifier = UUID()
-        conversation.domain = "local@domain.com"
-        user.oneOnOneConversation = conversation
-
-        return (connection, conversation)
-    }
 }
 
 // MARK: - Mock Error
 
-enum MockOneOnOneResolverError: Error {
+private enum MockOneOnOneResolverError: Error {
     case failed
 }

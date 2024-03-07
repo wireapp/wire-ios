@@ -94,9 +94,16 @@ final class ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(timerCell)]
 
         case .conversationIsSecure:
+            let shieldCell = ConversationSecureSystemMessageSectionDescription()
+            return [AnyConversationMessageCellDescription(shieldCell)]
+
+        case .conversationIsVerified:
             let shieldCell = ConversationVerifiedSystemMessageSectionDescription()
             return [AnyConversationMessageCellDescription(shieldCell)]
 
+        case .conversationIsDegraded:
+            let shieldCell = ConversationDegradedSystemMessageSectionDescription()
+            return [AnyConversationMessageCellDescription(shieldCell)]
         case .sessionReset:
             let sessionResetCell = ConversationSessionResetSystemMessageCellDescription(
                 message: message,
