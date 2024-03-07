@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-class CallParticipantsSnapshotTests: MessagingTest {
+final class CallParticipantsSnapshotTests: MessagingTest {
 
     private typealias Sut = WireSyncEngine.CallParticipantsSnapshot
 
