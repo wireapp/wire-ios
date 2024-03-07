@@ -34,20 +34,7 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
     private weak var delegate: ClientRemovalObserverDelegate?
     private let completion: ((Error?) -> Void)?
     private var credentials: ZMEmailCredentials?
-    private lazy var requestPasswordController: RequestPasswordController = {
-        return RequestPasswordController(context: .removeDevice,
-                                         callback: {[weak self] password in
-            guard let password = password,
-                  !password.isEmpty else {
-                self?.endRemoval(result: ClientRemovalUIError.noPasswordProvided)
-                return
-            }
-
-            self?.credentials = ZMEmailCredentials(email: "", password: password)
-            self?.startRemoval()
-            self?.passwordIsNecessaryForDelete = true
-        })
-    }()
+    private var requestPasswordController: RequestPasswordController?
     private var passwordIsNecessaryForDelete: Bool = false
     private var observerToken: Any?
 
@@ -63,6 +50,10 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
         super.init()
 
         observerToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
+    }
+
+    deinit {
+        print("ClientRemovalObserver.deinit")
     }
 
     func startRemoval() {
@@ -102,6 +93,18 @@ final class ClientRemovalObserver: NSObject, ClientUpdateObserver {
             delegate?.present(self, viewControllerToPresent: alert)
             endRemoval(result: error)
         } else {
+            let requestPasswordController = RequestPasswordController(context: .removeDevice) { [weak self] password in
+                guard let password = password,
+                      !password.isEmpty else {
+                    self?.endRemoval(result: ClientRemovalUIError.noPasswordProvided)
+                    return
+                }
+
+                self?.credentials = ZMEmailCredentials(email: "", password: password)
+                self?.startRemoval()
+                self?.passwordIsNecessaryForDelete = true
+            }
+            self.requestPasswordController = requestPasswordController
             delegate?.present(self, viewControllerToPresent: requestPasswordController.alertController)
         }
     }

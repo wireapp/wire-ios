@@ -95,6 +95,7 @@ final class RequestPasswordController {
                 textField.textContentType = .password
             }
 
+            // NOTE: `RequestPasswordController` must not be deallocated while this target/action is setup
             textField.addTarget(self, action: #selector(RequestPasswordController.passwordTextFieldChanged(_:)), for: .editingChanged)
 
             self.passwordTextField = textField
@@ -117,6 +118,10 @@ final class RequestPasswordController {
         alertController.preferredAction = okAction
 
         self.okAction = okAction
+    }
+
+    deinit {
+        print("RequestPasswordController.deinit")
     }
 
     @objc
