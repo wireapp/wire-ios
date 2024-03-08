@@ -997,7 +997,7 @@
 		BD979D2E1D8F41E700E8E3CB /* String+WireLocales.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD979D2D1D8F41E700E8E3CB /* String+WireLocales.swift */; };
 		BF02CDC31D79A98000C87D38 /* SavableImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF02CDC21D79A98000C87D38 /* SavableImage.swift */; };
 		BF0515251E390E10000D5C22 /* CopyableLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0515241E390E10000D5C22 /* CopyableLabel.swift */; };
-		BF0555BD1E6D785C00D3E9D4 /* CallCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0555BC1E6D785C00D3E9D4 /* CallCellViewModel.swift */; };
+		BF0555BD1E6D785C00D3E9D4 /* ConversationMissedCallSystemMessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0555BC1E6D785C00D3E9D4 /* ConversationMissedCallSystemMessageViewModel.swift */; };
 		BF079A3620EF9E6F00B152DD /* ConversationListCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF079A3520EF9E6F00B152DD /* ConversationListCellTests.swift */; };
 		BF0BDF6D1DA6794E003C61DE /* ConversationInputBarViewController+Ephemeral.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF0BDF6C1DA6794E003C61DE /* ConversationInputBarViewController+Ephemeral.swift */; };
 		BF0BDF721DA7A9D8003C61DE /* RedactedScript-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BF0BDF711DA7A9D8003C61DE /* RedactedScript-Regular.ttf */; };
@@ -1371,7 +1371,7 @@
 		E9C0B35F2B5592B300BC80E8 /* ConversationRenamedSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B35E2B5592B300BC80E8 /* ConversationRenamedSystemMessageCellDescription.swift */; };
 		E9C0B3612B55933600BC80E8 /* ConversationParticipantsChangedSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3602B55933600BC80E8 /* ConversationParticipantsChangedSystemMessageCellDescription.swift */; };
 		E9C0B3632B55940500BC80E8 /* ConversationMessageTimerSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3622B55940500BC80E8 /* ConversationMessageTimerSystemMessageCellDescription.swift */; };
-		E9C0B3652B5594A500BC80E8 /* ConversationCallSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3642B5594A500BC80E8 /* ConversationCallSystemMessageCellDescription.swift */; };
+		E9C0B3652B5594A500BC80E8 /* ConversationMissedCallSystemMessageCellDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3642B5594A500BC80E8 /* ConversationMissedCallSystemMessageCellDescription.swift */; };
 		E9C0B3672B55958300BC80E8 /* ConversationVerifiedSystemMessageSectionDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C0B3662B55958300BC80E8 /* ConversationVerifiedSystemMessageSectionDescription.swift */; };
 		E9C68C042A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */; };
 		E9C68C052A29DB0100CDCAFD /* WireCoreCrypto.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -3154,7 +3154,7 @@
 		BD979D2D1D8F41E700E8E3CB /* String+WireLocales.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+WireLocales.swift"; sourceTree = "<group>"; };
 		BF02CDC21D79A98000C87D38 /* SavableImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavableImage.swift; sourceTree = "<group>"; };
 		BF0515241E390E10000D5C22 /* CopyableLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CopyableLabel.swift; sourceTree = "<group>"; };
-		BF0555BC1E6D785C00D3E9D4 /* CallCellViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallCellViewModel.swift; sourceTree = "<group>"; };
+		BF0555BC1E6D785C00D3E9D4 /* ConversationMissedCallSystemMessageViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationMissedCallSystemMessageViewModel.swift; sourceTree = "<group>"; };
 		BF079A3520EF9E6F00B152DD /* ConversationListCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListCellTests.swift; sourceTree = "<group>"; };
 		BF0BDF6C1DA6794E003C61DE /* ConversationInputBarViewController+Ephemeral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+Ephemeral.swift"; sourceTree = "<group>"; };
 		BF0BDF711DA7A9D8003C61DE /* RedactedScript-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "RedactedScript-Regular.ttf"; sourceTree = "<group>"; };
@@ -3466,7 +3466,7 @@
 		E9C0B35E2B5592B300BC80E8 /* ConversationRenamedSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRenamedSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9C0B3602B55933600BC80E8 /* ConversationParticipantsChangedSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationParticipantsChangedSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9C0B3622B55940500BC80E8 /* ConversationMessageTimerSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMessageTimerSystemMessageCellDescription.swift; sourceTree = "<group>"; };
-		E9C0B3642B5594A500BC80E8 /* ConversationCallSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCallSystemMessageCellDescription.swift; sourceTree = "<group>"; };
+		E9C0B3642B5594A500BC80E8 /* ConversationMissedCallSystemMessageCellDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMissedCallSystemMessageCellDescription.swift; sourceTree = "<group>"; };
 		E9C0B3662B55958300BC80E8 /* ConversationVerifiedSystemMessageSectionDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationVerifiedSystemMessageSectionDescription.swift; sourceTree = "<group>"; };
 		E9C68C032A29DB0100CDCAFD /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
 		E9CCCF9629101D8D006E0153 /* UINavigationItem+NavigationBarTitle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UINavigationItem+NavigationBarTitle.swift"; sourceTree = "<group>"; };
@@ -4804,7 +4804,8 @@
 				E9C0B35E2B5592B300BC80E8 /* ConversationRenamedSystemMessageCellDescription.swift */,
 				E9C0B3602B55933600BC80E8 /* ConversationParticipantsChangedSystemMessageCellDescription.swift */,
 				E9C0B3622B55940500BC80E8 /* ConversationMessageTimerSystemMessageCellDescription.swift */,
-				E9C0B3642B5594A500BC80E8 /* ConversationCallSystemMessageCellDescription.swift */,
+				E9C0B3642B5594A500BC80E8 /* ConversationMissedCallSystemMessageCellDescription.swift */,
+				BF0555BC1E6D785C00D3E9D4 /* ConversationMissedCallSystemMessageViewModel.swift */,
 				1695B9D72B91307600E9342A /* ConversationSecureSystemMessageSectionDescription.swift */,
 				E9C0B3662B55958300BC80E8 /* ConversationVerifiedSystemMessageSectionDescription.swift */,
 				1695B9D52B912E8D00E9342A /* ConversationDegradedSystemMessageSectionDescription.swift */,
@@ -6657,7 +6658,6 @@
 				EF82E1BF20EE79EC001B5196 /* ZMConversationMessage+CountDown.swift */,
 				BF4D99CA1E79AAD400A7B08F /* ParticipantsCellViewModel.swift */,
 				EE7E0E752109FE9200787C65 /* ParticipantsStringFormatter.swift */,
-				BF0555BC1E6D785C00D3E9D4 /* CallCellViewModel.swift */,
 				160C311E1E4C78480012E4BC /* CustomMessageView.swift */,
 				0685007F26B35DFC00721F80 /* Restrictions */,
 				87F18BB41E0154C000C69D9B /* FileTransfer */,
@@ -9498,7 +9498,7 @@
 				D5168F502010F1FF00F8222A /* ShareViewController.swift in Sources */,
 				EF5EF40220B5B70A005453C1 /* ZMUserSession+MarketingConsent.swift in Sources */,
 				EF3BA5D421075FC60093048F /* ConversationInputBarViewController+Language.swift in Sources */,
-				E9C0B3652B5594A500BC80E8 /* ConversationCallSystemMessageCellDescription.swift in Sources */,
+				E9C0B3652B5594A500BC80E8 /* ConversationMissedCallSystemMessageCellDescription.swift in Sources */,
 				87D679E61EBC8002005BEB4C /* String+Compatibility.swift in Sources */,
 				8719FD671C88802C005FBEC0 /* Delay.swift in Sources */,
 				A955D3D323F54AC400304851 /* AuthenticationCoordinatedViewController.swift in Sources */,
@@ -10266,7 +10266,7 @@
 				F10F46D420288CEB00261449 /* ConversationCreationController.swift in Sources */,
 				A965F89E23DB3359005209E1 /* ConversationInputBarViewController.swift in Sources */,
 				87E8D0BB2182179F00BD26AC /* ConversationInputBarViewController+Reply.swift in Sources */,
-				BF0555BD1E6D785C00D3E9D4 /* CallCellViewModel.swift in Sources */,
+				BF0555BD1E6D785C00D3E9D4 /* ConversationMissedCallSystemMessageViewModel.swift in Sources */,
 				63A5E6F624C87E0000F7D401 /* SettingsCellDescriptorFactory+SoundAlert.swift in Sources */,
 				A9D19B16238441B500F6E14A /* ConversationViewController+ProfileViewControllerDelegate.swift in Sources */,
 				D39210A32A1CC1C100FA616A /* ReactionCategoryButton.swift in Sources */,

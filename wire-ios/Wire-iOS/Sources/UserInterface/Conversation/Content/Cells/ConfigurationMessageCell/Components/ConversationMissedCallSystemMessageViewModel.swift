@@ -21,7 +21,7 @@ import WireCommonComponents
 import UIKit
 import WireDataModel
 
-struct CallCellViewModel {
+struct ConversationMissedCallSystemMessageViewModel {
 
     let icon: StyleKitIcon
     let iconColor: UIColor?
@@ -35,34 +35,26 @@ struct CallCellViewModel {
     }
 
     func attributedTitle() -> NSAttributedString? {
-        guard let systemMessageData = message.systemMessageData,
+        guard
+            let systemMessageData = message.systemMessageData,
             let sender = message.senderUser,
             let labelFont = font,
             let labelTextColor = textColor,
             systemMessageData.systemMessageType == systemMessageType
-            else { return nil }
-
-        let senderString: String
-        var called = NSAttributedString()
-        let childs = systemMessageData.childMessages.count
-
-        if systemMessageType == .missedCall {
-
-            var detailKey = "missed-call"
-
-            if message.conversationLike?.conversationType == .group {
-                detailKey.append(".groups")
-            }
-
-            senderString = sender.isSelfUser ? selfKey(with: detailKey).localized : (sender.name ?? "")
-            called = key(with: detailKey).localized(pov: sender.pov, args: childs + 1, senderString) && labelFont
-        } else {
-            let detailKey = "called"
-            senderString = sender.isSelfUser ? selfKey(with: detailKey).localized : (sender.name ?? "")
-            called = key(with: detailKey).localized(pov: sender.pov, args: senderString) && labelFont
+        else {
+            return nil
         }
 
-        var title = called
+        let childs = systemMessageData.childMessages.count
+
+        var detailKey = "missed-call"
+
+        if message.conversationLike?.conversationType == .group {
+            detailKey.append(".groups")
+        }
+
+        let senderString = sender.isSelfUser ? selfKey(with: detailKey).localized : (sender.name ?? "")
+        var title = key(with: detailKey).localized(pov: sender.pov, args: childs + 1, senderString) && labelFont
 
         if childs > 0 {
             title += " (\(childs + 1))" && labelFont
