@@ -18,7 +18,7 @@
 
 @testable import WireDataModel
 
-class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
+final class ZMConversationMissedCallSystemMessageTests: ZMConversationTestsBase {
 
     // MARK: - Missed Call
 
@@ -155,87 +155,4 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
     }
-
-    // MARK: - Performed Call
-
-    func testThatItInsertAPerformedCallSystemMessage() {
-        // given
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        let user = createUser()
-
-        // when
-        conversation.appendPerformedCallMessage(with: 42, caller: user)
-
-        // then
-        guard let message = conversation.lastMessage as? ZMSystemMessage else {
-            return XCTFail("No system message")
-        }
-
-        XCTAssertEqual(message.sender, user)
-        XCTAssertEqual(message.users, [user])
-        XCTAssertEqual(message.duration, 42)
-        XCTAssertEqual(message.systemMessageType, .performedCall)
-    }
-
-    func testThatItUpdatesAPerformedCallSystemMessageIfAnotherOneIsInsertedSubsequently() {
-        // given
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        let user = createUser()
-        let first = conversation.appendPerformedCallMessage(with: 42, caller: user)
-
-        // when
-        let second = conversation.appendPerformedCallMessage(with: 60, caller: user)
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-
-        // then
-        guard let message = conversation.lastMessage as? ZMSystemMessage else {
-            return XCTFail("No system message")
-        }
-
-        XCTAssertEqual(message, first)
-        XCTAssertNil(message.hiddenInConversation)
-        XCTAssertEqual(message.visibleInConversation, conversation)
-        XCTAssertEqual(message.childMessages, [second])
-
-        XCTAssertEqual(second.users, [user])
-        XCTAssertEqual(second.parentMessage as? ZMSystemMessage, message)
-        XCTAssertEqual(second.systemMessageType, .performedCall)
-        XCTAssertNil(second.visibleInConversation)
-        XCTAssertEqual(second.hiddenInConversation, conversation)
-    }
-
-    func testThatItDoesNotUpdateAPerformedCallSystemMessageIfAnotherOneIsInsertedIntermediateMessage() {
-        // given
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        let user = createUser()
-        let first = conversation.appendPerformedCallMessage(with: 42, caller: user)
-        let intermediate = try! conversation.appendText(content: "Answer the call, please!") as! ZMMessage
-
-        // when
-        let second = conversation.appendPerformedCallMessage(with: 42, caller: user)
-
-        // then
-        let lastMessages = conversation.lastMessages()
-        XCTAssertEqual(lastMessages.count, 3)
-        XCTAssertEqual(lastMessages[2] as? ZMSystemMessage, first)
-        XCTAssertEqual(lastMessages[1], intermediate)
-        XCTAssertEqual(lastMessages[0] as? ZMSystemMessage, second)
-    }
-
-    func testThatItDoesNotUpdatePreviousPerformedCallMessageWhenCallerIsDifferent() {
-        // given
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        let firstUser = createUser(), secondUser = createUser()
-        let first = conversation.appendPerformedCallMessage(with: 42, caller: firstUser)
-
-        // when
-        let second = conversation.appendPerformedCallMessage(with: 42, caller: secondUser)
-
-        // then
-        let lastMessages = conversation.lastMessages()
-        XCTAssertEqual(lastMessages.count, 2)
-        XCTAssertEqual(lastMessages[1] as? ZMSystemMessage, first)
-        XCTAssertEqual(lastMessages[0] as? ZMSystemMessage, second)
-    }
-
 }
