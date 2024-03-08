@@ -36,6 +36,10 @@
     return NSProcessInfo.processInfo.environment[@"ZM_TIMEPOINTS_CALLSTACK"].boolValue;
 }
 
++ (instancetype)timePointWithInterval:(NSTimeInterval)interval {
+    return [self timePointWithInterval:interval label:nil];
+}
+
 + (instancetype)timePointWithInterval:(NSTimeInterval)interval label:(NSString *)label {
 
     ZMSTimePoint *tp = [[ZMSTimePoint alloc] init];
@@ -60,10 +64,6 @@
         }
     }];
     return finalArray;
-}
-
-+ (instancetype)timePointWithInterval:(NSTimeInterval)interval {
-    return [self timePointWithInterval:interval label:nil];
 }
 
 - (void)resetTime {
