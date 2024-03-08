@@ -47,27 +47,19 @@ struct ConversationMissedCallSystemMessageViewModel {
 
         let childs = systemMessageData.childMessages.count
 
-        var detailKey = "missed-call"
+        var detailKey = "content.system.call.missed-call"
 
         if message.conversationLike?.conversationType == .group {
             detailKey.append(".groups")
         }
 
-        let senderString = sender.isSelfUser ? selfKey(with: detailKey).localized : (sender.name ?? "")
-        var title = key(with: detailKey).localized(pov: sender.pov, args: childs + 1, senderString) && labelFont
+        let senderString = sender.name ?? ""
+        var title = detailKey.localized(pov: sender.pov, args: childs + 1, senderString) && labelFont
 
         if childs > 0 {
             title += " (\(childs + 1))" && labelFont
         }
 
         return title && labelTextColor
-    }
-
-    private func key(with component: String) -> String {
-        return "content.system.call.\(component)"
-    }
-
-    private func selfKey(with component: String) -> String {
-        return "\(key(with: component)).you"
     }
 }
