@@ -119,7 +119,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
             }
 
             currentURL = destinationURL
-            
+
             WireLogger.localStorage.info("finish migration step for \(migrationStep.sourceVersion)", attributes: .safePublic)
 
             try self.runPostMigrationStep(migrationStep, for: currentURL)

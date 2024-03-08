@@ -237,7 +237,7 @@ extension CoreDataStack {
                 if tp.warnIfLongerThanInterval() == false {
                     WireLogger.localStorage.debug("time spent in migration only: \(tp.elapsedTime)")
                 }
-                
+
                 // Import the persistent store to the account data directory
                 WireLogger.localStorage.debug("backup: import the persistent store to the account data directory")
                 try coordinator.replacePersistentStore(

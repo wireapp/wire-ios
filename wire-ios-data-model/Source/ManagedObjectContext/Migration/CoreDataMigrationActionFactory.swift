@@ -34,7 +34,7 @@ struct CoreDataMigrationActionFactory {
         switch version {
         case .version2_111:
             return RemoveDuplicatePreAction()
-     
+
         case .version2_107:
             return CleanupModels2_107PreAction()
 

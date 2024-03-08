@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
 /// Action to perform on a given persistentContainer
@@ -26,8 +25,8 @@ class CoreDataMigrationAction {
         persistentContainer.persistentStoreDescriptions.first?.shouldAddStoreAsynchronously = false
 
         var loadError: Error?
-        persistentContainer.loadPersistentStores { description, error in
-            loadError =  error
+        persistentContainer.loadPersistentStores { _, error in
+            loadError = error
         }
         if let loadError {
             throw loadError
@@ -56,7 +55,6 @@ class CoreDataMigrationAction {
         try removeStore(for: container)
     }
 
-
     func removeStore(for container: NSPersistentContainer) throws {
         if let store = container.persistentStoreCoordinator.persistentStores.first {
             try container.persistentStoreCoordinator.remove(store)
@@ -66,7 +64,6 @@ class CoreDataMigrationAction {
     func execute(in context: NSManagedObjectContext) throws {
         // to be overriden by subclasses
     }
-
 
     private func createStore(model: NSManagedObjectModel, at storeURL: URL) throws -> NSPersistentContainer {
 
