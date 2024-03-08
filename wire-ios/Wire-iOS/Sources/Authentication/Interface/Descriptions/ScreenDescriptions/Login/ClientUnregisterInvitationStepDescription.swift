@@ -27,7 +27,7 @@ final class ClientUnregisterInvitationStepDescription: AuthenticationStepDescrip
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String
-    let subtext: String?
+    let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription?
 
@@ -36,7 +36,7 @@ final class ClientUnregisterInvitationStepDescription: AuthenticationStepDescrip
     init() {
         backButton = BackButtonDescription()
         headline = TooManyDevices.title
-        subtext = TooManyDevices.subtitle
+        subtext = .markdown(from: TooManyDevices.subtitle, style: .login)
 
         mainView = SolidButtonDescription(title: TooManyDevices.ManageButton.title.capitalized, accessibilityIdentifier: "manage_devices")
         secondaryView = nil

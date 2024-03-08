@@ -231,8 +231,12 @@ extension CoreDataStack {
                 WireLogger.localStorage.debug("backup: import prepare")
                 try prepareStoreForBackupImport(coordinator: coordinator, location: backupStoreFile, options: options)
 
+                let tp = ZMSTimePoint(interval: 60.0, label: "db migration")
                 WireLogger.localStorage.debug("backup: migrate database \(metadata.modelVersion) to \(currentModel.version)")
                 try messagingMigrator.migrateStore(at: backupStoreFile, toVersion: .current)
+                if tp.warnIfLongerThanInterval() == false {
+                    WireLogger.localStorage.debug("time spent in migration only: \(tp.elapsedTime)")
+                }
 
                 // Import the persistent store to the account data directory
                 WireLogger.localStorage.debug("backup: import the persistent store to the account data directory")

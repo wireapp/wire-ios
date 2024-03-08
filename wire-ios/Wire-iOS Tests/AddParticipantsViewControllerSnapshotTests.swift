@@ -63,7 +63,13 @@ final class AddParticipantsViewControllerSnapshotTests: BaseSnapshotTestCase {
     }
 
     func testForEveryOneIsHere() {
-        let newValues = ConversationCreationValues(name: "", participants: [], allowGuests: true, selfUser: mockSelfUser)
+        let newValues = ConversationCreationValues(
+            name: "",
+            participants: [],
+            allowGuests: true,
+            encryptionProtocol: .proteus,
+            selfUser: mockSelfUser
+        )
 
         sut = AddParticipantsViewController(context: .create(newValues), userSession: userSession)
         verify(matching: sut)

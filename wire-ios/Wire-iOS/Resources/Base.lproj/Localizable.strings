@@ -330,6 +330,10 @@
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
 "conversation.create.non_federating_domains_error.learn_more" = "Learn More";
 "conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
+"conversation.create.protocol_selection.mls" = "MLS";
+"conversation.create.protocol_selection.mls_default" = "MLS (default)";
+"conversation.create.protocol_selection.proteus" = "Proteus";
+"conversation.create.protocol_selection.proteus_default" = "Proteus (default)";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Ongoing call";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "You can’t record an audio message during a call.";
@@ -1604,7 +1608,7 @@
 "registration.signin.alert.password_needed.message" = "Please enter your Password in order to log in.";
 
 "registration.signin.e2ei.title" = "End-to-end identity certificate";
-"registration.signin.e2ei.subtitle" = "Your team now uses end-to-end identity to make Wire's usage more secure.\n\n Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device.";
+"registration.signin.e2ei.subtitle" = "Your team now uses end-to-end identity to make Wire's usage more secure.\n\n Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device. \n\n [Learn more about end-to-end identity](%@)";
 "registration.signin.e2ei.get_certificate_button.title" = "Get Certificate";
 "registration.signin.e2ei.error.alert.title" = "Something went wrong";
 "registration.signin.e2ei.error.alert.message" = "Failed to retrieve certificate";

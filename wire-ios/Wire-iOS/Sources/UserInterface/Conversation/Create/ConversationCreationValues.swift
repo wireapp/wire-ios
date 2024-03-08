@@ -36,7 +36,7 @@ final class ConversationCreationValues {
     var allowGuests: Bool
     var allowServices: Bool
     var enableReceipts: Bool
-    var encryptionProtocol: EncryptionProtocol
+    var encryptionProtocol: Feature.MLS.Config.MessageProtocol
 
     var participants: UserSet {
         get {
@@ -67,7 +67,7 @@ final class ConversationCreationValues {
         allowGuests: Bool = true,
         allowServices: Bool = true,
         enableReceipts: Bool = true,
-        encryptionProtocol: EncryptionProtocol = .proteus,
+        encryptionProtocol: Feature.MLS.Config.MessageProtocol,
         selfUser: UserType
     ) {
         self.name = name

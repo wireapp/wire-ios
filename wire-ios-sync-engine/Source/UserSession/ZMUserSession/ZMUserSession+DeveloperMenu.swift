@@ -1,6 +1,6 @@
-//
+////
 // Wire
-// Copyright (C) 2024 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,23 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+import Foundation
+import WireDataModel
 
-final class DeveloperDebugActionsViewModelTests: XCTestCase {
+extension ZMUserSession {
 
-    func testButtonsCount() throws {
-        // given
-        let viewModel = makeViewModel()
-
-        // when
-        // then
-        XCTAssertEqual(viewModel.buttons.count, 6)
+    public func setBogusLastEventID() {
+        let uuidV1 = UUID(uuidString: "0747b970-472d-11ee-be56-0242ac120002")
+        lastEventIDRepository.storeLastEventID(uuidV1)
     }
 
-    // MARK: - Helpers
-
-    private func makeViewModel() -> DeveloperDebugActionsViewModel {
-        DeveloperDebugActionsViewModel(selfClient: nil)
+    public func updateMLSMigrationStatus() async throws {
+        try await proteusToMLSMigrationCoordinator.updateMigrationStatus()
     }
+
 }

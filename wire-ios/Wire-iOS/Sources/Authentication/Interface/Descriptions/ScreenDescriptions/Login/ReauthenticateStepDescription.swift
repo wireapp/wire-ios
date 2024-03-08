@@ -27,7 +27,7 @@ final class ReauthenticateStepDescription: AuthenticationStepDescription {
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String
-    let subtext: String?
+    let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription?
 
@@ -39,18 +39,18 @@ final class ReauthenticateStepDescription: AuthenticationStepDescription {
         switch prefilledCredentials?.primaryCredentialsType {
         case .email?:
             if prefilledCredentials?.isExpired == true {
-                subtext = L10n.Localizable.SigninLogout.Email.subheadline
+                subtext = .markdown(from: L10n.Localizable.SigninLogout.Email.subheadline, style: .login)
             } else {
-                subtext = L10n.Localizable.Signin.Email.MissingPassword.subtitle
+                subtext = .markdown(from: L10n.Localizable.Signin.Email.MissingPassword.subtitle, style: .login)
             }
         case .phone?:
             if prefilledCredentials?.isExpired == true {
-                subtext = L10n.Localizable.SigninLogout.Phone.subheadline
+                subtext = .markdown(from: L10n.Localizable.SigninLogout.Phone.subheadline, style: .login)
             } else {
-                subtext = L10n.Localizable.Signin.Phone.MissingPassword.subtitle
+                subtext = .markdown(from: L10n.Localizable.Signin.Phone.MissingPassword.subtitle, style: .login)
             }
         case .none:
-            subtext = L10n.Localizable.SigninLogout.subheadline
+            subtext = .markdown(from: L10n.Localizable.SigninLogout.subheadline, style: .login)
         }
 
         secondaryView = nil

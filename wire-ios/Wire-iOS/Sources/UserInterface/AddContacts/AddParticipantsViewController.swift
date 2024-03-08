@@ -155,9 +155,9 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     }
 
     init(
+        isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         context: Context,
-        userSession: UserSession,
-        isFederationEnabled: Bool = BackendInfo.isFederationEnabled
+        userSession: UserSession
     ) {
         self.userSession = userSession
 
@@ -326,11 +326,15 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     private func updateSelectionValues() {
         // Update view model after selection changed
         if case .create(let values) = viewModel.context {
-            let updated = ConversationCreationValues(name: values.name,
-                                                     participants: userSelection.users,
-                                                     allowGuests: true,
-                                                     allowServices: true,
-                                                     selfUser: userSession.selfUser)
+            let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
+            let updated = ConversationCreationValues(
+                name: values.name,
+                participants: userSelection.users,
+                allowGuests: true,
+                allowServices: true,
+                encryptionProtocol: mlsFeature.config.defaultProtocol,
+                selfUser: userSession.selfUser
+            )
             viewModel = AddParticipantsViewModel(with: .create(updated))
         }
 

@@ -124,9 +124,10 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             await context.perform {
                 self.messageExpirationTimer.stop(for: object)
                 self.context.enqueueDelayedSave()
+                // make sure completion is called on same calling thread so syncContext
+                completion()
             }
 
-            completion()
             context.leaveAllGroups(groups)
         }
     }

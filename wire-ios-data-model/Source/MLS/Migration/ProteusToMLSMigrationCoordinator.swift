@@ -157,6 +157,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         if (BackendInfo.apiVersion ?? .v0) < .v5 {
             return .cannotStart(reason: .unsupportedAPIVersion)
         }
+
         if !DeveloperFlag.enableMLSSupport.isOn {
             return .cannotStart(reason: .clientDoesntSupportMLS)
         }
@@ -175,7 +176,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
             return .cannotStart(reason: .mlsMigrationIsNotEnabled)
         }
 
-        if features.mlsMigration.config.startTime > .now {
+        guard let startTime = features.mlsMigration.config.startTime, startTime.isInThePast else {
             return .cannotStart(reason: .startTimeHasNotBeenReached)
         }
 
@@ -183,11 +184,13 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     }
 
     private func fetchFeatures() async -> (mls: Feature.MLS, mlsMigration: Feature.MLSMigration) {
-        return await context.perform { [featureRepository] in
-            let mlsFeature = featureRepository.fetchMLS()
-            let mlsMigrationFeature = featureRepository.fetchMLSMigration()
-            return (mls: mlsFeature, mlsMigration: mlsMigrationFeature)
+        let mlsFeature = await featureRepository.fetchMLS()
+
+        let mlsMigrationFeature = await context.perform { [featureRepository] in
+            featureRepository.fetchMLSMigration()
         }
+
+        return (mls: mlsFeature, mlsMigration: mlsMigrationFeature)
     }
 
     private func isMLSEnabledOnBackend() async -> Bool {

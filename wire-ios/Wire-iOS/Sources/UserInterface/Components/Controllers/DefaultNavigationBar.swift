@@ -59,9 +59,11 @@ class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
 }
 
 extension UIViewController {
-    func wrapInNavigationController(navigationControllerClass: UINavigationController.Type = RotationAwareNavigationController.self,
-                                    navigationBarClass: AnyClass? = DefaultNavigationBar.self,
-                                    setBackgroundColor: Bool = false) -> UINavigationController {
+    func wrapInNavigationController(
+        navigationControllerClass: UINavigationController.Type = RotationAwareNavigationController.self,
+        navigationBarClass: AnyClass? = DefaultNavigationBar.self,
+        setBackgroundColor: Bool = false
+    ) -> UINavigationController {
         let navigationController = navigationControllerClass.init(navigationBarClass: navigationBarClass, toolbarClass: nil)
         navigationController.setViewControllers([self], animated: false)
 

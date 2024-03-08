@@ -69,26 +69,22 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     @MainActor
     func removeDevice() async -> Bool {
         return await withCheckedContinuation {[weak self] continuation in
-            guard let self = self else {
-                return
+            guard let self else {
+                return continuation.resume(returning: false)
             }
-            // (Continuation)[https://developer.apple.com/documentation/swift/checkedcontinuation]
-            // Using the same continuation twice results in a crash.
-            var optionalContinuation: CheckedContinuation<Bool, Never>? = continuation
+
             clientRemovalObserver = ClientRemovalObserver(
                 userClientToDelete: userClient,
                 delegate: self,
-                credentials: credentials,
-                completion: { error in
-                    defer {
-                        optionalContinuation = nil
-                    }
-                    optionalContinuation?.resume(returning: error == nil)
-                    if let error = error {
-                        self.logger.error(error.localizedDescription)
-                    }
+                credentials: credentials
+            ) { [logger] error in
+                if let error {
+                    logger.error("failed to remove client: \(String(reflecting: error))")
+                    continuation.resume(returning: false)
+                } else {
+                    continuation.resume(returning: true)
                 }
-            )
+            }
             clientRemovalObserver?.startRemoval()
         }
     }

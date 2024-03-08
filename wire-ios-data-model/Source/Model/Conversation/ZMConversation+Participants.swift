@@ -116,7 +116,7 @@ extension ZMConversation {
     /// The method will also check if the addition of the users will change the verification status, the archive
     /// status, etc.
     @objc
-    public func addParticipantAndUpdateConversationState(user: ZMUser, role: Role?) {
+    public func addParticipantAndUpdateConversationState(user: ZMUser, role: Role? = nil) {
         self.addParticipantsAndUpdateConversationState(usersAndRoles: [(user, role)])
     }
 
@@ -132,7 +132,7 @@ extension ZMConversation {
     /// The method will also check if the addition of the users will change the verification status, the archive
     /// status, etc.
     @objc
-    public func addParticipantsAndUpdateConversationState(users: Set<ZMUser>, role: Role?) {
+    public func addParticipantsAndUpdateConversationState(users: Set<ZMUser>, role: Role? = nil) {
         self.addParticipantsAndUpdateConversationState(usersAndRoles: users.map { ($0, role) })
     }
 

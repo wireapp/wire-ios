@@ -24,7 +24,7 @@ final class EmailLinkVerificationStepDescription: AuthenticationStepDescription 
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String
-    let subtext: String?
+    let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription?
 
@@ -32,7 +32,7 @@ final class EmailLinkVerificationStepDescription: AuthenticationStepDescription 
         backButton = BackButtonDescription()
         mainView = EmailLinkVerificationMainView()
         headline = L10n.Localizable.Team.ActivationCode.headline
-        subtext = L10n.Localizable.Registration.VerifyEmail.instructions(emailAddress)
+        subtext = .markdown(from: L10n.Localizable.Registration.VerifyEmail.instructions(emailAddress), style: .login)
         secondaryView = nil
         footerView = VerifyEmailStepSecondaryView(canResend: false)
     }

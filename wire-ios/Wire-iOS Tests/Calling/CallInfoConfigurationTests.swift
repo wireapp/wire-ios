@@ -734,7 +734,7 @@ final class CallInfoConfigurationTests: ZMSnapshotTestCase {
 
         let mockConversation = ZMConversation.insertNewObject(in: uiMOC)
         mockConversation.messageProtocol = messageProtocol
-        mockConversation.add(participants: selfUser)
+        mockConversation.addParticipantAndUpdateConversationState(user: selfUser)
         mockConversation.conversationType = .oneOnOne
         mockConversation.remoteIdentifier = UUID.create()
         mockConversation.oneOnOneUser = otherUser
