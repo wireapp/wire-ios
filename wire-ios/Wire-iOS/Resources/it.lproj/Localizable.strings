@@ -533,12 +533,9 @@
 
 "content.system.you_started" = "Tu";
 
-"content.system.call.called" = "%@ ha chiamato";
-"content.system.call.called-you" = "%@ ha chiamato";
-"content.system.call.called.you" = "Tu";
-
 "content.system.call.missed-call" = "Chiamata senza risposta";
 "content.system.call.missed-call-you" = "Chiamata senza risposta";
+"content.system.call.missed-call.you" = "Tu";
 
 "content.system.call.missed-call.groups" = "Chiamata persa da %@";
 "content.system.call.missed-call.groups-you" = "Chiamata persa da %2$@";

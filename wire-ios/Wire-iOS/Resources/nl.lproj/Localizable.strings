@@ -533,12 +533,9 @@
 
 "content.system.you_started" = "Jij";
 
-"content.system.call.called" = "%@ belde";
-"content.system.call.called-you" = "%@ belde";
-"content.system.call.called.you" = "Jij";
-
 "content.system.call.missed-call" = "Gemiste oproep";
 "content.system.call.missed-call-you" = "Gemiste oproep";
+"content.system.call.missed-call.you" = "Jij";
 
 "content.system.call.missed-call.groups" = "Gemiste oproep van %@";
 "content.system.call.missed-call.groups-you" = "Missed call from %2$@";

@@ -533,12 +533,9 @@
 
 "content.system.you_started" = "あなた";
 
-"content.system.call.called" = "%@ からの着信";
-"content.system.call.called-you" = "%@ からの着信";
-"content.system.call.called.you" = "あなた";
-
 "content.system.call.missed-call" = "不在着信";
 "content.system.call.missed-call-you" = "不在着信";
+"content.system.call.missed-call.you" = "あなた";
 
 "content.system.call.missed-call.groups" = "%@ からの不在着信";
 "content.system.call.missed-call.groups-you" = "%2$@ からの不在着信";

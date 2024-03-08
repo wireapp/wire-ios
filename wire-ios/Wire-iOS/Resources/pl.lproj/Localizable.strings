@@ -533,12 +533,9 @@
 
 "content.system.you_started" = "Ty";
 
-"content.system.call.called" = "%@ dzwoni";
-"content.system.call.called-you" = "%@ dzwoni";
-"content.system.call.called.you" = "Ty";
-
 "content.system.call.missed-call" = "Nieodebrane połączenie";
 "content.system.call.missed-call-you" = "Nieodebrane połączenie";
+"content.system.call.missed-call.you" = "Ty";
 
 "content.system.call.missed-call.groups" = "Nieodebrane połączenie z %@";
 "content.system.call.missed-call.groups-you" = "Nieodebrana rozmowa od %2$@";

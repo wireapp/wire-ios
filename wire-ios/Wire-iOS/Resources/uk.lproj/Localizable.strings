@@ -533,12 +533,9 @@
 
 "content.system.you_started" = "Ви";
 
-"content.system.call.called" = "%@ дзвонив(-ла)";
-"content.system.call.called-you" = "%@ дзвонив(-ла)";
-"content.system.call.called.you" = "Ви";
-
 "content.system.call.missed-call" = "Пропущений дзвінок";
 "content.system.call.missed-call-you" = "Пропущений дзвінок";
+"content.system.call.missed-call.you" = "Ви";
 
 "content.system.call.missed-call.groups" = "Пропущений дзвінок від %@";
 "content.system.call.missed-call.groups-you" = "Пропущений дзвінок від %2$@";

@@ -533,12 +533,9 @@
 
 "content.system.you_started" = "Jūs";
 
-"content.system.call.called" = "%@ skambino";
-"content.system.call.called-you" = "%@ skambinote";
-"content.system.call.called.you" = "Jūs";
-
 "content.system.call.missed-call" = "Praleistas skambutis";
 "content.system.call.missed-call-you" = "Praleistas skambutis";
+"content.system.call.missed-call.you" = "Jūs";
 
 "content.system.call.missed-call.groups" = "Skambino %@";
 "content.system.call.missed-call.groups-you" = "Skambino %2$@";

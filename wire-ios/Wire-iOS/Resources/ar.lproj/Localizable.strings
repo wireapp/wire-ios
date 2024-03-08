@@ -533,12 +533,9 @@
 
 "content.system.you_started" = "أنت";
 
-"content.system.call.called" = "اتصل %@";
-"content.system.call.called-you" = "اتصل %@";
-"content.system.call.called.you" = "أنت";
-
 "content.system.call.missed-call" = "مكالمة فائتة";
 "content.system.call.missed-call-you" = "مكالمة فائتة";
+"content.system.call.missed-call.you" = "أنت";
 
 "content.system.call.missed-call.groups" = "Missed call from %@";
 "content.system.call.missed-call.groups-you" = "Missed call from %2$@";

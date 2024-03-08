@@ -533,12 +533,9 @@
 
 "content.system.you_started" = "Sina";
 
-"content.system.call.called" = "%@ helistas";
-"content.system.call.called-you" = "%@ helistasid";
-"content.system.call.called.you" = "Sina";
-
 "content.system.call.missed-call" = "Vastamata kõne";
 "content.system.call.missed-call-you" = "Vastamata kõne";
+"content.system.call.missed-call.you" = "Sina";
 
 "content.system.call.missed-call.groups" = "Vastamata kõne kasutajalt %@";
 "content.system.call.missed-call.groups-you" = "Vastamata kõne kasutajalt %2$@";

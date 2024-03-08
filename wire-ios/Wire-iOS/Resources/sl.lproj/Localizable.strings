@@ -533,12 +533,9 @@
 
 "content.system.you_started" = "Ti";
 
-"content.system.call.called" = "%@ je klical(-a)";
-"content.system.call.called-you" = "%@ je klical(-a)";
-"content.system.call.called.you" = "Ti";
-
 "content.system.call.missed-call" = "Zgrešen klic";
 "content.system.call.missed-call-you" = "Zgrešen klic";
+"content.system.call.missed-call.you" = "Ti";
 
 "content.system.call.missed-call.groups" = "Missed call from %@";
 "content.system.call.missed-call.groups-you" = "Missed call from %2$@";

@@ -537,12 +537,9 @@
 
 "content.system.you_started" = "You";
 
-"content.system.call.called" = "%@ called";
-"content.system.call.called-you" = "%@ called";
-"content.system.call.called.you" = "You";
-
 "content.system.call.missed-call" = "Missed call";
 "content.system.call.missed-call-you" = "Missed call";
+"content.system.call.missed-call.you" = "You";
 
 "content.system.call.missed-call.groups" = "Missed call from %@";
 "content.system.call.missed-call.groups-you" = "Missed call from %2$@";

@@ -533,12 +533,9 @@
 
 "content.system.you_started" = "Sie";
 
-"content.system.call.called" = "%@ hat angerufen";
-"content.system.call.called-you" = "%@ haben angerufen";
-"content.system.call.called.you" = "Sie";
-
 "content.system.call.missed-call" = "Verpasster Anruf";
 "content.system.call.missed-call-you" = "Verpasster Anruf";
+"content.system.call.missed-call.you" = "Sie";
 
 "content.system.call.missed-call.groups" = "Verpasster Anruf von %@";
 "content.system.call.missed-call.groups-you" = "Verpasster Anruf von %2$@";

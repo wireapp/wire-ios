@@ -533,12 +533,9 @@
 
 "content.system.you_started" = "Vous";
 
-"content.system.call.called" = "%@ a appelé";
-"content.system.call.called-you" = "%@ avez appelé";
-"content.system.call.called.you" = "Vous";
-
 "content.system.call.missed-call" = "Appel manqué";
 "content.system.call.missed-call-you" = "Appel manqué";
+"content.system.call.missed-call.you" = "Vous";
 
 "content.system.call.missed-call.groups" = "Appel manqué de %@";
 "content.system.call.missed-call.groups-you" = "Appel manqué de %2$@";

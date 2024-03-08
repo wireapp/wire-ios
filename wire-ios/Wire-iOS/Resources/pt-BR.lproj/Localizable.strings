@@ -533,12 +533,9 @@
 
 "content.system.you_started" = "Você";
 
-"content.system.call.called" = "%@ ligou";
-"content.system.call.called-you" = "%@ ligou";
-"content.system.call.called.you" = "Você";
-
 "content.system.call.missed-call" = "Chamada perdida";
 "content.system.call.missed-call-you" = "Chamada perdida";
+"content.system.call.missed-call.you" = "Você";
 
 "content.system.call.missed-call.groups" = "Chamada perdida de %@";
 "content.system.call.missed-call.groups-you" = "Chamada perdida de %2$@";
