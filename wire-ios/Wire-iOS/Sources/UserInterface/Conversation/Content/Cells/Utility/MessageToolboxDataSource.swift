@@ -79,8 +79,6 @@ final class MessageToolboxDataSource {
         return [.font: statusFont, .foregroundColor: statusTextColor]
     }
 
-    private static let separator = " " + String.MessageToolbox.middleDot + " "
-
     // MARK: - Initialization
 
     /// Creates a toolbox data source for the given message.
@@ -269,20 +267,16 @@ final class MessageToolboxDataSource {
 
     /// Creates the timestamp text.
     private func timestampString(_ message: ZMConversationMessage) -> String? {
-        let timestampString: String?
+        var timestampString: String?
 
         if let editedTimeString = message.formattedEditedDate() {
             timestampString = ContentSystem.editedMessagePrefixTimestamp(editedTimeString)
-        } else if let dateTimeString = message.formattedReceivedDate() {
-            if let systemMessage = message as? ZMSystemMessage, systemMessage.systemMessageType == .messageDeletedForEveryone {
-                timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)
-            } else if let durationString = message.systemMessageData?.callDurationString() {
-                timestampString = dateTimeString + MessageToolboxDataSource.separator + durationString
-            } else {
-                timestampString = nil
-            }
-        } else {
-            timestampString = nil
+        } else if
+            let dateTimeString = message.formattedReceivedDate(),
+            let systemMessage = message as? ZMSystemMessage,
+            systemMessage.systemMessageType == .messageDeletedForEveryone
+        {
+            timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)
         }
 
         return timestampString
