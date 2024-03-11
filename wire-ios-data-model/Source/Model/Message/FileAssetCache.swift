@@ -170,7 +170,7 @@ open class FileAssetCache: NSObject {
     ) -> String? {
         return cacheKeyForAsset(
             for: team,
-            identifier: StringFromImageFormat(format),
+            identifier: format.stringValue,
             encrypted: encrypted
         )
     }
@@ -455,7 +455,7 @@ open class FileAssetCache: NSObject {
     ) -> String? {
         return cacheKeyForAsset(
             message,
-            identifier: StringFromImageFormat(format),
+            identifier: format.stringValue,
             encrypted: encrypted
         )
     }

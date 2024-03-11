@@ -821,7 +821,7 @@ extension ZMAssetClientMessageTests {
     }
 
     func sampleProcessedImageData(_ format: ZMImageFormat) -> Data {
-        return "\(StringFromImageFormat(format)) fake data".data(using: String.Encoding.utf8, allowLossyConversion: true)!
+        return "\(format.stringValue) fake data".data(using: String.Encoding.utf8, allowLossyConversion: true)!
     }
 
     func sampleImageProperties(_ format: ZMImageFormat) -> ZMIImageProperties {
