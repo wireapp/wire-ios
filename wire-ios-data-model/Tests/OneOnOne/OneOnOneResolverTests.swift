@@ -225,7 +225,7 @@ final class OneOnOneResolverTests: XCTestCase {
         XCTAssertEqual(count, 0)
     }
 
-    func test_ResolveOneOnOneConversation_NoCommonProtocols() async throws {
+    func test_ResolveOneOnOneConversation_NoCommonProtocols_forSelfUser() async throws {
         // Given
         let userID: QualifiedID = .random()
 
@@ -258,6 +258,49 @@ final class OneOnOneResolverTests: XCTestCase {
             XCTAssertEqual(conversation.messageProtocol, .proteus)
             XCTAssertTrue(conversation.isForcedReadOnly)
             XCTAssertEqual(conversation.lastMessage?.systemMessageData?.systemMessageType, .mlsNotSupportedSelfUser)
+        }
+    }
+
+    func test_ResolveOneOnOneConversation_NoCommonProtocols_forOtherUser() async throws {
+        // Given
+        let userID: QualifiedID = .random()
+        let selfUserID: QualifiedID = .random()
+
+        let conversation = await viewContext.perform { [self] in
+            let user = modelHelper.createUser(
+                qualifiedID: userID,
+                in: viewContext
+            )
+
+            user.supportedProtocols = [.proteus]
+
+            let selfUser = modelHelper.createSelfUser(qualifiedID: selfUserID, in: viewContext)
+
+            selfUser.supportedProtocols = [.mls]
+
+            let (_, conversation) = modelHelper.createConnection(
+                status: .pending,
+                to: user,
+                in: viewContext
+            )
+
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertFalse(conversation.isForcedReadOnly)
+
+            return conversation
+        }
+
+        // Mock
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.some(nil))
+
+        // When
+        try await sut.resolveOneOnOneConversation(with: userID, in: viewContext)
+
+        // Then
+        await viewContext.perform {
+            XCTAssertEqual(conversation.messageProtocol, .proteus)
+            XCTAssertTrue(conversation.isForcedReadOnly)
+            XCTAssertEqual(conversation.lastMessage?.systemMessageData?.systemMessageType, .mlsNotSupportedOtherUser)
         }
     }
 }
