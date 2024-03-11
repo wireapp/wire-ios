@@ -257,6 +257,7 @@ final class OneOnOneResolverTests: XCTestCase {
         await viewContext.perform {
             XCTAssertEqual(conversation.messageProtocol, .proteus)
             XCTAssertTrue(conversation.isForcedReadOnly)
+            XCTAssertEqual(conversation.lastMessage?.systemMessageData?.systemMessageType, .mlsNotSupportedSelfUser)
         }
     }
 }
