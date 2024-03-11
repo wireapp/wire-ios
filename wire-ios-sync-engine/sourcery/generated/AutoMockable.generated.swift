@@ -54,6 +54,38 @@ import AppKit
 
 
 
+public class MockE2EIdentityCertificateUpdateStatusProtocol: E2EIdentityCertificateUpdateStatusProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() async throws -> E2EIdentityCertificateUpdateStatus)?
+    public var invoke_MockValue: E2EIdentityCertificateUpdateStatus?
+
+    public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+}
+
 public class MockGetE2eIdentityCertificatesUseCaseProtocol: GetE2eIdentityCertificatesUseCaseProtocol {
 
     // MARK: - Life cycle
