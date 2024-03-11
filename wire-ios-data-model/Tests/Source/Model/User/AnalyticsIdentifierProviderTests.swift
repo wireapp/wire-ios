@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,14 +19,17 @@
 import XCTest
 @testable import WireDataModel
 
-class ZMUserTests_AnalyticsIdentifier: ModelObjectsTests {
+class AnalyticsIdentifierProviderTests: ModelObjectsTests {
 
-    func testTheAnalyticsIdentifierIsAutomaticallyGenerated() {
+    func testTheAnalyticsIdentifierIsGeneratedByProvider() {
         // Given
-        let sut = createUser(selfUser: true, inTeam: true)
+        let selfUser = createUser(selfUser: true, inTeam: true)
+
+        let sut = AnalyticsIdentifierProvider(selfUser: selfUser)
+        sut.setIdentifierIfNeeded()
 
         // Then
-        XCTAssertNotNil(sut.analyticsIdentifier)
+        XCTAssertNotNil(selfUser.analyticsIdentifier)
     }
 
     func testTheAnalyticsIdentifierIsNotAutomaticallyGenerated() {
@@ -38,60 +41,85 @@ class ZMUserTests_AnalyticsIdentifier: ModelObjectsTests {
 
     func testTheAnalyticsIdentifierIsNotRegeneratedIfAValueExists() {
         // Given
-        let sut = createUser(selfUser: true, inTeam: true)
-        let existingIdentifier = sut.analyticsIdentifier
+        let selfUser = createUser(selfUser: true, inTeam: true)
+        let sut = AnalyticsIdentifierProvider(selfUser: selfUser)
+        sut.setIdentifierIfNeeded()
+
+        let existingIdentifier = selfUser.analyticsIdentifier
         XCTAssertNotNil(existingIdentifier)
 
         // Then
-        XCTAssertEqual(sut.analyticsIdentifier, existingIdentifier)
+        XCTAssertEqual(selfUser.analyticsIdentifier, existingIdentifier)
     }
 
-    func testTheAnalyticsIdentifierIsEncodedAsUUIDTransportString() {
+    func testTheAnalyticsIdentifierIsEncodedAsUUIDTransportString() throws {
         // Given
         let sut = createUser(selfUser: true, inTeam: true)
+
+        let provider = AnalyticsIdentifierProvider(selfUser: sut)
+        provider.setIdentifierIfNeeded()
 
         // Then
-        XCTAssertNotNil(sut.analyticsIdentifier)
-        XCTAssertNotNil(UUID(uuidString: sut.analyticsIdentifier!))
+        let id = try XCTUnwrap(sut.analyticsIdentifier)
+
+        XCTAssertNotNil(UUID(uuidString: id))
     }
 
-    func testTheAnalyticsIdentifierIsBroadcastedInSelfConversationWhenGenerated() {
+    func testTheAnalyticsIdentifierIsBroadcastedInSelfConversationWhenGenerated() throws {
         // Given
         let sut = createUser(selfUser: true, inTeam: true)
+
+        let provider = AnalyticsIdentifierProvider(selfUser: sut)
 
         let selfConversation = ZMConversation.selfConversation(in: uiMOC)
         XCTAssertTrue(selfConversation.allMessages.isEmpty)
 
         // When
-        let identifier = sut.analyticsIdentifier
-        XCTAssertNotNil(identifier)
+        provider.setIdentifierIfNeeded()
 
         // Then
-        XCTAssertEqual(selfConversation.numberOfDataTransferMessagesContaining(analyticsIdentifier: identifier!), 1)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        let identifier = try XCTUnwrap(sut.analyticsIdentifier)
+
+        try syncMOC.performAndWait {
+            var selfConv = try syncMOC.existingObject(with: selfConversation.objectID) as! ZMConversation
+
+            XCTAssertEqual(selfConv.numberOfDataTransferMessagesContaining(analyticsIdentifier: identifier), 1)
+        }
     }
 
-    func testTheAnalyticsIdentifierIsNotRebroadcastedInSelfConversation() {
+    func testTheAnalyticsIdentifierIsNotRebroadcastedInSelfConversation() throws {
         // Given
         let sut = createUser(selfUser: true, inTeam: true)
 
-        let identifier = sut.analyticsIdentifier
-        XCTAssertNotNil(identifier)
+        let provider = AnalyticsIdentifierProvider(selfUser: sut)
+
+        provider.setIdentifierIfNeeded()
+        let identifier = try XCTUnwrap(sut.analyticsIdentifier)
 
         let selfConversation = ZMConversation.selfConversation(in: uiMOC)
-        XCTAssertEqual(selfConversation.numberOfDataTransferMessagesContaining(analyticsIdentifier: identifier!), 1)
+        try syncMOC.performAndWait {
+            var selfConv = try syncMOC.existingObject(with: selfConversation.objectID) as! ZMConversation
 
+            XCTAssertEqual(selfConv.numberOfDataTransferMessagesContaining(analyticsIdentifier: identifier), 1)
+        }
         // When
-        _ = sut.analyticsIdentifier
+        provider.setIdentifierIfNeeded()
 
         // Then
-        XCTAssertEqual(selfConversation.numberOfDataTransferMessagesContaining(analyticsIdentifier: identifier!), 1)
+        try syncMOC.performAndWait {
+            var selfConv = try syncMOC.existingObject(with: selfConversation.objectID) as! ZMConversation
+
+            XCTAssertEqual(selfConv.numberOfDataTransferMessagesContaining(analyticsIdentifier: identifier), 1)
+        }
     }
 
 }
 
 // MARK: - Helpers
 
-private extension ZMUserTests_AnalyticsIdentifier {
+private extension AnalyticsIdentifierProviderTests {
 
     func createUser(selfUser: Bool, inTeam: Bool) -> ZMUser {
         let user = selfUser ? self.selfUser! : createUser(in: uiMOC)
