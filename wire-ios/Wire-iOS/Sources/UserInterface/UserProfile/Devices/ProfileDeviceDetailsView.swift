@@ -24,12 +24,17 @@ struct ProfileDeviceDetailsView: View {
     private var dismiss
 
     @ObservedObject var viewModel: DeviceInfoViewModel
-    @State var isCertificateViewPresented: Bool = false
-    @State var isDebugViewPresented: Bool = false
+    @State private var isCertificateViewPresented: Bool = false
+    @State private var isDebugViewPresented: Bool = false
 
-    var dismissedView: (() -> Void)?
+    private let dismissedView: (() -> Void)?
 
-    var e2eIdentityCertificateView: some View {
+    init(viewModel: DeviceInfoViewModel, dismissedView: (() -> Void)?) {
+        self.viewModel = viewModel
+        self.dismissedView = dismissedView
+    }
+
+    private var e2eIdentityCertificateView: some View {
         VStack(alignment: .leading) {
             DeviceDetailsE2EIdentityCertificateView(
                 viewModel: viewModel,
@@ -47,17 +52,20 @@ struct ProfileDeviceDetailsView: View {
         .frame(width: .infinity)
     }
 
-    var proteusView: some View {
+    private var proteusView: some View {
         VStack(alignment: .leading) {
-            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title,
-                             description: L10n.Localizable.Profile.Devices.Detail.verifyMessage(
-                                viewModel.userClient.user?.name ?? ""
-                             ))
+            let userName = viewModel.userClient.user?.name ?? ""
+            sectionTitleView(
+                title: L10n.Localizable.Device.Details.Section.Proteus.title,
+                description: L10n.Localizable.Profile.Devices.Detail.verifyMessage(userName)
+            )
 
-            DeviceDetailsProteusView(viewModel: viewModel,
-                                     isVerified: viewModel.isProteusVerificationEnabled,
-                                     shouldShowActivatedDate: false)
-                .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+            DeviceDetailsProteusView(
+                viewModel: viewModel,
+                isVerified: viewModel.isProteusVerificationEnabled,
+                shouldShowActivatedDate: false
+            )
+            .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
 
             if viewModel.isSelfClient {
                 Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
@@ -71,16 +79,17 @@ struct ProfileDeviceDetailsView: View {
         .frame(maxWidth: .infinity)
     }
 
-    var mlsView: some View {
+    private var mlsView: some View {
         VStack(alignment: .leading) {
             sectionTitleView(title: L10n.Localizable.Device.Details.Section.Mls.signature.uppercased())
+
             DeviceMLSView(viewModel: viewModel)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         }
         .frame(maxWidth: .infinity)
     }
 
-    var showDeviceFingerPrintView: some View {
+    private var showDeviceFingerPrintView: some View {
         HStack {
             SwiftUI.Button {
                 Task {
@@ -101,12 +110,12 @@ struct ProfileDeviceDetailsView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
+                if viewModel.isE2eIdentityEnabled, let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
                     mlsView
-                    if viewModel.isE2eIdentityEnabled {
-                        e2eIdentityCertificateView
-                    }
+
+                    e2eIdentityCertificateView
                 }
+
                 proteusView
             }
             .background(SemanticColors.View.backgroundDefault.swiftUIColor)
