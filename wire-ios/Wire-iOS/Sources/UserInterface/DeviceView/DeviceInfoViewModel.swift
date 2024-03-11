@@ -113,7 +113,7 @@ final class DeviceInfoViewModel: ObservableObject {
         self.conversationClientDetailsActions = conversationClientDetailsActions
         self.debugMenuActionsHandler = debugMenuActionsHandler
         self.showDebugMenu = showDebugMenu
-        self.actionsHandler.isProcessing = {[weak self] isProcessing in
+        self.actionsHandler.isProcessing = { [weak self] isProcessing in
             DispatchQueue.main.async {
                 self?.isActionInProgress = isProcessing
             }
