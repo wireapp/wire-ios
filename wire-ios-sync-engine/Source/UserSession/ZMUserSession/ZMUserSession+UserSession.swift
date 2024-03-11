@@ -307,7 +307,6 @@ extension ZMUserSession: UserSession {
             return nil
         }
         var updateE2EICertificate: E2EIdentityCertificateUpdateStatusProtocol = E2EIdentityCertificateUpdateStatusUseCase(
-            isE2EIdentityEnabled: getIsE2eIdentityEnabled,
             e2eCertificateForCurrentClient: getE2eIdentityCertificates,
             gracePeriod: Double(e2eiFeature.config.verificationExpiration),
             mlsGroupID: mlsGroupID,

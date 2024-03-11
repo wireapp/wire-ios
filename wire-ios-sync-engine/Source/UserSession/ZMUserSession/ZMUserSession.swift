@@ -20,6 +20,7 @@ import Foundation
 import WireDataModel
 import WireSystem
 import WireRequestStrategy
+import UIKit
 
 @objc(ZMThirdPartyServicesDelegate)
 public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
@@ -914,10 +915,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
         }
-
-        Task {
-
-        }
+        NotificationCenter.default.post(name: .checkForE2EICertificateStatus, object: nil)
     }
 
     func processEvents() {

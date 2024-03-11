@@ -53,6 +53,12 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             self.gracePeriodRepository = gracePeriodRepository
             self.userSession = userSession
             self.targetVC = targetVC
+
+            NotificationCenter.default.addObserver(forName: .checkForE2EICertificateStatus, object: nil, queue: .main) { _ in
+                Task {
+                    await self.updateCertificate()
+                }
+            }
         }
 
     @MainActor

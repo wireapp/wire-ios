@@ -26,10 +26,12 @@ public enum E2EIdentityCertificateUpdateStatus {
 public protocol E2EIdentityCertificateUpdateStatusProtocol {
     func invoke() async throws -> E2EIdentityCertificateUpdateStatus
 }
+public extension Notification.Name {
+    static let checkForE2EICertificateStatus = NSNotification.Name("CheckForE2EICertificateStatus")
+}
 
 final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusProtocol {
 
-    private let isE2EIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol
     private let e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol
     private let gracePeriod: TimeInterval
     private let serverStoragePeriod: TimeInterval
@@ -39,7 +41,6 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
     private let mlsClientID: MLSClientID
 
     public init(
-        isE2EIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol,
         e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol,
         gracePeriod: TimeInterval,
         serverStoragePeriod: TimeInterval = 28 * TimeInterval.oneDay, // default server storage time
@@ -49,7 +50,6 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
         mlsClientID: MLSClientID,
         lastAlertDate: Date?
     ) {
-        self.isE2EIdentityEnabled = isE2EIdentityEnabled
         self.e2eCertificateForCurrentClient = e2eCertificateForCurrentClient
         self.gracePeriod = gracePeriod
         self.lastAlertDate = lastAlertDate
@@ -61,8 +61,7 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
 
     // TODO: Check if feature flag has e2ei is enabled.
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
-        if try await isE2EIdentityEnabled.invoke(),
-           let certificate = try await e2eCertificateForCurrentClient.invoke(
+        if let certificate = try await e2eCertificateForCurrentClient.invoke(
             mlsGroupId: mlsGroupID,
             clientIds: [mlsClientID]
            ).first {
