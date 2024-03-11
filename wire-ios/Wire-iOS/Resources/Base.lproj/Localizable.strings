@@ -1619,6 +1619,10 @@
 "enroll_e2ei_certificate.certificate_details_button" = "Certificate Details";
 "enroll_e2ei_certificate.ok_button" = "OK";
 
+// Update e2ei certificate
+"update_e2ei_certificate.title" = "Certificate updated";
+"update_e2ei_certificate.subtitle" = "The certificate is updated and your device is verified.";
+
 "registration.signin.username.title" = "Your username";
 "registration.signin.username.message" = "Enter your username. It helps others to find you in Wire and connect with you.";
 "registration.signin.username.placeholder" = "username";
@@ -1791,6 +1795,8 @@
 "feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all group admins.";
 
 // Feature configs: mlsE2EId
+"feature_config.alert.mls_e2ei.update.message" = "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now. \n Enter your identity provider’s credentials in the next step to update the certificate automatically.";
+"feature_config.alert.mls_e2ei.update.title" = "Update certificate";
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";
 "feature_config.alert.mls_e2ei.message" = "As of today, your team uses end-to-end identity to make Wire’s usage more secure and practicable.\nEnter your identity provider’s credentials in the next step to automatically get a verification certificate for this device.";
 "feature_config.alert.mls_e2ei.button.get_certificate" = "Get Certificate";
@@ -1802,25 +1808,19 @@
 "feature_config.alert.mls_e2ei.update_message" = "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now.
 Enter your identity provider’s credentials in the next step to update the certificate automatically.";
 "feature_config.alert.mls_e2ei.alert.update_certificate.title" = "End-to-end identity certificate";
-"failet_to_get_certificate.alert.title" = "Certificate couldn’t be issued.";
-"failet_to_get_certificate.alert.message" = "You can retry to get the certificate now, or you will get a reminder later.";
-"failet_to_get_certificate.alert.forced_message" = "Please try again, or reach out to your team admin.";
-"failet_to_get_certificate.button.retry" = "Retry";
-"failet_to_get_certificate.button.ok" = "OK";
+"failed_to_get_certificate.alert.title" = "Certificate couldn’t be issued.";
+"failed_to_get_certificate.alert.message" = "You can retry to get the certificate now, or you will get a reminder later.";
+"failed_to_get_certificate.alert.forced_message" = "Please try again, or reach out to your team admin.";
+"failed_to_get_certificate.button.retry" = "Retry";
+"failed_to_get_certificate.button.ok" = "OK";
 
 // Update end-to-end identity certificate
 "update_certificate.alert.title" = "Update certificate";
 "update_certificate.alert.message" = "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now. Enter your identity provider’s credentials in the next step to update the certificate automatically.";
 "update_certificate.button.update_certificate" = "Update Certificate";
-"update_certificate.button.remind_me_later" = "Remind Me Later";
-"update_certificate.button.learn_more" = "Learn more";
 
-"failet_to_update_certificate.alert.title" = "Certificate couldn’t be updated.";
-"failet_to_update_certificate.alert.message" = "You can retry to update the certificate now, or you will get a reminder later.";
-"failet_to_update_certificate.alert.forced_message" = "Please try again, or reach out to your team admin.";
-
-"failet_to_update_certificate.button.retry" = "Retry";
-"failet_to_update_certificate.button.ok" = "OK";
+"failed_to_update_certificate.alert.title" = "Certificate couldn’t be updated.";
+"failed_to_update_certificate.alert.message" = "You can retry to update the certificate now, or you will get a reminder later.";
 
 // Jailbroken alert
 "jailbrokendevice.alert.title" = "Jailbreak detected";

@@ -35,6 +35,8 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
     private let serverStoragePeriod: TimeInterval
     private let randomPeriod: TimeInterval
     private let lastAlertDate: Date?
+    private let mlsGroupID: MLSGroupID
+    private let mlsClientID: MLSClientID
 
     public init(
         isE2EIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol,
@@ -43,6 +45,8 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
         serverStoragePeriod: TimeInterval = 28 * TimeInterval.oneDay, // default server storage time
         // TODO: replace (60 * 60 * 24) with TimeInterval.oneDay
         randomPeriod: TimeInterval = Double((0..<(60 * 60 * 24)).randomElement() ?? 0), // Random time in a day
+        mlsGroupID: MLSGroupID,
+        mlsClientID: MLSClientID,
         lastAlertDate: Date?
     ) {
         self.isE2EIdentityEnabled = isE2EIdentityEnabled
@@ -51,14 +55,12 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
         self.lastAlertDate = lastAlertDate
         self.serverStoragePeriod = serverStoragePeriod
         self.randomPeriod = randomPeriod
+        self.mlsGroupID = mlsGroupID
+        self.mlsClientID = mlsClientID
     }
 
     // TODO: Check if feature flag has e2ei is enabled.
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
-        guard let mlsClientID = fetchMLSClientID(),
-              let mlsGroupID = fetchMLSGroupID() else {
-            return .noAction
-        }
         if try await isE2EIdentityEnabled.invoke(),
            let certificate = try await e2eCertificateForCurrentClient.invoke(
             mlsGroupId: mlsGroupID,
@@ -112,11 +114,4 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
         return .noAction
     }
 
-    func fetchMLSGroupID() -> MLSGroupID? {
-        return nil
-    }
-
-    func fetchMLSClientID() -> MLSClientID? {
-        return nil
-    }
 }

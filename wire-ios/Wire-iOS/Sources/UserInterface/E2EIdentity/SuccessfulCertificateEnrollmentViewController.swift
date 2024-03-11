@@ -23,7 +23,7 @@ import SwiftUI
 final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepViewController {
     var certificateDetails: String = ""
     // MARK: - Properties
-
+    var isUpdateMode: Bool = false
     public var onOkTapped: ((_ viewController: SuccessfulCertificateEnrollmentViewController) -> Void)?
 
     private let titleLabel: UILabel = {
@@ -102,11 +102,12 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         return stack
     }()
 
+    private let lastE2EIdentityUpdateDate: LastE2EIdentityUpdateDateProtocol
     // MARK: - Life cycle
 
-    init() {
+    init(lastE2EIdentityUpdateDate: LastE2EIdentityUpdateDateProtocol) {
+        self.lastE2EIdentityUpdateDate = lastE2EIdentityUpdateDate
         super.init(nibName: nil, bundle: nil)
-
         setupViews()
     }
 
@@ -118,6 +119,9 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         super.viewDidLoad()
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
+        if isUpdateMode {
+            self.lastE2EIdentityUpdateDate.storeLastAlertDate(Date.now)
+        }
     }
 
     // MARK: - Helpers

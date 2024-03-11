@@ -215,8 +215,11 @@ final class ClientListViewController: UIViewController,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate
         )
         viewModel.showCertificateUpdateSuccess = {[weak self] certificateChain in
-            self?.updateAllClients()
-            let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
+            guard let self = self, let lastE2EIUpdateDate = userSession.lastE2EIUpdateDate else {
+                return
+            }
+            self.updateAllClients()
+            let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController(lastE2EIdentityUpdateDate: lastE2EIUpdateDate)
             successEnrollmentViewController.certificateDetails = certificateChain
             successEnrollmentViewController.onOkTapped = { viewController in
                 viewController.dismiss(animated: true)
@@ -230,16 +233,6 @@ final class ClientListViewController: UIViewController,
         hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
         navigationController.pushViewController(hostingViewController, animated: true)
         navigationController.isNavigationBarHidden = true
-    }
-
-    @MainActor
-    private func fetchSelfConversation() async -> MLSGroupID? {
-        guard let syncContext = contextProvider?.syncContext else {
-            return nil
-        }
-        return await syncContext.perform {
-            return ZMConversation.fetchSelfMLSConversation(in: syncContext)?.mlsGroupID
-        }
     }
 
     private func createTableView() {
@@ -506,8 +499,7 @@ final class ClientListViewController: UIViewController,
 
     @MainActor
     private func updateCertificates(for userClients: [UserClient]) async -> [UserClient] {
-        let mlsGroupID = await fetchSelfConversation()
-        if let mlsGroupID = mlsGroupID, let userSession = userSession {
+        if let userSession = userSession, let mlsGroupID = await userSession.fetchSelfConversationMLSGroupID() {
             var updatedUserClients = [UserClient]()
             let mlsResolver = MLSClientResolver()
             let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
