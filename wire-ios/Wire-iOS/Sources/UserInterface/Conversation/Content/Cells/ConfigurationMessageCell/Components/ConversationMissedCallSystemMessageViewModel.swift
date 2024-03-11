@@ -45,8 +45,7 @@ struct ConversationMissedCallSystemMessageViewModel {
             return nil
         }
 
-        let childs = systemMessageData.childMessages.count
-
+        let numberOfCalls = systemMessageData.childMessages.count + 1
         var detailKey = "content.system.call.missed-call"
 
         if message.conversationLike?.conversationType == .group {
@@ -54,10 +53,10 @@ struct ConversationMissedCallSystemMessageViewModel {
         }
 
         let senderString = sender.name ?? ""
-        var title = detailKey.localized(args: childs + 1, senderString) && labelFont
+        var title = detailKey.localized(args: numberOfCalls, senderString) && labelFont
 
-        if childs > 0 {
-            title += " (\(childs + 1))" && labelFont
+        if numberOfCalls > 1 {
+            title += " (\(numberOfCalls))" && labelFont
         }
 
         return title && labelTextColor
