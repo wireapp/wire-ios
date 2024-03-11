@@ -534,12 +534,7 @@
 "content.system.you_started" = "Ty";
 
 "content.system.call.missed-call" = "Nieodebrane połączenie";
-"content.system.call.missed-call-you" = "Nieodebrane połączenie";
-"content.system.call.missed-call.you" = "Ty";
-
 "content.system.call.missed-call.groups" = "Nieodebrane połączenie z %@";
-"content.system.call.missed-call.groups-you" = "Nieodebrana rozmowa od %2$@";
-"content.system.call.missed-call.groups.you" = "Ty";
 
 "content.system.renamed_conv.title" = "%@ zmienił nazwę konwersacji";
 "content.system.renamed_conv.title-you" = "%@ zmienił nazwę konwersacji";

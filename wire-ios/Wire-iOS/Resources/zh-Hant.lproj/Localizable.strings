@@ -534,12 +534,7 @@
 "content.system.you_started" = "您";
 
 "content.system.call.missed-call" = "未接來電";
-"content.system.call.missed-call-you" = "未接來電";
-"content.system.call.missed-call.you" = "您";
-
 "content.system.call.missed-call.groups" = "錯過%@的來電";
-"content.system.call.missed-call.groups-you" = "錯過%2$@的來電";
-"content.system.call.missed-call.groups.you" = "您";
 
 "content.system.renamed_conv.title" = "%@ 重新命名了聊天室";
 "content.system.renamed_conv.title-you" = "%@重新命名聊天室";
