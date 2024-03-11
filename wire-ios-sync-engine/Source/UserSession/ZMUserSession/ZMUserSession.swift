@@ -149,6 +149,18 @@ public final class ZMUserSession: NSObject {
         return featureRepository.fetchE2EI()
     }
 
+    public var gracePeriodEndDate: Date? {
+        guard
+            e2eiFeature.isEnabled,
+            let e2eiActivatedAt = e2eiActivationDateRepository.e2eiActivatedAt
+        else {
+            return nil
+        }
+
+        let gracePeriod = TimeInterval(e2eiFeature.config.verificationExpiration)
+        return e2eiActivatedAt.addingTimeInterval(gracePeriod)
+    }
+
     lazy var selfClientCertificateProvider: SelfClientCertificateProvider = {
         return SelfClientCertificateProvider(
             getE2eIdentityCertificatesUseCase: getE2eIdentityCertificates,
@@ -158,7 +170,7 @@ public final class ZMUserSession: NSObject {
     public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol = {
         return SnoozeCertificateEnrollmentUseCase(
             e2eiFeature: e2eiFeature,
-            gracePeriodRepository: gracePeriodRepository,
+            gracePeriodEndDate: gracePeriodEndDate,
             recurringActionService: recurringActionService,
             selfClientCertificateProvider: selfClientCertificateProvider,
             accountId: account.userIdentifier)
@@ -347,14 +359,18 @@ public final class ZMUserSession: NSObject {
         )
     }()
 
-//    public private(set) lazy var certificateUpdateStatus: E2EIdentityCertificateUpdateStatusProtocol = {
-//        return GetIsE2EIdentityEnabledUseCase(coreCryptoProvider: coreCryptoProvider)
-//    }()
+    public private(set) lazy var certificateUpdateStatus: E2EIdentityCertificateUpdateStatusProtocol = {
+        return E2EIdentityCertificateUpdateStatusUseCase(
+            isE2EIdentityEnabled: e2eiFeature.isEnabled,
+            e2eCertificateForCurrentClient: getE2eIdentityCertificates,
+            gracePeriod: TimeInterval(e2eiFeature.config.verificationExpiration),
+            lastAlertDate: nil)
+    }()
 
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
-    public let gracePeriodRepository: GracePeriodRepository
+    public let e2eiActivationDateRepository: E2EIActivationDateRepository
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
@@ -414,7 +430,7 @@ public final class ZMUserSession: NSObject {
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
         )
-        self.gracePeriodRepository = GracePeriodRepository(
+        self.e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults)
         self.applicationStatusDirectory = ApplicationStatusDirectory(

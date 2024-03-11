@@ -457,17 +457,13 @@ extension AppRootRouter {
             needToShowDataUsagePermissionDialog: needToShowDialog,
             featureRepositoryProvider: userSession,
             featureChangeActionsHandler: E2EINotificationActionsHandler(
-                updateCertificateUseCase: E2EIdentityCertificateUpdateStatusUseCase(
-                    isE2EIdentityEnabled: userSession.getIsE2eIdentityEnabled,
-                    e2eCertificateForCurrentClient: userSession.getE2eIdentityCertificates,
-                    gracePeriod: 10, // TODO: @arun change this
-                    lastAlertDate: nil),
+                updateCertificateUseCase: userSession.certificateUpdateStatus,
                 enrollCertificateUseCase: userSession.enrollE2EICertificate,
                 snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
                 stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
-                gracePeriodRepository: userSession.gracePeriodRepository,
+                gracePeriodEndDate: userSession.gracePeriodEndDate,
                 targetVC: rootViewController),
-            gracePeriodRepository: userSession.gracePeriodRepository
+            e2eiActivationDateRepository: userSession.e2eiActivationDateRepository
         )
     }
 }

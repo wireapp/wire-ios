@@ -29,7 +29,7 @@ public protocol E2EIdentityCertificateUpdateStatusProtocol {
 
 final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusProtocol {
 
-    private let isE2EIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol
+    private let isE2EIdentityEnabled: Bool
     private let e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol
     private let gracePeriod: TimeInterval
     private let serverStoragePeriod: TimeInterval
@@ -37,7 +37,7 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
     private let lastAlertDate: Date?
 
     public init(
-        isE2EIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol,
+        isE2EIdentityEnabled: Bool,
         e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol,
         gracePeriod: TimeInterval,
         serverStoragePeriod: TimeInterval = 28 * TimeInterval.oneDay, // default server storage time
@@ -55,61 +55,57 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
 
     // TODO: Check if feature flag has e2ei is enabled.
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
-        guard let mlsClientID = fetchMLSClientID(),
-              let mlsGroupID = fetchMLSGroupID() else {
+        guard
+            isE2EIdentityEnabled,
+            let mlsClientID = fetchMLSClientID(),
+            let mlsGroupID = fetchMLSGroupID(),
+            let certificate = try await e2eCertificateForCurrentClient.invoke(
+                mlsGroupId: mlsGroupID,
+                clientIds: [mlsClientID]
+            ).first
+        else {
             return .noAction
         }
-        if try await isE2EIdentityEnabled.invoke(),
-           let certificate = try await e2eCertificateForCurrentClient.invoke(
-            mlsGroupId: mlsGroupID,
-            clientIds: [mlsClientID]
-           ).first {
 
-            if certificate.expiryDate.isInThePast {
-                return .block
-            }
-            let timeLeft = certificate.expiryDate.timeIntervalSinceNow - serverStoragePeriod - gracePeriod - randomPeriod
-            let calendar = Calendar.current
-            let fourHours = .oneHour * 4
-            let fifteenMinutes = .fiveMinutes * 3
+        let timeLeft = certificate.expiryDate.timeIntervalSinceNow - serverStoragePeriod - gracePeriod - randomPeriod
+        let calendar = Calendar.current
+        let fourHours = .oneHour * 4
+        let fifteenMinutes = .fiveMinutes * 3
 
-            if timeLeft <= 0 {
-                return .block
-            }
+        if (certificate.expiryDate.isInThePast) || timeLeft <= 0 {
+            return .block
+        }
 
-            switch timeLeft {
-            case  .oneDay ..< .oneWeek:
-                if let lastAlertDate = lastAlertDate, calendar.isDateInToday(lastAlertDate) {
-                    return .noAction
-                }
-                return .reminder
-            case fourHours ..< .oneDay:
-                if let lastAlertDate = lastAlertDate, lastAlertDate.timeIntervalSinceNow < fourHours {
-                    return .noAction
-                }
-                return .reminder
-            case .oneHour ..< fourHours:
-                if let lastAlertDate = lastAlertDate, lastAlertDate.timeIntervalSinceNow < .oneHour {
-                    return .noAction
-                }
-                return .reminder
-            case fifteenMinutes ..< .oneHour:
-                if let lastAlertDate = lastAlertDate, lastAlertDate.timeIntervalSinceNow < fifteenMinutes {
-                    return .noAction
-                }
-                return .reminder
-
-            case 1 ..< fifteenMinutes:
-                if let lastAlertDate = lastAlertDate, lastAlertDate.timeIntervalSinceNow < .fiveMinutes {
-                    return .noAction
-                }
-                return .reminder
-            default:
+        switch timeLeft {
+        case  .oneDay ..< .oneWeek:
+            if let lastAlertDate = lastAlertDate, calendar.isDateInToday(lastAlertDate) {
                 return .noAction
             }
+            return .reminder
+        case fourHours ..< .oneDay:
+            if let lastAlertDate = lastAlertDate, lastAlertDate.timeIntervalSinceNow < fourHours {
+                return .noAction
+            }
+            return .reminder
+        case .oneHour ..< fourHours:
+            if let lastAlertDate = lastAlertDate, lastAlertDate.timeIntervalSinceNow < .oneHour {
+                return .noAction
+            }
+            return .reminder
+        case fifteenMinutes ..< .oneHour:
+            if let lastAlertDate = lastAlertDate, lastAlertDate.timeIntervalSinceNow < fifteenMinutes {
+                return .noAction
+            }
+            return .reminder
 
+        case 1 ..< fifteenMinutes:
+            if let lastAlertDate = lastAlertDate, lastAlertDate.timeIntervalSinceNow < .fiveMinutes {
+                return .noAction
+            }
+            return .reminder
+        default:
+            return .noAction
         }
-        return .noAction
     }
 
     func fetchMLSGroupID() -> MLSGroupID? {

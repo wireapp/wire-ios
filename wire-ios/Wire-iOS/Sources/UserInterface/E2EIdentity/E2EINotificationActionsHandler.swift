@@ -35,7 +35,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private var enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol
     private var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol
     private var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol
-    private let gracePeriodRepository: GracePeriodRepository
+    private let gracePeriodEndDate: Date?
     private let targetVC: UIViewController
 
     // MARK: - Life cycle
@@ -45,13 +45,13 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol,
         snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol,
         stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol,
-        gracePeriodRepository: GracePeriodRepository,
+        gracePeriodEndDate: Date?,
         targetVC: UIViewController) {
             self.updateCertificateUseCase = updateCertificateUseCase
             self.enrollCertificateUseCase = enrollCertificateUseCase
             self.snoozeCertificateEnrollmentUseCase = snoozeCertificateEnrollmentUseCase
             self.stopCertificateEnrollmentSnoozerUseCase = stopCertificateEnrollmentSnoozerUseCase
-            self.gracePeriodRepository = gracePeriodRepository
+            self.gracePeriodEndDate = gracePeriodEndDate
             self.targetVC = targetVC
         }
 
@@ -61,10 +61,8 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             let certificateDetails = try await enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
             await confirmSuccessfulEnrollment(certificateDetails)
         } catch {
-            guard let endOfGracePeriod = gracePeriodRepository.fetchGracePeriodEndDate() else {
-                return
-            }
-            await showGetCertificateErrorAlert(canCancel: !endOfGracePeriod.isInThePast)
+            guard let gracePeriodEndDate else { return }
+            await showGetCertificateErrorAlert(canCancel: !gracePeriodEndDate.isInThePast)
         }
     }
 
@@ -86,9 +84,9 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     }
 
     public func snoozeReminder() async {
-        guard let endOfGracePeriod = gracePeriodRepository.fetchGracePeriodEndDate(),
-              endOfGracePeriod.timeIntervalSinceNow > 0,
-              let formattedDuration = durationFormatter.string(from: endOfGracePeriod.timeIntervalSinceNow) else {
+        guard let gracePeriodEndDate,
+              !gracePeriodEndDate.isInThePast,
+              let formattedDuration = durationFormatter.string(from: gracePeriodEndDate.timeIntervalSinceNow) else {
             return
         }
 

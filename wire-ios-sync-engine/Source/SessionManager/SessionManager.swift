@@ -1145,13 +1145,24 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func requestCertificateUpdateOrEnrollIfNeeded() async {
         guard let userSession = activeUserSession else { return }
 
-        //if await userSession.needsToUpdateCertificate {
-            if await userSession.selfClientCertificateProvider.hasCertificate {
+        do {
+            let certificateUpdateStatus = try await userSession.certificateUpdateStatus.invoke()
+            if certificateUpdateStatus == .block {
                 delegate?.sessionManagerRequireCertificateUpdate()
-            } else {
-                delegate?.sessionManagerRequireCertificateEnrollment()
             }
-       // }
+        } catch {
+            WireLogger.e2ei.warn("Can't get certificate update status: \(error)")
+        }
+
+        // TODO: move to the usecase
+        let hasCertificate = await userSession.selfClientCertificateProvider.hasCertificate
+        guard let gracePeriodEndDate = userSession.gracePeriodEndDate else {
+            return
+        }
+        if userSession.e2eiFeature.isEnabled && !hasCertificate && gracePeriodEndDate.isInThePast {
+             delegate?.sessionManagerRequireCertificateEnrollment()
+        }
+
     }
 
     func shouldPerformPostRebootLogout() -> Bool {

@@ -28,7 +28,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     // MARK: - Properties
 
     private let e2eiFeature: Feature.E2EI
-    private let gracePeriodRepository: GracePeriodRepository
+    private let gracePeriodEndDate: Date?
     private let recurringActionService: RecurringActionServiceInterface
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
     private let actionId: String
@@ -37,12 +37,12 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
 
     init(
         e2eiFeature: Feature.E2EI,
-        gracePeriodRepository: GracePeriodRepository,
+        gracePeriodEndDate: Date?,
         recurringActionService: RecurringActionServiceInterface,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
         accountId: UUID) {
             self.e2eiFeature = e2eiFeature
-            self.gracePeriodRepository = gracePeriodRepository
+            self.gracePeriodEndDate = gracePeriodEndDate
             self.recurringActionService = recurringActionService
             self.selfClientCertificateProvider = selfClientCertificateProvider
             self.actionId = "\(accountId).enrollCertificate"
@@ -51,11 +51,10 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     // MARK: - Methods
 
     func invoke() async {
-        guard let endOfGracePeriod = gracePeriodRepository.fetchGracePeriodEndDate() else {
-            return
-        }
+        guard let gracePeriodEndDate else { return }
+
         let timeProvider = SnoozeTimeProvider()
-        let interval = timeProvider.getSnoozeTime(endOfPeriod: endOfGracePeriod)
+        let interval = timeProvider.getSnoozeTime(endOfPeriod: gracePeriodEndDate)
 
         await registerRecurringActionIfNeeded(interval: interval)
     }
@@ -72,10 +71,10 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
             id: actionId,
             interval: interval
         ) {
-            // We save the end of the grace period once and should not update it.
-            let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled(gracePeriod: nil)
-            NotificationCenter.default.post(name: .featureDidChangeNotification,
-                                            object: notificationObject)
+            // TODO: add new notofication
+//            let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled
+//            NotificationCenter.default.post(name: .featureDidChangeNotification,
+//                                            object: notificationObject)
         }
 
         recurringActionService.registerAction(recurringAction)
