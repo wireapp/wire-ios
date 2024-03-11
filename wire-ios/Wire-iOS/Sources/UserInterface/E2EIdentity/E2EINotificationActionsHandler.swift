@@ -65,7 +65,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             guard let endOfGracePeriod = gracePeriodRepository.fetchGracePeriodEndDate() else {
                 return
             }
-            await showGetCertificateErrorAlert(canCancel: !endOfGracePeriod.isInThePast)
+            showGetCertificateErrorAlert(canCancel: !endOfGracePeriod.isInThePast)
         }
     }
 
@@ -109,16 +109,18 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
     // MARK: - Helpers
     @MainActor
-    private func showGetCertificateErrorAlert(canCancel: Bool) async {
+    private func showGetCertificateErrorAlert(canCancel: Bool) {
         let oauthUseCase = OAuthUseCase(rootViewController: targetVC)
-        let alert = await UIAlertController.getCertificateFailed(canCancel: canCancel, isUpdateMode: isUpdateMode) {
-            Task {
+        let alert = UIAlertController.getCertificateFailed(canCancel: canCancel, isUpdateMode: isUpdateMode) {
+            Task { [weak self] in
+                guard let self else { return }
                 do {
                     let certificateDetails = try await self.enrollCertificateUseCase.invoke(
                         authenticate: oauthUseCase.invoke)
                     await self.confirmSuccessfulEnrollment(certificateDetails)
                 } catch {
-                    WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
+                    WireLogger.e2ei.error("failed to \(self.isUpdateMode ? "update" : "get") E2EI certification status: \(error)")
+                    isUpdateMode = false
                 }
             }
         }
@@ -168,6 +170,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
                 }
             }
         }
+        targetVC.present(alert, animated: true)
     }
 }
 

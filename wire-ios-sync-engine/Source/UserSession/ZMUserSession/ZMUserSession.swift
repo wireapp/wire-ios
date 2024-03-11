@@ -915,7 +915,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
             self?.notifyThirdPartyServices()
         }
 
-        // TODO: Call update here
+        Task {
+
+        }
     }
 
     func processEvents() {
