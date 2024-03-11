@@ -347,6 +347,10 @@ public final class ZMUserSession: NSObject {
         )
     }()
 
+//    public private(set) lazy var certificateUpdateStatus: E2EIdentityCertificateUpdateStatusProtocol = {
+//        return GetIsE2EIdentityEnabledUseCase(coreCryptoProvider: coreCryptoProvider)
+//    }()
+
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
