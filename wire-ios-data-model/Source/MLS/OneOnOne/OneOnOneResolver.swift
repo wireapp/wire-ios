@@ -110,6 +110,8 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
                 let selfUser = ZMUser.selfUser(in: context)
 
+                // The reason we need to add this first if check here is so to avoid running the same code path again
+                // if conversation has been marked as read only before.
                 if !conversation.isForcedReadOnly {
                     if !selfUser.supportedProtocols.contains(.mls) {
                         conversation.appendMLSMigrationMLSNotSupportedForSelfUser(user: selfUser)
