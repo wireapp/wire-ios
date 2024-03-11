@@ -300,6 +300,148 @@ public class MockConversationEventProcessorProtocol: ConversationEventProcessorP
 
 }
 
+public class MockConversationLike: ConversationLike {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - conversationType
+
+    public var conversationType: ZMConversationType {
+        get { return underlyingConversationType }
+        set(value) { underlyingConversationType = value }
+    }
+
+    public var underlyingConversationType: ZMConversationType!
+
+    // MARK: - isSelfAnActiveMember
+
+    public var isSelfAnActiveMember: Bool {
+        get { return underlyingIsSelfAnActiveMember }
+        set(value) { underlyingIsSelfAnActiveMember = value }
+    }
+
+    public var underlyingIsSelfAnActiveMember: Bool!
+
+    // MARK: - teamRemoteIdentifier
+
+    public var teamRemoteIdentifier: UUID?
+
+    // MARK: - localParticipantsCount
+
+    public var localParticipantsCount: Int {
+        get { return underlyingLocalParticipantsCount }
+        set(value) { underlyingLocalParticipantsCount = value }
+    }
+
+    public var underlyingLocalParticipantsCount: Int!
+
+    // MARK: - displayName
+
+    public var displayName: String?
+
+    // MARK: - connectedUserType
+
+    public var connectedUserType: UserType?
+
+    // MARK: - allowGuests
+
+    public var allowGuests: Bool {
+        get { return underlyingAllowGuests }
+        set(value) { underlyingAllowGuests = value }
+    }
+
+    public var underlyingAllowGuests: Bool!
+
+    // MARK: - allowServices
+
+    public var allowServices: Bool {
+        get { return underlyingAllowServices }
+        set(value) { underlyingAllowServices = value }
+    }
+
+    public var underlyingAllowServices: Bool!
+
+    // MARK: - isUnderLegalHold
+
+    public var isUnderLegalHold: Bool {
+        get { return underlyingIsUnderLegalHold }
+        set(value) { underlyingIsUnderLegalHold = value }
+    }
+
+    public var underlyingIsUnderLegalHold: Bool!
+
+    // MARK: - sortedActiveParticipantsUserTypes
+
+    public var sortedActiveParticipantsUserTypes: [UserType] = []
+
+    // MARK: - relatedConnectionState
+
+    public var relatedConnectionState: ZMConnectionStatus {
+        get { return underlyingRelatedConnectionState }
+        set(value) { underlyingRelatedConnectionState = value }
+    }
+
+    public var underlyingRelatedConnectionState: ZMConnectionStatus!
+
+    // MARK: - lastMessage
+
+    public var lastMessage: ZMConversationMessage?
+
+    // MARK: - firstUnreadMessage
+
+    public var firstUnreadMessage: ZMConversationMessage?
+
+    // MARK: - areServicesPresent
+
+    public var areServicesPresent: Bool {
+        get { return underlyingAreServicesPresent }
+        set(value) { underlyingAreServicesPresent = value }
+    }
+
+    public var underlyingAreServicesPresent: Bool!
+
+    // MARK: - domain
+
+    public var domain: String?
+
+
+    // MARK: - localParticipantsContain
+
+    public var localParticipantsContainUser_Invocations: [UserType] = []
+    public var localParticipantsContainUser_MockMethod: ((UserType) -> Bool)?
+    public var localParticipantsContainUser_MockValue: Bool?
+
+    public func localParticipantsContain(user: UserType) -> Bool {
+        localParticipantsContainUser_Invocations.append(user)
+
+        if let mock = localParticipantsContainUser_MockMethod {
+            return mock(user)
+        } else if let mock = localParticipantsContainUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `localParticipantsContainUser`")
+        }
+    }
+
+    // MARK: - verifyLegalHoldSubjects
+
+    public var verifyLegalHoldSubjects_Invocations: [Void] = []
+    public var verifyLegalHoldSubjects_MockMethod: (() -> Void)?
+
+    public func verifyLegalHoldSubjects() {
+        verifyLegalHoldSubjects_Invocations.append(())
+
+        guard let mock = verifyLegalHoldSubjects_MockMethod else {
+            fatalError("no mock for `verifyLegalHoldSubjects`")
+        }
+
+        mock()
+    }
+
+}
+
 public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - Life cycle

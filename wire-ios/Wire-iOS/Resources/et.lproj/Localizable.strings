@@ -533,16 +533,8 @@
 
 "content.system.you_started" = "Sina";
 
-"content.system.call.called" = "%@ helistas";
-"content.system.call.called-you" = "%@ helistasid";
-"content.system.call.called.you" = "Sina";
-
 "content.system.call.missed-call" = "Vastamata kõne";
-"content.system.call.missed-call-you" = "Vastamata kõne";
-
 "content.system.call.missed-call.groups" = "Vastamata kõne kasutajalt %@";
-"content.system.call.missed-call.groups-you" = "Vastamata kõne kasutajalt %2$@";
-"content.system.call.missed-call.groups.you" = "Sina";
 
 "content.system.renamed_conv.title" = "%@ nimetas vestluse ümber";
 "content.system.renamed_conv.title-you" = "%@ nimetasid vestluse ümber";
