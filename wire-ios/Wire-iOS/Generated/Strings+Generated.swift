@@ -2325,6 +2325,16 @@ internal enum L10n {
           /// Conversation options
           internal static let title = L10n.tr("Localizable", "conversation.create.options.title", fallback: "Conversation options")
         }
+        internal enum ProtocolSelection {
+          /// MLS
+          internal static let mls = L10n.tr("Localizable", "conversation.create.protocol_selection.mls", fallback: "MLS")
+          /// MLS (default)
+          internal static let mlsDefault = L10n.tr("Localizable", "conversation.create.protocol_selection.mls_default", fallback: "MLS (default)")
+          /// Proteus
+          internal static let proteus = L10n.tr("Localizable", "conversation.create.protocol_selection.proteus", fallback: "Proteus")
+          /// Proteus (default)
+          internal static let proteusDefault = L10n.tr("Localizable", "conversation.create.protocol_selection.proteus_default", fallback: "Proteus (default)")
+        }
         internal enum Receipts {
           /// When this is on, people can see when their messages in this conversation are read.
           internal static let subtitle = L10n.tr("Localizable", "conversation.create.receipts.subtitle", fallback: "When this is on, people can see when their messages in this conversation are read.")
@@ -4920,8 +4930,12 @@ internal enum L10n {
         internal enum E2ei {
           /// Your team now uses end-to-end identity to make Wire's usage more secure.
           /// 
-          ///  Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device.
-          internal static let subtitle = L10n.tr("Localizable", "registration.signin.e2ei.subtitle", fallback: "Your team now uses end-to-end identity to make Wire's usage more secure.\n\n Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device.")
+          ///  Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device. 
+          /// 
+          ///  [Learn more about end-to-end identity](%@)
+          internal static func subtitle(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "registration.signin.e2ei.subtitle", String(describing: p1), fallback: "Your team now uses end-to-end identity to make Wire's usage more secure.\n\n Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device. \n\n [Learn more about end-to-end identity](%@)")
+          }
           /// End-to-end identity certificate
           internal static let title = L10n.tr("Localizable", "registration.signin.e2ei.title", fallback: "End-to-end identity certificate")
           internal enum Error {
