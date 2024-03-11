@@ -55,7 +55,7 @@ struct ProfileDeviceDetailsView: View {
                              ))
 
             DeviceDetailsProteusView(viewModel: viewModel,
-                                     isVerfied: viewModel.isProteusVerificationEnabled,
+                                     isVerified: viewModel.isProteusVerificationEnabled,
                                      shouldShowActivatedDate: false)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
 

@@ -53,7 +53,7 @@ struct DeviceDetailsView: View {
     var proteusView: some View {
         VStack(alignment: .leading) {
             sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title)
-            DeviceDetailsProteusView(viewModel: viewModel, isVerfied: viewModel.isProteusVerificationEnabled)
+            DeviceDetailsProteusView(viewModel: viewModel, isVerified: viewModel.isProteusVerificationEnabled)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
             if viewModel.isSelfClient {
                 Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
