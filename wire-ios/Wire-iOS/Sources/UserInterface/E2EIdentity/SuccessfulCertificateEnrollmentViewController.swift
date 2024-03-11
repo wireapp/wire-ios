@@ -50,7 +50,8 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     }()
 
     private let shieldImageView = {
-        let imageView = UIImageView(image: .init(resource: .E_2_EI.Enrollment.certificateValid))
+        let shieldImage = Asset.Images.E2Ei.Enrollment.certificateValid.image
+        let imageView = UIImageView(image: shieldImage)
         imageView.accessibilityIdentifier = "shieldImageView"
         imageView.isAccessibilityElement = false
         imageView.contentMode = .scaleAspectFit
