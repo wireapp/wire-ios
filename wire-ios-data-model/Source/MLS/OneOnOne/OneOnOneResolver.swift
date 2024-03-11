@@ -107,7 +107,19 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
                 else {
                     return
                 }
+
+                let selfUser = ZMUser.selfUser(in: context)
+
+                if !conversation.isForcedReadOnly {
+                    if !selfUser.supportedProtocols.contains(.mls) {
+                        conversation.appendMLSMigrationMLSNotSupportedForSelfUser(user: selfUser, at: .now)
+                    } else if !otherUser.supportedProtocols.contains(.mls) {
+                        conversation.appendMLSMigrationMLSNotSupportedForOtherUser(user: otherUser, at: .now)
+                    }
+                }
+
                 conversation.isForcedReadOnly = true
+
             }
             return .archivedAsReadOnly
 
