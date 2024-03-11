@@ -533,16 +533,8 @@
 
 "content.system.you_started" = "你";
 
-"content.system.call.called" = "%@曾打电话";
-"content.system.call.called-you" = "%@曾打电话";
-"content.system.call.called.you" = "您";
-
 "content.system.call.missed-call" = "未接电话";
-"content.system.call.missed-call-you" = "未接电话";
-
 "content.system.call.missed-call.groups" = "从 %@ 的未接来电";
-"content.system.call.missed-call.groups-you" = "从 %2$@ 的未接来电";
-"content.system.call.missed-call.groups.you" = "您";
 
 "content.system.renamed_conv.title" = "%@ 重新命名了聊天室";
 "content.system.renamed_conv.title-you" = "%@ 重新命名了聊天室";

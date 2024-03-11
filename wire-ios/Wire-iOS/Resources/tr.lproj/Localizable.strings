@@ -533,16 +533,8 @@
 
 "content.system.you_started" = "Sen";
 
-"content.system.call.called" = "%@ aradı";
-"content.system.call.called-you" = "%@ aradı";
-"content.system.call.called.you" = "Sen";
-
 "content.system.call.missed-call" = "Cevapsız arama";
-"content.system.call.missed-call-you" = "Cevapsız arama";
-
 "content.system.call.missed-call.groups" = "%@ Kaynağından gelen cevapsız çağrı";
-"content.system.call.missed-call.groups-you" = "%2$@ kişisinden cevapsız çağrı";
-"content.system.call.missed-call.groups.you" = "Sen";
 
 "content.system.renamed_conv.title" = "%@ bu konuşmanın adını değiştirdi";
 "content.system.renamed_conv.title-you" = "%@ bu konuşmanın adını değiştirdi";

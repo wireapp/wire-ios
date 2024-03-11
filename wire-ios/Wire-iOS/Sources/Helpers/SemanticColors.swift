@@ -96,7 +96,6 @@ public enum SemanticColors {
         static let foregroundAvailabilityBusy = UIColor(light: Asset.Colors.amber500Light, dark: Asset.Colors.amber500Dark)
         static let foregroundAvailabilityAway = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let backgroundPasswordRuleCheck = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray20)
-        static let backgroundPhoneCall = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
         static let backgroundMissedPhoneCall = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let foregroundMicrophone = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let emojiCategoryDefault = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray60)

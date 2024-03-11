@@ -37,86 +37,51 @@ final class CallSystemMessageTests: XCTestCase, CoreDataFixtureTestHelper {
     // MARK: - Missed Call
 
     func testThatItRendersMissedCallFromSelfUser() {
-        let missedCell = cell(for: .missedCall, fromSelf: true)
+        let missedCell = missedCallCell(fromSelf: true)
         verify(matching: missedCell)
     }
 
     func testThatItRendersMissedCallFromOtherUser() {
-        let missedCell = cell(for: .missedCall, fromSelf: false)
-        verify(matching: missedCell)
-    }
-
-    func testThatItRendersMissedCallFromOtherUser_Expanded() {
-        let missedCell = cell(for: .missedCall, fromSelf: false, expanded: true)
+        let missedCell = missedCallCell(fromSelf: false)
         verify(matching: missedCell)
     }
 
     func testThatItRendersMissedCallFromSelfUserInGroup() {
-        let missedCell = cell(for: .missedCall, fromSelf: true, inGroup: true)
+        let missedCell = missedCallCell(fromSelf: true, inGroup: true)
         verify(matching: missedCell)
     }
 
     func testThatItRendersMissedCallFromOtherUserInGroup() {
-        let missedCell = cell(for: .missedCall, fromSelf: false, inGroup: true)
-        verify(matching: missedCell)
-    }
-
-    func testThatItRendersMissedCallFromOtherUserInGroup_Expanded() {
-        let missedCell = cell(for: .missedCall, fromSelf: false, expanded: true, inGroup: true)
-        verify(matching: missedCell)
-    }
-
-    // MARK: - Performed Call
-
-    func testThatItRendersPerformedCallFromSelfUser() {
-        let missedCell = cell(for: .performedCall, fromSelf: true)
-        verify(matching: missedCell)
-    }
-
-    func testThatItRendersPerformedCallFromOtherUser() {
-        let missedCell = cell(for: .performedCall, fromSelf: false)
-        verify(matching: missedCell)
-    }
-
-    func testThatItRendersPerformedCallFromOtherUser_Expanded() {
-        let missedCell = cell(for: .performedCall, fromSelf: false, expanded: true)
+        let missedCell = missedCallCell(fromSelf: false, inGroup: true)
         verify(matching: missedCell)
     }
 
     // MARK: - Helper
 
-    private func cell(for type: ZMSystemMessageType, fromSelf: Bool, expanded: Bool = false, inGroup: Bool = false) -> UITableViewCell {
-        let message = systemMessage(missed: type == .missedCall, in: .insertNewObject(in: uiMOC), from: fromSelf ? selfUser : otherUser, inGroup: inGroup)
-        let cell = createCell(for: message, missed: type == .missedCall)
-
-        // swiftlint:disable todo_requires_jira_link
-        // TODO: Check for expanded state
-        // swiftlint:enable todo_requires_jira_link
-//        if expanded {
-//            cell.setSelected(true, animated: false)
-//        }
+    private func missedCallCell(fromSelf: Bool, inGroup: Bool = false) -> UITableViewCell {
+        let message = systemMessage(in: .insertNewObject(in: uiMOC), from: fromSelf ? selfUser : otherUser, inGroup: inGroup)
+        let cell = createCell(for: message)
 
         return cell
     }
 
-    private func systemMessage(missed: Bool, in conversation: ZMConversation, from user: ZMUser, inGroup: Bool) -> ZMSystemMessage {
+    private func systemMessage(
+        in conversation: ZMConversation,
+        from user: ZMUser,
+        inGroup: Bool
+    ) -> ZMSystemMessage {
         let date = Date(timeIntervalSince1970: 123456879)
-        if missed {
-            if inGroup {
-                conversation.conversationType = .group
-            }
-            return conversation.appendMissedCallMessage(fromUser: user, at: date)
-        } else {
-            let message = conversation.appendPerformedCallMessage(with: 102, caller: user)
-            message.serverTimestamp = date
-            return message
+
+        if inGroup {
+            conversation.conversationType = .group
         }
+        return conversation.appendMissedCallMessage(fromUser: user, at: date)
     }
 
-    private func createCell(for systemMessage: ZMSystemMessage, missed: Bool) -> UITableViewCell {
-        let description = ConversationCallSystemMessageCellDescription(message: systemMessage, data: systemMessage.systemMessageData!, missed: missed)
+    private func createCell(for systemMessage: ZMSystemMessage) -> UITableViewCell {
+        let description = ConversationMissedCallSystemMessageCellDescription(message: systemMessage, data: systemMessage.systemMessageData!)
 
-        let cell = ConversationMessageCellTableViewAdapter<ConversationCallSystemMessageCellDescription>(style: .default, reuseIdentifier: nil)
+        let cell = ConversationMessageCellTableViewAdapter<ConversationMissedCallSystemMessageCellDescription>(style: .default, reuseIdentifier: nil)
         cell.cellDescription = description
         cell.configure(with: description.configuration, fullWidth: description.isFullWidth, topMargin: description.topMargin)
 

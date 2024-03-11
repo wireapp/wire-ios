@@ -285,7 +285,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
     func testThatItNotifiesWhenTheChildMessagesOfASystemMessageChange() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        let message = conversation.appendPerformedCallMessage(with: 42, caller: .selfUser(in: uiMOC))
+        let message = conversation.appendMissedCallMessage(fromUser: .selfUser(in: uiMOC), at: .now)
         let otherMessage = ZMSystemMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
 
         checkThatItNotifiesTheObserverOfAChange(
