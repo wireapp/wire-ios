@@ -19,6 +19,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ZMSAsserts.h"
+#import "WireSystem/WireSystem-Swift.h"
 
 void ZMAssertionDump_NSString(NSString *assertion, NSString *filename, int linenumber, NSString *message) {
     ZMAssertionDump(assertion.UTF8String, filename.UTF8String, linenumber, "%s", message.UTF8String);
@@ -40,6 +41,10 @@ void ZMAssertionDump(const char * const assertion, const char * const filename, 
                         assertion ? assertion : "",
                         message ? message : ""];
     
+
+
+    [WireLoggerObjc assertionDumpLog:output];
+
     // prepare file and exclude from backup
     NSURL *dumpFile = ZMLastAssertionFile();
     [[NSData data] writeToURL:dumpFile atomically:NO];
