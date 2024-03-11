@@ -48,15 +48,15 @@ extension UIAlertController {
                                                  style: .default) {_ in
             handler(.getCertificate)
         }
-        let remindLaterAction = UIAlertAction(title: MlsE2eiStrings.Button.remindMeLater,
-                                              style: .destructive) {_ in
-            handler(.remindLater)
-        }
 
         controller.addAction(learnMoreAction)
         controller.addAction(getCertificateAction)
 
         if canRemindLater {
+            let remindLaterAction = UIAlertAction(title: MlsE2eiStrings.Button.remindMeLater,
+                                                  style: .destructive) {_ in
+                handler(.remindLater)
+            }
             controller.addAction(remindLaterAction)
         }
 
