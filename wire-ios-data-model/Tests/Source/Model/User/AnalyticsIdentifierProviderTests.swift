@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireDataModel
 
-class AnalyticsIdentifierProviderTests: ModelObjectsTests {
+final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
 
     func testTheAnalyticsIdentifierIsGeneratedByProvider() {
         // Given
