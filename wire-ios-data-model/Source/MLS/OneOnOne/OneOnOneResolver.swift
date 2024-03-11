@@ -112,9 +112,9 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
                 if !conversation.isForcedReadOnly {
                     if !selfUser.supportedProtocols.contains(.mls) {
-                        conversation.appendMLSMigrationMLSNotSupportedForSelfUser(user: selfUser, at: .now)
+                        conversation.appendMLSMigrationMLSNotSupportedForSelfUser(user: selfUser)
                     } else if !otherUser.supportedProtocols.contains(.mls) {
-                        conversation.appendMLSMigrationMLSNotSupportedForOtherUser(user: otherUser, at: .now)
+                        conversation.appendMLSMigrationMLSNotSupportedForOtherUser(user: otherUser)
                     }
                 }
 
