@@ -52,7 +52,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
 
     private let shieldImageView: UIImageView = {
         let guestUserIconColor = SemanticColors.Icon.foregroundDefault
-        let imageView = UIImageView(image: Asset.Images.certificateValid.image)
+        let imageView = UIImageView(image: .init(resource: .E_2_EI.Enrollment.certificateValid))
         imageView.accessibilityIdentifier = "shieldImageView"
         imageView.isAccessibilityElement = false
         imageView.contentMode = .scaleAspectFit
