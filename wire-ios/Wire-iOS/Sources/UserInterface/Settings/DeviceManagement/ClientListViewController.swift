@@ -610,7 +610,7 @@ extension ClientListViewController: UserObserving {
 private extension UserClient {
 
     var resolvedMLSThumbprint: String? {
-        e2eIdentityCertificate?.mlsThumbprint ?? mlsPublicKeys.ed25519
+        e2eIdentityCertificate?.mlsThumbprint
     }
 
     func notActivatedE2EIdenityCertificate() -> E2eIdentityCertificate? {
