@@ -54,7 +54,7 @@ struct ConversationMissedCallSystemMessageViewModel {
         }
 
         let senderString = sender.name ?? ""
-        var title = detailKey.localized(pov: sender.pov, args: childs + 1, senderString) && labelFont
+        var title = detailKey.localized(args: childs + 1, senderString) && labelFont
 
         if childs > 0 {
             title += " (\(childs + 1))" && labelFont
