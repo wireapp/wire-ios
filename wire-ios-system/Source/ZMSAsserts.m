@@ -40,9 +40,8 @@ void ZMAssertionDump(const char * const assertion, const char * const filename, 
                         linenumber,
                         assertion ? assertion : "",
                         message ? message : ""];
-    
 
-
+    // report error to datadog or other loggers
     [WireLoggerObjc assertionDumpLog:output];
 
     // prepare file and exclude from backup

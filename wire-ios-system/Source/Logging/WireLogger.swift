@@ -189,11 +189,12 @@ public extension WireLogger {
     static let featureConfigs = WireLogger(tag: "feature-configurations")
 }
 
+/// Class to proxy WireLogger methods to Objective-C
 class WireLoggerObjc: NSObject {
 
     @objc
     static func assertionDumpLog(_ message: String) {
-        WireLogger.system.error(message, attributes: .safePublic)
+        WireLogger.system.critical(message, attributes: .safePublic)
     }
 
 }
