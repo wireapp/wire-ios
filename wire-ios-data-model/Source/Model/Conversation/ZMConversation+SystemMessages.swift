@@ -244,8 +244,7 @@ extension ZMConversation {
     }
 
     public func appendMLSMigrationMLSNotSupportedForSelfUser(
-        user: ZMUser,
-        at timestamp: Date
+        user: ZMUser
     ) {
 
         guard let context = self.managedObjectContext else { return }
@@ -255,13 +254,12 @@ extension ZMConversation {
             sender: ZMUser.selfUser(in: context),
             users: Set([user]),
             clients: nil,
-            timestamp: timestamp
+            timestamp: .now
         )
     }
 
     public func appendMLSMigrationMLSNotSupportedForOtherUser(
-        user: ZMUser,
-        at timestamp: Date
+        user: ZMUser
     ) {
 
         guard let context = self.managedObjectContext else { return }
@@ -271,7 +269,7 @@ extension ZMConversation {
             sender: ZMUser.selfUser(in: context),
             users: Set([user]),
             clients: nil,
-            timestamp: timestamp
+            timestamp: .now
         )
     }
 
