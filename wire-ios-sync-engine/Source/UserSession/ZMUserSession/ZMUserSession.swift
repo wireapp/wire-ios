@@ -905,6 +905,8 @@ extension ZMUserSession: ZMSyncStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
         }
+
+        // TODO: Call update here
     }
 
     func processEvents() {

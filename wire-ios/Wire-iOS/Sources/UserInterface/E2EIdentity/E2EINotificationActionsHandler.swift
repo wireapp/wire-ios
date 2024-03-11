@@ -31,7 +31,7 @@ public protocol E2EINotificationActions {
 final class E2EINotificationActionsHandler: E2EINotificationActions {
 
     // MARK: - Properties
-
+    private var updateCertificateUseCase: E2EIdentityCertificateUpdateStatusProtocol
     private var enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol
     private var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol
     private var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol
@@ -41,11 +41,13 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     // MARK: - Life cycle
 
     init(
+        updateCertificateUseCase: E2EIdentityCertificateUpdateStatusProtocol,
         enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol,
         snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol,
         stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol,
         gracePeriodRepository: GracePeriodRepository,
         targetVC: UIViewController) {
+            self.updateCertificateUseCase = updateCertificateUseCase
             self.enrollCertificateUseCase = enrollCertificateUseCase
             self.snoozeCertificateEnrollmentUseCase = snoozeCertificateEnrollmentUseCase
             self.stopCertificateEnrollmentSnoozerUseCase = stopCertificateEnrollmentSnoozerUseCase
@@ -66,8 +68,21 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         }
     }
 
+    @MainActor
     public func updateCertificate() async {
-        // TODO: [WPB-3324] update certificate
+        do {
+            let result = try await updateCertificateUseCase.invoke()
+            switch result {
+            case .noAction:
+                return
+            case .reminder:
+                showUpdateE2EIdentityCertificateAlert()
+            case .block:
+                showUpdateE2EIdentityCertificateAlert(canRemindLater: false)
+            }
+        } catch {
+            WireLogger.e2ei.error(error.localizedDescription)
+        }
     }
 
     public func snoozeReminder() async {
@@ -122,6 +137,26 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         return formatter
     }()
 
+    @MainActor
+    private func showUpdateE2EIdentityCertificateAlert(canRemindLater: Bool = true) {
+        typealias MlsE2eiStrings = L10n.Localizable.FeatureConfig.Alert.MlsE2ei
+        let alert = UIAlertController.alertForE2eIChangeWithActions(
+            title: MlsE2eiStrings.Alert.UpdateCertificate.title,
+            message: MlsE2eiStrings.updateMessage,
+            enrollButtonText: MlsE2eiStrings.Button.updateCertificate
+        ) { action in
+            switch action {
+            case .getCertificate:
+                Task {
+                    await self.getCertificate()
+                }
+            case .remindLater:
+                Task {
+                    await self.snoozeReminder()
+                }
+            }
+        }
+    }
 }
 
 extension UIAlertController {

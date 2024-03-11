@@ -24,27 +24,30 @@ enum E2EIChangeAction: CaseIterable {
 }
 
 extension UIAlertController {
+    private typealias MlsE2eiStrings = L10n.Localizable.FeatureConfig.Alert.MlsE2ei
 
-    static func alertForE2eIChangeWithActions(handler: @escaping (E2EIChangeAction) -> Void) -> UIAlertController {
-
-        typealias MlsE2eiStrings = L10n.Localizable.FeatureConfig.Alert.MlsE2ei
+    static func alertForE2eIChangeWithActions(
+        title: String = MlsE2eiStrings.title,
+        message: String = MlsE2eiStrings.message,
+        enrollButtonText: String = MlsE2eiStrings.Button.getCertificate,
+        handler: @escaping (E2EIChangeAction) -> Void) -> UIAlertController {
 
         let controller = UIAlertController(
-            title: MlsE2eiStrings.title,
-            message: MlsE2eiStrings.message,
+            title: title,
+            message: message,
             preferredStyle: .alert
         )
 
         let topViewController = UIApplication.shared.topmostViewController(onlyFullScreen: true)
 
-        let learnMoreAction = UIAlertAction.link(title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.learnMore,
+        let learnMoreAction = UIAlertAction.link(title: MlsE2eiStrings.Button.learnMore,
                                                  url: URL.wr_e2eiLearnMore,
                                                  presenter: topViewController)
-        let getCertificateAction = UIAlertAction(title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.getCertificate,
+        let getCertificateAction = UIAlertAction(title: enrollButtonText,
                                                  style: .default) {_ in
             handler(.getCertificate)
         }
-        let remindLaterAction = UIAlertAction(title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.remindMeLater,
+        let remindLaterAction = UIAlertAction(title: MlsE2eiStrings.Button.remindMeLater,
                                               style: .destructive) {_ in
             handler(.remindLater)
         }
