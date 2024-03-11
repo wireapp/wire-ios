@@ -43,9 +43,8 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
     public init(
         e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol,
         gracePeriod: TimeInterval,
-        serverStoragePeriod: TimeInterval = 28 * TimeInterval.oneDay, // default server storage time
-        // TODO: replace (60 * 60 * 24) with TimeInterval.oneDay
-        randomPeriod: TimeInterval = Double((0..<(60 * 60 * 24)).randomElement() ?? 0), // Random time in a day
+        serverStoragePeriod: TimeInterval = 28 * TimeInterval.oneDay,
+        randomPeriod: TimeInterval = Double((0..<Int(TimeInterval.oneDay)).randomElement() ?? 0), // Random time in a day
         mlsGroupID: MLSGroupID,
         mlsClientID: MLSClientID,
         lastAlertDate: Date?
@@ -59,7 +58,6 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
         self.mlsClientID = mlsClientID
     }
 
-    // TODO: Check if feature flag has e2ei is enabled.
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
         if let certificate = try await e2eCertificateForCurrentClient.invoke(
             mlsGroupId: mlsGroupID,
