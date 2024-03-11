@@ -17,17 +17,17 @@
 //
 
 import Foundation
-import WireSyncEngine
 
-enum E2EIdentityCertificateUpdateStatus {
+public enum E2EIdentityCertificateUpdateStatus {
     case noAction, reminder, block
 }
 
-protocol E2EIdentityCertificateUpdateStatusProtocol {
+// sourcery: AutoMockable
+public protocol E2EIdentityCertificateUpdateStatusProtocol {
     func invoke() async throws -> E2EIdentityCertificateUpdateStatus
 }
 
-final class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusProtocol {
+final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusProtocol {
 
     private let isE2EIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol
     private let e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol
@@ -36,11 +36,12 @@ final class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpd
     private let randomPeriod: TimeInterval
     private let lastAlertDate: Date?
 
-    init(
+    public init(
         isE2EIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol,
         e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol,
         gracePeriod: TimeInterval,
-        serverStoragePeriod: TimeInterval = 28 * 24 * 60 * 60, // default server storage time
+        serverStoragePeriod: TimeInterval = 28 * TimeInterval.oneDay, // default server storage time
+        // TODO: replace (60 * 60 * 24) with TimeInterval.oneDay
         randomPeriod: TimeInterval = Double((0..<(60 * 60 * 24)).randomElement() ?? 0), // Random time in a day
         lastAlertDate: Date?
     ) {
@@ -53,7 +54,7 @@ final class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpd
     }
 
     // TODO: Check if feature flag has e2ei is enabled.
-    func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
+    public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
         guard let mlsClientID = fetchMLSClientID(),
               let mlsGroupID = fetchMLSGroupID() else {
             return .noAction
