@@ -163,7 +163,8 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         let alert = UIAlertController.alertForE2eIChangeWithActions(
             title: MlsE2eiStrings.Alert.UpdateCertificate.title,
             message: MlsE2eiStrings.updateMessage,
-            enrollButtonText: MlsE2eiStrings.Button.updateCertificate
+            enrollButtonText: MlsE2eiStrings.Button.updateCertificate,
+            canRemindLater: canRemindLater
         ) { action in
             switch action {
             case .getCertificate:
