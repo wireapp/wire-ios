@@ -27,11 +27,11 @@ struct ProfileDeviceDetailsView: View {
     @State private var isCertificateViewPresented: Bool = false
     @State private var isDebugViewPresented: Bool = false
 
-    private let dismissedView: (() -> Void)?
+    private let onDisappear: (() -> Void)?
 
-    init(viewModel: DeviceInfoViewModel, dismissedView: (() -> Void)?) {
+    init(viewModel: DeviceInfoViewModel, onDisappear: (() -> Void)?) {
         self.viewModel = viewModel
-        self.dismissedView = dismissedView
+        self.onDisappear = onDisappear
     }
 
     private var e2eIdentityCertificateView: some View {
@@ -170,7 +170,7 @@ struct ProfileDeviceDetailsView: View {
             viewModel.onAppear()
         }
         .onDisappear {
-            dismissedView?()
+            onDisappear?()
         }
         .onReceive(viewModel.$shouldDismiss) { shouldDismiss in
             if shouldDismiss {
