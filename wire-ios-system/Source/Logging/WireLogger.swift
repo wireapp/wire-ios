@@ -190,9 +190,9 @@ public extension WireLogger {
 }
 
 /// Class to proxy WireLogger methods to Objective-C
+@objcMembers
 final class WireLoggerObjc: NSObject {
 
-    @objc
     static func assertionDumpLog(_ message: String) {
         WireLogger.system.critical(message, attributes: .safePublic)
     }
