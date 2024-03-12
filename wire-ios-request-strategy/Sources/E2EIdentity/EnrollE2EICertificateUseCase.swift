@@ -72,17 +72,18 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
 
     public init(
         e2eiRepository: E2EIRepositoryInterface,
-        context: NSManagedObjectContext) {
-            self.e2eiRepository = e2eiRepository
-            self.context = context
-        }
+        context: NSManagedObjectContext
+    ) {
+        self.e2eiRepository = e2eiRepository
+        self.context = context
+    }
 
     /// Invokes enrollment flow
     /// - Parameter authenticate: Block that performs OAUTH authentication
     /// - Returns: Chain of certificates for the clients
     /// - Description: **Visit the link below to understand the entire flow**  https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/800820113/Use+case+End-to-end+identity+enrollment#Detailed-enrolment-flow
     public func invoke(authenticate: @escaping OAuthBlock) async throws -> String {
-        return try await invoke(authenticate: authenticate, expirySec: nil)
+        try await invoke(authenticate: authenticate, expirySec: nil)
     }
 
     public func invoke(authenticate: @escaping OAuthBlock, expirySec: UInt32?) async throws -> String {
