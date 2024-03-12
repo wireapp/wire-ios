@@ -535,6 +535,37 @@ class FeatureRepositoryTests: ZMBaseManagedObjectTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
+    func testThatItFetchesMLSAsync() async {
+        // Given
+        let context = syncMOC
+        let sut = FeatureRepository(context: context)
+
+        let config = Feature.MLS.Config(
+            protocolToggleUsers: [.create()],
+            defaultProtocol: .mls,
+            allowedCipherSuites: [.MLS_128_DHKEMP256_AES128GCM_SHA256_P256],
+            defaultCipherSuite: .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448,
+            supportedProtocols: [
+                .mls,
+                .proteus
+            ]
+        )
+
+        await context.perform {
+            Feature.updateOrCreate(havingName: .mls, in: context) { feature in
+                feature.status = .enabled
+                feature.config = try! JSONEncoder().encode(config)
+            }
+        }
+
+        // When
+        let result = await sut.fetchMLS()
+
+        // Then
+        XCTAssertEqual(result.status, .enabled)
+        XCTAssertEqual(result.config, config)
+    }
+
     func testThatItFetchesMLS_ItReturnsADefaultConfigWhenConfigDoesNotExist() {
         syncMOC.performGroupedBlock {
             // Given

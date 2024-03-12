@@ -17,13 +17,29 @@
 //
 
 import Foundation
-import WireSystem
 
-class DuplicateTeamsMigrationPolicy: DuplicateObjectsMigrationPolicy {
+struct CoreDataMigrationActionFactory {
 
-    // Key used to compare duplicate occurences of Team
-    override func primaryKey(fromSourceInstance sInstance: NSManagedObject) -> String {
-        let remoteIdentifierData = sInstance.value(forKey: ZMManagedObject.remoteIdentifierDataKey()) as? Data
-        return remoteIdentifierData.flatMap { UUID(data: $0)?.uuidString } ?? "<nil>"
+    static func createPostMigrationAction(for version: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
+        switch version {
+        case .version2_111:
+            return PrefillPrimaryKeyAction()
+
+        default:
+            return nil
+        }
+    }
+
+    static func createPreMigrationAction(for version: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
+        switch version {
+        case .version2_111:
+            return RemoveDuplicatePreAction()
+
+        case .version2_107:
+            return CleanupModels2_107PreAction()
+
+        default:
+            return nil
+        }
     }
 }
