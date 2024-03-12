@@ -211,53 +211,6 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 }
 
-extension DeviceInfoViewModel {
-    static func map(
-        certificate: E2eIdentityCertificate?,
-        userClient: UserClient,
-        title: String,
-        addedDate: String,
-        proteusID: String?,
-        isSelfClient: Bool,
-        userSession: UserSession,
-        credentials: ZMEmailCredentials?,
-        gracePeriod: TimeInterval,
-        mlsThumbprint: String?,
-        getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
-        saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
-        contextProvider: ContextProvider,
-        e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseProtocol,
-        isFromConversation: Bool = false,
-        showDebugMenu: Bool = Bundle.developerModeEnabled
-    ) -> DeviceInfoViewModel {
-        let deviceActionsHandler = DeviceDetailsViewActionsHandler(
-            userClient: userClient,
-            userSession: userSession,
-            credentials: credentials,
-            saveFileManager: saveFileManager,
-            getProteusFingerprint: getProteusFingerprint,
-            contextProvider: contextProvider,
-            e2eiCertificateEnrollment: e2eiCertificateEnrollment
-        )
-        return DeviceInfoViewModel(
-            certificate: certificate,
-            title: title,
-            addedDate: addedDate,
-            proteusID: proteusID ?? "",
-            mlsThumbprint: mlsThumbprint,
-            isProteusVerificationEnabled: userClient.verified,
-            userClient: userClient,
-            isSelfClient: isSelfClient,
-            gracePeriod: gracePeriod,
-            isFromConversation: isFromConversation,
-            actionsHandler: deviceActionsHandler,
-            conversationClientDetailsActions: deviceActionsHandler,
-            debugMenuActionsHandler: deviceActionsHandler,
-            showDebugMenu: showDebugMenu
-        )
-    }
-}
-
 extension E2eIdentityCertificate {
 
     // current default days the certificate is retained on server
