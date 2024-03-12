@@ -70,6 +70,8 @@ final class ClientListViewController: UIViewController,
     private let clientFilter: (UserClient) -> Bool
     private let userSession: UserSession?
     private let contextProvider: ContextProvider?
+    private weak var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
+
     var sortedClients: [UserClient] = []
 
     var selfClient: UserClient?
@@ -214,7 +216,10 @@ final class ClientListViewController: UIViewController,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate
         )
         viewModel.showCertificateUpdateSuccess = {[weak self] certificateChain in
-            self?.updateAllClients()
+            self?.updateAllClients {
+                self?.updateE2EIdentityCertificateInDetailsView()
+            }
+
             let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
             successEnrollmentViewController.certificateDetails = certificateChain
             successEnrollmentViewController.onOkTapped = { viewController in
@@ -222,6 +227,7 @@ final class ClientListViewController: UIViewController,
             }
             successEnrollmentViewController.presentTopmost()
         }
+        selectedDeviceInfoViewModel = viewModel
         let detailsView = DeviceDetailsView(viewModel: viewModel) {
             self.navigationController?.setNavigationBarHidden(false, animated: false)
         }
@@ -559,7 +565,7 @@ final class ClientListViewController: UIViewController,
         }
     }
 
-    private func updateAllClients() {
+    private func updateAllClients(completed: (() -> Void)? = nil) {
         guard let selfUser = ZMUser.selfUser(), let selfClient = selfUser.selfClient() else {
             return
         }
@@ -568,12 +574,30 @@ final class ClientListViewController: UIViewController,
             self.clients = results
             self.selfClient = results.first(where: { $0.isSelfClient() })
             refreshViews()
+            completed?()
         }
     }
 
     @MainActor
     func refreshViews() {
         clientsTableView?.reloadData()
+    }
+
+    private func updateE2EIdentityCertificateInDetailsView() {
+        guard let client = findE2EIdentityCertificateClient() else { return }
+        selectedDeviceInfoViewModel?.update(from: client)
+    }
+
+    private func findE2EIdentityCertificateClient() -> UserClient? {
+        if selectedDeviceInfoViewModel?.isSelfClient == true {
+            return selfClient
+        }
+
+        guard let selectedUserClient = selectedDeviceInfoViewModel?.userClient as? UserClient else {
+            return nil
+        }
+
+        return clients.first { $0.clientId == selectedUserClient.clientId }
     }
 }
 
@@ -607,11 +631,7 @@ extension ClientListViewController: UserObserving {
 
 }
 
-private extension UserClient {
-
-    var resolvedMLSThumbprint: String? {
-        e2eIdentityCertificate?.mlsThumbprint ?? mlsPublicKeys.ed25519
-    }
+extension UserClient {
 
     func notActivatedE2EIdenityCertificate() -> E2eIdentityCertificate? {
         guard let mlsResolver = MLSClientResolver().mlsClientId(for: self) else {

@@ -272,6 +272,7 @@
 		2577CB632B18A406007D3443 /* E2EIdentityCertificateStatus+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB622B18A406007D3443 /* E2EIdentityCertificateStatus+Extensions.swift */; };
 		2577CB7B2B1DC787007D3443 /* DeviceMLSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB7A2B1DC787007D3443 /* DeviceMLSView.swift */; };
 		2577CB822B1DFF66007D3443 /* ViewConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB812B1DFF66007D3443 /* ViewConstants.swift */; };
+		2584AE472B98A2CD008E1DEA /* DeviceInfoViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2584AE462B98A2CD008E1DEA /* DeviceInfoViewModelTests.swift */; };
 		259BB5D32B7FC04100F1B552 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259BB5D12B7FC04100F1B552 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift */; };
 		259BB5D42B7FC04100F1B552 /* ProfileDeviceDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259BB5D22B7FC04100F1B552 /* ProfileDeviceDetailsView.swift */; };
 		25A7E62C2B67FB55002451A4 /* ClientTableViewCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25A7E62B2B67FB55002451A4 /* ClientTableViewCellTests.swift */; };
@@ -2322,6 +2323,7 @@
 		2577CB622B18A406007D3443 /* E2EIdentityCertificateStatus+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "E2EIdentityCertificateStatus+Extensions.swift"; sourceTree = "<group>"; };
 		2577CB7A2B1DC787007D3443 /* DeviceMLSView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceMLSView.swift; sourceTree = "<group>"; };
 		2577CB812B1DFF66007D3443 /* ViewConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewConstants.swift; sourceTree = "<group>"; };
+		2584AE462B98A2CD008E1DEA /* DeviceInfoViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoViewModelTests.swift; sourceTree = "<group>"; };
 		259BB5D12B7FC04100F1B552 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift"; sourceTree = "<group>"; };
 		259BB5D22B7FC04100F1B552 /* ProfileDeviceDetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileDeviceDetailsView.swift; sourceTree = "<group>"; };
 		25A7E62B2B67FB55002451A4 /* ClientTableViewCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientTableViewCellTests.swift; sourceTree = "<group>"; };
@@ -7674,6 +7676,7 @@
 				87240381215B92F00094363B /* ZMUserMentionsTest.swift */,
 				E66258902B4D65FD00C23E79 /* Developer */,
 				E6F442FE2B16018D00D2B08A /* UserInterface */,
+				2584AE462B98A2CD008E1DEA /* DeviceInfoViewModelTests.swift */,
 			);
 			path = "Wire-iOS UnitTests";
 			sourceTree = "<group>";
@@ -10792,6 +10795,7 @@
 				E6C25FF42B03550A00406A1C /* AppLockModuleInteractorTests.swift in Sources */,
 				E9B439332B07855C0069DA63 /* UserSessionMock.swift in Sources */,
 				E6579E522AFFA024004E7FD8 /* MockSelfLegalHoldSubject.swift in Sources */,
+				2584AE472B98A2CD008E1DEA /* DeviceInfoViewModelTests.swift in Sources */,
 				E6579E562AFFA024004E7FD8 /* MockVoiceChannel.swift in Sources */,
 				E6579E7E2AFFA98C004E7FD8 /* HandleChangeStateTests.swift in Sources */,
 				E6579E7F2AFFA99E004E7FD8 /* AnimatedListMenuViewTests.swift in Sources */,
