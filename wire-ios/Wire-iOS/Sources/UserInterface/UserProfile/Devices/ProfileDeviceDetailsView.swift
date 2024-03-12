@@ -20,12 +20,13 @@ import SwiftUI
 import WireCommonComponents
 
 struct ProfileDeviceDetailsView: View {
+
     @Environment(\.dismiss)
     private var dismiss
 
-    @ObservedObject var viewModel: DeviceInfoViewModel
-    @State var isCertificateViewPresented: Bool = false
-    @State var isDebugViewPresented: Bool = false
+    @ObservedObject private var viewModel: DeviceInfoViewModel
+    @State private var isCertificateViewPresented = false
+    @State private var isDebugViewPresented = false
 
     var dismissedView: (() -> Void)?
 
@@ -44,7 +45,7 @@ struct ProfileDeviceDetailsView: View {
         }
         .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         .padding(.top, ViewConstants.Padding.medium)
-        .frame(width: .infinity)
+        .frame(maxWidth: .infinity)
     }
 
     var proteusView: some View {
@@ -57,7 +58,7 @@ struct ProfileDeviceDetailsView: View {
             DeviceDetailsProteusView(viewModel: viewModel,
                                      isVerfied: viewModel.isProteusVerificationEnabled,
                                      shouldShowActivatedDate: false)
-                .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+            .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
 
             if viewModel.isSelfClient {
                 Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
@@ -88,9 +89,9 @@ struct ProfileDeviceDetailsView: View {
                 }
             } label: {
                 Text(L10n.Localizable.Profile.Devices.Detail.ShowMyDevice.title)
-                .padding(.all, ViewConstants.Padding.standard)
-                .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
-                .font(UIFont.swiftUIFont(for: .bodyTwoSemibold))
+                    .padding(.all, ViewConstants.Padding.standard)
+                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                    .font(UIFont.swiftUIFont(for: .bodyTwoSemibold))
             }
             Spacer()
             Asset.Images.chevronRight.swiftUIImage.padding(.trailing, ViewConstants.Padding.standard)
@@ -181,20 +182,20 @@ struct ProfileDeviceDetailsView: View {
         }
         .alert("Debug options", isPresented: $isDebugViewPresented, actions: {
             SwiftUI.Button("Delete Device", action: {
-                  viewModel.onDeleteDeviceTapped()
-              })
+                viewModel.onDeleteDeviceTapped()
+            })
             SwiftUI.Button("Duplicate Session", action: {
-                  viewModel.onDuplicateClientTapped()
-              })
+                viewModel.onDuplicateClientTapped()
+            })
             SwiftUI.Button("Corrupt Session", action: {
                 viewModel.onCorruptSessionTapped()
             })
             SwiftUI.Button("Cancel", role: .cancel, action: {
                 isDebugViewPresented.toggle()
             })
-            }, message: {
-              Text("Tap to perform an action")
-            })
+        }, message: {
+            Text("Tap to perform an action")
+        })
     }
 
     @ViewBuilder
