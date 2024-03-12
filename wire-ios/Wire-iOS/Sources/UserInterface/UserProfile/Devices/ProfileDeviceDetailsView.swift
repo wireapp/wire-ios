@@ -31,13 +31,6 @@ struct ProfileDeviceDetailsView: View {
     @State private var isCertificateViewPresented = false
     @State private var isDebugViewPresented = false
 
-    private let onDisappear: (() -> Void)?
-
-    init(viewModel: DeviceInfoViewModel, onDisappear: (() -> Void)?) {
-        self.viewModel = viewModel
-        self.onDisappear = onDisappear
-    }
-
     private var e2eIdentityCertificateView: some View {
         VStack(alignment: .leading) {
             DeviceDetailsE2EIdentityCertificateView(
@@ -171,13 +164,11 @@ struct ProfileDeviceDetailsView: View {
                 }
             }
         }
+        .navigationViewStyle(.stack)
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
         .navigationBarBackButtonHidden(true)
         .onAppear {
             viewModel.onAppear()
-        }
-        .onDisappear {
-            onDisappear?()
         }
         .onReceive(viewModel.$shouldDismiss) { shouldDismiss in
             if shouldDismiss {
@@ -196,18 +187,18 @@ struct ProfileDeviceDetailsView: View {
             }
         }
         .alert("Debug options", isPresented: $isDebugViewPresented, actions: {
-            Button("Delete Device", action: {
+            Button("Delete Device") {
                 viewModel.onDeleteDeviceTapped()
-            })
-            Button("Duplicate Session", action: {
+            }
+            Button("Duplicate Session") {
                 viewModel.onDuplicateClientTapped()
-            })
-            Button("Corrupt Session", action: {
+            }
+            Button("Corrupt Session") {
                 viewModel.onCorruptSessionTapped()
-            })
-            Button("Cancel", role: .cancel, action: {
+            }
+            Button("Cancel", role: .cancel) {
                 isDebugViewPresented.toggle()
-            })
+            }
         }, message: {
             Text("Tap to perform an action")
         })
