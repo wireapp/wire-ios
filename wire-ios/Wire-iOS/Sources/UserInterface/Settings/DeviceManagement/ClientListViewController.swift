@@ -603,13 +603,14 @@ final class ClientListViewController: UIViewController,
     // MARK: Helpers
 
     private func makeNotActivatedE2EIdenityCertificate(client: UserClient) -> E2eIdentityCertificate? {
-        guard let mlsResolver = MLSClientResolver().mlsClientId(for: client) else {
+        guard let clientID = MLSClientResolver().mlsClientId(for: client) else {
             return nil
         }
+
         return E2eIdentityCertificate(
-            clientId: mlsResolver.rawValue,
+            clientId: clientID.rawValue,
             certificateDetails: "",
-            mlsThumbprint: client.mlsPublicKeys.ed25519 ?? "",
+            mlsThumbprint: "",
             notValidBefore: .now,
             expiryDate: .now,
             certificateStatus: .notActivated,
