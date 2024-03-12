@@ -92,6 +92,13 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             logger.warn("failed to register trust anchor: \(error.localizedDescription)")
         }
 
+        do {
+            try await e2eiRepository.fetchFederationCertificates()
+        } catch {
+            logger.warn("failed to register intermediate certificates: \(String(describing: error))")
+            throw error
+        }
+
         let enrollment = try await e2eiRepository.createEnrollment(
             context: context,
             expirySec: expirySec

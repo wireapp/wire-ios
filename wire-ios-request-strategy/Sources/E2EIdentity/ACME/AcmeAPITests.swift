@@ -272,16 +272,27 @@ class AcmeAPITests: ZMTBaseTest {
             httpVersion: "",
             headerFields: nil
         )!
-        let mockData = Data()
+
+        let mockCertificates = [
+            "certificate_1",
+            "certificate_2",
+            "certificate_3"
+        ]
+        let mockPayload = [
+            "crts": mockCertificates
+        ]
+
+        let mockData = try JSONSerialization.data(withJSONObject: mockPayload)
         mockHttpClient?.mockResponse = (mockData, mockResponse)
 
         // when
-        _ = try await acmeApi?.getFederationCertificate()
+        let certificates = try await acmeApi?.getFederationCertificates()
         let request = try XCTUnwrap(mockHttpClient?.sentRequests.first)
 
         // then
         XCTAssertEqual(request.url?.absoluteString, "https://acme/federation")
         XCTAssertEqual(request.httpMethod, "GET")
+        XCTAssertEqual(certificates, mockCertificates)
     }
 
 }
