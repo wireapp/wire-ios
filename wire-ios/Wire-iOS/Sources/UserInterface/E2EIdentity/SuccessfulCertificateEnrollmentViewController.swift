@@ -143,7 +143,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         NSLayoutConstraint.activate([
             // title Label
             titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            view.trailingAnchor.constraint(equalTo: titleLabel.trailingAnchor, constant: 32),
+            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
 
             // shield image view
             shieldImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -153,14 +153,14 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
 
             // stackView
             stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            view.trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: 24),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
             // certificate details button
             certificateDetailsButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            view.trailingAnchor.constraint(equalTo: certificateDetailsButton.trailingAnchor, constant: 24),
+            certificateDetailsButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             certificateDetailsButton.heightAnchor.constraint(equalToConstant: 32),
-            view.bottomAnchor.constraint(equalTo: certificateDetailsButton.bottomAnchor, constant: 64)
+            certificateDetailsButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -64)
         ])
     }
 
