@@ -1142,29 +1142,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    private func requestCertificateUpdateOrEnrollIfNeeded() async {
-        guard let userSession = activeUserSession else { return }
-
-        do {
-            let certificateUpdateStatus = try await userSession.certificateUpdateStatus.invoke()
-            if certificateUpdateStatus == .block {
-                delegate?.sessionManagerRequireCertificateUpdate()
-            }
-        } catch {
-            WireLogger.e2ei.warn("Can't get certificate update status: \(error)")
-        }
-
-        // TODO: move to the usecase
-        let hasCertificate = await userSession.selfClientCertificateProvider.hasCertificate
-        guard let gracePeriodEndDate = userSession.gracePeriodEndDate else {
-            return
-        }
-        if userSession.e2eiFeature.isEnabled && !hasCertificate && gracePeriodEndDate.isInThePast {
-             delegate?.sessionManagerRequireCertificateEnrollment()
-        }
-
-    }
-
     func shouldPerformPostRebootLogout() -> Bool {
         guard configuration.authenticateAfterReboot,
               accountManager.selectedAccount != nil,
@@ -1517,6 +1494,36 @@ extension SessionManager {
 
     public func didUpdateCertificateSuccessfully() {
         delegate?.sessionManagerDidUpdateCertificate(for: activeUserSession)
+    }
+
+    private func requestCertificateUpdateOrEnrollIfNeeded() async {
+        guard let userSession = activeUserSession else { return }
+
+        await requestCertificateUpdateIfNeeded(userSession: userSession)
+        await requestCertificateEnrollIfNeeded(userSession: userSession)
+    }
+
+    private func requestCertificateUpdateIfNeeded(userSession: ZMUserSession) async {
+        do {
+            let certificateUpdateStatus = try await userSession.certificateUpdateStatus.invoke()
+            if certificateUpdateStatus == .block {
+                delegate?.sessionManagerRequireCertificateUpdate()
+            }
+        } catch {
+            WireLogger.e2ei.warn("Can't get certificate update status: \(error)")
+        }
+
+    }
+
+    private func requestCertificateEnrollIfNeeded(userSession: ZMUserSession) async {
+        do {
+            let isE2EICertificateEnrollmentRequired = try await userSession.isE2EICertificateEnrollmentRequired.invoke()
+            if isE2EICertificateEnrollmentRequired {
+                delegate?.sessionManagerRequireCertificateEnrollment()
+            }
+        } catch {
+            WireLogger.e2ei.warn("Can't get certificate enrollment status: \(error)")
+        }
     }
 
 }

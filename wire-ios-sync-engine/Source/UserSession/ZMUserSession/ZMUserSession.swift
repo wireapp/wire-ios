@@ -367,6 +367,13 @@ public final class ZMUserSession: NSObject {
             lastAlertDate: nil)
     }()
 
+    public private(set) lazy var isE2EICertificateEnrollmentRequired: IsE2EICertificateEnrollmentRequiredProtocol = {
+        return IsE2EICertificateEnrollmentRequiredUseCase(
+            isE2EIdentityEnabled: e2eiFeature.isEnabled,
+            selfClientCertificateProvider: selfClientCertificateProvider,
+            gracePeriodEndDate: gracePeriodEndDate)
+    }()
+
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()

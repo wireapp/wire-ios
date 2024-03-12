@@ -28,7 +28,6 @@ class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
     private var mockRecurringActionService: MockRecurringActionServiceInterface!
     private var mockFeatureRepository: MockFeatureRepositoryInterface!
     private var selfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
-    private var gracePeriodRepository: GracePeriodRepository!
 
     override func setUp() {
         super.setUp()
@@ -38,13 +37,9 @@ class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
         mockFeatureRepository.fetchE2EI_MockValue = .init(status: .enabled)
         selfClientCertificateProvider = MockSelfClientCertificateProviderProtocol()
         let accountID = UUID.create()
-        gracePeriodRepository = GracePeriodRepository(
-            userID: accountID,
-            sharedUserDefaults: sharedUserDefaults)
-        gracePeriodRepository.storeGracePeriodEndDate(Date.now)
         snoozer = SnoozeCertificateEnrollmentUseCase(
             e2eiFeature: mockFeatureRepository.fetchE2EI(),
-            gracePeriodRepository: gracePeriodRepository,
+            gracePeriodEndDate: Date.now,
             recurringActionService: mockRecurringActionService,
             selfClientCertificateProvider: selfClientCertificateProvider,
             accountId: accountID)
@@ -54,7 +49,6 @@ class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
         snoozer = nil
         mockRecurringActionService = nil
         selfClientCertificateProvider = nil
-        gracePeriodRepository = nil
 
         super.tearDown()
     }
