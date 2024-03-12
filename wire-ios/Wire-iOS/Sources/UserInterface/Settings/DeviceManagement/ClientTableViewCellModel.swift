@@ -55,8 +55,5 @@ struct ClientTableViewCellModel {
         let mlsThumbPrint = userClient.mlsThumbPrint?.fingerprintStringWithSpaces ?? ""
         mlsThumbprintLabelText = mlsThumbPrint.isNonEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbPrint) : ""
         e2eIdentityStatus = userClient.e2eIdentityCertificate?.status
-        print(userClient.e2eIdentityCertificate)
-        print(e2eIdentityStatus)
-        print("/////")
     }
 }
