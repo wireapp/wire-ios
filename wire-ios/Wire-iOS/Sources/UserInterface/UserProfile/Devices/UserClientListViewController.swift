@@ -246,5 +246,4 @@ extension Array where Element: UserClientType {
             return self
         }
     }
-
 }

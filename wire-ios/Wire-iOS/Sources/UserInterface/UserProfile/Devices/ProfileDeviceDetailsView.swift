@@ -21,10 +21,13 @@ import WireCommonComponents
 
 struct ProfileDeviceDetailsView: View {
 
+    private typealias Button = SwiftUI.Button
+    private typealias ProgressView = SwiftUI.ProgressView
+
     @Environment(\.dismiss)
     private var dismiss
 
-    @ObservedObject private var viewModel: DeviceInfoViewModel
+    @ObservedObject private(set) var viewModel: DeviceInfoViewModel
     @State private var isCertificateViewPresented = false
     @State private var isDebugViewPresented = false
 
@@ -50,10 +53,12 @@ struct ProfileDeviceDetailsView: View {
 
     var proteusView: some View {
         VStack(alignment: .leading) {
-            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title,
-                             description: L10n.Localizable.Profile.Devices.Detail.verifyMessage(
-                                viewModel.userClient.user?.name ?? ""
-                             ))
+            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title)
+            sectionDescriptionView(
+                description: L10n.Localizable.Profile.Devices.Detail.verifyMessage(
+                    viewModel.userClient.user?.name ?? ""
+                )
+            )
 
             DeviceDetailsProteusView(viewModel: viewModel,
                                      isVerfied: viewModel.isProteusVerificationEnabled,
@@ -83,7 +88,7 @@ struct ProfileDeviceDetailsView: View {
 
     var showDeviceFingerPrintView: some View {
         HStack {
-            SwiftUI.Button {
+            Button {
                 Task {
                     viewModel.onShowMyDeviceTapped()
                 }
@@ -118,7 +123,7 @@ struct ProfileDeviceDetailsView: View {
                     VStack {
                         if viewModel.isActionInProgress {
                             Spacer()
-                            SwiftUI.ProgressView()
+                            ProgressView()
                         }
                         Spacer()
                         showDeviceFingerPrintView
@@ -128,7 +133,7 @@ struct ProfileDeviceDetailsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    SwiftUI.Button(
+                    Button(
                         action: {
                             dismiss()
                         },
@@ -143,7 +148,7 @@ struct ProfileDeviceDetailsView: View {
                     DeviceView(viewModel: viewModel).titleView
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    SwiftUI.Button(
+                    Button(
                         action: {
                             isDebugViewPresented.toggle()
                         },
@@ -181,16 +186,16 @@ struct ProfileDeviceDetailsView: View {
             }
         }
         .alert("Debug options", isPresented: $isDebugViewPresented, actions: {
-            SwiftUI.Button("Delete Device", action: {
+            Button("Delete Device", action: {
                 viewModel.onDeleteDeviceTapped()
             })
-            SwiftUI.Button("Duplicate Session", action: {
+            Button("Duplicate Session", action: {
                 viewModel.onDuplicateClientTapped()
             })
-            SwiftUI.Button("Corrupt Session", action: {
+            Button("Corrupt Session", action: {
                 viewModel.onCorruptSessionTapped()
             })
-            SwiftUI.Button("Cancel", role: .cancel, action: {
+            Button("Cancel", role: .cancel, action: {
                 isDebugViewPresented.toggle()
             })
         }, message: {
@@ -199,30 +204,31 @@ struct ProfileDeviceDetailsView: View {
     }
 
     @ViewBuilder
-    func sectionTitleView(title: String, description: String? = nil) -> some View {
+    private func sectionTitleView(title: String) -> some View {
         Text(title)
             .font(FontSpec.mediumRegularFont.swiftUIFont)
             .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
             .padding([.leading, .top, .trailing], ViewConstants.Padding.standard)
+    }
 
-        if let description = description {
-            VStack(alignment: .leading) {
-                Text(description)
-                    .multilineTextAlignment(.leading)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .font(UIFont.swiftUIFont(for: .subheadline))
-                    .foregroundColor(SemanticColors.Label.textCellSubtitle.swiftUIColor)
-                    .frame(height: ViewConstants.View.Height.small)
-                    .padding([.leading, .top, .trailing], ViewConstants.Padding.standard)
-                Text(L10n.Localizable.Profile.Devices.Detail.VerifyMessage.link)
-                    .underline()
-                    .font(UIFont.swiftUIFont(for: .subheadline).bold())
-                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
-                    .padding(.leading)
-                    .onTapGesture {
-                        viewModel.onHowToDoThatTapped()
-                    }
-            }
+    @ViewBuilder
+    private func sectionDescriptionView(description: String) -> some View {
+        VStack(alignment: .leading) {
+            Text(description)
+                .multilineTextAlignment(.leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .font(UIFont.swiftUIFont(for: .subheadline))
+                .foregroundColor(SemanticColors.Label.textCellSubtitle.swiftUIColor)
+                .frame(height: ViewConstants.View.Height.small)
+                .padding([.leading, .top, .trailing], ViewConstants.Padding.standard)
+            Text(L10n.Localizable.Profile.Devices.Detail.VerifyMessage.link)
+                .underline()
+                .font(UIFont.swiftUIFont(for: .subheadline).bold())
+                .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                .padding(.leading)
+                .onTapGesture {
+                    viewModel.onHowToDoThatTapped()
+                }
         }
     }
 }
