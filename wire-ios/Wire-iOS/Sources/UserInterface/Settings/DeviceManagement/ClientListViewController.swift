@@ -219,8 +219,8 @@ final class ClientListViewController: UIViewController,
             guard let self = self, let lastE2EIUpdateDate = userSession.lastE2EIUpdateDate else {
                 return
             }
-            self?.updateAllClients {
-                self?.updateE2EIdentityCertificateInDetailsView()
+            self.updateAllClients {
+                self.updateE2EIdentityCertificateInDetailsView()
             }
 
             let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController(lastE2EIdentityUpdateDate: lastE2EIUpdateDate)
