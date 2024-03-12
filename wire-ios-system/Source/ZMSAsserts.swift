@@ -23,7 +23,6 @@ public func fatal(_ message: String,
                   file: StaticString = #file,
                   line: UInt = #line) -> Never {
     ZMAssertionDump_NSString("Swift assertion", "\(file)", Int32(line), message)
-    WireLogger.system.critical("Swift assertion at \(file) - \(Int32(line)): \(message)")
     fatalError(message, file: file, line: line)
 }
 

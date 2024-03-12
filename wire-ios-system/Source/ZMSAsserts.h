@@ -71,8 +71,6 @@
 		} \
 	} while (0)
 
-#   define RequireC(assertion) \
-		Require(assertion)
 
 #else
 
@@ -86,24 +84,8 @@
 			ZMCrashFormat(#assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
 		} \
 	} while (0)
-#   define RequireC(assertion) do { \
-		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMCrash(#assertion, __FILE__, __LINE__); \
-		} \
-	} while (0)
 
 #endif
-
-
-#define RequireInternal(assertion, frmt, ...) \
-    do { \
-        BOOL appStore = [NSBundle.mainBundle.bundleIdentifier isEqualToString:@"com.wearezeta.zclient.ios"]; \
-        if ( __builtin_expect(!appStore && !(assertion), 0) ) { \
-            ZMDebugAssertMessage(@"Assert", #assertion, __FILE__, __LINE__, nil); \
-            ZMCrash(#assertion, __FILE__, __LINE__); \
-        } \
-    } while (0)
-
 
 #define VerifyAction(assertion, action) \
 	do { \
