@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-import UIKit
+import SwiftUI
 import WireSyncEngine
 import WireCommonComponents
-import SwiftUI
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -71,12 +70,14 @@ final class ClientListViewController: UIViewController,
     private let clientFilter: (UserClient) -> Bool
     private let userSession: UserSession?
     private let contextProvider: ContextProvider?
+    private weak var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
+
     var sortedClients: [UserClient] = []
 
     var selfClient: UserClient?
     let detailedView: Bool
     var credentials: ZMEmailCredentials?
-    var clientsObserverToken: Any?
+    var clientsObserverToken: NSObjectProtocol?
     var userObserverToken: NSObjectProtocol?
 
     var leftBarButtonItem: UIBarButtonItem? {
@@ -218,7 +219,10 @@ final class ClientListViewController: UIViewController,
             guard let self = self, let lastE2EIUpdateDate = userSession.lastE2EIUpdateDate else {
                 return
             }
-            self.updateAllClients()
+            self?.updateAllClients {
+                self?.updateE2EIdentityCertificateInDetailsView()
+            }
+
             let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController(lastE2EIdentityUpdateDate: lastE2EIUpdateDate)
             successEnrollmentViewController.certificateDetails = certificateChain
             successEnrollmentViewController.onOkTapped = { viewController in
@@ -226,6 +230,7 @@ final class ClientListViewController: UIViewController,
             }
             successEnrollmentViewController.presentTopmost()
         }
+        selectedDeviceInfoViewModel = viewModel
         let detailsView = DeviceDetailsView(viewModel: viewModel) {
             self.navigationController?.setNavigationBarHidden(false, animated: false)
         }
@@ -552,7 +557,7 @@ final class ClientListViewController: UIViewController,
         }
     }
 
-    private func updateAllClients() {
+    private func updateAllClients(completed: (() -> Void)? = nil) {
         guard let selfUser = ZMUser.selfUser(), let selfClient = selfUser.selfClient() else {
             return
         }
@@ -561,12 +566,30 @@ final class ClientListViewController: UIViewController,
             self.clients = results
             self.selfClient = results.first(where: { $0.isSelfClient() })
             refreshViews()
+            completed?()
         }
     }
 
     @MainActor
     func refreshViews() {
         clientsTableView?.reloadData()
+    }
+
+    private func updateE2EIdentityCertificateInDetailsView() {
+        guard let client = findE2EIdentityCertificateClient() else { return }
+        selectedDeviceInfoViewModel?.update(from: client)
+    }
+
+    private func findE2EIdentityCertificateClient() -> UserClient? {
+        if selectedDeviceInfoViewModel?.isSelfClient == true {
+            return selfClient
+        }
+
+        guard let selectedUserClient = selectedDeviceInfoViewModel?.userClient as? UserClient else {
+            return nil
+        }
+
+        return clients.first { $0.clientId == selectedUserClient.clientId }
     }
 }
 
@@ -600,11 +623,7 @@ extension ClientListViewController: UserObserving {
 
 }
 
-private extension UserClient {
-
-    var resolvedMLSThumbprint: String? {
-        e2eIdentityCertificate?.mlsThumbprint ?? mlsPublicKeys.ed25519
-    }
+extension UserClient {
 
     func notActivatedE2EIdenityCertificate() -> E2eIdentityCertificate? {
         guard let mlsResolver = MLSClientResolver().mlsClientId(for: self) else {
