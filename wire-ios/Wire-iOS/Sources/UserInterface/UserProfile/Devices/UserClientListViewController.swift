@@ -179,8 +179,8 @@ final class UserClientListViewController: UIViewController,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate,
             isFromConversation: true
         )
-        let detailsView = ProfileDeviceDetailsView(viewModel: viewModel) {
-            self.navigationController?.setNavigationBarHidden(false, animated: false)
+        let detailsView = ProfileDeviceDetailsView(viewModel: viewModel) { [weak navigationController] in
+            navigationController?.setNavigationBarHidden(false, animated: false)
         }
         let hostingViewController = UIHostingController(rootView: detailsView)
         hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -218,9 +218,8 @@ extension Array where Element: UserClientType {
             return self
         }
         var updatedUserClients = [UserClientType]()
-        let mlsResolver = MLSClientResolver()
         let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
-            if let mlsClientId = mlsResolver.mlsClientId(for: $0) {
+            if let mlsClientId = MLSClientID(userClient: $0) {
                 ($0.clientId.hashValue, mlsClientId)
             } else {
                 nil
