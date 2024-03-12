@@ -208,7 +208,7 @@ final class ClientListViewController: UIViewController,
             userSession: userSession,
             credentials: credentials,
             gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
-            mlsThumbprint: client.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16),
+            mlsThumbprint: client.e2eIdentityCertificate?.mlsThumbprint.splitStringIntoLines(charactersPerLine: 16),
             getProteusFingerprint: userSession.getUserClientFingerprint,
             contextProvider: contextProvider,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate
@@ -525,16 +525,16 @@ final class ClientListViewController: UIViewController,
                     for client in userClients {
                         let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
                         client.e2eIdentityCertificate = certificates.first { $0.clientId == mlsClientIdRawValue }
-                        client.mlsThumbPrint = client.resolvedMLSThumbprint
+                        client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint
                         if client.e2eIdentityCertificate == nil && client.mlsPublicKeys.ed25519 != nil {
-                            client.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
+                            client.e2eIdentityCertificate = makeNotActivatedE2EIdenityCertificate(client: client)
                         }
                         updatedUserClients.append(client)
                     }
                     if let selfClient = selfClient {
                         selfClient.e2eIdentityCertificate = certificates.first(where: {
                             $0.clientId == mlsResolver.mlsClientId(for: selfClient)?.rawValue
-                        }) ?? selfClient.notActivatedE2EIdenityCertificate()
+                        }) ?? makeNotActivatedE2EIdenityCertificate(client: selfClient)
                         selfClient.mlsThumbPrint = selfClient.e2eIdentityCertificate?.mlsThumbprint ?? selfClient.mlsPublicKeys.ed25519
                     }
                     return updatedUserClients
@@ -542,7 +542,7 @@ final class ClientListViewController: UIViewController,
                     for client in clients {
                         if let mlsThumbprint = client.mlsPublicKeys.ed25519,
                            !mlsThumbprint.isEmpty {
-                            client.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
+                            client.e2eIdentityCertificate = makeNotActivatedE2EIdenityCertificate(client: client)
                             updatedUserClients.append(client)
                         }
                     }
@@ -575,6 +575,23 @@ final class ClientListViewController: UIViewController,
     func refreshViews() {
         clientsTableView?.reloadData()
     }
+
+    // MARK: Helpers
+
+    private func makeNotActivatedE2EIdenityCertificate(client: UserClient) -> E2eIdentityCertificate? {
+        guard let mlsResolver = MLSClientResolver().mlsClientId(for: client) else {
+            return nil
+        }
+        return E2eIdentityCertificate(
+            clientId: mlsResolver.rawValue,
+            certificateDetails: "",
+            mlsThumbprint: client.mlsPublicKeys.ed25519 ?? "",
+            notValidBefore: .now,
+            expiryDate: .now,
+            certificateStatus: .notActivated,
+            serialNumber: ""
+        )
+    }
 }
 
 // MARK: - ClientRemovalObserverDelegate
@@ -605,26 +622,4 @@ extension ClientListViewController: UserObserving {
         }
     }
 
-}
-
-private extension UserClient {
-
-    var resolvedMLSThumbprint: String? {
-        e2eIdentityCertificate?.mlsThumbprint
-    }
-
-    func notActivatedE2EIdenityCertificate() -> E2eIdentityCertificate? {
-        guard let mlsResolver = MLSClientResolver().mlsClientId(for: self) else {
-            return nil
-        }
-        return E2eIdentityCertificate(
-            clientId: mlsResolver.rawValue,
-            certificateDetails: "",
-            mlsThumbprint: self.mlsPublicKeys.ed25519 ?? "",
-            notValidBefore: .now,
-            expiryDate: .now,
-            certificateStatus: .notActivated,
-            serialNumber: ""
-        )
-    }
 }
