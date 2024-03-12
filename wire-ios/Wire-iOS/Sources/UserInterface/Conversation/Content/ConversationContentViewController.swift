@@ -45,8 +45,8 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
 
     /// A button that, when tapped, scrolls the conversation view to the latest messages.
     /// It appears when the user has scrolled up past a certain point in the conversation.
-    lazy var scrollToBottomButton: Button = {
-        let button = Button(style: .scrollToBottomButtonStyle, cornerRadius: scrollToBottomButtonHeight / 2)
+    lazy var scrollToBottomButton = {
+        let button = ZMButton(style: .scrollToBottomButtonStyle, cornerRadius: scrollToBottomButtonHeight / 2)
         let icon = Asset.Images.downArrow.image
 
         button.setImage(icon, for: .normal)

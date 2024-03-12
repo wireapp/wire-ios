@@ -19,8 +19,6 @@
 import UIKit
 import WireCommonComponents
 
-typealias Button = ZMButton
-
 final class ZMButton: LegacyButton {
 
     var style: ButtonStyle?
