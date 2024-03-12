@@ -118,9 +118,7 @@ final class DeviceInfoViewModelTests: XCTestCase {
 
     func testThatItCallsshowCertificateUpdateSuccess_WhenEnrolCertificateIsSuccessful() async {
         let expectation = expectation(description: "showCertificateUpdateSuccess should be called")
-        mockDeviceActionsHandler.enrollClient_MockMethod = {
-            return ""
-        }
+        mockDeviceActionsHandler.enrollClient_MockValue = ""
         deviceInfoViewModel.showCertificateUpdateSuccess = { _ in
             expectation.fulfill()
         }
