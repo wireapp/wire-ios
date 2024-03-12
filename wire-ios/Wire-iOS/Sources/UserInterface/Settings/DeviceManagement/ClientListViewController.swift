@@ -511,58 +511,61 @@ final class ClientListViewController: UIViewController,
 
     @MainActor
     private func updateCertificates(for userClients: [UserClient]) async -> [UserClient] {
-        let mlsGroupID = await fetchSelfConversation()
-        if let mlsGroupID = mlsGroupID, let userSession = userSession {
-            var updatedUserClients = [UserClient]()
-            let mlsResolver = MLSClientResolver()
-            let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
-                if let mlsClientId = mlsResolver.mlsClientId(for: $0) {
-                    ($0.clientId.hashValue, mlsClientId)
-                } else {
-                    nil
-                }
-            })
-            let mlsClienIds = Array(mlsClients.values)
-            do {
-                let isE2eIEnabledForSelfClient = try await userSession.getIsE2eIdentityEnabled.invoke()
-                let certificates = try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupID,
-                                                                                           clientIds: mlsClienIds)
-                if certificates.isNonEmpty {
-                    for client in userClients {
-                        let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
-                        client.e2eIdentityCertificate = certificates.first { $0.clientId == mlsClientIdRawValue }
-                        client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint
-                        if client.e2eIdentityCertificate == nil && client.mlsPublicKeys.ed25519 != nil {
-                            client.e2eIdentityCertificate = makeNotActivatedE2EIdenityCertificate(client: client)
-                        }
-                        updatedUserClients.append(client)
-                    }
-                    if let selfClient = selfClient {
-                        selfClient.e2eIdentityCertificate = certificates.first(where: {
-                            $0.clientId == mlsResolver.mlsClientId(for: selfClient)?.rawValue
-                        }) ?? makeNotActivatedE2EIdenityCertificate(client: selfClient)
-                        selfClient.mlsThumbPrint = selfClient.e2eIdentityCertificate?.mlsThumbprint ?? selfClient.mlsPublicKeys.ed25519
-                    }
-                    return updatedUserClients
-                } else if isE2eIEnabledForSelfClient {
-                    for client in clients {
-                        if let mlsThumbprint = client.mlsPublicKeys.ed25519,
-                           !mlsThumbprint.isEmpty {
-                            client.e2eIdentityCertificate = makeNotActivatedE2EIdenityCertificate(client: client)
-                            updatedUserClients.append(client)
-                        }
-                    }
-                    return updatedUserClients
-                } else {
-                    return userClients
-                }
-            } catch {
-                WireLogger.e2ei.error(error.localizedDescription)
-                return userClients
-            }
-        } else {
+        guard
+            let mlsGroupID = await fetchSelfConversation(),
+            let userSession
+        else {
             return userClients
         }
+
+        var updatedUserClients = [UserClient]()
+        let mlsResolver = MLSClientResolver()
+        let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
+            if let mlsClientId = mlsResolver.mlsClientId(for: $0) {
+                ($0.clientId.hashValue, mlsClientId)
+            } else {
+                nil
+            }
+        })
+        let mlsClienIds = Array(mlsClients.values)
+        do {
+            let isE2eIEnabledForSelfClient = try await userSession.getIsE2eIdentityEnabled.invoke()
+            let certificates = try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupID,
+                                                                                       clientIds: mlsClienIds)
+            if certificates.isNonEmpty {
+                for client in userClients {
+                    let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
+                    client.e2eIdentityCertificate = certificates.first { $0.clientId == mlsClientIdRawValue }
+                    client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint
+                    if client.e2eIdentityCertificate == nil && client.mlsPublicKeys.ed25519 != nil {
+                        client.e2eIdentityCertificate = makeNotActivatedE2EIdenityCertificate(client: client)
+                    }
+                    updatedUserClients.append(client)
+                }
+                if let selfClient = selfClient {
+                    selfClient.e2eIdentityCertificate = certificates.first(where: {
+                        $0.clientId == mlsResolver.mlsClientId(for: selfClient)?.rawValue
+                    }) ?? makeNotActivatedE2EIdenityCertificate(client: selfClient)
+                    selfClient.mlsThumbPrint = selfClient.e2eIdentityCertificate?.mlsThumbprint ?? selfClient.mlsPublicKeys.ed25519
+                }
+                return updatedUserClients
+            } else if isE2eIEnabledForSelfClient {
+                for client in clients {
+                    if let mlsThumbprint = client.mlsPublicKeys.ed25519,
+                       !mlsThumbprint.isEmpty {
+                        client.e2eIdentityCertificate = makeNotActivatedE2EIdenityCertificate(client: client)
+                        updatedUserClients.append(client)
+                    }
+                }
+                return updatedUserClients
+            } else {
+                return userClients
+            }
+        } catch {
+            WireLogger.e2ei.error(error.localizedDescription)
+            return userClients
+        }
+
     }
 
     private func updateAllClients(completed: (() -> Void)? = nil) {
