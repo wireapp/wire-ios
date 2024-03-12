@@ -26,19 +26,21 @@ final class DeviceInfoViewModelTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        self.deviceInfoViewModel = DeviceInfoViewModel(certificate: .mockExpired,
-                                                       title: "",
-                                                       addedDate: "",
-                                                       proteusID: "",
-                                                       mlsThumbprint: "",
-                                                       isProteusVerificationEnabled: true,
-                                                       userClient: MockUserClient(),
-                                                       isSelfClient: false,
-                                                       gracePeriod: 0,
-                                                       isFromConversation: false,
-                                                       actionsHandler: mockDeviceActionsHandler,
-                                                       conversationClientDetailsActions: mockConversationUserClientDetailsActions,
-                                                       showDebugMenu: false)
+        self.deviceInfoViewModel = DeviceInfoViewModel(
+            certificate: .mockExpired,
+            title: "",
+            addedDate: "",
+            proteusID: "",
+            mlsThumbprint: "",
+            isProteusVerificationEnabled: true,
+            userClient: MockUserClient(),
+            isSelfClient: false,
+            gracePeriod: 0,
+            isFromConversation: false,
+            actionsHandler: mockDeviceActionsHandler,
+            conversationClientDetailsActions: mockConversationUserClientDetailsActions,
+            showDebugMenu: false
+        )
     }
 
     func testThatItCallsShowMyDeviceMethodInConversationUserClientDetailsActionsHandler_WhenOnShowMyDeviceTappedIsCalled() {
