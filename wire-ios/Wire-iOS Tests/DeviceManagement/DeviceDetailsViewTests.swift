@@ -69,6 +69,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
     ) -> DeviceInfoViewModel {
         let mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
         mockSession.isE2eIdentityEnabled = isE2eIdentityEnabled
+
         var certificate: E2eIdentityCertificate
         switch status {
         case .notActivated:
@@ -84,24 +85,36 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         }
         let emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
 
-        let viewModel = DeviceInfoViewModel.map(
-            certificate: isE2eIdentityEnabled ? certificate : nil,
+        let deviceActionsHandler = DeviceDetailsViewActionsHandler(
             userClient: client,
-            title: "some title",
-            addedDate: "Monday 15 Oct, 2023",
-            proteusID: mockProteusId,
-            isSelfClient: isSelfClient,
             userSession: mockSession,
             credentials: emailCredentials,
-            gracePeriod: 3,
-            mlsThumbprint: mlsThumbprint,
+            saveFileManager: SaveFileManager(systemFileSavePresenter: SystemSavePresenter()), // should this manager be mocked?
             getProteusFingerprint: mockSession.mockGetUserClientFingerprintUseCaseProtocol,
             contextProvider: mockContextProvider,
             e2eiCertificateEnrollment: MockEnrollE2EICertificateUseCaseProtocol()
         )
+
+        let viewModel = DeviceInfoViewModel(
+            certificate: isE2eIdentityEnabled ? certificate : nil,
+            title: "some title",
+            addedDate: "Monday 15 Oct, 2023",
+            proteusID: mockProteusId,
+            mlsThumbprint: mlsThumbprint,
+            isProteusVerificationEnabled: client.verified,
+            userClient: client,
+            isSelfClient: isSelfClient,
+            gracePeriod: 3,
+            isFromConversation: false,
+            actionsHandler: deviceActionsHandler,
+            conversationClientDetailsActions: deviceActionsHandler,
+            debugMenuActionsHandler: deviceActionsHandler,
+            showDebugMenu: false
+        )
         viewModel.proteusKeyFingerprint = proteusKeyFingerPrint
         viewModel.isSelfClient = isSelfClient
         viewModel.isProteusVerificationEnabled = isProteusVerificationEnabled
+
         return viewModel
     }
 
