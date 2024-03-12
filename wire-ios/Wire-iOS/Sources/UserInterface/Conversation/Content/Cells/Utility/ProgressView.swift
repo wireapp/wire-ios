@@ -18,8 +18,6 @@
 
 import UIKit
 
-typealias ProgressView = ZMProgressView
-
 final class ZMProgressView: UIView {
     fileprivate var deterministic: Bool? = .none
     fileprivate var progress: Float = 0
