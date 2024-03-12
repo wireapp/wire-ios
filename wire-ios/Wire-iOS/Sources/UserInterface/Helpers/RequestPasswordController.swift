@@ -95,6 +95,7 @@ final class RequestPasswordController {
                 textField.textContentType = .password
             }
 
+            // NOTE: `RequestPasswordController` must not be deallocated while this target/action is active
             textField.addTarget(self, action: #selector(RequestPasswordController.passwordTextFieldChanged(_:)), for: .editingChanged)
 
             self.passwordTextField = textField

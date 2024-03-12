@@ -1,6 +1,6 @@
-//
+////
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,14 +19,15 @@
 import Foundation
 import WireDataModel
 
-extension Message {
+extension ZMUserSession {
 
-    static var callDurationFormatter: DateComponentsFormatter {
-        let formatter = DateComponentsFormatter()
-        formatter.unitsStyle = .full
-        formatter.allowedUnits = [.day, .hour, .minute, .second]
-        formatter.zeroFormattingBehavior = .dropLeading
-        return formatter
+    public func setBogusLastEventID() {
+        let uuidV1 = UUID(uuidString: "0747b970-472d-11ee-be56-0242ac120002")
+        lastEventIDRepository.storeLastEventID(uuidV1)
+    }
+
+    public func updateMLSMigrationStatus() async throws {
+        try await proteusToMLSMigrationCoordinator.updateMigrationStatus()
     }
 
 }
