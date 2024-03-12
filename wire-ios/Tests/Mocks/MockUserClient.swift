@@ -44,6 +44,8 @@ final class MockUserClient: NSObject, UserClientType {
 
     var deviceClass: DeviceClass? = .phone
 
+    var resolvedMLSThumbprint: String?
+
     func isSelfClient() -> Bool {
         return false
     }
