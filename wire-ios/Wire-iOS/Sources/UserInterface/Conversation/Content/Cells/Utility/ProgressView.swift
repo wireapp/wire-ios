@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-import Foundation
 import UIKit
 
-final class ProgressView: UIView {
+typealias ProgressView = ZMProgressView
+
+final class ZMProgressView: UIView {
     fileprivate var deterministic: Bool? = .none
     fileprivate var progress: Float = 0
     fileprivate var progressView: UIView = UIView()
