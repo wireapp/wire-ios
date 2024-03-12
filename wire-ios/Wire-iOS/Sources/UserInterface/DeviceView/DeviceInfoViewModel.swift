@@ -115,7 +115,7 @@ final class DeviceInfoViewModel: ObservableObject {
         self.conversationClientDetailsActions = conversationClientDetailsActions
         self.debugMenuActionsHandler = debugMenuActionsHandler
         self.showDebugMenu = showDebugMenu
-        self.actionsHandler.isProcessing = {[weak self] isProcessing in
+        self.actionsHandler.isProcessing = { [weak self] isProcessing in
             DispatchQueue.main.async {
                 self?.isActionInProgress = isProcessing
             }
@@ -124,7 +124,7 @@ final class DeviceInfoViewModel: ObservableObject {
 
     func update(from userClient: UserClientType) {
         e2eIdentityCertificate = userClient.e2eIdentityCertificate
-        mlsThumbprint = userClient.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16)
+        mlsThumbprint = userClient.e2eIdentityCertificate?.mlsThumbprint.splitStringIntoLines(charactersPerLine: 16)
         self.userClient = userClient
     }
 

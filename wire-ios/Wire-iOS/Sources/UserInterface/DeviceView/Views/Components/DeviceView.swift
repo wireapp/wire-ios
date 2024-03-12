@@ -27,11 +27,13 @@ struct DeviceView: View {
             Text(viewModel.title.truncated())
                 .font(FontSpec.headerSemiboldFont.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+
             if viewModel.isE2eIdentityEnabled,
                 let certificate = viewModel.e2eIdentityCertificate,
                 let imageForStatus = certificate.status.image {
                 imageForStatus
             }
+
             if viewModel.isProteusVerificationEnabled {
                 Image(.verifiedShield)
             }
@@ -41,6 +43,7 @@ struct DeviceView: View {
     var body: some View {
         VStack(alignment: .leading) {
             titleView
+
             if !viewModel.proteusID.isEmpty {
                 Text("\(L10n.Localizable.Device.Details.Section.Proteus.id): \(viewModel.proteusID)")
                     .font(FontSpec.mediumRegularFont.swiftUIFont)

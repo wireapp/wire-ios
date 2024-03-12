@@ -129,10 +129,6 @@ public class UserClient: ZMManagedObject, UserClientType {
     public var e2eIdentityCertificate: E2eIdentityCertificate?
     public var mlsThumbPrint: String?
 
-    public var resolvedMLSThumbprint: String? {
-        e2eIdentityCertificate?.mlsThumbprint ?? mlsPublicKeys.ed25519
-    }
-
     public var isLegalHoldDevice: Bool {
         return deviceClass == .legalHold || type == .legalHold
     }
