@@ -255,8 +255,6 @@
 		253C67502B8D0BED00965DE1 /* WireRequestStrategySupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 253C674E2B8D0BED00965DE1 /* WireRequestStrategySupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2545AEBC2B85FDF2007B5721 /* MockContextProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2545AEBB2B85FDF2007B5721 /* MockContextProvider.swift */; };
 		2545AEBE2B864253007B5721 /* (null) in Sources */ = {isa = PBXBuildFile; };
-		255176CF2B5528F5006A4E46 /* MLSClientResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255176CE2B5528F5006A4E46 /* MLSClientResolver.swift */; };
-		255176D12B552A0A006A4E46 /* MockMLSResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255176D02B552A0A006A4E46 /* MockMLSResolver.swift */; };
 		25644D8B2B21D1CD007DA01F /* E2EIdentityCertificateDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25644D8A2B21D1CD007DA01F /* E2EIdentityCertificateDetailsView.swift */; };
 		25644D8E2B2228BC007DA01F /* E2eIdentityCertificateViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25644D8C2B222892007DA01F /* E2eIdentityCertificateViewTests.swift */; };
 		2572EC552B148EE50075A7BE /* DeviceInfoViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2572EC472B148EE50075A7BE /* DeviceInfoViewModel.swift */; };
@@ -315,6 +313,7 @@
 		551CD27822BA288B00EE9AE5 /* LegalHoldDisclosureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551CD27722BA288B00EE9AE5 /* LegalHoldDisclosureController.swift */; };
 		55A42A701FC872600056752F /* CallQualityController+Budget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A42A6F1FC872600056752F /* CallQualityController+Budget.swift */; };
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
+		5922E92E2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */; };
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
 		597A3BBA2B641F280020E337 /* UserStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB92B641F280020E337 /* UserStatus.swift */; };
 		59A1F1472B7BA226002CB679 /* UserStatus+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */; };
@@ -2306,8 +2305,6 @@
 		253C67482B88A3BB00965DE1 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsDebugActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeviceDetailsViewActionsHandler+ConversationUserClientDetailsDebugActions.swift"; sourceTree = "<group>"; };
 		253C674E2B8D0BED00965DE1 /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2545AEBB2B85FDF2007B5721 /* MockContextProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockContextProvider.swift; sourceTree = "<group>"; };
-		255176CE2B5528F5006A4E46 /* MLSClientResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSClientResolver.swift; sourceTree = "<group>"; };
-		255176D02B552A0A006A4E46 /* MockMLSResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMLSResolver.swift; sourceTree = "<group>"; };
 		25644D8A2B21D1CD007DA01F /* E2EIdentityCertificateDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EIdentityCertificateDetailsView.swift; sourceTree = "<group>"; };
 		25644D8C2B222892007DA01F /* E2eIdentityCertificateViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIdentityCertificateViewTests.swift; sourceTree = "<group>"; };
 		2572EC472B148EE50075A7BE /* DeviceInfoViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceInfoViewModel.swift; sourceTree = "<group>"; };
@@ -2370,6 +2367,7 @@
 		551CD27722BA288B00EE9AE5 /* LegalHoldDisclosureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalHoldDisclosureController.swift; sourceTree = "<group>"; };
 		55A42A6F1FC872600056752F /* CallQualityController+Budget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CallQualityController+Budget.swift"; sourceTree = "<group>"; };
 		55DD5C331FA236F60082170C /* CallQualityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityViewController.swift; sourceTree = "<group>"; };
+		5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+initWithUserType.swift"; sourceTree = "<group>"; };
 		597A3BB92B641F280020E337 /* UserStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatus.swift; sourceTree = "<group>"; };
 		59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+Helpers.swift"; sourceTree = "<group>"; };
@@ -4552,7 +4550,6 @@
 		2572EC452B148EE50075A7BE /* DeviceView */ = {
 			isa = PBXGroup;
 			children = (
-				255176CE2B5528F5006A4E46 /* MLSClientResolver.swift */,
 				2572EC532B148EE50075A7BE /* DeviceDetailsViewActionsHandler.swift */,
 				2577CB622B18A406007D3443 /* E2EIdentityCertificateStatus+Extensions.swift */,
 				2572EC472B148EE50075A7BE /* DeviceInfoViewModel.swift */,
@@ -4632,9 +4629,18 @@
 			path = CallQualityController;
 			sourceTree = "<group>";
 		};
+		5922E92C2BA06889001A7B01 /* E2EIdentity */ = {
+			isa = PBXGroup;
+			children = (
+				5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */,
+			);
+			path = E2EIdentity;
+			sourceTree = "<group>";
+		};
 		598108B02B7F6D480021A0A9 /* UserInterface */ = {
 			isa = PBXGroup;
 			children = (
+				5922E92C2BA06889001A7B01 /* E2EIdentity */,
 				598108B12B7F6D4E0021A0A9 /* GroupDetails */,
 			);
 			path = UserInterface;
@@ -8169,7 +8175,6 @@
 				EF98987120C5A47A005680C5 /* DeviceDetailsViewTests.swift */,
 				25644D8C2B222892007DA01F /* E2eIdentityCertificateViewTests.swift */,
 				252183232B4C0457000C4325 /* DeviceDetailsViewActionsHandlerTests.swift */,
-				255176D02B552A0A006A4E46 /* MockMLSResolver.swift */,
 				252FE27F2B59725C00D94DBD /* MockLogger.swift */,
 				25A7E62B2B67FB55002451A4 /* ClientTableViewCellTests.swift */,
 				2545AEBB2B85FDF2007B5721 /* MockContextProvider.swift */,
@@ -9831,7 +9836,6 @@
 				877798AC205A8EF500898A5E /* ZClientViewController.swift in Sources */,
 				BF5FAC0120B6B738004CEB45 /* UIAlertController+OngoingCall.swift in Sources */,
 				EFF9A66022394E1B00CCEC85 /* ProgressSpinner.swift in Sources */,
-				255176CF2B5528F5006A4E46 /* MLSClientResolver.swift in Sources */,
 				16C4BDA320A57E5300BCDB17 /* CallDegradationController.swift in Sources */,
 				8711A5A41E0D6C8800043ACF /* TwoLineTitleView.swift in Sources */,
 				2572EC602B148EE50075A7BE /* DeviceDetailsViewActionsHandler.swift in Sources */,
@@ -10393,7 +10397,6 @@
 				F1C9E3601EAE008C006438D7 /* TestSetup.swift in Sources */,
 				EFAFCA822133FB59002B31A6 /* ArchivedNavigationBarTests.swift in Sources */,
 				EFE0439B2149D9CA00BC3079 /* ShareContactsViewControllerSnapshotTests.swift in Sources */,
-				255176D12B552A0A006A4E46 /* MockMLSResolver.swift in Sources */,
 				BFC9149B1D181BE7001F068B /* LocationMessageCellTests.swift in Sources */,
 				E9398D332B5FD58E00C4AFBA /* ConversationSystemMessageMlsSupportSnapshotTests.swift in Sources */,
 				5EC7C87C21907D94004662AC /* ConversationReplyCellDescriptionTests.swift in Sources */,
@@ -10409,6 +10412,7 @@
 				5E39FC65225CDA7800C682B8 /* ChangeEmailViewControllerTests.swift in Sources */,
 				BFFE943E1E7839EB0025AD75 /* CoreDataSnapshotTestCase.swift in Sources */,
 				E98B61102B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift in Sources */,
+				5922E92E2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift in Sources */,
 				EF6EB1CE20A5C296002F720D /* AppStateCalculatorTests.swift in Sources */,
 				BFA13E161D4A5F7100F0A91B /* ConfirmAssetViewControllerTests.swift in Sources */,
 				EF24477D2343656A00C747F5 /* ConnectRequestsCellTests.swift in Sources */,
