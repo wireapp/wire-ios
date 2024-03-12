@@ -170,7 +170,7 @@ final class UserClientListViewController: UIViewController,
         }
 
         let viewModel = makeDeviceInfoViewModel(
-            userClient: client,
+            client: client,
             contextProvider: contextProvider
         )
         let detailsView = ProfileDeviceDetailsView(viewModel: viewModel) { [weak navigationController] in
