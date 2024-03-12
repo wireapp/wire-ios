@@ -184,7 +184,16 @@ static NSString * const PendingKey = @"Pending";
     Team *selfTeam = selfUser.team;
     self.factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:selfTeam];
 
-    NSArray *allConversations = [self fetchAllConversations:moc];
+    NSArray<ZMConversation*> *allConversations = [self fetchAllConversations:moc];
+    NSLog(@"number of conversations: %lu", allConversations.count);
+
+    if (allConversations.count > 0) {
+        NSLog(@"conversation: %@", allConversations[0]);
+        NSLog(@"conversation type: %i", [allConversations[0] conversationType]);
+        NSLog(@"conversation oneOnOneUser: %@", [allConversations[0] oneOnOneUser]);
+        NSLog(@"conversation oneOnOneUser name: %@", [[allConversations[0] oneOnOneUser] name]);
+        NSLog(@"conversation team: %@", [allConversations[0] team]);
+    }
 
     [self.pendingConnectionConversations recreateWithAllConversations:allConversations predicate:[self.factory predicateForPendingConversations]];
     [self.archivedConversations recreateWithAllConversations:allConversations predicate:[self.factory predicateForArchivedConversations]];
