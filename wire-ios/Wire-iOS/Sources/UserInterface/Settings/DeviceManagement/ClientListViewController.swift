@@ -210,7 +210,7 @@ final class ClientListViewController: UIViewController,
             userSession: userSession,
             credentials: credentials,
             gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
-            mlsThumbprint: client.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16),
+            mlsThumbprint: client.e2eIdentityCertificate?.mlsThumbprint.splitStringIntoLines(charactersPerLine: 16),
             getProteusFingerprint: userSession.getUserClientFingerprint,
             contextProvider: contextProvider,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate
@@ -530,16 +530,16 @@ final class ClientListViewController: UIViewController,
                     for client in userClients {
                         let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
                         client.e2eIdentityCertificate = certificates.first { $0.clientId == mlsClientIdRawValue }
-                        client.mlsThumbPrint = client.resolvedMLSThumbprint
+                        client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint
                         if client.e2eIdentityCertificate == nil && client.mlsPublicKeys.ed25519 != nil {
-                            client.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
+                            client.e2eIdentityCertificate = makeNotActivatedE2EIdenityCertificate(client: client)
                         }
                         updatedUserClients.append(client)
                     }
                     if let selfClient = selfClient {
-                        selfClient.e2eIdentityCertificate = certificates.first(where: {
+                        selfClient.e2eIdentityCertificate = certificates.first {
                             $0.clientId == MLSClientID(userClient: selfClient)?.rawValue
-                        }) ?? selfClient.notActivatedE2EIdenityCertificate()
+                        } ?? makeNotActivatedE2EIdenityCertificate(client: selfClient)
                         selfClient.mlsThumbPrint = selfClient.e2eIdentityCertificate?.mlsThumbprint ?? selfClient.mlsPublicKeys.ed25519
                     }
                     return updatedUserClients
@@ -547,7 +547,7 @@ final class ClientListViewController: UIViewController,
                     for client in clients {
                         if let mlsThumbprint = client.mlsPublicKeys.ed25519,
                            !mlsThumbprint.isEmpty {
-                            client.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
+                            client.e2eIdentityCertificate = makeNotActivatedE2EIdenityCertificate(client: client)
                             updatedUserClients.append(client)
                         }
                     }
@@ -556,7 +556,7 @@ final class ClientListViewController: UIViewController,
                     return userClients
                 }
             } catch {
-                WireLogger.e2ei.error(error.localizedDescription)
+                WireLogger.e2ei.error(String(reflecting: error))
                 return userClients
             }
         } else {
@@ -598,6 +598,24 @@ final class ClientListViewController: UIViewController,
 
         return clients.first { $0.clientId == selectedUserClient.clientId }
     }
+
+    // MARK: Helpers
+
+    private func makeNotActivatedE2EIdenityCertificate(client: UserClient) -> E2eIdentityCertificate? {
+        guard let clientID = MLSClientID(userClient: client) else {
+            return nil
+        }
+
+        return E2eIdentityCertificate(
+            clientId: clientID.rawValue,
+            certificateDetails: "",
+            mlsThumbprint: "",
+            notValidBefore: .now,
+            expiryDate: .now,
+            certificateStatus: .notActivated,
+            serialNumber: ""
+        )
+    }
 }
 
 // MARK: - ClientRemovalObserverDelegate
@@ -628,22 +646,4 @@ extension ClientListViewController: UserObserving {
         }
     }
 
-}
-
-extension UserClient {
-
-    func notActivatedE2EIdenityCertificate() -> E2eIdentityCertificate? {
-        guard let mlsResolver = MLSClientID(userClient: self) else {
-            return nil
-        }
-        return E2eIdentityCertificate(
-            clientId: mlsResolver.rawValue,
-            certificateDetails: "",
-            mlsThumbprint: self.mlsPublicKeys.ed25519 ?? "",
-            notValidBefore: .now,
-            expiryDate: .now,
-            certificateStatus: .notActivated,
-            serialNumber: ""
-        )
-    }
 }

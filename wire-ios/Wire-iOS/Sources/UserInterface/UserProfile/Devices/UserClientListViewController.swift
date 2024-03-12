@@ -161,8 +161,9 @@ final class UserClientListViewController: UIViewController,
     }
 
     private func openDetailsOfClient(_ client: UserClient) {
-        guard let navigationController = self.navigationController,
-              let contextProvider = contextProvider
+        guard
+            let navigationController,
+            let contextProvider = contextProvider
         else {
             assertionFailure("Unable to display details from conversations as navigation instance is nil")
             return
@@ -183,8 +184,8 @@ final class UserClientListViewController: UIViewController,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate,
             isFromConversation: true
         )
-        let detailsView = ProfileDeviceDetailsView(viewModel: viewModel) {
-            self.navigationController?.setNavigationBarHidden(false, animated: false)
+        let detailsView = ProfileDeviceDetailsView(viewModel: viewModel) { [weak navigationController] in
+            navigationController?.setNavigationBarHidden(false, animated: false)
         }
         let hostingViewController = UIHostingController(rootView: detailsView)
         hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
