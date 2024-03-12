@@ -159,6 +159,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
     @MainActor
     private func showUpdateE2EIdentityCertificateAlert(canRemindLater: Bool = true) {
+        userSession?.lastE2EIUpdateDate?.storeLastAlertDate(Date.now)
         typealias MlsE2eiStrings = L10n.Localizable.FeatureConfig.Alert.MlsE2ei
         let alert = UIAlertController.alertForE2eIChangeWithActions(
             title: MlsE2eiStrings.Alert.UpdateCertificate.title,
