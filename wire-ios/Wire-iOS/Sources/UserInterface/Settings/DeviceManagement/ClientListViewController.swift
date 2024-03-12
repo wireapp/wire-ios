@@ -585,22 +585,20 @@ final class ClientListViewController: UIViewController,
     }
 
     private func updateE2EIdentityCertificateInDetailsView() {
-        guard let selectedDeviceInfoViewModel = selectedDeviceInfoViewModel else {
-            return
+        guard let client = findE2EIdentityCertificateClient() else { return }
+        selectedDeviceInfoViewModel?.update(from: client)
+    }
+
+    private func findE2EIdentityCertificateClient() -> UserClient? {
+        if selectedDeviceInfoViewModel?.isSelfClient == true {
+            return selfClient
         }
-        let client = if selectedDeviceInfoViewModel.isSelfClient {
-            selfClient
-        } else {
-            clients.first(
-                where: {
-                    guard let userClient = selectedDeviceInfoViewModel.userClient as? UserClient else {
-                        return false
-                    }
-                return $0.clientId == userClient.clientId
-            })
+
+        guard let selectedUserClient = selectedDeviceInfoViewModel?.userClient as? UserClient else {
+            return nil
         }
-        guard let client else { return }
-        selectedDeviceInfoViewModel.update(from: client)
+
+        return clients.first { $0.clientId == selectedUserClient.clientId }
     }
 }
 
