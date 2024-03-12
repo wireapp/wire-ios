@@ -141,7 +141,7 @@ class SelfClientCertificateProviderTests: MessagingTest {
 
 }
 
-private extension String {
+extension String {
     static let mockSerialNumber = String(repeating: "abcdefghijklmno", count: 2)
 
     static let mockMlsThumbprint = "AB CD EF GH IJ KL MN OP QR ST UV WX QR ST UV WX"

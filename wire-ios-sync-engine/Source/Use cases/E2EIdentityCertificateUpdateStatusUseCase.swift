@@ -83,23 +83,23 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
                 }
                 return .reminder
             case fourHours ..< .oneDay:
-                if let lastAlertDate = lastAlertDate, lastAlertDate.timeIntervalSinceNow < fourHours {
+                if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < fourHours {
                     return .noAction
                 }
                 return .reminder
             case .oneHour ..< fourHours:
-                if let lastAlertDate = lastAlertDate, lastAlertDate.timeIntervalSinceNow < .oneHour {
+                if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < .oneHour {
                     return .noAction
                 }
                 return .reminder
             case fifteenMinutes ..< .oneHour:
-                if let lastAlertDate = lastAlertDate, lastAlertDate.timeIntervalSinceNow < fifteenMinutes {
+                if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < fifteenMinutes {
                     return .noAction
                 }
                 return .reminder
 
             case 1 ..< fifteenMinutes:
-                if let lastAlertDate = lastAlertDate, lastAlertDate.timeIntervalSinceNow < .fiveMinutes {
+                if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < .fiveMinutes {
                     return .noAction
                 }
                 return .reminder
