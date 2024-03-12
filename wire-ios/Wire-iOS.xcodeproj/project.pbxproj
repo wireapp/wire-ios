@@ -79,6 +79,7 @@
 		06C412AC238FCAA80018866F /* Int+Const.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C412AB238FCAA80018866F /* Int+Const.swift */; };
 		06C412B0239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C412AF239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift */; };
 		06CDC6F62A2DDBCE00EB518D /* FailedUsersSystemMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06CDC6F52A2DDBCE00EB518D /* FailedUsersSystemMessageCell.swift */; };
+		06D16AB32B9FB43500D5A28A /* QRView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D16AB22B9FB43500D5A28A /* QRView.swift */; };
 		06D93B472B56F64F00A0A512 /* E2EIFeatureChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D93B462B56F64F00A0A512 /* E2EIFeatureChange.swift */; };
 		06DF42D12757DA56009C8A99 /* GuestLinkInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06DF42D02757DA55009C8A99 /* GuestLinkInfoCell.swift */; };
 		06E097982A20BEE000B38C4A /* ZMConversation+IncompleteMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06E097972A20BEE000B38C4A /* ZMConversation+IncompleteMetadata.swift */; };
@@ -2126,6 +2127,7 @@
 		06C412AB238FCAA80018866F /* Int+Const.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Const.swift"; sourceTree = "<group>"; };
 		06C412AF239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+DragAndDrop.swift"; sourceTree = "<group>"; };
 		06CDC6F52A2DDBCE00EB518D /* FailedUsersSystemMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FailedUsersSystemMessageCell.swift; sourceTree = "<group>"; };
+		06D16AB22B9FB43500D5A28A /* QRView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRView.swift; sourceTree = "<group>"; };
 		06D93B462B56F64F00A0A512 /* E2EIFeatureChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EIFeatureChange.swift; sourceTree = "<group>"; };
 		06DF42D02757DA55009C8A99 /* GuestLinkInfoCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuestLinkInfoCell.swift; sourceTree = "<group>"; };
 		06E097972A20BEE000B38C4A /* ZMConversation+IncompleteMetadata.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+IncompleteMetadata.swift"; sourceTree = "<group>"; };
@@ -4227,6 +4229,14 @@
 				06B3091226AEDC990057AF9E /* UIAlertController+FeatureConfig.swift */,
 			);
 			path = UIAlertController;
+			sourceTree = "<group>";
+		};
+		06D16AB12B9FB41600D5A28A /* QRCode */ = {
+			isa = PBXGroup;
+			children = (
+				06D16AB22B9FB43500D5A28A /* QRView.swift */,
+			);
+			path = QRCode;
 			sourceTree = "<group>";
 		};
 		06F3E73124EFA9E600B1083C /* Notification Extension */ = {
@@ -7950,6 +7960,7 @@
 		EE742AB9284DE67300A6B5F3 /* DeveloperTools */ = {
 			isa = PBXGroup;
 			children = (
+				06D16AB12B9FB41600D5A28A /* QRCode */,
 				EE742AB5284DE57900A6B5F3 /* DeveloperToolsView.swift */,
 				EE742AB7284DE66400A6B5F3 /* DeveloperToolsViewModel.swift */,
 				63238C692B860DE300951467 /* DeveloperE2ei */,
@@ -9652,6 +9663,7 @@
 				F16427081FCC5BF800D2ABFC /* SetPasswordStepDescription.swift in Sources */,
 				06DF42D12757DA56009C8A99 /* GuestLinkInfoCell.swift in Sources */,
 				0665DF7328F01D3B0094482B /* ProfileImagePickerManager.swift in Sources */,
+				06D16AB32B9FB43500D5A28A /* QRView.swift in Sources */,
 				5E8FFC0321ECC5CF0052DF03 /* AuthenticationFeatureProvider.swift in Sources */,
 				EF4C5D4E23391C7E0092CA38 /* ConversationListCell+ZMConversationObserver.swift in Sources */,
 				EF51C2BF211B2CAF0099A599 /* Data+HEIF.swift in Sources */,

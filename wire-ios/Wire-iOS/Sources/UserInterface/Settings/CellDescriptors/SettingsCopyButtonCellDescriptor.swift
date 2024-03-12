@@ -80,3 +80,69 @@ final class SettingsCopyButtonCellDescriptor: SettingsCellDescriptorType {
         }
     }
 }
+
+final class SettingsQRCodeButtonCellDescriptor: SettingsCellDescriptorType, SettingsGroupCellDescriptorType {
+    static let cellType: SettingsTableCellProtocol.Type = IconActionCell.self
+
+    let presentationStyle: PresentationStyle
+    let presentationAction: () -> (UIViewController?)
+
+    weak var delegate: IconActionCellDelegate?
+    weak var viewController: UIViewController?
+
+    init(presentationAction: @escaping () -> UIViewController?,
+         presentationStyle: PresentationStyle = .modal) {
+        self.presentationAction = presentationAction
+        self.presentationStyle = presentationStyle
+    }
+    // MARK: - Configuration
+
+    func featureCell(_ cell: SettingsCellType) {
+        if let iconActionCell = cell as? IconActionCell {
+            delegate = iconActionCell
+            iconActionCell.configure(with: .iconAction(title: "QR Code",
+                                                       icon: .markdownBulletList,
+                                                       color: nil,
+                                                       action: { _ in }))
+        }
+    }
+
+    // MARK: - SettingsCellDescriptorType
+
+    var visible: Bool {
+        return true
+    }
+
+    var title: String {
+        return URL.selfUserProfileLink?.absoluteString.removingPercentEncoding ?? ""
+    }
+
+    var identifier: String?
+    weak var group: SettingsGroupCellDescriptorType?
+    var previewGenerator: PreviewGeneratorType?
+
+    func select(_ value: SettingsPropertyValue?) {
+        guard let controllerToShow = self.generateViewController() else {
+            return
+        }
+
+        switch self.presentationStyle {
+        case .modal:
+            if controllerToShow.modalPresentationStyle == .popover,
+                let sourceView = self.viewController?.view,
+                let popoverPresentation = controllerToShow.popoverPresentationController {
+                popoverPresentation.sourceView = sourceView
+                popoverPresentation.sourceRect = sourceView.bounds
+            }
+
+            controllerToShow.modalPresentationCapturesStatusBarAppearance = true
+            self.viewController?.present(controllerToShow, animated: true, completion: .none)
+        case .navigation, .alert:
+            break
+        }
+    }
+
+    func generateViewController() -> UIViewController? {
+        return self.presentationAction()
+    }
+}

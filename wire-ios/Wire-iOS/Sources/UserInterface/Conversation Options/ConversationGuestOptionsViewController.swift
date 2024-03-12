@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireSyncEngine
+import SwiftUI
 
 final class ConversationGuestOptionsViewController: UIViewController,
                                                     UITableViewDelegate,
@@ -144,6 +145,16 @@ final class ConversationGuestOptionsViewController: UIViewController,
         present(activityController, animated: true)
 
         activityController.configPopover(pointToView: sourceView ?? view)
+    }
+
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, wantsToShowQRCode message: String, sourceView: UIView? = nil) {
+        let swiftUIView = QRView(qrCode: message)
+        let hostVC = UIHostingController(rootView: swiftUIView)
+        hostVC.modalPresentationCapturesStatusBarAppearance = true
+
+        present(hostVC, animated: true)
+
+        // activityController.configPopover(pointToView: sourceView ?? view)
     }
 
     // MARK: – UITableViewDelegate & UITableViewDataSource

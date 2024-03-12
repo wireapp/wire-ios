@@ -21,6 +21,8 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 import WireCommonComponents
+import CoreImage.CIFilterBuiltins
+import SwiftUI
 
 extension ZMUser {
     var hasValidEmail: Bool {
@@ -101,6 +103,7 @@ extension SettingsCellDescriptorFactory {
         if URL.selfUserProfileLink != nil {
             cellDescriptors.append(profileLinkElement())
             cellDescriptors.append(profileLinkButton())
+            cellDescriptors.append(profileQRCodeButton())
         }
 
         return SettingsSectionDescriptor(
@@ -269,6 +272,26 @@ extension SettingsCellDescriptorFactory {
         return SettingsCopyButtonCellDescriptor()
     }
 
+    func profileQRCodeButton() -> SettingsCellDescriptorType {
+        let urlStr = URL.selfUserProfileLink?.absoluteString.removingPercentEncoding ?? ""
+//        func generateQRCode(from string: String) -> UIImage? {
+//            let data = string.data(using: String.Encoding.ascii)
+//
+//            if let QRFilter = CIFilter(name: "CIQRCodeGenerator") {
+//                QRFilter.setValue(data, forKey: "inputMessage")
+//                guard let QRImage = QRFilter.outputImage else { return nil }
+//                return UIImage(ciImage: QRImage)
+//            }
+//
+//            return nil
+//        }
+
+        return SettingsQRCodeButtonCellDescriptor(presentationAction: {
+            let swiftUIView = QRView(qrCode: urlStr)
+            return UIHostingController(rootView: swiftUIView)
+        })
+    }
+
     func pictureElement() -> SettingsCellDescriptorType {
         let profileImagePicker = ProfileImagePickerManager()
         let previewGenerator: PreviewGeneratorType = { _ in
@@ -384,3 +407,14 @@ extension SettingsCellDescriptorFactory {
     }
 
 }
+
+// extension CIImage {
+//
+//    func combined(with image: CIImage) -> CIImage? {
+//        guard let combinedFilter = CIFilter(name: "CISourceOverCompositing") else { return nil }
+//        let centerTransform = CGAffineTransform(translationX: extent.midX - (image.extent.size.width / 2), y: extent.midY - (image.extent.size.height / 2))
+//        combinedFilter.setValue(image.transformed(by: centerTransform), forKey: "inputImage")
+//        combinedFilter.setValue(self, forKey: "inputBackgroundImage")
+//        return combinedFilter.outputImage!
+//    }
+// }

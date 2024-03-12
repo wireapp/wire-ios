@@ -39,6 +39,7 @@ protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmRemovingGuests completion: @escaping (Bool) -> Void) -> UIAlertController?
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmRevokingLink completion: @escaping (Bool) -> Void)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, wantsToShareMessage message: String, sourceView: UIView?)
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, wantsToShowQRCode message: String, sourceView: UIView?)
 }
 
 final class ConversationGuestOptionsViewModel {
@@ -125,6 +126,7 @@ final class ConversationGuestOptionsViewModel {
                 // Check if we have a link already
                 if let link = link {
                     rows.append(.text(link))
+                    rows.append(.qrCode { [weak self] view in self?.openQRCode(view: view) })
                     rows.append(copyInProgress ? .copiedLink : .copyLink { [weak self] _ in self?.copyLink() })
                     rows.append(.shareLink { [weak self] view in self?.shareLink(view: view) })
                     rows.append(.revokeLink { [weak self] _ in self?.revokeLink() })
@@ -191,6 +193,11 @@ final class ConversationGuestOptionsViewModel {
         guard let link = link else { return }
         let message = L10n.Localizable.GuestRoom.Share.message(link)
         delegate?.viewModel(self, wantsToShareMessage: message, sourceView: view)
+    }
+
+    private func openQRCode(view: UIView? = nil) {
+        guard let link = link else { return }
+        delegate?.viewModel(self, wantsToShowQRCode: link, sourceView: view)
     }
 
     private func copyLink() {

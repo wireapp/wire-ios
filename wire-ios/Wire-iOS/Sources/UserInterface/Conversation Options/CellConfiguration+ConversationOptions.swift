@@ -97,6 +97,15 @@ extension CellConfiguration {
         )
     }
 
+    static func qrCode(action: @escaping Action) -> CellConfiguration {
+        return .iconAction(
+            title: "QR Code",
+            icon: .markdownBulletList,
+            color: nil,
+            action: action
+        )
+    }
+
     static func revokeLink(action: @escaping Action) -> CellConfiguration {
         return .iconAction(
             title: L10n.Localizable.GuestRoom.Actions.revokeLink,
