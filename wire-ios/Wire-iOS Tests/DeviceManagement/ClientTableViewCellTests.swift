@@ -145,10 +145,18 @@ final class ClientTableViewCellTests: BaseSnapshotTestCase {
 extension ClientTableViewCellModel {
     typealias DeviceDetailsSection = L10n.Localizable.Device.Details.Section
 
+    private static let mockProteusId: String = "abcdefghijklmnop"
+        .uppercased()
+        .splitStringIntoLines(charactersPerLine: 16)
+
+    private static let mockFingerPrint: String = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl"
+        .uppercased()
+        .splitStringIntoLines(charactersPerLine: 16)
+
     static func mock(title: String = "Lorem ipsum",
                      isProteusVerified: Bool = false,
-                     mlsThumbprint: String = .mockFingerPrint,
-                     proteusId: String = .mockProteusId,
+                     mlsThumbprint: String = mockFingerPrint,
+                     proteusId: String = mockProteusId,
                      e2eIdentityCertificateStatus: E2EIdentityCertificateStatus? = nil
     ) -> Self {
         return .init(title: title,
