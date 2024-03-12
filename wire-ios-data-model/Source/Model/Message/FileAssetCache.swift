@@ -477,6 +477,8 @@ open class FileAssetCache: NSObject {
             .compactMap { $0 }
             .joined(separator: "_")
 
+        return key
+
         return key.data(using: .utf8)?
             .zmSHA256Digest()
             .zmHexEncodedString()
@@ -514,6 +516,8 @@ private func convertToOptionalFileAttributeKeyDictionary(_ input: [String: Any]?
 /// OS will terminate the app before purging the cache.
 private struct FileCache: Cache {
 
+    private let logger = WireLogger(tag: "assets")
+
     private let cacheFolderURL: URL
 
     /// Create FileCahe
@@ -529,6 +533,8 @@ private struct FileCache: Cache {
         } else {
             fatal("Can't find/access caches directory")
         }
+
+        logger.debug("created cache at: \(cacheFolderURL)")
 
         // create and set attributes
         FileManager.default.createAndProtectDirectory(at: cacheFolderURL)
@@ -560,6 +566,8 @@ private struct FileCache: Cache {
     }
 
     func storeAssetData(_ data: Data, key: String, createdAt creationDate: Date = Date()) {
+        logger.debug("storing data for key: \(key)")
+
         let url = URLForKey(key)
         let coordinator = NSFileCoordinator()
 
@@ -575,6 +583,8 @@ private struct FileCache: Cache {
     }
 
     func storeAssetFromURL(_ fromUrl: URL, key: String, createdAt creationDate: Date = Date()) {
+        logger.debug("storing data from url for key: \(key)")
+
         guard fromUrl.scheme == NSURLFileScheme else { fatal("Can't save remote URL to cache: \(fromUrl)") }
 
         let toUrl = URLForKey(key)
@@ -597,6 +607,8 @@ private struct FileCache: Cache {
     }
 
     func deleteAssetData(_ key: String) {
+        logger.debug("deleting data for key: \(key)")
+
         let url = URLForKey(key)
         let coordinator = NSFileCoordinator()
 
@@ -639,6 +651,7 @@ private struct FileCache: Cache {
     /// Deletes all existing caches. After calling this method, existing caches should not be used anymore.
     /// This is intended for testing
     func wipeCaches() {
+        logger.debug("wiping cache")
         _ = try? FileManager.default.removeItem(at: cacheFolderURL)
     }
 
