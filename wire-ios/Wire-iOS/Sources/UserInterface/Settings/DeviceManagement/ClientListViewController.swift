@@ -514,9 +514,8 @@ final class ClientListViewController: UIViewController,
         let mlsGroupID = await fetchSelfConversation()
         if let mlsGroupID = mlsGroupID, let userSession = userSession {
             var updatedUserClients = [UserClient]()
-            let mlsResolver = MLSClientResolver()
             let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
-                if let mlsClientId = mlsResolver.mlsClientId(for: $0) {
+                if let mlsClientId = MLSClientID(userClient: $0) {
                     ($0.clientId.hashValue, mlsClientId)
                 } else {
                     nil
@@ -539,7 +538,7 @@ final class ClientListViewController: UIViewController,
                     }
                     if let selfClient = selfClient {
                         selfClient.e2eIdentityCertificate = certificates.first(where: {
-                            $0.clientId == mlsResolver.mlsClientId(for: selfClient)?.rawValue
+                            $0.clientId == MLSClientID(userClient: selfClient)?.rawValue
                         }) ?? selfClient.notActivatedE2EIdenityCertificate()
                         selfClient.mlsThumbPrint = selfClient.e2eIdentityCertificate?.mlsThumbprint ?? selfClient.mlsPublicKeys.ed25519
                     }
@@ -634,7 +633,7 @@ extension ClientListViewController: UserObserving {
 extension UserClient {
 
     func notActivatedE2EIdenityCertificate() -> E2eIdentityCertificate? {
-        guard let mlsResolver = MLSClientResolver().mlsClientId(for: self) else {
+        guard let mlsResolver = MLSClientID(userClient: self) else {
             return nil
         }
         return E2eIdentityCertificate(
