@@ -22,6 +22,7 @@ import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 
+// sourcery: AutoMockable
 protocol DeviceDetailsViewActions {
     var isSelfClient: Bool { get }
     var isProcessing: ((Bool) -> Void)? { get set }
@@ -40,12 +41,13 @@ protocol DeviceDetailsViewActions {
 final class DeviceInfoViewModel: ObservableObject {
     let addedDate: String
     let proteusID: String
-    let userClient: UserClient
     let gracePeriod: TimeInterval
-    let mlsThumbprint: String?
     let isFromConversation: Bool
+
+    var mlsThumbprint: String?
     var title: String
     var isSelfClient: Bool
+    var userClient: UserClientType
 
     var isCopyEnabled: Bool {
         return Settings.isClipboardEnabled
@@ -90,7 +92,7 @@ final class DeviceInfoViewModel: ObservableObject {
         proteusID: String,
         mlsThumbprint: String?,
         isProteusVerificationEnabled: Bool,
-        userClient: UserClient,
+        userClient: UserClientType,
         isSelfClient: Bool,
         gracePeriod: TimeInterval,
         isFromConversation: Bool,
@@ -120,13 +122,18 @@ final class DeviceInfoViewModel: ObservableObject {
         }
     }
 
+    func update(from userClient: UserClientType) {
+        e2eIdentityCertificate = userClient.e2eIdentityCertificate
+        mlsThumbprint = userClient.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16)
+        self.userClient = userClient
+    }
+
     @MainActor
     func enrollClient() async {
         self.isActionInProgress = true
         do {
             let certificateChain = try await actionsHandler.enrollClient()
             showCertificateUpdateSuccess?(certificateChain)
-            e2eIdentityCertificate = userClient.e2eIdentityCertificate
         } catch {
             showEnrollmentCertificateError = true
         }
