@@ -124,7 +124,7 @@ final class DeviceInfoViewModel: ObservableObject {
 
     func update(from userClient: UserClientType) {
         e2eIdentityCertificate = userClient.e2eIdentityCertificate
-        mlsThumbprint = userClient.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16)
+        mlsThumbprint = userClient.e2eIdentityCertificate?.mlsThumbprint.splitStringIntoLines(charactersPerLine: 16)
         self.userClient = userClient
     }
 
