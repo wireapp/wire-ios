@@ -26,12 +26,14 @@ final class DeviceInfoViewModelTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+
+        let userClient = MockUserClient()
+        userClient.e2eIdentityCertificate = .mockExpired
+
         self.deviceInfoViewModel = DeviceInfoViewModel(
-            certificate: .mockExpired,
             title: "",
             addedDate: "",
             proteusID: "",
-            mlsThumbprint: "",
             isProteusVerificationEnabled: true,
             userClient: MockUserClient(),
             isSelfClient: false,

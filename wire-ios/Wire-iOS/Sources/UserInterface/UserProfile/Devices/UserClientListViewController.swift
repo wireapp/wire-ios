@@ -200,11 +200,9 @@ final class UserClientListViewController: UIViewController,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate
         )
         return DeviceInfoViewModel(
-            certificate: client.e2eIdentityCertificate,
             title: title,
             addedDate: "",
             proteusID: client.proteusSessionID?.clientID.uppercased().splitStringIntoLines(charactersPerLine: 16) ?? "",
-            mlsThumbprint: client.e2eIdentityCertificate?.mlsThumbprint.splitStringIntoLines(charactersPerLine: 16),
             isProteusVerificationEnabled: client.verified,
             userClient: client,
             isSelfClient: client.isSelfClient(),
