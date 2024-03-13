@@ -35,12 +35,16 @@ final class IncomingConnectionView: UIView {
     private let federatedIndicator = LabelIndicator(context: .federated)
     private let incomingConnectionFooter = UIView()
     private let warningView = WarningLabelView()
-    private let acceptButton = Button(style: .accentColorTextButtonStyle,
-                                      cornerRadius: 16,
-                                      fontSpec: .normalSemiboldFont)
-    private let ignoreButton = Button(style: .secondaryTextButtonStyle,
-                                      cornerRadius: 16,
-                                      fontSpec: .normalSemiboldFont)
+    private let acceptButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .normalSemiboldFont
+    )
+    private let ignoreButton = ZMButton(
+        style: .secondaryTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .normalSemiboldFont
+    )
     private let classificationProvider: SecurityClassificationProviding?
 
     var user: UserType {
