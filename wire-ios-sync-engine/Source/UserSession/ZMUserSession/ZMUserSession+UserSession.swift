@@ -301,7 +301,8 @@ extension ZMUserSession: UserSession {
             return ZMConversation.fetchSelfMLSConversation(in: self.syncContext)?.mlsGroupID
         }
     }
-
+    
+    @MainActor
     public func e2eIdentityUpdateCertificateUpdateStatus() async -> E2EIdentityCertificateUpdateStatusProtocol? {
         guard let mlsGroupID = await self.fetchSelfConversationMLSGroupID(), let selfMLSClientID else {
             return nil
