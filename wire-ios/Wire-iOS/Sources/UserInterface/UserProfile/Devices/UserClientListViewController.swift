@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+import UIKit
 import WireSyncEngine
 import SwiftUI
 
@@ -159,10 +161,13 @@ final class UserClientListViewController: UIViewController,
     }
 
     private func openDetailsOfClient(_ client: UserClient) {
-        guard let navigationController = navigationController, let contextProvider = contextProvider else {
-            return assertionFailure("Unable to display details from conversations as navigation instance is nil")
+        guard
+            let navigationController,
+            let contextProvider = contextProvider
+        else {
+            assertionFailure("Unable to display details from conversations as navigation instance is nil")
+            return
         }
-
         let viewModel = DeviceInfoViewModel.map(
             certificate: client.e2eIdentityCertificate,
             userClient: client,
@@ -179,8 +184,13 @@ final class UserClientListViewController: UIViewController,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate,
             isFromConversation: true
         )
-        let detailsViewController = ProfileDeviceDetailsViewController(viewModel: viewModel)
-        navigationController.pushViewController(detailsViewController, animated: true)
+        let detailsView = ProfileDeviceDetailsView(viewModel: viewModel) { [weak navigationController] in
+            navigationController?.setNavigationBarHidden(false, animated: false)
+        }
+        let hostingViewController = UIHostingController(rootView: detailsView)
+        hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationController.pushViewController(hostingViewController, animated: true)
+        navigationController.isNavigationBarHidden = true
     }
 }
 
@@ -240,4 +250,5 @@ extension Array where Element: UserClientType {
             return self
         }
     }
+
 }

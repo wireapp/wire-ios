@@ -272,7 +272,7 @@
 		2577CB822B1DFF66007D3443 /* ViewConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB812B1DFF66007D3443 /* ViewConstants.swift */; };
 		2584AE472B98A2CD008E1DEA /* DeviceInfoViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2584AE462B98A2CD008E1DEA /* DeviceInfoViewModelTests.swift */; };
 		259BB5D32B7FC04100F1B552 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259BB5D12B7FC04100F1B552 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift */; };
-		259BB5D42B7FC04100F1B552 /* ProfileDeviceDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259BB5D22B7FC04100F1B552 /* ProfileDeviceDetailsViewController.swift */; };
+		259BB5D42B7FC04100F1B552 /* ProfileDeviceDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259BB5D22B7FC04100F1B552 /* ProfileDeviceDetailsView.swift */; };
 		25A7E62C2B67FB55002451A4 /* ClientTableViewCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25A7E62B2B67FB55002451A4 /* ClientTableViewCellTests.swift */; };
 		25B236922B67A97E00EDB479 /* ClientTableViewCellModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25B236912B67A97E00EDB479 /* ClientTableViewCellModel.swift */; };
 		25F85D7E2B83447200FBE21F /* E2eIdentityCertificate+Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25F85D7D2B83447200FBE21F /* E2eIdentityCertificate+Mocks.swift */; };
@@ -2322,7 +2322,7 @@
 		2577CB812B1DFF66007D3443 /* ViewConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewConstants.swift; sourceTree = "<group>"; };
 		2584AE462B98A2CD008E1DEA /* DeviceInfoViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoViewModelTests.swift; sourceTree = "<group>"; };
 		259BB5D12B7FC04100F1B552 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift"; sourceTree = "<group>"; };
-		259BB5D22B7FC04100F1B552 /* ProfileDeviceDetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileDeviceDetailsViewController.swift; sourceTree = "<group>"; };
+		259BB5D22B7FC04100F1B552 /* ProfileDeviceDetailsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileDeviceDetailsView.swift; sourceTree = "<group>"; };
 		25A7E62B2B67FB55002451A4 /* ClientTableViewCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientTableViewCellTests.swift; sourceTree = "<group>"; };
 		25B236912B67A97E00EDB479 /* ClientTableViewCellModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientTableViewCellModel.swift; sourceTree = "<group>"; };
 		25F85D7D2B83447200FBE21F /* E2eIdentityCertificate+Mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "E2eIdentityCertificate+Mocks.swift"; sourceTree = "<group>"; };
@@ -5229,7 +5229,7 @@
 				011853952AE6BA5D0071FA32 /* ProfileClientViewModel.swift */,
 				16814843228D89EC0069F16F /* UserClientListViewController.swift */,
 				1681483F228C6E120069F16F /* UserClientCell.swift */,
-				259BB5D22B7FC04100F1B552 /* ProfileDeviceDetailsViewController.swift */,
+				259BB5D22B7FC04100F1B552 /* ProfileDeviceDetailsView.swift */,
 				259BB5D12B7FC04100F1B552 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift */,
 				253C67482B88A3BB00965DE1 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsDebugActions.swift */,
 			);
@@ -9255,7 +9255,7 @@
 				D30880FB292CD8F200DDEAB0 /* CallingBottomSheetViewController.swift in Sources */,
 				167961A9203F26E600B72ACC /* SectionHeader.swift in Sources */,
 				638332EA250282D200D18F42 /* OrientationDelta.swift in Sources */,
-				259BB5D42B7FC04100F1B552 /* ProfileDeviceDetailsViewController.swift in Sources */,
+				259BB5D42B7FC04100F1B552 /* ProfileDeviceDetailsView.swift in Sources */,
 				16719A1D1D9ABB7C00AA6B63 /* GiphyConfirmationViewController.swift in Sources */,
 				163495891F015389004E80DB /* AppDelegate+Network.swift in Sources */,
 				F15650E321DD11D700210504 /* CABasicAnimation+Rotation.swift in Sources */,

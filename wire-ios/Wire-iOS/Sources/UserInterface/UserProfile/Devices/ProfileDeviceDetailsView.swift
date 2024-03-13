@@ -19,31 +19,20 @@
 import SwiftUI
 import WireCommonComponents
 
-final class ProfileDeviceDetailsViewController: UIHostingController<ProfileDeviceDetailsView> {
-
-    init(viewModel: DeviceInfoViewModel) {
-        super.init(rootView: .init(viewModel: viewModel))
-    }
-
-    @MainActor
-    required dynamic init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) is not supported")
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = SemanticColors.View.backgroundDefault
-    }
-}
-
 struct ProfileDeviceDetailsView: View {
-
     @Environment(\.dismiss)
     private var dismiss
 
-    @ObservedObject private(set) var viewModel: DeviceInfoViewModel
-    @State private var isCertificateViewPresented = false
-    @State private var isDebugViewPresented = false
+    @ObservedObject var viewModel: DeviceInfoViewModel
+    @State private var isCertificateViewPresented: Bool = false
+    @State private var isDebugViewPresented: Bool = false
+
+    private let onDisappear: (() -> Void)?
+
+    init(viewModel: DeviceInfoViewModel, onDisappear: (() -> Void)?) {
+        self.viewModel = viewModel
+        self.onDisappear = onDisappear
+    }
 
     private var e2eIdentityCertificateView: some View {
         VStack(alignment: .leading) {
@@ -60,16 +49,15 @@ struct ProfileDeviceDetailsView: View {
         }
         .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         .padding(.top, ViewConstants.Padding.medium)
-        .frame(maxWidth: .infinity)
+        .frame(width: .infinity)
     }
 
     private var proteusView: some View {
         VStack(alignment: .leading) {
-            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title)
-            sectionDescriptionView(
-                description: L10n.Localizable.Profile.Devices.Detail.verifyMessage(
-                    viewModel.userClient.user?.name ?? ""
-                )
+            let userName = viewModel.userClient.user?.name ?? ""
+            sectionTitleView(
+                title: L10n.Localizable.Device.Details.Section.Proteus.title,
+                description: L10n.Localizable.Profile.Devices.Detail.verifyMessage(userName)
             )
 
             DeviceDetailsProteusView(
@@ -103,15 +91,15 @@ struct ProfileDeviceDetailsView: View {
 
     private var showDeviceFingerPrintView: some View {
         HStack {
-            Button {
+            SwiftUI.Button {
                 Task {
                     viewModel.onShowMyDeviceTapped()
                 }
             } label: {
                 Text(L10n.Localizable.Profile.Devices.Detail.ShowMyDevice.title)
-                    .padding(.all, ViewConstants.Padding.standard)
-                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
-                    .font(UIFont.swiftUIFont(for: .bodyTwoSemibold))
+                .padding(.all, ViewConstants.Padding.standard)
+                .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                .font(UIFont.swiftUIFont(for: .bodyTwoSemibold))
             }
             Spacer()
             Asset.Images.chevronRight.swiftUIImage.padding(.trailing, ViewConstants.Padding.standard)
@@ -131,25 +119,26 @@ struct ProfileDeviceDetailsView: View {
                 }
 
                 proteusView
-                showDeviceFingerPrintView
-                    .padding(.bottom, ViewConstants.Padding.standard)
             }
             .background(SemanticColors.View.backgroundDefault.swiftUIColor)
             .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
             .listStyle(.plain)
-            .overlay {
-                if viewModel.isActionInProgress {
+            .overlay(
+                content: {
                     VStack {
+                        if viewModel.isActionInProgress {
+                            Spacer()
+                            SwiftUI.ProgressView()
+                        }
                         Spacer()
-                        ProgressView()
-                        Spacer()
+                        showDeviceFingerPrintView
                     }
                 }
-            }
+            )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(
+                    SwiftUI.Button(
                         action: {
                             dismiss()
                         },
@@ -164,7 +153,7 @@ struct ProfileDeviceDetailsView: View {
                     DeviceView(viewModel: viewModel).titleView
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(
+                    SwiftUI.Button(
                         action: {
                             isDebugViewPresented.toggle()
                         },
@@ -177,11 +166,13 @@ struct ProfileDeviceDetailsView: View {
                 }
             }
         }
-        .navigationViewStyle(.stack)
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
         .navigationBarBackButtonHidden(true)
         .onAppear {
             viewModel.onAppear()
+        }
+        .onDisappear {
+            onDisappear?()
         }
         .onReceive(viewModel.$shouldDismiss) { shouldDismiss in
             if shouldDismiss {
@@ -200,49 +191,48 @@ struct ProfileDeviceDetailsView: View {
             }
         }
         .alert("Debug options", isPresented: $isDebugViewPresented, actions: {
-            Button("Delete Device") {
-                viewModel.onDeleteDeviceTapped()
-            }
-            Button("Duplicate Session") {
-                viewModel.onDuplicateClientTapped()
-            }
-            Button("Corrupt Session") {
+            SwiftUI.Button("Delete Device", action: {
+                  viewModel.onDeleteDeviceTapped()
+              })
+            SwiftUI.Button("Duplicate Session", action: {
+                  viewModel.onDuplicateClientTapped()
+              })
+            SwiftUI.Button("Corrupt Session", action: {
                 viewModel.onCorruptSessionTapped()
-            }
-            Button("Cancel", role: .cancel) {
+            })
+            SwiftUI.Button("Cancel", role: .cancel, action: {
                 isDebugViewPresented.toggle()
-            }
-        }, message: {
-            Text("Tap to perform an action")
-        })
+            })
+            }, message: {
+              Text("Tap to perform an action")
+            })
     }
 
     @ViewBuilder
-    private func sectionTitleView(title: String) -> some View {
+    func sectionTitleView(title: String, description: String? = nil) -> some View {
         Text(title)
             .font(FontSpec.mediumRegularFont.swiftUIFont)
             .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
             .padding([.leading, .top, .trailing], ViewConstants.Padding.standard)
-    }
 
-    @ViewBuilder
-    private func sectionDescriptionView(description: String) -> some View {
-        VStack(alignment: .leading) {
-            Text(description)
-                .multilineTextAlignment(.leading)
-                .fixedSize(horizontal: false, vertical: true)
-                .font(UIFont.swiftUIFont(for: .subheadline))
-                .foregroundColor(SemanticColors.Label.textCellSubtitle.swiftUIColor)
-                .frame(height: ViewConstants.View.Height.small)
-                .padding([.leading, .top, .trailing], ViewConstants.Padding.standard)
-            Text(L10n.Localizable.Profile.Devices.Detail.VerifyMessage.link)
-                .underline()
-                .font(UIFont.swiftUIFont(for: .subheadline).bold())
-                .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
-                .padding(.leading)
-                .onTapGesture {
-                    viewModel.onHowToDoThatTapped()
-                }
+        if let description = description {
+            VStack(alignment: .leading) {
+                Text(description)
+                    .multilineTextAlignment(.leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .font(UIFont.swiftUIFont(for: .subheadline))
+                    .foregroundColor(SemanticColors.Label.textCellSubtitle.swiftUIColor)
+                    .frame(height: ViewConstants.View.Height.small)
+                    .padding([.leading, .top, .trailing], ViewConstants.Padding.standard)
+                Text(L10n.Localizable.Profile.Devices.Detail.VerifyMessage.link)
+                    .underline()
+                    .font(UIFont.swiftUIFont(for: .subheadline).bold())
+                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                    .padding(.leading)
+                    .onTapGesture {
+                        viewModel.onHowToDoThatTapped()
+                    }
+            }
         }
     }
 }
