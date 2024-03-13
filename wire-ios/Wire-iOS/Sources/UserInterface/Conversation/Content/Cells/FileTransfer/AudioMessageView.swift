@@ -56,11 +56,10 @@ final class AudioMessageView: UIView, TransferView {
         return label
     }()
 
-    private let playerProgressView: ProgressView = {
-        let progressView = ProgressView()
+    private let playerProgressView = {
+        let progressView = ZMProgressView()
         progressView.backgroundColor = SemanticColors.View.backgroundSeparatorCell
         progressView.tintColor = .accent()
-
         return progressView
     }()
 

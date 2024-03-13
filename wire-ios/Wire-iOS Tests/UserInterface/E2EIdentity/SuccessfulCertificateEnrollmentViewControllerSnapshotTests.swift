@@ -16,17 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDataModel
+import XCTest
 
-protocol MLSClientResolving {
-    func mlsClientId(for userClient: UserClientType) -> MLSClientID?
-}
+@testable import Wire
 
-final class MLSClientResolver: MLSClientResolving {
+final class SuccessfulCertificateEnrollmentViewControllerSnapshotTests: BaseSnapshotTestCase {
 
-    func mlsClientId(for userClient: UserClientType) -> MLSClientID? {
-        return MLSClientID(userClient: userClient)
+    var sut: SuccessfulCertificateEnrollmentViewController!
+
+    override func setUp() {
+        super.setUp()
+        sut = .init()
     }
 
+    override func tearDown() {
+        sut = nil
+        super.tearDown()
+    }
+
+    func testLayout() {
+        verify(matching: sut)
+    }
 }

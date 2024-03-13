@@ -66,22 +66,25 @@ final class ConfirmAssetViewController: UIViewController {
                                                                 color: SemanticColors.Label.textDefault)
     private let bottomPanel: UIView = UIView()
     private let confirmButtonsStack: UIStackView = UIStackView()
-    private let acceptImageButton: Button = Button(style: .accentColorTextButtonStyle,
-                                                         cornerRadius: 16,
-                                                         fontSpec: .buttonBigSemibold)
-    private let rejectImageButton: Button = Button(style: .secondaryTextButtonStyle,
-                                                   cornerRadius: 16,
-                                                   fontSpec: .buttonBigSemibold)
+    private let acceptImageButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .buttonBigSemibold
+    )
+    private let rejectImageButton = ZMButton(
+        style: .secondaryTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .buttonBigSemibold
+    )
     private let contentLayoutGuide: UILayoutGuide = UILayoutGuide()
     private let imageToolbarSeparatorView: UIView = UIView()
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     init(context: Context) {
         self.context = context
-
         super.init(nibName: nil, bundle: nil)
     }
 
