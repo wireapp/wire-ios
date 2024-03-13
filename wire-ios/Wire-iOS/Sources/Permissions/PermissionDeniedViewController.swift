@@ -108,18 +108,22 @@ final class PermissionDeniedViewController: UIViewController {
 
     // MARK: - Setup Buttons
     private func createSettingsButton() {
-        settingsButton = Button(style: .accentColorTextButtonStyle,
-                                cornerRadius: 16,
-                                fontSpec: .normalSemiboldFont)
+        settingsButton = ZMButton(
+            style: .accentColorTextButtonStyle,
+            cornerRadius: 16,
+            fontSpec: .normalSemiboldFont
+        )
         settingsButton.addTarget(self, action: #selector(openSettings(_:)), for: .touchUpInside)
 
         view.addSubview(settingsButton)
     }
 
     private func createLaterButton() {
-        laterButton = Button(style: .secondaryTextButtonStyle,
-                             cornerRadius: 16,
-                             fontSpec: .normalSemiboldFont)
+        laterButton = ZMButton(
+            style: .secondaryTextButtonStyle,
+            cornerRadius: 16,
+            fontSpec: .normalSemiboldFont
+        )
         laterButton.addTarget(self, action: #selector(continueWithoutAccess(_:)), for: .touchUpInside)
 
         view.addSubview(laterButton)
