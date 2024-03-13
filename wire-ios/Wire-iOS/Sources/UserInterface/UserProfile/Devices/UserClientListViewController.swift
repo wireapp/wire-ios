@@ -168,21 +168,10 @@ final class UserClientListViewController: UIViewController,
             assertionFailure("Unable to display details from conversations as navigation instance is nil")
             return
         }
-        let viewModel = DeviceInfoViewModel.map(
-            certificate: client.e2eIdentityCertificate,
-            userClient: client,
-            title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.deviceClass?.localizedDescription.capitalized ?? client.type.localizedDescription.capitalized),
-            addedDate: "",
-            proteusID: client.proteusSessionID?.clientID.uppercased().splitStringIntoLines(charactersPerLine: 16),
-            isSelfClient: client.isSelfClient(),
-            userSession: userSession,
-            credentials: .none,
-            gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
-            mlsThumbprint: (client.e2eIdentityCertificate?.mlsThumbprint ?? client.mlsPublicKeys.ed25519)?.splitStringIntoLines(charactersPerLine: 16),
-            getProteusFingerprint: userSession.getUserClientFingerprint,
-            contextProvider: contextProvider,
-            e2eiCertificateEnrollment: userSession.enrollE2EICertificate,
-            isFromConversation: true
+
+        let viewModel = makeDeviceInfoViewModel(
+            client: client,
+            contextProvider: contextProvider
         )
         let detailsView = ProfileDeviceDetailsView(viewModel: viewModel) { [weak navigationController] in
             navigationController?.setNavigationBarHidden(false, animated: false)
@@ -191,6 +180,38 @@ final class UserClientListViewController: UIViewController,
         hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
         navigationController.pushViewController(hostingViewController, animated: true)
         navigationController.isNavigationBarHidden = true
+    }
+
+    private func makeDeviceInfoViewModel(
+        client: UserClient,
+        contextProvider: ContextProvider
+    ) -> DeviceInfoViewModel {
+        let title = client.isLegalHoldDevice
+            ? L10n.Localizable.Device.Class.legalhold
+            : (client.deviceClass?.localizedDescription.capitalized ?? client.type.localizedDescription.capitalized)
+        let saveFileManager = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
+        let deviceActionsHandler = DeviceDetailsViewActionsHandler(
+            userClient: client,
+            userSession: userSession,
+            credentials: .none,
+            saveFileManager: saveFileManager,
+            getProteusFingerprint: userSession.getUserClientFingerprint,
+            contextProvider: contextProvider,
+            e2eiCertificateEnrollment: userSession.enrollE2EICertificate
+        )
+        return DeviceInfoViewModel(
+            title: title,
+            addedDate: "",
+            proteusID: client.proteusSessionID?.clientID.uppercased().splitStringIntoLines(charactersPerLine: 16) ?? "",
+            userClient: client,
+            isSelfClient: client.isSelfClient(),
+            gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+            isFromConversation: true,
+            actionsHandler: deviceActionsHandler,
+            conversationClientDetailsActions: deviceActionsHandler,
+            debugMenuActionsHandler: deviceActionsHandler,
+            showDebugMenu: Bundle.developerModeEnabled
+        )
     }
 }
 

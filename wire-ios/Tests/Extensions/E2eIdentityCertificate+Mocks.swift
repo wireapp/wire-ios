@@ -17,28 +17,25 @@
 //
 
 import Foundation
-
-extension String {
-    static let mockSerialNumber = String(repeating: "abcdefghijklmno", count: 2)
-
-    static let mockMlsThumbprint = "AB CD EF GH IJ KL MN OP QR ST UV WX QR ST UV WX"
-
-    static var mockCertificate: String {
-        "BEGIN CERTIFICATE\n-----------\n"
-        + String(repeating: "abcdefghijklmno", count: 100)
-        + "\n-----------\nEND CERTIFICATE"
-    }
-}
+import WireDataModel
 
 extension E2eIdentityCertificate {
 
-    static let  dateFormatter = DateFormatter()
+    // MARK: Constants
+
+    private static let mockMLSFingerPrint: String = "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijkl".uppercased()
+
+    private static let mockClientId = "sdfsdfsdfs"
+
+    private static let  dateFormatter = DateFormatter()
+
+    // MARK: Values
 
     static var mockRevoked: E2eIdentityCertificate {
         E2eIdentityCertificate(
-            clientId: "sdfsdfsdfs",
+            clientId: mockClientId,
             certificateDetails: .mockCertificate,
-            mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
+            mlsThumbprint: mockMLSFingerPrint,
             notValidBefore: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             certificateStatus: .revoked,
@@ -48,9 +45,9 @@ extension E2eIdentityCertificate {
 
     static var mockInvalid: E2eIdentityCertificate {
         E2eIdentityCertificate(
-            clientId: "sdfsdfsdfs",
+            clientId: mockClientId,
             certificateDetails: .mockCertificate,
-            mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
+            mlsThumbprint: mockMLSFingerPrint,
             notValidBefore: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             certificateStatus: .invalid,
@@ -60,9 +57,9 @@ extension E2eIdentityCertificate {
 
     static var mockValid: E2eIdentityCertificate {
         E2eIdentityCertificate(
-            clientId: "sdfsdfsdfs",
+            clientId: mockClientId,
             certificateDetails: .mockCertificate,
-            mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
+            mlsThumbprint: mockMLSFingerPrint,
             notValidBefore: dateFormatter.date(from: "15.09.2023") ?? Date.now,
             expiryDate: dateFormatter.date(from: "15.10.2024") ?? Date.now,
             certificateStatus: .valid,
@@ -72,9 +69,9 @@ extension E2eIdentityCertificate {
 
     static var mockExpired: E2eIdentityCertificate {
         E2eIdentityCertificate(
-            clientId: "sdfsdfsdfs",
+            clientId: mockClientId,
             certificateDetails: .mockCertificate,
-            mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
+            mlsThumbprint: mockMLSFingerPrint,
             notValidBefore: dateFormatter.date(from: "15.09.2023") ?? Date.now,
             expiryDate: dateFormatter.date(from: "15.10.2023") ?? Date.now,
             certificateStatus: .expired,
@@ -84,9 +81,9 @@ extension E2eIdentityCertificate {
 
     static var mockNotActivated: E2eIdentityCertificate {
         E2eIdentityCertificate(
-            clientId: "sdfsdfsdfs",
+            clientId: mockClientId,
             certificateDetails: "",
-            mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
+            mlsThumbprint: mockMLSFingerPrint,
             notValidBefore: Date.now,
             expiryDate: Date.now,
             certificateStatus: .notActivated,
