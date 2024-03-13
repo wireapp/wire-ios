@@ -45,11 +45,6 @@ class TitleView: UIView, DynamicTypeCapable {
     }
 
     // MARK: - Private methods
-    private func createConstraints() {
-        [titleButton, stackView, subtitleLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-
-        stackView.fitIn(view: self)
-    }
 
     private func createViews() {
         titleButton.addTarget(self, action: #selector(titleButtonTapped), for: .touchUpInside)
@@ -57,6 +52,7 @@ class TitleView: UIView, DynamicTypeCapable {
         stackView.alignment = .center
         addSubview(stackView)
         [titleButton, subtitleLabel].forEach(stackView.addArrangedSubview)
+        stackView.fitIn(view: self)
     }
 
     // MARK: - Methods
@@ -92,8 +88,6 @@ class TitleView: UIView, DynamicTypeCapable {
         subtitleLabel.isHidden = subtitle == nil
         subtitleLabel.text = subtitle
         subtitleLabel.font = .smallLightFont
-
-        createConstraints()
     }
 
     required init?(coder aDecoder: NSCoder) {

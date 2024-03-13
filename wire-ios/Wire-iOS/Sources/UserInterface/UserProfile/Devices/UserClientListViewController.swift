@@ -179,10 +179,8 @@ final class UserClientListViewController: UIViewController,
             e2eiCertificateEnrollment: userSession.enrollE2EICertificate,
             isFromConversation: true
         )
-        let detailsView = ProfileDeviceDetailsView(viewModel: viewModel)
-        let hostingViewController = UIHostingController(rootView: detailsView)
-        hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationController.pushViewController(hostingViewController, animated: true)
+        let detailsViewController = ProfileDeviceDetailsViewController(viewModel: viewModel)
+        navigationController.pushViewController(detailsViewController, animated: true)
     }
 }
 

@@ -19,10 +19,24 @@
 import SwiftUI
 import WireCommonComponents
 
-struct ProfileDeviceDetailsView: View {
+final class ProfileDeviceDetailsViewController: UIHostingController<ProfileDeviceDetailsView> {
 
-    private typealias Button = SwiftUI.Button
-    private typealias ProgressView = SwiftUI.ProgressView
+    init(viewModel: DeviceInfoViewModel) {
+        super.init(rootView: .init(viewModel: viewModel))
+    }
+
+    @MainActor
+    required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+    }
+}
+
+struct ProfileDeviceDetailsView: View {
 
     @Environment(\.dismiss)
     private var dismiss
@@ -117,22 +131,21 @@ struct ProfileDeviceDetailsView: View {
                 }
 
                 proteusView
+                showDeviceFingerPrintView
+                    .padding(.bottom, ViewConstants.Padding.standard)
             }
             .background(SemanticColors.View.backgroundDefault.swiftUIColor)
             .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
             .listStyle(.plain)
-            .overlay(
-                content: {
+            .overlay {
+                if viewModel.isActionInProgress {
                     VStack {
-                        if viewModel.isActionInProgress {
-                            Spacer()
-                            ProgressView()
-                        }
                         Spacer()
-                        showDeviceFingerPrintView
+                        ProgressView()
+                        Spacer()
                     }
                 }
-            )
+            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
