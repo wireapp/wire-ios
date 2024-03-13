@@ -70,19 +70,31 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
 
         // make the call to Core Crypto
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
-        let identities = try await coreCrypto.perform { coreCrypto in
-            let result = try await coreCrypto.getUserIdentities(conversationId: mlsGroupID, userIds: [userID])
+        let (clientIDs, userIdentities) = try await coreCrypto.perform { coreCrypto in
+
+            // get all client IDs of the user
+            let clientIDs = try await coreCrypto.getClientIds(conversationId: mlsGroupID)
+                .compactMap { String(data: $0, encoding: .utf8) }
+
+            // get MLS group members
+            let userIdentities = try await coreCrypto.getUserIdentities(conversationId: mlsGroupID, userIds: [userID])
 
             // an empty result means not certified
-            guard !result.isEmpty else { return [WireIdentity]() }
-
-            guard let identities = result[userID] else {
-                throw Error.failedToGetIdentitiesFromCoreCryptoResult(result, userID)
+            guard !userIdentities.isEmpty else {
+                return (Set(clientIDs), [WireIdentity]())
             }
-            return identities
+
+            guard let userIdentities = userIdentities[userID] else {
+                throw Error.failedToGetIdentitiesFromCoreCryptoResult(userIdentities, userID)
+            }
+            return (Set(clientIDs), userIdentities)
         }
 
-        return !identities.isEmpty && identities.allSatisfy { $0.status == .valid }
+        for userIdentity in userIdentities {
+            print(userIdentity.thumbprint)
+        }
+
+        return !userIdentities.isEmpty && clientIDs == Set(userIdentities.map(\.clientId)) && userIdentities.allSatisfy { $0.status == .valid }
     }
 }
 
