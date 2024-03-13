@@ -420,6 +420,7 @@ extension ZMConversation {
     private func resendPendingMessagesAfterPrivacyChanges() {
         enumerateReverseMessagesThatCausedDegradationUntilFirstSystemMessageOnSyncContext {
             $0.causedSecurityLevelDegradation = false
+            $0.showMessage()
             $0.resend()
         }
     }

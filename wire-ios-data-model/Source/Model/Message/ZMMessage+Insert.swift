@@ -39,6 +39,7 @@ extension ZMMessage {
                 message.causedSecurityLevelDegradation = true
                 WireLogger.messaging.warn("expiring message because inserting into degraded conversation " + String(describing: message.nonce?.transportString().readableHash))
                 message.expire()
+                message.hideMessage()
                 syncMoc.saveOrRollback()
                 NotificationDispatcher.notifyNonCoreDataChanges(
                     objectID: conversation.objectID,
@@ -46,6 +47,18 @@ extension ZMMessage {
                     uiContext: uiMoc)
             }
         }
+    }
+
+    func showMessage() {
+        guard hiddenInConversation != nil else { return }
+        visibleInConversation = hiddenInConversation
+        hiddenInConversation = nil
+    }
+
+    func hideMessage() {
+        guard visibleInConversation != nil else { return }
+        hiddenInConversation = visibleInConversation
+        visibleInConversation = nil
     }
 
     private func verificationStatusKey(for messageProtocol: MessageProtocol) -> String {
