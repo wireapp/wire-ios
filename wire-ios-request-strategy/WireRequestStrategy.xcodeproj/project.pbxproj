@@ -212,6 +212,7 @@
 		63457C062B2C6F4200AFFEF3 /* ReplaceSelfMLSKeyPackagesActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63457C052B2C6F4200AFFEF3 /* ReplaceSelfMLSKeyPackagesActionHandlerTests.swift */; };
 		63457C082B2CA8E300AFFEF3 /* E2EIKeyPackageRotatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63457C072B2CA8E300AFFEF3 /* E2EIKeyPackageRotatorTests.swift */; };
 		6360A2132B0B722700A5D5FB /* MLSClientIDsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6360A2112B0B721F00A5D5FB /* MLSClientIDsProvider.swift */; };
+		636758242BA0AC7C00837803 /* FederationCertificates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636758232BA0AC7C00837803 /* FederationCertificates.swift */; };
 		638941F02AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638941EF2AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift */; };
 		638941FA2AFBED880051ABFD /* ConversationParticipantsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638941F92AFBED880051ABFD /* ConversationParticipantsService.swift */; };
 		6397F6E228F447F800298DB1 /* SendCommitBundleActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6397F6E128F447F800298DB1 /* SendCommitBundleActionHandler.swift */; };
@@ -729,6 +730,7 @@
 		63457C052B2C6F4200AFFEF3 /* ReplaceSelfMLSKeyPackagesActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReplaceSelfMLSKeyPackagesActionHandlerTests.swift; sourceTree = "<group>"; };
 		63457C072B2CA8E300AFFEF3 /* E2EIKeyPackageRotatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EIKeyPackageRotatorTests.swift; sourceTree = "<group>"; };
 		6360A2112B0B721F00A5D5FB /* MLSClientIDsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSClientIDsProvider.swift; sourceTree = "<group>"; };
+		636758232BA0AC7C00837803 /* FederationCertificates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FederationCertificates.swift; sourceTree = "<group>"; };
 		638941EF2AF50EB10051ABFD /* MockLocalConversationRemovalUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLocalConversationRemovalUseCase.swift; sourceTree = "<group>"; };
 		638941F92AFBED880051ABFD /* ConversationParticipantsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationParticipantsService.swift; sourceTree = "<group>"; };
 		6397F6E128F447F800298DB1 /* SendCommitBundleActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendCommitBundleActionHandler.swift; sourceTree = "<group>"; };
@@ -1111,6 +1113,7 @@
 				0671976D2AE951F400D96598 /* AcmeAPI.swift */,
 				06D61FB52B0CBE1E00C2699A /* AcmeAPITests.swift */,
 				067197992AFBE9FD00D96598 /* AcmeResponse.swift */,
+				636758232BA0AC7C00837803 /* FederationCertificates.swift */,
 			);
 			path = ACME;
 			sourceTree = "<group>";
@@ -2391,6 +2394,7 @@
 				6308F8AC2A273E7A0072A177 /* FetchMLSConversationGroupInfoActionHandler.swift in Sources */,
 				E69A02232B85096000126FF6 /* SupportedProtocolsService.swift in Sources */,
 				166901DB1D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.m in Sources */,
+				636758242BA0AC7C00837803 /* FederationCertificates.swift in Sources */,
 				EEB930B72ABD5C1400FB35B2 /* FetchSupportedProtocolsActionHandler.swift in Sources */,
 				06CF5DFA27FC900F00822FAB /* ZMLocalNotification+Calling.swift in Sources */,
 				8792F55721AD944100795027 /* UserPropertyRequestStrategy.swift in Sources */,

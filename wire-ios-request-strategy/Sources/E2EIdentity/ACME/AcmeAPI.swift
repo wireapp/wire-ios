@@ -24,7 +24,7 @@ public protocol AcmeAPIInterface {
     func getACMEDirectory() async throws -> Data
     func getACMENonce(path: String) async throws -> String
     func getTrustAnchor() async throws -> String
-    func getFederationCertificate() async throws -> String
+    func getFederationCertificates() async throws -> [String]
     func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse
     func sendAuthorizationRequest(path: String, requestBody: Data) async throws -> ACMEAuthorizationResponse
     func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse
@@ -39,6 +39,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
     private let federationCertificatePath = "federation"
     private let acmeDiscoveryPath: String
     private let httpClient: HttpClientCustom
+    private let decoder = JSONDecoder()
 
     // MARK: - Life cycle
 
@@ -104,7 +105,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         return certificateChain
     }
 
-    public func getFederationCertificate() async throws -> String {
+    public func getFederationCertificates() async throws -> [String] {
         guard
             let baseURL = URL(string: acmeDiscoveryPath)?.extractBaseURL,
             let url = URL(string: federationCertificatePath, relativeTo: baseURL)
@@ -118,12 +119,12 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         let (data, response) = try await httpClient.send(request)
 
         guard
-            let certificateChain = String(bytes: data, encoding: .utf8)
+            let certificates = try? decoder.decode(FederationCertificates.self, from: data).certificates
         else {
             throw NetworkError.errorDecodingURLResponse(response)
         }
 
-        return certificateChain
+        return certificates
     }
 
     public func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse {
@@ -161,7 +162,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         let (data, response) = try await httpClient.send(request)
 
         guard
-            let authorizationResponse = try? JSONDecoder().decode(AuthorizationResponse.self, from: data),
+            let authorizationResponse = try? decoder.decode(AuthorizationResponse.self, from: data),
             let type = authorizationResponse.challenges.first?.type,
             let httpResponse = response as? HTTPURLResponse,
             let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce)

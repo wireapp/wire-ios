@@ -194,26 +194,26 @@ public class MockAcmeAPIInterface: AcmeAPIInterface {
         }
     }
 
-    // MARK: - getFederationCertificate
+    // MARK: - getFederationCertificates
 
-    public var getFederationCertificate_Invocations: [Void] = []
-    public var getFederationCertificate_MockError: Error?
-    public var getFederationCertificate_MockMethod: (() async throws -> String)?
-    public var getFederationCertificate_MockValue: String?
+    public var getFederationCertificates_Invocations: [Void] = []
+    public var getFederationCertificates_MockError: Error?
+    public var getFederationCertificates_MockMethod: (() async throws -> [String])?
+    public var getFederationCertificates_MockValue: [String]?
 
-    public func getFederationCertificate() async throws -> String {
-        getFederationCertificate_Invocations.append(())
+    public func getFederationCertificates() async throws -> [String] {
+        getFederationCertificates_Invocations.append(())
 
-        if let error = getFederationCertificate_MockError {
+        if let error = getFederationCertificates_MockError {
             throw error
         }
 
-        if let mock = getFederationCertificate_MockMethod {
+        if let mock = getFederationCertificates_MockMethod {
             return try await mock()
-        } else if let mock = getFederationCertificate_MockValue {
+        } else if let mock = getFederationCertificates_MockValue {
             return mock
         } else {
-            fatalError("no mock for `getFederationCertificate`")
+            fatalError("no mock for `getFederationCertificates`")
         }
     }
 
