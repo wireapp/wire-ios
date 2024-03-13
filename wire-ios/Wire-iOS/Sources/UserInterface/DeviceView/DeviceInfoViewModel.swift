@@ -94,7 +94,6 @@ final class DeviceInfoViewModel: ObservableObject {
         title: String,
         addedDate: String,
         proteusID: String,
-        isProteusVerificationEnabled: Bool,
         userClient: UserClientType,
         isSelfClient: Bool,
         gracePeriod: TimeInterval,
@@ -107,7 +106,6 @@ final class DeviceInfoViewModel: ObservableObject {
         self.title = title
         self.addedDate = addedDate
         self.proteusID = proteusID
-        self.isProteusVerificationEnabled = isProteusVerificationEnabled
         self.actionsHandler = actionsHandler
         self.userClient = userClient
         self.isSelfClient = isSelfClient
@@ -123,6 +121,7 @@ final class DeviceInfoViewModel: ObservableObject {
         }
 
         e2eIdentityCertificate = userClient.e2eIdentityCertificate
+        isProteusVerificationEnabled = userClient.verified
     }
 
     func update(from userClient: UserClientType) {

@@ -84,7 +84,6 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             title: "some title",
             addedDate: "Monday 15 Oct, 2023",
             proteusID: mockProteusId,
-            isProteusVerificationEnabled: client.verified,
             userClient: client,
             isSelfClient: isSelfClient,
             gracePeriod: 3,
