@@ -51,12 +51,9 @@ extension AppLockModule.View {
         private let contentContainerView = UIView()
         private let blurView = UIVisualEffectView.blurView()
 
-        private let messageLabel: UILabel = {
-            let label = DynamicFontLabel(fontSpec: .largeRegularFont, color: SemanticColors.Label.textWhite)
-            return label
-        }()
+        private let messageLabel = DynamicFontLabel(fontSpec: .largeRegularFont, color: SemanticColors.Label.textWhite)
 
-        private let actionButton = Button(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
+        private let actionButton = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
 
         private var contentWidthConstraint: NSLayoutConstraint!
         private var contentCenterConstraint: NSLayoutConstraint!

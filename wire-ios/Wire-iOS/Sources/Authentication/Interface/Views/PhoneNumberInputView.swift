@@ -81,9 +81,11 @@ final class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidati
     private let countryPickerButton = IconButton()
 
     private let inputStack = UIStackView()
-    let loginButton = Button(style: .accentColorTextButtonStyle,
-                             cornerRadius: 16,
-                             fontSpec: .normalSemiboldFont)
+    let loginButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .normalSemiboldFont
+    )
     private let countryCodeInputView = IconButton()
     private let textField = ValidatedTextField(kind: .phoneNumber, leftInset: 8, style: .default)
 

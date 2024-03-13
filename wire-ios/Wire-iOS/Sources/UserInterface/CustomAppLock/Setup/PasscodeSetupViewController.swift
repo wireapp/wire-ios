@@ -53,7 +53,7 @@ final class PasscodeSetupViewController: UIViewController {
     private let contentView: UIView = UIView()
 
     private lazy var createButton: LegacyButton = {
-        let button = Button(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
+        let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
         button.accessibilityIdentifier = "createPasscodeButton"
 
         button.setTitle(L10n.Localizable.CreatePasscode.CreateButton.title, for: .normal)

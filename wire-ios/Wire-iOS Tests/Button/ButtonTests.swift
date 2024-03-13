@@ -16,14 +16,14 @@
 //
 
 import XCTest
+
 @testable import Wire
-import SnapshotTesting
 
 final class ButtonTests: XCTestCase {
     var sut: Wire.LegacyButton!
 
     override func setUp() {
-        sut = Button(legacyStyle: .empty, fontSpec: .smallLightFont)
+        sut = .init(legacyStyle: .empty, fontSpec: .smallLightFont)
     }
 
     override func tearDown() {
