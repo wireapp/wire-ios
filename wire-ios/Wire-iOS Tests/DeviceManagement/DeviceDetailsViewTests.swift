@@ -196,13 +196,38 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
                                          proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false)
+                                         isSelfClient: true)
         verify(
             matching: setupWrappedInNavigationController(viewModel: viewModel)
         )
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivated() {
+
+        let viewModel = prepareViewModel(mlsThumbprint: mockFingerPrint,
+                                         status: .notActivated,
+                                         isProteusVerificationEnabled: true,
+                                         isE2eIdentityEnabled: true,
+                                         proteusKeyFingerPrint: mockFingerPrint,
+                                         isSelfClient: true)
+        verify(
+            matching: setupWrappedInNavigationController(mode: .light, viewModel: viewModel)
+        )
+    }
+
+    func testWhenE2eidentityIsEnabledAndCertificateIsExpiredForOtherClient() {
+        let viewModel = prepareViewModel(mlsThumbprint: mockFingerPrint,
+                                         status: .expired,
+                                         isProteusVerificationEnabled: true,
+                                         isE2eIdentityEnabled: true,
+                                         proteusKeyFingerPrint: mockFingerPrint,
+                                         isSelfClient: false)
+        verify(
+            matching: setupWrappedInNavigationController(viewModel: viewModel)
+        )
+    }
+
+    func testWhenE2eidentityIsEnabledAndCertificateIsNotActivatedForOtherClient() {
 
         let viewModel = prepareViewModel(mlsThumbprint: mockFingerPrint,
                                          status: .notActivated,
@@ -284,13 +309,37 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
                                          proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false)
+                                         isSelfClient: true)
         verify(
             matching: setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
         )
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivatedInDarkMode() {
+        let viewModel = prepareViewModel(mlsThumbprint: mockFingerPrint,
+                                         status: .notActivated,
+                                         isProteusVerificationEnabled: true,
+                                         isE2eIdentityEnabled: true,
+                                         proteusKeyFingerPrint: mockFingerPrint,
+                                         isSelfClient: true)
+        verify(
+            matching: setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
+        )
+    }
+
+    func testWhenE2eidentityViewIsEnabledAndCertificateIsExpiredInDarkModeForOtherClient() {
+        let viewModel = prepareViewModel(mlsThumbprint: mockFingerPrint,
+                                         status: .expired,
+                                         isProteusVerificationEnabled: true,
+                                         isE2eIdentityEnabled: true,
+                                         proteusKeyFingerPrint: mockFingerPrint,
+                                         isSelfClient: false)
+        verify(
+            matching: setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
+        )
+    }
+
+    func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivatedInDarkModeForOtherClient() {
         let viewModel = prepareViewModel(mlsThumbprint: mockFingerPrint,
                                          status: .notActivated,
                                          isProteusVerificationEnabled: true,
