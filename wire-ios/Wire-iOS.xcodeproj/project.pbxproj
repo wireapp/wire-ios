@@ -1299,6 +1299,8 @@
 		E666EDDA2B73E9C400C03E2B /* BackupStatusCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDD92B73E9C400C03E2B /* BackupStatusCell.swift */; };
 		E666EDDC2B73EA3500C03E2B /* BackupActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDDB2B73EA3500C03E2B /* BackupActionCell.swift */; };
 		E682939A2B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */; };
+		E6832A932BA1B945007B123C /* String+Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6832A922BA1B945007B123C /* String+Mock.swift */; };
+		E6832A942BA1B945007B123C /* String+Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6832A922BA1B945007B123C /* String+Mock.swift */; };
 		E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
 		E6C25FC82AFFABBF00406A1C /* PhoneNumberTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96E230923EAD43A00C2195E /* PhoneNumberTests.swift */; };
 		E6C25FC92AFFABD100406A1C /* AvailabilityStringBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636E57BC2386BFD9005B4FD8 /* AvailabilityStringBuilderTests.swift */; };
@@ -3412,6 +3414,7 @@
 		E666EDD92B73E9C400C03E2B /* BackupStatusCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupStatusCell.swift; sourceTree = "<group>"; };
 		E666EDDB2B73EA3500C03E2B /* BackupActionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupActionCell.swift; sourceTree = "<group>"; };
 		E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationMissedCallSystemMessageViewModelTests.swift; sourceTree = "<group>"; };
+		E6832A922BA1B945007B123C /* String+Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Mock.swift"; sourceTree = "<group>"; };
 		E6C25FC42AFFAAC300406A1C /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6C25FCD2AFFAC2E00406A1C /* CoreDataFixture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataFixture.swift; sourceTree = "<group>"; };
 		E6C25FD92AFFAFB100406A1C /* NSAttributedString+Attachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Attachments.swift"; sourceTree = "<group>"; };
@@ -7787,6 +7790,7 @@
 				E6C25FD92AFFAFB100406A1C /* NSAttributedString+Attachments.swift */,
 				EF1CB6F422B39CBF004CB458 /* ZMConversation+Mock.swift */,
 				25F85D7D2B83447200FBE21F /* E2eIdentityCertificate+Mocks.swift */,
+				E6832A922BA1B945007B123C /* String+Mock.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -10379,6 +10383,7 @@
 				0608828F29EC742B0053772B /* ConversationMessageFailedRecipientsTests.swift in Sources */,
 				EF2E2F71223BC4A60038D7D9 /* VersionInfoViewControllerSnapshotTests.swift in Sources */,
 				638C88C62680F92D0074D512 /* MockCallGridHintNotificationLabel.swift in Sources */,
+				E6832A932BA1B945007B123C /* String+Mock.swift in Sources */,
 				D525426820934629001C04C1 /* IconLabelButtonTests.swift in Sources */,
 				BFF655741E81235900D48337 /* ConversationAvatarViewTests.swift in Sources */,
 				16D4932C203DD480008DDFFA /* UserCellTests.swift in Sources */,
@@ -10776,6 +10781,7 @@
 				E6579E6C2AFFA029004E7FD8 /* MockUser.m in Sources */,
 				E6579E782AFFA36D004E7FD8 /* AppLockModule.MockAppLockController.swift in Sources */,
 				E6C25FF62B03550A00406A1C /* AppLockModulePresenterTests.swift in Sources */,
+				E6832A942BA1B945007B123C /* String+Mock.swift in Sources */,
 				E6C25FD52AFFAE1200406A1C /* ZMConversation+Mock.swift in Sources */,
 				E6579E642AFFA024004E7FD8 /* MockZMUserSession.swift in Sources */,
 				E6579E692AFFA024004E7FD8 /* MockDevice.swift in Sources */,
