@@ -58,8 +58,8 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         return imageView
     }()
 
-    private lazy var certificateDetailsButton: Button = {
-        let button = Button(
+    private lazy var certificateDetailsButton = {
+        let button = ZMButton(
             style: .secondaryTextButtonStyle,
             cornerRadius: 12,
             fontSpec: .buttonSmallBold)
@@ -74,19 +74,19 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         return button
     }()
 
-    private lazy var confirmationButton: Button = {
-        let button = Button(
+    private lazy var confirmationButton = {
+        let button = ZMButton(
             style: .primaryTextButtonStyle,
             cornerRadius: 16,
-            fontSpec: .buttonBigSemibold)
-
+            fontSpec: .buttonBigSemibold
+        )
         button.accessibilityIdentifier = "confirmationButton"
         button.setTitle(L10n.Localizable.EnrollE2eiCertificate.okButton, for: .normal)
         button.addTarget(
             self,
             action: #selector(okTapped),
-            for: .touchUpInside)
-
+            for: .touchUpInside
+        )
         return button
     }()
 

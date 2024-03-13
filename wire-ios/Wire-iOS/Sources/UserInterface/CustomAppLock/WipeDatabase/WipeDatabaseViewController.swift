@@ -77,13 +77,10 @@ final class WipeDatabaseViewController: UIViewController {
         return label
     }()
 
-    private lazy var confirmButton: Button = {
-        let button = Button(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
-
+    private lazy var confirmButton = {
+        let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
         button.setTitle(WipeDatabase.Button.title, for: .normal)
-
         button.addTarget(self, action: #selector(onConfirmButtonPressed(sender:)), for: .touchUpInside)
-
         return button
     }()
 

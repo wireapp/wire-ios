@@ -86,9 +86,11 @@ private final class CTAFooterDescription: ViewDescriptor, AuthenticationSecondar
 
     var actioner: AuthenticationActioner?
 
-    let ctaButton = Button(style: .accentColorTextButtonStyle,
-                             cornerRadius: 16,
-                             fontSpec: .buttonBigSemibold)
+    let ctaButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .buttonBigSemibold
+    )
 
     init() {
         ctaButton.setTitle(L10n.Localizable.AddEmailPasswordStep.CtaButton.title.capitalized, for: .normal)
