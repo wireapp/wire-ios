@@ -33,8 +33,17 @@ final class DeveloperE2eiViewModel: ObservableObject {
     @Published
     var storedCRLExpirationDatesByURL = [String: String]()
 
+    @Published
+    var certificateValidFrom = ""
+
+    @Published
+    var certificateValidTo = ""
+
     init() {
         refreshCRLExpirationDates()
+        Task {
+            await fetchSelfClientCertificate()
+        }
     }
 
     // MARK: - Actions
@@ -74,10 +83,6 @@ final class DeveloperE2eiViewModel: ObservableObject {
 
         let expirationDates = crlExpirationDatesRepository.fetchAllCRLExpirationDates()
 
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .medium
-
         var formattedExpiratioDates = [String: String]()
 
         for (url, date) in expirationDates {
@@ -87,6 +92,28 @@ final class DeveloperE2eiViewModel: ObservableObject {
         }
 
         storedCRLExpirationDatesByURL = formattedExpiratioDates
+    }
+
+    @MainActor
+    func fetchSelfClientCertificate() async {
+        guard let session = userSession,
+              let certificate = try? await session.selfClientCertificateProvider.getCertificate()
+        else {
+            return
+        }
+
+        certificateValidFrom = dateFormatter.string(from: certificate.notValidBefore)
+        certificateValidTo = dateFormatter.string(from: certificate.expiryDate)
+    }
+
+    // MARK: - Helper
+
+    private var dateFormatter: DateFormatter {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .medium
+
+        return dateFormatter
     }
 
 }
