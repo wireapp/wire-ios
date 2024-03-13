@@ -688,29 +688,6 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
         }
     }
 
-    // MARK: - getExternalSender
-
-    public var getExternalSenderConversationId_Invocations: [Data] = []
-    public var getExternalSenderConversationId_MockError: Error?
-    public var getExternalSenderConversationId_MockMethod: ((Data) async throws -> Data)?
-    public var getExternalSenderConversationId_MockValue: Data?
-
-    public func getExternalSender(conversationId: Data) async throws -> Data {
-        getExternalSenderConversationId_Invocations.append(conversationId)
-
-        if let error = getExternalSenderConversationId_MockError {
-            throw error
-        }
-
-        if let mock = getExternalSenderConversationId_MockMethod {
-            return try await mock(conversationId)
-        } else if let mock = getExternalSenderConversationId_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `getExternalSenderConversationId`")
-        }
-    }
-
     // MARK: - createConversation
 
     public var createConversationConversationIdCreatorCredentialTypeConfig_Invocations: [(conversationId: Data, creatorCredentialType: WireCoreCrypto.MlsCredentialType, config: WireCoreCrypto.ConversationConfiguration)] = []
@@ -797,6 +774,29 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
         }
     }
 
+    // MARK: - e2eiDumpPkiEnv
+
+    public var e2eiDumpPkiEnv_Invocations: [Void] = []
+    public var e2eiDumpPkiEnv_MockError: Error?
+    public var e2eiDumpPkiEnv_MockMethod: (() async throws -> WireCoreCrypto.E2eiDumpedPkiEnv?)?
+    public var e2eiDumpPkiEnv_MockValue: WireCoreCrypto.E2eiDumpedPkiEnv??
+
+    public func e2eiDumpPkiEnv() async throws -> WireCoreCrypto.E2eiDumpedPkiEnv? {
+        e2eiDumpPkiEnv_Invocations.append(())
+
+        if let error = e2eiDumpPkiEnv_MockError {
+            throw error
+        }
+
+        if let mock = e2eiDumpPkiEnv_MockMethod {
+            return try await mock()
+        } else if let mock = e2eiDumpPkiEnv_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `e2eiDumpPkiEnv`")
+        }
+    }
+
     // MARK: - e2eiEnrollmentStash
 
     public var e2eiEnrollmentStashEnrollment_Invocations: [WireCoreCrypto.E2eiEnrollment] = []
@@ -863,6 +863,24 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
             return mock
         } else {
             fatalError("no mock for `e2eiIsEnabledCiphersuite`")
+        }
+    }
+
+    // MARK: - e2eiIsPkiEnvSetup
+
+    public var e2eiIsPkiEnvSetup_Invocations: [Void] = []
+    public var e2eiIsPkiEnvSetup_MockMethod: (() async -> Bool)?
+    public var e2eiIsPkiEnvSetup_MockValue: Bool?
+
+    public func e2eiIsPkiEnvSetup() async -> Bool {
+        e2eiIsPkiEnvSetup_Invocations.append(())
+
+        if let mock = e2eiIsPkiEnvSetup_MockMethod {
+            return await mock()
+        } else if let mock = e2eiIsPkiEnvSetup_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `e2eiIsPkiEnvSetup`")
         }
     }
 
@@ -1159,6 +1177,29 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
             return mock
         } else {
             fatalError("no mock for `getDeviceIdentitiesConversationIdDeviceIds`")
+        }
+    }
+
+    // MARK: - getExternalSender
+
+    public var getExternalSenderConversationId_Invocations: [Data] = []
+    public var getExternalSenderConversationId_MockError: Error?
+    public var getExternalSenderConversationId_MockMethod: ((Data) async throws -> Data)?
+    public var getExternalSenderConversationId_MockValue: Data?
+
+    public func getExternalSender(conversationId: Data) async throws -> Data {
+        getExternalSenderConversationId_Invocations.append(conversationId)
+
+        if let error = getExternalSenderConversationId_MockError {
+            throw error
+        }
+
+        if let mock = getExternalSenderConversationId_MockMethod {
+            return try await mock(conversationId)
+        } else if let mock = getExternalSenderConversationId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getExternalSenderConversationId`")
         }
     }
 
