@@ -20,14 +20,18 @@ import SwiftUI
 import WireSyncEngine
 
 final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepViewController {
+    typealias LocalizedEnrollE2eiCertificate = L10n.Localizable.EnrollE2eiCertificate
+    typealias LocalizedUpdateE2eiCertificate = L10n.Localizable.UpdateE2eiCertificate
+
     var certificateDetails: String = ""
     // MARK: - Properties
-    var isUpdateMode: Bool = false
+    var isUpdateMode: Bool
     public var onOkTapped: ((_ viewController: SuccessfulCertificateEnrollmentViewController) -> Void)?
 
-    private let titleLabel: UILabel = {
+    private var titleLabel: UILabel {
+        let title = isUpdateMode ? LocalizedUpdateE2eiCertificate.title : LocalizedEnrollE2eiCertificate.title
         let label = DynamicFontLabel(
-            text: L10n.Localizable.EnrollE2eiCertificate.title,
+            text: title,
             style: .bigHeadline,
             color: SemanticColors.Label.textDefault)
         label.textAlignment = .center
@@ -35,11 +39,12 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         label.accessibilityIdentifier = "titleLabel"
 
         return label
-    }()
+    }
 
-    private let detailsLabel: UILabel = {
+    private var detailsLabel: UILabel {
+        let subtitle = isUpdateMode ? LocalizedUpdateE2eiCertificate.subtitle : LocalizedEnrollE2eiCertificate.subtitle
         let label = DynamicFontLabel(
-            text: L10n.Localizable.EnrollE2eiCertificate.subtitle,
+            text: subtitle,
             style: .body,
             color: SemanticColors.Label.textDefault)
         label.numberOfLines = 0
@@ -47,7 +52,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         label.accessibilityIdentifier = "detailsLabel"
 
         return label
-    }()
+    }
 
     private let shieldImageView = {
         let shieldImage = ImageResource.E_2_EI.Enrollment.certificateValid
@@ -100,11 +105,12 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         return stack
     }()
 
-    private let lastE2EIdentityUpdateDate: LastE2EIdentityUpdateDateProtocol
+    private let lastE2EIdentityUpdateDate: LastE2EIdentityUpdateDateProtocol?
     // MARK: - Life cycle
 
-    init(lastE2EIdentityUpdateDate: LastE2EIdentityUpdateDateProtocol) {
+    init(lastE2EIdentityUpdateDate: LastE2EIdentityUpdateDateProtocol?, isUpdateMode: Bool = false) {
         self.lastE2EIdentityUpdateDate = lastE2EIdentityUpdateDate
+        self.isUpdateMode = isUpdateMode
         super.init(nibName: nil, bundle: nil)
         setupViews()
     }
@@ -118,7 +124,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
         if isUpdateMode {
-            self.lastE2EIdentityUpdateDate.storeLastAlertDate(Date.now)
+            self.lastE2EIdentityUpdateDate?.storeLastAlertDate(Date.now)
         }
     }
 
