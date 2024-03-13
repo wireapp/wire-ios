@@ -282,6 +282,6 @@ extension E2eIdentityCertificate {
     }
 
     func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
-        return isActivated && isExpired && (lastUpdateDate + gracePeriod) < comparedDate
+        return (isActivated && (lastUpdateDate + gracePeriod) < comparedDate) || isExpired
     }
 }
