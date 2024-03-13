@@ -147,8 +147,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     @MainActor
     private func fetchE2eIdentityCertificate() async throws -> E2eIdentityCertificate? {
-        let mlsClientResolver = MLSClientResolver()
-        guard let mlsClientID = mlsClientResolver.mlsClientId(for: userClient),
+        guard let mlsClientID = MLSClientID(userClient: userClient),
         let mlsGroupId = await fetchSelfConversationMLSGroupID() else {
             logger.error("MLSGroupID for self was not found")
             return nil

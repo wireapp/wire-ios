@@ -506,9 +506,8 @@ final class ClientListViewController: UIViewController,
     private func updateCertificates(for userClients: [UserClient]) async -> [UserClient] {
         if let userSession = userSession, let mlsGroupID = await userSession.fetchSelfConversationMLSGroupID() {
             var updatedUserClients = [UserClient]()
-            let mlsResolver = MLSClientResolver()
             let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
-                if let mlsClientId = mlsResolver.mlsClientId(for: $0) {
+                if let mlsClientId = MLSClientID(userClient: $0) {
                     ($0.clientId.hashValue, mlsClientId)
                 } else {
                     nil
@@ -530,9 +529,9 @@ final class ClientListViewController: UIViewController,
                         updatedUserClients.append(client)
                     }
                     if let selfClient = selfClient {
-                        selfClient.e2eIdentityCertificate = certificates.first(where: {
-                            $0.clientId == mlsResolver.mlsClientId(for: selfClient)?.rawValue
-                        }) ?? makeNotActivatedE2EIdenityCertificate(client: selfClient)
+                        selfClient.e2eIdentityCertificate = certificates.first {
+                            $0.clientId == MLSClientID(userClient: selfClient)?.rawValue
+                        } ?? makeNotActivatedE2EIdenityCertificate(client: selfClient)
                         selfClient.mlsThumbPrint = selfClient.e2eIdentityCertificate?.mlsThumbprint ?? selfClient.mlsPublicKeys.ed25519
                     }
                     return updatedUserClients
@@ -549,7 +548,7 @@ final class ClientListViewController: UIViewController,
                     return userClients
                 }
             } catch {
-                WireLogger.e2ei.error(error.localizedDescription)
+                WireLogger.e2ei.error(String(reflecting: error))
                 return userClients
             }
         } else {
@@ -595,7 +594,7 @@ final class ClientListViewController: UIViewController,
     // MARK: Helpers
 
     private func makeNotActivatedE2EIdenityCertificate(client: UserClient) -> E2eIdentityCertificate? {
-        guard let clientID = MLSClientResolver().mlsClientId(for: client) else {
+        guard let clientID = MLSClientID(userClient: client) else {
             return nil
         }
 
