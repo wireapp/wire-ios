@@ -43,7 +43,6 @@ final class DeviceInfoViewModel: ObservableObject {
     let gracePeriod: TimeInterval
     let isFromConversation: Bool
 
-    var mlsThumbprint: String?
     var title: String
     var isSelfClient: Bool
     var userClient: UserClientType
@@ -61,6 +60,12 @@ final class DeviceInfoViewModel: ObservableObject {
 
     var isE2eIdentityEnabled: Bool {
         return e2eIdentityCertificate != nil && mlsThumbprint != nil
+    }
+
+    var mlsThumbprint: String? {
+        e2eIdentityCertificate?
+            .mlsThumbprint
+            .splitStringIntoLines(charactersPerLine: 16)
     }
 
     var serialNumber: String? {
@@ -85,12 +90,9 @@ final class DeviceInfoViewModel: ObservableObject {
     let showDebugMenu: Bool
 
     init(
-        certificate: E2eIdentityCertificate?,
         title: String,
         addedDate: String,
         proteusID: String,
-        mlsThumbprint: String?,
-        isProteusVerificationEnabled: Bool,
         userClient: UserClientType,
         isSelfClient: Bool,
         gracePeriod: TimeInterval,
@@ -100,12 +102,9 @@ final class DeviceInfoViewModel: ObservableObject {
         debugMenuActionsHandler: ConversationUserClientDetailsDebugActions? = nil,
         showDebugMenu: Bool
     ) {
-        self.e2eIdentityCertificate = certificate
         self.title = title
         self.addedDate = addedDate
         self.proteusID = proteusID
-        self.mlsThumbprint = mlsThumbprint
-        self.isProteusVerificationEnabled = isProteusVerificationEnabled
         self.actionsHandler = actionsHandler
         self.userClient = userClient
         self.isSelfClient = isSelfClient
@@ -119,11 +118,13 @@ final class DeviceInfoViewModel: ObservableObject {
                 self?.isActionInProgress = isProcessing
             }
         }
+
+        e2eIdentityCertificate = userClient.e2eIdentityCertificate
+        isProteusVerificationEnabled = userClient.verified
     }
 
     func update(from userClient: UserClientType) {
         e2eIdentityCertificate = userClient.e2eIdentityCertificate
-        mlsThumbprint = userClient.e2eIdentityCertificate?.mlsThumbprint.splitStringIntoLines(charactersPerLine: 16)
         self.userClient = userClient
     }
 
@@ -207,53 +208,6 @@ final class DeviceInfoViewModel: ObservableObject {
 
     func onDuplicateClientTapped() {
         debugMenuActionsHandler?.duplicateClient()
-    }
-}
-
-extension DeviceInfoViewModel {
-    static func map(
-        certificate: E2eIdentityCertificate?,
-        userClient: UserClient,
-        title: String,
-        addedDate: String,
-        proteusID: String?,
-        isSelfClient: Bool,
-        userSession: UserSession,
-        credentials: ZMEmailCredentials?,
-        gracePeriod: TimeInterval,
-        mlsThumbprint: String?,
-        getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
-        saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
-        contextProvider: ContextProvider,
-        e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseProtocol,
-        isFromConversation: Bool = false,
-        showDebugMenu: Bool = Bundle.developerModeEnabled
-    ) -> DeviceInfoViewModel {
-        let deviceActionsHandler = DeviceDetailsViewActionsHandler(
-            userClient: userClient,
-            userSession: userSession,
-            credentials: credentials,
-            saveFileManager: saveFileManager,
-            getProteusFingerprint: getProteusFingerprint,
-            contextProvider: contextProvider,
-            e2eiCertificateEnrollment: e2eiCertificateEnrollment
-        )
-        return DeviceInfoViewModel(
-            certificate: certificate,
-            title: title,
-            addedDate: addedDate,
-            proteusID: proteusID ?? "",
-            mlsThumbprint: mlsThumbprint,
-            isProteusVerificationEnabled: userClient.verified,
-            userClient: userClient,
-            isSelfClient: isSelfClient,
-            gracePeriod: gracePeriod,
-            isFromConversation: isFromConversation,
-            actionsHandler: deviceActionsHandler,
-            conversationClientDetailsActions: deviceActionsHandler,
-            debugMenuActionsHandler: deviceActionsHandler,
-            showDebugMenu: showDebugMenu
-        )
     }
 }
 
