@@ -216,9 +216,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: true
         )
-        verify(
-            matching: setupWrappedInNavigationController(mode: .light, viewModel: viewModel)
-        )
+        let viewController = setupWrappedInNavigationController(mode: .light, viewModel: viewModel)
+
+        verify(matching: viewController)
     }
 
     func testWhenE2eidentityIsEnabledAndCertificateIsExpiredForOtherClient() {
@@ -230,9 +230,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: false
         )
-        verify(
-            matching: setupWrappedInNavigationController(viewModel: viewModel)
-        )
+        let viewController = setupWrappedInNavigationController(viewModel: viewModel)
+
+        verify(matching: viewController)
     }
 
     func testWhenE2eidentityIsEnabledAndCertificateIsNotActivatedForOtherClient() {
@@ -344,9 +344,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: true
         )
-        verify(
-            matching: setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
-        )
+        let viewController = setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
+
+        verify(matching: viewController)
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsExpiredInDarkModeForOtherClient() {
@@ -358,9 +358,9 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             proteusKeyFingerPrint: mockFingerPrint,
             isSelfClient: false
         )
-        verify(
-            matching: setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
-        )
+        let viewController = setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
+
+        verify(matching: viewController)
     }
 
     func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivatedInDarkModeForOtherClient() {
