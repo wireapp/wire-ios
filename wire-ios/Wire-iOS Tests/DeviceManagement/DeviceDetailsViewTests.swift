@@ -215,7 +215,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         )
     }
 
-    func testWhenE2eidentityViewIsEnabledAndCertificateIsExpiredForOtherClient() {
+    func testWhenE2eidentityIsEnabledAndCertificateIsExpiredForOtherClient() {
         let viewModel = prepareViewModel(mlsThumbprint: mockFingerPrint,
                                          status: .expired,
                                          isProteusVerificationEnabled: true,
@@ -227,7 +227,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         )
     }
 
-    func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivatedForOtherClient() {
+    func testWhenE2eidentityIsEnabledAndCertificateIsNotActivatedForOtherClient() {
 
         let viewModel = prepareViewModel(mlsThumbprint: mockFingerPrint,
                                          status: .notActivated,
