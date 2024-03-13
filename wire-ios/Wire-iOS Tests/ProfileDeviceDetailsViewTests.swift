@@ -64,12 +64,12 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
         isProteusVerificationEnabled: Bool,
         isE2eIdentityEnabled: Bool,
         proteusKeyFingerPrint: String,
-        isSelfClient: Bool,
         showDebugMenu: Bool = false
     ) -> DeviceInfoViewModel {
         let mockSession = UserSessionMock(mockUser: .createSelfUser(name: "Joe"))
         mockSession.isE2eIdentityEnabled = isE2eIdentityEnabled
         var certificate: E2eIdentityCertificate
+
         switch status {
         case .notActivated:
             certificate = .mockNotActivated
@@ -82,26 +82,22 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
         case .invalid:
             certificate = .mockInvalid
         }
-        let emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
 
-        let viewModel = DeviceInfoViewModel.map(
-            certificate: isE2eIdentityEnabled ? certificate : nil,
-            userClient: client,
-            title: "some title",
-            addedDate: "Monday 15 Oct, 2023",
-            proteusID: mockProteusId,
-            isSelfClient: isSelfClient,
-            userSession: mockSession,
-            credentials: emailCredentials,
-            gracePeriod: 3,
-            mlsThumbprint: mlsThumbprint,
-            getProteusFingerprint: mockSession.mockGetUserClientFingerprintUseCaseProtocol,
-            contextProvider: mockContextProvider,
-            e2eiCertificateEnrollment: MockEnrollE2EICertificateUseCaseProtocol(),
-            showDebugMenu: showDebugMenu
-        )
+        let emailCredentials = ZMEmailCredentials(email: "test@rad.com", password: "smalsdldl231S#")
+        let deviceActions = MockDeviceDetailsViewActions()
+        deviceActions.getProteusFingerPrint_MockValue = proteusKeyFingerPrint
+        let viewModel = DeviceInfoViewModel(title: "some title",
+                                            addedDate: "Monday 15 Oct, 2023",
+                                            proteusID: mockProteusId,
+                                            userClient: client,
+                                            isSelfClient: false,
+                                            gracePeriod: 0,
+                                            isFromConversation: true,
+                                            actionsHandler: deviceActions,
+                                            conversationClientDetailsActions: MockConversationUserClientDetailsActions(),
+                                            showDebugMenu: showDebugMenu)
+        viewModel.e2eIdentityCertificate = isE2eIdentityEnabled ? certificate : nil
         viewModel.proteusKeyFingerprint = proteusKeyFingerPrint
-        viewModel.isSelfClient = isSelfClient
         viewModel.isProteusVerificationEnabled = isProteusVerificationEnabled
         return viewModel
     }
@@ -120,8 +116,7 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
                                          status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: false,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false)
+                                         proteusKeyFingerPrint: mockFingerPrint)
         verify(
             matching: setupWrappedInNavigationController(
                 viewModel: viewModel
@@ -135,7 +130,6 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: false,
                                          proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false,
                                          showDebugMenu: true)
         verify(
             matching: setupWrappedInNavigationController(
@@ -149,24 +143,11 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
                                          status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: false,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false)
+                                         proteusKeyFingerPrint: mockFingerPrint)
         verify(
             matching: setupWrappedInNavigationController(
                 viewModel: viewModel
             )
-        )
-    }
-
-    func testGivenSelfClientWhenE2eidentityViewIsDisabled() {
-        let viewModel = prepareViewModel(mlsThumbprint: mockFingerPrint,
-                                         status: .notActivated,
-                                         isProteusVerificationEnabled: true,
-                                         isE2eIdentityEnabled: false,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: true)
-        verify(
-            matching: setupWrappedInNavigationController(viewModel: viewModel)
         )
     }
 
@@ -175,8 +156,7 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
                                          status: .valid,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false)
+                                         proteusKeyFingerPrint: mockFingerPrint)
         verify(
             matching: setupWrappedInNavigationController(viewModel: viewModel)
         )
@@ -187,8 +167,7 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
                                          status: .valid,
                                          isProteusVerificationEnabled: false,
                                          isE2eIdentityEnabled: true,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false)
+                                         proteusKeyFingerPrint: mockFingerPrint)
         verify(
             matching: setupWrappedInNavigationController(viewModel: viewModel)
         )
@@ -199,8 +178,7 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
                                          status: .revoked,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false)
+                                         proteusKeyFingerPrint: mockFingerPrint)
         verify(
             matching: setupWrappedInNavigationController(viewModel: viewModel)
         )
@@ -211,8 +189,7 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
                                          status: .expired,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: true)
+                                         proteusKeyFingerPrint: mockFingerPrint)
         verify(
             matching: setupWrappedInNavigationController(viewModel: viewModel)
         )
@@ -224,33 +201,7 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
                                          status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: true)
-        verify(
-            matching: setupWrappedInNavigationController(mode: .light, viewModel: viewModel)
-        )
-    }
-
-    func testWhenE2eidentityIsEnabledAndCertificateIsExpiredForOtherClient() {
-        let viewModel = prepareViewModel(mlsThumbprint: mockFingerPrint,
-                                         status: .expired,
-                                         isProteusVerificationEnabled: true,
-                                         isE2eIdentityEnabled: true,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false)
-        verify(
-            matching: setupWrappedInNavigationController(viewModel: viewModel)
-        )
-    }
-
-    func testWhenE2eidentityIsEnabledAndCertificateIsNotActivatedForOtherClient() {
-
-        let viewModel = prepareViewModel(mlsThumbprint: mockFingerPrint,
-                                         status: .notActivated,
-                                         isProteusVerificationEnabled: true,
-                                         isE2eIdentityEnabled: true,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false)
+                                         proteusKeyFingerPrint: mockFingerPrint)
         verify(
             matching: setupWrappedInNavigationController(mode: .light, viewModel: viewModel)
         )
@@ -261,8 +212,7 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
                                          status: .invalid,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false)
+                                         proteusKeyFingerPrint: mockFingerPrint)
         verify(
             matching: setupWrappedInNavigationController(viewModel: viewModel)
         )
@@ -270,26 +220,12 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
 
     // MARK: - Dark mode
 
-    func testGivenSelfClientWhenE2eidentityViewIsDisabledInDarkMode() {
-
-        let viewModel = prepareViewModel(mlsThumbprint: mockFingerPrint,
-                                         status: .notActivated,
-                                         isProteusVerificationEnabled: true,
-                                         isE2eIdentityEnabled: false,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: true)
-        verify(
-            matching: setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
-        )
-    }
-
     func testWhenE2eidentityViewIsDisabledInDarkMode() {
         let viewModel = prepareViewModel(mlsThumbprint: mockFingerPrint,
                                          status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: false,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false)
+                                         proteusKeyFingerPrint: mockFingerPrint)
         verify(
             matching: setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
         )
@@ -300,8 +236,7 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
                                          status: .valid,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false)
+                                         proteusKeyFingerPrint: mockFingerPrint)
         verify(
             matching: setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
         )
@@ -312,8 +247,7 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
                                          status: .revoked,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false)
+                                         proteusKeyFingerPrint: mockFingerPrint)
         verify(
             matching: setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
         )
@@ -324,8 +258,7 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
                                          status: .expired,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: true)
+                                         proteusKeyFingerPrint: mockFingerPrint)
         verify(
             matching: setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
         )
@@ -336,32 +269,7 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
                                          status: .notActivated,
                                          isProteusVerificationEnabled: true,
                                          isE2eIdentityEnabled: true,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: true)
-        verify(
-            matching: setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
-        )
-    }
-
-    func testWhenE2eidentityViewIsEnabledAndCertificateIsExpiredInDarkModeForOtherClient() {
-        let viewModel = prepareViewModel(mlsThumbprint: mockFingerPrint,
-                                         status: .expired,
-                                         isProteusVerificationEnabled: true,
-                                         isE2eIdentityEnabled: true,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false)
-        verify(
-            matching: setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
-        )
-    }
-
-    func testWhenE2eidentityViewIsEnabledAndCertificateIsNotActivatedInDarkModeForOtherClient() {
-        let viewModel = prepareViewModel(mlsThumbprint: mockFingerPrint,
-                                         status: .notActivated,
-                                         isProteusVerificationEnabled: true,
-                                         isE2eIdentityEnabled: true,
-                                         proteusKeyFingerPrint: mockFingerPrint,
-                                         isSelfClient: false)
+                                         proteusKeyFingerPrint: mockFingerPrint)
         verify(
             matching: setupWrappedInNavigationController(mode: .dark, viewModel: viewModel)
         )
