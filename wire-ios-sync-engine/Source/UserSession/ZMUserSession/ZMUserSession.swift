@@ -517,8 +517,6 @@ public final class ZMUserSession: NSObject {
             self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
 
-            createMLSClientIfNeeded()
-
             if e2eiFeature.isEnabled {
                 self.observeMLSGroupVerificationStatus.invoke()
                 self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
