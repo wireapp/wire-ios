@@ -90,7 +90,8 @@ extension ZMUserSession {
 
             Task {
                 do {
-                    try await self.e2eiRepository.fetchFederationCertificates()
+                    let e2eiRepository = await self.viewContext.perform { self.e2eiRepository }
+                    try await e2eiRepository.fetchFederationCertificates()
                 } catch {
                     WireLogger.e2ei.error("Failed to refresh federation certificates: \(error)")
                 }
