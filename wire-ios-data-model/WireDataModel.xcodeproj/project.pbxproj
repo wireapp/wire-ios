@@ -605,6 +605,7 @@
 		EEB121AE2A175C9500E74D39 /* LastEventIDRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB121AD2A175C9500E74D39 /* LastEventIDRepositoryTests.swift */; };
 		EEB5DE0A283784F9009B4741 /* Feature+DigitalSignature.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB5DE09283784F9009B4741 /* Feature+DigitalSignature.swift */; };
 		EEB5DE112837BD52009B4741 /* store2-101-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EEB5DE102837BD52009B4741 /* store2-101-0.wiredatabase */; };
+		EEB7138D2BA1E0FA00DB27F6 /* EAREncryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB7138C2BA1E0FA00DB27F6 /* EAREncryptor.swift */; };
 		EEB803AB283F61E600412F62 /* Feature.MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB803AA283F61E600412F62 /* Feature.MLS.swift */; };
 		EEB930B52ABD5A9B00FB35B2 /* FetchSupportedProtocolsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB930B42ABD5A9B00FB35B2 /* FetchSupportedProtocolsAction.swift */; };
 		EEBACDA525B9C243000210AC /* LAContextProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDA425B9C243000210AC /* LAContextProtocol.swift */; };
@@ -1528,6 +1529,7 @@
 		EEB121AD2A175C9500E74D39 /* LastEventIDRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastEventIDRepositoryTests.swift; sourceTree = "<group>"; };
 		EEB5DE09283784F9009B4741 /* Feature+DigitalSignature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Feature+DigitalSignature.swift"; sourceTree = "<group>"; };
 		EEB5DE102837BD52009B4741 /* store2-101-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-101-0.wiredatabase"; sourceTree = "<group>"; };
+		EEB7138C2BA1E0FA00DB27F6 /* EAREncryptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EAREncryptor.swift; sourceTree = "<group>"; };
 		EEB803AA283F61E600412F62 /* Feature.MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.MLS.swift; sourceTree = "<group>"; };
 		EEB930B42ABD5A9B00FB35B2 /* FetchSupportedProtocolsAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchSupportedProtocolsAction.swift; sourceTree = "<group>"; };
 		EEBACDA425B9C243000210AC /* LAContextProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LAContextProtocol.swift; sourceTree = "<group>"; };
@@ -2452,6 +2454,7 @@
 			isa = PBXGroup;
 			children = (
 				EEC57C4929E407CC0068DFDA /* EARService.swift */,
+				EEB7138C2BA1E0FA00DB27F6 /* EAREncryptor.swift */,
 				EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */,
 				EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */,
 				EE428C5129F1533000ECB715 /* EARKeyEncryptor.swift */,
@@ -4222,6 +4225,7 @@
 				1600D93C267A80D700970F99 /* ZMManagedObject+Fetching.swift in Sources */,
 				63B1336429A503D100009D84 /* UploadSelfMLSKeyPackagesAction.swift in Sources */,
 				165124D62188CF66006A3C75 /* ZMClientMessage+Editing.swift in Sources */,
+				EEB7138D2BA1E0FA00DB27F6 /* EAREncryptor.swift in Sources */,
 				165D3A2D1E1D47AB0052E654 /* ZMCallState.swift in Sources */,
 				F9A706731CAEE01D00C2F5FE /* AssetEncryption.swift in Sources */,
 				F9FD75731E2E6A2100B4558B /* ConversationListObserverCenter.swift in Sources */,

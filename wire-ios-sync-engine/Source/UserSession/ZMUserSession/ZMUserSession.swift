@@ -553,7 +553,11 @@ public final class ZMUserSession: NSObject {
         ZMUserSession.moveCachesIfNeededForAccount(with: coreDataStack.account.userIdentifier, in: coreDataStack.applicationContainer)
 
         let userImageCache = UserImageLocalCache(location: cacheLocation)
-        let fileAssetCache = FileAssetCache(location: cacheLocation)
+
+        let fileAssetCache = FileAssetCache(
+            location: cacheLocation,
+            earEncryptor: earService.encryptor
+        )
 
         managedObjectContext.zm_userImageCache = userImageCache
         managedObjectContext.zm_fileAssetCache = fileAssetCache

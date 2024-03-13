@@ -46,6 +46,7 @@ extension NSManagedObjectContext {
 open class FileAssetCache: NSObject {
 
     private let fileCache: FileCache
+    private let earEncryptor: EAREncryptorProtocol
 
     var cache: Cache {
         return fileCache
@@ -53,8 +54,12 @@ open class FileAssetCache: NSObject {
 
     /// Creates an asset cache.
 
-    public init(location: URL? = nil) {
+    public init(
+        location: URL? = nil,
+        earEncryptor: EAREncryptorProtocol
+    ) {
         fileCache = FileCache(name: "files", location: location)
+        self.earEncryptor = earEncryptor
         super.init()
     }
 
