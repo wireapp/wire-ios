@@ -74,7 +74,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             userClient: client,
             userSession: mockSession,
             credentials: emailCredentials,
-            saveFileManager: SaveFileManager(systemFileSavePresenter: SystemSavePresenter()), // should this manager be mocked?
+            saveFileManager: SaveFileManager(systemFileSavePresenter: MockSystemSaveFilePresenter()),
             getProteusFingerprint: mockSession.mockGetUserClientFingerprintUseCaseProtocol,
             contextProvider: mockContextProvider,
             e2eiCertificateEnrollment: MockEnrollE2EICertificateUseCaseProtocol()
