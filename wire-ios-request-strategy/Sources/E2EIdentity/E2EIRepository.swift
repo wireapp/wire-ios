@@ -47,6 +47,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
     private let e2eiSetupService: E2EISetupServiceInterface
     private let keyRotator: E2EIKeyPackageRotating
     private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private let logger: WireLogger = .e2ei
 
     // MARK: - Life cycle
 
@@ -74,7 +75,11 @@ public final class E2EIRepository: E2EIRepositoryInterface {
     public func fetchFederationCertificates() async throws {
         let federationCertificates = try await acmeApi.getFederationCertificates()
         for certificate in federationCertificates {
-            try await e2eiSetupService.registerFederationCertificate(certificate)
+            do {
+                try await e2eiSetupService.registerFederationCertificate(certificate)
+            } catch {
+                logger.warn("failed to register certificate (error: \(String(describing: error)), certificate: \(certificate))")
+            }
         }
     }
 

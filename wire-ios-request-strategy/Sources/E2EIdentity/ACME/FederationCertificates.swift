@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct FederationCertificates: Decodable {
+struct FederationCertificates: Codable {
     let certificates: [String]
 
     enum CodingKeys: String, CodingKey {

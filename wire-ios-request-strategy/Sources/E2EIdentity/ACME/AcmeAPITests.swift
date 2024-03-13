@@ -24,6 +24,7 @@ class AcmeAPITests: ZMTBaseTest {
     var acmeApi: AcmeAPI?
     var mockHttpClient: MockHttpClient?
     let backendDomainBackup = BackendInfo.domain
+    private let encoder: JSONEncoder = .defaultEncoder
 
     override func setUp() {
         super.setUp()
@@ -225,7 +226,7 @@ class AcmeAPITests: ZMTBaseTest {
             httpVersion: "",
             headerFields: ["Replay-Nonce": headerNonce]
         ))
-        let challengeResponseData = try JSONEncoder.defaultEncoder.encode(expectation)
+        let challengeResponseData = try encoder.encode(expectation)
         mockHttpClient?.mockResponse = (challengeResponseData, mockResponse)
 
         do {
@@ -278,11 +279,8 @@ class AcmeAPITests: ZMTBaseTest {
             "certificate_2",
             "certificate_3"
         ]
-        let mockPayload = [
-            "crts": mockCertificates
-        ]
-
-        let mockData = try JSONSerialization.data(withJSONObject: mockPayload)
+        let mockPayload = FederationCertificates(certificates: mockCertificates)
+        let mockData = try encoder.encode(mockPayload)
         mockHttpClient?.mockResponse = (mockData, mockResponse)
 
         // when
