@@ -91,18 +91,13 @@ struct ProfileDeviceDetailsView: View {
 
     private var showDeviceFingerPrintView: some View {
         HStack {
-            SwiftUI.Button {
-                Task {
-                    viewModel.onShowMyDeviceTapped()
-                }
-            } label: {
-                Text(L10n.Localizable.Profile.Devices.Detail.ShowMyDevice.title)
+            Text(L10n.Localizable.Profile.Devices.Detail.ShowMyDevice.title)
                 .padding(.all, ViewConstants.Padding.standard)
                 .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
                 .font(UIFont.swiftUIFont(for: .bodyTwoSemibold))
-            }
             Spacer()
-            Asset.Images.chevronRight.swiftUIImage.padding(.trailing, ViewConstants.Padding.standard)
+            Asset.Images.chevronRight.swiftUIImage
+                .padding(.trailing, ViewConstants.Padding.standard)
         }
         .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
     }
@@ -110,15 +105,18 @@ struct ProfileDeviceDetailsView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                if viewModel.isE2eIdentityEnabled {
-                    if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
-                        mlsView
+                VStack(alignment: .leading) {
+                    if viewModel.isE2eIdentityEnabled {
+                        if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
+                            mlsView
+                        }
+                        e2eIdentityCertificateView
                     }
-
-                    e2eIdentityCertificateView
+                    proteusView
+                    showDeviceFingerPrintView.onTapGesture {
+                        viewModel.onShowMyDeviceTapped()
+                    }
                 }
-
-                proteusView
             }
             .background(SemanticColors.View.backgroundDefault.swiftUIColor)
             .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
@@ -129,9 +127,8 @@ struct ProfileDeviceDetailsView: View {
                         if viewModel.isActionInProgress {
                             Spacer()
                             SwiftUI.ProgressView()
+                            Spacer()
                         }
-                        Spacer()
-                        showDeviceFingerPrintView
                     }
                 }
             )
