@@ -23,7 +23,7 @@ import Foundation
 public protocol E2EIActivationDateRepositoryProtocol {
 
     var e2eiActivatedAt: Date? { get }
-    func storeE2eiActivationDate(_ date: Date)
+    func storeE2EIActivationDate(_ date: Date)
 
 }
 
@@ -59,7 +59,7 @@ public final class E2EIActivationDateRepository: NSObject, E2EIActivationDateRep
         return storage.date(forKey: .e2eiActivatedAt)
     }
 
-    public func storeE2eiActivationDate(_ date: Date) {
+    public func storeE2EIActivationDate(_ date: Date) {
         storage.set(date, forKey: .e2eiActivatedAt)
     }
 

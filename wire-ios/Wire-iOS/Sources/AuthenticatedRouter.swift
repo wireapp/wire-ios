@@ -102,7 +102,7 @@ final class AuthenticatedRouter: NSObject {
         }
 
         if change == .e2eIEnabled {
-            e2eiActivationDateRepository.storeE2eiActivationDate(Date.now)
+            e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
         }
 
         _viewController?.presentAlert(alert)
