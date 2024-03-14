@@ -42,7 +42,7 @@ public class OAuthUseCase: OAuthUseCaseInterface {
         logger.info("invoke authentication flow")
 
         guard let bundleID = Bundle.main.bundleIdentifier,
-              let redirectURI = URL(string: "\(bundleID):/oauth2redirect")
+              let redirectURI = URL(string: "wire://e2ei/oauth2redirect")
         else {
             throw OAuthError.missingRequestParameters
         }

@@ -79,6 +79,12 @@
 				<string>${WIRE_BUNDLE_ID}</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>wire://e2ei/oauth2redirect</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>${WIRE_BUILD_NUMBER}</string>
