@@ -24,13 +24,11 @@ final class SuccessfulCertificateEnrollmentViewControllerSnapshotTests: BaseSnap
 
     func testThatItShouldShowAppriateMessage_WhenEnrolE2eIdentityIsSuccessful() {
         let sut = SuccessfulCertificateEnrollmentViewController(lastE2EIdentityUpdateDate: nil, isUpdateMode: false)
-        sut.isUpdateMode = false
         verify(matching: sut)
     }
 
     func testThatItShouldShowAppriateMessage_WhenUpdateE2eIdentityIsSuccessful() {
         let sut = SuccessfulCertificateEnrollmentViewController(lastE2EIdentityUpdateDate: nil, isUpdateMode: true)
-        sut.isUpdateMode = true
         verify(matching: sut)
     }
 }

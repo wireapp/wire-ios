@@ -214,9 +214,11 @@ final class ClientListViewController: UIViewController,
                 self.updateE2EIdentityCertificateInDetailsView()
             }
 
-            let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController(lastE2EIdentityUpdateDate: lastE2EIUpdateDate)
+            let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController(
+                lastE2EIdentityUpdateDate: lastE2EIUpdateDate,
+                isUpdateMode: true
+            )
             successEnrollmentViewController.certificateDetails = certificateChain
-            successEnrollmentViewController.isUpdateMode = true
             successEnrollmentViewController.onOkTapped = { viewController in
                 viewController.dismiss(animated: true)
             }

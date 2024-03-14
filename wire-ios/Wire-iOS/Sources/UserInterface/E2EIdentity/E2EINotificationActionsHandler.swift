@@ -136,8 +136,10 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     @MainActor
     private func confirmSuccessfulEnrollment(_ certificateDetails: String) async {
         await snoozeCertificateEnrollmentUseCase.invoke()
-        let successScreen = SuccessfulCertificateEnrollmentViewController(lastE2EIdentityUpdateDate: userSession?.lastE2EIUpdateDate)
-        successScreen.isUpdateMode = isUpdateMode
+        let successScreen = SuccessfulCertificateEnrollmentViewController(
+            lastE2EIdentityUpdateDate: userSession?.lastE2EIUpdateDate,
+            isUpdateMode: isUpdateMode
+        )
         successScreen.certificateDetails = certificateDetails
         successScreen.onOkTapped = { viewController in
             viewController.dismiss(animated: true)
