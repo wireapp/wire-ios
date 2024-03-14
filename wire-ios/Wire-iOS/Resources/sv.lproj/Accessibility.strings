@@ -35,10 +35,10 @@
 "conversation.openFormattingButton.description" = "Open formatting options";
 "conversation.hideFormattingButton.description" = "Hide formatting options";
 "conversation.timerButton.description" = "Set a timer for self-deleting messages";
-"conversation.mentionButton.description" = "Mention someone";
-"conversation.cameraButton.description" = "Take or select a photo";
+"conversation.mentionButton.description" = "Nämn någon";
+"conversation.cameraButton.description" = "Ta eller välj ett foto";
 "conversation.sketchButton.description" = "Open sketch to draw or write";
-"conversation.gifButton.description" = "Select a GIF";
+"conversation.gifButton.description" = "Välj en GIF";
 "conversation.audioButton.description" = "Record an audio message";
 "conversation.pingButton.description" = "Send a ping";
 "conversation.uploadFileButton.description" = "Share a file";
@@ -71,13 +71,13 @@
 "conversationSearch.section.hint" = "Double tap to open all";
 "conversationSearch.emptyResult.description" = "Inga resultat";
 "conversationSearch.noItems.description" = "Inga objekt i samlingen";
-"conversationSearch.imageMessage.description" = "Image";
+"conversationSearch.imageMessage.description" = "Bild";
 "conversationSearch.videoMessage.description" = "Video message";
 "conversationSearch.audioMessage.description" = "Ljudmeddelande";
-"conversationSearch.linkMessage.description" = "Link";
+"conversationSearch.linkMessage.description" = "Länk";
 "conversationSearch.sentBy.description" = "Sent by %@";
 "conversationSearch.fileName.description" = "File name";
-"conversationSearch.fileSize.description" = "Size";
+"conversationSearch.fileSize.description" = "Storlek";
 "conversationSearch.fileType.description" = "Type";
 
 "conversationSearch.item.hint" = "Double tap to open";
@@ -122,7 +122,7 @@
 "sketch.selectPictureButton.description" = "Select picture";
 "sketch.drawButton.description" = "Draw or write";
 "sketch.drawButton.hint" = "Double tap to enable or disable";
-"sketch.selectEmojiButton.description" = "Select emoji";
+"sketch.selectEmojiButton.description" = "Välj emoji";
 "sketch.sendButton.description" = "Skicka";
 "sketch.undoButton.description" = "Undo last step";
 "sketch.closeButton.description" = "Close sketch";
@@ -184,7 +184,7 @@
 "accountPage.availabilityStatus.description" = "Status";
 "accountPage.availabilityStatus.hint" = "Double tap to change status";
 "accountPage.handle.description" = "Användarnanm";
-"accountPage.name.description" = "Profile name";
+"accountPage.name.description" = "Profilnamn";
 "accountPage.teamName.description" = "Team name";
 "accountPage.profilePicture.description" = "Profilbild";
 "accountPage.profilePicture.hint" = "Double tap to change your picture";
@@ -229,6 +229,11 @@
 "conversationAnnouncement.file.description" = "File %@ received from %@";
 "conversationAnnouncement.deletedMessage.description" = "%@ raderade ett meddelande";
 "conversationAnnouncement.editedMessage.description" = "%@ redigerade ett meddelande";
+
+"groupDetails.conversation.participants.allYourDevicesProteusVerified" = "all your devices are verified (Proteus)";
+"groupDetails.conversation.participants.allYourDevicesHaveValidCertificates" = "all your devices have a valid end-to-end identity certificate";
+"groupDetails.conversation.participants.allDevicesProteusVerified" = "all devices are verified (Proteus)";
+"groupDetails.conversation.participants.allDevicesHaveValidCertificates" = "all devices have a valid end-to-end identity certificate";
 
 "calling.flipCameraBackButton.description" = "Flip to back camera";
 "calling.flipCameraFrontButton.description" = "Flip to front camera";

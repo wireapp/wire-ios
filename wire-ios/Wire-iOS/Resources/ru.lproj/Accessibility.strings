@@ -231,6 +231,11 @@
 "conversationAnnouncement.deletedMessage.description" = "%@ удалил сообщение";
 "conversationAnnouncement.editedMessage.description" = "%@ изменил сообщение";
 
+"groupDetails.conversation.participants.allYourDevicesProteusVerified" = "Все ваши устройства верифицированы (Proteus)";
+"groupDetails.conversation.participants.allYourDevicesHaveValidCertificates" = "все ваши устройства имеют действительный сертификат сквозной идентификации";
+"groupDetails.conversation.participants.allDevicesProteusVerified" = "Все устройства верифицированы (Proteus)";
+"groupDetails.conversation.participants.allDevicesHaveValidCertificates" = "все устройства имеют действительный сертификат сквозной идентификации";
+
 "calling.flipCameraBackButton.description" = "Переключиться на основную камеру";
 "calling.flipCameraFrontButton.description" = "Переключиться на фронтальную камеру";
 "calling.videoOnButton.description" = "Включить камеру";
