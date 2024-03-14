@@ -90,10 +90,6 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
             return (Set(clientIDs), userIdentities)
         }
 
-        for userIdentity in userIdentities {
-            print(userIdentity.thumbprint)
-        }
-
         return !userIdentities.isEmpty && clientIDs == Set(userIdentities.map(\.clientId)) && userIdentities.allSatisfy { $0.status == .valid }
     }
 }
