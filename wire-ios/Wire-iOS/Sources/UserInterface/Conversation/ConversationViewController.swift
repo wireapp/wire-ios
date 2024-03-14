@@ -560,8 +560,22 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     func conversationInputBarViewControllerDidComposeText(text: String,
                                                           mentions: [Mention],
                                                           replyingTo message: ZMConversationMessage?) {
-        contentViewController.scrollToBottomIfNeeded()
-        inputBarController.sendController.sendTextMessage(text, mentions: mentions, userSession: userSession, replyingTo: message)
+
+        let action = { [self] in
+            contentViewController.scrollToBottomIfNeeded()
+            inputBarController.sendController.sendTextMessage(text, mentions: mentions, userSession: userSession, replyingTo: message)
+        }
+
+        if conversation.isMLConversationDegraded {
+            presentE2EIPrivacyWarningAlert { sendAnyway in
+                if sendAnyway {
+                    action()
+                }
+            }
+            return
+        }
+        action()
+
     }
 
     func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController) -> Bool {
