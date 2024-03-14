@@ -19,129 +19,16 @@
 import Foundation
 import WireProtos
 
-fileprivate extension Cache {
-
-    /// Decrypts an encrypted asset in the asset cache to a decrypted version in the cache. Upon completion of the decryption, deletes the encrypted
-    /// original. In case of error (the digest doesn't match, or any other error), deletes the original and does not create a decrypted version.
-    /// Returns whether the decryption was successful and the digest matched
-    ///
-    func decryptAssetIfItMatchesDigest(
-        _ plaintextEntryKey: String,
-        encryptedEntryKey: String,
-        encryptionKey: Data,
-        macKey: Data,
-        macDigest: Data,
-        createdAt creationDate: Date
-    ) -> Bool {
-        guard let encryptedData = assetData(encryptedEntryKey) else {
-            return false
-        }
-
-        let mac = encryptedData.zmHMACSHA256Digest(key: macKey)
-
-        guard mac == macDigest else {
-            deleteAssetData(encryptedEntryKey)
-            return false
-        }
-
-        let plainData = encryptedData.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
-        
-        if let plainData {
-            storeAssetData(
-                plainData,
-                key: plaintextEntryKey,
-                createdAt: creationDate
-            )
-        }
-
-        deleteAssetData(encryptedEntryKey)
-        return true
-    }
-
-    /// Decrypts an encrypted asset in the asset cache to a decrypted version in the cache. Upon completion of the decryption, deletes the encrypted
-    /// original. In case of error (the digest doesn't match, or any other error), deletes the original and does not create a decrypted version.
-    /// Returns whether the decryption was successful and the digest matched
-    ///
-    /// - Parameters:
-    ///   - plaintextEntryKey: plain entry key
-    ///   - encryptedEntryKey: encrypted entry key
-    ///   - encryptionKey: encryption key
-    ///   - sha256Digest: optional sha 256 digest of the encrpted data, if it is nil, skip the checking. If it is non nil and does not match the encrypted data's hash, delete the encrypted data and return.
-    /// - Returns: whether the decryption was successful and the digest matched
-
-    func decryptAssetIfItMatchesDigest(
-        _ plaintextEntryKey: String,
-        encryptedEntryKey: String,
-        encryptionKey: Data,
-        sha256Digest: Data? = nil,
-        createdAt creationDate: Date
-    ) -> Bool {
-        guard let encryptedData = assetData(encryptedEntryKey) else {
-            return false
-        }
-
-        // check the digest
-        guard encryptedData.zmSHA256Digest() == sha256Digest else {
-            deleteAssetData(encryptedEntryKey)
-            return false
-        }
-
-        let plainData = encryptedData.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
-        
-        if let plainData {
-            storeAssetData(
-                plainData,
-                key: plaintextEntryKey,
-                createdAt: creationDate
-            )
-        }
-        
-        deleteAssetData(encryptedEntryKey)
-        return true
-    }
-
-    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest of the encrypted entry
-    ///
-    func encryptFileAndComputeSHA256Digest(
-        _ plaintextEntryKey: String,
-        encryptedEntryKey: String
-    ) -> ZMImageAssetEncryptionKeys? {
-        guard let plainData = assetData(plaintextEntryKey) else {
-            return nil
-        }
-
-        let encryptionKey = Data.randomEncryptionKey()
-
-        do {
-            let encryptedData = try plainData.zmEncryptPrefixingPlainTextIV(key: encryptionKey)
-            let hash = encryptedData.zmSHA256Digest()
-            
-            storeAssetData(
-                encryptedData,
-                key: encryptedEntryKey,
-                createdAt: Date()
-            )
-            
-            return ZMImageAssetEncryptionKeys(
-                otrKey: encryptionKey,
-                sha256: hash
-            )
-        } catch {
-            return nil
-        }
-    }
-}
-
 extension FileAssetCache {
 
-    // MARK: - team logo
+    // MARK: - Team logo
 
     public func decryptImageIfItMatchesDigest(
         for team: Team,
         format: ZMImageFormat,
         encryptionKey: Data
     ) -> Bool {
-        guard 
+        guard
             let plaintextCacheKey = Self.cacheKeyForAsset(
                 for: team,
                 format: format,
@@ -156,7 +43,7 @@ extension FileAssetCache {
             return false
         }
 
-        return cache.decryptAssetIfItMatchesDigest(
+        return decryptAssetIfItMatchesDigest(
             plaintextCacheKey,
             encryptedEntryKey: encryptedCacheKey,
             encryptionKey: encryptionKey,
@@ -169,7 +56,7 @@ extension FileAssetCache {
         for team: Team,
         format: ZMImageFormat
     ) -> ZMImageAssetEncryptionKeys? {
-        guard 
+        guard
             let plaintextCacheKey = Self.cacheKeyForAsset(
                 for: team,
                 format: format,
@@ -179,20 +66,24 @@ extension FileAssetCache {
                 for: team,
                 format: format,
                 encrypted: true
-            ) 
+            )
         else {
             return nil
         }
 
-        return cache.encryptFileAndComputeSHA256Digest(
+        return encryptFileAndComputeSHA256Digest(
             plaintextCacheKey,
             encryptedEntryKey: encryptedCacheKey
         )
     }
 
-    /// Decrypts an encrypted asset in the asset cache to a decrypted version in the cache. Upon completion of the decryption, deletes the encrypted
-    /// original. In case of error (the digest doesn't match, or any other error), deletes the original and does not create a decrypted version.
-    /// Returns whether the decryption was successful and the digest matched
+    // MARK: - Conversation message
+
+    /// Decrypts an encrypted asset in the asset cache to a decrypted version in the cache. 
+    /// Upon completion of the decryption, deletes the encrypted original. In case of error
+    /// (the digest doesn't match, or any other error), deletes the original and does not
+    /// create a decrypted version. Returns whether the decryption was successful and the
+    /// digest matched.
 
     public func decryptImageIfItMatchesDigest(
         _ message: ZMConversationMessage,
@@ -214,8 +105,8 @@ extension FileAssetCache {
         else {
             return false
         }
-        
-        return cache.decryptAssetIfItMatchesDigest(
+
+        return decryptAssetIfItMatchesDigest(
             plaintextCacheKey,
             encryptedEntryKey: encryptedCacheKey,
             encryptionKey: encryptionKey,
@@ -224,13 +115,14 @@ extension FileAssetCache {
         )
     }
 
-    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest of the encrypted entry
-    ///
+    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest 
+    /// of the encrypted entry.
+
     public func encryptImageAndComputeSHA256Digest(
         _ message: ZMConversationMessage,
         format: ZMImageFormat
     ) -> ZMImageAssetEncryptionKeys? {
-        guard 
+        guard
             let plaintextCacheKey = Self.cacheKeyForAsset(
                 message,
                 format: format,
@@ -245,15 +137,17 @@ extension FileAssetCache {
             return nil
         }
 
-        return cache.encryptFileAndComputeSHA256Digest(
+        return encryptFileAndComputeSHA256Digest(
             plaintextCacheKey,
             encryptedEntryKey: encryptedCacheKey
         )
     }
 
-    /// Decrypts an encrypted asset in the asset cache to a decrypted version in the cache. Upon completion of the decryption, deletes the encrypted
-    /// original. In case of error (the digest doesn't match, or any other error), deletes the original and does not create a decrypted version.
-    /// Returns whether the decryption was successful and the digest matched
+    /// Decrypts an encrypted asset in the asset cache to a decrypted version in the cache.
+    /// Upon completion of the decryption, deletes the encrypted original. In case of error
+    /// (the digest doesn't match, or any other error), deletes the original and does not
+    /// create a decrypted version. Returns whether the decryption was successful and the
+    /// digest matched.
 
     public func decryptFileIfItMatchesDigest(
         _ message: ZMConversationMessage,
@@ -272,8 +166,8 @@ extension FileAssetCache {
         else {
             return false
         }
-        
-        return self.cache.decryptAssetIfItMatchesDigest(
+
+        return decryptAssetIfItMatchesDigest(
             plaintextCacheKey,
             encryptedEntryKey: encryptedCacheKey,
             encryptionKey: encryptionKey,
@@ -282,7 +176,8 @@ extension FileAssetCache {
         )
     }
 
-    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest of the encrypted entry
+    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest 
+    /// of the encrypted entry.
 
     public func encryptFileAndComputeSHA256Digest(
         _ message: ZMConversationMessage
@@ -299,11 +194,130 @@ extension FileAssetCache {
         else {
             return nil
         }
-        
-        return self.cache.encryptFileAndComputeSHA256Digest(
+
+        return encryptFileAndComputeSHA256Digest(
             plaintextCacheKey,
             encryptedEntryKey: encryptedCacheKey
         )
+    }
+
+    // MARK: - Encrypt / decrypt
+
+    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest 
+    /// of the encrypted entry.
+
+    private func encryptFileAndComputeSHA256Digest(
+        _ plaintextEntryKey: String,
+        encryptedEntryKey: String
+    ) -> ZMImageAssetEncryptionKeys? {
+        guard let plainData = assetData(plaintextEntryKey) else {
+            return nil
+        }
+
+        let encryptionKey = Data.randomEncryptionKey()
+
+        do {
+            let encryptedData = try plainData.zmEncryptPrefixingPlainTextIV(key: encryptionKey)
+            let hash = encryptedData.zmSHA256Digest()
+
+            cache.storeAssetData(
+                encryptedData,
+                key: encryptedEntryKey,
+                createdAt: Date()
+            )
+
+            return ZMImageAssetEncryptionKeys(
+                otrKey: encryptionKey,
+                sha256: hash
+            )
+        } catch {
+            return nil
+        }
+    }
+
+    /// Decrypts an encrypted asset in the asset cache to a decrypted version in the cache. 
+    /// Upon completion of the decryption, deletes the encrypted original. In case of error
+    /// (the digest doesn't match, or any other error), deletes the original and does not 
+    /// create a decrypted version. Returns whether the decryption was successful and the
+    /// digest matched.
+
+    private func decryptAssetIfItMatchesDigest(
+        _ plaintextEntryKey: String,
+        encryptedEntryKey: String,
+        encryptionKey: Data,
+        macKey: Data,
+        macDigest: Data,
+        createdAt creationDate: Date
+    ) -> Bool {
+        guard let encryptedData = assetData(encryptedEntryKey) else {
+            return false
+        }
+
+        let mac = encryptedData.zmHMACSHA256Digest(key: macKey)
+
+        guard mac == macDigest else {
+            cache.deleteAssetData(encryptedEntryKey)
+            return false
+        }
+
+        let plainData = encryptedData.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
+
+        if let plainData {
+            cache.storeAssetData(
+                plainData,
+                key: plaintextEntryKey,
+                createdAt: creationDate
+            )
+        }
+
+        cache.deleteAssetData(encryptedEntryKey)
+        return true
+    }
+
+    /// Decrypts an encrypted asset in the asset cache to a decrypted version in the cache. 
+    /// Upon completion of the decryption, deletes the encrypted original. In case of error
+    /// (the digest doesn't match, or any other error), deletes the original and does not 
+    /// create a decrypted version. Returns whether the decryption was successful and the
+    /// digest matched.
+    ///
+    /// - Parameters:
+    ///   - plaintextEntryKey: plain entry key
+    ///   - encryptedEntryKey: encrypted entry key
+    ///   - encryptionKey: encryption key
+    ///   - sha256Digest: optional sha 256 digest of the encrpted data, if it is nil, 
+    ///   skip the checking. If it is non nil and does not match the encrypted data's hash,
+    ///   delete the encrypted data and return.
+    /// - Returns: whether the decryption was successful and the digest matched
+
+    func decryptAssetIfItMatchesDigest(
+        _ plaintextEntryKey: String,
+        encryptedEntryKey: String,
+        encryptionKey: Data,
+        sha256Digest: Data? = nil,
+        createdAt creationDate: Date
+    ) -> Bool {
+        guard let encryptedData = assetData(encryptedEntryKey) else {
+            return false
+        }
+
+        // check the digest
+        guard encryptedData.zmSHA256Digest() == sha256Digest else {
+            cache.deleteAssetData(encryptedEntryKey)
+            return false
+        }
+
+        let plainData = encryptedData.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
+
+        if let plainData {
+            cache.storeAssetData(
+                plainData,
+                key: plaintextEntryKey,
+                createdAt: creationDate
+            )
+        }
+
+        cache.deleteAssetData(encryptedEntryKey)
+        return true
     }
 
 }
