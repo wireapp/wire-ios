@@ -111,8 +111,8 @@ public class OAuthUseCase: OAuthUseCaseInterface {
     private func execute(authorizationRequest: OIDAuthorizationRequest) async throws -> OAuthResponse {
         guard let userAgent = OIDExternalUserAgentIOS(
             presenting: rootViewController,
-            prefersEphemeralSession: true)
-        else {
+            prefersEphemeralSession: true
+        ) else {
             throw OAuthError.missingOIDExternalUserAgent
         }
 
