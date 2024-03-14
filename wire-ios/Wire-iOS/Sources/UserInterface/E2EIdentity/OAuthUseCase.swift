@@ -41,11 +41,10 @@ public class OAuthUseCase: OAuthUseCaseInterface {
     public func invoke(parameters: OAuthParameters) async throws -> OAuthResponse {
         logger.info("invoke authentication flow")
 
-        guard let bundleID = Bundle.main.bundleIdentifier,
-              let redirectURI = URL(string: "\(bundleID):/oauth2redirect")
-        else {
+        guard let redirectURI = URL(string: "wire://e2ei/oauth2redirect") else {
             throw OAuthError.missingRequestParameters
         }
+
         let request: OIDAuthorizationRequest = try await withCheckedThrowingContinuation { continuation in
             OIDAuthorizationService.discoverConfiguration(forIssuer: parameters.identityProvider) { configuration, error in
                 if let error = error {
@@ -109,7 +108,10 @@ public class OAuthUseCase: OAuthUseCaseInterface {
 
     @MainActor
     private func execute(authorizationRequest: OIDAuthorizationRequest) async throws -> OAuthResponse {
-        guard let userAgent = OIDExternalUserAgentIOS(presenting: rootViewController) else {
+        guard let userAgent = OIDExternalUserAgentIOS(
+            presenting: rootViewController,
+            prefersEphemeralSession: true
+        ) else {
             throw OAuthError.missingOIDExternalUserAgent
         }
 
