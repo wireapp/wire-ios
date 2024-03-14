@@ -49,7 +49,7 @@ struct ProfileDeviceDetailsView: View {
         }
         .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         .padding(.top, ViewConstants.Padding.medium)
-        .frame(width: .infinity)
+        .frame(maxWidth: .infinity)
     }
 
     private var proteusView: some View {
@@ -163,6 +163,7 @@ struct ProfileDeviceDetailsView: View {
                 }
             }
         }
+        .navigationViewStyle(.stack)
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
         .navigationBarBackButtonHidden(true)
         .onAppear {
