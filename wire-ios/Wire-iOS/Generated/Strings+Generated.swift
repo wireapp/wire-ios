@@ -2113,8 +2113,8 @@ internal enum L10n {
           }
         }
         internal enum Mls {
-          /// This conversation is no longer verified, as some user uses at least one device without a valid end-to-end identity certificate.
-          internal static let conversationIsDegraded = L10n.tr("Localizable", "content.system.mls.conversation_is_degraded", fallback: "This conversation is no longer verified, as some user uses at least one device without a valid end-to-end identity certificate.")
+          /// This conversation is no longer verified, as at least one participant started using a new device or has an invalid certificate.
+          internal static let conversationIsDegraded = L10n.tr("Localizable", "content.system.mls.conversation_is_degraded", fallback: "This conversation is no longer verified, as at least one participant started using a new device or has an invalid certificate.")
           /// All devices are verified by End-to-end Identity. [Learn more](%@)
           internal static func conversationIsVerified(_ p1: Any) -> String {
             return L10n.tr("Localizable", "content.system.mls.conversation_is_verified", String(describing: p1), fallback: "All devices are verified by End-to-end Identity. [Learn more](%@)")
