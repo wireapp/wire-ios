@@ -25,7 +25,6 @@ public protocol MessageDependencyResolverInterface {
 
 public enum MessageDependencyResolverError: Error, Equatable {
     case securityLevelDegraded
-    case mlsVerificationStatusDegraded
     case legalHoldPendingApproval
 }
 
@@ -44,20 +43,12 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
                 message.conversation?.securityLevel == .secureWithIgnored
             }
 
-            let mlsVerificationStatusDegraded = await self.context.perform {
-                message.conversation?.mlsVerificationStatus == .degraded
-            }
-
             let legalHoldPendingApproval = await self.context.perform {
                 message.conversation?.legalHoldStatus == .pendingApproval
             }
 
             if legalHoldPendingApproval {
                 throw MessageDependencyResolverError.legalHoldPendingApproval
-            }
-
-            if mlsVerificationStatusDegraded {
-                throw MessageDependencyResolverError.mlsVerificationStatusDegraded
             }
 
             if isSecurityLevelDegraded {
