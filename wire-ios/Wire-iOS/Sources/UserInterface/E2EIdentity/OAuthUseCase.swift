@@ -114,7 +114,7 @@ public class OAuthUseCase: OAuthUseCaseInterface {
         ) else {
             throw OAuthError.missingOIDExternalUserAgent
         }
-        
+
         return try await withCheckedThrowingContinuation { [weak self] continuation in
             self?.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: authorizationRequest,
                                                                     externalUserAgent: userAgent,
