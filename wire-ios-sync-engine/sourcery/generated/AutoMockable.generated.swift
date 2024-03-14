@@ -333,19 +333,20 @@ public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneCon
 
 }
 
-class MockSelfClientCertificateProviderProtocol: SelfClientCertificateProviderProtocol {
+public class MockSelfClientCertificateProviderProtocol: SelfClientCertificateProviderProtocol {
 
     // MARK: - Life cycle
 
+    public init() {}
 
     // MARK: - hasCertificate
 
-    var hasCertificateCallsCount = 0
-    var hasCertificateCalled: Bool {
+    public var hasCertificateCallsCount = 0
+    public var hasCertificateCalled: Bool {
         return hasCertificateCallsCount > 0
     }
 
-    var hasCertificate: Bool {
+    public var hasCertificate: Bool {
         get async {
             hasCertificateCallsCount += 1
             if let hasCertificateClosure = hasCertificateClosure {
@@ -355,18 +356,18 @@ class MockSelfClientCertificateProviderProtocol: SelfClientCertificateProviderPr
             }
         }
     }
-    var underlyingHasCertificate: Bool!
-    var hasCertificateClosure: (() async -> Bool)?
+    public var underlyingHasCertificate: Bool!
+    public var hasCertificateClosure: (() async -> Bool)?
 
 
     // MARK: - getCertificate
 
-    var getCertificate_Invocations: [Void] = []
-    var getCertificate_MockError: Error?
-    var getCertificate_MockMethod: (() async throws -> E2eIdentityCertificate?)?
-    var getCertificate_MockValue: E2eIdentityCertificate??
+    public var getCertificate_Invocations: [Void] = []
+    public var getCertificate_MockError: Error?
+    public var getCertificate_MockMethod: (() async throws -> E2eIdentityCertificate?)?
+    public var getCertificate_MockValue: E2eIdentityCertificate??
 
-    func getCertificate() async throws -> E2eIdentityCertificate? {
+    public func getCertificate() async throws -> E2eIdentityCertificate? {
         getCertificate_Invocations.append(())
 
         if let error = getCertificate_MockError {

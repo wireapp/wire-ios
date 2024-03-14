@@ -26,93 +26,89 @@ public enum E2EIdentityCertificateUpdateStatus {
 public protocol E2EIdentityCertificateUpdateStatusProtocol {
     func invoke() async throws -> E2EIdentityCertificateUpdateStatus
 }
+public extension Notification.Name {
+    static let checkForE2EICertificateStatus = NSNotification.Name("CheckForE2EICertificateStatus")
+}
 
 final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusProtocol {
 
-    private let isE2EIdentityEnabled: Bool
     private let e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol
     private let gracePeriod: TimeInterval
     private let serverStoragePeriod: TimeInterval
     private let randomPeriod: TimeInterval
     private let lastAlertDate: Date?
+    private let mlsGroupID: MLSGroupID
+    private let mlsClientID: MLSClientID
 
     public init(
-        isE2EIdentityEnabled: Bool,
         e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol,
         gracePeriod: TimeInterval,
-        serverStoragePeriod: TimeInterval = 28 * TimeInterval.oneDay, // default server storage time
-        // TODO: replace (60 * 60 * 24) with TimeInterval.oneDay
-        randomPeriod: TimeInterval = Double((0..<(60 * 60 * 24)).randomElement() ?? 0), // Random time in a day
+        serverStoragePeriod: TimeInterval = 28 * TimeInterval.oneDay,
+        randomPeriod: TimeInterval = Double((0..<Int(TimeInterval.oneDay)).randomElement() ?? 0), // Random time in a day
+        mlsGroupID: MLSGroupID,
+        mlsClientID: MLSClientID,
         lastAlertDate: Date?
     ) {
-        self.isE2EIdentityEnabled = isE2EIdentityEnabled
         self.e2eCertificateForCurrentClient = e2eCertificateForCurrentClient
         self.gracePeriod = gracePeriod
         self.lastAlertDate = lastAlertDate
         self.serverStoragePeriod = serverStoragePeriod
         self.randomPeriod = randomPeriod
+        self.mlsGroupID = mlsGroupID
+        self.mlsClientID = mlsClientID
     }
 
-    // TODO: Check if feature flag has e2ei is enabled.
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
-        guard
-            isE2EIdentityEnabled,
-            let mlsClientID = fetchMLSClientID(),
-            let mlsGroupID = fetchMLSGroupID(),
-            let certificate = try await e2eCertificateForCurrentClient.invoke(
-                mlsGroupId: mlsGroupID,
-                clientIds: [mlsClientID]
-            ).first
-        else {
-            return .noAction
+        if let certificate = try await e2eCertificateForCurrentClient.invoke(
+            mlsGroupId: mlsGroupID,
+            clientIds: [mlsClientID]
+        ).first {
+
+            if certificate.expiryDate.isInThePast {
+                return .block
+            }
+            let timeLeft = certificate.expiryDate.timeIntervalSinceNow - serverStoragePeriod - gracePeriod - randomPeriod
+            let calendar = Calendar.current
+            let fourHours = .oneHour * 4
+            let fifteenMinutes = .fiveMinutes * 3
+
+            if timeLeft <= 0 {
+                return .block
+            }
+
+            switch timeLeft {
+            case  .oneDay ..< .oneWeek:
+                if let lastAlertDate = lastAlertDate, calendar.isDateInToday(lastAlertDate) {
+                    return .noAction
+                }
+                return .reminder
+            case fourHours ..< .oneDay:
+                if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < fourHours {
+                    return .noAction
+                }
+                return .reminder
+            case .oneHour ..< fourHours:
+                if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < .oneHour {
+                    return .noAction
+                }
+                return .reminder
+            case fifteenMinutes ..< .oneHour:
+                if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < fifteenMinutes {
+                    return .noAction
+                }
+                return .reminder
+
+            case 1 ..< fifteenMinutes:
+                if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < .fiveMinutes {
+                    return .noAction
+                }
+                return .reminder
+            default:
+                return .noAction
+            }
+
         }
-
-        let timeLeft = certificate.expiryDate.timeIntervalSinceNow - serverStoragePeriod - gracePeriod - randomPeriod
-        let calendar = Calendar.current
-        let fourHours = .oneHour * 4
-        let fifteenMinutes = .fiveMinutes * 3
-
-        if (certificate.expiryDate.isInThePast) || timeLeft <= 0 {
-            return .block
-        }
-
-        switch timeLeft {
-        case  .oneDay ..< .oneWeek:
-            if let lastAlertDate = lastAlertDate, calendar.isDateInToday(lastAlertDate) {
-                return .noAction
-            }
-            return .reminder
-        case fourHours ..< .oneDay:
-            if let lastAlertDate = lastAlertDate, lastAlertDate.timeIntervalSinceNow < fourHours {
-                return .noAction
-            }
-            return .reminder
-        case .oneHour ..< fourHours:
-            if let lastAlertDate = lastAlertDate, lastAlertDate.timeIntervalSinceNow < .oneHour {
-                return .noAction
-            }
-            return .reminder
-        case fifteenMinutes ..< .oneHour:
-            if let lastAlertDate = lastAlertDate, lastAlertDate.timeIntervalSinceNow < fifteenMinutes {
-                return .noAction
-            }
-            return .reminder
-
-        case 1 ..< fifteenMinutes:
-            if let lastAlertDate = lastAlertDate, lastAlertDate.timeIntervalSinceNow < .fiveMinutes {
-                return .noAction
-            }
-            return .reminder
-        default:
-            return .noAction
-        }
+        return .noAction
     }
 
-    func fetchMLSGroupID() -> MLSGroupID? {
-        return nil
-    }
-
-    func fetchMLSClientID() -> MLSClientID? {
-        return nil
-    }
 }

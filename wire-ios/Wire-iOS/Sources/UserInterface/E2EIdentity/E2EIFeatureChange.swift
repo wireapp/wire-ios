@@ -30,6 +30,7 @@ extension UIAlertController {
         title: String = MlsE2eiStrings.title,
         message: String = MlsE2eiStrings.message,
         enrollButtonText: String = MlsE2eiStrings.Button.getCertificate,
+        canRemindLater: Bool = true,
         handler: @escaping (E2EIChangeAction) -> Void) -> UIAlertController {
 
         let controller = UIAlertController(
@@ -47,14 +48,17 @@ extension UIAlertController {
                                                  style: .default) {_ in
             handler(.getCertificate)
         }
-        let remindLaterAction = UIAlertAction(title: MlsE2eiStrings.Button.remindMeLater,
-                                              style: .destructive) {_ in
-            handler(.remindLater)
-        }
 
         controller.addAction(learnMoreAction)
         controller.addAction(getCertificateAction)
-        controller.addAction(remindLaterAction)
+
+        if canRemindLater {
+            let remindLaterAction = UIAlertAction(title: MlsE2eiStrings.Button.remindMeLater,
+                                                  style: .destructive) {_ in
+                handler(.remindLater)
+            }
+            controller.addAction(remindLaterAction)
+        }
 
         return controller
     }

@@ -234,5 +234,11 @@ public protocol UserSession: AnyObject {
 
     var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol { get }
 
+    var lastE2EIUpdateDate: LastE2EIdentityUpdateDateProtocol? { get }
+
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol
+
+    func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
+
+    func e2eIdentityUpdateCertificateUpdateStatus() async -> E2EIdentityCertificateUpdateStatusProtocol?
 }

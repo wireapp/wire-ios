@@ -28,14 +28,14 @@ final public class IsE2EICertificateEnrollmentRequiredUseCase: IsE2EICertificate
     // MARK: - Properties
 
     private let isE2EIdentityEnabled: Bool
-    private let selfClientCertificateProvider: SelfClientCertificateProvider
+    private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
     private let gracePeriodEndDate: Date?
 
     // MARK: - Life cycle
 
     init(
         isE2EIdentityEnabled: Bool,
-        selfClientCertificateProvider: SelfClientCertificateProvider,
+        selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
         gracePeriodEndDate: Date?
     ) {
         self.isE2EIdentityEnabled = isE2EIdentityEnabled

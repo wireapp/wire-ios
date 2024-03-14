@@ -28,12 +28,12 @@ public extension NSManagedObjectContext {
         let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
 
         performAndWait {
-            tp?.resetTime()
+            tp.resetTime()
             result = execute(self)
             groups.apply {
                 dispatchGroupContext?.leave($0)
             }
-            tp?.warnIfLongerThanInterval()
+            tp.warnIfLongerThanInterval()
         }
 
         return result
@@ -47,12 +47,12 @@ public extension NSManagedObjectContext {
 
         performAndWait {
             do {
-                tp?.resetTime()
+                tp.resetTime()
                 result = try execute(self)
                 groups.apply {
                     dispatchGroupContext?.leave($0)
                 }
-                tp?.warnIfLongerThanInterval()
+                tp.warnIfLongerThanInterval()
             } catch {
                 thrownError = error
             }

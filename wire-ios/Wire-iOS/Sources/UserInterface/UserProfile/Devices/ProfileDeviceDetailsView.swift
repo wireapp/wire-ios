@@ -24,12 +24,17 @@ struct ProfileDeviceDetailsView: View {
     private var dismiss
 
     @ObservedObject var viewModel: DeviceInfoViewModel
-    @State var isCertificateViewPresented: Bool = false
-    @State var isDebugViewPresented: Bool = false
+    @State private var isCertificateViewPresented: Bool = false
+    @State private var isDebugViewPresented: Bool = false
 
-    var dismissedView: (() -> Void)?
+    private let onDisappear: (() -> Void)?
 
-    var e2eIdentityCertificateView: some View {
+    init(viewModel: DeviceInfoViewModel, onDisappear: (() -> Void)?) {
+        self.viewModel = viewModel
+        self.onDisappear = onDisappear
+    }
+
+    private var e2eIdentityCertificateView: some View {
         VStack(alignment: .leading) {
             DeviceDetailsE2EIdentityCertificateView(
                 viewModel: viewModel,
@@ -47,17 +52,20 @@ struct ProfileDeviceDetailsView: View {
         .frame(width: .infinity)
     }
 
-    var proteusView: some View {
+    private var proteusView: some View {
         VStack(alignment: .leading) {
-            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title,
-                             description: L10n.Localizable.Profile.Devices.Detail.verifyMessage(
-                                viewModel.userClient.user?.name ?? ""
-                             ))
+            let userName = viewModel.userClient.user?.name ?? ""
+            sectionTitleView(
+                title: L10n.Localizable.Device.Details.Section.Proteus.title,
+                description: L10n.Localizable.Profile.Devices.Detail.verifyMessage(userName)
+            )
 
-            DeviceDetailsProteusView(viewModel: viewModel,
-                                     isVerfied: viewModel.isProteusVerificationEnabled,
-                                     shouldShowActivatedDate: false)
-                .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+            DeviceDetailsProteusView(
+                viewModel: viewModel,
+                isVerified: viewModel.isProteusVerificationEnabled,
+                shouldShowActivatedDate: false
+            )
+            .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
 
             if viewModel.isSelfClient {
                 Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
@@ -71,29 +79,25 @@ struct ProfileDeviceDetailsView: View {
         .frame(maxWidth: .infinity)
     }
 
-    var mlsView: some View {
+    private var mlsView: some View {
         VStack(alignment: .leading) {
             sectionTitleView(title: L10n.Localizable.Device.Details.Section.Mls.signature.uppercased())
+
             DeviceMLSView(viewModel: viewModel)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         }
         .frame(maxWidth: .infinity)
     }
 
-    var showDeviceFingerPrintView: some View {
+    private var showDeviceFingerPrintView: some View {
         HStack {
-            SwiftUI.Button {
-                Task {
-                    viewModel.onShowMyDeviceTapped()
-                }
-            } label: {
-                Text(L10n.Localizable.Profile.Devices.Detail.ShowMyDevice.title)
+            Text(L10n.Localizable.Profile.Devices.Detail.ShowMyDevice.title)
                 .padding(.all, ViewConstants.Padding.standard)
                 .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
                 .font(UIFont.swiftUIFont(for: .bodyTwoSemibold))
-            }
             Spacer()
-            Asset.Images.chevronRight.swiftUIImage.padding(.trailing, ViewConstants.Padding.standard)
+            Asset.Images.chevronRight.swiftUIImage
+                .padding(.trailing, ViewConstants.Padding.standard)
         }
         .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
     }
@@ -101,13 +105,18 @@ struct ProfileDeviceDetailsView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
-                    mlsView
+                VStack(alignment: .leading) {
                     if viewModel.isE2eIdentityEnabled {
+                        if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
+                            mlsView
+                        }
                         e2eIdentityCertificateView
                     }
+                    proteusView
+                    showDeviceFingerPrintView.onTapGesture {
+                        viewModel.onShowMyDeviceTapped()
+                    }
                 }
-                proteusView
             }
             .background(SemanticColors.View.backgroundDefault.swiftUIColor)
             .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
@@ -118,9 +127,8 @@ struct ProfileDeviceDetailsView: View {
                         if viewModel.isActionInProgress {
                             Spacer()
                             SwiftUI.ProgressView()
+                            Spacer()
                         }
-                        Spacer()
-                        showDeviceFingerPrintView
                     }
                 }
             )
@@ -161,7 +169,7 @@ struct ProfileDeviceDetailsView: View {
             viewModel.onAppear()
         }
         .onDisappear {
-            dismissedView?()
+            onDisappear?()
         }
         .onReceive(viewModel.$shouldDismiss) { shouldDismiss in
             if shouldDismiss {

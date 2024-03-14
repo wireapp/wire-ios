@@ -169,6 +169,11 @@ internal enum Asset {
     internal static let contactsOutline = ImageAsset(name: "Contacts Outline")
     internal static let conversationsFilled = ImageAsset(name: "Conversations Filled")
     internal static let conversationsOutline = ImageAsset(name: "Conversations Outline")
+    internal enum E2Ei {
+      internal enum Enrollment {
+        internal static let certificateValid = ImageAsset(name: "E2EI/Enrollment/Certificate valid")
+      }
+    }
     internal static let activity = ImageAsset(name: "Activity")
     internal static let addEmojis = ImageAsset(name: "Add Emojis")
     internal static let animalsNature = ImageAsset(name: "Animals & Nature")

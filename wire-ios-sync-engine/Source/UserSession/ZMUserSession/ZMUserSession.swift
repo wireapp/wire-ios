@@ -20,6 +20,7 @@ import Foundation
 import WireDataModel
 import WireSystem
 import WireRequestStrategy
+import UIKit
 
 @objc(ZMThirdPartyServicesDelegate)
 public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
@@ -161,7 +162,7 @@ public final class ZMUserSession: NSObject {
         return e2eiActivatedAt.addingTimeInterval(gracePeriod)
     }
 
-    lazy var selfClientCertificateProvider: SelfClientCertificateProvider = {
+    public lazy var selfClientCertificateProvider: SelfClientCertificateProviderProtocol = {
         return SelfClientCertificateProvider(
             getE2eIdentityCertificatesUseCase: getE2eIdentityCertificates,
             context: syncContext)
@@ -348,6 +349,15 @@ public final class ZMUserSession: NSObject {
             context: syncContext)
     }()
 
+    public lazy var selfMLSClientID: MLSClientID? = {
+        guard let selfUserClient  else {
+            return nil
+        }
+       return  MLSClientID(userClient: selfUserClient)
+    }()
+
+    public var lastE2EIUpdateDate: LastE2EIdentityUpdateDateProtocol?
+
     public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol = {
         return GetIsE2EIdentityEnabledUseCase(coreCryptoProvider: coreCryptoProvider)
     }()
@@ -360,11 +370,12 @@ public final class ZMUserSession: NSObject {
     }()
 
     public private(set) lazy var certificateUpdateStatus: E2EIdentityCertificateUpdateStatusProtocol = {
-        return E2EIdentityCertificateUpdateStatusUseCase(
-            isE2EIdentityEnabled: e2eiFeature.isEnabled,
-            e2eCertificateForCurrentClient: getE2eIdentityCertificates,
-            gracePeriod: TimeInterval(e2eiFeature.config.verificationExpiration),
-            lastAlertDate: nil)
+        let mlsGroupID = ZMConversation.fetchSelfMLSConversation(in: self.syncContext)?.mlsGroupID
+        return E2EIdentityCertificateUpdateStatusUseCase(e2eCertificateForCurrentClient: getE2eIdentityCertificates,
+                                                         gracePeriod: Double(e2eiFeature.config.verificationExpiration),
+                                                         mlsGroupID: mlsGroupID!,
+                                                         mlsClientID: selfMLSClientID!,
+                                                         lastAlertDate: nil)
     }()
 
     public private(set) lazy var isE2EICertificateEnrollmentRequired: IsE2EICertificateEnrollmentRequiredProtocol = {
@@ -437,6 +448,8 @@ public final class ZMUserSession: NSObject {
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
         )
+
+        self.lastE2EIUpdateDate = LastE2EIdentityUpdateDate(userID: userId, sharedUserDefaults: UserDefaults.standard)
         self.e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults)
@@ -932,8 +945,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
         }
-
-        // TODO: Call update here
+        NotificationCenter.default.post(name: .checkForE2EICertificateStatus, object: nil)
     }
 
     func processEvents() {

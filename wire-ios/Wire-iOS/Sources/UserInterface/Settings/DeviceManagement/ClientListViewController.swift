@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-import UIKit
+import SwiftUI
 import WireSyncEngine
 import WireCommonComponents
-import SwiftUI
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -71,12 +70,14 @@ final class ClientListViewController: UIViewController,
     private let clientFilter: (UserClient) -> Bool
     private let userSession: UserSession?
     private let contextProvider: ContextProvider?
+    private weak var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
+
     var sortedClients: [UserClient] = []
 
     var selfClient: UserClient?
     let detailedView: Bool
     var credentials: ZMEmailCredentials?
-    var clientsObserverToken: Any?
+    var clientsObserverToken: NSObjectProtocol?
     var userObserverToken: NSObjectProtocol?
 
     var leftBarButtonItem: UIBarButtonItem? {
@@ -199,47 +200,67 @@ final class ClientListViewController: UIViewController,
             assertionFailure("Unable to display Devices screen.UserSession and/or navigation instances are nil")
             return
         }
-        let viewModel = DeviceInfoViewModel.map(
-            certificate: client.e2eIdentityCertificate,
-            userClient: client,
-            title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? ""),
-            addedDate: client.activationDate?.formattedDate ?? "",
-            proteusID: client.proteusSessionID?.clientID.uppercased().splitStringIntoLines(charactersPerLine: 16),
-            isSelfClient: client.isSelfClient(),
+
+        let viewModel = makeDeviceInfoViewModel(
+            client: client,
             userSession: userSession,
-            credentials: credentials,
-            gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
-            mlsThumbprint: client.resolvedMLSThumbprint?.splitStringIntoLines(charactersPerLine: 16),
-            getProteusFingerprint: userSession.getUserClientFingerprint,
-            contextProvider: contextProvider,
-            e2eiCertificateEnrollment: userSession.enrollE2EICertificate
+            contextProvider: contextProvider
         )
         viewModel.showCertificateUpdateSuccess = {[weak self] certificateChain in
-            self?.updateAllClients()
-            let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
+            guard let self = self, let lastE2EIUpdateDate = userSession.lastE2EIUpdateDate else {
+                return
+            }
+            self.updateAllClients {
+                self.updateE2EIdentityCertificateInDetailsView()
+            }
+
+            let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController(lastE2EIdentityUpdateDate: lastE2EIUpdateDate)
             successEnrollmentViewController.certificateDetails = certificateChain
             successEnrollmentViewController.onOkTapped = { viewController in
                 viewController.dismiss(animated: true)
             }
             successEnrollmentViewController.presentTopmost()
         }
+        selectedDeviceInfoViewModel = viewModel
+
         let detailsView = DeviceDetailsView(viewModel: viewModel) {
             self.navigationController?.setNavigationBarHidden(false, animated: false)
         }
         let hostingViewController = UIHostingController(rootView: detailsView)
         hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+
         navigationController.pushViewController(hostingViewController, animated: true)
         navigationController.isNavigationBarHidden = true
     }
 
-    @MainActor
-    private func fetchSelfConversation() async -> MLSGroupID? {
-        guard let syncContext = contextProvider?.syncContext else {
-            return nil
-        }
-        return await syncContext.perform {
-            return ZMConversation.fetchSelfMLSConversation(in: syncContext)?.mlsGroupID
-        }
+    private func makeDeviceInfoViewModel(
+        client: UserClient,
+        userSession: UserSession,
+        contextProvider: ContextProvider
+    ) -> DeviceInfoViewModel {
+        let saveFileManager = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
+        let deviceActionsHandler = DeviceDetailsViewActionsHandler(
+            userClient: client,
+            userSession: userSession,
+            credentials: credentials,
+            saveFileManager: saveFileManager,
+            getProteusFingerprint: userSession.getUserClientFingerprint,
+            contextProvider: contextProvider,
+            e2eiCertificateEnrollment: userSession.enrollE2EICertificate
+        )
+        return DeviceInfoViewModel(
+            title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? ""),
+            addedDate: client.activationDate?.formattedDate ?? "",
+            proteusID: client.proteusSessionID?.clientID.uppercased().splitStringIntoLines(charactersPerLine: 16) ?? "",
+            userClient: client,
+            isSelfClient: client.isSelfClient(),
+            gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+            isFromConversation: false,
+            actionsHandler: deviceActionsHandler,
+            conversationClientDetailsActions: deviceActionsHandler,
+            debugMenuActionsHandler: deviceActionsHandler,
+            showDebugMenu: Bundle.developerModeEnabled
+        )
     }
 
     private func createTableView() {
@@ -506,12 +527,10 @@ final class ClientListViewController: UIViewController,
 
     @MainActor
     private func updateCertificates(for userClients: [UserClient]) async -> [UserClient] {
-        let mlsGroupID = await fetchSelfConversation()
-        if let mlsGroupID = mlsGroupID, let userSession = userSession {
+        if let userSession = userSession, let mlsGroupID = await userSession.fetchSelfConversationMLSGroupID() {
             var updatedUserClients = [UserClient]()
-            let mlsResolver = MLSClientResolver()
             let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
-                if let mlsClientId = mlsResolver.mlsClientId(for: $0) {
+                if let mlsClientId = MLSClientID(userClient: $0) {
                     ($0.clientId.hashValue, mlsClientId)
                 } else {
                     nil
@@ -526,16 +545,16 @@ final class ClientListViewController: UIViewController,
                     for client in userClients {
                         let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
                         client.e2eIdentityCertificate = certificates.first { $0.clientId == mlsClientIdRawValue }
-                        client.mlsThumbPrint = client.resolvedMLSThumbprint
+                        client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint
                         if client.e2eIdentityCertificate == nil && client.mlsPublicKeys.ed25519 != nil {
-                            client.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
+                            client.e2eIdentityCertificate = makeNotActivatedE2EIdenityCertificate(client: client)
                         }
                         updatedUserClients.append(client)
                     }
                     if let selfClient = selfClient {
-                        selfClient.e2eIdentityCertificate = certificates.first(where: {
-                            $0.clientId == mlsResolver.mlsClientId(for: selfClient)?.rawValue
-                        }) ?? selfClient.notActivatedE2EIdenityCertificate()
+                        selfClient.e2eIdentityCertificate = certificates.first {
+                            $0.clientId == MLSClientID(userClient: selfClient)?.rawValue
+                        } ?? makeNotActivatedE2EIdenityCertificate(client: selfClient)
                         selfClient.mlsThumbPrint = selfClient.e2eIdentityCertificate?.mlsThumbprint ?? selfClient.mlsPublicKeys.ed25519
                     }
                     return updatedUserClients
@@ -543,7 +562,7 @@ final class ClientListViewController: UIViewController,
                     for client in clients {
                         if let mlsThumbprint = client.mlsPublicKeys.ed25519,
                            !mlsThumbprint.isEmpty {
-                            client.e2eIdentityCertificate = client.notActivatedE2EIdenityCertificate()
+                            client.e2eIdentityCertificate = makeNotActivatedE2EIdenityCertificate(client: client)
                             updatedUserClients.append(client)
                         }
                     }
@@ -552,7 +571,7 @@ final class ClientListViewController: UIViewController,
                     return userClients
                 }
             } catch {
-                WireLogger.e2ei.error(error.localizedDescription)
+                WireLogger.e2ei.error(String(reflecting: error))
                 return userClients
             }
         } else {
@@ -560,7 +579,7 @@ final class ClientListViewController: UIViewController,
         }
     }
 
-    private func updateAllClients() {
+    private func updateAllClients(completed: (() -> Void)? = nil) {
         guard let selfUser = ZMUser.selfUser(), let selfClient = selfUser.selfClient() else {
             return
         }
@@ -569,12 +588,48 @@ final class ClientListViewController: UIViewController,
             self.clients = results
             self.selfClient = results.first(where: { $0.isSelfClient() })
             refreshViews()
+            completed?()
         }
     }
 
     @MainActor
     func refreshViews() {
         clientsTableView?.reloadData()
+    }
+
+    private func updateE2EIdentityCertificateInDetailsView() {
+        guard let client = findE2EIdentityCertificateClient() else { return }
+        selectedDeviceInfoViewModel?.update(from: client)
+    }
+
+    private func findE2EIdentityCertificateClient() -> UserClient? {
+        if selectedDeviceInfoViewModel?.isSelfClient == true {
+            return selfClient
+        }
+
+        guard let selectedUserClient = selectedDeviceInfoViewModel?.userClient as? UserClient else {
+            return nil
+        }
+
+        return clients.first { $0.clientId == selectedUserClient.clientId }
+    }
+
+    // MARK: Helpers
+
+    private func makeNotActivatedE2EIdenityCertificate(client: UserClient) -> E2eIdentityCertificate? {
+        guard let clientID = MLSClientID(userClient: client) else {
+            return nil
+        }
+
+        return E2eIdentityCertificate(
+            clientId: clientID.rawValue,
+            certificateDetails: "",
+            mlsThumbprint: "",
+            notValidBefore: .now,
+            expiryDate: .now,
+            certificateStatus: .notActivated,
+            serialNumber: ""
+        )
     }
 }
 
@@ -606,26 +661,4 @@ extension ClientListViewController: UserObserving {
         }
     }
 
-}
-
-private extension UserClient {
-
-    var resolvedMLSThumbprint: String? {
-        e2eIdentityCertificate?.mlsThumbprint ?? mlsPublicKeys.ed25519
-    }
-
-    func notActivatedE2EIdenityCertificate() -> E2eIdentityCertificate? {
-        guard let mlsResolver = MLSClientResolver().mlsClientId(for: self) else {
-            return nil
-        }
-        return E2eIdentityCertificate(
-            clientId: mlsResolver.rawValue,
-            certificateDetails: "",
-            mlsThumbprint: self.mlsPublicKeys.ed25519 ?? "",
-            notValidBefore: .now,
-            expiryDate: .now,
-            certificateStatus: .notActivated,
-            serialNumber: ""
-        )
-    }
 }

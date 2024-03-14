@@ -25,6 +25,16 @@ import WireRequestStrategySupport
 @testable import Wire
 
 final class UserSessionMock: UserSession {
+    var lastE2EIUpdateDate: WireSyncEngine.LastE2EIdentityUpdateDateProtocol?
+
+    func fetchSelfConversationMLSGroupID() async -> WireDataModel.MLSGroupID? {
+        return MLSGroupID(Data())
+    }
+
+    func e2eIdentityUpdateCertificateUpdateStatus() async -> WireSyncEngine.E2EIdentityCertificateUpdateStatusProtocol? {
+        MockE2EIdentityCertificateUpdateStatusProtocol()
+    }
+
     var isE2eIdentityEnabled = false
     var certificate = E2eIdentityCertificate.mockNotActivated
     typealias Preference = AppLockPasscodePreference

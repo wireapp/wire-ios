@@ -294,6 +294,29 @@ extension ZMUserSession: UserSession {
         let featureRepository = FeatureRepository(context: syncContext)
         return GetMLSFeatureUseCase(featureRepository: featureRepository)
     }
+
+    @MainActor
+    public func fetchSelfConversationMLSGroupID() async -> MLSGroupID? {
+        return await syncContext.perform {
+            return ZMConversation.fetchSelfMLSConversation(in: self.syncContext)?.mlsGroupID
+        }
+    }
+    
+    @MainActor
+    public func e2eIdentityUpdateCertificateUpdateStatus() async -> E2EIdentityCertificateUpdateStatusProtocol? {
+        guard let mlsGroupID = await self.fetchSelfConversationMLSGroupID(), let selfMLSClientID else {
+            return nil
+        }
+        var updateE2EICertificate: E2EIdentityCertificateUpdateStatusProtocol = E2EIdentityCertificateUpdateStatusUseCase(
+            e2eCertificateForCurrentClient: getE2eIdentityCertificates,
+            gracePeriod: Double(e2eiFeature.config.verificationExpiration),
+            mlsGroupID: mlsGroupID,
+            mlsClientID: selfMLSClientID,
+            lastAlertDate: lastE2EIUpdateDate?.fetchLastAlertDate()
+        )
+
+        return updateE2EICertificate
+    }
 }
 
 extension UInt64 {

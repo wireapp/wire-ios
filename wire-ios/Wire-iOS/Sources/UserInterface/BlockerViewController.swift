@@ -108,7 +108,8 @@ final class BlockerViewController: LaunchImageViewController {
         )
 
         let learnMoreAction = UIAlertAction(
-            title: UpdateCertificate.Button.learnMore,
+            // Katerina: check
+            title: "UpdateCertificate.Button.learnMore",
             style: .default,
             handler: { _ in
                 UIApplication.shared.open(URL.wr_e2eiLearnMore)
@@ -134,14 +135,16 @@ final class BlockerViewController: LaunchImageViewController {
     private func showGetCertificateMessage() {
         typealias E2EI = L10n.Localizable.Registration.Signin.E2ei
 
+        // Katerina: check
         let getCertificateAlert = UIAlertController(
             title: E2EI.title,
-            message: E2EI.subtitle,
+            message: "E2EI.subtitle",
             preferredStyle: .alert
         )
 
+        // Katerina: check
         let learnMoreAction = UIAlertAction(
-            title: L10n.Localizable.UpdateCertificate.Button.learnMore,
+            title: "L10n.Localizable.UpdateCertificate.Button.learnMore",
             style: .default,
             handler: { _ in
                 UIApplication.shared.open(URL.wr_e2eiLearnMore)
@@ -267,7 +270,7 @@ extension BlockerViewController {
         } catch {
             WireLogger.e2ei.warn("failed to enroll certificate: \(error)")
 
-            let alert = UIAlertController.getCertificateFailed(canCancel: false) {
+            let alert = UIAlertController.getCertificateFailed(canCancel: false, isUpdateMode: false) {
                 Task {
                     await self.enrollCertificateAction()
                 }
@@ -289,12 +292,14 @@ extension BlockerViewController {
             .enrollE2EICertificate
             .invoke(authenticate: oauthUseCase.invoke)
 
-        let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
-        successEnrollmentViewController.certificateDetails = certificateChain
-        successEnrollmentViewController.onOkTapped = { viewController in
-            viewController.dismiss(animated: true)
-        }
-        successEnrollmentViewController.presentTopmost()
+        // Katerina: check
+
+//        let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
+//        successEnrollmentViewController.certificateDetails = certificateChain
+//        successEnrollmentViewController.onOkTapped = { viewController in
+//            viewController.dismiss(animated: true)
+//        }
+//        successEnrollmentViewController.presentTopmost()
     }
 
 }

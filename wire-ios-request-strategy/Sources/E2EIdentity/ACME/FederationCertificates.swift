@@ -17,16 +17,11 @@
 //
 
 import Foundation
-import WireDataModel
 
-protocol MLSClientResolving {
-    func mlsClientId(for userClient: UserClientType) -> MLSClientID?
-}
+struct FederationCertificates: Codable {
+    let certificates: [String]
 
-final class MLSClientResolver: MLSClientResolving {
-
-    func mlsClientId(for userClient: UserClientType) -> MLSClientID? {
-        return MLSClientID(userClient: userClient)
+    enum CodingKeys: String, CodingKey {
+        case certificates = "crts"
     }
-
 }

@@ -17,14 +17,15 @@
 //
 
 import Foundation
-@testable import Wire
 
-final class MockMLSClientResolver: MLSClientResolving {
-    func mlsClientId(for userClient: WireDataModel.UserClientType) -> WireDataModel.MLSClientID? {
-        .init(
-            userID: .randomAlphanumerical(length: 5),
-            clientID: .randomAlphanumerical(length: 5),
-            domain: .randomAlphanumerical(length: 6)
-        )
+extension String {
+    static let mockSerialNumber = String(repeating: "abcdefghijklmno", count: 2)
+
+    static let mockMlsThumbprint = "AB CD EF GH IJ KL MN OP QR ST UV WX QR ST UV WX"
+
+    static var mockCertificate: String {
+        "BEGIN CERTIFICATE\n-----------\n"
+        + String(repeating: "abcdefghijklmno", count: 100)
+        + "\n-----------\nEND CERTIFICATE"
     }
 }

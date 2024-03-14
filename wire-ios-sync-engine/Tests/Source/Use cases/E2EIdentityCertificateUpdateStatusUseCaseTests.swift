@@ -19,177 +19,186 @@
 import XCTest
 import WireSyncEngineSupport
 
-// final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
-//    var mockGetIsE2EIdentityEnabled: MockGetIsE2EIdentityEnabledUseCaseProtocol!
-//    var mockGetE2eIdentityCertificates: MockGetE2eIdentityCertificatesUseCaseProtocol!
-//    var e2eIdentityCertificateStatus: E2EIdentityCertificateUpdateStatusUseCase!
-//
-//    override func setUp() {
-//        mockGetIsE2EIdentityEnabled = MockGetIsE2EIdentityEnabledUseCaseProtocol()
-//        mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUseCaseProtocol()
-//        e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
-//            isE2EIdentityEnabled: mockGetIsE2EIdentityEnabled,
-//            e2eCertificateForCurrentClient: mockGetE2eIdentityCertificates,
-//            gracePeriod: 0,
-//            mlsGroupID: MLSGroupID(Data()),
-//            mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),
-//            lastAlertDate: nil)
-//        super.setUp()
-//    }
-//
-//    override func tearDown() {
-//        mockGetIsE2EIdentityEnabled = nil
-//        mockGetE2eIdentityCertificates = nil
-//        e2eIdentityCertificateStatus = nil
-//        super.tearDown()
-//    }
-//
-//    func update(isE2EIdenityEnabled: Bool, certificate: E2eIdentityCertificate) {
-//        mockGetIsE2EIdentityEnabled.invoke_MockValue = isE2EIdenityEnabled
-//        mockGetE2eIdentityCertificates.invokeMlsGroupIdClientIds_MockValue = [certificate]
-//    }
-//
-//    func testThatItReturnsNoAction_WhenExpiryDateIsBeyondSevenDays() async {
-//        update(isE2EIdenityEnabled: true, certificate: certificate(with: .oneWeek + .oneDay))
-//        do {
-//            let result = try await e2eIdentityCertificateStatus.invoke()
-//            XCTAssertEqual(result, .noAction)
-//        } catch {
-//            XCTFail(error.localizedDescription)
-//        }
-//    }
-//
-//    func testThatItReturnsReminder_WhenExpiryDateIsWithInSevenDays() async {
-//        update(isE2EIdenityEnabled: true, certificate: certificate(with: .oneWeek))
-//        do {
-//            let result = try await e2eIdentityCertificateStatus.invoke()
-//            XCTAssertEqual(result, .reminder)
-//        } catch {
-//            XCTFail(error.localizedDescription)
-//        }
-//    }
-//
-//    func testThatItReturnsNoAction_WhenExpiryDateIsWithInSevenDaysAndLastAlertWasDisplayedToday() async {
-//        e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
-//            isE2EIdentityEnabled: mockGetIsE2EIdentityEnabled,
-//            e2eCertificateForCurrentClient: mockGetE2eIdentityCertificates,
-//            mlsGroupID: MLSGroupID(Data()),
-//            mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),
-//            gracePeriod: 0,
-//            lastAlertDate: Date.now)
-//        update(isE2EIdenityEnabled: true, certificate: certificate(with: .oneWeek))
-//        do {
-//            let result = try await e2eIdentityCertificateStatus.invoke()
-//            XCTAssertEqual(result, .noAction)
-//        } catch {
-//            XCTFail(error.localizedDescription)
-//        }
-//    }
-//
-//    func testThatItReturnsReminder_WhenExpiryDateIsWithInSevenDaysAndLastAlertWasDisplayedNotToday() async {
-//        e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
-//            isE2EIdentityEnabled: mockGetIsE2EIdentityEnabled,
-//            e2eCertificateForCurrentClient: mockGetE2eIdentityCertificates,
-//            mlsGroupID: MLSGroupID(Data()),
-//            mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),
-//            gracePeriod: 0,
-//            lastAlertDate: Date.now - .oneDay)
-//        update(isE2EIdenityEnabled: true, certificate: certificate(with: .oneWeek))
-//        do {
-//            let result = try await e2eIdentityCertificateStatus.invoke()
-//            XCTAssertEqual(result, .reminder)
-//        } catch {
-//            XCTFail(error.localizedDescription)
-//        }
-//    }
-//
-//    func testThatItReturnsReminder_WhenExpiryDateIsWithInOneDay() async {
-//        update(isE2EIdenityEnabled: true, certificate: certificate(with: .oneDay))
-//        do {
-//            let result = try await e2eIdentityCertificateStatus.invoke()
-//            XCTAssertEqual(result, .reminder)
-//        } catch {
-//            XCTFail(error.localizedDescription)
-//        }
-//    }
-//
-//    func testThatItReturnsNoAction_WhenExpiryDateIsWithInOneDayAndAlertWasShownWithinFourHours() async {
-//        e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
-//            isE2EIdentityEnabled: mockGetIsE2EIdentityEnabled,
-//            e2eCertificateForCurrentClient: mockGetE2eIdentityCertificates,
-//            mlsGroupID: MLSGroupID(Data()),
-//            mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),
-//            gracePeriod: 0,
-//            lastAlertDate: Date.now)
-//        update(isE2EIdenityEnabled: true, certificate: certificate(with: .oneHour * 4))
-//        do {
-//            let result = try await e2eIdentityCertificateStatus.invoke()
-//            XCTAssertEqual(result, .noAction)
-//        } catch {
-//            XCTFail(error.localizedDescription)
-//        }
-//    }
-//
-//    func testThatItReturnsReminder_WhenExpiryDateIsWithInOneDayAndAlertWasShownBeyondFourHours() async {
-//        e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
-//            isE2EIdentityEnabled: mockGetIsE2EIdentityEnabled,
-//            e2eCertificateForCurrentClient: mockGetE2eIdentityCertificates,
-//            mlsGroupID: MLSGroupID(Data()),
-//            mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),
-//            gracePeriod: 0,
-//            lastAlertDate: Date.now)
-//        update(isE2EIdenityEnabled: true, certificate: certificate(with: .oneHour * 5))
-//        do {
-//            let result = try await e2eIdentityCertificateStatus.invoke()
-//            XCTAssertEqual(result, .reminder)
-//        } catch {
-//            XCTFail(error.localizedDescription)
-//        }
-//    }
-//
-//    func testThatItReturnsReminder_WhenExpiryDateIsWithInFourHours() async {
-//        update(isE2EIdenityEnabled: true, certificate: certificate(with: .oneHour * 4))
-//        do {
-//            let result = try await e2eIdentityCertificateStatus.invoke()
-//            XCTAssertEqual(result, .reminder)
-//        } catch {
-//            XCTFail(error.localizedDescription)
-//        }
-//    }
-//
-//    func testThatItReturnsReminder_WhenExpiryDateIsWithInOneHour() async {
-//        update(isE2EIdenityEnabled: true, certificate: certificate(with: .oneHour))
-//        do {
-//            let result = try await e2eIdentityCertificateStatus.invoke()
-//            XCTAssertEqual(result, .reminder)
-//        } catch {
-//            XCTFail(error.localizedDescription)
-//        }
-//    }
-//
-//    func testThatItReturnsBlock_WhenItExpires() async {
-//        update(isE2EIdenityEnabled: true, certificate: certificate(with: 0))
-//        do {
-//            let result = try await e2eIdentityCertificateStatus.invoke()
-//            XCTAssertEqual(result, .block)
-//        } catch {
-//            XCTFail(error.localizedDescription)
-//        }
-//    }
-//
-//    func testThatItReturnsBlock_WhenItIsBeyondExpiryDate() async {
-//        update(isE2EIdenityEnabled: true, certificate: certificate(with: -.oneDay))
-//        do {
-//            let result = try await e2eIdentityCertificateStatus.invoke()
-//            XCTAssertEqual(result, .block)
-//        } catch {
-//            XCTFail(error.localizedDescription)
-//        }
-//    }
-//
-//    private func certificate(with timeInterval: TimeInterval) -> E2eIdentityCertificate {
-//        let certificate = E2eIdentityCertificate.mockValid
-//        certificate.expiryDate = Date.now + timeInterval
-//        return certificate
-//    }
-// }
+ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
+    var mockGetE2eIdentityCertificates: MockGetE2eIdentityCertificatesUseCaseProtocol!
+    var e2eIdentityCertificateStatus: E2EIdentityCertificateUpdateStatusUseCase!
+
+    override func setUp() {
+        mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUseCaseProtocol()
+        e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
+            e2eCertificateForCurrentClient: mockGetE2eIdentityCertificates,
+            gracePeriod: 0,
+            serverStoragePeriod: 0,
+            randomPeriod: 0,
+            mlsGroupID: MLSGroupID(Data()),
+            mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),
+            lastAlertDate: nil)
+        super.setUp()
+    }
+
+    override func tearDown() {
+        mockGetE2eIdentityCertificates = nil
+        e2eIdentityCertificateStatus = nil
+        super.tearDown()
+    }
+
+    func update(certificate: E2eIdentityCertificate) {
+        mockGetE2eIdentityCertificates.invokeMlsGroupIdClientIds_MockValue = [certificate]
+    }
+
+    func testThatItReturnsNoAction_WhenExpiryDateIsBeyondSevenDays() async {
+        update(certificate: certificate(with: .oneWeek + .oneDay))
+        do {
+            let result = try await e2eIdentityCertificateStatus.invoke()
+            XCTAssertEqual(result, .noAction)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+
+    func testThatItReturnsReminder_WhenExpiryDateIsWithInSevenDays() async {
+        update(certificate: certificate(with: .oneWeek))
+        do {
+            let result = try await e2eIdentityCertificateStatus.invoke()
+            XCTAssertEqual(result, .reminder)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+
+    func testThatItReturnsNoAction_WhenExpiryDateIsWithInSevenDaysAndLastAlertWasDisplayedToday() async {
+        e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
+            e2eCertificateForCurrentClient: mockGetE2eIdentityCertificates,
+            gracePeriod: 0,
+            serverStoragePeriod: 0,
+            randomPeriod: 0,
+            mlsGroupID: MLSGroupID(Data()),
+            mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),
+            lastAlertDate: Date.now)
+        update(certificate: certificate(with: .oneWeek))
+        do {
+            let result = try await e2eIdentityCertificateStatus.invoke()
+            XCTAssertEqual(result, .noAction)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+
+    func testThatItReturnsReminder_WhenExpiryDateIsWithInSevenDaysAndLastAlertWasDisplayedNotToday() async {
+        e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
+            e2eCertificateForCurrentClient: mockGetE2eIdentityCertificates,
+            gracePeriod: 0,
+            serverStoragePeriod: 0,
+            randomPeriod: 0,
+            mlsGroupID: MLSGroupID(Data()),
+            mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),
+            lastAlertDate: Date.now - .oneDay)
+        update(certificate: certificate(with: .oneWeek))
+        do {
+            let result = try await e2eIdentityCertificateStatus.invoke()
+            XCTAssertEqual(result, .reminder)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+
+    func testThatItReturnsReminder_WhenExpiryDateIsWithInOneDay() async {
+        update(certificate: certificate(with: .oneDay))
+        do {
+            let result = try await e2eIdentityCertificateStatus.invoke()
+            XCTAssertEqual(result, .reminder)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+
+    func testThatItReturnsNoAction_WhenExpiryDateIsWithInOneDayAndAlertWasShownWithinFourHours() async {
+        e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
+            e2eCertificateForCurrentClient: mockGetE2eIdentityCertificates,
+            gracePeriod: 0,
+            serverStoragePeriod: 0,
+            randomPeriod: 0,
+            mlsGroupID: MLSGroupID(Data()),
+            mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),
+            lastAlertDate: Date.now)
+        update(certificate: certificate(with: .oneHour * 4))
+        do {
+            let result = try await e2eIdentityCertificateStatus.invoke()
+            XCTAssertEqual(result, .noAction)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+
+    func testThatItReturnsNoAction_WhenExpiryDateIsWithInOneDayAndAlertWasShownBeyondFourHours() async {
+        e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
+            e2eCertificateForCurrentClient: mockGetE2eIdentityCertificates,
+            gracePeriod: 0,
+            serverStoragePeriod: 0,
+            randomPeriod: 0,
+            mlsGroupID: MLSGroupID(Data()),
+            mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),
+            lastAlertDate: Date.now)
+        update(certificate: certificate(with: .oneHour * 5))
+        do {
+            let result = try await e2eIdentityCertificateStatus.invoke()
+            XCTAssertEqual(result, .noAction)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+
+    func testThatItReturnsReminder_WhenExpiryDateIsWithInFourHours() async {
+        update(certificate: certificate(with: .oneHour * 4))
+        do {
+            let result = try await e2eIdentityCertificateStatus.invoke()
+            XCTAssertEqual(result, .reminder)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+
+    func testThatItReturnsReminder_WhenExpiryDateIsWithInOneHour() async {
+        update(certificate: certificate(with: .oneHour))
+        do {
+            let result = try await e2eIdentityCertificateStatus.invoke()
+            XCTAssertEqual(result, .reminder)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+
+    func testThatItReturnsBlock_WhenItExpires() async {
+        update(certificate: certificate(with: 0))
+        do {
+            let result = try await e2eIdentityCertificateStatus.invoke()
+            XCTAssertEqual(result, .block)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+
+    func testThatItReturnsBlock_WhenItIsBeyondExpiryDate() async {
+        update(certificate: certificate(with: -.oneDay))
+        do {
+            let result = try await e2eIdentityCertificateStatus.invoke()
+            XCTAssertEqual(result, .block)
+        } catch {
+            XCTFail(error.localizedDescription)
+        }
+    }
+
+    private func certificate(with timeInterval: TimeInterval) -> E2eIdentityCertificate {
+        let certificate = E2eIdentityCertificate(
+            clientId: "sdfsdfsdfs",
+            certificateDetails: .mockCertificate,
+            mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
+            notValidBefore: Date.now,
+            expiryDate: Date.now,
+            certificateStatus: .valid,
+            serialNumber: .mockSerialNumber
+        )
+        certificate.expiryDate = Date.now + timeInterval
+        return certificate
+    }
+ }
