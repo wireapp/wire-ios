@@ -56,7 +56,8 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
             "languageChanged",
             "hasReadReceiptsEnabledChanged",
             "externalParticipantsStateChanged",
-            "legalHoldStatusChanged"
+            "legalHoldStatusChanged",
+            "oneOnOneUserChanged"
         ]
     }
 
@@ -553,6 +554,22 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 
     }
 
+    func testThatItNotifiesTheObserverOfChangeOneOnOneUser() {
+        // given
+        let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.conversationType = ZMConversationType.oneOnOne
+        uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(conversation,
+                                                     modifier: { conversation, _ in conversation.oneOnOneUser = otherUser },
+                                                     expectedChangedField: "oneOnOneUserChanged",
+                                                     expectedChangedKeys: ["oneOnOneUser"])
+
+    }
+
     func testThatAccessModeChangeIsTriggeringObservation() {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
@@ -658,7 +675,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
                 otherUser.connection?.status = ZMConnectionStatus.pending
                 otherUser.oneOnOneConversation = conversation
             },
-            expectedChangedFields: ["connectionStateChanged"],
+            expectedChangedFields: ["connectionStateChanged", "oneOnOneUserChanged"],
             expectedChangedKeys: ["relatedConnectionState"]
         )
     }

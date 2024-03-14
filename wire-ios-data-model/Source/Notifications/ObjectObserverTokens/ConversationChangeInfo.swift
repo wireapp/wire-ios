@@ -50,7 +50,8 @@ extension ZMConversation: ObjectInSnapshot {
             ZMConversation.mlsStatusKey,
             ZMConversation.mlsVerificationStatusKey,
             #keyPath(ZMConversation.isDeletedRemotely),
-            ZMConversation.messageProtocolKey
+            ZMConversation.messageProtocolKey,
+            #keyPath(ZMConversation.oneOnOneUser)
         ]
     }
 
@@ -177,6 +178,10 @@ extension ZMConversation: ObjectInSnapshot {
         changedKeysContain(keys: ZMConversation.messageProtocolKey)
     }
 
+    public var oneOnOneUserChanged: Bool {
+        changedKeysContain(keys: #keyPath(ZMConversation.oneOnOneUser))
+    }
+
     public var conversation: ZMConversation {
         return object as! ZMConversation
     }
@@ -207,7 +212,8 @@ extension ZMConversation: ObjectInSnapshot {
             "legalHoldStatusChanged: \(legalHoldStatusChanged)",
             "labelsChanged: \(labelsChanged)",
             "mlsStatusChanged: \(mlsStatusChanged)",
-            "messageProtocolChanges: \(messageProtocolChanged)"
+            "messageProtocolChanged: \(messageProtocolChanged)",
+            "oneOnOneUserChanged: \(oneOnOneUserChanged)"
         ].joined(separator: ", ")
     }
 
