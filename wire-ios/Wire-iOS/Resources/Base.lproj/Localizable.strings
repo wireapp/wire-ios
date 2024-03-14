@@ -1787,12 +1787,9 @@
 "feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all group admins.";
 
 // Feature configs: mlsE2EId
-"feature_config.alert.mls_e2ei.update.message" = "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now. \n Enter your identity provider’s credentials in the next step to update the certificate automatically.";
-"feature_config.alert.mls_e2ei.update.title" = "Update certificate";
 "feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";
 "feature_config.alert.mls_e2ei.message" = "As of today, your team uses end-to-end identity to make Wire’s usage more secure and practicable.\nEnter your identity provider’s credentials in the next step to automatically get a verification certificate for this device.";
 "feature_config.alert.mls_e2ei.button.get_certificate" = "Get Certificate";
-"feature_config.alert.mls_e2ei.button.update_certificate" = "Update Certificate";
 "feature_config.alert.mls_e2ei.button.remind_me_later" = "Remind Me Later";
 "feature_config.alert.mls_e2ei.button.learn_more" = "Learn More";
 "feature_config.alert.mls_e2ei.button.ok" = "OK";
@@ -1809,6 +1806,7 @@ Enter your identity provider’s credentials in the next step to update the cert
 // Update end-to-end identity certificate
 "update_certificate.alert.title" = "Update certificate";
 "update_certificate.alert.message" = "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now. Enter your identity provider’s credentials in the next step to update the certificate automatically.";
+"update_certificate.alert.expired-message" = "The end-to-end identity certificate for this device has expired. Enter your identity provider’s credentials in the next step to update the certificate automatically.";
 "update_certificate.button.update_certificate" = "Update Certificate";
 
 "failed_to_update_certificate.alert.title" = "Certificate couldn’t be updated.";

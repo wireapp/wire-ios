@@ -3163,15 +3163,6 @@ internal enum L10n {
             internal static let ok = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.ok", fallback: "OK")
             /// Remind Me Later
             internal static let remindMeLater = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.remind_me_later", fallback: "Remind Me Later")
-            /// Update Certificate
-            internal static let updateCertificate = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.update_certificate", fallback: "Update Certificate")
-          }
-          internal enum Update {
-            /// The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now. 
-            ///  Enter your identity provider’s credentials in the next step to update the certificate automatically.
-            internal static let message = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.update.message", fallback: "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now. \n Enter your identity provider’s credentials in the next step to update the certificate automatically.")
-            /// Update certificate
-            internal static let title = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.update.title", fallback: "Update certificate")
           }
         }
         internal enum SelfDeletingMessages {
@@ -5935,6 +5926,8 @@ internal enum L10n {
     }
     internal enum UpdateCertificate {
       internal enum Alert {
+        /// The end-to-end identity certificate for this device has expired. Enter your identity provider’s credentials in the next step to update the certificate automatically.
+        internal static let expiredMessage = L10n.tr("Localizable", "update_certificate.alert.expired-message", fallback: "The end-to-end identity certificate for this device has expired. Enter your identity provider’s credentials in the next step to update the certificate automatically.")
         /// The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now. Enter your identity provider’s credentials in the next step to update the certificate automatically.
         internal static let message = L10n.tr("Localizable", "update_certificate.alert.message", fallback: "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now. Enter your identity provider’s credentials in the next step to update the certificate automatically.")
         /// Update certificate
