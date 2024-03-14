@@ -200,20 +200,11 @@ final class ClientListViewController: UIViewController,
             assertionFailure("Unable to display Devices screen.UserSession and/or navigation instances are nil")
             return
         }
-        let viewModel = DeviceInfoViewModel.map(
-            certificate: client.e2eIdentityCertificate,
-            userClient: client,
-            title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? ""),
-            addedDate: client.activationDate?.formattedDate ?? "",
-            proteusID: client.proteusSessionID?.clientID.uppercased().splitStringIntoLines(charactersPerLine: 16),
-            isSelfClient: client.isSelfClient(),
+
+        let viewModel = makeDeviceInfoViewModel(
+            client: client,
             userSession: userSession,
-            credentials: credentials,
-            gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
-            mlsThumbprint: client.e2eIdentityCertificate?.mlsThumbprint.splitStringIntoLines(charactersPerLine: 16),
-            getProteusFingerprint: userSession.getUserClientFingerprint,
-            contextProvider: contextProvider,
-            e2eiCertificateEnrollment: userSession.enrollE2EICertificate
+            contextProvider: contextProvider
         )
         viewModel.showCertificateUpdateSuccess = {[weak self] certificateChain in
             self?.updateAllClients {
@@ -228,13 +219,45 @@ final class ClientListViewController: UIViewController,
             successEnrollmentViewController.presentTopmost()
         }
         selectedDeviceInfoViewModel = viewModel
+
         let detailsView = DeviceDetailsView(viewModel: viewModel) {
             self.navigationController?.setNavigationBarHidden(false, animated: false)
         }
         let hostingViewController = UIHostingController(rootView: detailsView)
         hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+
         navigationController.pushViewController(hostingViewController, animated: true)
         navigationController.isNavigationBarHidden = true
+    }
+
+    private func makeDeviceInfoViewModel(
+        client: UserClient,
+        userSession: UserSession,
+        contextProvider: ContextProvider
+    ) -> DeviceInfoViewModel {
+        let saveFileManager = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
+        let deviceActionsHandler = DeviceDetailsViewActionsHandler(
+            userClient: client,
+            userSession: userSession,
+            credentials: credentials,
+            saveFileManager: saveFileManager,
+            getProteusFingerprint: userSession.getUserClientFingerprint,
+            contextProvider: contextProvider,
+            e2eiCertificateEnrollment: userSession.enrollE2EICertificate
+        )
+        return DeviceInfoViewModel(
+            title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? ""),
+            addedDate: client.activationDate?.formattedDate ?? "",
+            proteusID: client.proteusSessionID?.clientID.uppercased().splitStringIntoLines(charactersPerLine: 16) ?? "",
+            userClient: client,
+            isSelfClient: client.isSelfClient(),
+            gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+            isFromConversation: false,
+            actionsHandler: deviceActionsHandler,
+            conversationClientDetailsActions: deviceActionsHandler,
+            debugMenuActionsHandler: deviceActionsHandler,
+            showDebugMenu: Bundle.developerModeEnabled
+        )
     }
 
     @MainActor
@@ -316,10 +339,9 @@ final class ClientListViewController: UIViewController,
 
     func finishedFetching(_ userClients: [UserClient]) {
         Task {
-            let updatedClients = await updateCertificates(for: userClients)
+            await updateCertificates(for: userClients)
             await MainActor.run {
                 dismissLoadingView()
-                clients = updatedClients.filter { !$0.isSelfClient() }
             }
         }
     }
@@ -510,57 +532,43 @@ final class ClientListViewController: UIViewController,
     }
 
     @MainActor
-    private func updateCertificates(for userClients: [UserClient]) async -> [UserClient] {
-        let mlsGroupID = await fetchSelfConversation()
-        if let mlsGroupID = mlsGroupID, let userSession = userSession {
-            var updatedUserClients = [UserClient]()
-            let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
-                if let mlsClientId = MLSClientID(userClient: $0) {
-                    ($0.clientId.hashValue, mlsClientId)
+    private func updateCertificates(for userClients: [UserClient]) async {
+        guard
+            let selfMlsGroupID = await fetchSelfConversation(),
+            let userSession,
+            userSession.e2eiFeature.isEnabled
+        else {
+            return
+        }
+
+        let mlsClients: [UserClient: MLSClientID] = Dictionary(
+            uniqueKeysWithValues:
+                userClients
+                .filter { $0.mlsPublicKeys.ed25519 != nil }
+                .compactMap {
+                    if let mlsClientId = MLSClientID(userClient: $0) {
+                        ($0, mlsClientId)
+                    } else {
+                        nil
+                    }
+                })
+
+        do {
+            let certificates = try await userSession.getE2eIdentityCertificates.invoke(
+                mlsGroupId: selfMlsGroupID,
+                clientIds: Array(mlsClients.values))
+
+            for (client, mlsClientId) in mlsClients {
+                if let e2eiCertificate = certificates.first(where: { $0.clientId == mlsClientId.rawValue }) {
+                    client.e2eIdentityCertificate = e2eiCertificate
                 } else {
-                    nil
+                    client.e2eIdentityCertificate = makeNotActivatedE2EIdenityCertificate(client: client)
                 }
-            })
-            let mlsClienIds = Array(mlsClients.values)
-            do {
-                let isE2eIEnabledForSelfClient = try await userSession.getIsE2eIdentityEnabled.invoke()
-                let certificates = try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupID,
-                                                                                           clientIds: mlsClienIds)
-                if certificates.isNonEmpty {
-                    for client in userClients {
-                        let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
-                        client.e2eIdentityCertificate = certificates.first { $0.clientId == mlsClientIdRawValue }
-                        client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint
-                        if client.e2eIdentityCertificate == nil && client.mlsPublicKeys.ed25519 != nil {
-                            client.e2eIdentityCertificate = makeNotActivatedE2EIdenityCertificate(client: client)
-                        }
-                        updatedUserClients.append(client)
-                    }
-                    if let selfClient = selfClient {
-                        selfClient.e2eIdentityCertificate = certificates.first {
-                            $0.clientId == MLSClientID(userClient: selfClient)?.rawValue
-                        } ?? makeNotActivatedE2EIdenityCertificate(client: selfClient)
-                        selfClient.mlsThumbPrint = selfClient.e2eIdentityCertificate?.mlsThumbprint ?? selfClient.mlsPublicKeys.ed25519
-                    }
-                    return updatedUserClients
-                } else if isE2eIEnabledForSelfClient {
-                    for client in clients {
-                        if let mlsThumbprint = client.mlsPublicKeys.ed25519,
-                           !mlsThumbprint.isEmpty {
-                            client.e2eIdentityCertificate = makeNotActivatedE2EIdenityCertificate(client: client)
-                            updatedUserClients.append(client)
-                        }
-                    }
-                    return updatedUserClients
-                } else {
-                    return userClients
-                }
-            } catch {
-                WireLogger.e2ei.error(String(reflecting: error))
-                return userClients
+                client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint
             }
-        } else {
-            return userClients
+
+        } catch {
+            WireLogger.e2ei.error(String(reflecting: error))
         }
     }
 
@@ -569,9 +577,7 @@ final class ClientListViewController: UIViewController,
             return
         }
         Task {
-            let results = await updateCertificates(for: Array(selfUser.clients))
-            self.clients = results
-            self.selfClient = results.first(where: { $0.isSelfClient() })
+            await updateCertificates(for: Array(selfUser.clients))
             refreshViews()
             completed?()
         }
