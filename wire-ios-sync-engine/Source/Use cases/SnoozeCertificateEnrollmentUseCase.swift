@@ -76,6 +76,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
             let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled(gracePeriod: nil)
             NotificationCenter.default.post(name: .featureDidChangeNotification,
                                             object: notificationObject)
+
         }
 
         recurringActionService.registerAction(recurringAction)

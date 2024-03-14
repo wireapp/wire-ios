@@ -23,6 +23,14 @@ public enum E2EIdentityCertificateStatus: CaseIterable {
     case notActivated, revoked, expired, invalid, valid
 }
 
+public enum E2eIdentityCertificateConstants {
+    // current default days the certificate is retained on server
+    public static let serverRetainedDays = Double(28 * TimeInterval.oneDay)
+
+    // Randomising time so that not all clients update certificate at the same time
+    public static let randomInterval = Double(Int.random(in: 0..<Int(TimeInterval.oneDay)))
+}
+
 @objc public class E2eIdentityCertificate: NSObject {
 
     public var clientId: String
@@ -33,6 +41,8 @@ public enum E2EIdentityCertificateStatus: CaseIterable {
     public var status: E2EIdentityCertificateStatus
     public var serialNumber: String
     public var comparedDate: Date
+    public var serverStoragePeriod: TimeInterval
+    public var randomPeriod: TimeInterval
 
     public init(
         clientId: String,
@@ -42,7 +52,9 @@ public enum E2EIdentityCertificateStatus: CaseIterable {
         expiryDate: Date,
         certificateStatus: E2EIdentityCertificateStatus,
         serialNumber: String,
-        comparedDate: Date = DateProvider(now: .now).now
+        comparedDate: Date = DateProvider(now: .now).now,
+        serverStoragePeriod: TimeInterval = E2eIdentityCertificateConstants.serverRetainedDays,
+        randomPeriod: TimeInterval = E2eIdentityCertificateConstants.randomInterval
     ) {
         self.clientId = clientId
         self.details = certificateDetails
@@ -52,6 +64,8 @@ public enum E2EIdentityCertificateStatus: CaseIterable {
         self.status = certificateStatus
         self.serialNumber = serialNumber
         self.comparedDate = comparedDate
+        self.serverStoragePeriod = serverStoragePeriod
+        self.randomPeriod = randomPeriod
     }
 
     public struct DateProvider: DateProviding {
@@ -62,4 +76,29 @@ public enum E2EIdentityCertificateStatus: CaseIterable {
         }
     }
 
+}
+
+public extension E2eIdentityCertificate {
+
+    private var isExpired: Bool {
+        return expiryDate <= comparedDate
+    }
+
+    private var isValid: Bool {
+        status == .valid
+    }
+
+    private var isActivated: Bool {
+        return notValidBefore <= comparedDate
+    }
+
+    func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
+        let startUpdateDate = startUpdateDate(with: gracePeriod)
+        return isExpired || (isActivated && comparedDate >= startUpdateDate)
+    }
+
+    func startUpdateDate(with gracePeriod: TimeInterval) -> Date {
+        let timeLeftToUpdate = expiryDate.timeIntervalSince(notValidBefore) - serverStoragePeriod - gracePeriod - randomPeriod
+        return notValidBefore + timeLeftToUpdate
+    }
 }

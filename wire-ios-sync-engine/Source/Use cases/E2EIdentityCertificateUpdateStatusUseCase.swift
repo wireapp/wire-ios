@@ -34,8 +34,7 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
 
     private let e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol
     private let gracePeriod: TimeInterval
-    private let serverStoragePeriod: TimeInterval
-    private let randomPeriod: TimeInterval
+    private let comparedDate: Date
     private let lastAlertDate: Date?
     private let mlsGroupID: MLSGroupID
     private let mlsClientID: MLSClientID
@@ -43,21 +42,20 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
     public init(
         e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol,
         gracePeriod: TimeInterval,
-        serverStoragePeriod: TimeInterval = 28 * TimeInterval.oneDay,
-        randomPeriod: TimeInterval = Double((0..<Int(TimeInterval.oneDay)).randomElement() ?? 0), // Random time in a day
         mlsGroupID: MLSGroupID,
         mlsClientID: MLSClientID,
-        lastAlertDate: Date?
+        lastAlertDate: Date?,
+        comparedDate: Date = Date.now
     ) {
         self.e2eCertificateForCurrentClient = e2eCertificateForCurrentClient
         self.gracePeriod = gracePeriod
         self.lastAlertDate = lastAlertDate
-        self.serverStoragePeriod = serverStoragePeriod
-        self.randomPeriod = randomPeriod
         self.mlsGroupID = mlsGroupID
         self.mlsClientID = mlsClientID
+        self.comparedDate = comparedDate
     }
 
+    @MainActor
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
         if let certificate = try await e2eCertificateForCurrentClient.invoke(
             mlsGroupId: mlsGroupID,
@@ -67,31 +65,37 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
             if certificate.expiryDate.isInThePast {
                 return .block
             }
-            let timeLeft = certificate.expiryDate.timeIntervalSinceNow - serverStoragePeriod - gracePeriod - randomPeriod
+            let startUpdateDate = certificate.startUpdateDate(with: gracePeriod)
             let calendar = Calendar.current
             let fourHours = .oneHour * 4
             let fifteenMinutes = .fiveMinutes * 3
 
-            if timeLeft <= 0 {
-                return .block
+            if startUpdateDate > comparedDate && startUpdateDate < certificate.expiryDate {
+                return .noAction
             }
 
+            let timeLeft = certificate.expiryDate.timeIntervalSince(comparedDate)
+
             switch timeLeft {
+
             case  .oneDay ..< .oneWeek:
                 if let lastAlertDate = lastAlertDate, calendar.isDateInToday(lastAlertDate) {
                     return .noAction
                 }
                 return .reminder
+
             case fourHours ..< .oneDay:
                 if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < fourHours {
                     return .noAction
                 }
                 return .reminder
+
             case .oneHour ..< fourHours:
                 if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < .oneHour {
                     return .noAction
                 }
                 return .reminder
+
             case fifteenMinutes ..< .oneHour:
                 if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < fifteenMinutes {
                     return .noAction
@@ -103,6 +107,7 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
                     return .noAction
                 }
                 return .reminder
+
             default:
                 return .noAction
             }
