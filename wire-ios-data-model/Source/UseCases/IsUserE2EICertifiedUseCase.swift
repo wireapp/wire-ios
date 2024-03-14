@@ -74,7 +74,9 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
 
             // get all client IDs of the user
             let clientIDs = try await coreCrypto.getClientIds(conversationId: mlsGroupID)
-                .compactMap { String(data: $0, encoding: .utf8) }
+                .compactMap(MLSClientID.init)
+                .filter { $0.userID == userID }
+                .map(\.rawValue)
 
             // get MLS group members
             let userIdentities = try await coreCrypto.getUserIdentities(conversationId: mlsGroupID, userIds: [userID])
