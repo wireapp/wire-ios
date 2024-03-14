@@ -144,14 +144,12 @@ final class CoreDataFixture {
     }
 
     private func setupTestObjects() {
-        selfUser = ZMUser.insertNewObject(in: uiMOC)
+        selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID()
         selfUser.name = "selfUser"
         selfUser.accentColorValue = .vividRed
         selfUser.emailAddress = "test@email.com"
         selfUser.phoneNumber = "+123456789"
-
-        ZMUser.boxSelfUser(selfUser, inContextUserInfo: uiMOC)
 
         if selfUserInTeam {
             setupMember()
@@ -166,17 +164,6 @@ final class CoreDataFixture {
         otherUserConversation = ZMConversation.createOtherUserConversation(moc: uiMOC, otherUser: otherUser)
 
         uiMOC.saveOrRollback()
-
-        // because we modify selfUser after CoreDataStack loadStores, we need to update it in the syncContext
-        coreDataStack.syncContext.performAndWait {
-            if let user = try! coreDataStack.syncContext.existingObject(with: selfUser.objectID) as? ZMUser {
-                // see SelfUserObjectIDKey
-                coreDataStack.syncContext.userInfo["ZMSelfUserManagedObjectID"] = user
-                ZMUser.boxSelfUser(user, inContextUserInfo: coreDataStack.syncContext)
-
-            }
-            coreDataStack.syncContext.saveOrRollback()
-        }
     }
 
     private func updateTeamStatus(wasInTeam: Bool) {
