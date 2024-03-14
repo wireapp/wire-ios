@@ -469,7 +469,7 @@
 		BF491CEC1F063F4B0055EE44 /* AccountStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF491CDF1F0529D80055EE44 /* AccountStoreTests.swift */; };
 		BF5DF5CD20F4EB3E002BCB67 /* ZMSystemMessage+NewConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5DF5CC20F4EB3E002BCB67 /* ZMSystemMessage+NewConversation.swift */; };
 		BF6EA4D21E2512E800B7BD4B /* ZMConversation+DisplayName.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF6EA4D11E2512E800B7BD4B /* ZMConversation+DisplayName.swift */; };
-		BF735CFD1E7050D5003BC61F /* ZMConversationTests+CallSystemMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF735CFB1E7050D0003BC61F /* ZMConversationTests+CallSystemMessages.swift */; };
+		BF735CFD1E7050D5003BC61F /* ZMConversationMissedCallSystemMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF735CFB1E7050D0003BC61F /* ZMConversationMissedCallSystemMessageTests.swift */; };
 		BF794FE61D1442B100E618C6 /* ZMClientMessageTests+Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF794FE41D14425E00E618C6 /* ZMClientMessageTests+Location.swift */; };
 		BF7D9C491D90286700949267 /* MessagingTest+UUID.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9C8622A1D87DC18009AAC33 /* MessagingTest+UUID.swift */; };
 		BF8361DA1F0A3C41009AE5AC /* NSSecureCoding+Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8361D91F0A3C41009AE5AC /* NSSecureCoding+Swift.swift */; };
@@ -1363,7 +1363,7 @@
 		BF491CE71F063EEB0055EE44 /* AccountManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountManager.swift; sourceTree = "<group>"; };
 		BF5DF5CC20F4EB3E002BCB67 /* ZMSystemMessage+NewConversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMSystemMessage+NewConversation.swift"; sourceTree = "<group>"; };
 		BF6EA4D11E2512E800B7BD4B /* ZMConversation+DisplayName.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+DisplayName.swift"; sourceTree = "<group>"; };
-		BF735CFB1E7050D0003BC61F /* ZMConversationTests+CallSystemMessages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+CallSystemMessages.swift"; sourceTree = "<group>"; };
+		BF735CFB1E7050D0003BC61F /* ZMConversationMissedCallSystemMessageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMConversationMissedCallSystemMessageTests.swift; sourceTree = "<group>"; };
 		BF794FE41D14425E00E618C6 /* ZMClientMessageTests+Location.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+Location.swift"; sourceTree = "<group>"; };
 		BF8361D91F0A3C41009AE5AC /* NSSecureCoding+Swift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSSecureCoding+Swift.swift"; sourceTree = "<group>"; };
 		BF85CF5E1D227A78006EDB97 /* LocationData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationData.swift; sourceTree = "<group>"; };
@@ -3181,7 +3181,7 @@
 				F92C992B1DAFC58A0034AFDD /* ZMConversationTests+Ephemeral.swift */,
 				1621E59120E62BD2006B2D17 /* ZMConversationTests+Silencing.swift */,
 				F1B025601E534CF900900C65 /* ZMConversationTests+PrepareToSend.swift */,
-				BF735CFB1E7050D0003BC61F /* ZMConversationTests+CallSystemMessages.swift */,
+				BF735CFB1E7050D0003BC61F /* ZMConversationMissedCallSystemMessageTests.swift */,
 				F1B58926202DCEF9002BB59B /* ZMConversationTests+CreationSystemMessages.swift */,
 				EF9A4702210A026600085102 /* ZMConversationTests+Language.swift */,
 				F1517921212DAE2E00BA3EBD /* ZMConversationTests+Services.swift */,
@@ -4655,7 +4655,7 @@
 				1672A6162344A14E00380537 /* LabelObserverTests.swift in Sources */,
 				BF1B980B1EC31D6100DE033B /* TeamDeletionRuleTests.swift in Sources */,
 				EEFAAC3528DDE2B1009940E7 /* CoreCryptoCallbacksTests.swift in Sources */,
-				BF735CFD1E7050D5003BC61F /* ZMConversationTests+CallSystemMessages.swift in Sources */,
+				BF735CFD1E7050D5003BC61F /* ZMConversationMissedCallSystemMessageTests.swift in Sources */,
 				E6BFE8382B3320C7000F0FBE /* DatabaseMigrationHelper.swift in Sources */,
 				6388054A240EA8990043B641 /* ZMClientMessageTests+Composite.swift in Sources */,
 				F11F3E8B1FA32AA0007B6D3D /* InvalidClientsRemovalTests.swift in Sources */,
