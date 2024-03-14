@@ -83,8 +83,6 @@ struct DeviceDetailsButtonsView: View {
                     Divider()
                     getCertificateButton.padding()
                 }
-                Divider()
-                showCertificateButton.padding()
             case .revoked, .invalid:
                 Divider()
                 showCertificateButton.padding()
