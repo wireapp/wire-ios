@@ -115,6 +115,7 @@ final class AuthenticationEventResponderChain {
 
     fileprivate func registerDefaultEventHandlers() {
         // flowStartHandlers
+        registerHandler(AuthenticationStartE2EIdentityMissingErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartMissingUsernameErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartMissingCredentialsErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartReauthenticateErrorHandler(), to: &flowStartHandlers)

@@ -65,6 +65,54 @@ class ZMClientRegistrationStatusTests: MessagingTest {
         super.tearDown()
     }
 
+    // MARK: Initialisation
+
+    func testThatItRequestsE2EIEnrollment_whenRequiredOnInitialisation() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            let client  = UserClient.insertNewObject(in: self.syncMOC)
+            client.user = selfUser
+            client.remoteIdentifier = "identifier"
+            self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
+
+            enableMLS()
+            enableE2EI()
+
+            // when
+            sut.determineInitialRegistrationStatus()
+
+            // then
+            XCTAssertTrue(mockClientRegistationDelegate.didCallFailRegisterSelfUserClient)
+            XCTAssertEqual(mockClientRegistationDelegate.currentError as? NSError, needToToEnrollE2EIToRegisterClientError())
+        }
+    }
+
+    func testThatItCreatesBasicMLSClient_whenIfThereIsNoneOnInitialisation() {
+        syncMOC.performAndWait {
+            // given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            selfUser.remoteIdentifier = UUID()
+            let client  = UserClient.insertNewObject(in: self.syncMOC)
+            client.user = selfUser
+            client.remoteIdentifier = "identifier"
+            selfUser.domain = "example.com"
+            self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: ZMPersistedClientIdKey)
+            mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_MockMethod = { _ in }
+
+            enableMLS()
+
+            // when
+            sut.determineInitialRegistrationStatus()
+            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+            // then
+            XCTAssertEqual(self.sut.currentPhase, .registeringMLSClient)
+            XCTAssertEqual(mockCoreCryptoProvider.initialiseMLSWithBasicCredentialsMlsClientID_Invocations.count, 1)
+        }
+    }
+
     func testThatItInsertsANewClientIfThereIsNoneWaitingToBeSynced() {
         syncMOC.performAndWait {
             // given
@@ -101,6 +149,8 @@ class ZMClientRegistrationStatusTests: MessagingTest {
             XCTAssertEqual(selfUser.clients.count, 1)
         }
     }
+
+    // MARK: State machine
 
     func testThatItReturns_WaitingForSelfUser_IfSelfUserDoesNotHaveRemoteID() {
         syncMOC.performAndWait {

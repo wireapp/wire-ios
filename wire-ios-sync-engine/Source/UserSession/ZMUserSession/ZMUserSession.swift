@@ -517,8 +517,6 @@ public final class ZMUserSession: NSObject {
             self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
 
-            createMLSClientIfNeeded()
-
             if e2eiFeature.isEnabled {
                 self.observeMLSGroupVerificationStatus.invoke()
                 self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
@@ -678,22 +676,6 @@ public final class ZMUserSession: NSObject {
     private func notifyUserAboutChangesInAvailabilityBehaviourIfNeeded() {
         syncManagedObjectContext.performGroupedBlock {
             self.localNotificationDispatcher?.notifyAvailabilityBehaviourChangedIfNeeded()
-        }
-    }
-
-    func createMLSClientIfNeeded() {
-        // TODO: [WPB-6198] refactor out - [jacob]
-        if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
-            guard let mlsClientID = MLSClientID(user: ZMUser.selfUser(in: syncContext)) else {
-                fatal("Needs to register MLS client but can't retrieve qualified client ID")
-            }
-            WaitingGroupTask(context: syncContext) { [self] in
-                do {
-                    _ = try await coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
-                } catch {
-                    WireLogger.mls.error("Failed to create MLS client: \(error)")
-                }
-            }
         }
     }
 
