@@ -134,11 +134,10 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     @MainActor
     private func confirmSuccessfulEnrollment(_ certificateDetails: String) async {
         await snoozeCertificateEnrollmentUseCase.invoke()
-        guard let lastE2EIdentityUpdateDate = userSession?.lastE2EIUpdateDate else {
-            return
-        }
-        let successScreen = SuccessfulCertificateEnrollmentViewController(lastE2EIdentityUpdateDate: lastE2EIdentityUpdateDate)
-        successScreen.isUpdateMode = isUpdateMode
+        let successScreen = SuccessfulCertificateEnrollmentViewController(
+            lastE2EIdentityUpdateDate: userSession?.lastE2EIUpdateDate,
+            isUpdateMode: isUpdateMode
+        )
         successScreen.certificateDetails = certificateDetails
         successScreen.onOkTapped = { viewController in
             viewController.dismiss(animated: true)
@@ -158,11 +157,12 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     @MainActor
     private func showUpdateE2EIdentityCertificateAlert(canRemindLater: Bool = true) {
         userSession?.lastE2EIUpdateDate?.storeLastAlertDate(Date.now)
-        typealias MlsE2eiStrings = L10n.Localizable.FeatureConfig.Alert.MlsE2ei
+        typealias E2EIUpdateStrings = L10n.Localizable.UpdateCertificate.Alert
+
         let alert = UIAlertController.alertForE2eIChangeWithActions(
-            title: MlsE2eiStrings.Alert.UpdateCertificate.title,
-            message: MlsE2eiStrings.updateMessage,
-            enrollButtonText: MlsE2eiStrings.Button.updateCertificate,
+            title: E2EIUpdateStrings.title,
+            message: canRemindLater ? E2EIUpdateStrings.message : E2EIUpdateStrings.expiredMessage,
+            enrollButtonText: E2EIUpdateStrings.title,
             canRemindLater: canRemindLater
         ) { action in
             switch action {

@@ -23,10 +23,12 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     typealias LocalizedEnrollE2eiCertificate = L10n.Localizable.EnrollE2eiCertificate
     typealias LocalizedUpdateE2eiCertificate = L10n.Localizable.UpdateE2eiCertificate
 
-    var certificateDetails: String = ""
     // MARK: - Properties
-    var isUpdateMode: Bool
+
+    var certificateDetails: String = ""
     public var onOkTapped: ((_ viewController: SuccessfulCertificateEnrollmentViewController) -> Void)?
+
+    private let isUpdateMode: Bool
 
     private var titleLabel: UILabel {
         let title = isUpdateMode ? LocalizedUpdateE2eiCertificate.title : LocalizedEnrollE2eiCertificate.title
@@ -193,8 +195,8 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         wrapNavigationController.presentTopmost()
     }
 
-    @objc
-    private func okTapped() {
+    @MainActor
+    @objc private func okTapped() {
         onOkTapped?(self)
     }
 

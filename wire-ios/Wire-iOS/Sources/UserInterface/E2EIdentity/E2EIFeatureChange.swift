@@ -41,9 +41,15 @@ extension UIAlertController {
 
         let topViewController = UIApplication.shared.topmostViewController(onlyFullScreen: true)
 
-        let learnMoreAction = UIAlertAction.link(title: MlsE2eiStrings.Button.learnMore,
-                                                 url: URL.wr_e2eiLearnMore,
-                                                 presenter: topViewController)
+        let learnMoreAction = UIAlertAction.link(
+            title: MlsE2eiStrings.Button.learnMore,
+            url: URL.wr_e2eiLearnMore,
+            presenter: topViewController
+        ) {
+            if !canRemindLater {
+                NotificationCenter.default.post(name: .checkForE2EICertificateStatus, object: nil)
+            }
+        }
         let getCertificateAction = UIAlertAction(title: enrollButtonText,
                                                  style: .default) {_ in
             handler(.getCertificate)

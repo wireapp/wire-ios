@@ -193,6 +193,7 @@
 		168A16AF1D9597C2005CFA6C /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 168A16AD1D9597C2005CFA6C /* MainInterface.storyboard */; };
 		1695B9D62B912E8D00E9342A /* ConversationDegradedSystemMessageSectionDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1695B9D52B912E8D00E9342A /* ConversationDegradedSystemMessageSectionDescription.swift */; };
 		1695B9D82B91307600E9342A /* ConversationSecureSystemMessageSectionDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1695B9D72B91307600E9342A /* ConversationSecureSystemMessageSectionDescription.swift */; };
+		1695B9DC2BA1C15000E9342A /* AuthenticationStartE2EIdentityMissingErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1695B9DB2BA1C15000E9342A /* AuthenticationStartE2EIdentityMissingErrorHandler.swift */; };
 		169FF9331C57CB2100C5BF90 /* VideoToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 169FF9321C57CB2100C5BF90 /* VideoToolbox.framework */; };
 		16A293DA1F5FFA2E00B4EB16 /* SkeletonViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A293D91F5FFA2E00B4EB16 /* SkeletonViewController.swift */; };
 		16A5FDC52154F53F00AEEBBD /* NSAttributedString+MessageFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A5FDC42154F53F00AEEBBD /* NSAttributedString+MessageFormatting.swift */; };
@@ -2243,6 +2244,7 @@
 		1693D9661CEDB26200D1F13C /* UIApplication+Permissions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIApplication+Permissions.swift"; sourceTree = "<group>"; };
 		1695B9D52B912E8D00E9342A /* ConversationDegradedSystemMessageSectionDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationDegradedSystemMessageSectionDescription.swift; sourceTree = "<group>"; };
 		1695B9D72B91307600E9342A /* ConversationSecureSystemMessageSectionDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSecureSystemMessageSectionDescription.swift; sourceTree = "<group>"; };
+		1695B9DB2BA1C15000E9342A /* AuthenticationStartE2EIdentityMissingErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStartE2EIdentityMissingErrorHandler.swift; sourceTree = "<group>"; };
 		169FF9321C57CB2100C5BF90 /* VideoToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = VideoToolbox.framework; path = System/Library/Frameworks/VideoToolbox.framework; sourceTree = SDKROOT; };
 		16A293D91F5FFA2E00B4EB16 /* SkeletonViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkeletonViewController.swift; sourceTree = "<group>"; };
 		16A5FDC42154F53F00AEEBBD /* NSAttributedString+MessageFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+MessageFormatting.swift"; sourceTree = "<group>"; };
@@ -5065,6 +5067,7 @@
 				5E1314C022097BEF000FAFC5 /* AuthenticationStartCompanyLoginLinkEventHandler.swift */,
 				5EE73BE52122C6DC0032986D /* AuthenticationStartAddAccountEventHandler.swift */,
 				16D74BEB2B59203C00160298 /* AuthenticationStartMissingUsernameErrorHandler.swift */,
+				1695B9DB2BA1C15000E9342A /* AuthenticationStartE2EIdentityMissingErrorHandler.swift */,
 			);
 			path = "Flow Start";
 			sourceTree = "<group>";
@@ -10138,6 +10141,7 @@
 				EE8E9267202496C2000F4752 /* NSAttributedString+Down.swift in Sources */,
 				A9C9D35E23E84EA20098CACC /* MediaPlayerDelegate.swift in Sources */,
 				16CB8DB91DC0F777000C5F47 /* DefaultNavigationBar.swift in Sources */,
+				1695B9DC2BA1C15000E9342A /* AuthenticationStartE2EIdentityMissingErrorHandler.swift in Sources */,
 				BF1743742123060E008851CA /* AdditionalMenuItem.swift in Sources */,
 				F15E9BFD1E4878AC00EA207F /* UINavigationController+Additions.swift in Sources */,
 				A96E802824C828070010CD80 /* WipeDatabaseViewController.swift in Sources */,
