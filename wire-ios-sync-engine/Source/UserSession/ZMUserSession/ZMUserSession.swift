@@ -679,22 +679,6 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    func createMLSClientIfNeeded() {
-        // TODO: [WPB-6198] refactor out - [jacob]
-        if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
-            guard let mlsClientID = MLSClientID(user: ZMUser.selfUser(in: syncContext)) else {
-                fatal("Needs to register MLS client but can't retrieve qualified client ID")
-            }
-            WaitingGroupTask(context: syncContext) { [self] in
-                do {
-                    _ = try await coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
-                } catch {
-                    WireLogger.mls.error("Failed to create MLS client: \(error)")
-                }
-            }
-        }
-    }
-
     // MARK: - Network
 
     public func requestResyncResources() {
