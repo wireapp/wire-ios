@@ -184,7 +184,7 @@ extension ConversationViewController: MLSConversationCheckerPresenter {
 
     func presentE2EIPrivacyWarningAlert(_ notification: Notification) {
         let content = e2eIPrivacyWarningAlertContent { sendAnyway in
-            MLSConversationChecker.e2eiPrivacyWarningConfirm(sendAnyway: sendAnyway)
+            E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: sendAnyway)
         }
         presentAlert(with: content)
     }

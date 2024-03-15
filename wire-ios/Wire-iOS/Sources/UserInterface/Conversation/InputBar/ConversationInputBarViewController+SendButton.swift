@@ -23,11 +23,11 @@ import WireCommonComponents
 extension ConversationInputBarViewController {
     func sendText() {
 
-        let checker = MLSConversationChecker(conversation: conversation) {
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
             self._sendText()
         }
 
-        checker.checkMessageSend()
+        checker.performAction()
     }
 
     private func _sendText() {

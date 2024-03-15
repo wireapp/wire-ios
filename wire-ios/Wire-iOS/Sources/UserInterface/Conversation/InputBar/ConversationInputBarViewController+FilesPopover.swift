@@ -125,11 +125,11 @@ extension ConversationInputBarViewController {
 
     @objc
     func docUploadPressed(_ sender: IconButton) {
-        let checker = MLSConversationChecker(conversation: conversation) {
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
             self.showDocUploadActionSheet(from: sender)
         }
 
-        checker.checkMessageSend()
+        checker.performAction()
     }
 
     private func showDocUploadActionSheet(from sender: IconButton) {

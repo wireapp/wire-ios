@@ -700,11 +700,11 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     private func presentMLSPrivacyWarningIfNeeded(execute: @escaping () -> Void) {
-        let checker = MLSConversationChecker(conversation: conversation) {
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
             execute()
         }
 
-        checker.checkMessageSend()
+        checker.performAction()
     }
 
     private func showGiphy(for conversation: ZMConversation) {
@@ -831,11 +831,11 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
 
-        let checker = MLSConversationChecker(conversation: conversation) {
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
             self.process(picker: picker, info: info)
         }
 
-        checker.checkMessageSend()
+        checker.performAction()
     }
 
     private func process(picker: UIImagePickerController, info: [UIImagePickerController.InfoKey: Any]) {

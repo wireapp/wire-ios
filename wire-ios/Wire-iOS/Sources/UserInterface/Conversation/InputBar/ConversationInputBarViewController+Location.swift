@@ -22,10 +22,10 @@ import WireSyncEngine
 extension ConversationInputBarViewController {
     @objc
     func locationButtonPressed(_ sender: IconButton?) {
-        let checker = MLSConversationChecker(conversation: conversation) {
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
             self.showLocationSelection(from: sender)
         }
-        checker.checkMessageSend()
+        checker.performAction()
     }
 
     private func showLocationSelection(from sender: IconButton?) {

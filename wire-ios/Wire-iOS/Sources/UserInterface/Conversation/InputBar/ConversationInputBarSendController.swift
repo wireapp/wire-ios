@@ -35,7 +35,7 @@ final class ConversationInputBarSendController: NSObject {
 
         guard let conversation = conversation as? ZMConversation else { return }
 
-        let checker = MLSConversationChecker(conversation: conversation, continueAction: { [self] in
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
             feedbackGenerator.prepare()
             userSession.enqueue({
                 do {
@@ -50,7 +50,7 @@ final class ConversationInputBarSendController: NSObject {
             })
         })
 
-        checker.checkMessageSend()
+        checker.performAction()
     }
 
     func sendTextMessage(_ text: String,

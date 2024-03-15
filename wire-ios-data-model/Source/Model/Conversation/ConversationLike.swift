@@ -37,7 +37,7 @@ public protocol ConversationLike: AnyObject {
 
     var isUnderLegalHold: Bool { get }
 
-    var isMLConversationDegraded: Bool { get }
+    var isMLSConversationDegraded: Bool { get }
 
     func verifyLegalHoldSubjects()
 
@@ -89,7 +89,7 @@ extension ZMConversation: ConversationLike {
 		return localParticipants.filter { $0.isServiceUser }.sorted(by: ZMConversation.userNameSorter)
     }
 
-    public var isMLConversationDegraded: Bool {
+    public var isMLSConversationDegraded: Bool {
         mlsVerificationStatus == .degraded
     }
 }

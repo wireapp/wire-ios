@@ -23,6 +23,7 @@ protocol MLSConversationCheckerPresenter {
     func presentE2EIPrivacyWarningAlert(_ notification: Notification)
 }
 
+// Checks if E2EIPrivacyWarningAlert needs to be presented before given action
 struct E2EIPrivacyWarningChecker {
     var conversation: ConversationLike
     var continueAction: () -> Void
