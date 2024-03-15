@@ -28,9 +28,13 @@ struct MLSConversationChecker {
     var continueAction: () -> Void
 
     func checkMessageSend() {
-        if conversation.isMLConversationDegraded {
-            NotificationCenter.default.post(name: .presentE2EIPrivacyWarningAlert, object: self, userInfo: nil)
+        guard conversation.isMLConversationDegraded else {
+            continueAction()
+            return
         }
+
+        NotificationCenter.default.post(name: .presentE2EIPrivacyWarningAlert, object: self, userInfo: nil)
+
         Task {
             var shouldContinue = false
             for await notification in NotificationCenter.default.notifications(named: .e2eiPrivacyWarningConfirm) {
