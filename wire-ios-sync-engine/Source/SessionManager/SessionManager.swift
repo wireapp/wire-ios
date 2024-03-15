@@ -58,7 +58,7 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
     func sessionManagerDidBlacklistJailbrokenDevice()
     func sessionManagerRequireCertificateEnrollment()
-    func sessionManagerDidUpdateCertificate(for activeSession: UserSession?)
+    func sessionManagerDidEnrollCertificate(for activeSession: UserSession?)
 
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?)
     func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?)
@@ -835,7 +835,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 self.performPostUnlockActionsIfPossible(for: session)
                 Task {
-                    await self.requestCertificateUpdateOrEnrollIfNeeded()
+                    await self.requestCertificateEnrollmentIfNeeded()
                 }
             }
         }
@@ -1398,7 +1398,7 @@ extension SessionManager {
             if session.isLoggedIn {
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 Task {
-                    await self.requestCertificateUpdateOrEnrollIfNeeded()
+                    await self.requestCertificateEnrollmentIfNeeded()
                 }
             }
         }
@@ -1491,11 +1491,11 @@ extension SessionManager {
 
 extension SessionManager {
 
-    public func didUpdateCertificateSuccessfully() {
-        delegate?.sessionManagerDidUpdateCertificate(for: activeUserSession)
+    public func didEnrollCertificateSuccessfully() {
+        delegate?.sessionManagerDidEnrollCertificate(for: activeUserSession)
     }
 
-    private func requestCertificateUpdateOrEnrollIfNeeded() async {
+    private func requestCertificateEnrollmentIfNeeded() async {
         guard let userSession = activeUserSession else { return }
 
         do {

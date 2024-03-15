@@ -227,7 +227,7 @@ extension BlockerViewController {
     private func enrollCertificateAction() async {
         do {
             try await enrollCertificate()
-            sessionManager?.didUpdateCertificateSuccessfully()
+            sessionManager?.didEnrollCertificateSuccessfully()
         } catch {
             WireLogger.e2ei.warn("failed to enroll certificate: \(error)")
 

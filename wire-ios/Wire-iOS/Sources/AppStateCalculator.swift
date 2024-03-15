@@ -186,7 +186,7 @@ extension AppStateCalculator: SessionManagerDelegate {
         transition(to: .certificateEnrollmentRequired)
     }
 
-    func sessionManagerDidUpdateCertificate(for activeSession: UserSession?) {
+    func sessionManagerDidEnrollCertificate(for activeSession: UserSession?) {
         if let activeSession {
             transition(to: .authenticated(activeSession))
         }

@@ -735,7 +735,7 @@ extension IntegrationTest: SessionManagerDelegate {
         // no-op
     }
 
-    public func sessionManagerDidUpdateCertificate(for activeSession: UserSession?) {
+    public func sessionManagerDidEnrollCertificate(for activeSession: UserSession?) {
         // no-op
     }
 

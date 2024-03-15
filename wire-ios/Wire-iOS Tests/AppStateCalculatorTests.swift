@@ -212,7 +212,7 @@ final class AppStateCalculatorTests: XCTestCase {
         sut.applicationDidBecomeActive()
 
         // WHEN
-        sut.sessionManagerDidUpdateCertificate(for: userSession)
+        sut.sessionManagerDidEnrollCertificate(for: userSession)
 
         // THEN
         XCTAssertEqual(sut.appState, .authenticated(userSession))
