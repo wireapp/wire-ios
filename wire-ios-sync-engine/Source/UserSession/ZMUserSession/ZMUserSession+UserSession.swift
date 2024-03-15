@@ -312,7 +312,8 @@ extension ZMUserSession: UserSession {
             gracePeriod: Double(e2eiFeature.config.verificationExpiration),
             mlsGroupID: mlsGroupID,
             mlsClientID: selfMLSClientID,
-            lastAlertDate: lastE2EIUpdateDate?.fetchLastAlertDate()
+            lastAlertDate: lastE2EIUpdateDate?.fetchLastAlertDate(),
+            gracePeriodRepository: gracePeriodRepository
         )
 
         return updateE2EICertificate

@@ -35,9 +35,11 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
     private let e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol
     private let gracePeriod: TimeInterval
     private let comparedDate: Date
-    private let lastAlertDate: Date?
     private let mlsGroupID: MLSGroupID
     private let mlsClientID: MLSClientID
+    private let gracePeriodRepository: GracePeriodRepositoryInterface
+
+    public var lastAlertDate: Date?
 
     public init(
         e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol,
@@ -45,7 +47,8 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
         mlsGroupID: MLSGroupID,
         mlsClientID: MLSClientID,
         lastAlertDate: Date?,
-        comparedDate: Date = Date.now
+        comparedDate: Date = Date.now,
+        gracePeriodRepository: GracePeriodRepositoryInterface
     ) {
         self.e2eCertificateForCurrentClient = e2eCertificateForCurrentClient
         self.gracePeriod = gracePeriod
@@ -53,6 +56,7 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
         self.mlsGroupID = mlsGroupID
         self.mlsClientID = mlsClientID
         self.comparedDate = comparedDate
+        self.gracePeriodRepository = gracePeriodRepository
     }
 
     @MainActor
@@ -65,20 +69,21 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
             if certificate.expiryDate.isInThePast {
                 return .block
             }
-            let startUpdateDate = certificate.startUpdateDate(with: gracePeriod)
+            let renewalNudgingDate = certificate.renewalNudgingDate(with: gracePeriod)
             let calendar = Calendar.current
             let fourHours = .oneHour * 4
             let fifteenMinutes = .fiveMinutes * 3
 
-            if startUpdateDate > comparedDate && startUpdateDate < certificate.expiryDate {
-                return .noAction
-            }
-
             let timeLeft = certificate.expiryDate.timeIntervalSince(comparedDate)
+            let maxTimeLeft = max(timeLeft, .oneWeek)
+
+            let snoozeTimeProvider = SnoozeTimeProvider()
+            let snoozeTime = snoozeTimeProvider.getSnoozeTime(endOfPeriod: certificate.expiryDate)
+            gracePeriodRepository.storeGracePeriodEndDate(Date.now + snoozeTime)
 
             switch timeLeft {
 
-            case  .oneDay ..< .oneWeek:
+            case  .oneDay ..< maxTimeLeft:
                 if let lastAlertDate = lastAlertDate, calendar.isDateInToday(lastAlertDate) {
                     return .noAction
                 }

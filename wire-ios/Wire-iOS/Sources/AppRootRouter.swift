@@ -214,10 +214,12 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             configureAuthenticatedAppearance()
             executeAuthenticatedBlocks()
             screenCurtain.userSession = userSession
-            showAuthenticated(
-                userSession: userSession,
-                completion: completionBlock
-            )
+            Task {
+                await showAuthenticated(
+                    userSession: userSession,
+                    completion: completionBlock
+                )
+            }
         case .headless:
             showLaunchScreen(completion: completionBlock)
         case .loading(account: let toAccount, from: let fromAccount):
@@ -345,13 +347,14 @@ extension AppRootRouter {
                                completion: completion)
     }
 
+    @MainActor
     private func showAuthenticated(
         userSession: UserSession,
         completion: @escaping () -> Void
-    ) {
+    ) async {
         guard
             let selectedAccount = SessionManager.shared?.accountManager.selectedAccount,
-            let authenticatedRouter = buildAuthenticatedRouter(
+            let authenticatedRouter = await buildAuthenticatedRouter(
                 account: selectedAccount,
                 userSession: userSession
             )
@@ -361,7 +364,6 @@ extension AppRootRouter {
         }
 
         self.authenticatedRouter = authenticatedRouter
-
         rootViewController.set(childViewController: authenticatedRouter.viewController,
                                completion: completion)
     }
@@ -414,10 +416,11 @@ extension AppRootRouter {
         Analytics.shared.provider?.selfUser = selfUser
     }
 
+    @MainActor
     private func buildAuthenticatedRouter(
         account: Account,
         userSession: UserSession
-    ) -> AuthenticatedRouter? {
+    ) async -> AuthenticatedRouter? {
         guard let userSession = ZMUserSession.shared() else { return  nil }
 
         let isTeamMember: Bool
@@ -429,7 +432,7 @@ extension AppRootRouter {
         }
 
         let needToShowDialog = appStateCalculator.wasUnauthenticated && !isTeamMember
-
+        let e2eIdentityCertificateUpdate = await userSession.e2eIdentityUpdateCertificateUpdateStatus()
         return AuthenticatedRouter(
             rootViewController: rootViewController,
             account: account,
@@ -441,7 +444,8 @@ extension AppRootRouter {
                 snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
                 stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
                 gracePeriodRepository: userSession.gracePeriodRepository,
-                userSession: userSession,
+                lastE2EIdentityUpdateAlertDate: userSession.lastE2EIUpdateDate,
+                e2eIdentityCertificateUpdate: e2eIdentityCertificateUpdate,
                 targetVC: rootViewController),
             gracePeriodRepository: userSession.gracePeriodRepository
         )

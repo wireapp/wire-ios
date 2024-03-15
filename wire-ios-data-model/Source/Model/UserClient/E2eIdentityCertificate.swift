@@ -93,12 +93,12 @@ public extension E2eIdentityCertificate {
     }
 
     func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
-        let startUpdateDate = startUpdateDate(with: gracePeriod)
-        return isExpired || (isActivated && comparedDate >= startUpdateDate)
+        let renewalNudgingDate = renewalNudgingDate(with: gracePeriod)
+        return isExpired || (isActivated && comparedDate >= renewalNudgingDate)
     }
 
-    func startUpdateDate(with gracePeriod: TimeInterval) -> Date {
-        let timeLeftToUpdate = expiryDate.timeIntervalSince(notValidBefore) - serverStoragePeriod - gracePeriod - randomPeriod
-        return notValidBefore + timeLeftToUpdate
+    func renewalNudgingDate(with gracePeriod: TimeInterval) -> Date {
+        let standardDeductionsFromExpiry = serverStoragePeriod + gracePeriod + randomPeriod
+        return expiryDate - standardDeductionsFromExpiry
     }
 }

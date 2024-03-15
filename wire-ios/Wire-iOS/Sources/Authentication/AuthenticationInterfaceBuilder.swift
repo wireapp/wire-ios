@@ -186,7 +186,7 @@ final class AuthenticationInterfaceBuilder {
             return makeViewController(for: viewController)
 
         case .enrollE2EIdentitySuccess(let certificateDetails):
-            let viewController = SuccessfulCertificateEnrollmentViewController(lastE2EIdentityUpdateDate: ZMUserSession.shared()?.lastE2EIUpdateDate)
+            let viewController = SuccessfulCertificateEnrollmentViewController()
             viewController.certificateDetails = certificateDetails
             viewController.onOkTapped = { viewController in
                 viewController.authenticationCoordinator?.executeAction(.completeE2EIEnrollment)

@@ -107,11 +107,9 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         return stack
     }()
 
-    private let lastE2EIdentityUpdateDate: LastE2EIdentityUpdateDateProtocol?
     // MARK: - Life cycle
 
-    init(lastE2EIdentityUpdateDate: LastE2EIdentityUpdateDateProtocol?, isUpdateMode: Bool = false) {
-        self.lastE2EIdentityUpdateDate = lastE2EIdentityUpdateDate
+    init(isUpdateMode: Bool = false) {
         self.isUpdateMode = isUpdateMode
         super.init(nibName: nil, bundle: nil)
         setupViews()
@@ -123,11 +121,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         view.backgroundColor = SemanticColors.View.backgroundDefault
-        if isUpdateMode {
-            self.lastE2EIdentityUpdateDate?.storeLastAlertDate(Date.now)
-        }
     }
 
     // MARK: - Helpers

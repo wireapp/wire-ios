@@ -584,17 +584,17 @@ public class MockSnoozeCertificateEnrollmentUseCaseProtocol: SnoozeCertificateEn
 
     // MARK: - invoke
 
-    public var invoke_Invocations: [Void] = []
-    public var invoke_MockMethod: (() async -> Void)?
+    public var invokeIsUpdateMode_Invocations: [Bool] = []
+    public var invokeIsUpdateMode_MockMethod: ((Bool) async -> Void)?
 
-    public func invoke() async {
-        invoke_Invocations.append(())
+    public func invoke(isUpdateMode: Bool) async {
+        invokeIsUpdateMode_Invocations.append(isUpdateMode)
 
-        guard let mock = invoke_MockMethod else {
-            fatalError("no mock for `invoke`")
+        guard let mock = invokeIsUpdateMode_MockMethod else {
+            fatalError("no mock for `invokeIsUpdateMode`")
         }
 
-        await mock()
+        await mock(isUpdateMode)
     }
 
 }
