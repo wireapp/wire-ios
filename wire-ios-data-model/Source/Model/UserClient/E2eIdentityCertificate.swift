@@ -25,10 +25,10 @@ public enum E2EIdentityCertificateStatus: CaseIterable {
 
 public enum E2eIdentityCertificateConstants {
     // current default days the certificate is retained on server
-    public static let serverRetainedDays = Double(28 * TimeInterval.oneDay)
+    public static let serverRetainedDays: TimeInterval = 28 * TimeInterval.oneDay
 
     // Randomising time so that not all clients update certificate at the same time
-    public static let randomInterval = Double(Int.random(in: 0..<Int(TimeInterval.oneDay)))
+    public static let randomInterval: TimeInterval = .random(in: 0..<TimeInterval.oneDay)
 }
 
 @objc public class E2eIdentityCertificate: NSObject {
