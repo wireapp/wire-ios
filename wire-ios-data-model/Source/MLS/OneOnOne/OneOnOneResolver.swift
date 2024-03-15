@@ -132,6 +132,22 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
                 throw OneOnOneResolverError.migratorNotFound
             }
 
+            let conversationMessageProtocol: MessageProtocol? = await context.perform {
+                guard
+                    let otherUser = ZMUser.fetch(with: userID, in: context),
+                    let conversation = otherUser.oneOnOneConversation
+                else {
+                    return nil
+                }
+
+                return conversation.messageProtocol
+            }
+
+            guard let conversationMessageProtocol, conversationMessageProtocol == .proteus else {
+                // Only proteus conversations should be migrated once
+                return .noAction
+            }
+
             let mlsGroupIdentifier = try await migrator.migrateToMLS(
                 userID: userID,
                 in: context
