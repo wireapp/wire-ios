@@ -35,18 +35,22 @@ final class ConversationInputBarSendController: NSObject {
 
         guard let conversation = conversation as? ZMConversation else { return }
 
-        feedbackGenerator.prepare()
-        userSession.enqueue({
-            do {
-                try conversation.appendImage(from: imageData)
-                self.feedbackGenerator.impactOccurred()
-            } catch {
-                Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
-            }
-        }, completionHandler: {
+        let checker = MLSConversationChecker(conversation: conversation, continueAction: { [self] in
+            feedbackGenerator.prepare()
+            userSession.enqueue({
+                do {
+                    try conversation.appendImage(from: imageData)
+                    self.feedbackGenerator.impactOccurred()
+                } catch {
+                    Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
+                }
+            }, completionHandler: {
                 completionHandler?()
-            Analytics.shared.tagMediaActionCompleted(.photo, inConversation: conversation)
+                Analytics.shared.tagMediaActionCompleted(.photo, inConversation: conversation)
+            })
         })
+
+        checker.checkMessageSend()
     }
 
     func sendTextMessage(_ text: String,
