@@ -50,7 +50,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
 
     // TODO: [WPB-6761] temporary workaround for a crash 
     // The E2eiEnrollment cause a memory corruption when it deinits so we hold on to it forever.
-    private static var enrollment: E2eiEnrollment?
+    private static var enrollments = [E2eiEnrollment]()
 
     // MARK: - Properties
 
@@ -98,7 +98,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
                 isUpgradingClient: isUpgradingClient,
                 expirySec: expirySec
             )
-            Self.enrollment = enrollment
+            Self.enrollments += [enrollment]
             return enrollment
         } catch {
             throw Failure.failedToSetupE2eIClient(error)
