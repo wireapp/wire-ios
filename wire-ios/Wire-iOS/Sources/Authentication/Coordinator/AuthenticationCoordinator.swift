@@ -855,25 +855,25 @@ extension AuthenticationCoordinator {
         }
         let oauthUseCase = OAuthUseCase(targetViewController: topmostViewController)
 
-        Task {
+        Task { @MainActor in
             do {
                 let certificateChain = try await e2eiCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
-                await MainActor.run {
-                    executeActions([
-                        .hideLoadingView,
-                        .transition(.enrollE2EIdentitySuccess(certificateChain), mode: .reset)
-                    ])
-                }
+                executeActions([
+                    .hideLoadingView,
+                    .transition(.enrollE2EIdentitySuccess(certificateChain), mode: .reset)
+                ])
+            } catch OAuthError.userCancelled {
+                executeActions([
+                    .hideLoadingView
+                ])
             } catch {
-                await MainActor.run {
-                    executeActions([
-                        .hideLoadingView,
-                        .presentAlert(
-                            .init(title: E2ei.Error.Alert.title,
-                                  message: E2ei.Error.Alert.message,
-                                  actions: [.ok]))
-                    ])
-                }
+                executeActions([
+                    .hideLoadingView,
+                    .presentAlert(
+                        .init(title: E2ei.Error.Alert.title,
+                              message: E2ei.Error.Alert.message,
+                              actions: [.ok]))
+                ])
             }
         }
     }
