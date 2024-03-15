@@ -24,12 +24,12 @@ enum E2EIChangeAction: CaseIterable {
 }
 
 extension UIAlertController {
-    private typealias MlsE2eiStrings = L10n.Localizable.FeatureConfig.Alert.MlsE2ei
+    private typealias MlsE2EIStrings = L10n.Localizable.FeatureConfig.Alert.MlsE2ei
 
     static func alertForE2eIChangeWithActions(
-        title: String = MlsE2eiStrings.title,
-        message: String = MlsE2eiStrings.message,
-        enrollButtonText: String = MlsE2eiStrings.Button.getCertificate,
+        title: String = MlsE2EIStrings.title,
+        message: String = MlsE2EIStrings.message,
+        enrollButtonText: String = MlsE2EIStrings.Button.getCertificate,
         canRemindLater: Bool = true,
         handler: @escaping (E2EIChangeAction) -> Void) -> UIAlertController {
 
@@ -42,7 +42,7 @@ extension UIAlertController {
         let topViewController = UIApplication.shared.topmostViewController(onlyFullScreen: true)
 
         let learnMoreAction = UIAlertAction.link(
-            title: MlsE2eiStrings.Button.learnMore,
+            title: MlsE2EIStrings.Button.learnMore,
             url: URL.wr_e2eiLearnMore,
             presenter: topViewController
         ) {
@@ -59,8 +59,8 @@ extension UIAlertController {
         controller.addAction(getCertificateAction)
 
         if canRemindLater {
-            let remindLaterAction = UIAlertAction(title: MlsE2eiStrings.Button.remindMeLater,
-                                                  style: .destructive) {_ in
+            let remindLaterAction = UIAlertAction(title: MlsE2EIStrings.Button.remindMeLater,
+                                                  style: .cancel) {_ in
                 handler(.remindLater)
             }
             controller.addAction(remindLaterAction)

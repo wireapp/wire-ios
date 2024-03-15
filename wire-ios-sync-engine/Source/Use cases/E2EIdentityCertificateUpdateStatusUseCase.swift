@@ -59,7 +59,6 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
         self.gracePeriodRepository = gracePeriodRepository
     }
 
-    @MainActor
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
         if let certificate = try await e2eCertificateForCurrentClient.invoke(
             mlsGroupId: mlsGroupID,

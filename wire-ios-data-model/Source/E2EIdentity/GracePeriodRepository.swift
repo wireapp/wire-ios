@@ -18,9 +18,6 @@
 
 import Foundation
 
-/// The repository is responsible for storing the grace period during which the user must enroll the end-to-end identity certificate.
-/// The grace period starts at the moment where the client fetches and processes the team feature flag.
-
 // sourcery: AutoMockable
 public protocol GracePeriodRepositoryInterface {
 
@@ -29,6 +26,8 @@ public protocol GracePeriodRepositoryInterface {
 
 }
 
+/// The repository is responsible for storing the grace period during which the user must enroll the end-to-end identity certificate.
+/// The grace period starts at the moment where the client fetches and processes the team feature flag.
 public final class GracePeriodRepository: NSObject, GracePeriodRepositoryInterface {
 
     // MARK: - Properties
