@@ -39,6 +39,13 @@ extension ConversationInputBarViewController {
             return
         }
 
+        let checker = MLSConversationChecker(conversation: conversation) {
+            self.recordAudio()
+        }
+        checker.checkMessageSend()
+    }
+
+    private func recordAudio() {
         if displayAudioMessageAlertIfNeeded() {
             return
         }
