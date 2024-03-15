@@ -682,13 +682,15 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesTheObserverOfChangedConnectionStatusWhenUpdatingAConnection() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        conversation.conversationType = ZMConversationType.oneOnOne
-
         let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
         otherUser.connection = ZMConnection.insertNewObject(in: self.uiMOC)
         otherUser.connection?.status = .pending
-        otherUser.oneOnOneConversation = conversation
+        self.uiMOC.saveOrRollback()
+
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.conversationType = ZMConversationType.oneOnOne
+        conversation.oneOnOneUser = otherUser
+        self.uiMOC.saveOrRollback()
 
         self.uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
