@@ -311,7 +311,7 @@ extension ZMUserSession: UserSession {
             return nil
         }
         return await E2EIdentityCertificateUpdateStatusUseCase(
-            e2eiCertificateForCurrentClient: getE2eIdentityCertificates,
+            getE2eIdentityCertificates: getE2eIdentityCertificates,
             gracePeriod: syncContext.perform { Double(self.e2eiFeature.config.verificationExpiration) },
             mlsGroupID: mlsGroupID,
             mlsClientID: selfMLSClientID,

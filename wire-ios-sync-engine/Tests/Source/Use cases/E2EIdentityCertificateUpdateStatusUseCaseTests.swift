@@ -29,7 +29,7 @@ import WireDataModelSupport
         mockGracePeriodRepository.storeGracePeriodEndDate_MockMethod = { _ in }
         mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUseCaseProtocol()
         e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
-            e2eiCertificateForCurrentClient: mockGetE2eIdentityCertificates,
+            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
             gracePeriod: 0,
             mlsGroupID: MLSGroupID(Data()),
             mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),

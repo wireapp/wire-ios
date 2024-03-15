@@ -36,7 +36,7 @@ public protocol E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
 final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
-    private let e2eiCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol
+    private let getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol
     private let gracePeriod: TimeInterval
     private let comparedDate: Date
     private let mlsGroupID: MLSGroupID
@@ -46,7 +46,7 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
     public var lastAlertDate: Date?
 
     public init(
-        e2eiCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol,
+        getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol,
         gracePeriod: TimeInterval,
         mlsGroupID: MLSGroupID,
         mlsClientID: MLSClientID,
@@ -54,7 +54,7 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
         comparedDate: Date = Date.now,
         gracePeriodRepository: GracePeriodRepositoryInterface
     ) {
-        self.e2eiCertificateForCurrentClient = e2eiCertificateForCurrentClient
+        self.getE2eIdentityCertificates = getE2eIdentityCertificates
         self.gracePeriod = gracePeriod
         self.lastAlertDate = lastAlertDate
         self.mlsGroupID = mlsGroupID
@@ -64,7 +64,7 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
     }
 
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
-        guard let certificate = try await e2eiCertificateForCurrentClient.invoke(
+        guard let certificate = try await getE2eIdentityCertificates.invoke(
             mlsGroupId: mlsGroupID,
             clientIds: [mlsClientID]
         ).first else {
