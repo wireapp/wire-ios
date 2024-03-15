@@ -119,8 +119,12 @@ public class OAuthUseCase: OAuthUseCaseInterface {
             self?.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: authorizationRequest,
                                                                     externalUserAgent: userAgent,
                                                                     callback: { authState, error in
-                if let error = error {
-                    return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
+                if let error = error as NSError? {
+                    if error.domain == OIDGeneralErrorDomain, error.code == OIDErrorCode.userCanceledAuthorizationFlow.rawValue {
+                        return continuation.resume(throwing: OAuthError.userCancelled)
+                    } else {
+                        return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
+                    }
                 }
 
                 guard let idToken = authState?.lastTokenResponse?.idToken else {
@@ -144,5 +148,6 @@ enum OAuthError: Error {
     case missingServiceConfiguration
     case missingOIDExternalUserAgent
     case missingIdToken
+    case userCancelled
 
 }
