@@ -204,7 +204,8 @@ private extension UIAlertController {
             typealias Button = L10n.Localizable.FailedToGetCertificate.Button
 
             let title = isUpdateMode ? UpdateAlert.title : Alert.title
-            let message = canCancel ? (isUpdateMode ? UpdateAlert.message : Alert.message) : Alert.forcedMessage
+            let detail = isUpdateMode ? UpdateAlert.message : Alert.message
+            let message = canCancel ? detail : Alert.forcedMessage
             let controller = UIAlertController(
                 title: title,
                 message: message,
