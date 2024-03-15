@@ -79,7 +79,7 @@ final class AnalyticsCountlyProvider: AnalyticsProvider {
         }
     }
 
-    var selfUser: UserType? {
+    weak var selfUser: UserType? {
         didSet {
             endCountly()
             guard let user = selfUser as? ZMUser else { return }
