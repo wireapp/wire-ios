@@ -25,7 +25,7 @@ import WireRequestStrategySupport
 @testable import Wire
 
 final class UserSessionMock: UserSession {
-    var lastE2EIUpdateDate: WireSyncEngine.LastE2EIdentityUpdateDateProtocol?
+    var lastE2EIUpdateDate: LastE2EIdentityUpdateDateRepositoryInterface?
 
     func fetchSelfConversationMLSGroupID() async -> WireDataModel.MLSGroupID? {
         return MLSGroupID(Data())

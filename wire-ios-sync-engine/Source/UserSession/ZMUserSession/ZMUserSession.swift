@@ -344,7 +344,7 @@ public final class ZMUserSession: NSObject {
        return  MLSClientID(userClient: selfUserClient)
     }()
 
-    public var lastE2EIUpdateDate: LastE2EIdentityUpdateDateProtocol?
+    public var lastE2EIUpdateDate: LastE2EIdentityUpdateDateRepositoryInterface?
 
     public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol = {
         return GetIsE2EIdentityEnabledUseCase(coreCryptoProvider: coreCryptoProvider)
@@ -421,7 +421,7 @@ public final class ZMUserSession: NSObject {
             sharedUserDefaults: sharedUserDefaults
         )
 
-        self.lastE2EIUpdateDate = LastE2EIdentityUpdateDate(userID: userId, sharedUserDefaults: UserDefaults.standard)
+        self.lastE2EIUpdateDate = LastE2EIdentityUpdateDateRepository(userID: userId, sharedUserDefaults: UserDefaults.standard)
         self.gracePeriodRepository = GracePeriodRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults)
