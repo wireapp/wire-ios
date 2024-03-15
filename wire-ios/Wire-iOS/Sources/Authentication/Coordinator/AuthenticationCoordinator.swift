@@ -864,6 +864,12 @@ extension AuthenticationCoordinator {
                         .transition(.enrollE2EIdentitySuccess(certificateChain), mode: .reset)
                     ])
                 }
+            } catch OAuthError.userCancelled {
+                await MainActor.run {
+                    executeActions([
+                        .hideLoadingView
+                    ])
+                }
             } catch {
                 await MainActor.run {
                     executeActions([
