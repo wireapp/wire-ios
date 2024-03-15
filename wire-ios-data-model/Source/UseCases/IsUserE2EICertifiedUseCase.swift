@@ -79,15 +79,15 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
                 .map(\.rawValue)
 
             // get MLS group members
-            let userIdentities = try await coreCrypto.getUserIdentities(conversationId: mlsGroupID, userIds: [userID])
+            let allUserIdentities = try await coreCrypto.getUserIdentities(conversationId: mlsGroupID, userIds: [userID])
 
             // an empty result means not certified
-            guard !userIdentities.isEmpty else {
+            guard !allUserIdentities.isEmpty else {
                 return (Set(clientIDs), [WireIdentity]())
             }
 
-            guard let userIdentities = userIdentities[userID] else {
-                throw Error.failedToGetIdentitiesFromCoreCryptoResult(userIdentities, userID)
+            guard let userIdentities = allUserIdentities[userID] else {
+                throw Error.failedToGetIdentitiesFromCoreCryptoResult(allUserIdentities, userID)
             }
             return (Set(clientIDs), userIdentities)
         }
