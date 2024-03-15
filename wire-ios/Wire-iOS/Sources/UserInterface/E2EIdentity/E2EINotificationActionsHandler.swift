@@ -37,7 +37,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private let gracePeriodRepository: GracePeriodRepository
     private let targetVC: UIViewController
     private var lastE2EIdentityUpdateAlertDate: LastE2EIdentityUpdateDateRepositoryInterface?
-    private var e2eIdentityCertificateUpdate: E2EIdentityCertificateUpdateStatusProtocol?
+    private var e2eIdentityCertificateUpdate: E2EIdentityCertificateUpdateStatusUseCaseProtocol?
     private var isUpdateMode: Bool = false
     // MARK: - Life cycle
     private var observer: Any?
@@ -47,7 +47,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol,
         gracePeriodRepository: GracePeriodRepository,
         lastE2EIdentityUpdateAlertDate: LastE2EIdentityUpdateDateRepositoryInterface?,
-        e2eIdentityCertificateUpdate: E2EIdentityCertificateUpdateStatusProtocol?,
+        e2eIdentityCertificateUpdate: E2EIdentityCertificateUpdateStatusUseCaseProtocol?,
         targetVC: UIViewController) {
             self.enrollCertificateUseCase = enrollCertificateUseCase
             self.snoozeCertificateEnrollmentUseCase = snoozeCertificateEnrollmentUseCase

@@ -240,5 +240,5 @@ public protocol UserSession: AnyObject {
 
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 
-    func e2eIdentityUpdateCertificateUpdateStatus() async -> E2EIdentityCertificateUpdateStatusProtocol?
+    func e2eIdentityUpdateCertificateUpdateStatus() async -> E2EIdentityCertificateUpdateStatusUseCaseProtocol?
 }

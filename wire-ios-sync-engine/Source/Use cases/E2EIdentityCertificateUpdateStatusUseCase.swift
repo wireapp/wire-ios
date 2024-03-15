@@ -30,11 +30,11 @@ public enum E2EIdentityCertificateUpdateStatus {
 }
 
 // sourcery: AutoMockable
-public protocol E2EIdentityCertificateUpdateStatusProtocol {
+public protocol E2EIdentityCertificateUpdateStatusUseCaseProtocol {
     func invoke() async throws -> E2EIdentityCertificateUpdateStatus
 }
 
-final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusProtocol {
+final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
     private let e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol
     private let gracePeriod: TimeInterval

@@ -303,7 +303,7 @@ extension ZMUserSession: UserSession {
     }
 
     @MainActor
-    public func e2eIdentityUpdateCertificateUpdateStatus() async -> E2EIdentityCertificateUpdateStatusProtocol? {
+    public func e2eIdentityUpdateCertificateUpdateStatus() async -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
         guard let selfUserClient,
               let mlsGroupID = await self.fetchSelfConversationMLSGroupID(),
               let selfMLSClientID = MLSClientID(userClient: selfUserClient)

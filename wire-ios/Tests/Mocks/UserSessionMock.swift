@@ -31,7 +31,7 @@ final class UserSessionMock: UserSession {
         return MLSGroupID(Data())
     }
 
-    func e2eIdentityUpdateCertificateUpdateStatus() async -> WireSyncEngine.E2EIdentityCertificateUpdateStatusProtocol? {
+    func e2eIdentityUpdateCertificateUpdateStatus() async -> WireSyncEngine.E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
         MockE2EIdentityCertificateUpdateStatusProtocol()
     }
 

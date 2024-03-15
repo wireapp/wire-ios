@@ -54,7 +54,7 @@ import AppKit
 
 
 
-public class MockE2EIdentityCertificateUpdateStatusProtocol: E2EIdentityCertificateUpdateStatusProtocol {
+public class MockE2EIdentityCertificateUpdateStatusUseCaseProtocol: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
     // MARK: - Life cycle
 
