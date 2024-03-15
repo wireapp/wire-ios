@@ -207,9 +207,12 @@ extension ConversationInputBarViewController: AudioRecordViewControllerDelegate 
 
     func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType) {
 
-        uploadFile(at: recordingURL as URL)
+        let checker = MLSConversationChecker(conversation: self.conversation) { [weak self] in
+            self?.uploadFile(at: recordingURL as URL)
 
-        self.hideAudioRecordViewController()
+            self?.hideAudioRecordViewController()
+        }
+        checker.checkMessageSend()
     }
 
 }
