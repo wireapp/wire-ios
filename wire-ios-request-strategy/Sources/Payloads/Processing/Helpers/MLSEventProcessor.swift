@@ -92,10 +92,11 @@ public class MLSEventProcessor: MLSEventProcessing {
         }
 
         let conversationExists = await mlsService.conversationExists(groupID: mlsGroupID)
-        let previousStatus = await context.perform { conversation.mlsStatus }
-        let newStatus = conversationExists ? MLSGroupStatus.ready : .pendingJoin
+        let newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
 
         await context.perform {
+            let previousStatus = conversation.mlsStatus
+
             conversation.mlsStatus = newStatus
             context.saveOrRollback()
             Flow.createGroup.checkpoint(description: "saved ZMConversation for MLS")
