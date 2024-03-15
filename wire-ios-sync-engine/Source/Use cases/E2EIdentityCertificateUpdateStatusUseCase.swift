@@ -76,7 +76,7 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
         }
 
         let renewalNudgingDate = certificate.renewalNudgingDate(with: gracePeriod)
-        if  renewalNudgingDate > comparedDate && renewalNudgingDate < certificate.expiryDate {
+        if renewalNudgingDate > comparedDate && renewalNudgingDate < certificate.expiryDate {
            return .noAction
        }
 

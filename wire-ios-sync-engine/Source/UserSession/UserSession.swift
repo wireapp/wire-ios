@@ -234,7 +234,7 @@ public protocol UserSession: AnyObject {
 
     var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol { get }
 
-    var lastE2EIUpdateDate: LastE2EIdentityUpdateDateRepositoryInterface? { get }
+    var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface? { get }
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol
 

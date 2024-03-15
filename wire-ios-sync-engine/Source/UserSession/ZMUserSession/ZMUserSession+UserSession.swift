@@ -310,12 +310,12 @@ extension ZMUserSession: UserSession {
         else {
             return nil
         }
-        return await E2EIdentityCertificateUpdateStatusUseCase(
+        return E2EIdentityCertificateUpdateStatusUseCase(
             getE2eIdentityCertificates: getE2eIdentityCertificates,
-            gracePeriod: syncContext.perform { Double(self.e2eiFeature.config.verificationExpiration) },
+            gracePeriod: TimeInterval(self.e2eiFeature.config.verificationExpiration),
             mlsGroupID: mlsGroupID,
             mlsClientID: selfMLSClientID,
-            lastAlertDate: lastE2EIUpdateDate?.fetchLastAlertDate(),
+            lastAlertDate: lastE2EIUpdateDateRepository?.fetchLastAlertDate(),
             gracePeriodRepository: gracePeriodRepository
         )
     }

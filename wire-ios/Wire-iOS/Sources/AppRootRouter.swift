@@ -447,8 +447,8 @@ extension AppRootRouter {
                 snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
                 stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
                 gracePeriodRepository: userSession.gracePeriodRepository,
-                lastE2EIdentityUpdateAlertDate: userSession.lastE2EIUpdateDate,
-                e2eIdentityCertificateUpdate: e2eIdentityCertificateUpdate,
+                lastE2EIdentityUpdateAlertDate: userSession.lastE2EIUpdateDateRepository,
+                e2eIdentityCertificateUpdateStatus: e2eIdentityCertificateUpdate,
                 targetVC: rootViewController),
             gracePeriodRepository: userSession.gracePeriodRepository
         )
