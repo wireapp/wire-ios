@@ -139,7 +139,6 @@ extension ConversationViewController {
         case .cancel:
             conversation.acknowledgePrivacyWarning(withResendIntent: false)
         case .sendAnywayWithAction(let closure):
-            conversation.acknowledgePrivacyChanges()
             closure(true)
         case .cancelWithAction(let closure):
             closure(false)
@@ -183,9 +182,32 @@ extension ConversationViewController {
 extension ConversationViewController: MLSConversationCheckerPresenter {
 
     func presentE2EIPrivacyWarningAlert(_ notification: Notification) {
-        let content = e2eIPrivacyWarningAlertContent { sendAnyway in
-            E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: sendAnyway)
+        switch notification.alertType {
+        case .call?:
+            let alert = UIAlertController.degradedMLSConference { continueDegradedCall in
+
+                if continueDegradedCall {
+                    self.conversation.acknowledgePrivacyChanges()
+                }
+                    E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: continueDegradedCall)
+            }
+
+            present(alert, animated: true)
+
+        case .message?:
+            let content = e2eIPrivacyWarningAlertContent { sendAnyway in
+
+                if sendAnyway {
+                    self.conversation.acknowledgePrivacyChanges()
+                }
+
+                E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: sendAnyway)
+            }
+
+            presentAlert(with: content)
+
+        case .none:
+            assertionFailure("wrong type of notification sent!")
         }
-        presentAlert(with: content)
     }
 }

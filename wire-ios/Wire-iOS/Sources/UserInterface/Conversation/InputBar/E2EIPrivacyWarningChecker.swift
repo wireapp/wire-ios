@@ -25,7 +25,11 @@ protocol MLSConversationCheckerPresenter {
 
 // Checks if E2EIPrivacyWarningAlert needs to be presented before given action
 struct E2EIPrivacyWarningChecker {
+    enum AlertType: Int {
+        case message, call
+    }
     var conversation: ConversationLike
+    var alertType = AlertType.message
     var continueAction: () -> Void
 
     func performAction() {
@@ -34,7 +38,7 @@ struct E2EIPrivacyWarningChecker {
             return
         }
 
-        NotificationCenter.default.post(name: .presentE2EIPrivacyWarningAlert, object: self, userInfo: nil)
+        NotificationCenter.default.post(.presentE2EIPrivacyWarningAlert(type: alertType))
 
         Task {
             var shouldContinue = false
@@ -53,7 +57,7 @@ struct E2EIPrivacyWarningChecker {
 
     // Notifies all MLSConversationChecker about user's choice following e2eiPrivacyWarningAlert
     static func e2eiPrivacyWarningConfirm(sendAnyway: Bool) {
-        NotificationCenter.default.post(Notification.e2eiPrivacyWarningConfirm(sendAnyway: sendAnyway))
+        NotificationCenter.default.post(.e2eiPrivacyWarningConfirm(sendAnyway: sendAnyway))
     }
 
     // add object in charge to present e2eiPrivacyWarningAlert
@@ -81,9 +85,19 @@ private extension Notification {
     }
 }
 
+extension Notification {
+
+    var alertType: E2EIPrivacyWarningChecker.AlertType? {
+        userInfo?["alertType"] as? E2EIPrivacyWarningChecker.AlertType
+    }
+}
 private extension Notification {
 
     static func e2eiPrivacyWarningConfirm(sendAnyway: Bool) -> Notification {
         Notification(name: .e2eiPrivacyWarningConfirm, object: nil, userInfo: ["sendAnyway": sendAnyway])
+    }
+
+    static func presentE2EIPrivacyWarningAlert(type: E2EIPrivacyWarningChecker.AlertType) -> Notification {
+        Notification(name: .presentE2EIPrivacyWarningAlert, object: nil, userInfo: ["alertType": type])
     }
 }
