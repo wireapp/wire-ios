@@ -64,7 +64,7 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
     }
 
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
-        guard let certificate = try await e2eCertificateForCurrentClient.invoke(
+        guard let certificate = try await e2eiCertificateForCurrentClient.invoke(
             mlsGroupId: mlsGroupID,
             clientIds: [mlsClientID]
         ).first else {

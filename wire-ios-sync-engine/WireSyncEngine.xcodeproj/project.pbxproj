@@ -288,6 +288,7 @@
 		259AAB0D2B9F477F00B13A7C /* LastE2EIdentityUpdateDateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259AAB0C2B9F477F00B13A7C /* LastE2EIdentityUpdateDateProtocol.swift */; };
 		25A9B7BA2B5EA36D00FD43FB /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 25A9B7B92B5EA36D00FD43FB /* Security.framework */; };
 		25CCE9D72BA4A693002AB21F /* SelfClientCertificateProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061F791A2B767AE100E8827B /* SelfClientCertificateProviderTests.swift */; };
+		25CCE9DC2BA4A943002AB21F /* String+Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CCE9DB2BA4A943002AB21F /* String+Mocks.swift */; };
 		25E11B0B2B56A15F005D51FA /* GetE2eIdentityCertificatesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E11B0A2B56A15F005D51FA /* GetE2eIdentityCertificatesUseCase.swift */; };
 		25E11B0D2B56B497005D51FA /* GetIsE2EIdentityEnabledUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E11B0C2B56B497005D51FA /* GetIsE2EIdentityEnabledUseCase.swift */; };
 		2B15596A295093360069AE34 /* HotfixPatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B155969295093360069AE34 /* HotfixPatch.swift */; };
@@ -961,6 +962,7 @@
 		16FF474B1F0D54B20044C491 /* SessionManager+Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SessionManager+Logs.swift"; sourceTree = "<group>"; };
 		259AAB0C2B9F477F00B13A7C /* LastE2EIdentityUpdateDateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastE2EIdentityUpdateDateProtocol.swift; sourceTree = "<group>"; };
 		25A9B7B92B5EA36D00FD43FB /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.0.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
+		25CCE9DB2BA4A943002AB21F /* String+Mocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Mocks.swift"; sourceTree = "<group>"; };
 		25E11B0A2B56A15F005D51FA /* GetE2eIdentityCertificatesUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetE2eIdentityCertificatesUseCase.swift; sourceTree = "<group>"; };
 		25E11B0C2B56B497005D51FA /* GetIsE2EIdentityEnabledUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetIsE2EIdentityEnabledUseCase.swift; sourceTree = "<group>"; };
 		2B155969295093360069AE34 /* HotfixPatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotfixPatch.swift; sourceTree = "<group>"; };
@@ -1555,6 +1557,7 @@
 			children = (
 				0145AE832B1154010097E3B8 /* WireSyncEngineSupport.h */,
 				59E6A9112B4EE57000DBCC6B /* Synchronization */,
+				25CCE9DB2BA4A943002AB21F /* String+Mocks.swift */,
 			);
 			path = WireSyncEngineSupport;
 			sourceTree = "<group>";
@@ -3238,6 +3241,7 @@
 				59E6A91A2B4EE62100DBCC6B /* RecurringAction+dummy.swift in Sources */,
 				25CCE9D72BA4A693002AB21F /* SelfClientCertificateProviderTests.swift in Sources */,
 				0145AE882B11551C0097E3B8 /* AutoMockable.generated.swift in Sources */,
+				25CCE9DC2BA4A943002AB21F /* String+Mocks.swift in Sources */,
 				0145AE892B11551C0097E3B8 /* AutoMockable.manual.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
