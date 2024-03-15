@@ -193,12 +193,21 @@ extension ConversationViewController {
     @objc
     func voiceCallItemTapped(_ sender: UIBarButtonItem) {
         endEditing()
-        startCallController.startAudioCall(started: ConversationInputBarViewController.endEditingMessage)
+        let checker = MLSConversationChecker(conversation: conversation) { [self] in
+            startCallController.startAudioCall(started: ConversationInputBarViewController.endEditingMessage)
+        }
+
+        checker.checkMessageSend()
     }
 
     @objc func videoCallItemTapped(_ sender: UIBarButtonItem) {
-        endEditing()
-        startCallController.startVideoCall(started: ConversationInputBarViewController.endEditingMessage)
+        let checker = MLSConversationChecker(conversation: conversation) { [self] in
+            endEditing()
+            startCallController.startVideoCall(started: ConversationInputBarViewController.endEditingMessage)
+        }
+
+        checker.checkMessageSend()
+
     }
 
     @objc private dynamic func joinCallButtonTapped(_sender: AnyObject!) {
