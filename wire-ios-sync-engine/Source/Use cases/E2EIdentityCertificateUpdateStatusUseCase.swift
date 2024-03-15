@@ -36,7 +36,7 @@ public protocol E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
 final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
-    private let e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol
+    private let e2eiCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol
     private let gracePeriod: TimeInterval
     private let comparedDate: Date
     private let mlsGroupID: MLSGroupID
@@ -46,7 +46,7 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
     public var lastAlertDate: Date?
 
     public init(
-        e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol,
+        e2eiCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol,
         gracePeriod: TimeInterval,
         mlsGroupID: MLSGroupID,
         mlsClientID: MLSClientID,
@@ -54,7 +54,7 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
         comparedDate: Date = Date.now,
         gracePeriodRepository: GracePeriodRepositoryInterface
     ) {
-        self.e2eCertificateForCurrentClient = e2eCertificateForCurrentClient
+        self.e2eiCertificateForCurrentClient = e2eiCertificateForCurrentClient
         self.gracePeriod = gracePeriod
         self.lastAlertDate = lastAlertDate
         self.mlsGroupID = mlsGroupID

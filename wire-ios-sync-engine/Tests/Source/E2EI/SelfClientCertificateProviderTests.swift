@@ -140,15 +140,3 @@ class SelfClientCertificateProviderTests: MessagingTest {
     }
 
 }
-
-extension String {
-    static let mockSerialNumber = String(repeating: "abcdefghijklmno", count: 2)
-
-    static let mockMlsThumbprint = "AB CD EF GH IJ KL MN OP QR ST UV WX QR ST UV WX"
-
-    static var mockCertificate: String {
-        "BEGIN CERTIFICATE\n-----------\n"
-        + String(repeating: "abcdefghijklmno", count: 100)
-        + "\n-----------\nEND CERTIFICATE"
-    }
-}
