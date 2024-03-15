@@ -125,6 +125,14 @@ extension ConversationInputBarViewController {
 
     @objc
     func docUploadPressed(_ sender: IconButton) {
+        let checker = MLSConversationChecker(conversation: conversation) {
+            self.showDocUploadActionSheet(from: sender)
+        }
+
+        checker.checkMessageSend()
+    }
+
+    private func showDocUploadActionSheet(from sender: IconButton) {
         mode = ConversationInputBarViewControllerMode.textInput
         inputBar.textView.resignFirstResponder()
 
