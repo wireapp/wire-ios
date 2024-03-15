@@ -139,7 +139,9 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
                         authenticate: oauthUseCase.invoke)
                     await self.confirmSuccessfulEnrollment(certificateDetails)
                 } catch {
-                    WireLogger.e2ei.error("failed to \(self.isUpdateMode ? "update" : "get") E2EI certification status: \(error)")
+                    WireLogger.e2ei.error(
+                        "failed to \(self.isUpdateMode ? "update" : "get") E2EI certification status: \(error)"
+                    )
                 }
                 self.isUpdateMode = false
             }
