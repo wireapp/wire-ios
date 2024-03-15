@@ -202,8 +202,6 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showBlacklisted(reason: reason, completion: completionBlock)
         case .jailbroken:
             showJailbroken(completion: completionBlock)
-        case .certificateUpdateRequired:
-            showCertificateUpdateRequest(completion: completionBlock)
         case .certificateEnrollmentRequired:
             showCertificateEnrollRequest(completion: completionBlock)
         case .databaseFailure(let error):
@@ -281,14 +279,6 @@ extension AppRootRouter {
 
     private func showJailbroken(completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(context: .jailbroken)
-        rootViewController.set(childViewController: blockerViewController,
-                               completion: completion)
-    }
-
-    private func showCertificateUpdateRequest(completion: @escaping () -> Void) {
-        let blockerViewController = BlockerViewController(
-            context: .pendingCertificateUpdate,
-            sessionManager: sessionManager)
         rootViewController.set(childViewController: blockerViewController,
                                completion: completion)
     }
@@ -457,7 +447,7 @@ extension AppRootRouter {
             needToShowDataUsagePermissionDialog: needToShowDialog,
             featureRepositoryProvider: userSession,
             featureChangeActionsHandler: E2EINotificationActionsHandler(
-                //updateCertificateUseCase: userSession.certificateUpdateStatus,
+                // updateCertificateUseCase: userSession.certificateUpdateStatus,
                 enrollCertificateUseCase: userSession.enrollE2EICertificate,
                 snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
                 stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,

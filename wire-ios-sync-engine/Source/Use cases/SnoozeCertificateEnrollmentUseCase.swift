@@ -71,10 +71,9 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
             id: actionId,
             interval: interval
         ) {
-            // TODO: add new notofication
-//            let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled
-//            NotificationCenter.default.post(name: .featureDidChangeNotification,
-//                                            object: notificationObject)
+            let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled
+            NotificationCenter.default.post(name: .featureDidChangeNotification,
+                                            object: notificationObject)
         }
 
         recurringActionService.registerAction(recurringAction)

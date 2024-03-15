@@ -138,10 +138,6 @@ private class MockSessionManagerExpectationDelegate: SessionManagerDelegate {
         // no op
     }
 
-    func sessionManagerRequireCertificateUpdate() {
-        // no-op
-    }
-
     func sessionManagerRequireCertificateEnrollment() {
         // no-op
     }

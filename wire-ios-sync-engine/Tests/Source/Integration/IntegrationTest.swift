@@ -731,10 +731,6 @@ extension IntegrationTest: SessionManagerDelegate {
         // no-op
     }
 
-    public func sessionManagerRequireCertificateUpdate() {
-        // no-op
-    }
-
     public func sessionManagerRequireCertificateEnrollment() {
         // no-op
     }

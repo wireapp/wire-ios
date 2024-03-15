@@ -57,7 +57,6 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidFailToLoadDatabase(error: Error)
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
     func sessionManagerDidBlacklistJailbrokenDevice()
-    func sessionManagerRequireCertificateUpdate()
     func sessionManagerRequireCertificateEnrollment()
     func sessionManagerDidUpdateCertificate(for activeSession: UserSession?)
 
@@ -1499,23 +1498,6 @@ extension SessionManager {
     private func requestCertificateUpdateOrEnrollIfNeeded() async {
         guard let userSession = activeUserSession else { return }
 
-        await requestCertificateUpdateIfNeeded(userSession: userSession)
-        await requestCertificateEnrollIfNeeded(userSession: userSession)
-    }
-
-    private func requestCertificateUpdateIfNeeded(userSession: ZMUserSession) async {
-        do {
-            let certificateUpdateStatus = try await userSession.certificateUpdateStatus.invoke()
-            if certificateUpdateStatus == .block {
-                delegate?.sessionManagerRequireCertificateUpdate()
-            }
-        } catch {
-            WireLogger.e2ei.warn("Can't get certificate update status: \(error)")
-        }
-
-    }
-
-    private func requestCertificateEnrollIfNeeded(userSession: ZMUserSession) async {
         do {
             let isE2EICertificateEnrollmentRequired = try await userSession.isE2EICertificateEnrollmentRequired.invoke()
             if isE2EICertificateEnrollmentRequired {

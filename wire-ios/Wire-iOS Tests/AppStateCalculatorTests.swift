@@ -195,23 +195,12 @@ final class AppStateCalculatorTests: XCTestCase {
         XCTAssertTrue(delegate.wasNotified)
     }
 
-    func testThatAppStateChanges_OnWillUpdateCertificate() {
-        // GIVEN
-        sut.applicationDidBecomeActive()
-
-        // WHEN
-        sut.sessionManagerWillUpdateCertificate()
-
-        // THEN
-        XCTAssertEqual(sut.appState, .pendingCertificateUpdate)
-    }
-
     func testThatAppStateChanges_OnWillEnrollCertificate() {
         // GIVEN
         sut.applicationDidBecomeActive()
 
         // WHEN
-        sut.sessionManagerWillEnrollCertificate()
+        sut.sessionManagerRequireCertificateEnrollment()
 
         // THEN
         XCTAssertEqual(sut.appState, .pendingCertificateEnroll)

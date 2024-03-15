@@ -369,15 +369,6 @@ public final class ZMUserSession: NSObject {
         )
     }()
 
-    public private(set) lazy var certificateUpdateStatus: E2EIdentityCertificateUpdateStatusProtocol = {
-        let mlsGroupID = ZMConversation.fetchSelfMLSConversation(in: self.syncContext)?.mlsGroupID
-        return E2EIdentityCertificateUpdateStatusUseCase(e2eCertificateForCurrentClient: getE2eIdentityCertificates,
-                                                         gracePeriod: Double(e2eiFeature.config.verificationExpiration),
-                                                         mlsGroupID: mlsGroupID!,
-                                                         mlsClientID: selfMLSClientID!,
-                                                         lastAlertDate: nil)
-    }()
-
     public private(set) lazy var isE2EICertificateEnrollmentRequired: IsE2EICertificateEnrollmentRequiredProtocol = {
         return IsE2EICertificateEnrollmentRequiredUseCase(
             isE2EIdentityEnabled: e2eiFeature.isEnabled,

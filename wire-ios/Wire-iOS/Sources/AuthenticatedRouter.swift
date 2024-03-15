@@ -101,7 +101,7 @@ final class AuthenticatedRouter: NSObject {
             return
         }
 
-        if change == .e2eIEnabled {
+        if change == .e2eIEnabled && e2eiActivationDateRepository.e2eiActivatedAt == nil {
             e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
         }
 

@@ -26,7 +26,6 @@ enum BlockerViewControllerContext {
     case jailbroken
     case databaseFailure
     case backendNotSupported
-    case pendingCertificateUpdate
     case pendingCertificateEnroll
 }
 
@@ -69,8 +68,6 @@ final class BlockerViewController: LaunchImageViewController {
             showDatabaseFailureMessage()
         case .backendNotSupported:
             showBackendNotSupportedMessage()
-        case .pendingCertificateUpdate:
-            showUpdateCertificateMessage()
         case .pendingCertificateEnroll:
             showGetCertificateMessage()
         }
@@ -98,53 +95,17 @@ final class BlockerViewController: LaunchImageViewController {
                                  message: L10n.Localizable.Jailbrokendevice.Alert.message)
     }
 
-    private func showUpdateCertificateMessage() {
-        typealias UpdateCertificate = L10n.Localizable.UpdateCertificate
-
-        let updateCertificateAlert = UIAlertController(
-            title: UpdateCertificate.Alert.title,
-            message: UpdateCertificate.Alert.message,
-            preferredStyle: .alert
-        )
-
-        let learnMoreAction = UIAlertAction(
-            // Katerina: check
-            title: "UpdateCertificate.Button.learnMore",
-            style: .default,
-            handler: { _ in
-                UIApplication.shared.open(URL.wr_e2eiLearnMore)
-            }
-        )
-
-        let updateCertificateAction = UIAlertAction(
-            title: UpdateCertificate.Button.updateCertificate,
-            style: .default,
-            handler: { _ in
-                Task {
-                    await self.enrollCertificateAction()
-                }
-
-            }
-        )
-
-        updateCertificateAlert.addAction(learnMoreAction)
-        updateCertificateAlert.addAction(updateCertificateAction)
-        present(updateCertificateAlert, animated: true)
-    }
-
     private func showGetCertificateMessage() {
         typealias E2EI = L10n.Localizable.Registration.Signin.E2ei
 
-        // Katerina: check
         let getCertificateAlert = UIAlertController(
             title: E2EI.title,
-            message: "E2EI.subtitle",
+            message: E2EI.subtitle(URL.wr_e2eiLearnMore),
             preferredStyle: .alert
         )
 
-        // Katerina: check
         let learnMoreAction = UIAlertAction(
-            title: "L10n.Localizable.UpdateCertificate.Button.learnMore",
+            title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.learnMore,
             style: .default,
             handler: { _ in
                 UIApplication.shared.open(URL.wr_e2eiLearnMore)
@@ -292,14 +253,12 @@ extension BlockerViewController {
             .enrollE2EICertificate
             .invoke(authenticate: oauthUseCase.invoke)
 
-        // Katerina: check
-
-//        let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
-//        successEnrollmentViewController.certificateDetails = certificateChain
-//        successEnrollmentViewController.onOkTapped = { viewController in
-//            viewController.dismiss(animated: true)
-//        }
-//        successEnrollmentViewController.presentTopmost()
+        let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController(lastE2EIdentityUpdateDate: nil)
+        successEnrollmentViewController.certificateDetails = certificateChain
+        successEnrollmentViewController.onOkTapped = { viewController in
+            viewController.dismiss(animated: true)
+        }
+        successEnrollmentViewController.presentTopmost()
     }
 
 }

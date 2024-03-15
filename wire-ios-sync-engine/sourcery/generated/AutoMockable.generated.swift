@@ -515,21 +515,6 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         mock()
     }
 
-    // MARK: - sessionManagerRequireCertificateUpdate
-
-    public var sessionManagerRequireCertificateUpdate_Invocations: [Void] = []
-    public var sessionManagerRequireCertificateUpdate_MockMethod: (() -> Void)?
-
-    public func sessionManagerRequireCertificateUpdate() {
-        sessionManagerRequireCertificateUpdate_Invocations.append(())
-
-        guard let mock = sessionManagerRequireCertificateUpdate_MockMethod else {
-            fatalError("no mock for `sessionManagerRequireCertificateUpdate`")
-        }
-
-        mock()
-    }
-
     // MARK: - sessionManagerRequireCertificateEnrollment
 
     public var sessionManagerRequireCertificateEnrollment_Invocations: [Void] = []
