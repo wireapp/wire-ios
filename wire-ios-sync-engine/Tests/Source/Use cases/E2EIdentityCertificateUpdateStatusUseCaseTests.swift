@@ -28,8 +28,6 @@ import WireSyncEngineSupport
         e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
             e2eCertificateForCurrentClient: mockGetE2eIdentityCertificates,
             gracePeriod: 0,
-            serverStoragePeriod: 0,
-            randomPeriod: 0,
             mlsGroupID: MLSGroupID(Data()),
             mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),
             lastAlertDate: nil)
@@ -57,7 +55,7 @@ import WireSyncEngineSupport
     }
 
     func testThatItReturnsReminder_WhenExpiryDateIsWithInSevenDays() async {
-        update(certificate: certificate(with: .oneWeek))
+        update(certificate: certificate(with: .oneWeek - .oneSecond))
         do {
             let result = try await e2eIdentityCertificateStatus.invoke()
             XCTAssertEqual(result, .reminder)
@@ -70,8 +68,6 @@ import WireSyncEngineSupport
         e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
             e2eCertificateForCurrentClient: mockGetE2eIdentityCertificates,
             gracePeriod: 0,
-            serverStoragePeriod: 0,
-            randomPeriod: 0,
             mlsGroupID: MLSGroupID(Data()),
             mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),
             lastAlertDate: Date.now)
@@ -88,12 +84,10 @@ import WireSyncEngineSupport
         e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
             e2eCertificateForCurrentClient: mockGetE2eIdentityCertificates,
             gracePeriod: 0,
-            serverStoragePeriod: 0,
-            randomPeriod: 0,
             mlsGroupID: MLSGroupID(Data()),
             mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),
             lastAlertDate: Date.now - .oneDay)
-        update(certificate: certificate(with: .oneWeek))
+        update(certificate: certificate(with: .oneWeek - .oneSecond))
         do {
             let result = try await e2eIdentityCertificateStatus.invoke()
             XCTAssertEqual(result, .reminder)
@@ -116,8 +110,6 @@ import WireSyncEngineSupport
         e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
             e2eCertificateForCurrentClient: mockGetE2eIdentityCertificates,
             gracePeriod: 0,
-            serverStoragePeriod: 0,
-            randomPeriod: 0,
             mlsGroupID: MLSGroupID(Data()),
             mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),
             lastAlertDate: Date.now)
@@ -134,8 +126,6 @@ import WireSyncEngineSupport
         e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
             e2eCertificateForCurrentClient: mockGetE2eIdentityCertificates,
             gracePeriod: 0,
-            serverStoragePeriod: 0,
-            randomPeriod: 0,
             mlsGroupID: MLSGroupID(Data()),
             mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),
             lastAlertDate: Date.now)
@@ -196,7 +186,9 @@ import WireSyncEngineSupport
             notValidBefore: Date.now,
             expiryDate: Date.now,
             certificateStatus: .valid,
-            serialNumber: .mockSerialNumber
+            serialNumber: .mockSerialNumber,
+            serverStoragePeriod: 0,
+            randomPeriod: 0
         )
         certificate.expiryDate = Date.now + timeInterval
         return certificate
