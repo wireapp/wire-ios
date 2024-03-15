@@ -337,10 +337,7 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateE2EICertifiedStatus() {
-        guard
-            let contextProvider = userSession as? ContextProvider,
-            let user = user as? ZMUser
-        else { return }
+        guard let user = user as? ZMUser else { return }
 
         Task { @MainActor [conversation] in
             do {
