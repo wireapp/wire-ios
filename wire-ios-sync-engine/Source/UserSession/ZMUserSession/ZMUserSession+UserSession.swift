@@ -304,10 +304,13 @@ extension ZMUserSession: UserSession {
 
     @MainActor
     public func e2eIdentityUpdateCertificateUpdateStatus() async -> E2EIdentityCertificateUpdateStatusProtocol? {
-        guard let mlsGroupID = await self.fetchSelfConversationMLSGroupID(), let selfMLSClientID else {
+        guard let selfUserClient,
+              let mlsGroupID = await self.fetchSelfConversationMLSGroupID(),
+              let selfMLSClientID = MLSClientID(userClient: selfUserClient)
+        else {
             return nil
         }
-        var updateE2EICertificate: E2EIdentityCertificateUpdateStatusProtocol = E2EIdentityCertificateUpdateStatusUseCase(
+        return E2EIdentityCertificateUpdateStatusUseCase(
             e2eCertificateForCurrentClient: getE2eIdentityCertificates,
             gracePeriod: Double(e2eiFeature.config.verificationExpiration),
             mlsGroupID: mlsGroupID,
@@ -315,8 +318,6 @@ extension ZMUserSession: UserSession {
             lastAlertDate: lastE2EIUpdateDate?.fetchLastAlertDate(),
             gracePeriodRepository: gracePeriodRepository
         )
-
-        return updateE2EICertificate
     }
 }
 

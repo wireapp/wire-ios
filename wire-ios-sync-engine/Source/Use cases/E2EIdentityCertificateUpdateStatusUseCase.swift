@@ -19,15 +19,19 @@
 import Foundation
 
 public enum E2EIdentityCertificateUpdateStatus {
-    case noAction, reminder, block
+    // Alert was already shown within snooze period, so do not remind user to update certificate
+    case noAction
+
+    // Alert was not  shown within snooze period, so remind user to update certificate
+    case reminder
+
+    // certificate expired so soft block user to update certificate
+    case block
 }
 
 // sourcery: AutoMockable
 public protocol E2EIdentityCertificateUpdateStatusProtocol {
     func invoke() async throws -> E2EIdentityCertificateUpdateStatus
-}
-public extension Notification.Name {
-    static let checkForE2EICertificateStatus = NSNotification.Name("CheckForE2EICertificateStatus")
 }
 
 final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusProtocol {
@@ -60,64 +64,63 @@ final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertifi
     }
 
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
-        if let certificate = try await e2eCertificateForCurrentClient.invoke(
+        guard let certificate = try await e2eCertificateForCurrentClient.invoke(
             mlsGroupId: mlsGroupID,
             clientIds: [mlsClientID]
-           ).first {
-
-            if certificate.expiryDate.isInThePast {
-                return .block
-            }
-            let renewalNudgingDate = certificate.renewalNudgingDate(with: gracePeriod)
-            let calendar = Calendar.current
-            let fourHours = .oneHour * 4
-            let fifteenMinutes = .fiveMinutes * 3
-
-            let timeLeft = certificate.expiryDate.timeIntervalSince(comparedDate)
-            let maxTimeLeft = max(timeLeft, .oneWeek)
-
-            let snoozeTimeProvider = SnoozeTimeProvider()
-            let snoozeTime = snoozeTimeProvider.getSnoozeTime(endOfPeriod: certificate.expiryDate)
-            gracePeriodRepository.storeGracePeriodEndDate(Date.now + snoozeTime)
-
-            switch timeLeft {
-
-            case  .oneDay ..< maxTimeLeft:
-                if let lastAlertDate = lastAlertDate, calendar.isDateInToday(lastAlertDate) {
-                    return .noAction
-                }
-                return .reminder
-
-            case fourHours ..< .oneDay:
-                if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < fourHours {
-                    return .noAction
-                }
-                return .reminder
-
-            case .oneHour ..< fourHours:
-                if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < .oneHour {
-                    return .noAction
-                }
-                return .reminder
-
-            case fifteenMinutes ..< .oneHour:
-                if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < fifteenMinutes {
-                    return .noAction
-                }
-                return .reminder
-
-            case 1 ..< fifteenMinutes:
-                if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < .fiveMinutes {
-                    return .noAction
-                }
-                return .reminder
-
-            default:
-                return .noAction
-            }
-
+        ).first else {
+            return .noAction
         }
-        return .noAction
+
+        if certificate.expiryDate.isInThePast {
+            return .block
+        }
+
+        let renewalNudgingDate = certificate.renewalNudgingDate(with: gracePeriod)
+        if  renewalNudgingDate > comparedDate && renewalNudgingDate < certificate.expiryDate {
+           return .noAction
+       }
+
+        let calendar = Calendar.current
+        let fourHours = .oneHour * 4
+        let fifteenMinutes = .fiveMinutes * 3
+
+        let timeLeftUntilExpiration = certificate.expiryDate.timeIntervalSince(comparedDate)
+        let maxTimeLeft = max(timeLeftUntilExpiration, .oneWeek)
+
+        // Sets recurrring actions to check for the next reminder to update the certificate
+        let snoozeTimeProvider = SnoozeTimeProvider()
+        let snoozeTime = snoozeTimeProvider.getSnoozeTime(endOfPeriod: certificate.expiryDate)
+        gracePeriodRepository.storeGracePeriodEndDate(Date.now + snoozeTime)
+
+        // If not alert was shown before, show a reminder
+        guard let lastAlertDate else {
+            return .reminder
+        }
+
+        // this value would be negative as alert is shown in the past. Hence getting a positive value
+        let lastAlertTimeInterval = abs(lastAlertDate.timeIntervalSinceNow)
+
+        switch timeLeftUntilExpiration {
+
+        case .oneDay ..< maxTimeLeft where lastAlertTimeInterval > .oneDay:
+            return .reminder
+
+        case fourHours ..< .oneDay where lastAlertTimeInterval > fourHours:
+            return .reminder
+
+        case .oneHour ..< fourHours where lastAlertTimeInterval > .oneHour:
+            return .reminder
+
+        case fifteenMinutes ..< .oneHour where lastAlertTimeInterval > fifteenMinutes:
+            return .reminder
+
+        case 0 ..< fifteenMinutes where lastAlertTimeInterval > .fiveMinutes:
+            return .reminder
+
+        default:
+            return .noAction
+        }
+
     }
 
 }

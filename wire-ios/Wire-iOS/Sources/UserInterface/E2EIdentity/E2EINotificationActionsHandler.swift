@@ -40,7 +40,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private var e2eIdentityCertificateUpdate: E2EIdentityCertificateUpdateStatusProtocol?
     private var isUpdateMode: Bool = false
     // MARK: - Life cycle
-
+    private var observer: Any?
     init(
         enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol,
         snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol,
@@ -57,12 +57,20 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             self.e2eIdentityCertificateUpdate = e2eIdentityCertificateUpdate
             self.targetVC = targetVC
 
-            NotificationCenter.default.addObserver(forName: .checkForE2EICertificateStatus, object: nil, queue: .main) { _ in
-                Task {
-                    await self.updateCertificate()
+            self.observer = NotificationCenter.default.addObserver(
+                forName: .checkForE2EICertificateExpiryStatus,
+                object: nil,
+                queue: .main
+            ) { _ in
+                Task { [weak self] in
+                    await self?.updateCertificate()
                 }
             }
         }
+
+    deinit {
+        self.observer = nil
+    }
 
     public func getCertificate() async {
         let oauthUseCase = OAuthUseCase(targetViewController: targetVC)

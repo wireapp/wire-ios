@@ -72,7 +72,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
             interval: interval
         ) {
             if isUpdateMode {
-                NotificationCenter.default.post(name: .checkForE2EICertificateStatus, object: nil)
+                NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
             } else {
                 // We save the end of the grace period once and should not update it.
                 let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled(gracePeriod: nil)

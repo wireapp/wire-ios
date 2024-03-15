@@ -49,24 +49,18 @@ import WireDataModelSupport
         mockGetE2eIdentityCertificates.invokeMlsGroupIdClientIds_MockValue = [certificate]
     }
 
-    func testThatItReturnsNoAction_WhenExpiryDateIsBeyondSevenDays() async {
-        update(certificate: certificate(with: .oneWeek + .oneDay))
-        do {
-            let result = try await e2eIdentityCertificateStatus.invoke()
-            XCTAssertEqual(result, .noAction)
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
+    func testThatItReturnsNoAction_WhenExpiryDateIsBeyondNudgingDate() async throws {
+        e2eIdentityCertificateStatus.lastAlertDate = nil
+        update(certificate: certificate(with: .oneYearFromNow, serverStoragePeriod: .fourWeeks))
+        let result = try await e2eIdentityCertificateStatus.invoke()
+        XCTAssertEqual(result, .noAction)
     }
 
-    func testThatItReturnsReminder_WhenExpiryDateIsWithInSevenDays() async {
+    func testThatItReturnsReminder_WhenExpiryDateIsWithInNudgingDate() async throws {
+        e2eIdentityCertificateStatus.lastAlertDate = nil
         update(certificate: certificate(with: .oneWeek - .oneSecond))
-        do {
-            let result = try await e2eIdentityCertificateStatus.invoke()
-            XCTAssertEqual(result, .reminder)
-        } catch {
-            XCTFail(error.localizedDescription)
-        }
+        let result = try await e2eIdentityCertificateStatus.invoke()
+        XCTAssertEqual(result, .reminder)
     }
 
     func testThatItReturnsNoAction_WhenExpiryDateIsWithInSevenDaysAndLastAlertWasDisplayedToday() async throws {
@@ -84,6 +78,7 @@ import WireDataModelSupport
     }
 
     func testThatItReturnsReminder_WhenExpiryDateIsWithInOneDay() async throws {
+        e2eIdentityCertificateStatus.lastAlertDate = nil
         update(certificate: certificate(with: .oneDay))
         let result = try await e2eIdentityCertificateStatus.invoke()
         XCTAssertEqual(result, .reminder)
@@ -104,42 +99,46 @@ import WireDataModelSupport
     }
 
     func testThatItReturnsReminder_WhenExpiryDateIsWithInFourHours() async throws {
+        e2eIdentityCertificateStatus.lastAlertDate = nil
         update(certificate: certificate(with: .oneHour * 4))
         let result = try await e2eIdentityCertificateStatus.invoke()
         XCTAssertEqual(result, .reminder)
     }
 
     func testThatItReturnsReminder_WhenExpiryDateIsWithInOneHour() async throws {
+        e2eIdentityCertificateStatus.lastAlertDate = nil
         update(certificate: certificate(with: .oneHour))
         let result = try await e2eIdentityCertificateStatus.invoke()
         XCTAssertEqual(result, .reminder)
     }
 
     func testThatItReturnsBlock_WhenItExpires() async throws {
+        e2eIdentityCertificateStatus.lastAlertDate = nil
         update(certificate: certificate(with: 0))
         let result = try await e2eIdentityCertificateStatus.invoke()
         XCTAssertEqual(result, .block)
     }
 
     func testThatItReturnsBlock_WhenItIsBeyondExpiryDate() async throws {
+        e2eIdentityCertificateStatus.lastAlertDate = nil
         update(certificate: certificate(with: -.oneDay))
         let result = try await e2eIdentityCertificateStatus.invoke()
         XCTAssertEqual(result, .block)
     }
 
-    private func certificate(with timeInterval: TimeInterval) -> E2eIdentityCertificate {
+    private func certificate(with expiry: TimeInterval,
+                             serverStoragePeriod: TimeInterval = 0) -> E2eIdentityCertificate {
         let certificate = E2eIdentityCertificate(
             clientId: "sdfsdfsdfs",
             certificateDetails: .mockCertificate,
             mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
             notValidBefore: Date.now,
-            expiryDate: Date.now,
+            expiryDate: Date.now + expiry,
             certificateStatus: .valid,
             serialNumber: .mockSerialNumber,
-            serverStoragePeriod: 0,
+            serverStoragePeriod: serverStoragePeriod,
             randomPeriod: 0
         )
-        certificate.expiryDate = Date.now + timeInterval
         return certificate
     }
  }

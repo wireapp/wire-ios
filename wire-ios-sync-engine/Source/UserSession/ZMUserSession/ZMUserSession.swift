@@ -20,7 +20,6 @@ import Foundation
 import WireDataModel
 import WireSystem
 import WireRequestStrategy
-import UIKit
 
 @objc(ZMThirdPartyServicesDelegate)
 public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
@@ -335,13 +334,6 @@ public final class ZMUserSession: NSObject {
         return EnrollE2EICertificateUseCase(
             e2eiRepository: e2eiRepository,
             context: syncContext)
-    }()
-
-    public lazy var selfMLSClientID: MLSClientID? = {
-        guard let selfUserClient  else {
-            return nil
-        }
-       return  MLSClientID(userClient: selfUserClient)
     }()
 
     public var lastE2EIUpdateDate: LastE2EIdentityUpdateDateRepositoryInterface?
@@ -899,7 +891,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
         }
-        NotificationCenter.default.post(name: .checkForE2EICertificateStatus, object: nil)
+        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
     }
 
     func processEvents() {
@@ -1034,4 +1026,9 @@ extension ZMUserSession: ContextProvider {
         return coreDataStack.eventContext
     }
 
+}
+
+public extension Notification.Name {
+    // This notification is used to check the E2EIdentity Certificate expiry status
+    static let checkForE2EICertificateExpiryStatus = NSNotification.Name("CheckForE2EICertificateExpiryStatus")
 }

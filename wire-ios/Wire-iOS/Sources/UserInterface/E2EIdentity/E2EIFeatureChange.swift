@@ -47,7 +47,7 @@ extension UIAlertController {
             presenter: topViewController
         ) {
             if !canRemindLater {
-                NotificationCenter.default.post(name: .checkForE2EICertificateStatus, object: nil)
+                NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
             }
         }
         let getCertificateAction = UIAlertAction(title: enrollButtonText,

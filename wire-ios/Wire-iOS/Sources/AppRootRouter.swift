@@ -185,6 +185,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         enqueueTransition(to: appState, completion: completion)
     }
 
+    @MainActor
     private func transition(to appState: AppState, completion: @escaping () -> Void) {
         applicationWillTransition(to: appState)
 
@@ -214,12 +215,10 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             configureAuthenticatedAppearance()
             executeAuthenticatedBlocks()
             screenCurtain.userSession = userSession
-            Task {
-                await showAuthenticated(
-                    userSession: userSession,
-                    completion: completionBlock
-                )
-            }
+            showAuthenticated(
+                userSession: userSession,
+                completion: completionBlock
+            )
         case .headless:
             showLaunchScreen(completion: completionBlock)
         case .loading(account: let toAccount, from: let fromAccount):
@@ -351,21 +350,25 @@ extension AppRootRouter {
     private func showAuthenticated(
         userSession: UserSession,
         completion: @escaping () -> Void
-    ) async {
-        guard
-            let selectedAccount = SessionManager.shared?.accountManager.selectedAccount,
-            let authenticatedRouter = await buildAuthenticatedRouter(
-                account: selectedAccount,
-                userSession: userSession
-            )
-        else {
-            completion()
-            return
-        }
+    ) {
+        Task {
+            guard
+                let selectedAccount = SessionManager.shared?.accountManager.selectedAccount,
+                let authenticatedRouter = await buildAuthenticatedRouter(
+                    account: selectedAccount,
+                    userSession: userSession
+                )
+            else {
+                completion()
+                return
+            }
 
-        self.authenticatedRouter = authenticatedRouter
-        rootViewController.set(childViewController: authenticatedRouter.viewController,
-                               completion: completion)
+            self.authenticatedRouter = authenticatedRouter
+           await MainActor.run {
+                rootViewController.set(childViewController: authenticatedRouter.viewController,
+                                       completion: completion)
+            }
+        }
     }
 
     private func showSkeleton(fromAccount: Account?, toAccount: Account, completion: @escaping () -> Void) {
