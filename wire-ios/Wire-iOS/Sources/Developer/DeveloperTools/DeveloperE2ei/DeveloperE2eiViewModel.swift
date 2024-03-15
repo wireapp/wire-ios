@@ -51,11 +51,11 @@ final class DeveloperE2eiViewModel: ObservableObject {
     func enrollCertificate() {
         guard
             let session = userSession,
-            let rootViewController = AppDelegate.shared.window?.rootViewController
+            let topmostViewController = UIApplication.shared.topmostViewController()
         else { return }
 
         let e2eiCertificateUseCase = session.enrollE2EICertificate as? EnrollE2EICertificateUseCase
-        let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
+        let oauthUseCase = OAuthUseCase(targetViewController: topmostViewController)
         let crlExpirationDatesRepository = CRLExpirationDatesRepository(userID: session.selfUser.remoteIdentifier)
 
         Task {
