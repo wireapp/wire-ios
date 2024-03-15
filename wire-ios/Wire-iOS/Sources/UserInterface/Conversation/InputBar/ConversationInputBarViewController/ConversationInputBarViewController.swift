@@ -615,30 +615,31 @@ final class ConversationInputBarViewController: UIViewController,
 
     // MARK: - PingButton
 
-        private func confirmPing(completion: @escaping (_ completion: Bool) -> Void) {
-            let participantCount = conversation.localParticipantsCount - 1
-            let title = L10n.Localizable.Conversation.Ping.ManyParticipantsConfirmation.title(participantCount)
+    private func confirmPing(completion: @escaping (_ completion: Bool) -> Void) {
+        let participantCount = conversation.localParticipantsCount - 1
+        let title = L10n.Localizable.Conversation.Ping.ManyParticipantsConfirmation.title(participantCount)
 
-            let controller = UIAlertController(
-                title: title,
-                message: nil,
-                preferredStyle: .alert
-            )
+        let controller = UIAlertController(
+            title: title,
+            message: nil,
+            preferredStyle: .alert
+        )
 
-            controller.addAction(.cancel { completion(false) })
+        controller.addAction(.cancel { completion(false) })
 
-            let sendAction = UIAlertAction(
-                title: L10n.Localizable.Conversation.Ping.Action.title,
-                style: .default,
-                handler: { _ in completion(true) }
-            )
+        let sendAction = UIAlertAction(
+            title: L10n.Localizable.Conversation.Ping.Action.title,
+            style: .default,
+            handler: { _ in completion(true) }
+        )
 
-            controller.addAction(sendAction)
-            self.present(controller, animated: true)
-        }
+        controller.addAction(sendAction)
+        self.present(controller, animated: true)
+    }
 
-        @objc
-        private func pingButtonPressed(_ button: UIButton?) {
+    @objc
+    private func pingButtonPressed(_ button: UIButton?) {
+        presentMLSPrivacyWarningIfNeeded { [self] in
             /// Don't take into account the selfUser when we check against the minimumPingParticipants
             /// That's why participantsIndex is **conversation.localParticipantsCount - 1**
             let participantIndex = conversation.localParticipantsCount - 1
@@ -654,6 +655,7 @@ final class ConversationInputBarViewController: UIViewController,
                 self.appendKnock()
             }
         }
+    }
 
     private func appendKnock() {
         guard let conversation = conversation as? ZMConversation else { return }
@@ -692,6 +694,20 @@ final class ConversationInputBarViewController: UIViewController,
         guard !AppDelegate.isOffline,
               let conversation = conversation as? ZMConversation else { return }
 
+        presentMLSPrivacyWarningIfNeeded {
+            self.showGiphy(for: conversation)
+        }
+    }
+
+    private func presentMLSPrivacyWarningIfNeeded(execute: @escaping () -> Void) {
+        let checker = MLSConversationChecker(conversation: conversation) {
+            execute()
+        }
+
+        checker.checkMessageSend()
+    }
+
+    private func showGiphy(for conversation: ZMConversation) {
         inputBar.textView.resignFirstResponder()
         let giphySearchViewController = GiphySearchViewController(searchTerm: "", conversation: conversation, userSession: userSession)
         giphySearchViewController.delegate = self
@@ -814,6 +830,15 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+
+        let checker = MLSConversationChecker(conversation: conversation) {
+            self.process(picker: picker, info: info)
+        }
+
+        checker.checkMessageSend()
+    }
+
+    private func process(picker: UIImagePickerController, info: [UIImagePickerController.InfoKey: Any]) {
         statusBarBlinksRedFix()
 
         let mediaType = info[UIImagePickerController.InfoKey.mediaType] as? String
@@ -876,6 +901,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
 extension ConversationInputBarViewController: InformalTextViewDelegate {
     func textView(_ textView: UITextView, hasImageToPaste image: MediaAsset) {
+
         let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: image),
                                                          onConfirm: {[weak self] editedImage in
                                                             self?.dismiss(animated: false)
