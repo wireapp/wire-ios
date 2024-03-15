@@ -850,10 +850,10 @@ extension AuthenticationCoordinator {
 
         guard let session = statusProvider.sharedUserSession else { return }
         let e2eiCertificateUseCase = session.enrollE2EICertificate
-        guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
+        guard let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return
         }
-        let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
+        let oauthUseCase = OAuthUseCase(targetViewController: topmostViewController)
 
         Task {
             do {

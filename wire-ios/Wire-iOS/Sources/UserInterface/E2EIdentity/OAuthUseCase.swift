@@ -32,10 +32,10 @@ public class OAuthUseCase: OAuthUseCaseInterface {
 
     private let logger = WireLogger.e2ei
     private var currentAuthorizationFlow: OIDExternalUserAgentSession?
-    private var rootViewController: UIViewController
+    private var targetViewController: UIViewController
 
-    init(rootViewController: UIViewController) {
-        self.rootViewController = rootViewController
+    init(targetViewController: UIViewController) {
+        self.targetViewController = targetViewController
     }
 
     public func invoke(parameters: OAuthParameters) async throws -> OAuthResponse {
@@ -109,7 +109,7 @@ public class OAuthUseCase: OAuthUseCaseInterface {
     @MainActor
     private func execute(authorizationRequest: OIDAuthorizationRequest) async throws -> OAuthResponse {
         guard let userAgent = OIDExternalUserAgentIOS(
-            presenting: rootViewController,
+            presenting: targetViewController,
             prefersEphemeralSession: true
         ) else {
             throw OAuthError.missingOIDExternalUserAgent

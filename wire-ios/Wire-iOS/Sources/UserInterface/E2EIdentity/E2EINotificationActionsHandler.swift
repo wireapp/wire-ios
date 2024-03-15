@@ -54,7 +54,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         }
 
     public func getCertificate() async {
-        let oauthUseCase = OAuthUseCase(rootViewController: targetVC)
+        let oauthUseCase = OAuthUseCase(targetViewController: targetVC)
         do {
             let certificateDetails = try await enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
             await confirmSuccessfulEnrollment(certificateDetails)
@@ -88,7 +88,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     // MARK: - Helpers
 
     private func showGetCertificateErrorAlert(canCancel: Bool) async {
-        let oauthUseCase = OAuthUseCase(rootViewController: targetVC)
+        let oauthUseCase = OAuthUseCase(targetViewController: targetVC)
         let alert = await UIAlertController.getCertificateFailed(canCancel: canCancel) {
             Task {
                 do {

@@ -134,12 +134,12 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     @MainActor
     private func startE2EIdentityEnrollment() async throws -> String {
-        guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
+        guard let topmostViewController = UIApplication.shared.topmostViewController() else {
             let errorDescription = "Failed to fetch RootViewController instance"
             logger.error(errorDescription)
             throw DeviceDetailsActionsError.failedAction(errorDescription)
         }
-        let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
+        let oauthUseCase = OAuthUseCase(targetViewController: topmostViewController)
         return try await e2eiCertificateEnrollment.invoke(
             authenticate: oauthUseCase.invoke
         )
