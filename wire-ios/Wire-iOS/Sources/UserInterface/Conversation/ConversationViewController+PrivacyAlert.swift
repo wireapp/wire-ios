@@ -124,11 +124,6 @@ extension ConversationViewController {
         return (title, message, actions)
     }
 
-    func presentE2EIPrivacyWarningAlert(sendAnywayClosure: @escaping (Bool) -> Void) {
-        let content = e2eIPrivacyWarningAlertContent(action: sendAnywayClosure)
-        presentAlert(with: content)
-    }
-
     // MARK: - Handling the Result
 
     private func performPrivacyAction(_ action: PrivacyAlertAction) {
@@ -181,4 +176,16 @@ extension ConversationViewController {
         LegalHoldDetailsViewController.present(in: self, conversation: conversation, userSession: userSession)
     }
 
+}
+
+// MARK: - MLSConversationCheckerPresenter
+
+extension ConversationViewController: MLSConversationCheckerPresenter {
+
+    func presentE2EIPrivacyWarningAlert(_ notification: Notification) {
+        let content = e2eIPrivacyWarningAlertContent { sendAnyway in
+            MLSConversationChecker.e2eiPrivacyWarningConfirm(sendAnyway: sendAnyway)
+        }
+        presentAlert(with: content)
+    }
 }

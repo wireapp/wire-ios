@@ -22,8 +22,18 @@ import WireCommonComponents
 
 extension ConversationInputBarViewController {
     func sendText() {
+
+        let checker = MLSConversationChecker(conversation: conversation) {
+            self._sendText()
+        }
+
+        checker.checkMessageSend()
+    }
+
+    private func _sendText() {
         let (text, mentions) = inputBar.textView.preparedText
         let quote = quotedMessage
+
         guard !showAlertIfTextIsTooLong(text: text) else { return }
 
         if inputBar.isEditing, let message = editingMessage {

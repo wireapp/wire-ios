@@ -141,6 +141,7 @@ final class ConversationViewController: UIViewController {
         hideAndDestroyParticipantsPopover()
         contentViewController.delegate = nil
     }
+    private var observationToken: NSObjectProtocol?
 
     private func update(conversation: ZMConversation) {
         setupNavigatiomItem()
@@ -158,6 +159,8 @@ final class ConversationViewController: UIViewController {
             self,
             for: userSession.conversationList()
         )
+
+        observationToken = MLSConversationChecker.addPresenter(self)
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
@@ -560,22 +563,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     func conversationInputBarViewControllerDidComposeText(text: String,
                                                           mentions: [Mention],
                                                           replyingTo message: ZMConversationMessage?) {
-
-        let action = { [self] in
-            contentViewController.scrollToBottomIfNeeded()
-            inputBarController.sendController.sendTextMessage(text, mentions: mentions, userSession: userSession, replyingTo: message)
-        }
-
-        if conversation.isMLConversationDegraded {
-            presentE2EIPrivacyWarningAlert { sendAnyway in
-                if sendAnyway {
-                    action()
-                }
-            }
-            return
-        }
-        action()
-
+        contentViewController.scrollToBottomIfNeeded()
+        inputBarController.sendController.sendTextMessage(text, mentions: mentions, userSession: userSession, replyingTo: message)
     }
 
     func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController) -> Bool {
