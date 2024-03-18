@@ -79,9 +79,11 @@ extension WireCallCenterV3: ZMConversationObserver {
         let conversation = changeInfo.conversation
 
         guard
+            let avsIdentifier = conversation.avsIdentifier,
+            let context = conversation.managedObjectContext,
             changeInfo.messageProtocolChanged,
             conversation.messageProtocol == .mls,
-            let context = conversation.managedObjectContext
+            conversationType(from: avsIdentifier) != .mlsConference
         else {
             return
         }
