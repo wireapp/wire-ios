@@ -40,7 +40,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private var e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?
     private var isUpdateMode: Bool = false
     // MARK: - Life cycle
-    private var observer: Any?
+    private var observer: NSObjectProtocol?
     init(
         enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol,
         snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol,
@@ -69,7 +69,8 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         }
 
     deinit {
-        self.observer = nil
+        guard let observer else { return }
+        NotificationCenter.default.removeObserver(observer)
     }
 
     public func getCertificate() async {

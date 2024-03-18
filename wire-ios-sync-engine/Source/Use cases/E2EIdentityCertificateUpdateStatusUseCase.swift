@@ -34,7 +34,7 @@ public protocol E2EIdentityCertificateUpdateStatusUseCaseProtocol {
     func invoke() async throws -> E2EIdentityCertificateUpdateStatus
 }
 
-final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
+public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
     private let getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol
     private let gracePeriod: TimeInterval
