@@ -201,6 +201,19 @@ final class OneOnOneResolverTests: XCTestCase {
         await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
         await mockMigrator.setMigrateToMLSUserIDIn_MockValue(.random())
 
+        await viewContext.perform { [self] in
+            let user = modelHelper.createUser(
+                qualifiedID: userID,
+                in: viewContext
+            )
+            let (_, conversation) = modelHelper.createConnection(
+                status: .pending,
+                to: user,
+                in: viewContext
+            )
+            conversation.messageProtocol = .proteus
+        }
+
         // When
         try await sut.resolveOneOnOneConversation(with: userID, in: viewContext)
 
@@ -208,6 +221,35 @@ final class OneOnOneResolverTests: XCTestCase {
         let invocations = await mockMigrator.migrateToMLSUserIDIn_Invocations
         XCTAssertEqual(invocations.count, 1)
         XCTAssertEqual(invocations.first?.userID, userID)
+    }
+
+    func test_ResolveOneOnOneConversation_MLSSupported_ButAlreadyResolved() async throws {
+        // Given
+        let userID: QualifiedID = .random()
+
+        // Mock
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
+        await mockMigrator.setMigrateToMLSUserIDIn_MockValue(.random())
+
+        await viewContext.perform { [self] in
+            let user = modelHelper.createUser(
+                qualifiedID: userID,
+                in: viewContext
+            )
+            let (_, conversation) = modelHelper.createConnection(
+                status: .pending,
+                to: user,
+                in: viewContext
+            )
+            conversation.messageProtocol = .mls
+        }
+
+        // When
+        try await sut.resolveOneOnOneConversation(with: userID, in: viewContext)
+
+        // Then
+        let invocations = await mockMigrator.migrateToMLSUserIDIn_Invocations
+        XCTAssert(invocations.isEmpty)
     }
 
     func test_ResolveOneOnOneConversation_ProteusSupported() async throws {

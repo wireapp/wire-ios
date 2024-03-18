@@ -92,81 +92,98 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     ) async throws -> OneOnOneConversationResolution {
         WireLogger.conversation.debug("resolving 1-1 conversation with user: \(userID)")
 
-        let messageProtocol = try await protocolSelector.getProtocolForUser(
-            with: userID,
-            in: context
-        )
+        let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
         switch messageProtocol {
         case .none:
-            WireLogger.conversation.debug("no common protocols found")
-            await context.perform {
-                guard
-                    let otherUser = ZMUser.fetch(with: userID, in: context),
-                    let conversation = otherUser.oneOnOneConversation
-                else {
-                    return
-                }
-
-                let selfUser = ZMUser.selfUser(in: context)
-
-                // The reason we need to add this first if check here is so to avoid running the same code path again
-                // if conversation has been marked as read only before.
-                if !conversation.isForcedReadOnly {
-                    if !selfUser.supportedProtocols.contains(.mls) {
-                        conversation.appendMLSMigrationMLSNotSupportedForSelfUser(user: selfUser)
-                    } else if !otherUser.supportedProtocols.contains(.mls) {
-                        conversation.appendMLSMigrationMLSNotSupportedForOtherUser(user: otherUser)
-                    }
-                }
-
-                conversation.isForcedReadOnly = true
-
-            }
-            return .archivedAsReadOnly
-
+            return await resolveCommonUserProtocolNone(with: userID, in: context)
         case .mls:
-            WireLogger.conversation.debug("should resolve to mls 1-1 conversation")
-
-            guard let migrator else {
-                throw OneOnOneResolverError.migratorNotFound
-            }
-
-            let conversationMessageProtocol: MessageProtocol? = await context.perform {
-                guard
-                    let otherUser = ZMUser.fetch(with: userID, in: context),
-                    let conversation = otherUser.oneOnOneConversation
-                else {
-                    return nil
-                }
-
-                return conversation.messageProtocol
-            }
-
-            guard let conversationMessageProtocol, conversationMessageProtocol == .proteus else {
-                // Only proteus conversations should be migrated once
-                return .noAction
-            }
-
-            let mlsGroupIdentifier = try await migrator.migrateToMLS(
-                userID: userID,
-                in: context
-            )
-
-            return .migratedToMLSGroup(identifier: mlsGroupIdentifier)
-
+            return try await resolveCommonUserProtocolMLS(with: userID, in: context)
         case .proteus:
-            WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
-            return .noAction
+            return resolveCommonUserProtocolProteus()
+        case .mixed:
+            return resolveCommonUserProtocolMixed()
+        }
+    }
 
+    private func resolveCommonUserProtocolNone(
+        with userID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) async -> OneOnOneConversationResolution {
+        WireLogger.conversation.debug("no common protocols found")
+
+        await context.perform {
+            guard
+                let otherUser = ZMUser.fetch(with: userID, in: context),
+                let conversation = otherUser.oneOnOneConversation
+            else {
+                return
+            }
+
+            let selfUser = ZMUser.selfUser(in: context)
+
+            // The reason we need to add this first if check here is so to avoid running the same code path again
+            // if conversation has been marked as read only before.
+            if !conversation.isForcedReadOnly {
+                if !selfUser.supportedProtocols.contains(.mls) {
+                    conversation.appendMLSMigrationMLSNotSupportedForSelfUser(user: selfUser)
+                } else if !otherUser.supportedProtocols.contains(.mls) {
+                    conversation.appendMLSMigrationMLSNotSupportedForOtherUser(user: otherUser)
+                }
+            }
+
+            conversation.isForcedReadOnly = true
+        }
+
+        return .archivedAsReadOnly
+    }
+
+    private func resolveCommonUserProtocolMLS(
+        with userID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) async throws -> OneOnOneConversationResolution {
+        WireLogger.conversation.debug("should resolve to mls 1-1 conversation")
+
+        guard let migrator else {
+            throw OneOnOneResolverError.migratorNotFound
+        }
+
+        let conversationMessageProtocol: MessageProtocol? = await context.perform {
+            guard
+                let otherUser = ZMUser.fetch(with: userID, in: context),
+                let conversation = otherUser.oneOnOneConversation
+            else {
+                return nil
+            }
+
+            return conversation.messageProtocol
+        }
+
+        guard case .proteus = conversationMessageProtocol else {
+            // Only proteus conversations should be migrated once
+            return .noAction
+        }
+
+        let mlsGroupIdentifier = try await migrator.migrateToMLS(
+            userID: userID,
+            in: context
+        )
+
+        return .migratedToMLSGroup(identifier: mlsGroupIdentifier)
+    }
+
+    private func resolveCommonUserProtocolProteus() -> OneOnOneConversationResolution {
+        WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
+        return .noAction
+    }
+
+    private func resolveCommonUserProtocolMixed() -> OneOnOneConversationResolution {
         // This should never happen:
         // Users can only support proteus and mls protocols.
         // Mixed protocol is used by conversations to represent
         // the migration state when migrating from proteus to mls.
-        case .mixed:
-            assertionFailure("users should not have mixed protocol")
-            return .noAction
-        }
+        assertionFailure("users should not have mixed protocol")
+        return .noAction
     }
 
     // MARK: Helpers
