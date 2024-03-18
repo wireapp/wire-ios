@@ -26,7 +26,7 @@ protocol MLSConversationCheckerPresenter {
 // Checks if E2EIPrivacyWarningAlert needs to be presented before given action
 struct E2EIPrivacyWarningChecker {
     enum AlertType: Int {
-        case message, call
+        case message, outgoingCall, incomingCall
     }
     var conversation: ConversationLike
     var alertType = AlertType.message

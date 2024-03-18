@@ -28,7 +28,7 @@ extension UIAlertController {
         degradedUser: UserType?,
         callEnded: Bool = false,
         confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil
-    ) -> UIAlertController {
+    ) -> AlertController {
 
         typealias GeneralLocale = L10n.Localizable.General
 
@@ -36,7 +36,7 @@ extension UIAlertController {
 
         let message = degradedCallMessage(forUser: degradedUser, callEnded: callEnded)
 
-        let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let controller = AlertController(title: title, message: message, preferredStyle: .alert)
 
         if let confirmationBlock = confirmationBlock {
             controller.addAction(UIAlertAction(title: GeneralLocale.cancel, style: .cancel) { _ in
@@ -77,14 +77,14 @@ extension UIAlertController {
 
     static func degradedMLSConference(
         conferenceEnded: Bool = false,
-        confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil) -> UIAlertController {
+        confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil) -> AlertController {
 
             typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
             typealias EndedCall = L10n.Localizable.Call.Mls.Degraded.Ended.Alert
 
             let title = DegradedCall.title
             let message = conferenceEnded ? EndedCall.message : DegradedCall.message
-            let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let controller = AlertController(title: title, message: message, preferredStyle: .alert)
 
             // Add actions
             if let confirmationBlock = confirmationBlock {
@@ -100,4 +100,24 @@ extension UIAlertController {
             return controller
         }
 
+    static func incomingCallDegradedMLSConference(
+        confirmationBlock: (@escaping (_ answerDegradedCall: Bool) -> Void)) -> AlertController {
+
+            typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
+            typealias IncomingCall = L10n.Localizable.Call.Mls.Degraded.Incoming.Alert
+
+            let controller = AlertController(title: DegradedCall.title,
+                                             message: IncomingCall.message,
+                                             preferredStyle: .alert)
+
+            // Add actions
+
+            controller.addAction(UIAlertAction(title: IncomingCall.Action.continue, style: .default) { _ in
+                confirmationBlock(true)
+            })
+
+            controller.addAction(.cancel())
+
+            return controller
+        }
 }
