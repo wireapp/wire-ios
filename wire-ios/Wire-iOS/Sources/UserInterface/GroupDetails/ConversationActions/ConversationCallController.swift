@@ -78,11 +78,14 @@ final class ConversationCallController: NSObject {
         guard conversation.canJoinCall else { return }
 
         let checker = E2EIPrivacyWarningChecker(conversation: conversation, alertType: .incomingCall, continueAction: { [conversation] in
+            conversation.acknowledgePrivacyChanges()
             conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) { [conversation] in
                 conversation.joinCall() // This will result in joining an ongoing call.
             }
         }, cancelAction: { [weak self] in
-            self?.conversation.voiceChannel?.leave()
+            guard let userSession = ZMUserSession.shared() else { return }
+            self?.conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
+
         }, showAlert: { [weak self] in
             self?.presentIncomingCallDegradedAlert()
         })
@@ -94,7 +97,9 @@ final class ConversationCallController: NSObject {
     private func presentIncomingCallDegradedAlert() {
         let alert = UIAlertController.incomingCallDegradedMLSConference(confirmationBlock: { answerDegradedCall in
             E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: answerDegradedCall)
-        })
+        }) {
+            E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: false)
+        }
         target.present(alert, animated: true)
     }
 

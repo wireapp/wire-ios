@@ -132,19 +132,23 @@ extension CallController: WireCallCenterCallStateObserver {
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
 
         // TODO: how to detect this is the first time we get the call sa degraded
-        if case .incoming(_, _, degraded: true) = callState, previousCallState != callState {
+        if case .incoming(_, shouldRing: true, degraded: true) = callState {
             let checker = E2EIPrivacyWarningChecker(conversation: conversation,
                                                     alertType: .incomingCall,
                                                     continueAction: {
+                conversation.acknowledgePrivacyChanges()
                 self.updateActiveCallPresentationState()
             }, cancelAction: {
-                conversation.voiceChannel?.leave()
+                guard let userSession = ZMUserSession.shared() else { return }
+                conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
             }, showAlert: {
                 self.router?.presentIncomingCallDegradedAlert()
             })
             checker.performAction()
-        } else {
+        } else if case .answered(true) = callState {
             presentSecurityDegradedAlertIfNecessary(for: conversation.voiceChannel)
+            updateActiveCallPresentationState()
+        } else {
             updateActiveCallPresentationState()
         }
     }

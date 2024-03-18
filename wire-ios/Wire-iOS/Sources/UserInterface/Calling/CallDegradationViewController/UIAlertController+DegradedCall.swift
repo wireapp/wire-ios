@@ -101,7 +101,8 @@ extension UIAlertController {
         }
 
     static func incomingCallDegradedMLSConference(
-        confirmationBlock: (@escaping (_ answerDegradedCall: Bool) -> Void)) -> AlertController {
+        confirmationBlock: (@escaping (_ answerDegradedCall: Bool) -> Void),
+        cancelBlock: Completion? = nil) -> AlertController {
 
             typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
             typealias IncomingCall = L10n.Localizable.Call.Mls.Degraded.Incoming.Alert
@@ -116,7 +117,7 @@ extension UIAlertController {
                 confirmationBlock(true)
             })
 
-            controller.addAction(.cancel())
+            controller.addAction(.cancel(cancelBlock))
 
             return controller
         }
