@@ -19,11 +19,11 @@
 import Foundation
 
 public extension String {
-    public static let mockSerialNumber = String(repeating: "abcdefghijklmno", count: 2)
+    static let mockSerialNumber = String(repeating: "abcdefghijklmno", count: 2)
 
-    public static let mockMlsThumbprint = "AB CD EF GH IJ KL MN OP QR ST UV WX QR ST UV WX"
+    static let mockMlsThumbprint = "AB CD EF GH IJ KL MN OP QR ST UV WX QR ST UV WX"
 
-    public static var mockCertificate: String {
+    static var mockCertificate: String {
         "BEGIN CERTIFICATE\n-----------\n"
         + String(repeating: "abcdefghijklmno", count: 100)
         + "\n-----------\nEND CERTIFICATE"
