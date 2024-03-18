@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import Wire
+@testable import WireDataModel
 
 /// This class provides a `NSManagedObjectContext` in order to test views with real data instead
 /// of mock objects.
@@ -143,14 +144,13 @@ final class CoreDataFixture {
     }
 
     private func setupTestObjects() {
-        selfUser = ZMUser.insertNewObject(in: uiMOC)
+        selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID()
         selfUser.name = "selfUser"
         selfUser.accentColorValue = .vividRed
         selfUser.emailAddress = "test@email.com"
         selfUser.phoneNumber = "+123456789"
 
-        ZMUser.boxSelfUser(selfUser, inContextUserInfo: uiMOC)
         if selfUserInTeam {
             setupMember()
         }
