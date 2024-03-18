@@ -38,7 +38,7 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
 
     private let getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol
     private let gracePeriod: TimeInterval
-    private let comparedDate: Date
+    private let comparedDate: DateProviding
     private let mlsClientID: MLSClientID
     private let gracePeriodRepository: GracePeriodRepositoryInterface
     private let mlsGroupIDProvider: MLSGroupIDProviding
@@ -49,7 +49,7 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
         gracePeriod: TimeInterval,
         mlsClientID: MLSClientID,
         lastAlertDate: Date?,
-        comparedDate: Date = Date.now,
+        comparedDate: DateProviding = SystemDateProvider(),
         gracePeriodRepository: GracePeriodRepositoryInterface,
         mlsGroupIDProvider: MLSGroupIDProviding
     ) {
@@ -77,14 +77,14 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
         }
 
         let renewalNudgingDate = certificate.renewalNudgingDate(with: gracePeriod)
-        if renewalNudgingDate > comparedDate && renewalNudgingDate < certificate.expiryDate {
+        if renewalNudgingDate > comparedDate.now && renewalNudgingDate < certificate.expiryDate {
             return .noAction
         }
 
         let fourHours = .oneHour * 4
         let fifteenMinutes = .fiveMinutes * 3
 
-        let timeLeftUntilExpiration = certificate.expiryDate.timeIntervalSince(comparedDate)
+        let timeLeftUntilExpiration = certificate.expiryDate.timeIntervalSince(comparedDate.now)
         let maxTimeLeft = max(timeLeftUntilExpiration, TimeInterval.oneWeek)
 
         // Sets recurrring actions to check for the next reminder to update the certificate

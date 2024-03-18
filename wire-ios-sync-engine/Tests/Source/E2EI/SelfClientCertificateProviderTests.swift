@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import XCTest
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 

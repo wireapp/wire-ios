@@ -290,6 +290,7 @@
 		25CCE9D72BA4A693002AB21F /* SelfClientCertificateProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061F791A2B767AE100E8827B /* SelfClientCertificateProviderTests.swift */; };
 		25CCE9DC2BA4A943002AB21F /* String+Mocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25CCE9DB2BA4A943002AB21F /* String+Mocks.swift */; };
 		25D57F112BA889660038521E /* MLSGroupIDProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25D57F102BA889660038521E /* MLSGroupIDProvider.swift */; };
+		25D57F122BA88FA30038521E /* MessagingTest+Swift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BBF7002473D51D00A26626 /* MessagingTest+Swift.swift */; };
 		25E11B0B2B56A15F005D51FA /* GetE2eIdentityCertificatesUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E11B0A2B56A15F005D51FA /* GetE2eIdentityCertificatesUseCase.swift */; };
 		25E11B0D2B56B497005D51FA /* GetIsE2EIdentityEnabledUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25E11B0C2B56B497005D51FA /* GetIsE2EIdentityEnabledUseCase.swift */; };
 		2B15596A295093360069AE34 /* HotfixPatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B155969295093360069AE34 /* HotfixPatch.swift */; };
@@ -3245,6 +3246,7 @@
 				25CCE9D72BA4A693002AB21F /* SelfClientCertificateProviderTests.swift in Sources */,
 				0145AE882B11551C0097E3B8 /* AutoMockable.generated.swift in Sources */,
 				25CCE9DC2BA4A943002AB21F /* String+Mocks.swift in Sources */,
+				25D57F122BA88FA30038521E /* MessagingTest+Swift.swift in Sources */,
 				0145AE892B11551C0097E3B8 /* AutoMockable.manual.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
