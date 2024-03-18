@@ -18,9 +18,13 @@
 
 import WireDataModel
 
-extension MLSGroupID {
+extension MLSClientID {
 
     public static func random() -> Self {
-        .init(Data.random(byteCount: 32))
+        .init(
+            userID: UUID().transportString(),
+            clientID: .randomAlphanumerical(length: 8),
+            domain: .randomDomain()
+        )
     }
 }
