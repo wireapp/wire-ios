@@ -73,18 +73,21 @@ extension ZMConversation {
             }
         }
 
-        UIApplication.wr_requestOrWarnAboutMicrophoneAccess { granted in
-            if video {
-                UIApplication.wr_requestOrWarnAboutVideoAccess { _ in
-                    // We still allow starting the call, even if the video permissions were not granted.
+        let checker = E2EIPrivacyWarningChecker(conversation: self, alertType: .incomingCall) {
+
+            UIApplication.wr_requestOrWarnAboutMicrophoneAccess { granted in
+                if video {
+                    UIApplication.wr_requestOrWarnAboutVideoAccess { _ in
+                        // We still allow starting the call, even if the video permissions were not granted.
+                        onGranted(granted)
+                    }
+                } else {
+                    RunLoop.current.run(until: Date().addingTimeInterval(0.1))
                     onGranted(granted)
                 }
-            } else {
-                RunLoop.current.run(until: Date().addingTimeInterval(0.1))
-                onGranted(granted)
             }
         }
-
+        checker.performAction()
     }
 
     func warnAboutSlowConnection(handler: @escaping (_ abortCall: Bool) -> Void) {
