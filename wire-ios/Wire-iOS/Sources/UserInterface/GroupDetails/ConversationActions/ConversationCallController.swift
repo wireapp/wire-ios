@@ -76,12 +76,27 @@ final class ConversationCallController: NSObject {
 
     func joinCall() {
         guard conversation.canJoinCall else { return }
-        conversation.confirmJoiningCallIfNeeded(alertPresenter: target) { [conversation] in
-            conversation.joinCall() // This will result in joining an ongoing call.
-        }
+
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation, alertType: .incomingCall, continueAction: { [conversation] in
+            conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) { [conversation] in
+                conversation.joinCall() // This will result in joining an ongoing call.
+            }
+        }, cancelAction: { [weak self] in
+            self?.conversation.voiceChannel?.leave()
+        }, showAlert: { [weak self] in
+            self?.presentIncomingCallDegradedAlert()
+        })
+        checker.performAction()
     }
 
     // MARK: - Helper
+
+    private func presentIncomingCallDegradedAlert() {
+        let alert = UIAlertController.incomingCallDegradedMLSConference(confirmationBlock: { answerDegradedCall in
+            E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: answerDegradedCall)
+        })
+        target.present(alert, animated: true)
+    }
 
     private func confirmGroupCall(completion: @escaping (_ completion: Bool) -> Void) {
         let controller = UIAlertController.confirmGroupCall(

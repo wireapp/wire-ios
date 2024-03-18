@@ -61,7 +61,7 @@ final class CallController: NSObject {
     private func addObservers(userSession: UserSession) {
         observerTokens.append(userSession.addConferenceCallStateObserver(self))
         observerTokens.append(userSession.addConferenceCallErrorObserver(self))
-        }
+    }
 
     private func presentOrMinimizeActiveCall(for conversation: ZMConversation) {
         if conversation == minimizedCall {
@@ -130,8 +130,23 @@ extension CallController: WireCallCenterCallStateObserver {
                              timestamp: Date?,
                              previousCallState: CallState?) {
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
-        presentSecurityDegradedAlertIfNecessary(for: conversation.voiceChannel)
-        updateActiveCallPresentationState()
+
+        // TODO: how to detect this is the first time we get the call sa degraded
+        if case .incoming(_, _, degraded: true) = callState, previousCallState != callState {
+            let checker = E2EIPrivacyWarningChecker(conversation: conversation,
+                                                    alertType: .incomingCall,
+                                                    continueAction: {
+                self.updateActiveCallPresentationState()
+            }, cancelAction: {
+                conversation.voiceChannel?.leave()
+            }, showAlert: {
+                self.router?.presentIncomingCallDegradedAlert()
+            })
+            checker.performAction()
+        } else {
+            presentSecurityDegradedAlertIfNecessary(for: conversation.voiceChannel)
+            updateActiveCallPresentationState()
+        }
     }
 
     private func presentUnsupportedVersionAlertIfNecessary(callState: CallState) {

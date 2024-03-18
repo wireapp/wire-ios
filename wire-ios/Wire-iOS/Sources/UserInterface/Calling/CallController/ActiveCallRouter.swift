@@ -28,6 +28,7 @@ protocol ActiveCallRouterProtocol: AnyObject {
     func showCallTopOverlay(for conversation: ZMConversation)
     func hideCallTopOverlay()
     func presentSecurityDegradedAlert(for reason: CallDegradationReason)
+    func presentIncomingCallDegradedAlert()
     func presentUnsupportedVersionAlert()
 }
 
@@ -161,6 +162,13 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
             }
             self?.rootViewController.present(alert, animated: true)
         }
+    }
+
+    func presentIncomingCallDegradedAlert() {
+        let alert = UIAlertController.incomingCallDegradedMLSConference(confirmationBlock: { answerDegradedCall in
+            E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: answerDegradedCall)
+        })
+        rootViewController.present(alert, animated: true)
     }
 
     func presentUnsupportedVersionAlert() {

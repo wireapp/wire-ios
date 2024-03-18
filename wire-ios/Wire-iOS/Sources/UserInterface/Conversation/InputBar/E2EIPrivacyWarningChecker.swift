@@ -31,6 +31,8 @@ struct E2EIPrivacyWarningChecker {
     var conversation: ConversationLike
     var alertType = AlertType.message
     var continueAction: () -> Void
+    var cancelAction: (() -> Void)?
+    var showAlert: (() -> Void)?
 
     func performAction() {
         guard conversation.isMLSConversationDegraded else {
@@ -38,7 +40,11 @@ struct E2EIPrivacyWarningChecker {
             return
         }
 
-        NotificationCenter.default.post(.presentE2EIPrivacyWarningAlert(type: alertType))
+        if let showAlert {
+            showAlert()
+        } else {
+            NotificationCenter.default.post(.presentE2EIPrivacyWarningAlert(type: alertType))
+        }
 
         Task {
             var shouldContinue = false
@@ -50,6 +56,10 @@ struct E2EIPrivacyWarningChecker {
             if shouldContinue {
                 await MainActor.run {
                     continueAction()
+                }
+            } else {
+                await MainActor.run {
+                    cancelAction?()
                 }
             }
         }
