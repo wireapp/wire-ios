@@ -42,24 +42,11 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     // MARK: - Dependencies
 
     private let protocolSelector: OneOnOneProtocolSelectorInterface
-    private let mlsService: MLSServiceInterface?
 
-    // MARK: - Life cycle
+    // MARK: - Initializer
 
-    public convenience init(syncContext: NSManagedObjectContext) {
-        let mlsService = syncContext.performAndWait {
-            syncContext.mlsService
-        }
-
-        self.init(mlsService: mlsService )
-    }
-
-    public init(
-        protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
-        mlsService: MLSServiceInterface?
-    ) {
+    public init(protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector()) {
         self.protocolSelector = protocolSelector
-        self.mlsService = mlsService
     }
 
     // MARK: - Resolve
@@ -152,7 +139,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     ) async throws -> OneOnOneConversationResolution {
         WireLogger.conversation.debug("should resolve to mls 1-1 conversation")
 
-        guard let mlsService else {
+        guard let mlsService = await mlsService(in: context) else {
             throw OneOnOneResolverError.mlsServiceNotFound
         }
 
@@ -179,6 +166,13 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         }
 
         return .migratedToMLSGroup(identifier: mlsGroupID)
+    }
+
+    private func mlsService(in context: NSManagedObjectContext) async -> MLSServiceInterface? {
+        await context.perform {
+            assert(context.zm_isSyncContext)
+            return context.mlsService
+        }
     }
 
     private func syncMLSConversationFromBackend(
