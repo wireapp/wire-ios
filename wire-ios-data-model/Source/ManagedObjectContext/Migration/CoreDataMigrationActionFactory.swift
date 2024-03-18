@@ -20,8 +20,8 @@ import Foundation
 
 struct CoreDataMigrationActionFactory {
 
-    static func createPreMigrationAction(for version: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
-        switch version {
+    static func createPreMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
+        switch destinationVersion {
         case .version2_114:
             return PreAction_2_114()
 
@@ -36,8 +36,8 @@ struct CoreDataMigrationActionFactory {
         }
     }
 
-    static func createPostMigrationAction(for version: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
-        switch version {
+    static func createPostMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
+        switch destinationVersion {
         case .version2_111:
             return PrefillPrimaryKeyAction()
 
