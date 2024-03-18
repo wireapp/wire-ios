@@ -33,7 +33,7 @@ public protocol OneOnOneResolverInterface {
 
 enum OneOnOneResolverError: Error {
 
-    case migratorNotFound
+    case mlsServiceNotFound
 
 }
 
@@ -43,7 +43,6 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     private let protocolSelector: OneOnOneProtocolSelectorInterface
     private let mlsService: MLSServiceInterface?
-    private let migrator: OneOnOneMigratorInterface?
 
     // MARK: - Life cycle
 
@@ -52,30 +51,18 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             syncContext.mlsService
         }
 
-        self.init(
-            mlsService: mlsService,
-            migrator: mlsService.map(OneOnOneMigrator.init)
-        )
-    }
-
-    public convenience init(mlsService: MLSServiceInterface) {
-        self.init(
-            mlsService: mlsService,
-            migrator: OneOnOneMigrator(mlsService: mlsService)
-        )
+        self.init(mlsService: mlsService )
     }
 
     public init(
         protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
-        mlsService: MLSServiceInterface?,
-        migrator: OneOnOneMigratorInterface?
+        mlsService: MLSServiceInterface?
     ) {
         self.protocolSelector = protocolSelector
         self.mlsService = mlsService
-        self.migrator = migrator
     }
 
-    // MARK: - Methods
+    // MARK: - Resolve
 
     public func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws {
         let usersIDs = try await fetchUserIdsWithOneOnOneConversation(in: context)
@@ -115,6 +102,8 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         }
     }
 
+    // MARK: Resolve - None
+
     private func resolveCommonUserProtocolNone(
         with userID: QualifiedID,
         in context: NSManagedObjectContext
@@ -147,30 +136,16 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         return .archivedAsReadOnly
     }
 
+    // MARK: Resolve - MLS
+
     private func resolveCommonUserProtocolMLS(
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
-        //        let conversationMessageProtocol: MessageProtocol? = await context.perform {
-        //            guard
-        //                let otherUser = ZMUser.fetch(with: userID, in: context),
-        //                let conversation = otherUser.oneOnOneConversation
-        //            else {
-        //                return nil
-        //            }
-        //
-        //            return conversation.messageProtocol
-        //        }
-        //
-        //        guard case .proteus = conversationMessageProtocol else {
-        //            // Only proteus conversations should be migrated once
-        //            return .noAction
-        //        }
-
         WireLogger.conversation.debug("should resolve to mls 1-1 conversation")
 
-        guard let mlsService, let migrator else {
-            throw OneOnOneResolverError.migratorNotFound
+        guard let mlsService else {
+            throw OneOnOneResolverError.mlsServiceNotFound
         }
 
         let mlsGroupID = try await syncMLSConversationFromBackend(
@@ -182,37 +157,21 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             return .noAction
         }
 
-        // if epoch = 0
-
-        try await migrator.migrateToMLS(
-            userID: userID,
-            mlsGroupID: mlsGroupID,
-            in: context
-        )
-
-        // else
-
-        // join via external commit
-        // try await mlsService.joinGroup(with: mlsGroupID)
+        let epoch = await fetchMLSConversationEpoch(with: userID, in: context)
+        if epoch == 0 {
+            // migrate to a new conversation
+            let migrator = OneOnOneMigrator(mlsService: mlsService, context: context)
+            try await migrator.migrateToMLS(
+                userID: userID,
+                mlsGroupID: mlsGroupID
+            )
+        } else {
+            // join existing conversation via external commit
+            try await mlsService.joinGroup(with: mlsGroupID)
+        }
 
         return .migratedToMLSGroup(identifier: mlsGroupID)
     }
-
-    private func resolveCommonUserProtocolProteus() -> OneOnOneConversationResolution {
-        WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
-        return .noAction
-    }
-
-    private func resolveCommonUserProtocolMixed() -> OneOnOneConversationResolution {
-        // This should never happen:
-        // Users can only support proteus and mls protocols.
-        // Mixed protocol is used by conversations to represent
-        // the migration state when migrating from proteus to mls.
-        assertionFailure("users should not have mixed protocol")
-        return .noAction
-    }
-
-    // MARK: Sync
 
     private func syncMLSConversationFromBackend(
         userID: QualifiedID,
@@ -230,7 +189,41 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         }
     }
 
-    // MARK: Helpers
+    private func fetchMLSConversationEpoch(
+        with userID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) async -> UInt64? {
+        await context.perform {
+            guard
+                let otherUser = ZMUser.fetch(with: userID, in: context),
+                let conversation = otherUser.oneOnOneConversation
+            else {
+                return nil
+            }
+
+            return conversation.epoch
+        }
+    }
+
+    // MARK: Resolve - Proteus
+
+    private func resolveCommonUserProtocolProteus() -> OneOnOneConversationResolution {
+        WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
+        return .noAction
+    }
+
+    // MARK: Resolve - Mixed
+
+    private func resolveCommonUserProtocolMixed() -> OneOnOneConversationResolution {
+        // This should never happen:
+        // Users can only support proteus and mls protocols.
+        // Mixed protocol is used by conversations to represent
+        // the migration state when migrating from proteus to mls.
+        assertionFailure("users should not have mixed protocol")
+        return .noAction
+    }
+
+    // MARK: - Helpers
 
     private func fetchUserIdsWithOneOnOneConversation(in context: NSManagedObjectContext) async throws -> [QualifiedID] {
         try await context.perform {
