@@ -29,7 +29,7 @@ final class AlertController: UIAlertController {
 }
 
 extension UIAlertController {
-    static func unsupportedVersionAlert(dismiss: @escaping () -> Void) -> UIAlertController {
+    static func unsupportedVersionAlert(dismiss: (() -> Void)? = nil) -> UIAlertController {
         let alertController = AlertController(
             title: L10n.Localizable.Voice.CallError.UnsupportedVersion.title,
             message: L10n.Localizable.Voice.CallError.UnsupportedVersion.message,
