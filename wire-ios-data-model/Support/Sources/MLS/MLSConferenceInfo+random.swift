@@ -16,11 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+@testable import WireDataModel
 
-extension MLSGroupID {
+extension MLSConferenceInfo {
 
     public static func random() -> Self {
-        .init(Data.random(byteCount: 32))
+        .init(
+            epoch: .random(in: (.min)...(.max)),
+            keyData: Data.random(byteCount: 8),
+            members: [.random()]
+        )
+    }
+}
+
+extension MLSConferenceInfo.Member {
+
+    public static func random() -> Self {
+        .init(
+            id: .random(),
+            isInSubconversation: .random()
+        )
     }
 }

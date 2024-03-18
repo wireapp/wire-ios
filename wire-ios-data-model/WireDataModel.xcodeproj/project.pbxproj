@@ -271,6 +271,8 @@
 		591F8A042B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A032B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift */; };
 		591F8A072B8CB82400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A052B8CB81400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */; };
 		594EB3062B1E3B340022A5CD /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594EB3002B1E31D30022A5CD /* AutoMockable.generated.swift */; };
+		5952B89B2BA3179100C48B01 /* MLSClientID+random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952B89A2BA3179100C48B01 /* MLSClientID+random.swift */; };
+		5952B89D2BA3189F00C48B01 /* MLSConferenceInfo+random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952B89C2BA3189F00C48B01 /* MLSConferenceInfo+random.swift */; };
 		597A3BB42B6416CA0020E337 /* Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB32B6416CA0020E337 /* Availability.swift */; };
 		597A3BB72B6418170020E337 /* Availability+WireProtos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB62B6418170020E337 /* Availability+WireProtos.swift */; };
 		597B70C72B03C6A5006C2121 /* UpdateConversationProtocolAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C62B03C6A5006C2121 /* UpdateConversationProtocolAction.swift */; };
@@ -1166,6 +1168,8 @@
 		591F8A032B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserE2EICertifiedUseCase.swift; sourceTree = "<group>"; };
 		591F8A052B8CB81400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserE2EICertifiedUseCaseTests.swift; sourceTree = "<group>"; };
 		594EB3002B1E31D30022A5CD /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
+		5952B89A2BA3179100C48B01 /* MLSClientID+random.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MLSClientID+random.swift"; sourceTree = "<group>"; };
+		5952B89C2BA3189F00C48B01 /* MLSConferenceInfo+random.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MLSConferenceInfo+random.swift"; sourceTree = "<group>"; };
 		5972D9792B480E790089D1D3 /* CoreCryptoProtocolExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCryptoProtocolExt.swift; sourceTree = "<group>"; };
 		597A3BB32B6416CA0020E337 /* Availability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Availability.swift; sourceTree = "<group>"; };
 		597A3BB62B6418170020E337 /* Availability+WireProtos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Availability+WireProtos.swift"; sourceTree = "<group>"; };
@@ -2096,7 +2100,9 @@
 		590C55732B62BEEF00FC1CE8 /* MLS */ = {
 			isa = PBXGroup;
 			children = (
+				5952B89A2BA3179100C48B01 /* MLSClientID+random.swift */,
 				590C55742B62BF0000FC1CE8 /* MLSGroupID+random.swift */,
+				5952B89C2BA3189F00C48B01 /* MLSConferenceInfo+random.swift */,
 			);
 			path = MLS;
 			sourceTree = "<group>";
@@ -3919,10 +3925,12 @@
 				E94FD49A2B8F432200F2B4F3 /* MockActionHandler.swift in Sources */,
 				0125F73C2B28A31C00D989AB /* SpyUserClientKeyStore.swift in Sources */,
 				635101EE2B4EE449009D6166 /* MockE2EIEnrollment.swift in Sources */,
+				5952B89B2BA3179100C48B01 /* MLSClientID+random.swift in Sources */,
 				594EB3062B1E3B340022A5CD /* AutoMockable.generated.swift in Sources */,
 				590C55752B62BF0000FC1CE8 /* MLSGroupID+random.swift in Sources */,
 				0125F73D2B28A31C00D989AB /* MockProteusProvider.swift in Sources */,
 				6398545C2B3346F700AA10DE /* MockSafeCoreCrypto.swift in Sources */,
+				5952B89D2BA3189F00C48B01 /* MLSConferenceInfo+random.swift in Sources */,
 				EEA58F132B7115A1006DEE32 /* ModelHelper.swift in Sources */,
 				EEA58F112B70E89B006DEE32 /* CoreDataStackHelper.swift in Sources */,
 			);
