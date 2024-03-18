@@ -428,7 +428,9 @@ struct CacheAsset: AssetType {
         guard needsPreprocessing else { return }
         guard var genericMessage = owner.underlyingMessage else { return }
 
+        // Now we have the preprocessed data, delete the original.
         cache.storeAssetData(owner, format: .medium, encrypted: false, data: preprocessedImageData)
+        cache.deleteAssetData(owner, format: .original, encrypted: false)
 
         switch type {
         case .file:
@@ -494,7 +496,7 @@ extension ZMAssetClientMessage: AssetMessage {
                 assets.append(CacheAsset(owner: self, type: .thumbnail, cache: cache))
             }
         } else {
-            if cache.hasDataOnDisk(self, format: .original, encrypted: false) {
+            if cache.hasDataOnDisk(for: self) {
                 assets.append(CacheAsset(owner: self, type: .image, cache: cache))
             }
         }
@@ -505,11 +507,17 @@ extension ZMAssetClientMessage: AssetMessage {
     public var processingState: AssetProcessingState {
         let assets = self.assets
 
-        if assets.filter({ $0.needsPreprocessing && !$0.hasPreprocessed || !$0.isUploaded && !$0.hasEncrypted }).count > 0 {
+        // There is an asset that needs to be encrypted.
+        if assets.contains(where: {
+            !$0.hasEncrypted
+        }) {
             return .preprocessing
         }
 
-        if assets.filter({ !$0.isUploaded }).count > 0 {
+        // There is some asset that isn't uploaded.
+        if assets.contains(where: {
+            !$0.isUploaded
+        }) {
             return .uploading
         }
 

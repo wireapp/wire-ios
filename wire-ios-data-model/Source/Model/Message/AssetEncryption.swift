@@ -137,10 +137,14 @@ extension FileAssetCache {
             return nil
         }
 
-        return encryptFileAndComputeSHA256Digest(
+        let keys = encryptFileAndComputeSHA256Digest(
             plaintextCacheKey,
             encryptedEntryKey: encryptedCacheKey
         )
+
+        cache.deleteAssetData(plaintextCacheKey)
+
+        return keys
     }
 
     /// Decrypts an encrypted asset in the asset cache to a decrypted version in the cache.

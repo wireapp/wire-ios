@@ -67,6 +67,15 @@ open class FileAssetCache: NSObject {
         return cache.assetData(key)
     }
 
+    public func assetData(
+        key: String,
+        encryptionKey: Data,
+        digest: Data
+    ) -> Data? {
+        let data = assetData(key)
+        return data?.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
+    }
+
     // MARK: - Team logo
 
     open func hasDataOnDisk(
@@ -202,6 +211,22 @@ open class FileAssetCache: NSObject {
     }
 
     // MARK: - Conversation message
+
+    open func hasDataOnDisk(for message: ZMConversationMessage) -> Bool {
+        return hasOriginalData(for: message) || hasPreprocessedData(for: message) || hasProcessedData(for: message)
+    }
+
+    private func hasOriginalData(for message: ZMConversationMessage) -> Bool {
+        return hasDataOnDisk(message, format: .original, encrypted: false)
+    }
+
+    private func hasPreprocessedData(for message: ZMConversationMessage) -> Bool {
+        return hasDataOnDisk(message, format: .medium, encrypted: false)
+    }
+
+    private func hasProcessedData(for message: ZMConversationMessage) -> Bool {
+        return hasDataOnDisk(message, format: .medium, encrypted: true)
+    }
 
     open func hasDataOnDisk(_ message: ZMConversationMessage, format: ZMImageFormat, encrypted: Bool) -> Bool {
         guard let key = Self.cacheKeyForAsset(

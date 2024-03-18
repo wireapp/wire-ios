@@ -132,29 +132,55 @@ private let zmLog = ZMSLog(tag: "Asset V3")
     }
 
     private func storeAndDecrypt(data: Data, for message: ZMAssetClientMessage) -> Bool {
-        guard let genericMessage = message.underlyingMessage,
-              let asset = genericMessage.assetData
-        else { return false }
+        guard
+            let genericMessage = message.underlyingMessage,
+            let asset = genericMessage.assetData
+        else {
+            return false
+        }
 
         let keys = (asset.uploaded.otrKey, asset.uploaded.sha256)
 
         if asset.original.hasRasterImage {
-            return storeAndDecryptImage(asset: asset, message: message, data: data, keys: keys)
+            return validateAndStoreImage(
+                asset: asset,
+                message: message,
+                data: data,
+                keys: keys
+            )
         } else {
-            return storeAndDecryptFile(asset: asset, message: message, data: data, keys: keys)
+            return storeAndDecryptFile(
+                asset: asset,
+                message: message,
+                data: data,
+                keys: keys
+            )
         }
     }
 
-    private func storeAndDecryptImage(asset: WireProtos.Asset, message: ZMAssetClientMessage, data: Data, keys: DecryptionKeys) -> Bool {
+    private func validateAndStoreImage(
+        asset: WireProtos.Asset,
+        message: ZMAssetClientMessage,
+        data: Data,
+        keys: DecryptionKeys
+    ) -> Bool {
         precondition(asset.original.hasRasterImage, "Should only be called for assets with image")
 
-        let cache = managedObjectContext.zm_fileAssetCache!
-        cache.storeAssetData(message, format: .medium, encrypted: true, data: data)
-        let success = cache.decryptImageIfItMatchesDigest(message, format: .medium, encryptionKey: keys.otrKey, sha256Digest: keys.sha256)
-        if !success {
-            zmLog.error("Failed to decrypt v3 asset (image) message: \(asset), nonce:\(message.nonce!)")
+        guard data.zmSHA256Digest() == keys.sha256 else {
+            zmLog.warn("v3 asset (image) message: \(asset), nonce:\(message.nonce!) digest is not valid, discarding...")
+            return false
         }
-        return success
+
+        let cache = managedObjectContext.zm_fileAssetCache!
+
+        cache.storeAssetData(
+            message,
+            format: .medium,
+            encrypted: true,
+            data: data
+        )
+
+        return true
     }
 
     private func storeAndDecryptFile(asset: WireProtos.Asset, message: ZMAssetClientMessage, data: Data, keys: DecryptionKeys) -> Bool {

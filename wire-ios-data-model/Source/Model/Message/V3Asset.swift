@@ -50,11 +50,45 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     @objc(fetchImageDataWithQueue:completionHandler:)
     public func fetchImageData(with queue: DispatchQueue, completionHandler: @escaping ((Data?) -> Void)) {
         let cache = moc.zm_fileAssetCache
-        let mediumKey = FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
-        let originalKey = FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .original)
+
+        let mediumKey = FileAssetCache.cacheKeyForAsset(
+            assetClientMessage,
+            format: .medium,
+            encrypted: true
+        )
+
+        // Just in case we're trying to access an asset that in not stored encrypted.
+        let fallbackKey = FileAssetCache.cacheKeyForAsset(
+            assetClientMessage,
+            format: .medium,
+            encrypted: false
+        )
+
+        let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded
+        let (key, digest) = (asset?.otrKey, asset?.sha256)
 
         queue.async {
-            completionHandler([mediumKey, originalKey].lazy.compactMap({ $0 }).compactMap({ cache?.assetData($0) }).first)
+            guard let cache else {
+                completionHandler(nil)
+                return
+            }
+
+            if
+                let mediumKey,
+                let key,
+                let digest,
+                let data = cache.assetData(
+                    key: mediumKey,
+                    encryptionKey: key,
+                    digest: digest
+                )
+            {
+                completionHandler(data)
+            } else if let fallbackKey {
+                completionHandler(cache.assetData(fallbackKey))
+            } else {
+                completionHandler(nil)
+            }
         }
     }
 
