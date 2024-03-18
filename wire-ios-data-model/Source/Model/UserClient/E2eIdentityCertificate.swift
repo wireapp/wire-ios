@@ -40,7 +40,7 @@ public enum E2eIdentityCertificateConstants {
     public var expiryDate: Date
     public var status: E2EIdentityCertificateStatus
     public var serialNumber: String
-    public var comparedDate: Date
+    public var comparedDate: DateProviding
     public var serverStoragePeriod: TimeInterval
     public var randomPeriod: TimeInterval
 
@@ -52,7 +52,7 @@ public enum E2eIdentityCertificateConstants {
         expiryDate: Date,
         certificateStatus: E2EIdentityCertificateStatus,
         serialNumber: String,
-        comparedDate: Date = DateProvider(now: .now).now,
+        comparedDate: DateProviding = SystemDateProvider(),
         serverStoragePeriod: TimeInterval = E2eIdentityCertificateConstants.serverRetainedDays,
         randomPeriod: TimeInterval = E2eIdentityCertificateConstants.randomInterval
     ) {
@@ -81,7 +81,7 @@ public enum E2eIdentityCertificateConstants {
 public extension E2eIdentityCertificate {
 
     private var isExpired: Bool {
-        return expiryDate <= comparedDate
+        return expiryDate <= comparedDate.now
     }
 
     private var isValid: Bool {
@@ -89,12 +89,12 @@ public extension E2eIdentityCertificate {
     }
 
     private var isActivated: Bool {
-        return notValidBefore <= comparedDate
+        return notValidBefore <= comparedDate.now
     }
 
     func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
         let renewalNudgingDate = renewalNudgingDate(with: gracePeriod)
-        return isExpired || (isActivated && comparedDate >= renewalNudgingDate)
+        return isExpired || (isActivated && comparedDate.now >= renewalNudgingDate)
     }
 
     /// In order to get `renewalNudgingDate` we should deduct standard deductions from Validity Period (VP) and add it to `notValidBefore` date
