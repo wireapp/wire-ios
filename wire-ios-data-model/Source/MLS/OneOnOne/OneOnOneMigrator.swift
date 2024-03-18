@@ -61,6 +61,12 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
             in: context
         )
 
+//        guard await !mlsService.conversationExists(groupID: mlsGroupID) else {
+//            return
+//        }
+
+        // if epoch = 0
+
         try await establishLocalMLSConversationIfNeeded(
             userID: userID,
             mlsGroupID: mlsGroupID
@@ -73,6 +79,10 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
         )
 
         return mlsGroupID
+
+        // else epoch > 0
+
+        // join via external commit
     }
 
     private func syncMLSConversationFromBackend(
