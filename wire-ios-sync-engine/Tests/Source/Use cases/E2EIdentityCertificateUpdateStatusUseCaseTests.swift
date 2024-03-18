@@ -23,18 +23,22 @@ import WireDataModelSupport
  final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
     var mockGetE2eIdentityCertificates: MockGetE2eIdentityCertificatesUseCaseProtocol!
     var e2eIdentityCertificateStatus: E2EIdentityCertificateUpdateStatusUseCase!
+    var mockMLSGroupProvider: MockMLSGroupIDProviding!
 
     override func setUp() {
         let mockGracePeriodRepository = MockGracePeriodRepositoryInterface()
+
         mockGracePeriodRepository.storeGracePeriodEndDate_MockMethod = { _ in }
+        mockMLSGroupProvider = MockMLSGroupIDProviding()
+        mockMLSGroupProvider.fetchMLSGroupID_MockValue = MLSGroupID(Data())
         mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUseCaseProtocol()
         e2eIdentityCertificateStatus = E2EIdentityCertificateUpdateStatusUseCase(
             getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
             gracePeriod: 0,
-            mlsGroupID: MLSGroupID(Data()),
             mlsClientID: MLSClientID(userID: "", clientID: "", domain: ""),
             lastAlertDate: nil,
-            gracePeriodRepository: mockGracePeriodRepository
+            gracePeriodRepository: mockGracePeriodRepository,
+            mlsGroupIDProvider: mockMLSGroupProvider
         )
         super.setUp()
     }

@@ -58,12 +58,11 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
         }
         let timeProvider = SnoozeTimeProvider()
         let interval = timeProvider.getSnoozeTime(endOfPeriod: endOfGracePeriod)
-
         await registerRecurringActionIfNeeded(isUpdateMode: isUpdateMode, interval: interval)
     }
 
     // MARK: - Helpers
-
+    @MainActor
     private func registerRecurringActionIfNeeded(isUpdateMode: Bool, interval: TimeInterval) async {
         guard e2eiFeature.isEnabled,
               await !selfClientCertificateProvider.hasCertificate else {

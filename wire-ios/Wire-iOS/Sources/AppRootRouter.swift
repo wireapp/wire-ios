@@ -351,24 +351,22 @@ extension AppRootRouter {
         userSession: UserSession,
         completion: @escaping () -> Void
     ) {
-        Task {
-            guard
-                let selectedAccount = SessionManager.shared?.accountManager.selectedAccount,
-                let authenticatedRouter = await buildAuthenticatedRouter(
-                    account: selectedAccount,
-                    userSession: userSession
-                )
-            else {
-                completion()
-                return
-            }
-
-            self.authenticatedRouter = authenticatedRouter
-           await MainActor.run {
-                rootViewController.set(childViewController: authenticatedRouter.viewController,
-                                       completion: completion)
-            }
+        guard
+            let selectedAccount = SessionManager.shared?.accountManager.selectedAccount,
+            let authenticatedRouter = buildAuthenticatedRouter(
+                account: selectedAccount,
+                userSession: userSession
+            )
+        else {
+            completion()
+            return
         }
+
+        self.authenticatedRouter = authenticatedRouter
+        rootViewController.set(
+            childViewController: authenticatedRouter.viewController,
+            completion: completion
+        )
     }
 
     private func showSkeleton(fromAccount: Account?, toAccount: Account, completion: @escaping () -> Void) {
@@ -422,7 +420,7 @@ extension AppRootRouter {
     private func buildAuthenticatedRouter(
         account: Account,
         userSession: UserSession
-    ) async -> AuthenticatedRouter? {
+    ) -> AuthenticatedRouter? {
         guard let userSession = ZMUserSession.shared() else { return  nil }
 
         let isTeamMember: Bool
@@ -434,7 +432,6 @@ extension AppRootRouter {
         }
 
         let needToShowDialog = appStateCalculator.wasUnauthenticated && !isTeamMember
-        let e2eIdentityCertificateUpdate = await userSession.e2eIdentityUpdateCertificateUpdateStatus()
         return AuthenticatedRouter(
             rootViewController: rootViewController,
             account: account,
@@ -447,7 +444,7 @@ extension AppRootRouter {
                 stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
                 gracePeriodRepository: userSession.gracePeriodRepository,
                 lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
-                e2eIdentityCertificateUpdateStatus: e2eIdentityCertificateUpdate,
+                e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
                 targetVC: rootViewController),
             gracePeriodRepository: userSession.gracePeriodRepository
         )

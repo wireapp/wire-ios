@@ -39,32 +39,33 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
     private let getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol
     private let gracePeriod: TimeInterval
     private let comparedDate: Date
-    private let mlsGroupID: MLSGroupID
     private let mlsClientID: MLSClientID
     private let gracePeriodRepository: GracePeriodRepositoryInterface
-
+    private let mlsGroupIDProvider: MLSGroupIDProviding
     public var lastAlertDate: Date?
 
     public init(
         getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol,
         gracePeriod: TimeInterval,
-        mlsGroupID: MLSGroupID,
         mlsClientID: MLSClientID,
         lastAlertDate: Date?,
         comparedDate: Date = Date.now,
-        gracePeriodRepository: GracePeriodRepositoryInterface
+        gracePeriodRepository: GracePeriodRepositoryInterface,
+        mlsGroupIDProvider: MLSGroupIDProviding
     ) {
         self.getE2eIdentityCertificates = getE2eIdentityCertificates
         self.gracePeriod = gracePeriod
         self.lastAlertDate = lastAlertDate
-        self.mlsGroupID = mlsGroupID
         self.mlsClientID = mlsClientID
         self.comparedDate = comparedDate
         self.gracePeriodRepository = gracePeriodRepository
+        self.mlsGroupIDProvider = mlsGroupIDProvider
     }
 
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
-        guard let certificate = try await getE2eIdentityCertificates.invoke(
+        guard
+            let mlsGroupID = await mlsGroupIDProvider.fetchMLSGroupID(),
+            let certificate = try await getE2eIdentityCertificates.invoke(
             mlsGroupId: mlsGroupID,
             clientIds: [mlsClientID]
         ).first else {
@@ -77,15 +78,14 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
 
         let renewalNudgingDate = certificate.renewalNudgingDate(with: gracePeriod)
         if renewalNudgingDate > comparedDate && renewalNudgingDate < certificate.expiryDate {
-           return .noAction
-       }
+            return .noAction
+        }
 
-        let calendar = Calendar.current
         let fourHours = .oneHour * 4
         let fifteenMinutes = .fiveMinutes * 3
 
         let timeLeftUntilExpiration = certificate.expiryDate.timeIntervalSince(comparedDate)
-        let maxTimeLeft = max(timeLeftUntilExpiration, .oneWeek)
+        let maxTimeLeft = max(timeLeftUntilExpiration, TimeInterval.oneWeek)
 
         // Sets recurrring actions to check for the next reminder to update the certificate
         let snoozeTimeProvider = SnoozeTimeProvider()

@@ -207,7 +207,7 @@ final class ClientListViewController: UIViewController,
             contextProvider: contextProvider
         )
         viewModel.showCertificateUpdateSuccess = {[weak self] certificateChain in
-            guard let self = self, let lastE2EIUpdateDateRepository = userSession.lastE2EIUpdateDateRepository else {
+            guard let self else {
                 return
             }
             self.updateAllClients {
