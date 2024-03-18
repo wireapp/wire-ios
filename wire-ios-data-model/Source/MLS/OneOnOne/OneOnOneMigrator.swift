@@ -21,11 +21,11 @@ import Foundation
 // sourcery: AutoMockable
 public protocol OneOnOneMigratorInterface {
 
-    @discardableResult
     func migrateToMLS(
         userID: QualifiedID,
+        mlsGroupID: MLSGroupID,
         in context: NSManagedObjectContext
-    ) async throws -> MLSGroupID
+    ) async throws
 
 }
 
@@ -37,7 +37,7 @@ public enum MigrateMLSOneOnOneConversationError: Error {
 
 }
 
-public final class OneOnOneMigrator: OneOnOneMigratorInterface {
+public struct OneOnOneMigrator: OneOnOneMigratorInterface {
 
     // MARK: - Dependencies
 
@@ -51,22 +51,11 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
 
     // MARK: - Methods
 
-    @discardableResult
     public func migrateToMLS(
         userID: QualifiedID,
+        mlsGroupID: MLSGroupID,
         in context: NSManagedObjectContext
-    ) async throws -> MLSGroupID {
-        let mlsGroupID = try await syncMLSConversationFromBackend(
-            userID: userID,
-            in: context
-        )
-
-//        guard await !mlsService.conversationExists(groupID: mlsGroupID) else {
-//            return
-//        }
-
-        // if epoch = 0
-
+    ) async throws {
         try await establishLocalMLSConversationIfNeeded(
             userID: userID,
             mlsGroupID: mlsGroupID
@@ -77,43 +66,16 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
             mlsGroupID: mlsGroupID,
             in: context
         )
-
-        return mlsGroupID
-
-        // else epoch > 0
-
-        // join via external commit
-    }
-
-    private func syncMLSConversationFromBackend(
-        userID: QualifiedID,
-        in context: NSManagedObjectContext
-    ) async throws -> MLSGroupID {
-        var action = SyncMLSOneToOneConversationAction(
-            userID: userID.uuid,
-            domain: userID.domain
-        )
-
-        do {
-            return try await action.perform(in: context.notificationContext)
-        } catch {
-            throw MigrateMLSOneOnOneConversationError.failedToFetchConversation(error)
-        }
     }
 
     private func establishLocalMLSConversationIfNeeded(
         userID: QualifiedID,
         mlsGroupID: MLSGroupID
     ) async throws {
-        guard await !mlsService.conversationExists(groupID: mlsGroupID) else {
-            return
-        }
+        let users = [MLSUser(userID)]
 
         do {
-            try await mlsService.establishGroup(
-                for: mlsGroupID,
-                with: [MLSUser(userID)]
-            )
+            try await mlsService.establishGroup(for: mlsGroupID, with: users)
         } catch {
             throw MigrateMLSOneOnOneConversationError.failedToEstablishGroup(error)
         }

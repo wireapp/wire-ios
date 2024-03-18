@@ -42,6 +42,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     // MARK: - Dependencies
 
     private let protocolSelector: OneOnOneProtocolSelectorInterface
+    private let mlsService: MLSServiceInterface?
     private let migrator: OneOnOneMigratorInterface?
 
     // MARK: - Life cycle
@@ -51,18 +52,26 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             syncContext.mlsService
         }
 
-        self.init(migrator: mlsService.map(OneOnOneMigrator.init))
+        self.init(
+            mlsService: mlsService,
+            migrator: mlsService.map(OneOnOneMigrator.init)
+        )
     }
 
     public convenience init(mlsService: MLSServiceInterface) {
-        self.init(migrator: OneOnOneMigrator(mlsService: mlsService))
+        self.init(
+            mlsService: mlsService,
+            migrator: OneOnOneMigrator(mlsService: mlsService)
+        )
     }
 
     public init(
         protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
-        migrator: OneOnOneMigratorInterface? = nil
+        mlsService: MLSServiceInterface?,
+        migrator: OneOnOneMigratorInterface?
     ) {
         self.protocolSelector = protocolSelector
+        self.mlsService = mlsService
         self.migrator = migrator
     }
 
@@ -142,34 +151,51 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
+        //        let conversationMessageProtocol: MessageProtocol? = await context.perform {
+        //            guard
+        //                let otherUser = ZMUser.fetch(with: userID, in: context),
+        //                let conversation = otherUser.oneOnOneConversation
+        //            else {
+        //                return nil
+        //            }
+        //
+        //            return conversation.messageProtocol
+        //        }
+        //
+        //        guard case .proteus = conversationMessageProtocol else {
+        //            // Only proteus conversations should be migrated once
+        //            return .noAction
+        //        }
+
         WireLogger.conversation.debug("should resolve to mls 1-1 conversation")
 
-        guard let migrator else {
+        guard let mlsService, let migrator else {
             throw OneOnOneResolverError.migratorNotFound
         }
 
-        let conversationMessageProtocol: MessageProtocol? = await context.perform {
-            guard
-                let otherUser = ZMUser.fetch(with: userID, in: context),
-                let conversation = otherUser.oneOnOneConversation
-            else {
-                return nil
-            }
-
-            return conversation.messageProtocol
-        }
-
-        guard case .proteus = conversationMessageProtocol else {
-            // Only proteus conversations should be migrated once
-            return .noAction
-        }
-
-        let mlsGroupIdentifier = try await migrator.migrateToMLS(
+        let mlsGroupID = try await syncMLSConversationFromBackend(
             userID: userID,
             in: context
         )
 
-        return .migratedToMLSGroup(identifier: mlsGroupIdentifier)
+        if await mlsService.conversationExists(groupID: mlsGroupID) {
+            return .noAction
+        }
+
+        // if epoch = 0
+
+        try await migrator.migrateToMLS(
+            userID: userID,
+            mlsGroupID: mlsGroupID,
+            in: context
+        )
+
+        // else
+
+        // join via external commit
+        // try await mlsService.joinGroup(with: mlsGroupID)
+
+        return .migratedToMLSGroup(identifier: mlsGroupID)
     }
 
     private func resolveCommonUserProtocolProteus() -> OneOnOneConversationResolution {
@@ -184,6 +210,24 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         // the migration state when migrating from proteus to mls.
         assertionFailure("users should not have mixed protocol")
         return .noAction
+    }
+
+    // MARK: Sync
+
+    private func syncMLSConversationFromBackend(
+        userID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) async throws -> MLSGroupID {
+        var action = SyncMLSOneToOneConversationAction(
+            userID: userID.uuid,
+            domain: userID.domain
+        )
+
+        do {
+            return try await action.perform(in: context.notificationContext)
+        } catch {
+            throw MigrateMLSOneOnOneConversationError.failedToFetchConversation(error)
+        }
     }
 
     // MARK: Helpers
