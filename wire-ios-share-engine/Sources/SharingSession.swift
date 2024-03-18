@@ -422,11 +422,7 @@ public final class SharingSession {
         userInterfaceContext.zm_userImageCache = userImageCache
         syncContext.zm_userImageCache = userImageCache
 
-        let fileAssetcache = FileAssetCache(
-            location: cachesDirectory,
-            earEncryptor: earService.encryptor
-        )
-
+        let fileAssetcache = FileAssetCache(location: cachesDirectory)
         userInterfaceContext.zm_fileAssetCache = fileAssetcache
         syncContext.zm_fileAssetCache = fileAssetcache
     }
