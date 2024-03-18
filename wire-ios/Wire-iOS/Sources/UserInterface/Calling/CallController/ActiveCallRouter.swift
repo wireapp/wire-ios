@@ -27,8 +27,8 @@ protocol ActiveCallRouterProtocol: AnyObject {
     func minimizeCall(animated: Bool, completion: Completion?)
     func showCallTopOverlay(for conversation: ZMConversation)
     func hideCallTopOverlay()
-    func presentSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping () -> Void)
-    func presentUnsupportedVersionAlert(completion: @escaping () -> Void)
+    func presentSecurityDegradedAlert(for reason: CallDegradationReason)
+    func presentUnsupportedVersionAlert()
 }
 
 // MARK: - CallQualityRouterProtocol
@@ -150,27 +150,24 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     // MARK: - Alerts
-    func presentSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping () -> Void) {
+    func presentSecurityDegradedAlert(for reason: CallDegradationReason) {
         executeOrSchedulePostCallAction { [weak self] in
-            let alert: AlertController
+            let alert: UIAlertController
             switch reason {
             case .degradedUser(user: let user):
-                alert = AlertController.degradedCall(degradedUser: user?.value, callEnded: true)
-
+                alert = UIAlertController.degradedCall(degradedUser: user?.value, callEnded: true)
             case .invalidCertificate:
-                alert = AlertController.degradedMLSConference(conferenceEnded: true)
+                alert = UIAlertController.degradedMLSConference(conferenceEnded: true)
             }
-
-            alert.dismissedClosure = completion
             self?.rootViewController.present(alert, animated: true)
         }
     }
 
-    func presentUnsupportedVersionAlert(completion: @escaping () -> Void) {
-        let alert = UIAlertController.unsupportedVersionAlert {
-            completion()
+    func presentUnsupportedVersionAlert() {
+        executeOrSchedulePostCallAction { [weak self] in
+            let alert = UIAlertController.unsupportedVersionAlert
+            self?.rootViewController.present(alert, animated: true)
         }
-        rootViewController.present(alert, animated: true)
     }
 
     // MARK: - Private Navigation Helpers

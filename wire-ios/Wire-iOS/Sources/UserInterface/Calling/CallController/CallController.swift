@@ -61,7 +61,7 @@ final class CallController: NSObject {
     private func addObservers(userSession: UserSession) {
         observerTokens.append(userSession.addConferenceCallStateObserver(self))
         observerTokens.append(userSession.addConferenceCallErrorObserver(self))
-    }
+        }
 
     private func presentOrMinimizeActiveCall(for conversation: ZMConversation) {
         if conversation == minimizedCall {
@@ -129,35 +129,25 @@ extension CallController: WireCallCenterCallStateObserver {
                              caller: UserType,
                              timestamp: Date?,
                              previousCallState: CallState?) {
-        print("🕵🏽", callState, previousCallState)
-
-            self.presentUnsupportedVersionAlertIfNecessary(callState: callState) { [weak self] in
-            self?.presentSecurityDegradedAlertIfNecessary(for: conversation.voiceChannel) { [weak self] in
-                self?.updateActiveCallPresentationState()
-            }
-        }
-
+        presentUnsupportedVersionAlertIfNecessary(callState: callState)
+        presentSecurityDegradedAlertIfNecessary(for: conversation.voiceChannel)
+        updateActiveCallPresentationState()
     }
 
-    private func presentUnsupportedVersionAlertIfNecessary(callState: CallState, completion: @escaping () -> Void) {
-        guard let router, isClientOutdated(callState: callState) else {
-            completion()
-            return
-        }
-        router.presentUnsupportedVersionAlert(completion: completion)
+    private func presentUnsupportedVersionAlertIfNecessary(callState: CallState) {
+        guard isClientOutdated(callState: callState) else { return }
+        router?.presentUnsupportedVersionAlert()
     }
 
-    private func presentSecurityDegradedAlertIfNecessary(for voiceChannel: VoiceChannel?, completion: @escaping () -> Void) {
-        guard let router, let degradationState = voiceChannel?.degradationState else {
-            completion()
+    private func presentSecurityDegradedAlertIfNecessary(for voiceChannel: VoiceChannel?) {
+        guard let degradationState = voiceChannel?.degradationState else {
             return
         }
         switch degradationState {
         case .incoming(reason: let degradationReason):
-            router.presentSecurityDegradedAlert(for: degradationReason, completion: completion)
-
+            router?.presentSecurityDegradedAlert(for: degradationReason)
         default:
-            completion()
+            break
         }
     }
 }
@@ -182,9 +172,7 @@ extension CallController: WireCallCenterCallErrorObserver {
         }
 
         dateOfLastErrorAlertByConversationId[conversationId] = Date()
-        router?.presentUnsupportedVersionAlert(completion: {
-            // do nothing
-        })
+        router?.presentUnsupportedVersionAlert()
     }
 
     private func shouldDisplayErrorAlert(for conversation: AVSIdentifier) -> Bool {
