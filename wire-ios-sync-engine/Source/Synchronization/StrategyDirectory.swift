@@ -221,13 +221,13 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
-                oneOneOneResolver: OneOnOneResolver(mlsService: mlsService)
+                oneOneOneResolver: OneOnOneResolver()
             ),
             ConversationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
-mlsService: mlsService,
+                mlsService: mlsService,
                 removeLocalConversation: RemoveLocalConversationUseCase()),
             UserProfileRequestStrategy(
                 managedObjectContext: syncMOC,

@@ -37,15 +37,24 @@ extension ZMUserSession {
 
         Task {
             do {
-                let (useCase, syncUser) = try await self.syncContext.perform {
-                    guard let syncUser = try? self.syncContext.existingObject(with: viewUser.objectID) as? ZMUser else {
+                let syncContext = self.syncContext
+
+                let (useCase, syncUser) = try await syncContext.perform {
+                    guard let syncUser = try? syncContext.existingObject(with: viewUser.objectID) as? ZMUser else {
                         throw CreateTeamOneOnOneConversationError.userDoesNotExist
+                    }
+
+                    let migrator: OneOnOneMigrator?
+                    if let mlsService = syncContext.mlsService {
+                        migrator = .init(mlsService: mlsService, context: syncContext)
+                    } else {
+                        migrator = nil
                     }
 
                     let useCase = CreateTeamOneOnOneConversationUseCase(
                         protocolSelector: OneOnOneProtocolSelector(),
-                        migrator: self.syncContext.mlsService.map(OneOnOneMigrator.init),
-                        service: ConversationService(context: self.syncContext)
+                        migrator: migrator,
+                        service: ConversationService(context: syncContext)
                     )
 
                     return (useCase, syncUser)
@@ -53,7 +62,7 @@ extension ZMUserSession {
 
                 let objectID = try await useCase.invoke(
                     with: syncUser,
-                    syncContext: self.syncContext
+                    syncContext: syncContext
                 )
 
                 try await self.viewContext.perform {

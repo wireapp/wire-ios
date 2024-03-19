@@ -61,7 +61,7 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
             }
 
             do {
-                let resolver = OneOnOneResolver(syncContext: syncContext)
+                let resolver = OneOnOneResolver()
                 try await resolver.resolveAllOneOnOneConversations(in: syncContext)
 
                 await syncContext.perform {
