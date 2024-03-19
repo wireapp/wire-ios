@@ -199,7 +199,7 @@ extension XCTestCase {
         }, onCompletion: { _ in
             exp.fulfill()
         })
-        wait(for: [exp], timeout: 60)
+        wait(for: [exp], timeout: 5)
 
         if let setupError {
             throw setupError
