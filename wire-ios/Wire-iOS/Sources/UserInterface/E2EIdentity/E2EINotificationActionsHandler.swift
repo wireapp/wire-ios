@@ -129,8 +129,8 @@ private extension UIAlertController {
     static func getCertificateFailed(
         canCancel: Bool,
         completion: @escaping () -> Void) -> UIAlertController {
-            typealias Alert = L10n.Localizable.FailedToGetCertificate.Alert
-            typealias Button = L10n.Localizable.FailedToGetCertificate.Button
+            typealias Alert = L10n.Localizable.FailetToGetCertificate.Alert
+            typealias Button = L10n.Localizable.FailetToGetCertificate.Button
 
             let title = Alert.title
             let message = canCancel ? Alert.message : Alert.forcedMessage
@@ -156,11 +156,11 @@ private extension UIAlertController {
     static func updateCertificateFailed(
         canCancel: Bool,
         completion: @escaping () -> Void) -> UIAlertController {
-            typealias Alert = L10n.Localizable.FailedToUpdateCertificate.Alert
-            typealias Button = L10n.Localizable.FailedToGetCertificate.Button
+            typealias Alert = L10n.Localizable.FailetToUpdateCertificate.Alert
+            typealias Button = L10n.Localizable.FailetToUpdateCertificate.Button
 
             let title = Alert.title
-            let message = canCancel ? Alert.message : L10n.Localizable.FailedToGetCertificate.Alert.forcedMessage
+            let message = canCancel ? Alert.message : Alert.forcedMessage
             let controller = UIAlertController(
                 title: title,
                 message: message,
