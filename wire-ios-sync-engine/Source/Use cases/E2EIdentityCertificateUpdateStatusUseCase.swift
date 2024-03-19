@@ -19,13 +19,14 @@
 import Foundation
 
 public enum E2EIdentityCertificateUpdateStatus {
+
     // Alert was already shown within snooze period, so do not remind user to update certificate
     case noAction
 
     // Alert was not  shown within snooze period, so remind user to update certificate
     case reminder
 
-    // certificate expired so soft block user to update certificate
+    // Certificate expired so soft block user to update certificate
     case block
 }
 
@@ -40,35 +41,41 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
     private let gracePeriod: TimeInterval
     private let comparedDate: DateProviding
     private let mlsClientID: MLSClientID
+    private var context: NSManagedObjectContext
     private let gracePeriodRepository: GracePeriodRepositoryInterface
-    private let mlsGroupIDProvider: MLSGroupIDProviding
     public var lastAlertDate: Date?
 
     public init(
         getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol,
         gracePeriod: TimeInterval,
         mlsClientID: MLSClientID,
+        context: NSManagedObjectContext,
         lastAlertDate: Date?,
         comparedDate: DateProviding = SystemDateProvider(),
-        gracePeriodRepository: GracePeriodRepositoryInterface,
-        mlsGroupIDProvider: MLSGroupIDProviding
+        gracePeriodRepository: GracePeriodRepositoryInterface
     ) {
         self.getE2eIdentityCertificates = getE2eIdentityCertificates
         self.gracePeriod = gracePeriod
         self.lastAlertDate = lastAlertDate
         self.mlsClientID = mlsClientID
+        self.context = context
         self.comparedDate = comparedDate
         self.gracePeriodRepository = gracePeriodRepository
-        self.mlsGroupIDProvider = mlsGroupIDProvider
     }
 
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
-        guard
-            let mlsGroupID = await mlsGroupIDProvider.fetchMLSGroupID(),
-            let certificate = try await getE2eIdentityCertificates.invoke(
-            mlsGroupId: mlsGroupID,
-            clientIds: [mlsClientID]
-        ).first else {
+
+        let selfMLSConversationGroupID = await context.perform {
+            ZMConversation.fetchSelfMLSConversation(in: context)?.mlsGroupID
+        }
+        guard let selfMLSConversationGroupID else {
+            WireLogger.e2ei.warn("Failed to get MLS group ID of the self-MLS-conversation.")
+            return .noAction
+        }
+
+        let certificate = try await getE2eIdentityCertificates.invoke(mlsGroupId: selfMLSConversationGroupID, clientIds: [mlsClientID]).first
+        guard let certificate else {
+            WireLogger.e2ei.warn("Failed to get the certificate for the self-MLS-conversation.")
             return .noAction
         }
 
@@ -120,7 +127,5 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
         default:
             return .noAction
         }
-
     }
-
 }

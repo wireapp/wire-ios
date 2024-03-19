@@ -204,33 +204,6 @@ public class MockGetUserClientFingerprintUseCaseProtocol: GetUserClientFingerpri
 
 }
 
-public class MockMLSGroupIDProviding: MLSGroupIDProviding {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - fetchMLSGroupID
-
-    public var fetchMLSGroupID_Invocations: [Void] = []
-    public var fetchMLSGroupID_MockMethod: (() async -> MLSGroupID?)?
-    public var fetchMLSGroupID_MockValue: MLSGroupID??
-
-    public func fetchMLSGroupID() async -> MLSGroupID? {
-        fetchMLSGroupID_Invocations.append(())
-
-        if let mock = fetchMLSGroupID_MockMethod {
-            return await mock()
-        } else if let mock = fetchMLSGroupID_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchMLSGroupID`")
-        }
-    }
-
-}
-
 class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
 
     // MARK: - Life cycle
