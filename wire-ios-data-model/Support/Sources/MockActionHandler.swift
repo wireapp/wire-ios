@@ -19,12 +19,14 @@
 import Foundation
 import WireDataModel
 
-public class MockActionHandler<T: EntityAction>: EntityActionHandler {
+public final class MockActionHandler<T: EntityAction>: EntityActionHandler {
 
     public typealias Action = T
 
-    var results: [Result<Action.Result, Action.Failure>]
-    var token: NSObjectProtocol?
+    private var results: [Result<Action.Result, Action.Failure>]
+    private var token: NSObjectProtocol?
+
+    private let lock = NSRecursiveLock()
 
     public var didPerformAction: Bool {
         return results.isEmpty
@@ -42,8 +44,12 @@ public class MockActionHandler<T: EntityAction>: EntityActionHandler {
     }
 
     public func performAction(_ action: Action) {
-        var action = action
+        // lock to prevent data races accessing `results`.
+        lock.lock()
+        defer { lock.unlock() }
+
         if let result = results.first {
+            var action = action
             action.notifyResult(result)
             performedActions.append(action)
             results.removeFirst()

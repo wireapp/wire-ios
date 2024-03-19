@@ -82,6 +82,7 @@ final class OneOnOneResolverTests: XCTestCase {
         mockMLSService.conversationExistsGroupID_MockValue = false
         mockMLSService.establishGroupForWith_MockMethod = { _, _ in }
 
+        // mockHandler must be retained to catch notifications
         let mockHandler = MockActionHandler<SyncMLSOneToOneConversationAction>(
             results: [.success(.random()), .success(.random())],
             context: syncContext.notificationContext
@@ -107,6 +108,7 @@ final class OneOnOneResolverTests: XCTestCase {
         // Then
         let selectorInvocationsCount = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.count
         XCTAssertEqual(selectorInvocationsCount, 2)
+        XCTAssertEqual(mockHandler.performedActions.count, 2)
     }
 
 //    func test_resolveAllOneOnOneConversations_givenUserWithoutConnection_thenSkipOneMigration() async throws {
