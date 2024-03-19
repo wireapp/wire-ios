@@ -112,7 +112,28 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public var mediumData: Data? {
-        guard 
+        return decryptedMediumData ?? unencryptedMediumData
+    }
+
+    // The asset data should have been stored encrypted.
+    private var decryptedMediumData: Data? {
+        guard
+            nil != assetClientMessage.fileMessageData,
+            isImage,
+            let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded,
+            let cache = moc.zm_fileAssetCache
+        else {
+            return nil
+        }
+
+        let encryptedData = cache.encryptedMediumImageData(for: assetClientMessage)
+        let decryptedData = encryptedData?.zmDecryptPrefixedPlainTextIV(key: asset.otrKey)
+        return decryptedData
+    }
+
+    // The asset data may be stored unencrypted.
+    private var unencryptedMediumData: Data? {
+        guard
             nil != assetClientMessage.fileMessageData,
             isImage,
             let cache = moc.zm_fileAssetCache
@@ -124,7 +145,7 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public var imageData: Data? {
-        guard 
+        guard
             nil != assetClientMessage.fileMessageData,
             isImage,
             let cache = moc.zm_fileAssetCache
@@ -144,7 +165,7 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public var previewData: Data? {
-        guard 
+        guard
             nil != assetClientMessage.fileMessageData,
             !isImage,
             hasDownloadedPreview,
@@ -152,8 +173,8 @@ private let zmLog = ZMSLog(tag: "AssetV3")
         else {
             return nil
         }
-        
-        return cache.mediumImageData(for: assetClientMessage) ?? cache.originalImageData(for: assetClientMessage)
+
+        return mediumData ?? cache.originalImageData(for: assetClientMessage)
     }
 
     public var isAnimatedGIF: Bool {
