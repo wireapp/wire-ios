@@ -25,19 +25,26 @@ import Foundation
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
     private var notificationToken: Any?
 
-    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
-        super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
+    public override init(
+        withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+        applicationStatus: ApplicationStatus
+    ) {
+        super.init(
+            withManagedObjectContext: managedObjectContext,
+            applicationStatus: applicationStatus
+        )
 
         let downloadFilter = NSPredicate { object, _ in
-            guard let message = object as? ZMClientMessage,
+            guard 
+                let message = object as? ZMClientMessage,
                 let genericMessage = message.underlyingMessage,
-                genericMessage.textData != nil else {
-                    return false
-            }
-            guard let preview = genericMessage.linkPreviews.first else {
+                genericMessage.textData != nil,
+                let preview = genericMessage.linkPreviews.first,
+                !managedObjectContext.zm_fileAssetCache.hasMediumImageData(for: message)
+            else {
                 return false
             }
-            guard nil == managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false) else { return false }
+
             return preview.image.uploaded.hasAssetID
         }
 
@@ -73,17 +80,30 @@ import Foundation
         return assetDownstreamObjectSync.nextRequest(for: apiVersion)
     }
 
-    func handleResponse(_ response: ZMTransportResponse!, forMessage message: ZMClientMessage) {
-        guard response.result == .success else { return }
-        let cache = managedObjectContext.zm_fileAssetCache!
+    func handleResponse(
+        _ response: ZMTransportResponse!,
+        forMessage message: ZMClientMessage
+    ) {
+        guard 
+            response.result == .success,
+            let cache = managedObjectContext.zm_fileAssetCache
+        else {
+            return
+        }
 
         let linkPreview = message.underlyingMessage?.linkPreviews.first
+        
         guard
             let remote = linkPreview?.image.uploaded,
-            let data = response.rawData else {
-                return
+            let data = response.rawData 
+        else {
+            return
         }
-        cache.storeAssetData(message, format: .medium, encrypted: true, data: data)
+
+        cache.storeEncryptedMediumImage(
+            data: data,
+            for: message
+        )
 
         let success = cache.decryptImageIfItMatchesDigest(
             message,
@@ -92,12 +112,22 @@ import Foundation
             sha256Digest: remote.sha256
         )
 
-        guard success else { return }
+        guard success else {
+            return
+        }
 
-        guard let uiMOC = managedObjectContext.zm_userInterface else { return }
-        NotificationDispatcher.notifyNonCoreDataChanges(objectID: message.objectID,
-                                                        changedKeys: [ZMClientMessage.linkPreviewKey, #keyPath(ZMAssetClientMessage.hasDownloadedPreview)],
-                                                        uiContext: uiMOC)
+        guard let uiMOC = managedObjectContext.zm_userInterface else {
+            return
+        }
+        
+        NotificationDispatcher.notifyNonCoreDataChanges(
+            objectID: message.objectID,
+            changedKeys: [
+                ZMClientMessage.linkPreviewKey,
+                #keyPath(ZMAssetClientMessage.hasDownloadedPreview)
+            ],
+            uiContext: uiMOC
+        )
     }
 
 }

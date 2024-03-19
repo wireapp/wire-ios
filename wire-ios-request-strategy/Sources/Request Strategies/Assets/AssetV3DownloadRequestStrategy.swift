@@ -173,11 +173,9 @@ private let zmLog = ZMSLog(tag: "Asset V3")
 
         let cache = managedObjectContext.zm_fileAssetCache!
 
-        cache.storeAssetData(
-            message,
-            format: .medium,
-            encrypted: true,
-            data: data
+        cache.storeEncryptedMediumImage(
+            data: data,
+            for: message
         )
 
         return true

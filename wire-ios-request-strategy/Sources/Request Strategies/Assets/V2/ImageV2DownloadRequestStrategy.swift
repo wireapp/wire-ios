@@ -72,10 +72,20 @@ public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
 
 extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let message = object as? ZMAssetClientMessage, let conversation = message.conversation else { return nil }
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
+        guard 
+            let message = object as? ZMAssetClientMessage,
+            let conversation = message.conversation,
+            let cache = managedObjectContext.zm_fileAssetCache
+        else {
+            return nil
+        }
 
-        if let existingData = managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false) {
+        if let existingData = cache.mediumImageData(for: message) {
             updateMediumImage(forMessage: message, imageData: existingData)
             managedObjectContext.enqueueDelayedSave()
             return nil
@@ -118,11 +128,26 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
                                                         uiContext: uiMOC)
     }
 
-    fileprivate func storeMediumImage(forMessage message: ZMAssetClientMessage, imageData: Data) {
-        managedObjectContext.zm_fileAssetCache.storeAssetData(message,
-                                                              format: .medium,
-                                                              encrypted: message.hasEncryptedAsset,
-                                                              data: imageData)
+    fileprivate func storeMediumImage(
+        forMessage message: ZMAssetClientMessage,
+        imageData: Data
+    ) {
+        guard let cache = managedObjectContext.zm_fileAssetCache else {
+            return
+        }
+
+        if message.hasEncryptedAsset {
+            cache.storeEncryptedMediumImage(
+                data: imageData,
+                for: message
+            )
+        } else {
+            cache.storeMediumImage(
+                data: imageData,
+                for: message
+            )
+        }
+
         if message.hasEncryptedAsset {
             let otrKey: Data?
             let sha256: Data?

@@ -57,14 +57,24 @@ public class V2Asset: NSObject, ZMImageMessageData {
     // MARK: - ZMImageMessageData
 
     public var mediumData: Data? {
-        if assetClientMessage.mediumGenericMessage?.imageAssetData?.width > 0 {
-            return imageData(for: .medium, encrypted: false)
+        guard
+            let asset = assetClientMessage.mediumGenericMessage?.imageAssetData,
+            asset.width > 0,
+            asset.size > 0,
+            let cache = moc.zm_fileAssetCache
+        else {
+            return nil
         }
-        return nil
+
+        return cache.mediumImageData(for: assetClientMessage)
     }
 
     public var imageData: Data? {
-        return mediumData ?? imageData(for: .original, encrypted: false)
+        guard let cache = moc.zm_fileAssetCache else {
+            return nil
+        }
+
+        return mediumData ?? cache.originalImageData(for: assetClientMessage)
     }
 
     public var imageDataIdentifier: String? {
@@ -77,8 +87,12 @@ public class V2Asset: NSObject, ZMImageMessageData {
 
     public var previewData: Data? {
         if assetClientMessage.hasDownloadedPreview {
+            guard let cache = moc.zm_fileAssetCache else {
+                return nil
+            }
+
             // File preview data
-            return imageData(for: .original) ?? imageData(for: .medium)
+            return cache.originalImageData(for: assetClientMessage) ?? cache.mediumImageData(for: assetClientMessage)
         }
 
         return nil
@@ -109,10 +123,6 @@ public class V2Asset: NSObject, ZMImageMessageData {
 
     // MARK: - Helper
 
-    private func imageData(for format: ZMImageFormat) -> Data? {
-        return moc.zm_fileAssetCache.assetData(assetClientMessage, format: format, encrypted: false)
-    }
-
     fileprivate func hasImageData(for format: ZMImageFormat) -> Bool {
         return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: format, encrypted: false)
     }
@@ -136,18 +146,6 @@ extension V2Asset: AssetProxyType {
 
     public var fileURL: URL? {
         return moc.zm_fileAssetCache.accessAssetURL(assetClientMessage)
-    }
-
-    public func imageData(for format: ZMImageFormat, encrypted: Bool) -> Data? {
-        if format != .original {
-            let message = format == .medium ? assetClientMessage.mediumGenericMessage : assetClientMessage.previewGenericMessage
-            guard message?.imageAssetData?.size > 0 else { return nil }
-            if encrypted && message?.imageAssetData?.otrKey.count == 0 {
-                return nil
-            }
-        }
-
-        return moc.zm_fileAssetCache.assetData(assetClientMessage, format: format, encrypted: encrypted)
     }
 
     public func requestFileDownload() {

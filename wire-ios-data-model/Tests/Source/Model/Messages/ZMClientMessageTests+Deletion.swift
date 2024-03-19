@@ -114,7 +114,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         cache.storeAssetData(sut, format: .original, encrypted: true, data: verySmallJPEGData())
         cache.storeAssetData(sut, encrypted: true, data: mediumJPEGData())
 
-        XCTAssertNotNil(cache.assetData(sut, format: .original, encrypted: false))
+        XCTAssertNotNil(cache.originalImageData(for: sut))
         XCTAssertNotNil(cache.assetData(sut, encrypted: false))
 
         // expect
@@ -236,9 +236,9 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         XCTAssertNil(sut.sender)
         XCTAssertNil(sut.senderClientID)
 
-        XCTAssertNil(cache.assetData(sut, format: .original, encrypted: false))
-        XCTAssertNil(cache.assetData(sut, format: .medium, encrypted: false))
-        XCTAssertNil(cache.assetData(sut, format: .preview, encrypted: false))
+        XCTAssertNil(cache.originalImageData(for: sut))
+        XCTAssertNil(cache.mediumImageData(for: sut))
+        XCTAssertNil(cache.previewImageData(for: sut))
         wipeCaches()
     }
 
@@ -581,11 +581,11 @@ extension ZMClientMessageTests_Deletion {
             XCTAssertEqual(assetMessage.size, 0, line: line)
 
             let cache = uiMOC.zm_fileAssetCache!
-            XCTAssertNil(cache.assetData(message, format: .original, encrypted: false))
-            XCTAssertNil(cache.assetData(message, format: .medium, encrypted: false))
-            XCTAssertNil(cache.assetData(message, format: .preview, encrypted: false))
-            XCTAssertNil(cache.assetData(message, format: .medium, encrypted: true))
-            XCTAssertNil(cache.assetData(message, format: .preview, encrypted: true))
+            XCTAssertNil(cache.originalImageData(for: message))
+            XCTAssertNil(cache.mediumImageData(for: message))
+            XCTAssertNil(cache.previewImageData(for: message))
+            XCTAssertNil(cache.encryptedMediumImageData(for: message))
+            XCTAssertNil(cache.encryptedPreviewImageData(for: message))
 
             XCTAssertNil(cache.assetData(message, encrypted: true))
             XCTAssertNil(cache.assetData(message, encrypted: false))

@@ -71,32 +71,43 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         return downstreamSync.nextRequest(for: apiVersion)
     }
 
-    fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
-        guard let asset = assetClientMessage.underlyingMessage?.assetData, response.result == .success else { return }
-        guard assetClientMessage.visibleInConversation != nil else { return }
+    fileprivate func handleResponse(
+        _ response: ZMTransportResponse,
+        forMessage assetClientMessage: ZMAssetClientMessage
+    ) {
+        guard 
+            let asset = assetClientMessage.underlyingMessage?.assetData,
+            response.result == .success,
+            assetClientMessage.visibleInConversation != nil,
+            let data = response.rawData
+        else {
+            return
+        }
 
         let remote = asset.preview.remote
         let cache = managedObjectContext.zm_fileAssetCache!
-        cache.storeAssetData(assetClientMessage, format: .medium, encrypted: true, data: response.rawData!)
 
-        // Decrypt the preview image file
-        let success = cache.decryptImageIfItMatchesDigest(
-            assetClientMessage,
-            format: .medium,
-            encryptionKey: remote.otrKey,
-            sha256Digest: remote.sha256
-        )
-
-        if !success {
+        guard data.zmSHA256Digest() == remote.sha256 else {
+            zmLog.warn("v3 asset (preview): \(asset), message: \(assetClientMessage) digest is not valid, discarding...")
             managedObjectContext.delete(assetClientMessage)
-            zmLog.error("Unable to decrypt preview image for file message: \(assetClientMessage), \(asset)")
+            return
         }
 
+        cache.storeEncryptedMediumImage(
+            data: data,
+            for: assetClientMessage
+        )
+
         // Notify about the changes
-        guard let uiMOC = managedObjectContext.zm_userInterface else { return }
-        NotificationDispatcher.notifyNonCoreDataChanges(objectID: assetClientMessage.objectID,
-                                                        changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedPreview)],
-                                                        uiContext: uiMOC)
+        guard let uiMOC = managedObjectContext.zm_userInterface else {
+            return
+        }
+        
+        NotificationDispatcher.notifyNonCoreDataChanges(
+            objectID: assetClientMessage.objectID,
+            changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedPreview)],
+            uiContext: uiMOC
+        )
     }
 
     // MARK: - ZMContextChangeTrackerSource

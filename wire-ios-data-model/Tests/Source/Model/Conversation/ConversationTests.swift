@@ -265,11 +265,11 @@ extension ConversationTests {
 
             // then
 
-            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: ZMImageFormat.original, encrypted: false))
-            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: ZMImageFormat.preview, encrypted: false))
-            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: ZMImageFormat.medium, encrypted: false))
-            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: ZMImageFormat.preview, encrypted: true))
-            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: ZMImageFormat.medium, encrypted: true))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.originalImageData(for: message))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.previewImageData(for: message))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.mediumImageData(for: message))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.encryptedPreviewImageData(for: message))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.encryptedMediumImageData(for: message))
         }
     }
 

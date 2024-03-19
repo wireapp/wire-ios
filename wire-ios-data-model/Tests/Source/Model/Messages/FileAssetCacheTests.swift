@@ -299,7 +299,7 @@ extension FileAssetCacheTests {
         XCTAssertNil(sut.assetData(message, encrypted: true))
     }
 
-    func testThatItCreatesTheEncryptedFileAndDoesNotDeletedThePlainTextWithSHA256() {
+    func testThatItCreatesTheEncryptedFileAndDeletesThePlainTextWithSHA256() {
 
         // given
         let sut = FileAssetCache()
@@ -313,7 +313,7 @@ extension FileAssetCacheTests {
 
         // then
         XCTAssertNotNil(sut.assetData(message, encrypted: true))
-        XCTAssertNotNil(sut.assetData(message, encrypted: false))
+        XCTAssertNil(sut.assetData(message, encrypted: false))
     }
 
     func testThatItReturnsCorrectEncryptionResultWithSHA256() {
@@ -357,7 +357,7 @@ extension FileAssetCacheTests {
         XCTAssertNil(sut.assetData(message, encrypted: true))
     }
 
-    func testThatItCreatesTheEncryptedImageAndDoesNotDeletedThePlainTextWithSHA256() {
+    func testThatItCreatesTheEncryptedImageAndDeletesThePlainTextWithSHA256() {
 
         // given
         let sut = FileAssetCache()
@@ -370,8 +370,8 @@ extension FileAssetCacheTests {
         _ = sut.encryptImageAndComputeSHA256Digest(message, format: .medium)
 
         // then
-        XCTAssertNotNil(sut.assetData(message, format: .medium, encrypted: true))
-        XCTAssertNotNil(sut.assetData(message, format: .medium, encrypted: false))
+        XCTAssertNotNil(sut.encryptedMediumImageData(for: message))
+        XCTAssertNil(sut.mediumImageData(for: message))
     }
 
     func testThatItReturnsCorrectEncryptionImageResultWithSHA256() {
@@ -386,7 +386,7 @@ extension FileAssetCacheTests {
         let result = sut.encryptImageAndComputeSHA256Digest(message, format: .medium)
 
         // then
-        let encryptedData = sut.assetData(message, format: .medium, encrypted: true)
+        let encryptedData = sut.encryptedMediumImageData(for: message)
         AssertOptionalNotNil(result, "Result") { result in
             AssertOptionalNotNil(encryptedData, "Encrypted data") { encryptedData in
                 let decodedData = encryptedData.zmDecryptPrefixedPlainTextIV(key: result.otrKey)

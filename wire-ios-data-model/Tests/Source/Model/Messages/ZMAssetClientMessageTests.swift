@@ -743,7 +743,7 @@ extension ZMAssetClientMessageTests {
         let sut = appendImageMessage(to: conversation)
 
         // then
-        XCTAssertNotNil(uiMOC.zm_fileAssetCache.assetData(sut, format: .original, encrypted: false))
+        XCTAssertNotNil(uiMOC.zm_fileAssetCache.originalImageData(for: sut))
     }
 
     func testThatItSetsTheOriginalImageSize() throws {

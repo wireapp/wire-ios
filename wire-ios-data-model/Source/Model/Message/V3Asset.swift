@@ -35,9 +35,6 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     var previewData: Data? { get }
     var imagePreviewDataIdentifier: String? { get }
 
-    @objc(imageDataForFormat:encrypted:)
-    func imageData(for: ZMImageFormat, encrypted: Bool) -> Data?
-
     func requestFileDownload()
     func requestPreviewDownload()
 
@@ -115,13 +112,27 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public var mediumData: Data? {
-        guard nil != assetClientMessage.fileMessageData, isImage else { return nil }
-        return imageData(for: .medium, encrypted: false)
+        guard 
+            nil != assetClientMessage.fileMessageData,
+            isImage,
+            let cache = moc.zm_fileAssetCache
+        else {
+            return nil
+        }
+
+        return cache.mediumImageData(for: assetClientMessage)
     }
 
     public var imageData: Data? {
-        guard nil != assetClientMessage.fileMessageData, isImage else { return nil }
-        return mediumData ?? imageData(for: .original, encrypted: false)
+        guard 
+            nil != assetClientMessage.fileMessageData,
+            isImage,
+            let cache = moc.zm_fileAssetCache
+        else {
+            return nil
+        }
+
+        return mediumData ?? cache.originalImageData(for: assetClientMessage)
     }
 
     public var imageDataIdentifier: String? {
@@ -133,8 +144,16 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public var previewData: Data? {
-        guard nil != assetClientMessage.fileMessageData, !isImage, hasDownloadedPreview else { return nil }
-        return imageData(for: .medium, encrypted: false) ?? imageData(for: .original, encrypted: false)
+        guard 
+            nil != assetClientMessage.fileMessageData,
+            !isImage,
+            hasDownloadedPreview,
+            let cache = moc.zm_fileAssetCache
+        else {
+            return nil
+        }
+        
+        return cache.mediumImageData(for: assetClientMessage) ?? cache.originalImageData(for: assetClientMessage)
     }
 
     public var isAnimatedGIF: Bool {
@@ -184,11 +203,6 @@ extension V3Asset: AssetProxyType {
 
     public var fileURL: URL? {
         return moc.zm_fileAssetCache.accessAssetURL(assetClientMessage)
-    }
-
-    public func imageData(for format: ZMImageFormat, encrypted: Bool) -> Data? {
-        guard assetClientMessage.fileMessageData != nil else { return nil }
-        return moc.zm_fileAssetCache.assetData(assetClientMessage, format: format, encrypted: encrypted)
     }
 
     public func requestFileDownload() {

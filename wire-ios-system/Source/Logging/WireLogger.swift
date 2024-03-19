@@ -187,4 +187,6 @@ public extension WireLogger {
     static let sync = WireLogger(tag: "sync")
     static let system = WireLogger(tag: "system")
     static let featureConfigs = WireLogger(tag: "feature-configurations")
+    static let assets = WireLogger(tag: "assets")
+
 }

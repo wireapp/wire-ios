@@ -325,10 +325,10 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         self.syncMOC.performGroupedAndWait { syncMOC in
             // THEN
-            let actual = syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false)
+            let actual = syncMOC.zm_fileAssetCache.mediumImageData(for: message)
             XCTAssertNotNil(actual)
             XCTAssertEqual(actual, data)
-            XCTAssertNil(syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true))
+            XCTAssertNil(syncMOC.zm_fileAssetCache.encryptedMediumImageData(for: message))
         }
     }
 
@@ -358,8 +358,8 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         self.syncMOC.performGroupedAndWait { syncMOC in
             // THEN
-            XCTAssertNil(syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false))
-            XCTAssertNil(syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true))
+            XCTAssertNil(syncMOC.zm_fileAssetCache.mediumImageData(for: message))
+            XCTAssertNil(syncMOC.zm_fileAssetCache.encryptedMediumImageData(for: message))
         }
     }
 }

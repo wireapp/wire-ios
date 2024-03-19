@@ -32,7 +32,7 @@ extension FileAssetCache {
             let plaintextCacheKey = Self.cacheKeyForAsset(
                 for: team,
                 format: format,
-                encrypted: true
+                encrypted: false
             ),
             let encryptedCacheKey = Self.cacheKeyForAsset(
                 for: team,
@@ -199,10 +199,14 @@ extension FileAssetCache {
             return nil
         }
 
-        return encryptFileAndComputeSHA256Digest(
+        let keys = encryptFileAndComputeSHA256Digest(
             plaintextCacheKey,
             encryptedEntryKey: encryptedCacheKey
         )
+
+        cache.deleteAssetData(plaintextCacheKey)
+
+        return keys
     }
 
     // MARK: - Encrypt / decrypt
@@ -305,7 +309,7 @@ extension FileAssetCache {
         }
 
         // check the digest
-        guard encryptedData.zmSHA256Digest() == sha256Digest else {
+        if let sha256Digest, encryptedData.zmSHA256Digest() != sha256Digest {
             cache.deleteAssetData(encryptedEntryKey)
             return false
         }

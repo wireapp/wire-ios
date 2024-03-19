@@ -349,7 +349,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
 
         // THEN
         self.syncMOC.performGroupedBlockAndWait {
-            let data = self.syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false)
+            let data = self.syncMOC.zm_fileAssetCache.mediumImageData(for: message)
             XCTAssertEqual(data, plainTextData)
             XCTAssertEqual(message.fileMessageData!.previewData, plainTextData)
         }

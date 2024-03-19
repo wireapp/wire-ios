@@ -211,7 +211,9 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
 
         // then
         XCTAssertTrue(sut.isUploaded)
-        XCTAssertNil(sut.encrypted)
+        XCTAssertNotNil(sut.encrypted)
+        XCTAssertFalse(sut.hasOriginal)
+        XCTAssertFalse(sut.hasPreprocessed)
     }
 
     func testUpdateAssetIdForThumbnail() {
@@ -225,7 +227,9 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
 
         // then
         XCTAssertTrue(sut.isUploaded)
-        XCTAssertNil(sut.encrypted)
+        XCTAssertNotNil(sut.encrypted)
+        XCTAssertFalse(sut.hasOriginal)
+        XCTAssertFalse(sut.hasPreprocessed)
     }
 
 }
