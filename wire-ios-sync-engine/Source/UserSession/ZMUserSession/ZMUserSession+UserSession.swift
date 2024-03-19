@@ -304,18 +304,15 @@ extension ZMUserSession: UserSession {
 
     @MainActor
     public func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
-        guard let selfUserClient,
-              let selfMLSClientID = MLSClientID(userClient: selfUserClient)
-        else {
-            return nil
-        }
+        guard let selfUserClient, let selfMLSClientID = MLSClientID(userClient: selfUserClient) else { return nil }
+
         return E2EIdentityCertificateUpdateStatusUseCase(
             getE2eIdentityCertificates: getE2eIdentityCertificates,
-            gracePeriod: TimeInterval(self.e2eiFeature.config.verificationExpiration),
+            gracePeriod: TimeInterval(e2eiFeature.config.verificationExpiration), // TODO: inject feature repository
             mlsClientID: selfMLSClientID,
+            context: syncContext,
             lastAlertDate: lastE2EIUpdateDateRepository?.fetchLastAlertDate(),
-            gracePeriodRepository: gracePeriodRepository,
-            mlsGroupIDProvider: MLSGroupIDProvider(context: syncContext)
+            gracePeriodRepository: gracePeriodRepository
         )
     }
 }
