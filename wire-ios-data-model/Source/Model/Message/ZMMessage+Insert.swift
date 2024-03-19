@@ -49,18 +49,6 @@ extension ZMMessage {
         }
     }
 
-    func showMessage() {
-        guard hiddenInConversation != nil else { return }
-        visibleInConversation = hiddenInConversation
-        hiddenInConversation = nil
-    }
-
-    func hideMessage() {
-        guard visibleInConversation != nil else { return }
-        hiddenInConversation = visibleInConversation
-        visibleInConversation = nil
-    }
-
     private func verificationStatusKey(for messageProtocol: MessageProtocol) -> String {
         switch messageProtocol {
         case .proteus:
