@@ -198,8 +198,6 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
 
     // MARK: - AuthenticationStepViewController
 
-    // TODO [WPB-3324]: Is `AuthenticationStepViewController` conformance really required?
-
     weak var authenticationCoordinator: AuthenticationCoordinator?
 
     func executeErrorFeedbackAction(_ feedbackAction: AuthenticationErrorFeedbackAction) { }
