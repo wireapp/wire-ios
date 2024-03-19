@@ -157,10 +157,10 @@ private extension UIAlertController {
         canCancel: Bool,
         completion: @escaping () -> Void) -> UIAlertController {
             typealias Alert = L10n.Localizable.FailedToUpdateCertificate.Alert
-            typealias Button = L10n.Localizable.FailedToUpdateCertificate.Button
+            typealias Button = L10n.Localizable.FailedToGetCertificate.Button
 
             let title = Alert.title
-            let message = canCancel ? Alert.message : Alert.forcedMessage
+            let message = canCancel ? Alert.message : L10n.Localizable.FailedToGetCertificate.Alert.forcedMessage
             let controller = UIAlertController(
                 title: title,
                 message: message,
