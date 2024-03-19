@@ -110,49 +110,27 @@ private let zmLog = ZMSLog(tag: "AssetV3")
         return self
     }
 
-    public var mediumData: Data? {
-        return decryptedMediumData ?? unencryptedMediumData
-    }
-
-    // The asset data should have been stored encrypted.
-    private var decryptedMediumData: Data? {
-        guard
-            nil != assetClientMessage.fileMessageData,
-            isImage,
-            let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded,
-            let cache = moc.zm_fileAssetCache
-        else {
-            return nil
-        }
-
-        let encryptedData = cache.encryptedMediumImageData(for: assetClientMessage)
-        let decryptedData = encryptedData?.zmDecryptPrefixedPlainTextIV(key: asset.otrKey)
-        return decryptedData
-    }
-
-    // The asset data may be stored unencrypted.
-    private var unencryptedMediumData: Data? {
-        guard
-            nil != assetClientMessage.fileMessageData,
-            isImage,
-            let cache = moc.zm_fileAssetCache
-        else {
-            return nil
-        }
-
-        return cache.mediumImageData(for: assetClientMessage)
-    }
-
     public var imageData: Data? {
         guard
-            nil != assetClientMessage.fileMessageData,
+            assetClientMessage.fileMessageData != nil,
             isImage,
             let cache = moc.zm_fileAssetCache
         else {
             return nil
         }
 
-        return mediumData ?? cache.originalImageData(for: assetClientMessage)
+        if
+            let data = cache.encryptedMediumImageData(for: assetClientMessage),
+            let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded
+        {
+            return data.zmDecryptPrefixedPlainTextIV(key: asset.otrKey)
+        } else if let data = cache.mediumImageData(for: assetClientMessage) {
+            return data
+        } else if let data = cache.originalImageData(for: assetClientMessage) {
+            return data
+        } else {
+            return nil
+        }
     }
 
     public var imageDataIdentifier: String? {
@@ -191,21 +169,27 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 
 extension V3Asset: AssetProxyType {
 
+    private var hasImageData: Bool {
+        guard let cache = moc.zm_fileAssetCache else {
+            return false
+        }
+
+        return cache.hasEncryptedMediumImageData(for: assetClientMessage)
+        || cache.hasMediumImageData(for: assetClientMessage)
+        || cache.hasOriginalImageData(for: assetClientMessage)
+    }
+
     public var hasDownloadedPreview: Bool {
         guard !isImage else { return false }
-
-        return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .medium, encrypted: false) ||
-               moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .original, encrypted: false)
+        return hasImageData
     }
 
     public var hasDownloadedFile: Bool {
         if isImage {
-            return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .medium, encrypted: false) ||
-                   moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .original, encrypted: false)
+            return hasImageData
         } else {
             return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, encrypted: false)
         }
-
     }
 
     public var fileURL: URL? {
