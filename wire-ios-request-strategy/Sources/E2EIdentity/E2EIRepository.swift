@@ -23,7 +23,7 @@ public protocol E2EIRepositoryInterface {
 
     func fetchTrustAnchor() async throws
 
-    func fetchFederationCertificate() async throws
+    func fetchFederationCertificates() async throws
 
     func createEnrollment(
         context: NSManagedObjectContext,
@@ -47,6 +47,7 @@ public final class E2EIRepository: E2EIRepositoryInterface {
     private let e2eiSetupService: E2EISetupServiceInterface
     private let keyRotator: E2EIKeyPackageRotating
     private let coreCryptoProvider: CoreCryptoProviderProtocol
+    private let logger: WireLogger = .e2ei
 
     // MARK: - Life cycle
 
@@ -71,9 +72,15 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         try await e2eiSetupService.registerTrustAnchor(trustAnchor)
     }
 
-    public func fetchFederationCertificate() async throws {
-        let federationCertificate = try await acmeApi.getFederationCertificate()
-        try await e2eiSetupService.registerFederationCertificate(federationCertificate)
+    public func fetchFederationCertificates() async throws {
+        let federationCertificates = try await acmeApi.getFederationCertificates()
+        for certificate in federationCertificates {
+            do {
+                try await e2eiSetupService.registerFederationCertificate(certificate)
+            } catch {
+                logger.warn("failed to register certificate (error: \(String(describing: error)), certificate: \(certificate))")
+            }
+        }
     }
 
     public func createEnrollment(

@@ -20,8 +20,9 @@ import Foundation
 
 public typealias Conversation = ConversationLike & SwiftConversationLike
 
+// sourcery: AutoMockable
 @objc
-public protocol ConversationLike: NSObjectProtocol {
+public protocol ConversationLike: AnyObject {
     var conversationType: ZMConversationType { get }
     var isSelfAnActiveMember: Bool { get }
     var teamRemoteIdentifier: UUID? { get }

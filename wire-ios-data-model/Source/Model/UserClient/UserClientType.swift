@@ -42,6 +42,7 @@ import Foundation
     var mlsThumbPrint: String? { get set }
 
     var e2eIdentityCertificate: E2eIdentityCertificate? { get set }
+
     /// Delete any existing session with client and establish a new one.
     func resetSession()
 

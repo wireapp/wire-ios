@@ -32,20 +32,19 @@ public class OAuthUseCase: OAuthUseCaseInterface {
 
     private let logger = WireLogger.e2ei
     private var currentAuthorizationFlow: OIDExternalUserAgentSession?
-    private var rootViewController: UIViewController
+    private var targetViewController: UIViewController
 
-    init(rootViewController: UIViewController) {
-        self.rootViewController = rootViewController
+    init(targetViewController: UIViewController) {
+        self.targetViewController = targetViewController
     }
 
     public func invoke(parameters: OAuthParameters) async throws -> OAuthResponse {
         logger.info("invoke authentication flow")
 
-        guard let bundleID = Bundle.main.bundleIdentifier,
-              let redirectURI = URL(string: "\(bundleID):/oauth2redirect")
-        else {
+        guard let redirectURI = URL(string: "wire://e2ei/oauth2redirect") else {
             throw OAuthError.missingRequestParameters
         }
+
         let request: OIDAuthorizationRequest = try await withCheckedThrowingContinuation { continuation in
             OIDAuthorizationService.discoverConfiguration(forIssuer: parameters.identityProvider) { configuration, error in
                 if let error = error {
@@ -109,7 +108,10 @@ public class OAuthUseCase: OAuthUseCaseInterface {
 
     @MainActor
     private func execute(authorizationRequest: OIDAuthorizationRequest) async throws -> OAuthResponse {
-        guard let userAgent = OIDExternalUserAgentIOS(presenting: rootViewController) else {
+        guard let userAgent = OIDExternalUserAgentIOS(
+            presenting: targetViewController,
+            prefersEphemeralSession: true
+        ) else {
             throw OAuthError.missingOIDExternalUserAgent
         }
 
@@ -117,8 +119,12 @@ public class OAuthUseCase: OAuthUseCaseInterface {
             self?.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: authorizationRequest,
                                                                     externalUserAgent: userAgent,
                                                                     callback: { authState, error in
-                if let error = error {
-                    return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
+                if let error = error as NSError? {
+                    if error.domain == OIDGeneralErrorDomain, error.code == OIDErrorCode.userCanceledAuthorizationFlow.rawValue {
+                        return continuation.resume(throwing: OAuthError.userCancelled)
+                    } else {
+                        return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
+                    }
                 }
 
                 guard let idToken = authState?.lastTokenResponse?.idToken else {
@@ -142,5 +148,6 @@ enum OAuthError: Error {
     case missingServiceConfiguration
     case missingOIDExternalUserAgent
     case missingIdToken
+    case userCancelled
 
 }

@@ -39,13 +39,15 @@ extension UIAlertAction {
     static func link(
         title: String,
         url: URL,
-        presenter: UIViewController?
+        presenter: UIViewController?,
+        onDismiss: (() -> Void)? = nil
     ) -> Self {
         return .init(
             title: title,
             style: .default
         ) { [weak presenter] _ in
             let browserViewController = BrowserViewController(url: url)
+            browserViewController.onDismiss = onDismiss
             presenter?.present(browserViewController, animated: true)
         }
     }

@@ -19,14 +19,14 @@
 import Foundation
 
 // sourcery: AutoMockable
-protocol SelfClientCertificateProviderProtocol {
+public protocol SelfClientCertificateProviderProtocol {
 
     var hasCertificate: Bool { get async }
     func getCertificate() async throws -> E2eIdentityCertificate?
 
 }
 
-final class SelfClientCertificateProvider: SelfClientCertificateProviderProtocol {
+public final class SelfClientCertificateProvider: SelfClientCertificateProviderProtocol {
 
     // MARK: - Properties
 
@@ -41,14 +41,14 @@ final class SelfClientCertificateProvider: SelfClientCertificateProviderProtocol
         self.context = context
     }
 
-    var hasCertificate: Bool {
+    public var hasCertificate: Bool {
         get async {
             let certificate = try? await getCertificate()
             return certificate != nil
         }
     }
 
-    func getCertificate() async throws -> E2eIdentityCertificate? {
+    public func getCertificate() async throws -> E2eIdentityCertificate? {
         let (conversationID, clientID) = try await context.perform {
 
             guard let selfConversation = ZMConversation.fetchSelfMLSConversation(in: self.context) else {

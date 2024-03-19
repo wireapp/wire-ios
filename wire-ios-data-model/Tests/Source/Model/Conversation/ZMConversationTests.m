@@ -3137,27 +3137,6 @@
     XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout:0.5]);
 }
 
-- (void)testThatItUnarchivesWhenAppendingAPerformedCall
-{
-    [self.syncMOC performGroupedBlock:^{
-        // given
-        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-        conversation.isArchived = YES;
-
-        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-        XCTAssertTrue(conversation.isArchived);
-
-        // when
-        [conversation appendPerformedCallMessageWith:42 caller:user];
-
-        // then
-        XCTAssertFalse(conversation.isArchived);
-    }];
-
-    XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout:0.5]);
-
-}
-
 - (void)testThatItUpdatesTheLastReadTimestampForMissedCallChildMessages
 {
     // given

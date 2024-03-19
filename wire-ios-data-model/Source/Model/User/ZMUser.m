@@ -749,7 +749,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 @end
 
 
-@implementation  ZMUser (Utilities)
+@implementation ZMUser (Utilities)
 
 + (ZMUser<ZMEditableUser> *)selfUserInUserSession:(id<ContextProvider>)session
 {

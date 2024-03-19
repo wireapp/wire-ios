@@ -74,12 +74,3 @@ extension ZMConversationMessage {
     }
 
 }
-
-extension ZMSystemMessageData {
-
-    func callDurationString() -> String? {
-        guard systemMessageType == .performedCall, duration > 0 else { return nil }
-        return Message.callDurationFormatter.string(from: duration)
-    }
-
-}

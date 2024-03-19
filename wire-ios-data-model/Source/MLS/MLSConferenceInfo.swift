@@ -32,14 +32,6 @@ public struct MLSConferenceInfo: Equatable {
             self.id = id
             self.isInSubconversation = isInSubconversation
         }
-
-        public static func random() -> Member {
-            return Member(
-                id: .random(),
-                isInSubconversation: .random()
-            )
-        }
-
     }
 
     public let epoch: UInt64
@@ -55,15 +47,4 @@ public struct MLSConferenceInfo: Equatable {
         self.keyData = keyData
         self.members = members
     }
-}
-
-public extension MLSConferenceInfo {
-
-    static func random() -> Self {
-        return MLSConferenceInfo(
-            epoch: .random(in: (.min)...(.max)),
-            keyData: Data.random(byteCount: 8),
-            members: [.random()])
-    }
-
 }

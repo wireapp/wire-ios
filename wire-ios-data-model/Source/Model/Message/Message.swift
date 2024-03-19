@@ -84,11 +84,6 @@ public extension ZMConversationMessage {
         return systemMessageData!.systemMessageType == .missedCall
     }
 
-    var isPerformedCall: Bool {
-        guard isSystem else { return false }
-        return systemMessageData!.systemMessageType == .performedCall
-    }
-
     var isDeletion: Bool {
         guard isSystem else { return false }
         return systemMessageData!.systemMessageType == .messageDeletedForEveryone
@@ -167,11 +162,6 @@ public class Message: NSObject {
     @objc(isMissedCallMessage:)
     public class func isMissedCall(_ message: ZMConversationMessage) -> Bool {
         return message.isMissedCall
-    }
-
-    @objc(isPerformedCallMessage:)
-    public class func isPerformedCall(_ message: ZMConversationMessage) -> Bool {
-        return message.isPerformedCall
     }
 
     @objc(isDeletedMessage:)

@@ -56,8 +56,7 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
                                    notValidBefore: Date(timeIntervalSince1970: Double(identity.notBefore)),
                                    expiryDate: Date(timeIntervalSince1970: Double(identity.notAfter)),
                                    certificateStatus: status,
-                                   serialNumber: identity.serialNumber,
-                                   comparedDate: Date.now)
+                                   serialNumber: identity.serialNumber)
         }
     }
 

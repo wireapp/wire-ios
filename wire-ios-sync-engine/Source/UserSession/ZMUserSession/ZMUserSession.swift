@@ -149,11 +149,13 @@ public final class ZMUserSession: NSObject {
         return featureRepository.fetchE2EI()
     }
 
-    public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol = {
-        let selfClientCertificateProvider = SelfClientCertificateProvider(
+    public lazy var selfClientCertificateProvider: SelfClientCertificateProviderProtocol = {
+        return SelfClientCertificateProvider(
             getE2eIdentityCertificatesUseCase: getE2eIdentityCertificates,
             context: syncContext)
+    }()
 
+    public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol = {
         return SnoozeCertificateEnrollmentUseCase(
             e2eiFeature: e2eiFeature,
             gracePeriodRepository: gracePeriodRepository,
@@ -334,6 +336,8 @@ public final class ZMUserSession: NSObject {
             context: syncContext)
     }()
 
+    private(set) public var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
+
     public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol = {
         return GetIsE2EIdentityEnabledUseCase(coreCryptoProvider: coreCryptoProvider)
     }()
@@ -408,6 +412,8 @@ public final class ZMUserSession: NSObject {
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
         )
+
+        self.lastE2EIUpdateDateRepository = LastE2EIdentityUpdateDateRepository(userID: userId, sharedUserDefaults: UserDefaults.standard)
         self.gracePeriodRepository = GracePeriodRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults)
@@ -514,8 +520,6 @@ public final class ZMUserSession: NSObject {
             self.applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
             self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
-
-            createMLSClientIfNeeded()
 
             if e2eiFeature.isEnabled {
                 self.observeMLSGroupVerificationStatus.invoke()
@@ -676,22 +680,6 @@ public final class ZMUserSession: NSObject {
     private func notifyUserAboutChangesInAvailabilityBehaviourIfNeeded() {
         syncManagedObjectContext.performGroupedBlock {
             self.localNotificationDispatcher?.notifyAvailabilityBehaviourChangedIfNeeded()
-        }
-    }
-
-    func createMLSClientIfNeeded() {
-        // TODO: [WPB-6198] refactor out - [jacob]
-        if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
-            guard let mlsClientID = MLSClientID(user: ZMUser.selfUser(in: syncContext)) else {
-                fatal("Needs to register MLS client but can't retrieve qualified client ID")
-            }
-            WaitingGroupTask(context: syncContext) { [self] in
-                do {
-                    _ = try await coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
-                } catch {
-                    WireLogger.mls.error("Failed to create MLS client: \(error)")
-                }
-            }
         }
     }
 
@@ -903,6 +891,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
         }
+        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
     }
 
     func processEvents() {
@@ -1037,4 +1026,9 @@ extension ZMUserSession: ContextProvider {
         return coreDataStack.eventContext
     }
 
+}
+
+public extension Notification.Name {
+    // This notification is used to check the E2EIdentity Certificate expiry status
+    static let checkForE2EICertificateExpiryStatus = NSNotification.Name("CheckForE2EICertificateExpiryStatus")
 }

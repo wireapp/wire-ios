@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-final class ConversationCallSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationMissedCallSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
     typealias IconColors = SemanticColors.Icon
@@ -41,23 +41,29 @@ final class ConversationCallSystemMessageCellDescription: ConversationMessageCel
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    init(message: ZMConversationMessage, data: ZMSystemMessageData, missed: Bool) {
-        let viewModel = CallCellViewModel(
-            icon: missed ? .endCall : .phone,
-            iconColor: missed ? IconColors.backgroundMissedPhoneCall : IconColors.backgroundPhoneCall,
+    init(message: ZMConversationMessage, data: ZMSystemMessageData) {
+        let viewModel = ConversationMissedCallSystemMessageViewModel(
+            icon: .endCall,
+            iconColor: IconColors.backgroundMissedPhoneCall,
             systemMessageType: data.systemMessageType,
             font: .mediumFont,
             textColor: LabelColors.textDefault,
             message: message
         )
 
-        configuration = View.Configuration(icon: viewModel.image(), attributedText: viewModel.attributedTitle(), showLine: false)
-        accessibilityLabel = viewModel.attributedTitle()?.string
+        let attributedString = viewModel.attributedTitle()
+
+        configuration = View.Configuration(
+            icon: viewModel.image(),
+            attributedText: attributedString,
+            showLine: false
+        )
+        accessibilityLabel = attributedString?.string
         actionController = nil
     }
 
     func isConfigurationEqual(with other: Any) -> Bool {
-        guard let otherDescription = other as? ConversationCallSystemMessageCellDescription else {
+        guard let otherDescription = other as? ConversationMissedCallSystemMessageCellDescription else {
             return false
         }
 

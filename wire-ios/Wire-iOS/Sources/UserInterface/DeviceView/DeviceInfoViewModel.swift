@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 
+// sourcery: AutoMockable
 protocol DeviceDetailsViewActions {
     var isSelfClient: Bool { get }
     var isProcessing: ((Bool) -> Void)? { get set }
@@ -40,12 +40,12 @@ protocol DeviceDetailsViewActions {
 final class DeviceInfoViewModel: ObservableObject {
     let addedDate: String
     let proteusID: String
-    let userClient: UserClient
     let gracePeriod: TimeInterval
-    let mlsThumbprint: String?
     let isFromConversation: Bool
+
     var title: String
     var isSelfClient: Bool
+    var userClient: UserClientType
 
     var isCopyEnabled: Bool {
         return Settings.isClipboardEnabled
@@ -60,6 +60,12 @@ final class DeviceInfoViewModel: ObservableObject {
 
     var isE2eIdentityEnabled: Bool {
         return e2eIdentityCertificate != nil && mlsThumbprint != nil
+    }
+
+    var mlsThumbprint: String? {
+        e2eIdentityCertificate?
+            .mlsThumbprint
+            .splitStringIntoLines(charactersPerLine: 16)
     }
 
     var serialNumber: String? {
@@ -84,13 +90,10 @@ final class DeviceInfoViewModel: ObservableObject {
     let showDebugMenu: Bool
 
     init(
-        certificate: E2eIdentityCertificate?,
         title: String,
         addedDate: String,
         proteusID: String,
-        mlsThumbprint: String?,
-        isProteusVerificationEnabled: Bool,
-        userClient: UserClient,
+        userClient: UserClientType,
         isSelfClient: Bool,
         gracePeriod: TimeInterval,
         isFromConversation: Bool,
@@ -99,12 +102,9 @@ final class DeviceInfoViewModel: ObservableObject {
         debugMenuActionsHandler: ConversationUserClientDetailsDebugActions? = nil,
         showDebugMenu: Bool
     ) {
-        self.e2eIdentityCertificate = certificate
         self.title = title
         self.addedDate = addedDate
         self.proteusID = proteusID
-        self.mlsThumbprint = mlsThumbprint
-        self.isProteusVerificationEnabled = isProteusVerificationEnabled
         self.actionsHandler = actionsHandler
         self.userClient = userClient
         self.isSelfClient = isSelfClient
@@ -113,11 +113,19 @@ final class DeviceInfoViewModel: ObservableObject {
         self.conversationClientDetailsActions = conversationClientDetailsActions
         self.debugMenuActionsHandler = debugMenuActionsHandler
         self.showDebugMenu = showDebugMenu
-        self.actionsHandler.isProcessing = {[weak self] isProcessing in
+        self.actionsHandler.isProcessing = { [weak self] isProcessing in
             DispatchQueue.main.async {
                 self?.isActionInProgress = isProcessing
             }
         }
+
+        e2eIdentityCertificate = userClient.e2eIdentityCertificate
+        isProteusVerificationEnabled = userClient.verified
+    }
+
+    func update(from userClient: UserClientType) {
+        e2eIdentityCertificate = userClient.e2eIdentityCertificate
+        self.userClient = userClient
     }
 
     @MainActor
@@ -126,7 +134,6 @@ final class DeviceInfoViewModel: ObservableObject {
         do {
             let certificateChain = try await actionsHandler.enrollClient()
             showCertificateUpdateSuccess?(certificateChain)
-            e2eIdentityCertificate = userClient.e2eIdentityCertificate
         } catch {
             showEnrollmentCertificateError = true
         }
@@ -201,81 +208,5 @@ final class DeviceInfoViewModel: ObservableObject {
 
     func onDuplicateClientTapped() {
         debugMenuActionsHandler?.duplicateClient()
-    }
-}
-
-extension DeviceInfoViewModel {
-    static func map(
-        certificate: E2eIdentityCertificate?,
-        userClient: UserClient,
-        title: String,
-        addedDate: String,
-        proteusID: String?,
-        isSelfClient: Bool,
-        userSession: UserSession,
-        credentials: ZMEmailCredentials?,
-        gracePeriod: TimeInterval,
-        mlsThumbprint: String?,
-        getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
-        saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter()),
-        contextProvider: ContextProvider,
-        e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseProtocol,
-        isFromConversation: Bool = false,
-        showDebugMenu: Bool = Bundle.developerModeEnabled
-    ) -> DeviceInfoViewModel {
-        let deviceActionsHandler = DeviceDetailsViewActionsHandler(
-            userClient: userClient,
-            userSession: userSession,
-            credentials: credentials,
-            saveFileManager: saveFileManager,
-            getProteusFingerprint: getProteusFingerprint,
-            contextProvider: contextProvider,
-            e2eiCertificateEnrollment: e2eiCertificateEnrollment
-        )
-        return DeviceInfoViewModel(
-            certificate: certificate,
-            title: title,
-            addedDate: addedDate,
-            proteusID: proteusID ?? "",
-            mlsThumbprint: mlsThumbprint,
-            isProteusVerificationEnabled: userClient.verified,
-            userClient: userClient,
-            isSelfClient: isSelfClient,
-            gracePeriod: gracePeriod,
-            isFromConversation: isFromConversation,
-            actionsHandler: deviceActionsHandler,
-            conversationClientDetailsActions: deviceActionsHandler,
-            debugMenuActionsHandler: deviceActionsHandler,
-            showDebugMenu: showDebugMenu
-        )
-    }
-}
-
-extension E2eIdentityCertificate {
-
-    // current default days the certificate is retained on server
-    private var kServerRetainedDays: Double { 28 * 24 * 60 * 60 }
-
-    // Randomising time so that not all clients update certificate at the same time
-    private var kRandomInterval: Double { Double(Int.random(in: 0..<86400)) }
-
-    private var isExpired: Bool {
-        return expiryDate > comparedDate
-    }
-
-    private var isValid: Bool {
-        status == .valid
-    }
-
-    private var isActivated: Bool {
-        return notValidBefore <= comparedDate
-    }
-
-    private var lastUpdateDate: Date {
-        return notValidBefore + kServerRetainedDays + kRandomInterval
-    }
-
-    func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
-        return isActivated && isExpired && (lastUpdateDate + gracePeriod) < comparedDate
     }
 }

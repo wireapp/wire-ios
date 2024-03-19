@@ -20,10 +20,10 @@ import SwiftUI
 import WireCommonComponents
 
 struct CopyValueView: View {
-    var title: String
-    var value: String
-    var isCopyEnabled: Bool
-    var performCopy: ((String) -> Void)?
+    let title: String
+    let value: String
+    let isCopyEnabled: Bool
+    let performCopy: ((String) -> Void)?
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -31,19 +31,20 @@ struct CopyValueView: View {
                 .font(FontSpec.smallSemiboldFont.swiftUIFont)
                 .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
                 .padding(.bottom, ViewConstants.Padding.small)
+
             HStack {
                 Text(value)
                     .font(FontSpec.normalRegularFont.swiftUIFont.monospaced())
+
                 if isCopyEnabled {
                     Spacer()
                     VStack {
-                        SwiftUI.Button(
-                            action: copy,
-                            label: {
-                                Image(.copy)
-                                    .renderingMode(.template)
-                                    .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
-                        })
+                        SwiftUI.Button(action: copy) {
+                            Image(.copy)
+                                .renderingMode(.template)
+                                .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                        }
+
                         Spacer()
                     }
                 }
@@ -51,7 +52,7 @@ struct CopyValueView: View {
         }
     }
 
-    func copy() {
+    private func copy() {
         performCopy?(value)
     }
 }

@@ -21,14 +21,6 @@ import XCTest
 import WireDataModel
 @testable import Wire
 
-// MARK: - Mock Message
-
-extension MockMessage {
-    var message: ZMConversationMessage {
-        return self as Any as! ZMConversationMessage
-    }
-}
-
 // MARK: - CollectionsViewControllerTests
 
 final class CollectionsViewControllerTests: BaseSnapshotTestCase {

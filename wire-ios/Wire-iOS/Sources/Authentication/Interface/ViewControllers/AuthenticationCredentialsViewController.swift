@@ -131,9 +131,11 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     let emailPasswordInputField = EmailPasswordTextField()
     let emailInputField = ValidatedTextField(kind: .email, style: .default)
     let phoneInputView = PhoneNumberInputView()
-    let loginButton = Button(style: .accentColorTextButtonStyle,
-                             cornerRadius: 16,
-                             fontSpec: .buttonBigSemibold)
+    let loginButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .buttonBigSemibold
+    )
 
     lazy var proxyCredentialsViewController = {
         ProxyCredentialsViewController(backendURL: backendEnvironment.backendURL,
@@ -161,8 +163,8 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         return TabBar(items: [emailTab, passwordTab])
     }()
 
-    lazy var forgotPasswordButton: Button = {
-        let button = Button(fontSpec: .smallLightFont)
+    lazy var forgotPasswordButton = {
+        let button = ZMButton(fontSpec: .smallLightFont)
         let attributes: [NSAttributedString.Key: Any] = [
             .font: FontSpec.smallSemiboldFont.font!,
             .foregroundColor: SemanticColors.Button.textUnderlineEnabled,

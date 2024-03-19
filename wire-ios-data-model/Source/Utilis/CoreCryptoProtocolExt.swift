@@ -47,8 +47,6 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func conversationExists(conversationId: Data) async -> Bool
 
-    func getExternalSender(conversationId: Data) async throws -> Data
-
     func createConversation(conversationId: Data, creatorCredentialType: WireCoreCrypto.MlsCredentialType, config: WireCoreCrypto.ConversationConfiguration) async throws
 
     func decryptMessage(conversationId: Data, payload: Data) async throws -> WireCoreCrypto.DecryptedMessage
@@ -57,11 +55,15 @@ public protocol CoreCryptoProtocol: WireCoreCrypto.CoreCryptoProtocol {
 
     func e2eiConversationState(conversationId: Data) async throws -> WireCoreCrypto.E2eiConversationState
 
+    func e2eiDumpPkiEnv() async throws -> WireCoreCrypto.E2eiDumpedPkiEnv?
+
     func e2eiEnrollmentStash(enrollment: WireCoreCrypto.E2eiEnrollment) async throws -> Data
 
     func e2eiEnrollmentStashPop(handle: Data) async throws -> WireCoreCrypto.E2eiEnrollment
 
     func e2eiIsEnabled(ciphersuite: WireCoreCrypto.Ciphersuite) async throws -> Bool
+
+    func e2eiIsPkiEnvSetup() async -> Bool
 
     func e2eiMlsInitOnly(enrollment: WireCoreCrypto.E2eiEnrollment, certificateChain: String, nbKeyPackage: UInt32?) async throws -> [String]?
 

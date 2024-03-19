@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 
@@ -31,9 +30,11 @@ final class CameraKeyboardPermissionsCell: UICollectionViewCell {
 
     // MARK: - Properties
 
-    let settingsButton = Button(style: .secondaryTextButtonStyle,
-                                cornerRadius: 4,
-                                fontSpec: .normalSemiboldFont)
+    let settingsButton = ZMButton(
+        style: .secondaryTextButtonStyle,
+        cornerRadius: 4,
+        fontSpec: .normalSemiboldFont
+    )
     let cameraIcon = IconButton()
     let descriptionLabel = UILabel()
 

@@ -53,22 +53,16 @@ final class ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(renamedCell)]
 
         case .missedCall:
-            let missedCallCell = ConversationCallSystemMessageCellDescription(
+            let missedCallCell = ConversationMissedCallSystemMessageCellDescription(
                 message: message,
-                data: systemMessageData,
-                missed: true
+                data: systemMessageData
             )
 
             return [AnyConversationMessageCellDescription(missedCallCell)]
 
         case .performedCall:
-            let callCell = ConversationCallSystemMessageCellDescription(
-                message: message,
-                data: systemMessageData,
-                missed: false
-            )
-
-            return [AnyConversationMessageCellDescription(callCell)]
+            // [WPB-6988] removed system message for call ends.
+            return []
 
         case .messageDeletedForEveryone:
             let senderCell = ConversationSenderMessageCellDescription(

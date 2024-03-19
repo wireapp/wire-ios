@@ -18,6 +18,7 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 /// The repository is responsible for storing the grace period during which the user must enroll the end-to-end identity certificate.
 /// The grace period starts at the moment where the client fetches and processes the team feature flag.
 public protocol GracePeriodRepositoryInterface {

@@ -134,12 +134,12 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     @MainActor
     private func startE2EIdentityEnrollment() async throws -> String {
-        guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
+        guard let topmostViewController = UIApplication.shared.topmostViewController() else {
             let errorDescription = "Failed to fetch RootViewController instance"
             logger.error(errorDescription)
             throw DeviceDetailsActionsError.failedAction(errorDescription)
         }
-        let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
+        let oauthUseCase = OAuthUseCase(targetViewController: topmostViewController)
         return try await e2eiCertificateEnrollment.invoke(
             authenticate: oauthUseCase.invoke
         )
@@ -147,8 +147,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
 
     @MainActor
     private func fetchE2eIdentityCertificate() async throws -> E2eIdentityCertificate? {
-        let mlsClientResolver = MLSClientResolver()
-        guard let mlsClientID = mlsClientResolver.mlsClientId(for: userClient),
+        guard let mlsClientID = MLSClientID(userClient: userClient),
         let mlsGroupId = await fetchSelfConversationMLSGroupID() else {
             logger.error("MLSGroupID for self was not found")
             return nil

@@ -292,7 +292,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func isToolboxVisible(in context: ConversationMessageContext) -> Bool {
-        guard !message.isSystem || message.isPerformedCall || message.isMissedCall else {
+        guard !message.isSystem || message.isMissedCall else {
             return false
         }
 

@@ -36,9 +36,11 @@ final class ContactsViewController: UIViewController {
     let searchHeaderViewController = SearchHeaderViewController(userSelection: .init())
     let separatorView = UIView()
     let tableView = UITableView()
-    let inviteOthersButton = Button(style: .accentColorTextButtonStyle,
-                                    cornerRadius: 16,
-                                    fontSpec: .normalSemiboldFont)
+    let inviteOthersButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .normalSemiboldFont
+    )
     let emptyResultsLabel = DynamicFontLabel(text: PeoplePicker.noMatchingResultsAfterAddressBookUploadTitle,
                                              fontSpec: .headerRegularFont,
                                              color: LabelColors.textSettingsPasswordPlaceholder)

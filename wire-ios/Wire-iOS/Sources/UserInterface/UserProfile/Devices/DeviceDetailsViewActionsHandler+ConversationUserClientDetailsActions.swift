@@ -19,6 +19,7 @@
 import Foundation
 import WireSyncEngine
 
+// sourcery: AutoMockable
 protocol ConversationUserClientDetailsActions {
     func showMyDevice()
     func howToDoThat()

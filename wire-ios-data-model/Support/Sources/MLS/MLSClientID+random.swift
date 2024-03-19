@@ -16,17 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 
-protocol MLSClientResolving {
-    func mlsClientId(for userClient: UserClientType) -> MLSClientID?
-}
+extension MLSClientID {
 
-final class MLSClientResolver: MLSClientResolving {
-
-    func mlsClientId(for userClient: UserClientType) -> MLSClientID? {
-        return MLSClientID(userClient: userClient)
+    public static func random() -> Self {
+        .init(
+            userID: UUID().transportString(),
+            clientID: .randomAlphanumerical(length: 8),
+            domain: .randomDomain()
+        )
     }
-
 }
