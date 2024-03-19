@@ -27,38 +27,30 @@ actor MockActorOneOnOneMigrator: OneOnOneMigratorInterface {
 
     // MARK: - migrateToMLS
 
-    var migrateToMLSUserIDIn_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext)] = []
-    var migrateToMLSUserIDIn_MockError: Error?
-    var migrateToMLSUserIDIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> MLSGroupID)?
-    var migrateToMLSUserIDIn_MockValue: MLSGroupID?
+    var migrateToMLSUserIDMlsGroupID_Invocations: [(userID: QualifiedID, mlsGroupID: MLSGroupID)] = []
+    var migrateToMLSUserIDMlsGroupID_MockError: Error?
+    var migrateToMLSUserIDMlsGroupID_MockMethod: ((QualifiedID, MLSGroupID) async throws -> Void)?
 
     func setMigrateToMLSUserIDIn_MockError(_ error: Error?) {
-        migrateToMLSUserIDIn_MockError = error
+        migrateToMLSUserIDMlsGroupID_MockError = error
     }
 
-    func setMigrateToMLSUserIDIn_MockMethod(_ method: ((QualifiedID, NSManagedObjectContext) async throws -> MLSGroupID)?) {
-        migrateToMLSUserIDIn_MockMethod = method
+    func setMigrateToMLSUserIDIn_MockMethod(_ method: ((QualifiedID, MLSGroupID) async throws -> Void)?) {
+        migrateToMLSUserIDMlsGroupID_MockMethod = method
     }
 
-    func setMigrateToMLSUserIDIn_MockValue(_ value: MLSGroupID?) {
-        migrateToMLSUserIDIn_MockValue = value
-    }
+    public func migrateToMLS(userID: QualifiedID, mlsGroupID: MLSGroupID) async throws {
+        migrateToMLSUserIDMlsGroupID_Invocations.append((userID: userID, mlsGroupID: mlsGroupID))
 
-    @discardableResult
-    func migrateToMLS(userID: QualifiedID, in context: NSManagedObjectContext) async throws -> MLSGroupID {
-        migrateToMLSUserIDIn_Invocations.append((userID: userID, context: context))
-
-        if let error = migrateToMLSUserIDIn_MockError {
+        if let error = migrateToMLSUserIDMlsGroupID_MockError {
             throw error
         }
 
-        if let mock = migrateToMLSUserIDIn_MockMethod {
-            return try await mock(userID, context)
-        } else if let mock = migrateToMLSUserIDIn_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `migrateToMLSUserIDIn`")
+        guard let mock = migrateToMLSUserIDMlsGroupID_MockMethod else {
+            fatalError("no mock for `migrateToMLSUserIDMlsGroupID`")
         }
+
+        try await mock(userID, mlsGroupID)
     }
 
 }

@@ -24,21 +24,31 @@ final class OneOnOneMigratorTests: XCTestCase {
 
     private let coreDataStackHelper = CoreDataStackHelper()
 
-    var coreDataStack: CoreDataStack!
-    var uiMOC: NSManagedObjectContext!
+    private var mockMLSService: MockMLSServiceInterface!
+
+    private var coreDataStack: CoreDataStack!
+    private var syncContext: NSManagedObjectContext!
 
     override func setUp() async throws {
         try await super.setUp()
 
+        mockMLSService = MockMLSServiceInterface()
+
         coreDataStack = try await coreDataStackHelper.createStack(at: coreDataStackHelper.storageDirectory)
-        uiMOC = coreDataStack.viewContext
+        syncContext = coreDataStack.syncContext
+
+        await syncContext.perform { [self] in
+            syncContext.mlsService = mockMLSService
+        }
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
 
-        uiMOC = nil
+        syncContext = nil
         coreDataStack = nil
+
+        mockMLSService = nil
 
         try coreDataStackHelper.cleanupDirectory(coreDataStackHelper.storageDirectory)
     }
@@ -47,36 +57,34 @@ final class OneOnOneMigratorTests: XCTestCase {
 
     func test_migrateToMLS() async throws {
         // Given
-        let mockMLSService = MockMLSServiceInterface()
-        mockMLSService.establishGroupForWith_MockMethod = { _, _ in }
-
-        let sut = OneOnOneMigrator(mlsService: mockMLSService)
+        let sut = OneOnOneMigrator(mlsService: mockMLSService, context: syncContext)
         let userID = QualifiedID.random()
         let mlsGroupID = MLSGroupID.random()
 
         let (connection, proteusConversation, mlsConversation) = await createConversations(
             userID: userID,
             mlsGroupID: mlsGroupID,
-            in: uiMOC
+            in: syncContext
         )
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
             result: .success(mlsGroupID),
-            context: uiMOC.notificationContext
+            context: syncContext.notificationContext
         )
 
         mockMLSService.conversationExistsGroupID_MockValue = false
+        mockMLSService.establishGroupForWith_MockMethod = { _, _ in }
 
         // When
-        await uiMOC.perform {
+        await syncContext.perform {
             XCTAssertEqual(proteusConversation.oneOnOneUser?.remoteIdentifier, userID.uuid)
             XCTAssertNil(mlsConversation.oneOnOneUser)
         }
 
         try await sut.migrateToMLS(
             userID: userID,
-            in: uiMOC
+            mlsGroupID: mlsGroupID
         )
 
         // Then
@@ -85,84 +93,82 @@ final class OneOnOneMigratorTests: XCTestCase {
         XCTAssertEqual(createGroupInvocation.groupID, mlsGroupID)
         XCTAssertEqual(createGroupInvocation.users, [MLSUser(userID)])
 
-        await uiMOC.perform {
+        await syncContext.perform {
             XCTAssertEqual(mlsConversation.oneOnOneUser, connection.to)
             XCTAssertNil(proteusConversation.oneOnOneUser)
         }
         withExtendedLifetime(handler) {}
     }
 
-    func test_migrateToMLS_conversationAlreadyExists() async throws {
-        // Given
-        let mockMLSService = MockMLSServiceInterface()
-        mockMLSService.conversationExistsGroupID_MockValue = true
+    // TODO: move test to resolver
 
-        let sut = OneOnOneMigrator(mlsService: mockMLSService)
-        let userID = QualifiedID.random()
-        let mlsGroupID = MLSGroupID.random()
-
-        let (connection, proteusConversation, mlsConversation) = await createConversations(
-            userID: userID,
-            mlsGroupID: mlsGroupID,
-            in: uiMOC
-        )
-
-        // Mock
-        let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            result: .success(mlsGroupID),
-            context: uiMOC.notificationContext
-        )
-
-        // When
-        await uiMOC.perform {
-            XCTAssertEqual(proteusConversation.oneOnOneUser?.remoteIdentifier, userID.uuid)
-            XCTAssertNil(mlsConversation.oneOnOneUser)
-        }
-
-        try await sut.migrateToMLS(
-            userID: userID,
-            in: uiMOC
-        )
-
-        // Then
-        XCTAssertTrue(mockMLSService.establishGroupForWith_Invocations.isEmpty)
-        XCTAssertTrue(mockMLSService.addMembersToConversationWithFor_Invocations.isEmpty)
-
-        await uiMOC.perform {
-            XCTAssertEqual(mlsConversation.oneOnOneUser, connection.to)
-            XCTAssertNil(proteusConversation.oneOnOneUser)
-        }
-        withExtendedLifetime(handler) {}
-    }
+//    func test_migrateToMLS_conversationAlreadyExists() async throws {
+//        // Given
+//        let sut = OneOnOneMigrator(mlsService: mockMLSService, context: syncContext)
+//        let userID = QualifiedID.random()
+//        let mlsGroupID = MLSGroupID.random()
+//
+//        let (connection, proteusConversation, mlsConversation) = await createConversations(
+//            userID: userID,
+//            mlsGroupID: mlsGroupID,
+//            in: syncContext
+//        )
+//
+//        // Mock
+//        let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
+//            result: .success(mlsGroupID),
+//            context: syncContext.notificationContext
+//        )
+//        mockMLSService.conversationExistsGroupID_MockValue = true
+//
+//        // When
+//        await syncContext.perform {
+//            XCTAssertEqual(proteusConversation.oneOnOneUser?.remoteIdentifier, userID.uuid)
+//            XCTAssertNil(mlsConversation.oneOnOneUser)
+//        }
+//
+//        try await sut.migrateToMLS(
+//            userID: userID,
+//            mlsGroupID: mlsGroupID
+//        )
+//
+//        // Then
+//        XCTAssertTrue(mockMLSService.establishGroupForWith_Invocations.isEmpty)
+//        XCTAssertTrue(mockMLSService.addMembersToConversationWithFor_Invocations.isEmpty)
+//
+//        await syncContext.perform {
+//            XCTAssertEqual(mlsConversation.oneOnOneUser, connection.to)
+//            XCTAssertNil(proteusConversation.oneOnOneUser)
+//        }
+//        withExtendedLifetime(handler) {}
+//    }
 
     func test_migrateToMLS_moveMessages() async throws {
-        // Given
-        let mockMLSService = MockMLSServiceInterface()
-        mockMLSService.conversationExistsGroupID_MockValue = true
-
-        let sut = OneOnOneMigrator(mlsService: mockMLSService)
+        let sut = OneOnOneMigrator(mlsService: mockMLSService, context: syncContext)
         let userID: QualifiedID = .random()
         let mlsGroupID: MLSGroupID = .random()
 
         let (_, proteusConversation, mlsConversation) = await createConversations(
             userID: userID,
             mlsGroupID: mlsGroupID,
-            in: uiMOC
+            in: syncContext
         )
 
         // Mock
         let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
             result: .success(mlsGroupID),
-            context: uiMOC.notificationContext
+            context: syncContext.notificationContext
         )
 
+        mockMLSService.establishGroupForWith_MockMethod = { _, _ in }
+
         // required to add be able to add images
-        await uiMOC.perform {
-            self.uiMOC.zm_fileAssetCache = .init()
+        await syncContext.perform {
+            self.syncContext.zm_fileAssetCache = .init()
         }
 
         // When
-        try await uiMOC.perform {
+        try await syncContext.perform {
             var message = try proteusConversation.appendText(content: "Hello World!")
             message.updateServerTimestamp(with: 0)
 
@@ -178,11 +184,11 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         try await sut.migrateToMLS(
             userID: userID,
-            in: uiMOC
+            mlsGroupID: mlsGroupID
         )
 
         // Then
-        await uiMOC.perform {
+        await syncContext.perform {
             let mlsMessages = mlsConversation.allMessages.sorted { $0.serverTimestamp < $1.serverTimestamp }
             XCTAssertEqual(mlsMessages.count, 3)
             XCTAssertEqual(mlsMessages[0].textMessageData?.messageText, "Hello World!")
