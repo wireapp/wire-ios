@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireSyncEngine
 import WireSyncEngineSupport
 import WireDataModelSupport
 import WireRequestStrategySupport
@@ -31,8 +32,8 @@ final class UserSessionMock: UserSession {
         return MLSGroupID(Data())
     }
 
-    func e2eIdentityUpdateCertificateUpdateStatus() async -> WireSyncEngine.E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
-        MockE2EIdentityCertificateUpdateStatusProtocol()
+    func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
+        MockE2EIdentityCertificateUpdateStatusUseCaseProtocol()
     }
 
     var isE2eIdentityEnabled = false
