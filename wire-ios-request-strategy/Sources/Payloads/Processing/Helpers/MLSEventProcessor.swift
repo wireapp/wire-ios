@@ -114,23 +114,11 @@ public class MLSEventProcessor: MLSEventProcessing {
         conversationID: QualifiedID,
         in context: NSManagedObjectContext
     ) async {
-        WireLogger.mls.info("MLS event processor is processing welcome message")
-
-        guard let mlsService = await context.perform({ context.mlsService }) else {
-            return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
-        }
-
-        let oneOnOneResolver = OneOnOneResolver(
-            protocolSelector: OneOnOneProtocolSelector(),
-            migrator: OneOnOneMigrator(mlsService: mlsService)
-        )
-
         await process(
             welcomeMessage: welcomeMessage,
             conversationID: conversationID,
             in: context,
-            mlsService: mlsService,
-            oneOnOneResolver: oneOnOneResolver
+            oneOnOneResolver: OneOnOneResolver()
         )
     }
 
@@ -138,9 +126,14 @@ public class MLSEventProcessor: MLSEventProcessing {
         welcomeMessage: String,
         conversationID: QualifiedID,
         in context: NSManagedObjectContext,
-        mlsService: MLSServiceInterface,
         oneOnOneResolver: OneOnOneResolverInterface
     ) async {
+        WireLogger.mls.info("MLS event processor is processing welcome message")
+
+        guard let mlsService = await context.perform({ context.mlsService }) else {
+            return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
+        }
+
         do {
             let groupID = try await mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
             await mlsService.uploadKeyPackagesIfNeeded()
@@ -164,8 +157,8 @@ public class MLSEventProcessor: MLSEventProcessing {
 
             await resolveOneOnOneConversationIfNeeded(
                 conversation: conversation,
-                oneOneOneResolver: oneOnOneResolver,
-                in: context
+                in: context,
+                oneOneOneResolver: oneOnOneResolver
             )
         } catch {
             WireLogger.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
@@ -175,13 +168,14 @@ public class MLSEventProcessor: MLSEventProcessing {
 
     private func resolveOneOnOneConversationIfNeeded(
         conversation: ZMConversation,
-        oneOneOneResolver: OneOnOneResolverInterface,
-        in context: NSManagedObjectContext
+        in context: NSManagedObjectContext,
+        oneOneOneResolver: OneOnOneResolverInterface
     ) async {
         WireLogger.mls.debug("resolving one on one conversation")
 
         let userID: QualifiedID? = await context.perform {
             guard conversation.conversationType == .oneOnOne else {
+                WireLogger.mls.warn("conversation type is not expected 'oneOnOne', aborting.")
                 return nil
             }
 

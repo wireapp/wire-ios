@@ -22,7 +22,7 @@ import XCTest
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
 
-class MLSEventProcessorTests: MessagingTestBase {
+final class MLSEventProcessorTests: MessagingTestBase {
 
     var sut: MLSEventProcessor!
     var mlsServiceMock: MockMLSServiceInterface!
@@ -89,7 +89,6 @@ class MLSEventProcessorTests: MessagingTestBase {
             welcomeMessage: message,
             conversationID: qualifiedID,
             in: syncMOC,
-            mlsService: mlsServiceMock,
             oneOnOneResolver: oneOnOneResolverMock
         )
 
@@ -134,10 +133,9 @@ class MLSEventProcessorTests: MessagingTestBase {
         // When
         await sut.process(
             welcomeMessage: message,
-            conversationID: self.qualifiedID,
-            in: self.syncMOC,
-            mlsService: self.mlsServiceMock,
-            oneOnOneResolver: self.oneOnOneResolverMock
+            conversationID: qualifiedID,
+            in: syncMOC,
+            oneOnOneResolver: oneOnOneResolverMock
         )
 
         // Then
