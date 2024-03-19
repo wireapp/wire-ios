@@ -52,9 +52,6 @@ import MobileCoreServices
     /// Dimensions of the video
     var videoDimensions: CGSize { get }
 
-    /// File thumbnail preview image
-    var previewData: Data? { get }
-
     /// This can be used as a cache key for @c -previewData
     var imagePreviewDataIdentifier: String? { get }
 
@@ -175,10 +172,6 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         var temporaryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
         temporaryURL.appendPathComponent(cacheKey)
         return temporaryURL
-    }
-
-    public var previewData: Data? {
-        return asset?.previewData
     }
 
     public func fetchImagePreviewData(queue: DispatchQueue, completionHandler: @escaping (Data?) -> Void) {

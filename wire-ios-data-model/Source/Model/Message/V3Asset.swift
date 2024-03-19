@@ -32,7 +32,6 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     var imageMessageData: ZMImageMessageData? { get }
     var fileURL: URL? { get }
 
-    var previewData: Data? { get }
     var imagePreviewDataIdentifier: String? { get }
 
     func requestFileDownload()
@@ -162,19 +161,6 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 
     public var imagePreviewDataIdentifier: String? {
         return FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .preview)
-    }
-
-    public var previewData: Data? {
-        guard
-            nil != assetClientMessage.fileMessageData,
-            !isImage,
-            hasDownloadedPreview,
-            let cache = moc.zm_fileAssetCache
-        else {
-            return nil
-        }
-
-        return mediumData ?? cache.originalImageData(for: assetClientMessage)
     }
 
     public var isAnimatedGIF: Bool {
