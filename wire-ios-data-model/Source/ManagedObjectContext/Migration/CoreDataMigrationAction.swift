@@ -56,7 +56,6 @@ class CoreDataMigrationAction {
         try removeStore(for: container)
     }
 
-
     func removeStore(for container: NSPersistentContainer) throws {
         if let store = container.persistentStoreCoordinator.persistentStores.first {
             try container.persistentStoreCoordinator.remove(store)
