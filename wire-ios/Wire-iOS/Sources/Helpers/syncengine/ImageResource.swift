@@ -25,7 +25,7 @@ import WireSyncEngine
 
 extension ZMConversationMessage {
 
-    var linkAttachmentImage: WireImageResource? {
+    var linkAttachmentImage: ImageResource? {
         guard let attachment = self.linkAttachments?.first, let textMessage = self.textMessageData else {
             return nil
         }
@@ -37,7 +37,7 @@ extension ZMConversationMessage {
 
 extension ZMTextMessageData {
 
-    var linkPreviewImage: WireImageResource {
+    var linkPreviewImage: ImageResource {
         return LinkPreviewImageResourceAdaptor(textMessageData: self)
     }
 
@@ -59,7 +59,7 @@ extension ZMImageMessageData {
 
 }
 
-struct LinkPreviewImageResourceAdaptor: WireImageResource {
+struct LinkPreviewImageResourceAdaptor: ImageResource {
 
     let textMessageData: ZMTextMessageData
 
@@ -81,7 +81,7 @@ struct LinkPreviewImageResourceAdaptor: WireImageResource {
 
 }
 
-struct LinkAttachmentImageResourceAdaptor: WireImageResource {
+struct LinkAttachmentImageResourceAdaptor: ImageResource {
 
     let attachment: LinkAttachment
     let textMessageData: ZMTextMessageData
@@ -189,7 +189,7 @@ struct ImageMessageImageResourceAdaptor: PreviewableImageResource {
 
 }
 
-protocol WireImageResource {
+protocol ImageResource {
 
     var cacheIdentifier: String? { get }
     var isAnimatedGIF: Bool { get }
@@ -199,7 +199,7 @@ protocol WireImageResource {
 
 }
 
-protocol PreviewableImageResource: WireImageResource {
+protocol PreviewableImageResource: ImageResource {
     var contentMode: UIView.ContentMode { get }
     var contentSize: CGSize { get }
 }
@@ -227,7 +227,7 @@ extension ImageSizeLimit {
     }
 }
 
-extension WireImageResource {
+extension ImageResource {
 
     /// Fetch image data and calls the completion handler when it is available on the main queue.
     func fetchImage(cache: ImageCache<AnyObject> = MediaAssetCache.defaultImageCache,
