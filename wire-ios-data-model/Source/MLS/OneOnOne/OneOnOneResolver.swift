@@ -143,6 +143,23 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             throw OneOnOneResolverError.mlsServiceNotFound
         }
 
+        let migrator = OneOnOneMigrator(mlsService: mlsService, context: context)
+
+        return try await resolveCommonUserProtocolMLS(
+            with: userID,
+            in: context,
+            mlsService: mlsService,
+            migrator: migrator
+        )
+    }
+
+    private func resolveCommonUserProtocolMLS(
+        with userID: QualifiedID,
+        in context: NSManagedObjectContext,
+        mlsService: MLSServiceInterface,
+        migrator: OneOnOneMigratorInterface
+    ) async throws -> OneOnOneConversationResolution {
+
         let mlsGroupID = try await syncMLSConversationFromBackend(
             userID: userID,
             in: context
@@ -155,7 +172,6 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         let epoch = await fetchMLSConversationEpoch(with: userID, in: context)
         if epoch == 0 {
             // migrate to a new conversation
-            let migrator = OneOnOneMigrator(mlsService: mlsService, context: context)
             try await migrator.migrateToMLS(
                 userID: userID,
                 mlsGroupID: mlsGroupID

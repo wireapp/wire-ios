@@ -25,18 +25,20 @@ public class MockActionHandler<T: EntityAction>: EntityActionHandler {
 
     var results: [Result<Action.Result, Action.Failure>]
     var token: NSObjectProtocol?
+
     public var didPerformAction: Bool {
         return results.isEmpty
     }
+
     public var performedActions: [Action] = []
+
+    public convenience init(result: Result<Action.Result, Action.Failure>, context: NotificationContext) {
+        self.init(results: [result], context: context)
+    }
 
     public init(results: [Result<Action.Result, Action.Failure>], context: NotificationContext) {
         self.results = results
         token = Action.registerHandler(self, context: context)
-    }
-
-    public convenience init(result: Result<Action.Result, Action.Failure>, context: NotificationContext) {
-        self.init(results: [result], context: context)
     }
 
     public func performAction(_ action: Action) {
