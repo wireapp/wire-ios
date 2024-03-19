@@ -20,6 +20,7 @@ import SwiftUI
 import WireSyncEngine
 
 final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepViewController {
+
     typealias LocalizedEnrollE2eiCertificate = L10n.Localizable.EnrollE2eiCertificate
     typealias LocalizedUpdateE2eiCertificate = L10n.Localizable.UpdateE2eiCertificate
 
@@ -155,15 +156,15 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
             confirmationButton.heightAnchor.constraint(equalToConstant: 56),
 
             // stackView
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
+            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
+            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
             stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
             // certificate details button
-            certificateDetailsButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            certificateDetailsButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            certificateDetailsButton.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
+            certificateDetailsButton.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
             certificateDetailsButton.heightAnchor.constraint(equalToConstant: 32),
-            certificateDetailsButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -64)
+            certificateDetailsButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -64)
         ])
     }
 
@@ -190,17 +191,43 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         wrapNavigationController.presentTopmost()
     }
 
-    @MainActor
-    @objc private func okTapped() {
+    @objc
+    private func okTapped() {
         onOkTapped?(self)
     }
 
     // MARK: - AuthenticationStepViewController
+
+    // TODO [WPB-3324]: Is `AuthenticationStepViewController` conformance really required?
 
     weak var authenticationCoordinator: AuthenticationCoordinator?
 
     func executeErrorFeedbackAction(_ feedbackAction: AuthenticationErrorFeedbackAction) { }
 
     func displayError(_ error: Error) { }
+}
 
+// MARK: - Previews
+
+struct SuccessfulCertificateEnrollmentViewController_Previews: PreviewProvider {
+
+    static var previews: some View {
+        Group {
+            SuccessfulCertificateEnrollmentViewControllerrWrapper(isUpdateMode: true)
+                .previewDisplayName("Update Mode: true")
+            SuccessfulCertificateEnrollmentViewControllerrWrapper(isUpdateMode: false)
+                .previewDisplayName("Update Mode: false")
+        }
+    }
+}
+
+private struct SuccessfulCertificateEnrollmentViewControllerrWrapper: UIViewControllerRepresentable {
+
+    @State private(set) var isUpdateMode = false
+
+    func makeUIViewController(context: Context) -> SuccessfulCertificateEnrollmentViewController {
+        .init(isUpdateMode: isUpdateMode)
+    }
+
+    func updateUIViewController(_ viewController: SuccessfulCertificateEnrollmentViewController, context: Context) {}
 }
