@@ -31,27 +31,47 @@ public protocol E2EINotificationActions {
 final class E2EINotificationActionsHandler: E2EINotificationActions {
 
     // MARK: - Properties
-
     private var enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol
     private var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol
     private var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol
     private let gracePeriodRepository: GracePeriodRepository
     private let targetVC: UIViewController
-
+    private var lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
+    private var e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?
+    private var isUpdateMode: Bool = false
     // MARK: - Life cycle
-
+    private var observer: NSObjectProtocol?
     init(
         enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol,
         snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol,
         stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol,
         gracePeriodRepository: GracePeriodRepository,
+        lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?,
+        e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?,
         targetVC: UIViewController) {
             self.enrollCertificateUseCase = enrollCertificateUseCase
             self.snoozeCertificateEnrollmentUseCase = snoozeCertificateEnrollmentUseCase
             self.stopCertificateEnrollmentSnoozerUseCase = stopCertificateEnrollmentSnoozerUseCase
             self.gracePeriodRepository = gracePeriodRepository
+            self.lastE2EIdentityUpdateAlertDateRepository = lastE2EIdentityUpdateAlertDateRepository
+            self.e2eIdentityCertificateUpdateStatus = e2eIdentityCertificateUpdateStatus
             self.targetVC = targetVC
+
+            self.observer = NotificationCenter.default.addObserver(
+                forName: .checkForE2EICertificateExpiryStatus,
+                object: nil,
+                queue: .main
+            ) { _ in
+                Task { [weak self] in
+                    await self?.updateCertificate()
+                }
+            }
         }
+
+    deinit {
+        guard let observer else { return }
+        NotificationCenter.default.removeObserver(observer)
+    }
 
     public func getCertificate() async {
         let oauthUseCase = OAuthUseCase(targetViewController: targetVC)
@@ -67,7 +87,26 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     }
 
     public func updateCertificate() async {
-        // TODO: [WPB-3324] update certificate
+        do {
+            guard let result = try await e2eIdentityCertificateUpdateStatus?.invoke() else { return }
+
+            switch result {
+            case .noAction:
+                isUpdateMode = false
+                return
+
+            case .reminder:
+                isUpdateMode = true
+                await showUpdateE2EIdentityCertificateAlert()
+
+            case .block:
+                isUpdateMode = true
+                await showUpdateE2EIdentityCertificateAlert(canRemindLater: false)
+            }
+
+        } catch {
+            WireLogger.e2ei.error(error.localizedDescription)
+        }
     }
 
     public func snoozeReminder() async {
@@ -78,8 +117,12 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         }
 
         let alert = await UIAlertController.reminderGetCertificate(timeLeft: formattedDuration) {
-            Task {
-                await self.snoozeCertificateEnrollmentUseCase.invoke()
+            Task { [weak self] in
+
+                guard let self else { return }
+
+                await self.snoozeCertificateEnrollmentUseCase.invoke(isUpdateMode: self.isUpdateMode)
+                self.isUpdateMode = false
             }
         }
         await targetVC.present(alert, animated: true)
@@ -89,27 +132,35 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
     private func showGetCertificateErrorAlert(canCancel: Bool) async {
         let oauthUseCase = OAuthUseCase(targetViewController: targetVC)
-        let alert = await UIAlertController.getCertificateFailed(canCancel: canCancel) {
-            Task {
+        let alert = await UIAlertController.getCertificateFailed(canCancel: canCancel, isUpdateMode: isUpdateMode) {
+            Task { [weak self] in
+                guard let self else { return }
                 do {
                     let certificateDetails = try await self.enrollCertificateUseCase.invoke(
                         authenticate: oauthUseCase.invoke)
                     await self.confirmSuccessfulEnrollment(certificateDetails)
                 } catch {
-                    WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
+                    WireLogger.e2ei.error(
+                        "failed to \(self.isUpdateMode ? "update" : "get") E2EI certification status: \(error)"
+                    )
                 }
+                self.isUpdateMode = false
             }
+        } cancelled: {[weak self] in
+            self?.isUpdateMode = false
         }
         await targetVC.present(alert, animated: true)
     }
 
     @MainActor
     private func confirmSuccessfulEnrollment(_ certificateDetails: String) async {
-        await snoozeCertificateEnrollmentUseCase.invoke()
-        let successScreen = SuccessfulCertificateEnrollmentViewController()
+        lastE2EIdentityUpdateAlertDateRepository?.storeLastAlertDate(Date.now)
+        await snoozeCertificateEnrollmentUseCase.invoke(isUpdateMode: isUpdateMode)
+        let successScreen = SuccessfulCertificateEnrollmentViewController(isUpdateMode: isUpdateMode)
         successScreen.certificateDetails = certificateDetails
         successScreen.onOkTapped = { viewController in
             viewController.dismiss(animated: true)
+            self.isUpdateMode = false
         }
 
         targetVC.present(successScreen, animated: true)
@@ -122,18 +173,46 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         return formatter
     }()
 
+    @MainActor
+    private func showUpdateE2EIdentityCertificateAlert(canRemindLater: Bool = true) {
+        typealias E2EIUpdateStrings = L10n.Localizable.UpdateCertificate.Alert
+
+        let alert = UIAlertController.alertForE2eIChangeWithActions(
+            title: E2EIUpdateStrings.title,
+            message: canRemindLater ? E2EIUpdateStrings.message : E2EIUpdateStrings.expiredMessage,
+            enrollButtonText: E2EIUpdateStrings.title,
+            canRemindLater: canRemindLater
+        ) { action in
+            switch action {
+            case .getCertificate:
+                Task {[weak self] in
+                    await self?.getCertificate()
+                }
+            case .remindLater:
+                Task { [weak self] in
+                    await self?.snoozeReminder()
+                }
+            }
+            self.lastE2EIdentityUpdateAlertDateRepository?.storeLastAlertDate(Date.now)
+        }
+        targetVC.present(alert, animated: true)
+    }
 }
 
 private extension UIAlertController {
 
     static func getCertificateFailed(
         canCancel: Bool,
-        completion: @escaping () -> Void) -> UIAlertController {
-            typealias Alert = L10n.Localizable.FailetToGetCertificate.Alert
-            typealias Button = L10n.Localizable.FailetToGetCertificate.Button
+        isUpdateMode: Bool,
+        completion: @escaping () -> Void,
+        cancelled: @escaping () -> Void) -> UIAlertController {
+            typealias UpdateAlert = L10n.Localizable.FailedToUpdateCertificate.Alert
+            typealias Alert = L10n.Localizable.FailedToGetCertificate.Alert
+            typealias Button = L10n.Localizable.FailedToGetCertificate.Button
 
-            let title = Alert.title
-            let message = canCancel ? Alert.message : Alert.forcedMessage
+            let title = isUpdateMode ? UpdateAlert.title : Alert.title
+            let detail = isUpdateMode ? UpdateAlert.message : Alert.message
+            let message = canCancel ? detail : Alert.forcedMessage
             let controller = UIAlertController(
                 title: title,
                 message: message,
@@ -148,34 +227,7 @@ private extension UIAlertController {
 
             controller.addAction(tryAgainAction)
             if canCancel {
-                controller.addAction(.cancel())
-            }
-            return controller
-        }
-
-    static func updateCertificateFailed(
-        canCancel: Bool,
-        completion: @escaping () -> Void) -> UIAlertController {
-            typealias Alert = L10n.Localizable.FailetToUpdateCertificate.Alert
-            typealias Button = L10n.Localizable.FailetToUpdateCertificate.Button
-
-            let title = Alert.title
-            let message = canCancel ? Alert.message : Alert.forcedMessage
-            let controller = UIAlertController(
-                title: title,
-                message: message,
-                preferredStyle: .alert
-            )
-
-            let tryAgainAction = UIAlertAction(
-                title: Button.retry,
-                style: .default,
-                handler: { _ in completion() }
-            )
-
-            controller.addAction(tryAgainAction)
-            if canCancel {
-                controller.addAction(.cancel())
+                controller.addAction(.cancel(cancelled))
             }
             return controller
         }

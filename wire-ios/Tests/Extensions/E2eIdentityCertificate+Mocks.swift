@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireSyncEngineSupport
 
 extension E2eIdentityCertificate {
 

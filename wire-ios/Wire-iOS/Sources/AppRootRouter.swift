@@ -185,6 +185,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         enqueueTransition(to: appState, completion: completion)
     }
 
+    @MainActor
     private func transition(to appState: AppState, completion: @escaping () -> Void) {
         applicationWillTransition(to: appState)
 
@@ -345,6 +346,7 @@ extension AppRootRouter {
                                completion: completion)
     }
 
+    @MainActor
     private func showAuthenticated(
         userSession: UserSession,
         completion: @escaping () -> Void
@@ -361,9 +363,10 @@ extension AppRootRouter {
         }
 
         self.authenticatedRouter = authenticatedRouter
-
-        rootViewController.set(childViewController: authenticatedRouter.viewController,
-                               completion: completion)
+        rootViewController.set(
+            childViewController: authenticatedRouter.viewController,
+            completion: completion
+        )
     }
 
     private func showSkeleton(fromAccount: Account?, toAccount: Account, completion: @escaping () -> Void) {
@@ -413,6 +416,7 @@ extension AppRootRouter {
         Analytics.shared.provider?.selfUser = selfUser
     }
 
+    @MainActor
     private func buildAuthenticatedRouter(
         account: Account,
         userSession: UserSession
@@ -428,7 +432,6 @@ extension AppRootRouter {
         }
 
         let needToShowDialog = appStateCalculator.wasUnauthenticated && !isTeamMember
-
         return AuthenticatedRouter(
             rootViewController: rootViewController,
             account: account,
@@ -440,6 +443,8 @@ extension AppRootRouter {
                 snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
                 stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
                 gracePeriodRepository: userSession.gracePeriodRepository,
+                lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
+                e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
                 targetVC: rootViewController),
             gracePeriodRepository: userSession.gracePeriodRepository
         )

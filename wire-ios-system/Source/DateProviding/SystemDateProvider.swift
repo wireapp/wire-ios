@@ -26,4 +26,6 @@ extension DateProviding where Self == SystemDateProvider {
 /// Provides date values based on the system clock.
 public struct SystemDateProvider: DateProviding {
     public var now: Date { .now }
+
+    public init() {}
 }

@@ -18,17 +18,16 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-/// The repository is responsible for storing the grace period during which the user must enroll the end-to-end identity certificate.
-/// The grace period starts at the moment where the client fetches and processes the team feature flag.
-public protocol GracePeriodRepositoryInterface {
+@objc
+public protocol LastE2EIdentityUpdateDateRepositoryInterface {
 
-    func fetchGracePeriodEndDate() -> Date?
-    func storeGracePeriodEndDate(_ date: Date)
+    func fetchLastAlertDate() -> Date?
+    func storeLastAlertDate(_ date: Date?)
 
 }
 
-public final class GracePeriodRepository: NSObject, GracePeriodRepositoryInterface {
+@objc
+public final class LastE2EIdentityUpdateDateRepository: NSObject, LastE2EIdentityUpdateDateRepositoryInterface {
 
     // MARK: - Properties
 
@@ -37,11 +36,12 @@ public final class GracePeriodRepository: NSObject, GracePeriodRepositoryInterfa
     // MARK: - Types
 
     private enum Key: String, DefaultsKey {
-        case endGracePeriod
+        case lastE2EIdenityUpdateDate
     }
 
     // MARK: - Life cycle
 
+    @objc
     public init(
         userID: UUID,
         sharedUserDefaults: UserDefaults
@@ -55,13 +55,12 @@ public final class GracePeriodRepository: NSObject, GracePeriodRepositoryInterfa
     }
 
     // MARK: - Methods
-
-    public func fetchGracePeriodEndDate() -> Date? {
-        storage.date(forKey: .endGracePeriod)
+    public func fetchLastAlertDate() -> Date? {
+        storage.date(forKey: .lastE2EIdenityUpdateDate)
     }
 
-    public func storeGracePeriodEndDate(_ date: Date) {
-        storage.set(date, forKey: .endGracePeriod)
+    public func storeLastAlertDate(_ date: Date?) {
+        storage.set(date, forKey: .lastE2EIdenityUpdateDate)
     }
 
 }
