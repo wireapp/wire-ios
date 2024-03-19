@@ -28,14 +28,6 @@ public protocol OneOnOneMigratorInterface {
 
 }
 
-public enum MigrateMLSOneOnOneConversationError: Error {
-
-    case failedToFetchConversation(Error)
-    case failedToEstablishGroup(Error)
-    case failedToActivateConversation
-
-}
-
 public struct OneOnOneMigrator: OneOnOneMigratorInterface {
 
     // MARK: - Dependencies

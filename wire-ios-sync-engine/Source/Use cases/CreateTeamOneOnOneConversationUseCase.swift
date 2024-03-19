@@ -104,6 +104,8 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
         }
     }
 
+    // MARK: MLS
+
     private func createMLSConversation(
         userID: QualifiedID,
         in context: NSManagedObjectContext
@@ -112,12 +114,15 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
             throw Error.mlsMigratorNotFound
         }
 
-        let groupID: MLSGroupID
+        let groupID = try await syncMLSConversationFromBackend(
+            userID: userID,
+            in: context
+        )
 
         do {
-            groupID = try await migrator.migrateToMLS(
+            try await migrator.migrateToMLS(
                 userID: userID,
-                in: context
+                mlsGroupID: groupID
             )
         } catch {
             throw Error.failedToCreateMLSConversation(error)
@@ -131,6 +136,21 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
             return conversation.objectID
         }
     }
+
+    private func syncMLSConversationFromBackend(
+        userID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) async throws -> MLSGroupID {
+        var action = SyncMLSOneToOneConversationAction(userID: userID.uuid, domain: userID.domain)
+
+        do {
+            return try await action.perform(in: context.notificationContext)
+        } catch {
+            throw MigrateMLSOneOnOneConversationError.failedToFetchConversation(error)
+        }
+    }
+
+    // MARK: Proteus
 
     private func createProteusConversation(
         with user: ZMUser,
