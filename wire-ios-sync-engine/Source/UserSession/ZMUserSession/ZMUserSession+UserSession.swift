@@ -308,7 +308,7 @@ extension ZMUserSession: UserSession {
 
         return E2EIdentityCertificateUpdateStatusUseCase(
             getE2eIdentityCertificates: getE2eIdentityCertificates,
-            gracePeriod: TimeInterval(e2eiFeature.config.verificationExpiration), // TODO: inject feature repository
+            gracePeriod: TimeInterval(e2eiFeature.config.verificationExpiration), // the feature repository should better be injected into the use case
             mlsClientID: selfMLSClientID,
             context: syncContext,
             lastAlertDate: lastE2EIUpdateDateRepository?.fetchLastAlertDate(),
