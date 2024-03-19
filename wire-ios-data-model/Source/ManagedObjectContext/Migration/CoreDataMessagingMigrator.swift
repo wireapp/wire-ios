@@ -285,7 +285,9 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
     // MARK: - CoreDataMigration Actions
 
     func runPreMigrationStep(_ step: CoreDataMessagingMigrationStep, for storeURL: URL) throws {
-        guard let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: step.destinationVersion) else { return }
+        guard let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: step.destinationVersion) else { 
+            return
+        }
 
         try action.perform(on: storeURL,
                            with: step.sourceModel)

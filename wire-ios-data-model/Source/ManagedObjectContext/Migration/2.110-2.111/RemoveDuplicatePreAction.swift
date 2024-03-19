@@ -34,6 +34,7 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
     }
 
     private func removeDuplicates(for entityName: String, context: NSManagedObjectContext) {
+        print("🕵🏽", entityName)
         let duplicateObjects: [Data: [NSManagedObject]] = context.findDuplicated(
             entityName: entityName,
             by: ZMManagedObject.remoteIdentifierDataKey()
