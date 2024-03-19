@@ -336,6 +336,8 @@ public final class ZMUserSession: NSObject {
             context: syncContext)
     }()
 
+    private(set) public var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
+
     public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol = {
         return GetIsE2EIdentityEnabledUseCase(coreCryptoProvider: coreCryptoProvider)
     }()
@@ -410,6 +412,8 @@ public final class ZMUserSession: NSObject {
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
         )
+
+        self.lastE2EIUpdateDateRepository = LastE2EIdentityUpdateDateRepository(userID: userId, sharedUserDefaults: UserDefaults.standard)
         self.gracePeriodRepository = GracePeriodRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults)
@@ -889,6 +893,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
         }
+        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
     }
 
     func processEvents() {
@@ -1023,4 +1028,9 @@ extension ZMUserSession: ContextProvider {
         return coreDataStack.eventContext
     }
 
+}
+
+public extension Notification.Name {
+    // This notification is used to check the E2EIdentity Certificate expiry status
+    static let checkForE2EICertificateExpiryStatus = NSNotification.Name("CheckForE2EICertificateExpiryStatus")
 }

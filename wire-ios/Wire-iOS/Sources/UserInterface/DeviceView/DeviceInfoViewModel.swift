@@ -210,32 +210,3 @@ final class DeviceInfoViewModel: ObservableObject {
         debugMenuActionsHandler?.duplicateClient()
     }
 }
-
-extension E2eIdentityCertificate {
-
-    // current default days the certificate is retained on server
-    private var kServerRetainedDays: Double { 28 * 24 * 60 * 60 }
-
-    // Randomising time so that not all clients update certificate at the same time
-    private var kRandomInterval: Double { Double(Int.random(in: 0..<86400)) }
-
-    private var isExpired: Bool {
-        return expiryDate > comparedDate
-    }
-
-    private var isValid: Bool {
-        status == .valid
-    }
-
-    private var isActivated: Bool {
-        return notValidBefore <= comparedDate
-    }
-
-    private var lastUpdateDate: Date {
-        return notValidBefore + kServerRetainedDays + kRandomInterval
-    }
-
-    func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
-        return (isActivated && (lastUpdateDate + gracePeriod) < comparedDate) || isExpired
-    }
-}
