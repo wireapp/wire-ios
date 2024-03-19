@@ -165,7 +165,7 @@ class WireCallCenterV3Tests: MessagingTest {
         // THEN
         let id = try XCTUnwrap(groupConversation.avsIdentifier)
         let callSnapshot = try XCTUnwrap(sut.callSnapshots[id])
-        XCTAssertTrue(callSnapshot.isConferenceCall)
+        XCTAssertTrue(callSnapshot.conversationType.isConference)
     }
 
     func testThatTheIncomingCallHandlerPostsTheRightNotification_IsVideo() {
@@ -1204,12 +1204,12 @@ class WireCallCenterV3Tests: MessagingTest {
 
         // then
         for callState in nonActiveCallStates {
-            sut.createSnapshot(callState: callState, members: [], callStarter: callStarter, video: false, for: groupConversation.avsIdentifier!, isConferenceCall: false)
+            sut.createSnapshot(callState: callState, members: [], callStarter: callStarter, video: false, for: groupConversation.avsIdentifier!, conversationType: .oneToOne)
             XCTAssertEqual(sut.activeCalls.count, 0)
         }
 
         for callState in activeCallStates {
-            sut.createSnapshot(callState: callState, members: [], callStarter: callStarter, video: false, for: groupConversation.avsIdentifier!, isConferenceCall: false)
+            sut.createSnapshot(callState: callState, members: [], callStarter: callStarter, video: false, for: groupConversation.avsIdentifier!, conversationType: .oneToOne)
             XCTAssertEqual(sut.activeCalls.count, 1)
         }
     }
@@ -1950,7 +1950,7 @@ extension WireCallCenterV3Tests {
             isConstantBitRate: false,
             videoState: .stopped,
             networkQuality: .normal,
-            isConferenceCall: true,
+            conversationType: .mlsConference,
             degradedUser: nil,
             activeSpeakers: [],
             videoGridPresentationMode: .allVideoStreams
@@ -2004,6 +2004,7 @@ extension WireCallCenterV3Tests {
 
     func test_SystemMessageIsAppended_WhenProtocolChangesToMLS() throws {
         // Given
+        sut.callSnapshots = callSnapshot(conversationId: groupConversation.avsIdentifier!, clients: [])
         groupConversation.messageProtocol = .mls
         let changeInfo = ConversationChangeInfo(object: groupConversation)
         changeInfo.changedKeys = [ZMConversation.messageProtocolKey]
