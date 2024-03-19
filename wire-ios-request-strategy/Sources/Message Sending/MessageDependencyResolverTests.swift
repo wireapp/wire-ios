@@ -17,6 +17,7 @@
 //
 
 import XCTest
+@testable import WireDataModel
 
 final class MessageDependencyResolverTests: MessagingTestBase {
 
@@ -64,6 +65,46 @@ final class MessageDependencyResolverTests: MessagingTestBase {
         // then test completes
         wait(timeout: 0.5) {
             try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+        }
+    }
+
+    func testThatGivenMessageWithLegalHoldStatusPendingApproval_thenThrow() throws {
+        // given
+        syncMOC.performAndWait {
+            // make conversatio sync a dependency
+            groupConversation.needsToBeUpdatedFromBackend = true
+            groupConversation.legalHoldStatus = .pendingApproval
+        }
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil)
+
+        let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
+            .arrange()
+
+        Task {
+            // Sleeping in order to hit the code path where we start observing RequestAvailable
+            try await Task.sleep(nanoseconds: 250_000_000)
+
+            await syncMOC.perform {
+                self.groupConversation.needsToBeUpdatedFromBackend = false
+            }
+
+            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+        }
+
+        // then test completes
+        wait(timeout: 0.5) {
+            do {
+                try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+                XCTFail()
+            } catch MessageDependencyResolverError.legalHoldPendingApproval {
+                // should pass here
+            } catch {
+                XCTFail()
+            }
         }
     }
 
