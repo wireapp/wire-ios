@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol MLSConversationVerificationStatusUpdating {
 
-    func updateAllStatuses() async throws
+    func updateAllStatuses() async
 
 }
 
