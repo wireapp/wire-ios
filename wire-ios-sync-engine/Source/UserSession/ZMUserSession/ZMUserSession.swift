@@ -20,6 +20,7 @@ import Foundation
 import WireDataModel
 import WireSystem
 import WireRequestStrategy
+import Combine
 
 @objc(ZMThirdPartyServicesDelegate)
 public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
@@ -310,24 +311,29 @@ public final class ZMUserSession: NSObject {
         let apiProvider = APIProvider(httpClient: httpClient)
 
         let e2eiSetupService = E2EISetupService(coreCryptoProvider: coreCryptoProvider)
+        let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
 
         let keyRotator = E2EIKeyPackageRotator(
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: conversationEventProcessor,
-            context: syncContext
+            context: syncContext,
+            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject
         )
 
-        cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
-            from: keyRotator.onNewCRLsDistributionPoints()
-        )
-
-        return E2EIRepository(
+        let e2eiRepository = E2EIRepository(
             acmeApi: acmeApi,
             apiProvider: apiProvider,
             e2eiSetupService: e2eiSetupService,
             keyRotator: keyRotator,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject
         )
+
+        cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
+            from: onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
+        )
+
+        return e2eiRepository
     }()
 
     public lazy var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol = {
