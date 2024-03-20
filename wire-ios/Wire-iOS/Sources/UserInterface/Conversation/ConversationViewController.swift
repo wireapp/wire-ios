@@ -393,7 +393,12 @@ final class ConversationViewController: UIViewController {
 
         Task {
             do {
-                let service = OneOnOneResolver()
+                guard let mlsService = await syncContext.perform({ syncContext.mlsService }) else {
+                    assertionFailure("mlsService is missing")
+                    return
+                }
+
+                let service = OneOnOneResolver(mlsService: mlsService)
                 let resolvedState = try await service.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
 
                 if case .migratedToMLSGroup(let identifier) = resolvedState {
