@@ -54,7 +54,7 @@ extension ZMUpdateEvent {
             return nil
         }
 
-        if self.type == .conversationOtrMessageAdd, let wrappedData = eventData["data"] as? String { // .conversationMLSMessageAdd?
+        if self.type == .conversationOtrMessageAdd, let wrappedData = eventData["data"] as? String {
             payload["external"] = wrappedData
         }
 
