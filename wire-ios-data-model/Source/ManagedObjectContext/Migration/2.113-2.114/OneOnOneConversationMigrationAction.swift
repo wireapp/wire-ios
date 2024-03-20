@@ -27,73 +27,75 @@ final class OneOnOneConversationMigrationAction: CoreDataMigrationAction {
         let users = try context.fetch(request)
 
         for user in users {
-
             if let connection = user.value(forKey: "connection") as? NSManagedObject {
-                // There is an existing connection for this user.
-
-                guard
-                    let conversation = connection.value(forKey: "conversation") as? NSManagedObject
-                else {
-                    continue
-                }
-
-                user.setValue(conversation, forKey: "oneOnOneConversation")
-
+                migrateConnectionOneOnOne(user: user, connection: connection)
             } else {
-                // There is an no connection for this user there might exist an implcit team 1-1 connection
-
-                let sessionRequest = NSFetchRequest<NSManagedObject>(entityName: ZMSession.entityName())
-                let result = try? context.fetch(sessionRequest)
-
-                guard
-                    let session = result?.first,
-                    let selfUser = session.value(forKey: "selfUser") as? NSManagedObject,
-                    let membership = selfUser.value(forKey: "membership") as? NSManagedObject,
-                    let selfTeam = membership.value(forKey: "team") as? NSManagedObject
-                else {
-                    continue
-                }
-
-                guard selfUser != user else {
-                    continue
-                }
-
-                // Look for an existing "fake" one on one team conversation,
-                // a special group conversation pretending to be a one on one.
-                let request = NSFetchRequest<NSManagedObject>(entityName: ZMConversation.entityName())
-
-                // We consider a conversation being an existing 1:1 team conversation in case the following points are true:
-                //  1. It is a conversation inside the team
-                //  2. The only participants are the current user and the selected user
-                //  3. It does not have a custom display name
-                let sameTeam = NSPredicate(format: "team == %@", selfTeam)
-                let groupConversation = NSPredicate(format: "%K == %d", ZMConversationConversationTypeKey, ZMConversationType.group.rawValue)
-                let noUserDefinedName = NSPredicate(format: "%K == NULL", ZMConversationUserDefinedNameKey)
-                let sameParticipant = NSPredicate(
-                    format: "%K.@count == 2 AND ANY %K.user == %@ AND ANY %K.user == %@",
-                    ZMConversationParticipantRolesKey,
-                    ZMConversationParticipantRolesKey,
-                    user,
-                    ZMConversationParticipantRolesKey,
-                    selfUser
-                )
-
-                request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-                    sameTeam,
-                    groupConversation,
-                    noUserDefinedName,
-                    sameParticipant
-                ])
-
-                guard
-                    let conversations = try? context.fetch(request),
-                    let conversation = conversations.first
-                else {
-                    continue
-                }
-
-                user.setValue(conversation, forKey: "oneOnOneConversation")
+                migrateTeamOneOnOne(user: user, context: context)
             }
         }
+    }
+
+    private func migrateConnectionOneOnOne(user: NSManagedObject, connection: NSManagedObject) {
+        guard
+            let conversation = connection.value(forKey: "conversation") as? NSManagedObject
+        else {
+            return
+        }
+
+        user.setValue(conversation, forKey: "oneOnOneConversation")
+    }
+
+    private func migrateTeamOneOnOne(user: NSManagedObject, context: NSManagedObjectContext) {
+        let sessionRequest = NSFetchRequest<NSManagedObject>(entityName: ZMSession.entityName())
+        let result = try? context.fetch(sessionRequest)
+
+        guard
+            let session = result?.first,
+            let selfUser = session.value(forKey: "selfUser") as? NSManagedObject,
+            let membership = selfUser.value(forKey: "membership") as? NSManagedObject,
+            let selfTeam = membership.value(forKey: "team") as? NSManagedObject
+        else {
+            return
+        }
+
+        guard selfUser != user else {
+            return
+        }
+
+        // Look for an existing "fake" one on one team conversation,
+        // a special group conversation pretending to be a one on one.
+        let request = NSFetchRequest<NSManagedObject>(entityName: ZMConversation.entityName())
+
+        // We consider a conversation being an existing 1:1 team conversation in case the following points are true:
+        //  1. It is a conversation inside the team
+        //  2. The only participants are the current user and the selected user
+        //  3. It does not have a custom display name
+        let sameTeam = NSPredicate(format: "team == %@", selfTeam)
+        let groupConversation = NSPredicate(format: "%K == %d", ZMConversationConversationTypeKey, ZMConversationType.group.rawValue)
+        let noUserDefinedName = NSPredicate(format: "%K == NULL", ZMConversationUserDefinedNameKey)
+        let sameParticipant = NSPredicate(
+            format: "%K.@count == 2 AND ANY %K.user == %@ AND ANY %K.user == %@",
+            ZMConversationParticipantRolesKey,
+            ZMConversationParticipantRolesKey,
+            user,
+            ZMConversationParticipantRolesKey,
+            selfUser
+        )
+
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            sameTeam,
+            groupConversation,
+            noUserDefinedName,
+            sameParticipant
+        ])
+
+        guard
+            let conversations = try? context.fetch(request),
+            let conversation = conversations.first
+        else {
+            return
+        }
+
+        user.setValue(conversation, forKey: "oneOnOneConversation")
     }
 }
