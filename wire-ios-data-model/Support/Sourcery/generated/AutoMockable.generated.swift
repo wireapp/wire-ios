@@ -3922,21 +3922,16 @@ public class MockMLSConversationVerificationStatusUpdating: MLSConversationVerif
     // MARK: - updateAllStatuses
 
     public var updateAllStatuses_Invocations: [Void] = []
-    public var updateAllStatuses_MockError: Error?
-    public var updateAllStatuses_MockMethod: (() async throws -> Void)?
+    public var updateAllStatuses_MockMethod: (() async -> Void)?
 
-    public func updateAllStatuses() async throws {
+    public func updateAllStatuses() async {
         updateAllStatuses_Invocations.append(())
-
-        if let error = updateAllStatuses_MockError {
-            throw error
-        }
 
         guard let mock = updateAllStatuses_MockMethod else {
             fatalError("no mock for `updateAllStatuses`")
         }
 
-        try await mock()
+        await mock()
     }
 
 }
