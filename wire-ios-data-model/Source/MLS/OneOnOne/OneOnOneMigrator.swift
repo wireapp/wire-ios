@@ -23,7 +23,8 @@ public protocol OneOnOneMigratorInterface {
 
     func migrateToMLS(
         userID: QualifiedID,
-        mlsGroupID: MLSGroupID
+        mlsGroupID: MLSGroupID,
+        in context: NSManagedObjectContext
     ) async throws
 
 }
@@ -33,23 +34,19 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
     // MARK: - Dependencies
 
     private let mlsService: MLSServiceInterface
-    private let context: NSManagedObjectContext
 
     // MARK: - Life cycle
 
-    public init(
-        mlsService: MLSServiceInterface,
-        context: NSManagedObjectContext
-    ) {
+    public init(mlsService: MLSServiceInterface) {
         self.mlsService = mlsService
-        self.context = context
     }
 
     // MARK: - Methods
 
     public func migrateToMLS(
         userID: QualifiedID,
-        mlsGroupID: MLSGroupID
+        mlsGroupID: MLSGroupID,
+        in context: NSManagedObjectContext
     ) async throws {
         try await establishLocalMLSConversationIfNeeded(
             userID: userID,
@@ -58,7 +55,8 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
 
         try await switchLocalConversationToMLS(
             userID: userID,
-            mlsGroupID: mlsGroupID
+            mlsGroupID: mlsGroupID,
+            in: context
         )
     }
 
@@ -77,7 +75,8 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
 
     private func switchLocalConversationToMLS(
         userID: QualifiedID,
-        mlsGroupID: MLSGroupID
+        mlsGroupID: MLSGroupID,
+        in context: NSManagedObjectContext
     ) async throws {
         try await context.perform {
             guard let mlsConversation = ZMConversation.fetch(

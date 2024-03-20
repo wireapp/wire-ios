@@ -33,6 +33,7 @@ public protocol OneOnOneResolverInterface {
 
 enum OneOnOneResolverError: Error {
 
+    case migratorNotFound
     case mlsServiceNotFound
 
 }
@@ -42,11 +43,26 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     // MARK: - Dependencies
 
     private let protocolSelector: OneOnOneProtocolSelectorInterface
+    private let migrator: OneOnOneMigratorInterface?
+    private let mlsService: MLSServiceInterface?
 
     // MARK: - Initializer
 
-    public init(protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector()) {
+    public convenience init(mlsService: MLSServiceInterface?) {
+        self.init(
+            migrator: mlsService.flatMap(OneOnOneMigrator.init(mlsService:)),
+            mlsService: mlsService
+        )
+    }
+
+    public init(
+        protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
+        migrator: OneOnOneMigratorInterface?,
+        mlsService: MLSServiceInterface?
+    ) {
         self.protocolSelector = protocolSelector
+        self.migrator = migrator
+        self.mlsService = mlsService
     }
 
     // MARK: - Resolve
@@ -139,26 +155,13 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     ) async throws -> OneOnOneConversationResolution {
         WireLogger.conversation.debug("should resolve to mls 1-1 conversation")
 
-        guard let mlsService = await mlsService(in: context) else {
-            throw OneOnOneResolverError.mlsServiceNotFound
+        guard let migrator else {
+            throw OneOnOneResolverError.migratorNotFound
         }
 
-        let migrator = OneOnOneMigrator(mlsService: mlsService, context: context)
-
-        return try await resolveCommonUserProtocolMLS(
-            with: userID,
-            in: context,
-            mlsService: mlsService,
-            migrator: migrator
-        )
-    }
-
-    private func resolveCommonUserProtocolMLS(
-        with userID: QualifiedID,
-        in context: NSManagedObjectContext,
-        mlsService: MLSServiceInterface,
-        migrator: OneOnOneMigratorInterface
-    ) async throws -> OneOnOneConversationResolution {
+        guard let mlsService else {
+            throw OneOnOneResolverError.migratorNotFound
+        }
 
         let mlsGroupID = try await syncMLSConversationFromBackend(
             userID: userID,
@@ -174,7 +177,8 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             // migrate to a new conversation
             try await migrator.migrateToMLS(
                 userID: userID,
-                mlsGroupID: mlsGroupID
+                mlsGroupID: mlsGroupID,
+                in: context
             )
         } else {
             // join existing conversation via external commit
@@ -182,13 +186,6 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         }
 
         return .migratedToMLSGroup(identifier: mlsGroupID)
-    }
-
-    private func mlsService(in context: NSManagedObjectContext) async -> MLSServiceInterface? {
-        await context.perform {
-            assert(context.zm_isSyncContext)
-            return context.mlsService
-        }
     }
 
     private func syncMLSConversationFromBackend(
@@ -252,7 +249,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
                 .fetch(request)
                 .compactMap { user in
                     guard let userID = user.qualifiedID else {
-                        WireLogger.conversation.error("required to have a user's qualifiedID to resolve 1-1 conversation!")
+                        WireLogger.conversation.error("missing user's qualifiedID to resolve 1-1 conversation!")
                         return nil
                     }
                     return userID
