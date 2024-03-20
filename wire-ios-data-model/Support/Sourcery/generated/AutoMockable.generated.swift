@@ -2132,20 +2132,23 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
 
     public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_Invocations: [(enrollment: E2eiEnrollment, certificateChain: String)] = []
     public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockError: Error?
-    public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockMethod: ((E2eiEnrollment, String) async throws -> Void)?
+    public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockMethod: ((E2eiEnrollment, String) async throws -> CRLsDistributionPoints?)?
+    public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockValue: CRLsDistributionPoints??
 
-    public func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws {
+    public func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws -> CRLsDistributionPoints? {
         initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_Invocations.append((enrollment: enrollment, certificateChain: certificateChain))
 
         if let error = initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockError {
             throw error
         }
 
-        guard let mock = initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockMethod else {
+        if let mock = initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockMethod {
+            return try await mock(enrollment, certificateChain)
+        } else if let mock = initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain`")
         }
-
-        try await mock(enrollment, certificateChain)
     }
 
 }
@@ -3517,6 +3520,48 @@ class MockFileManagerInterface: FileManagerInterface {
 
 }
 
+public class MockGracePeriodRepositoryInterface: GracePeriodRepositoryInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - fetchGracePeriodEndDate
+
+    public var fetchGracePeriodEndDate_Invocations: [Void] = []
+    public var fetchGracePeriodEndDate_MockMethod: (() -> Date?)?
+    public var fetchGracePeriodEndDate_MockValue: Date??
+
+    public func fetchGracePeriodEndDate() -> Date? {
+        fetchGracePeriodEndDate_Invocations.append(())
+
+        if let mock = fetchGracePeriodEndDate_MockMethod {
+            return mock()
+        } else if let mock = fetchGracePeriodEndDate_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchGracePeriodEndDate`")
+        }
+    }
+
+    // MARK: - storeGracePeriodEndDate
+
+    public var storeGracePeriodEndDate_Invocations: [Date] = []
+    public var storeGracePeriodEndDate_MockMethod: ((Date) -> Void)?
+
+    public func storeGracePeriodEndDate(_ date: Date) {
+        storeGracePeriodEndDate_Invocations.append(date)
+
+        guard let mock = storeGracePeriodEndDate_MockMethod else {
+            fatalError("no mock for `storeGracePeriodEndDate`")
+        }
+
+        mock(date)
+    }
+
+}
+
 public class MockIsSelfUserE2EICertifiedUseCaseProtocol: IsSelfUserE2EICertifiedUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -3880,21 +3925,16 @@ public class MockMLSConversationVerificationStatusUpdating: MLSConversationVerif
     // MARK: - updateAllStatuses
 
     public var updateAllStatuses_Invocations: [Void] = []
-    public var updateAllStatuses_MockError: Error?
-    public var updateAllStatuses_MockMethod: (() async throws -> Void)?
+    public var updateAllStatuses_MockMethod: (() async -> Void)?
 
-    public func updateAllStatuses() async throws {
+    public func updateAllStatuses() async {
         updateAllStatuses_Invocations.append(())
-
-        if let error = updateAllStatuses_MockError {
-            throw error
-        }
 
         guard let mock = updateAllStatuses_MockMethod else {
             fatalError("no mock for `updateAllStatuses`")
         }
 
-        try await mock()
+        await mock()
     }
 
 }
