@@ -42,7 +42,7 @@ final class DatabaseMigrationTests_UserUniqueness: XCTestCase {
         let initialVersion = "2.110.0"
 
         let uniqueUser1: (UUID?, String?) = (UUID(), nil)
-        let uniqueUser2: (UUID?, String?) = (nil, "test.example.com")
+        let uniqueUser2: (UUID?, String?) = (UUID(), "test.example.com")
         let otherDuplicateUsers = (UUID(), "otherdomain")
 
         try helper.migrateStoreToCurrentVersion(
