@@ -44,6 +44,7 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
             for object in objectsWithNil {
                 context.delete(object)
             }
+            WireLogger.localStorage.info("Deleted \(objectsWithNil.count) \(entityName) objects with no remoteIdentifierData", attributes: .safePublic)
         } catch {
             WireLogger.localStorage.error("error fetching object \(entityName) with no remoteIdentifierData \(error.localizedDescription)", attributes: .safePublic)
         }
