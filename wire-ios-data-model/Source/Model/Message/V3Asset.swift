@@ -188,7 +188,7 @@ extension V3Asset: AssetProxyType {
         if isImage {
             return hasImageData
         } else {
-            return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, encrypted: false)
+            return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, encrypted: true) || moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, encrypted: false)
         }
     }
 

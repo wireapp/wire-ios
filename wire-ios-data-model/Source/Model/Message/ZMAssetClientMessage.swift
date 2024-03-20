@@ -413,16 +413,6 @@ struct CacheAsset: AssetType {
             Logging.messageProcessing.warn("Failed to update asset id. Reason: \(error.localizedDescription)")
             return
         }
-
-        // Now that we've stored the assetId when can safely delete the encrypted data
-        switch type {
-        case .file:
-            // TODO: do we delete the original?
-            cache.deleteAssetData(owner, encrypted: true)
-        case .image, .thumbnail:
-            // TODO: actually... is there even the unencrypted data to delete?
-            cache.deleteAssetData(owner, format: .medium, encrypted: false)
-        }
     }
 
     func updateWithPreprocessedData(_ preprocessedImageData: Data, imageProperties: ZMIImageProperties) {
