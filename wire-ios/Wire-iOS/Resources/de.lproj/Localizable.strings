@@ -1611,6 +1611,10 @@
 "enroll_e2ei_certificate.certificate_details_button" = "Zertifikatsdetails";
 "enroll_e2ei_certificate.ok_button" = "OK";
 
+// Update e2ei certificate
+"update_e2ei_certificate.title" = "Zertifikat aktualisiert";
+"update_e2ei_certificate.subtitle" = "Zertifikat wurde aktualisiert und Ihr Gerät wurde überprüft.";
+
 "registration.signin.username.title" = "Ihr Benutzername";
 "registration.signin.username.message" = "Geben Sie Ihren Benutzernamen ein. Andere können Sie so leichter in Wire finden und sich mit Ihnen verbinden.";
 "registration.signin.username.placeholder" = "Benutzername";
@@ -1790,26 +1794,22 @@
 "feature_config.alert.mls_e2ei.button.learn_more" = "Mehr erfahren";
 "feature_config.alert.mls_e2ei.button.ok" = "OK";
 "feature_config.alert.mls_e2ei.reminder_message" = "Sie können das Zertifikat in Ihren Wire Einstellungen in der/den nächsten %@ erhalten. Öffnen Sie 'Geräte' und wählen Sie 'Zertifikat erhalten' für Ihr aktuelles Gerät. ";
-
-"failet_to_get_certificate.alert.title" = "Zertifikat konnte nicht ausgestellt werden.";
-"failet_to_get_certificate.alert.message" = "Sie können jetzt erneut versuchen, das Zertifikat zu erhalten, oder Sie erhalten später eine Erinnerung.";
-"failet_to_get_certificate.alert.forced_message" = "Bitte versuchen Sie es erneut oder wenden Sie sich an Ihren Team-Admin.";
-"failet_to_get_certificate.button.retry" = "Wiederholen";
-"failet_to_get_certificate.button.ok" = "OK";
+"feature_config.alert.mls_e2ei.update_message" = "Das Ende-zu-Ende-Identitätszertifikat für dieses Gerät läuft bald ab. Aktualisieren Sie Ihr Zertifikat jetzt, damit Ihre Kommunikation sicher bleibt. Geben Sie im nächsten Schritt die Anmeldedaten Ihres Identity-Providers ein, um das Zertifikat automatisch zu aktualisieren.";
+"feature_config.alert.mls_e2ei.alert.update_certificate.title" = "Ende-zu-Ende-Identitätszertifikat";
+"failed_to_get_certificate.alert.title" = "Zertifikat konnte nicht ausgestellt werden.";
+"failed_to_get_certificate.alert.message" = "Sie können jetzt erneut versuchen, das Zertifikat zu erhalten, oder Sie erhalten später eine Erinnerung.";
+"failed_to_get_certificate.alert.forced_message" = "Bitte versuchen Sie es erneut oder wenden Sie sich an Ihren Team-Admin.";
+"failed_to_get_certificate.button.retry" = "Wiederholen";
+"failed_to_get_certificate.button.ok" = "OK";
 
 // Update end-to-end identity certificate
 "update_certificate.alert.title" = "Zertifikat aktualisieren";
 "update_certificate.alert.message" = "Das Ende-zu-Ende-Identitätszertifikat für dieses Gerät läuft bald ab. Um Ihre Kommunikation auf dem höchsten Sicherheitsniveau zu halten, aktualisieren Sie Ihr Zertifikat jetzt. Geben Sie im nächsten Schritt die Anmeldedaten Ihres Identity-Providers ein, um das Zertifikat automatisch zu aktualisieren.";
+"update_certificate.alert.expired-message" = "Das Ende-zu-Ende-Identitätszertifikat für dieses Gerät ist abgelaufen. Geben Sie im nächsten Schritt die Anmeldedaten Ihres Identity-Providers ein, um das Zertifikat automatisch zu aktualisieren.";
 "update_certificate.button.update_certificate" = "Zertifikat aktualisieren";
-"update_certificate.button.remind_me_later" = "Später erinnern";
-"update_certificate.button.learn_more" = "Mehr erfahren";
 
-"failet_to_update_certificate.alert.title" = "Zertifikat konnte nicht aktualisiert werden.";
-"failet_to_update_certificate.alert.message" = "Sie können jetzt erneut versuchen, das Zertifikat zu aktualisieren, oder Sie erhalten später eine Erinnerung.";
-"failet_to_update_certificate.alert.forced_message" = "Bitte versuchen Sie es erneut oder wenden Sie sich an Ihren Team-Admin.";
-
-"failet_to_update_certificate.button.retry" = "Wiederholen";
-"failet_to_update_certificate.button.ok" = "OK";
+"failed_to_update_certificate.alert.title" = "Zertifikat konnte nicht aktualisiert werden.";
+"failed_to_update_certificate.alert.message" = "Sie können jetzt erneut versuchen, das Zertifikat zu aktualisieren, oder Sie erhalten später eine Erinnerung.";
 
 // Jailbroken alert
 "jailbrokendevice.alert.title" = "Jailbreak erkannt";

@@ -3517,6 +3517,48 @@ class MockFileManagerInterface: FileManagerInterface {
 
 }
 
+public class MockGracePeriodRepositoryInterface: GracePeriodRepositoryInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - fetchGracePeriodEndDate
+
+    public var fetchGracePeriodEndDate_Invocations: [Void] = []
+    public var fetchGracePeriodEndDate_MockMethod: (() -> Date?)?
+    public var fetchGracePeriodEndDate_MockValue: Date??
+
+    public func fetchGracePeriodEndDate() -> Date? {
+        fetchGracePeriodEndDate_Invocations.append(())
+
+        if let mock = fetchGracePeriodEndDate_MockMethod {
+            return mock()
+        } else if let mock = fetchGracePeriodEndDate_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchGracePeriodEndDate`")
+        }
+    }
+
+    // MARK: - storeGracePeriodEndDate
+
+    public var storeGracePeriodEndDate_Invocations: [Date] = []
+    public var storeGracePeriodEndDate_MockMethod: ((Date) -> Void)?
+
+    public func storeGracePeriodEndDate(_ date: Date) {
+        storeGracePeriodEndDate_Invocations.append(date)
+
+        guard let mock = storeGracePeriodEndDate_MockMethod else {
+            fatalError("no mock for `storeGracePeriodEndDate`")
+        }
+
+        mock(date)
+    }
+
+}
+
 public class MockIsSelfUserE2EICertifiedUseCaseProtocol: IsSelfUserE2EICertifiedUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -3880,21 +3922,16 @@ public class MockMLSConversationVerificationStatusUpdating: MLSConversationVerif
     // MARK: - updateAllStatuses
 
     public var updateAllStatuses_Invocations: [Void] = []
-    public var updateAllStatuses_MockError: Error?
-    public var updateAllStatuses_MockMethod: (() async throws -> Void)?
+    public var updateAllStatuses_MockMethod: (() async -> Void)?
 
-    public func updateAllStatuses() async throws {
+    public func updateAllStatuses() async {
         updateAllStatuses_Invocations.append(())
-
-        if let error = updateAllStatuses_MockError {
-            throw error
-        }
 
         guard let mock = updateAllStatuses_MockMethod else {
             fatalError("no mock for `updateAllStatuses`")
         }
 
-        try await mock()
+        await mock()
     }
 
 }
