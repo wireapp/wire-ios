@@ -235,7 +235,7 @@ extension BlockerViewController {
                 Task {
                     await self.enrollCertificateAction()
                 }
-            }
+            } cancelled: {}
         }
 
     }
@@ -247,13 +247,13 @@ extension BlockerViewController {
         else {
             return
         }
-        let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
+        let oauthUseCase = OAuthUseCase(targetViewController: rootViewController)
 
         let certificateChain = try await activeUserSession
             .enrollE2EICertificate
             .invoke(authenticate: oauthUseCase.invoke)
 
-        let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController(lastE2EIdentityUpdateDate: nil)
+        let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
         successEnrollmentViewController.certificateDetails = certificateChain
         successEnrollmentViewController.onOkTapped = { viewController in
             viewController.dismiss(animated: true)

@@ -20,7 +20,7 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol SnoozeCertificateEnrollmentUseCaseProtocol {
-    func invoke() async
+    func invoke(isUpdateMode: Bool) async
 }
 
 final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol {
@@ -50,18 +50,21 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
 
     // MARK: - Methods
 
-    func invoke() async {
-        guard let gracePeriodEndDate else { return }
-
+    /// Schedules recurring actions to check for enrolling or updating E2EI certificate
+    /// - Parameter isUpdateMode: If set to `true`, `checkForE2EICertificateExpiryStatus` to check for updating certificate is scheduled else
+    /// `featureDidChangeNotification` is triggered to check for enrolling the certificate. By default, this is `false`.
+    func invoke(isUpdateMode: Bool = false) async {
+        guard let gracePeriodEndDate else {
+            return
+        }
         let timeProvider = SnoozeTimeProvider()
         let interval = timeProvider.getSnoozeTime(endOfPeriod: gracePeriodEndDate)
-
-        await registerRecurringActionIfNeeded(interval: interval)
+        await registerRecurringActionIfNeeded(isUpdateMode: isUpdateMode, interval: interval)
     }
 
     // MARK: - Helpers
-
-    private func registerRecurringActionIfNeeded(interval: TimeInterval) async {
+    @MainActor
+    private func registerRecurringActionIfNeeded(isUpdateMode: Bool, interval: TimeInterval) async {
         guard e2eiFeature.isEnabled,
               await !selfClientCertificateProvider.hasCertificate else {
             return
@@ -71,9 +74,14 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
             id: actionId,
             interval: interval
         ) {
-            let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled
-            NotificationCenter.default.post(name: .featureDidChangeNotification,
-                                            object: notificationObject)
+            if isUpdateMode {
+                NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
+            } else {
+                // We save the end of the grace period once and should not update it.
+                let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled
+                NotificationCenter.default.post(name: .featureDidChangeNotification,
+                                                object: notificationObject)
+            }
         }
 
         recurringActionService.registerAction(recurringAction)

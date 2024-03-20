@@ -25,10 +25,10 @@ public enum E2EIdentityCertificateStatus: CaseIterable {
 
 public enum E2eIdentityCertificateConstants {
     // current default days the certificate is retained on server
-    public static let serverRetainedDays = Double(28 * TimeInterval.oneDay)
+    public static let serverRetainedDays: TimeInterval = 28 * TimeInterval.oneDay
 
     // Randomising time so that not all clients update certificate at the same time
-    public static let randomInterval = Double(Int.random(in: 0..<Int(TimeInterval.oneDay)))
+    public static let randomInterval: TimeInterval = .random(in: 0..<TimeInterval.oneDay)
 }
 
 @objc public class E2eIdentityCertificate: NSObject {
@@ -40,7 +40,7 @@ public enum E2eIdentityCertificateConstants {
     public var expiryDate: Date
     public var status: E2EIdentityCertificateStatus
     public var serialNumber: String
-    public var comparedDate: Date
+    public var comparedDate: DateProviding
     public var serverStoragePeriod: TimeInterval
     public var randomPeriod: TimeInterval
 
@@ -52,7 +52,7 @@ public enum E2eIdentityCertificateConstants {
         expiryDate: Date,
         certificateStatus: E2EIdentityCertificateStatus,
         serialNumber: String,
-        comparedDate: Date = DateProvider(now: .now).now,
+        comparedDate: DateProviding = SystemDateProvider(),
         serverStoragePeriod: TimeInterval = E2eIdentityCertificateConstants.serverRetainedDays,
         randomPeriod: TimeInterval = E2eIdentityCertificateConstants.randomInterval
     ) {
@@ -81,7 +81,7 @@ public enum E2eIdentityCertificateConstants {
 public extension E2eIdentityCertificate {
 
     private var isExpired: Bool {
-        return expiryDate <= comparedDate
+        return expiryDate <= comparedDate.now
     }
 
     private var isValid: Bool {
@@ -89,16 +89,21 @@ public extension E2eIdentityCertificate {
     }
 
     private var isActivated: Bool {
-        return notValidBefore <= comparedDate
+        return notValidBefore <= comparedDate.now
     }
 
     func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
-        let startUpdateDate = startUpdateDate(with: gracePeriod)
-        return isExpired || (isActivated && comparedDate >= startUpdateDate)
+        let renewalNudgingDate = renewalNudgingDate(with: gracePeriod)
+        return isExpired || (isActivated && comparedDate.now >= renewalNudgingDate)
     }
 
-    func startUpdateDate(with gracePeriod: TimeInterval) -> Date {
-        let timeLeftToUpdate = expiryDate.timeIntervalSince(notValidBefore) - serverStoragePeriod - gracePeriod - randomPeriod
-        return notValidBefore + timeLeftToUpdate
+    /// In order to get `renewalNudgingDate` we should deduct standard deductions from Validity Period (VP) and add it to `notValidBefore` date
+    /// Standard deductions are : Server storage time(HT) , Grace period set by team admin(GP),  Random time in a day(UT)
+    /// Renewal nudging date = VP - (HT + GP + UT)
+    /// Here we calculate it from the other way where we deduct the standard deductions from the expiry date to get the renewal nudging date
+    /// This is done so as to be in sync with Android codebase
+    func renewalNudgingDate(with gracePeriod: TimeInterval) -> Date {
+        let standardDeductionsFromExpiry = serverStoragePeriod + gracePeriod + randomPeriod
+        return expiryDate - standardDeductionsFromExpiry
     }
 }

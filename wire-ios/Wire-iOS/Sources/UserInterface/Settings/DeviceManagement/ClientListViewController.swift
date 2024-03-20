@@ -207,17 +207,14 @@ final class ClientListViewController: UIViewController,
             contextProvider: contextProvider
         )
         viewModel.showCertificateUpdateSuccess = {[weak self] certificateChain in
-            guard let self = self, let lastE2EIUpdateDate = userSession.lastE2EIUpdateDate else {
+            guard let self else {
                 return
             }
             self.updateAllClients {
                 self.updateE2EIdentityCertificateInDetailsView()
             }
 
-            let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController(
-                lastE2EIdentityUpdateDate: lastE2EIUpdateDate,
-                isUpdateMode: true
-            )
+            let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController(isUpdateMode: true)
             successEnrollmentViewController.certificateDetails = certificateChain
             successEnrollmentViewController.onOkTapped = { viewController in
                 viewController.dismiss(animated: true)
@@ -532,6 +529,7 @@ final class ClientListViewController: UIViewController,
         guard
             let userSession,
             let selfMlsGroupID = await userSession.fetchSelfConversationMLSGroupID(),
+            // dangerous access: ZMUserSession.e2eiFeature initialises a FeatureRepository using the viewContext, thus the following line must be executed o the main thread
             userSession.e2eiFeature.isEnabled
         else {
             return

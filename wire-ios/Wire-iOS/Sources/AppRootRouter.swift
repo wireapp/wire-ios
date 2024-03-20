@@ -185,6 +185,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         enqueueTransition(to: appState, completion: completion)
     }
 
+    @MainActor
     private func transition(to appState: AppState, completion: @escaping () -> Void) {
         applicationWillTransition(to: appState)
 
@@ -355,6 +356,7 @@ extension AppRootRouter {
                                completion: completion)
     }
 
+    @MainActor
     private func showAuthenticated(
         userSession: UserSession,
         completion: @escaping () -> Void
@@ -371,9 +373,10 @@ extension AppRootRouter {
         }
 
         self.authenticatedRouter = authenticatedRouter
-
-        rootViewController.set(childViewController: authenticatedRouter.viewController,
-                               completion: completion)
+        rootViewController.set(
+            childViewController: authenticatedRouter.viewController,
+            completion: completion
+        )
     }
 
     private func showSkeleton(fromAccount: Account?, toAccount: Account, completion: @escaping () -> Void) {
@@ -412,7 +415,6 @@ extension AppRootRouter {
 
     private func setupAnalyticsSharing() {
         guard
-            appStateCalculator.wasUnauthenticated,
             let selfUser = SelfUser.provider?.providedSelfUser,
             selfUser.isTeamMember
         else {
@@ -424,6 +426,7 @@ extension AppRootRouter {
         Analytics.shared.provider?.selfUser = selfUser
     }
 
+    @MainActor
     private func buildAuthenticatedRouter(
         account: Account,
         userSession: UserSession
@@ -439,7 +442,6 @@ extension AppRootRouter {
         }
 
         let needToShowDialog = appStateCalculator.wasUnauthenticated && !isTeamMember
-
         return AuthenticatedRouter(
             rootViewController: rootViewController,
             account: account,
@@ -451,7 +453,8 @@ extension AppRootRouter {
                 snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
                 stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
                 gracePeriodEndDate: userSession.gracePeriodEndDate,
-                userSession: userSession,
+                lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
+                e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
                 targetVC: rootViewController),
             e2eiActivationDateRepository: userSession.e2eiActivationDateRepository
         )

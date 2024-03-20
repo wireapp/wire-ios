@@ -19,101 +19,109 @@
 import Foundation
 
 public enum E2EIdentityCertificateUpdateStatus {
-    case noAction, reminder, block
+
+    // Alert was already shown within snooze period, so do not remind user to update certificate
+    case noAction
+
+    // Alert was not  shown within snooze period, so remind user to update certificate
+    case reminder
+
+    // Certificate expired so soft block user to update certificate
+    case block
 }
 
 // sourcery: AutoMockable
-public protocol E2EIdentityCertificateUpdateStatusProtocol {
+public protocol E2EIdentityCertificateUpdateStatusUseCaseProtocol {
     func invoke() async throws -> E2EIdentityCertificateUpdateStatus
 }
-public extension Notification.Name {
-    static let checkForE2EICertificateStatus = NSNotification.Name("CheckForE2EICertificateStatus")
-}
 
-final public class E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusProtocol {
+public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
-    private let e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol
+    private let getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol
     private let gracePeriod: TimeInterval
-    private let comparedDate: Date
-    private let lastAlertDate: Date?
-    private let mlsGroupID: MLSGroupID
+    private let comparedDate: DateProviding
     private let mlsClientID: MLSClientID
+    private var context: NSManagedObjectContext
+    public var lastAlertDate: Date?
 
     public init(
-        e2eCertificateForCurrentClient: GetE2eIdentityCertificatesUseCaseProtocol,
+        getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol,
         gracePeriod: TimeInterval,
-        mlsGroupID: MLSGroupID,
         mlsClientID: MLSClientID,
+        context: NSManagedObjectContext,
         lastAlertDate: Date?,
-        comparedDate: Date = Date.now
+        comparedDate: DateProviding = SystemDateProvider()
     ) {
-        self.e2eCertificateForCurrentClient = e2eCertificateForCurrentClient
+        self.getE2eIdentityCertificates = getE2eIdentityCertificates
         self.gracePeriod = gracePeriod
         self.lastAlertDate = lastAlertDate
-        self.mlsGroupID = mlsGroupID
         self.mlsClientID = mlsClientID
+        self.context = context
         self.comparedDate = comparedDate
     }
 
-    @MainActor
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
-        if let certificate = try await e2eCertificateForCurrentClient.invoke(
-            mlsGroupId: mlsGroupID,
-            clientIds: [mlsClientID]
-        ).first {
 
-            if certificate.expiryDate.isInThePast {
-                return .block
-            }
-            let startUpdateDate = certificate.startUpdateDate(with: gracePeriod)
-            let calendar = Calendar.current
-            let fourHours = .oneHour * 4
-            let fifteenMinutes = .fiveMinutes * 3
-
-            if startUpdateDate > comparedDate && startUpdateDate < certificate.expiryDate {
-                return .noAction
-            }
-
-            let timeLeft = certificate.expiryDate.timeIntervalSince(comparedDate)
-
-            switch timeLeft {
-
-            case  .oneDay ..< .oneWeek:
-                if let lastAlertDate = lastAlertDate, calendar.isDateInToday(lastAlertDate) {
-                    return .noAction
-                }
-                return .reminder
-
-            case fourHours ..< .oneDay:
-                if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < fourHours {
-                    return .noAction
-                }
-                return .reminder
-
-            case .oneHour ..< fourHours:
-                if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < .oneHour {
-                    return .noAction
-                }
-                return .reminder
-
-            case fifteenMinutes ..< .oneHour:
-                if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < fifteenMinutes {
-                    return .noAction
-                }
-                return .reminder
-
-            case 1 ..< fifteenMinutes:
-                if let lastAlertDate = lastAlertDate, abs(lastAlertDate.timeIntervalSinceNow) < .fiveMinutes {
-                    return .noAction
-                }
-                return .reminder
-
-            default:
-                return .noAction
-            }
-
+        let selfMLSConversationGroupID = await context.perform {
+            ZMConversation.fetchSelfMLSConversation(in: context)?.mlsGroupID
         }
-        return .noAction
-    }
+        guard let selfMLSConversationGroupID else {
+            WireLogger.e2ei.warn("Failed to get MLS group ID of the self-MLS-conversation.")
+            return .noAction
+        }
 
+        let certificate = try await getE2eIdentityCertificates.invoke(mlsGroupId: selfMLSConversationGroupID, clientIds: [mlsClientID]).first
+        guard let certificate else {
+            WireLogger.e2ei.warn("Failed to get the certificate for the self-MLS-conversation.")
+            return .noAction
+        }
+
+        if certificate.expiryDate.isInThePast {
+            return .block
+        }
+
+        let renewalNudgingDate = certificate.renewalNudgingDate(with: gracePeriod)
+        if renewalNudgingDate > comparedDate.now && renewalNudgingDate < certificate.expiryDate {
+            return .noAction
+        }
+
+        let fourHours = .oneHour * 4
+        let fifteenMinutes = .fiveMinutes * 3
+
+        let timeLeftUntilExpiration = certificate.expiryDate.timeIntervalSince(comparedDate.now)
+        let maxTimeLeft = max(timeLeftUntilExpiration, TimeInterval.oneWeek)
+
+        // Sets recurrring actions to check for the next reminder to update the certificate
+        let snoozeTimeProvider = SnoozeTimeProvider()
+        let snoozeTime = snoozeTimeProvider.getSnoozeTime(endOfPeriod: certificate.expiryDate)
+
+        // If not alert was shown before, show a reminder
+        guard let lastAlertDate else {
+            return .reminder
+        }
+
+        // this value would be negative as alert is shown in the past. Hence getting a positive value
+        let lastAlertTimeInterval = abs(lastAlertDate.timeIntervalSinceNow)
+
+        switch timeLeftUntilExpiration {
+
+        case .oneDay ..< maxTimeLeft where lastAlertTimeInterval > .oneDay:
+            return .reminder
+
+        case fourHours ..< .oneDay where lastAlertTimeInterval > fourHours:
+            return .reminder
+
+        case .oneHour ..< fourHours where lastAlertTimeInterval > .oneHour:
+            return .reminder
+
+        case fifteenMinutes ..< .oneHour where lastAlertTimeInterval > fifteenMinutes:
+            return .reminder
+
+        case 0 ..< fifteenMinutes where lastAlertTimeInterval > .fiveMinutes:
+            return .reminder
+
+        default:
+            return .noAction
+        }
+    }
 }

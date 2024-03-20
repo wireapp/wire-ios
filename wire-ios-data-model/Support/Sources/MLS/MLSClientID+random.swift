@@ -16,16 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
-extension DateProviding where Self == SystemDateProvider {
-    /// Returns a new instance of `SystemDateProvider`.
-    public static var system: Self { .init() }
-}
+extension MLSClientID {
 
-/// Provides date values based on the system clock.
-public struct SystemDateProvider: DateProviding {
-    public var now: Date { .now }
-
-    public init() {}
+    public static func random() -> Self {
+        .init(
+            userID: UUID().transportString(),
+            clientID: .randomAlphanumerical(length: 8),
+            domain: .randomDomain()
+        )
+    }
 }

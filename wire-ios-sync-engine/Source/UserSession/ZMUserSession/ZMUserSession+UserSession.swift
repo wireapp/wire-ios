@@ -302,20 +302,18 @@ extension ZMUserSession: UserSession {
         }
     }
 
+    //gracePeriod: Double(e2eiFeature.config.verificationExpiration),
     @MainActor
-    public func e2eIdentityUpdateCertificateUpdateStatus() async -> E2EIdentityCertificateUpdateStatusProtocol? {
-        guard let mlsGroupID = await self.fetchSelfConversationMLSGroupID(), let selfMLSClientID else {
-            return nil
-        }
-        var updateE2EICertificate: E2EIdentityCertificateUpdateStatusProtocol = E2EIdentityCertificateUpdateStatusUseCase(
-            e2eCertificateForCurrentClient: getE2eIdentityCertificates,
-            gracePeriod: Double(e2eiFeature.config.verificationExpiration),
-            mlsGroupID: mlsGroupID,
-            mlsClientID: selfMLSClientID,
-            lastAlertDate: lastE2EIUpdateDate?.fetchLastAlertDate()
-        )
+    public func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
+        guard let selfUserClient, let selfMLSClientID = MLSClientID(userClient: selfUserClient) else { return nil }
 
-        return updateE2EICertificate
+        return E2EIdentityCertificateUpdateStatusUseCase(
+            getE2eIdentityCertificates: getE2eIdentityCertificates,
+            gracePeriod: TimeInterval(e2eiFeature.config.verificationExpiration), // the feature repository should better be injected into the use case
+            mlsClientID: selfMLSClientID,
+            context: syncContext,
+            lastAlertDate: lastE2EIUpdateDateRepository?.fetchLastAlertDate()
+        )
     }
 }
 

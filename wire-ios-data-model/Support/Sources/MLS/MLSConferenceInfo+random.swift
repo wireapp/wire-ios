@@ -16,16 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@testable import WireDataModel
 
-extension DateProviding where Self == SystemDateProvider {
-    /// Returns a new instance of `SystemDateProvider`.
-    public static var system: Self { .init() }
+extension MLSConferenceInfo {
+
+    public static func random() -> Self {
+        .init(
+            epoch: .random(in: (.min)...(.max)),
+            keyData: Data.random(byteCount: 8),
+            members: [.random()]
+        )
+    }
 }
 
-/// Provides date values based on the system clock.
-public struct SystemDateProvider: DateProviding {
-    public var now: Date { .now }
+extension MLSConferenceInfo.Member {
 
-    public init() {}
+    public static func random() -> Self {
+        .init(
+            id: .random(),
+            isInSubconversation: .random()
+        )
+    }
 }

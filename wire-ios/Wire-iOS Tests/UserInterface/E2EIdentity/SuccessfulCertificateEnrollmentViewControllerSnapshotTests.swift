@@ -22,13 +22,13 @@ import XCTest
 
 final class SuccessfulCertificateEnrollmentViewControllerSnapshotTests: BaseSnapshotTestCase {
 
-    func testThatItShouldShowAppriateMessage_WhenEnrolE2eIdentityIsSuccessful() {
-        let sut = SuccessfulCertificateEnrollmentViewController(lastE2EIdentityUpdateDate: nil, isUpdateMode: false)
+    func testThatItShouldShowAppropriateMessage_WhenEnrolE2eIdentityIsSuccessful() {
+        let sut = SuccessfulCertificateEnrollmentViewController(isUpdateMode: false)
         verify(matching: sut)
     }
 
-    func testThatItShouldShowAppriateMessage_WhenUpdateE2eIdentityIsSuccessful() {
-        let sut = SuccessfulCertificateEnrollmentViewController(lastE2EIdentityUpdateDate: nil, isUpdateMode: true)
+    func testThatItShouldShowAppropriateMessage_WhenUpdateE2eIdentityIsSuccessful() {
+        let sut = SuccessfulCertificateEnrollmentViewController(isUpdateMode: true)
         verify(matching: sut)
     }
 }
