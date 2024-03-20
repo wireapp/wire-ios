@@ -157,8 +157,12 @@ final class OneOnOneMigratorTests: XCTestCase {
         )
 
         // required to add be able to add images
+        let cacheLocation = try XCTUnwrap(
+            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+        )
+
         await uiMOC.perform {
-            self.uiMOC.zm_fileAssetCache = .init()
+            self.uiMOC.zm_fileAssetCache = FileAssetCache(location: cacheLocation)
         }
 
         // When

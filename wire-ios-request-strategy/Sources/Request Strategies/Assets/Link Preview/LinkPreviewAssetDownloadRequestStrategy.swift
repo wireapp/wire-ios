@@ -84,7 +84,7 @@ import Foundation
         _ response: ZMTransportResponse!,
         forMessage message: ZMClientMessage
     ) {
-        guard 
+        guard
             response.result == .success,
             let cache = managedObjectContext.zm_fileAssetCache
         else {
@@ -92,7 +92,7 @@ import Foundation
         }
 
         let linkPreview = message.underlyingMessage?.linkPreviews.first
-        
+
         guard
             let remote = linkPreview?.image.uploaded,
             let data = response.rawData 

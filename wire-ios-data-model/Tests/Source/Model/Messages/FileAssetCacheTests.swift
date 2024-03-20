@@ -17,42 +17,67 @@
 // 
 
 import XCTest
+import WireDataModelSupport
 @testable import WireDataModel
 
-class FileAssetCacheTests: BaseZMMessageTests {
-    override func setUp() {
-        super.setUp()
-        createSelfClient()
-        FileAssetCache().wipeCaches()
+class FileAssetCacheTests: XCTestCase {
+
+    var sut: FileAssetCache!
+    var location: URL!
+    var coreDataStack: CoreDataStack!
+
+    var coreDataStackHelper: CoreDataStackHelper!
+    var modelHelper: ModelHelper!
+
+    var context: NSManagedObjectContext {
+        return coreDataStack.viewContext
     }
 
-    override func tearDown() {
-        FileAssetCache().wipeCaches()
-        super.tearDown()
+    override func setUp() async throws {
+        try await super.setUp()
+        coreDataStackHelper = CoreDataStackHelper()
+        modelHelper = ModelHelper()
+
+        coreDataStack = try await coreDataStackHelper.createStack()
+
+        await context.perform {
+            self.modelHelper.createSelfUser(in: self.context)
+            self.modelHelper.createSelfClient(in: self.context)
+        }
+
+        location = try XCTUnwrap(
+            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+        )
+
+        try FileManager.default.removeItemIfExists(at: location!)
+        sut = FileAssetCache(location: location!)
     }
 
-    fileprivate func createMessageForCaching() -> ZMConversationMessage {
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+    override func tearDown() async throws {
+        try FileManager.default.removeItemIfExists(at: location!)
+        try coreDataStackHelper.cleanupDirectory()
+        sut = nil
+        location = nil
+        coreDataStack = nil
+        coreDataStackHelper = nil
+        modelHelper = nil
+        try await super.tearDown()
+    }
+
+    private func createMessageForCaching() -> ZMConversationMessage {
+        let conversation = ZMConversation.insertNewObject(in: context)
         conversation.remoteIdentifier = UUID()
-
-        let message = try! conversation.appendText(content: "123")
-
-        return message
+        return try! conversation.appendText(content: "123")
     }
 
-    fileprivate func testData() -> Data {
+    private func testData() -> Data {
         return Data.secureRandomData(ofLength: 2000)
     }
 
-}
+    // MARK: - Storing and retrieving image assets
 
-// MARK: - Storing and retrieving image assets
-extension FileAssetCacheTests {
-
-    func testThatStoringAndRetrievingAssetsWithDifferentOptionsRetrievesTheRightData() {
-
+    func testThatStoringAndRetrievingAssetsWithDifferentOptionsRetrievesTheRightData() throws {
         // given
-        let sut = FileAssetCache()
         let message1 = createMessageForCaching()
         let message2 = createMessageForCaching()
         let data1_plain = "data1_plain".data(using: String.Encoding.utf8)!
@@ -79,7 +104,6 @@ extension FileAssetCacheTests {
 
     func testThatCreationDateIsLinkedToMessageServerTimestamp() throws {
         // given
-        let sut = FileAssetCache()
         let message = createMessageForCaching() as! ZMClientMessage
         message.serverTimestamp = Date(timeIntervalSinceReferenceDate: 1000)
 
@@ -87,7 +111,8 @@ extension FileAssetCacheTests {
         sut.storeAssetData(message, encrypted: false, data: "data1_plain".data(using: String.Encoding.utf8)!)
 
         // then
-        let attributes = try FileManager.default.attributesOfItem(atPath: sut.accessAssetURL(message)!.path)
+        let url = try XCTUnwrap(sut.accessAssetURL(message))
+        let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
         let creationDate = attributes[.creationDate] as? Date
         XCTAssertEqual(creationDate, message.serverTimestamp)
     }
@@ -95,7 +120,6 @@ extension FileAssetCacheTests {
     func testThatHasDataOnDisk() {
 
         // given
-        let sut = FileAssetCache()
         let message = createMessageForCaching()
         sut.storeAssetData(message, encrypted: false, data: testData())
 
@@ -109,7 +133,6 @@ extension FileAssetCacheTests {
     func testThatHasNoDataOnDiskWithWrongEncryptionFlag() {
 
         // given
-        let sut = FileAssetCache()
         let message = createMessageForCaching()
         sut.storeAssetData(message, encrypted: false, data: testData())
 
@@ -123,7 +146,6 @@ extension FileAssetCacheTests {
     func testThatRetrievingMissingAssetsUUIDReturnsNil() {
 
         // given
-        let sut = FileAssetCache()
         let message1 = createMessageForCaching()
         let message2 = createMessageForCaching()
         sut.storeAssetData(message1, encrypted: false, data: testData())
@@ -138,7 +160,6 @@ extension FileAssetCacheTests {
     func testThatHasNoDataOnDiskWithWrongUUID() {
 
         // given
-        let sut = FileAssetCache()
         let message1 = createMessageForCaching()
         let message2 = createMessageForCaching()
         sut.storeAssetData(message1, encrypted: false, data: testData())
@@ -150,15 +171,15 @@ extension FileAssetCacheTests {
         XCTAssertFalse(data)
     }
 
-    func testThatAssetsAreLoadedAcrossInstances() {
+    func testThatAssetsAreLoadedAcrossInstances() throws {
         // given
         let message = createMessageForCaching()
         let data = testData()
-        let sut = FileAssetCache()
         sut.storeAssetData(message, encrypted: false, data: data)
 
         // when
-        let extractedData = FileAssetCache().assetData(message, encrypted: false)
+        let newSUT = FileAssetCache(location: location)
+        let extractedData = newSUT.assetData(message, encrypted: false)
 
         // then
         XCTAssertEqual(extractedData, data)
@@ -169,7 +190,6 @@ extension FileAssetCacheTests {
         // given
         let message = createMessageForCaching()
         let data = testData()
-        let sut = FileAssetCache()
         sut.storeAssetData(message, encrypted: false, data: data)
 
         // when
@@ -186,7 +206,6 @@ extension FileAssetCacheTests {
         let message1 = createMessageForCaching()
         let message2 = createMessageForCaching()
         let data = testData()
-        let sut = FileAssetCache()
         sut.storeAssetData(message1, encrypted: true, data: data)
         sut.storeAssetData(message1, encrypted: false, data: data)
 
@@ -204,7 +223,6 @@ extension FileAssetCacheTests {
     func testThatItDeletesAssets_WhenAssetIsOlderThanGivenDate() {
         let message = createMessageForCaching()
         let data = testData()
-        let sut = FileAssetCache()
         sut.storeAssetData(message, encrypted: false, data: data)
 
         // when
@@ -217,7 +235,6 @@ extension FileAssetCacheTests {
     func testThatItKeepsAssets_WhenAssetIsNewerThanGivenDate() {
         let message = createMessageForCaching()
         let data = testData()
-        let sut = FileAssetCache()
         sut.storeAssetData(message, encrypted: false, data: data)
 
         // when
@@ -226,14 +243,10 @@ extension FileAssetCacheTests {
         // then
         XCTAssertNotNil(sut.assetData(message, encrypted: false))
     }
-}
-
-extension FileAssetCacheTests {
 
     func testThatItDoesNotDecryptAFileThatDoesNotExistSHA256() {
 
         // given
-        let sut = FileAssetCache()
         let message = createMessageForCaching()
 
         // when
@@ -248,7 +261,6 @@ extension FileAssetCacheTests {
 
         // given
         let message = createMessageForCaching()
-        let sut = FileAssetCache()
         sut.storeAssetData(message, encrypted: true, data: testData())
 
         // when
@@ -264,7 +276,6 @@ extension FileAssetCacheTests {
     func testThatItDoesDecryptAndDeletesAFileWithTheRightSHA256() throws {
 
         // given
-        let sut = FileAssetCache()
         let message = createMessageForCaching()
         let plainTextData = Data.secureRandomData(ofLength: 500)
         let key = Data.randomEncryptionKey()
@@ -280,15 +291,12 @@ extension FileAssetCacheTests {
         let decryptedData = sut.assetData(message, encrypted: false)
         XCTAssertEqual(decryptedData, plainTextData)
     }
-}
 
-// MARK: - File encryption
-extension FileAssetCacheTests {
+    // MARK: - File encryption
 
     func testThatReturnsNilWhenEncryptingAMissingFileWithSHA256() {
 
         // given
-        let sut = FileAssetCache()
         let message = createMessageForCaching()
 
         // when
@@ -302,7 +310,6 @@ extension FileAssetCacheTests {
     func testThatItCreatesTheEncryptedFileAndDeletesThePlainTextWithSHA256() {
 
         // given
-        let sut = FileAssetCache()
         let message = createMessageForCaching()
         let plainData = Data.secureRandomData(ofLength: 500)
 
@@ -318,7 +325,6 @@ extension FileAssetCacheTests {
 
     func testThatItReturnsCorrectEncryptionResultWithSHA256() {
         // given
-        let sut = FileAssetCache()
         let message = createMessageForCaching()
         let plainData = Data.secureRandomData(ofLength: 500)
 
@@ -338,15 +344,12 @@ extension FileAssetCacheTests {
             }
         }
     }
-}
 
-// MARK: - Image encryption
-extension FileAssetCacheTests {
+    // MARK: - Image encryption
 
     func testThatReturnsNilWhenEncryptingAMissingImageWithSHA256() {
 
         // given
-        let sut = FileAssetCache()
         let message = createMessageForCaching()
 
         // when
@@ -360,7 +363,6 @@ extension FileAssetCacheTests {
     func testThatItCreatesTheEncryptedImageAndDeletesThePlainTextWithSHA256() {
 
         // given
-        let sut = FileAssetCache()
         let message = createMessageForCaching()
         let plainData = Data.secureRandomData(ofLength: 500)
 
@@ -376,7 +378,6 @@ extension FileAssetCacheTests {
 
     func testThatItReturnsCorrectEncryptionImageResultWithSHA256() {
         // given
-        let sut = FileAssetCache()
         let message = createMessageForCaching()
         let plainData = Data.secureRandomData(ofLength: 500)
 
@@ -396,13 +397,10 @@ extension FileAssetCacheTests {
             }
         }
     }
-}
 
-// MARK: - File urls
-extension FileAssetCacheTests {
+    // MARK: - File urls
 
     func testThatItStoresTheRequestDataAndReturnsTheFileURL() {
-        let sut = FileAssetCache()
         let message = createMessageForCaching()
         let requestData = Data.secureRandomData(ofLength: 500)
 
@@ -416,7 +414,6 @@ extension FileAssetCacheTests {
     }
 
     func testThatItDeletesTheRequestData() {
-        let sut = FileAssetCache()
         let message = createMessageForCaching()
         let requestData = Data.secureRandomData(ofLength: 500)
 
@@ -435,24 +432,36 @@ extension FileAssetCacheTests {
     // MARK: - FileAssetCache
 
     func testThatItReturnsCorrectEncryptionTeamLogoResultWithSHA256() {
-
-        syncMOC.performGroupedBlockAndWait {
+        let syncContext = coreDataStack.syncContext
+        syncContext.performGroupedBlockAndWait {
             // given
-            let sut = FileAssetCache()
-            let team = Team.mockTeam(context: self.syncMOC)
+            let team = Team.mockTeam(context: syncContext)
             let assetId = UUID.create().transportString(), assetKey = UUID.create().transportString()
             team.pictureAssetId = assetId
             team.pictureAssetKey = assetKey
 
             let plainData = self.testData()
 
-            sut.storeAssetData(for: team, format: .medium, encrypted: false, data: plainData)
+            self.sut.storeAssetData(
+                for: team,
+                format: .medium,
+                encrypted: false,
+                data: plainData
+            )
 
             // when
-            let encryptionKeys = sut.encryptImageAndComputeSHA256Digest(for: team, format: .medium)
+            let encryptionKeys = self.sut.encryptImageAndComputeSHA256Digest(
+                for: team,
+                format: .medium
+            )
 
             // then
-            let encryptedData = sut.assetData(for: team, format: .medium, encrypted: true)
+            let encryptedData = self.sut.assetData(
+                for: team,
+                format: .medium,
+                encrypted: true
+            )
+
             AssertOptionalNotNil(encryptionKeys, "Result") { result in
                 AssertOptionalNotNil(encryptedData, "Encrypted data") { encryptedData in
                     let decodedData = encryptedData.zmDecryptPrefixedPlainTextIV(key: result.otrKey)
@@ -463,7 +472,11 @@ extension FileAssetCacheTests {
             }
 
             // when
-            let decryptResult = sut.decryptImageIfItMatchesDigest(for: team, format: .medium, encryptionKey: encryptionKeys!.otrKey)
+            let decryptResult = self.sut.decryptImageIfItMatchesDigest(
+                for: team,
+                format: .medium,
+                encryptionKey: encryptionKeys!.otrKey
+            )
 
             // then
             XCTAssert(decryptResult)
@@ -471,23 +484,25 @@ extension FileAssetCacheTests {
     }
 
     func testThatHasDataOnDiskForTeam() {
-
         // given
-        let sut = FileAssetCache()
-        syncMOC.performGroupedBlockAndWait {
-
-            let team = Team.mockTeam(context: self.syncMOC)
+        let syncContext = coreDataStack.syncContext
+        syncContext.performGroupedBlockAndWait {
+            let team = Team.mockTeam(context: syncContext)
             team.pictureAssetId = "abc123"
 
-            sut.storeAssetData(for: team,
-                               format: .medium,
-                               encrypted: false,
-                               data: self.testData())
+            self.sut.storeAssetData(
+                for: team,
+                format: .medium,
+                encrypted: false,
+                data: self.testData()
+            )
 
             // when
-            let data = sut.hasDataOnDisk(for: team,
-                                         format: .medium,
-                                         encrypted: false)
+            let data = self.sut.hasDataOnDisk(
+                for: team,
+                format: .medium,
+                encrypted: false
+            )
 
             // then
             XCTAssert(data)
@@ -495,28 +510,44 @@ extension FileAssetCacheTests {
     }
 
     func testThatItDeletesAnExistingAssetDataForTeam() {
-
-        syncMOC.performGroupedBlockAndWait {
+        let syncContext = coreDataStack.syncContext
+        syncContext.performGroupedBlockAndWait {
             // given
-            let team = Team.mockTeam(context: self.syncMOC)
+            let team = Team.mockTeam(context: syncContext)
             team.pictureAssetId = "abc123"
-            let sut = FileAssetCache()
-            sut.storeAssetData(for: team,
-                               format: .medium,
-                               encrypted: false,
-                               data: self.testData())
+
+            self.sut.storeAssetData(
+                for: team,
+                format: .medium,
+                encrypted: false,
+                data: self.testData()
+            )
 
             // when
-            sut.deleteAssetData(for: team,
-                                format: .medium,
-                                encrypted: false)
-            let extractedData = sut.assetData(for: team,
-                                              format: .medium,
-                                              encrypted: false)
+            self.sut.deleteAssetData(
+                for: team,
+                format: .medium,
+                encrypted: false
+            )
+
+            let extractedData = self.sut.assetData(
+                for: team,
+                format: .medium,
+                encrypted: false
+            )
 
             // then
             XCTAssertNil(extractedData)
         }
+    }
+
+}
+
+extension FileManager {
+
+    func removeItemIfExists(at url: URL) throws {
+        guard fileExists(atPath: url.path) else { return }
+        try removeItem(atPath: url.path)
     }
 
 }

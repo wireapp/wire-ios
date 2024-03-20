@@ -193,7 +193,20 @@ extension V3Asset: AssetProxyType {
     }
 
     public var fileURL: URL? {
-        return moc.zm_fileAssetCache.accessAssetURL(assetClientMessage)
+        if moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, encrypted: true) {
+            guard let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded else {
+                return nil
+            }
+
+            return moc.zm_fileAssetCache.temporaryURLForDecryptedFile(
+                for: assetClientMessage,
+                encryptionKey: asset.otrKey
+            )
+        } else if moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, encrypted: false) {
+            return moc.zm_fileAssetCache.accessAssetURL(assetClientMessage)
+        } else {
+            return nil
+        }
     }
 
     public func requestFileDownload() {

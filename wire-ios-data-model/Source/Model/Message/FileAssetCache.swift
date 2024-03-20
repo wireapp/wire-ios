@@ -45,7 +45,9 @@ extension NSManagedObjectContext {
 @objcMembers
 open class FileAssetCache: NSObject {
 
+    // TODO: purge temp cache when app goes to bg / fg
     private let fileCache: FileCache
+    private let tempCache: FileCache
 
     var cache: Cache {
         return fileCache
@@ -53,10 +55,10 @@ open class FileAssetCache: NSObject {
 
     /// Creates an asset cache.
 
-    public init(
-        location: URL? = nil
-    ) {
-        fileCache = FileCache(name: "files", location: location)
+    public init(location: URL) {
+        let tempLocation = location.appendingPathComponent("temp")
+        fileCache = FileCache(location: location)
+        tempCache = FileCache(location: tempLocation)
         super.init()
     }
 
@@ -697,6 +699,61 @@ public extension FileAssetCache {
         )
     }
 
+    func storeEncryptedFile(
+        data: Data,
+        for message: ZMConversationMessage
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            encrypted: true
+        ) else {
+            return
+        }
+
+        cache.storeAssetData(
+            data,
+            key: key,
+            createdAt: message.serverTimestamp ?? Date()
+        )
+    }
+
+    func temporaryURLForDecryptedFile(
+        for message: ZMConversationMessage,
+        encryptionKey: Data
+    ) -> URL? {
+        guard let unencryptedKey = Self.cacheKeyForAsset(
+            message,
+            encrypted: false
+        ) else {
+            return nil
+        }
+
+        // We already have a temp url for the decrypted asset.
+        if let url = tempCache.assetURL(unencryptedKey) {
+            return url
+        }
+
+        // We need to decrypt the asset and store it in temp.
+        guard
+            let encryptedKey = Self.cacheKeyForAsset(
+                message,
+                encrypted: true
+            ),
+            let encryptedData = cache.assetData(encryptedKey),
+            let decryptedData = encryptedData.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
+        else {
+            return nil
+        }
+
+        tempCache.storeAssetData(
+            decryptedData,
+            key: unencryptedKey,
+            createdAt: message.serverTimestamp ?? Date()
+        )
+
+        return tempCache.assetURL(unencryptedKey)
+    }
+
     // MARK: - Upload request data
 
     func storeTransportData(
@@ -741,6 +798,7 @@ public extension FileAssetCache {
     /// This is intended for testing
     func wipeCaches() {
         fileCache.wipeCaches()
+        tempCache.wipeCaches()
     }
 }
 
@@ -762,23 +820,12 @@ private struct FileCache: Cache {
     private let cacheFolderURL: URL
 
     /// Create FileCahe
-    /// - parameter name: name of the cache
-    /// - parameter location: where cache is persisted on disk. Defaults to caches directory if nil.
-    init(name: String, location: URL? = nil) {
+    /// - parameter location: where cache is persisted on disk.
 
-        // Create cache at the provided location or in the defalt caches directory if omitted
-        if let cacheFolderURL = location {
-            self.cacheFolderURL = cacheFolderURL
-        } else if let cacheFolderURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first {
-            self.cacheFolderURL = cacheFolderURL
-        } else {
-            fatal("Can't find/access caches directory")
-        }
-
-        logger.debug("created cache at: \(cacheFolderURL)")
-
-        // create and set attributes
+    init(location: URL) {
+        cacheFolderURL = location
         FileManager.default.createAndProtectDirectory(at: cacheFolderURL)
+        logger.debug("created cache at: \(cacheFolderURL)")
     }
 
     func assetData(_ key: String) -> Data? {
