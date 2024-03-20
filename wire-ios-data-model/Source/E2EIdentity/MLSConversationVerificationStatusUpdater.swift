@@ -45,7 +45,7 @@ public class MLSConversationVerificationStatusUpdater: MLSConversationVerificati
     // MARK: - Public interface
 
     public func updateAllStatuses() async {
-        WireLogger.ear.info("updating all MLS conversations verification status")
+        WireLogger.e2ei.info("updating all MLS conversations verification status")
 
         let groupIDConversationTuples: [(MLSGroupID, ZMConversation)] = await syncContext.perform { [self] in
             let conversations = ZMConversation.fetchMLSConversations(in: syncContext)
