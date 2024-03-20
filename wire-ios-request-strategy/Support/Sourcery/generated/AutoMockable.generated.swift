@@ -430,24 +430,6 @@ public class MockE2EIKeyPackageRotating: E2EIKeyPackageRotating {
         try await mock(enrollment, certificateChain)
     }
 
-    // MARK: - onNewCRLsDistributionPoints
-
-    public var onNewCRLsDistributionPoints_Invocations: [Void] = []
-    public var onNewCRLsDistributionPoints_MockMethod: (() -> AnyPublisher<CRLsDistributionPoints, Never>)?
-    public var onNewCRLsDistributionPoints_MockValue: AnyPublisher<CRLsDistributionPoints, Never>?
-
-    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
-        onNewCRLsDistributionPoints_Invocations.append(())
-
-        if let mock = onNewCRLsDistributionPoints_MockMethod {
-            return mock()
-        } else if let mock = onNewCRLsDistributionPoints_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `onNewCRLsDistributionPoints`")
-        }
-    }
-
 }
 public class MockE2eIAPI: E2eIAPI {
 

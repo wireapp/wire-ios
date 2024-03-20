@@ -29,8 +29,6 @@ public protocol E2EIKeyPackageRotating {
         certificateChain: String
     ) async throws
 
-    func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never>
-
 }
 
 public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
@@ -50,7 +48,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
     private let context: NSManagedObjectContext
     private let commitSender: CommitSending
     private let newKeyPackageCount: UInt32 = 100
-    private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
+    private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -64,11 +62,13 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         coreCryptoProvider: CoreCryptoProviderProtocol,
         conversationEventProcessor: ConversationEventProcessorProtocol,
         context: NSManagedObjectContext,
+        onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>,
         commitSender: CommitSending? = nil
     ) {
         self.coreCryptoProvider = coreCryptoProvider
         self.conversationEventProcessor = conversationEventProcessor
         self.context = context
+        self.onNewCRLsDistributionPointsSubject = onNewCRLsDistributionPointsSubject
         self.commitSender = commitSender ?? CommitSender(
             coreCryptoProvider: coreCryptoProvider,
             notificationContext: context.notificationContext
@@ -119,10 +119,6 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
         if let newDistributionPoints = CRLsDistributionPoints(from: rotateBundle.crlNewDistributionPoints) {
             onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
         }
-    }
-
-    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
-        onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
     }
 
     // MARK: - Helpers

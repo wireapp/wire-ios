@@ -37,8 +37,11 @@ class E2EIServiceTests: ZMConversationTestsBase {
         mockSafeCoreCrypto = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
-        sut = E2EIService(e2eIdentity: mockE2eIdentity,
-                          coreCryptoProvider: mockCoreCryptoProvider)
+        sut = E2EIService(
+            e2eIdentity: mockE2eIdentity,
+            coreCryptoProvider: mockCoreCryptoProvider,
+            onNewCRLsDistributionPointsSubject: .init()
+        )
     }
 
     override func tearDown() {
