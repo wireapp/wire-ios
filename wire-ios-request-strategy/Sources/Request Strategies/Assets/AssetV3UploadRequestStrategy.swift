@@ -155,20 +155,37 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         return ZMUpstreamRequest(keys: [#keyPath(ZMAssetClientMessage.transferState)], transportRequest: request)
     }
 
-    public func updateUpdatedObject(_ managedObject: ZMManagedObject, requestUserInfo: [AnyHashable: Any]? = nil, response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
+    public func updateUpdatedObject(
+        _ managedObject: ZMManagedObject,
+        requestUserInfo: [AnyHashable: Any]? = nil,
+        response: ZMTransportResponse,
+        keysToParse: Set<String>
+    ) -> Bool {
+        guard 
+            response.result == .success,
+            let message = managedObject as? ZMAssetClientMessage,
+            let asset = message.assets.first(where: { !$0.isUploaded })
+        else {
+            return false
+        }
 
-        guard response.result == .success else { return false }
-        guard let message = managedObject as? ZMAssetClientMessage else { return false }
-        guard let asset = message.assets.first(where: { !$0.isUploaded }) else {return false }
-        guard let payload = response.payload?.asDictionary(),
-              let assetId = payload["key"] as? String else {
+        guard 
+            let payload = response.payload?.asDictionary(),
+            let assetId = payload["key"] as? String
+        else {
             fatal("No asset ID present in payload")
         }
 
         let token = payload["token"] as? String
         let domain = payload["domain"] as? String
 
-        asset.updateWithAssetId(assetId, token: token, domain: domain)
+        asset.updateWithAssetId(
+            assetId,
+            token: token,
+            domain: domain
+        )
+
+        managedObjectContext.zm_fileAssetCache.deleteTransportData(for: message)
 
         if message.processingState == .done {
             message.updateTransferState(.uploaded, synchronize: false)
@@ -179,18 +196,31 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         }
     }
 
-    public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject,
-                                             request upstreamRequest: ZMUpstreamRequest,
-                                             response: ZMTransportResponse,
-                                             keysToParse keys: Set<String>) -> Bool {
-        guard let message = managedObject as? ZMAssetClientMessage else { return false }
+    public func shouldRetryToSyncAfterFailed(
+        toUpdate managedObject: ZMManagedObject,
+        request upstreamRequest: ZMUpstreamRequest,
+        response: ZMTransportResponse,
+        keysToParse keys: Set<String>
+    ) -> Bool {
+        guard let message = managedObject as? ZMAssetClientMessage else {
+            return false
+        }
+
         message.expire()
+        managedObjectContext.zm_fileAssetCache.deleteTransportData(for: message)
         return false
     }
 
-    public func requestExpired(for managedObject: ZMManagedObject, forKeys keys: Set<String>) {
-        guard let message = managedObject as? ZMAssetClientMessage else { return  }
+    public func requestExpired(
+        for managedObject: ZMManagedObject,
+        forKeys keys: Set<String>
+    ) {
+        guard let message = managedObject as? ZMAssetClientMessage else {
+            return
+        }
+
         message.expire()
+        managedObjectContext.zm_fileAssetCache.deleteTransportData(for: message)
         return
     }
 

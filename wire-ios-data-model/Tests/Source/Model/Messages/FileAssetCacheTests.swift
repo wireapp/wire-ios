@@ -407,7 +407,7 @@ extension FileAssetCacheTests {
         let requestData = Data.secureRandomData(ofLength: 500)
 
         // when
-        let assetURL = sut.storeRequestData(message, data: requestData)
+        let assetURL = sut.storeTransportData(requestData, for: message)
 
         // then
         guard let url = assetURL else { return XCTFail() }
@@ -421,8 +421,8 @@ extension FileAssetCacheTests {
         let requestData = Data.secureRandomData(ofLength: 500)
 
         // when
-        let assetURL = sut.storeRequestData(message, data: requestData)
-        sut.deleteRequestData(message)
+        let assetURL = sut.storeTransportData(requestData, for: message)
+        sut.deleteTransportData(for: message)
 
         // then
         XCTAssertNotNil(assetURL)

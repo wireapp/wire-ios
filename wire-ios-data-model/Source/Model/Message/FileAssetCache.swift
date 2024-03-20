@@ -279,19 +279,6 @@ open class FileAssetCache: NSObject {
         return cache.assetURL(key)
     }
 
-    /// Returns the asset URL for a given message.
-
-    open func accessRequestURL(_ message: ZMConversationMessage) -> URL? {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            identifier: "request"
-        ) else {
-            return nil
-        }
-
-        return cache.assetURL(key)
-    }
-
     /// Sets the image asset data for a given message.
     ///
     /// This will cause I/O.
@@ -338,45 +325,6 @@ open class FileAssetCache: NSObject {
             key: key,
             createdAt: message.serverTimestamp ?? Date()
         )
-    }
-
-    /// Sets the request data for a given message and returns the asset url.
-    ///
-    /// This will cause I/O.
-
-    open func storeRequestData(
-        _ message: ZMConversationMessage,
-        data: Data
-    ) -> URL? {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            identifier: "request"
-        ) else {
-            return nil
-        }
-
-        cache.storeAssetData(
-            data,
-            key: key,
-            createdAt: message.serverTimestamp ?? Date()
-        )
-
-        return accessRequestURL(message)
-    }
-
-    /// Deletes the request data for a given message.
-    ///
-    /// This will cause I/O.
-
-    open func deleteRequestData(_ message: ZMConversationMessage) {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            identifier: "request"
-        ) else {
-            return
-        }
-
-        cache.deleteAssetData(key)
     }
 
     /// Deletes the image data for a given message.
@@ -748,6 +696,42 @@ public extension FileAssetCache {
             createdAt: message.serverTimestamp ?? Date()
         )
     }
+
+    // MARK: - Upload request data
+
+    func storeTransportData(
+        _ data: Data,
+        for message: ZMConversationMessage
+    ) -> URL? {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            identifier: "transport"
+        ) else {
+            return nil
+        }
+
+        cache.storeAssetData(
+            data,
+            key: key,
+            createdAt: message.serverTimestamp ?? Date()
+        )
+
+        return cache.assetURL(key)
+    }
+
+    func deleteTransportData(
+        for message: ZMConversationMessage
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            identifier: "transport"
+        ) else {
+            return
+        }
+
+        cache.deleteAssetData(key)
+    }
+
 
 }
 

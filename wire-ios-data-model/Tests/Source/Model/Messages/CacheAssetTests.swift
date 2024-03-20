@@ -197,7 +197,6 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
 
         // then
         XCTAssertTrue(sut.isUploaded)
-        XCTAssertNil(sut.encrypted)
     }
 
     func testUpdateAssetIdForImage() {
