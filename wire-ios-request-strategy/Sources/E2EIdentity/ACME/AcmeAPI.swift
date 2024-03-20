@@ -257,8 +257,18 @@ public protocol HttpClientCustom {
 
 public class HttpClientE2EI: NSObject, HttpClientCustom {
 
+    private let urlSession: URLSession
+
+    public override init() {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.urlCache = nil
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        self.urlSession = URLSession(configuration: configuration)
+        super.init()
+    }
+
     public func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
-        return try await URLSession.shared.data(for: request)
+        return try await urlSession.data(for: request)
     }
 
 }
