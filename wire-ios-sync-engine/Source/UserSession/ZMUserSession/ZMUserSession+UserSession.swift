@@ -302,10 +302,14 @@ extension ZMUserSession: UserSession {
         }
     }
 
-    //gracePeriod: Double(e2eiFeature.config.verificationExpiration),
     @MainActor
     public func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
-        guard let selfUserClient, let selfMLSClientID = MLSClientID(userClient: selfUserClient) else { return nil }
+        guard let selfUserClient,
+              let selfMLSClientID = MLSClientID(userClient: selfUserClient),
+              e2eiFeature.isEnabled
+        else {
+            return nil
+        }
 
         return E2EIdentityCertificateUpdateStatusUseCase(
             getE2eIdentityCertificates: getE2eIdentityCertificates,

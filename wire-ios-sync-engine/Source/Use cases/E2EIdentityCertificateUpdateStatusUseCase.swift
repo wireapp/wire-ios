@@ -23,7 +23,7 @@ public enum E2EIdentityCertificateUpdateStatus {
     // Alert was already shown within snooze period, so do not remind user to update certificate
     case noAction
 
-    // Alert was not  shown within snooze period, so remind user to update certificate
+    // Alert was not shown within snooze period, so remind user to update certificate
     case reminder
 
     // Certificate expired so soft block user to update certificate
@@ -42,7 +42,7 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
     private let comparedDate: DateProviding
     private let mlsClientID: MLSClientID
     private var context: NSManagedObjectContext
-    public var lastAlertDate: Date?
+    private var lastAlertDate: Date?
 
     public init(
         getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol,
@@ -90,10 +90,6 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
 
         let timeLeftUntilExpiration = certificate.expiryDate.timeIntervalSince(comparedDate.now)
         let maxTimeLeft = max(timeLeftUntilExpiration, TimeInterval.oneWeek)
-
-        // Sets recurrring actions to check for the next reminder to update the certificate
-        let snoozeTimeProvider = SnoozeTimeProvider()
-        let snoozeTime = snoozeTimeProvider.getSnoozeTime(endOfPeriod: certificate.expiryDate)
 
         // If not alert was shown before, show a reminder
         guard let lastAlertDate else {

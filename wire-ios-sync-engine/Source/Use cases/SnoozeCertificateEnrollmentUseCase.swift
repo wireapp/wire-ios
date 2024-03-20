@@ -54,11 +54,12 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     /// - Parameter isUpdateMode: If set to `true`, `checkForE2EICertificateExpiryStatus` to check for updating certificate is scheduled else
     /// `featureDidChangeNotification` is triggered to check for enrolling the certificate. By default, this is `false`.
     func invoke(isUpdateMode: Bool = false) async {
-        guard let gracePeriodEndDate else {
+        let selfClientCertificate = try? await selfClientCertificateProvider.getCertificate()
+        guard let endOfPeriod = selfClientCertificate?.expiryDate ?? gracePeriodEndDate else {
             return
         }
         let timeProvider = SnoozeTimeProvider()
-        let interval = timeProvider.getSnoozeTime(endOfPeriod: gracePeriodEndDate)
+        let interval = timeProvider.getSnoozeTime(endOfPeriod: endOfPeriod)
         await registerRecurringActionIfNeeded(isUpdateMode: isUpdateMode, interval: interval)
     }
 
@@ -77,7 +78,6 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
             if isUpdateMode {
                 NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
             } else {
-                // We save the end of the grace period once and should not update it.
                 let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled
                 NotificationCenter.default.post(name: .featureDidChangeNotification,
                                                 object: notificationObject)

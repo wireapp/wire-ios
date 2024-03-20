@@ -31,16 +31,21 @@ public protocol E2EINotificationActions {
 final class E2EINotificationActionsHandler: E2EINotificationActions {
 
     // MARK: - Properties
+
     private var enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol
     private var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol
     private var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol
     private let gracePeriodEndDate: Date?
-    private let targetVC: UIViewController
     private var lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
     private var e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?
+    private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
     private var isUpdateMode: Bool = false
-    // MARK: - Life cycle
+
+    private let targetVC: UIViewController
     private var observer: NSObjectProtocol?
+
+    // MARK: - Life cycle
+
     init(
         enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol,
         snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol,
@@ -48,6 +53,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         gracePeriodEndDate: Date?,
         lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?,
         e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?,
+        selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
         targetVC: UIViewController) {
             self.enrollCertificateUseCase = enrollCertificateUseCase
             self.snoozeCertificateEnrollmentUseCase = snoozeCertificateEnrollmentUseCase
@@ -55,6 +61,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             self.gracePeriodEndDate = gracePeriodEndDate
             self.lastE2EIdentityUpdateAlertDateRepository = lastE2EIdentityUpdateAlertDateRepository
             self.e2eIdentityCertificateUpdateStatus = e2eIdentityCertificateUpdateStatus
+            self.selfClientCertificateProvider = selfClientCertificateProvider
             self.targetVC = targetVC
 
             self.observer = NotificationCenter.default.addObserver(
@@ -77,6 +84,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         let oauthUseCase = OAuthUseCase(targetViewController: targetVC)
         do {
             let certificateDetails = try await enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
+            stopCertificateEnrollmentSnoozerUseCase.invoke()
             await confirmSuccessfulEnrollment(certificateDetails)
         } catch {
             guard let gracePeriodEndDate else { return }
@@ -96,11 +104,11 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
             case .reminder:
                 isUpdateMode = true
-                await showUpdateE2EIdentityCertificateAlert()
+                showUpdateE2EIdentityCertificateAlert()
 
             case .block:
                 isUpdateMode = true
-                await showUpdateE2EIdentityCertificateAlert(canRemindLater: false)
+                showUpdateE2EIdentityCertificateAlert(canRemindLater: false)
             }
 
         } catch {
@@ -109,9 +117,10 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     }
 
     public func snoozeReminder() async {
-        guard let gracePeriodEndDate,
-              !gracePeriodEndDate.isInThePast,
-              let formattedDuration = durationFormatter.string(from: gracePeriodEndDate.timeIntervalSinceNow) else {
+        let selfClientCertificate = try? await selfClientCertificateProvider.getCertificate()
+        guard let endOfPeriod = selfClientCertificate?.expiryDate ?? gracePeriodEndDate,
+              !endOfPeriod.isInThePast,
+              let formattedDuration = durationFormatter.string(from: endOfPeriod.timeIntervalSinceNow) else {
             return
         }
 
@@ -123,7 +132,6 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
                 await self.snoozeCertificateEnrollmentUseCase.invoke(isUpdateMode: self.isUpdateMode)
                 self.isUpdateMode = false
             }
-            self.isUpdateMode = false
         }
         await targetVC.present(alert, animated: true)
     }
