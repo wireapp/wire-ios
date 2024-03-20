@@ -14,10 +14,6 @@ As it is hard to spot changes from version to version of database models (.xcdat
 * added `supportedProtocols` attribute of type `Transformable` with valueTransformerName `ExtendedSecureUnarchiveFromData` on `User`
 * added one-to-one relationship (optional nullify) `User.oneOnOneConversation` <-> `Conversation.oneOnOneUser` (optional nullify)
 
-#### heavy weight migration MappingModel_2.113-2.114
-
-* add custom policy UserToUser: `WireDataModel.OneOnOneConversationMigrationPolicy`
-
 ### 2.113.0
 
 * added `lastActiveDate` attribute of type `Date` on `UserClient`
