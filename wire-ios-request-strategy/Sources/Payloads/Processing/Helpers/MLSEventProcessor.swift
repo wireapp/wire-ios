@@ -114,11 +114,16 @@ public class MLSEventProcessor: MLSEventProcessing {
         conversationID: QualifiedID,
         in context: NSManagedObjectContext
     ) async {
+        guard let mlsService = await context.perform({ context.mlsService }) else {
+            return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
+        }
+
         await process(
             welcomeMessage: welcomeMessage,
             conversationID: conversationID,
             in: context,
-            oneOnOneResolver: OneOnOneResolver()
+            mlsService: mlsService,
+            oneOnOneResolver: OneOnOneResolver(mlsService: mlsService)
         )
     }
 
@@ -126,13 +131,10 @@ public class MLSEventProcessor: MLSEventProcessing {
         welcomeMessage: String,
         conversationID: QualifiedID,
         in context: NSManagedObjectContext,
+        mlsService: MLSServiceInterface,
         oneOnOneResolver: OneOnOneResolverInterface
     ) async {
         WireLogger.mls.info("MLS event processor is processing welcome message")
-
-        guard let mlsService = await context.perform({ context.mlsService }) else {
-            return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
-        }
 
         do {
             let groupID = try await mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
