@@ -22,9 +22,6 @@ struct CoreDataMigrationActionFactory {
 
     static func createPreMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
         switch destinationVersion {
-        case .version2_114:
-            return PreAction_2_114()
-
         case .version2_111:
             return RemoveDuplicatePreAction()
 
@@ -38,6 +35,9 @@ struct CoreDataMigrationActionFactory {
 
     static func createPostMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
         switch destinationVersion {
+        case .version2_114:
+            return OneOnOneConversationMigrationAction()
+
         case .version2_111:
             return PrefillPrimaryKeyAction()
 

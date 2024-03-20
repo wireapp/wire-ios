@@ -36,7 +36,7 @@ final class CoreDataMigrationActionFactoryTests: XCTestCase {
         let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: .version2_114)
 
         // then
-        XCTAssert(action is PreAction_2_114)
+        XCTAssertNil(action)
     }
 
     func test_ItReturnsPostActionForVersion2114() {
@@ -45,7 +45,7 @@ final class CoreDataMigrationActionFactoryTests: XCTestCase {
         let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: .version2_114)
 
         // then
-        XCTAssertNil(action)
+        XCTAssertTrue(action is OneOnOneConversationMigrationAction)
     }
 
     // MARK: - Version 2.111
