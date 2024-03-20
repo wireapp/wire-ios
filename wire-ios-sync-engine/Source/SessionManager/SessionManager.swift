@@ -774,6 +774,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
             self?.activeUserSession?.close(deleteCookie: deleteCookie)
             self?.activeUserSession = nil
+            self?.clearCRLExpirationDates(for: account)
 
             if deleteAccount {
                 self?.deleteAccountData(for: account)
@@ -785,8 +786,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
             // Clear tmp directory when the user logout from the session.
             self?.deleteTemporaryData()
-
-            self?.clearCRLExpirationDates(for: account)
         })
     }
 
