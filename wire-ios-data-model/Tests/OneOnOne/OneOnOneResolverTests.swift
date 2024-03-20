@@ -99,64 +99,73 @@ final class OneOnOneResolverTests: XCTestCase {
         XCTAssertEqual(mockHandler.performedActions.count, 2)
     }
 
-//    func test_resolveAllOneOnOneConversations_givenUserWithoutConnection_thenSkipOneMigration() async throws {
-//        // Given
-//        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
-//        await mockMigrator.setMigrateToMLSUserIDIn_MockValue(.random())
-//
-//        await viewContext.perform { [self] in
-//            modelHelper.createUser(
-//                domain: "local@domain.com",
-//                in: viewContext
-//            )
-//
-//            let userB = modelHelper.createUser(
-//                domain: "local@domain.com",
-//                in: viewContext
-//            )
-//            modelHelper.createConnection(status: .accepted, to: userB, in: viewContext)
-//        }
-//
-//        // When
-//        try await sut.resolveAllOneOnOneConversations(in: viewContext)
-//
-//        // Then
-//        let selectorInvocationsCount = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.count
-//        XCTAssertEqual(selectorInvocationsCount, 1)
-//
-//        let migratorInvocationsCount = await mockMigrator.migrateToMLSUserIDIn_Invocations.count
-//        XCTAssertEqual(migratorInvocationsCount, 1)
-//    }
-//
-//    func test_resolveAllOneOnOneConversations_givenUserWithoutDomain_thenSkipOneMigration() async throws {
-//        // Given
-//        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
-//        await mockMigrator.setMigrateToMLSUserIDIn_MockValue(.random())
-//
-//        await viewContext.perform { [self] in
-//            let userA = modelHelper.createUser(
-//                domain: nil,
-//                in: viewContext
-//            )
-//            modelHelper.createConnection(status: .accepted, to: userA, in: viewContext)
-//
-//            let userB = modelHelper.createUser(
-//                domain: "local@domain.com",
-//                in: viewContext
-//            )
-//            modelHelper.createConnection(status: .accepted, to: userB, in: viewContext)
-//        }
-//
-//        // When
-//        try await sut.resolveAllOneOnOneConversations(in: viewContext)
-//
-//        // Then
-//        let selectorInvocationsCount = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.count
-//        XCTAssertEqual(selectorInvocationsCount, 1)
-//
-//        let migratorInvocationsCount = await mockMigrator.migrateToMLSUserIDIn_Invocations.count
-//        XCTAssertEqual(migratorInvocationsCount, 1)
-//    }
+    func test_resolveAllOneOnOneConversations_givenUserWithoutConnection_thenSkipOneMigration() async throws {
+        // Given
+        let resolver = makeResolver()
+
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
+        await mockMigrator.setMigrateToMLSUserIDIn_MockMethod { _, _, _ in }
+        mockMLSService.conversationExistsGroupID_MockValue = false
+
+        // mockHandler must be retained to catch notifications
+        let mockHandler = MockActionHandler<SyncMLSOneToOneConversationAction>(
+            results: [.success(.random())],
+            context: syncContext.notificationContext
+        )
+
+        await syncContext.perform { [self] in
+            modelHelper.createUser(
+                domain: "local@domain.com",
+                in: syncContext
+            )
+
+            makeOneOnOneConnection(in: syncContext)
+        }
+
+        // When
+        try await resolver.resolveAllOneOnOneConversations(in: syncContext)
+
+        // Then
+        let selectorInvocationsCount = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.count
+        XCTAssertEqual(selectorInvocationsCount, 1)
+
+        let migratorInvocationsCount = await mockMigrator.migrateToMLSUserIDMlsGroupIDIn_Invocations.count
+        XCTAssertEqual(migratorInvocationsCount, 1)
+
+        XCTAssertEqual(mockHandler.performedActions.count, 1)
+    }
+
+    func test_resolveAllOneOnOneConversations_givenUserWithoutDomain_thenSkipOneMigration() async throws {
+        // Given
+        let resolver = makeResolver()
+
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
+        await mockMigrator.setMigrateToMLSUserIDIn_MockMethod { _, _, _ in }
+        mockMLSService.conversationExistsGroupID_MockValue = false
+
+        // mockHandler must be retained to catch notifications
+        let mockHandler = MockActionHandler<SyncMLSOneToOneConversationAction>(
+            results: [.success(.random())],
+            context: syncContext.notificationContext
+        )
+
+        await syncContext.perform { [self] in
+            makeOneOnOneConnection(domain: nil, in: syncContext)
+            makeOneOnOneConnection(domain: "local@domain.com", in: syncContext)
+        }
+
+        // When
+        try await resolver.resolveAllOneOnOneConversations(in: syncContext)
+
+        // Then
+        let selectorInvocationsCount = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.count
+        XCTAssertEqual(selectorInvocationsCount, 1)
+
+        let migratorInvocationsCount = await mockMigrator.migrateToMLSUserIDMlsGroupIDIn_Invocations.count
+        XCTAssertEqual(migratorInvocationsCount, 1)
+
+        XCTAssertEqual(mockHandler.performedActions.count, 1)
+    }
 //
 //    func test_resolveAllOneOnOneConversations_givenMigrationFailure() async throws {
 //        // Given
@@ -361,9 +370,12 @@ final class OneOnOneResolverTests: XCTestCase {
         )
     }
 
-    private func makeOneOnOneConnection(in context: NSManagedObjectContext) {
+    private func makeOneOnOneConnection(
+        domain: String? = "local@domain.com",
+        in context: NSManagedObjectContext
+    ) {
         let user = modelHelper.createUser(
-            domain: "local@domain.com",
+            domain: domain,
             in: context
         )
         modelHelper.createConnection(status: .accepted, to: user, in: context)
