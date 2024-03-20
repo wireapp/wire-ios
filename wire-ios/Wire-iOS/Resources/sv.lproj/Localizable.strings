@@ -1796,7 +1796,7 @@
 "feature_config.alert.mls_e2ei.reminder_message" = "You can get the certificate in your 'Wire Settings' during the next %@. Open 'Devices' and select 'Get Certificate' for your current device.";
 "feature_config.alert.mls_e2ei.update_message" = "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now.\nEnter your identity provider’s credentials in the next step to update the certificate automatically.";
 "feature_config.alert.mls_e2ei.alert.update_certificate.title" = "End-to-end identity certificate";
-"failed_to_get_certificate.alert.title" = "Certifikat kunde inte utfärdas.";
+"failed_to_get_certificate.alert.title" = "Certificate couldn’t be issued.";
 "failed_to_get_certificate.alert.message" = "You can retry to get the certificate now, or you will get a reminder later.";
 "failed_to_get_certificate.alert.forced_message" = "Please try again, or reach out to your team admin.";
 "failed_to_get_certificate.button.retry" = "Försök igen";
