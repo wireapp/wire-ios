@@ -230,7 +230,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
     func process(event: ZMUpdateEvent, conversationsByID: [UUID: ZMConversation]?) {
         guard
             event.type == .conversationTyping ||
-                event.type == .conversationOtrMessageAdd ||
+                event.type == .conversationOtrMessageAdd || // .conversationMLSMessageAdd?
                 event.type == .conversationMemberLeave
             else { return }
 
@@ -246,7 +246,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
                 let status = payloadData[StatusKey]
                 else { return }
             processIsTypingUpdateEvent(for: user, in: conversation, with: status)
-        } else if event.type == .conversationOtrMessageAdd {
+        } else if event.type == .conversationOtrMessageAdd { // .conversationMLSMessageAdd?
             if let message = GenericMessage(from: event), message.hasText
                 || message.hasEdited {
                 typing.setIsTyping(false, for: user, in: conversation)

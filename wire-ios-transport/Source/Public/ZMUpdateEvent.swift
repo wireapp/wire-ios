@@ -224,7 +224,7 @@ open class ZMUpdateEvent: NSObject {
     /// True if the event contains cryptobox-encrypted data
     open var isEncrypted: Bool {
         switch self.type {
-        case .conversationOtrAssetAdd, .conversationOtrMessageAdd:
+        case .conversationOtrAssetAdd, .conversationOtrMessageAdd: // .conversationMLSMessageAdd?
             return true
         default:
             return false
@@ -234,7 +234,7 @@ open class ZMUpdateEvent: NSObject {
     /// True if the event is encoded with ZMGenericMessage
     open var isGenericMessageEvent: Bool {
         switch self.type {
-        case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd:
+        case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd: // .conversationMLSMessageAdd?
             return true
         default:
             return false
@@ -244,7 +244,7 @@ open class ZMUpdateEvent: NSObject {
     /// True if this event type could have two versions, encrypted and non-encrypted, during the transition phase
     open var hasEncryptedAndUnencryptedVersion: Bool {
         switch self.type {
-        case .conversationOtrMessageAdd,
+        case .conversationOtrMessageAdd, // .conversationMLSMessageAdd?
                 .conversationOtrAssetAdd,
                 .conversationMessageAdd,
                 .conversationAssetAdd,

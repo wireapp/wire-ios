@@ -80,7 +80,7 @@ final class Job: NSObject, Loggable {
         let event = try await fetchEvent(eventID: eventID)
 
         switch event.type {
-        case .conversationOtrMessageAdd:
+        case .conversationOtrMessageAdd: // .conversationMLSMessageAdd ?
             logger.trace("\(self.request.identifier, privacy: .public): returning notification for new message")
             let content = UNMutableNotificationContent()
             content.body = "You received a new message"
