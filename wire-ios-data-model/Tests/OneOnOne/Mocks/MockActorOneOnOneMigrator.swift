@@ -27,8 +27,8 @@ actor MockActorOneOnOneMigrator: OneOnOneMigratorInterface {
 
     // MARK: - migrateToMLS
 
-    public var migrateToMLSUserIDMlsGroupIDIn_Invocations: [(userID: QualifiedID, mlsGroupID: MLSGroupID, context: NSManagedObjectContext)] = []
-    public var migrateToMLSUserIDMlsGroupIDIn_MockError: Error?
+    var migrateToMLSUserIDMlsGroupIDIn_Invocations: [(userID: QualifiedID, mlsGroupID: MLSGroupID, context: NSManagedObjectContext)] = []
+    var migrateToMLSUserIDMlsGroupIDIn_MockError: Error?
     var migrateToMLSUserIDMlsGroupIDIn_MockMethod: ((QualifiedID, MLSGroupID, NSManagedObjectContext) async throws -> Void)?
 
     func setMigrateToMLSUserIDMlsGroupIDIn_MockError(_ error: Error?) {
