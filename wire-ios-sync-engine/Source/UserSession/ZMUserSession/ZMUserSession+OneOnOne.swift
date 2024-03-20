@@ -44,18 +44,9 @@ extension ZMUserSession {
                         throw CreateTeamOneOnOneConversationError.userDoesNotExist
                     }
 
-                    let migrator: OneOnOneMigrator?
-                    if let mlsService = syncContext.mlsService {
-                        migrator = .init(mlsService: mlsService, context: syncContext)
-                    } else {
-                        migrator = nil
-                    }
-
-                    let useCase = CreateTeamOneOnOneConversationUseCase(
-                        protocolSelector: OneOnOneProtocolSelector(),
-                        migrator: migrator,
-                        service: ConversationService(context: syncContext)
-                    )
+                    let migrator = syncContext.mlsService.map(OneOnOneMigrator.init(mlsService:))
+                    let service = ConversationService(context: syncContext)
+                    let useCase = CreateTeamOneOnOneConversationUseCase(migrator: migrator, service: service)
 
                     return (useCase, syncUser)
                 }

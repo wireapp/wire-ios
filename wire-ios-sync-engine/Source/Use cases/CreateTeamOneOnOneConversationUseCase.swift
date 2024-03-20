@@ -52,7 +52,7 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
     private let service: ConversationServiceInterface
 
     init(
-        protocolSelector: OneOnOneProtocolSelectorInterface,
+        protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
         migrator: OneOnOneMigratorInterface?,
         service: ConversationServiceInterface
     ) {
@@ -122,7 +122,8 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
         do {
             try await migrator.migrateToMLS(
                 userID: userID,
-                mlsGroupID: groupID
+                mlsGroupID: groupID,
+                in: context
             )
         } catch {
             throw Error.failedToCreateMLSConversation(error)
