@@ -774,6 +774,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
             self?.activeUserSession?.close(deleteCookie: deleteCookie)
             self?.activeUserSession = nil
+            self?.clearCRLExpirationDates(for: account)
 
             if deleteAccount {
                 self?.deleteAccountData(for: account)
@@ -785,7 +786,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
             // Clear tmp directory when the user logout from the session.
             self?.deleteTemporaryData()
-
         })
     }
 
@@ -916,6 +916,11 @@ public final class SessionManager: NSObject, SessionManagerType {
                 userSession.syncStatus.forceSlowSync()
             }
         }
+    }
+
+    private func clearCRLExpirationDates(for account: Account) {
+        let repository = CRLExpirationDatesRepository(userID: account.userIdentifier)
+        repository.removeAllExpirationDates()
     }
 
     private func clearCacheDirectory() {
