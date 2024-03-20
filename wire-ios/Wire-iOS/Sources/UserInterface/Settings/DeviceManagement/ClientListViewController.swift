@@ -207,11 +207,14 @@ final class ClientListViewController: UIViewController,
             contextProvider: contextProvider
         )
         viewModel.showCertificateUpdateSuccess = {[weak self] certificateChain in
-            self?.updateAllClients {
-                self?.updateE2EIdentityCertificateInDetailsView()
+            guard let self else {
+                return
+            }
+            self.updateAllClients {
+                self.updateE2EIdentityCertificateInDetailsView()
             }
 
-            let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
+            let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController(isUpdateMode: true)
             successEnrollmentViewController.certificateDetails = certificateChain
             successEnrollmentViewController.onOkTapped = { viewController in
                 viewController.dismiss(animated: true)
@@ -258,16 +261,6 @@ final class ClientListViewController: UIViewController,
             debugMenuActionsHandler: deviceActionsHandler,
             showDebugMenu: Bundle.developerModeEnabled
         )
-    }
-
-    @MainActor
-    private func fetchSelfConversation() async -> MLSGroupID? {
-        guard let syncContext = contextProvider?.syncContext else {
-            return nil
-        }
-        return await syncContext.perform {
-            return ZMConversation.fetchSelfMLSConversation(in: syncContext)?.mlsGroupID
-        }
     }
 
     private func createTableView() {
@@ -534,8 +527,9 @@ final class ClientListViewController: UIViewController,
     @MainActor
     private func updateCertificates(for userClients: [UserClient]) async {
         guard
-            let selfMlsGroupID = await fetchSelfConversation(),
             let userSession,
+            let selfMlsGroupID = await userSession.fetchSelfConversationMLSGroupID(),
+            // dangerous access: ZMUserSession.e2eiFeature initialises a FeatureRepository using the viewContext, thus the following line must be executed o the main thread
             userSession.e2eiFeature.isEnabled
         else {
             return
