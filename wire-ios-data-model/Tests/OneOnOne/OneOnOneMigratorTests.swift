@@ -24,31 +24,27 @@ final class OneOnOneMigratorTests: XCTestCase {
 
     private let coreDataStackHelper = CoreDataStackHelper()
 
-    private var mockMLSService: MockMLSServiceInterface!
-
     private var coreDataStack: CoreDataStack!
     private var syncContext: NSManagedObjectContext!
+
+    private var mockMLSService: MockMLSServiceInterface!
 
     override func setUp() async throws {
         try await super.setUp()
 
-        mockMLSService = MockMLSServiceInterface()
-
         coreDataStack = try await coreDataStackHelper.createStack(at: coreDataStackHelper.storageDirectory)
         syncContext = coreDataStack.syncContext
 
-        await syncContext.perform { [self] in
-            syncContext.mlsService = mockMLSService
-        }
+        mockMLSService = MockMLSServiceInterface()
     }
 
     override func tearDown() async throws {
         try await super.tearDown()
 
+        mockMLSService = nil
+
         syncContext = nil
         coreDataStack = nil
-
-        mockMLSService = nil
 
         try coreDataStackHelper.cleanupDirectory(coreDataStackHelper.storageDirectory)
     }
