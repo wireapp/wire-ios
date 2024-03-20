@@ -126,13 +126,13 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
                         destinationOptions: nil
                     )
                 }
-                WireLogger.localStorage.debug("finish migrate store for \(migrationStep.sourceVersion)", attributes: .safePublic)
+                WireLogger.localStorage.info("finish migrate store for \(migrationStep.sourceVersion)", attributes: .safePublic)
             } catch {
                 throw CoreDataMessagingMigratorError.migrateStoreFailed(error: error)
             }
 
             if currentURL != storeURL {
-                WireLogger.localStorage.debug("destroy store \(storeURL)", attributes: .safePublic)
+                WireLogger.localStorage.info("destroy store \(storeURL)", attributes: .safePublic)
                 // Destroy intermediate step's store
                 try destroyStore(at: currentURL)
             }
@@ -143,12 +143,12 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
 
             try self.runPostMigrationStep(migrationStep, for: currentURL)
         }
-        WireLogger.localStorage.debug("replace store \(storeURL), with \(currentURL)", attributes: .safePublic)
+        WireLogger.localStorage.info("replace store \(storeURL), with \(currentURL)", attributes: .safePublic)
         try replaceStore(at: storeURL, withStoreAt: currentURL)
-        WireLogger.localStorage.debug("replace store finished", attributes: .safePublic)
+        WireLogger.localStorage.info("replace store finished", attributes: .safePublic)
 
         if currentURL != storeURL {
-            WireLogger.localStorage.debug("destroy last store \(currentURL)", attributes: .safePublic)
+            WireLogger.localStorage.info("destroy last store \(currentURL)", attributes: .safePublic)
             try destroyStore(at: currentURL)
         }
     }

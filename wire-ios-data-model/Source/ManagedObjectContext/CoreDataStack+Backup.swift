@@ -247,7 +247,7 @@ extension CoreDataStack {
                     ofType: NSSQLiteStoreType
                 )
 
-                WireLogger.localStorage.info("successfully imported backup with metadata: \(metadata)")
+                WireLogger.localStorage.info("successfully imported backup with metadata: \(metadata)", attributes: .safePublic)
 
                 DispatchQueue.main.async(group: dispatchGroup) {
                     completion(.success(accountDirectory))
