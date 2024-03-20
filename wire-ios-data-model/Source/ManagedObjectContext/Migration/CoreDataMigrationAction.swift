@@ -50,12 +50,13 @@ class CoreDataMigrationAction {
             }
         }
         if let savedError {
+            // enforce cleanup without handling errors
+            try? removeStore(for: container)
             throw savedError
         }
 
         try removeStore(for: container)
     }
-
 
     func removeStore(for container: NSPersistentContainer) throws {
         if let store = container.persistentStoreCoordinator.persistentStores.first {

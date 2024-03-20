@@ -16,6 +16,7 @@
 		014DD8C72B6C3F01007ECFD1 /* DatabaseMigrationTests+ConversationUniqueness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014DD8C62B6C3F01007ECFD1 /* DatabaseMigrationTests+ConversationUniqueness.swift */; };
 		014DD8D42B6D1FF6007ECFD1 /* UUID+SafeLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 014DD8D22B6D1FE9007ECFD1 /* UUID+SafeLogging.swift */; };
 		016291FF2B757D2100213A9B /* DatabaseMigrationTests+TeamUniqueness.swift in Sources */ = {isa = PBXBuildFile; fileRef = 016291FE2B757D2100213A9B /* DatabaseMigrationTests+TeamUniqueness.swift */; };
+		0179BC822BA9D08300A6C493 /* DatabaseRemoteIdentifierUniquenessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0179BC812BA9D08300A6C493 /* DatabaseRemoteIdentifierUniquenessTests.swift */; };
 		017CA4442A2742B800E8E778 /* WireCoreCrypto.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */; };
 		018964252A6FE72700BCEE0E /* EARStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018964242A6FE72700BCEE0E /* EARStorage.swift */; };
 		0189815529A66B0800B52510 /* SafeCoreCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */; };
@@ -802,6 +803,7 @@
 		014DD8C62B6C3F01007ECFD1 /* DatabaseMigrationTests+ConversationUniqueness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DatabaseMigrationTests+ConversationUniqueness.swift"; sourceTree = "<group>"; };
 		014DD8D22B6D1FE9007ECFD1 /* UUID+SafeLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UUID+SafeLogging.swift"; sourceTree = "<group>"; };
 		016291FE2B757D2100213A9B /* DatabaseMigrationTests+TeamUniqueness.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DatabaseMigrationTests+TeamUniqueness.swift"; sourceTree = "<group>"; };
+		0179BC812BA9D08300A6C493 /* DatabaseRemoteIdentifierUniquenessTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseRemoteIdentifierUniquenessTests.swift; sourceTree = "<group>"; };
 		017CA4432A2742B800E8E778 /* WireCoreCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCoreCrypto.xcframework; path = ../Carthage/Build/WireCoreCrypto.xcframework; sourceTree = "<group>"; };
 		018964242A6FE72700BCEE0E /* EARStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARStorage.swift; sourceTree = "<group>"; };
 		0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafeCoreCryptoTests.swift; sourceTree = "<group>"; };
@@ -2641,6 +2643,7 @@
 				F16F8EBE2063E9CC009A9D6F /* CoreDataStackTests+Backup.swift */,
 				167BCC91260DB5FA00E9D7E3 /* CoreDataStackTests+ClearStorage.swift */,
 				F9A708041CAEEB7400C2F5FE /* ManagedObjectContextSaveNotificationTests.m */,
+				0179BC812BA9D08300A6C493 /* DatabaseRemoteIdentifierUniquenessTests.swift */,
 				F9A708051CAEEB7400C2F5FE /* ManagedObjectContextTests.m */,
 				F14FA376221DB05B005E7EF5 /* MockBackgroundActivityManager.swift */,
 				54929FAD1E12AC8B0010186B /* NSPersistentStoreMetadataTests.swift */,
@@ -3941,6 +3944,7 @@
 				F94A208F1CB51AF50059632A /* ManagedObjectValidationTests.m in Sources */,
 				A927F52723A029250058D744 /* ParticipantRoleTests.swift in Sources */,
 				E97A542827B122D80009DCCF /* AccessRoleMigrationTests.swift in Sources */,
+				0179BC822BA9D08300A6C493 /* DatabaseRemoteIdentifierUniquenessTests.swift in Sources */,
 				871DD79F2084A316006B1C56 /* BatchDeleteTests.swift in Sources */,
 				068DCC5B29BFEC4E00F7E4F1 /* ZMMessageTests+ExpirationReasonCode.swift in Sources */,
 				F9DD60C11E8916170019823F /* ChangedIndexesTests.swift in Sources */,
