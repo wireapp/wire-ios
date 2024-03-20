@@ -38,7 +38,7 @@ extension EventDecoder {
             return event
         }
 
-        guard event.type.isOne(of: .conversationOtrMessageAdd, .conversationOtrAssetAdd) else { // .conversationMLSMessageAdd?
+        guard event.type.isOne(of: .conversationOtrMessageAdd, .conversationOtrAssetAdd) else {
             fatal("Can't decrypt event of type \(event.type) as it's not supposed to be encrypted")
         }
 
@@ -279,7 +279,7 @@ private extension ZMUpdateEvent {
 
     var payloadKey: String? {
         switch type {
-        case .conversationOtrMessageAdd: // .conversationMLSMessageAdd?
+        case .conversationOtrMessageAdd:
             return "text"
 
         case .conversationOtrAssetAdd:
