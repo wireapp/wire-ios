@@ -24,7 +24,7 @@ class PrefillPrimaryKeyAction: CoreDataMigrationAction {
         case primaryKey
     }
 
-    let batchSize = 2
+    let batchSize = 200
     let entityNames = [ZMUser.entityName(), ZMConversation.entityName()]
 
     override func execute(in context: NSManagedObjectContext) throws {
@@ -38,15 +38,10 @@ class PrefillPrimaryKeyAction: CoreDataMigrationAction {
             let request = NSFetchRequest<NSManagedObject>(entityName: entityName)
             request.fetchBatchSize = batchSize
             let objects = try context.fetch(request)
-            var index = 0
+
             objects.forEach { object in
-
                 let uniqueKey = PrimaryKeyGenerator.generateKey(for: object, entityName: entityName)
-                print("🕵🏽 \(entityName) \(index)", object.value(forKey: "primaryKey") as? String, uniqueKey)
-
                 object.setValue(uniqueKey, forKey: Keys.primaryKey.rawValue)
-                print("🕵🏽 \(entityName) \(index) after", object.value(forKey: "primaryKey") as? String, uniqueKey)
-                index += 1
             }
         } catch {
             WireLogger.localStorage.error("error fetching data \(entityName) during PrefillPrimaryKeyAction: \(error.localizedDescription)")
