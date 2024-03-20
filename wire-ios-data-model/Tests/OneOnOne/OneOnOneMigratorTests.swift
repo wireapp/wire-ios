@@ -57,7 +57,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
     func test_migrateToMLS() async throws {
         // Given
-        let sut = OneOnOneMigrator(mlsService: mockMLSService, context: syncContext)
+        let sut = OneOnOneMigrator(mlsService: mockMLSService)
         let userID = QualifiedID.random()
         let mlsGroupID = MLSGroupID.random()
 
@@ -84,7 +84,8 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         try await sut.migrateToMLS(
             userID: userID,
-            mlsGroupID: mlsGroupID
+            mlsGroupID: mlsGroupID,
+            in: syncContext
         )
 
         // Then
@@ -144,7 +145,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 //    }
 
     func test_migrateToMLS_moveMessages() async throws {
-        let sut = OneOnOneMigrator(mlsService: mockMLSService, context: syncContext)
+        let sut = OneOnOneMigrator(mlsService: mockMLSService)
         let userID: QualifiedID = .random()
         let mlsGroupID: MLSGroupID = .random()
 
@@ -184,7 +185,8 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         try await sut.migrateToMLS(
             userID: userID,
-            mlsGroupID: mlsGroupID
+            mlsGroupID: mlsGroupID,
+            in: syncContext
         )
 
         // Then

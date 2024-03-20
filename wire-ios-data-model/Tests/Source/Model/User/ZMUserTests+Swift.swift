@@ -1082,7 +1082,7 @@ extension ZMUserTests_Swift {
         let didSucceed = XCTestExpectation(description: "didSucceed")
 
         // When I accept the connection request from the other user.
-        user.accept(oneOnOneResolver: oneOneOneResolver) { error in
+        user.accept(oneOnOneResolver: oneOneOneResolver, context: syncMOC) { error in
             if let error {
                 XCTFail("unexpected error: \(error)")
             } else {
