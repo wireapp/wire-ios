@@ -61,6 +61,7 @@ final class CallController: NSObject {
     private func addObservers(userSession: UserSession) {
         observerTokens.append(userSession.addConferenceCallStateObserver(self))
         observerTokens.append(userSession.addConferenceCallErrorObserver(self))
+        observerTokens.append(userSession.addDegradedCallObserver(self))
     }
 
     private func presentOrMinimizeActiveCall(for conversation: ZMConversation) {
@@ -121,6 +122,25 @@ final class CallController: NSObject {
     }
 }
 
+// MARK: - WireCallCenterDegradedCallObserver
+extension CallController: WireCallCenterDegradedCallObserver {
+
+    func callCenterDegradedCall(conversation: ZMConversation) {
+        // incoming degraded call
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation,
+                                                alertType: .incomingCall,
+                                                continueAction: {
+            conversation.acknowledgePrivacyChanges()
+            self.updateActiveCallPresentationState()
+        }, cancelAction: {
+            guard let userSession = ZMUserSession.shared() else { return }
+            conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
+        }, showAlert: {
+            self.router?.presentIncomingCallDegradedAlert()
+        })
+        checker.performAction()
+    }
+}
 // MARK: - WireCallCenterCallStateObserver
 extension CallController: WireCallCenterCallStateObserver {
 
@@ -130,27 +150,8 @@ extension CallController: WireCallCenterCallStateObserver {
                              timestamp: Date?,
                              previousCallState: CallState?) {
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
-
-        // TODO: how to detect this is the first time we get the call sa degraded
-        if case .incoming(_, shouldRing: true, degraded: true) = callState {
-            let checker = E2EIPrivacyWarningChecker(conversation: conversation,
-                                                    alertType: .incomingCall,
-                                                    continueAction: {
-                conversation.acknowledgePrivacyChanges()
-                self.updateActiveCallPresentationState()
-            }, cancelAction: {
-                guard let userSession = ZMUserSession.shared() else { return }
-                conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
-            }, showAlert: {
-                self.router?.presentIncomingCallDegradedAlert()
-            })
-            checker.performAction()
-        } else if case .answered(true) = callState {
-            presentSecurityDegradedAlertIfNecessary(for: conversation.voiceChannel)
-            updateActiveCallPresentationState()
-        } else {
-            updateActiveCallPresentationState()
-        }
+        presentSecurityDegradedAlertIfNecessary(for: conversation.voiceChannel)
+        updateActiveCallPresentationState()
     }
 
     private func presentUnsupportedVersionAlertIfNecessary(callState: CallState) {
