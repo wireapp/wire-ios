@@ -1383,8 +1383,8 @@ public final class MLSService: MLSServiceInterface {
                     }
                 }
 
-                await taskGroup.waitForAll()
             }
+            await taskGroup.waitForAll()
         }
     }
 
