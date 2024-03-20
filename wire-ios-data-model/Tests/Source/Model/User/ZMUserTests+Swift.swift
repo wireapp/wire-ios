@@ -1067,7 +1067,6 @@ extension ZMUserTests_Swift {
         }
 
         let user = try XCTUnwrap(ZMUser.fetch(with: userID, in: uiMOC))
-        let proteusConversation = try XCTUnwrap(ZMConversation.fetch(with: proteusConversationID, in: uiMOC))
 
         // Mock successful connection updates.
         let handler = MockActionHandler<UpdateConnectionAction>(
