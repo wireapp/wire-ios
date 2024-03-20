@@ -1115,7 +1115,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        try await self.sut.commitPendingProposals()
+        await self.sut.commitPendingProposals()
 
         // Then we asked for the subgroup id
         let subgroupInvocations = mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_Invocations

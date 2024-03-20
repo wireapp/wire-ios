@@ -1343,15 +1343,11 @@ public final class MLSService: MLSServiceInterface {
         }
 
         WaitingGroupTask(context: context) { [self] in
-            do {
-                try await commitPendingProposals()
-            } catch {
-                WireLogger.mls.error("Failed to commit pending proposals: \(String(describing: error))")
-            }
+            await commitPendingProposals()
         }
     }
 
-    func commitPendingProposals() async throws {
+    func commitPendingProposals() async {
         guard context != nil else {
             return
         }
@@ -1386,6 +1382,8 @@ public final class MLSService: MLSServiceInterface {
                         logger.error("failed to commit pending proposals: \(String(describing: error))")
                     }
                 }
+
+                await taskGroup.waitForAll()
             }
         }
     }
