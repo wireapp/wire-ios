@@ -209,6 +209,8 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         in context: NSManagedObjectContext
     ) async -> UInt64? {
         await context.perform {
+            // TODO: Can we use ZMConversation.fetch(with groupID: MLSGroupID, in context: NSManagedObjectContext) instead?
+
             guard
                 let otherUser = ZMUser.fetch(with: userID, in: context),
                 let conversation = otherUser.oneOnOneConversation
