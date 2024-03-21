@@ -120,7 +120,6 @@ public final class MLSService: MLSServiceInterface {
     private let logger = WireLogger.mls
     private let groupsBeingRepaired = GroupsBeingRepaired()
     private let syncStatus: SyncStatusProtocol
-    private let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -1715,7 +1714,7 @@ public final class MLSService: MLSServiceInterface {
 
     public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
         decryptionService.onNewCRLsDistributionPoints()
-            .merge(with: onNewCRLsDistributionPointsSubject, mlsActionExecutor.onNewCRLsDistributionPoints())
+            .merge(with: mlsActionExecutor.onNewCRLsDistributionPoints())
             .eraseToAnyPublisher()
     }
 
