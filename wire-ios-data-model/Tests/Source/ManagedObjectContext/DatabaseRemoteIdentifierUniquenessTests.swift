@@ -20,7 +20,7 @@ import XCTest
 @testable import WireDataModel
 
 final class DatabaseRemoteIdentifierUniquenessTests: XCTestCase {
-    
+
     var helper: DatabaseMigrationHelper!
 
     override func setUpWithError() throws {
@@ -54,21 +54,21 @@ final class DatabaseRemoteIdentifierUniquenessTests: XCTestCase {
     }
 
     private func internalTestMigratingDatabase_WithEntityWithNoRemoteIdentifier<T: ZMManagedObject>(sourceVersion: String, entity: T.Type) throws {
+        let count = 100
         try helper.migrateStoreToCurrentVersion(sourceVersion: sourceVersion,
                                                 preMigrationAction: { context in
 
-            for _ in 1...100 {
+            for _ in 1...count {
                 // object with no remoteIdentifier
-                let object = T.insertNewObject(in: context)
+                _ = T.insertNewObject(in: context)
             }
             try context.save()
 
         }, postMigrationAction: { context in
-            let request = NSFetchRequest<NSManagedObject>(entityName: T.entityName())
-            let result = try context.fetch(request)
-
-            for object in result {
-                print(object)
+            try context.performAndWait {
+                let request = NSFetchRequest<NSManagedObject>(entityName: T.entityName())
+                let result = try context.fetch(request)
+                XCTAssertNotEqual(result.count, count)
             }
         }, for: self)
     }
