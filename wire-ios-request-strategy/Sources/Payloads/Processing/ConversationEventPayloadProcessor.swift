@@ -694,8 +694,6 @@ struct ConversationEventPayloadProcessor {
             return conversation
         }
 
-        await updateMLSStatus(from: payload, for: conversation, context: context, source: source)
-
         return conversation
     }
 
