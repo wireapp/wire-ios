@@ -180,6 +180,11 @@ extension CallControllerTests {
 // MARK: - ActiveCallRouterMock
 final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
 
+    var presentIncomingCallDegradedAlertCalled: Bool = false
+    func presentIncomingCallDegradedAlert() {
+        presentIncomingCallDegradedAlertCalled = true
+    }
+
     var presentActiveCallIsCalled: Bool = false
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
         presentActiveCallIsCalled = true
