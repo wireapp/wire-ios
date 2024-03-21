@@ -123,6 +123,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
@@ -191,8 +192,8 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         wrapNavigationController.presentTopmost()
     }
 
-    @objc
-    private func okTapped() {
+    @MainActor
+    @objc private func okTapped() {
         onOkTapped?(self)
     }
 

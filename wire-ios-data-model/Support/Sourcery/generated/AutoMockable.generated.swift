@@ -3520,48 +3520,6 @@ class MockFileManagerInterface: FileManagerInterface {
 
 }
 
-public class MockGracePeriodRepositoryInterface: GracePeriodRepositoryInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - fetchGracePeriodEndDate
-
-    public var fetchGracePeriodEndDate_Invocations: [Void] = []
-    public var fetchGracePeriodEndDate_MockMethod: (() -> Date?)?
-    public var fetchGracePeriodEndDate_MockValue: Date??
-
-    public func fetchGracePeriodEndDate() -> Date? {
-        fetchGracePeriodEndDate_Invocations.append(())
-
-        if let mock = fetchGracePeriodEndDate_MockMethod {
-            return mock()
-        } else if let mock = fetchGracePeriodEndDate_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `fetchGracePeriodEndDate`")
-        }
-    }
-
-    // MARK: - storeGracePeriodEndDate
-
-    public var storeGracePeriodEndDate_Invocations: [Date] = []
-    public var storeGracePeriodEndDate_MockMethod: ((Date) -> Void)?
-
-    public func storeGracePeriodEndDate(_ date: Date) {
-        storeGracePeriodEndDate_Invocations.append(date)
-
-        guard let mock = storeGracePeriodEndDate_MockMethod else {
-            fatalError("no mock for `storeGracePeriodEndDate`")
-        }
-
-        mock(date)
-    }
-
-}
-
 public class MockIsSelfUserE2EICertifiedUseCaseProtocol: IsSelfUserE2EICertifiedUseCaseProtocol {
 
     // MARK: - Life cycle

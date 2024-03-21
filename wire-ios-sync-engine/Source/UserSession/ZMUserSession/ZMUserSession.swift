@@ -150,6 +150,18 @@ public final class ZMUserSession: NSObject {
         return featureRepository.fetchE2EI()
     }
 
+    public var gracePeriodEndDate: Date? {
+        guard
+            e2eiFeature.isEnabled,
+            let e2eiActivatedAt = e2eiActivationDateRepository.e2eiActivatedAt
+        else {
+            return nil
+        }
+
+        let gracePeriod = TimeInterval(e2eiFeature.config.verificationExpiration)
+        return e2eiActivatedAt.addingTimeInterval(gracePeriod)
+    }
+
     public lazy var selfClientCertificateProvider: SelfClientCertificateProviderProtocol = {
         return SelfClientCertificateProvider(
             getE2eIdentityCertificatesUseCase: getE2eIdentityCertificates,
@@ -158,10 +170,9 @@ public final class ZMUserSession: NSObject {
 
     public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol = {
         return SnoozeCertificateEnrollmentUseCase(
-            e2eiFeature: e2eiFeature,
-            gracePeriodRepository: gracePeriodRepository,
+            featureRepository: featureRepository,
+            featureRepositoryContext: syncContext,
             recurringActionService: recurringActionService,
-            selfClientCertificateProvider: selfClientCertificateProvider,
             accountId: account.userIdentifier)
     }()
 
@@ -355,10 +366,18 @@ public final class ZMUserSession: NSObject {
         )
     }()
 
+    @MainActor
+    public private(set) lazy var isE2EICertificateEnrollmentRequired: IsE2EICertificateEnrollmentRequiredProtocol = {
+        return IsE2EICertificateEnrollmentRequiredUseCase(
+            isE2EIdentityEnabled: e2eiFeature.isEnabled,
+            selfClientCertificateProvider: selfClientCertificateProvider,
+            gracePeriodEndDate: gracePeriodEndDate)
+    }()
+
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
-    public let gracePeriodRepository: GracePeriodRepository
+    public let e2eiActivationDateRepository: E2EIActivationDateRepository
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
@@ -420,7 +439,7 @@ public final class ZMUserSession: NSObject {
         )
 
         self.lastE2EIUpdateDateRepository = LastE2EIdentityUpdateDateRepository(userID: userId, sharedUserDefaults: UserDefaults.standard)
-        self.gracePeriodRepository = GracePeriodRepository(
+        self.e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults)
         self.applicationStatusDirectory = ApplicationStatusDirectory(

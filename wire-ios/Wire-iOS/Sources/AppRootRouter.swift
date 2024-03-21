@@ -203,6 +203,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showBlacklisted(reason: reason, completion: completionBlock)
         case .jailbroken:
             showJailbroken(completion: completionBlock)
+        case .certificateEnrollmentRequired:
+            showCertificateEnrollRequest(completion: completionBlock)
         case .databaseFailure(let error):
             showDatabaseLoadingFailure(error: error, completion: completionBlock)
         case .migrating:
@@ -278,6 +280,14 @@ extension AppRootRouter {
 
     private func showJailbroken(completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(context: .jailbroken)
+        rootViewController.set(childViewController: blockerViewController,
+                               completion: completion)
+    }
+
+    private func showCertificateEnrollRequest(completion: @escaping () -> Void) {
+        let blockerViewController = BlockerViewController(
+            context: .pendingCertificateEnroll,
+            sessionManager: sessionManager)
         rootViewController.set(childViewController: blockerViewController,
                                completion: completion)
     }
@@ -442,11 +452,13 @@ extension AppRootRouter {
                 enrollCertificateUseCase: userSession.enrollE2EICertificate,
                 snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
                 stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
-                gracePeriodRepository: userSession.gracePeriodRepository,
+                e2eiActivationDateRepository: userSession.e2eiActivationDateRepository,
+                e2eiFeature: userSession.e2eiFeature,
                 lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
                 e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
+                selfClientCertificateProvider: userSession.selfClientCertificateProvider,
                 targetVC: rootViewController),
-            gracePeriodRepository: userSession.gracePeriodRepository
+            e2eiActivationDateRepository: userSession.e2eiActivationDateRepository
         )
     }
 }
