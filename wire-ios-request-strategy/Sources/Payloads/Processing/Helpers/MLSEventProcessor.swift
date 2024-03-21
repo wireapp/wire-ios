@@ -45,15 +45,23 @@ public class MLSEventProcessor: MLSEventProcessing {
     // MARK: - Properties
 
     private let conversationService: ConversationServiceInterface
+    private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
 
     // MARK: - Life cycle
 
     convenience init(context: NSManagedObjectContext) {
-        self.init(conversationService: ConversationService(context: context))
+        self.init(
+            conversationService: ConversationService(context: context),
+            staleKeyMaterialDetector: StaleMLSKeyDetector(context: context)
+        )
     }
 
-    init(conversationService: ConversationServiceInterface) {
+    init(
+        conversationService: ConversationServiceInterface,
+        staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
+    ) {
         self.conversationService = conversationService
+        self.staleKeyMaterialDetector = staleKeyMaterialDetector
     }
 
     // MARK: - Update conversation
@@ -145,7 +153,6 @@ public class MLSEventProcessor: MLSEventProcessing {
             return (conversation!, conversation!.mlsGroupID!)
         }) else { return }
 
-        let staleKeyMaterialDetector = StaleMLSKeyDetector(context: context)
         staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
         await mlsService.uploadKeyPackagesIfNeeded()
         await conversationService.syncConversationIfMissing(qualifiedID: conversationID)

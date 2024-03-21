@@ -18,7 +18,7 @@
 
 import Foundation
 
-protocol StaleMLSKeyDetectorProtocol {
+public protocol StaleMLSKeyDetectorProtocol {
 
     /// The number of days before a key is considered stale.
 
@@ -70,7 +70,7 @@ public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
         self.context = context
     }
 
-    var groupsWithStaleKeyingMaterial: Set<MLSGroupID> {
+    public var groupsWithStaleKeyingMaterial: Set<MLSGroupID> {
         var result = Set<MLSGroupID>()
 
         context.performAndWait {
