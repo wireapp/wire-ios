@@ -217,6 +217,16 @@ public final class NotificationSession {
             lastEventIDRepository: lastEventIDRepository
         )
 
+        let requestGeneratorStore = RequestGeneratorStore(strategies: [pushNotificationStrategy])
+
+        let operationLoop = RequestGeneratingOperationLoop(
+            userContext: coreDataStack.viewContext,
+            syncContext: coreDataStack.syncContext,
+            callBackQueue: .main,
+            requestGeneratorStore: requestGeneratorStore,
+            transportSession: transportSession
+        )
+
         let cryptoboxMigrationManager = CryptoboxMigrationManager()
         let coreCryptoProvider = CoreCryptoProvider(
             selfUserID: accountIdentifier,
@@ -233,28 +243,6 @@ public final class NotificationSession {
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
             commitSender: commitSender
-        )
-        let mlsService = MLSService(
-            context: coreDataStack.syncContext,
-            coreCryptoProvider: coreCryptoProvider,
-            conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
-            userDefaults: .standard,
-            syncStatus: SyncStatus(),
-            userID: coreDataStack.account.userIdentifier
-            )
-
-        let conversationRequestStrategy = ConversationRequestStrategy(
-            withManagedObjectContext: coreDataStack.syncContext
-            , applicationStatus: applicationStatusDirectory, syncProgress: SyncStatus(), mlsService: mlsService, removeLocalConversation: RemoveLocalConversationUseCase())
-
-        let requestGeneratorStore = RequestGeneratorStore(strategies: [pushNotificationStrategy, conversationRequestStrategy])
-
-        let operationLoop = RequestGeneratingOperationLoop(
-            userContext: coreDataStack.viewContext,
-            syncContext: coreDataStack.syncContext,
-            callBackQueue: .main,
-            requestGeneratorStore: requestGeneratorStore,
-            transportSession: transportSession
         )
 
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
