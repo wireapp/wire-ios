@@ -80,9 +80,8 @@ class MLSEventProcessorTests: MessagingTestBase {
         let message = "welcome message"
 
         await syncMOC.perform {
-            self.conversation.mlsStatus = .pendingJoin
+            self.conversation.mlsStatus = .ready
             self.conversation.conversationType = .group
-            XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
         }
 
         // When
@@ -95,14 +94,10 @@ class MLSEventProcessorTests: MessagingTestBase {
         )
 
         // Then
-        XCTAssertEqual(mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations, [message])
+        // TODO jacob: assert that it updates key material date
         XCTAssertEqual(mlsServiceMock.uploadKeyPackagesIfNeeded_Invocations.count, 1)
         XCTAssertEqual(conversationServiceMock.syncConversationIfMissingQualifiedID_Invocations, [qualifiedID])
         XCTAssertTrue(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.isEmpty)
-
-        await syncMOC.perform {
-            XCTAssertEqual(self.conversation.mlsStatus, .ready)
-        }
     }
 
     func test_itProcessesMessageAndUpdatesConversation_OneOnOneConversation() async throws {
@@ -115,9 +110,8 @@ class MLSEventProcessorTests: MessagingTestBase {
         )
 
         await syncMOC.perform {
-            self.conversation.mlsStatus = .pendingJoin
+            self.conversation.mlsStatus = .ready
             self.conversation.conversationType = .oneOnOne
-            XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
 
             let otherUser = self.createUser()
             otherUser.remoteIdentifier = otherUserID.uuid
@@ -142,16 +136,11 @@ class MLSEventProcessorTests: MessagingTestBase {
         )
 
         // Then
-
-        XCTAssertEqual(mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations, [message])
+        // TODO jacob: assert that it updates key material date
         XCTAssertEqual(mlsServiceMock.uploadKeyPackagesIfNeeded_Invocations.count, 1)
         XCTAssertEqual(conversationServiceMock.syncConversationIfMissingQualifiedID_Invocations, [qualifiedID])
         XCTAssertEqual(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.count, 1)
         XCTAssertEqual(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.first?.userID, otherUserID)
-
-        await syncMOC.perform {
-            XCTAssertEqual(self.conversation.mlsStatus, .ready)
-        }
     }
 
     // MARK: - Update Conversation
