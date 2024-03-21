@@ -145,7 +145,7 @@ public class MLSEventProcessor: MLSEventProcessing {
             return (conversation!, conversation!.mlsGroupID!)
         }) else { return }
 
-        let staleKeyMaterialDetector = StaleMLSKeyDetector(context: context) // TODO: inject?
+        let staleKeyMaterialDetector = StaleMLSKeyDetector(context: context)
         staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
         await mlsService.uploadKeyPackagesIfNeeded()
         await conversationService.syncConversationIfMissing(qualifiedID: conversationID)
