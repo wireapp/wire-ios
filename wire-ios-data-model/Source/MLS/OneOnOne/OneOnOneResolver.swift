@@ -101,7 +101,12 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         case .proteus:
             return resolveCommonUserProtocolProteus()
         case .mixed:
-            return resolveCommonUserProtocolMixed()
+            // This should never happen:
+            // Users can only support proteus and mls protocols.
+            // Mixed protocol is used by conversations to represent
+            // the migration state when migrating from proteus to mls.
+            assertionFailure("users should not have mixed protocol")
+            return .noAction
         }
     }
 
@@ -221,17 +226,6 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     private func resolveCommonUserProtocolProteus() -> OneOnOneConversationResolution {
         WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
-        return .noAction
-    }
-
-    // MARK: Resolve - Mixed
-
-    private func resolveCommonUserProtocolMixed() -> OneOnOneConversationResolution {
-        // This should never happen:
-        // Users can only support proteus and mls protocols.
-        // Mixed protocol is used by conversations to represent
-        // the migration state when migrating from proteus to mls.
-        assertionFailure("users should not have mixed protocol")
         return .noAction
     }
 
