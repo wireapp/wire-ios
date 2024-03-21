@@ -30,7 +30,11 @@ final class OneOnOneConversationMigrationAction: CoreDataMigrationAction {
             if let connection = user.value(forKey: "connection") as? NSManagedObject {
                 migrateConnectionOneOnOne(user: user, connection: connection)
             } else {
-                migrateTeamOneOnOne(user: user, context: context)
+                do {
+                    try migrateTeamOneOnOne(user: user, context: context)
+                } catch {
+                    WireLogger.localStorage.error("failed to migrate non connected user: \(user)")
+                }
             }
         }
     }
@@ -45,16 +49,17 @@ final class OneOnOneConversationMigrationAction: CoreDataMigrationAction {
         user.setValue(conversation, forKey: "oneOnOneConversation")
     }
 
-    private func migrateTeamOneOnOne(user: NSManagedObject, context: NSManagedObjectContext) {
+    private func migrateTeamOneOnOne(user: NSManagedObject, context: NSManagedObjectContext) throws {
         let sessionRequest = NSFetchRequest<NSManagedObject>(entityName: ZMSession.entityName())
-        let result = try? context.fetch(sessionRequest)
+        let result = try context.fetch(sessionRequest)
 
         guard
-            let session = result?.first,
+            let session = result.first,
             let selfUser = session.value(forKey: "selfUser") as? NSManagedObject,
             let membership = selfUser.value(forKey: "membership") as? NSManagedObject,
             let selfTeam = membership.value(forKey: "team") as? NSManagedObject
         else {
+            // user is not a member of the self team there won't exist any one-on-one conversation
             return
         }
 
@@ -90,8 +95,7 @@ final class OneOnOneConversationMigrationAction: CoreDataMigrationAction {
         ])
 
         guard
-            let conversations = try? context.fetch(request),
-            let conversation = conversations.first
+            let conversation = try context.fetch(request).first
         else {
             return
         }
