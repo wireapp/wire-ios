@@ -5078,6 +5078,48 @@ class MockProteusToMLSMigrationStorageInterface: ProteusToMLSMigrationStorageInt
 
 }
 
+public class MockStaleMLSKeyDetectorProtocol: StaleMLSKeyDetectorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - refreshIntervalInDays
+
+    public var refreshIntervalInDays: UInt {
+        get { return underlyingRefreshIntervalInDays }
+        set(value) { underlyingRefreshIntervalInDays = value }
+    }
+
+    public var underlyingRefreshIntervalInDays: UInt!
+
+    // MARK: - groupsWithStaleKeyingMaterial
+
+    public var groupsWithStaleKeyingMaterial: Set<MLSGroupID> {
+        get { return underlyingGroupsWithStaleKeyingMaterial }
+        set(value) { underlyingGroupsWithStaleKeyingMaterial = value }
+    }
+
+    public var underlyingGroupsWithStaleKeyingMaterial: Set<MLSGroupID>!
+
+
+    // MARK: - keyingMaterialUpdated
+
+    public var keyingMaterialUpdatedFor_Invocations: [MLSGroupID] = []
+    public var keyingMaterialUpdatedFor_MockMethod: ((MLSGroupID) -> Void)?
+
+    public func keyingMaterialUpdated(for groupID: MLSGroupID) {
+        keyingMaterialUpdatedFor_Invocations.append(groupID)
+
+        guard let mock = keyingMaterialUpdatedFor_MockMethod else {
+            fatalError("no mock for `keyingMaterialUpdatedFor`")
+        }
+
+        mock(groupID)
+    }
+
+}
+
 public class MockSubconversationGroupIDRepositoryInterface: SubconversationGroupIDRepositoryInterface {
 
     // MARK: - Life cycle

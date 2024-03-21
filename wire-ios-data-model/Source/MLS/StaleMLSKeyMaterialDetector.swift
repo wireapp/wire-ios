@@ -18,6 +18,7 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 public protocol StaleMLSKeyDetectorProtocol {
 
     /// The number of days before a key is considered stale.
