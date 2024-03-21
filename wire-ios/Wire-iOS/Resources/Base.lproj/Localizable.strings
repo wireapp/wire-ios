@@ -774,10 +774,6 @@
 "call.mls.degraded.alert.message" = "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to start the call?";
 "call.mls.degraded.alert.action.continue" = "Call anyway";
 
-"call.mls.degraded.incoming.alert.message" = "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to join the call?";
-"call.mls.degraded.incoming.alert.action.continue" = "Join anyway";
-
-
 "call.mls.degraded.ended.alert.title" = "Conversation no longer verified";
 "call.mls.degraded.ended.alert.message" = "The call was disconnected as at least one participant started using a new device or has an invalid certificate.";
 

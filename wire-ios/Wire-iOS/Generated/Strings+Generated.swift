@@ -1298,18 +1298,6 @@ internal enum L10n {
               internal static let title = L10n.tr("Localizable", "call.mls.degraded.ended.alert.title", fallback: "Conversation no longer verified")
             }
           }
-          internal enum Incoming {
-            internal enum Alert {
-              /// At least one participant started using a new device or has an invalid certificate.
-              /// 
-              /// Do you still want to join the call?
-              internal static let message = L10n.tr("Localizable", "call.mls.degraded.incoming.alert.message", fallback: "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to join the call?")
-              internal enum Action {
-                /// Join anyway
-                internal static let `continue` = L10n.tr("Localizable", "call.mls.degraded.incoming.alert.action.continue", fallback: "Join anyway")
-              }
-            }
-          }
         }
       }
       internal enum Overlay {

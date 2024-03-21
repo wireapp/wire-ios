@@ -19,23 +19,14 @@
 import Foundation
 import UIKit
 
-final class AlertController: UIAlertController {
-    var dismissedClosure: (() -> Void)?
-
-    override func removeFromParent() {
-        super.removeFromParent()
-        dismissedClosure?()
-    }
-}
-
 extension UIAlertController {
-    static func unsupportedVersionAlert(dismiss: (() -> Void)? = nil) -> UIAlertController {
-        let alertController = AlertController(
+    static var unsupportedVersionAlert: UIAlertController {
+        let alertController = UIAlertController(
             title: L10n.Localizable.Voice.CallError.UnsupportedVersion.title,
             message: L10n.Localizable.Voice.CallError.UnsupportedVersion.message,
             preferredStyle: .alert
         )
-        alertController.dismissedClosure = dismiss
+
         alertController.addAction(UIAlertAction(
             title: L10n.Localizable.Force.Update.okButton,
             style: .default,

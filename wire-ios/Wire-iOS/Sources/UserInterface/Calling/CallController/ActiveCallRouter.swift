@@ -175,7 +175,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     func presentUnsupportedVersionAlert() {
         executeOrSchedulePostCallAction { [weak self] in
-            let alert = UIAlertController.unsupportedVersionAlert()
+            let alert = UIAlertController.unsupportedVersionAlert
             self?.rootViewController.present(alert, animated: true)
         }
     }
