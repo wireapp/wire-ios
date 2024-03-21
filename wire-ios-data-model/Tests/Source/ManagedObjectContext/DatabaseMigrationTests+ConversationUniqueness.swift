@@ -43,7 +43,7 @@ final class DatabaseMigrationTests_ConversationUniqueness: XCTestCase {
         let initialVersion = "2.110.0"
 
         let uniqueConversation1: (UUID?, String?) = (UUID(), nil)
-        let uniqueConversation2: (UUID?, String?) = (nil, "test.example.com")
+        let uniqueConversation2: (UUID?, String?) = (UUID(), "test.example.com")
         let otherDuplicateConversations = (UUID(), "otherdomain")
 
         try helper.migrateStoreToCurrentVersion(
