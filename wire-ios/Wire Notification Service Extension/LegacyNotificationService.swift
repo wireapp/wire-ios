@@ -81,7 +81,6 @@ public final class LegacyNotificationService: UNNotificationServiceExtension, No
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
         WireLogger.notifications.info("legacy notification service will process request (\(request.identifier))")
-        return
 
         self.contentHandler = contentHandler
 

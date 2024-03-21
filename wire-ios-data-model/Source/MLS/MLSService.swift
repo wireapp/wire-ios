@@ -38,8 +38,6 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func conversationExists(groupID: MLSGroupID) async -> Bool
 
-//    func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID
-
     func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws
 
     func removeMembersFromConversation(with clientIds: [MLSClientID], for groupID: MLSGroupID) async throws
@@ -146,20 +144,6 @@ public final class MLSService: MLSServiceInterface {
 
     // The number of days to wait until refreshing the key material for a group.
 
-    private static var keyMaterialRefreshIntervalInDays: UInt {
-        // To ensure that a group's key material does not exceed its maximum age,
-        // refresh pre-emptively so that it doesn't go stale while the user is offline.
-        return keyMaterialMaximumAgeInDays - backendMessageHoldTimeInDays
-    }
-
-    // The maximum age of a group's key material before it's considered stale.
-
-    private static let keyMaterialMaximumAgeInDays: UInt = 90
-
-    // The number of days the backend will hold a message.
-
-    private static let backendMessageHoldTimeInDays: UInt = 28
-
     private static let epochChangeBufferSize: Int = 1000
 
     weak var delegate: MLSServiceDelegate?
@@ -178,10 +162,7 @@ public final class MLSService: MLSServiceInterface {
             context: context,
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: conversationEventProcessor,
-            staleKeyMaterialDetector: StaleMLSKeyDetector(
-                refreshIntervalInDays: Self.keyMaterialRefreshIntervalInDays,
-                context: context
-            ),
+            staleKeyMaterialDetector: StaleMLSKeyDetector(context: context),
             userDefaults: userDefaults,
             actionsProvider: MLSActionsProvider(),
             syncStatus: syncStatus,
@@ -816,36 +797,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
-        logger.info("processing welcome message")
-
-        guard let messageData = welcomeMessage.base64DecodedData else {
-            logger.error("failed to convert welcome message to data")
-            throw MLSWelcomeMessageProcessingError.failedToConvertMessageToBytes
-        }
-
-        do {
-            let welcomeBundle = try await coreCrypto.perform {
-                try await $0.processWelcomeMessage(
-                    welcomeMessage: messageData,
-                    customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
-                )
-            }
-
-            if let newDistributionPoints = CRLsDistributionPoints(
-                from: welcomeBundle.crlNewDistributionPoints
-            ) {
-                onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
-            }
-
-            let groupID = MLSGroupID(welcomeBundle.id)
-            await uploadKeyPackagesIfNeeded()
-            staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
-            return groupID
-
-        } catch {
-            logger.error("failed to process welcome message: \(String(reflecting: error))")
-            throw MLSWelcomeMessageProcessingError.failedToProcessMessage
-        }
+        return try await decryptionService.processWelcomeMessage(welcomeMessage: welcomeMessage)
     }
 
     // MARK: - Joining conversations

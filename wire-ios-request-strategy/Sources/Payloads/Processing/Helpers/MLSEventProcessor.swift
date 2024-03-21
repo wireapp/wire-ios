@@ -140,36 +140,21 @@ public class MLSEventProcessor: MLSEventProcessing {
         mlsService: MLSServiceInterface,
         oneOnOneResolver: OneOnOneResolverInterface
     ) async {
-        do {
-            let groupID = try? await mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
-            await mlsService.uploadKeyPackagesIfNeeded()
-            await conversationService.syncConversationIfMissing(qualifiedID: conversationID)
+        guard let (conversation, groupID) = await context.perform({
+            let conversation = ZMConversation.fetch(with: conversationID, in: context)
+            return (conversation!, conversation!.mlsGroupID!)
+        }) else { return }
 
-            let conversation: ZMConversation? = await context.perform {
-                guard let conversation = ZMConversation.fetch(
-                    with: conversationID,
-                    in: context
-                ) else {
-                    return nil
-                }
+        let staleKeyMaterialDetector = StaleMLSKeyDetector(context: context) // TODO: inject?
+        staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
+        await mlsService.uploadKeyPackagesIfNeeded()
+        await conversationService.syncConversationIfMissing(qualifiedID: conversationID)
 
-                conversation.mlsGroupID = groupID
-                conversation.mlsStatus = .ready
-
-                return conversation
-            }
-
-            guard let conversation else { return }
-
-            await resolveOneOnOneConversationIfNeeded(
-                conversation: conversation,
-                oneOneOneResolver: oneOnOneResolver,
-                in: context
-            )
-        } catch {
-            WireLogger.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
-            return
-        }
+        await resolveOneOnOneConversationIfNeeded(
+            conversation: conversation,
+            oneOneOneResolver: oneOnOneResolver,
+            in: context
+        )
     }
 
     private func resolveOneOnOneConversationIfNeeded(

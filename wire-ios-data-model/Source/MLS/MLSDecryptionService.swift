@@ -104,6 +104,8 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
     }
 
     public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
+        WireLogger.mls.info("processing welcome message")
+
         guard let messageData = welcomeMessage.base64DecodedData else {
             throw MLSMessageDecryptionError.failedToConvertMessageToBytes
         }

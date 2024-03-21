@@ -37,17 +37,33 @@ protocol StaleMLSKeyDetectorProtocol {
 
 }
 
-final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
+public final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
+
+    // MARK: - Constants
+
+    public static var keyMaterialRefreshIntervalInDays: UInt {
+        // To ensure that a group's key material does not exceed its maximum age,
+        // refresh pre-emptively so that it doesn't go stale while the user is offline.
+        return keyMaterialMaximumAgeInDays - backendMessageHoldTimeInDays
+    }
+
+    // The maximum age of a group's key material before it's considered stale.
+
+    private static let keyMaterialMaximumAgeInDays: UInt = 90
+
+    // The number of days the backend will hold a message.
+
+    private static let backendMessageHoldTimeInDays: UInt = 28
 
     // MARK: - Properties
 
-    var refreshIntervalInDays: UInt
+    public var refreshIntervalInDays: UInt
     let context: NSManagedObjectContext
 
     // MARK: - Life cycle
 
-    init(
-        refreshIntervalInDays: UInt,
+    public init(
+        refreshIntervalInDays: UInt = StaleMLSKeyDetector.keyMaterialRefreshIntervalInDays,
         context: NSManagedObjectContext
     ) {
         self.refreshIntervalInDays = refreshIntervalInDays
@@ -68,7 +84,7 @@ final class StaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
         return result
     }
 
-    func keyingMaterialUpdated(for groupID: MLSGroupID) {
+    public func keyingMaterialUpdated(for groupID: MLSGroupID) {
         WireLogger.mls.info("Tracking key material update date for group (\(groupID))")
 
         context.performGroupedBlock {
