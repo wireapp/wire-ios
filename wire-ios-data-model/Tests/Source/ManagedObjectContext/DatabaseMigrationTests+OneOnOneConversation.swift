@@ -36,14 +36,7 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testMigratingToMessagingStore_2_114_UpdatesRelationships() throws {
-        let mappingModelURL = bundle.url(
-            forResource: "MappingModel_2.113-2.114",
-            withExtension: "cdm"
-        )
-
-        let mappingModel = try XCTUnwrap(NSMappingModel(contentsOf: mappingModelURL))
-
+    func testMigratingToMessagingStore_from2_113_updatesRelationships() throws {
         let selfUserID = UUID.create()
         let teamID = UUID.create()
 
@@ -56,11 +49,8 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
         let teamUser2ID = UUID.create()
         let teamConversation2ID = UUID.create()
 
-        try helper.migrateStore(
+        try helper.migrateStoreToCurrentVersion(
             sourceVersion: "2.113.0",
-            destinationVersion: "2.114.0",
-            mappingModel: mappingModel,
-            storeDirectory: tmpStoreURL,
             preMigrationAction: { context in
                 let selfUser = ZMUser.selfUser(in: context)
                 selfUser.remoteIdentifier = selfUserID
@@ -109,28 +99,30 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
                 XCTAssertEqual(teamGroupConversation.conversationType, .group)
             },
             postMigrationAction: { context in
-                let selfUser = try XCTUnwrap(ZMUser.fetch(with: selfUserID, in: context))
-                XCTAssertNil(selfUser.oneOnOneConversation)
+                try context.performGroupedAndWait { context in
+                    let selfUser = try XCTUnwrap(ZMUser.fetch(with: selfUserID, in: context))
+                    XCTAssertNil(selfUser.oneOnOneConversation)
 
-                // Connected conversation was migrated.
-                let connectedUser = try XCTUnwrap(ZMUser.fetch(with: connectedUserID, in: context))
-                let connectedConversation = try XCTUnwrap(ZMConversation.fetch(with: connectedConversationID, in: context))
-                XCTAssertEqual(connectedUser.oneOnOneConversation, connectedConversation)
-                XCTAssertEqual(connectedConversation.oneOnOneUser, connectedUser)
+                    // Connected conversation was migrated.
+                    let connectedUser = try XCTUnwrap(ZMUser.fetch(with: connectedUserID, in: context))
+                    let connectedConversation = try XCTUnwrap(ZMConversation.fetch(with: connectedConversationID, in: context))
+                    XCTAssertEqual(connectedUser.oneOnOneConversation, connectedConversation)
+                    XCTAssertEqual(connectedConversation.oneOnOneUser, connectedUser)
 
-                // Team one on one was migrated.
-                let teamUser1 = try XCTUnwrap(ZMUser.fetch(with: teamUser1ID, in: context))
-                let teamConversation1 = try XCTUnwrap(ZMConversation.fetch(with: teamConversation1ID, in: context))
-                XCTAssertEqual(teamUser1.oneOnOneConversation, teamConversation1)
-                XCTAssertEqual(teamConversation1.oneOnOneUser, teamUser1)
+                    // Team one on one was migrated.
+                    let teamUser1 = try XCTUnwrap(ZMUser.fetch(with: teamUser1ID, in: context))
+                    let teamConversation1 = try XCTUnwrap(ZMConversation.fetch(with: teamConversation1ID, in: context))
+                    XCTAssertEqual(teamUser1.oneOnOneConversation, teamConversation1)
+                    XCTAssertEqual(teamConversation1.oneOnOneUser, teamUser1)
 
-                // Team group was not migrated.
-                let teamUser2 = try XCTUnwrap(ZMUser.fetch(with: teamUser2ID, in: context))
-                let teamConversation2 = try XCTUnwrap(ZMConversation.fetch(with: teamConversation2ID, in: context))
-                XCTAssertNil(teamUser2.oneOnOneConversation)
-                XCTAssertNil(teamConversation2.oneOnOneUser)
-            }
-        )
+                    // Team group was not migrated.
+                    let teamUser2 = try XCTUnwrap(ZMUser.fetch(with: teamUser2ID, in: context))
+                    let teamConversation2 = try XCTUnwrap(ZMConversation.fetch(with: teamConversation2ID, in: context))
+                    XCTAssertNil(teamUser2.oneOnOneConversation)
+                    XCTAssertNil(teamConversation2.oneOnOneUser)
+                }
+            },
+            for: self)
     }
 
     private func addUser(
