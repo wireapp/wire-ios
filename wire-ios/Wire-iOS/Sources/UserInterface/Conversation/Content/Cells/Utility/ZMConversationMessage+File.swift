@@ -21,11 +21,8 @@ import WireDataModel
 
 extension ZMConversationMessage {
     public func isFileDownloaded() -> Bool {
-        if self.fileMessageData?.fileURL != nil {
-            return true
-        } else {
-            return false
-        }
+        guard let fileMessageData else { return false }
+        return fileMessageData.hasLocalFileData
     }
 
     public func videoCanBeSavedToCameraRoll() -> Bool {

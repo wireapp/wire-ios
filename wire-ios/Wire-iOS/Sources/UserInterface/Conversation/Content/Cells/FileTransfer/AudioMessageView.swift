@@ -395,24 +395,31 @@ final class AudioMessageView: UIView, TransferView {
     @objc private func onActionButtonPressed(_ sender: UIButton) {
         isPausedForIncomingCall = false
 
-        guard let fileMessage = fileMessage, let fileMessageData = fileMessage.fileMessageData else { return }
+        guard
+            let fileMessage = fileMessage,
+            let fileMessageData = fileMessage.fileMessageData
+        else {
+            return
+        }
 
         switch fileMessageData.transferState {
         case .uploading:
-            if .none != fileMessageData.fileURL {
-                delegate?.transferView(self, didSelect: .cancel)
-            }
+            guard fileMessageData.hasLocalFileData else { return }
+            delegate?.transferView(self, didSelect: .cancel)
+
         case .uploadingCancelled, .uploadingFailed:
-            if .none != fileMessageData.fileURL {
-                delegate?.transferView(self, didSelect: .resend)
-            }
+            guard fileMessageData.hasLocalFileData else { return }
+            delegate?.transferView(self, didSelect: .resend)
+
         case .uploaded:
             switch fileMessageData.downloadState {
             case .remote:
                 expectingDownload = true
                 ZMUserSession.shared()?.enqueue(fileMessageData.requestFileDownload)
+
             case .downloaded:
                 playTrack()
+
             case .downloading:
                 downloadProgressView.setProgress(0, animated: false)
                 delegate?.transferView(self, didSelect: .cancel)

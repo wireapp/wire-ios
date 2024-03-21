@@ -246,17 +246,21 @@ final class FileTransferView: UIView, TransferView {
     // MARK: - Actions
 
     @objc func onActionButtonPressed(_ sender: UIButton) {
-        guard let message = fileMessage, let fileMessageData = message.fileMessageData else {
+        guard 
+            let message = fileMessage,
+            let fileMessageData = message.fileMessageData
+        else {
             return
         }
 
         switch fileMessageData.transferState {
         case .uploading:
-            if .none != message.fileMessageData!.fileURL {
-                delegate?.transferView(self, didSelect: .cancel)
-            }
+            guard fileMessageData.hasLocalFileData else { return }
+            delegate?.transferView(self, didSelect: .cancel)
+
         case .uploadingFailed, .uploadingCancelled:
             delegate?.transferView(self, didSelect: .resend)
+
         case .uploaded:
             if case .downloading = fileMessageData.downloadState {
                 progressView.setProgress(0, animated: false)

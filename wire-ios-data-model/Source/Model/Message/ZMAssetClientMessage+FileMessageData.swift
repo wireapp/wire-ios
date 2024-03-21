@@ -40,6 +40,9 @@ import MobileCoreServices
     /// Currend download / upload progress
     var progress: Float { get set }
 
+    /// Whether the file data exists locally.
+    var hasLocalFileData: Bool { get }
+
     /// The file location on the filesystem
     var fileURL: URL? { get }
 
@@ -131,6 +134,10 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     /// If the asset is a rich file type, this returns its type.
     public var richAssetType: RichAssetFileType? {
         return mimeType.flatMap(RichAssetFileType.init)
+    }
+
+    public var hasLocalFileData: Bool {
+        return asset?.hasDownloadedFile ?? false
     }
 
     public var fileURL: URL? {
