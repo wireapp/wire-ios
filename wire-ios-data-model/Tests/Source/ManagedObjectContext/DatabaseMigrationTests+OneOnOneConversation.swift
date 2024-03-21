@@ -36,7 +36,7 @@ class DatabaseMigrationTests_OneOnOneConversation: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testMigratingToMessagingStore_2_114_UpdatesRelationships() throws {
+    func testMigratingToMessagingStore_from2_113_updatesRelationships() throws {
         let selfUserID = UUID.create()
         let teamID = UUID.create()
 
