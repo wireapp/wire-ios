@@ -28,7 +28,9 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
                 let user = ZMUser(context: context)
+                user.remoteIdentifier = UUID()
                 let conversation = ZMConversation(context: context)
+                conversation.remoteIdentifier = UUID()
                 let participantRole = ParticipantRole(context: context)
                 participantRole.conversation = conversation
                 participantRole.user = user
@@ -49,7 +51,9 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
                 let user = ZMUser(context: context)
+                user.remoteIdentifier = UUID()
                 let conversation = ZMConversation(context: context)
+                conversation.remoteIdentifier = UUID()
                 let participantRole = ParticipantRole(context: context)
                 participantRole.conversation = conversation
                 participantRole.user = user
@@ -70,7 +74,9 @@ final class DatabaseMigrationTests_Conversations: XCTestCase {
             sourceVersion: "2.106.0",
             preMigrationAction: { context in
                 let user = ZMUser(context: context)
+                user.remoteIdentifier = UUID()
                 let conversation = ZMConversation(context: context)
+                conversation.remoteIdentifier = UUID()
                 let participantRole = ParticipantRole(context: context)
                 participantRole.conversation = conversation
                 participantRole.user = user
