@@ -143,7 +143,10 @@ extension ConversationInputBarViewController {
 
     @objc
     func videoButtonPressed(_ sender: IconButton) {
-        recordVideo()
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+            self.recordVideo()
+        }
+        checker.performAction()
     }
 
     private func recordVideo() {

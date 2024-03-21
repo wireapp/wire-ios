@@ -35,22 +35,18 @@ final class ConversationInputBarSendController: NSObject {
 
         guard let conversation = conversation as? ZMConversation else { return }
 
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
-            feedbackGenerator.prepare()
-            userSession.enqueue({
-                do {
-                    try conversation.appendImage(from: imageData)
-                    self.feedbackGenerator.impactOccurred()
-                } catch {
-                    Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
-                }
-            }, completionHandler: {
-                completionHandler?()
-                Analytics.shared.tagMediaActionCompleted(.photo, inConversation: conversation)
-            })
+        feedbackGenerator.prepare()
+        userSession.enqueue({
+            do {
+                try conversation.appendImage(from: imageData)
+                self.feedbackGenerator.impactOccurred()
+            } catch {
+                Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
+            }
+        }, completionHandler: {
+            completionHandler?()
+            Analytics.shared.tagMediaActionCompleted(.photo, inConversation: conversation)
         })
-
-        checker.performAction()
     }
 
     func sendTextMessage(_ text: String,

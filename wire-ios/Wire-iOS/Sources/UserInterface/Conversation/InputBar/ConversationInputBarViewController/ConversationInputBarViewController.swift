@@ -887,8 +887,15 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
     @objc
     func sketchButtonPressed(_ sender: Any?) {
-        inputBar.textView.resignFirstResponder()
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
+            sketch()
+        })
 
+        checker.performAction()
+    }
+
+    private func sketch() {
+        inputBar.textView.resignFirstResponder()
         let viewController = CanvasViewController()
         viewController.delegate = self
         viewController.navigationItem.setupNavigationBarTitle(title: conversation.displayNameWithFallback)
