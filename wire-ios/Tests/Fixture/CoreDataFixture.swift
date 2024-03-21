@@ -124,8 +124,9 @@ final class CoreDataFixture {
     }
 
     func setUpCaches() {
+        let cacheLocation = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         uiMOC.zm_userImageCache = UserImageLocalCache(location: nil)
-        uiMOC.zm_fileAssetCache = FileAssetCache(location: nil)
+        uiMOC.zm_fileAssetCache = FileAssetCache(location: cacheLocation)
     }
 
     // MARK: – Setup
