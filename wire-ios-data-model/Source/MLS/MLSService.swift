@@ -1382,9 +1382,7 @@ public final class MLSService: MLSServiceInterface {
                         logger.error("failed to commit pending proposals: \(String(describing: error))")
                     }
                 }
-
             }
-            await taskGroup.waitForAll()
         }
     }
 
