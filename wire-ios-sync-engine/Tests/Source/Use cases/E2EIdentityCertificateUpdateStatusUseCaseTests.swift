@@ -25,6 +25,9 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
     private var mockGetE2eIdentityCertificates: MockGetE2eIdentityCertificatesUseCaseProtocol!
     private var stack: CoreDataStack!
     private var sut: E2EIdentityCertificateUpdateStatusUseCase!
+    private var userID: UUID!
+    private var userDefaults: UserDefaults!
+    private var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface!
 
     override func setUp() async throws {
         try await super.setUp()
@@ -37,18 +40,23 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
 
         mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUseCaseProtocol()
 
+        userDefaults = .temporary()
+        userID = UUID.create()
+        lastE2EIUpdateDateRepository = LastE2EIdentityUpdateDateRepository(userID: userID, sharedUserDefaults: userDefaults)
         sut = E2EIdentityCertificateUpdateStatusUseCase(
             getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
             gracePeriod: 0,
             mlsClientID: .random(),
             context: stack.syncContext,
-            lastAlertDate: nil
+            lastE2EIUpdateDateRepository: nil
         )
     }
 
     override func tearDown() async throws {
         stack = nil
         mockGetE2eIdentityCertificates = nil
+        userID = nil
+        userDefaults = nil
         sut = nil
 
         try await super.tearDown()
@@ -82,12 +90,13 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
 
     func testThatItReturnsNoAction_WhenExpiryDateIsWithInSevenDaysAndLastAlertWasDisplayedToday() async throws {
         // Given
+        lastE2EIUpdateDateRepository.storeLastAlertDate(Date.now)
         sut = E2EIdentityCertificateUpdateStatusUseCase(
             getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
             gracePeriod: 0,
             mlsClientID: .random(),
             context: stack.syncContext,
-            lastAlertDate: Date.now
+            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
         )
         update(certificate: certificate(with: .oneWeek))
 
@@ -100,12 +109,13 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
 
     func testThatItReturnsReminder_WhenExpiryDateIsWithInSevenDaysAndLastAlertWasDisplayedNotToday() async throws {
         // Given
+        lastE2EIUpdateDateRepository.storeLastAlertDate(Date.now - .oneDay)
         sut = E2EIdentityCertificateUpdateStatusUseCase(
             getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
             gracePeriod: 0,
             mlsClientID: .random(),
             context: stack.syncContext,
-            lastAlertDate: Date.now - .oneDay
+            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
         )
         update(certificate: certificate(with: .oneWeek - .oneSecond))
 
@@ -127,12 +137,13 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
 
     func testThatItReturnsNoAction_WhenExpiryDateIsWithInOneDayAndAlertWasShownWithinFourHours() async throws {
         // Given
+        lastE2EIUpdateDateRepository.storeLastAlertDate(Date.now)
         sut = E2EIdentityCertificateUpdateStatusUseCase(
             getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
             gracePeriod: 0,
             mlsClientID: .random(),
             context: stack.syncContext,
-            lastAlertDate: Date.now
+            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
         )
         update(certificate: certificate(with: .oneHour * 4))
 
@@ -145,12 +156,13 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
 
     func testThatItReturnsNoAction_WhenExpiryDateIsWithInOneDayAndAlertWasShownBeyondFourHours() async throws {
         // Given
+        lastE2EIUpdateDateRepository.storeLastAlertDate(Date.now)
         sut = E2EIdentityCertificateUpdateStatusUseCase(
             getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
             gracePeriod: 0,
             mlsClientID: .random(),
             context: stack.syncContext,
-            lastAlertDate: Date.now
+            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
         )
         update(certificate: certificate(with: .oneHour * 5))
 

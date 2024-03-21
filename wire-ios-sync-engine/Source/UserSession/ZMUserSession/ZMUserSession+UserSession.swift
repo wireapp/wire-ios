@@ -316,7 +316,7 @@ extension ZMUserSession: UserSession {
             gracePeriod: TimeInterval(e2eiFeature.config.verificationExpiration), // the feature repository should better be injected into the use case
             mlsClientID: selfMLSClientID,
             context: syncContext,
-            lastAlertDate: lastE2EIUpdateDateRepository?.fetchLastAlertDate()
+            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
         )
     }
 }

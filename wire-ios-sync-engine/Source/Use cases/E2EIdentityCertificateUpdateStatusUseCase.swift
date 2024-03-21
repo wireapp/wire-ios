@@ -41,20 +41,20 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
     private let gracePeriod: TimeInterval
     private let comparedDate: DateProviding
     private let mlsClientID: MLSClientID
-    private var context: NSManagedObjectContext
-    private var lastAlertDate: Date?
+    private let context: NSManagedObjectContext
+    private let lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
     public init(
         getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol,
         gracePeriod: TimeInterval,
         mlsClientID: MLSClientID,
         context: NSManagedObjectContext,
-        lastAlertDate: Date?,
+        lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?,
         comparedDate: DateProviding = SystemDateProvider()
     ) {
         self.getE2eIdentityCertificates = getE2eIdentityCertificates
         self.gracePeriod = gracePeriod
-        self.lastAlertDate = lastAlertDate
+        self.lastE2EIUpdateDateRepository = lastE2EIUpdateDateRepository
         self.mlsClientID = mlsClientID
         self.context = context
         self.comparedDate = comparedDate
@@ -92,7 +92,7 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
         let maxTimeLeft = max(timeLeftUntilExpiration, TimeInterval.oneWeek)
 
         // If not alert was shown before, show a reminder
-        guard let lastAlertDate else {
+        guard let lastAlertDate = lastE2EIUpdateDateRepository?.fetchLastAlertDate() else {
             return .reminder
         }
 
