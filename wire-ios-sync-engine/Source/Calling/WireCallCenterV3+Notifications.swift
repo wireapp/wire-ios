@@ -128,6 +128,19 @@ public struct WireCallCenterMissedCallNotification: SelfPostingNotification {
     let video: Bool
 }
 
+// MARK: - Degraded call observer
+
+public protocol WireCallCenterDegradedCallObserver: AnyObject {
+    func callCenterDegradedCall(conversation: ZMConversation)
+}
+
+public struct WireCallCenterDegradedCallNotification: SelfPostingNotification {
+    static let notificationName = Notification.Name("WireCallCenterDegradedCallNotification")
+
+    weak var context: NSManagedObjectContext?
+    let conversationId: AVSIdentifier
+}
+
 // MARK: - Received call observer
 
 public protocol WireCallCenterCallErrorObserver: AnyObject {
@@ -283,6 +296,21 @@ extension WireCallCenterV3 {
                                                        in: context) {
 
                 observer?.callCenterMissedCall(conversation: conversation, caller: caller, timestamp: note.timestamp, video: note.video)
+            }
+        }
+    }
+
+    /// Register observer of calls degrading
+    /// Returns a token which needs to be retained as long as the observer should be active.
+    public class func addDegradedCallObserver(observer: WireCallCenterDegradedCallObserver, context: NSManagedObjectContext) -> NSObjectProtocol {
+        return NotificationInContext.addObserver(name: WireCallCenterDegradedCallNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
+            if let note = note.userInfo[WireCallCenterDegradedCallNotification.userInfoKey] as? WireCallCenterDegradedCallNotification,
+
+               let conversation = ZMConversation.fetch(with: note.conversationId.identifier,
+                                                       domain: note.conversationId.domain,
+                                                       in: context) {
+
+                observer?.callCenterDegradedCall(conversation: conversation)
             }
         }
     }

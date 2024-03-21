@@ -61,7 +61,8 @@ final class CallController: NSObject {
     private func addObservers(userSession: UserSession) {
         observerTokens.append(userSession.addConferenceCallStateObserver(self))
         observerTokens.append(userSession.addConferenceCallErrorObserver(self))
-        }
+        observerTokens.append(userSession.addDegradedCallObserver(self))
+    }
 
     private func presentOrMinimizeActiveCall(for conversation: ZMConversation) {
         if conversation == minimizedCall {
@@ -121,6 +122,26 @@ final class CallController: NSObject {
     }
 }
 
+// MARK: - WireCallCenterDegradedCallObserver
+extension CallController: WireCallCenterDegradedCallObserver {
+
+    func callCenterDegradedCall(conversation: ZMConversation) {
+//        return
+//        // incoming degraded call
+//        let checker = E2EIPrivacyWarningChecker(conversation: conversation,
+//                                                alertType: .incomingCall,
+//                                                continueAction: {
+//            conversation.acknowledgePrivacyChanges()
+//            self.updateActiveCallPresentationState()
+//        }, cancelAction: {
+//            guard let userSession = ZMUserSession.shared() else { return }
+//            conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
+//        }, showAlert: {
+//            self.router?.presentIncomingCallDegradedAlert()
+//        })
+//        checker.performAction()
+    }
+}
 // MARK: - WireCallCenterCallStateObserver
 extension CallController: WireCallCenterCallStateObserver {
 

@@ -140,12 +140,21 @@ extension WireCallCenterV3 {
 
     /// Handles incoming calls.
     func handleIncomingCall(conversationId: AVSIdentifier, messageTime: Date, client: AVSClient, isVideoCall: Bool, shouldRing: Bool, conversationType: AVSConversationType) {
+
         handleEvent("incoming-call") {
             let isDegraded = self.isDegraded(conversationId: conversationId)
             let callState = CallState.incoming(video: isVideoCall, shouldRing: shouldRing, degraded: isDegraded)
             let members = [AVSCallMember(client: client)]
 
             self.createSnapshot(callState: callState, members: members, callStarter: client.avsIdentifier, video: isVideoCall, for: conversationId, conversationType: conversationType)
+
+            if let context = self.uiMOC, self.isConversationDegraded(conversationId: conversationId) {
+                // only send for MLS degraded conversation
+                WireCallCenterDegradedCallNotification(context: context,
+                                                       conversationId: conversationId)
+                    .post(in: context.notificationContext)
+            }
+
             self.handle(callState: callState, conversationId: conversationId)
         }
     }
