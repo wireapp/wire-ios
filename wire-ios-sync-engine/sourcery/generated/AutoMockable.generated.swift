@@ -646,17 +646,17 @@ public class MockSnoozeCertificateEnrollmentUseCaseProtocol: SnoozeCertificateEn
 
     // MARK: - invoke
 
-    public var invokeIsUpdateMode_Invocations: [Bool] = []
-    public var invokeIsUpdateMode_MockMethod: ((Bool) async -> Void)?
+    public var invokeEndOfPeriodIsUpdateMode_Invocations: [(endOfPeriod: Date, isUpdateMode: Bool)] = []
+    public var invokeEndOfPeriodIsUpdateMode_MockMethod: ((Date, Bool) async -> Void)?
 
-    public func invoke(isUpdateMode: Bool) async {
-        invokeIsUpdateMode_Invocations.append(isUpdateMode)
+    public func invoke(endOfPeriod: Date, isUpdateMode: Bool) async {
+        invokeEndOfPeriodIsUpdateMode_Invocations.append((endOfPeriod: endOfPeriod, isUpdateMode: isUpdateMode))
 
-        guard let mock = invokeIsUpdateMode_MockMethod else {
-            fatalError("no mock for `invokeIsUpdateMode`")
+        guard let mock = invokeEndOfPeriodIsUpdateMode_MockMethod else {
+            fatalError("no mock for `invokeEndOfPeriodIsUpdateMode`")
         }
 
-        await mock(isUpdateMode)
+        await mock(endOfPeriod, isUpdateMode)
     }
 
 }

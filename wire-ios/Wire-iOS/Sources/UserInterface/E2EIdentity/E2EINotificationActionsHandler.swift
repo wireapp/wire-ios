@@ -129,7 +129,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
                 guard let self else { return }
 
-                await self.snoozeCertificateEnrollmentUseCase.invoke(isUpdateMode: self.isUpdateMode)
+                await self.snoozeCertificateEnrollmentUseCase.invoke(endOfPeriod: endOfPeriod, isUpdateMode: self.isUpdateMode)
                 self.isUpdateMode = false
             }
         }
@@ -163,7 +163,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     @MainActor
     private func confirmSuccessfulEnrollment(_ certificateDetails: String) async {
         lastE2EIdentityUpdateAlertDateRepository?.storeLastAlertDate(Date.now)
-        await snoozeCertificateEnrollmentUseCase.invoke(isUpdateMode: isUpdateMode)
+        stopCertificateEnrollmentSnoozerUseCase.invoke()
         let successScreen = SuccessfulCertificateEnrollmentViewController(isUpdateMode: isUpdateMode)
         successScreen.certificateDetails = certificateDetails
         successScreen.onOkTapped = { viewController in

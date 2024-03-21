@@ -41,7 +41,6 @@ class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
             e2eiFeature: mockFeatureRepository.fetchE2EI(),
             gracePeriodEndDate: Date.now,
             recurringActionService: mockRecurringActionService,
-            selfClientCertificateProvider: selfClientCertificateProvider,
             accountId: accountID)
     }
 
@@ -60,7 +59,7 @@ class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
 
         // When
         XCTAssertEqual(mockRecurringActionService.registerAction_Invocations.count, 0)
-        await snoozer.invoke()
+        await snoozer.invoke(endOfPeriod: .now)
 
         // Then
         XCTAssertEqual(mockRecurringActionService.registerAction_Invocations.count, 1)

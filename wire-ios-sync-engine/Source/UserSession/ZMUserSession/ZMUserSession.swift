@@ -173,7 +173,6 @@ public final class ZMUserSession: NSObject {
             e2eiFeature: e2eiFeature,
             gracePeriodEndDate: gracePeriodEndDate,
             recurringActionService: recurringActionService,
-            selfClientCertificateProvider: selfClientCertificateProvider,
             accountId: account.userIdentifier)
     }()
 
@@ -362,6 +361,7 @@ public final class ZMUserSession: NSObject {
         )
     }()
 
+    @MainActor
     public private(set) lazy var isE2EICertificateEnrollmentRequired: IsE2EICertificateEnrollmentRequiredProtocol = {
         return IsE2EICertificateEnrollmentRequiredUseCase(
             isE2EIdentityEnabled: e2eiFeature.isEnabled,

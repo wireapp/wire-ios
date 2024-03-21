@@ -20,7 +20,7 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol SnoozeCertificateEnrollmentUseCaseProtocol {
-    func invoke(isUpdateMode: Bool) async
+    func invoke(endOfPeriod: Date, isUpdateMode: Bool) async
 }
 
 final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol {
@@ -30,7 +30,6 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     private let e2eiFeature: Feature.E2EI
     private let gracePeriodEndDate: Date?
     private let recurringActionService: RecurringActionServiceInterface
-    private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
     private let actionId: String
 
     // MARK: - Life cycle
@@ -39,12 +38,10 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
         e2eiFeature: Feature.E2EI,
         gracePeriodEndDate: Date?,
         recurringActionService: RecurringActionServiceInterface,
-        selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
         accountId: UUID) {
             self.e2eiFeature = e2eiFeature
             self.gracePeriodEndDate = gracePeriodEndDate
             self.recurringActionService = recurringActionService
-            self.selfClientCertificateProvider = selfClientCertificateProvider
             self.actionId = "\(accountId).enrollCertificate"
         }
 
@@ -53,11 +50,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     /// Schedules recurring actions to check for enrolling or updating E2EI certificate
     /// - Parameter isUpdateMode: If set to `true`, `checkForE2EICertificateExpiryStatus` to check for updating certificate is scheduled else
     /// `featureDidChangeNotification` is triggered to check for enrolling the certificate. By default, this is `false`.
-    func invoke(isUpdateMode: Bool = false) async {
-        let selfClientCertificate = try? await selfClientCertificateProvider.getCertificate()
-        guard let endOfPeriod = selfClientCertificate?.expiryDate ?? gracePeriodEndDate else {
-            return
-        }
+    func invoke(endOfPeriod: Date, isUpdateMode: Bool = false) async {
         let timeProvider = SnoozeTimeProvider()
         let interval = timeProvider.getSnoozeTime(endOfPeriod: endOfPeriod)
         await registerRecurringActionIfNeeded(isUpdateMode: isUpdateMode, interval: interval)
@@ -66,8 +59,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     // MARK: - Helpers
     @MainActor
     private func registerRecurringActionIfNeeded(isUpdateMode: Bool, interval: TimeInterval) async {
-        guard e2eiFeature.isEnabled,
-              await !selfClientCertificateProvider.hasCertificate else {
+        guard e2eiFeature.isEnabled else {
             return
         }
 
