@@ -80,14 +80,16 @@ final class OneOnOneResolverTests: XCTestCase {
         mockMLSService.conversationExistsGroupID_MockValue = false
 
         // mockHandler must be retained to catch notifications
+        let mlsGroupID1: MLSGroupID = .random()
+        let mlsGroupID2: MLSGroupID = .random()
         let mockHandler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            results: [.success(.random()), .success(.random())],
+            results: [.success(mlsGroupID1), .success(mlsGroupID2)],
             context: syncContext.notificationContext
         )
 
         await syncContext.perform { [self] in
-            makeOneOnOneConversation(in: syncContext)
-            makeOneOnOneConversation(in: syncContext)
+            makeOneOnOneConversation(mlsGroupID: mlsGroupID1, in: syncContext)
+            makeOneOnOneConversation(mlsGroupID: mlsGroupID2, in: syncContext)
         }
 
         // When
@@ -108,18 +110,14 @@ final class OneOnOneResolverTests: XCTestCase {
         mockMLSService.conversationExistsGroupID_MockValue = false
 
         // mockHandler must be retained to catch notifications
+        let mlsGroupID: MLSGroupID = .random()
         let mockHandler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            results: [.success(.random())],
+            results: [.success(mlsGroupID)],
             context: syncContext.notificationContext
         )
 
         await syncContext.perform { [self] in
-            modelHelper.createUser(
-                domain: "local@domain.com",
-                in: syncContext
-            )
-
-            makeOneOnOneConversation(in: syncContext)
+            _ = makeOneOnOneConversation(mlsGroupID: mlsGroupID, in: syncContext)
         }
 
         // When
@@ -144,14 +142,24 @@ final class OneOnOneResolverTests: XCTestCase {
         mockMLSService.conversationExistsGroupID_MockValue = false
 
         // mockHandler must be retained to catch notifications
+        let mlsGroupID1: MLSGroupID = .random()
+        let mlsGroupID2: MLSGroupID = .random()
         let mockHandler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            results: [.success(.random())],
+            results: [.success(mlsGroupID1), .success(mlsGroupID2)],
             context: syncContext.notificationContext
         )
 
         await syncContext.perform { [self] in
-            makeOneOnOneConversation(domain: nil, in: syncContext)
-            makeOneOnOneConversation(domain: "local@domain.com", in: syncContext)
+            makeOneOnOneConversation(
+                domain: nil,
+                mlsGroupID: mlsGroupID1,
+                in: syncContext
+            )
+            makeOneOnOneConversation(
+                domain: "local@domain.com",
+                mlsGroupID: mlsGroupID2,
+                in: syncContext
+            )
         }
 
         // When
@@ -165,6 +173,7 @@ final class OneOnOneResolverTests: XCTestCase {
         XCTAssertEqual(migratorInvocationsCount, 1)
 
         XCTAssertEqual(mockHandler.performedActions.count, 1)
+        XCTAssertEqual(mockHandler.performedActions.first?.domain, "local@domain.com")
     }
 
     func test_resolveAllOneOnOneConversations_givenMigrationFailure() async throws {
@@ -175,15 +184,17 @@ final class OneOnOneResolverTests: XCTestCase {
         await mockMigrator.setMigrateToMLSUserIDMlsGroupIDIn_MockError(MockOneOnOneResolverError.failed)
         mockMLSService.conversationExistsGroupID_MockValue = false
 
+        let mlsGroupID1: MLSGroupID = .random()
+        let mlsGroupID2: MLSGroupID = .random()
         // mockHandler must be retained to catch notifications
         let mockHandler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            results: [.success(.random()), .success(.random())],
+            results: [.success(mlsGroupID1), .success(mlsGroupID2)],
             context: syncContext.notificationContext
         )
 
         await syncContext.perform { [self] in
-            makeOneOnOneConversation(in: syncContext)
-            makeOneOnOneConversation(in: syncContext)
+            makeOneOnOneConversation(mlsGroupID: mlsGroupID1, in: syncContext)
+            makeOneOnOneConversation(mlsGroupID: mlsGroupID2, in: syncContext)
         }
 
         // When
@@ -210,14 +221,19 @@ final class OneOnOneResolverTests: XCTestCase {
         mockMLSService.conversationExistsGroupID_MockValue = false
 
         // mockHandler must be retained to catch notifications
+        let mlsGroupID: MLSGroupID = .random()
         let mockHandler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            results: [.success(.random())],
+            results: [.success(mlsGroupID)],
             context: syncContext.notificationContext
         )
 
         await syncContext.perform { [self] in
             let conversation = makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
             conversation.messageProtocol = .proteus
+
+            // in the real code the mlsGroupID is created and persisted through the SyncMLSOneToOneConversationActionHandler
+            // but we can just mock the returned result, so we setup this ID here already.
+            conversation.mlsGroupID = mlsGroupID
         }
 
         // When
@@ -371,6 +387,7 @@ final class OneOnOneResolverTests: XCTestCase {
     @discardableResult
     private func makeOneOnOneConversation(
         domain: String? = "local@domain.com",
+        mlsGroupID: MLSGroupID? = nil,
         in context: NSManagedObjectContext
     ) -> ZMConversation {
         let user = modelHelper.createUser(
@@ -378,6 +395,7 @@ final class OneOnOneResolverTests: XCTestCase {
             in: context
         )
         let (_, conversation) = modelHelper.createConnection(status: .accepted, to: user, in: context)
+        conversation.mlsGroupID = mlsGroupID
         return conversation
     }
 

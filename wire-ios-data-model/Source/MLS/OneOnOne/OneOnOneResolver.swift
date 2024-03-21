@@ -172,7 +172,10 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             return .noAction
         }
 
-        let epoch = await fetchMLSConversationEpoch(with: userID, in: context)
+        guard let epoch = await fetchMLSConversationEpoch(mlsGroupID: mlsGroupID, in: context) else {
+            throw MigrateMLSOneOnOneConversationError.missingConversationEpoch
+        }
+
         if epoch == 0 {
             // migrate to a new conversation
             try await migrator.migrateToMLS(
@@ -205,20 +208,12 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     }
 
     private func fetchMLSConversationEpoch(
-        with userID: QualifiedID,
+        mlsGroupID: MLSGroupID,
         in context: NSManagedObjectContext
     ) async -> UInt64? {
         await context.perform {
-            // TODO: Can we use ZMConversation.fetch(with groupID: MLSGroupID, in context: NSManagedObjectContext) instead?
-
-            guard
-                let otherUser = ZMUser.fetch(with: userID, in: context),
-                let conversation = otherUser.oneOnOneConversation
-            else {
-                return nil
-            }
-
-            return conversation.epoch
+            let conversation = ZMConversation.fetch(with: mlsGroupID, in: context)
+            return conversation?.epoch
         }
     }
 
