@@ -122,7 +122,7 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
 
         // then
         XCTAssertNotNil(transcoder.lastReceivedResponse)
-        let uiidSet: Set<UUID> =  [uuid]
+        let uiidSet: Set<UUID> = [uuid]
         XCTAssertEqual(transcoder.lastReceivedResponse?.identifiers, uiidSet)
     }
 

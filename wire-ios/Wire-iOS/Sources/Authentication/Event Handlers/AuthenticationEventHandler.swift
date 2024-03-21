@@ -60,8 +60,4 @@ extension AuthenticationEventHandler {
     var isRegistered: Bool {
         return statusProvider?.authenticatedUserWasRegisteredOnThisDevice == true
     }
-
-    var postAction: AuthenticationCoordinatorAction {
-        return isRegistered ? .completeRegistrationFlow : .completeLoginFlow
-    }
 }

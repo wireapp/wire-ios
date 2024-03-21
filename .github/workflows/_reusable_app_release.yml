@@ -147,6 +147,17 @@ jobs:
           aws-region: eu-west-1
       - name: Trigger build
         run: bundle exec fastlane ${{ inputs.fastlane_action }}
+      - name: Archiving Logs
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: build-logs
+          path: |
+            /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
+            ~/Library/Logs/DiagnosticReports/**
+            build/**
+
+
       - name: Archiving env variables
         if: always()
         uses: actions/upload-artifact@v2

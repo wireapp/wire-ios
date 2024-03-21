@@ -43,7 +43,7 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
         self.performPretendingUiMocIsSyncMoc {
             self.conversation.team = self.team
             self.conversation.teamRemoteIdentifier = self.team.remoteIdentifier
-            let member = Member.getOrCreateMember(for: self.selfUser, in: self.team, context: self.uiMOC)
+            let member = Member.getOrUpdateMember(for: self.selfUser, in: self.team, context: self.uiMOC)
             member.permissions = permissions
         }
     }

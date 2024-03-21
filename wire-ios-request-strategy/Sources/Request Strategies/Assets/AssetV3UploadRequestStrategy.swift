@@ -111,7 +111,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
 
     public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>, apiVersion: APIVersion) -> ZMUpstreamRequest? {
         guard let message = managedObject as? AssetMessage else { fatal("Could not cast to ZMAssetClientMessage, it is \(type(of: managedObject)))") }
-        guard let asset = message.assets.first(where: { !$0.isUploaded}) else { return nil } // TODO jacob are we sure we only have one upload per message active?
+        guard let asset = message.assets.first(where: { !$0.isUploaded }) else { return nil } // TODO jacob are we sure we only have one upload per message active?
 
         return requestForUploadingAsset(asset, for: managedObject as! ZMAssetClientMessage, apiVersion: apiVersion)
     }
@@ -159,7 +159,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
 
         guard response.result == .success else { return false }
         guard let message = managedObject as? ZMAssetClientMessage else { return false }
-        guard let asset = message.assets.first(where: { !$0.isUploaded}) else {return false }
+        guard let asset = message.assets.first(where: { !$0.isUploaded }) else {return false }
         guard let payload = response.payload?.asDictionary(),
               let assetId = payload["key"] as? String else {
             fatal("No asset ID present in payload")

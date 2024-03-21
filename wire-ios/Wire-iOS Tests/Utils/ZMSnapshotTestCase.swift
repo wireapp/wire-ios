@@ -44,7 +44,7 @@ extension UITableViewCell: UITableViewDelegate, UITableViewDataSource {
 
         NSLayoutConstraint.activate([
             tableView.heightAnchor.constraint(equalToConstant: size.height)
-            ])
+        ])
 
         self.layoutSubviews()
         return tableView
@@ -101,7 +101,8 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
         snapshotBackgroundColor = UIColor.clear
 
         // Enable when the design of the view has changed in order to update the reference snapshots
-        recordMode = strcmp(getenv("RECORDING_SNAPSHOTS"), "YES") == 0
+
+        recordMode = ProcessInfo.processInfo.environment["RECORDING_SNAPSHOTS"] == "YES"
         usesDrawViewHierarchyInRect = true
 
         do {
@@ -279,40 +280,6 @@ extension ZMSnapshotTestCase {
     }
 
     static let tolerance: CGFloat = 0.3
-    /// Performs an assertion with the given view and the recorded snapshot with the custom width
-    func verifyView(view: UIView,
-                    extraLayoutPass: Bool = false,
-                    width: CGFloat,
-                    tolerance: CGFloat = tolerance,
-                    identifier: String? = nil,
-                    configuration: ((UIView) -> Swift.Void)? = nil,
-                    file: StaticString = #file,
-                    line: UInt = #line
-        ) {
-        let container = containerView(with: view, snapshotBackgroundColor: snapshotBackgroundColor)
-
-        container.addWidthConstraint(width: width)
-
-        if assertEmptyFrame(container, file: file, line: line) {
-            return
-        }
-
-        configuration?(view)
-
-        if extraLayoutPass {
-            RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.1))
-        }
-
-        view.layer.speed = 0 // freeze animations for deterministic tests
-
-        let identifier = finalIdentifier(deviceName: "\(Int(width))", identifier: identifier)
-
-        snapshotVerify(view: container,
-                       identifier: identifier,
-                       tolerance: tolerance,
-                       file: file,
-                       line: line)
-    }
 
     /// verify the snapshot with default iphone size
     ///
@@ -330,7 +297,7 @@ extension ZMSnapshotTestCase {
         NSLayoutConstraint.activate([
             view.heightAnchor.constraint(equalToConstant: size.height),
             view.widthAnchor.constraint(equalToConstant: size.width)
-            ])
+        ])
 
         view.layoutIfNeeded()
 

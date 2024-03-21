@@ -20,7 +20,7 @@ private let zmLog = ZMSLog(tag: "SyncStatus")
 
 extension Notification.Name {
 
-    public static let ForceSlowSync = Notification.Name("restartSlowSyncNotificationName")
+    public static let resyncResources = Notification.Name("resyncResourcesNotificationName")
     static let triggerQuickSync = Notification.Name("triggerQuickSync")
 
 }
@@ -44,7 +44,7 @@ extension Notification.Name {
     private let lastEventIDRepository: LastEventIDRepositoryInterface
     fileprivate var lastUpdateEventID: UUID?
     fileprivate unowned var managedObjectContext: NSManagedObjectContext
-    fileprivate var forceSlowSyncToken: Any?
+    fileprivate var resyncResourcesToken: Any?
 
     public internal (set) var isFetchingNotificationStream: Bool = false
     public internal (set) var isInBackground: Bool = false
@@ -80,8 +80,8 @@ extension Notification.Name {
 
         super.init()
 
-        self.forceSlowSyncToken = NotificationInContext.addObserver(name: .ForceSlowSync, context: managedObjectContext.notificationContext) { [weak self] (_) in
-            self?.forceSlowSync()
+        self.resyncResourcesToken = NotificationInContext.addObserver(name: .resyncResources, context: managedObjectContext.notificationContext) { [weak self] (_) in
+            self?.resyncResources()
         }
 
         NotificationCenter.default.addObserver(
@@ -112,11 +112,21 @@ extension Notification.Name {
     public func forceSlowSync() {
         // Refetch user settings.
         ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
-        // Set the status.
-        currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
+        // Reset the status.
+        currentSyncPhase = SyncPhase.fetchingLastUpdateEventID
         self.log("slow sync")
         syncStateDelegate?.didStartSlowSync()
     }
+
+    /// Sync the resources: Teams, Users, Conversations...
+    func resyncResources() {
+       // Refetch user settings.
+       ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = true
+       // Set the status.
+       currentSyncPhase = SyncPhase.fetchingLastUpdateEventID.nextPhase
+       self.log("resyncResources")
+       syncStateDelegate?.didStartSlowSync()
+   }
 
     public func performQuickSync() async {
         return await withCheckedContinuation { [weak self] continuation in
@@ -152,7 +162,7 @@ extension Notification.Name {
 extension SyncStatus {
 
     public func finishCurrentSyncPhase(phase: SyncPhase) {
-        precondition(phase == currentSyncPhase, "Finished syncPhase does not match currentPhase")
+        precondition(phase == currentSyncPhase, "Finished syncPhase does not match currentPhase '\(currentSyncPhase)'!")
 
         zmLog.debug("finished sync phase: \(phase)")
         log("finished sync phase")
@@ -233,7 +243,7 @@ extension SyncStatus {
     @objc(completedFetchingNotificationStreamFetchBeganAt:)
     public func completedFetchingNotificationStream(fetchBeganAt: Date?) {
         if currentSyncPhase == .fetchingMissedEvents &&
-           pushChannelEstablishedDate < fetchBeganAt {
+            pushChannelEstablishedDate < fetchBeganAt {
 
             // Only complete the .fetchingMissedEvents phase if the push channel was
             // established before we initiated the notification stream fetch.
@@ -279,10 +289,10 @@ extension SyncStatus {
             let data = try JSONEncoder().encode(info)
             let jsonString = String(data: data, encoding: .utf8)
             let message = "SYNC_STATUS: \(jsonString ?? self.description)"
-            RemoteMonitoring.remoteLogger?.log(message: message, error: nil, attributes: nil, level: .debug)
+            WireLogger.sync.info(message)
         } catch {
             let message = "SYNC_STATUS: \(self.description)"
-            RemoteMonitoring.remoteLogger?.log(message: message, error: nil, attributes: nil, level: .error)
+            WireLogger.sync.error(message)
         }
     }
 }

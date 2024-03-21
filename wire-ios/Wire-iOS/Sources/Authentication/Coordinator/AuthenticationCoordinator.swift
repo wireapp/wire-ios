@@ -28,11 +28,9 @@ protocol AuthenticationCoordinatorDelegate: AnyObject {
 
     /**
      * The coordinator finished authenticating the user.
-     * - parameter addedAccount: Whether the authentication action added a new account
-     * to this device.
      */
 
-    func userAuthenticationDidComplete(userSession: UserSession, addedAccount: Bool)
+    func userAuthenticationDidComplete(userSession: UserSession)
 
 }
 
@@ -46,7 +44,7 @@ protocol AuthenticationCoordinatorDelegate: AnyObject {
  * or delegate call from one of the abstracted components.
  */
 
-class AuthenticationCoordinator: NSObject, AuthenticationEventResponderChainDelegate {
+final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderChainDelegate {
 
     /// The handle to the OS log for authentication events.
     let log = ZMSLog(tag: "Authentication")
@@ -102,7 +100,6 @@ class AuthenticationCoordinator: NSObject, AuthenticationEventResponderChainDele
     private var loginObservers: [Any] = []
     private var unauthenticatedSessionObserver: Any?
     private var postLoginObservers: [Any] = []
-    private var initialSyncObserver: Any?
     private var pendingAlert: AuthenticationCoordinatorAlert?
     private var registrationStatus: RegistrationStatus {
         return unauthenticatedSession.registrationStatus
@@ -111,9 +108,6 @@ class AuthenticationCoordinator: NSObject, AuthenticationEventResponderChainDele
     private var isTornDown = false
 
     var pendingModal: UIViewController?
-
-    /// Whether an account was added.
-    var addedAccount: Bool = false
 
     /// The user session to use before authentication has finished.
     var unauthenticatedSession: UnauthenticatedSession {
@@ -156,7 +150,6 @@ class AuthenticationCoordinator: NSObject, AuthenticationEventResponderChainDele
         loginObservers.removeAll()
         unauthenticatedSessionObserver = nil
         postLoginObservers.removeAll()
-        initialSyncObserver = nil
         isTornDown = true
     }
 
@@ -203,7 +196,7 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
             var viewControllers = presenter.viewControllers
             let rewindedController = viewControllers.first { milestone.shouldRewind(to: $0) }
             if let rewindedController = rewindedController {
-                viewControllers = [viewControllers.prefix { !milestone.shouldRewind(to: $0)}, [rewindedController], [stepViewController]].flatMap { $0 }
+                viewControllers = [viewControllers.prefix { !milestone.shouldRewind(to: $0) }, [rewindedController], [stepViewController]].flatMap { $0 }
                 presenter.setViewControllers(viewControllers, animated: true)
             } else {
                 presenter.setViewControllers([stepViewController], animated: true)
@@ -220,7 +213,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
     func sessionManagerCreated(userSession: ZMUserSession) {
         log.info("Session manager created session: \(userSession)")
         currentPostRegistrationFields().apply(sendPostRegistrationFields)
-        initialSyncObserver = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
     }
 
     func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {
@@ -239,11 +231,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
         loginObservers = [
             sessionManager.addSessionManagerCreatedSessionObserver(self)
         ]
-
-        if let userSession = SessionManager.shared?.activeUserSession {
-            initialSyncObserver = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
-        }
-
         sessionManager.loginDelegate = self
         registrationStatus.delegate = self
     }
@@ -307,14 +294,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
             case .completeLoginFlow:
                 delegate?.userAuthenticationDidComplete(
-                    userSession: statusProvider.sharedUserSession!,
-                    addedAccount: addedAccount
-                )
-
-            case .completeRegistrationFlow:
-                delegate?.userAuthenticationDidComplete(
-                    userSession: statusProvider.sharedUserSession!,
-                    addedAccount: true
+                    userSession: statusProvider.sharedUserSession!
                 )
 
             case .startPostLoginFlow:
@@ -413,6 +393,12 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                         self?.eventResponderChain.handleEvent(ofType: .deviceConfigurationComplete)
                     }
                 }
+
+            case .startE2EIEnrollment:
+                startE2EIdentityEnrollment()
+
+            case .completeE2EIEnrollment:
+                completeE2EIdentityEnrollment()
             }
         }
     }
@@ -855,6 +841,47 @@ extension AuthenticationCoordinator {
         }
 
         stateController.unwindState()
+    }
+
+    // MARK: - End-to-end Identity
+
+    private func startE2EIdentityEnrollment() {
+        typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
+
+        guard let session = statusProvider.sharedUserSession else { return }
+        let e2eiCertificateUseCase = session.enrollE2EICertificate
+        guard let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
+            return
+        }
+        let oauthUseCase = OAuthUseCase(targetViewController: topmostViewController)
+
+        Task { @MainActor in
+            do {
+                let certificateChain = try await e2eiCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
+                executeActions([
+                    .hideLoadingView,
+                    .transition(.enrollE2EIdentitySuccess(certificateChain), mode: .reset)
+                ])
+            } catch OAuthError.userCancelled {
+                executeActions([
+                    .hideLoadingView
+                ])
+            } catch {
+                executeActions([
+                    .hideLoadingView,
+                    .presentAlert(
+                        .init(title: E2ei.Error.Alert.title,
+                              message: E2ei.Error.Alert.message,
+                              actions: [.ok]))
+                ])
+            }
+        }
+    }
+
+    private func completeE2EIdentityEnrollment() {
+        executeActions([.showLoadingView])
+        guard let session = statusProvider.sharedUserSession else { return }
+        session.reportEndToEndIdentityEnrollmentSuccess()
     }
 
     private func showAlertWithNoInternetConnectionError() {

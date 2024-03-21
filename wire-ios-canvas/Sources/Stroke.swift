@@ -39,7 +39,7 @@ public struct Brush {
 
 }
 
-class Stroke: Renderable {
+final class Stroke: Renderable {
 
     private var points: [CGPoint]
     private let minimumStrokeDistance = 0.1
@@ -129,7 +129,7 @@ class Stroke: Renderable {
         let controlPoints = controlsPoints(points: points)
 
         for i in 1..<points.count {
-            path.addCurve(to: points[i], controlPoint1: controlPoints[i-1].1, controlPoint2: controlPoints[i].0)
+            path.addCurve(to: points[i], controlPoint1: controlPoints[i - 1].1, controlPoint2: controlPoints[i].0)
         }
 
         return path
@@ -140,10 +140,10 @@ class Stroke: Renderable {
         let points = [points.first!] + points + [points.last!]
         var controlPoints: [(CGPoint, CGPoint)] = []
 
-        for i in 1..<points.count-1 {
-            let p0 = points[i-1]
+        for i in 1..<points.count - 1 {
+            let p0 = points[i - 1]
             let p1 = points[i]
-            let p2 = points[i+1]
+            let p2 = points[i + 1]
 
             let v0 = CGPoint(x: p1.x - p0.x, y: p1.y - p0.y)
             let v1 = CGPoint(x: p2.x - p1.x, y: p2.y - p1.y)
@@ -153,7 +153,7 @@ class Stroke: Renderable {
 
             let len0 = v0.x * v0.x + v0.y * v0.y
             let len1 = v1.x * v1.x + v1.y * v1.y
-            let ratio =  len0 / (len0 + len1)
+            let ratio = len0 / (len0 + len1)
 
             let b0 = CGPoint(x: a0.x - a1.x, y: a0.y - a1.y)
 

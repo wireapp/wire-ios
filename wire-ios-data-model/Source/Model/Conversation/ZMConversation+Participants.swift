@@ -116,7 +116,7 @@ extension ZMConversation {
     /// The method will also check if the addition of the users will change the verification status, the archive
     /// status, etc.
     @objc
-    public func addParticipantAndUpdateConversationState(user: ZMUser, role: Role?) {
+    public func addParticipantAndUpdateConversationState(user: ZMUser, role: Role? = nil) {
         self.addParticipantsAndUpdateConversationState(usersAndRoles: [(user, role)])
     }
 
@@ -132,7 +132,7 @@ extension ZMConversation {
     /// The method will also check if the addition of the users will change the verification status, the archive
     /// status, etc.
     @objc
-    public func addParticipantsAndUpdateConversationState(users: Set<ZMUser>, role: Role?) {
+    public func addParticipantsAndUpdateConversationState(users: Set<ZMUser>, role: Role? = nil) {
         self.addParticipantsAndUpdateConversationState(usersAndRoles: users.map { ($0, role) })
     }
 
@@ -165,7 +165,7 @@ extension ZMConversation {
             return (result == .created) ? pr : nil
         }
 
-        let addedSelfUser = doesExistsOnBackend && addedRoles.contains(where: {$0.user?.isSelfUser == true})
+        let addedSelfUser = doesExistsOnBackend && addedRoles.contains(where: { $0.user?.isSelfUser == true })
         if addedSelfUser {
             self.markToDownloadRolesIfNeeded()
             self.needsToBeUpdatedFromBackend = true
@@ -190,7 +190,7 @@ extension ZMConversation {
         guard let moc = self.managedObjectContext else { return nil }
 
         // If the user is already there, just change the role
-        if let current = self.participantRoles.first(where: {$0.user == user}) {
+        if let current = self.participantRoles.first(where: { $0.user == user }) {
             if let role = role {
                 current.role = role
             }

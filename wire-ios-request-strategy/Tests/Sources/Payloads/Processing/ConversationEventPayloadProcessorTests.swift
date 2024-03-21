@@ -57,6 +57,81 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         super.tearDown()
     }
 
+    // MARK: - Process NewConversation Event
+
+    func testProcessPayload_NewConversation_IgnoredWhenConversationAlreadyExists() async throws {
+        // Given
+        let initialName = "foo"
+        let qualifiedID = await syncMOC.perform {
+            BackendInfo.isFederationEnabled = true
+            self.groupConversation.userDefinedName = initialName
+            return self.groupConversation.qualifiedID!
+        }
+        let conversationPayload = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group,
+            name: "bar"
+        )
+        let eventPayload = Payload.ConversationEvent.stub(
+            data: conversationPayload,
+            qualifiedID: qualifiedID
+        )
+
+        // When
+        await sut.processPayload(eventPayload, in: syncMOC)
+
+        // Then
+        await syncMOC.perform {
+            XCTAssertEqual(self.groupConversation.userDefinedName, initialName)
+        }
+    }
+
+    func testProcessPayload_NewConversation_IgnoredWhenConversationIDIsMissing() async throws {
+        // Given
+        let qualifiedID = QualifiedID.random()
+        let conversationPayload = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group
+        )
+        let eventPayload = Payload.ConversationEvent.stub(
+            data: conversationPayload,
+            qualifiedID: nil
+        )
+
+        // When
+        disableZMLogError(true)
+        await sut.processPayload(eventPayload, in: syncMOC)
+        disableZMLogError(false)
+
+        // Then
+        await syncMOC.perform {
+            XCTAssertNil(ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC))
+        }
+    }
+
+    func testProcessPayload_NewConversation_IgnoredWhenTimestampIsMissing() async throws {
+        // Given
+        let qualifiedID = QualifiedID.random()
+        let conversationPayload = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group
+        )
+        let eventPayload = Payload.ConversationEvent.stub(
+            data: conversationPayload,
+            timestamp: nil
+        )
+
+        // When
+        disableZMLogError(true)
+        await sut.processPayload(eventPayload, in: syncMOC)
+        disableZMLogError(false)
+
+        // Then
+        await syncMOC.perform {
+            XCTAssertNil(ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC))
+        }
+    }
+
     // MARK: - Group conversations
 
     func testUpdateOrCreateConversation_Group_UpdatesQualifiedID() async throws {
@@ -153,7 +228,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
-    func testUpdateOrCreateConversation_Group_AddSystemMessageWhenCreatingGroup() async throws {
+    func testUpdateOrCreateConversation_Group_AddsNewConversationSystemMessageWhenCreatingGroup() async throws {
         // given
         let qualifiedID = await syncMOC.perform {
             QualifiedID(uuid: UUID(), domain: self.owningDomain)
@@ -173,6 +248,32 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         await syncMOC.perform {
             let conversation = ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC)
             XCTAssertEqual(conversation?.lastMessage?.systemMessageData?.systemMessageType, .newConversation)
+        }
+    }
+
+    func testUpdateOrCreateConversation_Group_DoesntAddMlsMigrationPotentialGapSystemMessageWhenCreatingGroup() async throws {
+        // given
+        let qualifiedID = await syncMOC.perform {
+            QualifiedID(uuid: UUID(), domain: self.owningDomain)
+        }
+        let payload = Payload.Conversation.stub(
+            qualifiedID: qualifiedID,
+            type: .group,
+            messageProtocol: MessageProtocol.mls.rawValue
+        )
+
+        // when
+        await sut.updateOrCreateConversation(
+            from: payload,
+            in: syncMOC
+        )
+
+        // then
+        try await syncMOC.perform {
+            let conversation = try XCTUnwrap(ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.syncMOC))
+            XCTAssertFalse(conversation.allMessages.contains(where: { message in
+                message.systemMessageData?.systemMessageType == .mlsMigrationPotentialGap
+            }))
         }
     }
 
@@ -643,7 +744,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     func testUpdateOrCreateConversation_OneToOne_CreatesConversation() async throws {
         // given
         BackendInfo.isFederationEnabled = true
-        let qualifiedID =  QualifiedID(uuid: .create(), domain: owningDomain)
+        let qualifiedID = QualifiedID(uuid: .create(), domain: owningDomain)
 
         let (payload, selfUser) = await syncMOC.perform { [self] in
             let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -679,7 +780,7 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
     func testUpdateOrCreateConversation_OneToOne_DoesntAssignDomain_WhenFederationIsDisabled() async throws {
         // given
         BackendInfo.isFederationEnabled = false
-        let qualifiedID =  QualifiedID(uuid: .create(), domain: owningDomain)
+        let qualifiedID = QualifiedID(uuid: .create(), domain: owningDomain)
 
         let (payload, selfUser) = await syncMOC.perform { [self] in
             let selfUser = ZMUser.selfUser(in: syncMOC)
@@ -1013,12 +1114,40 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     // MARK: - MLS Self Group
 
-    func testUpdateOrCreate_withMLSSelfGroupEpoch0_callsMLSServiceCreateGroup() async {
+    func testUpdateOrCreate_withoutRegisteredMLSClient_dontEstablishMLSSelfGroup() async throws {
+        // given
+        let expectation = XCTestExpectation(description: "didCallCreateGroup")
+        expectation.isInverted = true
+        mockMLSService.createSelfGroupFor_MockMethod = { _ in
+            expectation.fulfill()
+        }
+        try await syncMOC.perform {
+            let selfClient = try XCTUnwrap(ZMUser.selfUser(in: self.syncMOC).selfClient())
+            selfClient.mlsPublicKeys = .init(ed25519: "mock_ed25519")
+            selfClient.needsToUploadMLSPublicKeys = true
+        }
+
+        // when
+        await internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
+        await fulfillment(of: [expectation], timeout: 0.5)
+
+        // then
+        XCTAssertTrue(mockMLSService.createSelfGroupFor_Invocations.isEmpty)
+    }
+
+    func testUpdateOrCreate_withMLSSelfGroupEpoch0_callsMLSServiceCreateGroup() async throws {
+        // given
         let didCallCreateGroup = XCTestExpectation(description: "didCallCreateGroup")
         mockMLSService.createSelfGroupFor_MockMethod = { _ in
             didCallCreateGroup.fulfill()
         }
+        try await syncMOC.perform {
+            let selfClient = try XCTUnwrap(ZMUser.selfUser(in: self.syncMOC).selfClient())
+            selfClient.mlsPublicKeys = .init(ed25519: "mock_ed25519")
+            selfClient.needsToUploadMLSPublicKeys = false
+        }
 
+        // when
         await internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 0)
         await fulfillment(of: [didCallCreateGroup], timeout: 0.5)
 
@@ -1026,13 +1155,21 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         XCTAssertFalse(mockMLSService.createSelfGroupFor_Invocations.isEmpty)
     }
 
-    func testUpdateOrCreate_withMLSSelfGroupEpoch1_callsMLSServiceJoinGroup() async {
+    func testUpdateOrCreate_withMLSSelfGroupEpoch1_callsMLSServiceJoinGroup() async throws {
+        // given
         let didJoinGroup = XCTestExpectation(description: "didJoinGroup")
         mockMLSService.joinGroupWith_MockMethod = { _ in
             didJoinGroup.fulfill()
         }
         mockMLSService.conversationExistsGroupID_MockValue = false
 
+        try await syncMOC.perform {
+            let selfClient = try XCTUnwrap(ZMUser.selfUser(in: self.syncMOC).selfClient())
+            selfClient.mlsPublicKeys = .init(ed25519: "mock_ed25519")
+            selfClient.needsToUploadMLSPublicKeys = false
+        }
+
+        // when
         await internalTest_UpdateOrCreate_withMLSSelfGroupEpoch(epoch: 1)
         await fulfillment(of: [didJoinGroup], timeout: 0.5)
 

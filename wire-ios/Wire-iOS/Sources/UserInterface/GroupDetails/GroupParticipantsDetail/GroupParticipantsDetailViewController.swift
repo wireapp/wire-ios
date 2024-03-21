@@ -33,26 +33,27 @@ final class GroupParticipantsDetailViewController: UIViewController {
     private var firstLayout = true
     private var firstLoad = true
 
-    private var sections: [CollectionViewSectionController] = []
-
     weak var delegate: GroupDetailsUserDetailPresenter?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
     }
 
-    init(selectedParticipants: [UserType],
-         conversation: GroupParticipantsDetailConversation,
-         userSession: UserSession) {
+    init(
+        selectedParticipants: [UserType],
+        conversation: GroupParticipantsDetailConversation,
+        userSession: UserSession
+    ) {
 
         viewModel = GroupParticipantsDetailViewModel(
             selectedParticipants: selectedParticipants,
-            conversation: conversation, userSession: userSession)
+            conversation: conversation,
+            userSession: userSession
+        )
 
         collectionViewController = SectionCollectionViewController()
 
         super.init(nibName: nil, bundle: nil)
-        sections = computeSections()
     }
 
     @available(*, unavailable)
@@ -62,6 +63,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         setupViews()
         createConstraints()
     }
@@ -98,8 +100,8 @@ final class GroupParticipantsDetailViewController: UIViewController {
         view.addSubview(collectionView)
 
         collectionViewController.collectionView = collectionView
-        collectionViewController.sections = sections
-        viewModel.participantsDidChange = self.participantsDidChange
+        collectionViewController.sections = computeSections()
+        viewModel.participantsDidChange = participantsDidChange
 
         collectionView.accessibilityIdentifier = "group_details.full_list"
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
@@ -120,11 +122,11 @@ final class GroupParticipantsDetailViewController: UIViewController {
         ])
     }
 
-     func participantsDidChange() {
+    func participantsDidChange() {
         collectionViewController.sections = computeSections()
         collectionViewController.collectionView?.reloadData()
 
-         let emptyResultMessage = (viewModel.admins.isEmpty && viewModel.members.isEmpty) ? PeoplePicker.noSearchResults : ""
+        let emptyResultMessage = (viewModel.admins.isEmpty && viewModel.members.isEmpty) ? PeoplePicker.noSearchResults : ""
         collectionViewController.collectionView?.setEmptyMessage(emptyResultMessage)
     }
 
@@ -135,11 +137,13 @@ final class GroupParticipantsDetailViewController: UIViewController {
     }
 
     private func computeSections() -> [CollectionViewSectionController] {
-        sections = []
+        var sections = [CollectionViewSectionController]()
+
         if !viewModel.admins.isEmpty {
             sections.append(
                 ParticipantsSectionController(
                     participants: viewModel.admins,
+                    userStatuses: viewModel.userStatuses,
                     conversationRole: .admin,
                     conversation: viewModel.conversation,
                     delegate: self,
@@ -155,6 +159,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
             sections.append(
                 ParticipantsSectionController(
                     participants: viewModel.members,
+                    userStatuses: viewModel.userStatuses,
                     conversationRole: .member,
                     conversation: viewModel.conversation,
                     delegate: self,

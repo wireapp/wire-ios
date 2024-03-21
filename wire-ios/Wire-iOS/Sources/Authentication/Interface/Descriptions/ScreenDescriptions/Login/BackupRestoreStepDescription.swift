@@ -23,7 +23,7 @@ import WireCommonComponents
  * The view that displays the restore from backup button.
  */
 
-class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDescription {
+final class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDescription {
 
     let views: [ViewDescriptor]
     weak var actioner: AuthenticationActioner?
@@ -44,11 +44,11 @@ class BackupRestoreStepDescriptionFooterView: AuthenticationFooterViewDescriptio
  * The step that displays information about the history.
  */
 
-class BackupRestoreStepDescription: AuthenticationStepDescription {
+final class BackupRestoreStepDescription: AuthenticationStepDescription {
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String
-    let subtext: String?
+    let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription?
 
@@ -59,10 +59,10 @@ class BackupRestoreStepDescription: AuthenticationStepDescription {
         switch context {
         case .newDevice:
             headline = L10n.Localizable.Registration.NoHistory.hero
-            subtext = L10n.Localizable.Registration.NoHistory.subtitle
+            subtext = .markdown(from: L10n.Localizable.Registration.NoHistory.subtitle, style: .login)
         case .loggedOut:
             headline = L10n.Localizable.Registration.NoHistory.LoggedOut.hero
-            subtext = L10n.Localizable.Registration.NoHistory.LoggedOut.subtitle
+            subtext = .markdown(from: L10n.Localizable.Registration.NoHistory.LoggedOut.subtitle, style: .login)
         }
 
         guard SecurityFlags.backup.isEnabled else {

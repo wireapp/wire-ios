@@ -18,7 +18,7 @@
 
 import UIKit
 
-class CallQualityDismissalTransition: NSObject, UIViewControllerAnimatedTransitioning {
+final class CallQualityDismissalTransition: NSObject, UIViewControllerAnimatedTransitioning {
 
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 0.55

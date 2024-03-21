@@ -78,7 +78,7 @@ class AssetColletionBatchedTests: ModelObjectsTests {
         let receivedMessageCount = delegate.messagesByFilter.first?[defaultMatchPair]?.count
         XCTAssertEqual(receivedMessageCount, totalMessageCount)
 
-        guard let lastMessage =  delegate.messagesByFilter.last?[defaultMatchPair]?.last,
+        guard let lastMessage = delegate.messagesByFilter.last?[defaultMatchPair]?.last,
             let context = lastMessage.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }
@@ -130,7 +130,7 @@ class AssetColletionBatchedTests: ModelObjectsTests {
         let receivedMessageCount = delegate.messagesByFilter.first?[defaultMatchPair]?.count
         XCTAssertEqual(receivedMessageCount, totalMessageCount)
 
-        guard let lastMessage =  delegate.messagesByFilter.last?[defaultMatchPair]?.last,
+        guard let lastMessage = delegate.messagesByFilter.last?[defaultMatchPair]?.last,
             let context = lastMessage.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }
@@ -153,7 +153,7 @@ class AssetColletionBatchedTests: ModelObjectsTests {
         let receivedMessages = delegate.allMessages(for: defaultMatchPair)
         XCTAssertEqual(receivedMessages.count, totalMessageCount)
 
-        guard let lastMessage =  receivedMessages.last,
+        guard let lastMessage = receivedMessages.last,
             let context = lastMessage.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }
@@ -197,7 +197,7 @@ class AssetColletionBatchedTests: ModelObjectsTests {
 
         // given
         insertAssetMessages(count: 1000)
-        uiMOC.registeredObjects.forEach {uiMOC.refresh($0, mergeChanges: false)}
+        uiMOC.registeredObjects.forEach { uiMOC.refresh($0, mergeChanges: false) }
 
         self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
 
@@ -211,7 +211,7 @@ class AssetColletionBatchedTests: ModelObjectsTests {
             // then
             self.sut.tearDown()
             self.sut = nil
-            self.uiMOC.registeredObjects.forEach {self.uiMOC.refresh($0, mergeChanges: false)}
+            self.uiMOC.registeredObjects.forEach { self.uiMOC.refresh($0, mergeChanges: false) }
         }
     }
 
@@ -220,7 +220,7 @@ class AssetColletionBatchedTests: ModelObjectsTests {
         insertAssetMessages(count: 10)
 
         // when
-        conversation.allMessages.forEach {_ = $0.cachedCategory}
+        conversation.allMessages.forEach { _ = $0.cachedCategory }
         uiMOC.saveOrRollback()
 
         sut = AssetCollectionBatched(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
@@ -234,7 +234,7 @@ class AssetColletionBatchedTests: ModelObjectsTests {
     func testThatItGetsPreCategorizedMessagesInTheCorrectOrder() {
         // given
         let messages = insertAssetMessages(count: 10)
-        conversation.allMessages.forEach {_ = $0.cachedCategory}
+        conversation.allMessages.forEach { _ = $0.cachedCategory }
         uiMOC.saveOrRollback()
 
         // when
@@ -255,7 +255,7 @@ class AssetColletionBatchedTests: ModelObjectsTests {
         uiMOC.saveOrRollback()
 
         // when
-        conversation.allMessages.forEach {_ = $0.cachedCategory}
+        conversation.allMessages.forEach { _ = $0.cachedCategory }
         uiMOC.saveOrRollback()
 
         let excludingGif = CategoryMatch(including: .image, excluding: .GIF)
@@ -343,7 +343,7 @@ class AssetColletionBatchedTests: ModelObjectsTests {
     func testThatItFetchesPreAndUncategorizedObjectsAndSavesThemAsUIDObjects() {
         // given
         let messages = insertAssetMessages(count: 20)
-        messages[0..<10].forEach {_ = $0.cachedCategory}
+        messages[0..<10].forEach { _ = $0.cachedCategory }
         uiMOC.saveOrRollback()
 
         // when

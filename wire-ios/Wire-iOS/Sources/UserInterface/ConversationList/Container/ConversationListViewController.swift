@@ -15,7 +15,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
@@ -31,6 +30,7 @@ final class ConversationListViewController: UIViewController {
     weak var delegate: ConversationListTabBarControllerDelegate?
 
     let viewModel: ViewModel
+
     /// internal View Model
     var state: ConversationListState = .conversationList
 
@@ -81,35 +81,40 @@ final class ConversationListViewController: UIViewController {
         return conversationListOnboardingHint
     }()
 
-    convenience init(account: Account, selfUser: SelfUserType, userSession: UserSession) {
-        let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, userSession: userSession)
-
+    convenience init(
+        account: Account,
+        selfUser: SelfUserType,
+        userSession: UserSession,
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+    ) {
+        let viewModel = ConversationListViewController.ViewModel(
+            account: account,
+            selfUser: selfUser,
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
+        )
         self.init(viewModel: viewModel)
-
-        viewModel.viewController = self
-
         delegate = self
-
         onboardingHint.arrowPointToView = tabBar
     }
 
     required init(viewModel: ViewModel) {
-
         self.viewModel = viewModel
 
-        topBarViewController = ConversationListTopBarViewController(account: viewModel.account,
-                                                                    selfUser: viewModel.selfUser,
-                                                                    userSession: viewModel.userSession)
-
-        listContentController = ConversationListContentController(userSession: viewModel.userSession)
-        listContentController.collectionView.contentInset = UIEdgeInsets(
-            top: 0,
-            left: 0,
-            bottom: ConversationListViewController.contentControllerBottomInset,
-            right: 0
+        topBarViewController = ConversationListTopBarViewController(
+            account: viewModel.account,
+            selfUser: viewModel.selfUser,
+            userSession: viewModel.userSession
         )
+        topBarViewController.selfUserStatus = viewModel.selfUserStatus
+
+        let bottomInset = ConversationListViewController.contentControllerBottomInset
+        listContentController = ConversationListContentController(userSession: viewModel.userSession)
+        listContentController.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomInset, right: 0)
 
         super.init(nibName: nil, bundle: nil)
+
+        viewModel.viewController = self
 
         definesPresentationContext = true
 
@@ -170,6 +175,8 @@ final class ConversationListViewController: UIViewController {
         shouldAnimateNetworkStatusView = true
 
         ZClientViewController.shared?.notifyUserOfDisabledAppLockIfNeeded()
+
+        viewModel.updateE2EICertifiedStatus()
 
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
@@ -368,6 +375,15 @@ final class ConversationListViewController: UIViewController {
 
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
         UIAlertController.showNewsletterSubscriptionDialogIfNeeded(presentViewController: self, completionHandler: completionHandler)
+    }
+}
+
+// MARK: - ViewModel Delegate
+
+extension ConversationListViewController: ConversationListContainerViewModelDelegate {
+
+    func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
+        topBarViewController.selfUserStatus = selfUserStatus
     }
 }
 

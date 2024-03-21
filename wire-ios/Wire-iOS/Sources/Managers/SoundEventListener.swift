@@ -35,8 +35,8 @@ extension ZMConversationMessage {
         }
 
         switch data.systemMessageType {
-        // No sound must be played for the case when the user participated in the call.
         case .performedCall:
+            // No sound must be played for the case when the user participated in the call.
             return false
 
         default:
@@ -45,7 +45,7 @@ extension ZMConversationMessage {
     }
 }
 
-class SoundEventListener: NSObject {
+final class SoundEventListener: NSObject {
 
     weak var userSession: ZMUserSession?
 

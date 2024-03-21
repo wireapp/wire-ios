@@ -20,6 +20,9 @@ import Foundation
 import WireSyncEngine
 
 final class MockUserClient: NSObject, UserClientType {
+    var mlsThumbPrint: String?
+
+    var e2eIdentityCertificate: WireDataModel.E2eIdentityCertificate?
 
     var type: DeviceType = .permanent
 

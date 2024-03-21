@@ -35,7 +35,7 @@ enum TeamRoleIndicator {
 
 // MARK: - ConversationSenderMessageDetailsCell
 
-class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
+final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
     struct Configuration {
         let user: UserType
@@ -138,7 +138,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
         [avatar, authorLabel, dateLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
-        let trailingDateLabelConstraint  = dateLabel.trailingAnchor.constraint(
+        let trailingDateLabelConstraint = dateLabel.trailingAnchor.constraint(
             equalTo: self.trailingAnchor,
             constant: -conversationHorizontalMargins.right
         )
@@ -267,7 +267,7 @@ class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCell {
 
 // MARK: - ConversationSenderMessageCellDescription
 
-class ConversationSenderMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationSenderMessageCellDescription: ConversationMessageCellDescription {
 
     // MARK: - Properties
 

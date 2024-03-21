@@ -22,12 +22,12 @@ import Foundation
  * The view that displays the message to inform the user that they have too many devices.
  */
 
-class ClientUnregisterInvitationStepDescription: AuthenticationStepDescription {
+final class ClientUnregisterInvitationStepDescription: AuthenticationStepDescription {
 
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String
-    let subtext: String?
+    let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription?
 
@@ -36,7 +36,7 @@ class ClientUnregisterInvitationStepDescription: AuthenticationStepDescription {
     init() {
         backButton = BackButtonDescription()
         headline = TooManyDevices.title
-        subtext = TooManyDevices.subtitle
+        subtext = .markdown(from: TooManyDevices.subtitle, style: .login)
 
         mainView = SolidButtonDescription(title: TooManyDevices.ManageButton.title.capitalized, accessibilityIdentifier: "manage_devices")
         secondaryView = nil

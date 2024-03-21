@@ -23,7 +23,7 @@ import WireDataModel
  * Handles the change of user data during registration.
  */
 
-class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHandler {
+final class RegistrationIncrementalUserDataChangeHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

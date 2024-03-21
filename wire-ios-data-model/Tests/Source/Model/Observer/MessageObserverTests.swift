@@ -193,7 +193,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(
             message,
-            modifier: {$0.setReactions(["👻"], forUser: ZMUser.selfUser(in: self.uiMOC))},
+            modifier: { $0.setReactions(["👻"], forUser: ZMUser.selfUser(in: self.uiMOC)) },
             expectedChangedField: #keyPath(MessageChangeInfo.reactionsChanged)
         )
     }
@@ -226,7 +226,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(
             message,
-            modifier: {$0.setReactions([], forUser: selfUser)},
+            modifier: { $0.setReactions([], forUser: selfUser) },
             expectedChangedField: #keyPath(MessageChangeInfo.reactionsChanged)
         )
     }
@@ -285,7 +285,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
     func testThatItNotifiesWhenTheChildMessagesOfASystemMessageChange() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        let message = conversation.appendPerformedCallMessage(with: 42, caller: .selfUser(in: uiMOC))
+        let message = conversation.appendMissedCallMessage(fromUser: .selfUser(in: uiMOC), at: .now)
         let otherMessage = ZMSystemMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
 
         checkThatItNotifiesTheObserverOfAChange(

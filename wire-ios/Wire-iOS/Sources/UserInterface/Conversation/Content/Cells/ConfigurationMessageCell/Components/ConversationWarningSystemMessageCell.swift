@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 
-class ConversationWarningSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
+final class ConversationWarningSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
     private typealias LabelColors = SemanticColors.Label
     private typealias IconColors = SemanticColors.Icon
@@ -50,7 +50,8 @@ class ConversationWarningSystemMessageCell: ConversationIconBasedCell, Conversat
         bottomContentView.addSubview(sensitiveInfoLabel)
 
         lineView.isHidden = true
-        imageView.image =  Asset.Images.attention.image.withTintColor(IconColors.backgroundDefault)
+        imageView.image = Asset.Images.attention.image
+        imageView.tintColor = IconColors.backgroundDefault
     }
 
     override func configureConstraints() {

@@ -65,7 +65,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
             self.mockApplicationStatus.mockSynchronizationState = .online
             let user = ZMUser.insertNewObject(in: self.syncMOC)
             user.remoteIdentifier = userId
-            let member = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            let member = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
 
             // when
             member.needsToBeUpdatedFromBackend = true
@@ -105,7 +105,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
             team.remoteIdentifier = .create()
             user = ZMUser.insertNewObject(in: self.syncMOC)
             user.remoteIdentifier = .create()
-            member = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            member = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
 
             member.needsToBeUpdatedFromBackend = true
             self.boostrapChangeTrackers(with: member)
@@ -151,7 +151,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
             team.remoteIdentifier = .create()
             let user = ZMUser.insertNewObject(in: self.syncMOC)
             user.remoteIdentifier = userid
-            let member = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            let member = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
             member.needsToBeUpdatedFromBackend = true
 
             self.boostrapChangeTrackers(with: member)

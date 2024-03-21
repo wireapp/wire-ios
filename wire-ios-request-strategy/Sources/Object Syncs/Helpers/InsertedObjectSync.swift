@@ -56,7 +56,7 @@ class InsertedObjectSync<Transcoder: InsertedObjectSyncTranscoder>: NSObject, ZM
     }
 
     func objectsDidChange(_ objects: Set<NSManagedObject>) {
-        var trackedObjects = objects.compactMap({ $0 as? Transcoder.Object})
+        var trackedObjects = objects.compactMap({ $0 as? Transcoder.Object })
         let indexOfSecondPartition = trackedObjects.partition(by: insertPredicate.evaluate)
         let insertedObjects = trackedObjects[indexOfSecondPartition...]
         let removedObjects = trackedObjects[..<indexOfSecondPartition]
@@ -69,7 +69,7 @@ class InsertedObjectSync<Transcoder: InsertedObjectSyncTranscoder>: NSObject, ZM
     }
 
     func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        let insertedObjects = objects.compactMap({ $0 as? Transcoder.Object})
+        let insertedObjects = objects.compactMap({ $0 as? Transcoder.Object })
 
         addInsertedObjects(insertedObjects)
     }

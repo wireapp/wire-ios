@@ -25,7 +25,7 @@ import WireLinkPreview
 import WireDataModelSupport
 @testable import WireShareEngine
 
-class FakeAuthenticationStatus: AuthenticationStatusProvider {
+final class FakeAuthenticationStatus: AuthenticationStatusProvider {
     var state: AuthenticationState = .authenticated
 }
 

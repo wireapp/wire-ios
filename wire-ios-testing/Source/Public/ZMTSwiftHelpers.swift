@@ -33,7 +33,7 @@ public func AssertOptionalEqual<T: Equatable>(_ expression1: @autoclosure () -> 
     }
 }
 
-public func AssertOptionalNotNil<T>(_ expression: @autoclosure () -> T?, _ message: String = "", file: StaticString = #file, line: UInt = #line, block: (T) -> Void = {_ in}) {
+public func AssertOptionalNotNil<T>(_ expression: @autoclosure () -> T?, _ message: String = "", file: StaticString = #file, line: UInt = #line, block: (T) -> Void = { _ in }) {
     if let v = expression() {
         block(v)
     } else {

@@ -36,7 +36,10 @@ public protocol FeatureRepositoryInterface {
     func fetchDigitalSignature() -> Feature.DigitalSignature
     func storeDigitalSignature(_ digitalSignature: Feature.DigitalSignature)
     func fetchMLS() -> Feature.MLS
+    func fetchMLS() async -> Feature.MLS
     func storeMLS(_ mls: Feature.MLS)
+    func fetchE2EI() -> Feature.E2EI
+    func storeE2EI(_ e2ei: Feature.E2EI)
     func fetchMLSMigration() -> Feature.MLSMigration
     func storeMLSMigration(_ mlsMigration: Feature.MLSMigration)
 
@@ -275,23 +278,38 @@ public class FeatureRepository: FeatureRepositoryInterface {
 
     // MARK: - MLS
 
+    public func fetchMLS() async -> Feature.MLS {
+        let (status, configData) = await context.perform {
+            let feature = Feature.fetch(name: .mls, context: self.context)
+            return (feature?.status, feature?.config)
+        }
+
+        return makeMLS(status: status, configData: configData)
+    }
+
     public func fetchMLS() -> Feature.MLS {
-        guard
-            let feature = Feature.fetch(name: .mls, context: context),
-            let featureConfig = feature.config
-        else {
+        let (status, configData) = context.performAndWait {
+            let feature = Feature.fetch(name: .mls, context: context)
+            return (feature?.status, feature?.config)
+        }
+
+        return makeMLS(status: status, configData: configData)
+    }
+
+    private func makeMLS(status: Feature.Status?, configData: Data?) -> Feature.MLS {
+        guard let status, let configData else {
             return .init()
         }
 
         var config = Feature.MLS.Config()
 
         do {
-            config = try decoder.decode(Feature.MLS.Config.self, from: featureConfig)
+            config = try decoder.decode(Feature.MLS.Config.self, from: configData)
         } catch {
             logger.error("failed to decode Feature.MLS.Config: \(error)")
         }
 
-        return .init(status: feature.status, config: config)
+        return .init(status: status, config: config)
     }
 
     public func storeMLS(_ mls: Feature.MLS) {
@@ -307,7 +325,45 @@ public class FeatureRepository: FeatureRepositoryInterface {
         }
     }
 
-    // MARK: - MLS Migration
+    // MARK: - E2EId
+
+    public func fetchE2EI() -> Feature.E2EI {
+        guard
+            let feature = Feature.fetch(name: .e2ei, context: context),
+            let featureConfig = feature.config
+        else {
+            return .init()
+        }
+
+        let config = try! JSONDecoder().decode(Feature.E2EI.Config.self, from: featureConfig)
+        return .init(status: feature.status, config: config)
+    }
+
+    public func storeE2EI(_ e2ei: Feature.E2EI) {
+        do {
+            let config = try encoder.encode(e2ei.config)
+
+            Feature.updateOrCreate(havingName: .e2ei, in: context) {
+                $0.status = e2ei.status
+                $0.config = config
+            }
+        } catch {
+            logger.error("failed to encode Feature.E2EI.Config: \(error)")
+        }
+
+        guard needsToNotifyUser(for: .e2ei) else { return }
+
+        switch e2ei.status {
+        case .enabled:
+            let gracePeriod = TimeInterval(e2ei.config.verificationExpiration)
+            notifyChange(.e2eIEnabled(gracePeriod: gracePeriod))
+
+        case .disabled:
+            return
+        }
+    }
+
+    // MARK: - MLSMigration
 
     public func fetchMLSMigration() -> Feature.MLSMigration {
         guard
@@ -370,6 +426,9 @@ public class FeatureRepository: FeatureRepositoryInterface {
             case .mls:
                 storeMLS(.init())
 
+            case .e2ei:
+                storeE2EI(.init())
+
             case .mlsMigration:
                 storeMLSMigration(.init())
             }
@@ -416,7 +475,16 @@ extension FeatureRepository {
         case fileSharingDisabled
         case conversationGuestLinksEnabled
         case conversationGuestLinksDisabled
+        case e2eIEnabled(gracePeriod: TimeInterval?)
 
+        public var hasFurtherActions: Bool {
+            switch self {
+            case .e2eIEnabled:
+                return true
+            default:
+                return false
+            }
+        }
     }
 
 }

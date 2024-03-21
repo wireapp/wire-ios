@@ -17,9 +17,10 @@
 //
 
 import XCTest
+@testable import WireRequestStrategy
 @testable import WireSyncEngine
 
-class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
+final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
 
     override func setUp() {
         super.setUp()
@@ -29,7 +30,7 @@ class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
 
     // MARK: Helpers
 
-    class InitialSyncObserver: NSObject, ZMInitialSyncCompletionObserver {
+    final class InitialSyncObserver: NSObject, ZMInitialSyncCompletionObserver {
 
         var didNotify: Bool = false
         var initialSyncToken: Any?

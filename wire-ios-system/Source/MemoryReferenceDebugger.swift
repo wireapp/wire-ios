@@ -21,7 +21,8 @@ import Foundation
 /// This is used to highlight memory leaks of critical objects.
 /// In the code, add objects to the debugger by calling `MemoryReferenceDebugger.add`.
 /// When running tests, you should check that `MemoryReferenceDebugger.aliveObjects` is empty
-@objc public class MemoryReferenceDebugger: NSObject {
+@objc
+public final class MemoryReferenceDebugger: NSObject {
 
     public var references = [ReferenceAllocation]()
 

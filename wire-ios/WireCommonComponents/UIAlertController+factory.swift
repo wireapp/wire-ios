@@ -35,7 +35,7 @@ public extension UIAlertController {
                                       message: message,
                                       preferredStyle: .alert)
 
-        let okAction =  UIAlertAction.ok(style: .cancel, handler: okActionHandler)
+        let okAction = UIAlertAction.ok(style: .cancel, handler: okActionHandler)
         alert.addAction(okAction)
 
         return alert

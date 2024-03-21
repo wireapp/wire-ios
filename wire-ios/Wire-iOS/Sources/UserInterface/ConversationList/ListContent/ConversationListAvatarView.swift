@@ -110,7 +110,7 @@ extension Mode {
     }
 }
 
-final public class ConversationListAvatarView: UIView {
+public final class ConversationListAvatarView: UIView {
 
     public var conversation: ZMConversation? = .none {
         didSet {
@@ -212,7 +212,7 @@ final public class ConversationListAvatarView: UIView {
             size = CGSize(width: containerSize.width, height: containerSize.height)
 
         case .two:
-            size = CGSize(width: (containerSize.width  - inset) / 2.0, height: containerSize.height)
+            size = CGSize(width: (containerSize.width - inset) / 2.0, height: containerSize.height)
 
         case .four:
             size = CGSize(width: (containerSize.width - inset) / 2.0, height: (containerSize.height - inset) / 2.0)

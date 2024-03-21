@@ -46,7 +46,7 @@ extension SearchResult {
 
         let (additionalUsersFromAddressBook, addressBookContactsWithoutUser) = contactsThatAreAlsoUsers(contacts: allMatchingAddressBookContacts,
                                                                                                         managedObjectContext: contextProvider.viewContext)
-        let searchUsersFromAddressBook = addressBookContactsWithoutUser.compactMap {  ZMSearchUser(contextProvider: contextProvider, contact: $0) }
+        let searchUsersFromAddressBook = addressBookContactsWithoutUser.compactMap { ZMSearchUser(contextProvider: contextProvider, contact: $0) }
 
         // of those users, which one are connected and which one are not?
         let additionalConnectedUsers = additionalUsersFromAddressBook

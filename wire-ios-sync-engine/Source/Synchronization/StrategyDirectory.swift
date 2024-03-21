@@ -71,7 +71,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             coreCryptoProvider: coreCryptoProvider
         )
 
-        self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy})
+        self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy })
         self.eventConsumers = strategies.compactMap({ $0 as? ZMEventConsumer })
         self.eventAsyncConsumers = strategies.compactMap({ $0 as? ZMEventAsyncConsumer })
         self.contextChangeTrackers = strategies.flatMap({ (object: Any) -> [ZMContextChangeTracker] in
@@ -134,8 +134,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
                 context: syncMOC,
-                proteusProvider: proteusProvider,
-                coreCryptoProvider: coreCryptoProvider
+                proteusProvider: proteusProvider
             ),
             ZMMissingUpdateEventsTranscoder(
                 managedObjectContext: syncMOC,
@@ -221,7 +220,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ConnectionRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus),
+                syncProgress: applicationStatusDirectory.syncStatus,
+                oneOneOneResolver: OneOnOneResolver(mlsService: mlsService)
+            ),
             ConversationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
@@ -265,6 +266,10 @@ mlsService: mlsService,
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncStatus: applicationStatusDirectory.syncStatus),
+            TeamMembersDownloadRequestStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: applicationStatusDirectory,
+                syncStatus: applicationStatusDirectory.syncStatus),
             PermissionsDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
@@ -297,7 +302,9 @@ mlsService: mlsService,
                 applicationStatus: applicationStatusDirectory),
             FeatureConfigRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory,
+                syncProgress: applicationStatusDirectory.syncStatus
+            ),
             TerminateFederationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
@@ -318,6 +325,17 @@ mlsService: mlsService,
             MLSRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
+            ),
+            SelfSupportedProtocolsRequestStrategy(
+                context: syncMOC,
+                applicationStatus: applicationStatusDirectory,
+                syncProgress: applicationStatusDirectory.syncStatus,
+                userRepository: UserRepository(context: syncMOC)
+            ),
+            EvaluateOneOnOneConversationsStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: applicationStatusDirectory,
+                syncProgress: applicationStatusDirectory.syncStatus
             )
         ]
 

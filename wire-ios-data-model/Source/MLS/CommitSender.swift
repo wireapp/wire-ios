@@ -48,7 +48,7 @@ public actor CommitSender: CommitSending {
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
-            try await coreCryptoProvider.coreCrypto(requireMLS: true)
+            try await coreCryptoProvider.coreCrypto()
         }
     }
 
@@ -208,7 +208,7 @@ private extension CommitError.RecoveryStrategy {
         case .mlsClientMismatch:
             self = .retryAfterQuickSync
         case .mlsCommitMissingReferences:
-            self = .commitPendingProposalsAfterQuickSync
+            self = .retryAfterQuickSync
         case .mlsStaleMessage:
             self = .retryAfterRepairingGroup
         default:

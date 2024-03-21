@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-class ZMLocalNotificationTests_CallState: MessagingTest {
+final class ZMLocalNotificationTests_CallState: MessagingTest {
 
     typealias ZMLocalNotification = WireSyncEngine.ZMLocalNotification
 
@@ -213,7 +213,7 @@ class ZMLocalNotificationTests_CallState: MessagingTest {
             let team = Team.insertNewObject(in: self.syncMOC)
             team.name = "Wire Amazing Team"
             let user = ZMUser.selfUser(in: self.syncMOC)
-            _ = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
             self.syncMOC.saveOrRollback()
 
             XCTAssertNotNil(user.team)

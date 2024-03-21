@@ -19,10 +19,67 @@
 import Foundation
 import MessageUI
 import WireSystem
+import WireCommonComponents
 
 extension MFMailComposeViewController {
 
-    func attachLogs() {
+    func prefilledBody(withMessage message: String = "") -> String {
+        let date = Date()
+        let device = UIDevice.current.zm_model()
+
+        var body = """
+        --DO NOT EDIT--
+        App Version: \(Bundle.main.appInfo.fullVersion)
+        Bundle id: \(Bundle.main.bundleIdentifier ?? "-")
+        Device: \(device)
+        iOS version: \(UIDevice.current.systemVersion)
+        Date: \(date.transportString())
+        """
+
+#if DATADOG_IMPORT
+        // datadogId has always a value. NONE by default
+        // display only when enabled
+        if let datadogId = DatadogWrapper.shared?.datadogUserId {
+            body.append("\nDatadog ID: \(datadogId)")
+        }
+#endif
+        body.append("\n---------------\n")
+        typealias l10n = L10n.Localizable.Self.Settings.TechnicalReport.MailBody
+        let details = """
+        \(l10n.firstline)
+
+        - \(l10n.section1)
+
+
+        - \(l10n.section2)
+        \(message)
+
+        - \(l10n.section3)
+
+
+        """
+        body.append("\n\(details)\n")
+        return body
+    }
+
+    func attachLogs() async {
+        defer {
+            // because we don't rotate file for this one, we clean it once sent
+            // this regenerated from os_log anyway
+            if let url = LogFileDestination.main.log {
+                try? FileManager.default.removeItem(at: url)
+            }
+        }
+        // save current logs to file in order to send them
+        await WireLogger.provider?.persist(fileDestination: LogFileDestination.main)
+
+        for destination in LogFileDestination.allCases {
+            if let data = FileManager.default.zipData(from: destination.log) {
+                addAttachmentData(data, mimeType: "application/zip", fileName: "\(destination.filename).zip")
+            } else {
+                WireLogger.system.debug("no logs for WireLogger to send \(destination.filename)")
+            }
+        }
 
         if let crashLog = ZMLastAssertionFile(),
            FileManager.default.fileExists(atPath: crashLog.path) {

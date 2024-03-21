@@ -88,8 +88,11 @@ final class ConversationViewController: UIViewController {
 
         switch conversation.conversationType {
         case .group:
-            let groupDetailsViewController = GroupDetailsViewController(conversation: conversation, userSession: userSession)
-            viewController = groupDetailsViewController
+            viewController = GroupDetailsViewController(
+                conversation: conversation,
+                userSession: userSession,
+                isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            )
         case .`self`, .oneOnOne, .connection:
             viewController = createUserDetailViewController()
         case .invalid:
@@ -182,6 +185,7 @@ final class ConversationViewController: UIViewController {
         }
 
         resolveConversationIfOneOnOne()
+        updateVerificationStatusIfNeeded()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -290,6 +294,7 @@ final class ConversationViewController: UIViewController {
     }
 
     // MARK: - Application Events & Notifications
+
     override func accessibilityPerformEscape() -> Bool {
         openConversationList()
         return true
@@ -431,6 +436,35 @@ final class ConversationViewController: UIViewController {
     private func hideAndDestroyParticipantsPopover() {
         if (presentedViewController is GroupDetailsViewController) || (presentedViewController is ProfileViewController) {
             dismiss(animated: true)
+        }
+    }
+
+    // MARK: - Update verification status for MLS groups
+
+    private func updateVerificationStatusIfNeeded() {
+        guard
+            conversation.conversationType.isOne(of: .group, .oneOnOne),
+            conversation.messageProtocol == .mls
+        else {
+            return
+        }
+
+        guard
+            let mlsGroupID = conversation.mlsGroupID
+        else {
+            WireLogger.conversation.warn("missing mlsGroupID to update verification status!")
+            return
+        }
+
+        Task {
+            do {
+                try await userSession.updateMLSGroupVerificationStatus.invoke(
+                    for: conversation,
+                    groupID: mlsGroupID)
+                setupNavigatiomItem()
+            } catch {
+                WireLogger.e2ei.error("failed to update conversation's verification status: \(String(reflecting: error))")
+            }
         }
     }
 }

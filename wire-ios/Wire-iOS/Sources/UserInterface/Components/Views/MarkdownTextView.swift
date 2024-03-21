@@ -68,7 +68,7 @@ final class MarkdownTextView: NextResponderTextView {
                 #selector(UIResponderStandardEditActions.select(_:)),
                 #selector(UIResponderStandardEditActions.selectAll(_:))
             ]
-            return text.isEmpty ? false: validActions.contains(action)
+            return text.isEmpty ? false : validActions.contains(action)
         } else {
             return super.canPerformAction(action, withSender: sender)
         }
@@ -696,6 +696,23 @@ extension DownStyle {
         style.h1Size = style.baseFont.pointSize
         style.h2Size = style.h1Size
         style.h3Size = style.h1Size
+        return style
+    }()
+
+    /// The style used during the login flow
+    static var login: DownStyle = {
+        let paragraphStyle = NSParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
+        paragraphStyle.alignment = .center
+        paragraphStyle.paragraphSpacing = 8
+        paragraphStyle.paragraphSpacingBefore = 8
+
+        let style = DownStyle()
+        style.baseFont = FontSpec.normalLightFont.font!
+        style.baseFontColor = SemanticColors.Label.textDefault
+        style.codeFont = UIFont(name: "Menlo", size: style.baseFont.pointSize) ?? style.baseFont
+        style.codeColor = SemanticColors.Label.textDefault
+        style.baseParagraphStyle = paragraphStyle
+        style.listItemPrefixSpacing = 8
         return style
     }()
 }

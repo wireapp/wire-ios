@@ -18,12 +18,14 @@
 
 import Foundation
 
-let ZMParticipantRoleRoleValueKey           = #keyPath(ParticipantRole.role)
+let ZMParticipantRoleRoleValueKey = #keyPath(ParticipantRole.role)
 
 @objcMembers
-final public class ParticipantRole: ZMManagedObject {
+public final class ParticipantRole: ZMManagedObject {
 
+    /// - Note: conversation is optional dbut we should make sure it's always created with one using `create(managedObjectContext:user:conversation:)`
     @NSManaged public var conversation: ZMConversation?
+    /// - Note: user is optional but we should make sure it's always created with one using `create(managedObjectContext:user:conversation:)`
     @NSManaged public var user: ZMUser?
     @NSManaged public var role: Role?
 

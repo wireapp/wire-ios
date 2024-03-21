@@ -126,6 +126,9 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Clients that ignore this client trust (currently can contain only self client)
     @NSManaged public var ignoredByClients: Set<UserClient>
 
+    public var e2eIdentityCertificate: E2eIdentityCertificate?
+    public var mlsThumbPrint: String?
+
     public var isLegalHoldDevice: Bool {
         return deviceClass == .legalHold || type == .legalHold
     }
@@ -197,7 +200,7 @@ public class UserClient: ZMManagedObject, UserClientType {
             fatal("User \(user.safeForLoggingDescription) is not a member of a managed object context (deleted object).")
         }
 
-        let relationClients = user.clients.filter({$0.remoteIdentifier == remoteIdentifier})
+        let relationClients = user.clients.filter({ $0.remoteIdentifier == remoteIdentifier })
 
         if relationClients.count > 1 {
             WireLogger.userClient.error("Detected duplicate clients: \(relationClients.map(\.remoteIdentifier))")
@@ -307,8 +310,10 @@ public class UserClient: ZMManagedObject, UserClientType {
                     hasSession = await proteusService.sessionExists(id: sessionID)
                 },
                 withKeyStore: { keyStore in
-                    keyStore.encryptionContext.perform { sessionsDirectory in
-                        hasSession = sessionsDirectory.hasSession(for: sessionID.mapToEncryptionSessionID())
+                    managedObjectContext?.performAndWait {
+                        keyStore.encryptionContext.perform { sessionsDirectory in
+                            hasSession = sessionsDirectory.hasSession(for: sessionID.mapToEncryptionSessionID())
+                        }
                     }
                 }
             )
@@ -319,6 +324,7 @@ public class UserClient: ZMManagedObject, UserClientType {
 
     /// Resets the session between the client and the selfClient
     /// Can be called several times without issues
+
     public func resetSession() {
         guard
             let uiMOC = managedObjectContext?.zm_userInterface,
@@ -395,9 +401,12 @@ public extension UserClient {
     ) -> UserClient? {
         WireLogger.userClient.info("create or update self user client")
 
-        guard let id = payloadData["id"] as? String,
-              let type = payloadData["type"] as? String
-        else { return nil }
+        guard
+            let id = payloadData["id"] as? String,
+            let type = payloadData["type"] as? String
+        else {
+            return nil
+        }
 
         let payloadAsDictionary = payloadData as NSDictionary
 
@@ -406,7 +415,8 @@ public extension UserClient {
         let deviceClass = payloadAsDictionary.optionalString(forKey: "class")
         let activationDate = payloadAsDictionary.date(for: "time")
         let lastActiveDate = payloadAsDictionary.optionalDate(forKey: "last_active")
-
+        let mlsPublicKeys = payloadAsDictionary.optionalDictionary(forKey: "mls_public_keys")
+        let mlsEd25519 = mlsPublicKeys?.optionalString(forKey: "ed25519")
         let result = fetchOrCreateUserClient(with: id, in: context)
         let client = result.client
         let isNewClient = result.isNewClient
@@ -418,9 +428,15 @@ public extension UserClient {
         client.activationDate = activationDate
         client.lastActiveDate = lastActiveDate
         client.remoteIdentifier = id
-
+        if let mlsEd25519 {
+            client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519)
+        }
         let selfUser = ZMUser.selfUser(in: context)
         client.user = client.user ?? selfUser
+
+        if let ed22519Key = mlsPublicKeys?["ed25519"] as? String {
+            client.mlsPublicKeys.ed25519 = ed22519Key
+        }
 
         if isNewClient {
             client.needsSessionMigration = selfUser.domain == nil
@@ -625,30 +641,31 @@ public extension UserClient {
         preKey: String
     ) -> Bool {
         var didEstablishSession = false
+        managedObjectContext?.performAndWait {
 
-        keystore.encryptionContext.perform { (sessionsDirectory) in
+            keystore.encryptionContext.perform { (sessionsDirectory) in
 
-            // Session is already established?
-            if sessionsDirectory.hasSession(for: sessionId) {
-                zmLog.debug("Session with \(sessionId) was already established, re-creating")
-                sessionsDirectory.delete(sessionId)
+                // Session is already established?
+                if sessionsDirectory.hasSession(for: sessionId) {
+                    zmLog.debug("Session with \(sessionId) was already established, re-creating")
+                    sessionsDirectory.delete(sessionId)
+                }
+            }
+
+            // Because of caching within the `perform` block, it commits to disk only at the end of a block.
+            // I don't think the cache is smart enough to perform the sum of operations (delete + recreate)
+            // if at the end of the block the session is still there. Just to be safe, I split the operations
+            // in two separate `perform` blocks.
+
+            keystore.encryptionContext.perform { (sessionsDirectory) in
+                do {
+                    try sessionsDirectory.createClientSession(sessionId, base64PreKeyString: preKey)
+                    didEstablishSession = true
+                } catch {
+                    zmLog.error("Cannot create session for prekey \(preKey)")
+                }
             }
         }
-
-        // Because of caching within the `perform` block, it commits to disk only at the end of a block.
-        // I don't think the cache is smart enough to perform the sum of operations (delete + recreate)
-        // if at the end of the block the session is still there. Just to be safe, I split the operations
-        // in two separate `perform` blocks.
-
-        keystore.encryptionContext.perform { (sessionsDirectory) in
-            do {
-                try sessionsDirectory.createClientSession(sessionId, base64PreKeyString: preKey)
-                didEstablishSession = true
-            } catch {
-                zmLog.error("Cannot create session for prekey \(preKey)")
-            }
-        }
-
         return didEstablishSession
     }
 
@@ -713,7 +730,7 @@ extension UserClient {
 
     /// Adds to ignored clients, remove from trusted clients, returns the set with the self client excluded
     fileprivate func addIgnoredClients(_ clients: Set<UserClient>) -> Set<UserClient> {
-        let notSelfClients = Set(clients.filter {$0 != self})
+        let notSelfClients = Set(clients.filter { $0 != self })
 
         guard notSelfClients.count > 0 else { return notSelfClients }
 

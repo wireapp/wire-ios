@@ -20,14 +20,14 @@ import Foundation
 import WireUtilities
 import UIKit
 
-class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
+final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
 
     let backButton: BackButtonDescription?
     var mainView: ViewDescriptor & ValueSubmission {
         emailPasswordFieldDescription
     }
     let headline: String
-    let subtext: String?
+    let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let initialValidation: ValueValidation
     let footerView: AuthenticationFooterViewDescription?
@@ -37,7 +37,7 @@ class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
     init() {
         backButton = BackButtonDescription()
         headline = L10n.Localizable.Registration.AddEmailPassword.Hero.title
-        subtext = L10n.Localizable.Registration.AddEmailPassword.Hero.paragraph
+        subtext = .markdown(from: L10n.Localizable.Registration.AddEmailPassword.Hero.paragraph, style: .login)
         initialValidation = .info(PasswordRuleSet.localizedErrorMessage)
         footerView = nil
 
@@ -79,16 +79,18 @@ extension AddEmailPasswordStepDescription: EmailPasswordTextFieldDelegate {
 
 // MARK: - CTAFooterDescription
 
-private class CTAFooterDescription: ViewDescriptor, AuthenticationSecondaryViewDescription {
+private final class CTAFooterDescription: ViewDescriptor, AuthenticationSecondaryViewDescription {
     var views: [ViewDescriptor] {
         [self]
     }
 
     var actioner: AuthenticationActioner?
 
-    let ctaButton = Button(style: .accentColorTextButtonStyle,
-                             cornerRadius: 16,
-                             fontSpec: .buttonBigSemibold)
+    let ctaButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .buttonBigSemibold
+    )
 
     init() {
         ctaButton.setTitle(L10n.Localizable.AddEmailPasswordStep.CtaButton.title.capitalized, for: .normal)

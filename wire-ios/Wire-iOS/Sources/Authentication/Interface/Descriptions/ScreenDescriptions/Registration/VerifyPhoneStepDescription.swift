@@ -18,7 +18,7 @@
 
 import Foundation
 
-class VerifyPhoneStepSecondaryView: AuthenticationFooterViewDescription {
+final class VerifyPhoneStepSecondaryView: AuthenticationFooterViewDescription {
     let views: [ViewDescriptor]
     weak var actioner: AuthenticationActioner?
 
@@ -44,7 +44,7 @@ final class VerifyPhoneStepDescription: AuthenticationStepDescription {
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String
-    let subtext: String?
+    let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription?
 
@@ -53,7 +53,7 @@ final class VerifyPhoneStepDescription: AuthenticationStepDescription {
         backButton = nil
         mainView = VerificationCodeFieldDescription()
         headline = L10n.Localizable.Team.PhoneActivationCode.headline
-        subtext = L10n.Localizable.Team.ActivationCode.subheadline(phoneNumber)
+        subtext = .markdown(from: L10n.Localizable.Team.ActivationCode.subheadline(phoneNumber), style: .login)
         secondaryView = nil
         footerView = VerifyPhoneStepSecondaryView(phoneNumber: phoneNumber, allowChange: allowChange)
     }

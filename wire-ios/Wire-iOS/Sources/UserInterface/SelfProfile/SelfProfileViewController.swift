@@ -52,10 +52,6 @@ final class SelfProfileViewController: UIViewController {
         return [.portrait]
     }
 
-    private var userCanSetProfilePicture: Bool {
-        return userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture)
-    }
-
     // MARK: - Initialization
 
     /**
@@ -84,11 +80,19 @@ final class SelfProfileViewController: UIViewController {
 
         settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
 
+        var options: ProfileHeaderViewController.Options
+        options = selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability]
+        if userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) {
+            options.insert(.allowEditingProfilePicture)
+        }
         profileHeaderViewController = ProfileHeaderViewController(
             user: selfUser,
             viewer: selfUser,
-            options: selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability],
-            userSession: userSession
+            conversation: .none,
+            options: options,
+            userSession: userSession,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
 
         self.userRightInterfaceType = userRightInterfaceType
@@ -115,16 +119,13 @@ final class SelfProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        profileHeaderViewController.imageView.addTarget(self, action: #selector(userDidTapProfileImage), for: .touchUpInside)
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(userDidTapProfileImage))
+        profileHeaderViewController.imageView.addGestureRecognizer(tapGestureRecognizer)
 
         addChild(profileHeaderViewController)
         profileContainerView.addSubview(profileHeaderViewController.view)
         view.addSubview(profileContainerView)
         profileHeaderViewController.didMove(toParent: self)
-
-        if userCanSetProfilePicture {
-            profileHeaderViewController.options.insert(.allowEditingProfilePicture)
-        }
 
         addChild(settingsController)
         view.addSubview(settingsController.view)
@@ -194,8 +195,8 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - Events
 
-    @objc func userDidTapProfileImage(sender: UserImageView) {
-        guard userCanSetProfilePicture else { return }
+    @objc private func userDidTapProfileImage(_ sender: UIGestureRecognizer) {
+        guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else { return }
 
         let alertViewController = profileImagePicker.selectProfileImage()
         alertViewController.configPopover(pointToView: profileHeaderViewController.imageView)
