@@ -201,8 +201,8 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
                     await self?.snoozeReminder()
                 }
             }
-            self.lastE2EIdentityUpdateAlertDateRepository?.storeLastAlertDate(Date.now)
         }
+        lastE2EIdentityUpdateAlertDateRepository?.storeLastAlertDate(Date.now)
         targetVC.present(alert, animated: true)
     }
 }
