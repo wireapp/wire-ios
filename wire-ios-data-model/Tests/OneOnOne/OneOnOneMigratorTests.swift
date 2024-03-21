@@ -97,49 +97,6 @@ final class OneOnOneMigratorTests: XCTestCase {
         withExtendedLifetime(handler) {}
     }
 
-    // TODO: move test to resolver
-
-//    func test_migrateToMLS_conversationAlreadyExists() async throws {
-//        // Given
-//        let sut = OneOnOneMigrator(mlsService: mockMLSService, context: syncContext)
-//        let userID = QualifiedID.random()
-//        let mlsGroupID = MLSGroupID.random()
-//
-//        let (connection, proteusConversation, mlsConversation) = await createConversations(
-//            userID: userID,
-//            mlsGroupID: mlsGroupID,
-//            in: syncContext
-//        )
-//
-//        // Mock
-//        let handler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-//            result: .success(mlsGroupID),
-//            context: syncContext.notificationContext
-//        )
-//        mockMLSService.conversationExistsGroupID_MockValue = true
-//
-//        // When
-//        await syncContext.perform {
-//            XCTAssertEqual(proteusConversation.oneOnOneUser?.remoteIdentifier, userID.uuid)
-//            XCTAssertNil(mlsConversation.oneOnOneUser)
-//        }
-//
-//        try await sut.migrateToMLS(
-//            userID: userID,
-//            mlsGroupID: mlsGroupID
-//        )
-//
-//        // Then
-//        XCTAssertTrue(mockMLSService.establishGroupForWith_Invocations.isEmpty)
-//        XCTAssertTrue(mockMLSService.addMembersToConversationWithFor_Invocations.isEmpty)
-//
-//        await syncContext.perform {
-//            XCTAssertEqual(mlsConversation.oneOnOneUser, connection.to)
-//            XCTAssertNil(proteusConversation.oneOnOneUser)
-//        }
-//        withExtendedLifetime(handler) {}
-//    }
-
     func test_migrateToMLS_moveMessages() async throws {
         let sut = OneOnOneMigrator(mlsService: mockMLSService)
         let userID: QualifiedID = .random()

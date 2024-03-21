@@ -210,7 +210,7 @@ final class OneOnOneResolverTests: XCTestCase {
         XCTAssertEqual(mockHandler.performedActions.count, 2)
     }
 
-    func test_resolveOneOnOneConversation_MLSSupported() async throws {
+    func test_resolveOneOnOneConversation_MLSSupported_epochIsZero() async throws {
         // Given
         let userID: QualifiedID = .random()
         let resolver = makeResolver()
@@ -231,9 +231,10 @@ final class OneOnOneResolverTests: XCTestCase {
             let conversation = makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
             conversation.messageProtocol = .proteus
 
-            // in the real code the mlsGroupID is created and persisted through the SyncMLSOneToOneConversationActionHandler
-            // but we can just mock the returned result, so we setup this ID here already.
+            // in the real code converation values are updated through the SyncMLSOneToOneConversationActionHandler
+            // but we can just mock the returned result here, so we setup this ID here already.
             conversation.mlsGroupID = mlsGroupID
+            conversation.epoch = 0
         }
 
         // When
@@ -243,6 +244,44 @@ final class OneOnOneResolverTests: XCTestCase {
         let invocations = await mockMigrator.migrateToMLSUserIDMlsGroupIDIn_Invocations
         XCTAssertEqual(invocations.count, 1)
         XCTAssertEqual(invocations.first?.userID, userID)
+
+        XCTAssertEqual(mockHandler.performedActions.count, 1)
+    }
+
+    func test_resolveOneOnOneConversation_MLSSupported_epochGreaterZero() async throws {
+        // Given
+        let userID: QualifiedID = .random()
+        let resolver = makeResolver()
+
+        // Mock
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
+        await mockMigrator.setMigrateToMLSUserIDIn_MockMethod { _, _, _ in }
+        mockMLSService.conversationExistsGroupID_MockValue = false
+        mockMLSService.joinGroupWith_MockMethod = { _ in }
+
+        // mockHandler must be retained to catch notifications
+        let mlsGroupID: MLSGroupID = .random()
+        let mockHandler = MockActionHandler<SyncMLSOneToOneConversationAction>(
+            results: [.success(mlsGroupID)],
+            context: syncContext.notificationContext
+        )
+
+        await syncContext.perform { [self] in
+            let conversation = makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
+            conversation.messageProtocol = .proteus
+
+            // in the real code converation values are updated through the SyncMLSOneToOneConversationActionHandler
+            // but we can just mock the returned result here, so we setup this ID here already.
+            conversation.mlsGroupID = mlsGroupID
+            conversation.epoch = 1
+        }
+
+        // When
+        try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
+
+        // Then
+        let invocations = await mockMigrator.migrateToMLSUserIDMlsGroupIDIn_Invocations
+        XCTAssertEqual(invocations.count, 0)
 
         XCTAssertEqual(mockHandler.performedActions.count, 1)
     }
