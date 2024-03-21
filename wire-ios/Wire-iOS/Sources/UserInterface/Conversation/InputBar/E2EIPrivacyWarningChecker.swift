@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-protocol MLSConversationCheckerPresenter {
+protocol E2EIPrivacyWarningPresenter {
     func presentE2EIPrivacyWarningAlert(_ notification: Notification)
 }
 
@@ -31,7 +31,10 @@ struct E2EIPrivacyWarningChecker {
     var conversation: ConversationLike
     var alertType = AlertType.message
     var continueAction: () -> Void
+
+    // set if need to do extra action on cancel
     var cancelAction: (() -> Void)?
+    // set if need to present differently the alert without notification: `.presentE2EIPrivacyWarningAlert`
     var showAlert: (() -> Void)?
 
     func performAction() {
@@ -71,7 +74,7 @@ struct E2EIPrivacyWarningChecker {
     }
 
     // add object in charge to present e2eiPrivacyWarningAlert
-    static func addPresenter(_ observer: MLSConversationCheckerPresenter) -> NSObjectProtocol {
+    static func addPresenter(_ observer: E2EIPrivacyWarningPresenter) -> NSObjectProtocol {
        return NotificationCenter.default.addObserver(forName: .presentE2EIPrivacyWarningAlert, object: nil, queue: .main) { note in
             observer.presentE2EIPrivacyWarningAlert(note)
         }

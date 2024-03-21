@@ -177,9 +177,9 @@ extension ConversationViewController {
 
 }
 
-// MARK: - MLSConversationCheckerPresenter
+// MARK: - E2EIPrivacyWarningPresenter
 
-extension ConversationViewController: MLSConversationCheckerPresenter {
+extension ConversationViewController: E2EIPrivacyWarningPresenter {
 
     func presentE2EIPrivacyWarningAlert(_ notification: Notification) {
         switch notification.alertType {
