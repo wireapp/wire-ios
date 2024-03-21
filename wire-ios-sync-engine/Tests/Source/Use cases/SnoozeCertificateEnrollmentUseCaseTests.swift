@@ -29,6 +29,8 @@ class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
     private var mockFeatureRepository: MockFeatureRepositoryInterface!
     private var selfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
 
+    private var context: NSManagedObjectContext { syncMOC }
+
     override func setUp() {
         super.setUp()
 
@@ -38,7 +40,8 @@ class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
         selfClientCertificateProvider = MockSelfClientCertificateProviderProtocol()
         let accountID = UUID.create()
         snoozer = SnoozeCertificateEnrollmentUseCase(
-            e2eiFeature: mockFeatureRepository.fetchE2EI(),
+            featureRepository: mockFeatureRepository,
+            featureRepositoryContext: context,
             recurringActionService: mockRecurringActionService,
             accountId: accountID)
     }

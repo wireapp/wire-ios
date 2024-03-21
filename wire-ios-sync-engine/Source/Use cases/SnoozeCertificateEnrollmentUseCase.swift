@@ -27,17 +27,20 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
 
     // MARK: - Properties
 
-    private let e2eiFeature: Feature.E2EI
+    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepositoryContext: NSManagedObjectContext
     private let recurringActionService: RecurringActionServiceInterface
     private let actionId: String
 
     // MARK: - Life cycle
 
     init(
-        e2eiFeature: Feature.E2EI,
+        featureRepository: FeatureRepositoryInterface,
+        featureRepositoryContext: NSManagedObjectContext,
         recurringActionService: RecurringActionServiceInterface,
         accountId: UUID) {
-            self.e2eiFeature = e2eiFeature
+            self.featureRepository = featureRepository
+            self.featureRepositoryContext = featureRepositoryContext
             self.recurringActionService = recurringActionService
             self.actionId = "\(accountId).enrollCertificate"
         }
@@ -54,11 +57,11 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     }
 
     // MARK: - Helpers
-    @MainActor
     private func registerRecurringActionIfNeeded(isUpdateMode: Bool, interval: TimeInterval) async {
-        guard e2eiFeature.isEnabled else {
-            return
+        let isE2EIEnabled = await featureRepositoryContext.perform {
+            self.featureRepository.fetchE2EI().isEnabled
         }
+        guard isE2EIEnabled else { return }
 
         let recurringAction = RecurringAction(
             id: actionId,

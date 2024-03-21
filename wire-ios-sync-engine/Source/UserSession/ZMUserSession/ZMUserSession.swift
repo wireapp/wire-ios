@@ -170,7 +170,8 @@ public final class ZMUserSession: NSObject {
 
     public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol = {
         return SnoozeCertificateEnrollmentUseCase(
-            e2eiFeature: e2eiFeature,
+            featureRepository: featureRepository,
+            featureRepositoryContext: syncContext,
             recurringActionService: recurringActionService,
             accountId: account.userIdentifier)
     }()
