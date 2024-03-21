@@ -27,8 +27,7 @@ protocol ActiveCallRouterProtocol: AnyObject {
     func minimizeCall(animated: Bool, completion: Completion?)
     func showCallTopOverlay(for conversation: ZMConversation)
     func hideCallTopOverlay()
-    func presentSecurityDegradedAlert(for reason: CallDegradationReason)
-    func presentIncomingCallDegradedAlert()
+    func presentSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (Bool) -> Void)
     func presentUnsupportedVersionAlert()
 }
 
@@ -62,7 +61,7 @@ final class ActiveCallRouter: NSObject {
 
     private var isCallQualityShown = false
     private var isCallTopOverlayShown = false
-    private(set) var scheduledPostCallAction: (() -> Void)?
+    private(set) var scheduledPostCallAction: ((Completion) -> Void)?
 
     private var zClientViewController: ZClientViewController? {
         return rootViewController.firstChild(ofType: ZClientViewController.self)
@@ -92,6 +91,7 @@ final class ActiveCallRouter: NSObject {
 
 // MARK: - ActiveCallRouterProtocol
 extension ActiveCallRouter: ActiveCallRouterProtocol {
+
     // MARK: - ActiveCall
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
         guard
@@ -125,9 +125,14 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         }
         rootViewController.dismiss(animated: animated, completion: { [weak self] in
             self?.isActiveCallShown = false
-            self?.scheduledPostCallAction?()
+            if let action = self?.scheduledPostCallAction {
+                action {
+                    completion?()
+                }
+            } else {
+                completion?()
+            }
             self?.scheduledPostCallAction = nil
-            completion?()
         })
     }
 
@@ -151,31 +156,29 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     // MARK: - Alerts
-    func presentSecurityDegradedAlert(for reason: CallDegradationReason) {
-        executeOrSchedulePostCallAction { [weak self] in
-            let alert: UIAlertController
+    func presentSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (Bool) -> Void) {
+        executeOrSchedulePostCallAction { [weak self] completion in
+            let alert: AlertController
             switch reason {
             case .degradedUser(user: let user):
                 alert = UIAlertController.degradedCall(degradedUser: user?.value, callEnded: true)
+                alert.dismissedClosure = {
+                    completion(true)
+                }
             case .invalidCertificate:
-                alert = UIAlertController.degradedMLSConference(conferenceEnded: true)
+                alert = UIAlertController.incomingCallDegradedMLSConference(confirmationBlock: { answerDegradedCall in
+                    completion(answerDegradedCall)
+                })
             }
             self?.rootViewController.present(alert, animated: true)
         }
     }
 
-    func presentIncomingCallDegradedAlert() {
-        let alert = UIAlertController.incomingCallDegradedMLSConference(confirmationBlock: { answerDegradedCall in
-            E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: answerDegradedCall)
-        }, cancelBlock: {
-            E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: false)
-        })
-        rootViewController.present(alert, animated: true)
-    }
-
     func presentUnsupportedVersionAlert() {
-        executeOrSchedulePostCallAction { [weak self] in
-            let alert = UIAlertController.unsupportedVersionAlert()
+        executeOrSchedulePostCallAction { [weak self] completion in
+            let alert = UIAlertController.unsupportedVersionAlert {
+                completion()
+            }
             self?.rootViewController.present(alert, animated: true)
         }
     }
@@ -198,9 +201,11 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     // MARK: - Helpers
 
-    func executeOrSchedulePostCallAction(_ action: @escaping () -> Void) {
+    func executeOrSchedulePostCallAction(_ action: @escaping (Completion) -> Void) {
         if !isActiveCallShown {
-            action()
+            action {
+                // nothing
+            }
         } else {
             scheduledPostCallAction = action
         }

@@ -126,6 +126,7 @@ final class CallController: NSObject {
 extension CallController: WireCallCenterDegradedCallObserver {
 
     func callCenterDegradedCall(conversation: ZMConversation) {
+        return
         // incoming degraded call
         let checker = E2EIPrivacyWarningChecker(conversation: conversation,
                                                 alertType: .incomingCall,
@@ -150,8 +151,11 @@ extension CallController: WireCallCenterCallStateObserver {
                              timestamp: Date?,
                              previousCallState: CallState?) {
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
-        presentSecurityDegradedAlertIfNecessary(for: conversation.voiceChannel)
-        updateActiveCallPresentationState()
+        presentSecurityDegradedAlertIfNecessary(for: conversation.voiceChannel) { continueCall in
+            if continueCall {
+                self.updateActiveCallPresentationState()
+            }
+        }
     }
 
     private func presentUnsupportedVersionAlertIfNecessary(callState: CallState) {
@@ -159,15 +163,18 @@ extension CallController: WireCallCenterCallStateObserver {
         router?.presentUnsupportedVersionAlert()
     }
 
-    private func presentSecurityDegradedAlertIfNecessary(for voiceChannel: VoiceChannel?) {
+    private func presentSecurityDegradedAlertIfNecessary(for voiceChannel: VoiceChannel?, continueCallBlock: @escaping (Bool) -> Void) {
         guard let degradationState = voiceChannel?.degradationState else {
+            continueCallBlock(false)
             return
         }
         switch degradationState {
         case .incoming(reason: let degradationReason):
-            router?.presentSecurityDegradedAlert(for: degradationReason)
-        default:
-            break
+            router?.presentSecurityDegradedAlert(for: degradationReason) { continueCall in
+                continueCallBlock(continueCall)
+            }
+            default:
+            continueCallBlock(false)
         }
     }
 }
