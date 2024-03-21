@@ -271,7 +271,6 @@
 		2577CB632B18A406007D3443 /* E2EIdentityCertificateStatus+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB622B18A406007D3443 /* E2EIdentityCertificateStatus+Extensions.swift */; };
 		2577CB7B2B1DC787007D3443 /* DeviceMLSView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB7A2B1DC787007D3443 /* DeviceMLSView.swift */; };
 		2577CB822B1DFF66007D3443 /* ViewConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2577CB812B1DFF66007D3443 /* ViewConstants.swift */; };
-		259AAB0E2B9F4EAF00B13A7C /* MLSClientResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 255176CE2B5528F5006A4E46 /* MLSClientResolver.swift */; };
 		2584AE472B98A2CD008E1DEA /* DeviceInfoViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2584AE462B98A2CD008E1DEA /* DeviceInfoViewModelTests.swift */; };
 		259BB5D32B7FC04100F1B552 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259BB5D12B7FC04100F1B552 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift */; };
 		259BB5D42B7FC04100F1B552 /* ProfileDeviceDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 259BB5D22B7FC04100F1B552 /* ProfileDeviceDetailsView.swift */; };
@@ -10832,7 +10831,6 @@
 				F15650C321DD0A9B00210504 /* Bundle+Backend.swift in Sources */,
 				F15650B221DD018700210504 /* Bundle+Identifiers.swift in Sources */,
 				F15650B021DCFF5300210504 /* AutomationHelper.swift in Sources */,
-				259AAB0E2B9F4EAF00B13A7C /* MLSClientResolver.swift in Sources */,
 				F15650A421DCF66600210504 /* AudioProcessing.swift in Sources */,
 				A98370BA248806E600515687 /* UIAlertController+factory.swift in Sources */,
 				F15650A121DCF3E700210504 /* ExtensionSettings.swift in Sources */,
