@@ -185,6 +185,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         enqueueTransition(to: appState, completion: completion)
     }
 
+    @MainActor
     private func transition(to appState: AppState, completion: @escaping () -> Void) {
         applicationWillTransition(to: appState)
 
@@ -210,13 +211,12 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             screenCurtain.userSession = nil
             configureUnauthenticatedAppearance()
             showUnauthenticatedFlow(error: error, completion: completionBlock)
-        case let .authenticated(userSession, completedRegistration):
+        case let .authenticated(userSession):
             configureAuthenticatedAppearance()
             executeAuthenticatedBlocks()
             screenCurtain.userSession = userSession
             showAuthenticated(
                 userSession: userSession,
-                isComingFromRegistration: completedRegistration,
                 completion: completionBlock
             )
         case .headless:
@@ -346,17 +346,16 @@ extension AppRootRouter {
                                completion: completion)
     }
 
+    @MainActor
     private func showAuthenticated(
         userSession: UserSession,
-        isComingFromRegistration: Bool,
         completion: @escaping () -> Void
     ) {
         guard
             let selectedAccount = SessionManager.shared?.accountManager.selectedAccount,
             let authenticatedRouter = buildAuthenticatedRouter(
                 account: selectedAccount,
-                userSession: userSession,
-                isComingFromRegistration: isComingFromRegistration
+                userSession: userSession
             )
         else {
             completion()
@@ -364,9 +363,10 @@ extension AppRootRouter {
         }
 
         self.authenticatedRouter = authenticatedRouter
-
-        rootViewController.set(childViewController: authenticatedRouter.viewController,
-                               completion: completion)
+        rootViewController.set(
+            childViewController: authenticatedRouter.viewController,
+            completion: completion
+        )
     }
 
     private func showSkeleton(fromAccount: Account?, toAccount: Account, completion: @escaping () -> Void) {
@@ -405,7 +405,6 @@ extension AppRootRouter {
 
     private func setupAnalyticsSharing() {
         guard
-            appStateCalculator.wasUnauthenticated,
             let selfUser = SelfUser.provider?.providedSelfUser,
             selfUser.isTeamMember
         else {
@@ -417,10 +416,10 @@ extension AppRootRouter {
         Analytics.shared.provider?.selfUser = selfUser
     }
 
+    @MainActor
     private func buildAuthenticatedRouter(
         account: Account,
-        userSession: UserSession,
-        isComingFromRegistration: Bool
+        userSession: UserSession
     ) -> AuthenticatedRouter? {
         guard let userSession = ZMUserSession.shared() else { return  nil }
 
@@ -433,12 +432,10 @@ extension AppRootRouter {
         }
 
         let needToShowDialog = appStateCalculator.wasUnauthenticated && !isTeamMember
-
         return AuthenticatedRouter(
             rootViewController: rootViewController,
             account: account,
             userSession: userSession,
-            isComingFromRegistration: isComingFromRegistration,
             needToShowDataUsagePermissionDialog: needToShowDialog,
             featureRepositoryProvider: userSession,
             featureChangeActionsHandler: E2EINotificationActionsHandler(
@@ -446,6 +443,8 @@ extension AppRootRouter {
                 snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
                 stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
                 gracePeriodRepository: userSession.gracePeriodRepository,
+                lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
+                e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
                 targetVC: rootViewController),
             gracePeriodRepository: userSession.gracePeriodRepository
         )

@@ -30,11 +30,11 @@ public struct OAuthParameters {
 public struct OAuthResponse {
 
     let idToken: String
-    let refreshToken: String
+    let refreshToken: String?
 
     public init(
         idToken: String,
-        refreshToken: String) {
+        refreshToken: String?) {
             self.idToken = idToken
             self.refreshToken = refreshToken
         }
@@ -72,17 +72,18 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
 
     public init(
         e2eiRepository: E2EIRepositoryInterface,
-        context: NSManagedObjectContext) {
-            self.e2eiRepository = e2eiRepository
-            self.context = context
-        }
+        context: NSManagedObjectContext
+    ) {
+        self.e2eiRepository = e2eiRepository
+        self.context = context
+    }
 
     /// Invokes enrollment flow
     /// - Parameter authenticate: Block that performs OAUTH authentication
     /// - Returns: Chain of certificates for the clients
     /// - Description: **Visit the link below to understand the entire flow**  https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/800820113/Use+case+End-to-end+identity+enrollment#Detailed-enrolment-flow
     public func invoke(authenticate: @escaping OAuthBlock) async throws -> String {
-        return try await invoke(authenticate: authenticate, expirySec: nil)
+        try await invoke(authenticate: authenticate, expirySec: nil)
     }
 
     public func invoke(authenticate: @escaping OAuthBlock, expirySec: UInt32?) async throws -> String {
@@ -90,6 +91,13 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             try await e2eiRepository.fetchTrustAnchor()
         } catch {
             logger.warn("failed to register trust anchor: \(error.localizedDescription)")
+        }
+
+        do {
+            try await e2eiRepository.fetchFederationCertificates()
+        } catch {
+            logger.warn("failed to register intermediate certificates: \(String(describing: error))")
+            throw error
         }
 
         let enrollment = try await e2eiRepository.createEnrollment(
@@ -138,8 +146,6 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             clientId: selfClientId ?? "",
             dpopToken: dpopToken)
 
-        let refreshTokenFromCC = try? await enrollment.getOAuthRefreshToken()
-
         let dpopChallengeResponse = try await enrollment.validateDPoPChallenge(
             accessToken: wireAccessToken.token,
             prevNonce: authorizations.nonce,
@@ -147,7 +153,7 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
 
         let oidcChallengeResponse = try await enrollment.validateOIDCChallenge(
             idToken: oAuthResponse.idToken,
-            refreshToken: refreshTokenFromCC ?? oAuthResponse.refreshToken,
+            refreshToken: oAuthResponse.refreshToken ?? " ",
             prevNonce: dpopChallengeResponse.nonce,
             acmeChallenge: oidcAuthorization.challenge)
 

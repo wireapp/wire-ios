@@ -87,7 +87,7 @@ final class ProfileHeaderViewController: UIViewController {
     private let handleLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: LabelColors.textDefault)
     private let teamNameLabel = DynamicFontLabel(fontSpec: .accountTeam, color: LabelColors.textDefault)
     private let remainingTimeLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont, color: LabelColors.textDefault)
-    let imageView =  UserImageView(size: .big)
+    let imageView = UserImageView(size: .big)
     private let userStatusViewController: UserStatusViewController
 
     private let guestIndicatorStack = UIStackView()
@@ -337,10 +337,7 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateE2EICertifiedStatus() {
-        guard
-            let contextProvider = userSession as? ContextProvider,
-            let user = user as? ZMUser
-        else { return }
+        guard let user = user as? ZMUser else { return }
 
         Task { @MainActor [conversation] in
             do {

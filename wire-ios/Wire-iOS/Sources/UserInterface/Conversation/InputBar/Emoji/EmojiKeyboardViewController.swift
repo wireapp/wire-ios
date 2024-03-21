@@ -203,7 +203,7 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
 
     func setupViews() {
         titleLabel.textAlignment = .center
-        let fontSize: CGFloat =  UIDevice.current.userInterfaceIdiom == .pad ? 40 : 28
+        let fontSize: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 40 : 28
         titleLabel.font = .systemFont(ofSize: fontSize)
         titleLabel.adjustsFontSizeToFitWidth = true
         addSubview(titleLabel)

@@ -171,16 +171,16 @@ public class MockCertificateRevocationListsChecking: CertificateRevocationListsC
         await mock(distributionPoints)
     }
 
-    // MARK: - checkExpiringCRLs
+    // MARK: - checkExpiredCRLs
 
-    public var checkExpiringCRLs_Invocations: [Void] = []
-    public var checkExpiringCRLs_MockMethod: (() async -> Void)?
+    public var checkExpiredCRLs_Invocations: [Void] = []
+    public var checkExpiredCRLs_MockMethod: (() async -> Void)?
 
-    public func checkExpiringCRLs() async {
-        checkExpiringCRLs_Invocations.append(())
+    public func checkExpiredCRLs() async {
+        checkExpiredCRLs_Invocations.append(())
 
-        guard let mock = checkExpiringCRLs_MockMethod else {
-            fatalError("no mock for `checkExpiringCRLs`")
+        guard let mock = checkExpiredCRLs_MockMethod else {
+            fatalError("no mock for `checkExpiredCRLs`")
         }
 
         await mock()
@@ -296,6 +296,148 @@ public class MockConversationEventProcessorProtocol: ConversationEventProcessorP
         }
 
         mock(payload)
+    }
+
+}
+
+public class MockConversationLike: ConversationLike {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - conversationType
+
+    public var conversationType: ZMConversationType {
+        get { return underlyingConversationType }
+        set(value) { underlyingConversationType = value }
+    }
+
+    public var underlyingConversationType: ZMConversationType!
+
+    // MARK: - isSelfAnActiveMember
+
+    public var isSelfAnActiveMember: Bool {
+        get { return underlyingIsSelfAnActiveMember }
+        set(value) { underlyingIsSelfAnActiveMember = value }
+    }
+
+    public var underlyingIsSelfAnActiveMember: Bool!
+
+    // MARK: - teamRemoteIdentifier
+
+    public var teamRemoteIdentifier: UUID?
+
+    // MARK: - localParticipantsCount
+
+    public var localParticipantsCount: Int {
+        get { return underlyingLocalParticipantsCount }
+        set(value) { underlyingLocalParticipantsCount = value }
+    }
+
+    public var underlyingLocalParticipantsCount: Int!
+
+    // MARK: - displayName
+
+    public var displayName: String?
+
+    // MARK: - connectedUserType
+
+    public var connectedUserType: UserType?
+
+    // MARK: - allowGuests
+
+    public var allowGuests: Bool {
+        get { return underlyingAllowGuests }
+        set(value) { underlyingAllowGuests = value }
+    }
+
+    public var underlyingAllowGuests: Bool!
+
+    // MARK: - allowServices
+
+    public var allowServices: Bool {
+        get { return underlyingAllowServices }
+        set(value) { underlyingAllowServices = value }
+    }
+
+    public var underlyingAllowServices: Bool!
+
+    // MARK: - isUnderLegalHold
+
+    public var isUnderLegalHold: Bool {
+        get { return underlyingIsUnderLegalHold }
+        set(value) { underlyingIsUnderLegalHold = value }
+    }
+
+    public var underlyingIsUnderLegalHold: Bool!
+
+    // MARK: - sortedActiveParticipantsUserTypes
+
+    public var sortedActiveParticipantsUserTypes: [UserType] = []
+
+    // MARK: - relatedConnectionState
+
+    public var relatedConnectionState: ZMConnectionStatus {
+        get { return underlyingRelatedConnectionState }
+        set(value) { underlyingRelatedConnectionState = value }
+    }
+
+    public var underlyingRelatedConnectionState: ZMConnectionStatus!
+
+    // MARK: - lastMessage
+
+    public var lastMessage: ZMConversationMessage?
+
+    // MARK: - firstUnreadMessage
+
+    public var firstUnreadMessage: ZMConversationMessage?
+
+    // MARK: - areServicesPresent
+
+    public var areServicesPresent: Bool {
+        get { return underlyingAreServicesPresent }
+        set(value) { underlyingAreServicesPresent = value }
+    }
+
+    public var underlyingAreServicesPresent: Bool!
+
+    // MARK: - domain
+
+    public var domain: String?
+
+
+    // MARK: - localParticipantsContain
+
+    public var localParticipantsContainUser_Invocations: [UserType] = []
+    public var localParticipantsContainUser_MockMethod: ((UserType) -> Bool)?
+    public var localParticipantsContainUser_MockValue: Bool?
+
+    public func localParticipantsContain(user: UserType) -> Bool {
+        localParticipantsContainUser_Invocations.append(user)
+
+        if let mock = localParticipantsContainUser_MockMethod {
+            return mock(user)
+        } else if let mock = localParticipantsContainUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `localParticipantsContainUser`")
+        }
+    }
+
+    // MARK: - verifyLegalHoldSubjects
+
+    public var verifyLegalHoldSubjects_Invocations: [Void] = []
+    public var verifyLegalHoldSubjects_MockMethod: (() -> Void)?
+
+    public func verifyLegalHoldSubjects() {
+        verifyLegalHoldSubjects_Invocations.append(())
+
+        guard let mock = verifyLegalHoldSubjects_MockMethod else {
+            fatalError("no mock for `verifyLegalHoldSubjects`")
+        }
+
+        mock()
     }
 
 }
@@ -546,29 +688,6 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
         }
     }
 
-    // MARK: - getExternalSender
-
-    public var getExternalSenderConversationId_Invocations: [Data] = []
-    public var getExternalSenderConversationId_MockError: Error?
-    public var getExternalSenderConversationId_MockMethod: ((Data) async throws -> Data)?
-    public var getExternalSenderConversationId_MockValue: Data?
-
-    public func getExternalSender(conversationId: Data) async throws -> Data {
-        getExternalSenderConversationId_Invocations.append(conversationId)
-
-        if let error = getExternalSenderConversationId_MockError {
-            throw error
-        }
-
-        if let mock = getExternalSenderConversationId_MockMethod {
-            return try await mock(conversationId)
-        } else if let mock = getExternalSenderConversationId_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `getExternalSenderConversationId`")
-        }
-    }
-
     // MARK: - createConversation
 
     public var createConversationConversationIdCreatorCredentialTypeConfig_Invocations: [(conversationId: Data, creatorCredentialType: WireCoreCrypto.MlsCredentialType, config: WireCoreCrypto.ConversationConfiguration)] = []
@@ -655,6 +774,29 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
         }
     }
 
+    // MARK: - e2eiDumpPkiEnv
+
+    public var e2eiDumpPkiEnv_Invocations: [Void] = []
+    public var e2eiDumpPkiEnv_MockError: Error?
+    public var e2eiDumpPkiEnv_MockMethod: (() async throws -> WireCoreCrypto.E2eiDumpedPkiEnv?)?
+    public var e2eiDumpPkiEnv_MockValue: WireCoreCrypto.E2eiDumpedPkiEnv??
+
+    public func e2eiDumpPkiEnv() async throws -> WireCoreCrypto.E2eiDumpedPkiEnv? {
+        e2eiDumpPkiEnv_Invocations.append(())
+
+        if let error = e2eiDumpPkiEnv_MockError {
+            throw error
+        }
+
+        if let mock = e2eiDumpPkiEnv_MockMethod {
+            return try await mock()
+        } else if let mock = e2eiDumpPkiEnv_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `e2eiDumpPkiEnv`")
+        }
+    }
+
     // MARK: - e2eiEnrollmentStash
 
     public var e2eiEnrollmentStashEnrollment_Invocations: [WireCoreCrypto.E2eiEnrollment] = []
@@ -721,6 +863,24 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
             return mock
         } else {
             fatalError("no mock for `e2eiIsEnabledCiphersuite`")
+        }
+    }
+
+    // MARK: - e2eiIsPkiEnvSetup
+
+    public var e2eiIsPkiEnvSetup_Invocations: [Void] = []
+    public var e2eiIsPkiEnvSetup_MockMethod: (() async -> Bool)?
+    public var e2eiIsPkiEnvSetup_MockValue: Bool?
+
+    public func e2eiIsPkiEnvSetup() async -> Bool {
+        e2eiIsPkiEnvSetup_Invocations.append(())
+
+        if let mock = e2eiIsPkiEnvSetup_MockMethod {
+            return await mock()
+        } else if let mock = e2eiIsPkiEnvSetup_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `e2eiIsPkiEnvSetup`")
         }
     }
 
@@ -1017,6 +1177,29 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
             return mock
         } else {
             fatalError("no mock for `getDeviceIdentitiesConversationIdDeviceIds`")
+        }
+    }
+
+    // MARK: - getExternalSender
+
+    public var getExternalSenderConversationId_Invocations: [Data] = []
+    public var getExternalSenderConversationId_MockError: Error?
+    public var getExternalSenderConversationId_MockMethod: ((Data) async throws -> Data)?
+    public var getExternalSenderConversationId_MockValue: Data?
+
+    public func getExternalSender(conversationId: Data) async throws -> Data {
+        getExternalSenderConversationId_Invocations.append(conversationId)
+
+        if let error = getExternalSenderConversationId_MockError {
+            throw error
+        }
+
+        if let mock = getExternalSenderConversationId_MockMethod {
+            return try await mock(conversationId)
+        } else if let mock = getExternalSenderConversationId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getExternalSenderConversationId`")
         }
     }
 
@@ -1949,20 +2132,23 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
 
     public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_Invocations: [(enrollment: E2eiEnrollment, certificateChain: String)] = []
     public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockError: Error?
-    public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockMethod: ((E2eiEnrollment, String) async throws -> Void)?
+    public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockMethod: ((E2eiEnrollment, String) async throws -> CRLsDistributionPoints?)?
+    public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockValue: CRLsDistributionPoints??
 
-    public func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws {
+    public func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws -> CRLsDistributionPoints? {
         initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_Invocations.append((enrollment: enrollment, certificateChain: certificateChain))
 
         if let error = initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockError {
             throw error
         }
 
-        guard let mock = initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockMethod else {
+        if let mock = initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockMethod {
+            return try await mock(enrollment, certificateChain)
+        } else if let mock = initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain`")
         }
-
-        try await mock(enrollment, certificateChain)
     }
 
 }
@@ -3334,6 +3520,48 @@ class MockFileManagerInterface: FileManagerInterface {
 
 }
 
+public class MockGracePeriodRepositoryInterface: GracePeriodRepositoryInterface {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - fetchGracePeriodEndDate
+
+    public var fetchGracePeriodEndDate_Invocations: [Void] = []
+    public var fetchGracePeriodEndDate_MockMethod: (() -> Date?)?
+    public var fetchGracePeriodEndDate_MockValue: Date??
+
+    public func fetchGracePeriodEndDate() -> Date? {
+        fetchGracePeriodEndDate_Invocations.append(())
+
+        if let mock = fetchGracePeriodEndDate_MockMethod {
+            return mock()
+        } else if let mock = fetchGracePeriodEndDate_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchGracePeriodEndDate`")
+        }
+    }
+
+    // MARK: - storeGracePeriodEndDate
+
+    public var storeGracePeriodEndDate_Invocations: [Date] = []
+    public var storeGracePeriodEndDate_MockMethod: ((Date) -> Void)?
+
+    public func storeGracePeriodEndDate(_ date: Date) {
+        storeGracePeriodEndDate_Invocations.append(date)
+
+        guard let mock = storeGracePeriodEndDate_MockMethod else {
+            fatalError("no mock for `storeGracePeriodEndDate`")
+        }
+
+        mock(date)
+    }
+
+}
+
 public class MockIsSelfUserE2EICertifiedUseCaseProtocol: IsSelfUserE2EICertifiedUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -3697,21 +3925,16 @@ public class MockMLSConversationVerificationStatusUpdating: MLSConversationVerif
     // MARK: - updateAllStatuses
 
     public var updateAllStatuses_Invocations: [Void] = []
-    public var updateAllStatuses_MockError: Error?
-    public var updateAllStatuses_MockMethod: (() async throws -> Void)?
+    public var updateAllStatuses_MockMethod: (() async -> Void)?
 
-    public func updateAllStatuses() async throws {
+    public func updateAllStatuses() async {
         updateAllStatuses_Invocations.append(())
-
-        if let error = updateAllStatuses_MockError {
-            throw error
-        }
 
         guard let mock = updateAllStatuses_MockMethod else {
             fatalError("no mock for `updateAllStatuses`")
         }
 
-        try await mock()
+        await mock()
     }
 
 }
@@ -3893,24 +4116,44 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         try await mock(groupID)
     }
 
-    // MARK: - createGroup
+    // MARK: - establishGroup
 
-    public var createGroupForWith_Invocations: [(groupID: MLSGroupID, users: [MLSUser])] = []
-    public var createGroupForWith_MockError: Error?
-    public var createGroupForWith_MockMethod: ((MLSGroupID, [MLSUser]) async throws -> Void)?
+    public var establishGroupForWith_Invocations: [(groupID: MLSGroupID, users: [MLSUser])] = []
+    public var establishGroupForWith_MockError: Error?
+    public var establishGroupForWith_MockMethod: ((MLSGroupID, [MLSUser]) async throws -> Void)?
 
-    public func createGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
-        createGroupForWith_Invocations.append((groupID: groupID, users: users))
+    public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
+        establishGroupForWith_Invocations.append((groupID: groupID, users: users))
 
-        if let error = createGroupForWith_MockError {
+        if let error = establishGroupForWith_MockError {
             throw error
         }
 
-        guard let mock = createGroupForWith_MockMethod else {
-            fatalError("no mock for `createGroupForWith`")
+        guard let mock = establishGroupForWith_MockMethod else {
+            fatalError("no mock for `establishGroupForWith`")
         }
 
         try await mock(groupID, users)
+    }
+
+    // MARK: - createGroup
+
+    public var createGroupForParentGroupID_Invocations: [(groupID: MLSGroupID, parentGroupID: MLSGroupID?)] = []
+    public var createGroupForParentGroupID_MockError: Error?
+    public var createGroupForParentGroupID_MockMethod: ((MLSGroupID, MLSGroupID?) async throws -> Void)?
+
+    public func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws {
+        createGroupForParentGroupID_Invocations.append((groupID: groupID, parentGroupID: parentGroupID))
+
+        if let error = createGroupForParentGroupID_MockError {
+            throw error
+        }
+
+        guard let mock = createGroupForParentGroupID_MockMethod else {
+            fatalError("no mock for `createGroupForParentGroupID`")
+        }
+
+        try await mock(groupID, parentGroupID)
     }
 
     // MARK: - conversationExists

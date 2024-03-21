@@ -81,9 +81,11 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
         }
     }
 
-    let actionButton: Button = Button(style: .accentColorTextButtonStyle,
-                                      cornerRadius: 4,
-                                      fontSpec: .mediumSemiboldFont)
+    let actionButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 4,
+        fontSpec: .mediumSemiboldFont
+    )
 
     var actionButtonHandler: ContactsCellActionButtonHandler?
 

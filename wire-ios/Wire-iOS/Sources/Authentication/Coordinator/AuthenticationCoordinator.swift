@@ -28,11 +28,9 @@ protocol AuthenticationCoordinatorDelegate: AnyObject {
 
     /**
      * The coordinator finished authenticating the user.
-     * - parameter addedAccount: Whether the authentication action added a new account
-     * to this device.
      */
 
-    func userAuthenticationDidComplete(userSession: UserSession, addedAccount: Bool)
+    func userAuthenticationDidComplete(userSession: UserSession)
 
 }
 
@@ -102,7 +100,6 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     private var loginObservers: [Any] = []
     private var unauthenticatedSessionObserver: Any?
     private var postLoginObservers: [Any] = []
-    private var initialSyncObserver: Any?
     private var pendingAlert: AuthenticationCoordinatorAlert?
     private var registrationStatus: RegistrationStatus {
         return unauthenticatedSession.registrationStatus
@@ -111,9 +108,6 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     private var isTornDown = false
 
     var pendingModal: UIViewController?
-
-    /// Whether an account was added.
-    var addedAccount: Bool = false
 
     /// The user session to use before authentication has finished.
     var unauthenticatedSession: UnauthenticatedSession {
@@ -156,7 +150,6 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
         loginObservers.removeAll()
         unauthenticatedSessionObserver = nil
         postLoginObservers.removeAll()
-        initialSyncObserver = nil
         isTornDown = true
     }
 
@@ -220,7 +213,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
     func sessionManagerCreated(userSession: ZMUserSession) {
         log.info("Session manager created session: \(userSession)")
         currentPostRegistrationFields().apply(sendPostRegistrationFields)
-        initialSyncObserver = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
     }
 
     func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {
@@ -239,11 +231,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
         loginObservers = [
             sessionManager.addSessionManagerCreatedSessionObserver(self)
         ]
-
-        if let userSession = SessionManager.shared?.activeUserSession {
-            initialSyncObserver = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
-        }
-
         sessionManager.loginDelegate = self
         registrationStatus.delegate = self
     }
@@ -307,14 +294,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
             case .completeLoginFlow:
                 delegate?.userAuthenticationDidComplete(
-                    userSession: statusProvider.sharedUserSession!,
-                    addedAccount: addedAccount
-                )
-
-            case .completeRegistrationFlow:
-                delegate?.userAuthenticationDidComplete(
-                    userSession: statusProvider.sharedUserSession!,
-                    addedAccount: true
+                    userSession: statusProvider.sharedUserSession!
                 )
 
             case .startPostLoginFlow:
@@ -870,30 +850,30 @@ extension AuthenticationCoordinator {
 
         guard let session = statusProvider.sharedUserSession else { return }
         let e2eiCertificateUseCase = session.enrollE2EICertificate
-        guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
+        guard let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return
         }
-        let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
+        let oauthUseCase = OAuthUseCase(targetViewController: topmostViewController)
 
-        Task {
+        Task { @MainActor in
             do {
                 let certificateChain = try await e2eiCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
-                await MainActor.run {
-                    executeActions([
-                        .hideLoadingView,
-                        .transition(.enrollE2EIdentitySuccess(certificateChain), mode: .reset)
-                    ])
-                }
+                executeActions([
+                    .hideLoadingView,
+                    .transition(.enrollE2EIdentitySuccess(certificateChain), mode: .reset)
+                ])
+            } catch OAuthError.userCancelled {
+                executeActions([
+                    .hideLoadingView
+                ])
             } catch {
-                await MainActor.run {
-                    executeActions([
-                        .hideLoadingView,
-                        .presentAlert(
-                            .init(title: E2ei.Error.Alert.title,
-                                  message: E2ei.Error.Alert.message,
-                                  actions: [.ok]))
-                    ])
-                }
+                executeActions([
+                    .hideLoadingView,
+                    .presentAlert(
+                        .init(title: E2ei.Error.Alert.title,
+                              message: E2ei.Error.Alert.message,
+                              actions: [.ok]))
+                ])
             }
         }
     }

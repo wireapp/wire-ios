@@ -29,7 +29,7 @@ public protocol CertificateRevocationListAPIProtocol {
 // sourcery: AutoMockable
 public protocol CertificateRevocationListsChecking {
     func checkNewCRLs(from distributionPoints: CRLsDistributionPoints) async
-    func checkExpiringCRLs() async
+    func checkExpiredCRLs() async
 }
 
 public class CertificateRevocationListsChecker: CertificateRevocationListsChecking {
@@ -92,13 +92,17 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         await checkCertificateRevocationLists(from: newDistributionPoints)
     }
 
-    public func checkExpiringCRLs() async {
+    public func checkExpiredCRLs() async {
 
-        WireLogger.e2ei.info("checking expiring CRLs")
+        WireLogger.e2ei.info("checking expired CRLs")
 
         let distributionPointsOfExpiringCRLs = crlExpirationDatesRepository
             .fetchAllCRLExpirationDates()
-            .filter { isCRLExpiringSoon(expirationDate: $0.value) }
+            .filter {
+                // We give 10 seconds delay to allow time for the certificate to be renewed by the server
+                // see https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/950010018/Use+case+revocation+expiration+of+an+E2EI+certificate
+                hasCRLExpiredAtLeastTenSecondsAgo(expirationDate: $0.value)
+            }
             .keys
 
         await checkCertificateRevocationLists(from: Set(distributionPointsOfExpiringCRLs))
@@ -127,7 +131,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
                 // check if certificate is "dirty"
                 if registration.dirty {
                     // update verification state for conversations
-                    try await mlsConversationsVerificationUpdater.updateAllStatuses()
+                    await mlsConversationsVerificationUpdater.updateAllStatuses()
                 }
             } catch {
                 logger.warn("failed to check certificate revocation list: (error: \(error), distributionPoint: \(distributionPoint))")
@@ -135,18 +139,18 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         }
     }
 
-    private func isCRLExpiringSoon(expirationDate: Date) -> Bool {
-        guard let oneHourBeforeExpiration = oneHourBefore(date: expirationDate) else {
-           return false
+    private func hasCRLExpiredAtLeastTenSecondsAgo(expirationDate: Date) -> Bool {
+        guard let tenSecondsAfterExpiration = tenSecondsAfter(date: expirationDate) else {
+            return expirationDate.isInThePast
         }
 
-        return .now > oneHourBeforeExpiration
+        return tenSecondsAfterExpiration.isInThePast
     }
 
-    private func oneHourBefore(date: Date) -> Date? {
+    private func tenSecondsAfter(date: Date) -> Date? {
         Calendar.current.date(
-            byAdding: .hour,
-            value: -1,
+            byAdding: .second,
+            value: 10,
             to: date
         )
     }

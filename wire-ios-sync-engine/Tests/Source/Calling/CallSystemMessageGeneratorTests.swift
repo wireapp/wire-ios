@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireSyncEngine
 
-class CallSystemMessageGeneratorTests: MessagingTest {
+final class CallSystemMessageGeneratorTests: MessagingTest {
 
     var sut: WireSyncEngine.CallSystemMessageGenerator!
     var mockWireCallCenterV3: WireCallCenterV3Mock!
@@ -45,7 +45,13 @@ class CallSystemMessageGeneratorTests: MessagingTest {
         clientID = "foo"
 
         sut = WireSyncEngine.CallSystemMessageGenerator()
-        mockWireCallCenterV3 = WireCallCenterV3Mock(userId: selfUserID, clientId: clientID, uiMOC: uiMOC, flowManager: FlowManagerMock(), transport: WireCallCenterTransportMock())
+        mockWireCallCenterV3 = WireCallCenterV3Mock(
+            userId: selfUserID,
+            clientId: clientID,
+            uiMOC: uiMOC,
+            flowManager: FlowManagerMock(),
+            transport: WireCallCenterTransportMock()
+        )
     }
 
     override func tearDown() {
@@ -60,7 +66,7 @@ class CallSystemMessageGeneratorTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
-    func testThatItAppendsPerformedCallSystemMessage_AnsweredOutgoingCall() {
+    func testMessages_whenAnswerOutgoingCall_thenDoNotAddSystemMessage() {
         // given
         let messageCount = conversation.allMessages.count
 
@@ -70,19 +76,15 @@ class CallSystemMessageGeneratorTests: MessagingTest {
         let msg3 = sut.appendSystemMessageIfNeeded(callState: .terminating(reason: .canceled), conversation: conversation, caller: selfUser, timestamp: nil, previousCallState: nil)
 
         // then
-        XCTAssertEqual(conversation.allMessages.count, messageCount+1)
         XCTAssertNil(msg1)
         XCTAssertNil(msg2)
-        if let message = conversation.lastMessage as? ZMSystemMessage {
-            XCTAssertEqual(message, msg3)
-            XCTAssertEqual(message.systemMessageType, .performedCall)
-            XCTAssertTrue(message.users.contains(selfUser))
-        } else {
-            XCTFail("No system message inserted")
-        }
+        XCTAssertNil(msg3)
+
+        XCTAssertEqual(conversation.allMessages.count, messageCount)
+        XCTAssertFalse(conversation.lastMessage is ZMSystemMessage)
     }
 
-    func testThatItAppendsPerformedCallSystemMessage_AnsweredIncomingCall() {
+    func testMessages_whenAnswerIncomingCall_thenDoNotAddSystemMessage() {
         // given
         let messageCount = conversation.allMessages.count
 
@@ -92,19 +94,14 @@ class CallSystemMessageGeneratorTests: MessagingTest {
         let msg3 = sut.appendSystemMessageIfNeeded(callState: .terminating(reason: .canceled), conversation: conversation, caller: user, timestamp: nil, previousCallState: nil)
 
         // then
-        XCTAssertEqual(conversation.allMessages.count, messageCount+1)
         XCTAssertNil(msg1)
         XCTAssertNil(msg2)
-        if let message = conversation.lastMessage as? ZMSystemMessage {
-            XCTAssertEqual(message, msg3)
-            XCTAssertEqual(message.systemMessageType, .performedCall)
-            XCTAssertTrue(message.users.contains(user))
-        } else {
-            XCTFail("No system message inserted")
-        }
+        XCTAssertNil(msg3)
+        XCTAssertEqual(conversation.allMessages.count, messageCount)
+        XCTAssertFalse(conversation.lastMessage is ZMSystemMessage)
     }
 
-    func testThatItAppendsPerformedCallSystemMessage_UnansweredIncomingCallFromSelfuser() {
+    func testMessages_whenUnansweredIncomingCallFromSelfUser_thenDoNotAddSystemMessage() {
         // given
         let messageCount = conversation.allMessages.count
 
@@ -113,30 +110,25 @@ class CallSystemMessageGeneratorTests: MessagingTest {
         let msg2 = sut.appendSystemMessageIfNeeded(callState: .terminating(reason: .canceled), conversation: conversation, caller: selfUser, timestamp: nil, previousCallState: nil)
 
         // then
-        XCTAssertEqual(conversation.allMessages.count, messageCount+1)
         XCTAssertNil(msg1)
-        if let message = conversation.lastMessage as? ZMSystemMessage {
-            XCTAssertEqual(message, msg2)
-            XCTAssertEqual(message.systemMessageType, .performedCall)
-            XCTAssertTrue(message.users.contains(selfUser))
-        } else {
-            XCTFail("No system message inserted")
-        }
+        XCTAssertNil(msg2)
+        XCTAssertEqual(conversation.allMessages.count, messageCount)
+        XCTAssertFalse(conversation.lastMessage is ZMSystemMessage)
     }
 
-    func testThatItAppendsMissedCallSystemMessage_UnansweredIncomingCall() {
+    func testMessages_whenUnansweredIncomingCall_thenAddMissedCallSystemMessage() {
         // given
         let messageCount = conversation.allMessages.count
 
         // when
-        let msg1 =  sut.appendSystemMessageIfNeeded(callState: .incoming(video: false, shouldRing: true, degraded: false), conversation: conversation, caller: user, timestamp: nil, previousCallState: nil)
+        let msg1 = sut.appendSystemMessageIfNeeded(callState: .incoming(video: false, shouldRing: true, degraded: false), conversation: conversation, caller: user, timestamp: nil, previousCallState: nil)
         var msg2: ZMSystemMessage?
         self.performIgnoringZMLogError {
             msg2 = self.sut.appendSystemMessageIfNeeded(callState: .terminating(reason: .canceled), conversation: self.conversation, caller: self.user, timestamp: nil, previousCallState: nil)
         }
 
         // then
-        XCTAssertEqual(conversation.allMessages.count, messageCount+1)
+        XCTAssertEqual(conversation.allMessages.count, messageCount + 1)
         XCTAssertNil(msg1)
         if let message = conversation.lastMessage as? ZMSystemMessage {
             XCTAssertEqual(message, msg2)

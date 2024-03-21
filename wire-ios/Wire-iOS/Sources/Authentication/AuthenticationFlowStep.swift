@@ -75,7 +75,7 @@ indirect enum AuthenticationFlowStep: Equatable {
     case addUsername
     case registerEmailCredentials(ZMEmailCredentials, isResend: Bool)
     case pendingEmailLinkVerification(ZMEmailCredentials)
-    case pendingInitialSync(next: AuthenticationFlowStep?)
+    case pendingInitialSync
 
     // Registration
     case createCredentials(UnregisteredUser)
