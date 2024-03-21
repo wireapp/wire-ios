@@ -203,7 +203,7 @@ final class AppStateCalculatorTests: XCTestCase {
         sut.sessionManagerRequireCertificateEnrollment()
 
         // THEN
-        XCTAssertEqual(sut.appState, .pendingCertificateEnroll)
+        XCTAssertEqual(sut.appState, .certificateEnrollmentRequired)
     }
 
     func testThatAppStateChanges_OnDidUpdateCertificate() {
