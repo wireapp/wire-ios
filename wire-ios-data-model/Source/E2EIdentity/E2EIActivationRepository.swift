@@ -63,4 +63,8 @@ public final class E2EIActivationDateRepository: NSObject, E2EIActivationDateRep
         storage.set(date, forKey: .e2eiActivatedAt)
     }
 
+    public func removeE2EIActivationDate() {
+        storage.removeObject(forKey: .e2eiActivatedAt)
+    }
+
 }

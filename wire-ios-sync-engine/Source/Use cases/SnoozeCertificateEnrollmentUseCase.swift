@@ -28,7 +28,6 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     // MARK: - Properties
 
     private let e2eiFeature: Feature.E2EI
-    private let gracePeriodEndDate: Date?
     private let recurringActionService: RecurringActionServiceInterface
     private let actionId: String
 
@@ -36,11 +35,9 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
 
     init(
         e2eiFeature: Feature.E2EI,
-        gracePeriodEndDate: Date?,
         recurringActionService: RecurringActionServiceInterface,
         accountId: UUID) {
             self.e2eiFeature = e2eiFeature
-            self.gracePeriodEndDate = gracePeriodEndDate
             self.recurringActionService = recurringActionService
             self.actionId = "\(accountId).enrollCertificate"
         }

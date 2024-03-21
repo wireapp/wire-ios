@@ -775,6 +775,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 self?.activeUserSession?.lastEventIDRepository.storeLastEventID(nil)
             }
 
+            self?.activeUserSession?.e2eiActivationDateRepository.removeE2EIActivationDate()
             self?.activeUserSession?.close(deleteCookie: deleteCookie)
             self?.activeUserSession = nil
             self?.clearCRLExpirationDates(for: account)

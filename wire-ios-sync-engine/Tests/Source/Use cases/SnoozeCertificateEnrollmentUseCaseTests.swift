@@ -39,7 +39,6 @@ class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
         let accountID = UUID.create()
         snoozer = SnoozeCertificateEnrollmentUseCase(
             e2eiFeature: mockFeatureRepository.fetchE2EI(),
-            gracePeriodEndDate: Date.now,
             recurringActionService: mockRecurringActionService,
             accountId: accountID)
     }

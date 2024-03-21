@@ -35,7 +35,8 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private var enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol
     private var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol
     private var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol
-    private let gracePeriodEndDate: Date?
+    private let e2eiActivationDateRepository: E2EIActivationDateRepository
+    private let e2eiFeature: Feature.E2EI
     private var lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
     private var e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
@@ -50,7 +51,8 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol,
         snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol,
         stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol,
-        gracePeriodEndDate: Date?,
+        e2eiActivationDateRepository: E2EIActivationDateRepository,
+        e2eiFeature: Feature.E2EI,
         lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?,
         e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
@@ -58,7 +60,8 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             self.enrollCertificateUseCase = enrollCertificateUseCase
             self.snoozeCertificateEnrollmentUseCase = snoozeCertificateEnrollmentUseCase
             self.stopCertificateEnrollmentSnoozerUseCase = stopCertificateEnrollmentSnoozerUseCase
-            self.gracePeriodEndDate = gracePeriodEndDate
+            self.e2eiActivationDateRepository = e2eiActivationDateRepository
+            self.e2eiFeature = e2eiFeature
             self.lastE2EIdentityUpdateAlertDateRepository = lastE2EIdentityUpdateAlertDateRepository
             self.e2eIdentityCertificateUpdateStatus = e2eIdentityCertificateUpdateStatus
             self.selfClientCertificateProvider = selfClientCertificateProvider
@@ -205,6 +208,16 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         lastE2EIdentityUpdateAlertDateRepository?.storeLastAlertDate(Date.now)
         targetVC.present(alert, animated: true)
     }
+
+    private var gracePeriodEndDate: Date? {
+        guard let e2eiActivatedAt = e2eiActivationDateRepository.e2eiActivatedAt else {
+            return nil
+        }
+
+        let gracePeriod = TimeInterval(e2eiFeature.config.verificationExpiration)
+        return e2eiActivatedAt.addingTimeInterval(gracePeriod)
+    }
+
 }
 
 extension UIAlertController {
