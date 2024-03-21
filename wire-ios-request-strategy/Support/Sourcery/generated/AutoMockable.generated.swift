@@ -402,6 +402,21 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
         await mock(qualifiedID)
     }
 
+    // MARK: - syncConversationIfMissing
+
+    public var syncConversationIfMissingQualifiedID_Invocations: [QualifiedID] = []
+    public var syncConversationIfMissingQualifiedID_MockMethod: ((QualifiedID) async -> Void)?
+
+    public func syncConversationIfMissing(qualifiedID: QualifiedID) async {
+        syncConversationIfMissingQualifiedID_Invocations.append(qualifiedID)
+
+        guard let mock = syncConversationIfMissingQualifiedID_MockMethod else {
+            fatalError("no mock for `syncConversationIfMissingQualifiedID`")
+        }
+
+        await mock(qualifiedID)
+    }
+
 }
 public class MockE2EIKeyPackageRotating: E2EIKeyPackageRotating {
 

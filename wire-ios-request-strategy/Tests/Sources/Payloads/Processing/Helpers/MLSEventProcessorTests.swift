@@ -48,6 +48,7 @@ class MLSEventProcessorTests: MessagingTestBase {
 
         conversationServiceMock = .init()
         conversationServiceMock.syncConversationQualifiedID_MockMethod = { _ in }
+        conversationServiceMock.syncConversationIfMissingQualifiedID_MockMethod = { _ in }
 
         syncMOC.performGroupedBlockAndWait {
             self.syncMOC.mlsService = self.mlsServiceMock
@@ -96,7 +97,7 @@ class MLSEventProcessorTests: MessagingTestBase {
         // Then
         XCTAssertEqual(mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations, [message])
         XCTAssertEqual(mlsServiceMock.uploadKeyPackagesIfNeeded_Invocations.count, 1)
-        XCTAssertEqual(conversationServiceMock.syncConversationQualifiedID_Invocations, [qualifiedID])
+        XCTAssertEqual(conversationServiceMock.syncConversationIfMissingQualifiedID_Invocations, [qualifiedID])
         XCTAssertTrue(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.isEmpty)
 
         await syncMOC.perform {
@@ -144,7 +145,7 @@ class MLSEventProcessorTests: MessagingTestBase {
 
         XCTAssertEqual(mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations, [message])
         XCTAssertEqual(mlsServiceMock.uploadKeyPackagesIfNeeded_Invocations.count, 1)
-        XCTAssertEqual(conversationServiceMock.syncConversationQualifiedID_Invocations, [qualifiedID])
+        XCTAssertEqual(conversationServiceMock.syncConversationIfMissingQualifiedID_Invocations, [qualifiedID])
         XCTAssertEqual(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.count, 1)
         XCTAssertEqual(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.first?.userID, otherUserID)
 

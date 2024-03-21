@@ -46,6 +46,10 @@ public protocol ConversationServiceInterface {
         qualifiedID: QualifiedID
     ) async
 
+    func syncConversationIfMissing(
+        qualifiedID: QualifiedID
+    ) async
+
 }
 
 public enum ConversationCreationFailure: Error {
@@ -393,6 +397,17 @@ public final class ConversationService: ConversationServiceInterface {
         action.perform(in: context.notificationContext) { _ in
             completion()
         }
+    }
+
+    public func syncConversationIfMissing(
+        qualifiedID: QualifiedID
+    ) async {
+        guard await context.perform({
+            ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.context)
+        }) == nil else {
+            return
+        }
+        await syncConversation(qualifiedID: qualifiedID)
     }
 
     public func syncConversation(

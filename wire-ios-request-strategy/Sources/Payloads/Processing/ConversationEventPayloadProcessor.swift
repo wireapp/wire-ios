@@ -224,11 +224,10 @@ struct ConversationEventPayloadProcessor {
                 in: context
             )!
         }) {
-            let selfUser = ZMUser.selfUser(in: context)
             let users = Set(usersAndRoles.map { $0.0 })
             let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
 
-            if (users.contains(selfUser) || newUsers) && conversation.conversationType == .group {
+            if newUsers && conversation.conversationType == .group {
                 // TODO jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }
