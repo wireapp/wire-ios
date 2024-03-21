@@ -30,12 +30,9 @@ extension EventDecoder {
         }
 
         let decoder = EventPayloadDecoder()
-        guard let payload = try? decoder.decode(Payload.UpdateConversationMLSWelcome.self, from: updateEvent.payload) else {
-            WireLogger.mls.error("failed to decrypt mls message: invalid update event payload")
-            return
-        }
 
         do {
+            let payload = try decoder.decode(Payload.UpdateConversationMLSWelcome.self, from: updateEvent.payload)
             let groupID = try await decryptionService.processWelcomeMessage(welcomeMessage: payload.data)
             await context.perform {
                 let conversation = ZMConversation.insertNewObject(in: context)
