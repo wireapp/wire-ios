@@ -247,7 +247,7 @@ public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequ
 
     private func processEvent(_ event: ZMUpdateEvent) {
         let serverTimeDelta = managedObjectContext.serverTimeDelta
-        guard event.type == .conversationOtrMessageAdd || event.type == .conversationMLSMessageAdd else { return }
+        guard event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) else { return }
 
         if let genericMessage = GenericMessage(from: event), genericMessage.hasCalling {
 
