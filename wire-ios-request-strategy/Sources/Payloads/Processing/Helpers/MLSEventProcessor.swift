@@ -139,7 +139,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         do {
             let groupID = try await mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
             await mlsService.uploadKeyPackagesIfNeeded()
-            await conversationService.syncConversation(qualifiedID: conversationID)
+            await conversationService.syncConversationIfMissing(qualifiedID: conversationID)
 
             let conversation: ZMConversation? = await context.perform {
                 guard let conversation = ZMConversation.fetch(
