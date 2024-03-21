@@ -35,7 +35,7 @@ extension EventDecoder {
             let payload = try decoder.decode(Payload.UpdateConversationMLSWelcome.self, from: updateEvent.payload)
             let groupID = try await decryptionService.processWelcomeMessage(welcomeMessage: payload.data)
             await context.perform {
-                let conversation = ZMConversation.insertNewObject(in: context)
+                let conversation = ZMConversation.fetchOrCreate(with: payload.id, domain: payload.qualifiedID?.domain, in: context)
                 conversation.remoteIdentifier = payload.qualifiedID?.uuid
                 conversation.domain = payload.qualifiedID?.domain
                 conversation.mlsGroupID = groupID
