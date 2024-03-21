@@ -253,7 +253,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
     // MARK: - CoreDataMigration Actions
 
     func runPreMigrationStep(_ step: CoreDataMessagingMigrationStep, for storeURL: URL) throws {
-        guard let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: step.destinationVersion) else { 
+        guard let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: step.destinationVersion) else {
             return
         }
         WireLogger.localStorage.debug("run preMigration step \(step.destinationVersion)", attributes: .safePublic)
