@@ -221,34 +221,11 @@ open class ZMUpdateEvent: NSObject {
     open var isTransient: Bool
     /// True if the event had encrypted payload but now it has decrypted payload
     open var wasDecrypted: Bool
-    /// True if the event contains cryptobox-encrypted data
-    open var isEncrypted: Bool {
-        switch self.type {
-        case .conversationOtrAssetAdd, .conversationOtrMessageAdd:
-            return true
-        default:
-            return false
-        }
-    }
 
     /// True if the event is encoded with ZMGenericMessage
     open var isGenericMessageEvent: Bool {
         switch self.type {
-        case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd:
-            return true
-        default:
-            return false
-        }
-    }
-
-    /// True if this event type could have two versions, encrypted and non-encrypted, during the transition phase
-    open var hasEncryptedAndUnencryptedVersion: Bool {
-        switch self.type {
-        case .conversationOtrMessageAdd,
-                .conversationOtrAssetAdd,
-                .conversationMessageAdd,
-                .conversationAssetAdd,
-                .conversationKnock:
+        case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd, .conversationMLSMessageAdd:
             return true
         default:
             return false
