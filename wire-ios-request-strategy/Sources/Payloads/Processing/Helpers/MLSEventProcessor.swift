@@ -150,7 +150,7 @@ public class MLSEventProcessor: MLSEventProcessing {
     ) async {
         guard let (conversation, groupID) = await context.perform({
             let conversation = ZMConversation.fetch(with: conversationID, in: context)
-            return (conversation!, conversation!.mlsGroupID!)
+            return (conversation, conversation?.mlsGroupID) as? (ZMConversation, MLSGroupID)
         }) else { return }
 
         staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
