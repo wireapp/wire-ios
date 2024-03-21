@@ -91,6 +91,7 @@ public class ProteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
         switch storage.migrationStatus {
         case .notStarted:
             try await startMigrationIfNeeded()
+            try await finaliseMigrationIfNeeded()
         case .started:
             try await finaliseMigrationIfNeeded()
         default:
