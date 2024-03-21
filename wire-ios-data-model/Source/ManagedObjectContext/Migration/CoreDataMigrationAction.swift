@@ -48,13 +48,14 @@ class CoreDataMigrationAction {
                 savedError = error
             }
         }
+
         if let savedError {
             // enforce cleanup without handling errors
             try? removeStore(for: container)
             throw savedError
+        } else {
+            try removeStore(for: container)
         }
-
-        try removeStore(for: container)
     }
 
     func removeStore(for container: NSPersistentContainer) throws {

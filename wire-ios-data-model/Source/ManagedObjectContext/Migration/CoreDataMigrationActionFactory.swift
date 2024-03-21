@@ -20,23 +20,26 @@ import Foundation
 
 struct CoreDataMigrationActionFactory {
 
-    static func createPostMigrationAction(for version: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
-        switch version {
+    static func createPreMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
+        switch destinationVersion {
         case .version2_111:
-            return PrefillPrimaryKeyAction()
+            return RemoveDuplicatePreAction()
+
+        case .version2_107:
+            return CleanupModels2_107PreAction()
 
         default:
             return nil
         }
     }
 
-    static func createPreMigrationAction(for version: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
-        switch version {
-        case .version2_111:
-            return RemoveDuplicatePreAction()
+    static func createPostMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
+        switch destinationVersion {
+        case .version2_114:
+            return OneOnOneConversationMigrationAction()
 
-        case .version2_107:
-            return CleanupModels2_107PreAction()
+        case .version2_111:
+            return PrefillPrimaryKeyAction()
 
         default:
             return nil

@@ -4,16 +4,15 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.115.0
+
+* removed one-to-one relationship `Connection.conversation` <-> `Conversation.connection`
+
 ### 2.114.0
 
 * added `mlsVerificationStatus` attribute of type Integer 16, default value 0
 * added `supportedProtocols` attribute of type `Transformable` with valueTransformerName `ExtendedSecureUnarchiveFromData` on `User`
 * added one-to-one relationship (optional nullify) `User.oneOnOneConversation` <-> `Conversation.oneOnOneUser` (optional nullify)
-* removed one-to-one relationship `Connection.conversation` <-> `Conversation.connection`
-
-#### heavy weight migration MappingModel_2.113-2.114
-
-* add custom policy UserToUser: `WireDataModel.OneOnOneConversationMigrationPolicy`
 
 ### 2.113.0
 
