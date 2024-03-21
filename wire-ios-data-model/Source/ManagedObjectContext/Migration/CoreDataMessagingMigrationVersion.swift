@@ -72,19 +72,18 @@ enum CoreDataMessagingMigrationVersion: String, CaseIterable {
             return nil
         case .version2_114:
             return .version2_115
-        case .version2_113: // custom migration required
-            return .version2_114
         case .version2_111,
-                .version2_112:
-            return .version2_113
-        case .version2_110: // custom migration required
-            return .version2_111
+                .version2_112,
+                .version2_113:
+            return .version2_114 // destination version runs custom migration actions
+        case .version2_110:
+            return .version2_111 // destination version runs custom migration actions
         case .version2_107,
                 .version2_108,
                 .version2_109:
             return .version2_110
-        case .version2_106: // custom migration required
-            return .version2_107
+        case .version2_106:
+            return .version2_107 // destination version runs custom migration actions
         case .version2_80,
                 .version2_81,
                 .version2_82,
