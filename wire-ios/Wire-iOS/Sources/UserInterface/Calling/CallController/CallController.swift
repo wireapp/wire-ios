@@ -126,20 +126,20 @@ final class CallController: NSObject {
 extension CallController: WireCallCenterDegradedCallObserver {
 
     func callCenterDegradedCall(conversation: ZMConversation) {
-        return
-        // incoming degraded call
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation,
-                                                alertType: .incomingCall,
-                                                continueAction: {
-            conversation.acknowledgePrivacyChanges()
-            self.updateActiveCallPresentationState()
-        }, cancelAction: {
-            guard let userSession = ZMUserSession.shared() else { return }
-            conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
-        }, showAlert: {
-            self.router?.presentIncomingCallDegradedAlert()
-        })
-        checker.performAction()
+//        return
+//        // incoming degraded call
+//        let checker = E2EIPrivacyWarningChecker(conversation: conversation,
+//                                                alertType: .incomingCall,
+//                                                continueAction: {
+//            conversation.acknowledgePrivacyChanges()
+//            self.updateActiveCallPresentationState()
+//        }, cancelAction: {
+//            guard let userSession = ZMUserSession.shared() else { return }
+//            conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
+//        }, showAlert: {
+//            self.router?.presentIncomingCallDegradedAlert()
+//        })
+//        checker.performAction()
     }
 }
 // MARK: - WireCallCenterCallStateObserver
@@ -173,7 +173,7 @@ extension CallController: WireCallCenterCallStateObserver {
             router?.presentSecurityDegradedAlert(for: degradationReason) { continueCall in
                 continueCallBlock(continueCall)
             }
-            default:
+        default:
             continueCallBlock(false)
         }
     }
