@@ -4005,6 +4005,29 @@ public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
         }
     }
 
+    // MARK: - processWelcomeMessage
+
+    public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
+    public var processWelcomeMessageWelcomeMessage_MockError: Error?
+    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
+    public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
+
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
+        processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
+
+        if let error = processWelcomeMessageWelcomeMessage_MockError {
+            throw error
+        }
+
+        if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
+            return try await mock(welcomeMessage)
+        } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `processWelcomeMessageWelcomeMessage`")
+        }
+    }
+
 }
 
 public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
@@ -4171,29 +4194,6 @@ public class MockMLSServiceInterface: MLSServiceInterface {
             return mock
         } else {
             fatalError("no mock for `conversationExistsGroupID`")
-        }
-    }
-
-    // MARK: - processWelcomeMessage
-
-    public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
-    public var processWelcomeMessageWelcomeMessage_MockError: Error?
-    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
-    public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
-
-    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
-        processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
-
-        if let error = processWelcomeMessageWelcomeMessage_MockError {
-            throw error
-        }
-
-        if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
-            return try await mock(welcomeMessage)
-        } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `processWelcomeMessageWelcomeMessage`")
         }
     }
 
@@ -4598,6 +4598,29 @@ public class MockMLSServiceInterface: MLSServiceInterface {
             return mock
         } else {
             fatalError("no mock for `decryptMessageForSubconversationType`")
+        }
+    }
+
+    // MARK: - processWelcomeMessage
+
+    public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
+    public var processWelcomeMessageWelcomeMessage_MockError: Error?
+    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
+    public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
+
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
+        processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
+
+        if let error = processWelcomeMessageWelcomeMessage_MockError {
+            throw error
+        }
+
+        if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
+            return try await mock(welcomeMessage)
+        } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `processWelcomeMessageWelcomeMessage`")
         }
     }
 
