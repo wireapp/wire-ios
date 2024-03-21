@@ -19,6 +19,27 @@
 import Foundation
 import WireRequestStrategy
 
+final class SyncStatus: SyncProgress, SyncStatusProtocol {
+
+    var currentSyncPhase: WireRequestStrategy.SyncPhase = .done
+
+    func finishCurrentSyncPhase(phase: WireRequestStrategy.SyncPhase) {
+
+    }
+
+    func failCurrentSyncPhase(phase: WireRequestStrategy.SyncPhase) {
+
+    }
+
+    func performQuickSync() async {
+
+    }
+
+    func forceSlowSync() {
+
+    }
+}
+
 final class ApplicationStatusDirectory: ApplicationStatus {
 
     // MARK: - Properties

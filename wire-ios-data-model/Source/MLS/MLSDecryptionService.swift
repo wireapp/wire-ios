@@ -33,6 +33,10 @@ public protocol MLSDecryptionServiceInterface {
         subconversationType: SubgroupType?
     ) async throws -> [MLSDecryptResult]
 
+    func processWelcomeMessage(
+        welcomeMessage: String
+    ) async throws -> MLSGroupID
+
 }
 
 public enum MLSDecryptResult: Equatable {
@@ -97,6 +101,14 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         case failedToDecodeSenderClientID
         case wrongEpoch
 
+    }
+
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
+        guard let messageData = welcomeMessage.base64DecodedData else {
+            throw MLSMessageDecryptionError.failedToConvertMessageToBytes
+        }
+
+        return try await mlsActionExecutor.processWelcomeMessage(messageData)
     }
 
     /// Decrypts an MLS message for the given group

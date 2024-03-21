@@ -30,10 +30,17 @@ public protocol MLSActionExecutorProtocol {
     func decryptMessage(_ message: Data, in groupID: MLSGroupID) async throws -> DecryptedMessage
     func onEpochChanged() -> AnyPublisher<MLSGroupID, Never>
     func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never>
+    func processWelcomeMessage(_ message: Data) async throws -> MLSGroupID
 
 }
 
 public actor MLSActionExecutor: MLSActionExecutorProtocol {
+    public func processWelcomeMessage(_ message: Data) async throws -> MLSGroupID {
+        let welcomeBundle = try await coreCrypto.perform { coreCrypto in
+            try await coreCrypto.processWelcomeMessage(welcomeMessage: message, customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil))
+        }
+        return MLSGroupID(welcomeBundle.id)
+    }
 
     // MARK: - Types
 

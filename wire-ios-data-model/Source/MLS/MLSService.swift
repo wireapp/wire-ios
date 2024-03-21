@@ -38,7 +38,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func conversationExists(groupID: MLSGroupID) async -> Bool
 
-    func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID
+//    func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID
 
     func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws
 

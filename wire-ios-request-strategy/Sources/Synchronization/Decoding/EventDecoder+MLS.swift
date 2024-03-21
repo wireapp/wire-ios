@@ -20,6 +20,37 @@ import Foundation
 
 extension EventDecoder {
 
+    func processWelcomeMessage(
+        from updateEvent: ZMUpdateEvent,
+        context: NSManagedObjectContext
+    ) async {
+        guard let decryptionService = await context.perform({ context.mlsDecryptionService }) else {
+            WireLogger.mls.critical("failed to decrypt mls message: mlsDecyptionService is missing")
+            fatalError("failed to decrypt mls message: mlsService is missing")
+        }
+
+        let decoder = EventPayloadDecoder()
+        guard let payload = try? decoder.decode(Payload.UpdateConversationMLSWelcome.self, from: updateEvent.payload) else {
+            WireLogger.mls.error("failed to decrypt mls message: invalid update event payload")
+            return
+        }
+
+        do {
+            let groupID = try await decryptionService.processWelcomeMessage(welcomeMessage: payload.data)
+            await context.perform {
+                let conversation = ZMConversation.insertNewObject(in: context)
+                conversation.remoteIdentifier = payload.qualifiedID?.uuid
+                conversation.domain = payload.qualifiedID?.domain
+                conversation.mlsGroupID = groupID
+                conversation.mlsStatus = .ready
+                context.saveOrRollback()
+            }
+        } catch {
+            WireLogger.mls.warn("failed to decrypt mls welcome message: \(String(describing: error))")
+            return
+        }
+    }
+
     func decryptMlsMessage(
         from updateEvent: ZMUpdateEvent,
         context: NSManagedObjectContext

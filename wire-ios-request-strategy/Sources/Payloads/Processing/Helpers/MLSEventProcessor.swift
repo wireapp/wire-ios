@@ -141,7 +141,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         oneOnOneResolver: OneOnOneResolverInterface
     ) async {
         do {
-            let groupID = try await mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
+            let groupID = try? await mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
             await mlsService.uploadKeyPackagesIfNeeded()
             await conversationService.syncConversationIfMissing(qualifiedID: conversationID)
 
