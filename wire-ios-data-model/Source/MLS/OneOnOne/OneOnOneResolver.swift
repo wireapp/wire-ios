@@ -160,7 +160,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
         }
 
         guard let mlsService else {
-            throw OneOnOneResolverError.migratorNotFound
+            throw OneOnOneResolverError.mlsServiceNotFound
         }
 
         let mlsGroupID = try await syncMLSConversationFromBackend(
