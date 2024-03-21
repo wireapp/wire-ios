@@ -303,6 +303,17 @@ extension WireCallCenterV3 {
         return isConversationDegraded || isCallDegraded
     }
 
+    func isConversationDegraded(conversationId: AVSIdentifier) -> Bool {
+        guard
+            isEnabled,
+            let uiMOC,
+            let conversation = ZMConversation.fetch(with: conversationId.identifier, domain: conversationId.domain, in: uiMOC)
+        else {
+            return  false
+        }
+        return conversation.isMLSConversationDegraded
+    }
+
     func canJoinCall(conversationId: AVSIdentifier) -> Bool {
         guard
             isEnabled,

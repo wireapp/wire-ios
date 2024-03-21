@@ -179,6 +179,13 @@ extension ZMUserSession: UserSession {
         )
     }
 
+    public func addDegradedCallObserver(
+        _ observer: WireCallCenterDegradedCallObserver
+    ) -> NSObjectProtocol {
+        return WireCallCenterV3.addDegradedCallObserver(observer: observer,
+                                                        context: managedObjectContext)
+    }
+
     public func addConversationListObserver(
         _ observer: ZMConversationListObserver,
         for list: ZMConversationList

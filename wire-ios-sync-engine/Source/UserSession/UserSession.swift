@@ -164,6 +164,10 @@ public protocol UserSession: AnyObject {
         _ observer: WireCallCenterCallErrorObserver
     ) -> Any
 
+    func addDegradedCallObserver(
+        _ observer: WireCallCenterDegradedCallObserver
+    ) -> NSObjectProtocol
+
     func addConversationListObserver(
         _ observer: ZMConversationListObserver,
         for list: ZMConversationList
