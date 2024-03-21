@@ -55,10 +55,12 @@ final class MessagePresenter: NSObject {
     func openDocumentController(for message: ZMConversationMessage,
                                 targetView: UIView,
                                 withPreview preview: Bool) {
-        guard let fileURL = message.fileMessageData?.fileURL,
-              fileURL.isFileURL,
-              !fileURL.path.isEmpty else {
-            let errorMessage = "File URL is missing: \(message.fileMessageData?.fileURL.debugDescription ?? "") (\(message.fileMessageData.debugDescription))"
+        guard 
+            let fileURL = message.fileMessageData?.temporaryURLToDecryptedFile(),
+            fileURL.isFileURL,
+            !fileURL.path.isEmpty 
+        else {
+            let errorMessage = "File URL is missing: \(message.fileMessageData.debugDescription)"
             assert(false, errorMessage)
 
             zmLog.error(errorMessage)
@@ -131,16 +133,24 @@ final class MessagePresenter: NSObject {
             return
         }
 
-        guard let fileURL = message.fileMessageData?.fileURL else { return }
+        guard 
+            let fileMessageData = message.fileMessageData,
+            fileMessageData.hasLocalFileData
+        else {
+            return
+        }
 
         _ = message.startSelfDestructionIfNeeded()
 
-        if let fileMessageData = message.fileMessageData, fileMessageData.isPass {
+        if fileMessageData.isPass {
             Task {
                 await openPassesViewController(fileMessageData: fileMessageData)
             }
-        } else if let fileMessageData = message.fileMessageData, fileMessageData.isVideo,
-                  let mediaPlaybackManager = mediaPlaybackManager {
+        } else if
+            fileMessageData.isVideo,
+            let fileURL = fileMessageData.temporaryURLToDecryptedFile(),
+            let mediaPlaybackManager = mediaPlaybackManager
+        {
             let player = AVPlayer(url: fileURL)
             mediaPlayerController = MediaPlayerController(player: player, message: message, delegate: mediaPlaybackManager)
             let playerViewController = AVPlayerViewController()
@@ -224,7 +234,7 @@ final class MessagePresenter: NSObject {
         guard PKAddPassesViewController.canAddPasses() else { return } // suggestion: implement error visible for the user
 
         do {
-            guard let fileURL = fileMessageData.fileURL else {
+            guard let fileURL = fileMessageData.temporaryURLToDecryptedFile() else {
                 throw MessagePresenterError.missingFileURL
             }
 

@@ -43,8 +43,11 @@ import MobileCoreServices
     /// Whether the file data exists locally.
     var hasLocalFileData: Bool { get }
 
-    /// The file location on the filesystem
-    var fileURL: URL? { get }
+    /// Creates a temporary url to the decrypted file data.
+    ///
+    /// To check if the data exists, use `hasLocalFileData` instead to
+    /// avoid unnecessary decryption.
+    func temporaryURLToDecryptedFile() -> URL?
 
     /// The asset ID of the thumbnail, if any
     var thumbnailAssetID: String? { get set }
@@ -140,7 +143,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         return asset?.hasDownloadedFile ?? false
     }
 
-    public var fileURL: URL? {
+    public func temporaryURLToDecryptedFile() -> URL? {
         guard
             let assetURL = asset?.fileURL,
             let temporaryDirectoryURL = temporaryDirectoryURL,
@@ -311,7 +314,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         guard
             let managedObjectContext = managedObjectContext,
             let syncContext = managedObjectContext.zm_sync,
-            let fileURL = fileURL,
+            let fileURL = temporaryURLToDecryptedFile(),
             let PDFData = try? Data(contentsOf: fileURL)
         else {
             return nil

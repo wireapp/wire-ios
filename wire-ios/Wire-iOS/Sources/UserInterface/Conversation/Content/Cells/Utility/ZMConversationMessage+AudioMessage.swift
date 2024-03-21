@@ -52,7 +52,7 @@ extension ZMAssetClientMessage: AudioTrack {
     }
 
     var streamURL: URL? {
-        return fileMessageData?.fileURL
+        return fileMessageData?.temporaryURLToDecryptedFile()
     }
 
     var failedToLoad: Bool {

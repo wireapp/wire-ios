@@ -95,7 +95,7 @@ final class ZMAssetClientMessageTests: BaseZMAssetClientMessageTests {
         self.uiMOC.zm_fileAssetCache.storeAssetData(sut, format: .medium, encrypted: false, data: Data.secureRandomData(ofLength: 100))
         guard let tempFolder = sut.temporaryDirectoryURL else { XCTFail(); return }
 
-        XCTAssertNotNil(sut.fileURL)
+        XCTAssertNotNil(sut.temporaryURLToDecryptedFile())
         XCTAssertTrue(FileManager.default.fileExists(atPath: tempFolder.path))
 
         // when
@@ -118,9 +118,9 @@ extension ZMAssetClientMessageTests {
 
         // then
         XCTAssertNotNil(sut)
-        XCTAssertNotNil(sut?.fileURL)
+        XCTAssertNotNil(sut?.temporaryURLToDecryptedFile())
 
-        guard let absoluteString = sut?.fileURL?.absoluteString else {
+        guard let absoluteString = sut?.temporaryURLToDecryptedFile()?.absoluteString else {
             XCTFail("asset doesn't have a file URL")
             return
         }
