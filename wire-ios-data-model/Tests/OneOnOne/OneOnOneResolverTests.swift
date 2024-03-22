@@ -26,7 +26,6 @@ final class OneOnOneResolverTests: XCTestCase {
     private var modelHelper: ModelHelper!
 
     private var mockCoreDataStack: CoreDataStack!
-    private var mockMLSService: MockMLSServiceInterface!
     private var mockMigrator: MockActorOneOnOneMigrator!
     private var mockProtocolSelector: MockActorOneOnOneProtocolSelector!
 
@@ -41,14 +40,12 @@ final class OneOnOneResolverTests: XCTestCase {
         mockCoreDataStack = try await coreDataStackHelper.createStack()
 
         mockProtocolSelector = MockActorOneOnOneProtocolSelector()
-        mockMLSService = MockMLSServiceInterface()
         mockMigrator = MockActorOneOnOneMigrator()
     }
 
     override func tearDown() async throws {
         mockProtocolSelector = nil
         mockCoreDataStack = nil
-        mockMLSService = nil
 
         try coreDataStackHelper.cleanupDirectory()
         coreDataStackHelper = nil
@@ -75,21 +72,11 @@ final class OneOnOneResolverTests: XCTestCase {
         // Given
         let resolver = makeResolver()
 
-        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
-        await mockMigrator.setMigrateToMLSUserIDIn_MockMethod { _, _, _ in }
-        mockMLSService.conversationExistsGroupID_MockValue = false
-
-        // mockHandler must be retained to catch notifications
-        let mlsGroupID1: MLSGroupID = .random()
-        let mlsGroupID2: MLSGroupID = .random()
-        let mockHandler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            results: [.success(mlsGroupID1), .success(mlsGroupID2)],
-            context: syncContext.notificationContext
-        )
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.some(.none))
 
         await syncContext.perform { [self] in
-            makeOneOnOneConversation(mlsGroupID: mlsGroupID1, in: syncContext)
-            makeOneOnOneConversation(mlsGroupID: mlsGroupID2, in: syncContext)
+            makeOneOnOneConversation(in: syncContext)
+            makeOneOnOneConversation(in: syncContext)
         }
 
         // When
@@ -98,39 +85,6 @@ final class OneOnOneResolverTests: XCTestCase {
         // Then
         let selectorInvocationsCount = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.count
         XCTAssertEqual(selectorInvocationsCount, 2)
-        XCTAssertEqual(mockHandler.performedActions.count, 2)
-    }
-
-    func test_resolveAllOneOnOneConversations_givenUserWithoutConnection_thenSkipOneMigration() async throws {
-        // Given
-        let resolver = makeResolver()
-
-        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
-        await mockMigrator.setMigrateToMLSUserIDIn_MockMethod { _, _, _ in }
-        mockMLSService.conversationExistsGroupID_MockValue = false
-
-        // mockHandler must be retained to catch notifications
-        let mlsGroupID: MLSGroupID = .random()
-        let mockHandler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            results: [.success(mlsGroupID)],
-            context: syncContext.notificationContext
-        )
-
-        await syncContext.perform { [self] in
-            _ = makeOneOnOneConversation(mlsGroupID: mlsGroupID, in: syncContext)
-        }
-
-        // When
-        try await resolver.resolveAllOneOnOneConversations(in: syncContext)
-
-        // Then
-        let selectorInvocationsCount = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.count
-        XCTAssertEqual(selectorInvocationsCount, 1)
-
-        let migratorInvocationsCount = await mockMigrator.migrateToMLSUserIDMlsGroupIDIn_Invocations.count
-        XCTAssertEqual(migratorInvocationsCount, 1)
-
-        XCTAssertEqual(mockHandler.performedActions.count, 1)
     }
 
     func test_resolveAllOneOnOneConversations_givenUserWithoutDomain_thenSkipOneMigration() async throws {
@@ -138,26 +92,16 @@ final class OneOnOneResolverTests: XCTestCase {
         let resolver = makeResolver()
 
         await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
-        await mockMigrator.setMigrateToMLSUserIDIn_MockMethod { _, _, _ in }
-        mockMLSService.conversationExistsGroupID_MockValue = false
+        await mockMigrator.setMigrateToMLSUserIDIn_MockMethod { _, _ in .random() }
 
         // mockHandler must be retained to catch notifications
-        let mlsGroupID1: MLSGroupID = .random()
-        let mlsGroupID2: MLSGroupID = .random()
-        let mockHandler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            results: [.success(mlsGroupID1), .success(mlsGroupID2)],
-            context: syncContext.notificationContext
-        )
-
         await syncContext.perform { [self] in
             makeOneOnOneConversation(
                 domain: nil,
-                mlsGroupID: mlsGroupID1,
                 in: syncContext
             )
             makeOneOnOneConversation(
                 domain: "local@domain.com",
-                mlsGroupID: mlsGroupID2,
                 in: syncContext
             )
         }
@@ -169,11 +113,8 @@ final class OneOnOneResolverTests: XCTestCase {
         let selectorInvocationsCount = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.count
         XCTAssertEqual(selectorInvocationsCount, 1)
 
-        let migratorInvocationsCount = await mockMigrator.migrateToMLSUserIDMlsGroupIDIn_Invocations.count
+        let migratorInvocationsCount = await mockMigrator.migrateToMLSUserIDIn_Invocations.count
         XCTAssertEqual(migratorInvocationsCount, 1)
-
-        XCTAssertEqual(mockHandler.performedActions.count, 1)
-        XCTAssertEqual(mockHandler.performedActions.first?.domain, "local@domain.com")
     }
 
     func test_resolveAllOneOnOneConversations_givenMigrationFailure() async throws {
@@ -182,19 +123,10 @@ final class OneOnOneResolverTests: XCTestCase {
 
         await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
         await mockMigrator.setMigrateToMLSUserIDMlsGroupIDIn_MockError(MockOneOnOneResolverError.failed)
-        mockMLSService.conversationExistsGroupID_MockValue = false
-
-        let mlsGroupID1: MLSGroupID = .random()
-        let mlsGroupID2: MLSGroupID = .random()
-        // mockHandler must be retained to catch notifications
-        let mockHandler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            results: [.success(mlsGroupID1), .success(mlsGroupID2)],
-            context: syncContext.notificationContext
-        )
 
         await syncContext.perform { [self] in
-            makeOneOnOneConversation(mlsGroupID: mlsGroupID1, in: syncContext)
-            makeOneOnOneConversation(mlsGroupID: mlsGroupID2, in: syncContext)
+            makeOneOnOneConversation(in: syncContext)
+            makeOneOnOneConversation(in: syncContext)
         }
 
         // When
@@ -204,132 +136,55 @@ final class OneOnOneResolverTests: XCTestCase {
         let selectorCount = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.count
         XCTAssertEqual(selectorCount, 2)
 
-        let migratorCount = await mockMigrator.migrateToMLSUserIDMlsGroupIDIn_Invocations.count
+        let migratorCount = await mockMigrator.migrateToMLSUserIDIn_Invocations.count
         XCTAssertEqual(migratorCount, 2)
-
-        XCTAssertEqual(mockHandler.performedActions.count, 2)
     }
 
-    func test_resolveOneOnOneConversation_MLSSupported_epochIsZero() async throws {
+    func test_resolveOneOnOneConversation_givenMLS() async throws {
         // Given
         let userID: QualifiedID = .random()
         let resolver = makeResolver()
 
         // Mock
         await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
-        await mockMigrator.setMigrateToMLSUserIDIn_MockMethod { _, _, _ in }
-        mockMLSService.conversationExistsGroupID_MockValue = false
-
-        // mockHandler must be retained to catch notifications
-        let mlsGroupID: MLSGroupID = .random()
-        let mockHandler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            results: [.success(mlsGroupID)],
-            context: syncContext.notificationContext
-        )
+        await mockMigrator.setMigrateToMLSUserIDIn_MockValue(.random())
 
         await syncContext.perform { [self] in
             let conversation = makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
             conversation.messageProtocol = .proteus
-
-            // in the real code converation values are updated through the SyncMLSOneToOneConversationActionHandler
-            // but we can just mock the returned result here, so we setup this ID here already.
-            conversation.mlsGroupID = mlsGroupID
-            conversation.epoch = 0
         }
 
         // When
-        try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
+        let result = try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
 
         // Then
-        let invocations = await mockMigrator.migrateToMLSUserIDMlsGroupIDIn_Invocations
+        guard case .migratedToMLSGroup = result else {
+            XCTFail("expected result '.noAction'")
+            return
+        }
+
+        let invocations = await mockMigrator.migrateToMLSUserIDIn_Invocations
         XCTAssertEqual(invocations.count, 1)
         XCTAssertEqual(invocations.first?.userID, userID)
-
-        XCTAssertEqual(mockHandler.performedActions.count, 1)
-    }
-
-    func test_resolveOneOnOneConversation_MLSSupported_epochGreaterZero() async throws {
-        // Given
-        let userID: QualifiedID = .random()
-        let resolver = makeResolver()
-
-        // Mock
-        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
-        await mockMigrator.setMigrateToMLSUserIDIn_MockMethod { _, _, _ in }
-        mockMLSService.conversationExistsGroupID_MockValue = false
-        mockMLSService.joinGroupWith_MockMethod = { _ in }
-
-        // mockHandler must be retained to catch notifications
-        let mlsGroupID: MLSGroupID = .random()
-        let mockHandler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            results: [.success(mlsGroupID)],
-            context: syncContext.notificationContext
-        )
-
-        await syncContext.perform { [self] in
-            let conversation = makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
-            conversation.messageProtocol = .proteus
-
-            // in the real code converation values are updated through the SyncMLSOneToOneConversationActionHandler
-            // but we can just mock the returned result here, so we setup this ID here already.
-            conversation.mlsGroupID = mlsGroupID
-            conversation.epoch = 1
-        }
-
-        // When
-        try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
-
-        // Then
-        let invocations = await mockMigrator.migrateToMLSUserIDMlsGroupIDIn_Invocations
-        XCTAssertEqual(invocations.count, 0)
-
-        XCTAssertEqual(mockHandler.performedActions.count, 1)
-    }
-
-    func test_ResolveOneOnOneConversation_MLSSupported_conversationExists() async throws {
-        // Given
-        let userID: QualifiedID = .random()
-        let resolver = makeResolver()
-
-        // Mock
-        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
-        await mockMigrator.setMigrateToMLSUserIDIn_MockMethod { _, _, _ in }
-        mockMLSService.conversationExistsGroupID_MockValue = true
-
-        // mockHandler must be retained to catch notifications
-        let mockHandler = MockActionHandler<SyncMLSOneToOneConversationAction>(
-            results: [.success(.random())],
-            context: syncContext.notificationContext
-        )
-
-        await syncContext.perform { [self] in
-            let conversation = makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
-            conversation.messageProtocol = .mls
-        }
-
-        // When
-        try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
-
-        // Then
-        let invocations = await mockMigrator.migrateToMLSUserIDMlsGroupIDIn_Invocations
-        XCTAssert(invocations.isEmpty)
-
-        XCTAssertEqual(mockHandler.performedActions.count, 1)
     }
 
     func test_ResolveOneOnOneConversation_ProteusSupported() async throws {
         // Given
-        let userID: QualifiedID = .random()
         let resolver = makeResolver()
 
         // Mock
         await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.proteus)
 
         // When
-        try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
+        let result = try await resolver.resolveOneOnOneConversation(with: .random(), in: syncContext)
 
         // Then
-        let invocations = await mockMigrator.migrateToMLSUserIDMlsGroupIDIn_Invocations
+        guard case .noAction = result else {
+            XCTFail("expected result '.noAction'")
+            return
+        }
+
+        let invocations = await mockMigrator.migrateToMLSUserIDIn_Invocations
         XCTAssert(invocations.isEmpty)
     }
 
@@ -351,9 +206,14 @@ final class OneOnOneResolverTests: XCTestCase {
         await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.some(nil))
 
         // When
-        try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
+        let result = try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
 
         // Then
+        guard case .archivedAsReadOnly = result else {
+            XCTFail("expected result '.noAction'")
+            return
+        }
+
         await syncContext.perform {
             XCTAssertEqual(conversation.messageProtocol, .proteus)
             XCTAssertTrue(conversation.isForcedReadOnly)
@@ -361,72 +221,18 @@ final class OneOnOneResolverTests: XCTestCase {
         }
     }
 
-    func test_ResolveOneOnOneConversation_NoCommonProtocols_forOtherUser() async throws {
-        // Given
-        let userID: QualifiedID = .random()
-        let selfUserID: QualifiedID = .random()
-        let resolver = makeResolver()
-
-        let conversation = await syncContext.perform { [self] in
-            let user = modelHelper.createUser(
-                qualifiedID: userID,
-                in: syncContext
-            )
-            user.supportedProtocols = [.proteus]
-
-            let selfUser = modelHelper.createSelfUser(qualifiedID: selfUserID, in: syncContext)
-            selfUser.supportedProtocols = [.mls]
-
-            let (_, conversation) = modelHelper.createConnection(
-                status: .accepted,
-                to: user,
-                in: syncContext
-            )
-
-            XCTAssertEqual(conversation.messageProtocol, .proteus)
-            XCTAssertFalse(conversation.isForcedReadOnly)
-
-            return conversation
-        }
-
-        // Mock
-        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.some(nil))
-
-        // When
-        try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
-
-        // Then
-        await syncContext.perform {
-            XCTAssertEqual(conversation.messageProtocol, .proteus)
-            XCTAssertTrue(conversation.isForcedReadOnly)
-            XCTAssertEqual(conversation.lastMessage?.systemMessageData?.systemMessageType, .mlsNotSupportedOtherUser)
-        }
-    }
-
     // MARK: Helpers
 
     private func makeResolver() -> OneOnOneResolver {
-        makeResolver(
-            migrator: mockMigrator,
-            mlsService: mockMLSService
-        )
-    }
-
-    private func makeResolver(
-        migrator: OneOnOneMigratorInterface?,
-        mlsService: MLSServiceInterface?
-    ) -> OneOnOneResolver {
         OneOnOneResolver(
             protocolSelector: mockProtocolSelector,
-            migrator: migrator,
-            mlsService: mlsService
+            migrator: mockMigrator
         )
     }
 
     @discardableResult
     private func makeOneOnOneConversation(
         domain: String? = "local@domain.com",
-        mlsGroupID: MLSGroupID? = nil,
         in context: NSManagedObjectContext
     ) -> ZMConversation {
         let user = modelHelper.createUser(
@@ -434,7 +240,6 @@ final class OneOnOneResolverTests: XCTestCase {
             in: context
         )
         let (_, conversation) = modelHelper.createConnection(status: .accepted, to: user, in: context)
-        conversation.mlsGroupID = mlsGroupID
         return conversation
     }
 
