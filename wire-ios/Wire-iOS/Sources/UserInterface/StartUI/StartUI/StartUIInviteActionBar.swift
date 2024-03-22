@@ -22,7 +22,7 @@ final class StartUIInviteActionBar: UIView {
 
     var bottomEdgeConstraint: NSLayoutConstraint!
 
-    private(set) var inviteButton: Button!
+    private(set) var inviteButton: ZMButton!
 
     private let padding: CGFloat = 12
 
@@ -42,9 +42,11 @@ final class StartUIInviteActionBar: UIView {
     }
 
     private func createInviteButton() {
-        inviteButton = Button(style: .accentColorTextButtonStyle,
-                              cornerRadius: 16,
-                              fontSpec: .normalSemiboldFont)
+        inviteButton = .init(
+            style: .accentColorTextButtonStyle,
+            cornerRadius: 16,
+            fontSpec: .normalSemiboldFont
+        )
         inviteButton.titleEdgeInsets = UIEdgeInsets(top: 2, left: 8, bottom: 3, right: 8)
         inviteButton.setTitle(L10n.Localizable.Peoplepicker.inviteMorePeople.capitalized, for: .normal)
         addSubview(inviteButton)

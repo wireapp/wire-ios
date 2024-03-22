@@ -21,7 +21,7 @@ import WireCommonComponents
 
 struct DeviceDetailsProteusView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
-    @State var isVerfied: Bool
+    @State var isVerified: Bool
     var shouldShowActivatedDate: Bool = true
 
     var body: some View {
@@ -33,35 +33,43 @@ struct DeviceDetailsProteusView: View {
                 performCopy: nil
             )
             .padding(.all, ViewConstants.Padding.standard)
+
             if shouldShowActivatedDate {
                 Divider()
+
                 Text(L10n.Localizable.Device.Details.Section.Proteus.activated)
                     .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
                     .font(FontSpec.mediumSemiboldFont.swiftUIFont)
                     .padding([.leading, .top], ViewConstants.Padding.standard)
                     .padding(.bottom, ViewConstants.Padding.small)
+
                 Text(viewModel.addedDate)
                     .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
                     .padding([.leading, .trailing, .bottom], ViewConstants.Padding.standard)
                     .font(FontSpec.normalRegularFont.swiftUIFont)
             }
+
             Divider()
+
             CopyValueView(
                 title: L10n.Localizable.Device.Details.Section.Proteus.keyFingerprint,
                 value: $viewModel.proteusKeyFingerprint.wrappedValue,
                 isCopyEnabled: viewModel.isCopyEnabled,
                 performCopy: viewModel.copyToClipboard
-            ).padding(.all, ViewConstants.Padding.standard)
+            )
+            .padding(.all, ViewConstants.Padding.standard)
+
             if !viewModel.isSelfClient {
                 Divider()
-                Toggle(L10n.Localizable.Device.verified, isOn: $isVerfied)
+
+                Toggle(L10n.Localizable.Device.verified, isOn: $isVerified)
                     .font(FontSpec.headerSemiboldFont.swiftUIFont)
                     .padding(.all, ViewConstants.Padding.standard)
-                .onChange(of: isVerfied) { value in
-                    Task {
-                        await viewModel.updateVerifiedStatus(value)
+                    .onChange(of: isVerified) { value in
+                        Task {
+                            await viewModel.updateVerifiedStatus(value)
+                        }
                     }
-                }
             }
         }
     }

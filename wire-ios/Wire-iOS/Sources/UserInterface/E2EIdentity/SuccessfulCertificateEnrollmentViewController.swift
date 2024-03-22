@@ -16,19 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
 import SwiftUI
+import WireSyncEngine
 
 final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepViewController {
-    var certificateDetails: String = ""
+
+    typealias LocalizedEnrollE2eiCertificate = L10n.Localizable.EnrollE2eiCertificate
+    typealias LocalizedUpdateE2eiCertificate = L10n.Localizable.UpdateE2eiCertificate
+
     // MARK: - Properties
 
+    var certificateDetails: String = ""
     public var onOkTapped: ((_ viewController: SuccessfulCertificateEnrollmentViewController) -> Void)?
 
-    private let titleLabel: UILabel = {
+    // Based on this value, appropriate texts are displayed for update certifcate or enroll certificate for E2EI
+    private let isUpdateMode: Bool
+
+    private var titleLabel: UILabel {
+        let title = isUpdateMode ? LocalizedUpdateE2eiCertificate.title : LocalizedEnrollE2eiCertificate.title
         let label = DynamicFontLabel(
-            text: L10n.Localizable.EnrollE2eiCertificate.title,
+            text: title,
             style: .bigHeadline,
             color: SemanticColors.Label.textDefault)
         label.textAlignment = .center
@@ -36,11 +43,12 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         label.accessibilityIdentifier = "titleLabel"
 
         return label
-    }()
+    }
 
-    private let detailsLabel: UILabel = {
+    private var detailsLabel: UILabel {
+        let subtitle = isUpdateMode ? LocalizedUpdateE2eiCertificate.subtitle : LocalizedEnrollE2eiCertificate.subtitle
         let label = DynamicFontLabel(
-            text: L10n.Localizable.EnrollE2eiCertificate.subtitle,
+            text: subtitle,
             style: .body,
             color: SemanticColors.Label.textDefault)
         label.numberOfLines = 0
@@ -48,20 +56,19 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         label.accessibilityIdentifier = "detailsLabel"
 
         return label
-    }()
+    }
 
-    private let shieldImageView: UIImageView = {
-        let guestUserIconColor = SemanticColors.Icon.foregroundDefault
-        let imageView = UIImageView(image: Asset.Images.certificateValid.image)
+    private let shieldImageView = {
+        let shieldImage = ImageResource.E_2_EI.Enrollment.certificateValid
+        let imageView = UIImageView(image: .init(resource: shieldImage))
         imageView.accessibilityIdentifier = "shieldImageView"
         imageView.isAccessibilityElement = false
         imageView.contentMode = .scaleAspectFit
-
         return imageView
     }()
 
-    private lazy var certificateDetailsButton: Button = {
-        let button = Button(
+    private lazy var certificateDetailsButton = {
+        let button = ZMButton(
             style: .secondaryTextButtonStyle,
             cornerRadius: 12,
             fontSpec: .buttonSmallBold)
@@ -76,19 +83,19 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         return button
     }()
 
-    private lazy var confirmationButton: Button = {
-        let button = Button(
+    private lazy var confirmationButton = {
+        let button = ZMButton(
             style: .primaryTextButtonStyle,
             cornerRadius: 16,
-            fontSpec: .buttonBigSemibold)
-
+            fontSpec: .buttonBigSemibold
+        )
         button.accessibilityIdentifier = "confirmationButton"
         button.setTitle(L10n.Localizable.EnrollE2eiCertificate.okButton, for: .normal)
         button.addTarget(
             self,
             action: #selector(okTapped),
-            for: .touchUpInside)
-
+            for: .touchUpInside
+        )
         return button
     }()
 
@@ -104,9 +111,9 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
 
     // MARK: - Life cycle
 
-    init() {
+    init(isUpdateMode: Bool = false) {
+        self.isUpdateMode = isUpdateMode
         super.init(nibName: nil, bundle: nil)
-
         setupViews()
     }
 
@@ -143,14 +150,8 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
 
     private func createConstraints() {
         NSLayoutConstraint.activate([
-            // title Label
-            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
-            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
-
             // shield image view
             shieldImageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            shieldImageView.heightAnchor.constraint(equalToConstant: 64),
-            shieldImageView.widthAnchor.constraint(equalToConstant: 64),
 
             // confirmation button
             confirmationButton.heightAnchor.constraint(equalToConstant: 56),
@@ -161,10 +162,10 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
             stackView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
             // certificate details button
-            certificateDetailsButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
-            certificateDetailsButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -24),
+            certificateDetailsButton.leadingAnchor.constraint(equalTo: stackView.leadingAnchor),
+            certificateDetailsButton.trailingAnchor.constraint(equalTo: stackView.trailingAnchor),
             certificateDetailsButton.heightAnchor.constraint(equalToConstant: 32),
-            certificateDetailsButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -64)
+            certificateDetailsButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -64)
         ])
     }
 
@@ -191,8 +192,8 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         wrapNavigationController.presentTopmost()
     }
 
-    @objc
-    private func okTapped() {
+    @MainActor
+    @objc private func okTapped() {
         onOkTapped?(self)
     }
 
@@ -203,5 +204,29 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     func executeErrorFeedbackAction(_ feedbackAction: AuthenticationErrorFeedbackAction) { }
 
     func displayError(_ error: Error) { }
+}
 
+// MARK: - Previews
+
+struct SuccessfulCertificateEnrollmentViewController_Previews: PreviewProvider {
+
+    static var previews: some View {
+        Group {
+            SuccessfulCertificateEnrollmentViewControllerrWrapper(isUpdateMode: true)
+                .previewDisplayName("Update Mode: true")
+            SuccessfulCertificateEnrollmentViewControllerrWrapper(isUpdateMode: false)
+                .previewDisplayName("Update Mode: false")
+        }
+    }
+}
+
+private struct SuccessfulCertificateEnrollmentViewControllerrWrapper: UIViewControllerRepresentable {
+
+    @State private(set) var isUpdateMode = false
+
+    func makeUIViewController(context: Context) -> SuccessfulCertificateEnrollmentViewController {
+        .init(isUpdateMode: isUpdateMode)
+    }
+
+    func updateUIViewController(_ viewController: SuccessfulCertificateEnrollmentViewController, context: Context) {}
 }

@@ -57,6 +57,9 @@ public protocol SessionManagerDelegate: AnyObject, SessionActivationObserver {
     func sessionManagerDidFailToLoadDatabase(error: Error)
     func sessionManagerDidBlacklistCurrentVersion(reason: BlacklistReason)
     func sessionManagerDidBlacklistJailbrokenDevice()
+    func sessionManagerRequireCertificateEnrollment()
+    func sessionManagerDidEnrollCertificate(for activeSession: UserSession?)
+
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?)
     func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?)
     func sessionManagerAsksToRetryStart()
@@ -772,8 +775,10 @@ public final class SessionManager: NSObject, SessionManagerType {
                 self?.activeUserSession?.lastEventIDRepository.storeLastEventID(nil)
             }
 
+            self?.activeUserSession?.e2eiActivationDateRepository.removeE2EIActivationDate()
             self?.activeUserSession?.close(deleteCookie: deleteCookie)
             self?.activeUserSession = nil
+            self?.clearCRLExpirationDates(for: account)
 
             if deleteAccount {
                 self?.deleteAccountData(for: account)
@@ -785,7 +790,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
             // Clear tmp directory when the user logout from the session.
             self?.deleteTemporaryData()
-
         })
     }
 
@@ -831,6 +835,9 @@ public final class SessionManager: NSObject, SessionManagerType {
             if session.isLoggedIn {
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
                 self.performPostUnlockActionsIfPossible(for: session)
+                Task {
+                    await self.requestCertificateEnrollmentIfNeeded()
+                }
             }
         }
     }
@@ -916,6 +923,11 @@ public final class SessionManager: NSObject, SessionManagerType {
                 userSession.syncStatus.forceSlowSync()
             }
         }
+    }
+
+    private func clearCRLExpirationDates(for account: Account) {
+        let repository = CRLExpirationDatesRepository(userID: account.userIdentifier)
+        repository.removeAllExpirationDates()
     }
 
     private func clearCacheDirectory() {
@@ -1118,7 +1130,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    internal func checkJailbreakIfNeeded() {
+    func checkJailbreakIfNeeded() {
         guard configuration.blockOnJailbreakOrRoot || configuration.wipeOnJailbreakOrRoot else { return }
 
         if jailbreakDetector?.isJailbroken() == true {
@@ -1391,6 +1403,9 @@ extension SessionManager {
             // to complete the login flow, which will be handle elsewhere.
             if session.isLoggedIn {
                 self.delegate?.sessionManagerDidReportLockChange(forSession: session)
+                Task {
+                    await self.requestCertificateEnrollmentIfNeeded()
+                }
             }
         }
     }
@@ -1474,6 +1489,29 @@ extension SessionManager {
     /// The timestamp when the user initiated the request.
     public static var companyLoginRequestTimestampKey: String {
         return "WireCompanyLoginTimesta;p"
+    }
+
+}
+
+// MARK: - End-to-end Identity
+
+extension SessionManager {
+
+    public func didEnrollCertificateSuccessfully() {
+        delegate?.sessionManagerDidEnrollCertificate(for: activeUserSession)
+    }
+
+    private func requestCertificateEnrollmentIfNeeded() async {
+        guard let userSession = activeUserSession else { return }
+
+        do {
+            let isE2EICertificateEnrollmentRequired = try await userSession.isE2EICertificateEnrollmentRequired.invoke()
+            if isE2EICertificateEnrollmentRequired {
+                delegate?.sessionManagerRequireCertificateEnrollment()
+            }
+        } catch {
+            WireLogger.e2ei.warn("Can't get certificate enrollment status: \(error)")
+        }
     }
 
 }

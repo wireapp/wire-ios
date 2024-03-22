@@ -294,6 +294,31 @@ extension ZMUserSession: UserSession {
         let featureRepository = FeatureRepository(context: syncContext)
         return GetMLSFeatureUseCase(featureRepository: featureRepository)
     }
+
+    @MainActor
+    public func fetchSelfConversationMLSGroupID() async -> MLSGroupID? {
+        return await syncContext.perform {
+            return ZMConversation.fetchSelfMLSConversation(in: self.syncContext)?.mlsGroupID
+        }
+    }
+
+    @MainActor
+    public func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
+        guard let selfUserClient,
+              let selfMLSClientID = MLSClientID(userClient: selfUserClient),
+              e2eiFeature.isEnabled
+        else {
+            return nil
+        }
+
+        return E2EIdentityCertificateUpdateStatusUseCase(
+            getE2eIdentityCertificates: getE2eIdentityCertificates,
+            gracePeriod: TimeInterval(e2eiFeature.config.verificationExpiration), // the feature repository should better be injected into the use case
+            mlsClientID: selfMLSClientID,
+            context: syncContext,
+            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
+        )
+    }
 }
 
 extension UInt64 {

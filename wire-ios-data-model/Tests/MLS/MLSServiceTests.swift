@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireCoreCrypto
 import XCTest
+import WireTesting
 
 @testable import WireDataModel
 @testable import WireDataModelSupport
@@ -1107,15 +1108,14 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subgroupID
 
         // Mock committing pending proposal.
-        var mockCommitPendingProposalArguments = [(MLSGroupID, Date)]()
-
+        let commitPendingProposalsArgumentsActor = GenericArrayActor<(MLSGroupID, Date)>()
         mockMLSActionExecutor.mockCommitPendingProposals = {
-            mockCommitPendingProposalArguments.append(($0, Date()))
+            await commitPendingProposalsArgumentsActor.append((($0, Date())))
             return []
         }
 
         // When
-        try await self.sut.commitPendingProposals()
+        await self.sut.commitPendingProposals()
 
         // Then we asked for the subgroup id
         let subgroupInvocations = mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_Invocations
@@ -1124,6 +1124,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(subgroupInvocations.first?.parentGroupID, parentGroupdID)
 
         // Then we try to commit pending proposals twice, once for the subgroup, once for the parent
+        var mockCommitPendingProposalArguments = await commitPendingProposalsArgumentsActor.items
         XCTAssertEqual(mockCommitPendingProposalArguments.count, 2)
         let (id1, commitTime1) = try XCTUnwrap(mockCommitPendingProposalArguments.first)
 

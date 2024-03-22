@@ -72,24 +72,22 @@ struct DeviceDetailsButtonsView: View {
         if let status = viewModel.e2eIdentityCertificate?.status {
             switch status {
             case .valid:
-                if let isExpiring = viewModel.isCertificateExpiringSoon, isExpiring {
+                if viewModel.isSelfClient, viewModel.isCertificateExpiringSoon == true {
                     Divider()
                     updateCertificateButton.padding()
                 }
                 Divider()
                 showCertificateButton.padding()
             case .notActivated:
-                if !viewModel.isFromConversation {
+                if !viewModel.isFromConversation && viewModel.isSelfClient {
                     Divider()
                     getCertificateButton.padding()
                 }
-                Divider()
-                showCertificateButton.padding()
             case .revoked, .invalid:
                 Divider()
                 showCertificateButton.padding()
             case .expired:
-                if !viewModel.isFromConversation {
+                if !viewModel.isFromConversation, viewModel.isSelfClient {
                     Divider()
                     updateCertificateButton.padding()
                 }

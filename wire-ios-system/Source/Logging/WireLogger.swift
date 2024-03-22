@@ -190,3 +190,13 @@ public extension WireLogger {
     static let assets = WireLogger(tag: "assets")
 
 }
+
+/// Class to proxy WireLogger methods to Objective-C
+@objcMembers
+final class WireLoggerObjc: NSObject {
+
+    static func assertionDumpLog(_ message: String) {
+        WireLogger.system.critical(message, attributes: .safePublic)
+    }
+
+}
