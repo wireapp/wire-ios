@@ -119,7 +119,7 @@ import Foundation
         guard let uiMOC = managedObjectContext.zm_userInterface else {
             return
         }
-        
+
         NotificationDispatcher.notifyNonCoreDataChanges(
             objectID: message.objectID,
             changedKeys: [

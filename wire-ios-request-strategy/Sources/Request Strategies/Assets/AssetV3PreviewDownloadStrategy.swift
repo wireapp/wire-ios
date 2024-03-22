@@ -75,7 +75,7 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         _ response: ZMTransportResponse,
         forMessage assetClientMessage: ZMAssetClientMessage
     ) {
-        guard 
+        guard
             let asset = assetClientMessage.underlyingMessage?.assetData,
             response.result == .success,
             assetClientMessage.visibleInConversation != nil,
