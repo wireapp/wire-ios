@@ -114,15 +114,11 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
             throw Error.mlsMigratorNotFound
         }
 
-        let groupID = try await syncMLSConversationFromBackend(
-            userID: userID,
-            in: context
-        )
+        let groupID: MLSGroupID
 
         do {
-            try await migrator.migrateToMLS(
+            groupID = try await migrator.migrateToMLS(
                 userID: userID,
-                mlsGroupID: groupID,
                 in: context
             )
         } catch {
@@ -135,19 +131,6 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
             }
 
             return conversation.objectID
-        }
-    }
-
-    private func syncMLSConversationFromBackend(
-        userID: QualifiedID,
-        in context: NSManagedObjectContext
-    ) async throws -> MLSGroupID {
-        var action = SyncMLSOneToOneConversationAction(userID: userID.uuid, domain: userID.domain)
-
-        do {
-            return try await action.perform(in: context.notificationContext)
-        } catch {
-            throw MigrateMLSOneOnOneConversationError.failedToFetchConversation(error)
         }
     }
 
