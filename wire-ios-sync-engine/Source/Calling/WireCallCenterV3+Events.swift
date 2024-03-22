@@ -79,9 +79,11 @@ extension WireCallCenterV3: ZMConversationObserver {
         let conversation = changeInfo.conversation
 
         guard
+            let avsIdentifier = conversation.avsIdentifier,
+            let context = conversation.managedObjectContext,
             changeInfo.messageProtocolChanged,
             conversation.messageProtocol == .mls,
-            let context = conversation.managedObjectContext
+            !isMLSConferenceCall(conversationId: avsIdentifier)
         else {
             return
         }
@@ -142,9 +144,8 @@ extension WireCallCenterV3 {
             let isDegraded = self.isDegraded(conversationId: conversationId)
             let callState = CallState.incoming(video: isVideoCall, shouldRing: shouldRing, degraded: isDegraded)
             let members = [AVSCallMember(client: client)]
-            let isConferenceCall = conversationType.isConference
 
-            self.createSnapshot(callState: callState, members: members, callStarter: client.avsIdentifier, video: isVideoCall, for: conversationId, isConferenceCall: isConferenceCall)
+            self.createSnapshot(callState: callState, members: members, callStarter: client.avsIdentifier, video: isVideoCall, for: conversationId, conversationType: conversationType)
             self.handle(callState: callState, conversationId: conversationId)
         }
     }

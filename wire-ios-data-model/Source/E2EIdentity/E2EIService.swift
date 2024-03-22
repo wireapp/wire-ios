@@ -18,6 +18,7 @@
 
 import Foundation
 import WireCoreCrypto
+import Combine
 
 // sourcery: AutoMockable
 public protocol E2EIServiceInterface {
@@ -51,6 +52,7 @@ public final class E2EIService: E2EIServiceInterface {
 
     // MARK: - Properties
 
+    private let onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
     private let defaultDPoPTokenExpiry: UInt32 = 30
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var coreCrypto: SafeCoreCryptoProtocol {
@@ -63,9 +65,14 @@ public final class E2EIService: E2EIServiceInterface {
 
     // MARK: - Life cycle
 
-    public init(e2eIdentity: E2eiEnrollmentProtocol, coreCryptoProvider: CoreCryptoProviderProtocol) {
+    public init(
+        e2eIdentity: E2eiEnrollmentProtocol,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
+        onNewCRLsDistributionPointsSubject: PassthroughSubject<CRLsDistributionPoints, Never>
+    ) {
         self.e2eIdentity = e2eIdentity
         self.coreCryptoProvider = coreCryptoProvider
+        self.onNewCRLsDistributionPointsSubject = onNewCRLsDistributionPointsSubject
     }
 
     // MARK: - Methods
@@ -154,10 +161,15 @@ public final class E2EIService: E2EIServiceInterface {
         guard let enrollment = e2eIdentity as? E2eiEnrollment else {
             throw E2EIServiceFailure.missingEnrollment
         }
-        try await coreCryptoProvider.initialiseMLSWithEndToEndIdentity(
+
+        let crlDistributionPoints = try await coreCryptoProvider.initialiseMLSWithEndToEndIdentity(
             enrollment: enrollment,
             certificateChain: certificateChain
         )
+
+        if let crlDistributionPoints {
+            onNewCRLsDistributionPointsSubject.send(crlDistributionPoints)
+        }
     }
 
     enum E2EIServiceFailure: Error {

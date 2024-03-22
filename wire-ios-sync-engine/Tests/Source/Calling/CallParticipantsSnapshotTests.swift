@@ -265,7 +265,7 @@ final class CallParticipantsSnapshotTests: MessagingTest {
             isConstantBitRate: false,
             videoState: .stopped,
             networkQuality: .normal,
-            isConferenceCall: true,
+            conversationType: .conference,
             degradedUser: nil,
             activeSpeakers: [],
             videoGridPresentationMode: .allVideoStreams,
