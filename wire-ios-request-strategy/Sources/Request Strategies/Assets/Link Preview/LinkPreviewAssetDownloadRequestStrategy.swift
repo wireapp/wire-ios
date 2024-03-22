@@ -95,8 +95,12 @@ import Foundation
 
         guard
             let remote = linkPreview?.image.uploaded,
-            let data = response.rawData 
+            let data = response.rawData
         else {
+            return
+        }
+
+        guard data.zmSHA256Digest() == remote.sha256 else {
             return
         }
 
@@ -104,17 +108,6 @@ import Foundation
             data: data,
             for: message
         )
-
-        let success = cache.decryptImageIfItMatchesDigest(
-            message,
-            format: .medium,
-            encryptionKey: remote.otrKey,
-            sha256Digest: remote.sha256
-        )
-
-        guard success else {
-            return
-        }
 
         guard let uiMOC = managedObjectContext.zm_userInterface else {
             return
