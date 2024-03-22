@@ -26,6 +26,7 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 /// It only includes methods in which these two versions differentiate.
 @objc public protocol AssetProxyType {
 
+    // TODO: rename to "hasLocalFileData"
     var hasDownloadedFile: Bool { get }
     var hasDownloadedPreview: Bool { get }
 
@@ -60,8 +61,19 @@ private let zmLog = ZMSLog(tag: "AssetV3")
             encrypted: false
         )
 
-        let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded
-        let (key, digest) = (asset?.otrKey, asset?.sha256)
+
+        var key: Data?
+        var digest: Data?
+
+        if isImage {
+            let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded
+            key = asset?.otrKey
+            digest = asset?.sha256
+        } else {
+            let asset = assetClientMessage.underlyingMessage?.assetData?.preview.remote
+            key = asset?.otrKey
+            digest = asset?.sha256
+        }
 
         queue.async {
             guard let cache else {
