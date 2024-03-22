@@ -55,10 +55,10 @@ final class MessagePresenter: NSObject {
     func openDocumentController(for message: ZMConversationMessage,
                                 targetView: UIView,
                                 withPreview preview: Bool) {
-        guard 
+        guard
             let fileURL = message.fileMessageData?.temporaryURLToDecryptedFile(),
             fileURL.isFileURL,
-            !fileURL.path.isEmpty 
+            !fileURL.path.isEmpty
         else {
             let errorMessage = "File URL is missing: \(message.fileMessageData.debugDescription)"
             assert(false, errorMessage)
@@ -133,7 +133,7 @@ final class MessagePresenter: NSObject {
             return
         }
 
-        guard 
+        guard
             let fileMessageData = message.fileMessageData,
             fileMessageData.hasLocalFileData
         else {

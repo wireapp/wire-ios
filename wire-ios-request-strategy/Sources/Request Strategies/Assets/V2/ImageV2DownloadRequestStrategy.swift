@@ -77,7 +77,7 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
         downstreamSync: ZMObjectSync!,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
-        guard 
+        guard
             let message = object as? ZMAssetClientMessage,
             let conversation = message.conversation,
             let cache = managedObjectContext.zm_fileAssetCache

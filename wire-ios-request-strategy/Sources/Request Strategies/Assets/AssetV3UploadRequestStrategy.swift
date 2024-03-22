@@ -161,7 +161,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         response: ZMTransportResponse,
         keysToParse: Set<String>
     ) -> Bool {
-        guard 
+        guard
             response.result == .success,
             let message = managedObject as? ZMAssetClientMessage,
             let asset = message.assets.first(where: { !$0.isUploaded })
@@ -169,7 +169,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             return false
         }
 
-        guard 
+        guard
             let payload = response.payload?.asDictionary(),
             let assetId = payload["key"] as? String
         else {

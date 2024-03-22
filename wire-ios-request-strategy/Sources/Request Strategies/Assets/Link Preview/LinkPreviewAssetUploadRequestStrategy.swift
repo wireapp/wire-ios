@@ -100,7 +100,7 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
             guard let message = object as? ZMClientMessage else {
                 return false
             }
-            
+
             return self.managedObjectContext.zm_fileAssetCache.hasEncryptedMediumImageData(for: message)
         }
     }

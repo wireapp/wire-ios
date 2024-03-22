@@ -35,7 +35,7 @@ import Foundation
         )
 
         let downloadFilter = NSPredicate { object, _ in
-            guard 
+            guard
                 let message = object as? ZMClientMessage,
                 let genericMessage = message.underlyingMessage,
                 genericMessage.textData != nil,

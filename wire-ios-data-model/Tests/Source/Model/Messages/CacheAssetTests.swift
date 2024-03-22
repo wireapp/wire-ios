@@ -56,7 +56,7 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
 
         // thumbnail
         uiMOC.zm_fileAssetCache.storeOriginalImage(data: verySmallJPEGData(), for: message)
-        
+
         return asset
     }
 

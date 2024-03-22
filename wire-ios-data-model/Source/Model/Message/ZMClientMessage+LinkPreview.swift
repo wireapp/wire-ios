@@ -205,7 +205,7 @@ extension ZMClientMessage: ZMImageOwner {
 
             guard
                 let content = genericMessage.content,
-                let nonce = nonce 
+                let nonce = nonce
             else {
                 return
             }

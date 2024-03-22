@@ -26,7 +26,6 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 /// It only includes methods in which these two versions differentiate.
 @objc public protocol AssetProxyType {
 
-    // TODO: rename to "hasLocalFileData"
     var hasDownloadedFile: Bool { get }
     var hasDownloadedPreview: Bool { get }
 

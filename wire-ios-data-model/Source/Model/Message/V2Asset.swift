@@ -143,7 +143,6 @@ public class V2Asset: NSObject, ZMImageMessageData {
         return FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .preview)
     }
 
-    // TODO: [John] Check if we can delete this.
     public var previewData: Data? {
         if assetClientMessage.hasDownloadedPreview {
             guard let cache = moc.zm_fileAssetCache else {
