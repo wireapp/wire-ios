@@ -74,6 +74,10 @@ public struct CoreDataStackHelper {
             return
         }
 
+        guard fileManager.fileExists(atPath: storageDirectory.absoluteString) else {
+            return
+        }
+
         let files = try fileManager.contentsOfDirectory(
             at: storageDirectory,
             includingPropertiesForKeys: nil,
