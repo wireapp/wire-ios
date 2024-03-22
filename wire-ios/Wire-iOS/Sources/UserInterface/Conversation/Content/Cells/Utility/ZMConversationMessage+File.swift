@@ -20,22 +20,23 @@ import Foundation
 import WireDataModel
 
 extension ZMConversationMessage {
+
     public func isFileDownloaded() -> Bool {
-        if self.fileMessageData?.fileURL != nil {
-            return true
-        } else {
-            return false
-        }
+        guard let fileMessageData else { return false }
+        return fileMessageData.hasLocalFileData
     }
 
     public func videoCanBeSavedToCameraRoll() -> Bool {
-        if self.isFileDownloaded(),
-            let fileMessageData = self.fileMessageData,
-            let fileURL = fileMessageData.fileURL,
-            UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(fileURL.path) && fileMessageData.isVideo {
-            return true
-        } else {
+        guard
+            let fileMessageData,
+            fileMessageData.isVideo,
+            let fileURL = fileMessageData.temporaryURLToDecryptedFile(),
+            UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(fileURL.path)
+        else {
             return false
         }
+
+        return true
     }
+
 }

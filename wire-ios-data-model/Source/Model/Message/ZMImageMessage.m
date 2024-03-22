@@ -202,17 +202,20 @@
         [self.managedObjectContext.zm_fileAssetCache deleteAssetData:self format:format encrypted:NO];
     }
     else {
-        [self.managedObjectContext.zm_fileAssetCache storeAssetData:self format:format encrypted:NO data:imageData];
+        FileAssetCache *cache = self.managedObjectContext.zm_fileAssetCache;
+
         switch (format) {
             case ZMImageFormatMedium:
+                [cache storeMediumImageData:imageData forMessage:self];
                 self.mediumDataLoaded = YES;
                 self.isAnimatedGIF = [imageData isDataAnimatedGIF];
                 self.imageType = [ZMImageMessage imageTypeForData:imageData];
-                
                 break;
             case ZMImageFormatPreview:
+                [cache storePreviewImageData:imageData forMessage:self];
                 break;
             case ZMImageFormatOriginal:
+                [cache storeOriginalImageData:imageData forMessage:self];
                 self.isAnimatedGIF = [imageData isDataAnimatedGIF];
                 break;
             default:
@@ -231,9 +234,11 @@
 {
     switch (format) {
         case ZMImageFormatPreview:
+            return [self.managedObjectContext.zm_fileAssetCache previewImageDataFor:self];
         case ZMImageFormatMedium:
+            return [self.managedObjectContext.zm_fileAssetCache mediumImageDataFor:self];
         case ZMImageFormatOriginal:
-            return [self.managedObjectContext.zm_fileAssetCache assetData:self format:format encrypted:NO];
+            return [self.managedObjectContext.zm_fileAssetCache originalImageDataFor:self];
         default:
             return nil;
     }

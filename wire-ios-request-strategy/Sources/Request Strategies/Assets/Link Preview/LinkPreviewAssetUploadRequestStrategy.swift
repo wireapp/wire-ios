@@ -97,8 +97,11 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
 
     var filterForAssetUpload: NSPredicate {
         return NSPredicate { [unowned self] object, _ in
-            guard let message = object as? ZMClientMessage else { return false }
-            return nil != self.managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true)
+            guard let message = object as? ZMClientMessage else {
+                return false
+            }
+
+            return self.managedObjectContext.zm_fileAssetCache.hasEncryptedMediumImageData(for: message)
         }
     }
 
@@ -112,13 +115,35 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
 }
 
 extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
-    public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>, apiVersion: APIVersion) -> ZMUpstreamRequest? {
-        guard let message = managedObject as? ZMClientMessage else { return nil }
-        guard keys.contains(ZMClientMessage.linkPreviewStateKey) else { return nil }
-        guard let retention = message.conversation.map(AssetRequestFactory.Retention.init) else { fatal("Trying to send message that doesn't have a conversation") }
-        guard let imageData = managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true) else { return nil }
 
-        return ZMUpstreamRequest(keys: [ZMClientMessage.linkPreviewStateKey], transportRequest: requestFactory.upstreamRequestForAsset(withData: imageData, retention: retention, apiVersion: apiVersion))
+    public func request(
+        forUpdating managedObject: ZMManagedObject,
+        forKeys keys: Set<String>,
+        apiVersion: APIVersion
+    ) -> ZMUpstreamRequest? {
+        guard
+            let message = managedObject as? ZMClientMessage,
+            keys.contains(ZMClientMessage.linkPreviewStateKey)
+        else {
+            return nil
+        }
+
+        guard let retention = message.conversation.map(AssetRequestFactory.Retention.init) else {
+            fatal("Trying to send message that doesn't have a conversation")
+        }
+
+        guard let imageData = managedObjectContext.zm_fileAssetCache.encryptedMediumImageData(for: message) else {
+            return nil
+        }
+
+        return ZMUpstreamRequest(
+            keys: [ZMClientMessage.linkPreviewStateKey],
+            transportRequest: requestFactory.upstreamRequestForAsset(
+                withData: imageData,
+                retention: retention,
+                apiVersion: apiVersion
+            )
+        )
     }
 
     public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?, apiVersion: APIVersion) -> ZMUpstreamRequest? {

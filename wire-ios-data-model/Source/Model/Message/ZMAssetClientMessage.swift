@@ -352,7 +352,7 @@ struct CacheAsset: AssetType {
         if case .file = type {
             return cache.assetData(owner, encrypted: false)
         } else {
-            return cache.assetData(owner, format: .original, encrypted: false)
+            return cache.originalImageData(for: owner)
         }
     }
 
@@ -364,8 +364,7 @@ struct CacheAsset: AssetType {
 
     var preprocessed: Data? {
         guard needsPreprocessing else { return nil }
-
-        return cache.assetData(owner, format: .medium, encrypted: false)
+        return cache.mediumImageData(for: owner)
     }
 
     var hasEncrypted: Bool {
@@ -382,7 +381,7 @@ struct CacheAsset: AssetType {
         case .file:
             return cache.assetData(owner, encrypted: true)
         case .image, .thumbnail:
-            return cache.assetData(owner, format: .medium, encrypted: true)
+            return cache.encryptedMediumImageData(for: owner)
         }
     }
 
@@ -414,21 +413,15 @@ struct CacheAsset: AssetType {
             Logging.messageProcessing.warn("Failed to update asset id. Reason: \(error.localizedDescription)")
             return
         }
-
-        // Now that we've stored the assetId when can safely delete the encrypted data
-        switch type {
-        case .file:
-            cache.deleteAssetData(owner, encrypted: true)
-        case .image, .thumbnail:
-            cache.deleteAssetData(owner, format: .medium, encrypted: true)
-        }
     }
 
     func updateWithPreprocessedData(_ preprocessedImageData: Data, imageProperties: ZMIImageProperties) {
         guard needsPreprocessing else { return }
         guard var genericMessage = owner.underlyingMessage else { return }
 
-        cache.storeAssetData(owner, format: .medium, encrypted: false, data: preprocessedImageData)
+        // Now we have the preprocessed data, delete the original.
+        cache.storeMediumImage(data: preprocessedImageData, for: owner)
+        cache.deleteAssetData(owner, format: .original, encrypted: false)
 
         switch type {
         case .file:
@@ -451,19 +444,22 @@ struct CacheAsset: AssetType {
 
         switch type {
         case .file:
+            WireLogger.assets.debug("encrypting file")
             if let keys = cache.encryptFileAndComputeSHA256Digest(owner) {
                 genericMessage.updateAsset(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)
             }
         case .image:
             if !needsPreprocessing, let original = original {
                 // Even if we don't do any preprocessing on an image we still need to copy it to .medium
-                cache.storeAssetData(owner, format: .medium, encrypted: false, data: original)
+                cache.storeMediumImage(data: original, for: owner)
             }
 
+            WireLogger.assets.debug("encrypting image")
             if let keys = cache.encryptImageAndComputeSHA256Digest(owner, format: .medium) {
                 genericMessage.updateAsset(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)
             }
         case .thumbnail:
+            WireLogger.assets.debug("encrypting thumbnail")
             if let keys = cache.encryptImageAndComputeSHA256Digest(owner, format: .medium) {
                 genericMessage.updateAssetPreview(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)
             }
@@ -486,15 +482,32 @@ extension ZMAssetClientMessage: AssetMessage {
         var assets: [AssetType] = []
 
         if isFile {
+            // has original file data
             if cache.hasDataOnDisk(self, encrypted: false) {
                 assets.append(CacheAsset(owner: self, type: .file, cache: cache))
             }
 
+            // encrypted file data
+            if cache.hasDataOnDisk(self, encrypted: true) {
+                assets.append(CacheAsset(owner: self, type: .file, cache: cache))
+            }
+
+            // has original thumbnail
             if cache.hasDataOnDisk(self, format: .original, encrypted: false) {
                 assets.append(CacheAsset(owner: self, type: .thumbnail, cache: cache))
             }
+
+            // has preprocessed thumbnail
+            if cache.hasDataOnDisk(self, format: .medium, encrypted: false) {
+                assets.append(CacheAsset(owner: self, type: .thumbnail, cache: cache))
+            }
+
+            // has encrypted thumbnail
+            if cache.hasDataOnDisk(self, format: .medium, encrypted: true) {
+                assets.append(CacheAsset(owner: self, type: .thumbnail, cache: cache))
+            }
         } else {
-            if cache.hasDataOnDisk(self, format: .original, encrypted: false) {
+            if cache.hasDataOnDisk(for: self) {
                 assets.append(CacheAsset(owner: self, type: .image, cache: cache))
             }
         }
@@ -505,11 +518,17 @@ extension ZMAssetClientMessage: AssetMessage {
     public var processingState: AssetProcessingState {
         let assets = self.assets
 
-        if assets.filter({ $0.needsPreprocessing && !$0.hasPreprocessed || !$0.isUploaded && !$0.hasEncrypted }).count > 0 {
+        // There is an asset that needs to be encrypted.
+        if assets.contains(where: {
+            !$0.hasEncrypted
+        }) {
             return .preprocessing
         }
 
-        if assets.filter({ !$0.isUploaded }).count > 0 {
+        // There is some asset that isn't uploaded.
+        if assets.contains(where: {
+            !$0.isUploaded
+        }) {
             return .uploading
         }
 

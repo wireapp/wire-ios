@@ -54,7 +54,8 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
         let message = appendFileMessage(to: conversation)!
         let asset = WireDataModel.CacheAsset(owner: message, type: .thumbnail, cache: uiMOC.zm_fileAssetCache)
 
-        uiMOC.zm_fileAssetCache.storeAssetData(message, format: .original, encrypted: false, data: verySmallJPEGData()) // thumbnail
+        // thumbnail
+        uiMOC.zm_fileAssetCache.storeOriginalImage(data: verySmallJPEGData(), for: message)
 
         return asset
     }
@@ -197,7 +198,6 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
 
         // then
         XCTAssertTrue(sut.isUploaded)
-        XCTAssertNil(sut.encrypted)
     }
 
     func testUpdateAssetIdForImage() {
@@ -211,7 +211,9 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
 
         // then
         XCTAssertTrue(sut.isUploaded)
-        XCTAssertNil(sut.encrypted)
+        XCTAssertNotNil(sut.encrypted)
+        XCTAssertFalse(sut.hasOriginal)
+        XCTAssertFalse(sut.hasPreprocessed)
     }
 
     func testUpdateAssetIdForThumbnail() {
@@ -225,7 +227,9 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
 
         // then
         XCTAssertTrue(sut.isUploaded)
-        XCTAssertNil(sut.encrypted)
+        XCTAssertNotNil(sut.encrypted)
+        XCTAssertFalse(sut.hasOriginal)
+        XCTAssertFalse(sut.hasPreprocessed)
     }
 
 }

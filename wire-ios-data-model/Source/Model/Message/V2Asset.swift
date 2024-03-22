@@ -23,17 +23,65 @@ import MobileCoreServices
 public class V2Asset: NSObject, ZMImageMessageData {
 
     public var isDownloaded: Bool {
-        return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .medium, encrypted: false) ||
-               moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .original, encrypted: false)
+        return hasDownloadedFile
     }
 
-    public func fetchImageData(with queue: DispatchQueue, completionHandler: @escaping ((Data?) -> Void)) {
+    public func fetchImageData(
+        with queue: DispatchQueue,
+        completionHandler: @escaping ((Data?) -> Void)
+    ) {
         let cache = moc.zm_fileAssetCache
-        let mediumKey = FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
-        let originalKey = FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .original)
+
+        let mediumEncryptedKey = FileAssetCache.cacheKeyForAsset(
+            assetClientMessage,
+            format: .medium,
+            encrypted: true
+        )
+
+        let mediumKey = FileAssetCache.cacheKeyForAsset(
+            assetClientMessage,
+            format: .medium
+        )
+
+        let originalKey = FileAssetCache.cacheKeyForAsset(
+            assetClientMessage,
+            format: .original
+        )
+
+        let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded
+        let key = asset?.otrKey
+        let digest = asset?.sha256
 
         queue.async {
-            completionHandler([mediumKey, originalKey].lazy.compactMap({ $0 }).compactMap({ cache?.assetData($0) }).first)
+            guard let cache else {
+                completionHandler(nil)
+                return
+            }
+
+            if
+                let mediumEncryptedKey,
+                let key,
+                let digest,
+                let data = cache.decryptData(
+                    key: mediumEncryptedKey,
+                    encryptionKey: key,
+                    sha256Digest: digest
+                )
+            {
+                completionHandler(data)
+            } else if
+                let mediumKey,
+                let data = cache.assetData(mediumKey)
+            {
+                completionHandler(data)
+            } else if
+                let originalKey,
+                let data = cache.assetData(originalKey)
+            {
+                completionHandler(data)
+            } else {
+                completionHandler(nil)
+            }
         }
     }
 
@@ -56,15 +104,35 @@ public class V2Asset: NSObject, ZMImageMessageData {
 
     // MARK: - ZMImageMessageData
 
-    public var mediumData: Data? {
-        if assetClientMessage.mediumGenericMessage?.imageAssetData?.width > 0 {
-            return imageData(for: .medium, encrypted: false)
+    private var mediumData: Data? {
+        guard
+            let asset = assetClientMessage.mediumGenericMessage?.imageAssetData,
+            asset.width > 0,
+            asset.size > 0,
+            let cache = moc.zm_fileAssetCache
+        else {
+            return nil
         }
-        return nil
+
+        if let data = cache.decryptedMediumImageData(
+            for: assetClientMessage,
+            encryptionKey: asset.otrKey,
+            sha256Digest: asset.sha256
+        ) {
+            return data
+        } else if let data = cache.mediumImageData(for: assetClientMessage) {
+            return data
+        } else {
+            return nil
+        }
     }
 
     public var imageData: Data? {
-        return mediumData ?? imageData(for: .original, encrypted: false)
+        guard let cache = moc.zm_fileAssetCache else {
+            return nil
+        }
+
+        return mediumData ?? cache.originalImageData(for: assetClientMessage)
     }
 
     public var imageDataIdentifier: String? {
@@ -77,8 +145,12 @@ public class V2Asset: NSObject, ZMImageMessageData {
 
     public var previewData: Data? {
         if assetClientMessage.hasDownloadedPreview {
+            guard let cache = moc.zm_fileAssetCache else {
+                return nil
+            }
+
             // File preview data
-            return imageData(for: .original) ?? imageData(for: .medium)
+            return cache.originalImageData(for: assetClientMessage) ?? cache.mediumImageData(for: assetClientMessage)
         }
 
         return nil
@@ -107,47 +179,57 @@ public class V2Asset: NSObject, ZMImageMessageData {
 
     }
 
-    // MARK: - Helper
-
-    private func imageData(for format: ZMImageFormat) -> Data? {
-        return moc.zm_fileAssetCache.assetData(assetClientMessage, format: format, encrypted: false)
-    }
-
-    fileprivate func hasImageData(for format: ZMImageFormat) -> Bool {
-        return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: format, encrypted: false)
-    }
-
 }
 
 extension V2Asset: AssetProxyType {
 
+    private var hasImageData: Bool {
+        guard let cache = moc.zm_fileAssetCache else {
+            return false
+        }
+
+        return cache.hasEncryptedMediumImageData(for: assetClientMessage)
+        || cache.hasMediumImageData(for: assetClientMessage)
+        || cache.hasOriginalImageData(for: assetClientMessage)
+    }
+
     public var hasDownloadedPreview: Bool {
-        guard assetClientMessage.fileMessageData != nil else { return false }
-        return hasImageData(for: .medium) || hasImageData(for: .original)
+        return assetClientMessage.fileMessageData != nil && hasImageData
     }
 
     public var hasDownloadedFile: Bool {
         if assetClientMessage.imageMessageData != nil {
-            return hasImageData(for: .medium) || hasImageData(for: .original)
+            return hasImageData
         } else {
-            return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, encrypted: false)
+            guard let cache = moc.zm_fileAssetCache else {
+                return false
+            }
+
+            return cache.hasDataOnDisk(assetClientMessage, encrypted: true)
+            || cache.hasDataOnDisk(assetClientMessage, encrypted: false)
         }
     }
 
     public var fileURL: URL? {
-        return moc.zm_fileAssetCache.accessAssetURL(assetClientMessage)
-    }
-
-    public func imageData(for format: ZMImageFormat, encrypted: Bool) -> Data? {
-        if format != .original {
-            let message = format == .medium ? assetClientMessage.mediumGenericMessage : assetClientMessage.previewGenericMessage
-            guard message?.imageAssetData?.size > 0 else { return nil }
-            if encrypted && message?.imageAssetData?.otrKey.count == 0 {
-                return nil
-            }
+        guard let cache = moc.zm_fileAssetCache else {
+            return nil
         }
 
-        return moc.zm_fileAssetCache.assetData(assetClientMessage, format: format, encrypted: encrypted)
+        if cache.hasDataOnDisk(assetClientMessage, encrypted: true) {
+            guard let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded else {
+                return nil
+            }
+
+            return cache.temporaryURLForDecryptedFile(
+                for: assetClientMessage,
+                encryptionKey: asset.otrKey,
+                sha256Digest: asset.sha256
+            )
+        } else if cache.hasDataOnDisk(assetClientMessage, encrypted: false) {
+            return cache.accessAssetURL(assetClientMessage)
+        } else {
+            return nil
+        }
     }
 
     public func requestFileDownload() {

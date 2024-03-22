@@ -29,10 +29,6 @@ typedef NS_ENUM(NSUInteger, ZMImageFormat) {
     ZMImageFormatProfile
 };
 
-extern ZMImageFormat ImageFormatFromString(NSString * _Nonnull string);
-extern NSString * _Nonnull StringFromImageFormat(ZMImageFormat format);
-
-
 @protocol ZMImageOwner <NSObject>
 
 /// The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data is preprocessed

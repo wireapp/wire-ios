@@ -237,15 +237,18 @@ final class VideoMessageView: UIView, TransferView {
 
     @objc
     func onActionButtonPressed(_ sender: UIButton) {
-        guard let fileMessageData = self.fileMessage?.fileMessageData else { return }
+        guard let fileMessageData = fileMessage?.fileMessageData else {
+            return
+        }
 
         switch fileMessageData.transferState {
         case .uploading:
-            if .none != fileMessageData.fileURL {
-                self.delegate?.transferView(self, didSelect: .cancel)
-            }
+            guard fileMessageData.hasLocalFileData else { return }
+            self.delegate?.transferView(self, didSelect: .cancel)
+
         case .uploadingCancelled, .uploadingFailed:
             self.delegate?.transferView(self, didSelect: .resend)
+
         case .uploaded:
             if case .downloading = fileMessageData.downloadState {
                 self.progressView.setProgress(0, animated: false)
