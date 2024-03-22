@@ -852,11 +852,27 @@ extension ZMAssetClientMessageTests {
 
             genericMessage[format] = GenericMessage(content: imageAsset, nonce: nonce)
 
-            if storeProcessed {
-                directory.storeFile(data: processedData, for: assetMessage)
-            }
-            if storeEncrypted {
-                directory.storeEncryptedFile(data: encryptedData, for: assetMessage)
+            switch format {
+            case .medium:
+                if storeProcessed {
+                    directory.storeMediumImage(data: processedData, for: assetMessage)
+                }
+
+                if storeEncrypted {
+                    directory.storeEncryptedMediumImage(data: encryptedData, for: assetMessage)
+                }
+
+            case .preview:
+                if storeProcessed {
+                    directory.storePreviewImage(data: processedData, for: assetMessage)
+                }
+
+                if storeEncrypted {
+                    directory.storeEncryptedPreviewImage(data: encryptedData, for: assetMessage)
+                }
+
+            default:
+                break
             }
         }
 
