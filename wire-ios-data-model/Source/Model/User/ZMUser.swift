@@ -478,18 +478,18 @@ extension ZMUser: UserConnections {
     }
 
     public func accept(completion: @escaping (Error?) -> Void) {
-        guard let context = managedObjectContext else {
+        guard let syncContext = managedObjectContext?.zm_sync else {
             completion(AcceptConnectionError.invalidState)
             return
         }
 
-        let mlsService = context.performAndWait { context.mlsService }
+        let mlsService = syncContext.performAndWait { syncContext.mlsService }
         let migrator = mlsService.map(OneOnOneMigrator.init(mlsService:))
         let resolver = OneOnOneResolver(migrator: migrator)
 
         accept(
             oneOnOneResolver: resolver,
-            context: context,
+            context: syncContext,
             completion: completion
         )
     }
