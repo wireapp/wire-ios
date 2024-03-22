@@ -21,7 +21,6 @@ import WireProtos
 
 extension FileAssetCache {
 
-
     // MARK: - Conversation message
 
     /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest 

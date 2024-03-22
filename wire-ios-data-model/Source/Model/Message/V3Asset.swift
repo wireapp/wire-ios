@@ -61,7 +61,6 @@ private let zmLog = ZMSLog(tag: "AssetV3")
             encrypted: false
         )
 
-
         var key: Data?
         var digest: Data?
 
