@@ -137,6 +137,26 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
         }
 
         if message.hasEncryptedAsset {
+            let sha256: Data?
+
+            if message.fileMessageData != nil {
+                let remote = message.underlyingMessage?.assetData?.preview.remote
+                sha256 = remote?.sha256
+            } else if message.imageMessageData != nil {
+                let imageAsset = message.mediumGenericMessage?.imageAssetData
+                sha256 = imageAsset?.sha256
+            } else {
+                sha256 = nil
+            }
+
+            if let sha256, imageData.zmSHA256Digest() != sha256 {
+                if message.imageMessageData != nil {
+                    managedObjectContext.delete(message)
+                }
+
+                return
+            }
+
             cache.storeEncryptedMediumImage(
                 data: imageData,
                 for: message
@@ -146,36 +166,6 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
                 data: imageData,
                 for: message
             )
-        }
-
-        if message.hasEncryptedAsset {
-            let otrKey: Data?
-            let sha256: Data?
-
-            if message.fileMessageData != nil {
-                let remote = message.underlyingMessage?.assetData?.preview.remote
-                otrKey = remote?.otrKey
-                sha256 = remote?.sha256
-            } else if message.imageMessageData != nil {
-                let imageAsset = message.mediumGenericMessage?.imageAssetData
-                otrKey = imageAsset?.otrKey
-                sha256 = imageAsset?.sha256
-            } else {
-                otrKey = nil
-                sha256 = nil
-            }
-
-            var decrypted = false
-            if let otrKey = otrKey, let sha256 = sha256 {
-                decrypted = managedObjectContext.zm_fileAssetCache.decryptImageIfItMatchesDigest(message,
-                                                                                                 format: .medium,
-                                                                                                 encryptionKey: otrKey,
-                                                                                                 sha256Digest: sha256)
-            }
-
-            if !decrypted && message.imageMessageData != nil {
-                managedObjectContext.delete(message)
-            }
         }
     }
 
