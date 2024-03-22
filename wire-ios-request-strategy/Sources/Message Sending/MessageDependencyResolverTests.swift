@@ -68,9 +68,9 @@ final class MessageDependencyResolverTests: MessagingTestBase {
         }
     }
 
-    func testThatGivenMessageWithLegalHoldStatusPendingApproval_thenThrow() throws {
+    func testThatGivenMessageWithLegalHoldStatusPendingApproval_thenThrow() async throws {
         // given
-        syncMOC.performAndWait {
+        await syncMOC.perform { [self] in
             // make conversatio sync a dependency
             groupConversation.needsToBeUpdatedFromBackend = true
             groupConversation.legalHoldStatus = .pendingApproval
@@ -83,17 +83,6 @@ final class MessageDependencyResolverTests: MessagingTestBase {
 
         let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
             .arrange()
-
-        Task {
-            // Sleeping in order to hit the code path where we start observing RequestAvailable
-            try await Task.sleep(nanoseconds: 250_000_000)
-
-            await syncMOC.perform {
-                self.groupConversation.needsToBeUpdatedFromBackend = false
-            }
-
-            RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-        }
 
         // then test completes
         wait(timeout: 0.5) {
