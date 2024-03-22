@@ -193,6 +193,8 @@
     ConversationListChangeObserver *obs = [[ConversationListChangeObserver alloc] initWithConversationList:(ZMConversationList *)list managedObjectContext:self.uiMOC];
     ZMConversation *c2;
     
+    ConversationPredicateFactory *factory = [[ConversationPredicateFactory alloc] initWithSelfTeam:nil];
+
     // when
     // conversation is inserted while the app is in the background
     {
@@ -212,8 +214,8 @@
     // refresh list and observer token
     {
         NSArray *allConversations = @[c1,c2];
-        [(ZMConversationList*)list recreateWithAllConversations:allConversations];
-        
+        [(ZMConversationList*)list recreateWithAllConversations:allConversations predicate:[factory predicateForConversationsIncludingArchived]];
+
         // then list is updated
         NSArray *expected = @[c1, c2];
         XCTAssertEqualObjects(list, expected);

@@ -330,6 +330,10 @@
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Изменить список участников";
 "conversation.create.non_federating_domains_error.learn_more" = "Подробнее";
 "conversation.create.non_federating_domains_error.abort" = "Отменить создание группы";
+"conversation.create.protocol_selection.mls" = "MLS";
+"conversation.create.protocol_selection.mls_default" = "MLS (по умолчанию)";
+"conversation.create.protocol_selection.proteus" = "Proteus";
+"conversation.create.protocol_selection.proteus_default" = "Proteus (по умолчанию)";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Исходящий звонок";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Вы не можете записать аудиосообщение во время звонка.";
@@ -533,16 +537,8 @@
 
 "content.system.you_started" = "Вы";
 
-"content.system.call.called" = "%@ звонили";
-"content.system.call.called-you" = "%@ звонил(-а)";
-"content.system.call.called.you" = "Вы";
-
 "content.system.call.missed-call" = "Пропущенный вызов";
-"content.system.call.missed-call-you" = "Пропущенный вызов";
-
 "content.system.call.missed-call.groups" = "Пропущенный вызов от %@";
-"content.system.call.missed-call.groups-you" = "Пропущенный вызов от %2$@";
-"content.system.call.missed-call.groups.you" = "Вы";
 
 "content.system.renamed_conv.title" = "%@ переименовал(-а) беседу";
 "content.system.renamed_conv.title-you" = "%@ переименовали беседу";
@@ -580,8 +576,9 @@
 "content.system.message_legal_hold.learn_more" = "Подробнее";
 
 //
-
 "content.system.is_verified" = "Все отпечатки верифицированы";
+"content.system.mls.conversation_is_verified" = "Все устройства верифицируются сквозной идентификацией. [Подробнее](%@)";
+"content.system.mls.conversation_is_degraded" = "Эта беседа больше не является верифицированной, поскольку по крайней мере один из участников начал использовать новое устройство или имеет недействительный сертификат.";
 
 "content.system.new_users" = "Присоединился новый участник.";
 "content.system.verify_devices" = "Верифицируйте устройства";
@@ -773,6 +770,13 @@
 "call.degraded.ended.alert.message.user" = "Вызов был прерван, поскольку %@ больше не является верифицированным контактом.";
 "call.degraded.ended.alert.message.unknown" = "Вызов был прерван, поскольку кто-то больше не является верифицированным контактом.";
 
+"call.mls.degraded.alert.title" = "Беседа больше не является верифицированной";
+"call.mls.degraded.alert.message" = "По крайней мере, один из участников начал использовать новое устройство или имеет недействительный сертификат.\n\nВы все еще хотите позвонить?";
+"call.mls.degraded.alert.action.continue" = "Все равно позвонить";
+
+"call.mls.degraded.ended.alert.title" = "Беседа больше не является верифицированной";
+"call.mls.degraded.ended.alert.message" = "Вызов был прерван, поскольку по крайней мере один из участников начал использовать новое устройство или имеет недействительный сертификат.";
+
 "call.alert.ongoing.alert_title" = "Это действие завершит другой ваш вызов.";
 
 "call.alert.ongoing.start.message" = "Уже есть активный вызов в другой беседе.\nВызов в этой беседе прервет его.";
@@ -874,6 +878,9 @@
 "meta.degraded.cancel_sending_button" = "Отмена";
 "meta.legalhold.info_button" = "Что такое юридические ограничения?";
 "meta.legalhold.send_alert_title" = "Эта беседа теперь является субъектом юридических ограничений.";
+
+"meta.mls.degraded.alert.title" = "Беседа больше не является верифицированной";
+"meta.mls.degraded.alert.message" = "По крайней мере, один из участников начал использовать новое устройство или имеет недействительный сертификат.\n\nВы все еще хотите отправить сообщение?";
 
 // Remove from conversation dialogue
 "profile.remove_dialog_title" = "Удалить?";
@@ -999,6 +1006,8 @@
 "group_details.conversation_admins_header.title" = "Администраторы группы";
 "group_details.conversation_members_header.title" = "Участники группы";
 
+"group_details.conversation_verification_status.e2ei" = "Верифицировано (сквозная идентификация)";
+"group_details.conversation_verification_status.proteus" = "Верифицировано (Proteus)";
 
 // Legal hold details
 
@@ -1590,6 +1599,22 @@
 "registration.signin.alert.password_needed.title" = "Введите пароль";
 "registration.signin.alert.password_needed.message" = "Для входа необходимо ввести пароль.";
 
+"registration.signin.e2ei.title" = "Сертификат сквозной идентификации";
+"registration.signin.e2ei.subtitle" = "Теперь ваша команда использует сквозную идентификацию, чтобы сделать использование Wire более безопасным.\n\n На следующем шаге введите учетные данные провайдера идентификационных данных, чтобы автоматически получить сертификат верификации для этого устройства. \n\n [Узнайте больше о сквозной идентификации](%@)";
+"registration.signin.e2ei.get_certificate_button.title" = "Получить сертификат";
+"registration.signin.e2ei.error.alert.title" = "Что-то пошло не так";
+"registration.signin.e2ei.error.alert.message" = "Не удалось извлечь сертификат";
+
+// Enroll e2ei certificate
+"enroll_e2ei_certificate.title" = "Сертификат выпущен";
+"enroll_e2ei_certificate.subtitle" = "Сертификат активен, а устройство верифицировано.";
+"enroll_e2ei_certificate.certificate_details_button" = "Сведения о сертификате";
+"enroll_e2ei_certificate.ok_button" = "OK";
+
+// Update e2ei certificate
+"update_e2ei_certificate.title" = "Certificate updated";
+"update_e2ei_certificate.subtitle" = "The certificate is updated and your device is verified.";
+
 "registration.signin.username.title" = "Ваш псевдоним";
 "registration.signin.username.message" = "Введите свой псевдоним. Это поможет другим найти вас в Wire и связаться.";
 "registration.signin.username.placeholder" = "псевдоним";
@@ -1760,6 +1785,31 @@
 // Feature configs: conversation guest links
 "feature_config.alert.conversation_guest_links.message.disabled" = "Генерация гостевых ссылок теперь отключена для всех администраторов групп.";
 "feature_config.alert.conversation_guest_links.message.enabled" = "Генерация гостевых ссылок теперь включена для всех администраторов групп.";
+
+// Feature configs: mlsE2EId
+"feature_config.alert.mls_e2ei.title" = "Сертификат сквозной идентификации";
+"feature_config.alert.mls_e2ei.message" = "С сегодняшнего дня ваша команда использует сквозную идентификацию, чтобы сделать использование Wire более безопасным и практичным.\nНа следующем шаге введите учетные данные провайдера идентификационных данных, чтобы автоматически получить сертификат верификации для этого устройства.";
+"feature_config.alert.mls_e2ei.button.get_certificate" = "Получить сертификат";
+"feature_config.alert.mls_e2ei.button.remind_me_later" = "Напомнить позже";
+"feature_config.alert.mls_e2ei.button.learn_more" = "Подробнее";
+"feature_config.alert.mls_e2ei.button.ok" = "OK";
+"feature_config.alert.mls_e2ei.reminder_message" = "Вы можете получить сертификат в настройках Wire во время следующего %@. Откройте Устройства и выберите Получить сертификат для вашего текущего устройства. ";
+"feature_config.alert.mls_e2ei.update_message" = "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now.\nEnter your identity provider’s credentials in the next step to update the certificate automatically.";
+"feature_config.alert.mls_e2ei.alert.update_certificate.title" = "Сертификат сквозной идентификации";
+"failed_to_get_certificate.alert.title" = "Certificate couldn’t be issued.";
+"failed_to_get_certificate.alert.message" = "You can retry to get the certificate now, or you will get a reminder later.";
+"failed_to_get_certificate.alert.forced_message" = "Please try again, or reach out to your team admin.";
+"failed_to_get_certificate.button.retry" = "Повторить";
+"failed_to_get_certificate.button.ok" = "OK";
+
+// Update end-to-end identity certificate
+"update_certificate.alert.title" = "Обновить сертификат";
+"update_certificate.alert.message" = "Срок действия сертификата сквозной идентификации для этого устройства истекает в ближайшее время. Для обеспечения безопасности общения обновите сертификат сейчас. На следующем шаге введите учетные данные поставщика идентификационных данных для автоматического обновления сертификата.";
+"update_certificate.alert.expired-message" = "The end-to-end identity certificate for this device has expired. Enter your identity provider’s credentials in the next step to update the certificate automatically.";
+"update_certificate.button.update_certificate" = "Обновить сертификат";
+
+"failed_to_update_certificate.alert.title" = "Certificate couldn’t be updated.";
+"failed_to_update_certificate.alert.message" = "You can retry to update the certificate now, or you will get a reminder later.";
 
 // Jailbroken alert
 "jailbrokendevice.alert.title" = "Обнаружен Jailbreak";
@@ -2067,3 +2117,26 @@
 // MARK: - Time
 
 "time.just_now" = "Только что";
+
+// MARK: - Device Details
+"device.details.section.proteus.title" = "СВЕДЕНИЯ ОБ УСТРОЙСТВЕ PROTEUS";
+"device.details.section.proteus.id" = "Proteus ID";
+"device.details.section.proteus.value" = "Proteus ID: %@";
+"device.details.section.proteus.activated" = "Активировано";
+"device.details.section.proteus.key_fingerprint" = "Отпечаток ключа Proteus";
+"device.details.section.e2ei.title" = "Сертификат сквозной идентификации";
+"device.details.section.e2ei.show_certificate_details" = "Показать сведения о сертификате";
+"device.details.section.e2ei.get_certificate" = "Получить сертификат";
+"device.details.section.e2ei.update_certificate" = "Обновить сертификат";
+"device.details.section.e2ei.status.title" = "Статус";
+"device.details.section.e2ei.status.not_activated" = "Не активирован";
+"device.details.section.e2ei.status.valid" = "Действует";
+"device.details.section.e2ei.status.revoked" = "Отозван";
+"device.details.section.e2ei.status.expired" = "Истек";
+"device.details.section.e2ei.status.invalid" = "Недействителен";
+"device.details.section.e2ei.serial_number" = "Серийный номер";
+"device.details.section.mls.signature" = "MLS с подписью Ed25519";
+"device.details.section.mls.title" = "Отпечаток MLS";
+"device.details.section.mls.thumbprint" = "Отпечаток MLS: %@";
+"device.details.certificate_details.title" = "Сведения о сертификате";
+"device.details.certificate_details.copy_to_clipboard" = "Скопировать в буфер обмена";

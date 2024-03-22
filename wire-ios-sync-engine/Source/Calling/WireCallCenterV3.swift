@@ -175,7 +175,7 @@ extension WireCallCenterV3 {
      * - parameter conversationId: The identifier of the conversation that hosts the call.
      */
 
-    func createSnapshot(callState: CallState, members: [AVSCallMember], callStarter: AVSIdentifier, video: Bool, for conversationId: AVSIdentifier, isConferenceCall: Bool) {
+    func createSnapshot(callState: CallState, members: [AVSCallMember], callStarter: AVSIdentifier, video: Bool, for conversationId: AVSIdentifier, conversationType: AVSConversationType) {
         guard
             let moc = uiMOC,
             let conversation = ZMConversation.fetch(with: conversationId.identifier,
@@ -198,7 +198,7 @@ extension WireCallCenterV3 {
             isConstantBitRate: false,
             videoState: video ? .started : .stopped,
             networkQuality: .normal,
-            isConferenceCall: isConferenceCall,
+            conversationType: conversationType,
             degradedUser: nil,
             activeSpeakers: [],
             videoGridPresentationMode: .allVideoStreams,
@@ -352,7 +352,11 @@ extension WireCallCenterV3 {
     }
 
     public func isConferenceCall(conversationId: AVSIdentifier) -> Bool {
-        return callSnapshots[conversationId]?.isConferenceCall ?? false
+        return callSnapshots[conversationId]?.conversationType.isConference ?? false
+    }
+
+    public func isMLSConferenceCall(conversationId: AVSIdentifier) -> Bool {
+        return callSnapshots[conversationId]?.conversationType == .mlsConference
     }
 
     func degradedUser(conversationId: AVSIdentifier) -> ZMUser? {
@@ -529,6 +533,7 @@ extension WireCallCenterV3 {
             break
 
         case .mls:
+            guard conversation.avsConversationType == .mlsConference else { return }
             try setUpMLSConference(in: conversation)
         }
     }
@@ -591,7 +596,7 @@ extension WireCallCenterV3 {
             callStarter: selfUserId,
             video: isVideo,
             for: conversationId,
-            isConferenceCall: conversationType.isConference
+            conversationType: conversationType
         )
 
         if let context = uiMOC {
@@ -609,6 +614,7 @@ extension WireCallCenterV3 {
         case .proteus, .mixed:
             break
         case .mls:
+            guard conversationType == .mlsConference else { return }
             try setUpMLSConference(in: conversation)
         }
     }

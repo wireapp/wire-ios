@@ -27,6 +27,27 @@ struct DeveloperE2eiView: View {
     var body: some View {
 
         List {
+            Section("E2EI Certificate Details") {
+                HStack {
+                    Text("Valid from")
+                    Spacer()
+                    Text(viewModel.certificateValidFrom)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                        .foregroundColor(.secondary)
+                }
+
+                HStack {
+                    Text("Valid to")
+                    Spacer()
+                    Text(viewModel.certificateValidTo)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                        .foregroundColor(.secondary)
+                }
+
+            }
+
             Section("Enroll E2EI Certificate") {
                 TextField("Certificate expiration time (in seconds)", text: $viewModel.certificateExpirationTime)
 
