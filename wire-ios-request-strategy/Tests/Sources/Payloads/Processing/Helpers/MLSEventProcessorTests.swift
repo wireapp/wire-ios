@@ -90,6 +90,7 @@ final class MLSEventProcessorTests: MessagingTestBase {
             welcomeMessage: message,
             conversationID: qualifiedID,
             in: syncMOC,
+            mlsService: mlsServiceMock,
             oneOnOneResolver: oneOnOneResolverMock
         )
 
@@ -136,6 +137,7 @@ final class MLSEventProcessorTests: MessagingTestBase {
             welcomeMessage: message,
             conversationID: qualifiedID,
             in: syncMOC,
+            mlsService: mlsServiceMock,
             oneOnOneResolver: oneOnOneResolverMock
         )
 
