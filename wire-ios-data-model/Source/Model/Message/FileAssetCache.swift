@@ -454,6 +454,65 @@ open class FileAssetCache: NSObject {
 
 public extension FileAssetCache {
 
+    // MARK: - Team logos
+
+    func storeImage(
+        data: Data,
+        for team: Team
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            for: team,
+            format: .medium
+        ) else {
+            return
+        }
+
+        cache.storeAssetData(
+            data,
+            key: key,
+            createdAt: Date()
+        )
+    }
+
+    func hasImageData(
+        for team: Team
+    ) -> Bool {
+        guard let key = Self.cacheKeyForAsset(
+            for: team,
+            format: .medium
+        ) else {
+            return false
+        }
+
+        return cache.hasDataForKey(key)
+    }
+
+    func imageData(
+        for team: Team
+    ) -> Data? {
+        guard let key = Self.cacheKeyForAsset(
+            for: team,
+            format: .medium
+        ) else {
+            return nil
+        }
+
+        return cache.assetData(key)
+    }
+
+    func deleteImageData(
+        for team: Team
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            for: team,
+            format: .medium
+        ) else {
+            return
+        }
+
+        return cache.deleteAssetData(key)
+    }
+
     // MARK: - Original images
 
     @objc(storeOriginalImageData:forMessage:)
