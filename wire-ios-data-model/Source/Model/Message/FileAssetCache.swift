@@ -344,6 +344,25 @@ open class FileAssetCache: NSObject {
 
     // MARK: - Encrypted preview
 
+    public func storeEncryptedPreviewImage(
+        data: Data,
+        for message: ZMConversationMessage
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .preview,
+            encrypted: true
+        ) else {
+            return
+        }
+
+        cache.storeAssetData(
+            data,
+            key: key,
+            createdAt: message.serverTimestamp ?? Date()
+        )
+    }
+
     public func encryptedPreviewImageData(for message: ZMConversationMessage) -> Data? {
         guard let key = Self.cacheKeyForAsset(
             message,

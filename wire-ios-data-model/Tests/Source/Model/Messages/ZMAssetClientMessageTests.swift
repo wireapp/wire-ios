@@ -92,7 +92,7 @@ final class ZMAssetClientMessageTests: BaseZMAssetClientMessageTests {
     func testThatItDeletesCopiesOfDownloadedFilesIntoTemporaryFolder() {
         // given
         let sut = appendFileMessage(to: conversation)!
-        self.uiMOC.zm_fileAssetCache.storeAssetData(sut, format: .medium, encrypted: false, data: Data.secureRandomData(ofLength: 100))
+        self.uiMOC.zm_fileAssetCache.storeMediumImage(data: .secureRandomData(length: 100), for: sut)
         guard let tempFolder = sut.temporaryDirectoryURL else { XCTFail(); return }
 
         XCTAssertNotNil(sut.temporaryURLToDecryptedFile())
@@ -186,7 +186,7 @@ extension ZMAssetClientMessageTests {
         // given
         let sut = appendFileMessage(to: conversation)!
 
-        self.uiMOC.zm_fileAssetCache.storeAssetData(sut, format: .medium, encrypted: false, data: Data.secureRandomData(ofLength: 100))
+        self.uiMOC.zm_fileAssetCache.storeMediumImage(data: .secureRandomData(length: 100), for: sut)
         defer { self.uiMOC.zm_fileAssetCache.deleteAssetData(sut, format: .medium, encrypted: false) }
 
         // then
@@ -197,7 +197,7 @@ extension ZMAssetClientMessageTests {
         // given
         let sut = appendFileMessage(to: conversation)!
 
-        self.uiMOC.zm_fileAssetCache.storeAssetData(sut, format: .original, encrypted: false, data: Data.secureRandomData(ofLength: 100))
+        self.uiMOC.zm_fileAssetCache.storeOriginalImage(data: .secureRandomData(length: 100), for: sut)
         defer { self.uiMOC.zm_fileAssetCache.deleteAssetData(sut, format: .medium, encrypted: false) }
 
         // then
@@ -853,15 +853,15 @@ extension ZMAssetClientMessageTests {
             genericMessage[format] = GenericMessage(content: imageAsset, nonce: nonce)
 
             if storeProcessed {
-                directory.storeAssetData(assetMessage, format: format, encrypted: false, data: processedData)
+                directory.storeFile(data: processedData, for: assetMessage)
             }
             if storeEncrypted {
-                directory.storeAssetData(assetMessage, format: format, encrypted: true, data: encryptedData)
+                directory.storeEncryptedFile(data: encryptedData, for: assetMessage)
             }
         }
 
         if storeOriginal {
-            directory.storeAssetData(assetMessage, format: .original, encrypted: false, data: imageData)
+            directory.storeOriginalImage(data: imageData, for: assetMessage)
         }
 
         do {
@@ -1234,7 +1234,7 @@ extension ZMAssetClientMessageTests {
         let image = WireProtos.Asset.ImageMetaData(width: 123, height: 4569)
         sut.update(with: updateEventForOriginal(nonce: nonce, image: image, preview: nil), initialUpdate: false)
         sut.update(with: updateEventForUploaded(nonce: nonce, assetId: assetId), initialUpdate: false)
-        uiMOC.zm_fileAssetCache.storeAssetData(sut, format: .medium, encrypted: false, data: assetData)
+        uiMOC.zm_fileAssetCache.storeMediumImage(data: assetData, for: sut)
 
         // then
         XCTAssertTrue(sut.hasDownloadedFile)
@@ -1298,7 +1298,7 @@ extension ZMAssetClientMessageTests {
         let (preview, _) = previewGenericMessage(with: nonce)
         let updateEvent = createUpdateEvent(nonce, conversationID: UUID.create(), genericMessage: preview)
         sut.update(with: updateEvent, initialUpdate: false)
-        uiMOC.zm_fileAssetCache.storeAssetData(sut, format: .medium, encrypted: false, data: previewData)
+        uiMOC.zm_fileAssetCache.storeMediumImage(data: previewData, for: sut)
 
         // then
         XCTAssertFalse(sut.hasDownloadedFile)
@@ -1326,7 +1326,7 @@ extension ZMAssetClientMessageTests {
         sut.update(with: original, initialUpdate: false)
         sut.update(with: uploaded, initialUpdate: false)
 
-        uiMOC.zm_fileAssetCache.storeAssetData(sut, format: .medium, encrypted: false, data: data)
+        uiMOC.zm_fileAssetCache.storeMediumImage(data: data, for: sut)
 
         // then
         XCTAssertTrue(sut.underlyingMessage!.v3_isImage)

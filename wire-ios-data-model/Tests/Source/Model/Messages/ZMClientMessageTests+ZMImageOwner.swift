@@ -127,7 +127,7 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         clientMessage.sender = selfUser
         clientMessage.visibleInConversation = conversation
-        self.uiMOC.zm_fileAssetCache.storeAssetData(clientMessage, format: .original, encrypted: false, data: mediumJPEGData())
+        self.uiMOC.zm_fileAssetCache.storeOriginalImage(data: mediumJPEGData(), for: clientMessage)
 
         // when
         clientMessage.processingDidFinish()
@@ -143,7 +143,7 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         clientMessage.sender = selfUser
         clientMessage.visibleInConversation = conversation
-        self.uiMOC.zm_fileAssetCache.storeAssetData(clientMessage, format: .original, encrypted: false, data: mediumJPEGData())
+        self.uiMOC.zm_fileAssetCache.storeOriginalImage(data: mediumJPEGData(), for: clientMessage)
 
         // when
         let imageSize = clientMessage.originalImageSize()

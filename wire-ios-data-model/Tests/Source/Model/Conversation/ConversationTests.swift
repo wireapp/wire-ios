@@ -239,11 +239,11 @@ extension ConversationTests {
             let message = try! conversation.appendImage(from: self.verySmallJPEGData(), nonce: messageID)
 
             // store asset data
-            syncMOC.zm_fileAssetCache.storeAssetData(message, format: ZMImageFormat.original, encrypted: false, data: imageData)
-            syncMOC.zm_fileAssetCache.storeAssetData(message, format: ZMImageFormat.preview, encrypted: false, data: imageData)
-            syncMOC.zm_fileAssetCache.storeAssetData(message, format: ZMImageFormat.medium, encrypted: false, data: imageData)
-            syncMOC.zm_fileAssetCache.storeAssetData(message, format: ZMImageFormat.preview, encrypted: true, data: imageData)
-            syncMOC.zm_fileAssetCache.storeAssetData(message, format: ZMImageFormat.medium, encrypted: true, data: imageData)
+            syncMOC.zm_fileAssetCache.storeOriginalImage(data: imageData, for: message)
+            syncMOC.zm_fileAssetCache.storePreviewImage(data: imageData, for: message)
+            syncMOC.zm_fileAssetCache.storeEncryptedPreviewImage(data: imageData, for: message)
+            syncMOC.zm_fileAssetCache.storeMediumImage(data: imageData, for: message)
+            syncMOC.zm_fileAssetCache.storeEncryptedMediumImage(data: imageData, for: message)
 
             // delete
             let deleteMessage = GenericMessage(content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: messageID), nonce: UUID.create())

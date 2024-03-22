@@ -54,8 +54,9 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
         let message = appendFileMessage(to: conversation)!
         let asset = WireDataModel.CacheAsset(owner: message, type: .thumbnail, cache: uiMOC.zm_fileAssetCache)
 
-        uiMOC.zm_fileAssetCache.storeAssetData(message, format: .original, encrypted: false, data: verySmallJPEGData()) // thumbnail
-
+        // thumbnail
+        uiMOC.zm_fileAssetCache.storeOriginalImage(data: verySmallJPEGData(), for: message)
+        
         return asset
     }
 

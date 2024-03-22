@@ -66,11 +66,11 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         let sut = try! conversation.appendImage(from: mediumJPEGData(), nonce: .create()) as! ZMAssetClientMessage
 
         let cache = uiMOC.zm_fileAssetCache!
-        cache.storeAssetData(sut, format: .preview, encrypted: false, data: verySmallJPEGData())
-        cache.storeAssetData(sut, format: .medium, encrypted: false, data: mediumJPEGData())
-        cache.storeAssetData(sut, format: .original, encrypted: false, data: mediumJPEGData())
-        cache.storeAssetData(sut, format: .preview, encrypted: true, data: verySmallJPEGData())
-        cache.storeAssetData(sut, format: .medium, encrypted: true, data: mediumJPEGData())
+        cache.storePreviewImage(data: verySmallJPEGData(), for: sut)
+        cache.storeMediumImage(data: mediumJPEGData(), for: sut)
+        cache.storeOriginalImage(data: mediumJPEGData(), for: sut)
+        cache.storeEncryptedPreviewImage(data: verySmallJPEGData(), for: sut)
+        cache.storeEncryptedMediumImage(data: mediumJPEGData(), for: sut)
 
         // expect
         let assetId = "asset-id"
@@ -110,12 +110,8 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         let sut = try! conversation.appendFile(with: fileMetaData, nonce: .create())  as! ZMAssetClientMessage
 
         let cache = uiMOC.zm_fileAssetCache!
-
-        cache.storeAssetData(sut, format: .original, encrypted: true, data: verySmallJPEGData())
-        cache.storeAssetData(sut, encrypted: true, data: mediumJPEGData())
-
-        XCTAssertNotNil(cache.originalImageData(for: sut))
-        XCTAssertNotNil(cache.assetData(sut, encrypted: false))
+        cache.storeEncryptedMediumImage(data: mediumJPEGData(), for: sut)
+        XCTAssertTrue(cache.hasEncryptedMediumImageData(for: sut))
 
         // expect
         let assetId = UUID.create().transportString()
@@ -214,9 +210,9 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         sut.sender = selfUser
 
         let cache = uiMOC.zm_fileAssetCache!
-        cache.storeAssetData(sut, format: .preview, encrypted: false, data: verySmallJPEGData())
-        cache.storeAssetData(sut, format: .medium, encrypted: false, data: mediumJPEGData())
-        cache.storeAssetData(sut, format: .original, encrypted: false, data: mediumJPEGData())
+        cache.storePreviewImage(data: verySmallJPEGData(), for: sut)
+        cache.storeMediumImage(data: mediumJPEGData(), for: sut)
+        cache.storeOriginalImage(data: mediumJPEGData(), for: sut)
 
         // when
         performPretendingUiMocIsSyncMoc {
