@@ -143,6 +143,8 @@ public class MLSEventProcessor: MLSEventProcessing {
         mlsService: MLSServiceInterface,
         oneOnOneResolver: OneOnOneResolverInterface
     ) async {
+        WireLogger.mls.info("MLS event processor is processing welcome message")
+
         guard let (conversation, groupID) = await context.perform({
             let conversation = ZMConversation.fetch(with: conversationID, in: context)
             return (conversation, conversation?.mlsGroupID) as? (ZMConversation, MLSGroupID)
@@ -154,8 +156,8 @@ public class MLSEventProcessor: MLSEventProcessing {
 
         await resolveOneOnOneConversationIfNeeded(
             conversation: conversation,
-            oneOneOneResolver: oneOnOneResolver,
-            in: context
+            in: context,
+            oneOneOneResolver: oneOnOneResolver
         )
     }
 
