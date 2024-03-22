@@ -132,6 +132,419 @@ open class FileAssetCache: NSObject {
         return cache.deleteAssetData(key)
     }
 
+    // MARK: - Original images
+
+    @objc(storeOriginalImageData:forMessage:)
+    public func storeOriginalImage(
+        data: Data,
+        for message: ZMConversationMessage
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .original,
+            encrypted: false
+        ) else {
+            return
+        }
+
+        cache.storeAssetData(
+            data,
+            key: key,
+            createdAt: message.serverTimestamp ?? Date()
+        )
+    }
+
+    public func hasOriginalImageData(for message: ZMConversationMessage) -> Bool {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .original,
+            encrypted: false
+        ) else {
+            return false
+        }
+
+        return cache.hasDataForKey(key)
+    }
+
+    public func originalImageData(for message: ZMConversationMessage) -> Data? {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .original,
+            encrypted: false
+        ) else {
+            return nil
+        }
+
+        return cache.assetData(key)
+    }
+
+    // MARK: - Medium images
+
+    @objc(storeMediumImageData:forMessage:)
+    public func storeMediumImage(
+        data: Data,
+        for message: ZMConversationMessage
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .medium,
+            encrypted: false
+        ) else {
+            return
+        }
+
+        cache.storeAssetData(
+            data,
+            key: key,
+            createdAt: message.serverTimestamp ?? Date()
+        )
+    }
+
+    public func hasMediumImageData(for message: ZMConversationMessage) -> Bool {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .medium,
+            encrypted: false
+        ) else {
+            return false
+        }
+
+        return cache.hasDataForKey(key)
+    }
+
+    public func mediumImageData(for message: ZMConversationMessage) -> Data? {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .medium,
+            encrypted: false
+        ) else {
+            return nil
+        }
+
+        return cache.assetData(key)
+    }
+
+    // MARK: - Encrypted images
+
+    public func encryptMediumImage(for message: ZMConversationMessage) -> ZMImageAssetEncryptionKeys? {
+        return encryptImageAndComputeSHA256Digest(
+            message,
+            format: .medium
+        )
+    }
+
+    public func storeEncryptedMediumImage(
+        data: Data,
+        for message: ZMConversationMessage
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .medium,
+            encrypted: true
+        ) else {
+            return
+        }
+
+        cache.storeAssetData(
+            data,
+            key: key,
+            createdAt: message.serverTimestamp ?? Date()
+        )
+    }
+
+    public func hasEncryptedMediumImageData(for message: ZMConversationMessage) -> Bool {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .medium,
+            encrypted: true
+        ) else {
+            return false
+        }
+
+        return cache.hasDataForKey(key)
+    }
+
+    public func encryptedMediumImageData(for message: ZMConversationMessage) -> Data? {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .medium,
+            encrypted: true
+        ) else {
+            return nil
+        }
+
+        return cache.assetData(key)
+    }
+
+    // MARK: - Preview images
+
+    @objc(storePreviewImageData:forMessage:)
+    public func storePreviewImage(
+        data: Data,
+        for message: ZMConversationMessage
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .preview,
+            encrypted: false
+        ) else {
+            return
+        }
+
+        cache.storeAssetData(
+            data,
+            key: key,
+            createdAt: message.serverTimestamp ?? Date()
+        )
+    }
+
+    public func hasPreviewImageData(for message: ZMConversationMessage) -> Bool {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .preview,
+            encrypted: false
+        ) else {
+            return false
+        }
+
+        return cache.hasDataForKey(key)
+    }
+
+    public func previewImageData(for message: ZMConversationMessage) -> Data? {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .preview,
+            encrypted: false
+        ) else {
+            return nil
+        }
+
+        return cache.assetData(key)
+    }
+
+    // MARK: - Encrypted preview
+
+    public func encryptedPreviewImageData(for message: ZMConversationMessage) -> Data? {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .preview,
+            encrypted: true
+        ) else {
+            return nil
+        }
+
+        return cache.assetData(key)
+    }
+
+    // MARK: - File data
+
+    public func storeFile(
+        data: Data,
+        for message: ZMConversationMessage
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            encrypted: false
+        ) else {
+            return
+        }
+
+        cache.storeAssetData(
+            data,
+            key: key,
+            createdAt: message.serverTimestamp ?? Date()
+        )
+    }
+
+    public func storeEncryptedFile(
+        data: Data,
+        for message: ZMConversationMessage
+    ) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            encrypted: true
+        ) else {
+            return
+        }
+
+        cache.storeAssetData(
+            data,
+            key: key,
+            createdAt: message.serverTimestamp ?? Date()
+        )
+    }
+
+    public func temporaryURLForDecryptedFile(
+        for message: ZMConversationMessage,
+        encryptionKey: Data
+    ) -> URL? {
+        guard let unencryptedKey = Self.cacheKeyForAsset(
+            message,
+            encrypted: false
+        ) else {
+            return nil
+        }
+
+        // We already have a temp url for the decrypted asset.
+        if let url = tempCache.assetURL(unencryptedKey) {
+            return url
+        }
+
+        // We need to decrypt the asset and store it in temp.
+        guard
+            let encryptedKey = Self.cacheKeyForAsset(
+                message,
+                encrypted: true
+            ),
+            let encryptedData = cache.assetData(encryptedKey),
+            let decryptedData = encryptedData.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
+        else {
+            return nil
+        }
+
+        tempCache.storeAssetData(
+            decryptedData,
+            key: unencryptedKey,
+            createdAt: message.serverTimestamp ?? Date()
+        )
+
+        return tempCache.assetURL(unencryptedKey)
+    }
+
+    // MARK: - Upload request data
+
+    public func storeTransportData(
+        _ data: Data,
+        for message: ZMConversationMessage
+    ) -> URL? {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            identifier: "transport"
+        ) else {
+            return nil
+        }
+
+        cache.storeAssetData(
+            data,
+            key: key,
+            createdAt: message.serverTimestamp ?? Date()
+        )
+
+        return cache.assetURL(key)
+    }
+
+    public func deleteTransportData(for message: ZMConversationMessage) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            identifier: "transport"
+        ) else {
+            return
+        }
+
+        cache.deleteAssetData(key)
+    }
+
+    // MARK: - Encryption
+
+    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest
+    /// of the encrypted entry.
+
+    func encryptImageAndComputeSHA256Digest(
+        _ message: ZMConversationMessage,
+        format: ZMImageFormat
+    ) -> ZMImageAssetEncryptionKeys? {
+        guard
+            let plaintextCacheKey = Self.cacheKeyForAsset(
+                message,
+                format: format,
+                encrypted: false
+            ),
+            let encryptedCacheKey = Self.cacheKeyForAsset(
+                message,
+                format: format,
+                encrypted: true
+            )
+        else {
+            return nil
+        }
+
+        let keys = encryptFileAndComputeSHA256Digest(
+            plaintextCacheKey,
+            encryptedEntryKey: encryptedCacheKey
+        )
+
+        cache.deleteAssetData(plaintextCacheKey)
+
+        return keys
+    }
+
+    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest
+    /// of the encrypted entry.
+
+    func encryptFileAndComputeSHA256Digest(
+        _ message: ZMConversationMessage
+    ) -> ZMImageAssetEncryptionKeys? {
+        guard
+            let plaintextCacheKey = Self.cacheKeyForAsset(
+                message,
+                encrypted: false
+            ),
+            let encryptedCacheKey = Self.cacheKeyForAsset(
+                message,
+                encrypted: true
+            )
+        else {
+            return nil
+        }
+
+        let keys = encryptFileAndComputeSHA256Digest(
+            plaintextCacheKey,
+            encryptedEntryKey: encryptedCacheKey
+        )
+
+        cache.deleteAssetData(plaintextCacheKey)
+
+        return keys
+    }
+
+    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest
+    /// of the encrypted entry.
+
+    private func encryptFileAndComputeSHA256Digest(
+        _ plaintextEntryKey: String,
+        encryptedEntryKey: String
+    ) -> ZMImageAssetEncryptionKeys? {
+        guard let plainData = assetData(plaintextEntryKey) else {
+            return nil
+        }
+
+        let encryptionKey = Data.randomEncryptionKey()
+
+        do {
+            let encryptedData = try plainData.zmEncryptPrefixingPlainTextIV(key: encryptionKey)
+            let hash = encryptedData.zmSHA256Digest()
+
+            cache.storeAssetData(
+                encryptedData,
+                key: encryptedEntryKey,
+                createdAt: Date()
+            )
+
+            return ZMImageAssetEncryptionKeys(
+                otrKey: encryptionKey,
+                sha256: hash
+            )
+        } catch {
+            return nil
+        }
+    }
+
+    // MARK: - Purge
+
+    public func purgeTemporaryAssets() {
+        tempCache.wipeCaches()
+    }
+
     // MARK: - Asset data
 
     open func assetData(_ key: String) -> Data? {
@@ -217,31 +630,6 @@ open class FileAssetCache: NSObject {
         }
 
         return cache.assetURL(key)
-    }
-
-    /// Sets the image asset data for a given message.
-    ///
-    /// This will cause I/O.
-
-    open func storeAssetData(
-        _ message: ZMConversationMessage,
-        format: ZMImageFormat,
-        encrypted: Bool,
-        data: Data
-    ) {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            format: format,
-            encrypted: encrypted
-        ) else {
-            return
-        }
-
-        cache.storeAssetData(
-            data,
-            key: key,
-            createdAt: message.serverTimestamp ?? Date()
-        )
     }
 
     /// Sets the asset data for a given message.
@@ -372,8 +760,6 @@ open class FileAssetCache: NSObject {
             .compactMap { $0 }
             .joined(separator: "_")
 
-        return key
-
         return key.data(using: .utf8)?
             .zmSHA256Digest()
             .zmHexEncodedString()
@@ -389,454 +775,17 @@ open class FileAssetCache: NSObject {
 
 }
 
-public extension FileAssetCache {
-
-    
-    // MARK: - Original images
-
-    @objc(storeOriginalImageData:forMessage:)
-    func storeOriginalImage(
-        data: Data,
-        for message: ZMConversationMessage
-    ) {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            format: .original,
-            encrypted: false
-        ) else {
-            return
-        }
-
-        cache.storeAssetData(
-            data,
-            key: key,
-            createdAt: message.serverTimestamp ?? Date()
-        )
-    }
-
-    func hasOriginalImageData(
-        for message: ZMConversationMessage
-    ) -> Bool {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            format: .original,
-            encrypted: false
-        ) else {
-            return false
-        }
-
-        return cache.hasDataForKey(key)
-    }
-
-    func originalImageData(
-        for message: ZMConversationMessage
-    ) -> Data? {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            format: .original,
-            encrypted: false
-        ) else {
-            return nil
-        }
-
-        return cache.assetData(key)
-    }
-
-    // MARK: - Medium images
-
-    @objc(storeMediumImageData:forMessage:)
-    func storeMediumImage(
-        data: Data,
-        for message: ZMConversationMessage
-    ) {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            format: .medium,
-            encrypted: false
-        ) else {
-            return
-        }
-
-        cache.storeAssetData(
-            data,
-            key: key,
-            createdAt: message.serverTimestamp ?? Date()
-        )
-    }
-
-    func hasMediumImageData(
-        for message: ZMConversationMessage
-    ) -> Bool {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            format: .medium,
-            encrypted: false
-        ) else {
-            return false
-        }
-
-        return cache.hasDataForKey(key)
-    }
-
-    func mediumImageData(
-        for message: ZMConversationMessage
-    ) -> Data? {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            format: .medium,
-            encrypted: false
-        ) else {
-            return nil
-        }
-
-        return cache.assetData(key)
-    }
-
-    // MARK: - Encrypted images
-
-    func encryptMediumImage(
-        for message: ZMConversationMessage
-    ) -> ZMImageAssetEncryptionKeys? {
-        return encryptImageAndComputeSHA256Digest(
-            message,
-            format: .medium
-        )
-    }
-
-    func storeEncryptedMediumImage(
-        data: Data,
-        for message: ZMConversationMessage
-    ) {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            format: .medium,
-            encrypted: true
-        ) else {
-            return
-        }
-
-        cache.storeAssetData(
-            data,
-            key: key,
-            createdAt: message.serverTimestamp ?? Date()
-        )
-    }
-
-    func hasEncryptedMediumImageData(
-        for message: ZMConversationMessage
-    ) -> Bool {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            format: .medium,
-            encrypted: true
-        ) else {
-            return false
-        }
-
-        return cache.hasDataForKey(key)
-    }
-
-    func encryptedMediumImageData(
-        for message: ZMConversationMessage
-    ) -> Data? {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            format: .medium,
-            encrypted: true
-        ) else {
-            return nil
-        }
-
-        return cache.assetData(key)
-    }
-
-    // MARK: - Preview images
-
-    @objc(storePreviewImageData:forMessage:)
-    func storePreviewImage(
-        data: Data,
-        for message: ZMConversationMessage
-    ) {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            format: .preview,
-            encrypted: false
-        ) else {
-            return
-        }
-
-        cache.storeAssetData(
-            data,
-            key: key,
-            createdAt: message.serverTimestamp ?? Date()
-        )
-    }
-
-    func hasPreviewImageData(
-        for message: ZMConversationMessage
-    ) -> Bool {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            format: .preview,
-            encrypted: false
-        ) else {
-            return false
-        }
-
-        return cache.hasDataForKey(key)
-    }
-
-    func previewImageData(
-        for message: ZMConversationMessage
-    ) -> Data? {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            format: .preview,
-            encrypted: false
-        ) else {
-            return nil
-        }
-
-        return cache.assetData(key)
-    }
-
-    // MARK: - Encrypted preview
-
-    func encryptedPreviewImageData(
-        for message: ZMConversationMessage
-    ) -> Data? {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            format: .preview,
-            encrypted: true
-        ) else {
-            return nil
-        }
-
-        return cache.assetData(key)
-    }
-
-    // MARK: - File data
-
-    func storeFile(
-        data: Data,
-        for message: ZMConversationMessage
-    ) {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            encrypted: false
-        ) else {
-            return
-        }
-
-        cache.storeAssetData(
-            data,
-            key: key,
-            createdAt: message.serverTimestamp ?? Date()
-        )
-    }
-
-    func storeEncryptedFile(
-        data: Data,
-        for message: ZMConversationMessage
-    ) {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            encrypted: true
-        ) else {
-            return
-        }
-
-        cache.storeAssetData(
-            data,
-            key: key,
-            createdAt: message.serverTimestamp ?? Date()
-        )
-    }
-
-    func temporaryURLForDecryptedFile(
-        for message: ZMConversationMessage,
-        encryptionKey: Data
-    ) -> URL? {
-        guard let unencryptedKey = Self.cacheKeyForAsset(
-            message,
-            encrypted: false
-        ) else {
-            return nil
-        }
-
-        // We already have a temp url for the decrypted asset.
-        if let url = tempCache.assetURL(unencryptedKey) {
-            return url
-        }
-
-        // We need to decrypt the asset and store it in temp.
-        guard
-            let encryptedKey = Self.cacheKeyForAsset(
-                message,
-                encrypted: true
-            ),
-            let encryptedData = cache.assetData(encryptedKey),
-            let decryptedData = encryptedData.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
-        else {
-            return nil
-        }
-
-        tempCache.storeAssetData(
-            decryptedData,
-            key: unencryptedKey,
-            createdAt: message.serverTimestamp ?? Date()
-        )
-
-        return tempCache.assetURL(unencryptedKey)
-    }
-
-    // MARK: - Upload request data
-
-    func storeTransportData(
-        _ data: Data,
-        for message: ZMConversationMessage
-    ) -> URL? {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            identifier: "transport"
-        ) else {
-            return nil
-        }
-
-        cache.storeAssetData(
-            data,
-            key: key,
-            createdAt: message.serverTimestamp ?? Date()
-        )
-
-        return cache.assetURL(key)
-    }
-
-    func deleteTransportData(
-        for message: ZMConversationMessage
-    ) {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            identifier: "transport"
-        ) else {
-            return
-        }
-
-        cache.deleteAssetData(key)
-    }
-
-    // MARK: - Purge
-
-    func purgeTemporaryAssets() {
-        tempCache.wipeCaches()
-    }
-
-    // MARK: - Encryption
-
-    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest
-    /// of the encrypted entry.
-
-    func encryptImageAndComputeSHA256Digest(
-        _ message: ZMConversationMessage,
-        format: ZMImageFormat
-    ) -> ZMImageAssetEncryptionKeys? {
-        guard
-            let plaintextCacheKey = Self.cacheKeyForAsset(
-                message,
-                format: format,
-                encrypted: false
-            ),
-            let encryptedCacheKey = Self.cacheKeyForAsset(
-                message,
-                format: format,
-                encrypted: true
-            )
-        else {
-            return nil
-        }
-
-        let keys = encryptFileAndComputeSHA256Digest(
-            plaintextCacheKey,
-            encryptedEntryKey: encryptedCacheKey
-        )
-
-        cache.deleteAssetData(plaintextCacheKey)
-
-        return keys
-    }
-
-    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest
-    /// of the encrypted entry.
-
-    func encryptFileAndComputeSHA256Digest(
-        _ message: ZMConversationMessage
-    ) -> ZMImageAssetEncryptionKeys? {
-        guard
-            let plaintextCacheKey = Self.cacheKeyForAsset(
-                message,
-                encrypted: false
-            ),
-            let encryptedCacheKey = Self.cacheKeyForAsset(
-                message,
-                encrypted: true
-            )
-        else {
-            return nil
-        }
-
-        let keys = encryptFileAndComputeSHA256Digest(
-            plaintextCacheKey,
-            encryptedEntryKey: encryptedCacheKey
-        )
-
-        cache.deleteAssetData(plaintextCacheKey)
-
-        return keys
-    }
-
-    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest
-    /// of the encrypted entry.
-
-    private func encryptFileAndComputeSHA256Digest(
-        _ plaintextEntryKey: String,
-        encryptedEntryKey: String
-    ) -> ZMImageAssetEncryptionKeys? {
-        guard let plainData = assetData(plaintextEntryKey) else {
-            return nil
-        }
-
-        let encryptionKey = Data.randomEncryptionKey()
-
-        do {
-            let encryptedData = try plainData.zmEncryptPrefixingPlainTextIV(key: encryptionKey)
-            let hash = encryptedData.zmSHA256Digest()
-
-            cache.storeAssetData(
-                encryptedData,
-                key: encryptedEntryKey,
-                createdAt: Date()
-            )
-
-            return ZMImageAssetEncryptionKeys(
-                otrKey: encryptionKey,
-                sha256: hash
-            )
-        } catch {
-            return nil
-        }
-    }
-
-}
-
 // MARK: - Testing
+
 public extension FileAssetCache {
+
     /// Deletes all existing caches. After calling this method, existing caches should not be used anymore.
     /// This is intended for testing
     func wipeCaches() {
         fileCache.wipeCaches()
         tempCache.wipeCaches()
     }
+
 }
 
 // Helper function inserted by Swift 4.2 migrator.
