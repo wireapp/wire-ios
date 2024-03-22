@@ -45,15 +45,23 @@ public class MLSEventProcessor: MLSEventProcessing {
     // MARK: - Properties
 
     private let conversationService: ConversationServiceInterface
+    private let staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
 
     // MARK: - Life cycle
 
     convenience init(context: NSManagedObjectContext) {
-        self.init(conversationService: ConversationService(context: context))
+        self.init(
+            conversationService: ConversationService(context: context),
+            staleKeyMaterialDetector: StaleMLSKeyDetector(context: context)
+        )
     }
 
-    init(conversationService: ConversationServiceInterface) {
+    init(
+        conversationService: ConversationServiceInterface,
+        staleKeyMaterialDetector: StaleMLSKeyDetectorProtocol
+    ) {
         self.conversationService = conversationService
+        self.staleKeyMaterialDetector = staleKeyMaterialDetector
     }
 
     // MARK: - Update conversation
@@ -140,36 +148,20 @@ public class MLSEventProcessor: MLSEventProcessing {
         mlsService: MLSServiceInterface,
         oneOnOneResolver: OneOnOneResolverInterface
     ) async {
-        do {
-            let groupID = try await mlsService.processWelcomeMessage(welcomeMessage: welcomeMessage)
-            await mlsService.uploadKeyPackagesIfNeeded()
-            await conversationService.syncConversationIfMissing(qualifiedID: conversationID)
+        guard let (conversation, groupID) = await context.perform({
+            let conversation = ZMConversation.fetch(with: conversationID, in: context)
+            return (conversation, conversation?.mlsGroupID) as? (ZMConversation, MLSGroupID)
+        }) else { return }
 
-            let conversation: ZMConversation? = await context.perform {
-                guard let conversation = ZMConversation.fetch(
-                    with: conversationID,
-                    in: context
-                ) else {
-                    return nil
-                }
+        staleKeyMaterialDetector.keyingMaterialUpdated(for: groupID)
+        await mlsService.uploadKeyPackagesIfNeeded()
+        await conversationService.syncConversationIfMissing(qualifiedID: conversationID)
 
-                conversation.mlsGroupID = groupID
-                conversation.mlsStatus = .ready
-
-                return conversation
-            }
-
-            guard let conversation else { return }
-
-            await resolveOneOnOneConversationIfNeeded(
-                conversation: conversation,
-                oneOneOneResolver: oneOnOneResolver,
-                in: context
-            )
-        } catch {
-            WireLogger.mls.warn("MLS event processor aborting processing welcome message: \(String(describing: error))")
-            return
-        }
+        await resolveOneOnOneConversationIfNeeded(
+            conversation: conversation,
+            oneOneOneResolver: oneOnOneResolver,
+            in: context
+        )
     }
 
     private func resolveOneOnOneConversationIfNeeded(
