@@ -45,7 +45,6 @@ extension NSManagedObjectContext {
 @objcMembers
 open class FileAssetCache: NSObject {
 
-    // TODO: purge temp cache when app goes to bg / fg
     private let fileCache: FileCache
     private let tempCache: FileCache
 
@@ -789,6 +788,11 @@ public extension FileAssetCache {
         cache.deleteAssetData(key)
     }
 
+    // MARK: - Purge
+
+    func purgeTemporaryAssets() {
+        tempCache.wipeCaches()
+    }
 
 }
 
