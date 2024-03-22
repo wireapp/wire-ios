@@ -248,12 +248,20 @@ class FileAssetCacheTests: XCTestCase {
 
         // given
         let message = createMessageForCaching()
+        XCTAssertFalse(sut.hasEncryptedMediumImageData(for: message))
 
         // when
-        let result = sut.decryptFileIfItMatchesDigest(message, encryptionKey: Data.randomEncryptionKey(), sha256Digest: Data.secureRandomData(ofLength: 128))
+        let result = sut.decryptedMediumImageData(
+            for: message,
+            encryptionKey: .randomEncryptionKey(),
+            sha256Digest: .secureRandomData(
+                length: 128
+            )
+        )
 
         // then
-        XCTAssertFalse(result)
+        XCTAssertNil(result)
+        XCTAssertFalse(sut.hasEncryptedMediumImageData(for: message))
     }
 
     // @SF.Messages @TSFI.RESTfulAPI @S0.1 @S0.2 @S0.3
@@ -261,34 +269,43 @@ class FileAssetCacheTests: XCTestCase {
 
         // given
         let message = createMessageForCaching()
-        sut.storeAssetData(message, encrypted: true, data: testData())
+        sut.storeEncryptedMediumImage(data: testData(), for: message)
+        XCTAssertTrue(sut.hasEncryptedMediumImageData(for: message))
 
         // when
-        let result = sut.decryptFileIfItMatchesDigest(message, encryptionKey: Data.randomEncryptionKey(), sha256Digest: Data.secureRandomData(ofLength: 128))
-        XCTAssertFalse(result)
+        let result = sut.decryptedMediumImageData(
+            for: message,
+            encryptionKey: .randomEncryptionKey(),
+            sha256Digest: .secureRandomData(
+                length: 128
+            )
+        )
 
         // then
-        let extractedData = sut.assetData(message, encrypted: true)
-        XCTAssertNil(extractedData)
+        XCTAssertNil(result)
+        XCTAssertFalse(sut.hasEncryptedMediumImageData(for: message))
     }
 
     // @SF.Messages @TSFI.RESTfulAPI @S0.1 @S0.2 @S0.3
-    func testThatItDoesDecryptAndDeletesAFileWithTheRightSHA256() throws {
+    func testThatItDoesDecryptAFileWithTheRightSHA256() throws {
 
         // given
         let message = createMessageForCaching()
         let plainTextData = Data.secureRandomData(ofLength: 500)
         let key = Data.randomEncryptionKey()
         let encryptedData = try plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
-        sut.storeAssetData(message, encrypted: true, data: encryptedData)
         let sha = encryptedData.zmSHA256Digest()
+        sut.storeEncryptedMediumImage(data: encryptedData, for: message)
+        XCTAssertTrue(sut.hasEncryptedMediumImageData(for: message))
 
         // when
-        let result = sut.decryptFileIfItMatchesDigest(message, encryptionKey: key, sha256Digest: sha)
+        let decryptedData = try XCTUnwrap(sut.decryptedMediumImageData(
+            for: message,
+            encryptionKey: key,
+            sha256Digest: sha
+        ))
 
         // then
-        XCTAssertTrue(result)
-        let decryptedData = sut.assetData(message, encrypted: false)
         XCTAssertEqual(decryptedData, plainTextData)
     }
 
@@ -365,8 +382,7 @@ class FileAssetCacheTests: XCTestCase {
         // given
         let message = createMessageForCaching()
         let plainData = Data.secureRandomData(ofLength: 500)
-
-        sut.storeAssetData(message, format: .medium, encrypted: false, data: plainData)
+        sut.storeMediumImage(data: plainData, for: message)
 
         // when
         _ = sut.encryptImageAndComputeSHA256Digest(message, format: .medium)
@@ -380,8 +396,7 @@ class FileAssetCacheTests: XCTestCase {
         // given
         let message = createMessageForCaching()
         let plainData = Data.secureRandomData(ofLength: 500)
-
-        sut.storeAssetData(message, format: .medium, encrypted: false, data: plainData)
+        sut.storeMediumImage(data: plainData, for: message)
 
         // when
         let result = sut.encryptImageAndComputeSHA256Digest(message, format: .medium)
@@ -431,81 +446,19 @@ class FileAssetCacheTests: XCTestCase {
 
     // MARK: - FileAssetCache
 
-    func testThatItReturnsCorrectEncryptionTeamLogoResultWithSHA256() {
-        let syncContext = coreDataStack.syncContext
-        syncContext.performGroupedBlockAndWait {
-            // given
-            let team = Team.mockTeam(context: syncContext)
-            let assetId = UUID.create().transportString(), assetKey = UUID.create().transportString()
-            team.pictureAssetId = assetId
-            team.pictureAssetKey = assetKey
-
-            let plainData = self.testData()
-
-            self.sut.storeAssetData(
-                for: team,
-                format: .medium,
-                encrypted: false,
-                data: plainData
-            )
-
-            // when
-            let encryptionKeys = self.sut.encryptImageAndComputeSHA256Digest(
-                for: team,
-                format: .medium
-            )
-
-            // then
-            let encryptedData = self.sut.assetData(
-                for: team,
-                format: .medium,
-                encrypted: true
-            )
-
-            AssertOptionalNotNil(encryptionKeys, "Result") { result in
-                AssertOptionalNotNil(encryptedData, "Encrypted data") { encryptedData in
-                    let decodedData = encryptedData.zmDecryptPrefixedPlainTextIV(key: result.otrKey)
-                    XCTAssertEqual(decodedData, plainData)
-                    let sha = encryptedData.zmSHA256Digest()
-                    XCTAssertEqual(sha, result.sha256)
-                }
-            }
-
-            // when
-            let decryptResult = self.sut.decryptImageIfItMatchesDigest(
-                for: team,
-                format: .medium,
-                encryptionKey: encryptionKeys!.otrKey
-            )
-
-            // then
-            XCTAssert(decryptResult)
-        }
-    }
-
     func testThatHasDataOnDiskForTeam() {
         // given
         let syncContext = coreDataStack.syncContext
         syncContext.performGroupedBlockAndWait {
             let team = Team.mockTeam(context: syncContext)
             team.pictureAssetId = "abc123"
-
-            self.sut.storeAssetData(
-                for: team,
-                format: .medium,
-                encrypted: false,
-                data: self.testData()
-            )
+            self.sut.storeImage(data: self.testData(), for: team)
 
             // when
-            let data = self.sut.hasDataOnDisk(
-                for: team,
-                format: .medium,
-                encrypted: false
-            )
+            let hasData = self.sut.hasImageData(for: team)
 
             // then
-            XCTAssert(data)
+            XCTAssertTrue(hasData)
         }
     }
 
@@ -515,29 +468,14 @@ class FileAssetCacheTests: XCTestCase {
             // given
             let team = Team.mockTeam(context: syncContext)
             team.pictureAssetId = "abc123"
-
-            self.sut.storeAssetData(
-                for: team,
-                format: .medium,
-                encrypted: false,
-                data: self.testData()
-            )
+            self.sut.storeImage(data: self.testData(), for: team)
+            XCTAssertTrue(self.sut.hasImageData(for: team))
 
             // when
-            self.sut.deleteAssetData(
-                for: team,
-                format: .medium,
-                encrypted: false
-            )
-
-            let extractedData = self.sut.assetData(
-                for: team,
-                format: .medium,
-                encrypted: false
-            )
+            self.sut.deleteImageData(for: team)
 
             // then
-            XCTAssertNil(extractedData)
+            XCTAssertFalse(self.sut.hasImageData(for: team))
         }
     }
 

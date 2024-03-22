@@ -276,6 +276,26 @@ open class FileAssetCache: NSObject {
         return cache.assetData(key)
     }
 
+    public func decryptedMediumImageData(
+        for message: ZMConversationMessage,
+        encryptionKey: Data,
+        sha256Digest: Data
+    ) -> Data? {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .medium,
+            encrypted: true
+        ) else {
+            return nil
+        }
+
+        return decryptData(
+            key: key,
+            encryptionKey: encryptionKey,
+            sha256Digest: sha256Digest
+        )
+    }
+
     // MARK: - Preview images
 
     @objc(storePreviewImageData:forMessage:)
@@ -376,7 +396,8 @@ open class FileAssetCache: NSObject {
 
     public func temporaryURLForDecryptedFile(
         for message: ZMConversationMessage,
-        encryptionKey: Data
+        encryptionKey: Data,
+        sha256Digest: Data
     ) -> URL? {
         guard let unencryptedKey = Self.cacheKeyForAsset(
             message,
@@ -396,8 +417,11 @@ open class FileAssetCache: NSObject {
                 message,
                 encrypted: true
             ),
-            let encryptedData = cache.assetData(encryptedKey),
-            let decryptedData = encryptedData.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
+            let decryptedData = decryptData(
+                key: encryptedKey,
+                encryptionKey: encryptionKey,
+                sha256Digest: sha256Digest
+            )
         else {
             return nil
         }
@@ -539,6 +563,25 @@ open class FileAssetCache: NSObject {
         }
     }
 
+    // MARK: - Decryption
+
+    public func decryptData(
+        key: String,
+        encryptionKey: Data,
+        sha256Digest: Data
+    ) -> Data? {
+        guard let encryptedData = cache.assetData(key) else {
+            return nil
+        }
+
+        guard encryptedData.zmSHA256Digest() == sha256Digest else {
+            cache.deleteAssetData(key)
+            return nil
+        }
+
+        return encryptedData.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
+    }
+
     // MARK: - Purge
 
     public func purgeTemporaryAssets() {
@@ -549,15 +592,6 @@ open class FileAssetCache: NSObject {
 
     open func assetData(_ key: String) -> Data? {
         return cache.assetData(key)
-    }
-
-    public func assetData(
-        key: String,
-        encryptionKey: Data,
-        digest: Data
-    ) -> Data? {
-        let data = assetData(key)
-        return data?.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
     }
 
     // MARK: - Conversation message

@@ -84,10 +84,10 @@ private let zmLog = ZMSLog(tag: "AssetV3")
                 let mediumKey,
                 let key,
                 let digest,
-                let data = cache.assetData(
+                let data = cache.decryptData(
                     key: mediumKey,
                     encryptionKey: key,
-                    digest: digest
+                    sha256Digest: digest
                 )
             {
                 completionHandler(data)
@@ -131,10 +131,14 @@ private let zmLog = ZMSLog(tag: "AssetV3")
         }
 
         if
-            let data = cache.encryptedMediumImageData(for: assetClientMessage),
-            let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded
+            let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded,
+            let data = cache.decryptedMediumImageData(
+                for: assetClientMessage,
+                encryptionKey: asset.otrKey,
+                sha256Digest: asset.sha256
+            )
         {
-            return data.zmDecryptPrefixedPlainTextIV(key: asset.otrKey)
+            return data
         } else if let data = cache.mediumImageData(for: assetClientMessage) {
             return data
         } else if let data = cache.originalImageData(for: assetClientMessage) {
@@ -211,7 +215,8 @@ extension V3Asset: AssetProxyType {
 
             return moc.zm_fileAssetCache.temporaryURLForDecryptedFile(
                 for: assetClientMessage,
-                encryptionKey: asset.otrKey
+                encryptionKey: asset.otrKey,
+                sha256Digest: asset.sha256
             )
         } else if moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, encrypted: false) {
             return moc.zm_fileAssetCache.accessAssetURL(assetClientMessage)

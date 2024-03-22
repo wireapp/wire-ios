@@ -62,10 +62,10 @@ public class V2Asset: NSObject, ZMImageMessageData {
                 let mediumEncryptedKey,
                 let key,
                 let digest,
-                let data = cache.assetData(
+                let data = cache.decryptData(
                     key: mediumEncryptedKey,
                     encryptionKey: key,
-                    digest: digest
+                    sha256Digest: digest
                 )
             {
                 completionHandler(data)
@@ -114,8 +114,12 @@ public class V2Asset: NSObject, ZMImageMessageData {
             return nil
         }
 
-        if let data = cache.encryptedMediumImageData(for: assetClientMessage) {
-            return data.zmDecryptPrefixedPlainTextIV(key: asset.otrKey)
+        if let data = cache.decryptedMediumImageData(
+            for: assetClientMessage,
+            encryptionKey: asset.otrKey,
+            sha256Digest: asset.sha256
+        ) {
+            return data
         } else if let data = cache.mediumImageData(for: assetClientMessage) {
             return data
         } else {
@@ -219,7 +223,8 @@ extension V2Asset: AssetProxyType {
 
             return cache.temporaryURLForDecryptedFile(
                 for: assetClientMessage,
-                encryptionKey: asset.otrKey
+                encryptionKey: asset.otrKey,
+                sha256Digest: asset.sha256
             )
         } else if cache.hasDataOnDisk(assetClientMessage, encrypted: false) {
             return cache.accessAssetURL(assetClientMessage)
