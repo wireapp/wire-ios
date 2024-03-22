@@ -484,7 +484,8 @@ extension ZMUser: UserConnections {
         }
 
         let mlsService = context.performAndWait { context.mlsService }
-        let resolver = OneOnOneResolver(mlsService: mlsService)
+        let migrator = mlsService.map(OneOnOneMigrator.init(mlsService:))
+        let resolver = OneOnOneResolver(migrator: migrator)
 
         accept(
             oneOnOneResolver: resolver,

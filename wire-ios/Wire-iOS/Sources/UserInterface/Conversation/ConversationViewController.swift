@@ -398,7 +398,7 @@ final class ConversationViewController: UIViewController {
                     return
                 }
 
-                let service = OneOnOneResolver(mlsService: mlsService)
+                let service = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
                 let resolvedState = try await service.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
 
                 if case .migratedToMLSGroup(let identifier) = resolvedState {

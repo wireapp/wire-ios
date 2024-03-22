@@ -62,7 +62,8 @@ final class EvaluateOneOnOneConversationsStrategy: AbstractRequestStrategy {
 
             do {
                 let mlsService = await syncContext.perform { syncContext.mlsService }
-                let resolver = OneOnOneResolver(mlsService: mlsService)
+                let migrator = mlsService.map(OneOnOneMigrator.init(mlsService:))
+                let resolver = OneOnOneResolver(migrator: migrator)
                 try await resolver.resolveAllOneOnOneConversations(in: syncContext)
 
                 await syncContext.perform {

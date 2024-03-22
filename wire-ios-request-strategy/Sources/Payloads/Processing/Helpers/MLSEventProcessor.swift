@@ -117,13 +117,14 @@ public class MLSEventProcessor: MLSEventProcessing {
         guard let mlsService = await context.perform({ context.mlsService }) else {
             return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
         }
+        let migrator = OneOnOneMigrator(mlsService: mlsService)
 
         await process(
             welcomeMessage: welcomeMessage,
             conversationID: conversationID,
             in: context,
             mlsService: mlsService,
-            oneOnOneResolver: OneOnOneResolver(mlsService: mlsService)
+            oneOnOneResolver: OneOnOneResolver(migrator: migrator)
         )
     }
 

@@ -461,7 +461,8 @@ public final class ZMUserSession: NSObject {
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults
         )
-        self.mlsService = mlsService ?? MLSService(
+
+        let mlsService = mlsService ?? MLSService(
             context: coreDataStack.syncContext,
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
@@ -469,6 +470,7 @@ public final class ZMUserSession: NSObject {
             syncStatus: applicationStatusDirectory.syncStatus,
             userID: coreDataStack.account.userIdentifier
         )
+        self.mlsService = mlsService
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
 
@@ -480,7 +482,7 @@ public final class ZMUserSession: NSObject {
         self.useCaseFactory = useCaseFactory ?? UseCaseFactory(
             context: coreDataStack.syncContext,
             supportedProtocolService: SupportedProtocolsService(context: coreDataStack.syncContext),
-            oneOnOneResolver: OneOnOneResolver(mlsService: mlsService)
+            oneOnOneResolver: OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
         )
         let e2eIVerificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
         self.updateMLSGroupVerificationStatus = UpdateMLSGroupVerificationStatusUseCase(
