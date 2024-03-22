@@ -102,7 +102,7 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         guard let uiMOC = managedObjectContext.zm_userInterface else {
             return
         }
-        
+
         NotificationDispatcher.notifyNonCoreDataChanges(
             objectID: assetClientMessage.objectID,
             changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedPreview)],
