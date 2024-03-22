@@ -101,8 +101,6 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Properties
 
-    // TODO: set database key and salt
-    public let encryptor: EAREncryptorProtocol = EAREncryptor()
     public weak var delegate: EARServiceDelegate?
 
     private let accountID: UUID
