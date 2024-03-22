@@ -61,84 +61,33 @@ open class FileAssetCache: NSObject {
         super.init()
     }
 
-    open func assetData(_ key: String) -> Data? {
-        return cache.assetData(key)
-    }
-
-    public func assetData(
-        key: String,
-        encryptionKey: Data,
-        digest: Data
-    ) -> Data? {
-        let data = assetData(key)
-        return data?.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
-    }
-
     // MARK: - Team logo
 
-    open func hasDataOnDisk(
+    private func cacheKey(
         for team: Team,
-        format: ZMImageFormat,
-        encrypted: Bool
-    ) -> Bool {
-        guard let key = Self.cacheKeyForAsset(
-            for: team,
-            format: format,
-            encrypted: encrypted
-        ) else {
-            return false
-        }
-
-        return cache.hasDataForKey(key)
-    }
-
-    /// Returns the team logo image asset data for a team.
-    ///
-    /// This will probably cause I/O.
-    ///
-    /// - Parameters:
-    ///   - team: the team of the logo image
-    ///   - format: the format of the image
-    ///   - encrypted: encrypted or not
-    ///
-    /// - Returns: the image data
-
-    open func assetData(
-        for team: Team,
-        format: ZMImageFormat,
-        encrypted: Bool
-    ) -> Data? {
-        guard let key = Self.cacheKeyForAsset(
-            for: team,
-            format: format,
-            encrypted: encrypted
-        ) else {
+        format: ZMImageFormat
+    ) -> String? {
+        guard
+            let teamID = team.remoteIdentifier?.uuidString,
+            let assetID = team.pictureAssetId
+        else {
             return nil
         }
 
-        return cache.assetData(key)
+        return [teamID, assetID, format.stringValue]
+            .joined(separator: "_")
+            .data(using: .utf8)?
+            .zmSHA256Digest()
+            .zmHexEncodedString()
     }
 
-    /// Sets the image asset data for a team.
-    ///
-    /// This will cause I/O.
-    ///
-    /// - Parameters:
-    ///   - team: the team of the logo image
-    ///   - format: the format of the image
-    ///   - encrypted: encrypted or not
-    ///   - data: the image data
-
-    open func storeAssetData(
-        for team: Team,
-        format: ZMImageFormat,
-        encrypted: Bool,
-        data: Data
+    public func storeImage(
+        data: Data,
+        for team: Team
     ) {
-        guard let key = Self.cacheKeyForAsset(
+        guard let key = cacheKey(
             for: team,
-            format: format,
-            encrypted: encrypted
+            format: .medium
         ) else {
             return
         }
@@ -150,62 +99,52 @@ open class FileAssetCache: NSObject {
         )
     }
 
-    /// Deletes the image data for a given message.
-    ///
-    /// This will cause I/O.
-    ///
-    /// - Parameters:
-    ///   - team: the team of the logo image
-    ///   - format: the format of the image
-    ///   - encrypted: encrypted or not
-
-    open func deleteAssetData(
-        for team: Team,
-        format: ZMImageFormat,
-        encrypted: Bool
-    ) {
-        guard let key = Self.cacheKeyForAsset(
+    public func hasImageData(for team: Team) -> Bool {
+        guard let key = cacheKey(
             for: team,
-            format: format,
-            encrypted: encrypted
+            format: .medium
+        ) else {
+            return false
+        }
+
+        return cache.hasDataForKey(key)
+    }
+
+    public func imageData(for team: Team) -> Data? {
+        guard let key = cacheKey(
+            for: team,
+            format: .medium
+        ) else {
+            return nil
+        }
+
+        return cache.assetData(key)
+    }
+
+    public func deleteImageData(for team: Team) {
+        guard let key = cacheKey(
+            for: team,
+            format: .medium
         ) else {
             return
         }
 
-        cache.deleteAssetData(key)
+        return cache.deleteAssetData(key)
     }
 
-    public static func cacheKeyForAsset(
-        for team: Team,
-        format: ZMImageFormat,
-        encrypted: Bool = false
-    ) -> String? {
-        return cacheKeyForAsset(
-            for: team,
-            identifier: format.stringValue,
-            encrypted: encrypted
-        )
+    // MARK: - Asset data
+
+    open func assetData(_ key: String) -> Data? {
+        return cache.assetData(key)
     }
 
-    public static func cacheKeyForAsset(
-        for team: Team,
-        identifier: String? = nil,
-        encrypted: Bool = false
-    ) -> String? {
-        guard
-            let teamID = team.remoteIdentifier?.uuidString,
-            let assetID = team.pictureAssetId
-        else {
-            return nil
-        }
-
-        let key = [teamID, assetID, identifier, encrypted ? "encrypted" : nil]
-            .compactMap { $0 }
-            .joined(separator: "_")
-
-        return key.data(using: .utf8)?
-            .zmSHA256Digest()
-            .zmHexEncodedString()
+    public func assetData(
+        key: String,
+        encryptionKey: Data,
+        digest: Data
+    ) -> Data? {
+        let data = assetData(key)
+        return data?.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
     }
 
     // MARK: - Conversation message
@@ -450,69 +389,9 @@ open class FileAssetCache: NSObject {
 
 }
 
-// MARK: - New file asset cache
-
 public extension FileAssetCache {
 
-    // MARK: - Team logos
-
-    func storeImage(
-        data: Data,
-        for team: Team
-    ) {
-        guard let key = Self.cacheKeyForAsset(
-            for: team,
-            format: .medium
-        ) else {
-            return
-        }
-
-        cache.storeAssetData(
-            data,
-            key: key,
-            createdAt: Date()
-        )
-    }
-
-    func hasImageData(
-        for team: Team
-    ) -> Bool {
-        guard let key = Self.cacheKeyForAsset(
-            for: team,
-            format: .medium
-        ) else {
-            return false
-        }
-
-        return cache.hasDataForKey(key)
-    }
-
-    func imageData(
-        for team: Team
-    ) -> Data? {
-        guard let key = Self.cacheKeyForAsset(
-            for: team,
-            format: .medium
-        ) else {
-            return nil
-        }
-
-        return cache.assetData(key)
-    }
-
-    func deleteImageData(
-        for team: Team
-    ) {
-        guard let key = Self.cacheKeyForAsset(
-            for: team,
-            format: .medium
-        ) else {
-            return
-        }
-
-        return cache.deleteAssetData(key)
-    }
-
+    
     // MARK: - Original images
 
     @objc(storeOriginalImageData:forMessage:)
