@@ -40,6 +40,18 @@ public struct ModelHelper {
     }
 
     @discardableResult
+    public func createSelfUser(
+        qualifiedID: QualifiedID,
+        domain: String? = nil,
+        in context: NSManagedObjectContext
+    ) -> ZMUser {
+        let selfUser = ZMUser.selfUser(in: context)
+        selfUser.remoteIdentifier = qualifiedID.uuid
+        selfUser.domain = domain
+        return selfUser
+    }
+
+    @discardableResult
     public func createUser(
         id: UUID = .init(),
         domain: String? = nil,

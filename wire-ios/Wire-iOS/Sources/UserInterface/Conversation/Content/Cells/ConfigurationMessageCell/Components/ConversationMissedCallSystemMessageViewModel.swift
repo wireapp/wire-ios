@@ -21,7 +21,7 @@ import WireCommonComponents
 import UIKit
 import WireDataModel
 
-struct CallCellViewModel {
+struct ConversationMissedCallSystemMessageViewModel {
 
     let icon: StyleKitIcon
     let iconColor: UIColor?
@@ -35,47 +35,30 @@ struct CallCellViewModel {
     }
 
     func attributedTitle() -> NSAttributedString? {
-        guard let systemMessageData = message.systemMessageData,
+        guard
+            let systemMessageData = message.systemMessageData,
             let sender = message.senderUser,
             let labelFont = font,
             let labelTextColor = textColor,
             systemMessageData.systemMessageType == systemMessageType
-            else { return nil }
-
-        let senderString: String
-        var called = NSAttributedString()
-        let childs = systemMessageData.childMessages.count
-
-        if systemMessageType == .missedCall {
-
-            var detailKey = "missed-call"
-
-            if message.conversationLike?.conversationType == .group {
-                detailKey.append(".groups")
-            }
-
-            senderString = sender.isSelfUser ? selfKey(with: detailKey).localized : (sender.name ?? "")
-            called = key(with: detailKey).localized(pov: sender.pov, args: childs + 1, senderString) && labelFont
-        } else {
-            let detailKey = "called"
-            senderString = sender.isSelfUser ? selfKey(with: detailKey).localized : (sender.name ?? "")
-            called = key(with: detailKey).localized(pov: sender.pov, args: senderString) && labelFont
+        else {
+            return nil
         }
 
-        var title = called
+        let numberOfCalls = systemMessageData.childMessages.count + 1
+        var detailKey = "content.system.call.missed-call"
 
-        if childs > 0 {
-            title += " (\(childs + 1))" && labelFont
+        if message.conversationLike?.conversationType == .group {
+            detailKey.append(".groups")
+        }
+
+        let senderString = sender.name ?? ""
+        var title = detailKey.localized(args: numberOfCalls, senderString) && labelFont
+
+        if numberOfCalls > 1 {
+            title += " (\(numberOfCalls))" && labelFont
         }
 
         return title && labelTextColor
-    }
-
-    private func key(with component: String) -> String {
-        return "content.system.call.\(component)"
-    }
-
-    private func selfKey(with component: String) -> String {
-        return "\(key(with: component)).you"
     }
 }
