@@ -297,7 +297,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: false, data: .secureRandomData(length: 42))
+            self.syncMOC.zm_fileAssetCache.storeMediumImage(data: .secureRandomData(length: 42), for: message)
 
             do {
                 try message.setUnderlyingMessage(previewGenericMessage)
