@@ -31,13 +31,6 @@ public protocol OneOnOneResolverInterface {
 
 }
 
-enum OneOnOneResolverError: Error {
-
-    case migratorNotFound
-    case mlsServiceNotFound
-
-}
-
 public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     // MARK: - Dependencies
@@ -48,9 +41,7 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     // MARK: - Initializer
 
     public convenience init(mlsService: MLSServiceInterface?) {
-        self.init(
-            migrator: mlsService.map(OneOnOneMigrator.init(mlsService:))
-        )
+        self.init(migrator: mlsService.map(OneOnOneMigrator.init(mlsService:)))
     }
 
     public init(
