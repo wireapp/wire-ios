@@ -2721,61 +2721,6 @@ public class MockE2EIVerificationStatusServiceInterface: E2EIVerificationStatusS
 
 }
 
-public class MockEAREncryptorProtocol: EAREncryptorProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - encryptData
-
-    public var encryptData_Invocations: [Data] = []
-    public var encryptData_MockError: Error?
-    public var encryptData_MockMethod: ((Data) throws -> (ciphertext: Data, nonce: Data))?
-    public var encryptData_MockValue: (ciphertext: Data, nonce: Data)?
-
-    public func encryptData(_ data: Data) throws -> (ciphertext: Data, nonce: Data) {
-        encryptData_Invocations.append(data)
-
-        if let error = encryptData_MockError {
-            throw error
-        }
-
-        if let mock = encryptData_MockMethod {
-            return try mock(data)
-        } else if let mock = encryptData_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `encryptData`")
-        }
-    }
-
-    // MARK: - decryptData
-
-    public var decryptDataNonce_Invocations: [(data: Data, nonce: Data)] = []
-    public var decryptDataNonce_MockError: Error?
-    public var decryptDataNonce_MockMethod: ((Data, Data) throws -> Data)?
-    public var decryptDataNonce_MockValue: Data?
-
-    public func decryptData(_ data: Data, nonce: Data) throws -> Data {
-        decryptDataNonce_Invocations.append((data: data, nonce: nonce))
-
-        if let error = decryptDataNonce_MockError {
-            throw error
-        }
-
-        if let mock = decryptDataNonce_MockMethod {
-            return try mock(data, nonce)
-        } else if let mock = decryptDataNonce_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `decryptDataNonce`")
-        }
-    }
-
-}
-
 class MockEARKeyEncryptorInterface: EARKeyEncryptorInterface {
 
     // MARK: - Life cycle
@@ -3028,15 +2973,6 @@ public class MockEARServiceInterface: EARServiceInterface {
     // MARK: - Life cycle
 
     public init() {}
-
-    // MARK: - encryptor
-
-    public var encryptor: EAREncryptorProtocol {
-        get { return underlyingEncryptor }
-        set(value) { underlyingEncryptor = value }
-    }
-
-    public var underlyingEncryptor: EAREncryptorProtocol!
 
     // MARK: - delegate
 
