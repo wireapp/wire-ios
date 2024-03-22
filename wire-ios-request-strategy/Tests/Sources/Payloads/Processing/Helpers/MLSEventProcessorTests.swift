@@ -28,6 +28,7 @@ final class MLSEventProcessorTests: MessagingTestBase {
     var mlsServiceMock: MockMLSServiceInterface!
     var conversationServiceMock: MockConversationServiceInterface!
     var oneOnOneResolverMock: MockOneOnOneResolverInterface!
+    var staleKeyMaterialDetectorMock: MockStaleMLSKeyDetectorProtocol!
 
     var conversation: ZMConversation!
     var qualifiedID: QualifiedID!
@@ -50,6 +51,9 @@ final class MLSEventProcessorTests: MessagingTestBase {
         conversationServiceMock.syncConversationQualifiedID_MockMethod = { _ in }
         conversationServiceMock.syncConversationIfMissingQualifiedID_MockMethod = { _ in }
 
+        staleKeyMaterialDetectorMock = .init()
+        staleKeyMaterialDetectorMock.keyingMaterialUpdatedFor_MockMethod = { _ in }
+
         syncMOC.performGroupedBlockAndWait {
             self.syncMOC.mlsService = self.mlsServiceMock
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
@@ -59,7 +63,10 @@ final class MLSEventProcessorTests: MessagingTestBase {
             self.conversation.messageProtocol = .mls
         }
 
-        sut = MLSEventProcessor(conversationService: conversationServiceMock)
+        sut = MLSEventProcessor(
+            conversationService: conversationServiceMock,
+            staleKeyMaterialDetector: staleKeyMaterialDetectorMock
+        )
     }
 
     override func tearDown() {
@@ -80,9 +87,8 @@ final class MLSEventProcessorTests: MessagingTestBase {
         let message = "welcome message"
 
         await syncMOC.perform {
-            self.conversation.mlsStatus = .pendingJoin
+            self.conversation.mlsStatus = .ready
             self.conversation.conversationType = .group
-            XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
         }
 
         // When
@@ -95,14 +101,10 @@ final class MLSEventProcessorTests: MessagingTestBase {
         )
 
         // Then
-        XCTAssertEqual(mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations, [message])
+        XCTAssertEqual(staleKeyMaterialDetectorMock.keyingMaterialUpdatedFor_Invocations.count, 1)
         XCTAssertEqual(mlsServiceMock.uploadKeyPackagesIfNeeded_Invocations.count, 1)
         XCTAssertEqual(conversationServiceMock.syncConversationIfMissingQualifiedID_Invocations, [qualifiedID])
         XCTAssertTrue(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.isEmpty)
-
-        await syncMOC.perform {
-            XCTAssertEqual(self.conversation.mlsStatus, .ready)
-        }
     }
 
     func test_itProcessesMessageAndUpdatesConversation_OneOnOneConversation() async throws {
@@ -115,9 +117,8 @@ final class MLSEventProcessorTests: MessagingTestBase {
         )
 
         await syncMOC.perform {
-            self.conversation.mlsStatus = .pendingJoin
+            self.conversation.mlsStatus = .ready
             self.conversation.conversationType = .oneOnOne
-            XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
 
             let otherUser = self.createUser()
             otherUser.remoteIdentifier = otherUserID.uuid
@@ -142,16 +143,11 @@ final class MLSEventProcessorTests: MessagingTestBase {
         )
 
         // Then
-
-        XCTAssertEqual(mlsServiceMock.processWelcomeMessageWelcomeMessage_Invocations, [message])
+        XCTAssertEqual(staleKeyMaterialDetectorMock.keyingMaterialUpdatedFor_Invocations.count, 1)
         XCTAssertEqual(mlsServiceMock.uploadKeyPackagesIfNeeded_Invocations.count, 1)
         XCTAssertEqual(conversationServiceMock.syncConversationIfMissingQualifiedID_Invocations, [qualifiedID])
         XCTAssertEqual(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.count, 1)
         XCTAssertEqual(oneOnOneResolverMock.resolveOneOnOneConversationWithIn_Invocations.first?.userID, otherUserID)
-
-        await syncMOC.perform {
-            XCTAssertEqual(self.conversation.mlsStatus, .ready)
-        }
     }
 
     // MARK: - Update Conversation
