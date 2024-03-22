@@ -24,8 +24,6 @@ import LocalAuthentication
 /// sourcery: AutoMockable
 public protocol EARServiceInterface: AnyObject {
 
-    var encryptor: EAREncryptorProtocol { get }
-
     var delegate: EARServiceDelegate? { get set }
 
     /// Enable encryption at rest.
