@@ -4027,6 +4027,29 @@ public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
         }
     }
 
+    // MARK: - processWelcomeMessage
+
+    public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
+    public var processWelcomeMessageWelcomeMessage_MockError: Error?
+    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
+    public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
+
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
+        processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
+
+        if let error = processWelcomeMessageWelcomeMessage_MockError {
+            throw error
+        }
+
+        if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
+            return try await mock(welcomeMessage)
+        } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `processWelcomeMessageWelcomeMessage`")
+        }
+    }
+
 }
 
 public class MockMLSEncryptionServiceInterface: MLSEncryptionServiceInterface {
@@ -4193,29 +4216,6 @@ public class MockMLSServiceInterface: MLSServiceInterface {
             return mock
         } else {
             fatalError("no mock for `conversationExistsGroupID`")
-        }
-    }
-
-    // MARK: - processWelcomeMessage
-
-    public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
-    public var processWelcomeMessageWelcomeMessage_MockError: Error?
-    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
-    public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
-
-    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
-        processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
-
-        if let error = processWelcomeMessageWelcomeMessage_MockError {
-            throw error
-        }
-
-        if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
-            return try await mock(welcomeMessage)
-        } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `processWelcomeMessageWelcomeMessage`")
         }
     }
 
@@ -4620,6 +4620,29 @@ public class MockMLSServiceInterface: MLSServiceInterface {
             return mock
         } else {
             fatalError("no mock for `decryptMessageForSubconversationType`")
+        }
+    }
+
+    // MARK: - processWelcomeMessage
+
+    public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
+    public var processWelcomeMessageWelcomeMessage_MockError: Error?
+    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
+    public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
+
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
+        processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
+
+        if let error = processWelcomeMessageWelcomeMessage_MockError {
+            throw error
+        }
+
+        if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
+            return try await mock(welcomeMessage)
+        } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `processWelcomeMessageWelcomeMessage`")
         }
     }
 
@@ -5074,6 +5097,48 @@ class MockProteusToMLSMigrationStorageInterface: ProteusToMLSMigrationStorageInt
 
     var underlyingMigrationStatus: ProteusToMLSMigrationCoordinator.MigrationStatus!
 
+
+}
+
+public class MockStaleMLSKeyDetectorProtocol: StaleMLSKeyDetectorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - refreshIntervalInDays
+
+    public var refreshIntervalInDays: UInt {
+        get { return underlyingRefreshIntervalInDays }
+        set(value) { underlyingRefreshIntervalInDays = value }
+    }
+
+    public var underlyingRefreshIntervalInDays: UInt!
+
+    // MARK: - groupsWithStaleKeyingMaterial
+
+    public var groupsWithStaleKeyingMaterial: Set<MLSGroupID> {
+        get { return underlyingGroupsWithStaleKeyingMaterial }
+        set(value) { underlyingGroupsWithStaleKeyingMaterial = value }
+    }
+
+    public var underlyingGroupsWithStaleKeyingMaterial: Set<MLSGroupID>!
+
+
+    // MARK: - keyingMaterialUpdated
+
+    public var keyingMaterialUpdatedFor_Invocations: [MLSGroupID] = []
+    public var keyingMaterialUpdatedFor_MockMethod: ((MLSGroupID) -> Void)?
+
+    public func keyingMaterialUpdated(for groupID: MLSGroupID) {
+        keyingMaterialUpdatedFor_Invocations.append(groupID)
+
+        guard let mock = keyingMaterialUpdatedFor_MockMethod else {
+            fatalError("no mock for `keyingMaterialUpdatedFor`")
+        }
+
+        mock(groupID)
+    }
 
 }
 
