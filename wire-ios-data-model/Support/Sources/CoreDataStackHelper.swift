@@ -26,15 +26,17 @@ public struct CoreDataStackHelper {
     public var storageDirectory: URL {
         var path = fileManager.temporaryDirectory
         if #available(iOS 16, *) {
-            path.append(path: "CoreDataStackHelper", directoryHint: .isDirectory)
+            path.append(path: uniquePath, directoryHint: .isDirectory)
         } else {
-            path.appendPathComponent("CoreDataStackHelper", isDirectory: true)
+            path.appendPathComponent(uniquePath, isDirectory: true)
         }
         return path
     }
 
-    public init() {
+    var uniquePath: String
 
+    public init() {
+        self.uniquePath = UUID().uuidString
     }
 
     public func createStack() async throws -> CoreDataStack {
