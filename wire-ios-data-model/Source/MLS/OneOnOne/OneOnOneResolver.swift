@@ -44,25 +44,21 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
 
     private let protocolSelector: OneOnOneProtocolSelectorInterface
     private let migrator: OneOnOneMigratorInterface?
-    private let mlsService: MLSServiceInterface?
 
     // MARK: - Initializer
 
     public convenience init(mlsService: MLSServiceInterface?) {
         self.init(
-            migrator: mlsService.flatMap(OneOnOneMigrator.init(mlsService:)),
-            mlsService: mlsService
+            migrator: mlsService.map(OneOnOneMigrator.init(mlsService:))
         )
     }
 
     public init(
         protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
-        migrator: OneOnOneMigratorInterface?,
-        mlsService: MLSServiceInterface?
+        migrator: OneOnOneMigratorInterface?
     ) {
         self.protocolSelector = protocolSelector
         self.migrator = migrator
-        self.mlsService = mlsService
     }
 
     // MARK: - Resolve
@@ -164,62 +160,12 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             throw OneOnOneResolverError.migratorNotFound
         }
 
-        guard let mlsService else {
-            throw OneOnOneResolverError.mlsServiceNotFound
-        }
-
-        let mlsGroupID = try await syncMLSConversationFromBackend(
+        let mlsGroupID = try await migrator.migrateToMLS(
             userID: userID,
             in: context
         )
 
-        if await mlsService.conversationExists(groupID: mlsGroupID) {
-            return .noAction
-        }
-
-        guard let epoch = await fetchMLSConversationEpoch(mlsGroupID: mlsGroupID, in: context) else {
-            throw MigrateMLSOneOnOneConversationError.missingConversationEpoch
-        }
-
-        if epoch == 0 {
-            // migrate to a new conversation
-            try await migrator.migrateToMLS(
-                userID: userID,
-                mlsGroupID: mlsGroupID,
-                in: context
-            )
-        } else {
-            // join existing conversation via external commit
-            try await mlsService.joinGroup(with: mlsGroupID)
-        }
-
         return .migratedToMLSGroup(identifier: mlsGroupID)
-    }
-
-    private func syncMLSConversationFromBackend(
-        userID: QualifiedID,
-        in context: NSManagedObjectContext
-    ) async throws -> MLSGroupID {
-        var action = SyncMLSOneToOneConversationAction(
-            userID: userID.uuid,
-            domain: userID.domain
-        )
-
-        do {
-            return try await action.perform(in: context.notificationContext)
-        } catch {
-            throw MigrateMLSOneOnOneConversationError.failedToFetchConversation(error)
-        }
-    }
-
-    private func fetchMLSConversationEpoch(
-        mlsGroupID: MLSGroupID,
-        in context: NSManagedObjectContext
-    ) async -> UInt64? {
-        await context.perform {
-            let conversation = ZMConversation.fetch(with: mlsGroupID, in: context)
-            return conversation?.epoch
-        }
     }
 
     // MARK: Resolve - Proteus
