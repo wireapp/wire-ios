@@ -37,7 +37,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     var mockSyncStatus: MockSyncStatus!
     var mockActionsProvider: MockMLSActionsProviderProtocol!
     var mockConversationEventProcessor: MockConversationEventProcessorProtocol!
-    var mockStaleMLSKeyDetector: MockStaleMLSKeyDetector!
+    var mockStaleMLSKeyDetector: MockStaleMLSKeyDetectorProtocol!
     var userDefaultsTestSuite: UserDefaults!
     var privateUserDefaults: PrivateUserDefaults<MLSService.Keys>!
     var mockSubconversationGroupIDRepository: MockSubconversationGroupIDRepositoryInterface!
@@ -61,11 +61,12 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockActionsProvider = MockMLSActionsProviderProtocol()
         mockConversationEventProcessor = MockConversationEventProcessorProtocol()
         mockConversationEventProcessor.processConversationEvents_MockMethod = { _ in }
-        mockStaleMLSKeyDetector = MockStaleMLSKeyDetector()
+        mockStaleMLSKeyDetector = MockStaleMLSKeyDetectorProtocol()
         userDefaultsTestSuite = UserDefaults.temporary()
         privateUserDefaults = PrivateUserDefaults(userID: userIdentifier, storage: userDefaultsTestSuite)
         mockSubconversationGroupIDRepository = MockSubconversationGroupIDRepositoryInterface()
 
+        mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_MockMethod = { _ in }
         mockCoreCrypto.e2eiIsEnabledCiphersuite_MockValue = false
         mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
             return 100
@@ -372,7 +373,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         XCTAssertEqual(mockCreateConversationCount, 1)
-        XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
+        XCTAssertEqual(mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_Invocations, [groupID])
     }
 
     func test_CreateGroup_ThrowsError() async throws {
@@ -422,7 +423,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         await fulfillment(of: [fetchBackendPublicKeysExpectation], timeout: 0.5)
-        XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
+        XCTAssertEqual(mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_Invocations, [groupID])
     }
 
     // MARK: - Establish group
@@ -461,7 +462,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         XCTAssertEqual(mockCreateConversationCount, 1)
-        XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
+        XCTAssertEqual(mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_Invocations, [groupID])
     }
 
     func test_EstablishGroupWithMultipleUsers_IsSuccessful() async throws {
@@ -513,7 +514,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         XCTAssertEqual(mockCreateConversationCount, 1)
-        XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
+        XCTAssertEqual(mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_Invocations, [groupID])
         XCTAssertEqual(mockMLSActionExecutor.updateKeyMaterialCount, 0)
         XCTAssertTrue(mockAddMembersCalled)
     }
@@ -1781,71 +1782,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await fulfillment(of: [countUnclaimedKeyPackages, uploadKeyPackages], timeout: 0.5)
     }
 
-    // MARK: - Welcome message
-
-    func test_ProcessWelcomeMessage_Sucess() async throws {
-        // Given
-        let groupID = MLSGroupID.random()
-        let message = Data.random().base64EncodedString()
-        let welcomeBundle = WelcomeBundle(id: groupID.data, crlNewDistributionPoints: nil)
-
-        // Mock
-        mockCoreCrypto.processWelcomeMessageWelcomeMessageCustomConfiguration_MockMethod = { _, _ in
-            welcomeBundle
-        }
-
-        var mockClientValidKeypackagesCountCount = 0
-        mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
-            mockClientValidKeypackagesCountCount += 1
-            return UInt64(self.sut.targetUnclaimedKeyPackageCount)
-        }
-
-        // When
-        _ = try await sut.processWelcomeMessage(welcomeMessage: message)
-
-        // Then
-        XCTAssertEqual(mockClientValidKeypackagesCountCount, 1)
-        XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
-    }
-
-    func test_ProcessWelcomeMessage_PublishesNewDistributionPoints() async throws {
-        // Given
-        let distributionPoint = "example.domain.com"
-        let message = Data.random().base64EncodedString()
-
-        // Mock processing welcome message return new distribution point
-        mockCoreCrypto.processWelcomeMessageWelcomeMessageCustomConfiguration_MockMethod = { _, _ in
-            return .init(
-                id: .random(),
-                crlNewDistributionPoints: [distributionPoint]
-            )
-        }
-
-        // Mock valid key packages count
-        mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
-            return UInt64(self.sut.targetUnclaimedKeyPackageCount)
-        }
-
-        // Mock new distribution points publishers
-        mockDecryptionService.onNewCRLsDistributionPoints_MockValue = PassthroughSubject<CRLsDistributionPoints, Never>().eraseToAnyPublisher()
-
-        mockMLSActionExecutor.mockOnNewCRLsDistributionPoints = PassthroughSubject<CRLsDistributionPoints, Never>().eraseToAnyPublisher
-
-        // Expect to receive new distribution point value
-        let expectation = XCTestExpectation(description: "received value")
-        let cancellable = sut.onNewCRLsDistributionPoints().sink { value in
-            XCTAssertEqual(value, CRLsDistributionPoints(from: [distributionPoint]))
-            expectation.fulfill()
-        }
-
-        // When
-        _ = try await sut.processWelcomeMessage(welcomeMessage: message)
-
-        // Then
-        await fulfillment(of: [expectation], timeout: 0.5)
-        cancellable.cancel()
-    }
-
     // MARK: - Update key material
 
     func test_UpdateKeyMaterial() async throws {
@@ -1885,7 +1821,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then we informed the detector.
         XCTAssertEqual(
-            Set(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated),
+            Set(mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_Invocations),
             Set([group1, group2])
         )
 
