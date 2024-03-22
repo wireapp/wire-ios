@@ -853,6 +853,101 @@ public extension FileAssetCache {
         tempCache.wipeCaches()
     }
 
+    // MARK: - Encryption
+
+    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest
+    /// of the encrypted entry.
+
+    func encryptImageAndComputeSHA256Digest(
+        _ message: ZMConversationMessage,
+        format: ZMImageFormat
+    ) -> ZMImageAssetEncryptionKeys? {
+        guard
+            let plaintextCacheKey = Self.cacheKeyForAsset(
+                message,
+                format: format,
+                encrypted: false
+            ),
+            let encryptedCacheKey = Self.cacheKeyForAsset(
+                message,
+                format: format,
+                encrypted: true
+            )
+        else {
+            return nil
+        }
+
+        let keys = encryptFileAndComputeSHA256Digest(
+            plaintextCacheKey,
+            encryptedEntryKey: encryptedCacheKey
+        )
+
+        cache.deleteAssetData(plaintextCacheKey)
+
+        return keys
+    }
+
+    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest
+    /// of the encrypted entry.
+
+    func encryptFileAndComputeSHA256Digest(
+        _ message: ZMConversationMessage
+    ) -> ZMImageAssetEncryptionKeys? {
+        guard
+            let plaintextCacheKey = Self.cacheKeyForAsset(
+                message,
+                encrypted: false
+            ),
+            let encryptedCacheKey = Self.cacheKeyForAsset(
+                message,
+                encrypted: true
+            )
+        else {
+            return nil
+        }
+
+        let keys = encryptFileAndComputeSHA256Digest(
+            plaintextCacheKey,
+            encryptedEntryKey: encryptedCacheKey
+        )
+
+        cache.deleteAssetData(plaintextCacheKey)
+
+        return keys
+    }
+
+    /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest
+    /// of the encrypted entry.
+
+    private func encryptFileAndComputeSHA256Digest(
+        _ plaintextEntryKey: String,
+        encryptedEntryKey: String
+    ) -> ZMImageAssetEncryptionKeys? {
+        guard let plainData = assetData(plaintextEntryKey) else {
+            return nil
+        }
+
+        let encryptionKey = Data.randomEncryptionKey()
+
+        do {
+            let encryptedData = try plainData.zmEncryptPrefixingPlainTextIV(key: encryptionKey)
+            let hash = encryptedData.zmSHA256Digest()
+
+            cache.storeAssetData(
+                encryptedData,
+                key: encryptedEntryKey,
+                createdAt: Date()
+            )
+
+            return ZMImageAssetEncryptionKeys(
+                otrKey: encryptionKey,
+                sha256: hash
+            )
+        } catch {
+            return nil
+        }
+    }
+
 }
 
 // MARK: - Testing
