@@ -101,19 +101,17 @@ jobs:
               id: get-cherry
               if: env.shouldCherryPick == 'true'
               run: |
-                  set -vx
-                  echo We are at commit `git rev-parse HEAD`
                   if [[ -n "${{ env.SUBMODULE_NAME }}" && "${{ env.SUBMODULE_TRACK }}" == "true" ]]; then
                     # If SUBMODULE_NAME is set
                     git reset --soft HEAD~2
-                    git commit -m "${{ env.lastCommitMessage }}"
+                    # Decode the base64-encoded string
+                    LAST_COMMIT_MESSAGE=$(echo "${{ env.lastCommitMessageBase64 }}" | base64 --decode)
+                    git commit -m "$LAST_COMMIT_MESSAGE"
                   fi
                   
                   # Get the SHA of the current commit (either squashed or not based on the condition above)
                   CHERRY_PICK_COMMIT=$(git rev-parse HEAD)
-                  # Decode the base64-encoded string
-                  LAST_COMMIT_MESSAGE=$(echo "${{ env.lastCommitMessageBase64 }}" | base64 --decode)
-                  git commit -m "$LAST_COMMIT_MESSAGE"
+                  echo "cherryPickCommit=$CHERRY_PICK_COMMIT" >> $GITHUB_ENV
 
             - name: Get Original Author
               id: get-author
