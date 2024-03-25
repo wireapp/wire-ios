@@ -54,7 +54,6 @@ jobs:
             - name: Append -cherry-pick to branch name
               id: extract
               run: |
-                  set -vx
                   PR_BRANCH="${{ github.event.pull_request.head.ref }}"
                   NEW_BRANCH_NAME="${PR_BRANCH}-cherry-pick"
                   echo "New branch name: $NEW_BRANCH_NAME"
@@ -63,7 +62,6 @@ jobs:
             - name: Check for changes excluding submodule
               id: check_changes
               run: |
-                  set -vx
                   if [[ -n "${{ env.SUBMODULE_NAME }}" ]]; then
                     # If SUBMODULE_NAME is set
                     NUM_CHANGES=$(git diff origin/${{ env.TARGET_BRANCH }} --name-only | grep -v "^${{ env.SUBMODULE_NAME }}/" | wc -l)
@@ -85,7 +83,7 @@ jobs:
             - name: Update submodule
               if: env.SUBMODULE_NAME && env.SUBMODULE_TRACK == 'true' && env.shouldCherryPick == 'true'
               run: |
-                  set -vx
+                  set -x
                   git submodule update --init --recursive || true
                   # Create a temporary branch and get the last commit message
                   git checkout -b temp-branch-for-cherry-pick
@@ -120,7 +118,6 @@ jobs:
               id: get-author
               if: env.shouldCherryPick == 'true'
               run: |
-                  set -vx
                   ORIGINAL_AUTHOR=$(git log -1 --pretty=format:'%an <%ae>' ${{ github.event.pull_request.merge_commit_sha }})
                   echo "Original author: $ORIGINAL_AUTHOR"
                   echo "originalAuthor=$ORIGINAL_AUTHOR" >> $GITHUB_ENV
@@ -129,7 +126,6 @@ jobs:
               id: commit-cherry-pick
               if: env.shouldCherryPick == 'true'
               run: |
-                  set -vx
                   # Checkout the desired branch and cherry-pick the commit
                   git checkout ${{ env.TARGET_BRANCH }}
                   git checkout -b ${{ env.newBranchName }}
@@ -160,6 +156,5 @@ jobs:
                   PR_BRANCH: ${{ env.newBranchName }}
                   PR_ASSIGNEE: ${{ github.event.pull_request.user.login }}
               run: |
-                  set -vx
                   PR_BODY=$(echo -e "Cherry pick from the original PR: \n- #${{ github.event.pull_request.number }}\n\n---- \n\n ⚠️ Conflicts during cherry-pick:\n${{ env.conflictedFiles }}\n\n${{ github.event.pull_request.body }}")
                   gh pr create --title "$PR_TITLE" --body "$PR_BODY" --base ${{ env.TARGET_BRANCH }} --head "$PR_BRANCH" --label "cherry-pick" --assignee "$PR_ASSIGNEE"
