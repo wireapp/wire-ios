@@ -674,24 +674,6 @@ open class FileAssetCache: NSObject {
         return hasOriginalFileData(for: message) || hasEncryptedFileData(for: message)
     }
 
-    /// Returns the asset data for a given message.
-    ///
-    /// This will probably cause I/O.
-
-    open func assetData(
-        _ message: ZMConversationMessage,
-        encrypted: Bool
-    ) -> Data? {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            encrypted: encrypted
-        ) else {
-            return nil
-        }
-
-        return cache.assetData(key)
-    }
-
     /// Returns the asset URL for a given message.
 
     open func accessAssetURL(_ message: ZMConversationMessage) -> URL? {
@@ -700,29 +682,6 @@ open class FileAssetCache: NSObject {
         }
 
         return cache.assetURL(key)
-    }
-
-    /// Sets the asset data for a given message.
-    ///
-    /// This will cause I/O.
-
-    open func storeAssetData(
-        _ message: ZMConversationMessage,
-        encrypted: Bool,
-        data: Data
-    ) {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            encrypted: encrypted
-        ) else {
-            return
-        }
-
-        cache.storeAssetData(
-            data,
-            key: key,
-            createdAt: message.serverTimestamp ?? Date()
-        )
     }
 
     /// Deletes the image data for a given message.
