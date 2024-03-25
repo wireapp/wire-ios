@@ -43,7 +43,7 @@ extension NSManagedObjectContext {
 /// before purging the cache.
 
 @objcMembers
-open class FileAssetCache: NSObject {
+public final class FileAssetCache: NSObject {
 
     private let fileCache: FileCache
     private let tempCache: FileCache
@@ -692,7 +692,7 @@ open class FileAssetCache: NSObject {
 
     // MARK: - Asset data
 
-    open func assetData(_ key: String) -> Data? {
+    public func assetData(_ key: String) -> Data? {
         return cache.assetData(key)
     }
 
@@ -712,7 +712,7 @@ open class FileAssetCache: NSObject {
 
     /// Returns the asset URL for a given message.
 
-    open func accessAssetURL(_ message: ZMConversationMessage) -> URL? {
+    public func accessAssetURL(_ message: ZMConversationMessage) -> URL? {
         guard let key = Self.cacheKeyForAsset(message) else {
             return nil
         }
@@ -724,7 +724,7 @@ open class FileAssetCache: NSObject {
     ///
     /// This will cause I/O.
 
-    open func deleteAssetData(_ message: ZMConversationMessage) {
+    public func deleteAssetData(_ message: ZMConversationMessage) {
         if message.imageMessageData != nil {
             let imageFormats: [ZMImageFormat] = [.medium, .original, .preview]
 
