@@ -667,12 +667,16 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
         return client
     }
 
-    private func assertLegalHoldHintBehavior(initiallyEnabled: Bool,
-                                             receivedStatus: LegalHoldStatus,
-                                             expectedStatus: ZMConversationLegalHoldStatus,
-                                             expectSystemMessage: Bool,
-                                             expectLegalHoldVerification: Bool,
-                                             messageContent: @escaping () -> MessageCapable, file: StaticString = #file, line: UInt = #line) {
+    private func assertLegalHoldHintBehavior(
+        initiallyEnabled: Bool,
+        receivedStatus: LegalHoldStatus,
+        expectedStatus: ZMConversationLegalHoldStatus,
+        expectSystemMessage: Bool,
+        expectLegalHoldVerification: Bool,
+        messageContent: @escaping () -> MessageCapable,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         syncMOC.performGroupedBlock {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
