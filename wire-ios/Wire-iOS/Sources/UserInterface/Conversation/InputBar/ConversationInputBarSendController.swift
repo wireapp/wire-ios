@@ -44,7 +44,7 @@ final class ConversationInputBarSendController: NSObject {
                 Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
             }
         }, completionHandler: {
-                completionHandler?()
+            completionHandler?()
             Analytics.shared.tagMediaActionCompleted(.photo, inConversation: conversation)
         })
     }
