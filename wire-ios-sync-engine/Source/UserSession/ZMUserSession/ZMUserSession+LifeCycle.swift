@@ -42,6 +42,8 @@ extension ZMUserSession {
         stopEphemeralTimers()
         lockDatabase()
         recalculateUnreadMessages()
+        purgeTemporaryAssets()
+
     }
 
     @objc

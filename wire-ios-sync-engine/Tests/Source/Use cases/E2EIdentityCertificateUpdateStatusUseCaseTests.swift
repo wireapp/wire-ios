@@ -25,6 +25,9 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
     private var mockGetE2eIdentityCertificates: MockGetE2eIdentityCertificatesUseCaseProtocol!
     private var stack: CoreDataStack!
     private var sut: E2EIdentityCertificateUpdateStatusUseCase!
+    private var userID: UUID!
+    private var userDefaults: UserDefaults!
+    private var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface!
 
     override func setUp() async throws {
         try await super.setUp()
@@ -35,106 +38,177 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
             conversation.mlsGroupID = .random()
         }
 
-        let mockGracePeriodRepository = MockGracePeriodRepositoryInterface()
-        mockGracePeriodRepository.storeGracePeriodEndDate_MockMethod = { _ in }
         mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUseCaseProtocol()
 
+        userDefaults = .temporary()
+        userID = UUID.create()
+        lastE2EIUpdateDateRepository = LastE2EIdentityUpdateDateRepository(userID: userID, sharedUserDefaults: userDefaults)
         sut = E2EIdentityCertificateUpdateStatusUseCase(
             getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
             gracePeriod: 0,
             mlsClientID: .random(),
             context: stack.syncContext,
-            lastAlertDate: nil,
-            gracePeriodRepository: mockGracePeriodRepository
+            lastE2EIUpdateDateRepository: nil
         )
     }
 
     override func tearDown() async throws {
         stack = nil
         mockGetE2eIdentityCertificates = nil
+        userID = nil
+        userDefaults = nil
         sut = nil
 
         try await super.tearDown()
     }
 
-    func update(certificate: E2eIdentityCertificate) {
+    private func update(certificate: E2eIdentityCertificate) {
         mockGetE2eIdentityCertificates.invokeMlsGroupIdClientIds_MockValue = [certificate]
     }
 
     func testThatItReturnsNoAction_WhenExpiryDateIsBeyondNudgingDate() async throws {
-        sut.lastAlertDate = nil
+        // Given
         update(certificate: certificate(with: .oneYearFromNow, serverStoragePeriod: .fourWeeks))
+
+        // When
         let result = try await sut.invoke()
+
+        // Then
         XCTAssertEqual(result, .noAction)
     }
 
     func testThatItReturnsReminder_WhenExpiryDateIsWithInNudgingDate() async throws {
-        sut.lastAlertDate = nil
+        // Given
         update(certificate: certificate(with: .oneWeek - .oneSecond))
+
+        // When
         let result = try await sut.invoke()
+
+        // Then
         XCTAssertEqual(result, .reminder)
     }
 
     func testThatItReturnsNoAction_WhenExpiryDateIsWithInSevenDaysAndLastAlertWasDisplayedToday() async throws {
-        sut.lastAlertDate = Date.now
+        // Given
+        lastE2EIUpdateDateRepository.storeLastAlertDate(Date.now)
+        sut = E2EIdentityCertificateUpdateStatusUseCase(
+            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
+            gracePeriod: 0,
+            mlsClientID: .random(),
+            context: stack.syncContext,
+            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
+        )
         update(certificate: certificate(with: .oneWeek))
+
+        // When
         let result = try await sut.invoke()
+
+        // Then
         XCTAssertEqual(result, .noAction)
     }
 
     func testThatItReturnsReminder_WhenExpiryDateIsWithInSevenDaysAndLastAlertWasDisplayedNotToday() async throws {
-        sut.lastAlertDate = Date.now - .oneDay
+        // Given
+        lastE2EIUpdateDateRepository.storeLastAlertDate(Date.now - .oneDay)
+        sut = E2EIdentityCertificateUpdateStatusUseCase(
+            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
+            gracePeriod: 0,
+            mlsClientID: .random(),
+            context: stack.syncContext,
+            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
+        )
         update(certificate: certificate(with: .oneWeek - .oneSecond))
+
+        // When
         let result = try await sut.invoke()
+
+        // Then
         XCTAssertEqual(result, .reminder)
     }
 
     func testThatItReturnsReminder_WhenExpiryDateIsWithInOneDay() async throws {
-        sut.lastAlertDate = nil
+        // Given
         update(certificate: certificate(with: .oneDay))
         let result = try await sut.invoke()
+
+        // Then
         XCTAssertEqual(result, .reminder)
     }
 
     func testThatItReturnsNoAction_WhenExpiryDateIsWithInOneDayAndAlertWasShownWithinFourHours() async throws {
-        sut.lastAlertDate = Date.now
+        // Given
+        lastE2EIUpdateDateRepository.storeLastAlertDate(Date.now)
+        sut = E2EIdentityCertificateUpdateStatusUseCase(
+            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
+            gracePeriod: 0,
+            mlsClientID: .random(),
+            context: stack.syncContext,
+            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
+        )
         update(certificate: certificate(with: .oneHour * 4))
+
+        // When
         let result = try await sut.invoke()
+
+        // Then
         XCTAssertEqual(result, .noAction)
     }
 
     func testThatItReturnsNoAction_WhenExpiryDateIsWithInOneDayAndAlertWasShownBeyondFourHours() async throws {
-        sut.lastAlertDate = Date.now
+        // Given
+        lastE2EIUpdateDateRepository.storeLastAlertDate(Date.now)
+        sut = E2EIdentityCertificateUpdateStatusUseCase(
+            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
+            gracePeriod: 0,
+            mlsClientID: .random(),
+            context: stack.syncContext,
+            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
+        )
         update(certificate: certificate(with: .oneHour * 5))
+
+        // When
         let result = try await sut.invoke()
+
+        // Then
         XCTAssertEqual(result, .noAction)
     }
 
     func testThatItReturnsReminder_WhenExpiryDateIsWithInFourHours() async throws {
-        sut.lastAlertDate = nil
+        // Given
         update(certificate: certificate(with: .oneHour * 4))
         let result = try await sut.invoke()
+
+        // Then
         XCTAssertEqual(result, .reminder)
     }
 
     func testThatItReturnsReminder_WhenExpiryDateIsWithInOneHour() async throws {
-        sut.lastAlertDate = nil
+        // Given
         update(certificate: certificate(with: .oneHour))
+
+        // When
         let result = try await sut.invoke()
+
+        // Then
         XCTAssertEqual(result, .reminder)
     }
 
     func testThatItReturnsBlock_WhenItExpires() async throws {
-        sut.lastAlertDate = nil
         update(certificate: certificate(with: 0))
         let result = try await sut.invoke()
+
+        // Then
         XCTAssertEqual(result, .block)
     }
 
     func testThatItReturnsBlock_WhenItIsBeyondExpiryDate() async throws {
-        sut.lastAlertDate = nil
+        // Given
         update(certificate: certificate(with: -.oneDay))
+
+        // When
         let result = try await sut.invoke()
+
+        // Then
         XCTAssertEqual(result, .block)
     }
 

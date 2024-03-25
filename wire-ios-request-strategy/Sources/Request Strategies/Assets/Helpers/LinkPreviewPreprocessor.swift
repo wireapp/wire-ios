@@ -50,38 +50,61 @@ import WireUtilities
         }
     }
 
-    override func didProcessMessage(_ message: ZMClientMessage, result linkPreviews: [LinkMetadata]) {
+    override func didProcessMessage(
+        _ message: ZMClientMessage,
+        result linkPreviews: [LinkMetadata]
+    ) {
         finishProcessing(message)
 
-        if let preview = linkPreviews.first, let messageText = message.textMessageData?.messageText, let mentions = message.textMessageData?.mentions, !message.isObfuscated {
-
-            let updatedText = Text(content: messageText, mentions: mentions, linkPreviews: [preview], replyingTo: nil)
-            let updatedMessage = GenericMessage(content: updatedText, nonce: message.nonce!, expiresAfterTimeInterval: message.deletionTimeout)
-
-            do {
-                try message.setUnderlyingMessage(updatedMessage)
-            } catch {
-                zmLog.warn("Failed to set link preview on client message. Reason: \(error.localizedDescription) Resetting state to try again later.")
-                message.linkPreviewState = .waitingToBeProcessed
-                return
-            }
-
-            if let imageData = preview.imageData.first {
-                zmLog.debug("image in linkPreview (need to upload), setting state to .downloaded for: \(message.nonce?.uuidString ?? "nil")")
-                managedObjectContext.zm_fileAssetCache.storeAssetData(message, format: .original, encrypted: false, data: imageData)
-                message.linkPreviewState = .downloaded
-            } else {
-                zmLog.debug("no image in preview, setting state to .uploaded for: \(message.nonce?.uuidString ?? "nil")")
-                message.linkPreviewState = .uploaded
-            }
-        } else {
-            zmLog.debug("no linkpreview or obfuscated message, setting state to .done for: \(message.nonce?.uuidString ?? "nil")")
-            message.linkPreviewState = .done
+        defer {
+            // The change processor is called as a response to a context save,
+            // which is why we need to enque a save maually here
+            managedObjectContext.enqueueDelayedSave()
         }
 
-        // The change processor is called as a response to a context save,
-        // which is why we need to enque a save maually here
-        managedObjectContext.enqueueDelayedSave()
+        guard
+            let preview = linkPreviews.first,
+            let messageText = message.textMessageData?.messageText,
+            let mentions = message.textMessageData?.mentions,
+            !message.isObfuscated
+        else {
+            zmLog.debug("no linkpreview or obfuscated message, setting state to .done for: \(message.nonce?.uuidString ?? "nil")")
+            message.linkPreviewState = .done
+            return
+        }
+
+        let updatedText = Text(
+            content: messageText,
+            mentions: mentions,
+            linkPreviews: [preview],
+            replyingTo: nil
+        )
+
+        let updatedMessage = GenericMessage(
+            content: updatedText,
+            nonce: message.nonce!,
+            expiresAfterTimeInterval: message.deletionTimeout
+        )
+
+        do {
+            try message.setUnderlyingMessage(updatedMessage)
+        } catch {
+            zmLog.warn("Failed to set link preview on client message. Reason: \(error.localizedDescription) Resetting state to try again later.")
+            message.linkPreviewState = .waitingToBeProcessed
+            return
+        }
+
+        if let imageData = preview.imageData.first {
+            zmLog.debug("image in linkPreview (need to upload), setting state to .downloaded for: \(message.nonce?.uuidString ?? "nil")")
+            managedObjectContext.zm_fileAssetCache.storeOriginalImage(
+                data: imageData,
+                for: message
+            )
+            message.linkPreviewState = .downloaded
+        } else {
+            zmLog.debug("no image in preview, setting state to .uploaded for: \(message.nonce?.uuidString ?? "nil")")
+            message.linkPreviewState = .uploaded
+        }
     }
 
 }
