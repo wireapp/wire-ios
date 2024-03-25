@@ -31,13 +31,15 @@ final class WireApplication: UIApplication {
                     DeveloperToolsView(viewModel: DeveloperToolsViewModel(
                         router: AppDelegate.shared.appRootRouter,
                         onDismiss: { [weak self] completion in
-                            guard let topmostViewController = self?.topmostViewController() else { return completion() }
-                            topmostViewController.dismissIfNeeded(animated: true, completion: completion)
+                            if let topmostViewController = self?.topmostViewController() {
+                                topmostViewController.dismissIfNeeded(completion: completion)
+                            } else {
+                                completion()
+                            }
                         }
                     ))
                 }
             )
-
             topmostViewController()?.present(developerTools, animated: true)
         } else {
             DebugAlert.showSendLogsMessage(
@@ -48,6 +50,7 @@ final class WireApplication: UIApplication {
 }
 
 extension WireApplication: NotificationSettingsRegistrable {
+
     var shouldRegisterUserNotificationSettings: Bool {
         return !(AutomationHelper.sharedHelper.skipFirstLoginAlerts || AutomationHelper.sharedHelper.disablePushNotificationAlert)
     }
