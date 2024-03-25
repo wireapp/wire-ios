@@ -764,6 +764,14 @@ open class FileAssetCache: NSObject {
         }
     }
 
+    public func deleteAssetsOlderThan(_ date: Date) {
+        do {
+            try cache.deleteAssetsOlderThan(date)
+        } catch let error {
+            zmLog.error("Error trying to delete assets older than \(date): \(error)")
+        }
+    }
+
     public static func cacheKeyForAsset(
         _ message: ZMConversationMessage,
         format: ZMImageFormat,
@@ -798,13 +806,6 @@ open class FileAssetCache: NSObject {
             .zmHexEncodedString()
     }
 
-    public func deleteAssetsOlderThan(_ date: Date) {
-        do {
-            try cache.deleteAssetsOlderThan(date)
-        } catch let error {
-            zmLog.error("Error trying to delete assets older than \(date): \(error)")
-        }
-    }
 
 }
 
