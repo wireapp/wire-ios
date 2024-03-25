@@ -511,6 +511,10 @@
 		E6A5BBA82B0E355A00ACC236 /* CoreDataMessagingMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A5BBA72B0E355A00ACC236 /* CoreDataMessagingMigrator.swift */; };
 		E6A5BBAA2B0E4DD500ACC236 /* CoreDataMessagingMigrationStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A5BBA92B0E4DD500ACC236 /* CoreDataMessagingMigrationStep.swift */; };
 		E6A5BBAE2B0E564200ACC236 /* WireDataModelBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A5BBAD2B0E564200ACC236 /* WireDataModelBundle.swift */; };
+		E6B84C672BB1DA3E002D68D1 /* EARPublicKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B84C662BB1DA3E002D68D1 /* EARPublicKeys.swift */; };
+		E6B84C692BB1DA6C002D68D1 /* EARPrivateKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B84C682BB1DA6C002D68D1 /* EARPrivateKeys.swift */; };
+		E6B84C6B2BB1DA94002D68D1 /* EARServiceFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B84C6A2BB1DA94002D68D1 /* EARServiceFailure.swift */; };
+		E6B84C6D2BB1DAB2002D68D1 /* EARServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B84C6C2BB1DAB2002D68D1 /* EARServiceDelegate.swift */; };
 		E6BDA1152B1642A400488D92 /* store2-110-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E6BDA1142B1642A400488D92 /* store2-110-0.wiredatabase */; };
 		E6BFE8382B3320C7000F0FBE /* DatabaseMigrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BFE8372B3320C7000F0FBE /* DatabaseMigrationHelper.swift */; };
 		E6BFE83A2B332DDB000F0FBE /* DatabaseMigrationTests+ParticipantRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BFE8392B332DDB000F0FBE /* DatabaseMigrationTests+ParticipantRole.swift */; };
@@ -1410,6 +1414,10 @@
 		E6A5BBA72B0E355A00ACC236 /* CoreDataMessagingMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMessagingMigrator.swift; sourceTree = "<group>"; };
 		E6A5BBA92B0E4DD500ACC236 /* CoreDataMessagingMigrationStep.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMessagingMigrationStep.swift; sourceTree = "<group>"; };
 		E6A5BBAD2B0E564200ACC236 /* WireDataModelBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireDataModelBundle.swift; sourceTree = "<group>"; };
+		E6B84C662BB1DA3E002D68D1 /* EARPublicKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARPublicKeys.swift; sourceTree = "<group>"; };
+		E6B84C682BB1DA6C002D68D1 /* EARPrivateKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARPrivateKeys.swift; sourceTree = "<group>"; };
+		E6B84C6A2BB1DA94002D68D1 /* EARServiceFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARServiceFailure.swift; sourceTree = "<group>"; };
+		E6B84C6C2BB1DAB2002D68D1 /* EARServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARServiceDelegate.swift; sourceTree = "<group>"; };
 		E6BDA1132B16421300488D92 /* zmessaging2.110.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.110.0.xcdatamodel; sourceTree = "<group>"; };
 		E6BDA1142B1642A400488D92 /* store2-110-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-110-0.wiredatabase"; sourceTree = "<group>"; };
 		E6BFE8372B3320C7000F0FBE /* DatabaseMigrationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMigrationHelper.swift; sourceTree = "<group>"; };
@@ -2464,15 +2472,19 @@
 		EE22F81029DD82290053E1C6 /* EAR */ = {
 			isa = PBXGroup;
 			children = (
-				EEC57C4929E407CC0068DFDA /* EARService.swift */,
-				EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */,
-				EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */,
-				EE428C5129F1533000ECB715 /* EARKeyEncryptor.swift */,
-				018964242A6FE72700BCEE0E /* EARStorage.swift */,
 				EE22F80829DD818B0053E1C6 /* BaseEARKeyDescription.swift */,
-				EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */,
-				EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */,
 				EE22F80E29DD82110053E1C6 /* DatabaseEARKeyDescription.swift */,
+				EE428C5129F1533000ECB715 /* EARKeyEncryptor.swift */,
+				EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */,
+				EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */,
+				E6B84C682BB1DA6C002D68D1 /* EARPrivateKeys.swift */,
+				E6B84C662BB1DA3E002D68D1 /* EARPublicKeys.swift */,
+				EEC57C4929E407CC0068DFDA /* EARService.swift */,
+				E6B84C6C2BB1DAB2002D68D1 /* EARServiceDelegate.swift */,
+				E6B84C6A2BB1DA94002D68D1 /* EARServiceFailure.swift */,
+				018964242A6FE72700BCEE0E /* EARStorage.swift */,
+				EE22F80C29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift */,
+				EE22F80A29DD81C50053E1C6 /* PublicEARKeyDescription.swift */,
 			);
 			path = EAR;
 			sourceTree = "<group>";
@@ -4269,8 +4281,10 @@
 				EE428C5029F1247400ECB715 /* EARKeyGenerator.swift in Sources */,
 				54FB03AA1E41F204000E13DC /* LegacyPersistedDataPatches+Directory.swift in Sources */,
 				EEC57C4A29E407CC0068DFDA /* EARService.swift in Sources */,
+				E6B84C672BB1DA3E002D68D1 /* EARPublicKeys.swift in Sources */,
 				F9B71F2D1CB264EF001DB03F /* ZMConversation+UnreadCount.m in Sources */,
 				54D7B83F1E12774600C1B347 /* NSPersistentStore+Metadata.swift in Sources */,
+				E6B84C692BB1DA6C002D68D1 /* EARPrivateKeys.swift in Sources */,
 				BFCD8A2D1DCB4E8A00C6FCCF /* V2Asset.swift in Sources */,
 				062C0D332B2280AA00848A48 /* Feature.E2EId.swift in Sources */,
 				F9A706B41CAEE01D00C2F5FE /* ObjectChangeInfo.swift in Sources */,
@@ -4301,6 +4315,7 @@
 				87E9508B2118B2DA00306AA7 /* ZMConversation+DeleteOlderMessages.swift in Sources */,
 				E6F443232B16294400D2B08A /* zmessaging.xcdatamodeld in Sources */,
 				EE9AD9162696F01700DD5F51 /* FeatureRepository.swift in Sources */,
+				E6B84C6B2BB1DA94002D68D1 /* EARServiceFailure.swift in Sources */,
 				63B1337329A798C800009D84 /* ProteusProvider.swift in Sources */,
 				0630E4B6257F888600C75BFB /* NSManagedObjectContext+AppLock.swift in Sources */,
 				63495E1B23FED9A9002A7C59 /* ZMUser+Protobuf.swift in Sources */,
@@ -4364,6 +4379,7 @@
 				BF10B58B1E6432ED00E7036E /* Message.swift in Sources */,
 				59F4B6F22B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift in Sources */,
 				BF491CE81F063EEB0055EE44 /* AccountManager.swift in Sources */,
+				E6B84C6D2BB1DAB2002D68D1 /* EARServiceDelegate.swift in Sources */,
 				060C06612B73D9D400B484C6 /* E2EIActivationRepository.swift in Sources */,
 				63B1335429A503D100009D84 /* ProteusServiceInterface.swift in Sources */,
 				16D95A421FCEF87B00C96069 /* ZMUser+Availability.swift in Sources */,
