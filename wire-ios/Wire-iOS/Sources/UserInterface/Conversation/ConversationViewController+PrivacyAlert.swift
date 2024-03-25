@@ -24,25 +24,27 @@ extension ConversationViewController {
     private enum PrivacyAlertAction {
         case verifyDevices
         case sendAnyway
+        case sendAnywayWithAction((Bool) -> Void)
         case legalHoldDetails
+        case cancelWithAction((Bool) -> Void)
         case cancel
 
         var localizedTitle: String {
             switch self {
             case .verifyDevices:
                 return L10n.Localizable.Meta.Degraded.verifyDevicesButton
-            case .sendAnyway:
+            case .sendAnyway, .sendAnywayWithAction:
                 return L10n.Localizable.Meta.Degraded.sendAnywayButton
             case .legalHoldDetails:
                 return L10n.Localizable.Meta.Legalhold.infoButton
-            case .cancel:
+            case .cancel, .cancelWithAction:
                 return L10n.Localizable.General.cancel
             }
         }
 
         var preferredStyle: UIAlertAction.Style {
             switch self {
-            case .cancel:
+            case .cancel, .cancelWithAction:
                 return .cancel
             default:
                 return .default
@@ -60,8 +62,6 @@ extension ConversationViewController {
 
         if conversation.legalHoldStatus == .pendingApproval {
             alertContent = legalHoldPrivacyWarningAlertContent()
-        } else if conversation.mlsVerificationStatus == .degraded {
-            alertContent = e2eIPrivacyWarningAlertContent()
         } else if conversation.securityLevel == .secureWithIgnored {
             alertContent = clientVerificationPrivacyWarningAlertContent(
                 degradedUsers: changeInfo.usersThatCausedConversationToDegrade)
@@ -69,6 +69,11 @@ extension ConversationViewController {
             // no-op: there is no privacy warning
             return
         }
+
+        presentAlert(with: alertContent)
+    }
+
+    private func presentAlert(with alertContent: AlertContent) {
 
         let alert = UIAlertController(title: alertContent.title, message: alertContent.message, preferredStyle: .alert)
 
@@ -110,11 +115,11 @@ extension ConversationViewController {
         return (title, message, actions)
     }
 
-    private func e2eIPrivacyWarningAlertContent() -> AlertContent {
+    private func e2eIPrivacyWarningAlertContent(action: @escaping (Bool) -> Void) -> AlertContent {
         let title = L10n.Localizable.Meta.Mls.Degraded.Alert.title
         let message = L10n.Localizable.Meta.Mls.Degraded.Alert.message
 
-        let actions: [PrivacyAlertAction] = [.sendAnyway, .cancel]
+        let actions: [PrivacyAlertAction] = [.sendAnywayWithAction(action), .cancelWithAction(action)]
 
         return (title, message, actions)
     }
@@ -133,6 +138,10 @@ extension ConversationViewController {
             conversation.acknowledgePrivacyWarning(withResendIntent: true)
         case .cancel:
             conversation.acknowledgePrivacyWarning(withResendIntent: false)
+        case .sendAnywayWithAction(let closure):
+            closure(true)
+        case .cancelWithAction(let closure):
+            closure(false)
         }
     }
 
@@ -166,4 +175,29 @@ extension ConversationViewController {
         LegalHoldDetailsViewController.present(in: self, conversation: conversation, userSession: userSession)
     }
 
+}
+
+// MARK: - E2EIPrivacyWarningPresenter
+
+extension ConversationViewController: E2EIPrivacyWarningPresenter {
+
+    func presentE2EIPrivacyWarningAlert(_ notification: Notification) {
+        switch notification.alertType {
+
+        case .message?:
+            let content = e2eIPrivacyWarningAlertContent { sendAnyway in
+
+                if sendAnyway {
+                    self.conversation.acknowledgePrivacyChanges()
+                }
+
+                E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: sendAnyway)
+            }
+
+            presentAlert(with: content)
+
+        case .none:
+            assertionFailure("wrong type of notification sent!")
+        }
+    }
 }
