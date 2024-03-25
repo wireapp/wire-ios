@@ -52,10 +52,14 @@ final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
         ]
     }
 
-    func checkThatItNotifiesTheObserverOfAChange(_ participantRole: ParticipantRole, modifier: (ParticipantRole) -> Void, expectedChangedFields: Set<String>, customAffectedKeys: AffectedKeys? = nil,
-                                                 file: StaticString = #file,
-                                                 line: UInt = #line) {
-
+    func checkThatItNotifiesTheObserverOfAChange(
+        _ participantRole: ParticipantRole,
+        modifier: (ParticipantRole) -> Void,
+        expectedChangedFields: Set<String>,
+        customAffectedKeys: AffectedKeys? = nil,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
         // given
         uiMOC.saveOrRollback()
 

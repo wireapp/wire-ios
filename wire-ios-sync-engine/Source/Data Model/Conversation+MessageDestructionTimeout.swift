@@ -51,8 +51,9 @@ extension ZMConversation {
     /// Changes the conversation message destruction timeout
     public func setMessageDestructionTimeout(
         _ timeout: MessageDestructionTimeoutValue,
-        in userSession: ZMUserSession, _
-        completion: @escaping (Result<Void, Error>) -> Void) {
+        in userSession: ZMUserSession,
+        _ completion: @escaping (Result<Void, Error>) -> Void
+    ) {
         // TODO: [WPB-5730] move this method to a useCase
 
         guard let apiVersion = BackendInfo.apiVersion else {
