@@ -25,14 +25,12 @@ actor MockActorOneOnOneMigrator: OneOnOneMigratorInterface {
 
     init() {}
 
-    // MARK: - migrateToMLS
-
     var migrateToMLSUserIDIn_Invocations: [(userID: QualifiedID, context: NSManagedObjectContext)] = []
     var migrateToMLSUserIDIn_MockError: Error?
     var migrateToMLSUserIDIn_MockMethod: ((QualifiedID, NSManagedObjectContext) async throws -> MLSGroupID)?
     var migrateToMLSUserIDIn_MockValue: MLSGroupID?
 
-    func setMigrateToMLSUserIDIn_MockError(_ error: Error?) {
+    func setMigrateToMLSUserIDMlsGroupIDIn_MockError(_ error: Error?) {
         migrateToMLSUserIDIn_MockError = error
     }
 
@@ -45,7 +43,7 @@ actor MockActorOneOnOneMigrator: OneOnOneMigratorInterface {
     }
 
     @discardableResult
-    func migrateToMLS(userID: QualifiedID, in context: NSManagedObjectContext) async throws -> MLSGroupID {
+    public func migrateToMLS(userID: QualifiedID, in context: NSManagedObjectContext) async throws -> MLSGroupID {
         migrateToMLSUserIDIn_Invocations.append((userID: userID, context: context))
 
         if let error = migrateToMLSUserIDIn_MockError {
@@ -60,5 +58,4 @@ actor MockActorOneOnOneMigrator: OneOnOneMigratorInterface {
             fatalError("no mock for `migrateToMLSUserIDIn`")
         }
     }
-
 }

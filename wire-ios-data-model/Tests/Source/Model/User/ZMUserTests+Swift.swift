@@ -1067,7 +1067,6 @@ extension ZMUserTests_Swift {
         }
 
         let user = try XCTUnwrap(ZMUser.fetch(with: userID, in: uiMOC))
-        let proteusConversation = try XCTUnwrap(ZMConversation.fetch(with: proteusConversationID, in: uiMOC))
 
         // Mock successful connection updates.
         let handler = MockActionHandler<UpdateConnectionAction>(
@@ -1082,7 +1081,7 @@ extension ZMUserTests_Swift {
         let didSucceed = XCTestExpectation(description: "didSucceed")
 
         // When I accept the connection request from the other user.
-        user.accept(oneOnOneResolver: oneOneOneResolver) { error in
+        user.accept(oneOnOneResolver: oneOneOneResolver, context: syncMOC) { error in
             if let error {
                 XCTFail("unexpected error: \(error)")
             } else {

@@ -100,10 +100,11 @@ public class MLSEventProcessor: MLSEventProcessing {
         }
 
         let conversationExists = await mlsService.conversationExists(groupID: mlsGroupID)
-        let previousStatus = await context.perform { conversation.mlsStatus }
-        let newStatus = conversationExists ? MLSGroupStatus.ready : .pendingJoin
+        let newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
 
         await context.perform {
+            let previousStatus = conversation.mlsStatus
+
             conversation.mlsStatus = newStatus
             context.saveOrRollback()
             Flow.createGroup.checkpoint(description: "saved ZMConversation for MLS")
@@ -121,23 +122,17 @@ public class MLSEventProcessor: MLSEventProcessing {
         conversationID: QualifiedID,
         in context: NSManagedObjectContext
     ) async {
-        WireLogger.mls.info("MLS event processor is processing welcome message")
-
         guard let mlsService = await context.perform({ context.mlsService }) else {
             return logWarn(aborting: .processingWelcome, withReason: .missingMLSService)
         }
-
-        let oneOnOneResolver = OneOnOneResolver(
-            protocolSelector: OneOnOneProtocolSelector(),
-            migrator: OneOnOneMigrator(mlsService: mlsService)
-        )
+        let migrator = OneOnOneMigrator(mlsService: mlsService)
 
         await process(
             welcomeMessage: welcomeMessage,
             conversationID: conversationID,
             in: context,
             mlsService: mlsService,
-            oneOnOneResolver: oneOnOneResolver
+            oneOnOneResolver: OneOnOneResolver(migrator: migrator)
         )
     }
 
@@ -148,6 +143,8 @@ public class MLSEventProcessor: MLSEventProcessing {
         mlsService: MLSServiceInterface,
         oneOnOneResolver: OneOnOneResolverInterface
     ) async {
+        WireLogger.mls.info("MLS event processor is processing welcome message")
+
         guard let (conversation, groupID) = await context.perform({
             let conversation = ZMConversation.fetch(with: conversationID, in: context)
             return (conversation, conversation?.mlsGroupID) as? (ZMConversation, MLSGroupID)
@@ -159,20 +156,21 @@ public class MLSEventProcessor: MLSEventProcessing {
 
         await resolveOneOnOneConversationIfNeeded(
             conversation: conversation,
-            oneOneOneResolver: oneOnOneResolver,
-            in: context
+            in: context,
+            oneOneOneResolver: oneOnOneResolver
         )
     }
 
     private func resolveOneOnOneConversationIfNeeded(
         conversation: ZMConversation,
-        oneOneOneResolver: OneOnOneResolverInterface,
-        in context: NSManagedObjectContext
+        in context: NSManagedObjectContext,
+        oneOneOneResolver: OneOnOneResolverInterface
     ) async {
         WireLogger.mls.debug("resolving one on one conversation")
 
         let userID: QualifiedID? = await context.perform {
             guard conversation.conversationType == .oneOnOne else {
+                WireLogger.mls.warn("conversation type is not expected 'oneOnOne', aborting.")
                 return nil
             }
 
