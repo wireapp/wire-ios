@@ -41,7 +41,6 @@ These differences are:
 ### Prerequisites
 In order to build Wire for iOS locally, it is necessary to install and setup the following tools on the local machine:
 
-- macOS 13.5 (Ventura) or later
 - [Xcode 15.3](https://xcodereleases.com)
 - Carthage 0.38 or newer (https://github.com/Carthage/Carthage)
 - `gem` must be setup to use ruby without admin permissions. One way to achieve this is to use [rbenv](https://github.com/rbenv/rbenv), install the latest ruby version and set it as global version.
