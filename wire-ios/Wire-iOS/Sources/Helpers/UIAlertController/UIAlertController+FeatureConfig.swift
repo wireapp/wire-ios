@@ -91,6 +91,8 @@ extension UIAlertController {
                     Task {
                         await actionsHandler.snoozeReminder()
                     }
+                case .learnMore:
+                    break
                 }
             }
 

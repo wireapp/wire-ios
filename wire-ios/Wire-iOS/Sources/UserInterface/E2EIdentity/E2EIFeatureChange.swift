@@ -20,7 +20,7 @@ import Foundation
 import WireSyncEngine
 
 enum E2EIChangeAction: CaseIterable {
-    case getCertificate, remindLater
+    case getCertificate, remindLater, learnMore
 }
 
 extension UIAlertController {
@@ -44,12 +44,13 @@ extension UIAlertController {
             let learnMoreAction = UIAlertAction.link(
                 title: MlsE2EIStrings.Button.learnMore,
                 url: URL.wr_e2eiLearnMore,
-                presenter: topViewController
-            ) {
-                if !canRemindLater {
-                    NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
+                presenter: topViewController) {
+//                    if !canRemindLater {
+//                        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
+//                    }
+                    handler(.learnMore)
                 }
-            }
+
             let getCertificateAction = UIAlertAction(title: enrollButtonText,
                                                      style: .default) {_ in
                 handler(.getCertificate)
