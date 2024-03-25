@@ -23,8 +23,7 @@
                   continueAfterRunningActions = "No"
                   symbolName = "-[UIViewController presentViewController:animated:completion:]"
                   moduleName = "UIKitCore"
-                  usesParentBreakpointCondition = "Yes"
-                  offsetFromSymbolStart = "0">
+                  usesParentBreakpointCondition = "Yes">
                </Location>
             </Locations>
          </BreakpointContent>
