@@ -901,7 +901,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        try await self.sut.commitPendingProposals()
+        await self.sut.commitPendingProposals()
 
         // Then we cleared the pending proposal date.
         await uiMOC.perform {
@@ -935,7 +935,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        try await self.sut.commitPendingProposals()
+        await self.sut.commitPendingProposals()
 
         // Then we committed the pending proposal immediately.
         let (id, commitTime) = try XCTUnwrap(mockCommitPendingProposalArguments.first)
@@ -977,7 +977,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        try await self.sut.commitPendingProposals()
+        await self.sut.commitPendingProposals()
 
         // Then we committed the proposal at the right time.
         let (id, commitTime) = try XCTUnwrap(mockCommitPendingProposalArguments.first)
@@ -1045,7 +1045,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        try await sut.commitPendingProposals()
+        await sut.commitPendingProposals()
 
         // Then pending proposals were committed in order at the right times.
         XCTAssertEqual(mockCommitPendingProposalArguments.count, 3)
