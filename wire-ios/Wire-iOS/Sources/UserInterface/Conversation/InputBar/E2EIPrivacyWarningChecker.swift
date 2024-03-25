@@ -75,7 +75,9 @@ struct E2EIPrivacyWarningChecker {
 
     // add object in charge to present e2eiPrivacyWarningAlert
     static func addPresenter(_ observer: E2EIPrivacyWarningPresenter) -> NSObjectProtocol {
-       return NotificationCenter.default.addObserver(forName: .presentE2EIPrivacyWarningAlert, object: nil, queue: .main) { note in
+        NotificationCenter.default.addObserver(forName: .presentE2EIPrivacyWarningAlert,
+                                               object: nil,
+                                               queue: .main) { note in
             observer.presentE2EIPrivacyWarningAlert(note)
         }
     }
