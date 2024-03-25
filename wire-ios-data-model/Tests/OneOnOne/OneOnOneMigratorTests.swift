@@ -204,8 +204,12 @@ final class OneOnOneMigratorTests: XCTestCase {
         mockMLSService.establishGroupForWith_MockMethod = { _, _ in }
 
         // required to add be able to add images
+        let cacheLocation = try XCTUnwrap(
+            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+        )
+
         await syncContext.perform {
-            self.syncContext.zm_fileAssetCache = .init()
+            self.syncContext.zm_fileAssetCache = FileAssetCache(location: cacheLocation)
         }
 
         // When

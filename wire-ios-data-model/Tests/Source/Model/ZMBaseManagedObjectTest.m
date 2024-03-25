@@ -195,8 +195,10 @@
 
 - (void)setupCaches
 {
+    NSURL *location = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] firstObject];
+
     self.uiMOC.zm_userImageCache = [[UserImageLocalCache alloc] initWithLocation:nil];
-    self.uiMOC.zm_fileAssetCache = [[FileAssetCache alloc] initWithLocation:nil];
+    self.uiMOC.zm_fileAssetCache = [[FileAssetCache alloc] initWithLocation:location];
 
     [self.syncMOC performGroupedBlockAndWait:^{
         self.syncMOC.zm_fileAssetCache = self.uiMOC.zm_fileAssetCache;

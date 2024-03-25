@@ -88,6 +88,7 @@ public final class ZMUserSession: NSObject {
     private(set) var notificationDispatcher: NotificationDispatcher
     private(set) var localNotificationDispatcher: LocalNotificationDispatcher?
     let applicationStatusDirectory: ApplicationStatusDirectory
+    private let assetCache: FileAssetCache
     private(set) var callStateObserver: CallStateObserver?
     var messageReplyObserver: ManagedObjectContextChangeObserver?
     var likeMesssageObserver: ManagedObjectContextChangeObserver?
@@ -512,6 +513,12 @@ public final class ZMUserSession: NSObject {
             updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatus,
             syncContext: coreDataStack.syncContext)
 
+        let cacheLocation = FileManager.default.cachesURLForAccount(with: coreDataStack.account.userIdentifier, in: coreDataStack.applicationContainer)
+        ZMUserSession.moveCachesIfNeededForAccount(with: coreDataStack.account.userIdentifier, in: coreDataStack.applicationContainer)
+
+        let userImageCache = UserImageLocalCache(location: cacheLocation)
+        assetCache = FileAssetCache(location: cacheLocation)
+
         super.init()
 
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
@@ -521,7 +528,10 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory.syncStatus.syncStateDelegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
 
-        configureCaches()
+        configureCaches(
+            userImageCache: userImageCache,
+            fileAssetCache: assetCache
+        )
 
         syncManagedObjectContext.performGroupedBlockAndWait { [self] in
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
@@ -581,13 +591,10 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    private func configureCaches() {
-        let cacheLocation = FileManager.default.cachesURLForAccount(with: coreDataStack.account.userIdentifier, in: coreDataStack.applicationContainer)
-        ZMUserSession.moveCachesIfNeededForAccount(with: coreDataStack.account.userIdentifier, in: coreDataStack.applicationContainer)
-
-        let userImageCache = UserImageLocalCache(location: cacheLocation)
-        let fileAssetCache = FileAssetCache(location: cacheLocation)
-
+    private func configureCaches(
+        userImageCache: UserImageLocalCache,
+        fileAssetCache: FileAssetCache
+    ) {
         managedObjectContext.zm_userImageCache = userImageCache
         managedObjectContext.zm_fileAssetCache = fileAssetCache
         managedObjectContext.zm_searchUserCache = NSCache()
@@ -596,7 +603,6 @@ public final class ZMUserSession: NSObject {
             self.syncManagedObjectContext.zm_userImageCache = userImageCache
             self.syncManagedObjectContext.zm_fileAssetCache = fileAssetCache
         }
-
     }
 
     private func createStrategyDirectory(useLegacyPushNotifications: Bool) -> StrategyDirectoryProtocol {
@@ -782,6 +788,12 @@ public final class ZMUserSession: NSObject {
             self.syncManagedObjectContext.setPersistentStoreMetadata(NSNumber(value: true), key: DeleteAccountRequestStrategy.userDeletionInitiatedKey)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
+    }
+
+    // MARK: - Caches
+
+    func purgeTemporaryAssets() {
+        assetCache.purgeTemporaryAssets()
     }
 
 }
