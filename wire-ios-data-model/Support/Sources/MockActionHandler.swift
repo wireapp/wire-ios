@@ -19,29 +19,37 @@
 import Foundation
 import WireDataModel
 
-public class MockActionHandler<T: EntityAction>: EntityActionHandler {
+public final class MockActionHandler<T: EntityAction>: EntityActionHandler {
 
     public typealias Action = T
 
-    var results: [Result<Action.Result, Action.Failure>]
-    var token: NSObjectProtocol?
+    private var results: [Result<Action.Result, Action.Failure>]
+    private var token: NSObjectProtocol?
+
+    private let lock = NSRecursiveLock()
+
     public var didPerformAction: Bool {
         return results.isEmpty
     }
+
     public var performedActions: [Action] = []
+
+    public convenience init(result: Result<Action.Result, Action.Failure>, context: NotificationContext) {
+        self.init(results: [result], context: context)
+    }
 
     public init(results: [Result<Action.Result, Action.Failure>], context: NotificationContext) {
         self.results = results
         token = Action.registerHandler(self, context: context)
     }
 
-    public convenience init(result: Result<Action.Result, Action.Failure>, context: NotificationContext) {
-        self.init(results: [result], context: context)
-    }
-
     public func performAction(_ action: Action) {
-        var action = action
+        // lock to prevent data races accessing `results`.
+        lock.lock()
+        defer { lock.unlock() }
+
         if let result = results.first {
+            var action = action
             action.notifyResult(result)
             performedActions.append(action)
             results.removeFirst()
