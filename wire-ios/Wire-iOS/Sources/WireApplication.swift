@@ -22,30 +22,33 @@ import WireSyncEngine
 
 final class WireApplication: UIApplication {
 
-    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
-        guard motion == .motionShake else { return }
+    private var displayedDeveloperTools = false
 
-        if Bundle.developerModeEnabled {
-            let developerTools = UIHostingController(
-                rootView: NavigationView {
-                    DeveloperToolsView(viewModel: DeveloperToolsViewModel(
-                        router: AppDelegate.shared.appRootRouter,
-                        onDismiss: { [weak self] completion in
-                            if let topmostViewController = self?.topmostViewController() {
-                                topmostViewController.dismissIfNeeded(completion: completion)
-                            } else {
-                                completion()
-                            }
-                        }
-                    ))
-                }
-            )
-            topmostViewController()?.present(developerTools, animated: true)
-        } else {
-            DebugAlert.showSendLogsMessage(
-                message: "You have performed a shake motion, please confirm sending debug logs."
-            )
+    override func motionEnded(_ motion: UIEvent.EventSubtype, with event: UIEvent?) {
+        guard Bundle.developerModeEnabled else {
+            return
         }
+
+        guard motion == .motionShake, !displayedDeveloperTools else { return }
+
+        let developerTools = UIHostingController(
+            rootView: NavigationView {
+                DeveloperToolsView(viewModel: DeveloperToolsViewModel(
+                    router: AppDelegate.shared.appRootRouter,
+                    onDismiss: { [weak self] completion in
+                        if let topmostViewController = self?.topmostViewController() {
+                            topmostViewController.dismissIfNeeded(completion: completion)
+                        } else {
+                            completion()
+                        }
+                    }
+                ))
+            }
+        )
+
+        topmostViewController()?.present(developerTools, animated: true, completion: { [weak self] in
+            self?.displayedDeveloperTools = true
+        })
     }
 }
 
