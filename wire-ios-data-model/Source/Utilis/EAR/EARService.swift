@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import CoreData
 
 /// An object that provides encryption at rest.
 ///
