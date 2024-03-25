@@ -54,6 +54,129 @@ import AppKit
 
 
 
+public class MockE2EIdentityCertificateUpdateStatusUseCaseProtocol: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() async throws -> E2EIdentityCertificateUpdateStatus)?
+    public var invoke_MockValue: E2EIdentityCertificateUpdateStatus?
+
+    public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+}
+
+public class MockGetE2eIdentityCertificatesUseCaseProtocol: GetE2eIdentityCertificatesUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeMlsGroupIdClientIds_Invocations: [(mlsGroupId: MLSGroupID, clientIds: [MLSClientID])] = []
+    public var invokeMlsGroupIdClientIds_MockError: Error?
+    public var invokeMlsGroupIdClientIds_MockMethod: ((MLSGroupID, [MLSClientID]) async throws -> [E2eIdentityCertificate])?
+    public var invokeMlsGroupIdClientIds_MockValue: [E2eIdentityCertificate]?
+
+    public func invoke(mlsGroupId: MLSGroupID, clientIds: [MLSClientID]) async throws -> [E2eIdentityCertificate] {
+        invokeMlsGroupIdClientIds_Invocations.append((mlsGroupId: mlsGroupId, clientIds: clientIds))
+
+        if let error = invokeMlsGroupIdClientIds_MockError {
+            throw error
+        }
+
+        if let mock = invokeMlsGroupIdClientIds_MockMethod {
+            return try await mock(mlsGroupId, clientIds)
+        } else if let mock = invokeMlsGroupIdClientIds_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeMlsGroupIdClientIds`")
+        }
+    }
+
+}
+
+public class MockGetIsE2EIdentityEnabledUseCaseProtocol: GetIsE2EIdentityEnabledUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() async throws -> Bool)?
+    public var invoke_MockValue: Bool?
+
+    public func invoke() async throws -> Bool {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+}
+
+public class MockGetMLSFeatureUseCaseProtocol: GetMLSFeatureUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() -> Feature.MLS)?
+    public var invoke_MockValue: Feature.MLS?
+
+    public func invoke() -> Feature.MLS {
+        invoke_Invocations.append(())
+
+        if let mock = invoke_MockMethod {
+            return mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+}
+
 public class MockGetUserClientFingerprintUseCaseProtocol: GetUserClientFingerprintUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -76,6 +199,38 @@ public class MockGetUserClientFingerprintUseCaseProtocol: GetUserClientFingerpri
             return mock
         } else {
             fatalError("no mock for `invokeUserClient`")
+        }
+    }
+
+}
+
+public class MockIsE2EICertificateEnrollmentRequiredProtocol: IsE2EICertificateEnrollmentRequiredProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() async throws -> Bool)?
+    public var invoke_MockValue: Bool?
+
+    public func invoke() async throws -> Bool {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
         }
     }
 
@@ -130,6 +285,102 @@ class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
         }
 
         mock(id)
+    }
+
+    // MARK: - removeAction
+
+    var removeActionId_Invocations: [String] = []
+    var removeActionId_MockMethod: ((String) -> Void)?
+
+    func removeAction(id: String) {
+        removeActionId_Invocations.append(id)
+
+        guard let mock = removeActionId_MockMethod else {
+            fatalError("no mock for `removeActionId`")
+        }
+
+        mock(id)
+    }
+
+}
+
+public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneConversationsUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockError: Error?
+    public var invoke_MockMethod: (() async throws -> Void)?
+
+    public func invoke() async throws {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        try await mock()
+    }
+
+}
+
+public class MockSelfClientCertificateProviderProtocol: SelfClientCertificateProviderProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - hasCertificate
+
+    public var hasCertificateCallsCount = 0
+    public var hasCertificateCalled: Bool {
+        return hasCertificateCallsCount > 0
+    }
+
+    public var hasCertificate: Bool {
+        get async {
+            hasCertificateCallsCount += 1
+            if let hasCertificateClosure = hasCertificateClosure {
+                return await hasCertificateClosure()
+            } else {
+                return underlyingHasCertificate
+            }
+        }
+    }
+    public var underlyingHasCertificate: Bool!
+    public var hasCertificateClosure: (() async -> Bool)?
+
+
+    // MARK: - getCertificate
+
+    public var getCertificate_Invocations: [Void] = []
+    public var getCertificate_MockError: Error?
+    public var getCertificate_MockMethod: (() async throws -> E2eIdentityCertificate?)?
+    public var getCertificate_MockValue: E2eIdentityCertificate??
+
+    public func getCertificate() async throws -> E2eIdentityCertificate? {
+        getCertificate_Invocations.append(())
+
+        if let error = getCertificate_MockError {
+            throw error
+        }
+
+        if let mock = getCertificate_MockMethod {
+            return try await mock()
+        } else if let mock = getCertificate_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getCertificate`")
+        }
     }
 
 }
@@ -264,6 +515,36 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         mock()
     }
 
+    // MARK: - sessionManagerRequireCertificateEnrollment
+
+    public var sessionManagerRequireCertificateEnrollment_Invocations: [Void] = []
+    public var sessionManagerRequireCertificateEnrollment_MockMethod: (() -> Void)?
+
+    public func sessionManagerRequireCertificateEnrollment() {
+        sessionManagerRequireCertificateEnrollment_Invocations.append(())
+
+        guard let mock = sessionManagerRequireCertificateEnrollment_MockMethod else {
+            fatalError("no mock for `sessionManagerRequireCertificateEnrollment`")
+        }
+
+        mock()
+    }
+
+    // MARK: - sessionManagerDidEnrollCertificate
+
+    public var sessionManagerDidEnrollCertificateFor_Invocations: [UserSession?] = []
+    public var sessionManagerDidEnrollCertificateFor_MockMethod: ((UserSession?) -> Void)?
+
+    public func sessionManagerDidEnrollCertificate(for activeSession: UserSession?) {
+        sessionManagerDidEnrollCertificateFor_Invocations.append(activeSession)
+
+        guard let mock = sessionManagerDidEnrollCertificateFor_MockMethod else {
+            fatalError("no mock for `sessionManagerDidEnrollCertificateFor`")
+        }
+
+        mock(activeSession)
+    }
+
     // MARK: - sessionManagerDidPerformFederationMigration
 
     public var sessionManagerDidPerformFederationMigrationActiveSession_Invocations: [UserSession?] = []
@@ -309,6 +590,21 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         mock()
     }
 
+    // MARK: - sessionManagerDidCompleteInitialSync
+
+    public var sessionManagerDidCompleteInitialSyncFor_Invocations: [UserSession?] = []
+    public var sessionManagerDidCompleteInitialSyncFor_MockMethod: ((UserSession?) -> Void)?
+
+    public func sessionManagerDidCompleteInitialSync(for activeSession: UserSession?) {
+        sessionManagerDidCompleteInitialSyncFor_Invocations.append(activeSession)
+
+        guard let mock = sessionManagerDidCompleteInitialSyncFor_MockMethod else {
+            fatalError("no mock for `sessionManagerDidCompleteInitialSyncFor`")
+        }
+
+        mock(activeSession)
+    }
+
     // MARK: - sessionManagerDidChangeActiveUserSession
 
     public var sessionManagerDidChangeActiveUserSessionUserSession_Invocations: [ZMUserSession] = []
@@ -337,6 +633,81 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
         }
 
         mock(session)
+    }
+
+}
+
+public class MockSnoozeCertificateEnrollmentUseCaseProtocol: SnoozeCertificateEnrollmentUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeEndOfPeriodIsUpdateMode_Invocations: [(endOfPeriod: Date, isUpdateMode: Bool)] = []
+    public var invokeEndOfPeriodIsUpdateMode_MockMethod: ((Date, Bool) async -> Void)?
+
+    public func invoke(endOfPeriod: Date, isUpdateMode: Bool) async {
+        invokeEndOfPeriodIsUpdateMode_Invocations.append((endOfPeriod: endOfPeriod, isUpdateMode: isUpdateMode))
+
+        guard let mock = invokeEndOfPeriodIsUpdateMode_MockMethod else {
+            fatalError("no mock for `invokeEndOfPeriodIsUpdateMode`")
+        }
+
+        await mock(endOfPeriod, isUpdateMode)
+    }
+
+}
+
+public class MockStopCertificateEnrollmentSnoozerUseCaseProtocol: StopCertificateEnrollmentSnoozerUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() -> Void)?
+
+    public func invoke() {
+        invoke_Invocations.append(())
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        mock()
+    }
+
+}
+
+public class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - createResolveOneOnOneUseCase
+
+    public var createResolveOneOnOneUseCase_Invocations: [Void] = []
+    public var createResolveOneOnOneUseCase_MockMethod: (() -> ResolveOneOnOneConversationsUseCaseProtocol)?
+    public var createResolveOneOnOneUseCase_MockValue: ResolveOneOnOneConversationsUseCaseProtocol?
+
+    public func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
+        createResolveOneOnOneUseCase_Invocations.append(())
+
+        if let mock = createResolveOneOnOneUseCase_MockMethod {
+            return mock()
+        } else if let mock = createResolveOneOnOneUseCase_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `createResolveOneOnOneUseCase`")
+        }
     }
 
 }

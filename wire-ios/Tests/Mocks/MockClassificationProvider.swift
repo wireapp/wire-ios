@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireSyncEngine
+
 @testable import Wire
 
-final class MockClassificationProvider: ClassificationProviding {
-    var returnClassification: SecurityClassification = .none
+final class MockClassificationProvider: SecurityClassificationProviding {
+    var returnClassification: SecurityClassification? = .none
 
-    func classification(with users: [UserType], conversationDomain: String? = nil) -> SecurityClassification {
+    func classification(users: [UserType], conversationDomain: String?) -> SecurityClassification? {
         returnClassification
     }
 }

@@ -20,16 +20,6 @@ import UIKit
 
 class ConversationEncryptionProtocolCell: DetailsCollectionViewCell {
 
-    var encryptionProtocol: String {
-        get {
-            return label.text ?? EncryptionProtocol.proteus.rawValue
-        }
-
-        set {
-            return label.text = newValue
-        }
-    }
-
     let label: UILabel = {
         let label = DynamicFontLabel(fontSpec: .normalRegularFont, color: SemanticColors.Label.textDefault)
         label.textAlignment = .right
@@ -38,7 +28,6 @@ class ConversationEncryptionProtocolCell: DetailsCollectionViewCell {
 
     override func setUp() {
         super.setUp()
-        label.text = encryptionProtocol
         contentStackView.insertArrangedSubview(label, at: contentStackView.arrangedSubviews.count)
     }
 }

@@ -33,7 +33,7 @@ public extension MockTransportSession {
     func pushEventsForTeams(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, deleted: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> [MockPushEvent] {
         guard shouldSendEventsToSelfUser else { return [] }
 
-        let updatedEvents =  updated
+        let updatedEvents = updated
             .compactMap { $0 as? MockTeam }
             .sorted(by: ascendingCreationDate)
             .flatMap { self.pushEventForUpdatedTeam(team: $0, insertedObjects: inserted) }

@@ -57,7 +57,6 @@ final class AuthenticationEventResponderChain {
 
     enum EventType {
         case flowStart(NSError?, Int)
-        case initialSyncCompleted
         case backupReady(Bool)
         case clientRegistrationError(NSError, UUID)
         case clientRegistrationSuccess
@@ -89,7 +88,6 @@ final class AuthenticationEventResponderChain {
     // MARK: - Configuration
 
     var flowStartHandlers: [AnyAuthenticationEventHandler<(NSError?, Int)>] = []
-    var initialSyncHandlers: [AnyAuthenticationEventHandler<Void>] = []
     var backupEventHandlers: [AnyAuthenticationEventHandler<Bool>] = []
     var clientRegistrationErrorHandlers: [AnyAuthenticationEventHandler<(NSError, UUID)>] = []
     var clientRegistrationSuccessHandlers: [AnyAuthenticationEventHandler<Void>] = []
@@ -117,19 +115,18 @@ final class AuthenticationEventResponderChain {
 
     fileprivate func registerDefaultEventHandlers() {
         // flowStartHandlers
+        registerHandler(AuthenticationStartE2EIdentityMissingErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartMissingUsernameErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartMissingCredentialsErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartReauthenticateErrorHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartCompanyLoginLinkEventHandler(), to: &flowStartHandlers)
         registerHandler(AuthenticationStartAddAccountEventHandler(featureProvider: featureProvider), to: &flowStartHandlers)
 
-        // initialSyncHandlers
-        registerHandler(AuthenticationInitialSyncEventHandler(), to: &initialSyncHandlers)
-
         // clientRegistrationErrorHandlers
         registerHandler(AuthenticationClientLimitErrorHandler(), to: &clientRegistrationErrorHandlers)
         registerHandler(AuthenticationNoCredentialsErrorHandler(), to: &clientRegistrationErrorHandlers)
         registerHandler(AuthenticationNeedsReauthenticationErrorHandler(), to: &clientRegistrationErrorHandlers)
+        registerHandler(AuthenticationE2EIdentityMissingErrorHandler(), to: &clientRegistrationErrorHandlers)
         registerHandler(AuthenticationMissingUsernameErrorHandler(), to: &clientRegistrationErrorHandlers)
         registerHandler(ClientRegistrationErrorEventHandler(), to: &clientRegistrationErrorHandlers)
 
@@ -198,8 +195,6 @@ final class AuthenticationEventResponderChain {
         switch eventType {
         case .flowStart(let error, let numberOfAccounts):
             handleEvent(with: flowStartHandlers, context: (error, numberOfAccounts))
-        case .initialSyncCompleted:
-            handleEvent(with: initialSyncHandlers, context: ())
         case .backupReady(let existingAccount):
             handleEvent(with: backupEventHandlers, context: existingAccount)
         case .clientRegistrationError(let error, let accountID):

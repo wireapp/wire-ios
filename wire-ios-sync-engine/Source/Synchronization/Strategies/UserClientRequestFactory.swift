@@ -215,7 +215,7 @@ public final class UserClientRequestFactory {
             payload = [:]
         }
 
-        let request =  ZMTransportRequest(path: "/clients/\(client.remoteIdentifier!)", method: ZMTransportRequestMethod.delete, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(path: "/clients/\(client.remoteIdentifier!)", method: ZMTransportRequestMethod.delete, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
         let userClientMarkedToDeleteKeySet: Set<String> = [ZMUserClientMarkedToDeleteKey]
         return ZMUpstreamRequest(keys: userClientMarkedToDeleteKeySet, transportRequest: request)
     }

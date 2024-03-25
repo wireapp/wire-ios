@@ -217,6 +217,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         }
         DispatchQueue.global(qos: .userInitiated).async {
             if self.needsMessagingStoreMigration() {
+                let tp = ZMSTimePoint(interval: 60.0, label: "db migration")
                 WireLogger.localStorage.info("[setup] start migration of core data messaging store!", attributes: .safePublic)
 
                 do {
@@ -231,10 +232,13 @@ public class CoreDataStack: NSObject, ContextProvider {
                     }
                     return
                 }
+                if tp.warnIfLongerThanInterval() == false {
+                    WireLogger.localStorage.info("time spent in migration only: \(tp.elapsedTime)", attributes: .safePublic)
+                }
             }
 
             DispatchQueue.main.async {
-                WireLogger.localStorage.debug("[setup] load core data stores!")
+                WireLogger.localStorage.info("[setup] load core data stores!", attributes: .safePublic)
                 self.loadStores { error in
                     if DeveloperFlag.forceDatabaseLoadingFailure.isOn {
                         // flip off the flag in order not to be stuck in failure

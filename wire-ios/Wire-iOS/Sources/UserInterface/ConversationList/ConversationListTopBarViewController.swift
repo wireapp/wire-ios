@@ -241,8 +241,6 @@ final class ConversationListTopBarViewController: UIViewController {
         let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: settingsViewController)
 
         if wr_splitViewController?.layoutSize == .compact {
-            keyboardAvoidingViewController.modalPresentationStyle = .currentContext
-            keyboardAvoidingViewController.transitioningDelegate = self
             present(keyboardAvoidingViewController, animated: true)
         } else {
             keyboardAvoidingViewController.modalPresentationStyle = .formSheet
@@ -277,13 +275,11 @@ extension ConversationListTopBarViewController: UIViewControllerTransitioningDel
 
 extension ConversationListTopBarViewController: UserObserving {
 
-    func userDidChange(_ changes: UserChangeInfo) {
-
-        if changes.nameChanged || changes.teamsChanged {
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+        if changeInfo.nameChanged || changeInfo.teamsChanged {
             updateAccountView()
         }
-
-        if changes.legalHoldStatusChanged {
+        if changeInfo.legalHoldStatusChanged {
             updateLegalHoldIndictor()
         }
     }

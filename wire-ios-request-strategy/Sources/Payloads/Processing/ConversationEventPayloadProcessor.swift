@@ -81,6 +81,17 @@ struct ConversationEventPayloadProcessor {
             Logging.eventProcessing.error("Conversation creation missing timestamp in event, aborting...")
             return
         }
+        guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
+            Flow.createGroup.fail(ConversationEventPayloadProcessorError.noBackendConversationId)
+            Logging.eventProcessing.error("Conversation creation missing conversationID in event, aborting...")
+            return
+        }
+        guard await context.perform({
+            ZMConversation.fetch(with: conversationID, domain: payload.qualifiedID?.domain, in: context) == nil
+        }) else {
+            Logging.eventProcessing.warn("Conversation already exists, aborting...")
+            return
+        }
 
         await updateOrCreateConversation(
             from: payload.data,
@@ -213,11 +224,10 @@ struct ConversationEventPayloadProcessor {
                 in: context
             )!
         }) {
-            let selfUser = ZMUser.selfUser(in: context)
             let users = Set(usersAndRoles.map { $0.0 })
             let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
 
-            if (users.contains(selfUser) || newUsers) && conversation.conversationType == .group {
+            if newUsers && conversation.conversationType == .group {
                 // TODO jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }
@@ -808,6 +818,7 @@ struct ConversationEventPayloadProcessor {
         for conversation: ZMConversation,
         in context: NSManagedObjectContext
     ) {
+
         guard let messageProtocolString = payload.messageProtocol else {
             Logging.eventProcessing.warn("message protocol is missing")
             return

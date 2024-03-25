@@ -134,6 +134,24 @@ extension ZMConversation {
                             domains: domains)
     }
 
+    // MARK: - Conversation verification status
+
+    public func appendConversationVerifiedSystemMessage(sender: ZMUser, at timestamp: Date) {
+        appendSystemMessage(type: .conversationIsVerified,
+                            sender: sender,
+                            users: nil,
+                            clients: nil,
+                            timestamp: timestamp)
+    }
+
+    public func appendConversationDegradedSystemMessage(sender: ZMUser, at timestamp: Date) {
+        appendSystemMessage(type: .conversationIsDegraded,
+                            sender: sender,
+                            users: nil,
+                            clients: nil,
+                            timestamp: timestamp)
+    }
+
     // MARK: - MLS Migration
 
     public func appendMLSMigrationFinalizedSystemMessage(
@@ -164,14 +182,13 @@ extension ZMConversation {
     }
 
     public func appendMLSMigrationOngoingCallSystemMessage(
-        users: Set<ZMUser>,
         sender: ZMUser,
         at timestamp: Date
     ) {
         appendSystemMessage(
             type: .mlsMigrationOngoingCall,
             sender: sender,
-            users: users,
+            users: nil,
             clients: nil,
             timestamp: timestamp
         )
@@ -227,8 +244,7 @@ extension ZMConversation {
     }
 
     public func appendMLSMigrationMLSNotSupportedForSelfUser(
-        user: ZMUser,
-        at timestamp: Date
+        user: ZMUser
     ) {
 
         guard let context = self.managedObjectContext else { return }
@@ -238,13 +254,12 @@ extension ZMConversation {
             sender: ZMUser.selfUser(in: context),
             users: Set([user]),
             clients: nil,
-            timestamp: timestamp
+            timestamp: .now
         )
     }
 
     public func appendMLSMigrationMLSNotSupportedForOtherUser(
-        user: ZMUser,
-        at timestamp: Date
+        user: ZMUser
     ) {
 
         guard let context = self.managedObjectContext else { return }
@@ -254,7 +269,7 @@ extension ZMConversation {
             sender: ZMUser.selfUser(in: context),
             users: Set([user]),
             clients: nil,
-            timestamp: timestamp
+            timestamp: .now
         )
     }
 

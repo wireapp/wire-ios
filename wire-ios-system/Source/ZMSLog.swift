@@ -308,7 +308,7 @@ extension ZMSLog {
 
             // move last-1 to 0 items
             for index in (0..<lastIndex).reversed() {
-                try? manager.moveItem(at: previousZipLogURLs[index], to: previousZipLogURLs[index+1])
+                try? manager.moveItem(at: previousZipLogURLs[index], to: previousZipLogURLs[index + 1])
             }
 
             // move current log to 0 item

@@ -91,9 +91,11 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
         var currentURL = storeURL
 
         for migrationStep in try migrationStepsForStore(at: storeURL, to: version) {
+
             let logMessage = "messaging core data store migration step \(migrationStep.sourceVersion) to \(migrationStep.destinationVersion)"
-            zmLog.safePublic(SanitizedString(stringLiteral: logMessage), level: .info)
-            WireLogger.localStorage.info(logMessage)
+            WireLogger.localStorage.info(logMessage, attributes: .safePublic)
+
+            try self.runPreMigrationStep(migrationStep, for: currentURL)
 
             let manager = NSMigrationManager(sourceModel: migrationStep.sourceModel, destinationModel: migrationStep.destinationModel)
             let destinationURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent(UUID().uuidString)
@@ -106,23 +108,29 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
                     to: destinationURL,
                     type: persistentStoreType
                 )
+                WireLogger.localStorage.info("finish migrate store for \(migrationStep.sourceVersion)", attributes: .safePublic)
             } catch let error {
                 throw CoreDataMessagingMigratorError.migrateStoreFailed(error: error)
             }
 
             if currentURL != storeURL {
+                WireLogger.localStorage.info("destroy store \(storeURL)", attributes: .safePublic)
                 // Destroy intermediate step's store
                 try destroyStore(at: currentURL)
             }
 
             currentURL = destinationURL
 
-            zmLog.safePublic("finish migration step", level: .info)
-        }
+            WireLogger.localStorage.info("finish migration step for \(migrationStep.sourceVersion)", attributes: .safePublic)
 
+            try self.runPostMigrationStep(migrationStep, for: currentURL)
+        }
+        WireLogger.localStorage.info("replace store \(storeURL), with \(currentURL)", attributes: .safePublic)
         try replaceStore(at: storeURL, withStoreAt: currentURL)
+        WireLogger.localStorage.info("replace store finished", attributes: .safePublic)
 
         if currentURL != storeURL {
+            WireLogger.localStorage.info("destroy last store \(currentURL)", attributes: .safePublic)
             try destroyStore(at: currentURL)
         }
     }
@@ -240,5 +248,25 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
         } catch {
             throw CoreDataMessagingMigratorError.failedToDestroyPersistentStore(storeURL: storeURL)
         }
+    }
+
+    // MARK: - CoreDataMigration Actions
+
+    func runPreMigrationStep(_ step: CoreDataMessagingMigrationStep, for storeURL: URL) throws {
+        guard let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: step.destinationVersion) else {
+            return
+        }
+        WireLogger.localStorage.debug("run preMigration step \(step.destinationVersion)", attributes: .safePublic)
+        try action.perform(on: storeURL,
+                           with: step.sourceModel)
+    }
+
+    func runPostMigrationStep(_ step: CoreDataMessagingMigrationStep, for storeURL: URL) throws {
+
+        guard let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: step.destinationVersion) else { return }
+
+        WireLogger.localStorage.debug("run postMigration step \(step.destinationVersion)", attributes: .safePublic)
+        try action.perform(on: storeURL,
+                           with: step.destinationModel)
     }
 }

@@ -183,6 +183,20 @@ public extension WireLogger {
     static let conversation = WireLogger(tag: "conversation")
     static let authentication = WireLogger(tag: "authentication")
     static let session = WireLogger(tag: "session")
+    static let e2ei = WireLogger(tag: "end-to-end-identity")
     static let sync = WireLogger(tag: "sync")
     static let system = WireLogger(tag: "system")
+    static let featureConfigs = WireLogger(tag: "feature-configurations")
+    static let assets = WireLogger(tag: "assets")
+
+}
+
+/// Class to proxy WireLogger methods to Objective-C
+@objcMembers
+final class WireLoggerObjc: NSObject {
+
+    static func assertionDumpLog(_ message: String) {
+        WireLogger.system.critical(message, attributes: .safePublic)
+    }
+
 }

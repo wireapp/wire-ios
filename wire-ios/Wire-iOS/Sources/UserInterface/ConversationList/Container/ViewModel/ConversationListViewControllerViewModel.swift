@@ -15,7 +15,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import UserNotifications
 import WireDataModel
 import WireSyncEngine
@@ -68,6 +68,7 @@ extension ConversationListViewController {
         let selfUser: SelfUserType
         let conversationListType: ConversationListHelperType.Type
         let userSession: UserSession
+        private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
 
         var selectedConversation: ZMConversation?
 
@@ -83,16 +84,25 @@ extension ConversationListViewController {
             account: Account,
             selfUser: SelfUserType,
             conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
-            userSession: UserSession
-            // TODO [WPB-765]: inject use case
+            userSession: UserSession,
+            isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
+            notificationCenter: NotificationCenter = .default
         ) {
             self.account = account
             self.selfUser = selfUser
             self.conversationListType = conversationListType
             self.userSession = userSession
+            self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
+            selfUserStatus = .init(user: selfUser, isE2EICertified: false)
+            super.init()
 
-            selfUserStatus = .init(user: selfUser, isCertified: false)
-            // TODO [WPB-765]: use usecase to get verification info
+            updateE2EICertifiedStatus()
+            notificationCenter.addObserver(
+                self,
+                selector: #selector(handleApplicationDidBecomeActiveNotification(_:)),
+                name: UIApplication.didBecomeActiveNotification,
+                object: nil
+            )
         }
     }
 }
@@ -146,10 +156,16 @@ extension ConversationListViewController.ViewModel {
 
             selfUser.fetchMarketingConsent(in: userSession, completion: {[weak self] result in
                 switch result {
-                case .failure:
-                    self?.viewController?.showNewsletterSubscriptionDialogIfNeeded(completionHandler: { marketingConsent in
-                        selfUser.setMarketingConsent(to: marketingConsent, in: userSession, completion: { _ in })
-                    })
+                case .failure(let error):
+                    switch error {
+                    case ConsentRequestError.notAvailable:
+                        // don't show the alert there is no consent to show
+                        break
+                    default:
+                        self?.viewController?.showNewsletterSubscriptionDialogIfNeeded(completionHandler: { marketingConsent in
+                            selfUser.setMarketingConsent(to: marketingConsent, in: userSession, completion: { _ in })
+                        })
+                    }
                 case .success:
                     // The user already gave a marketing consent, no need to ask for it again.
                     return
@@ -190,16 +206,27 @@ extension ConversationListViewController.ViewModel {
         return true
     }
 
+    func updateE2EICertifiedStatus() {
+        Task { @MainActor in
+            do {
+                selfUserStatus.isE2EICertified = try await isSelfUserE2EICertifiedUseCase.invoke()
+            } catch {
+                WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
+            }
+        }
+    }
 }
 
 extension ConversationListViewController.ViewModel: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-
         if changeInfo.nameChanged {
             selfUserStatus.name = changeInfo.user.name ?? ""
         }
-
+        if changeInfo.trustLevelChanged {
+            selfUserStatus.isProteusVerified = changeInfo.user.isVerified
+            updateE2EICertifiedStatus()
+        }
         if changeInfo.availabilityChanged {
             selfUserStatus.availability = changeInfo.user.availability
         }
@@ -210,6 +237,16 @@ extension ConversationListViewController.ViewModel: ZMInitialSyncCompletionObser
 
     func initialSyncCompleted() {
         requestMarketingConsentIfNeeded()
+    }
+}
+
+// MARK: - Observing UIApplication Life Cycle
+
+extension ConversationListViewController.ViewModel {
+
+    @objc
+    private func handleApplicationDidBecomeActiveNotification(_ notification: Notification) {
+        updateE2EICertifiedStatus()
     }
 }
 
