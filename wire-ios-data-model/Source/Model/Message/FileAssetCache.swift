@@ -99,6 +99,7 @@ open class FileAssetCache: NSObject {
         )
     }
 
+    @objc(hasImageDataForTeam:)
     public func hasImageData(for team: Team) -> Bool {
         guard let key = cacheKey(
             for: team,
@@ -375,9 +376,9 @@ open class FileAssetCache: NSObject {
         return cache.assetData(key)
     }
 
-    // MARK: - File data
+    // MARK: - Original file
 
-    public func storeFile(
+    public func storeOriginalFile(
         data: Data,
         for message: ZMConversationMessage
     ) {
@@ -395,6 +396,30 @@ open class FileAssetCache: NSObject {
         )
     }
 
+    public func hasOriginalFileData(for message: ZMConversationMessage) -> Bool {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            encrypted: false
+        ) else {
+            return false
+        }
+
+        return cache.hasDataForKey(key)
+    }
+
+    public func originalFileData(for message: ZMConversationMessage) -> Data? {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            encrypted: false
+        ) else {
+            return nil
+        }
+
+        return cache.assetData(key)
+    }
+
+    // MARK: - Encrypted file
+
     public func storeEncryptedFile(
         data: Data,
         for message: ZMConversationMessage
@@ -411,6 +436,28 @@ open class FileAssetCache: NSObject {
             key: key,
             createdAt: message.serverTimestamp ?? Date()
         )
+    }
+
+    public func hasEncryptedFileData(for message: ZMConversationMessage) -> Bool {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            encrypted: true
+        ) else {
+            return false
+        }
+
+        return cache.hasDataForKey(key)
+    }
+
+    public func encryptedFileData(for message: ZMConversationMessage) -> Data? {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            encrypted: true
+        ) else {
+            return nil
+        }
+
+        return cache.assetData(key)
     }
 
     public func temporaryURLForDecryptedFile(
@@ -615,20 +662,16 @@ open class FileAssetCache: NSObject {
 
     // MARK: - Conversation message
 
-    open func hasDataOnDisk(for message: ZMConversationMessage) -> Bool {
-        return hasOriginalData(for: message) || hasPreprocessedData(for: message) || hasProcessedData(for: message)
+    @objc(hasImageDataForMessage:)
+    public func hasImageData(for message: ZMConversationMessage) -> Bool {
+        return hasOriginalImageData(for: message)
+        || hasMediumImageData(for: message)
+        || hasEncryptedMediumImageData(for: message)
     }
 
-    private func hasOriginalData(for message: ZMConversationMessage) -> Bool {
-        return hasDataOnDisk(message, format: .original, encrypted: false)
-    }
-
-    private func hasPreprocessedData(for message: ZMConversationMessage) -> Bool {
-        return hasDataOnDisk(message, format: .medium, encrypted: false)
-    }
-
-    private func hasProcessedData(for message: ZMConversationMessage) -> Bool {
-        return hasDataOnDisk(message, format: .medium, encrypted: true)
+    @objc(hasFileDataForMessage:)
+    public func hasFileData(for message: ZMConversationMessage) -> Bool {
+        return hasOriginalFileData(for: message) || hasEncryptedFileData(for: message)
     }
 
     open func hasDataOnDisk(_ message: ZMConversationMessage, format: ZMImageFormat, encrypted: Bool) -> Bool {
