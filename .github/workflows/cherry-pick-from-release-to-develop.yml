@@ -101,6 +101,8 @@ jobs:
               id: get-cherry
               if: env.shouldCherryPick == 'true'
               run: |
+                  set -vx
+                  echo We are at commit `git rev-parse HEAD`
                   if [[ -n "${{ env.SUBMODULE_NAME }}" && "${{ env.SUBMODULE_TRACK }}" == "true" ]]; then
                     # If SUBMODULE_NAME is set
                     git reset --soft HEAD~2
