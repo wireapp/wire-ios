@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 import WireCommonComponents
 import WireSyncEngine
-import SwiftUI
 
 final class WireApplication: UIApplication {
 
@@ -31,8 +30,9 @@ final class WireApplication: UIApplication {
                 rootView: NavigationView {
                     DeveloperToolsView(viewModel: DeveloperToolsViewModel(
                         router: AppDelegate.shared.appRootRouter,
-                        onDismiss: { [weak self] in
-                            self?.topmostViewController()?.dismissIfNeeded()
+                        onDismiss: { [weak self] completion in
+                            guard let topmostViewController = self?.topmostViewController() else { return completion() }
+                            topmostViewController.dismissIfNeeded(animated: true, completion: completion)
                         }
                     ))
                 }
