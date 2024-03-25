@@ -104,6 +104,7 @@ extension Notification {
         userInfo?["alertType"] as? E2EIPrivacyWarningChecker.AlertType
     }
 }
+
 private extension Notification {
 
     static func e2eiPrivacyWarningConfirm(sendAnyway: Bool) -> Notification {
