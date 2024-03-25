@@ -183,6 +183,14 @@ final class MockPassFileMessageData: NSObject, ZMFileMessageData {
         return false
     }
 
+    var hasLocalFileData: Bool {
+        return fileURL != nil
+    }
+
+    func temporaryURLToDecryptedFile() -> URL? {
+        return fileURL
+    }
+
     func requestFileDownload() {
         // no-op
     }
@@ -241,6 +249,14 @@ final class MockFileMessageData: NSObject, ZMFileMessageData {
 
     var v3_isImage: Bool {
         return false
+    }
+
+    var hasLocalFileData: Bool {
+        return fileURL != nil
+    }
+
+    func temporaryURLToDecryptedFile() -> URL? {
+        return fileURL
     }
 
     func requestFileDownload() {

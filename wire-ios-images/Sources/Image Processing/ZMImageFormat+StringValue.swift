@@ -18,31 +18,44 @@
 
 import Foundation
 
-struct CoreDataMigrationActionFactory {
+public extension ZMImageFormat {
 
-    static func createPreMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
-        switch destinationVersion {
-        case .version2_111:
-            return RemoveDuplicatePreAction()
+    init(_ string: String) {
+        switch string {
+        case "preview":
+            self = .preview
 
-        case .version2_107:
-            return CleanupModels2_107PreAction()
+        case "medium":
+            self = .medium
+
+        case "smallProfile":
+            self = .profile
+
+        case "original":
+            self = .original
 
         default:
-            return nil
+            self = .invalid
         }
     }
 
-    static func createPostMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
-        switch destinationVersion {
-        case .version2_114:
-            return OneOnOneConversationMigrationAction()
+    var stringValue: String {
+        switch self {
+        case .invalid:
+            return "invalid"
 
-        case .version2_111:
-            return PrefillPrimaryKeyAction()
+        case .preview:
+            return "preview"
 
-        default:
-            return nil
+        case .medium:
+            return "medium"
+
+        case .original:
+            return "original"
+
+        case .profile:
+            return "smallProfile"
         }
     }
+
 }

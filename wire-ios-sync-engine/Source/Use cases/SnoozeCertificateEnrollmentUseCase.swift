@@ -20,30 +20,28 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol SnoozeCertificateEnrollmentUseCaseProtocol {
-    func invoke(isUpdateMode: Bool) async
+    func invoke(endOfPeriod: Date, isUpdateMode: Bool) async
 }
 
 final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol {
 
     // MARK: - Properties
 
-    private let e2eiFeature: Feature.E2EI
-    private let gracePeriodRepository: GracePeriodRepository
+    private let featureRepository: FeatureRepositoryInterface
+    private let featureRepositoryContext: NSManagedObjectContext
     private let recurringActionService: RecurringActionServiceInterface
-    private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
     private let actionId: String
+
     // MARK: - Life cycle
 
     init(
-        e2eiFeature: Feature.E2EI,
-        gracePeriodRepository: GracePeriodRepository,
+        featureRepository: FeatureRepositoryInterface,
+        featureRepositoryContext: NSManagedObjectContext,
         recurringActionService: RecurringActionServiceInterface,
-        selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
         accountId: UUID) {
-            self.e2eiFeature = e2eiFeature
-            self.gracePeriodRepository = gracePeriodRepository
+            self.featureRepository = featureRepository
+            self.featureRepositoryContext = featureRepositoryContext
             self.recurringActionService = recurringActionService
-            self.selfClientCertificateProvider = selfClientCertificateProvider
             self.actionId = "\(accountId).enrollCertificate"
         }
 
@@ -52,22 +50,18 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     /// Schedules recurring actions to check for enrolling or updating E2EI certificate
     /// - Parameter isUpdateMode: If set to `true`, `checkForE2EICertificateExpiryStatus` to check for updating certificate is scheduled else
     /// `featureDidChangeNotification` is triggered to check for enrolling the certificate. By default, this is `false`.
-    func invoke(isUpdateMode: Bool = false) async {
-        guard let endOfGracePeriod = gracePeriodRepository.fetchGracePeriodEndDate() else {
-            return
-        }
+    func invoke(endOfPeriod: Date, isUpdateMode: Bool = false) async {
         let timeProvider = SnoozeTimeProvider()
-        let interval = timeProvider.getSnoozeTime(endOfPeriod: endOfGracePeriod)
+        let interval = timeProvider.getSnoozeTime(endOfPeriod: endOfPeriod)
         await registerRecurringActionIfNeeded(isUpdateMode: isUpdateMode, interval: interval)
     }
 
     // MARK: - Helpers
-    @MainActor
     private func registerRecurringActionIfNeeded(isUpdateMode: Bool, interval: TimeInterval) async {
-        guard e2eiFeature.isEnabled,
-              await !selfClientCertificateProvider.hasCertificate else {
-            return
+        let isE2EIEnabled = await featureRepositoryContext.perform {
+            self.featureRepository.fetchE2EI().isEnabled
         }
+        guard isE2EIEnabled else { return }
 
         let recurringAction = RecurringAction(
             id: actionId,
@@ -76,8 +70,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
             if isUpdateMode {
                 NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
             } else {
-                // We save the end of the grace period once and should not update it.
-                let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled(gracePeriod: nil)
+                let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled
                 NotificationCenter.default.post(name: .featureDidChangeNotification,
                                                 object: notificationObject)
             }

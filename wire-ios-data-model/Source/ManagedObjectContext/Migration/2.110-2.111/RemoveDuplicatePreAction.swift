@@ -29,7 +29,24 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
 
     override func execute(in context: NSManagedObjectContext) {
         entityNames.forEach { entityName in
+            removeNilPrimaryKey(for: entityName, context: context)
             removeDuplicates(for: entityName, context: context)
+        }
+    }
+
+    // Method to cleanup objects without remoteIdentifierDataKey before removeDuplicates
+    private func removeNilPrimaryKey(for entityName: String, context: NSManagedObjectContext) {
+        let request = NSFetchRequest<NSManagedObject>(entityName: entityName)
+        request.predicate = NSPredicate(format: "%K = nil", ZMManagedObject.remoteIdentifierDataKey())
+        do {
+            let objectsWithNil = try context.fetch(request)
+
+            for object in objectsWithNil {
+                context.delete(object)
+            }
+            WireLogger.localStorage.info("Deleted \(objectsWithNil.count) \(entityName) objects with no remoteIdentifierData", attributes: .safePublic)
+        } catch {
+            WireLogger.localStorage.error("error fetching object \(entityName) with no remoteIdentifierData \(error.localizedDescription)", attributes: .safePublic)
         }
     }
 
@@ -52,16 +69,16 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
             }
         }
 
-        WireLogger.localStorage.info("found \(duplicates.count) different duplicate(s) of \(entityName)")
+        WireLogger.localStorage.info("found \(duplicates.count) different duplicate(s) of \(entityName)", attributes: .safePublic)
 
         var needsSlowSync = false
 
         duplicates.forEach { (key, objects: [NSManagedObject]) in
             guard objects.count > 1 else {
-                WireLogger.localStorage.info("skipping object with different domain if any: \(key)")
+                WireLogger.localStorage.info("skipping object with different domain if any: \(key)", attributes: .safePublic)
                 return
             }
-            WireLogger.localStorage.debug("processing \(key)")
+            WireLogger.localStorage.debug("processing \(key)", attributes: .safePublic)
             // for now we just keep one object and mark to sync and drop the rest.
             // Marking needsToBeUpdatedFromBackend will recover the data from backend
             objects.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)
