@@ -133,7 +133,7 @@ extension ZMClientMessage: ZMImageOwner {
     @objc public func processingDidFinish() {
         self.linkPreviewState = .processed
         guard let moc = self.managedObjectContext else { return }
-        moc.zm_fileAssetCache.deleteAssetData(self, format: .original, encrypted: false)
+        moc.zm_fileAssetCache.deleteOriginalImageData(for: self)        
         moc.enqueueDelayedSave()
     }
 

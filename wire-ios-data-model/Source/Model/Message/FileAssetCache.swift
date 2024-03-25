@@ -179,6 +179,18 @@ open class FileAssetCache: NSObject {
         return cache.assetData(key)
     }
 
+    public func deleteOriginalImageData(for message: ZMConversationMessage) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .original,
+            encrypted: false
+        ) else {
+            return
+        }
+
+        return cache.deleteAssetData(key)
+    }
+
     // MARK: - Medium images
 
     @objc(storeMediumImageData:forMessage:)
@@ -223,6 +235,18 @@ open class FileAssetCache: NSObject {
         }
 
         return cache.assetData(key)
+    }
+
+    public func deleteMediumImageData(for message: ZMConversationMessage) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .medium,
+            encrypted: false
+        ) else {
+            return
+        }
+
+        return cache.deleteAssetData(key)
     }
 
     // MARK: - Encrypted images
@@ -341,6 +365,18 @@ open class FileAssetCache: NSObject {
         }
 
         return cache.assetData(key)
+    }
+
+    public func deletePreviewImageData(for message: ZMConversationMessage) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .preview,
+            encrypted: false
+        ) else {
+            return
+        }
+
+        return cache.deleteAssetData(key)
     }
 
     // MARK: - Encrypted preview
@@ -684,46 +720,6 @@ open class FileAssetCache: NSObject {
         return cache.assetURL(key)
     }
 
-    /// Deletes the image data for a given message.
-    ///
-    /// This will cause I/O.
-
-    open func deleteAssetData(
-        _ message: ZMConversationMessage,
-        format: ZMImageFormat,
-        encrypted: Bool
-    ) {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            format: format,
-            encrypted: encrypted
-        ) else {
-            return
-        }
-
-        cache.deleteAssetData(key)
-    }
-
-    /// Deletes the data for a given message.
-    ///
-    /// This will cause I/O.
-
-    open func deleteAssetData(
-        _ message: ZMConversationMessage,
-        identifier: String? = nil,
-        encrypted: Bool
-    ) {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            identifier: identifier,
-            encrypted: encrypted
-        ) else {
-            return
-        }
-
-        cache.deleteAssetData(key)
-    }
-
     /// Deletes all associated data for a given message.
     ///
     /// This will cause I/O.
@@ -733,30 +729,38 @@ open class FileAssetCache: NSObject {
             let imageFormats: [ZMImageFormat] = [.medium, .original, .preview]
 
             imageFormats.forEach { format in
-                deleteAssetData(
+                if let key = Self.cacheKeyForAsset(
                     message,
                     format: format,
                     encrypted: false
-                )
+                ) {
+                    cache.deleteAssetData(key)
+                }
 
-                deleteAssetData(
+                if let key = Self.cacheKeyForAsset(
                     message,
                     format: format,
                     encrypted: true
-                )
+                ) {
+                    cache.deleteAssetData(key)
+                }
             }
         }
 
         if message.fileMessageData != nil {
-            deleteAssetData(
+            if let key = Self.cacheKeyForAsset(
                 message,
                 encrypted: false
-            )
+            ) {
+                cache.deleteAssetData(key)
+            }
 
-            deleteAssetData(
+            if let key = Self.cacheKeyForAsset(
                 message,
                 encrypted: true
-            )
+            ) {
+                cache.deleteAssetData(key)
+            }
         }
     }
 

@@ -433,7 +433,7 @@ struct CacheAsset: AssetType {
         _ preprocessedImageData: Data,
         imageProperties: ZMIImageProperties
     ) {
-        guard 
+        guard
             needsPreprocessing,
             var genericMessage = owner.underlyingMessage
         else {
@@ -442,7 +442,7 @@ struct CacheAsset: AssetType {
 
         // Now we have the preprocessed data, delete the original.
         cache.storeMediumImage(data: preprocessedImageData, for: owner)
-        cache.deleteAssetData(owner, format: .original, encrypted: false)
+        cache.deleteOriginalImageData(for: owner)
 
         switch type {
         case .file:
