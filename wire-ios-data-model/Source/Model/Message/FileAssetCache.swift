@@ -674,32 +674,6 @@ open class FileAssetCache: NSObject {
         return hasOriginalFileData(for: message) || hasEncryptedFileData(for: message)
     }
 
-    open func hasDataOnDisk(_ message: ZMConversationMessage, format: ZMImageFormat, encrypted: Bool) -> Bool {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            format: format,
-            encrypted: encrypted
-        ) else {
-            return false
-        }
-
-        return cache.hasDataForKey(key)
-    }
-
-    open func hasDataOnDisk(
-        _ message: ZMConversationMessage,
-        encrypted: Bool
-    ) -> Bool {
-        guard let key = Self.cacheKeyForAsset(
-            message,
-            encrypted: encrypted
-        ) else {
-            return false
-        }
-
-        return cache.hasDataForKey(key)
-    }
-
     /// Returns the asset data for a given message.
     ///
     /// This will probably cause I/O.

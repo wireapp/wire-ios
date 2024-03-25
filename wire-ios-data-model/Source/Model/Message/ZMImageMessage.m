@@ -137,7 +137,7 @@
 
 - (BOOL)isDownloaded
 {
-    return [self.managedObjectContext.zm_fileAssetCache hasDataOnDisk:self format:ZMImageFormatMedium encrypted:NO] || [self.managedObjectContext.zm_fileAssetCache hasDataOnDisk:self format:ZMImageFormatOriginal encrypted:NO];
+    return [self.managedObjectContext.zm_fileAssetCache hasImageDataForMessage:self];
 }
 
 - (void)removeMessageClearingSender:(BOOL)clearingSender
