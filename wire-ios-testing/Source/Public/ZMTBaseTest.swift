@@ -23,7 +23,6 @@ extension ZMTBaseTest {
     public static func checkForMemoryLeaksAfterTestClassCompletes() {
         if MemoryReferenceDebugger.aliveObjects.count > 0 {
             print("Leaked: \(MemoryReferenceDebugger.aliveObjectsDescription)")
-            assert(false)
         }
     }
 

@@ -40,7 +40,6 @@ class PrefillPrimaryKeyAction: CoreDataMigrationAction {
             let objects = try context.fetch(request)
 
             objects.forEach { object in
-
                 let uniqueKey = PrimaryKeyGenerator.generateKey(for: object, entityName: entityName)
                 object.setValue(uniqueKey, forKey: Keys.primaryKey.rawValue)
             }

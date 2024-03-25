@@ -66,11 +66,11 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         let sut = try! conversation.appendImage(from: mediumJPEGData(), nonce: .create()) as! ZMAssetClientMessage
 
         let cache = uiMOC.zm_fileAssetCache!
-        cache.storeAssetData(sut, format: .preview, encrypted: false, data: verySmallJPEGData())
-        cache.storeAssetData(sut, format: .medium, encrypted: false, data: mediumJPEGData())
-        cache.storeAssetData(sut, format: .original, encrypted: false, data: mediumJPEGData())
-        cache.storeAssetData(sut, format: .preview, encrypted: true, data: verySmallJPEGData())
-        cache.storeAssetData(sut, format: .medium, encrypted: true, data: mediumJPEGData())
+        cache.storePreviewImage(data: verySmallJPEGData(), for: sut)
+        cache.storeMediumImage(data: mediumJPEGData(), for: sut)
+        cache.storeOriginalImage(data: mediumJPEGData(), for: sut)
+        cache.storeEncryptedPreviewImage(data: verySmallJPEGData(), for: sut)
+        cache.storeEncryptedMediumImage(data: mediumJPEGData(), for: sut)
 
         // expect
         let assetId = "asset-id"
@@ -110,12 +110,8 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         let sut = try! conversation.appendFile(with: fileMetaData, nonce: .create())  as! ZMAssetClientMessage
 
         let cache = uiMOC.zm_fileAssetCache!
-
-        cache.storeAssetData(sut, format: .original, encrypted: true, data: verySmallJPEGData())
-        cache.storeAssetData(sut, encrypted: true, data: mediumJPEGData())
-
-        XCTAssertNotNil(cache.assetData(sut, format: .original, encrypted: false))
-        XCTAssertNotNil(cache.assetData(sut, encrypted: false))
+        cache.storeEncryptedMediumImage(data: mediumJPEGData(), for: sut)
+        XCTAssertTrue(cache.hasEncryptedMediumImageData(for: sut))
 
         // expect
         let assetId = UUID.create().transportString()
@@ -214,9 +210,9 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         sut.sender = selfUser
 
         let cache = uiMOC.zm_fileAssetCache!
-        cache.storeAssetData(sut, format: .preview, encrypted: false, data: verySmallJPEGData())
-        cache.storeAssetData(sut, format: .medium, encrypted: false, data: mediumJPEGData())
-        cache.storeAssetData(sut, format: .original, encrypted: false, data: mediumJPEGData())
+        cache.storePreviewImage(data: verySmallJPEGData(), for: sut)
+        cache.storeMediumImage(data: mediumJPEGData(), for: sut)
+        cache.storeOriginalImage(data: mediumJPEGData(), for: sut)
 
         // when
         performPretendingUiMocIsSyncMoc {
@@ -236,9 +232,9 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         XCTAssertNil(sut.sender)
         XCTAssertNil(sut.senderClientID)
 
-        XCTAssertNil(cache.assetData(sut, format: .original, encrypted: false))
-        XCTAssertNil(cache.assetData(sut, format: .medium, encrypted: false))
-        XCTAssertNil(cache.assetData(sut, format: .preview, encrypted: false))
+        XCTAssertNil(cache.originalImageData(for: sut))
+        XCTAssertNil(cache.mediumImageData(for: sut))
+        XCTAssertNil(cache.previewImageData(for: sut))
         wipeCaches()
     }
 
@@ -581,11 +577,11 @@ extension ZMClientMessageTests_Deletion {
             XCTAssertEqual(assetMessage.size, 0, line: line)
 
             let cache = uiMOC.zm_fileAssetCache!
-            XCTAssertNil(cache.assetData(message, format: .original, encrypted: false))
-            XCTAssertNil(cache.assetData(message, format: .medium, encrypted: false))
-            XCTAssertNil(cache.assetData(message, format: .preview, encrypted: false))
-            XCTAssertNil(cache.assetData(message, format: .medium, encrypted: true))
-            XCTAssertNil(cache.assetData(message, format: .preview, encrypted: true))
+            XCTAssertNil(cache.originalImageData(for: message))
+            XCTAssertNil(cache.mediumImageData(for: message))
+            XCTAssertNil(cache.previewImageData(for: message))
+            XCTAssertNil(cache.encryptedMediumImageData(for: message))
+            XCTAssertNil(cache.encryptedPreviewImageData(for: message))
 
             XCTAssertNil(cache.assetData(message, encrypted: true))
             XCTAssertNil(cache.assetData(message, encrypted: false))
