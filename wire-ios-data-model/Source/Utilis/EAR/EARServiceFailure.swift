@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum EARServiceFailure: Error {
+enum EARServiceFailure: Error {
 
     case cannotPerformMigration
     case databaseKeyMissing
