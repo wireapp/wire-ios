@@ -515,6 +515,7 @@
 		E6B84C692BB1DA6C002D68D1 /* EARPrivateKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B84C682BB1DA6C002D68D1 /* EARPrivateKeys.swift */; };
 		E6B84C6B2BB1DA94002D68D1 /* EARServiceFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B84C6A2BB1DA94002D68D1 /* EARServiceFailure.swift */; };
 		E6B84C6D2BB1DAB2002D68D1 /* EARServiceDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B84C6C2BB1DAB2002D68D1 /* EARServiceDelegate.swift */; };
+		E6B84C6F2BB1DF23002D68D1 /* EARKeyRepositoryFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6B84C6E2BB1DF23002D68D1 /* EARKeyRepositoryFailure.swift */; };
 		E6BDA1152B1642A400488D92 /* store2-110-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E6BDA1142B1642A400488D92 /* store2-110-0.wiredatabase */; };
 		E6BFE8382B3320C7000F0FBE /* DatabaseMigrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BFE8372B3320C7000F0FBE /* DatabaseMigrationHelper.swift */; };
 		E6BFE83A2B332DDB000F0FBE /* DatabaseMigrationTests+ParticipantRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BFE8392B332DDB000F0FBE /* DatabaseMigrationTests+ParticipantRole.swift */; };
@@ -1418,6 +1419,7 @@
 		E6B84C682BB1DA6C002D68D1 /* EARPrivateKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARPrivateKeys.swift; sourceTree = "<group>"; };
 		E6B84C6A2BB1DA94002D68D1 /* EARServiceFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARServiceFailure.swift; sourceTree = "<group>"; };
 		E6B84C6C2BB1DAB2002D68D1 /* EARServiceDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARServiceDelegate.swift; sourceTree = "<group>"; };
+		E6B84C6E2BB1DF23002D68D1 /* EARKeyRepositoryFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EARKeyRepositoryFailure.swift; sourceTree = "<group>"; };
 		E6BDA1132B16421300488D92 /* zmessaging2.110.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.110.0.xcdatamodel; sourceTree = "<group>"; };
 		E6BDA1142B1642A400488D92 /* store2-110-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-110-0.wiredatabase"; sourceTree = "<group>"; };
 		E6BFE8372B3320C7000F0FBE /* DatabaseMigrationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMigrationHelper.swift; sourceTree = "<group>"; };
@@ -2477,6 +2479,7 @@
 				EE428C5129F1533000ECB715 /* EARKeyEncryptor.swift */,
 				EE428C4F29F1247400ECB715 /* EARKeyGenerator.swift */,
 				EE22F81129DD84ED0053E1C6 /* EARKeyRepository.swift */,
+				E6B84C6E2BB1DF23002D68D1 /* EARKeyRepositoryFailure.swift */,
 				E6B84C682BB1DA6C002D68D1 /* EARPrivateKeys.swift */,
 				E6B84C662BB1DA3E002D68D1 /* EARPublicKeys.swift */,
 				EEC57C4929E407CC0068DFDA /* EARService.swift */,
@@ -4377,6 +4380,7 @@
 				169315EF25AC4C8100709F15 /* MigrateSenderClient.swift in Sources */,
 				167BCC1C2609E92400E9D7E3 /* ZMEventModel.xcdatamodeld in Sources */,
 				BF10B58B1E6432ED00E7036E /* Message.swift in Sources */,
+				E6B84C6F2BB1DF23002D68D1 /* EARKeyRepositoryFailure.swift in Sources */,
 				59F4B6F22B87563E00AC84B1 /* IsUserE2EICertifiedUseCaseProtocol.swift in Sources */,
 				BF491CE81F063EEB0055EE44 /* AccountManager.swift in Sources */,
 				E6B84C6D2BB1DAB2002D68D1 /* EARServiceDelegate.swift in Sources */,

@@ -127,7 +127,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
                 return secondaryKeys.publicKey
 
             default:
-                throw EarKeyRepositoryFailure.keyNotFound
+                throw EARKeyRepositoryFailure.keyNotFound
             }
         }
 
@@ -140,7 +140,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
                 return secondaryKeys.privateKey
 
             default:
-                throw EarKeyRepositoryFailure.keyNotFound
+                throw EARKeyRepositoryFailure.keyNotFound
             }
         }
 
@@ -178,7 +178,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     func test_ItDoesMigrateKeys_IfEARIsEnabledAndSecondaryKeysDontExist() throws {
         // Given
         uiMOC.encryptMessagesAtRest = true
-        keyRepository.fetchPublicKeyDescription_MockError = EarKeyRepositoryFailure.keyNotFound
+        keyRepository.fetchPublicKeyDescription_MockError = EARKeyRepositoryFailure.keyNotFound
         keyRepository.storePublicKeyDescriptionKey_MockMethod = { _, _ in }
 
         // When
@@ -671,7 +671,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
         // When then
         XCTAssertThrowsError(try sut.fetchPublicKeys()) { error in
-            guard case EarKeyRepositoryFailure.keyNotFound = error else {
+            guard case EARKeyRepositoryFailure.keyNotFound = error else {
                 return XCTFail("unexpected error")
             }
         }
@@ -687,7 +687,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
                 return secondary
 
             default:
-                throw EarKeyRepositoryFailure.keyNotFound
+                throw EARKeyRepositoryFailure.keyNotFound
             }
         }
     }
@@ -777,7 +777,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
         // When then
         XCTAssertThrowsError(try sut.fetchPrivateKeys(includingPrimary: true)) { error in
-            guard case EarKeyRepositoryFailure.keyNotFound = error else {
+            guard case EARKeyRepositoryFailure.keyNotFound = error else {
                 return XCTFail("unexpected error")
             }
         }
@@ -793,7 +793,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
                 return secondary
 
             default:
-                throw EarKeyRepositoryFailure.keyNotFound
+                throw EARKeyRepositoryFailure.keyNotFound
             }
         }
     }

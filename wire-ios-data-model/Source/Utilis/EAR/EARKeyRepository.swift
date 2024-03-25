@@ -34,12 +34,6 @@ public protocol EARKeyRepositoryInterface {
 
 }
 
-public enum EarKeyRepositoryFailure: Error {
-
-    case keyNotFound
-
-}
-
 public class EARKeyRepository: EARKeyRepositoryInterface {
 
     private var keyCache = [String: SecKey]()
@@ -64,7 +58,7 @@ public class EARKeyRepository: EARKeyRepositoryInterface {
             keyCache[description.id] = key
             return key
         } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
-            throw EarKeyRepositoryFailure.keyNotFound
+            throw EARKeyRepositoryFailure.keyNotFound
         } catch {
             throw error
         }
@@ -87,7 +81,7 @@ public class EARKeyRepository: EARKeyRepositoryInterface {
             keyCache[description.id] = key
             return key
         } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
-            throw EarKeyRepositoryFailure.keyNotFound
+            throw EARKeyRepositoryFailure.keyNotFound
         } catch {
             throw error
         }
@@ -108,7 +102,7 @@ public class EARKeyRepository: EARKeyRepositoryInterface {
         do {
             return try KeychainManager.fetchItem(description)
         } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
-            throw EarKeyRepositoryFailure.keyNotFound
+            throw EARKeyRepositoryFailure.keyNotFound
         } catch {
             throw error
         }
