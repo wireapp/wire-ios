@@ -191,8 +191,9 @@ static ZMReachability *sharedReachabilityMock = nil;
 
 - (void)setupCaches
 {
+    NSURL *cacheLocation = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] firstObject];
     self.uiMOC.zm_userImageCache = [[UserImageLocalCache alloc] initWithLocation:nil];
-    self.uiMOC.zm_fileAssetCache = [[FileAssetCache alloc] initWithLocation:nil];
+    self.uiMOC.zm_fileAssetCache = [[FileAssetCache alloc] initWithLocation:cacheLocation];
 
     [self.syncMOC performGroupedBlockAndWait:^{
         self.syncMOC.zm_fileAssetCache = self.uiMOC.zm_fileAssetCache;

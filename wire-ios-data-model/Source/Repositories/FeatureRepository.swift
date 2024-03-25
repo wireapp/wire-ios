@@ -351,16 +351,14 @@ public class FeatureRepository: FeatureRepositoryInterface {
             logger.error("failed to encode Feature.E2EI.Config: \(error)")
         }
 
-        guard needsToNotifyUser(for: .e2ei) else { return }
-
-        switch e2ei.status {
-        case .enabled:
-            let gracePeriod = TimeInterval(e2ei.config.verificationExpiration)
-            notifyChange(.e2eIEnabled(gracePeriod: gracePeriod))
-
-        case .disabled:
+        guard
+            needsToNotifyUser(for: .e2ei),
+            e2ei.status == .enabled
+        else {
             return
         }
+
+        notifyChange(.e2eIEnabled)
     }
 
     // MARK: - MLSMigration
@@ -466,7 +464,7 @@ extension FeatureRepository {
     /// These can be used by the ui layer to determine what kind of alert
     /// it needs to display to inform the user of changes.
 
-    public enum FeatureChange {
+    public enum FeatureChange: Equatable {
 
         case conferenceCallingIsAvailable
         case selfDeletingMessagesIsDisabled
@@ -475,7 +473,7 @@ extension FeatureRepository {
         case fileSharingDisabled
         case conversationGuestLinksEnabled
         case conversationGuestLinksDisabled
-        case e2eIEnabled(gracePeriod: TimeInterval?)
+        case e2eIEnabled
 
         public var hasFurtherActions: Bool {
             switch self {

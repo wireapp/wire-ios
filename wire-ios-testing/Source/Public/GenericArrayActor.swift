@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,29 +17,13 @@
 //
 
 import Foundation
-@testable import WireDataModel
 
-class MockStaleMLSKeyDetector: StaleMLSKeyDetectorProtocol {
+public actor GenericArrayActor<T> {
+    public var items = [T]()
 
-    // MARK: - Metrics
+    public init() {}
 
-    struct Calls: Equatable {
-
-        var keyingMaterialUpdated = [MLSGroupID]()
-
+    public func append(_ item: T) {
+        items.append(item)
     }
-
-    var calls = Calls()
-
-    // MARK: - Properties
-
-    var refreshIntervalInDays: UInt = 90
-    var groupsWithStaleKeyingMaterial: Set<MLSGroupID> = Set()
-
-    // MARK: - Methods
-
-    func keyingMaterialUpdated(for groupID: MLSGroupID) {
-        calls.keyingMaterialUpdated.append(groupID)
-    }
-
 }

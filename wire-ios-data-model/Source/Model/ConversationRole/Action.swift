@@ -30,9 +30,11 @@ public final class Action: ZMManagedObject {
         return String(describing: Action.self)
     }
 
-    private static func fetchExistingAction(with name: String,
-                                            role: Role,
-                                            in context: NSManagedObjectContext) -> Action? {
+    private static func fetchExistingAction(
+        with name: String,
+        role: Role,
+        in context: NSManagedObjectContext
+    ) -> Action? {
         let fetchRequest = NSFetchRequest<Action>(entityName: self.entityName())
         fetchRequest.predicate = NSPredicate(format: "%K == %@", nameKey, name)
 
@@ -43,17 +45,22 @@ public final class Action: ZMManagedObject {
     }
 
     @discardableResult
-    private static func create(managedObjectContext: NSManagedObjectContext,
-                               name: String) -> Action {
+    private static func create(
+        managedObjectContext: NSManagedObjectContext,
+        name: String
+    ) -> Action {
         let entry = Action.insertNewObject(in: managedObjectContext)
         entry.name = name
         return entry
     }
 
     @discardableResult
-    public static func fetchOrCreate(with name: String,
-                                     role: Role,
-                                     in context: NSManagedObjectContext, created: inout Bool) -> Action {
+    public static func fetchOrCreate(
+        with name: String,
+        role: Role,
+        in context: NSManagedObjectContext,
+        created: inout Bool
+    ) -> Action {
         let existingAction = fetchExistingAction(with: name, role: role, in: context)
         let action = existingAction ?? Action.create(managedObjectContext: context, name: name)
         created = (existingAction == nil)
