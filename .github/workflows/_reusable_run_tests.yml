@@ -307,7 +307,6 @@ jobs:
             build/reports/*.junit
           compare_to_earlier_commit: false
             
-            
       - name: Archiving DerivedData Logs
         uses: actions/upload-artifact@v2
         if: always()
