@@ -37,6 +37,7 @@ struct E2EIdentityCertificateDetailsView: View {
             Spacer()
             Text(L10n.Localizable.Device.Details.CertificateDetails.title)
                 .font(FontSpec.headerSemiboldFont.swiftUIFont)
+                .accessibilityIdentifier("CertificateDetailsTitle")
             Spacer()
         }
         .padding(.all, ViewConstants.Padding.standard)
@@ -53,6 +54,7 @@ struct E2EIdentityCertificateDetailsView: View {
                             .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
                     }
                 )
+                .accessibilityIdentifier("CloseButton")
                 .padding(.all, ViewConstants.Padding.standard)
             }
         }
@@ -64,6 +66,7 @@ struct E2EIdentityCertificateDetailsView: View {
                 .font(FontSpec.smallFont.swiftUIFont.monospaced())
                 .padding()
                 .frame(maxHeight: .infinity)
+                .accessibilityIdentifier("CertificateDetailsView")
         }
     }
 
@@ -89,6 +92,7 @@ struct E2EIdentityCertificateDetailsView: View {
                     .font(FontSpec.normalBoldFont.swiftUIFont)
             }
         )
+        .accessibilityIdentifier("DownloadButton")
     }
 
     private var moreButton: some View {
@@ -102,6 +106,7 @@ struct E2EIdentityCertificateDetailsView: View {
                     .padding(.trailing, ViewConstants.Padding.standard)
             }
         )
+        .accessibilityIdentifier("MoreButton")
     }
 
     private var copyToClipboardButton: some View {
@@ -150,7 +155,6 @@ struct E2EIdentityCertificateDetailsView: View {
 
         titleView
             .background(SemanticColors.View.backgroundDefault.swiftUIColor)
-
         certificateView
             .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
 
