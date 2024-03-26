@@ -15,10 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "594F41C32BB2FC4E00F6C171"
-               BuildableName = "Periphery"
-               BlueprintName = "Periphery"
-               ReferencedContainer = "container:Wire-iOS.xcodeproj">
+               BlueprintIdentifier = "594F41C82BB2FF0500F6C171"
+               BuildableName = "WireSystem Periphery"
+               BlueprintName = "WireSystem Periphery"
+               ReferencedContainer = "container:WireSystem.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -50,10 +50,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "594F41C32BB2FC4E00F6C171"
-            BuildableName = "Periphery"
-            BlueprintName = "Periphery"
-            ReferencedContainer = "container:Wire-iOS.xcodeproj">
+            BlueprintIdentifier = "594F41C82BB2FF0500F6C171"
+            BuildableName = "WireSystem Periphery"
+            BlueprintName = "WireSystem Periphery"
+            ReferencedContainer = "container:WireSystem.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

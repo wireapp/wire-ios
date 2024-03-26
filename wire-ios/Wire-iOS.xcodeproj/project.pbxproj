@@ -7,15 +7,15 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		594F41C32BB2FC4E00F6C171 /* Periphery */ = {
+		594F41C32BB2FC4E00F6C171 /* Wire-iOS Periphery */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 594F41C62BB2FC4E00F6C171 /* Build configuration list for PBXAggregateTarget "Periphery" */;
+			buildConfigurationList = 594F41C62BB2FC4E00F6C171 /* Build configuration list for PBXAggregateTarget "Wire-iOS Periphery" */;
 			buildPhases = (
 				594F41C72BB2FC5800F6C171 /* ShellScript */,
 			);
 			dependencies = (
 			);
-			name = Periphery;
+			name = "Wire-iOS Periphery";
 			productName = Periphery;
 		};
 /* End PBXAggregateTarget section */
@@ -8819,7 +8819,7 @@
 				F1FEA14921DCEB1700790A54 /* WireCommonComponents */,
 				065A5ADD279B07AC002D4D1E /* Wire Notification Service Extension */,
 				E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */,
-				594F41C32BB2FC4E00F6C171 /* Periphery */,
+				594F41C32BB2FC4E00F6C171 /* Wire-iOS Periphery */,
 			);
 		};
 /* End PBXProject section */
@@ -11689,7 +11689,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		594F41C62BB2FC4E00F6C171 /* Build configuration list for PBXAggregateTarget "Periphery" */ = {
+		594F41C62BB2FC4E00F6C171 /* Build configuration list for PBXAggregateTarget "Wire-iOS Periphery" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				594F41C42BB2FC4E00F6C171 /* Debug */,
