@@ -35,7 +35,7 @@ final class DeepLinksViewModel: ObservableObject {
     }
 
     let router: AppRootRouter?
-    let onDismiss: (() -> Void)?
+    let onDismiss: (_ completion: @escaping () -> Void) -> Void
 
     @Published
     var isShowingAlert = false
@@ -47,7 +47,7 @@ final class DeepLinksViewModel: ObservableObject {
 
     init(
         router: AppRootRouter? = nil,
-        onDismiss: (() -> Void)? = nil
+        onDismiss: @escaping (_ completion: @escaping () -> Void) -> Void = { $0() }
     ) {
         self.router = router
         self.onDismiss = onDismiss
@@ -65,7 +65,8 @@ final class DeepLinksViewModel: ObservableObject {
             return
         }
 
-        onDismiss?()
-        _ = router?.openDeepLinkURL(url)
+        onDismiss {
+            _ = self.router?.openDeepLinkURL(url)
+        }
     }
 }

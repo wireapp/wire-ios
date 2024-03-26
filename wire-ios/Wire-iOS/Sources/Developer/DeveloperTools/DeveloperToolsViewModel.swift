@@ -93,7 +93,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     // MARK: - Properties
 
     let router: AppRootRouter?
-    var onDismiss: (() -> Void)?
+    let onDismiss: (_ completion: @escaping () -> Void) -> Void
 
     // MARK: - State
 
@@ -109,7 +109,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     init(
         router: AppRootRouter? = nil,
-        onDismiss: (() -> Void)? = nil
+        onDismiss: @escaping (_ completion: @escaping () -> Void) -> Void = { $0() }
     ) {
         self.router = router
         self.onDismiss = onDismiss
@@ -134,7 +134,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .destination(DestinationItem(title: "Deep links", makeView: { [weak self] in
                     AnyView(DeepLinksView(viewModel: DeepLinksViewModel(
                         router: self?.router,
-                        onDismiss: self?.onDismiss
+                        onDismiss: self?.onDismiss ?? { $0() }
                     )))
                 }))
             ]
@@ -229,7 +229,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     func handleEvent(_ event: Event) {
         switch event {
         case .dismissButtonTapped:
-            onDismiss?()
+            onDismiss {}
 
         case let .itemCopyRequested(.text(textItem)):
             UIPasteboard.general.string = textItem.value
