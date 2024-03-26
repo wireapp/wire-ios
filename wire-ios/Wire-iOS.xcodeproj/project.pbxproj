@@ -8995,7 +8995,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "alias periphery=\"/Users/christoph/Library/Homebrew/bin/periphery\"\nperiphery scan \\\n    --workspace ../wire-ios-mono.xcworkspace \\\n    --schemes Wire-iOS \\\n    --targets Wire-iOS WireCommonComponents Wire-iOS-Tests \"Wire-iOS UnitTests\" \"Wire Share Extension\" \"Wire Notification Service Extension\" WireDataModel \\\n    -- -destination generic/platform=iOS\n";
+			shellScript = "alias periphery=\"/Users/christoph/Library/Homebrew/bin/periphery\"\nperiphery scan \\\n    --workspace ../wire-ios-mono.xcworkspace \\\n    --schemes Wire-iOS WireNotificationEngine WireShareEngine WireSyncEngine WireRequestStrategy WireDataModel WireUtilities WireTesting WireSystem \\\n    --targets Wire-iOS WireCommonComponents Wire-iOS-Tests \"Wire-iOS UnitTests\" \"Wire Share Extension\" \"Wire Notification Service Extension\" WireNotificationEngine WireShareEngine WireSyncEngine WireSyncEngineSupport WireRequestStrategy WireRequestStrategySupport WireDataModel WireDataModelSupport WireUtilities WireTesting WireSystem \\\n    -- -destination \"platform=iOS Simulator,name=iPhone 14\"\n";
 		};
 		5E055B28228AAF1500E91314 /* Embed Internal Resources */ = {
 			isa = PBXShellScriptBuildPhase;
