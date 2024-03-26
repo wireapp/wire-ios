@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "549815921A43232400A7CE2E"
                BuildableName = "WireSyncEngine.framework"
-               BlueprintName = "WireSyncEngine-ios"
+               BlueprintName = "WireSyncEngine"
                ReferencedContainer = "container:WireSyncEngine.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -47,7 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "549815921A43232400A7CE2E"
             BuildableName = "WireSyncEngine.framework"
-            BlueprintName = "WireSyncEngine-ios"
+            BlueprintName = "WireSyncEngine"
             ReferencedContainer = "container:WireSyncEngine.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -117,7 +117,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "549815921A43232400A7CE2E"
             BuildableName = "WireSyncEngine.framework"
-            BlueprintName = "WireSyncEngine-ios"
+            BlueprintName = "WireSyncEngine"
             ReferencedContainer = "container:WireSyncEngine.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -181,7 +181,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "549815921A43232400A7CE2E"
             BuildableName = "WireSyncEngine.framework"
-            BlueprintName = "WireSyncEngine-ios"
+            BlueprintName = "WireSyncEngine"
             ReferencedContainer = "container:WireSyncEngine.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

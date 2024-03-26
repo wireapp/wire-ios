@@ -332,6 +332,8 @@
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
 		5922E92E2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */; };
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
+		594F41D32BB311F800F6C171 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594F41D22BB311F800F6C171 /* WireDataModelSupport.framework */; };
+		594F41D72BB3127400F6C171 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594F41D62BB3127400F6C171 /* WireRequestStrategySupport.framework */; };
 		597A3BBA2B641F280020E337 /* UserStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB92B641F280020E337 /* UserStatus.swift */; };
 		59A1F1472B7BA226002CB679 /* UserStatus+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */; };
 		59A1F1492B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1482B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift */; };
@@ -2389,6 +2391,8 @@
 		55DD5C331FA236F60082170C /* CallQualityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityViewController.swift; sourceTree = "<group>"; };
 		5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+initWithUserType.swift"; sourceTree = "<group>"; };
+		594F41D22BB311F800F6C171 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		594F41D62BB3127400F6C171 /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		597A3BB92B641F280020E337 /* UserStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatus.swift; sourceTree = "<group>"; };
 		59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+Helpers.swift"; sourceTree = "<group>"; };
 		59A1F1482B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatusViewControllerDelegate.swift; sourceTree = "<group>"; };
@@ -4107,8 +4111,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				594F41D72BB3127400F6C171 /* WireRequestStrategySupport.framework in Frameworks */,
 				0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
 				E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */,
+				594F41D32BB311F800F6C171 /* WireDataModelSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5437,6 +5443,8 @@
 		8286E48D7CC440448CBD8F48 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				594F41D62BB3127400F6C171 /* WireRequestStrategySupport.framework */,
+				594F41D22BB311F800F6C171 /* WireDataModelSupport.framework */,
 				253C674E2B8D0BED00965DE1 /* WireRequestStrategySupport.framework */,
 				59A697202B728F6C00961E68 /* WireDataModelSupport.framework */,
 				0145AE982B1156FC0097E3B8 /* WireSyncEngineSupport.framework */,
@@ -8987,7 +8995,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "periphery scan \\\n    --workspace ../wire-ios-mono.xcworkspace \\\n    --schemes Wire-iOS \\\n    --targets Wire-iOS WireCommonComponents Wire-iOS-Tests \"Wire-iOS UnitTests\" \"Wire Share Extension\" \"Wire Notification Service Extension\" WireNotificationEngine WireShareEngine WireSyncEngine WireSyncEngineSupport WireRequestStrategy WireRequestStrategySupport WireDataModel WireDataModelSupport WireUtilities WireTesting WireSystem \\\n    -- -destination generic/platform=iOS\n";
+			shellScript = "alias periphery=\"/Users/christoph/Library/Homebrew/bin/periphery\"\nperiphery scan \\\n    --workspace ../wire-ios-mono.xcworkspace \\\n    --schemes Wire-iOS \\\n    --targets Wire-iOS WireCommonComponents Wire-iOS-Tests \"Wire-iOS UnitTests\" \"Wire Share Extension\" \"Wire Notification Service Extension\" WireDataModel \\\n    -- -destination generic/platform=iOS\n";
 		};
 		5E055B28228AAF1500E91314 /* Embed Internal Resources */ = {
 			isa = PBXShellScriptBuildPhase;
