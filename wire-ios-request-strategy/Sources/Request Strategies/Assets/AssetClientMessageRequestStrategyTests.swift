@@ -153,7 +153,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
-            let message = self.createMessage(uploaded: true, sender: self.otherUser)
+            _ = self.createMessage(uploaded: true, sender: self.otherUser)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -166,7 +166,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
-            let message = self.createMessage(uploaded: true, expired: true)
+            _ = self.createMessage(uploaded: true, expired: true)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

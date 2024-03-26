@@ -181,8 +181,6 @@ final class ConversationActionController {
             let conversation = conversation as? ZMConversation else {
             return
         }
-        let id = conversation.remoteIdentifier
-        let domain = conversation.domain
         context.performAndWait {
             guard let original = ZMConversation.existingObject(for: conversation.objectID, in: context) else {
                 return
@@ -197,7 +195,7 @@ final class ConversationActionController {
 
             context.saveOrRollback()
 
-            WireLogger.conversation.debug("duplicate conversation \(original.qualifiedID?.safeForLoggingDescription)")
+            WireLogger.conversation.debug("duplicate conversation \(String(describing: original.qualifiedID?.safeForLoggingDescription))")
         }
 
     }

@@ -23,7 +23,7 @@ import XCTest
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
 
-class MLSConversationParticipantsServiceTests: MessagingTestBase {
+final class MLSConversationParticipantsServiceTests: MessagingTestBase {
 
     // MARK: - Properties
 
@@ -126,8 +126,8 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
     func test_AddParticipants_Throws_UnreachableDomainsError() async {
         // GIVEN
         let unreachableDomains = Set(["example.com"])
-        let mlsUser = await syncMOC.perform { [self] in
-            MLSUser(from: user)
+        await syncMOC.perform { [self] in
+            _ = MLSUser(from: user)
         }
 
         mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
@@ -144,8 +144,8 @@ class MLSConversationParticipantsServiceTests: MessagingTestBase {
     func test_AddParticipants_Throws_NonFederatingDomainsError() async {
         // GIVEN
         let unreachableDomains = Set(["example"])
-        let mlsUser = await syncMOC.perform { [self] in
-            MLSUser(from: user)
+        await syncMOC.perform { [self] in
+            _ = MLSUser(from: user)
         }
 
         mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in

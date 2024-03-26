@@ -78,7 +78,6 @@ extension MessagingTestBase {
             return
         }
 
-        let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()!
         var prekey: String?
         self.encryptionContext(for: client).perform { (session) in
             prekey = try! session.generateLastPrekey()

@@ -48,6 +48,9 @@ struct AuthenticationTypeDetector: AuthenticationTypeProvider {
             return .touchID
         case .faceID:
             return .faceID
+        case .opticID:
+            // opticID is only for visionPro, that we do not support
+            return .passcode
         @unknown default:
             return .passcode
         }
