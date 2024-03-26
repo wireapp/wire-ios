@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import UIKit
 
 public struct LabelStyle {
@@ -42,7 +43,7 @@ public struct LabelStyle {
         textColor: SemanticColors.SearchBar.textInputViewPlaceholder)
 }
 
-extension UILabel {
+extension UILabel: Stylable {
 
     public func applyStyle(_ style: LabelStyle) {
         backgroundColor = style.backgroundColor

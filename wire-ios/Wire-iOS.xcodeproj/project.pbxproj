@@ -6,20 +6,6 @@
 	objectVersion = 54;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		594F41C32BB2FC4E00F6C171 /* Wire-iOS Periphery */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 594F41C62BB2FC4E00F6C171 /* Build configuration list for PBXAggregateTarget "Wire-iOS Periphery" */;
-			buildPhases = (
-				594F41C72BB2FC5800F6C171 /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = "Wire-iOS Periphery";
-			productName = Periphery;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		010497D52940DEAC0046124D /* DatadogWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D02940D8990046124D /* DatadogWrapper.swift */; };
 		010497D92940F4F40046124D /* TextFieldWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D62940F4F30046124D /* TextFieldWrapper.swift */; };
@@ -8744,9 +8730,6 @@
 							};
 						};
 					};
-					594F41C32BB2FC4E00F6C171 = {
-						CreatedOnToolsVersion = 15.3;
-					};
 					8F42C537199244A700288E4D = {
 						CreatedOnToolsVersion = 6.0;
 						LastSwiftMigration = 1000;
@@ -8819,7 +8802,6 @@
 				F1FEA14921DCEB1700790A54 /* WireCommonComponents */,
 				065A5ADD279B07AC002D4D1E /* Wire Notification Service Extension */,
 				E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */,
-				594F41C32BB2FC4E00F6C171 /* Wire-iOS Periphery */,
 			);
 		};
 /* End PBXProject section */
@@ -8970,23 +8952,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "$SRCROOT/Scripts/copyExtraAudioNotifications\n\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"YES\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-		};
-		594F41C72BB2FC5800F6C171 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/Users/christoph/Library/Homebrew/bin/periphery scan --workspace ../wire-ios-mono.xcworkspace --schemes Wire-iOS --targets Wire-iOS \"Wire Share Extension\" \"Wire Notification Service Extension\" --format xcode\n";
 		};
 		5E055B28228AAF1500E91314 /* Embed Internal Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -11329,22 +11294,6 @@
 			};
 			name = Release;
 		};
-		594F41C42BB2FC4E00F6C171 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		594F41C52BB2FC4E00F6C171 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		8F42C556199244A700288E4D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -11685,15 +11634,6 @@
 			buildConfigurations = (
 				168A16B51D9597C2005CFA6C /* Debug */,
 				168A16B61D9597C2005CFA6C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		594F41C62BB2FC4E00F6C171 /* Build configuration list for PBXAggregateTarget "Wire-iOS Periphery" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				594F41C42BB2FC4E00F6C171 /* Debug */,
-				594F41C52BB2FC4E00F6C171 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -22,7 +22,7 @@ final class RecordingDotView: UIView {
 
     // MARK: - Properties
 
-    var animating: Bool = false {
+    public var animating: Bool = false {
         didSet {
             if oldValue == animating {
                 return
@@ -38,7 +38,7 @@ final class RecordingDotView: UIView {
 
     // MARK: - Init
 
-    init() {
+    public init() {
         super.init(frame: CGRect.zero)
 
         backgroundColor = SemanticColors.Icon.foregroundDefaultRed
@@ -51,7 +51,7 @@ final class RecordingDotView: UIView {
 
     // MARK: - Override Methods
 
-    override func layoutSubviews() {
+    public override func layoutSubviews() {
         super.layoutSubviews()
         self.layer.cornerRadius = self.bounds.width / 2
     }

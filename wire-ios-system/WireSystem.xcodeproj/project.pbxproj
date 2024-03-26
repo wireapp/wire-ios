@@ -6,20 +6,6 @@
 	objectVersion = 54;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		594F41C82BB2FF0500F6C171 /* WireSystem Periphery */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 594F41CB2BB2FF0500F6C171 /* Build configuration list for PBXAggregateTarget "WireSystem Periphery" */;
-			buildPhases = (
-				594F41CC2BB2FF0A00F6C171 /* Periphery */,
-			);
-			dependencies = (
-			);
-			name = "WireSystem Periphery";
-			productName = Periphery;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		013404E22B5E762A00D2D2D5 /* AggregatedLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013404E12B5E762A00D2D2D5 /* AggregatedLogger.swift */; };
 		013404E42B5F162D00D2D2D5 /* LegacyLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013404E32B5F162D00D2D2D5 /* LegacyLogger.swift */; };
@@ -404,9 +390,6 @@
 						CreatedOnToolsVersion = 6.4;
 						LastSwiftMigration = 1000;
 					};
-					594F41C82BB2FF0500F6C171 = {
-						CreatedOnToolsVersion = 15.3;
-					};
 				};
 			};
 			buildConfigurationList = 3ECC34C71AD430BB0089FD4B /* Build configuration list for PBXProject "WireSystem" */;
@@ -424,7 +407,6 @@
 			targets = (
 				3ECC350F1AD436750089FD4B /* WireSystem */,
 				54A3272B1B99A3190004EB95 /* WireSystem Tests */,
-				594F41C82BB2FF0500F6C171 /* WireSystem Periphery */,
 			);
 		};
 /* End PBXProject section */
@@ -461,24 +443,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# artificial delay or file won't be seen by the next step\nsleep 1\n";
-		};
-		594F41CC2BB2FF0A00F6C171 /* Periphery */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = Periphery;
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/Users/christoph/Library/Homebrew/bin/periphery scan --workspace ../wire-ios-mono.xcworkspace --schemes Wire-iOS --targets WireSystem -- -destination generic/platform=iOS\n";
 		};
 		AD4812AC2AB9912400ED208C /* Run Swiftlint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -629,22 +593,6 @@
 			};
 			name = Release;
 		};
-		594F41C92BB2FF0500F6C171 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		594F41CA2BB2FF0500F6C171 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -671,15 +619,6 @@
 			buildConfigurations = (
 				54A327361B99A3190004EB95 /* Debug */,
 				54A327371B99A3190004EB95 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		594F41CB2BB2FF0500F6C171 /* Build configuration list for PBXAggregateTarget "WireSystem Periphery" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				594F41C92BB2FF0500F6C171 /* Debug */,
-				594F41CA2BB2FF0500F6C171 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
