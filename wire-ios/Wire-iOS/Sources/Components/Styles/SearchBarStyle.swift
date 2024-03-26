@@ -32,13 +32,13 @@ public struct SearchBarStyle {
     var cornerRadius: CGFloat = 12
     var borderWidth: CGFloat = 1
 
-    static let `default` = SearchBarStyle(borderColorNotSelected: SemanticColors.SearchBar.borderInputView,
-                                          textColor: SemanticColors.SearchBar.textInputView,
-                                          backgroundColor: SemanticColors.SearchBar.backgroundInputView)
+    static let `default` = SearchBarStyle(borderColorNotSelected: SearchBarColors.borderInputView,
+                                          textColor: SearchBarColors.textInputView,
+                                          backgroundColor: SearchBarColors.backgroundInputView)
 
 }
 
-extension UITextView: Stylable {
+extension UITextView {
 
     public func applyStyle(_ style: SearchBarStyle) {
 
@@ -48,7 +48,5 @@ extension UITextView: Stylable {
         layer.borderWidth = style.borderWidth
         layer.cornerRadius = style.cornerRadius
         layer.borderColor = style.borderColorNotSelected.cgColor
-
     }
-
 }

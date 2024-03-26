@@ -1,0 +1,27 @@
+retain_objc_accessible: true
+schemes:
+- Wire Notification Service Extension
+- Wire Share Extension
+- Wire-iOS
+- WireCanvas
+- WireCommonComponents
+- WireCryptobox
+- WireDataModel
+- WireDataModelSupport
+- WireImages
+- WireLinkPreview
+- WireLinkPreview-E2E
+- WireMockTransport
+- WireNotificationEngine
+- WireProtos
+- WireRequestStrategy
+- WireShareEngine
+- WireSyncEngine
+- WireSystem
+- WireTesting
+- WireTransport
+- WireUtilities
+- Ziphy
+targets:
+- Wire-iOS
+workspace: wire-ios-mono.xcworkspace
