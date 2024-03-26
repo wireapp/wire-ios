@@ -454,6 +454,17 @@ public final class FileAssetCache: NSObject {
         return cache.assetData(key)
     }
 
+    public func deleteOriginalFileData(for message: ZMConversationMessage) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            encrypted: false
+        ) else {
+            return
+        }
+
+        return cache.deleteAssetData(key)
+    }
+
     // MARK: - Encrypted file
 
     public func storeEncryptedFile(
