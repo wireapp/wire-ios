@@ -84,6 +84,9 @@ jobs:
       
       - name: Retrieve Xcode version
         run: |
+          echo "local: $(xcodebuild -version | head -n 1 | sed "s/Xcode //")"
+          echo "file: $(cat .xcode-version)"
+          echo "repo root: $(git rev-parse --show-toplevel)"
           echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
         id: xcode-version
 
