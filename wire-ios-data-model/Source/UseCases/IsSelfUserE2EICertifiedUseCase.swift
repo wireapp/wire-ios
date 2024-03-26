@@ -25,6 +25,7 @@ import WireCoreCrypto
 public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
 
     private let context: NSManagedObjectContext
+    private let featureRepository: FeatureRepositoryInterface
     private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
 
     /// - Parameters:
@@ -32,13 +33,19 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
     ///   - isUserE2EICertifiedUseCase: The use case which contains the actual business logic.
     public init(
         context: NSManagedObjectContext,
+        featureRepository: FeatureRepositoryInterface,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {
         self.context = context
+        self.featureRepository = featureRepository
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
     }
 
     public func invoke() async throws -> Bool {
+        let isE2EIEnabled = await context.perform {
+            featureRepository.fetchE2EI().isEnabled
+        }
+        guard isE2EIEnabled else { return false }
 
         let (selfUser, selfMLSConversation) = await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
