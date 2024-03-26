@@ -1,5 +1,5 @@
 #!/bin/bash
-set -Eeuo pipefail
+set -Eeuxvo pipefail
 
 #
 # Wire
@@ -32,7 +32,7 @@ function die { ( >&2 echo "$*"); exit 1; }
 
 ## Xcode
 hash xcodebuild 2>/dev/null || die "Can't find Xcode, please install from the App Store"
-local_xcode_version=`xcodebuild -version | sed -n "s/Xcode //p"`
+local_xcode_version=`xcodebuild -version | head -n 1 | sed "s/Xcode //"`
 LOCAL_XCODE_VERSION=( ${local_xcode_version//./ } )
 
 repository_xcode_version=`cat .xcode-version`
