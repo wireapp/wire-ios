@@ -27,6 +27,7 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     private var selfUser: ZMUser!
     private var selfMLSConversation: ZMConversation!
     private var mockIsUserE2EICertifiedUseCase: MockIsUserE2EICertifiedUseCaseProtocol!
+    private var mockFeatureRepository: MockFeatureRepositoryInterface!
     private var sut: IsSelfUserE2EICertifiedUseCase!
 
     private var context: NSManagedObjectContext { syncMOC }
@@ -42,8 +43,11 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
             modelHelper.createSelfMLSConversation(mlsGroupID: .random(), in: context)
         }
         mockIsUserE2EICertifiedUseCase = .init()
+        mockFeatureRepository = .init()
+        mockFeatureRepository.fetchE2EI_MockValue = .init(status: .enabled, config: .init())
         sut = .init(
             context: context,
+            featureRepository: mockFeatureRepository,
             isUserE2EICertifiedUseCase: mockIsUserE2EICertifiedUseCase
         )
     }
@@ -51,6 +55,7 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
     override func tearDown() {
         sut = nil
         mockIsUserE2EICertifiedUseCase = nil
+        mockFeatureRepository = nil
         selfMLSConversation = nil
         selfUser = nil
 
@@ -70,6 +75,18 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         let invocation = try XCTUnwrap(mockIsUserE2EICertifiedUseCase.invokeConversationUser_Invocations.first)
         XCTAssert(invocation.user === selfUser)
         XCTAssert(invocation.conversation === selfMLSConversation)
+    }
+
+    func testThatSelfUserIsNotCertified_WhenE2EIFeatureIsDisabled() async throws {
+        // Given
+        mockIsUserE2EICertifiedUseCase.invokeConversationUser_MockValue = true
+
+        // When
+        mockFeatureRepository.fetchE2EI_MockValue = .init(status: .disabled, config: .init())
+        let result = try await sut.invoke()
+
+        // Then
+        XCTAssertFalse(result)
     }
 
     func testErrorsAreForwarded() async throws {
