@@ -154,6 +154,9 @@ jobs:
           aws-region: eu-west-1
       - name: Trigger build
         run: bundle exec fastlane ${{ inputs.fastlane_action }}
+        env: # https://docs.fastlane.tools/getting-started/ios/setup/
+          LC_ALL: en_US.UTF-8
+          LANG: en_US.UTF-8
       - name: Archiving Logs
         uses: actions/upload-artifact@v2
         if: failure()
