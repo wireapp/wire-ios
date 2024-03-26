@@ -34,7 +34,7 @@ struct DeepLinksView: View {
         List {
             Section("Open deeplink") {
                 TextField("Link", text: $urlString, prompt: Text("Enter deeplink"))
-                SwiftUI.Button("Go") {
+                Button("Go") {
                     viewModel.openLink(urlString: urlString)
                 }
                 .disabled(urlString.isEmpty)
