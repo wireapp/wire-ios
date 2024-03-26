@@ -967,11 +967,21 @@ private struct FileCache: Cache {
         return cacheFolderURL.appendingPathComponent(safeKey)
     }
 
-    /// Deletes all existing caches. After calling this method, existing caches should not be used anymore.
-    /// This is intended for testing
+    /// Deletes the contents of the cache.
+
     func wipeCaches() {
         logger.debug("wiping cache")
-        _ = try? FileManager.default.removeItem(at: cacheFolderURL)
+        if FileManager.default.fileExists(atPath: cacheFolderURL.path) {
+            do {
+                // Delete the entire cache.
+                try FileManager.default.removeItem(at: cacheFolderURL)
+            } catch {
+                logger.error("failed to wipe cache: \(error)")
+            }
+        }
+
+        // Create it again so we can write files to it.
+        FileManager.default.createAndProtectDirectory(at: cacheFolderURL)
     }
 
     /// Deletes assets created earlier than the given date
