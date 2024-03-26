@@ -20,6 +20,10 @@ import UIKit
 import WireSyncEngine
 import WireCommonComponents
 
+enum AlertChoice {
+    case cancel, confirm, alreadyPresented
+}
+
 // MARK: - ActiveCallRouterProtocol
 protocol ActiveCallRouterProtocol: AnyObject {
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool)
@@ -27,7 +31,8 @@ protocol ActiveCallRouterProtocol: AnyObject {
     func minimizeCall(animated: Bool, completion: Completion?)
     func showCallTopOverlay(for conversation: ZMConversation)
     func hideCallTopOverlay()
-    func presentSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (Bool) -> Void)
+    func presentSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void)
+    func dismissSecurityDegradedAlertIfNeeded()
     func presentUnsupportedVersionAlert()
 }
 
@@ -65,6 +70,7 @@ final class ActiveCallRouter: NSObject {
     private var isCallQualityShown = false
     private var isCallTopOverlayShown = false
     private(set) var scheduledPostCallAction: PostCallAction?
+    private(set) var presentedDegradedAlert: UIAlertController?
 
     private var zClientViewController: ZClientViewController? {
         return rootViewController.firstChild(ofType: ZClientViewController.self)
@@ -159,22 +165,38 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     // MARK: - Alerts
-    func presentSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (Bool) -> Void) {
+    func presentSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void) {
+        guard self.presentedDegradedAlert == nil else {
+            completion(.alreadyPresented)
+            return
+        }
+
         executeOrSchedulePostCallAction { [weak self] postCallActionCompletion in
-            let alert: AlertController
+            let alert: UIAlertController
             switch reason {
             case .degradedUser(user: let user):
-                alert = UIAlertController.degradedCall(degradedUser: user?.value, callEnded: true)
-                alert.dismissedClosure = {
+                alert = UIAlertController.degradedCall(degradedUser: user?.value, callEnded: true, confirmationBlock: { continueDegradedCall in
+                    completion(continueDegradedCall ? .confirm : .cancel)
                     postCallActionCompletion()
-                }
+                    self?.presentedDegradedAlert = nil
+                })
             case .invalidCertificate:
                 alert = UIAlertController.incomingCallDegradedMLSConference(confirmationBlock: { answerDegradedCall in
-                    completion(answerDegradedCall)
+                    completion(answerDegradedCall ? .confirm : .cancel)
+                    postCallActionCompletion()
+                    self?.presentedDegradedAlert = nil
                 })
             }
+
+            self?.presentedDegradedAlert = alert
             self?.rootViewController.present(alert, animated: true)
         }
+    }
+
+    func dismissSecurityDegradedAlertIfNeeded() {
+        guard let alert = self.presentedDegradedAlert else { return }
+
+        alert.dismissIfNeeded()
     }
 
     func presentUnsupportedVersionAlert() {

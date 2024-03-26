@@ -28,7 +28,7 @@ extension UIAlertController {
         degradedUser: UserType?,
         callEnded: Bool = false,
         confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil
-    ) -> AlertController {
+    ) -> UIAlertController {
 
         typealias GeneralLocale = L10n.Localizable.General
 
@@ -77,7 +77,7 @@ extension UIAlertController {
 
     static func degradedMLSConference(
         conferenceEnded: Bool = false,
-        confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil) -> AlertController {
+        confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil) -> UIAlertController {
 
             typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
             typealias EndedCall = L10n.Localizable.Call.Mls.Degraded.Ended.Alert
@@ -101,8 +101,7 @@ extension UIAlertController {
         }
 
     static func incomingCallDegradedMLSConference(
-        confirmationBlock: (@escaping (_ answerDegradedCall: Bool) -> Void),
-        cancelBlock: Completion? = nil) -> AlertController {
+        confirmationBlock: (@escaping (_ answerDegradedCall: Bool) -> Void)) -> UIAlertController {
 
             typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
             typealias IncomingCall = L10n.Localizable.Call.Mls.Degraded.Incoming.Alert
@@ -117,7 +116,9 @@ extension UIAlertController {
                 confirmationBlock(true)
             })
 
-            controller.addAction(.cancel(cancelBlock))
+            controller.addAction(.cancel({
+                confirmationBlock(false)
+            }))
 
             return controller
         }

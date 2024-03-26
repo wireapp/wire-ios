@@ -129,12 +129,23 @@ extension CallController: WireCallCenterCallStateObserver {
                              caller: UserType,
                              timestamp: Date?,
                              previousCallState: CallState?) {
+        print("🕵🏽 callState:", callState)
+        if case .terminating(let reason) = callState {
+            router?.dismissSecurityDegradedAlertIfNeeded()
+        }
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
         presentSecurityDegradedAlertIfNecessary(for: conversation.voiceChannel) { continueCall in
             if continueCall {
                 self.updateActiveCallPresentationState()
+            } else {
+                self.cancelCall(conversation: conversation)
             }
         }
+    }
+
+    private func cancelCall(conversation: ZMConversation) {
+        guard let userSession = ZMUserSession.shared() else { return }
+        conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
     }
 
     private func presentUnsupportedVersionAlertIfNecessary(callState: CallState) {
@@ -149,10 +160,20 @@ extension CallController: WireCallCenterCallStateObserver {
         }
         switch degradationState {
         case .incoming(reason: let degradationReason):
-            router?.presentSecurityDegradedAlert(for: degradationReason) { continueCall in
-                continueCallBlock(continueCall)
+
+            router?.presentSecurityDegradedAlert(for: degradationReason) { choice in
+                switch choice {
+                case .cancel:
+                    continueCallBlock(false)
+                case .confirm:
+                    continueCallBlock(true)
+                case .alreadyPresented:
+                    // do nothing
+                    break
+                }
             }
         default:
+            router?.dismissSecurityDegradedAlertIfNeeded()
             continueCallBlock(true)
         }
     }
