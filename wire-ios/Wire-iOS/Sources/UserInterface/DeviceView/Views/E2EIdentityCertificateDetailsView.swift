@@ -155,6 +155,7 @@ struct E2EIdentityCertificateDetailsView: View {
 
         titleView
             .background(SemanticColors.View.backgroundDefault.swiftUIColor)
+
         certificateView
             .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
 
