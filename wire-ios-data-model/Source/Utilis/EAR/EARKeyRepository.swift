@@ -42,7 +42,7 @@ final class EARKeyRepository: EARKeyRepositoryInterface {
 
     init() {}
 
-    // MARK: - keys
+    // MARK: - Public keys
 
     func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws {
         try KeychainManager.storeItem(description, value: key)
