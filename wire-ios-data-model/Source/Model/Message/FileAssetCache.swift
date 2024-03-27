@@ -697,8 +697,8 @@ public final class FileAssetCache: NSObject {
 
     // MARK: - Purge
 
-    public func purgeTemporaryAssets() {
-        tempCache.wipeCaches()
+    public func purgeTemporaryAssets() throws {
+        try tempCache.wipeCaches()
     }
 
     // MARK: - Asset data
@@ -825,9 +825,9 @@ public extension FileAssetCache {
 
     /// Deletes all existing caches. After calling this method, existing caches should not be used anymore.
     /// This is intended for testing
-    func wipeCaches() {
-        fileCache.wipeCaches()
-        tempCache.wipeCaches()
+    func wipeCaches() throws {
+        try fileCache.wipeCaches()
+        try tempCache.wipeCaches()
     }
 
 }
@@ -854,7 +854,7 @@ private struct FileCache: Cache {
 
     init(location: URL) {
         cacheFolderURL = location
-        FileManager.default.createAndProtectDirectory(at: cacheFolderURL)
+        try! FileManager.default.createAndProtectDirectory(at: cacheFolderURL)
         logger.debug("created cache at: \(cacheFolderURL)")
     }
 
@@ -968,19 +968,15 @@ private struct FileCache: Cache {
 
     /// Deletes the contents of the cache.
 
-    func wipeCaches() {
+    func wipeCaches() throws {
         logger.debug("wiping cache")
         if FileManager.default.fileExists(atPath: cacheFolderURL.path) {
-            do {
-                // Delete the entire cache.
-                try FileManager.default.removeItem(at: cacheFolderURL)
-            } catch {
-                logger.error("failed to wipe cache: \(error)")
-            }
+            // Delete the entire cache.
+            try FileManager.default.removeItem(at: cacheFolderURL)
         }
 
         // Create it again so we can write files to it.
-        FileManager.default.createAndProtectDirectory(at: cacheFolderURL)
+        try FileManager.default.createAndProtectDirectory(at: cacheFolderURL)
     }
 
     /// Deletes assets created earlier than the given date
