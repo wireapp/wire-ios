@@ -2876,6 +2876,7 @@
 					x86_64,
 					arm64,
 				);
+				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategy;
@@ -2887,6 +2888,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 166901961D7075D7000FE4AF /* WireRequestStrategy.xcconfig */;
 			buildSettings = {
+				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = Resources/Info.plist;
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategy;
