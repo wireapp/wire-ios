@@ -55,7 +55,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func reactionEventInOneOnOneConversation() -> ZMUpdateEvent {
         let message = try! oneOnOneConversation.appendText(content: "text") as! ZMClientMessage
-        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!) as! MessageCapable)
+        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!))
         let event = createUpdateEvent(UUID.create(), conversationID: oneOnOneConversation.remoteIdentifier!, genericMessage: reaction, senderID: sender.remoteIdentifier!)
         return event
     }
@@ -64,7 +64,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
         // given
         let message = try! conversation.appendText(content: "text") as! ZMClientMessage
-        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!) as! MessageCapable)
+        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!))
         let event = createUpdateEvent(UUID.create(), conversationID: conversation.remoteIdentifier!, genericMessage: reaction, senderID: aSender.remoteIdentifier!)
 
         // when
@@ -79,7 +79,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
         // given
         let message = try! conversation.appendText(content: "text") as! ZMClientMessage
-        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!) as! MessageCapable)
+        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!))
         let event = createUpdateEvent(UUID.create(), conversationID: conversation.remoteIdentifier!, genericMessage: reaction, senderID: aSender.remoteIdentifier!)
 
         // when
@@ -389,7 +389,13 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
             let genericMessage = GenericMessage(content: Text(content: "123"))
 
             // when
-            let note = self.noteWithPayload(["text": try? genericMessage.serializedData().base64EncodedString()], from: self.sender, in: nil, type: self.EventaAddOTRMessage)
+            let text = try! genericMessage.serializedData().base64EncodedString()
+            let note = self.noteWithPayload(
+                ["text": text],
+                from: self.sender,
+                in: nil,
+                type: self.EventaAddOTRMessage
+            )
 
             // then
             XCTAssertNotNil(note)
