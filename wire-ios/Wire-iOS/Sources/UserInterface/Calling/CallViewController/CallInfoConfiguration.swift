@@ -266,9 +266,9 @@ extension VoiceChannel {
         guard let degradationReason else { return .none }
 
         switch state {
-        case .incoming(video: _, shouldRing: _, degraded: true):
+        case .incoming(video: _, shouldRing: _, degraded: true), .answered(degraded: true):
             return .incoming(reason: degradationReason)
-        case .answered(degraded: true), .outgoing(degraded: true):
+        case .outgoing(degraded: true):
             return .outgoing(reason: degradationReason)
         default:
             return .none

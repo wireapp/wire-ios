@@ -185,9 +185,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
                 alert = UIAlertController.incomingCallDegradedMLSConference(confirmationBlock: { answerDegradedCall in
                     completion(answerDegradedCall ? .confirm : .cancel)
                     postCallActionCompletion()
-                    print("🕵🏽 invalidCertificate:", self?.presentedDegradedAlert)
                     self?.presentedDegradedAlert = nil
-                    print("🕵🏽 invalidCertificate after:", self?.presentedDegradedAlert)
                 })
             }
 

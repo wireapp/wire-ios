@@ -131,11 +131,9 @@ extension CallController: WireCallCenterCallStateObserver {
                              previousCallState: CallState?) {
         print("🕵🏽 callState:", callState)
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
-        presentSecurityDegradedAlertIfNecessary(for: conversation.voiceChannel, callState: callState) { continueCall in
+        presentSecurityDegradedAlertIfNecessary(for: conversation, callState: callState) { continueCall in
             if continueCall {
                 self.updateActiveCallPresentationState()
-            } else {
-                self.cancelCall(conversation: conversation)
             }
         }
     }
@@ -150,9 +148,18 @@ extension CallController: WireCallCenterCallStateObserver {
         router?.presentUnsupportedVersionAlert()
     }
 
-    private func presentSecurityDegradedAlertIfNecessary(for voiceChannel: VoiceChannel?, callState: CallState, continueCallBlock: @escaping (Bool) -> Void) {
+    private func acceptDegradedCall(conversation: ZMConversation) {
+        guard let userSession = ZMUserSession.shared() else { return }
 
-        guard let voiceChannel else {
+        userSession.enqueue({
+            conversation.voiceChannel?.continueByDecreasingConversationSecurity(userSession: userSession)
+        }, completionHandler: {
+            conversation.joinCall()
+        })
+    }
+    private func presentSecurityDegradedAlertIfNecessary(for conversation: ZMConversation, callState: CallState, continueCallBlock: @escaping (Bool) -> Void) {
+
+        guard let voiceChannel = conversation.voiceChannel else {
             // no alert to show, continue
             continueCallBlock(true)
             return
@@ -163,11 +170,13 @@ extension CallController: WireCallCenterCallStateObserver {
         switch (degradationState, callState) {
         case (.incoming(reason: let degradationReason), .incoming(video: _, shouldRing: true, degraded: true)):
             // only present when incoming ringing and degraded
-            router?.presentSecurityDegradedAlert(for: degradationReason) { choice in
+            router?.presentSecurityDegradedAlert(for: degradationReason) { [weak self] choice in
                 switch choice {
                 case .cancel:
+                    self?.cancelCall(conversation: conversation)
                     continueCallBlock(false)
                 case .confirm:
+                    self?.acceptDegradedCall(conversation: conversation)
                     continueCallBlock(true)
                 case .alreadyPresented:
                     // do nothing
