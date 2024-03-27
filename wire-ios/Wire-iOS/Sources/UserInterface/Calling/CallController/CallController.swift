@@ -145,7 +145,6 @@ extension CallController: WireCallCenterCallStateObserver {
                              caller: UserType,
                              timestamp: Date?,
                              previousCallState: CallState?) {
-        print("🕵🏽 callState:", callState)
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
         presentSecurityDegradedAlertIfNecessary(for: conversation, callState: callState) { continueCall in
             if continueCall {
@@ -159,8 +158,14 @@ extension CallController: WireCallCenterCallStateObserver {
         router?.presentUnsupportedVersionAlert()
     }
 
-    private func presentSecurityDegradedAlertIfNecessary(for conversation: ZMConversation, callState: CallState, continueCallBlock: @escaping (Bool) -> Void) {
-
+    /// Present warning about incoming call on unverified conversation
+    /// - Parameters:
+    ///   - conversation: unverified conversation
+    ///   - callState: state of the incoming call
+    ///   - continueCallBlock: block to execute if no alert is shown or after user confirm or cancel choice on alert
+    private func presentSecurityDegradedAlertIfNecessary(for conversation: ZMConversation,
+                                                         callState: CallState,
+                                                         continueCallBlock: @escaping (Bool) -> Void) {
         guard let voiceChannel = conversation.voiceChannel else {
             // no alert to show, continue
             continueCallBlock(true)
