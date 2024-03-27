@@ -141,6 +141,7 @@ final class ConversationViewController: UIViewController {
         hideAndDestroyParticipantsPopover()
         contentViewController.delegate = nil
     }
+    private var observationToken: NSObjectProtocol?
 
     private func update(conversation: ZMConversation) {
         setupNavigatiomItem()
@@ -158,6 +159,8 @@ final class ConversationViewController: UIViewController {
             self,
             for: userSession.conversationList()
         )
+
+        observationToken = E2EIPrivacyWarningChecker.addPresenter(self)
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
@@ -392,18 +395,14 @@ final class ConversationViewController: UIViewController {
         }
 
         Task {
-
             do {
                 guard let mlsService = await syncContext.perform({ syncContext.mlsService }) else {
                     assertionFailure("mlsService is missing")
                     return
                 }
 
-                let service = OneOnOneResolver(
-                    protocolSelector: OneOnOneProtocolSelector(),
-                    migrator: OneOnOneMigrator(mlsService: mlsService)
-                )
-                let resolvedState = try await service.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
+                let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+                let resolvedState = try await resolver.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
 
                 if case .migratedToMLSGroup(let identifier) = resolvedState {
                     await navigateToNewMLSConversation(mlsGroupIdentifier: identifier, in: viewContext)

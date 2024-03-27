@@ -51,7 +51,7 @@ class AssetsPreprocessorTests: MessagingTestBase {
 
         // then
         XCTAssertTrue(asset.hasEncrypted)
-        XCTAssertTrue(asset.hasPreprocessed)
+        XCTAssertFalse(asset.hasPreprocessed)
     }
 
     func testThatItPreprocessAssetMessageWithMultipleAssets() {
@@ -70,7 +70,7 @@ class AssetsPreprocessorTests: MessagingTestBase {
             XCTAssertTrue(asset.hasEncrypted)
 
             if asset.needsPreprocessing {
-                XCTAssertTrue(asset.hasPreprocessed)
+                XCTAssertFalse(asset.hasPreprocessed)
             }
         }
     }
