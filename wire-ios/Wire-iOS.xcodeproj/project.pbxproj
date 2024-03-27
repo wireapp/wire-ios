@@ -325,6 +325,7 @@
 		59AADE212BB4287200D9E658 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E644B79A2B7CBBA3005D0BFD /* AutoMockable.generated.swift */; };
 		59AADE232BB4299900D9E658 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */; };
 		59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */; };
+		59AADE282BB429D300D9E658 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = E644B79A2B7CBBA3005D0BFD /* AutoMockable.generated.swift */; };
 		59D8A62C2B7A73B2008236FF /* ShapeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62B2B7A73B2008236FF /* ShapeView.swift */; };
 		59D8A62F2B7A75B0008236FF /* PersonalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */; };
 		59D8A6312B7A7C2D008236FF /* AccountViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A6302B7A7C2D008236FF /* AccountViewFactory.swift */; };
@@ -10802,6 +10803,7 @@
 				E6579E692AFFA024004E7FD8 /* MockDevice.swift in Sources */,
 				E6579E612AFFA024004E7FD8 /* MockConversation.swift in Sources */,
 				E6579E762AFFA36D004E7FD8 /* AppLockModule.MockRouter.swift in Sources */,
+				59AADE282BB429D300D9E658 /* AutoMockable.generated.swift in Sources */,
 				E6579E472AFF9FFD004E7FD8 /* MockUserType+Creation.swift in Sources */,
 				E6579E702AFFA033004E7FD8 /* MockURLSession.swift in Sources */,
 				E6C25FCA2AFFABD700406A1C /* UITextView+ReplaceTests.swift in Sources */,
