@@ -68,7 +68,7 @@ extension UIApplication {
                 case .authorized:
                     grantedHandler(true)
                 case .limited:
-                    fallthrough // should this be handled differently?
+                    fallthrough
                 @unknown default:
                     break
                 }
