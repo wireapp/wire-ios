@@ -330,11 +330,12 @@ extension ZMUpdateEvent {
 }
 
 extension ZMUpdateEvent {
+
     override open func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? ZMUpdateEvent else { return false }
-        return
-        (self.uuid == other.uuid) &&
-        (self.type == other.type) &&
-        (self.payload as NSDictionary).isEqual(to: other.payload)
+
+        return uuid == other.uuid &&
+        type == other.type &&
+        (payload as NSDictionary).isEqual(to: other.payload)
     }
 }

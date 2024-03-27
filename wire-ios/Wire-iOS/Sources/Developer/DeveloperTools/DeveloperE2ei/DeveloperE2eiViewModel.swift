@@ -56,7 +56,7 @@ final class DeveloperE2eiViewModel: ObservableObject {
 
         let e2eiCertificateUseCase = session.enrollE2EICertificate as? EnrollE2EICertificateUseCase
         let oauthUseCase = OAuthUseCase(targetViewController: topmostViewController)
-        let crlExpirationDatesRepository = CRLExpirationDatesRepository(userID: session.selfUser.remoteIdentifier)
+        _ = CRLExpirationDatesRepository(userID: session.selfUser.remoteIdentifier)
 
         Task {
             do {

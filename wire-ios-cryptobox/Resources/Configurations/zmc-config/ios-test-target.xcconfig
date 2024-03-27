@@ -18,5 +18,4 @@
 
 #include "tests.xcconfig"
 
-LIBRARY_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/build/lib
 SWIFT_INCLUDE_PATHS = $(inherited) $(SRCROOT)/WireCryptobox
