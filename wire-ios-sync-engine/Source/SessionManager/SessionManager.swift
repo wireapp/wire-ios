@@ -1416,6 +1416,9 @@ extension SessionManager {
 
     @objc fileprivate func applicationDidBecomeActive(_ note: Notification) {
         notificationsTracker?.dispatchEvent()
+        if let session = activeUserSession, session.isLoggedIn {
+            session.checkE2EICertificateExpiryStatus()
+        }
     }
 
 }
