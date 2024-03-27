@@ -301,6 +301,18 @@ public final class FileAssetCache: NSObject {
         return cache.assetData(key)
     }
 
+    public func deleteMediumEncryptedImageData(for message: ZMConversationMessage) {
+        guard let key = Self.cacheKeyForAsset(
+            message,
+            format: .medium,
+            encrypted: true
+        ) else {
+            return
+        }
+
+        return cache.deleteAssetData(key)
+    }
+
     public func decryptedMediumImageData(
         for message: ZMConversationMessage,
         encryptionKey: Data,
