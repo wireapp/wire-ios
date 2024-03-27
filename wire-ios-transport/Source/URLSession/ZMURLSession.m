@@ -482,7 +482,6 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
     if (nil != transportRequest.fileUploadURL) {
         RequireString(self.isBackgroundSession, "File uploads need to set 'forceToBackgroundSession' on the request");
         task = [self.backingSession uploadTaskWithRequest:request fromFile:transportRequest.fileUploadURL];
-        NSLog(@"passed 0");
         ZMLogDebug(@"Created file upload task: %@, url: %@", task, transportRequest.fileUploadURL);
     }
     else if (self.isBackgroundSession) {
@@ -501,7 +500,6 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
             task = [self.backingSession uploadTaskWithRequest:request fromData:bodyData];
         } else {
             task = [self.backingSession dataTaskWithRequest:request];
-            NSLog(@"passed 1");
         }
     }
     
