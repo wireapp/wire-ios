@@ -345,6 +345,11 @@
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-Wextra",
+					"-Weverything",
+				);
 			};
 			name = Debug;
 		};
@@ -355,6 +360,11 @@
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				SWIFT_COMPILATION_MODE = wholemodule;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-Wextra",
+					"-Weverything",
+				);
 			};
 			name = Release;
 		};

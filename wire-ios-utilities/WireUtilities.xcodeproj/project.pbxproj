@@ -1185,6 +1185,11 @@
 			baseConfigurationReference = F1E148C4207BAED000F81833 /* project-debug.xcconfig */;
 			buildSettings = {
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-Wextra",
+					"-Weverything",
+				);
 			};
 			name = Debug;
 		};
@@ -1193,6 +1198,11 @@
 			baseConfigurationReference = F1E148CC207BAED000F81833 /* project.xcconfig */;
 			buildSettings = {
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-Wextra",
+					"-Weverything",
+				);
 			};
 			name = Release;
 		};

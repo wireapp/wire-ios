@@ -151,7 +151,7 @@ public actor CommitSender: CommitSending {
         do {
             WireLogger.mls.info("merging commit for group (\(groupID.safeForLoggingDescription))")
             // TODO: [WPB-5829] handle buffered messages
-            _ = try await coreCrypto.perform {
+            let bufferedDecryptedMessages = try await coreCrypto.perform {
                 try await $0.commitAccepted(conversationId: groupID.data)
             }
             onEpochChangedSubject.send(groupID)

@@ -534,6 +534,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 546BC7D11EFD49B400DDB12A /* project-debug.xcconfig */;
 			buildSettings = {
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-Wextra",
+					"-Weverything",
+				);
 			};
 			name = Debug;
 		};
@@ -541,6 +546,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 546BC7D21EFD49B400DDB12A /* project.xcconfig */;
 			buildSettings = {
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-Wextra",
+					"-Weverything",
+				);
 			};
 			name = Release;
 		};

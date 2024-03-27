@@ -4309,6 +4309,11 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-Wextra",
+					"-Weverything",
+				);
 			};
 			name = Debug;
 		};
@@ -4318,6 +4323,11 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-Wextra",
+					"-Weverything",
+				);
 			};
 			name = Release;
 		};
