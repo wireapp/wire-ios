@@ -166,6 +166,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     // MARK: - Alerts
     func presentSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void) {
+        print("🕵🏽 presentedDegradedAlert:", presentedDegradedAlert)
         guard self.presentedDegradedAlert == nil else {
             completion(.alreadyPresented)
             return
@@ -184,11 +185,14 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
                 alert = UIAlertController.incomingCallDegradedMLSConference(confirmationBlock: { answerDegradedCall in
                     completion(answerDegradedCall ? .confirm : .cancel)
                     postCallActionCompletion()
+                    print("🕵🏽 invalidCertificate:", self?.presentedDegradedAlert)
                     self?.presentedDegradedAlert = nil
+                    print("🕵🏽 invalidCertificate after:", self?.presentedDegradedAlert)
                 })
             }
 
             self?.presentedDegradedAlert = alert
+            print("🕵🏽 present:", self?.presentedDegradedAlert)
             self?.rootViewController.present(alert, animated: true)
         }
     }
@@ -197,6 +201,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         guard let alert = self.presentedDegradedAlert else { return }
 
         alert.dismissIfNeeded()
+        self.presentedDegradedAlert = nil
     }
 
     func presentUnsupportedVersionAlert() {

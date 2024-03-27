@@ -130,11 +130,8 @@ extension CallController: WireCallCenterCallStateObserver {
                              timestamp: Date?,
                              previousCallState: CallState?) {
         print("🕵🏽 callState:", callState)
-        if case .terminating(let reason) = callState {
-            router?.dismissSecurityDegradedAlertIfNeeded()
-        }
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
-        presentSecurityDegradedAlertIfNecessary(for: conversation.voiceChannel) { continueCall in
+        presentSecurityDegradedAlertIfNecessary(for: conversation.voiceChannel, callState: callState) { continueCall in
             if continueCall {
                 self.updateActiveCallPresentationState()
             } else {
@@ -153,14 +150,19 @@ extension CallController: WireCallCenterCallStateObserver {
         router?.presentUnsupportedVersionAlert()
     }
 
-    private func presentSecurityDegradedAlertIfNecessary(for voiceChannel: VoiceChannel?, continueCallBlock: @escaping (Bool) -> Void) {
-        guard let degradationState = voiceChannel?.degradationState else {
-            continueCallBlock(false)
+    private func presentSecurityDegradedAlertIfNecessary(for voiceChannel: VoiceChannel?, callState: CallState, continueCallBlock: @escaping (Bool) -> Void) {
+
+        guard let voiceChannel else {
+            // no alert to show, continue
+            continueCallBlock(true)
             return
         }
-        switch degradationState {
-        case .incoming(reason: let degradationReason):
 
+        let degradationState = voiceChannel.degradationState
+
+        switch (degradationState, callState) {
+        case (.incoming(reason: let degradationReason), .incoming(video: _, shouldRing: true, degraded: true)):
+            // only present when incoming ringing and degraded
             router?.presentSecurityDegradedAlert(for: degradationReason) { choice in
                 switch choice {
                 case .cancel:
@@ -173,8 +175,10 @@ extension CallController: WireCallCenterCallStateObserver {
                 }
             }
         default:
-            router?.dismissSecurityDegradedAlertIfNeeded()
+            // no alert to show, continue
             continueCallBlock(true)
+            // dismiss alert that would be there
+            router?.dismissSecurityDegradedAlertIfNeeded()
         }
     }
 }
