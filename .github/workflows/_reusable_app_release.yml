@@ -42,6 +42,10 @@ on:
       SUBMODULE_PAT:
         required: true
 
+env: # https://docs.fastlane.tools/getting-started/ios/setup/
+  LC_ALL: en_US.UTF-8
+  LANG: en_US.UTF-8
+
 permissions: 
   checks: write
 
