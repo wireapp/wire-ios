@@ -524,9 +524,9 @@ extension ZMAssetClientMessage: AssetMessage {
     public var processingState: AssetProcessingState {
         let assets = self.assets
 
-        // There is an asset that needs to be encrypted.
+        // There is an asset that still needs encrypting and uploading.
         if assets.contains(where: {
-            !$0.hasEncrypted
+            !$0.isUploaded && !$0.hasEncrypted
         }) {
             return .preprocessing
         }
