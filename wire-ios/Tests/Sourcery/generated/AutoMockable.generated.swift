@@ -31,6 +31,7 @@ import UIKit
 import AppKit
 #endif
 
+import WireDataModel
 
 @testable import Wire
 
@@ -88,6 +89,187 @@ class MockBackupSource: BackupSource {
         }
 
         mock()
+    }
+
+}
+
+class MockConversationUserClientDetailsActions: ConversationUserClientDetailsActions {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - showMyDevice
+
+    var showMyDevice_Invocations: [Void] = []
+    var showMyDevice_MockMethod: (() -> Void)?
+
+    func showMyDevice() {
+        showMyDevice_Invocations.append(())
+
+        guard let mock = showMyDevice_MockMethod else {
+            fatalError("no mock for `showMyDevice`")
+        }
+
+        mock()
+    }
+
+    // MARK: - howToDoThat
+
+    var howToDoThat_Invocations: [Void] = []
+    var howToDoThat_MockMethod: (() -> Void)?
+
+    func howToDoThat() {
+        howToDoThat_Invocations.append(())
+
+        guard let mock = howToDoThat_MockMethod else {
+            fatalError("no mock for `howToDoThat`")
+        }
+
+        mock()
+    }
+
+}
+
+class MockDeviceDetailsViewActions: DeviceDetailsViewActions {
+
+    // MARK: - Life cycle
+
+
+    // MARK: - isSelfClient
+
+    var isSelfClient: Bool {
+        get { return underlyingIsSelfClient }
+        set(value) { underlyingIsSelfClient = value }
+    }
+
+    var underlyingIsSelfClient: Bool!
+
+    // MARK: - isProcessing
+
+    var isProcessing: ((Bool) -> Void)?
+
+
+    // MARK: - enrollClient
+
+    var enrollClient_Invocations: [Void] = []
+    var enrollClient_MockError: Error?
+    var enrollClient_MockMethod: (() async throws -> String)?
+    var enrollClient_MockValue: String?
+
+    func enrollClient() async throws -> String {
+        enrollClient_Invocations.append(())
+
+        if let error = enrollClient_MockError {
+            throw error
+        }
+
+        if let mock = enrollClient_MockMethod {
+            return try await mock()
+        } else if let mock = enrollClient_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `enrollClient`")
+        }
+    }
+
+    // MARK: - removeDevice
+
+    var removeDevice_Invocations: [Void] = []
+    var removeDevice_MockMethod: (() async -> Bool)?
+    var removeDevice_MockValue: Bool?
+
+    func removeDevice() async -> Bool {
+        removeDevice_Invocations.append(())
+
+        if let mock = removeDevice_MockMethod {
+            return await mock()
+        } else if let mock = removeDevice_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `removeDevice`")
+        }
+    }
+
+    // MARK: - resetSession
+
+    var resetSession_Invocations: [Void] = []
+    var resetSession_MockMethod: (() -> Void)?
+
+    func resetSession() {
+        resetSession_Invocations.append(())
+
+        guard let mock = resetSession_MockMethod else {
+            fatalError("no mock for `resetSession`")
+        }
+
+        mock()
+    }
+
+    // MARK: - updateVerified
+
+    var updateVerified_Invocations: [Bool] = []
+    var updateVerified_MockMethod: ((Bool) async -> Bool)?
+    var updateVerified_MockValue: Bool?
+
+    func updateVerified(_ value: Bool) async -> Bool {
+        updateVerified_Invocations.append(value)
+
+        if let mock = updateVerified_MockMethod {
+            return await mock(value)
+        } else if let mock = updateVerified_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `updateVerified`")
+        }
+    }
+
+    // MARK: - copyToClipboard
+
+    var copyToClipboard_Invocations: [String] = []
+    var copyToClipboard_MockMethod: ((String) -> Void)?
+
+    func copyToClipboard(_ value: String) {
+        copyToClipboard_Invocations.append(value)
+
+        guard let mock = copyToClipboard_MockMethod else {
+            fatalError("no mock for `copyToClipboard`")
+        }
+
+        mock(value)
+    }
+
+    // MARK: - downloadE2EIdentityCertificate
+
+    var downloadE2EIdentityCertificateCertificate_Invocations: [E2eIdentityCertificate] = []
+    var downloadE2EIdentityCertificateCertificate_MockMethod: ((E2eIdentityCertificate) -> Void)?
+
+    func downloadE2EIdentityCertificate(certificate: E2eIdentityCertificate) {
+        downloadE2EIdentityCertificateCertificate_Invocations.append(certificate)
+
+        guard let mock = downloadE2EIdentityCertificateCertificate_MockMethod else {
+            fatalError("no mock for `downloadE2EIdentityCertificateCertificate`")
+        }
+
+        mock(certificate)
+    }
+
+    // MARK: - getProteusFingerPrint
+
+    var getProteusFingerPrint_Invocations: [Void] = []
+    var getProteusFingerPrint_MockMethod: (() async -> String)?
+    var getProteusFingerPrint_MockValue: String?
+
+    func getProteusFingerPrint() async -> String {
+        getProteusFingerPrint_Invocations.append(())
+
+        if let mock = getProteusFingerPrint_MockMethod {
+            return await mock()
+        } else if let mock = getProteusFingerPrint_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getProteusFingerPrint`")
+        }
     }
 
 }

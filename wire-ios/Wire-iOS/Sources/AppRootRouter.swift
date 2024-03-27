@@ -186,6 +186,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         enqueueTransition(to: appState, completion: completion)
     }
 
+    @MainActor
     private func transition(to appState: AppState, completion: @escaping () -> Void) {
         applicationWillTransition(to: appState)
 
@@ -203,6 +204,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showBlacklisted(reason: reason, completion: completionBlock)
         case .jailbroken:
             showJailbroken(completion: completionBlock)
+        case .certificateEnrollmentRequired:
+            showCertificateEnrollRequest(completion: completionBlock)
         case .databaseFailure(let error):
             showDatabaseLoadingFailure(error: error, completion: completionBlock)
         case .migrating:
@@ -282,6 +285,14 @@ extension AppRootRouter {
                                completion: completion)
     }
 
+    private func showCertificateEnrollRequest(completion: @escaping () -> Void) {
+        let blockerViewController = BlockerViewController(
+            context: .pendingCertificateEnroll,
+            sessionManager: sessionManager)
+        rootViewController.set(childViewController: blockerViewController,
+                               completion: completion)
+    }
+
     private func showDatabaseLoadingFailure(error: Error, completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(
             context: .databaseFailure,
@@ -346,6 +357,7 @@ extension AppRootRouter {
                                completion: completion)
     }
 
+    @MainActor
     private func showAuthenticated(
         userSession: UserSession,
         completion: @escaping () -> Void
@@ -362,9 +374,10 @@ extension AppRootRouter {
         }
 
         self.authenticatedRouter = authenticatedRouter
-
-        rootViewController.set(childViewController: authenticatedRouter.viewController,
-                               completion: completion)
+        rootViewController.set(
+            childViewController: authenticatedRouter.viewController,
+            completion: completion
+        )
     }
 
     private func showSkeleton(fromAccount: Account?, toAccount: Account, completion: @escaping () -> Void) {
@@ -403,7 +416,6 @@ extension AppRootRouter {
 
     private func setupAnalyticsSharing() {
         guard
-            appStateCalculator.wasUnauthenticated,
             let selfUser = SelfUser.provider?.providedSelfUser,
             selfUser.isTeamMember
         else {
@@ -415,6 +427,7 @@ extension AppRootRouter {
         Analytics.shared.provider?.selfUser = selfUser
     }
 
+    @MainActor
     private func buildAuthenticatedRouter(
         account: Account,
         userSession: UserSession
@@ -430,7 +443,6 @@ extension AppRootRouter {
         }
 
         let needToShowDialog = appStateCalculator.wasUnauthenticated && !isTeamMember
-
         return AuthenticatedRouter(
             rootViewController: rootViewController,
             account: account,
@@ -441,9 +453,13 @@ extension AppRootRouter {
                 enrollCertificateUseCase: userSession.enrollE2EICertificate,
                 snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
                 stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
-                gracePeriodRepository: userSession.gracePeriodRepository,
+                e2eiActivationDateRepository: userSession.e2eiActivationDateRepository,
+                e2eiFeature: userSession.e2eiFeature,
+                lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
+                e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
+                selfClientCertificateProvider: userSession.selfClientCertificateProvider,
                 targetVC: rootViewController),
-            gracePeriodRepository: userSession.gracePeriodRepository
+            e2eiActivationDateRepository: userSession.e2eiActivationDateRepository
         )
     }
 }

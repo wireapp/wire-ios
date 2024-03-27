@@ -41,34 +41,14 @@ public extension ZMConversation {
         return message
     }
 
-    @discardableResult
-    @objc func appendPerformedCallMessage(with duration: TimeInterval, caller: ZMUser) -> ZMSystemMessage {
-        let associatedMessage = associatedSystemMessage(of: .performedCall, sender: caller)
-
-        let message = appendSystemMessage(
-            type: .performedCall,
-            sender: caller,
-            users: [caller],
-            clients: nil,
-            timestamp: Date(),
-            duration: duration
-        )
-
-        if isArchived && mutedMessageTypes == .none {
-            isArchived = false
-        }
-
-        associatedMessage?.addChild(message)
-
-        managedObjectContext?.enqueueDelayedSave()
-        return message
-    }
-
     private func associatedSystemMessage(of type: ZMSystemMessageType, sender: ZMUser) -> ZMSystemMessage? {
-        guard let lastMessage = lastMessage as? ZMSystemMessage,
-              lastMessage.systemMessageType == type,
-              lastMessage.sender == sender
-        else { return nil }
+        guard
+            let lastMessage = lastMessage as? ZMSystemMessage,
+            lastMessage.systemMessageType == type,
+            lastMessage.sender == sender
+        else {
+            return nil
+        }
 
         return lastMessage
     }

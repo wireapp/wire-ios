@@ -78,8 +78,8 @@ import Foundation
 
         _ = managedObjectContext.enterAllGroups()
 
-        for asset in message.assets {
-
+        // We only want to start processing originals.
+        for asset in message.assets where asset.hasOriginal {
             if asset.needsPreprocessing, let imageOperations = imageAssetPreprocessor?.operations(forPreprocessingImageOwner: AssetImageOwnerAdapter(asset: asset)) {
                 processingGroup.enter()
                 imageProcessingQueue.addOperations(imageOperations, waitUntilFinished: false)
