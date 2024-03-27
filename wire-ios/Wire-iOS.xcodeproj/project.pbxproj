@@ -289,7 +289,6 @@
 		543DF685252DD7F0001F6EA6 /* NotificationObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543DF684252DD7F0001F6EA6 /* NotificationObserver.swift */; };
 		543DF69F252F5A4C001F6EA6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 543DF69E252F5A4B001F6EA6 /* Main.storyboard */; };
 		543DF6AD25309641001F6EA6 /* AppRootRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543DF6AC25309641001F6EA6 /* AppRootRouter.swift */; };
-		543DF6B025309CF8001F6EA6 /* Navigator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543DF6AF25309CF8001F6EA6 /* Navigator.swift */; };
 		543DF6B225309E52001F6EA6 /* RootViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543DF6B125309E52001F6EA6 /* RootViewController.swift */; };
 		543E0C641E2394F4000E2161 /* ConversationSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543E0C611E2394E7000E2161 /* ConversationSelectionViewController.swift */; };
 		543E0C661E23A72F000E2161 /* SendingProgressViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 543E0C651E23A72F000E2161 /* SendingProgressViewController.swift */; };
@@ -2341,7 +2340,6 @@
 		543DF684252DD7F0001F6EA6 /* NotificationObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationObserver.swift; sourceTree = "<group>"; };
 		543DF69E252F5A4B001F6EA6 /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		543DF6AC25309641001F6EA6 /* AppRootRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRootRouter.swift; sourceTree = "<group>"; };
-		543DF6AF25309CF8001F6EA6 /* Navigator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigator.swift; sourceTree = "<group>"; };
 		543DF6B125309E52001F6EA6 /* RootViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewController.swift; sourceTree = "<group>"; };
 		543E0C611E2394E7000E2161 /* ConversationSelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationSelectionViewController.swift; sourceTree = "<group>"; };
 		543E0C651E23A72F000E2161 /* SendingProgressViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendingProgressViewController.swift; sourceTree = "<group>"; };
@@ -6388,7 +6386,6 @@
 				546EEA8C2536DDF500195097 /* URLActionRouter.swift */,
 				546EEA8E2536DFAB00195097 /* SwitchingAccountRouter.swift */,
 				543DF684252DD7F0001F6EA6 /* NotificationObserver.swift */,
-				543DF6AF25309CF8001F6EA6 /* Navigator.swift */,
 				5405444E253842C200FAE77A /* LaunchSequenceOperation.swift */,
 				546EEA88253493FF00195097 /* ForegroundNotificationFilter.swift */,
 				546EEA8A2534942F00195097 /* SessionManagerLifeCycleObserver.swift */,
@@ -9536,7 +9533,6 @@
 				064AD4C425DD31A600143D74 /* UIApplication+OpenURL.swift in Sources */,
 				87E4D2CA1FC6E39800F3C664 /* CharacterInputField.swift in Sources */,
 				F15650D921DD107800210504 /* RoundedViewProtocol.swift in Sources */,
-				543DF6B025309CF8001F6EA6 /* Navigator.swift in Sources */,
 				A9F57E3D2419A83100EEA912 /* TokenContainer.swift in Sources */,
 				5E39FC63225CCEFA00C682B8 /* ValueValidationCell.swift in Sources */,
 				7C440E7823472DFB00D91B5F /* FolderCreationNameSectionController.swift in Sources */,
