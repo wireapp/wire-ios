@@ -77,7 +77,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
         // when
         weak var observerCenter = uiMOC.conversationListObserverCenter
-        uiMOC.userInfo.removeObject(forKey: NSManagedObjectContext.ConversationListObserverCenterKey)
+        uiMOC.userInfo.removeObject(forKey: NSManagedObjectContext.conversationListObserverCenterKey)
 
         // then
         XCTAssertNil(observerCenter)
