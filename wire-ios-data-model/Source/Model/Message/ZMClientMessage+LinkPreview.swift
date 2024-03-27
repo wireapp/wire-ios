@@ -83,7 +83,7 @@ extension ZMClientMessage {
         completionHandler: @escaping (_ imageData: Data?) -> Void
     ) {
         let cache = managedObjectContext?.zm_fileAssetCache
- 
+
         let mediumKey = FileAssetCache.cacheKeyForAsset(
             self,
             format: .medium,
@@ -171,7 +171,7 @@ extension ZMClientMessage: ZMImageOwner {
     @objc public func processingDidFinish() {
         self.linkPreviewState = .processed
         guard let moc = self.managedObjectContext else { return }
-        moc.zm_fileAssetCache.deleteOriginalImageData(for: self)        
+        moc.zm_fileAssetCache.deleteOriginalImageData(for: self)
         moc.enqueueDelayedSave()
     }
 

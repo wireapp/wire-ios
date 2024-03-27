@@ -817,7 +817,6 @@ public final class FileAssetCache: NSObject {
             .zmHexEncodedString()
     }
 
-
 }
 
 // MARK: - Testing
