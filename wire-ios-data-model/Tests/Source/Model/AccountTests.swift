@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireDataModel
 
-final class AccountTests: ZMConversationTestsBase {
+final class AccountTests: XCTestCase {
 
     func testThatItCanSerializeAnAccountToDisk() throws {
         // given
@@ -32,8 +32,8 @@ final class AccountTests: ZMConversationTestsBase {
             userName: "Bruno",
             userIdentifier: .create(),
             teamName: "Wire",
-            imageData: verySmallJPEGData(),
-            teamImageData: verySmallJPEGData(),
+            imageData: Data(),
+            teamImageData: Data(),
             loginCredentials: credentials
         )
 
@@ -47,7 +47,7 @@ final class AccountTests: ZMConversationTestsBase {
         // given
         let url = URL(fileURLWithPath: NSTemporaryDirectory() + "/AccountTests")
         defer { try? FileManager.default.removeItem(at: url) }
-        let userName = "Bruno", team = "Wire", id = UUID.create(), image = verySmallJPEGData(), count = 14
+        let userName = "Bruno", team = "Wire", id = UUID.create(), image = Data(), count = 14
 
         // we create and store an account
         do {
@@ -78,7 +78,7 @@ final class AccountTests: ZMConversationTestsBase {
         // given
         let url = URL(fileURLWithPath: NSTemporaryDirectory() + "/AccountTests")
         defer { try? FileManager.default.removeItem(at: url) }
-        let userName = "Bruno", team = "Wire", id = UUID.create(), image = verySmallJPEGData(), count = 14
+        let userName = "Bruno", team = "Wire", id = UUID.create(), image = Data(), count = 14
         let credentials = LoginCredentials(emailAddress: "bruno@example.com", phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
 
         // we create and store an account
@@ -108,7 +108,7 @@ final class AccountTests: ZMConversationTestsBase {
 
     func testThatAccountsAreEqualWhenNotImportantPropertiesAreDifferent() {
         // given
-        let userName = "Bruno", team = "Wire", id = UUID.create(), image = verySmallJPEGData(), count = 14
+        let userName = "Bruno", team = "Wire", id = UUID.create(), image = Data(), count = 14
 
         let account = Account(userName: userName,
                               userIdentifier: id,
