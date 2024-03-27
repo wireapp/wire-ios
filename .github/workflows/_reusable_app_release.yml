@@ -42,6 +42,10 @@ on:
       SUBMODULE_PAT:
         required: true
 
+env: # https://docs.fastlane.tools/getting-started/ios/setup/
+  LC_ALL: en_US.UTF-8
+  LANG: en_US.UTF-8
+
 permissions: 
   checks: write
 
@@ -122,6 +126,13 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: CHANGELOG.md
+      - name: Retrieve Xcode version
+        run: |
+          echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
+        id: xcode-version
+      - uses: maxim-lobanov/setup-xcode@v1.5.1
+        with:
+          xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
       - name: Restore Carthage Cache
         uses: actions/cache@v3
         id: cache-carthage
