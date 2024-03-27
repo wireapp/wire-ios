@@ -37,7 +37,7 @@ final class CallController: NSObject {
     private var alertDebounceInterval: TimeInterval { 15 * .oneMinute  }
 
     // MARK: - Init
-     init(userSession: UserSession) {
+    init(userSession: UserSession) {
         super.init()
         addObservers(userSession: userSession)
     }
@@ -61,7 +61,7 @@ final class CallController: NSObject {
     private func addObservers(userSession: UserSession) {
         observerTokens.append(userSession.addConferenceCallStateObserver(self))
         observerTokens.append(userSession.addConferenceCallErrorObserver(self))
-        }
+    }
 
     private func presentOrMinimizeActiveCall(for conversation: ZMConversation) {
         if conversation == minimizedCall {
@@ -119,6 +119,22 @@ final class CallController: NSObject {
             return false
         }
     }
+
+    private func acceptDegradedCall(conversation: ZMConversation) {
+        guard let userSession = ZMUserSession.shared() else { return }
+
+        userSession.enqueue({
+            conversation.voiceChannel?.continueByDecreasingConversationSecurity(userSession: userSession)
+        }, completionHandler: {
+            conversation.joinCall()
+        })
+    }
+
+    private func cancelCall(conversation: ZMConversation) {
+        guard let userSession = ZMUserSession.shared() else { return }
+        conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
+    }
+
 }
 
 // MARK: - WireCallCenterCallStateObserver
@@ -138,25 +154,11 @@ extension CallController: WireCallCenterCallStateObserver {
         }
     }
 
-    private func cancelCall(conversation: ZMConversation) {
-        guard let userSession = ZMUserSession.shared() else { return }
-        conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
-    }
-
     private func presentUnsupportedVersionAlertIfNecessary(callState: CallState) {
         guard isClientOutdated(callState: callState) else { return }
         router?.presentUnsupportedVersionAlert()
     }
 
-    private func acceptDegradedCall(conversation: ZMConversation) {
-        guard let userSession = ZMUserSession.shared() else { return }
-
-        userSession.enqueue({
-            conversation.voiceChannel?.continueByDecreasingConversationSecurity(userSession: userSession)
-        }, completionHandler: {
-            conversation.joinCall()
-        })
-    }
     private func presentSecurityDegradedAlertIfNecessary(for conversation: ZMConversation, callState: CallState, continueCallBlock: @escaping (Bool) -> Void) {
 
         guard let voiceChannel = conversation.voiceChannel else {
