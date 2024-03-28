@@ -30,15 +30,17 @@ public struct SwiftDebugging {
     }
 
     public static func sequenceDescription<T>(_ sequence: AnySequence<T>) -> String {
-
-        return "( " + sequence.map({ obj -> String in self.shortDescription(obj) + ", " })
-            .reduce("", +) + " )"
+        let formattedSequence = sequence
+            .map { shortDescription($0) }
+            .joined(separator: ", ")
+        return "( \(formattedSequence) )"
     }
 
     public static func sequenceDescription<S: Sequence>(_ sequence: S) -> String {
-
-        return "( " + sequence.map({ obj -> String in self.shortDescription(obj) + ", " })
-            .reduce("", +) + " )"
+        let formattedSequence = sequence
+            .map { Self.shortDescription($0) }
+            .joined(separator: ", ")
+        return "( \(formattedSequence) )"
     }
 
     public static func shortDescription(_ value: Any) -> String {

@@ -18,7 +18,7 @@
 
 import Foundation
 
-class ExplicitChangeDetector: ChangeDetector {
+final class ExplicitChangeDetector: ChangeDetector {
 
     private typealias ObservableChangesByObject = [ZMManagedObject: Changes]
 
@@ -84,7 +84,9 @@ class ExplicitChangeDetector: ChangeDetector {
             .map(getChangedKeysSinceLastSave)
             .filter(\.hasChanges)
             .map(observableChangesCausedByChange)
-            .reduce([:], combine)
+            .reduce(into: [:]) { partialResult, changes in
+                partialResult.merge(with: changes)
+            }
     }
 
     private func getChangedKeysSinceLastSave(object: ZMManagedObject) -> UpdatedObject {
@@ -148,10 +150,13 @@ class ExplicitChangeDetector: ChangeDetector {
     ///     All objects and their observable keys that have changed.
 
     private func observableChangesCausedByInsertionOrDeletion(for objects: Set<ZMManagedObject>) -> ObservableChangesByObject {
-        objects.lazy
+        objects
+            .lazy
             .compactMap { $0 as? SideEffectSource }
             .map { $0.affectedObjectsForInsertionOrDeletion(keyStore: self.dependencyKeyStore) }
-            .reduce([:], combine)
+            .reduce(into: [:]) { partialResult, changes in
+                partialResult.merge(with: changes)
+            }
     }
 
     // MARK: - Helper methods

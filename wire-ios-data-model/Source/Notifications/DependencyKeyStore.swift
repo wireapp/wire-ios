@@ -169,7 +169,9 @@ class DependencyKeyStore {
 
     /// Combines observed keys and all affecting keys in one giant Set
     private static func setupAllKeys(observableKeys: Set<String>, affectingKeys: [String: Set<String>]) -> Set<String> {
-        let allAffectingKeys: Set<String> = affectingKeys.reduce(Set()) { $0.union($1.value) }
+        let allAffectingKeys: Set<String> = affectingKeys.reduce(into: .init()) { partialResult, affectingKey in
+            partialResult.formUnion(affectingKey.value)
+        }
         return observableKeys.union(allAffectingKeys)
     }
 

@@ -426,12 +426,3 @@ extension WireCallCenterV3 {
         }
     }
 }
-
-private extension Set where Element == ZMUser {
-
-    var avsClients: Set<AVSClient> {
-        return reduce(Set<AVSClient>()) { result, user in
-            return result.union(user.clients.compactMap(AVSClient.init))
-        }
-    }
-}
