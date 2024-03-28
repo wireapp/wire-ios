@@ -43,7 +43,7 @@ extension ZMImagePreprocessingTracker {
         let imageFetchPredicate = NSPredicate(format: "%K == %d", ZMClientMessage.linkPreviewStateKey, ZMLinkPreviewState.downloaded.rawValue)
         let needsProccessing = NSPredicate { object, _ in
             guard let message = object as? ZMClientMessage else { return false }
-            return managedObjectContext.zm_fileAssetCache.hasDataOnDisk(message, format: .original, encrypted: false)
+            return managedObjectContext.zm_fileAssetCache.hasOriginalImageData(for: message)
         }
 
         let previewImagePreprocessor = ZMImagePreprocessingTracker(

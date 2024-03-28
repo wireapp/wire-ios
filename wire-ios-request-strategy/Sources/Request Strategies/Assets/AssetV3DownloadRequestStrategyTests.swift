@@ -134,7 +134,7 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
 
             // Given
             guard let (message, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, encrypted: false, data: Data())
+            self.syncMOC.zm_fileAssetCache.storeOriginalFile(data: Data(), for: message)
             assetMessage = message
 
             // When

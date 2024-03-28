@@ -342,15 +342,15 @@ struct CacheAsset: AssetType {
 
     var hasOriginal: Bool {
         if case .file = type {
-            return cache.hasDataOnDisk(owner, encrypted: false)
+            return cache.hasOriginalFileData(for: owner)
         } else {
-            return cache.hasDataOnDisk(owner, format: .original, encrypted: false)
+            return cache.hasOriginalImageData(for: owner)
         }
     }
 
     var original: Data? {
         if case .file = type {
-            return cache.assetData(owner, encrypted: false)
+            return cache.originalFileData(for: owner)
         } else {
             return cache.originalImageData(for: owner)
         }
@@ -358,8 +358,7 @@ struct CacheAsset: AssetType {
 
     var hasPreprocessed: Bool {
         guard needsPreprocessing else { return false }
-
-        return cache.hasDataOnDisk(owner, format: .medium, encrypted: false)
+        return cache.hasMediumImageData(for: owner)
     }
 
     var preprocessed: Data? {
@@ -370,23 +369,25 @@ struct CacheAsset: AssetType {
     var hasEncrypted: Bool {
         switch type {
         case .file:
-            return cache.hasDataOnDisk(owner, encrypted: true)
+            return cache.hasEncryptedFileData(for: owner)
         case .image, .thumbnail:
-            return cache.hasDataOnDisk(owner, format: .medium, encrypted: true)
+            return cache.hasEncryptedMediumImageData(for: owner)
         }
     }
 
     var encrypted: Data? {
         switch type {
         case .file:
-            return cache.assetData(owner, encrypted: true)
+            return cache.encryptedFileData(for: owner)
         case .image, .thumbnail:
             return cache.encryptedMediumImageData(for: owner)
         }
     }
 
     var isUploaded: Bool {
-        guard let genericMessage = owner.underlyingMessage else { return false }
+        guard let genericMessage = owner.underlyingMessage else {
+            return false
+        }
 
         switch type {
         case .thumbnail:
@@ -394,17 +395,30 @@ struct CacheAsset: AssetType {
         case .file, .image:
             return genericMessage.assetData?.uploaded.hasAssetID ?? false
         }
-
     }
 
-    func updateWithAssetId(_ assetId: String, token: String?, domain: String?) {
-        guard var genericMessage = owner.underlyingMessage else { return }
+    func updateWithAssetId(
+        _ assetId: String,
+        token: String?,
+        domain: String?
+    ) {
+        guard var genericMessage = owner.underlyingMessage else {
+            return
+        }
 
         switch type {
         case .thumbnail:
-            genericMessage.updatePreview(assetId: assetId, token: token, domain: domain)
+            genericMessage.updatePreview(
+                assetId: assetId,
+                token: token,
+                domain: domain
+            )
         case .image, .file:
-            genericMessage.updateUploaded(assetId: assetId, token: token, domain: domain)
+            genericMessage.updateUploaded(
+                assetId: assetId,
+                token: token,
+                domain: domain
+            )
         }
 
         do {
@@ -415,13 +429,20 @@ struct CacheAsset: AssetType {
         }
     }
 
-    func updateWithPreprocessedData(_ preprocessedImageData: Data, imageProperties: ZMIImageProperties) {
-        guard needsPreprocessing else { return }
-        guard var genericMessage = owner.underlyingMessage else { return }
+    func updateWithPreprocessedData(
+        _ preprocessedImageData: Data,
+        imageProperties: ZMIImageProperties
+    ) {
+        guard
+            needsPreprocessing,
+            var genericMessage = owner.underlyingMessage
+        else {
+            return
+        }
 
         // Now we have the preprocessed data, delete the original.
         cache.storeMediumImage(data: preprocessedImageData, for: owner)
-        cache.deleteAssetData(owner, format: .original, encrypted: false)
+        cache.deleteOriginalImageData(for: owner)
 
         switch type {
         case .file:
@@ -440,7 +461,9 @@ struct CacheAsset: AssetType {
     }
 
     func encrypt() {
-        guard var genericMessage = owner.underlyingMessage else { return }
+        guard var genericMessage = owner.underlyingMessage else {
+            return
+        }
 
         switch type {
         case .file:
@@ -477,39 +500,22 @@ struct CacheAsset: AssetType {
 extension ZMAssetClientMessage: AssetMessage {
 
     public var assets: [AssetType] {
-        guard let cache = managedObjectContext?.zm_fileAssetCache else { return [] }
+        guard let cache = managedObjectContext?.zm_fileAssetCache else {
+            return []
+        }
 
-        var assets: [AssetType] = []
+        var assets = [AssetType]()
 
         if isFile {
-            // has original file data
-            if cache.hasDataOnDisk(self, encrypted: false) {
+            if cache.hasFileData(for: self) {
                 assets.append(CacheAsset(owner: self, type: .file, cache: cache))
             }
 
-            // encrypted file data
-            if cache.hasDataOnDisk(self, encrypted: true) {
-                assets.append(CacheAsset(owner: self, type: .file, cache: cache))
-            }
-
-            // has original thumbnail
-            if cache.hasDataOnDisk(self, format: .original, encrypted: false) {
+            if cache.hasImageData(for: self) {
                 assets.append(CacheAsset(owner: self, type: .thumbnail, cache: cache))
             }
-
-            // has preprocessed thumbnail
-            if cache.hasDataOnDisk(self, format: .medium, encrypted: false) {
-                assets.append(CacheAsset(owner: self, type: .thumbnail, cache: cache))
-            }
-
-            // has encrypted thumbnail
-            if cache.hasDataOnDisk(self, format: .medium, encrypted: true) {
-                assets.append(CacheAsset(owner: self, type: .thumbnail, cache: cache))
-            }
-        } else {
-            if cache.hasDataOnDisk(for: self) {
-                assets.append(CacheAsset(owner: self, type: .image, cache: cache))
-            }
+        } else if cache.hasImageData(for: self) {
+            assets.append(CacheAsset(owner: self, type: .image, cache: cache))
         }
 
         return assets
@@ -518,9 +524,9 @@ extension ZMAssetClientMessage: AssetMessage {
     public var processingState: AssetProcessingState {
         let assets = self.assets
 
-        // There is an asset that needs to be encrypted.
+        // There is an asset that still needs encrypting and uploading.
         if assets.contains(where: {
-            !$0.hasEncrypted
+            !$0.isUploaded && !$0.hasEncrypted
         }) {
             return .preprocessing
         }

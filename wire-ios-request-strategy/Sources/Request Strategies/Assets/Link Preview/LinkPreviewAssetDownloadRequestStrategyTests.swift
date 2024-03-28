@@ -51,9 +51,9 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
             self.sut = nil
             self.mockApplicationStatus = nil
             self.oneToOneconversationOnSync = nil
-            syncMOC.zm_fileAssetCache.wipeCaches()
+            try? syncMOC.zm_fileAssetCache.wipeCaches()
         }
-        uiMOC.zm_fileAssetCache.wipeCaches()
+        try? uiMOC.zm_fileAssetCache.wipeCaches()
         apiVersion = nil
         super.tearDown()
     }
