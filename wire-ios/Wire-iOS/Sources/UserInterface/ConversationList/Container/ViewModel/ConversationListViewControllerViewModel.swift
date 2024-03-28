@@ -69,6 +69,7 @@ extension ConversationListViewController {
         let conversationListType: ConversationListHelperType.Type
         let userSession: UserSession
         private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+        private let notificationCenter: NotificationCenter
 
         var selectedConversation: ZMConversation?
 
@@ -94,15 +95,10 @@ extension ConversationListViewController {
             self.userSession = userSession
             self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
             selfUserStatus = .init(user: selfUser, isE2EICertified: false)
+            self.notificationCenter = notificationCenter
             super.init()
 
             updateE2EICertifiedStatus()
-            notificationCenter.addObserver(
-                self,
-                selector: #selector(handleApplicationDidBecomeActiveNotification(_:)),
-                name: UIApplication.didBecomeActiveNotification,
-                object: nil
-            )
         }
     }
 }
@@ -117,6 +113,20 @@ extension ConversationListViewController.ViewModel {
         }
 
         updateObserverTokensForActiveTeam()
+
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(handleApplicationDidBecomeActiveNotification(_:)),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
+
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(updateE2EICertificateStatus),
+            name: .e2eiCertificateChanged,
+            object: nil
+        )
     }
 
     func savePendingLastRead() {
@@ -248,6 +258,17 @@ extension ConversationListViewController.ViewModel {
     private func handleApplicationDidBecomeActiveNotification(_ notification: Notification) {
         updateE2EICertifiedStatus()
     }
+}
+
+// MARK: - Observing certificate changes
+
+extension ConversationListViewController.ViewModel {
+
+    @objc
+    private func updateE2EICertificateStatus() {
+        updateE2EICertifiedStatus()
+    }
+
 }
 
 extension Settings {

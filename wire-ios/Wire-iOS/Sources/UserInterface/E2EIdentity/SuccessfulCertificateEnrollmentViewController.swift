@@ -115,6 +115,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
         self.isUpdateMode = isUpdateMode
         super.init(nibName: nil, bundle: nil)
         setupViews()
+        notifyE2EICertificateChange()
     }
 
     required init?(coder: NSCoder) {
@@ -167,6 +168,10 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
             certificateDetailsButton.heightAnchor.constraint(equalToConstant: 32),
             certificateDetailsButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -64)
         ])
+    }
+
+    private func notifyE2EICertificateChange() {
+        NotificationCenter.default.post(name: .e2eiCertificateChanged, object: self)
     }
 
     // MARK: - Actions
