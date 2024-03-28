@@ -49,14 +49,23 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
         let identitiesAndStatus = await validateUserHandleAndName(for: identities)
 
         return identitiesAndStatus.map { identity, status in
-
-            E2eIdentityCertificate(clientId: identity.clientId,
-                                   certificateDetails: identity.certificate,
-                                   mlsThumbprint: identity.thumbprint,
-                                   notValidBefore: Date(timeIntervalSince1970: Double(identity.notBefore)),
-                                   expiryDate: Date(timeIntervalSince1970: Double(identity.notAfter)),
-                                   certificateStatus: status,
-                                   serialNumber: identity.serialNumber)
+            if let x509Identity = identity.x509Identity {
+                E2eIdentityCertificate(clientId: identity.clientId,
+                                       certificateDetails: x509Identity.certificate,
+                                       mlsThumbprint: identity.thumbprint,
+                                       notValidBefore: Date(timeIntervalSince1970: Double(x509Identity.notBefore)),
+                                       expiryDate: Date(timeIntervalSince1970: Double(x509Identity.notAfter)),
+                                       certificateStatus: status,
+                                       serialNumber: x509Identity.serialNumber)
+            } else {
+                E2eIdentityCertificate(clientId: identity.clientId,
+                                       certificateDetails: "",
+                                       mlsThumbprint: identity.thumbprint,
+                                       notValidBefore: .now,
+                                       expiryDate: .now,
+                                       certificateStatus: .notActivated,
+                                       serialNumber: "")
+            }
         }
     }
 
@@ -83,8 +92,8 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
                 return (identity, .invalid)
             }
 
-            let hasValidDisplayName = identity.displayName == name
-            let hasValidHandle = identity.handle.contains("\(handle)@\(domain)")
+            let hasValidDisplayName = identity.x509Identity?.displayName == name
+            let hasValidHandle = identity.x509Identity?.handle.contains("\(handle)@\(domain)") ?? false
             let isValid = hasValidDisplayName && hasValidHandle
             return (identity, isValid ? .valid : .invalid)
         }
