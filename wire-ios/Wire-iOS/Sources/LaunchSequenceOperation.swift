@@ -191,11 +191,11 @@ extension AppCenterOperation: CrashesDelegate {
     }
 
     internal func crashes(_ crashes: Crashes, didSucceedSending errorReport: ErrorReport) {
-        zmLog.error("AppCenter: finished sending the crash report")
+        logger.error("AppCenter: finished sending the crash report")
     }
 
     internal func crashes(_ crashes: Crashes, didFailSending errorReport: ErrorReport, withError error: Error?) {
-        zmLog.error("AppCenter: failed sending the crash report with error: \(String(describing: error?.localizedDescription))")
+        logger.error("AppCenter: failed sending the crash report with error: \(String(describing: error?.localizedDescription))")
     }
 }
 #endif
