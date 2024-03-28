@@ -20,7 +20,7 @@ import Foundation
 import LocalAuthentication
 
 public final class AppLockController: AppLockType {
-    private let logger = WireLogger(tag: "AppLock")
+    let logger = WireLogger(tag: "AppLock")
 
     // MARK: - Properties
 
