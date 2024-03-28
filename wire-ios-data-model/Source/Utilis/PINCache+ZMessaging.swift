@@ -36,15 +36,17 @@ extension PINDiskCache {
     // disable backup of URL
     func makeURLSecure() {
 
-        let secureBlock: (PINDiskCache) -> Void = { cache in
-            // exclude from backup
+        let secureBlock: (any PINCaching) -> Void = { cache in
+            // exclude disk cache from backup
+            guard let cache = cache as? PINDiskCache else { return }
+
             do {
                 var url = cache.cacheURL
                 var values = URLResourceValues()
                 values.isExcludedFromBackup = true
                 try url.setResourceValues(values)
             } catch {
-                fatal("Could not exclude \(cache.cacheURL) from backup")
+                assertionFailure("Could not exclude \(cache.cacheURL) from backup")
             }
         }
 
