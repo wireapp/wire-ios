@@ -145,6 +145,7 @@ extension CallController: WireCallCenterCallStateObserver {
                              caller: UserType,
                              timestamp: Date?,
                              previousCallState: CallState?) {
+        print("🕵🏽 callState:", callState)
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
         presentSecurityDegradedAlertIfNecessary(for: conversation, callState: callState) { continueCall in
             if continueCall {
@@ -167,6 +168,7 @@ extension CallController: WireCallCenterCallStateObserver {
                                                          callState: CallState,
                                                          continueCallBlock: @escaping (Bool) -> Void) {
         guard let voiceChannel = conversation.voiceChannel else {
+            print("🕵🏽 no voice channel stop")
             // no alert to show, continue
             continueCallBlock(true)
             return
@@ -174,10 +176,25 @@ extension CallController: WireCallCenterCallStateObserver {
 
         let degradationState = voiceChannel.degradationState
 
+        var reason: CallDegradationReason?
+        var callEnded: Bool?
+
         switch (degradationState, callState) {
         case (.incoming(reason: let degradationReason), .incoming(video: _, shouldRing: true, degraded: true)):
+            print("🕵🏽 incoming")
+            reason = degradationReason
+            callEnded = false
+        case (.terminating(reason: let degradationReason), .terminating(reason: .securityDegraded)):
+            print("🕵🏽 terminating")
+            reason = degradationReason
+            callEnded = true
+        default:
+            break
+        }
+
+        if let callEnded, let reason {
             // only present when incoming ringing and degraded
-            router?.presentSecurityDegradedAlert(for: degradationReason) { [weak self] choice in
+            router?.presentSecurityDegradedAlert(for: reason, callEnded: callEnded) { [weak self] choice in
                 switch choice {
                 case .cancel:
                     self?.cancelCall(conversation: conversation)
@@ -190,7 +207,8 @@ extension CallController: WireCallCenterCallStateObserver {
                     break
                 }
             }
-        default:
+
+        } else {
             // no alert to show, continue
             continueCallBlock(true)
             // dismiss alert that would be there

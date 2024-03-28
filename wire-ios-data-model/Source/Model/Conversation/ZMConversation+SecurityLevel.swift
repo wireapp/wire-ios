@@ -405,6 +405,8 @@ extension ZMConversation {
             case .proteus, .mixed:
                 securityLevel = .notSecure
             case .mls:
+                // disabled
+                break
                 mlsVerificationStatus = .notVerified
             }
         }

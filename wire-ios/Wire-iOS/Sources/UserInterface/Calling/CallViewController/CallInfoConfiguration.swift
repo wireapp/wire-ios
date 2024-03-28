@@ -270,6 +270,8 @@ extension VoiceChannel {
             return .incoming(reason: degradationReason)
         case .outgoing(degraded: true):
             return .outgoing(reason: degradationReason)
+        case .terminating(reason: .securityDegraded):
+            return .terminating(reason: degradationReason)
         default:
             return .none
         }

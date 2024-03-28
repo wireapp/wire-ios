@@ -29,6 +29,7 @@ enum CallDegradationState: Equatable {
     case none
     case incoming(reason: CallDegradationReason)
     case outgoing(reason: CallDegradationReason)
+    case terminating(reason: CallDegradationReason)
 }
 
 protocol CallDegradationControllerDelegate: AnyObject {
@@ -67,7 +68,7 @@ final class CallDegradationController: UIViewController {
                     continueDegradedCall ? self?.delegate?.continueDegradedCall() : self?.delegate?.cancelDegradedCall()
                 })
             }
-        case .none, .incoming:
+        case .none, .incoming, .terminating:
             return
         }
         presentAlertIfNeeded()

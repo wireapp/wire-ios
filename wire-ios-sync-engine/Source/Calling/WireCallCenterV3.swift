@@ -1039,6 +1039,9 @@ extension WireCallCenterV3 {
         )
 
         if case .terminating = callState {
+            if case .incoming(video: false, shouldRing: false, degraded: true) = previousCallState {
+                callState = .terminating(reason: .securityDegraded)
+            }
             clearSnapshot(conversationId: conversationId)
         }
 

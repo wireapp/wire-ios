@@ -31,7 +31,7 @@ protocol ActiveCallRouterProtocol: AnyObject {
     func minimizeCall(animated: Bool, completion: Completion?)
     func showCallTopOverlay(for conversation: ZMConversation)
     func hideCallTopOverlay()
-    func presentSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void)
+    func presentSecurityDegradedAlert(for reason: CallDegradationReason, callEnded: Bool, completion: @escaping (AlertChoice) -> Void)
     func dismissSecurityDegradedAlertIfNeeded()
     func presentUnsupportedVersionAlert()
 }
@@ -166,8 +166,9 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     // MARK: - Alerts
 
-    func presentSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void) {
+    func presentSecurityDegradedAlert(for reason: CallDegradationReason, callEnded: Bool = false, completion: @escaping (AlertChoice) -> Void) {
         guard self.presentedDegradedAlert == nil else {
+            print("🕵🏽 already presented")
             completion(.alreadyPresented)
             return
         }
@@ -176,27 +177,40 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
             let alert: UIAlertController
             switch reason {
             case .degradedUser(user: let user):
-                alert = UIAlertController.degradedCall(degradedUser: user?.value, callEnded: true, confirmationBlock: { continueDegradedCall in
+                print("🕵🏽 degradedUser")
+                alert = UIAlertController.degradedCall(degradedUser: user?.value, callEnded: callEnded, confirmationBlock: { continueDegradedCall in
                     completion(continueDegradedCall ? .confirm : .cancel)
                     postCallActionCompletion()
                     self?.presentedDegradedAlert = nil
                 })
             case .invalidCertificate:
-                alert = UIAlertController.incomingCallDegradedMLSConference(confirmationBlock: { answerDegradedCall in
-                    completion(answerDegradedCall ? .confirm : .cancel)
-                    postCallActionCompletion()
-                    self?.presentedDegradedAlert = nil
-                })
+                print("🕵🏽 invalidCertificate")
+                if !callEnded {
+                    print("🕵🏽 incomingCallDegradedMLSConference")
+                    alert = UIAlertController.incomingCallDegradedMLSConference(confirmationBlock: { answerDegradedCall in
+                        completion(answerDegradedCall ? .confirm : .cancel)
+                        postCallActionCompletion()
+                        self?.presentedDegradedAlert = nil
+                    })
+                } else {
+                    print("🕵🏽 degradedMLSConference")
+                    alert = UIAlertController.degradedMLSConference(conferenceEnded: callEnded, cancelBlock: {
+                        postCallActionCompletion()
+                        self?.presentedDegradedAlert = nil
+                    })
+                }
             }
 
             self?.presentedDegradedAlert = alert
+
+            print("🕵🏽 presentDegradedAlert")
             self?.rootViewController.present(alert, animated: true)
         }
     }
 
     func dismissSecurityDegradedAlertIfNeeded() {
         guard let alert = self.presentedDegradedAlert else { return }
-
+        print("🕵🏽 dismissSecurityDegradedAlertIfNeeded")
         alert.dismissIfNeeded()
         self.presentedDegradedAlert = nil
     }
