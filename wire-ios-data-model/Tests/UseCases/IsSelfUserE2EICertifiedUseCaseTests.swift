@@ -48,6 +48,7 @@ final class IsSelfUserE2EICertifiedUseCaseTests: ZMBaseManagedObjectTest {
         sut = .init(
             context: context,
             featureRepository: mockFeatureRepository,
+            featureRepositoryContext: context,
             isUserE2EICertifiedUseCase: mockIsUserE2EICertifiedUseCase
         )
     }

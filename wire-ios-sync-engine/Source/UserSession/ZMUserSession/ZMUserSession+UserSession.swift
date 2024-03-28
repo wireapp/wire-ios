@@ -287,6 +287,7 @@ extension ZMUserSession: UserSession {
         IsSelfUserE2EICertifiedUseCase(
             context: syncContext,
             featureRepository: FeatureRepository(context: syncContext),
+            featureRepositoryContext: syncContext,
             isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase
         )
     }

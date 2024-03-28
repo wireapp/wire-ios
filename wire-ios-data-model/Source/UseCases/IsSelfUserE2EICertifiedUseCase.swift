@@ -26,6 +26,10 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
 
     private let context: NSManagedObjectContext
     private let featureRepository: FeatureRepositoryInterface
+    /// The `featureRepository` operates on a context, so every operation must be dispatched
+    /// on that context's queue. Since `FeatureRepositoryInterface` doesn't contain any
+    /// `context` property, we inject the context here.
+    private let featureRepositoryContext: NSManagedObjectContext
     private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
 
     /// - Parameters:
@@ -34,15 +38,18 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
     public init(
         context: NSManagedObjectContext,
         featureRepository: FeatureRepositoryInterface,
+        featureRepositoryContext: NSManagedObjectContext,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {
         self.context = context
         self.featureRepository = featureRepository
+        self.featureRepositoryContext = featureRepositoryContext
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
     }
 
     public func invoke() async throws -> Bool {
-        let isE2EIEnabled = await context.perform {
+
+        let isE2EIEnabled = await featureRepositoryContext.perform {
             featureRepository.fetchE2EI().isEnabled
         }
         guard isE2EIEnabled else { return false }
