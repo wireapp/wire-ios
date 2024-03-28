@@ -27,7 +27,7 @@ enum ProgressViewType {
 
 typealias FileMessageViewViewsState = (progressViewType: ProgressViewType?, playButtonIcon: StyleKitIcon?, playButtonBackgroundColor: UIColor?)
 
-public enum FileMessageViewState {
+enum FileMessageViewState {
 
     case unavailable
 

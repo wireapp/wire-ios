@@ -21,7 +21,7 @@ import Foundation
 /// Converts a 16 Bit PCM sample (i.e. from a linear scale) to a scalar between 0d and 1d (inclusive),
 /// that represents the "loudness" (a bit like sone, but not frequency-adaptive). While both (input and output)
 /// scales are linear, they are *not* directly proportional to each other.
-public func scalar(_ amplitude: Int16) -> Double {
+func scalar(_ amplitude: Int16) -> Double {
     return scalar(spl(min(max(minAmplitude, Double(amplitude)), maxAmplitude))) / maxScalar
 }
 

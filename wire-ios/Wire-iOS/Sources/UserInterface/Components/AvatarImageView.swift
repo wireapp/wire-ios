@@ -180,12 +180,12 @@ class AvatarImageView: UIView {
     // MARK: -
 
     /// The different, mutually-exclusive forms of avatars.
-    public enum Avatar: Equatable {
+    enum Avatar: Equatable {
 
         case image(UIImage)
         case text(String)
 
-        public init() {
+        init() {
             self = .image(resource: .unavailableUser)
         }
 

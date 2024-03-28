@@ -38,7 +38,7 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
 
     // MARK: - Init
 
-    public init(userId: UUID, profileViewControllerDelegate: ProfileViewControllerDelegate?, userSession: UserSession) {
+    init(userId: UUID, profileViewControllerDelegate: ProfileViewControllerDelegate?, userSession: UserSession) {
         self.userId = userId
         self.profileViewControllerDelegate = profileViewControllerDelegate
         self.userSession = userSession

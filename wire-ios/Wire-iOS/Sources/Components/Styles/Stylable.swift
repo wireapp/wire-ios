@@ -21,7 +21,7 @@ import Foundation
 // MARK: - Stylable Protocol
 
 /// Objects conforming to this protocol opt in to apply a certain style to UI elements
-public protocol Stylable {
+protocol Stylable {
 
     associatedtype StyleConfiguration
     /// This method is called when we apply a certain style such as titleColor, backgroundColor to a UI Element

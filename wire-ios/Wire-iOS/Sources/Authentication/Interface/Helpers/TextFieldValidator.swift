@@ -161,7 +161,7 @@ extension TextFieldValidator.ValidationError: LocalizedError {
 // MARK: - Email validator
 
 extension String {
-    public var isEmail: Bool {
+    var isEmail: Bool {
         guard !self.hasPrefix("mailto:") else { return false }
 
         guard let dataDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else { return false }

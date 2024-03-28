@@ -22,7 +22,7 @@ extension UserDefaults {
     public static var applicationGroup: UserDefaults {
         return UserDefaults(suiteName: Bundle.main.applicationGroupIdentifier) ?? .standard
     }
-    public static var applicationGroupCombinedWithStandard: UserDefaults {
+    static var applicationGroupCombinedWithStandard: UserDefaults {
         let userDefaults = UserDefaults.standard
         if let applicationGroupIdentifier = Bundle.main.applicationGroupIdentifier {
             userDefaults.addSuite(named: applicationGroupIdentifier)

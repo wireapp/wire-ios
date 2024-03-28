@@ -21,27 +21,27 @@ import XCTest
 
 extension MockMessage: AudioTrack {
 
-    public var title: String? {
+    var title: String? {
         return .none
     }
 
-    public var author: String? {
+    var author: String? {
         return .none
     }
 
-    public var duration: TimeInterval {
+    var duration: TimeInterval {
         return 9999
     }
 
-    public var streamURL: URL? {
+    var streamURL: URL? {
         return .none
     }
 
-    public var previewStreamURL: URL? {
+    var previewStreamURL: URL? {
         return .none
     }
 
-    public var failedToLoad: Bool {
+    var failedToLoad: Bool {
         get {
             return false
         }

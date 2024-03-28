@@ -86,7 +86,7 @@ final class SpacingView: UIView {
 
     var size: CGFloat
 
-    public init(_ size: CGFloat) {
+    init(_ size: CGFloat) {
         self.size = size
 
         super.init(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: size, height: size)))

@@ -27,7 +27,7 @@ extension Message {
     }
 }
 
-public extension LocationMessageData {
+extension LocationMessageData {
 
     func openInMaps(with span: MKCoordinateSpan) {
         let launchOptions = [

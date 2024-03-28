@@ -63,7 +63,7 @@ final class ConversationNewDeviceSystemMessageCell: ConversationIconBasedCell, C
 
 extension ConversationNewDeviceSystemMessageCell {
 
-    public override func textView(
+    override func textView(
         _ textView: UITextView,
         shouldInteractWith url: URL,
         in characterRange: NSRange,

@@ -19,7 +19,7 @@
 import UIKit
 import WireSyncEngine
 
-public enum NavigationDestination {
+enum NavigationDestination {
     case conversation(ZMConversation, ZMConversationMessage?)
     case userProfile(UserType)
     case connectionRequest(UUID)

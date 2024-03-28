@@ -83,7 +83,7 @@ public final class NetworkStatus {
     // MARK: - Public API
 
     /// The shared network status object (status of 0.0.0.0)
-    static public var shared: NetworkStatus = NetworkStatus()
+    public static var shared: NetworkStatus = NetworkStatus()
 
     /// Current state of the network.
     public var reachability: ServerReachability {

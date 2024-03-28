@@ -18,7 +18,7 @@
 
 import XCTest
 import SnapshotTesting
-import WireCommonComponents
+@testable import WireCommonComponents
 @testable import Wire
 
 final class AccentColorPickerSnapshotTests: BaseSnapshotTestCase {

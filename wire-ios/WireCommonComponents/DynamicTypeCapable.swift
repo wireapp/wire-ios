@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 // MARK: - DynamicTypeCapable Protocol
 
 /// Objects conforming to this protocol opt in to react to changes of the preferred content size category

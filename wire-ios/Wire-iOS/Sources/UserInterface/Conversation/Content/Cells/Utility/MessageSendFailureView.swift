@@ -91,7 +91,7 @@ final class MessageSendFailureView: UIView {
 }
 
 // MARK: - DownStyle extension
-    public extension DownStyle {
+    extension DownStyle {
 
     static var errorLabelStyle: DownStyle {
         let style = DownStyle()

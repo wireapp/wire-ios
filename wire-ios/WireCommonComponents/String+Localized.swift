@@ -18,9 +18,9 @@
 
 import Foundation
 
-public extension String {
+extension String {
     /// Returns the NSLocalizedString version of self
-    var localized: String {
+    public var localized: String {
         return NSLocalizedString(self, comment: "")
     }
 }

@@ -261,7 +261,7 @@ extension AppStateCalculator: AuthenticationCoordinatorDelegate {
 
 extension AppStateCalculator {
     // NOTA BENE: THIS MUST BE USED JUST FOR TESTING PURPOSE
-    public func testHelper_setAppState(_ appState: AppState) {
+    func testHelper_setAppState(_ appState: AppState) {
         self.appState = appState
         transition(to: appState)
     }

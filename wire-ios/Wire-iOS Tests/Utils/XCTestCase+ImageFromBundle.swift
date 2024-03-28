@@ -48,8 +48,10 @@ extension XCTestCase {
 }
 
 extension UIImage {
-    public convenience init?(inTestBundleNamed name: String,
-                             for aClass: AnyClass) {
+    convenience init?(
+        inTestBundleNamed name: String,
+        for aClass: AnyClass
+    ) {
 
         let bundle = Bundle(for: aClass)
 

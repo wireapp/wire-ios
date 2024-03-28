@@ -113,7 +113,7 @@ extension AVSAudioEffectType: CustomStringConvertible {
         }
     }
 
-    public var accessibilityLabel: String {
+    var accessibilityLabel: String {
         typealias AudioRecord = L10n.Accessibility.AudioRecord
 
         switch self {

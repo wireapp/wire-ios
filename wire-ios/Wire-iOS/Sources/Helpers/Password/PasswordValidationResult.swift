@@ -21,7 +21,7 @@ import Foundation
  * The result of password validation.
  */
 
-public enum PasswordValidationResult: Equatable {
+enum PasswordValidationResult: Equatable {
 
     /// The password is valid.
     case valid
@@ -29,7 +29,7 @@ public enum PasswordValidationResult: Equatable {
     /// The password is invalid due to the violations.
     case invalid(violations: [Violation])
 
-    public enum Violation: Equatable {
+    enum Violation: Equatable {
 
         /// The password is too short.
         case tooShort

@@ -18,7 +18,7 @@
 
 import SnapshotTesting
 import XCTest
-import WireCommonComponents
+@testable import WireCommonComponents
 @testable import Wire
 
 // In this class the snapshot tests they don't look the same as in the real app.

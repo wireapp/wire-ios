@@ -21,12 +21,12 @@ import WireDataModel
 
 extension ZMConversationMessage {
 
-    public func isFileDownloaded() -> Bool {
+    func isFileDownloaded() -> Bool {
         guard let fileMessageData else { return false }
         return fileMessageData.hasLocalFileData
     }
 
-    public func videoCanBeSavedToCameraRoll() -> Bool {
+    func videoCanBeSavedToCameraRoll() -> Bool {
         guard
             let fileMessageData,
             fileMessageData.isVideo,

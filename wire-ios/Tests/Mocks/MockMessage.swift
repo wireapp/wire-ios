@@ -425,7 +425,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
     var isObfuscated: Bool = false
 
     var deletionTimeout: TimeInterval = -1
-    public var destructionDate: Date?
+    var destructionDate: Date?
 
     func startSelfDestructionIfNeeded() -> Bool {
         return true
