@@ -55,7 +55,7 @@ extension FileManager {
         try setProtectionUntilFirstUserAuthentication(url)
 
         // Make sure this is not backed up.
-        try? url.excludeFromBackup()
+        try url.excludeFromBackup()
     }
 
     /// Sets the protection to FileProtectionType.completeUntilFirstUserAuthentication
