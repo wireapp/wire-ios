@@ -22,8 +22,10 @@ extension ZMTBaseTest {
     @objc
     public static func checkForMemoryLeaksAfterTestClassCompletes() {
         let leakedObjects = "Leaked: \(MemoryReferenceDebugger.aliveObjectsDescription)"
-        print(leakedObjects)
         XCTAssert(MemoryReferenceDebugger.aliveObjects.isEmpty, leakedObjects)
+        if !MemoryReferenceDebugger.aliveObjects.isEmpty {
+            print(leakedObjects)
+        }
     }
 
     public func wait(timeout: TimeInterval = 0.5,
