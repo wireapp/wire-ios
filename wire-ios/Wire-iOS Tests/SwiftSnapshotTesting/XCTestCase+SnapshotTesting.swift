@@ -18,30 +18,31 @@
 
 import XCTest
 import SnapshotTesting
-@testable import Wire
 import UIKit
+
+@testable import Wire
 
 // Precision of matching snapshots. Lower this value to fix issue with difference with Intel and Apple Silicon
 private let precision: Float = 0.90
 private let perceptualPrecision: Float = 0.98
 
 extension ViewImageConfig: Hashable {
-    static func == (lhs: ViewImageConfig, rhs: ViewImageConfig) -> Bool {
-        return lhs.size == rhs.size && lhs.traits == rhs.traits
+
+    public static func == (lhs: ViewImageConfig, rhs: ViewImageConfig) -> Bool {
+        lhs.size == rhs.size && lhs.traits == rhs.traits
     }
 
-    func hash(into hasher: inout Hasher) {
-        if let size = size {
-            hasher.combine(size.width)
-            hasher.combine(size.height)
-        }
-
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(size?.width)
+        hasher.combine(size?.height)
         hasher.combine(traits)
     }
 }
 
 // MARK: - snapshoting all iPhone sizes
+
 extension XCTestCase {
+
     /// snapshot file name suffixs
     static func phoneConfigNames(orientation: ViewImageConfig.Orientation = .portrait) -> [ViewImageConfig: String] {
         return [

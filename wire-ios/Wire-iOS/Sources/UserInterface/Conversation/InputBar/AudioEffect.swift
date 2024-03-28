@@ -60,7 +60,7 @@ extension AVSAudioEffectType: CustomStringConvertible {
         }
     }
 
-    var description: String {
+    public var description: String {
         switch self {
         case .chorusMin:
             return "ChorusMin"

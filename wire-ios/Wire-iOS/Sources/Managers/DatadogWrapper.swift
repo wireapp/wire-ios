@@ -28,11 +28,11 @@ import Datadog
 import DatadogCrashReporting
 import UIKit
 
-final class DatadogWrapper {
+public final class DatadogWrapper {
 
     /// Get shared instance only if Developer Flag is on.
 
-    static var shared: DatadogWrapper? = {
+    public static var shared: DatadogWrapper? = {
         let bundle = Bundle(for: DatadogWrapper.self)
 
         guard
@@ -48,7 +48,7 @@ final class DatadogWrapper {
 
     /// SHA256 string to identify current Device across app and extensions.
 
-    var datadogUserId: String
+    public var datadogUserId: String
 
     private let bundleVersion: String?
 
@@ -101,7 +101,7 @@ final class DatadogWrapper {
         }
     }
 
-    func startMonitoring() {
+    public func startMonitoring() {
         Global.rum = RUMMonitor.initialize()
         Global.sharedTracer = Tracer.initialize(
             configuration: Tracer.Configuration(
@@ -117,7 +117,7 @@ final class DatadogWrapper {
         )
     }
 
-    func log(
+    public func log(
         level: LogLevel,
         message: String,
         error: Error? = nil,
@@ -137,7 +137,7 @@ final class DatadogWrapper {
 
 extension DatadogWrapper: RemoteLogger {
 
-    func log(
+    public func log(
         message: String,
         error: Error?,
         attributes: [String: Encodable]?,
@@ -175,7 +175,7 @@ extension String {
 
 // MARK: - DATADOG DISABLED
 
-enum LogLevel {
+public enum LogLevel {
 
     case debug
     case info
@@ -185,22 +185,22 @@ enum LogLevel {
     case critical
 
 }
-final class DatadogWrapper {
+public final class DatadogWrapper {
 
-    static let shared: DatadogWrapper? = nil
+    public static let shared: DatadogWrapper? = nil
 
-    init() {}
+    public init() {}
 
-    func log(
+    public func log(
         level: LogLevel,
         message: String,
         error: Error? = nil,
         attributes: [String: Encodable]? = nil
     ) {}
 
-    func startMonitoring() {}
+    public func startMonitoring() {}
 
-    let datadogUserId: String = "NONE"
+    public var datadogUserId: String = "NONE"
 }
 #endif
 
@@ -232,27 +232,27 @@ extension RemoteMonitoring.Level {
 }
 
 extension DatadogWrapper: WireSystem.LoggerProtocol {
-    func debug(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func debug(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .debug, message: message.logDescription, attributes: attributes)
     }
 
-    func info(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func info(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .info, message: message.logDescription, attributes: attributes)
     }
 
-    func notice(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func notice(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .notice, message: message.logDescription, attributes: attributes)
     }
 
-    func warn(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func warn(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .warn, message: message.logDescription, attributes: attributes)
     }
 
-    func error(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func error(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .error, message: message.logDescription, attributes: attributes)
     }
 
-    func critical(_ message: LogConvertible, attributes: LogAttributes?) {
+    public func critical(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .critical, message: message.logDescription, attributes: attributes)
     }
 }

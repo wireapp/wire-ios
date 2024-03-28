@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 @testable import Wire
 
 extension MockUser: SelfUserProviderUI {
-    static var selfUser: EditableUser {
-        return (mockSelf() as Any as! ZMUser)
+
+    public static var selfUser: EditableUser {
+        fatalError("not supported")
     }
 }

@@ -351,7 +351,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
 extension PushToken.TokenType: CustomStringConvertible {
 
-    var description: String {
+    public var description: String {
         switch self {
         case .standard:
             return "Standard"
@@ -366,7 +366,7 @@ extension PushToken.TokenType: CustomStringConvertible {
 
 extension PushToken: CustomDebugStringConvertible {
 
-    var debugDescription: String {
+    public var debugDescription: String {
         return """
         token: \(deviceTokenString),
         type: \(tokenType),
