@@ -25,10 +25,12 @@ import Foundation
         uname(&systemInfo)
 
         let machineMirror = Mirror(reflecting: systemInfo.machine)
-        let identifier = machineMirror.children.reduce("") { identifier, element in
-            guard let value = element.value as? Int8, value != 0 else { return identifier }
-            return identifier + String(UnicodeScalar(UInt8(value)))
-        }
+        let identifier: String = machineMirror
+            .children
+            .reduce(into: "") { identifier, element in
+                guard let value = element.value as? Int8, value != 0 else { return }
+                identifier.append(String(UnicodeScalar(UInt8(value))))
+            }
 
         switch identifier {
         case "iPod5,1":                                     return "iPod Touch 5"

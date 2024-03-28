@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireRequestStrategy
 
-class AcmeAPITests: ZMTBaseTest {
+final class AcmeAPITests: ZMTBaseTest {
 
     var acmeApi: AcmeAPI?
     var mockHttpClient: MockHttpClient?
@@ -91,9 +91,6 @@ class AcmeAPITests: ZMTBaseTest {
     }
 
     func testThatResponseHeaderDoesNotContainNonce_WhenNoHeaderFields() async throws {
-        // expectation
-        let expectedNonce = "ACMENonce"
-
         // given
         let path = "https://acme.elna.wire.link/acme/defaultteams/new-nonce"
 
@@ -108,7 +105,8 @@ class AcmeAPITests: ZMTBaseTest {
 
         do {
             // when
-            let nonce = try await acmeApi?.getACMENonce(path: path)
+            _ = try await acmeApi?.getACMENonce(path: path)
+            XCTFail("unexpected catch error")
         } catch NetworkError.errorDecodingURLResponse {
             // then
             return
@@ -150,7 +148,6 @@ class AcmeAPITests: ZMTBaseTest {
 
     func testThatItDoesNotSendACMERequest_WhenNoNonceInTheHeader() async throws {
         // expectation
-        let headerNonce = "ACMENonce"
         let headerLocation = "Location"
 
         // given
@@ -168,7 +165,8 @@ class AcmeAPITests: ZMTBaseTest {
 
         do {
             // when
-            let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
+            _ = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
+            XCTFail("unexpected catch error")
         } catch NetworkError.errorDecodingURLResponse {
             // then
             return
@@ -180,7 +178,6 @@ class AcmeAPITests: ZMTBaseTest {
     func testThatItDoesNotSendACMERequest_WhenNoLocationInTheHeader() async throws {
         // expectation
         let headerNonce = "ACMENonce"
-        let headerLocation = "Location"
 
         // given
         let path = "https://acme.elna.wire.link/acme/defaultteams/new-account"
@@ -197,7 +194,7 @@ class AcmeAPITests: ZMTBaseTest {
 
         do {
             // when
-            let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
+            _ = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
         } catch NetworkError.errorDecodingURLResponse {
             // then
             return
