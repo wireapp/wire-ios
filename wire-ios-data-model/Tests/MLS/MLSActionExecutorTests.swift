@@ -131,7 +131,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
                 commitDelay: 0,
                 senderClientId: nil,
                 hasEpochChanged: false,
-                identity: nil,
+                identity: .withBasicCredentials(),
                 bufferedMessages: nil,
                 crlNewDistributionPoints: nil
             )
@@ -195,7 +195,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
                 commitDelay: 0,
                 senderClientId: nil,
                 hasEpochChanged: false,
-                identity: nil,
+                identity: .withBasicCredentials(),
                 bufferedMessages: nil,
                 crlNewDistributionPoints: nil
             )
@@ -612,7 +612,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             commitDelay: 0,
             senderClientId: nil,
             hasEpochChanged: false,
-            identity: nil,
+            identity: .withBasicCredentials(),
             bufferedMessages: nil,
             crlNewDistributionPoints: nil
         )
