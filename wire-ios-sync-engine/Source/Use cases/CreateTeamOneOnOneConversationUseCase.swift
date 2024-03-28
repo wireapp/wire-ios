@@ -52,7 +52,7 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
     private let service: ConversationServiceInterface
 
     init(
-        protocolSelector: OneOnOneProtocolSelectorInterface,
+        protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
         migrator: OneOnOneMigratorInterface?,
         service: ConversationServiceInterface
     ) {
@@ -104,6 +104,8 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
         }
     }
 
+    // MARK: MLS
+
     private func createMLSConversation(
         userID: QualifiedID,
         in context: NSManagedObjectContext
@@ -131,6 +133,8 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
             return conversation.objectID
         }
     }
+
+    // MARK: Proteus
 
     private func createProteusConversation(
         with user: ZMUser,

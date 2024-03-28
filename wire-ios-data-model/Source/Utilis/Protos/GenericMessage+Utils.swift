@@ -42,7 +42,7 @@ extension ImageAsset {
                 $0.sha256 = sha256
             }
             $0.mimeType = processedProperties?.mimeType ?? ""
-            $0.tag = StringFromImageFormat(format)
+            $0.tag = format.stringValue
         }
     }
 }

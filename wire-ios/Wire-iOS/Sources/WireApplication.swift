@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 import WireCommonComponents
 import WireSyncEngine
-import SwiftUI
 
 final class WireApplication: UIApplication {
 
@@ -31,13 +30,16 @@ final class WireApplication: UIApplication {
                 rootView: NavigationView {
                     DeveloperToolsView(viewModel: DeveloperToolsViewModel(
                         router: AppDelegate.shared.appRootRouter,
-                        onDismiss: { [weak self] in
-                            self?.topmostViewController()?.dismissIfNeeded()
+                        onDismiss: { [weak self] completion in
+                            if let topmostViewController = self?.topmostViewController() {
+                                topmostViewController.dismissIfNeeded(completion: completion)
+                            } else {
+                                completion()
+                            }
                         }
                     ))
                 }
             )
-
             topmostViewController()?.present(developerTools, animated: true)
         } else {
             DebugAlert.showSendLogsMessage(
@@ -48,6 +50,7 @@ final class WireApplication: UIApplication {
 }
 
 extension WireApplication: NotificationSettingsRegistrable {
+
     var shouldRegisterUserNotificationSettings: Bool {
         return !(AutomationHelper.sharedHelper.skipFirstLoginAlerts || AutomationHelper.sharedHelper.disablePushNotificationAlert)
     }

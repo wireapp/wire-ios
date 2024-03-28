@@ -164,14 +164,15 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
     }
 
     func wipeCaches() {
-        uiMOC.zm_fileAssetCache.wipeCaches()
+        try? uiMOC.zm_fileAssetCache.wipeCaches()
         uiMOC.zm_userImageCache.wipeCache()
         PersonName.stringsToPersonNames().removeAllObjects()
     }
 
     func setUpCaches() {
+        let cacheLocation = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         uiMOC.zm_userImageCache = UserImageLocalCache(location: nil)
-        uiMOC.zm_fileAssetCache = FileAssetCache(location: nil)
+        uiMOC.zm_fileAssetCache = FileAssetCache(location: cacheLocation)
     }
 
 }

@@ -24,6 +24,8 @@ import WireRequestStrategy
 // swiftlint:enable todo_requires_jira_link
 class SwiftMockConversation: NSObject, Conversation {
 
+    var isMLSConversationDegraded: Bool = false
+
 	var relatedConnectionState: ZMConnectionStatus = .invalid
 
 	var sortedOtherParticipants: [UserType] = []

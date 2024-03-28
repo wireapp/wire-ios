@@ -286,6 +286,8 @@ extension ZMUserSession: UserSession {
     public var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
         IsSelfUserE2EICertifiedUseCase(
             context: syncContext,
+            featureRepository: FeatureRepository(context: syncContext),
+            featureRepositoryContext: syncContext,
             isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase
         )
     }
@@ -304,15 +306,19 @@ extension ZMUserSession: UserSession {
 
     @MainActor
     public func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
-        guard let selfUserClient, let selfMLSClientID = MLSClientID(userClient: selfUserClient) else { return nil }
+        guard let selfUserClient,
+              let selfMLSClientID = MLSClientID(userClient: selfUserClient),
+              e2eiFeature.isEnabled
+        else {
+            return nil
+        }
 
         return E2EIdentityCertificateUpdateStatusUseCase(
             getE2eIdentityCertificates: getE2eIdentityCertificates,
             gracePeriod: TimeInterval(e2eiFeature.config.verificationExpiration), // the feature repository should better be injected into the use case
             mlsClientID: selfMLSClientID,
             context: syncContext,
-            lastAlertDate: lastE2EIUpdateDateRepository?.fetchLastAlertDate(),
-            gracePeriodRepository: gracePeriodRepository
+            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
         )
     }
 }

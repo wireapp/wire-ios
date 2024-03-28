@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol MLSConversationVerificationStatusUpdating {
 
-    func updateAllStatuses() async throws
+    func updateAllStatuses() async
 
 }
 
@@ -44,7 +44,9 @@ public class MLSConversationVerificationStatusUpdater: MLSConversationVerificati
 
     // MARK: - Public interface
 
-    public func updateAllStatuses() async throws {
+    public func updateAllStatuses() async {
+        WireLogger.e2ei.info("updating all MLS conversations verification status")
+
         let groupIDConversationTuples: [(MLSGroupID, ZMConversation)] = await syncContext.perform { [self] in
             let conversations = ZMConversation.fetchMLSConversations(in: syncContext)
             return conversations.compactMap {
@@ -56,7 +58,11 @@ public class MLSConversationVerificationStatusUpdater: MLSConversationVerificati
         }
 
         for (groupID, conversation) in groupIDConversationTuples {
-            try await updateMLSGroupVerificationStatus.invoke(for: conversation, groupID: groupID)
+            do {
+                try await updateMLSGroupVerificationStatus.invoke(for: conversation, groupID: groupID)
+            } catch {
+                WireLogger.e2ei.warn("failed to update verification status for (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+            }
         }
     }
 }

@@ -478,19 +478,28 @@ extension ZMUser: UserConnections {
     }
 
     public func accept(completion: @escaping (Error?) -> Void) {
+        guard let syncContext = managedObjectContext?.zm_sync else {
+            completion(AcceptConnectionError.invalidState)
+            return
+        }
+
+        let mlsService = syncContext.performAndWait { syncContext.mlsService }
+        let migrator = mlsService.map(OneOnOneMigrator.init(mlsService:))
+        let resolver = OneOnOneResolver(migrator: migrator)
+
         accept(
-            oneOnOneResolver: nil,
+            oneOnOneResolver: resolver,
+            context: syncContext,
             completion: completion
         )
     }
 
     func accept(
-        oneOnOneResolver: OneOnOneResolverInterface?,
+        oneOnOneResolver: OneOnOneResolverInterface,
+        context: NSManagedObjectContext,
         completion: @escaping (Error?) -> Void
     ) {
         guard
-            let context = managedObjectContext,
-            let syncContext = context.zm_sync,
             let connection,
             let userID = remoteIdentifier,
             let domain = domain ?? BackendInfo.domain
@@ -504,8 +513,7 @@ extension ZMUser: UserConnections {
             case .success:
                 Task {
                     do {
-                        let resolver = oneOnOneResolver ?? OneOnOneResolver(syncContext: syncContext)
-                        try await resolver.resolveOneOnOneConversation(
+                        try await oneOnOneResolver.resolveOneOnOneConversation(
                             with: QualifiedID(uuid: userID, domain: domain),
                             in: context
                         )

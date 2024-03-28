@@ -49,21 +49,29 @@ public enum FileMessageViewState {
 
     // Value mapping from message consolidated state (transfer state, previewData, fileURL) to FileMessageViewState
     static func fromConversationMessage(_ message: ZMConversationMessage) -> FileMessageViewState? {
-        guard let fileMessageData = message.fileMessageData, message.isFile else {
+        guard
+            let fileMessageData = message.fileMessageData,
+            message.isFile
+        else {
             return .none
         }
 
-        guard !message.isObfuscated else { return .obfuscated }
+        guard !message.isObfuscated else {
+            return .obfuscated
+        }
 
         switch fileMessageData.transferState {
         case .uploaded:
             switch fileMessageData.downloadState {
-            case .downloaded: return .downloaded
-            case .downloading: return .downloading
-            default: return .uploaded
+            case .downloaded:
+                return .downloaded
+            case .downloading:
+                return .downloading
+            default:
+                return .uploaded
             }
         case .uploading:
-            if fileMessageData.fileURL != nil {
+            if fileMessageData.hasLocalFileData {
                 return .uploading
             } else if fileMessageData.size == 0 {
                 return .downloaded
@@ -71,13 +79,13 @@ public enum FileMessageViewState {
                 return .unavailable
             }
         case .uploadingFailed:
-            if fileMessageData.fileURL != nil {
+            if fileMessageData.hasLocalFileData {
                 return .failedUpload
             } else {
                 return .unavailable
             }
         case .uploadingCancelled:
-            if fileMessageData.fileURL != nil {
+            if fileMessageData.hasLocalFileData {
                 return .cancelledUpload
             } else {
                 return .unavailable

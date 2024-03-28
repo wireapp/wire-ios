@@ -95,32 +95,46 @@ import WireTransport
 
         assetClientMessage.isDownloading = false
 
-        if response.result == .success {
-            guard let asset = assetClientMessage.underlyingMessage?.assetData else { return }
-            guard assetClientMessage.visibleInConversation != nil else {
-                // If the assetClientMessage was "deleted" (e.g. due to ephemeral) before the download finished, 
-                // we don't want to update the message
-                return
-            }
-
-            // swiftlint:disable todo_requires_jira_link
-            // TODO: create request that streams directly to the cache file, otherwise the memory would overflow on big files
-            // swiftlint:enable todo_requires_jira_link
-            let fileCache = self.managedObjectContext.zm_fileAssetCache!
-            fileCache.storeAssetData(assetClientMessage, encrypted: true, data: response.rawData!)
-
-            downloadSuccess = fileCache.decryptFileIfItMatchesDigest(
-                assetClientMessage,
-                encryptionKey: asset.uploaded.otrKey,
-                sha256Digest: asset.uploaded.sha256
-            )
-
-            if downloadSuccess {
-                NotificationDispatcher.notifyNonCoreDataChanges(objectID: assetClientMessage.objectID,
-                                                                changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedFile)],
-                                                                uiContext: self.managedObjectContext.zm_userInterface!)
-            }
+        guard response.result == .success else {
+            return
         }
+
+        guard
+            let asset = assetClientMessage.underlyingMessage?.assetData,
+            let data = response.rawData,
+            let fileCache = managedObjectContext.zm_fileAssetCache
+        else {
+            return
+        }
+
+        guard assetClientMessage.visibleInConversation != nil else {
+            // If the assetClientMessage was "deleted" (e.g. due to ephemeral) before the download finished,
+            // we don't want to update the message
+            return
+        }
+
+        guard data.zmSHA256Digest() == asset.uploaded.sha256 else {
+            // Digest doesn't match, ignore
+            return
+        }
+
+        // swiftlint:disable todo_requires_jira_link
+        // TODO: create request that streams directly to the cache file, otherwise the memory would overflow on big files
+        // swiftlint:enable todo_requires_jira_link
+        fileCache.storeEncryptedFile(
+            data: data,
+            for: assetClientMessage
+        )
+
+        guard let viewcontext = managedObjectContext.zm_userInterface else {
+            return
+        }
+
+        NotificationDispatcher.notifyNonCoreDataChanges(
+            objectID: assetClientMessage.objectID,
+            changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedFile)],
+            uiContext: viewcontext
+        )
     }
 
     // MARK: - ZMContextChangeTrackerSource

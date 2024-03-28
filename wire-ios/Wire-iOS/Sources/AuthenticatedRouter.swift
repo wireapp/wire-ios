@@ -42,7 +42,7 @@ final class AuthenticatedRouter: NSObject {
     private weak var _viewController: ZClientViewController?
     private let featureRepositoryProvider: FeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
-    private let gracePeriodRepository: GracePeriodRepository
+    private let e2eiActivationDateRepository: E2EIActivationDateRepository
 
     // MARK: - Public Property
 
@@ -61,7 +61,7 @@ final class AuthenticatedRouter: NSObject {
         needToShowDataUsagePermissionDialog: Bool,
         featureRepositoryProvider: FeatureRepositoryProvider,
         featureChangeActionsHandler: E2EINotificationActionsHandler,
-        gracePeriodRepository: GracePeriodRepository
+        e2eiActivationDateRepository: E2EIActivationDateRepository
     ) {
         self.rootViewController = rootViewController
         activeCallRouter = ActiveCallRouter(rootviewController: rootViewController, userSession: userSession)
@@ -75,7 +75,7 @@ final class AuthenticatedRouter: NSObject {
 
         self.featureRepositoryProvider = featureRepositoryProvider
         self.featureChangeActionsHandler = featureChangeActionsHandler
-        self.gracePeriodRepository = gracePeriodRepository
+        self.e2eiActivationDateRepository = e2eiActivationDateRepository
 
         super.init()
 
@@ -101,9 +101,8 @@ final class AuthenticatedRouter: NSObject {
             return
         }
 
-        if case .e2eIEnabled(gracePeriod: let gracePeriod) = change, let gracePeriod {
-            let endOfGracePeriod = Date.now.addingTimeInterval(gracePeriod)
-            gracePeriodRepository.storeGracePeriodEndDate(endOfGracePeriod)
+        if change == .e2eIEnabled && e2eiActivationDateRepository.e2eiActivatedAt == nil {
+            e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
         }
 
         _viewController?.presentAlert(alert)

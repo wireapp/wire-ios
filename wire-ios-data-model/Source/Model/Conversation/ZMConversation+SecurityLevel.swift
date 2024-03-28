@@ -396,7 +396,7 @@ extension ZMConversation {
         }
     }
 
-    private func acknowledgePrivacyChanges() {
+    public func acknowledgePrivacyChanges() {
         precondition(managedObjectContext?.zm_isUserInterfaceContext == true)
 
         // Downgrade the conversation to be unverified

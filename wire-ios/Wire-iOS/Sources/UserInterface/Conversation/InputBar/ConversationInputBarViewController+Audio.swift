@@ -39,6 +39,13 @@ extension ConversationInputBarViewController {
             return
         }
 
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+            self.recordAudio()
+        }
+        checker.performAction()
+    }
+
+    private func recordAudio() {
         if displayAudioMessageAlertIfNeeded() {
             return
         }
@@ -207,9 +214,12 @@ extension ConversationInputBarViewController: AudioRecordViewControllerDelegate 
 
     func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType) {
 
-        uploadFile(at: recordingURL as URL)
+        let checker = E2EIPrivacyWarningChecker(conversation: self.conversation) { [weak self] in
+            self?.uploadFile(at: recordingURL as URL)
 
-        self.hideAudioRecordViewController()
+            self?.hideAudioRecordViewController()
+        }
+        checker.performAction()
     }
 
 }

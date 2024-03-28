@@ -29,15 +29,7 @@ public protocol OneOnOneMigratorInterface {
 
 }
 
-public enum MigrateMLSOneOnOneConversationError: Error {
-
-    case failedToFetchConversation(Error)
-    case failedToEstablishGroup(Error)
-    case failedToActivateConversation
-
-}
-
-public final class OneOnOneMigrator: OneOnOneMigratorInterface {
+public struct OneOnOneMigrator: OneOnOneMigratorInterface {
 
     // MARK: - Dependencies
 
@@ -61,10 +53,22 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
             in: context
         )
 
-        try await establishLocalMLSConversationIfNeeded(
-            userID: userID,
-            mlsGroupID: mlsGroupID
-        )
+        if await mlsService.conversationExists(groupID: mlsGroupID) {
+            return mlsGroupID
+        }
+
+        guard let epoch = await fetchMLSConversationEpoch(mlsGroupID: mlsGroupID, in: context) else {
+            throw MigrateMLSOneOnOneConversationError.missingConversationEpoch
+        }
+
+        if epoch == 0 {
+            try await establishLocalMLSConversationIfNeeded(
+                userID: userID,
+                mlsGroupID: mlsGroupID
+            )
+        } else {
+            try await mlsService.joinGroup(with: mlsGroupID)
+        }
 
         try await switchLocalConversationToMLS(
             userID: userID,
@@ -72,8 +76,14 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
             in: context
         )
 
+        await context.perform {
+            _ = context.saveOrRollback()
+        }
+
         return mlsGroupID
     }
+
+    // MARK: Helpers
 
     private func syncMLSConversationFromBackend(
         userID: QualifiedID,
@@ -91,19 +101,24 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
         }
     }
 
+    private func fetchMLSConversationEpoch(
+        mlsGroupID: MLSGroupID,
+        in context: NSManagedObjectContext
+    ) async -> UInt64? {
+        await context.perform {
+            let conversation = ZMConversation.fetch(with: mlsGroupID, in: context)
+            return conversation?.epoch
+        }
+    }
+
     private func establishLocalMLSConversationIfNeeded(
         userID: QualifiedID,
         mlsGroupID: MLSGroupID
     ) async throws {
-        guard await !mlsService.conversationExists(groupID: mlsGroupID) else {
-            return
-        }
+        let users = [MLSUser(userID)]
 
         do {
-            try await mlsService.establishGroup(
-                for: mlsGroupID,
-                with: [MLSUser(userID)]
-            )
+            try await mlsService.establishGroup(for: mlsGroupID, with: users)
         } catch {
             throw MigrateMLSOneOnOneConversationError.failedToEstablishGroup(error)
         }
@@ -126,7 +141,7 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
                 throw MigrateMLSOneOnOneConversationError.failedToActivateConversation
             }
 
-            // move local messages
+            // move local messages from proteus conversation if it exists
             if let proteusConversation = otherUser.oneOnOneConversation {
                 // Since ZMMessages only have a single conversation connected,
                 // forming this union also removes the relationship to the proteus conversation.
@@ -138,8 +153,6 @@ public final class OneOnOneMigrator: OneOnOneMigratorInterface {
 
             // switch active conversation
             otherUser.oneOnOneConversation = mlsConversation
-
-            context.saveOrRollback()
         }
     }
 }

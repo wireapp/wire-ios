@@ -224,11 +224,10 @@ struct ConversationEventPayloadProcessor {
                 in: context
             )!
         }) {
-            let selfUser = ZMUser.selfUser(in: context)
             let users = Set(usersAndRoles.map { $0.0 })
             let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
 
-            if (users.contains(selfUser) || newUsers) && conversation.conversationType == .group {
+            if newUsers && conversation.conversationType == .group {
                 // TODO jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }
@@ -452,26 +451,22 @@ struct ConversationEventPayloadProcessor {
         case .connection:
             // Conversations are of type `connection` while the connection
             // is pending.
-            return await context.perform {
-                self.updateOrCreateConnectionConversation(
-                    from: payload,
-                    in: context,
-                    serverTimestamp: serverTimestamp,
-                    source: source
-                )
-            }
+            return await updateOrCreateConnectionConversation(
+                from: payload,
+                in: context,
+                serverTimestamp: serverTimestamp,
+                source: source
+            )
 
         case .oneOnOne:
             // Conversations are of type `oneOnOne` when the connection
             // is accepted.
-            return await context.perform {
-                self.updateOrCreateOneToOneConversation(
-                    from: payload,
-                    in: context,
-                    serverTimestamp: serverTimestamp,
-                    source: source
-                )
-            }
+            return await self.updateOrCreateOneToOneConversation(
+                from: payload,
+                in: context,
+                serverTimestamp: serverTimestamp,
+                source: source
+            )
 
         default:
             return nil
@@ -632,22 +627,30 @@ struct ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext,
         serverTimestamp: Date,
         source: Source
-    ) -> ZMConversation? {
+    ) async -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
             Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
             return nil
         }
 
-        let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
-        conversation.conversationType = .connection
-        updateAttributes(from: payload, for: conversation, context: context)
-        updateMessageProtocol(from: payload, for: conversation, in: context)
-        updateMetadata(from: payload, for: conversation, context: context)
-        updateMembers(from: payload, for: conversation, context: context)
-        updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-        updateConversationStatus(from: payload, for: conversation)
-        conversation.needsToBeUpdatedFromBackend = false
-        return conversation
+        return await context.perform {
+            let conversation = ZMConversation.fetchOrCreate(
+                with: conversationID,
+                domain: payload.qualifiedID?.domain,
+                in: context
+            )
+            conversation.conversationType = .connection
+
+            updateAttributes(from: payload, for: conversation, context: context)
+            updateMessageProtocol(from: payload, for: conversation, in: context)
+            updateMetadata(from: payload, for: conversation, context: context)
+            updateMembers(from: payload, for: conversation, context: context)
+            updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+            updateConversationStatus(from: payload, for: conversation)
+            conversation.needsToBeUpdatedFromBackend = false
+
+            return conversation
+        }
     }
 
     @discardableResult
@@ -656,7 +659,7 @@ struct ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext,
         serverTimestamp: Date,
         source: Source
-    ) -> ZMConversation? {
+    ) async -> ZMConversation? {
         guard
             let conversationID = payload.id ?? payload.qualifiedID?.uuid,
             let conversationType = payload.type.map(BackendConversationType.clientConversationType)
@@ -665,23 +668,29 @@ struct ConversationEventPayloadProcessor {
             return nil
         }
 
-        let conversation = ZMConversation.fetchOrCreate(
-            with: conversationID,
-            domain: payload.qualifiedID?.domain,
-            in: context
-        )
+        let conversation = await context.perform {
+            let conversation = ZMConversation.fetchOrCreate(
+                with: conversationID,
+                domain: payload.qualifiedID?.domain,
+                in: context
+            )
 
-        conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
-        updateAttributes(from: payload, for: conversation, context: context)
-        updateMessageProtocol(from: payload, for: conversation, in: context)
-        updateMetadata(from: payload, for: conversation, context: context)
-        updateMembers(from: payload, for: conversation, context: context)
-        updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-        updateConversationStatus(from: payload, for: conversation)
-        conversation.needsToBeUpdatedFromBackend = false
+            conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
+            updateAttributes(from: payload, for: conversation, context: context)
+            updateMessageProtocol(from: payload, for: conversation, in: context)
+            updateMetadata(from: payload, for: conversation, context: context)
+            updateMembers(from: payload, for: conversation, context: context)
+            updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+            updateConversationStatus(from: payload, for: conversation)
+            linkOneOnOneUserIfNeeded(for: conversation)
 
-        if let otherUser = conversation.localParticipantsExcludingSelf.first {
-            conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
+            conversation.needsToBeUpdatedFromBackend = false
+
+            if let otherUser = conversation.localParticipantsExcludingSelf.first {
+                conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
+            }
+
+            return conversation
         }
 
         return conversation

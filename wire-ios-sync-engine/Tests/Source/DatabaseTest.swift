@@ -45,6 +45,10 @@ class DatabaseTest: ZMTBaseTest {
         return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupIdentifier)
     }
 
+    var cacheURL: URL {
+        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+    }
+
     private func cleanUp() {
         try? FileManager.default.contentsOfDirectory(at: sharedContainerURL!, includingPropertiesForKeys: nil, options: .skipsHiddenFiles).forEach {
             try? FileManager.default.removeItem(at: $0)
@@ -66,7 +70,7 @@ class DatabaseTest: ZMTBaseTest {
     }
 
     private func configureCaches() {
-        let fileAssetCache = FileAssetCache(location: nil)
+        let fileAssetCache = FileAssetCache(location: cacheURL)
         let userImageCache = UserImageLocalCache(location: nil)
 
         uiMOC.zm_fileAssetCache = fileAssetCache

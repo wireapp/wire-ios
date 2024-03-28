@@ -661,9 +661,40 @@ extension EventDecoderTest {
         // Then
         XCTAssertTrue(decryptedEvents.isEmpty)
     }
+
+    func test_DecryptWelcomeMessage_ReturnsEvent() async {
+        // Given
+        let conversationID = QualifiedID.random()
+        let groupID = MLSGroupID.random()
+        let event = mlsWelcomeMessageEvent(data: Data.random(), conversationID: conversationID)
+
+        mockMLSService.processWelcomeMessageWelcomeMessage_MockValue = groupID
+
+        // When
+        let result = await sut.decryptAndStoreEvents([event])
+
+        // Then
+        XCTAssertEqual(result, [event])
+    }
+
+    func test_DecryptWelcomeMessage_ProcessWelcomeMessage() async {
+        // Given
+        let conversationID = QualifiedID.random()
+        let groupID = MLSGroupID.random()
+        let event = mlsWelcomeMessageEvent(data: Data.random(), conversationID: conversationID)
+
+        mockMLSService.processWelcomeMessageWelcomeMessage_MockValue = groupID
+
+        // When
+        _ = await sut.decryptAndStoreEvents([event])
+
+        // Then
+        XCTAssertEqual(mockMLSService.processWelcomeMessageWelcomeMessage_Invocations.count, 1)
+    }
 }
 
 // MARK: - Helpers
+
 extension EventDecoderTest {
     /// Returns an event from the notification stream
     func eventStreamEvent(uuid: UUID? = nil) -> ZMUpdateEvent {
@@ -696,6 +727,20 @@ extension EventDecoderTest {
             type: "conversation.mls-message-add",
             data: data,
             time: Date()
+        )
+
+        return ZMUpdateEvent(fromEventStreamPayload: payload!, uuid: UUID().create())!
+    }
+
+    /// Returns a `conversation.mls-message-add` event
+    func mlsWelcomeMessageEvent(data: Data, conversationID: QualifiedID) -> ZMUpdateEvent {
+        let payload = self.payloadForMessage(
+            conversationID: conversationID.uuid,
+            domain: conversationID.domain,
+            type: "conversation.mls-welcome",
+            data: data.base64EncodedString(),
+            time: Date(),
+            fromID: UUID()
         )
 
         return ZMUpdateEvent(fromEventStreamPayload: payload!, uuid: UUID().create())!

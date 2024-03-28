@@ -451,6 +451,34 @@ final class SessionManagerTests: IntegrationTest {
         XCTAssertFalse(FileManager.default.fileExists(atPath: tempUrl.path))
     }
 
+    func testThatItClearsCRLExpirationDatesAfterLogout() throws {
+        // GIVEN
+        let account = createAccount()
+        let sut = sessionManagerBuilder.build()
+        sut.accountManager.addAndSelect(account)
+        sut.start(launchOptions: [:])
+        sut.delegate = mockDelegate
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        let url = try XCTUnwrap( URL(string: "https://example.com"))
+        let expirationDatesRepository = CRLExpirationDatesRepository(userID: account.userIdentifier)
+        expirationDatesRepository.storeCRLExpirationDate(.now, for: url)
+
+        let expectation = XCTestExpectation(description: "session torn down")
+        mockDelegate.sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod = { _, block in
+            block?()
+            expectation.fulfill()
+        }
+
+        // WHEN
+        sut.logoutCurrentSession()
+
+        // THEN
+        wait(for: [expectation], timeout: 0.5)
+        XCTAssertTrue(expirationDatesRepository.fetchAllCRLExpirationDates().isEmpty)
+    }
+
     // FIXME: [WPB-5638] this test will hang - [jacob]
     //
     // Since markAllConversationsAsRead() will schedule read up update message

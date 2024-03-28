@@ -23,7 +23,7 @@ public enum E2EIdentityCertificateUpdateStatus {
     // Alert was already shown within snooze period, so do not remind user to update certificate
     case noAction
 
-    // Alert was not  shown within snooze period, so remind user to update certificate
+    // Alert was not shown within snooze period, so remind user to update certificate
     case reminder
 
     // Certificate expired so soft block user to update certificate
@@ -41,26 +41,23 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
     private let gracePeriod: TimeInterval
     private let comparedDate: DateProviding
     private let mlsClientID: MLSClientID
-    private var context: NSManagedObjectContext
-    private let gracePeriodRepository: GracePeriodRepositoryInterface
-    public var lastAlertDate: Date?
+    private let context: NSManagedObjectContext
+    private let lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
     public init(
         getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol,
         gracePeriod: TimeInterval,
         mlsClientID: MLSClientID,
         context: NSManagedObjectContext,
-        lastAlertDate: Date?,
-        comparedDate: DateProviding = SystemDateProvider(),
-        gracePeriodRepository: GracePeriodRepositoryInterface
+        lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?,
+        comparedDate: DateProviding = SystemDateProvider()
     ) {
         self.getE2eIdentityCertificates = getE2eIdentityCertificates
         self.gracePeriod = gracePeriod
-        self.lastAlertDate = lastAlertDate
+        self.lastE2EIUpdateDateRepository = lastE2EIUpdateDateRepository
         self.mlsClientID = mlsClientID
         self.context = context
         self.comparedDate = comparedDate
-        self.gracePeriodRepository = gracePeriodRepository
     }
 
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
@@ -94,13 +91,8 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
         let timeLeftUntilExpiration = certificate.expiryDate.timeIntervalSince(comparedDate.now)
         let maxTimeLeft = max(timeLeftUntilExpiration, TimeInterval.oneWeek)
 
-        // Sets recurrring actions to check for the next reminder to update the certificate
-        let snoozeTimeProvider = SnoozeTimeProvider()
-        let snoozeTime = snoozeTimeProvider.getSnoozeTime(endOfPeriod: certificate.expiryDate)
-        gracePeriodRepository.storeGracePeriodEndDate(Date.now + snoozeTime)
-
         // If not alert was shown before, show a reminder
-        guard let lastAlertDate else {
+        guard let lastAlertDate = lastE2EIUpdateDateRepository?.fetchLastAlertDate() else {
             return .reminder
         }
 

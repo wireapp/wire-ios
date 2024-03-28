@@ -41,7 +41,7 @@ extension ZMUserSession {
         guard let files = (try? fm.contentsOfDirectory(atPath: oldCacheLocation.path))
         else { return }
 
-        fm.createAndProtectDirectory(at: newCacheLocation)
+        try! fm.createAndProtectDirectory(at: newCacheLocation)
         // FIXME: Use dictionary grouping in Swift4
         // swiftlint:enable todo_requires_jira_link
         // see https://developer.apple.com/documentation/swift/dictionary/2893436-init

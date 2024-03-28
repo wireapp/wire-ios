@@ -22,19 +22,47 @@ import XCTest
 final class CoreDataMigrationActionFactoryTests: XCTestCase {
 
     // add version with actions here - aka custom migration
-    let excludedVersions: [CoreDataMessagingMigrationVersion] = [.version2_111, .version2_107]
+    let excludedVersions: [CoreDataMessagingMigrationVersion] = [
+        .version2_114,
+        .version2_111,
+        .version2_107
+    ]
 
-    func test_ItReturnsPreActionForVersion211() {
+    // MARK: - Version 2.114
+
+    func test_ItReturnsPreActionForVersion2114() {
+        // given
+        // when
+        let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: .version2_114)
+
+        // then
+        XCTAssertNil(action)
+    }
+
+    func test_ItReturnsPostActionForVersion2114() {
+        // given
+        // when
+        let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: .version2_114)
+
+        // then
+        XCTAssertTrue(action is OneOnOneConversationMigrationAction)
+    }
+
+    // MARK: - Version 2.111
+
+    func test_ItReturnsPreActionForVersion2111() {
         let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: .version2_111)
 
         XCTAssertNotNil(action)
     }
 
-    func test_ItReturnsPostActionForVersion211() {
+    func test_ItReturnsPostActionForVersion2111() {
         let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: .version2_111)
 
         XCTAssertNotNil(action)
     }
+
+    // MARK: - Version 2.107
 
     func test_ItReturnsPreActionForVersion207() {
         let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: .version2_107)
@@ -48,22 +76,26 @@ final class CoreDataMigrationActionFactoryTests: XCTestCase {
         XCTAssertNil(action)
     }
 
+    // MARK: - Other Versions
+
     func test_ItReturnsNoPostActionForAllOtherVersions() {
 
-        CoreDataMessagingMigrationVersion.allCases.filter({ !excludedVersions.contains($0) }).forEach {
-
-            let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: $0)
-            XCTAssertNil(action)
-        }
+        CoreDataMessagingMigrationVersion.allCases
+            .filter { !excludedVersions.contains($0) }
+            .forEach {
+                let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: $0)
+                XCTAssertNil(action)
+            }
     }
 
     func test_ItReturnsNoPreActionForAllOtherVersions() {
 
-        CoreDataMessagingMigrationVersion.allCases.filter({ !excludedVersions.contains($0) }).forEach {
-
-            let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: $0)
-            XCTAssertNil(action)
-        }
+        CoreDataMessagingMigrationVersion.allCases
+            .filter { !excludedVersions.contains($0) }
+            .forEach {
+                let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: $0)
+                XCTAssertNil(action)
+            }
     }
 
 }

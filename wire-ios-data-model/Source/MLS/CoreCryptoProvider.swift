@@ -38,7 +38,7 @@ public protocol CoreCryptoProviderProtocol {
     /// - parameters:
     ///   - enrollment: enrollment instance which was used to establish end to end identity
     ///   - certificateChain: the resulting certificate chain from the end to end identity enrollment
-    func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws
+    func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws -> CRLsDistributionPoints?
 
 }
 
@@ -85,15 +85,16 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
     }
 
-    public func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws {
+    public func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws -> CRLsDistributionPoints? {
         WireLogger.mls.info("Initialising MLS client from end-to-end identity enrollment")
-        try await coreCrypto().perform { coreCrypto in
-            _ = try await coreCrypto.e2eiMlsInitOnly(
+        return try await coreCrypto().perform { coreCrypto in
+            let crlsDistributionPoints = try await coreCrypto.e2eiMlsInitOnly(
                 enrollment: enrollment,
                 certificateChain: certificateChain,
                 nbKeyPackage: nil
             )
             try await generateClientPublicKeys(with: coreCrypto, credentialType: .x509)
+            return CRLsDistributionPoints(from: crlsDistributionPoints)
         }
     }
 

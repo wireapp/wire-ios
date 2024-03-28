@@ -346,6 +346,35 @@ final class ClientMessageTests: BaseZMClientMessageTests {
 
 extension ClientMessageTests {
 
+    func testThatItDoesNotCreateOTRMessageIfConversationIsForceReadonly() throws {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+        conversation.isForcedReadOnly = true
+
+        let senderClientID: String = .randomClientIdentifier()
+        let nonce = UUID.create()
+        var prototype = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+
+        let contentData = try prototype.serializedData()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(senderClientID),
+            "text": contentData.base64String()
+        ]
+        let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
+        let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
+        XCTAssertNotNil(event)
+
+        // when
+        var sut: ZMClientMessage?
+        self.performPretendingUiMocIsSyncMoc {
+            sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
+        }
+
+        // then
+        XCTAssertNil(sut)
+    }
+
     func testThatItDoesNotCreateOTRMessageIfItsIdentifierIsInvalid() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)

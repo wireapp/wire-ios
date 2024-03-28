@@ -22,7 +22,10 @@ import WireDataModel
 extension UIActivityViewController {
 
     convenience init?(message: ZMConversationMessage, from view: UIView) {
-        guard let fileMessageData = message.fileMessageData, message.isFileDownloaded() == true, let fileURL = fileMessageData.fileURL else { return nil }
+        guard let fileURL = message.fileMessageData?.temporaryURLToDecryptedFile() else {
+            return nil
+        }
+
         self.init(
             activityItems: [fileURL],
             applicationActivities: nil

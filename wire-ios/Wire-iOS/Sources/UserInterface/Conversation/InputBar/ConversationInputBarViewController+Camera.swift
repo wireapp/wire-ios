@@ -265,6 +265,22 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 // MARK: - CameraViewController
 
 extension ConversationInputBarViewController {
+
+    func showCameraAndPhotos() {
+        UIApplication.wr_requestVideoAccess({ _ in
+            if SecurityFlags.cameraRoll.isEnabled,
+               MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll {
+                self.executeWithCameraRollPermission { _ in
+                    self.mode = .camera
+                    self.inputBar.textView.becomeFirstResponder()
+                }
+            } else {
+                self.mode = .camera
+                self.inputBar.textView.becomeFirstResponder()
+            }
+        })
+    }
+
     @objc
     func cameraButtonPressed(_ sender: Any?) {
         if mode == .camera {
@@ -274,18 +290,10 @@ extension ConversationInputBarViewController {
                 self.mode = .textInput
             }
         } else {
-            UIApplication.wr_requestVideoAccess({ _ in
-                if SecurityFlags.cameraRoll.isEnabled,
-                   MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll {
-                    self.executeWithCameraRollPermission { _ in
-                        self.mode = .camera
-                        self.inputBar.textView.becomeFirstResponder()
-                    }
-                } else {
-                    self.mode = .camera
-                    self.inputBar.textView.becomeFirstResponder()
-                }
+            let checker = E2EIPrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
+                showCameraAndPhotos()
             })
+            checker.performAction()
         }
     }
 }

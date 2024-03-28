@@ -52,8 +52,22 @@ public final class AssetRequestFactory: NSObject {
         }
     }
 
-    public func backgroundUpstreamRequestForAsset(message: ZMAssetClientMessage, withData data: Data, shareable: Bool = true, retention: Retention, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let uploadURL = uploadURL(for: message, in: message.managedObjectContext!, shareable: shareable, retention: retention, data: data) else { return nil }
+    public func backgroundUpstreamRequestForAsset(
+        message: ZMAssetClientMessage,
+        withData data: Data,
+        shareable: Bool = true,
+        retention: Retention,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
+        guard let uploadURL = uploadURL(
+            for: message,
+            in: message.managedObjectContext!,
+            shareable: shareable,
+            retention: retention,
+            data: data
+        ) else {
+            return nil
+        }
 
         let path: String
         switch apiVersion {
@@ -99,9 +113,25 @@ public final class AssetRequestFactory: NSObject {
         ], boundary: Constant.boundary)
     }
 
-    private func uploadURL(for message: ZMAssetClientMessage, in moc: NSManagedObjectContext, shareable: Bool, retention: Retention, data: Data) -> URL? {
-        guard let multipartData = try? dataForMultipartAssetUploadRequest(data, shareable: shareable, retention: retention) else { return nil }
-        return moc.zm_fileAssetCache.storeRequestData(message, data: multipartData)
+    private func uploadURL(
+        for message: ZMAssetClientMessage,
+        in moc: NSManagedObjectContext,
+        shareable: Bool,
+        retention: Retention,
+        data: Data
+    ) -> URL? {
+        guard let multipartData = try? dataForMultipartAssetUploadRequest(
+            data,
+            shareable: shareable,
+            retention: retention
+        ) else {
+            return nil
+        }
+
+        return moc.zm_fileAssetCache.storeTransportData(
+            multipartData,
+            for: message
+        )
     }
 
 }

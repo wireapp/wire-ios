@@ -18,17 +18,16 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-/// The repository is responsible for storing the grace period during which the user must enroll the end-to-end identity certificate.
-/// The grace period starts at the moment where the client fetches and processes the team feature flag.
-public protocol GracePeriodRepositoryInterface {
+/// The repository is responsible for storing the e2ei activation date.
+/// The e2ei activation date begins from the moment the client receives the notification that the feature flag is enabled for the team.
+public protocol E2EIActivationDateRepositoryProtocol {
 
-    func fetchGracePeriodEndDate() -> Date?
-    func storeGracePeriodEndDate(_ date: Date)
+    var e2eiActivatedAt: Date? { get }
+    func storeE2EIActivationDate(_ date: Date)
 
 }
 
-public final class GracePeriodRepository: NSObject, GracePeriodRepositoryInterface {
+public final class E2EIActivationDateRepository: NSObject, E2EIActivationDateRepositoryProtocol {
 
     // MARK: - Properties
 
@@ -37,7 +36,7 @@ public final class GracePeriodRepository: NSObject, GracePeriodRepositoryInterfa
     // MARK: - Types
 
     private enum Key: String, DefaultsKey {
-        case endGracePeriod
+        case e2eiActivatedAt
     }
 
     // MARK: - Life cycle
@@ -54,14 +53,18 @@ public final class GracePeriodRepository: NSObject, GracePeriodRepositoryInterfa
         super.init()
     }
 
-    // MARK: - Methods
+    // MARK: - Public
 
-    public func fetchGracePeriodEndDate() -> Date? {
-        storage.date(forKey: .endGracePeriod)
+    public var e2eiActivatedAt: Date? {
+        return storage.date(forKey: .e2eiActivatedAt)
     }
 
-    public func storeGracePeriodEndDate(_ date: Date) {
-        storage.set(date, forKey: .endGracePeriod)
+    public func storeE2EIActivationDate(_ date: Date) {
+        storage.set(date, forKey: .e2eiActivatedAt)
+    }
+
+    public func removeE2EIActivationDate() {
+        storage.removeObject(forKey: .e2eiActivatedAt)
     }
 
 }

@@ -23,6 +23,7 @@ import WireTesting
 
 public class DiskDatabaseTest: ZMTBaseTest {
 
+    var cacheURL: URL!
     var sharedContainerURL: URL!
     var accountId: UUID!
     var moc: NSManagedObjectContext {
@@ -42,7 +43,8 @@ public class DiskDatabaseTest: ZMTBaseTest {
         super.setUp()
 
         accountId = .create()
-        sharedContainerURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("\(UUID().uuidString)")
+        cacheURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+        sharedContainerURL = cacheURL.appendingPathComponent("\(UUID().uuidString)")
         cleanUp()
         createDatabase()
         setupCaches()
@@ -64,7 +66,7 @@ public class DiskDatabaseTest: ZMTBaseTest {
 
     private func setupCaches() {
         coreDataStack.viewContext.zm_userImageCache = UserImageLocalCache(location: nil)
-        coreDataStack.viewContext.zm_fileAssetCache = FileAssetCache(location: nil)
+        coreDataStack.viewContext.zm_fileAssetCache = FileAssetCache(location: cacheURL)
 
         coreDataStack.syncContext.performGroupedBlockAndWait {
             self.coreDataStack.syncContext.zm_fileAssetCache = self.coreDataStack.viewContext.zm_fileAssetCache

@@ -150,6 +150,9 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
             from: event.payload
         ) else { return }
 
+        if let conversationID = payload.qualifiedID {
+            await conversationService.syncConversationIfMissing(qualifiedID: conversationID)
+        }
         await context.perform {
             self.processor.processPayload(
                 payload,
@@ -157,7 +160,6 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
                 in: self.context
             )
         }
-        await syncConversationForMLSStatus(payload: payload)
     }
 
     private func processConversationRename(_ event: ZMUpdateEvent) async {
@@ -284,49 +286,5 @@ public class ConversationEventProcessor: NSObject, ConversationEventProcessorPro
     func fetchOrCreateConversation(id: UUID?, qualifiedID: QualifiedID?, in context: NSManagedObjectContext) -> ZMConversation? {
         guard let conversationID = id ?? qualifiedID?.uuid else { return nil }
         return ZMConversation.fetchOrCreate(with: conversationID, domain: qualifiedID?.domain, in: context)
-    }
-
-    private func syncConversationForMLSStatus(payload: MemberJoinPayload) async {
-        // If this is an MLS conversation, we need to fetch some metadata in order to process
-        // the welcome message. We expect that all MLS conversations have qualified IDs.
-        guard let qualifiedID = payload.qualifiedID else { return }
-
-        await conversationService.syncConversation(qualifiedID: qualifiedID)
-
-        var usersContainedSelfUser = false
-
-        let conversation: ZMConversation? = await self.context.perform {
-            guard
-                let conversation = self.fetchOrCreateConversation(id: payload.id, qualifiedID: payload.qualifiedID, in: self.context)
-            else {
-                Logging.eventProcessing.warn("Member join update missing conversation, aborting...")
-                return nil
-            }
-
-            if let usersAndRoles = payload.data.users?.map({
-                self.processor.fetchUserAndRole(
-                    from: $0,
-                    for: conversation,
-                    in: self.context
-                )!
-            }) {
-                let selfUser = ZMUser.selfUser(in: self.context)
-                let users = Set(usersAndRoles.map { $0.0 })
-                usersContainedSelfUser = users.contains(selfUser)
-            }
-            return conversation
-        }
-
-        if let conversation, usersContainedSelfUser {
-            await updateMLSStatus(for: conversation, context: context)
-        }
-    }
-
-    private func updateMLSStatus(for conversation: ZMConversation, context: NSManagedObjectContext) async {
-        await mlsEventProcessor.updateConversationIfNeeded(
-            conversation: conversation,
-            fallbackGroupID: nil,
-            context: context
-        )
     }
 }

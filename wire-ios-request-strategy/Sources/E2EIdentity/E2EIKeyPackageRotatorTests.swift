@@ -44,6 +44,7 @@ class E2EIKeyPackageRotatorTests: MessagingTestBase {
             coreCryptoProvider: mockCoreCryptoProvider,
             conversationEventProcessor: mockConversationEventProcessor,
             context: syncMOC,
+            onNewCRLsDistributionPointsSubject: .init(),
             commitSender: mockCommitSender
         )
     }

@@ -22,6 +22,7 @@ import Combine
 
 public protocol MLSActionExecutorProtocol {
 
+    func processWelcomeMessage(_ message: Data) async throws -> MLSGroupID
     func addMembers(_ invitees: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func removeClients(_ clients: [ClientId], from groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
     func updateKeyMaterial(for groupID: MLSGroupID) async throws -> [ZMUpdateEvent]
@@ -116,6 +117,23 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
     }
 
     // MARK: - Actions
+
+    public func processWelcomeMessage(_ message: Data) async throws -> MLSGroupID {
+        let welcomeBundle = try await coreCrypto.perform { coreCrypto in
+            try await coreCrypto.processWelcomeMessage(
+                welcomeMessage: message,
+                customConfiguration: .init(keyRotationSpan: nil, wirePolicy: nil)
+            )
+        }
+
+        if let newDistributionPoints = CRLsDistributionPoints(
+            from: welcomeBundle.crlNewDistributionPoints
+        ) {
+            onNewCRLsDistributionPointsSubject.send(newDistributionPoints)
+        }
+
+        return MLSGroupID(welcomeBundle.id)
+    }
 
     public func addMembers(_ invitees: [KeyPackage], to groupID: MLSGroupID) async throws -> [ZMUpdateEvent] {
         try await performNonReentrant(groupID: groupID) {

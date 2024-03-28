@@ -42,6 +42,12 @@ extension ZMUserSession {
         stopEphemeralTimers()
         lockDatabase()
         recalculateUnreadMessages()
+
+        do {
+            try purgeTemporaryAssets()
+        } catch {
+            WireLogger.assets.error("failed to purge temporary assets: \(error)")
+        }
     }
 
     @objc
