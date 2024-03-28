@@ -49,7 +49,7 @@ final class WireCallCenterTransportMock: WireCallCenterTransport {
 
 }
 
-class WireCallCenterV3Tests: MessagingTest {
+final class WireCallCenterV3Tests: MessagingTest {
 
     var flowManager: FlowManagerMock!
     var mockAVSWrapper: MockAVSWrapper!
