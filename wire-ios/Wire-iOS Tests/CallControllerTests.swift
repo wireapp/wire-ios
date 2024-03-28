@@ -55,7 +55,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     func testThatActiveCallIsPresented_WhenMinimizedCallIsNil() {
         // GIVEN
         let callState: CallState = .established
-        sut.callConversationProvider?.priorityCallConversation = conversation
+        callConversationProvider?.priorityCallConversation = conversation
         sut.testHelper_setMinimizedCall(nil)
 
         // WHEN
@@ -68,7 +68,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     func testThatActiveCallIsDismissed_WhenPriorityCallConversationIsNil() {
         // GIVEN
         let callState: CallState = .established
-        sut.callConversationProvider?.priorityCallConversation = nil
+        callConversationProvider?.priorityCallConversation = nil
 
         // WHEN
         callController_callCenterDidChange(callState: callState, conversation: conversation)
@@ -80,7 +80,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     func testThatActiveCallIsMinimized_WhenPriorityCallConversationIsTheCallConversationMinimized() {
         // GIVEN
         let callState: CallState = .established
-        sut.callConversationProvider?.priorityCallConversation = conversation
+        callConversationProvider?.priorityCallConversation = conversation
         sut.testHelper_setMinimizedCall(conversation)
 
         // WHEN
@@ -94,7 +94,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     func testThatCallTopOverlayIsShown_WhenPriorityCallConversationIsNotNil() {
         // GIVEN
         let callState: CallState = .established
-        sut.callConversationProvider?.priorityCallConversation = conversation
+        callConversationProvider?.priorityCallConversation = conversation
 
         // WHEN
         callController_callCenterDidChange(callState: callState, conversation: conversation)
@@ -106,7 +106,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     func testThatCallTopOverlayIsHidden_WhenPriorityCallConversationIsNil() {
         // GIVEN
         let callState: CallState = .established
-        sut.callConversationProvider?.priorityCallConversation = nil
+        callConversationProvider?.priorityCallConversation = nil
 
         // WHEN
         callController_callCenterDidChange(callState: callState, conversation: conversation)
@@ -119,7 +119,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     func testThatVersionAlertIsPresented_WhenCallStateIsTerminatedAndReasonIsOutdatedClient() {
         // GIVEN
         let callState: CallState = .terminating(reason: .outdatedClient)
-        sut.callConversationProvider?.priorityCallConversation = conversation
+        callConversationProvider?.priorityCallConversation = conversation
 
         // WHEN
         callController_callCenterDidChange(callState: callState, conversation: conversation)
@@ -131,7 +131,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     func testThatVersionAlertIsNotPresented_WhenCallStateIsTerminatedAndReasonIsNotOutdatedClient() {
         // GIVEN
         let callState: CallState = .terminating(reason: .canceled)
-        sut.callConversationProvider?.priorityCallConversation = conversation
+        callConversationProvider?.priorityCallConversation = conversation
 
         // WHEN
         callController_callCenterDidChange(callState: callState, conversation: conversation)
@@ -143,7 +143,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     func testThatVersionAlertIsNotPresented_WhenCallStateIsNotTerminated() {
         // GIVEN
         let callState: CallState = .established
-        sut.callConversationProvider?.priorityCallConversation = conversation
+        callConversationProvider?.priorityCallConversation = conversation
 
         // WHEN
         callController_callCenterDidChange(callState: callState, conversation: conversation)
@@ -156,7 +156,7 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     func testThatVersionDegradationAlertIsNotPresented_WhenVoiceChannelHasNotDegradationState() {
         // GIVEN
         let callState: CallState = .established
-        sut.callConversationProvider?.priorityCallConversation = conversation
+        callConversationProvider?.priorityCallConversation = conversation
 
         // WHEN
         callController_callCenterDidChange(callState: callState, conversation: conversation)

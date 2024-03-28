@@ -42,7 +42,7 @@ extension Settings {
 
     /// Loads from user default the list of logs that are enabled
     func loadEnabledLogs() {
-        var tagsToEnable: Set<String> = [
+        let tagsToEnable: Set<String> = [
             "AVS",
             "Network",
             "SessionManager",

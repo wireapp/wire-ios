@@ -549,6 +549,7 @@
 			baseConfigurationReference = 092758691B70E68F00AD5A78 /* WireSystem.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireSystem-Info.plist";
 				ONLY_ACTIVE_ARCH = YES;
@@ -564,6 +565,7 @@
 			baseConfigurationReference = 092758691B70E68F00AD5A78 /* WireSystem.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireSystem-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireSystem;

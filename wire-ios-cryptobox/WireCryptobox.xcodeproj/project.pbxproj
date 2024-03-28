@@ -816,6 +816,7 @@
 			baseConfigurationReference = 0928E3751BA17E300057232E /* WireCryptobox.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = WireCryptobox/Info.plist;
 				ONLY_ACTIVE_ARCH = YES;
@@ -831,6 +832,7 @@
 			baseConfigurationReference = 0928E3751BA17E300057232E /* WireCryptobox.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_STYLE = Manual;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = WireCryptobox/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.cryptobox;
