@@ -1071,12 +1071,14 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     deinit {
-        backgroundUserSessions.forEach { (_, session) in
-            session.tearDown()
+        DispatchQueue.main.async { [backgroundUserSessions, blacklistVerificator, unauthenticatedSession, reachability] in
+            backgroundUserSessions.values.forEach { session in
+                session.tearDown()
+            }
+            blacklistVerificator?.tearDown()
+            unauthenticatedSession?.tearDown()
+            reachability.tearDown()
         }
-        blacklistVerificator?.tearDown()
-        unauthenticatedSession?.tearDown()
-        reachability.tearDown()
 
         if let memoryWarningObserver {
             NotificationCenter.default.removeObserver(memoryWarningObserver)

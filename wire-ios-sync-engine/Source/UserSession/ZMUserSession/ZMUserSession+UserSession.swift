@@ -286,6 +286,8 @@ extension ZMUserSession: UserSession {
     public var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
         IsSelfUserE2EICertifiedUseCase(
             context: syncContext,
+            featureRepository: FeatureRepository(context: syncContext),
+            featureRepositoryContext: syncContext,
             isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase
         )
     }

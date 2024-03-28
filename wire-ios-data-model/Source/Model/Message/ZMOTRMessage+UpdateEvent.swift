@@ -38,6 +38,11 @@ extension ZMOTRMessage {
                 return nil
         }
 
+        guard !conversation.isForcedReadOnly else {
+            zmLog.warn("Ignoring incoming message in readonly conversation.")
+            return nil
+        }
+
         guard
             let message = GenericMessage(from: updateEvent),
             let content = message.content
