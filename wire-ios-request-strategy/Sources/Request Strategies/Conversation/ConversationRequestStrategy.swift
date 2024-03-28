@@ -154,7 +154,9 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         )
 
         self.configuration = [.allowsRequestsWhileOnline,
-                              .allowsRequestsDuringSlowSync]
+                              .allowsRequestsDuringSlowSync,
+                              .allowsRequestsDuringQuickSync,
+                              .allowsRequestsWhileWaitingForWebsocket]
 
         self.updateSync.transcoder = self
         self.conversationByIDListSync.delegate = self
