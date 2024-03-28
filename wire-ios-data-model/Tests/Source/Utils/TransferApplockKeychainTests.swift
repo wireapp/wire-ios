@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireDataModel
 
-class TransferAppLockKeychainTests: DiskDatabaseTest {
+final class TransferAppLockKeychainTests: DiskDatabaseTest {
 
     var appLock: AppLockController!
 
@@ -64,7 +64,7 @@ class TransferAppLockKeychainTests: DiskDatabaseTest {
 
     func testItMigratesPasscodes() throws {
         // Given
-        let legacyItem = AppLockController.PasscodeKeychainItem.legacyItem
+        let legacyItem = AppLockController.PasscodeKeychainItem.makeLegacyItem()
         let passcode = "hello".data(using: .utf8)!
 
         try Keychain.updateItem(legacyItem, value: passcode)

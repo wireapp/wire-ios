@@ -2784,20 +2784,19 @@ class MockEARKeyEncryptorInterface: EARKeyEncryptorInterface {
 
 }
 
-public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
+class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
 
     // MARK: - Life cycle
 
-    public init() {}
 
 
     // MARK: - storePublicKey
 
-    public var storePublicKeyDescriptionKey_Invocations: [(description: PublicEARKeyDescription, key: SecKey)] = []
-    public var storePublicKeyDescriptionKey_MockError: Error?
-    public var storePublicKeyDescriptionKey_MockMethod: ((PublicEARKeyDescription, SecKey) throws -> Void)?
+    var storePublicKeyDescriptionKey_Invocations: [(description: PublicEARKeyDescription, key: SecKey)] = []
+    var storePublicKeyDescriptionKey_MockError: Error?
+    var storePublicKeyDescriptionKey_MockMethod: ((PublicEARKeyDescription, SecKey) throws -> Void)?
 
-    public func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws {
+    func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws {
         storePublicKeyDescriptionKey_Invocations.append((description: description, key: key))
 
         if let error = storePublicKeyDescriptionKey_MockError {
@@ -2813,12 +2812,12 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
 
     // MARK: - fetchPublicKey
 
-    public var fetchPublicKeyDescription_Invocations: [PublicEARKeyDescription] = []
-    public var fetchPublicKeyDescription_MockError: Error?
-    public var fetchPublicKeyDescription_MockMethod: ((PublicEARKeyDescription) throws -> SecKey)?
-    public var fetchPublicKeyDescription_MockValue: SecKey?
+    var fetchPublicKeyDescription_Invocations: [PublicEARKeyDescription] = []
+    var fetchPublicKeyDescription_MockError: Error?
+    var fetchPublicKeyDescription_MockMethod: ((PublicEARKeyDescription) throws -> SecKey)?
+    var fetchPublicKeyDescription_MockValue: SecKey?
 
-    public func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey {
+    func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey {
         fetchPublicKeyDescription_Invocations.append(description)
 
         if let error = fetchPublicKeyDescription_MockError {
@@ -2836,11 +2835,11 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
 
     // MARK: - deletePublicKey
 
-    public var deletePublicKeyDescription_Invocations: [PublicEARKeyDescription] = []
-    public var deletePublicKeyDescription_MockError: Error?
-    public var deletePublicKeyDescription_MockMethod: ((PublicEARKeyDescription) throws -> Void)?
+    var deletePublicKeyDescription_Invocations: [PublicEARKeyDescription] = []
+    var deletePublicKeyDescription_MockError: Error?
+    var deletePublicKeyDescription_MockMethod: ((PublicEARKeyDescription) throws -> Void)?
 
-    public func deletePublicKey(description: PublicEARKeyDescription) throws {
+    func deletePublicKey(description: PublicEARKeyDescription) throws {
         deletePublicKeyDescription_Invocations.append(description)
 
         if let error = deletePublicKeyDescription_MockError {
@@ -2856,12 +2855,12 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
 
     // MARK: - fetchPrivateKey
 
-    public var fetchPrivateKeyDescription_Invocations: [PrivateEARKeyDescription] = []
-    public var fetchPrivateKeyDescription_MockError: Error?
-    public var fetchPrivateKeyDescription_MockMethod: ((PrivateEARKeyDescription) throws -> SecKey)?
-    public var fetchPrivateKeyDescription_MockValue: SecKey?
+    var fetchPrivateKeyDescription_Invocations: [PrivateEARKeyDescription] = []
+    var fetchPrivateKeyDescription_MockError: Error?
+    var fetchPrivateKeyDescription_MockMethod: ((PrivateEARKeyDescription) throws -> SecKey)?
+    var fetchPrivateKeyDescription_MockValue: SecKey?
 
-    public func fetchPrivateKey(description: PrivateEARKeyDescription) throws -> SecKey {
+    func fetchPrivateKey(description: PrivateEARKeyDescription) throws -> SecKey {
         fetchPrivateKeyDescription_Invocations.append(description)
 
         if let error = fetchPrivateKeyDescription_MockError {
@@ -2879,11 +2878,11 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
 
     // MARK: - deletePrivateKey
 
-    public var deletePrivateKeyDescription_Invocations: [PrivateEARKeyDescription] = []
-    public var deletePrivateKeyDescription_MockError: Error?
-    public var deletePrivateKeyDescription_MockMethod: ((PrivateEARKeyDescription) throws -> Void)?
+    var deletePrivateKeyDescription_Invocations: [PrivateEARKeyDescription] = []
+    var deletePrivateKeyDescription_MockError: Error?
+    var deletePrivateKeyDescription_MockMethod: ((PrivateEARKeyDescription) throws -> Void)?
 
-    public func deletePrivateKey(description: PrivateEARKeyDescription) throws {
+    func deletePrivateKey(description: PrivateEARKeyDescription) throws {
         deletePrivateKeyDescription_Invocations.append(description)
 
         if let error = deletePrivateKeyDescription_MockError {
@@ -2899,11 +2898,11 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
 
     // MARK: - storeDatabaseKey
 
-    public var storeDatabaseKeyDescriptionKey_Invocations: [(description: DatabaseEARKeyDescription, key: Data)] = []
-    public var storeDatabaseKeyDescriptionKey_MockError: Error?
-    public var storeDatabaseKeyDescriptionKey_MockMethod: ((DatabaseEARKeyDescription, Data) throws -> Void)?
+    var storeDatabaseKeyDescriptionKey_Invocations: [(description: DatabaseEARKeyDescription, key: Data)] = []
+    var storeDatabaseKeyDescriptionKey_MockError: Error?
+    var storeDatabaseKeyDescriptionKey_MockMethod: ((DatabaseEARKeyDescription, Data) throws -> Void)?
 
-    public func storeDatabaseKey(description: DatabaseEARKeyDescription, key: Data) throws {
+    func storeDatabaseKey(description: DatabaseEARKeyDescription, key: Data) throws {
         storeDatabaseKeyDescriptionKey_Invocations.append((description: description, key: key))
 
         if let error = storeDatabaseKeyDescriptionKey_MockError {
@@ -2919,12 +2918,12 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
 
     // MARK: - fetchDatabaseKey
 
-    public var fetchDatabaseKeyDescription_Invocations: [DatabaseEARKeyDescription] = []
-    public var fetchDatabaseKeyDescription_MockError: Error?
-    public var fetchDatabaseKeyDescription_MockMethod: ((DatabaseEARKeyDescription) throws -> Data)?
-    public var fetchDatabaseKeyDescription_MockValue: Data?
+    var fetchDatabaseKeyDescription_Invocations: [DatabaseEARKeyDescription] = []
+    var fetchDatabaseKeyDescription_MockError: Error?
+    var fetchDatabaseKeyDescription_MockMethod: ((DatabaseEARKeyDescription) throws -> Data)?
+    var fetchDatabaseKeyDescription_MockValue: Data?
 
-    public func fetchDatabaseKey(description: DatabaseEARKeyDescription) throws -> Data {
+    func fetchDatabaseKey(description: DatabaseEARKeyDescription) throws -> Data {
         fetchDatabaseKeyDescription_Invocations.append(description)
 
         if let error = fetchDatabaseKeyDescription_MockError {
@@ -2942,11 +2941,11 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
 
     // MARK: - deleteDatabaseKey
 
-    public var deleteDatabaseKeyDescription_Invocations: [DatabaseEARKeyDescription] = []
-    public var deleteDatabaseKeyDescription_MockError: Error?
-    public var deleteDatabaseKeyDescription_MockMethod: ((DatabaseEARKeyDescription) throws -> Void)?
+    var deleteDatabaseKeyDescription_Invocations: [DatabaseEARKeyDescription] = []
+    var deleteDatabaseKeyDescription_MockError: Error?
+    var deleteDatabaseKeyDescription_MockMethod: ((DatabaseEARKeyDescription) throws -> Void)?
 
-    public func deleteDatabaseKey(description: DatabaseEARKeyDescription) throws {
+    func deleteDatabaseKey(description: DatabaseEARKeyDescription) throws {
         deleteDatabaseKeyDescription_Invocations.append(description)
 
         if let error = deleteDatabaseKeyDescription_MockError {
@@ -2962,10 +2961,10 @@ public class MockEARKeyRepositoryInterface: EARKeyRepositoryInterface {
 
     // MARK: - clearCache
 
-    public var clearCache_Invocations: [Void] = []
-    public var clearCache_MockMethod: (() -> Void)?
+    var clearCache_Invocations: [Void] = []
+    var clearCache_MockMethod: (() -> Void)?
 
-    public func clearCache() {
+    func clearCache() {
         clearCache_Invocations.append(())
 
         guard let mock = clearCache_MockMethod else {

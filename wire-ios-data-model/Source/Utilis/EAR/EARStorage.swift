@@ -18,8 +18,7 @@
 
 import Foundation
 
-@objc
-public final class EARStorage: NSObject {
+struct EARStorage {
 
     // MARK: - Properties
 
@@ -33,8 +32,7 @@ public final class EARStorage: NSObject {
 
     // MARK: - Life cycle
 
-    @objc
-    public init(
+    init(
         userID: UUID,
         sharedUserDefaults: UserDefaults
     ) {
@@ -42,17 +40,15 @@ public final class EARStorage: NSObject {
             userID: userID,
             storage: sharedUserDefaults
         )
-
-        super.init()
     }
 
     // MARK: - Methods
 
-    public func earEnabled() -> Bool {
+    func earEnabled() -> Bool {
         return storage.bool(forKey: .enabledEAR)
     }
 
-    public func enableEAR(_ enabled: Bool) {
+    func enableEAR(_ enabled: Bool) {
         storage.set(enabled, forKey: .enabledEAR)
     }
 }

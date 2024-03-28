@@ -33,7 +33,7 @@ protocol EARKeyEncryptorInterface {
 
 }
 
-final class EARKeyEncryptor: EARKeyEncryptorInterface {
+struct EARKeyEncryptor: EARKeyEncryptorInterface {
 
     private var databaseKeyAlgorithm: SecKeyAlgorithm {
         return .eciesEncryptionCofactorX963SHA256AESGCM

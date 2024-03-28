@@ -24,7 +24,7 @@ import LocalAuthentication
 /// Private EAR keys are used to decrypt material that was encrypted
 /// with the corresponding public EAR key.
 
-public class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
+public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
 
     // MARK: - Life cycle
 

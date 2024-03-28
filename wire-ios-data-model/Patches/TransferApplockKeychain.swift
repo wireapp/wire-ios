@@ -47,7 +47,7 @@ struct TransferApplockKeychain {
     static func migrateAppLockPasscode(in moc: NSManagedObjectContext) {
         guard let selfUserId = ZMUser.selfUser(in: moc).remoteIdentifier else { return }
 
-        let legacyKeychainItem = AppLockController.PasscodeKeychainItem.legacyItem
+        let legacyKeychainItem = AppLockController.PasscodeKeychainItem.makeLegacyItem()
 
         guard
             let passcode = try? Keychain.fetchItem(legacyKeychainItem),
