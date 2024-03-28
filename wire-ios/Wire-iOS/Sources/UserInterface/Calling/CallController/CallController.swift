@@ -184,12 +184,12 @@ extension CallController: WireCallCenterCallStateObserver {
             print("🕵🏽 incoming")
             reason = degradationReason
             callEnded = false
-        case (.terminating(reason: let degradationReason), .terminating(reason: .securityDegraded)):
+        case (_, .terminating(reason: .securityDegraded)):
             print("🕵🏽 terminating")
-            reason = degradationReason
+            reason = voiceChannel.degradationReason
             callEnded = true
-        default:
-            break
+            default:
+            print("🕵🏽 other:", degradationState, callState)
         }
 
         if let callEnded, let reason {
