@@ -20,7 +20,7 @@ import Foundation
 import LocalAuthentication
 
 public final class AppLockController: AppLockType {
-
+    let logger = WireLogger(tag: "AppLock")
     static let log = ZMSLog(tag: "AppLockController")
 
     // MARK: - Properties
@@ -157,6 +157,8 @@ public final class AppLockController: AppLockType {
                                        description: String,
                                        context: LAContextProtocol = LAContext(),
                                        callback: @escaping (AppLockAuthenticationResult, LAContextProtocol) -> Void) {
+        logger.info("evaluating authentication for app lock")
+
         let policy = passcodePreference.policy
         var error: NSError?
         let canEvaluatePolicy = context.canEvaluatePolicy(policy, error: &error)
@@ -165,19 +167,21 @@ public final class AppLockController: AppLockType {
         // the device passcode isn't considered secure enough, then ask for the custon passcode
         // to accept the new biometrics state.
         if biometricsState.biometricsChanged(in: context) && !passcodePreference.allowsDevicePasscode {
+            logger.info("need custom passcode because biometrics changed")
             callback(.needCustomPasscode, context)
             return
         }
 
         // No device authentication possible, but can fall back to the custom passcode.
         if !canEvaluatePolicy && passcodePreference.allowsCustomPasscode {
+            logger.info("need custom passcode because device auth is not possible")
             callback(.needCustomPasscode, context)
             return
         }
 
         guard canEvaluatePolicy else {
             callback(.unavailable, context)
-            Self.log.error("Local authentication error: \(String(describing: error?.localizedDescription))")
+            logger.warn("Local authentication error: \(String(describing: error?.localizedDescription))")
             return
         }
 
@@ -192,6 +196,7 @@ public final class AppLockController: AppLockType {
                 self.state = .unlocked
             }
 
+            self.logger.info("app lock auth concluded with (result: \(result), policy: \(policy))")
             callback(result, context)
         }
     }
