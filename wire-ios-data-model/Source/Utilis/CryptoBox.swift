@@ -84,7 +84,7 @@ public extension FileManager {
     @objc(keyStoreURLForAccountInDirectory:createParentIfNeeded:)
     static func keyStoreURL(accountDirectory: URL, createParentIfNeeded: Bool) -> URL {
         if createParentIfNeeded {
-            FileManager.default.createAndProtectDirectory(at: accountDirectory)
+            try! FileManager.default.createAndProtectDirectory(at: accountDirectory)
         }
         let keyStoreDirectory = accountDirectory.appendingPathComponent(FileManager.keyStoreFolderPrefix)
         return keyStoreDirectory
@@ -122,7 +122,7 @@ open class UserClientKeysStore: NSObject {
     }
 
     private static func setupContext(in directory: URL) -> EncryptionContext? {
-        FileManager.default.createAndProtectDirectory(at: directory)
+        try! FileManager.default.createAndProtectDirectory(at: directory)
         return EncryptionContext(path: directory)
     }
 
