@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import CoreData
 
 /// An object that provides encryption at rest.
 ///
@@ -76,23 +77,6 @@ public protocol EARServiceInterface: AnyObject {
     func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys?
 
     func setInitialEARFlagValue(_ enabled: Bool)
-}
-
-public protocol EARServiceDelegate: AnyObject {
-
-    /// Prepare for the migration of existing database content.
-    ///
-    /// When the migration can be started, invoke the `onReady` closure.
-
-    func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) rethrows
-
-}
-
-public enum EARServiceFailure: Error {
-
-    case cannotPerformMigration
-    case databaseKeyMissing
-
 }
 
 public class EARService: EARServiceInterface {
@@ -504,36 +488,6 @@ public class EARService: EARServiceInterface {
                 block(context)
             }
         }
-    }
-
-}
-
-public struct EARPublicKeys {
-
-    public let primary: SecKey
-    public let secondary: SecKey
-
-    public init(
-        primary: SecKey,
-        secondary: SecKey
-    ) {
-        self.primary = primary
-        self.secondary = secondary
-    }
-
-}
-
-public struct EARPrivateKeys {
-
-    public let primary: SecKey?
-    public let secondary: SecKey
-
-    public init(
-        primary: SecKey?,
-        secondary: SecKey
-    ) {
-        self.primary = primary
-        self.secondary = secondary
     }
 
 }

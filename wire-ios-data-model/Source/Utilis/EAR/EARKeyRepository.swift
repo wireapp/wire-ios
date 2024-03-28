@@ -20,7 +20,7 @@ import Foundation
 import LocalAuthentication
 
 // sourcery: AutoMockable
-public protocol EARKeyRepositoryInterface {
+protocol EARKeyRepositoryInterface {
 
     func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws
     func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey
@@ -34,27 +34,21 @@ public protocol EARKeyRepositoryInterface {
 
 }
 
-public enum EarKeyRepositoryFailure: Error {
-
-    case keyNotFound
-
-}
-
-public class EARKeyRepository: EARKeyRepositoryInterface {
+final class EARKeyRepository: EARKeyRepositoryInterface {
 
     private var keyCache = [String: SecKey]()
 
     // MARK: - Life cycle
 
-    public init() {}
+    init() {}
 
     // MARK: - Public keys
 
-    public func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws {
+    func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws {
         try KeychainManager.storeItem(description, value: key)
     }
 
-    public func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey {
+    func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey {
         if let key = keyCache [description.id] {
             return key
         }
@@ -64,20 +58,20 @@ public class EARKeyRepository: EARKeyRepositoryInterface {
             keyCache[description.id] = key
             return key
         } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
-            throw EarKeyRepositoryFailure.keyNotFound
+            throw EARKeyRepositoryFailure.keyNotFound
         } catch {
             throw error
         }
     }
 
-    public func deletePublicKey(description: PublicEARKeyDescription) throws {
+    func deletePublicKey(description: PublicEARKeyDescription) throws {
         try KeychainManager.deleteItem(description)
         keyCache[description.id] = nil
     }
 
     // MARK: - Private keys
 
-    public func fetchPrivateKey(description: PrivateEARKeyDescription) throws -> SecKey {
+    func fetchPrivateKey(description: PrivateEARKeyDescription) throws -> SecKey {
         if let key = keyCache[description.id] {
             return key
         }
@@ -87,40 +81,40 @@ public class EARKeyRepository: EARKeyRepositoryInterface {
             keyCache[description.id] = key
             return key
         } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
-            throw EarKeyRepositoryFailure.keyNotFound
+            throw EARKeyRepositoryFailure.keyNotFound
         } catch {
             throw error
         }
     }
 
-    public func deletePrivateKey(description: PrivateEARKeyDescription) throws {
+    func deletePrivateKey(description: PrivateEARKeyDescription) throws {
         try KeychainManager.deleteItem(description)
         keyCache[description.id] = nil
     }
 
     // MARK: - Datatbase keys
 
-    public func storeDatabaseKey(description: DatabaseEARKeyDescription, key: Data) throws {
+    func storeDatabaseKey(description: DatabaseEARKeyDescription, key: Data) throws {
         try KeychainManager.storeItem(description, value: key)
     }
 
-    public func fetchDatabaseKey(description: DatabaseEARKeyDescription) throws -> Data {
+    func fetchDatabaseKey(description: DatabaseEARKeyDescription) throws -> Data {
         do {
             return try KeychainManager.fetchItem(description)
         } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
-            throw EarKeyRepositoryFailure.keyNotFound
+            throw EARKeyRepositoryFailure.keyNotFound
         } catch {
             throw error
         }
     }
 
-    public func deleteDatabaseKey(description: DatabaseEARKeyDescription) throws {
+    func deleteDatabaseKey(description: DatabaseEARKeyDescription) throws {
         return try KeychainManager.deleteItem(description)
     }
 
     // MARK: - Cache
 
-    public func clearCache() {
+    func clearCache() {
         keyCache.removeAll()
     }
 
