@@ -18,7 +18,7 @@
 
 @testable import WireDataModel
 
-class AssetColletionBatchedTests: ModelObjectsTests {
+final class AssetColletionBatchedTests: ModelObjectsTests {
 
     var sut: AssetCollectionBatched!
     var delegate: MockAssetCollectionDelegate!
