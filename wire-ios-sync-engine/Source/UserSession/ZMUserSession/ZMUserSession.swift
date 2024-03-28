@@ -1001,6 +1001,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {
+        print("#><#", String(reflecting: error))
         managedObjectContext.performGroupedBlock {  [weak self] in
             guard let accountId = self?.managedObjectContext.selfUserId else {
                 return
