@@ -20,8 +20,7 @@ import Foundation
 import LocalAuthentication
 
 public final class AppLockController: AppLockType {
-    let logger = WireLogger(tag: "AppLock")
-    static let log = ZMSLog(tag: "AppLockController")
+    private let logger = WireLogger(tag: "AppLock")
 
     // MARK: - Properties
 
