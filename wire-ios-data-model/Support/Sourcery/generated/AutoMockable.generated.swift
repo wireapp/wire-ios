@@ -372,6 +372,15 @@ public class MockConversationLike: ConversationLike {
 
     public var underlyingIsUnderLegalHold: Bool!
 
+    // MARK: - isMLSConversationDegraded
+
+    public var isMLSConversationDegraded: Bool {
+        get { return underlyingIsMLSConversationDegraded }
+        set(value) { underlyingIsMLSConversationDegraded = value }
+    }
+
+    public var underlyingIsMLSConversationDegraded: Bool!
+
     // MARK: - sortedActiveParticipantsUserTypes
 
     public var sortedActiveParticipantsUserTypes: [UserType] = []

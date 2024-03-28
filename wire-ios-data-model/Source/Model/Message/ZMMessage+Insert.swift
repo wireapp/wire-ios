@@ -39,6 +39,7 @@ extension ZMMessage {
                 message.causedSecurityLevelDegradation = true
                 WireLogger.messaging.warn("expiring message because inserting into degraded conversation " + String(describing: message.nonce?.transportString().readableHash))
                 message.expire()
+
                 syncMoc.saveOrRollback()
                 NotificationDispatcher.notifyNonCoreDataChanges(
                     objectID: conversation.objectID,
