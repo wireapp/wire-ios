@@ -28,11 +28,11 @@ import Datadog
 import DatadogCrashReporting
 import UIKit
 
-public final class DatadogWrapper {
+final class DatadogWrapper {
 
     /// Get shared instance only if Developer Flag is on.
 
-    public static var shared: DatadogWrapper? = {
+    static var shared: DatadogWrapper? = {
         let bundle = Bundle(for: DatadogWrapper.self)
 
         guard
@@ -48,7 +48,7 @@ public final class DatadogWrapper {
 
     /// SHA256 string to identify current Device across app and extensions.
 
-    public var datadogUserId: String
+    var datadogUserId: String
 
     private let bundleVersion: String?
 
@@ -175,7 +175,7 @@ extension String {
 
 // MARK: - DATADOG DISABLED
 
-public enum LogLevel {
+enum LogLevel {
 
     case debug
     case info
@@ -185,22 +185,22 @@ public enum LogLevel {
     case critical
 
 }
-public final class DatadogWrapper {
+final class DatadogWrapper {
 
-    public static let shared: DatadogWrapper? = nil
+    static let shared: DatadogWrapper? = nil
 
     init() {}
 
-    public func log(
+    func log(
         level: LogLevel,
         message: String,
         error: Error? = nil,
         attributes: [String: Encodable]? = nil
     ) {}
 
-    public func startMonitoring() {}
+    func startMonitoring() {}
 
-    public let datadogUserId: String = "NONE"
+    let datadogUserId: String = "NONE"
 }
 #endif
 
@@ -232,27 +232,27 @@ extension RemoteMonitoring.Level {
 }
 
 extension DatadogWrapper: WireSystem.LoggerProtocol {
-    public func debug(_ message: LogConvertible, attributes: LogAttributes?) {
+    func debug(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .debug, message: message.logDescription, attributes: attributes)
     }
 
-    public func info(_ message: LogConvertible, attributes: LogAttributes?) {
+    func info(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .info, message: message.logDescription, attributes: attributes)
     }
 
-    public func notice(_ message: LogConvertible, attributes: LogAttributes?) {
+    func notice(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .notice, message: message.logDescription, attributes: attributes)
     }
 
-    public func warn(_ message: LogConvertible, attributes: LogAttributes?) {
+    func warn(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .warn, message: message.logDescription, attributes: attributes)
     }
 
-    public func error(_ message: LogConvertible, attributes: LogAttributes?) {
+    func error(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .error, message: message.logDescription, attributes: attributes)
     }
 
-    public func critical(_ message: LogConvertible, attributes: LogAttributes?) {
+    func critical(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .critical, message: message.logDescription, attributes: attributes)
     }
 }

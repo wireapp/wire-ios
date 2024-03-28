@@ -26,11 +26,11 @@ private let precision: Float = 0.90
 private let perceptualPrecision: Float = 0.98
 
 extension ViewImageConfig: Hashable {
-    public static func == (lhs: ViewImageConfig, rhs: ViewImageConfig) -> Bool {
+    static func == (lhs: ViewImageConfig, rhs: ViewImageConfig) -> Bool {
         return lhs.size == rhs.size && lhs.traits == rhs.traits
     }
 
-    public func hash(into hasher: inout Hasher) {
+    func hash(into hasher: inout Hasher) {
         if let size = size {
             hasher.combine(size.width)
             hasher.combine(size.height)

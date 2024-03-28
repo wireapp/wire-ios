@@ -26,11 +26,11 @@ final class MockLegalHoldDataSource: NSObject {
 
 extension MockUser: SelfLegalHoldSubject {
 
-    public var needsToAcknowledgeLegalHoldStatus: Bool {
+    var needsToAcknowledgeLegalHoldStatus: Bool {
         return legalHoldDataSource.needsToAcknowledgeLegalHoldStatus
     }
 
-    public var legalHoldStatus: UserLegalHoldStatus {
+    var legalHoldStatus: UserLegalHoldStatus {
         if isUnderLegalHold {
             return .enabled
         } else if let request = legalHoldDataSource.legalHoldRequest {
@@ -40,24 +40,24 @@ extension MockUser: SelfLegalHoldSubject {
         }
     }
 
-    public var fingerprint: String? {
+    var fingerprint: String? {
         return "test"
     }
 
-    public func acknowledgeLegalHoldStatus() {
+    func acknowledgeLegalHoldStatus() {
         legalHoldDataSource.needsToAcknowledgeLegalHoldStatus = false
     }
 
-    public func userDidAcceptLegalHoldRequest(_ request: LegalHoldRequest) {
+    func userDidAcceptLegalHoldRequest(_ request: LegalHoldRequest) {
         legalHoldDataSource.legalHoldRequest = nil
         isUnderLegalHold = true
     }
 
-    public func userDidReceiveLegalHoldRequest(_ request: LegalHoldRequest) {
+    func userDidReceiveLegalHoldRequest(_ request: LegalHoldRequest) {
         legalHoldDataSource.legalHoldRequest = request
     }
 
-    public func legalHoldRequestWasCancelled() {
+    func legalHoldRequestWasCancelled() {
         legalHoldDataSource.legalHoldRequest = nil
     }
 

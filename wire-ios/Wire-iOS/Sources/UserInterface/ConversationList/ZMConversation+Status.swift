@@ -241,7 +241,7 @@ final class ConversationStatusStyle {
 private let statusStyle = ConversationStatusStyle()
 
 extension ConversationStatusMatcher {
-    public static var regularStyle: [NSAttributedString.Key: AnyObject] {
+    static var regularStyle: [NSAttributedString.Key: AnyObject] {
         return statusStyle.regularStyle
     }
 

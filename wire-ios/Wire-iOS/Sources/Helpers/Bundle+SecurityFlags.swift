@@ -18,7 +18,7 @@
 
 import Foundation
 
-public enum SecurityFlags {
+enum SecurityFlags {
 
     case generateLinkPreviews
     case forceConstantBitRateCalls
@@ -65,16 +65,16 @@ public enum SecurityFlags {
         }
     }
 
-    public var intValue: Int? {
+    var intValue: Int? {
         guard let string = stringValue else { return nil }
         return Int(string)
     }
 
-    public var stringValue: String? {
+    var stringValue: String? {
         return Bundle.appMainBundle.infoForKey(bundleKey)
     }
 
-    public var isEnabled: Bool {
+    var isEnabled: Bool {
         return stringValue == "1"
     }
 
