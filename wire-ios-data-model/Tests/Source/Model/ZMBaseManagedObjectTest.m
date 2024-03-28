@@ -208,11 +208,11 @@
 
 - (void)wipeCaches
 {
-    [self.uiMOC.zm_fileAssetCache wipeCaches];
+    [self.uiMOC.zm_fileAssetCache wipeCachesAndReturnError:nil];
     [self.uiMOC.zm_userImageCache wipeCache];
 
     [self.syncMOC performGroupedBlockAndWait:^{
-        [self.syncMOC.zm_fileAssetCache wipeCaches];
+        [self.syncMOC.zm_fileAssetCache wipeCachesAndReturnError:nil];
         [self.syncMOC.zm_userImageCache wipeCache];
     }];
     [PersonName.stringsToPersonNames removeAllObjects];

@@ -164,7 +164,7 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
     }
 
     func wipeCaches() {
-        uiMOC.zm_fileAssetCache.wipeCaches()
+        try? uiMOC.zm_fileAssetCache.wipeCaches()
         uiMOC.zm_userImageCache.wipeCache()
         PersonName.stringsToPersonNames().removeAllObjects()
     }

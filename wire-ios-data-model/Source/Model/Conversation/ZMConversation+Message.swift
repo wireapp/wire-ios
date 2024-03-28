@@ -262,7 +262,7 @@ extension ZMConversation {
             nonce: nonce,
             expires: false
         ) { message in
-            moc.zm_fileAssetCache.storeFile(
+            moc.zm_fileAssetCache.storeOriginalFile(
                 data: data,
                 for: message
             )

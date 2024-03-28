@@ -583,8 +583,8 @@ extension ZMClientMessageTests_Deletion {
             XCTAssertNil(cache.encryptedMediumImageData(for: message))
             XCTAssertNil(cache.encryptedPreviewImageData(for: message))
 
-            XCTAssertNil(cache.assetData(message, encrypted: true))
-            XCTAssertNil(cache.assetData(message, encrypted: false))
+            XCTAssertNil(cache.encryptedFileData(for: message))
+            XCTAssertNil(cache.originalFileData(for: message))
 
         } else if let clientMessage = message as? ZMClientMessage {
             XCTAssertNil(clientMessage.underlyingMessage, line: line)

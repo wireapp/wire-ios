@@ -120,10 +120,9 @@ import WireTransport
         // swiftlint:disable todo_requires_jira_link
         // TODO: create request that streams directly to the cache file, otherwise the memory would overflow on big files
         // swiftlint:enable todo_requires_jira_link
-        fileCache.storeAssetData(
-            assetClientMessage,
-            encrypted: true,
-            data: data
+        fileCache.storeEncryptedFile(
+            data: data,
+            for: assetClientMessage
         )
 
         guard let viewcontext = managedObjectContext.zm_userInterface else {
