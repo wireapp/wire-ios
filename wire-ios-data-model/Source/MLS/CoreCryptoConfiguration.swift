@@ -78,7 +78,7 @@ public class CoreCryptoConfigProvider {
             applicationContainer: sharedContainerURL
         )
 
-        FileManager.default.createAndProtectDirectory(at: accountDirectory)
+        try FileManager.default.createAndProtectDirectory(at: accountDirectory)
         let coreCryptoDirectory = accountDirectory.appendingPathComponent("corecrypto")
 
         do {
