@@ -116,7 +116,8 @@ public final class BackendEnvironment: NSObject {
     let type: EnvironmentType
 
     init(
-        title: String, environmentType: EnvironmentType,
+        title: String,
+        environmentType: EnvironmentType,
         endpoints: BackendEndpointsProvider,
         proxySettings: ProxySettingsProvider?,
         certificateTrust: BackendTrustProvider

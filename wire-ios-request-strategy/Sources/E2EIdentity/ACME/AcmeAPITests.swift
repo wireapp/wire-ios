@@ -19,11 +19,12 @@
 import Foundation
 @testable import WireRequestStrategy
 
-class AcmeAPITests: ZMTBaseTest {
+final class AcmeAPITests: ZMTBaseTest {
 
     var acmeApi: AcmeAPI?
     var mockHttpClient: MockHttpClient?
     let backendDomainBackup = BackendInfo.domain
+    private let encoder: JSONEncoder = .defaultEncoder
 
     override func setUp() {
         super.setUp()
@@ -90,9 +91,6 @@ class AcmeAPITests: ZMTBaseTest {
     }
 
     func testThatResponseHeaderDoesNotContainNonce_WhenNoHeaderFields() async throws {
-        // expectation
-        let expectedNonce = "ACMENonce"
-
         // given
         let path = "https://acme.elna.wire.link/acme/defaultteams/new-nonce"
 
@@ -107,7 +105,8 @@ class AcmeAPITests: ZMTBaseTest {
 
         do {
             // when
-            let nonce = try await acmeApi?.getACMENonce(path: path)
+            _ = try await acmeApi?.getACMENonce(path: path)
+            XCTFail("unexpected catch error")
         } catch NetworkError.errorDecodingURLResponse {
             // then
             return
@@ -149,7 +148,6 @@ class AcmeAPITests: ZMTBaseTest {
 
     func testThatItDoesNotSendACMERequest_WhenNoNonceInTheHeader() async throws {
         // expectation
-        let headerNonce = "ACMENonce"
         let headerLocation = "Location"
 
         // given
@@ -167,7 +165,8 @@ class AcmeAPITests: ZMTBaseTest {
 
         do {
             // when
-            let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
+            _ = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
+            XCTFail("unexpected catch error")
         } catch NetworkError.errorDecodingURLResponse {
             // then
             return
@@ -179,7 +178,6 @@ class AcmeAPITests: ZMTBaseTest {
     func testThatItDoesNotSendACMERequest_WhenNoLocationInTheHeader() async throws {
         // expectation
         let headerNonce = "ACMENonce"
-        let headerLocation = "Location"
 
         // given
         let path = "https://acme.elna.wire.link/acme/defaultteams/new-account"
@@ -196,7 +194,7 @@ class AcmeAPITests: ZMTBaseTest {
 
         do {
             // when
-            let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
+            _ = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
         } catch NetworkError.errorDecodingURLResponse {
             // then
             return
@@ -225,7 +223,7 @@ class AcmeAPITests: ZMTBaseTest {
             httpVersion: "",
             headerFields: ["Replay-Nonce": headerNonce]
         ))
-        let challengeResponseData = try JSONEncoder.defaultEncoder.encode(expectation)
+        let challengeResponseData = try encoder.encode(expectation)
         mockHttpClient?.mockResponse = (challengeResponseData, mockResponse)
 
         do {
@@ -272,16 +270,24 @@ class AcmeAPITests: ZMTBaseTest {
             httpVersion: "",
             headerFields: nil
         )!
-        let mockData = Data()
+
+        let mockCertificates = [
+            "certificate_1",
+            "certificate_2",
+            "certificate_3"
+        ]
+        let mockPayload = FederationCertificates(certificates: mockCertificates)
+        let mockData = try encoder.encode(mockPayload)
         mockHttpClient?.mockResponse = (mockData, mockResponse)
 
         // when
-        _ = try await acmeApi?.getFederationCertificate()
+        let certificates = try await acmeApi?.getFederationCertificates()
         let request = try XCTUnwrap(mockHttpClient?.sentRequests.first)
 
         // then
         XCTAssertEqual(request.url?.absoluteString, "https://acme/federation")
         XCTAssertEqual(request.httpMethod, "GET")
+        XCTAssertEqual(certificates, mockCertificates)
     }
 
 }

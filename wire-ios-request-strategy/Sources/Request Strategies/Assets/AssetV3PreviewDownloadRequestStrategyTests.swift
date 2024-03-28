@@ -297,7 +297,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
 
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: false, data: .secureRandomData(length: 42))
+            self.syncMOC.zm_fileAssetCache.storeMediumImage(data: .secureRandomData(length: 42), for: message)
 
             do {
                 try message.setUnderlyingMessage(previewGenericMessage)
@@ -316,7 +316,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         }
     }
 
-    func testThatItStoresAndDecryptsTheRawDataInTheImageCacheWhenItReceivesAResponse() throws {
+    func testThatItStoresTheEncryptedRawDataInTheImageCacheWhenItReceivesAResponse() throws {
         // GIVEN
         let plainTextData = Data.secureRandomData(length: 500)
         let key = Data.randomEncryptionKey()
@@ -349,9 +349,8 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
 
         // THEN
         self.syncMOC.performGroupedBlockAndWait {
-            let data = self.syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false)
-            XCTAssertEqual(data, plainTextData)
-            XCTAssertEqual(message.fileMessageData!.previewData, plainTextData)
+            let data = self.syncMOC.zm_fileAssetCache.encryptedMediumImageData(for: message)
+            XCTAssertEqual(data, encryptedData)
         }
     }
 

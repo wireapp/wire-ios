@@ -104,8 +104,8 @@
 - (void)testThatItHasOutstandingItemsWhenItemsAreAdded
 {
     // given
-    [self.coreDataStack.viewContext.zm_fileAssetCache storeAssetData:self.linkPreviewMessage1 format:ZMImageFormatOriginal encrypted:NO data:[NSData dataWithBytes:"1" length:1]];
-    [self.coreDataStack.viewContext.zm_fileAssetCache storeAssetData:self.linkPreviewMessage2 format:ZMImageFormatOriginal encrypted:NO data:[NSData dataWithBytes:"2" length:1]];
+    [self.coreDataStack.viewContext.zm_fileAssetCache storeOriginalImageData:[NSData dataWithBytes:"1" length:1] forMessage:self.linkPreviewMessage1];
+    [self.coreDataStack.viewContext.zm_fileAssetCache storeOriginalImageData:[NSData dataWithBytes:"2" length:1] forMessage:self.linkPreviewMessage2];
     NSSet *objects = [NSSet setWithArray:@[self.linkPreviewMessage1, self.linkPreviewMessage2]];
     
     // when
@@ -121,8 +121,8 @@
 - (void)testThatItHasOutstandingItemsWhenItemsAreAddedAndOneIsRemoved
 {
     // given
-    [self.coreDataStack.viewContext.zm_fileAssetCache storeAssetData:self.linkPreviewMessage1 format:ZMImageFormatOriginal encrypted:NO data:[NSData dataWithBytes:"1" length:1]];
-    [self.coreDataStack.viewContext.zm_fileAssetCache storeAssetData:self.linkPreviewMessage2 format:ZMImageFormatOriginal encrypted:NO data:[NSData dataWithBytes:"2" length:1]];
+    [self.coreDataStack.viewContext.zm_fileAssetCache storeOriginalImageData:[NSData dataWithBytes:"1" length:1] forMessage:self.linkPreviewMessage1];
+    [self.coreDataStack.viewContext.zm_fileAssetCache storeOriginalImageData:[NSData dataWithBytes:"2" length:1] forMessage:self.linkPreviewMessage2];
     NSSet *objects = [NSSet setWithArray:@[self.linkPreviewMessage1, self.linkPreviewMessage2]];
     
     // when
@@ -140,8 +140,8 @@
 - (void)testThatItHasNoOutstandingItemsWhenItemsAreAddedAndThenRemoved;
 {
     // given
-    [self.coreDataStack.viewContext.zm_fileAssetCache storeAssetData:self.linkPreviewMessage1 format:ZMImageFormatOriginal encrypted:NO data:[NSData dataWithBytes:"1" length:1]];
-    [self.coreDataStack.viewContext.zm_fileAssetCache storeAssetData:self.linkPreviewMessage2 format:ZMImageFormatOriginal encrypted:NO data:[NSData dataWithBytes:"2" length:1]];
+    [self.coreDataStack.viewContext.zm_fileAssetCache storeOriginalImageData:[NSData dataWithBytes:"1" length:1] forMessage:self.linkPreviewMessage1];
+    [self.coreDataStack.viewContext.zm_fileAssetCache storeOriginalImageData:[NSData dataWithBytes:"2" length:1] forMessage:self.linkPreviewMessage2];
     NSSet *objects = [NSSet setWithArray:@[self.linkPreviewMessage1, self.linkPreviewMessage2]];
     
     // when

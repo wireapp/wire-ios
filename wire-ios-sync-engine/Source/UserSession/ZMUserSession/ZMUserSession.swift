@@ -20,6 +20,7 @@ import Foundation
 import WireDataModel
 import WireSystem
 import WireRequestStrategy
+import Combine
 
 @objc(ZMThirdPartyServicesDelegate)
 public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
@@ -87,6 +88,7 @@ public final class ZMUserSession: NSObject {
     private(set) var notificationDispatcher: NotificationDispatcher
     private(set) var localNotificationDispatcher: LocalNotificationDispatcher?
     let applicationStatusDirectory: ApplicationStatusDirectory
+    private let assetCache: FileAssetCache
     private(set) var callStateObserver: CallStateObserver?
     var messageReplyObserver: ManagedObjectContextChangeObserver?
     var likeMesssageObserver: ManagedObjectContextChangeObserver?
@@ -149,16 +151,29 @@ public final class ZMUserSession: NSObject {
         return featureRepository.fetchE2EI()
     }
 
-    public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol = {
-        let selfClientCertificateProvider = SelfClientCertificateProvider(
+    public var gracePeriodEndDate: Date? {
+        guard
+            e2eiFeature.isEnabled,
+            let e2eiActivatedAt = e2eiActivationDateRepository.e2eiActivatedAt
+        else {
+            return nil
+        }
+
+        let gracePeriod = TimeInterval(e2eiFeature.config.verificationExpiration)
+        return e2eiActivatedAt.addingTimeInterval(gracePeriod)
+    }
+
+    public lazy var selfClientCertificateProvider: SelfClientCertificateProviderProtocol = {
+        return SelfClientCertificateProvider(
             getE2eIdentityCertificatesUseCase: getE2eIdentityCertificates,
             context: syncContext)
+    }()
 
+    public lazy var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol = {
         return SnoozeCertificateEnrollmentUseCase(
-            e2eiFeature: e2eiFeature,
-            gracePeriodRepository: gracePeriodRepository,
+            featureRepository: featureRepository,
+            featureRepositoryContext: syncContext,
             recurringActionService: recurringActionService,
-            selfClientCertificateProvider: selfClientCertificateProvider,
             accountId: account.userIdentifier)
     }()
 
@@ -308,24 +323,29 @@ public final class ZMUserSession: NSObject {
         let apiProvider = APIProvider(httpClient: httpClient)
 
         let e2eiSetupService = E2EISetupService(coreCryptoProvider: coreCryptoProvider)
+        let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
 
         let keyRotator = E2EIKeyPackageRotator(
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: conversationEventProcessor,
-            context: syncContext
+            context: syncContext,
+            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject
         )
 
-        cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
-            from: keyRotator.onNewCRLsDistributionPoints()
-        )
-
-        return E2EIRepository(
+        let e2eiRepository = E2EIRepository(
             acmeApi: acmeApi,
             apiProvider: apiProvider,
             e2eiSetupService: e2eiSetupService,
             keyRotator: keyRotator,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject
         )
+
+        cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
+            from: onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
+        )
+
+        return e2eiRepository
     }()
 
     public lazy var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol = {
@@ -333,6 +353,8 @@ public final class ZMUserSession: NSObject {
             e2eiRepository: e2eiRepository,
             context: syncContext)
     }()
+
+    private(set) public var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
     public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol = {
         return GetIsE2EIdentityEnabledUseCase(coreCryptoProvider: coreCryptoProvider)
@@ -345,10 +367,18 @@ public final class ZMUserSession: NSObject {
         )
     }()
 
+    @MainActor
+    public private(set) lazy var isE2EICertificateEnrollmentRequired: IsE2EICertificateEnrollmentRequiredProtocol = {
+        return IsE2EICertificateEnrollmentRequiredUseCase(
+            isE2EIdentityEnabled: e2eiFeature.isEnabled,
+            selfClientCertificateProvider: selfClientCertificateProvider,
+            gracePeriodEndDate: gracePeriodEndDate)
+    }()
+
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
-    public let gracePeriodRepository: GracePeriodRepository
+    public let e2eiActivationDateRepository: E2EIActivationDateRepository
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
@@ -408,7 +438,9 @@ public final class ZMUserSession: NSObject {
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
         )
-        self.gracePeriodRepository = GracePeriodRepository(
+
+        self.lastE2EIUpdateDateRepository = LastE2EIdentityUpdateDateRepository(userID: userId, sharedUserDefaults: UserDefaults.standard)
+        self.e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults)
         self.applicationStatusDirectory = ApplicationStatusDirectory(
@@ -430,7 +462,8 @@ public final class ZMUserSession: NSObject {
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults
         )
-        self.mlsService = mlsService ?? MLSService(
+
+        let mlsService = mlsService ?? MLSService(
             context: coreDataStack.syncContext,
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
@@ -438,6 +471,7 @@ public final class ZMUserSession: NSObject {
             syncStatus: applicationStatusDirectory.syncStatus,
             userID: coreDataStack.account.userIdentifier
         )
+        self.mlsService = mlsService
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
 
@@ -446,9 +480,11 @@ public final class ZMUserSession: NSObject {
             userID: userId
         )
 
-        self.useCaseFactory = useCaseFactory ?? UseCaseFactory(context: coreDataStack.syncContext,
-                                                               supportedProtocolService: SupportedProtocolsService(context: coreDataStack.syncContext),
-                                                               oneOnOneResolver: OneOnOneResolver(mlsService: self.mlsService))
+        self.useCaseFactory = useCaseFactory ?? UseCaseFactory(
+            context: coreDataStack.syncContext,
+            supportedProtocolService: SupportedProtocolsService(context: coreDataStack.syncContext),
+            oneOnOneResolver: OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+        )
         let e2eIVerificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
         self.updateMLSGroupVerificationStatus = UpdateMLSGroupVerificationStatusUseCase(
             e2eIVerificationStatusService: e2eIVerificationStatusService,
@@ -477,6 +513,12 @@ public final class ZMUserSession: NSObject {
             updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatus,
             syncContext: coreDataStack.syncContext)
 
+        let cacheLocation = FileManager.default.cachesURLForAccount(with: coreDataStack.account.userIdentifier, in: coreDataStack.applicationContainer)
+        ZMUserSession.moveCachesIfNeededForAccount(with: coreDataStack.account.userIdentifier, in: coreDataStack.applicationContainer)
+
+        let userImageCache = UserImageLocalCache(location: cacheLocation)
+        assetCache = FileAssetCache(location: cacheLocation)
+
         super.init()
 
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
@@ -486,7 +528,10 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory.syncStatus.syncStateDelegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
 
-        configureCaches()
+        configureCaches(
+            userImageCache: userImageCache,
+            fileAssetCache: assetCache
+        )
 
         syncManagedObjectContext.performGroupedBlockAndWait { [self] in
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
@@ -514,8 +559,6 @@ public final class ZMUserSession: NSObject {
             self.applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
             self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
-
-            createMLSClientIfNeeded()
 
             if e2eiFeature.isEnabled {
                 self.observeMLSGroupVerificationStatus.invoke()
@@ -548,13 +591,10 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    private func configureCaches() {
-        let cacheLocation = FileManager.default.cachesURLForAccount(with: coreDataStack.account.userIdentifier, in: coreDataStack.applicationContainer)
-        ZMUserSession.moveCachesIfNeededForAccount(with: coreDataStack.account.userIdentifier, in: coreDataStack.applicationContainer)
-
-        let userImageCache = UserImageLocalCache(location: cacheLocation)
-        let fileAssetCache = FileAssetCache(location: cacheLocation)
-
+    private func configureCaches(
+        userImageCache: UserImageLocalCache,
+        fileAssetCache: FileAssetCache
+    ) {
         managedObjectContext.zm_userImageCache = userImageCache
         managedObjectContext.zm_fileAssetCache = fileAssetCache
         managedObjectContext.zm_searchUserCache = NSCache()
@@ -563,7 +603,6 @@ public final class ZMUserSession: NSObject {
             self.syncManagedObjectContext.zm_userImageCache = userImageCache
             self.syncManagedObjectContext.zm_fileAssetCache = fileAssetCache
         }
-
     }
 
     private func createStrategyDirectory(useLegacyPushNotifications: Bool) -> StrategyDirectoryProtocol {
@@ -679,22 +718,6 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    func createMLSClientIfNeeded() {
-        // TODO: [WPB-6198] refactor out - [jacob]
-        if applicationStatusDirectory.clientRegistrationStatus.needsToRegisterMLSCLient {
-            guard let mlsClientID = MLSClientID(user: ZMUser.selfUser(in: syncContext)) else {
-                fatal("Needs to register MLS client but can't retrieve qualified client ID")
-            }
-            WaitingGroupTask(context: syncContext) { [self] in
-                do {
-                    _ = try await coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
-                } catch {
-                    WireLogger.mls.error("Failed to create MLS client: \(error)")
-                }
-            }
-        }
-    }
-
     // MARK: - Network
 
     public func requestResyncResources() {
@@ -765,6 +788,12 @@ public final class ZMUserSession: NSObject {
             self.syncManagedObjectContext.setPersistentStoreMetadata(NSNumber(value: true), key: DeleteAccountRequestStrategy.userDeletionInitiatedKey)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
+    }
+
+    // MARK: - Caches
+
+    func purgeTemporaryAssets() {
+        assetCache.purgeTemporaryAssets()
     }
 
 }
@@ -903,6 +932,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
         }
+        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
     }
 
     func processEvents() {
@@ -1037,4 +1067,9 @@ extension ZMUserSession: ContextProvider {
         return coreDataStack.eventContext
     }
 
+}
+
+public extension Notification.Name {
+    // This notification is used to check the E2EIdentity Certificate expiry status
+    static let checkForE2EICertificateExpiryStatus = NSNotification.Name("CheckForE2EICertificateExpiryStatus")
 }

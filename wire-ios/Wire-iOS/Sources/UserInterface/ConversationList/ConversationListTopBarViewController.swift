@@ -241,8 +241,6 @@ final class ConversationListTopBarViewController: UIViewController {
         let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: settingsViewController)
 
         if wr_splitViewController?.layoutSize == .compact {
-            keyboardAvoidingViewController.modalPresentationStyle = .currentContext
-            keyboardAvoidingViewController.transitioningDelegate = self
             present(keyboardAvoidingViewController, animated: true)
         } else {
             keyboardAvoidingViewController.modalPresentationStyle = .formSheet

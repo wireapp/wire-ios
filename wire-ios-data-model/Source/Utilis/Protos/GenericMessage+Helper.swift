@@ -773,7 +773,7 @@ public extension Tweet {
 
 extension ImageAsset {
     public func imageFormat() -> ZMImageFormat {
-        return ImageFormatFromString(self.tag)
+        return ZMImageFormat(self.tag)
     }
 }
 

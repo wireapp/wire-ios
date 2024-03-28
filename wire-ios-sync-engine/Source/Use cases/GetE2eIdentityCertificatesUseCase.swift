@@ -56,8 +56,7 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
                                    notValidBefore: Date(timeIntervalSince1970: Double(identity.notBefore)),
                                    expiryDate: Date(timeIntervalSince1970: Double(identity.notAfter)),
                                    certificateStatus: status,
-                                   serialNumber: identity.serialNumber,
-                                   comparedDate: Date.now)
+                                   serialNumber: identity.serialNumber)
         }
     }
 
@@ -92,12 +91,16 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
     }
 
     @MainActor
-    private func getWireIdentity(coreCrypto: SafeCoreCryptoProtocol,
-                                 conversationId: Data, clientIDs: [Data]) async throws -> [WireIdentity] {
-        return try await coreCrypto.perform {
-            return try await $0.getDeviceIdentities(
+    private func getWireIdentity(
+        coreCrypto: SafeCoreCryptoProtocol,
+        conversationId: Data,
+        clientIDs: [Data]
+    ) async throws -> [WireIdentity] {
+        try await coreCrypto.perform {
+            try await $0.getDeviceIdentities(
                 conversationId: conversationId,
-                deviceIds: clientIDs)
+                deviceIds: clientIDs
+            )
         }
     }
 }

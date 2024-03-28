@@ -300,6 +300,148 @@ public class MockConversationEventProcessorProtocol: ConversationEventProcessorP
 
 }
 
+public class MockConversationLike: ConversationLike {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - conversationType
+
+    public var conversationType: ZMConversationType {
+        get { return underlyingConversationType }
+        set(value) { underlyingConversationType = value }
+    }
+
+    public var underlyingConversationType: ZMConversationType!
+
+    // MARK: - isSelfAnActiveMember
+
+    public var isSelfAnActiveMember: Bool {
+        get { return underlyingIsSelfAnActiveMember }
+        set(value) { underlyingIsSelfAnActiveMember = value }
+    }
+
+    public var underlyingIsSelfAnActiveMember: Bool!
+
+    // MARK: - teamRemoteIdentifier
+
+    public var teamRemoteIdentifier: UUID?
+
+    // MARK: - localParticipantsCount
+
+    public var localParticipantsCount: Int {
+        get { return underlyingLocalParticipantsCount }
+        set(value) { underlyingLocalParticipantsCount = value }
+    }
+
+    public var underlyingLocalParticipantsCount: Int!
+
+    // MARK: - displayName
+
+    public var displayName: String?
+
+    // MARK: - connectedUserType
+
+    public var connectedUserType: UserType?
+
+    // MARK: - allowGuests
+
+    public var allowGuests: Bool {
+        get { return underlyingAllowGuests }
+        set(value) { underlyingAllowGuests = value }
+    }
+
+    public var underlyingAllowGuests: Bool!
+
+    // MARK: - allowServices
+
+    public var allowServices: Bool {
+        get { return underlyingAllowServices }
+        set(value) { underlyingAllowServices = value }
+    }
+
+    public var underlyingAllowServices: Bool!
+
+    // MARK: - isUnderLegalHold
+
+    public var isUnderLegalHold: Bool {
+        get { return underlyingIsUnderLegalHold }
+        set(value) { underlyingIsUnderLegalHold = value }
+    }
+
+    public var underlyingIsUnderLegalHold: Bool!
+
+    // MARK: - sortedActiveParticipantsUserTypes
+
+    public var sortedActiveParticipantsUserTypes: [UserType] = []
+
+    // MARK: - relatedConnectionState
+
+    public var relatedConnectionState: ZMConnectionStatus {
+        get { return underlyingRelatedConnectionState }
+        set(value) { underlyingRelatedConnectionState = value }
+    }
+
+    public var underlyingRelatedConnectionState: ZMConnectionStatus!
+
+    // MARK: - lastMessage
+
+    public var lastMessage: ZMConversationMessage?
+
+    // MARK: - firstUnreadMessage
+
+    public var firstUnreadMessage: ZMConversationMessage?
+
+    // MARK: - areServicesPresent
+
+    public var areServicesPresent: Bool {
+        get { return underlyingAreServicesPresent }
+        set(value) { underlyingAreServicesPresent = value }
+    }
+
+    public var underlyingAreServicesPresent: Bool!
+
+    // MARK: - domain
+
+    public var domain: String?
+
+
+    // MARK: - localParticipantsContain
+
+    public var localParticipantsContainUser_Invocations: [UserType] = []
+    public var localParticipantsContainUser_MockMethod: ((UserType) -> Bool)?
+    public var localParticipantsContainUser_MockValue: Bool?
+
+    public func localParticipantsContain(user: UserType) -> Bool {
+        localParticipantsContainUser_Invocations.append(user)
+
+        if let mock = localParticipantsContainUser_MockMethod {
+            return mock(user)
+        } else if let mock = localParticipantsContainUser_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `localParticipantsContainUser`")
+        }
+    }
+
+    // MARK: - verifyLegalHoldSubjects
+
+    public var verifyLegalHoldSubjects_Invocations: [Void] = []
+    public var verifyLegalHoldSubjects_MockMethod: (() -> Void)?
+
+    public func verifyLegalHoldSubjects() {
+        verifyLegalHoldSubjects_Invocations.append(())
+
+        guard let mock = verifyLegalHoldSubjects_MockMethod else {
+            fatalError("no mock for `verifyLegalHoldSubjects`")
+        }
+
+        mock()
+    }
+
+}
+
 public class MockCoreCryptoProtocol: CoreCryptoProtocol {
 
     // MARK: - Life cycle
@@ -546,29 +688,6 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
         }
     }
 
-    // MARK: - getExternalSender
-
-    public var getExternalSenderConversationId_Invocations: [Data] = []
-    public var getExternalSenderConversationId_MockError: Error?
-    public var getExternalSenderConversationId_MockMethod: ((Data) async throws -> Data)?
-    public var getExternalSenderConversationId_MockValue: Data?
-
-    public func getExternalSender(conversationId: Data) async throws -> Data {
-        getExternalSenderConversationId_Invocations.append(conversationId)
-
-        if let error = getExternalSenderConversationId_MockError {
-            throw error
-        }
-
-        if let mock = getExternalSenderConversationId_MockMethod {
-            return try await mock(conversationId)
-        } else if let mock = getExternalSenderConversationId_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `getExternalSenderConversationId`")
-        }
-    }
-
     // MARK: - createConversation
 
     public var createConversationConversationIdCreatorCredentialTypeConfig_Invocations: [(conversationId: Data, creatorCredentialType: WireCoreCrypto.MlsCredentialType, config: WireCoreCrypto.ConversationConfiguration)] = []
@@ -655,6 +774,29 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
         }
     }
 
+    // MARK: - e2eiDumpPkiEnv
+
+    public var e2eiDumpPkiEnv_Invocations: [Void] = []
+    public var e2eiDumpPkiEnv_MockError: Error?
+    public var e2eiDumpPkiEnv_MockMethod: (() async throws -> WireCoreCrypto.E2eiDumpedPkiEnv?)?
+    public var e2eiDumpPkiEnv_MockValue: WireCoreCrypto.E2eiDumpedPkiEnv??
+
+    public func e2eiDumpPkiEnv() async throws -> WireCoreCrypto.E2eiDumpedPkiEnv? {
+        e2eiDumpPkiEnv_Invocations.append(())
+
+        if let error = e2eiDumpPkiEnv_MockError {
+            throw error
+        }
+
+        if let mock = e2eiDumpPkiEnv_MockMethod {
+            return try await mock()
+        } else if let mock = e2eiDumpPkiEnv_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `e2eiDumpPkiEnv`")
+        }
+    }
+
     // MARK: - e2eiEnrollmentStash
 
     public var e2eiEnrollmentStashEnrollment_Invocations: [WireCoreCrypto.E2eiEnrollment] = []
@@ -721,6 +863,24 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
             return mock
         } else {
             fatalError("no mock for `e2eiIsEnabledCiphersuite`")
+        }
+    }
+
+    // MARK: - e2eiIsPkiEnvSetup
+
+    public var e2eiIsPkiEnvSetup_Invocations: [Void] = []
+    public var e2eiIsPkiEnvSetup_MockMethod: (() async -> Bool)?
+    public var e2eiIsPkiEnvSetup_MockValue: Bool?
+
+    public func e2eiIsPkiEnvSetup() async -> Bool {
+        e2eiIsPkiEnvSetup_Invocations.append(())
+
+        if let mock = e2eiIsPkiEnvSetup_MockMethod {
+            return await mock()
+        } else if let mock = e2eiIsPkiEnvSetup_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `e2eiIsPkiEnvSetup`")
         }
     }
 
@@ -1017,6 +1177,29 @@ public class MockCoreCryptoProtocol: CoreCryptoProtocol {
             return mock
         } else {
             fatalError("no mock for `getDeviceIdentitiesConversationIdDeviceIds`")
+        }
+    }
+
+    // MARK: - getExternalSender
+
+    public var getExternalSenderConversationId_Invocations: [Data] = []
+    public var getExternalSenderConversationId_MockError: Error?
+    public var getExternalSenderConversationId_MockMethod: ((Data) async throws -> Data)?
+    public var getExternalSenderConversationId_MockValue: Data?
+
+    public func getExternalSender(conversationId: Data) async throws -> Data {
+        getExternalSenderConversationId_Invocations.append(conversationId)
+
+        if let error = getExternalSenderConversationId_MockError {
+            throw error
+        }
+
+        if let mock = getExternalSenderConversationId_MockMethod {
+            return try await mock(conversationId)
+        } else if let mock = getExternalSenderConversationId_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getExternalSenderConversationId`")
         }
     }
 
@@ -1949,20 +2132,23 @@ public class MockCoreCryptoProviderProtocol: CoreCryptoProviderProtocol {
 
     public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_Invocations: [(enrollment: E2eiEnrollment, certificateChain: String)] = []
     public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockError: Error?
-    public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockMethod: ((E2eiEnrollment, String) async throws -> Void)?
+    public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockMethod: ((E2eiEnrollment, String) async throws -> CRLsDistributionPoints?)?
+    public var initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockValue: CRLsDistributionPoints??
 
-    public func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws {
+    public func initialiseMLSWithEndToEndIdentity(enrollment: E2eiEnrollment, certificateChain: String) async throws -> CRLsDistributionPoints? {
         initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_Invocations.append((enrollment: enrollment, certificateChain: certificateChain))
 
         if let error = initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockError {
             throw error
         }
 
-        guard let mock = initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockMethod else {
+        if let mock = initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockMethod {
+            return try await mock(enrollment, certificateChain)
+        } else if let mock = initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `initialiseMLSWithEndToEndIdentityEnrollmentCertificateChain`")
         }
-
-        try await mock(enrollment, certificateChain)
     }
 
 }
@@ -3697,21 +3883,16 @@ public class MockMLSConversationVerificationStatusUpdating: MLSConversationVerif
     // MARK: - updateAllStatuses
 
     public var updateAllStatuses_Invocations: [Void] = []
-    public var updateAllStatuses_MockError: Error?
-    public var updateAllStatuses_MockMethod: (() async throws -> Void)?
+    public var updateAllStatuses_MockMethod: (() async -> Void)?
 
-    public func updateAllStatuses() async throws {
+    public func updateAllStatuses() async {
         updateAllStatuses_Invocations.append(())
-
-        if let error = updateAllStatuses_MockError {
-            throw error
-        }
 
         guard let mock = updateAllStatuses_MockMethod else {
             fatalError("no mock for `updateAllStatuses`")
         }
 
-        try await mock()
+        await mock()
     }
 
 }
@@ -3779,6 +3960,29 @@ public class MockMLSDecryptionServiceInterface: MLSDecryptionServiceInterface {
             return mock
         } else {
             fatalError("no mock for `decryptMessageForSubconversationType`")
+        }
+    }
+
+    // MARK: - processWelcomeMessage
+
+    public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
+    public var processWelcomeMessageWelcomeMessage_MockError: Error?
+    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
+    public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
+
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
+        processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
+
+        if let error = processWelcomeMessageWelcomeMessage_MockError {
+            throw error
+        }
+
+        if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
+            return try await mock(welcomeMessage)
+        } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `processWelcomeMessageWelcomeMessage`")
         }
     }
 
@@ -3948,29 +4152,6 @@ public class MockMLSServiceInterface: MLSServiceInterface {
             return mock
         } else {
             fatalError("no mock for `conversationExistsGroupID`")
-        }
-    }
-
-    // MARK: - processWelcomeMessage
-
-    public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
-    public var processWelcomeMessageWelcomeMessage_MockError: Error?
-    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
-    public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
-
-    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
-        processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
-
-        if let error = processWelcomeMessageWelcomeMessage_MockError {
-            throw error
-        }
-
-        if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
-            return try await mock(welcomeMessage)
-        } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `processWelcomeMessageWelcomeMessage`")
         }
     }
 
@@ -4375,6 +4556,29 @@ public class MockMLSServiceInterface: MLSServiceInterface {
             return mock
         } else {
             fatalError("no mock for `decryptMessageForSubconversationType`")
+        }
+    }
+
+    // MARK: - processWelcomeMessage
+
+    public var processWelcomeMessageWelcomeMessage_Invocations: [String] = []
+    public var processWelcomeMessageWelcomeMessage_MockError: Error?
+    public var processWelcomeMessageWelcomeMessage_MockMethod: ((String) async throws -> MLSGroupID)?
+    public var processWelcomeMessageWelcomeMessage_MockValue: MLSGroupID?
+
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
+        processWelcomeMessageWelcomeMessage_Invocations.append(welcomeMessage)
+
+        if let error = processWelcomeMessageWelcomeMessage_MockError {
+            throw error
+        }
+
+        if let mock = processWelcomeMessageWelcomeMessage_MockMethod {
+            return try await mock(welcomeMessage)
+        } else if let mock = processWelcomeMessageWelcomeMessage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `processWelcomeMessageWelcomeMessage`")
         }
     }
 
@@ -4829,6 +5033,48 @@ class MockProteusToMLSMigrationStorageInterface: ProteusToMLSMigrationStorageInt
 
     var underlyingMigrationStatus: ProteusToMLSMigrationCoordinator.MigrationStatus!
 
+
+}
+
+public class MockStaleMLSKeyDetectorProtocol: StaleMLSKeyDetectorProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - refreshIntervalInDays
+
+    public var refreshIntervalInDays: UInt {
+        get { return underlyingRefreshIntervalInDays }
+        set(value) { underlyingRefreshIntervalInDays = value }
+    }
+
+    public var underlyingRefreshIntervalInDays: UInt!
+
+    // MARK: - groupsWithStaleKeyingMaterial
+
+    public var groupsWithStaleKeyingMaterial: Set<MLSGroupID> {
+        get { return underlyingGroupsWithStaleKeyingMaterial }
+        set(value) { underlyingGroupsWithStaleKeyingMaterial = value }
+    }
+
+    public var underlyingGroupsWithStaleKeyingMaterial: Set<MLSGroupID>!
+
+
+    // MARK: - keyingMaterialUpdated
+
+    public var keyingMaterialUpdatedFor_Invocations: [MLSGroupID] = []
+    public var keyingMaterialUpdatedFor_MockMethod: ((MLSGroupID) -> Void)?
+
+    public func keyingMaterialUpdated(for groupID: MLSGroupID) {
+        keyingMaterialUpdatedFor_Invocations.append(groupID)
+
+        guard let mock = keyingMaterialUpdatedFor_MockMethod else {
+            fatalError("no mock for `keyingMaterialUpdatedFor`")
+        }
+
+        mock(groupID)
+    }
 
 }
 

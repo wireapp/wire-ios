@@ -39,9 +39,10 @@ public class CRLsDistributionPointsObserver: CRLsDistributionPointsObserving {
     public func startObservingNewCRLsDistributionPoints(
         from publisher: AnyPublisher<CRLsDistributionPoints, Never>
     ) {
-        publisher.sink { distributionPoints in
+        publisher.sink { [weak self] distributionPoints in
+            let cRLsChecker = self?.cRLsChecker
             Task {
-                await self.cRLsChecker.checkNewCRLs(from: distributionPoints)
+                await cRLsChecker?.checkNewCRLs(from: distributionPoints)
             }
         }
         .store(in: &cancellables)

@@ -173,6 +173,11 @@ extension EventDecoder {
                     )
                 }
                 return proteusEvent.map { [$0] } ?? []
+
+            case .conversationMLSWelcome:
+                await self.processWelcomeMessage(from: event, context: self.syncMOC)
+                return [event]
+
             case .conversationMLSMessageAdd:
                 return await self.decryptMlsMessage(from: event, context: self.syncMOC)
 
@@ -211,6 +216,10 @@ extension EventDecoder {
                         )
                     }
                     return proteusEvent.map { [$0] } ?? []
+
+                case .conversationMLSWelcome:
+                    await self.processWelcomeMessage(from: event, context: self.syncMOC)
+                    return [event]
 
                 case .conversationMLSMessageAdd:
                     return await self.decryptMlsMessage(from: event, context: self.syncMOC)
