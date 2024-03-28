@@ -969,7 +969,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), "[A] waitForCustomExpectations failed", file: file, line: line)
 
         // then we set conference info 2 to avs (see expectations)
-        XCTAssert(waitForCustomExpectations(withTimeout: 1), "[B] waitForCustomExpectations failed", file: file, line: line)
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5), "[B] waitForCustomExpectations failed", file: file, line: line)
     }
 
     func testThatItDoesNotStartAConferenceCall_IfConferenceCallingFeatureStatusIsDisabled() throws {
