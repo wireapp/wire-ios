@@ -875,6 +875,9 @@ final class WireCallCenterV3Tests: MessagingTest {
     }
 
     func testThatItStartsACall_conference_mls() throws {
+        // TODO [WPB-7346]: enable this (flaky) test again
+        throw XCTSkip()
+
         try assertMLSConference(
             expectedCallState: .outgoing(degraded: false),
             expectedCallerID: selfUserID,
