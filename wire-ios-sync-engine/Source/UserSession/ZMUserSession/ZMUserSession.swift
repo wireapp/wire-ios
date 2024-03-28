@@ -287,6 +287,8 @@ public final class ZMUserSession: NSObject {
 
         // Wait for all sync operations to finish
         syncManagedObjectContext.performGroupedBlockAndWait { }
+        eventContext.performGroupedBlockAndWait {}
+        searchContext.performGroupedBlockAndWait {}
 
         let uiMOC = coreDataStack.viewContext
         coreDataStack = nil
