@@ -43,9 +43,10 @@ class NSManagedObjectContextDebuggingTests: ZMBaseManagedObjectTest {
 
 // MARK: - Helper
 
-private let longString = (0..<50).reduce("") { (prev, _) -> String in
-    return prev + "AaAaAaAaAa"
-}
+private let longString = (0..<50)
+    .reduce(into: "") { partialResult, _ in
+        partialResult.append("AaAaAaAaAa")
+    }
 
 extension NSManagedObjectContextDebuggingTests {
 

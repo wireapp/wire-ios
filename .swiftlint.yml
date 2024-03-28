@@ -3,6 +3,7 @@ opt_in_rules:
   - literal_expression_end_indentation
   - operator_usage_whitespace
   - multiline_parameters
+  - reduce_into
 
 disabled_rules:
   - function_body_length

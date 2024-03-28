@@ -53,7 +53,7 @@ class CombinationTest<SUT: Copyable, Variant: Hashable> {
             let new = current.map { variation -> [CombinationChainPair] in
                 let step = mutator.apply(variation.result)
                 return step.map {
-                    let newChain: [Variant] = [variation.combinationChain, [$0.combination]].reduce([], +)
+                    let newChain: [Variant] = [variation.combinationChain, [$0.combination]].reduce([], +) // swiftlint:disable:this reduce_into
                     return (combinationChain: newChain, result: $0.result)
                 }
             }
