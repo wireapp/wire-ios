@@ -130,7 +130,7 @@ extension ZMUserSession {
             let notAuthenticated = !self.isAuthenticated
 
             if notAuthenticated {
-                WireLogger.notifications.info("Not displaying notification because app is not authenticated")
+                WireLogger.notifications.info("Not displaying notification because app is not authenticated", attributes: .safePublic)
                 completion()
                 return
             }
