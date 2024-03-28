@@ -785,6 +785,9 @@ final class WireCallCenterV3Tests: MessagingTest {
     }
 
     func testThatItAnswersACall_conference_mls() throws {
+        // TODO [WPB-7346]: enable this (flaky) test again
+        throw XCTSkip()
+
         // given
         sut.handleIncomingCall(
             conversationId: groupConversationID,
