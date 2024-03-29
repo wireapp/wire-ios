@@ -180,6 +180,11 @@ extension CallControllerTests {
 // MARK: - ActiveCallRouterMock
 final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
 
+    var dismissSecurityDegradedAlertIfNeededIsCalled: Bool = false
+    func dismissSecurityDegradedAlertIfNeeded() {
+        dismissSecurityDegradedAlertIfNeededIsCalled = true
+    }
+
     var presentActiveCallIsCalled: Bool = false
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
         presentActiveCallIsCalled = true
@@ -206,9 +211,13 @@ final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
         hideCallTopOverlayIsCalled = true
     }
 
-    var presentSecurityDegradedAlertIsCalled: Bool = false
-    func presentSecurityDegradedAlert(for reason: Wire.CallDegradationReason) {
+    var expectedAlertChoice: AlertChoice?
+    var presentSecurityDegradedAlertIsCalled = false
+    func presentSecurityDegradedAlert(for reason: CallDegradationReason, callEnded: Bool, completion: @escaping (AlertChoice) -> Void) {
         presentSecurityDegradedAlertIsCalled = true
+        if let expectedAlertChoice {
+            completion(expectedAlertChoice)
+        }
     }
 
     var presentUnsupportedVersionAlertIsCalled: Bool = false
