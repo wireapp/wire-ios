@@ -36,7 +36,7 @@ extension UIAlertController {
 
         let message = degradedCallMessage(forUser: degradedUser, callEnded: callEnded)
 
-        let controller = AlertController(title: title, message: message, preferredStyle: .alert)
+        let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
         if let confirmationBlock = confirmationBlock {
             controller.addAction(UIAlertAction(title: GeneralLocale.cancel, style: .cancel) { _ in
@@ -85,7 +85,7 @@ extension UIAlertController {
 
             let title = DegradedCall.title
             let message = conferenceEnded ? EndedCall.message : DegradedCall.message
-            let controller = AlertController(title: title, message: message, preferredStyle: .alert)
+            let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
             // Add actions
             if let confirmationBlock = confirmationBlock {
@@ -109,7 +109,7 @@ extension UIAlertController {
             typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
             typealias IncomingCall = L10n.Localizable.Call.Mls.Degraded.Incoming.Alert
 
-            let controller = AlertController(title: DegradedCall.title,
+            let controller = UIAlertController(title: DegradedCall.title,
                                              message: IncomingCall.message,
                                              preferredStyle: .alert)
 
