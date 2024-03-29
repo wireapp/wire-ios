@@ -1019,11 +1019,10 @@ extension WireCallCenterV3 {
 
         if case .terminating(reason: .stillOngoing) = callState {
 
-            let degraded = isDegraded(conversationId: conversationId)
-            if degraded {
+            if isDegraded(conversationId: conversationId) {
                 callState = .terminating(reason: .securityDegraded)
             } else if canJoinCall(conversationId: conversationId) {
-                callState = .incoming(video: false, shouldRing: false, degraded: degraded)
+                callState = .incoming(video: false, shouldRing: false, degraded: false)
             }
         }
 
