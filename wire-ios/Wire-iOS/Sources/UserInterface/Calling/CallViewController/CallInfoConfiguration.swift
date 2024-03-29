@@ -286,8 +286,7 @@ extension VoiceChannel {
     }
 
     var degradationReason: CallDegradationReason? {
-        guard let conversation else {
-            return nil }
+        guard let conversation else { return nil }
 
         switch conversation.messageProtocol {
         case .mls:
