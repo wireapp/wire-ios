@@ -52,7 +52,6 @@ final class CallController: NSObject {
             dismissCall()
             return
         }
-
         showCallTopOverlay(for: priorityCallConversation)
         presentOrMinimizeActiveCall(for: priorityCallConversation)
     }
@@ -188,7 +187,7 @@ extension CallController: WireCallCenterCallStateObserver {
             print("🕵🏽 terminating")
             reason = voiceChannel.degradationReason
             callEnded = true
-            default:
+        default:
             print("🕵🏽 other:", degradationState, callState)
         }
 
@@ -201,6 +200,8 @@ extension CallController: WireCallCenterCallStateObserver {
                     continueCallBlock(false)
                 case .confirm:
                     self?.acceptDegradedCall(conversation: conversation)
+                    continueCallBlock(true)
+                case .ok:
                     continueCallBlock(true)
                 case .alreadyPresented:
                     // do nothing

@@ -21,7 +21,7 @@ import WireSyncEngine
 import WireCommonComponents
 
 enum AlertChoice {
-    case cancel, confirm, alreadyPresented
+    case cancel, confirm, alreadyPresented, ok
 }
 
 // MARK: - ActiveCallRouterProtocol
@@ -195,6 +195,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
                 } else {
                     print("🕵🏽 degradedMLSConference")
                     alert = UIAlertController.degradedMLSConference(conferenceEnded: callEnded, cancelBlock: {
+                        completion(.ok)
                         postCallActionCompletion()
                         self?.presentedDegradedAlert = nil
                     })
