@@ -273,8 +273,6 @@ extension VoiceChannel {
         case .terminating(reason: .securityDegraded):
             return .terminating(reason: degradationReason)
         default:
-            print("🕵🏽 degradationState none with state:", state)
-
             return .none
         }
     }
@@ -289,7 +287,6 @@ extension VoiceChannel {
 
     var degradationReason: CallDegradationReason? {
         guard let conversation else {
-            print("🕵🏽 no conversation of voicechannel how?")
             return nil }
 
         switch conversation.messageProtocol {

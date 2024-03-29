@@ -168,7 +168,6 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     func presentSecurityDegradedAlert(for reason: CallDegradationReason, callEnded: Bool = false, completion: @escaping (AlertChoice) -> Void) {
         guard self.presentedDegradedAlert == nil else {
-            print("🕵🏽 already presented")
             completion(.alreadyPresented)
             return
         }
@@ -177,23 +176,19 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
             let alert: UIAlertController
             switch reason {
             case .degradedUser(user: let user):
-                print("🕵🏽 degradedUser")
                 alert = UIAlertController.degradedCall(degradedUser: user?.value, callEnded: callEnded, confirmationBlock: { continueDegradedCall in
                     completion(continueDegradedCall ? .confirm : .cancel)
                     postCallActionCompletion()
                     self?.presentedDegradedAlert = nil
                 })
             case .invalidCertificate:
-                print("🕵🏽 invalidCertificate")
                 if !callEnded {
-                    print("🕵🏽 incomingCallDegradedMLSConference")
                     alert = UIAlertController.incomingCallDegradedMLSConference(confirmationBlock: { answerDegradedCall in
                         completion(answerDegradedCall ? .confirm : .cancel)
                         postCallActionCompletion()
                         self?.presentedDegradedAlert = nil
                     })
                 } else {
-                    print("🕵🏽 degradedMLSConference")
                     alert = UIAlertController.degradedMLSConference(conferenceEnded: callEnded, cancelBlock: {
                         completion(.ok)
                         postCallActionCompletion()
@@ -204,14 +199,13 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
             self?.presentedDegradedAlert = alert
 
-            print("🕵🏽 presentDegradedAlert")
             self?.rootViewController.present(alert, animated: true)
         }
     }
 
     func dismissSecurityDegradedAlertIfNeeded() {
         guard let alert = self.presentedDegradedAlert else { return }
-        print("🕵🏽 dismissSecurityDegradedAlertIfNeeded")
+
         alert.dismissIfNeeded()
         self.presentedDegradedAlert = nil
     }

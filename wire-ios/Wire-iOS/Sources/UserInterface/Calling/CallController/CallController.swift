@@ -144,7 +144,7 @@ extension CallController: WireCallCenterCallStateObserver {
                              caller: UserType,
                              timestamp: Date?,
                              previousCallState: CallState?) {
-        print("🕵🏽 callState:", callState)
+
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
         presentSecurityDegradedAlertIfNecessary(for: conversation, callState: callState) { continueCall in
             if continueCall {
@@ -167,7 +167,6 @@ extension CallController: WireCallCenterCallStateObserver {
                                                          callState: CallState,
                                                          continueCallBlock: @escaping (Bool) -> Void) {
         guard let voiceChannel = conversation.voiceChannel else {
-            print("🕵🏽 no voice channel stop")
             // no alert to show, continue
             continueCallBlock(true)
             return
@@ -180,15 +179,13 @@ extension CallController: WireCallCenterCallStateObserver {
 
         switch (degradationState, callState) {
         case (.incoming(reason: let degradationReason), .incoming(video: _, shouldRing: true, degraded: true)):
-            print("🕵🏽 incoming")
             reason = degradationReason
             callEnded = false
         case (_, .terminating(reason: .securityDegraded)):
-            print("🕵🏽 terminating")
             reason = voiceChannel.degradationReason
             callEnded = true
         default:
-            print("🕵🏽 other:", degradationState, callState)
+            break
         }
 
         if let callEnded, let reason {
