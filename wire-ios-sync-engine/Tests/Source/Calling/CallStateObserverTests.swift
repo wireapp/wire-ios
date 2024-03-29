@@ -132,7 +132,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     func testThatMissedCallMessageIsNotAppendedForCallsOtherCallStates() {
 
         // given
-        let ignoredCallStates: [CallState] = [.terminating(reason: .anweredElsewhere),
+        let ignoredCallStates: [CallState] = [.terminating(reason: .answeredElsewhere),
                                                .terminating(reason: .lostMedia),
                                                .terminating(reason: .internalError),
                                                .terminating(reason: .unknown),
@@ -330,7 +330,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         // when
         self.sut.callCenterDidChange(callState: .incoming(video: false, shouldRing: false, degraded: false), conversation: conversationUI, caller: senderUI, timestamp: nil, previousCallState: nil)
-        self.sut.callCenterDidChange(callState: .terminating(reason: .anweredElsewhere), conversation: conversationUI, caller: self.senderUI, timestamp: nil, previousCallState: nil)
+        self.sut.callCenterDidChange(callState: .terminating(reason: .answeredElsewhere), conversation: conversationUI, caller: self.senderUI, timestamp: nil, previousCallState: nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
