@@ -90,7 +90,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
 
     func requestToDownloadAsset(withMessage message: ZMAssetClientMessage) -> ZMTransportRequest {
         // remove image data or it won't be downloaded
-        syncMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
+        self.syncMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
         message.imageMessageData?.requestFileDownload()
         return sut.nextRequest(for: .v0)!
     }
@@ -109,7 +109,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
             }
 
             // remove image data or it won't be downloaded
-            self.syncMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
+            self.syncMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
             message.imageMessageData?.requestFileDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -137,7 +137,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
             }
 
             // remove image data or it won't be downloaded
-            self.syncMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
+            self.syncMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
             message.imageMessageData?.requestFileDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -160,7 +160,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
             }
 
             // remove image data or it won't be downloaded
-            self.syncMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
+            self.syncMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -248,7 +248,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
             encryptedData = messageAndEncryptedData.1
 
             // remove image data or it won't be downloaded
-            self.syncMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
+            self.syncMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
             message.imageMessageData?.requestFileDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
