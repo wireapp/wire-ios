@@ -73,6 +73,8 @@ extension ConversationListViewController {
 
         var selectedConversation: ZMConversation?
 
+        private var didBecomeActiveNotificationToken: Any?
+        private var e2eiCertificateChangedToken: Any?
         private var initialSyncObserverToken: Any?
         private var userObservationToken: NSObjectProtocol?
         /// observer tokens which are assigned when viewDidLoad
@@ -100,6 +102,16 @@ extension ConversationListViewController {
 
             updateE2EICertifiedStatus()
         }
+
+        deinit {
+            if let didBecomeActiveNotificationToken {
+                notificationCenter.removeObserver(didBecomeActiveNotificationToken)
+            }
+
+            if let e2eiCertificateChangedToken {
+                notificationCenter.removeObserver(e2eiCertificateChangedToken)
+            }
+        }
     }
 }
 
@@ -114,15 +126,15 @@ extension ConversationListViewController.ViewModel {
 
         updateObserverTokensForActiveTeam()
 
-        notificationCenter.addObserver(forName: UIApplication.didBecomeActiveNotification,
-                                       object: nil,
-                                       queue: .main) { [weak self] _ in
+        didBecomeActiveNotificationToken = notificationCenter.addObserver(forName: UIApplication.didBecomeActiveNotification,
+                                                                          object: nil,
+                                                                          queue: .main) { [weak self] _ in
             self?.updateE2EICertifiedStatus()
         }
 
-        notificationCenter.addObserver(forName: .e2eiCertificateChanged,
-                                       object: nil,
-                                       queue: .main) { [weak self] _ in
+        e2eiCertificateChangedToken = notificationCenter.addObserver(forName: .e2eiCertificateChanged,
+                                                                     object: nil,
+                                                                     queue: .main) { [weak self] _ in
             self?.updateE2EICertifiedStatus()
         }
     }
