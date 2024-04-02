@@ -91,9 +91,19 @@
         self.sortDescriptors = [ZMConversation defaultSortDescriptors];
         [self calculateKeysAffectingPredicateAndSort];
         [self createBackingList:conversations];
-        [moc.conversationListObserverCenter startObservingList:self];
+
+        [moc performBlockAndWait:^{
+            [moc.conversationListObserverCenter startObservingList:self];
+        }];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [self.moc performBlockAndWait:^{
+        [self.moc.conversationListObserverCenter removeConversationList:self];
+    }];
 }
 
 - (NSManagedObjectContext *)managedObjectContext
@@ -105,7 +115,10 @@
 {
     self.filteringPredicate = predicate;
     [self createBackingList:conversations];
-    [self.moc.conversationListObserverCenter startObservingList:self];
+
+    [self.moc performBlockAndWait:^{
+        [self.moc.conversationListObserverCenter startObservingList:self];
+    }];
 }
 
 - (void)calculateKeysAffectingPredicateAndSort;
@@ -124,11 +137,6 @@
 {
     NSArray *filtered = [conversations filteredArrayUsingPredicate:self.filteringPredicate];
     self.backingList = [[filtered sortedArrayUsingDescriptors:[ZMConversation defaultSortDescriptors]] mutableCopy];
-}
-
-- (void)dealloc
-{
-    [self.managedObjectContext.conversationListObserverCenter removeConversationList:self];
 }
 
 - (void)sortInsertConversation:(ZMConversation *)conversation
