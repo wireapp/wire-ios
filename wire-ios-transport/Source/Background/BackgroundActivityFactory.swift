@@ -250,7 +250,7 @@ import WireUtilities
             }
             self.currentBackgroundTask = nil
         } else {
-            WireLogger.backgroundActivity.info("Finishing background task: no current background task")
+            WireLogger.backgroundActivity.info("Finishing background task: no current background task", attributes: .safePublic)
         }
         stopTimer()
     }

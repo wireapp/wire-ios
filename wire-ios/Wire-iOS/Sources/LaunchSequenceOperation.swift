@@ -191,11 +191,11 @@ extension AppCenterOperation: CrashesDelegate {
     }
 
     internal func crashes(_ crashes: Crashes, didSucceedSending errorReport: ErrorReport) {
-        WireLogger.system.error("AppCenter: finished sending the crash report")
+        WireLogger.system.error("AppCenter: finished sending the crash report", attributes: .safePublic)
     }
 
     internal func crashes(_ crashes: Crashes, didFailSending errorReport: ErrorReport, withError error: Error?) {
-        WireLogger.system.error("AppCenter: failed sending the crash report with error: \(String(describing: error?.localizedDescription))")
+        WireLogger.system.error("AppCenter: failed sending the crash report with error: \(String(describing: error?.localizedDescription))", attributes: .safePublic)
     }
 }
 #endif
