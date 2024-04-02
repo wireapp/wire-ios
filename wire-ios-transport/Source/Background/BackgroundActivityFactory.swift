@@ -255,11 +255,7 @@ import WireUtilities
         stopTimer()
     }
 
-}
-
-// MARK: - Change in application state
-
-extension BackgroundActivityFactory {
+    // MARK: - Change in application state
 
     /// Register for change in application state: didEnterBackground
     func registerObserverForDidEnterBackground(_ object: NSObject, selector: Selector) {
@@ -277,7 +273,7 @@ extension BackgroundActivityFactory {
     }
 
     @objc
-    func startTimer() {
+    private func startTimer() {
         guard backgroundTaskTimer == nil else { return }
 
         backgroundTaskTimer = Timer.scheduledTimer(
@@ -294,11 +290,8 @@ extension BackgroundActivityFactory {
     }
 
     @objc
-    func stopTimer() {
-        if backgroundTaskTimer == nil { return }
-
+    private func stopTimer() {
         backgroundTaskTimer?.invalidate()
         backgroundTaskTimer = nil
     }
-
 }
