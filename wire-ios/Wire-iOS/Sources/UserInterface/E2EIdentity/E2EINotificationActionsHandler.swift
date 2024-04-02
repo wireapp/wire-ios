@@ -49,6 +49,15 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private let targetVC: UIViewController
     private var observer: NSObjectProtocol?
 
+    private weak var alertForE2EIChange: UIAlertController?
+
+    private let durationFormatter: DateComponentsFormatter = {
+        let formatter = DateComponentsFormatter()
+        formatter.allowedUnits = [.day, .hour, .minute]
+        formatter.unitsStyle = .abbreviated
+        return formatter
+    }()
+
     // MARK: - Life cycle
 
     init(
@@ -178,15 +187,6 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         let vc = UIApplication.shared.topmostViewController(onlyFullScreen: false) ?? targetVC
         vc.present(viewController, animated: true)
     }
-
-    private let durationFormatter: DateComponentsFormatter = {
-        let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = [.day, .hour, .minute]
-        formatter.unitsStyle = .abbreviated
-        return formatter
-    }()
-
-    private weak var alertForE2EIChange: UIAlertController?
 
     @MainActor
     private func showUpdateE2EIdentityCertificateAlert(canRemindLater: Bool = true) {
