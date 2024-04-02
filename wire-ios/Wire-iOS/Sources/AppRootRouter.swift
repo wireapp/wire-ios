@@ -463,7 +463,7 @@ extension AppRootRouter {
     }
 }
 
-// TO DO: THIS PART MUST BE CLENED UP
+// TODO: THIS PART MUST BE CLEANED UP
 extension AppRootRouter {
     private func applicationWillTransition(to appState: AppState) {
         appStateTransitionGroup.enter()
