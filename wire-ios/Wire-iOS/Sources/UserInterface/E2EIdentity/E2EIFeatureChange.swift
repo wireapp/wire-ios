@@ -24,12 +24,12 @@ enum E2EIChangeAction: CaseIterable {
 }
 
 extension UIAlertController {
-    private typealias MlsE2EIStrings = L10n.Localizable.FeatureConfig.Alert.MlsE2ei
+    private typealias MLSE2EIStrings = L10n.Localizable.FeatureConfig.Alert.MlsE2ei
 
-    static func alertForE2eIChangeWithActions(
-        title: String = MlsE2EIStrings.title,
-        message: String = MlsE2EIStrings.message,
-        enrollButtonText: String = MlsE2EIStrings.Button.getCertificate,
+    static func alertForE2EIChangeWithActions(
+        title: String = MLSE2EIStrings.title,
+        message: String = MLSE2EIStrings.message,
+        enrollButtonText: String = MLSE2EIStrings.Button.getCertificate,
         canRemindLater: Bool = true,
         handler: @escaping (E2EIChangeAction) -> Void) -> UIAlertController {
 
@@ -42,12 +42,12 @@ extension UIAlertController {
             let topViewController = UIApplication.shared.topmostViewController(onlyFullScreen: true)
 
             let learnMoreAction = UIAlertAction.link(
-                title: MlsE2EIStrings.Button.learnMore,
+                title: MLSE2EIStrings.Button.learnMore,
                 url: URL.wr_e2eiLearnMore,
                 presenter: topViewController) {
-//                    if !canRemindLater {
-//                        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
-//                    }
+                    if !canRemindLater {
+                        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
+                    }
                     handler(.learnMore)
                 }
 
@@ -55,7 +55,7 @@ extension UIAlertController {
                                                      style: .default) {_ in
                 handler(.getCertificate)
             }
-            let remindLaterAction = UIAlertAction(title: MlsE2EIStrings.Button.remindMeLater,
+            let remindLaterAction = UIAlertAction(title: MLSE2EIStrings.Button.remindMeLater,
                                                   style: .cancel) {_ in
                 handler(.remindLater)
             }

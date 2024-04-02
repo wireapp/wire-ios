@@ -94,8 +94,8 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             stopCertificateEnrollmentSnoozerUseCase.invoke()
             await confirmSuccessfulEnrollment(certificateDetails)
         } catch {
-            guard let gracePeriodEndDate else { return }
-            await showGetCertificateErrorAlert(canCancel: !gracePeriodEndDate.isInThePast, retry: getCertificate)
+            let canCancel = gracePeriodEndDate == nil || gracePeriodEndDate?.isInThePast == false
+            await showGetCertificateErrorAlert(canCancel: canCancel, retry: getCertificate)
         }
     }
 
@@ -156,11 +156,11 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         } cancelled: { [weak self] in
             self?.isUpdateMode = false
         }
-        await targetVC.present(alert, animated: true)
+        await presentScreen(viewController: alert)
     }
 
     @MainActor
-    private func confirmSuccessfulEnrollment(_ certificateDetails: String) async {
+    private func confirmSuccessfulEnrollment(_ certificateDetails: String) {
         lastE2EIdentityUpdateAlertDateRepository?.storeLastAlertDate(Date.now)
         stopCertificateEnrollmentSnoozerUseCase.invoke()
         let successScreen = SuccessfulCertificateEnrollmentViewController(isUpdateMode: isUpdateMode)
@@ -170,7 +170,13 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             self.isUpdateMode = false
         }
 
-        targetVC.present(successScreen, animated: true)
+        presentScreen(viewController: successScreen)
+    }
+
+    @MainActor
+    private func presentScreen(viewController: UIViewController) {
+        let vc = UIApplication.shared.topmostViewController(onlyFullScreen: false) ?? targetVC
+        vc.present(viewController, animated: true)
     }
 
     private let durationFormatter: DateComponentsFormatter = {
@@ -180,16 +186,15 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         return formatter
     }()
 
-    private var isCertificateAlertPresented: Bool = false
+    private weak var alertForE2EIChange: UIAlertController?
 
     @MainActor
     private func showUpdateE2EIdentityCertificateAlert(canRemindLater: Bool = true) {
         typealias E2EIUpdateStrings = L10n.Localizable.UpdateCertificate.Alert
 
-        guard !isCertificateAlertPresented else { return }
-        self.isCertificateAlertPresented = true
+        guard alertForE2EIChange == nil else { return }
 
-        let alert = UIAlertController.alertForE2eIChangeWithActions(
+        let alert = UIAlertController.alertForE2EIChangeWithActions(
             title: E2EIUpdateStrings.title,
             message: canRemindLater ? E2EIUpdateStrings.message : E2EIUpdateStrings.expiredMessage,
             enrollButtonText: E2EIUpdateStrings.title,
@@ -198,22 +203,21 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
             switch action {
             case .getCertificate:
-
-                Task {[weak self] in
+                Task { [weak self] in
                     await self?.getCertificate()
-                    self?.isCertificateAlertPresented = false
                 }
             case .remindLater:
                 Task { [weak self] in
                     await self?.snoozeReminder()
-                    self?.isCertificateAlertPresented = false
                 }
             case .learnMore:
-                self.isCertificateAlertPresented = false
+                break
             }
         }
+        alertForE2EIChange = alert
         lastE2EIdentityUpdateAlertDateRepository?.storeLastAlertDate(Date.now)
-        targetVC.present(alert, animated: true)
+
+        presentScreen(viewController: alert)
     }
 
     private var gracePeriodEndDate: Date? {
