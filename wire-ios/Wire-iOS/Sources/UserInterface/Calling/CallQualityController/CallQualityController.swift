@@ -95,7 +95,8 @@ class CallQualityController: NSObject {
         switch reason {
         case .normal, .stillOngoing:
             handleCallSuccess(callStartDate: callStartDate, callEndDate: eventDate)
-        case .answeredElsewhere: break
+        case .answeredElsewhere:
+            break
         case .securityDegraded:
             // handled in CallController, ignore
             break
