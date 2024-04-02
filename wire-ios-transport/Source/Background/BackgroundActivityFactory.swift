@@ -129,7 +129,10 @@ import WireUtilities
     @objc public func resume() {
         isolationQueue.sync {
             if currentBackgroundTask == UIBackgroundTaskIdentifier.invalid {
-                WireLogger.backgroundActivity.info("Resume: currentBackgroundTask is invalid, setting it to nil")
+                WireLogger.backgroundActivity.info(
+                    "Resume: currentBackgroundTask is invalid, setting it to nil",
+                    attributes: .safePublic
+                )
                 currentBackgroundTask = nil
             }
         }
@@ -143,19 +146,31 @@ import WireUtilities
     @objc public func endBackgroundActivity(_ activity: BackgroundActivity) {
         isolationQueue.sync {
             guard currentBackgroundTask != UIBackgroundTaskIdentifier.invalid else {
-                WireLogger.backgroundActivity.info("End background activity: current background task is invalid")
+                WireLogger.backgroundActivity.info(
+                    "End background activity: current background task is invalid",
+                    attributes: .safePublic
+                )
                 return
             }
 
             let count = SafeValueForLogging(activities.count)
             if activities.remove(activity) != nil {
-                WireLogger.backgroundActivity.info("End background activity: removed \(activity), \(count) others left.")
+                WireLogger.backgroundActivity.info(
+                    "End background activity: removed \(activity), \(count) others left.",
+                    attributes: .safePublic
+                )
             } else {
-                WireLogger.backgroundActivity.info("End background activity: could not remove \(activity), \(count) others left")
+                WireLogger.backgroundActivity.info(
+                    "End background activity: could not remove \(activity), \(count) others left",
+                    attributes: .safePublic
+                )
             }
 
             if activities.isEmpty {
-                WireLogger.backgroundActivity.info("End background activity: no activities left, finishing")
+                WireLogger.backgroundActivity.info(
+                    "End background activity: no activities left, finishing",
+                    attributes: .safePublic
+                )
                 finishBackgroundTask()
             }
         }
@@ -168,13 +183,19 @@ import WireUtilities
         return isolationQueue.sync {
             let activityName = ActivityName(name: name)
             guard let activityManager = activityManager else {
-                WireLogger.backgroundActivity.info("Start activity <\(activityName)>: failed, activityManager is nil")
+                WireLogger.backgroundActivity.info(
+                    "Start activity <\(activityName)>: failed, activityManager is nil",
+                    attributes: .safePublic
+                )
                 return nil
             }
 
             // Do not start new tasks if the background timer is running.
             guard currentBackgroundTask != UIBackgroundTaskIdentifier.invalid else {
-                WireLogger.backgroundActivity.info("Start activity <\(activityName)>: failed, currentBackgroundTask is invalid")
+                WireLogger.backgroundActivity.info(
+                    "Start activity <\(activityName)>: failed, currentBackgroundTask is invalid",
+                    attributes: .safePublic
+                )
                 return nil
             }
 
@@ -182,22 +203,37 @@ import WireUtilities
             let activity = BackgroundActivity(name: name, expirationHandler: expirationHandler)
 
             if currentBackgroundTask == nil {
-                WireLogger.backgroundActivity.info("Start activity <\(activityName)>: no current background task, starting new")
+                WireLogger.backgroundActivity.info(
+                    "Start activity <\(activityName)>: no current background task, starting new",
+                    attributes: .safePublic
+                )
                 let task = activityManager.beginBackgroundTask(withName: name, expirationHandler: handleExpiration)
                 guard task != UIBackgroundTaskIdentifier.invalid else {
-                    WireLogger.backgroundActivity.info("Start activity <\(activityName)>: failed to begin new background task")
+                    WireLogger.backgroundActivity.info(
+                        "Start activity <\(activityName)>: failed to begin new background task",
+                        attributes: .safePublic
+                    )
                     return nil
                 }
                 let value = SafeValueForLogging(task.rawValue)
-                WireLogger.backgroundActivity.info("Start activity <\(activityName)>: started new background task: \(value)")
+                WireLogger.backgroundActivity.info(
+                    "Start activity <\(activityName)>: started new background task: \(value)",
+                    attributes: .safePublic
+                )
                 currentBackgroundTask = task
             }
 
             let (inserted, _) = activities.insert(activity)
             if inserted {
-                WireLogger.backgroundActivity.info("Start activity <\(activityName)>: started \(activity)")
+                WireLogger.backgroundActivity.info(
+                    "Start activity <\(activityName)>: started \(activity)",
+                    attributes: .safePublic
+                )
             } else {
-                WireLogger.backgroundActivity.info("Start activity <\(activityName)>: could not insert activity \(activity)")
+                WireLogger.backgroundActivity.info(
+                    "Start activity <\(activityName)>: could not insert activity \(activity)",
+                    attributes: .safePublic
+                )
             }
             return activity
         }
@@ -206,17 +242,25 @@ import WireUtilities
     /// Called on main queue when the background timer is about to expire.
     private func handleExpiration() {
         guard let activityManager = self.activityManager else {
-            WireLogger.backgroundActivity.info("Handle expiration: failed, activityManager is nil")
+            WireLogger.backgroundActivity.info(
+                "Handle expiration: failed, activityManager is nil",
+                attributes: .safePublic
+            )
             return
         }
 
         let value = SafeValueForLogging(activityManager.stateDescription)
-        WireLogger.backgroundActivity.info("Handle expiration: \(value)")
+        WireLogger.backgroundActivity.info(
+            "Handle expiration: \(value)",
+            attributes: .safePublic
+        )
         let activities = isolationQueue.sync {
             return self.activities
         }
         activities.forEach { activity in
-            WireLogger.backgroundActivity.info("Handle expiration: notifying \(activity)")
+            WireLogger.backgroundActivity.info(
+                "Handle expiration: notifying \(activity)", attributes: .safePublic
+            )
             activity.expirationHandler?()
         }
         isolationQueue.sync {
@@ -241,16 +285,25 @@ import WireUtilities
         if let currentBackgroundTask = self.currentBackgroundTask {
             if let activityManager = activityManager {
                 let value = SafeValueForLogging(currentBackgroundTask.rawValue)
-                WireLogger.backgroundActivity.info("Finishing background task: \(value)")
+                WireLogger.backgroundActivity.info(
+                    "Finishing background task: \(value)",
+                    attributes: .safePublic
+                )
                 // We might get killed pretty soon, let's flush the logs
                 ZMSLog.sync()
                 activityManager.endBackgroundTask(currentBackgroundTask)
             } else {
-                WireLogger.backgroundActivity.info("Finishing background task: failed, activityManager is nil")
+                WireLogger.backgroundActivity.info(
+                    "Finishing background task: failed, activityManager is nil",
+                    attributes: .safePublic
+                )
             }
             self.currentBackgroundTask = nil
         } else {
-            WireLogger.backgroundActivity.info("Finishing background task: no current background task", attributes: .safePublic)
+            WireLogger.backgroundActivity.info(
+                "Finishing background task: no current background task",
+                attributes: .safePublic
+            )
         }
         stopTimer()
     }
@@ -281,7 +334,10 @@ import WireUtilities
             repeats: false,
             block: { [weak self] timer in
                 self?.mainQueue.async { [weak self] in
-                    WireLogger.backgroundActivity.info("Handle expiration when the background task has timed out")
+                    WireLogger.backgroundActivity.info(
+                        "Handle expiration when the background task has timed out",
+                        attributes: .safePublic
+                    )
                     self?.handleExpiration()
                     timer.invalidate()
                 }
