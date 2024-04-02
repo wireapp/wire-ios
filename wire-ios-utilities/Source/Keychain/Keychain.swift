@@ -37,7 +37,7 @@ public enum Keychain {
     // MARK: - Keychain access
 
     public static func storeItem<T: KeychainItem>(_ item: T, value: T.Value) throws {
-        WireLogger.keychain.info("[Keychain] storing item (\(item))")
+        WireLogger.keychain.info("storing item (\(item))")
 
         let query = item.queryForSetting(value: value) as CFDictionary
         let status = SecItemAdd(query, nil)
@@ -48,7 +48,7 @@ public enum Keychain {
     }
 
     public static func fetchItem<T: KeychainItem>(_ item: T) throws -> T.Value {
-        WireLogger.keychain.info("[Keychain] fetching item (\(item))")
+        WireLogger.keychain.info("fetching item (\(item))")
 
         var value: CFTypeRef?
         let status = SecItemCopyMatching(item.queryForGettingValue as CFDictionary, &value)
@@ -65,7 +65,7 @@ public enum Keychain {
     }
 
     public static func deleteItem<T: KeychainItem>(_ item: T) throws {
-        WireLogger.keychain.info("[Keychain] deleting item (\(item))")
+        WireLogger.keychain.info("deleting item (\(item))")
 
         let status = SecItemDelete(item.queryForGettingValue as CFDictionary)
 
