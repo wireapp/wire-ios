@@ -94,7 +94,7 @@ extension ObjectChangeInfo {
 
 }
 
-class NotificationDispatcherTests: NotificationDispatcherTestBase {
+final class NotificationDispatcherTests: NotificationDispatcherTestBase {
 
     class Wrapper {
         let dispatcher: NotificationDispatcher
