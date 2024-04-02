@@ -455,6 +455,11 @@ extension NotificationSession: PushNotificationStrategyDelegate {
             return nil
         }
 
+        if conversation.isForcedReadOnly {
+            WireLogger.calling.info("should not handle call event: conversation is forced readonly")
+            return nil
+        }
+
         guard VoIPPushHelper.isAVSReady else {
             WireLogger.calling.warn("should not handle call event: AVS is not ready")
             return nil
