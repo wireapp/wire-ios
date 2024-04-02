@@ -555,8 +555,6 @@ final class ClientListViewController: UIViewController,
             for (client, mlsClientId) in mlsClients {
                 if let e2eiCertificate = certificates.first(where: { $0.clientId == mlsClientId.rawValue }) {
                     client.e2eIdentityCertificate = e2eiCertificate
-                } else {
-                    client.e2eIdentityCertificate = makeNotActivatedE2EIdenityCertificate(client: client)
                 }
                 client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint
             }
@@ -597,24 +595,6 @@ final class ClientListViewController: UIViewController,
         }
 
         return clients.first { $0.clientId == selectedUserClient.clientId }
-    }
-
-    // MARK: Helpers
-
-    private func makeNotActivatedE2EIdenityCertificate(client: UserClient) -> E2eIdentityCertificate? {
-        guard let clientID = MLSClientID(userClient: client) else {
-            return nil
-        }
-
-        return E2eIdentityCertificate(
-            clientId: clientID.rawValue,
-            certificateDetails: "",
-            mlsThumbprint: "",
-            notValidBefore: .now,
-            expiryDate: .now,
-            certificateStatus: .notActivated,
-            serialNumber: ""
-        )
     }
 }
 
