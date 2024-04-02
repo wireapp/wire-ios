@@ -184,7 +184,7 @@ extension ConversationViewController: E2EIPrivacyWarningPresenter {
     func presentE2EIPrivacyWarningAlert(_ notification: Notification) {
         switch notification.alertType {
         case .incomingCall?:
-            let alert = UIAlertController.incomingCallDegradedMLSConference { continueDegradedCall in
+            let alert = UIAlertController.makeIncomingDegradedMLSCall { continueDegradedCall in
 
                 if continueDegradedCall {
                     self.conversation.acknowledgePrivacyChanges()
@@ -195,12 +195,12 @@ extension ConversationViewController: E2EIPrivacyWarningPresenter {
             present(alert, animated: true)
 
         case .outgoingCall?:
-            let alert = UIAlertController.degradedMLSConference { continueDegradedCall in
+            let alert = UIAlertController.makeOutgoingDegradedMLSCall { continueDegradedCall in
 
                 if continueDegradedCall {
                     self.conversation.acknowledgePrivacyChanges()
                 }
-                    E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: continueDegradedCall)
+                E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: continueDegradedCall)
             }
 
             present(alert, animated: true)

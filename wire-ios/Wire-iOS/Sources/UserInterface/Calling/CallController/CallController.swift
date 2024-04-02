@@ -174,39 +174,34 @@ extension CallController: WireCallCenterCallStateObserver {
 
         let degradationState = voiceChannel.degradationState
 
-        var reason: CallDegradationReason?
-        var callEnded: Bool?
-
-        switch (degradationState, callState) {
-        case (.incoming(reason: let degradationReason), .incoming(video: _, shouldRing: true, degraded: true)):
-            reason = degradationReason
-            callEnded = false
-        case (_, .terminating(reason: .securityDegraded)):
-            reason = voiceChannel.degradationReason
-            callEnded = true
-        default:
-            break
+        let alertCompletion: (AlertChoice) -> Void = { [weak self] choice in
+            switch choice {
+            case .cancel:
+                self?.cancelCall(conversation: conversation)
+                continueCallBlock(false)
+            case .confirm:
+                self?.acceptDegradedCall(conversation: conversation)
+                continueCallBlock(true)
+            case .ok:
+                continueCallBlock(true)
+            case .alreadyPresented:
+                // do nothing
+                break
+            }
         }
 
-        if let callEnded, let reason {
-            // only present when incoming ringing and degraded
-            router?.presentSecurityDegradedAlert(for: reason, callEnded: callEnded) { [weak self] choice in
-                switch choice {
-                case .cancel:
-                    self?.cancelCall(conversation: conversation)
-                    continueCallBlock(false)
-                case .confirm:
-                    self?.acceptDegradedCall(conversation: conversation)
-                    continueCallBlock(true)
-                case .ok:
-                    continueCallBlock(true)
-                case .alreadyPresented:
-                    // do nothing
-                    break
-                }
+        switch (degradationState, callState) {
+        case (.incoming(reason: let degradationReason),
+              .incoming(video: _, shouldRing: true, degraded: true)):
+            router?.presentIncomingSecurityDegradedAlert(for: degradationReason,
+                                                 completion: alertCompletion)
+        case (_, .terminating(reason: .securityDegraded)):
+            if let reason = voiceChannel.degradationReason {
+                router?.presentEndingSecurityDegradedAlert(for: reason,
+                                                           completion: alertCompletion)
             }
 
-        } else {
+        default:
             // no alert to show, continue
             continueCallBlock(true)
             // dismiss alert that would be there

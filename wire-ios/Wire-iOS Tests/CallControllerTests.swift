@@ -162,7 +162,8 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         callController_callCenterDidChange(callState: callState, conversation: conversation)
 
         // THEN
-        XCTAssertFalse(router.presentSecurityDegradedAlertIsCalled)
+        XCTAssertFalse(router.presentIncomingSecurityDegradedAlertIsCalled)
+        XCTAssertFalse(router.presentEndingSecurityDegradedAlertIsCalled)
     }
 }
 
@@ -211,12 +212,21 @@ final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
         hideCallTopOverlayIsCalled = true
     }
 
-    var expectedAlertChoice: AlertChoice?
-    var presentSecurityDegradedAlertIsCalled = false
-    func presentSecurityDegradedAlert(for reason: CallDegradationReason, callEnded: Bool, completion: @escaping (AlertChoice) -> Void) {
-        presentSecurityDegradedAlertIsCalled = true
-        if let expectedAlertChoice {
-            completion(expectedAlertChoice)
+    var expectedEndedAlertChoice: AlertChoice?
+    var presentEndingSecurityDegradedAlertIsCalled = false
+    func presentEndingSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void) {
+        presentEndingSecurityDegradedAlertIsCalled = true
+        if let expectedEndedAlertChoice {
+            completion(expectedEndedAlertChoice)
+        }
+    }
+
+    var expectedIncomingAlertChoice: AlertChoice?
+    var presentIncomingSecurityDegradedAlertIsCalled = false
+    func presentIncomingSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void) {
+        presentIncomingSecurityDegradedAlertIsCalled = true
+        if let expectedIncomingAlertChoice {
+            completion(expectedIncomingAlertChoice)
         }
     }
 

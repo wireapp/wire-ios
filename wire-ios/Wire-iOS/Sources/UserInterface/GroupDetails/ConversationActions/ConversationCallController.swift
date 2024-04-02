@@ -95,7 +95,7 @@ final class ConversationCallController: NSObject {
     // MARK: - Helper
 
     private func presentIncomingCallDegradedAlert() {
-        let alert = UIAlertController.incomingCallDegradedMLSConference(confirmationBlock: { answerDegradedCall in
+        let alert = UIAlertController.makeIncomingDegradedMLSCall(confirmationBlock: { answerDegradedCall in
             E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: answerDegradedCall)
         })
         target.present(alert, animated: true)

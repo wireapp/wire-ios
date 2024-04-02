@@ -24,7 +24,7 @@ extension UIAlertController {
 
     typealias DegradedCallLocale = L10n.Localizable.Call.Degraded
 
-    static func degradedCall(
+    static func makeDegradedProteusCall(
         degradedUser: UserType?,
         callEnded: Bool = false,
         confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil
@@ -53,38 +53,14 @@ extension UIAlertController {
         return controller
     }
 
-    static func degradedCallTitle(forCallEnded callEnded: Bool) -> String {
-        return callEnded ? DegradedCallLocale.Ended.Alert.title : DegradedCallLocale.Alert.title
-    }
-
-    static func degradedCallMessage(forUser degradedUser: UserType?, callEnded: Bool) -> String {
-        if let user = degradedUser {
-            if callEnded {
-                return user.isSelfUser ?
-                DegradedCallLocale.Ended.Alert.Message.`self` :
-                DegradedCallLocale.Ended.Alert.Message.user(user.name ?? "")
-            } else {
-                return user.isSelfUser ?
-                DegradedCallLocale.Alert.Message.`self` :
-                DegradedCallLocale.Alert.Message.user(user.name ?? "")
-            }
-        } else {
-            return callEnded ?
-            DegradedCallLocale.Ended.Alert.Message.unknown :
-            DegradedCallLocale.Alert.Message.unknown
-        }
-    }
-
-    static func degradedMLSConference(
-        conferenceEnded: Bool = false,
+    static func makeOutgoingDegradedMLSCall(
         confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil,
         cancelBlock: (() -> Void)? = nil) -> UIAlertController {
 
             typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
-            typealias EndedCall = L10n.Localizable.Call.Mls.Degraded.Ended.Alert
 
             let title = DegradedCall.title
-            let message = conferenceEnded ? EndedCall.message : DegradedCall.message
+            let message = DegradedCall.message
             let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
             // Add actions
@@ -103,8 +79,36 @@ extension UIAlertController {
             return controller
         }
 
-    static func incomingCallDegradedMLSConference(
-        confirmationBlock: (@escaping (_ answerDegradedCall: Bool) -> Void)) -> UIAlertController {
+    static func makeEndingDegradedMLSCall(
+        confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil,
+        cancelBlock: (() -> Void)? = nil) -> UIAlertController {
+
+            typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
+            typealias EndedCall = L10n.Localizable.Call.Mls.Degraded.Ended.Alert
+
+            let title = DegradedCall.title
+            let message = EndedCall.message
+            let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+            // Add actions
+            if let confirmationBlock = confirmationBlock {
+                controller.addAction(UIAlertAction(title: DegradedCall.Action.continue, style: .default) { _ in
+                    confirmationBlock(true)
+                })
+
+                controller.addAction(.cancel(cancelBlock))
+            } else {
+                controller.addAction(.ok({ _ in
+                    cancelBlock?()
+                }))
+            }
+
+            return controller
+        }
+
+    static func makeIncomingDegradedMLSCall(
+        confirmationBlock: (@escaping (_ answerDegradedCall: Bool) -> Void)
+    ) -> UIAlertController {
 
             typealias DegradedCall = L10n.Localizable.Call.Mls.Degraded.Alert
             typealias IncomingCall = L10n.Localizable.Call.Mls.Degraded.Incoming.Alert
@@ -125,4 +129,28 @@ extension UIAlertController {
 
             return controller
         }
+
+    // MARK: - Private
+
+    private static func degradedCallTitle(forCallEnded callEnded: Bool) -> String {
+        return callEnded ? DegradedCallLocale.Ended.Alert.title : DegradedCallLocale.Alert.title
+    }
+
+    private static func degradedCallMessage(forUser degradedUser: UserType?, callEnded: Bool) -> String {
+        if let user = degradedUser {
+            if callEnded {
+                return user.isSelfUser ?
+                DegradedCallLocale.Ended.Alert.Message.`self` :
+                DegradedCallLocale.Ended.Alert.Message.user(user.name ?? "")
+            } else {
+                return user.isSelfUser ?
+                DegradedCallLocale.Alert.Message.`self` :
+                DegradedCallLocale.Alert.Message.user(user.name ?? "")
+            }
+        } else {
+            return callEnded ?
+            DegradedCallLocale.Ended.Alert.Message.unknown :
+            DegradedCallLocale.Alert.Message.unknown
+        }
+    }
 }
