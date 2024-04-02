@@ -102,7 +102,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     @MainActor
     public func updateCertificate() async {
         do {
-            guard let result = try await e2eIdentityCertificateUpdateStatus?.invoke() else { return }
+            let result = try await e2eIdentityCertificateUpdateStatus?.invoke() else { return }
 
             switch result {
             case .noAction:
@@ -140,7 +140,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
                 self.isUpdateMode = false
             }
         }
-        await targetVC.present(alert, animated: true)
+        await presentScreen(viewController: alert)
     }
 
     // MARK: - Helpers
@@ -284,5 +284,4 @@ extension UIAlertController {
             controller.addAction(okAction)
             return controller
         }
-
 }
