@@ -115,7 +115,7 @@ class ZMMessageCategorizationTests: ZMBaseManagedObjectTest {
 
         // GIVEN
         let message = try! self.conversation.appendImage(from: self.verySmallJPEGData())
-        uiMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
+        uiMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
 
         // THEN
         XCTAssertEqual(message.categorization, [MessageCategory.image, MessageCategory.excludedFromCollection])
