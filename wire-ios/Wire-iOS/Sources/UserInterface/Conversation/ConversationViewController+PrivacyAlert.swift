@@ -167,3 +167,52 @@ extension ConversationViewController {
     }
 
 }
+<<<<<<< HEAD
+=======
+
+// MARK: - E2EIPrivacyWarningPresenter
+
+extension ConversationViewController: E2EIPrivacyWarningPresenter {
+
+    func presentE2EIPrivacyWarningAlert(_ notification: Notification) {
+        switch notification.alertType {
+        case .incomingCall?:
+            let alert = UIAlertController.makeIncomingDegradedMLSCall { continueDegradedCall in
+
+                if continueDegradedCall {
+                    self.conversation.acknowledgePrivacyChanges()
+                }
+                E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: continueDegradedCall)
+            }
+
+            present(alert, animated: true)
+
+        case .outgoingCall?:
+            let alert = UIAlertController.makeOutgoingDegradedMLSCall { continueDegradedCall in
+
+                if continueDegradedCall {
+                    self.conversation.acknowledgePrivacyChanges()
+                }
+                E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: continueDegradedCall)
+            }
+
+            present(alert, animated: true)
+
+        case .message?:
+            let content = e2eIPrivacyWarningAlertContent { sendAnyway in
+
+                if sendAnyway {
+                    self.conversation.acknowledgePrivacyChanges()
+                }
+
+                E2EIPrivacyWarningChecker.e2eiPrivacyWarningConfirm(sendAnyway: sendAnyway)
+            }
+
+            presentAlert(with: content)
+
+        case .none:
+            assertionFailure("wrong type of notification sent!")
+        }
+    }
+}
+>>>>>>> def1817577 (fix: degraded popup for calling on mls conversation - WPB-7238 (#1199))

@@ -39,7 +39,7 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
 
         func dependenciesAreResolved() async throws -> Bool {
             let isSecurityLevelDegraded = await self.context.perform {
-                message.conversation?.securityLevel == .secureWithIgnored
+                message.conversation?.isDegraded == true
             }
 
             if isSecurityLevelDegraded {
