@@ -191,7 +191,7 @@ private extension CallClosedReason {
             return "internal_error"
         case .securityDegraded:
             return "security_degraded"
-        case .anweredElsewhere:
+        case .answeredElsewhere:
             return "answered_elsewhere"
         case .timeout, .timeoutECONN:
             return "timeout"
