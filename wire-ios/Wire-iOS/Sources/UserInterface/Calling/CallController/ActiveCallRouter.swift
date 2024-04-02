@@ -168,7 +168,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     // MARK: - Alerts
 
     func presentEndingSecurityDegradedAlert(for reason: CallDegradationReason,
-                                                completion: @escaping (AlertChoice) -> Void) {
+                                            completion: @escaping (AlertChoice) -> Void) {
 
         guard self.presentedDegradedAlert == nil else {
             completion(.alreadyPresented)
