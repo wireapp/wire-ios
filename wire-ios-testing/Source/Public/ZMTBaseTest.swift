@@ -21,10 +21,10 @@ import Foundation
 extension ZMTBaseTest {
     @objc
     public static func checkForMemoryLeaksAfterTestClassCompletes() {
-        if MemoryReferenceDebugger.aliveObjects.count > 0 {
-            let description = "Leaked: \(MemoryReferenceDebugger.aliveObjectsDescription)"
-            print(description)
-            XCTFail(description)
+        let leakedObjects = "Leaked: \(MemoryReferenceDebugger.aliveObjectsDescription)"
+        XCTAssert(MemoryReferenceDebugger.aliveObjects.isEmpty, leakedObjects)
+        if !MemoryReferenceDebugger.aliveObjects.isEmpty {
+            print(leakedObjects)
         }
     }
 
