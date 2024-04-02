@@ -114,19 +114,17 @@ extension ConversationListViewController.ViewModel {
 
         updateObserverTokensForActiveTeam()
 
-        notificationCenter.addObserver(
-            self,
-            selector: #selector(handleApplicationDidBecomeActiveNotification(_:)),
-            name: UIApplication.didBecomeActiveNotification,
-            object: nil
-        )
+        notificationCenter.addObserver(forName: UIApplication.didBecomeActiveNotification,
+                                       object: nil,
+                                       queue: .main) { [weak self] _ in
+            self?.updateE2EICertifiedStatus()
+        }
 
-        notificationCenter.addObserver(
-            self,
-            selector: #selector(updateE2EICertificateStatus),
-            name: .e2eiCertificateChanged,
-            object: nil
-        )
+        notificationCenter.addObserver(forName: .e2eiCertificateChanged,
+                                       object: nil,
+                                       queue: .main) { [weak self] _ in
+            self?.updateE2EICertifiedStatus()
+        }
     }
 
     func savePendingLastRead() {
@@ -248,27 +246,6 @@ extension ConversationListViewController.ViewModel: ZMInitialSyncCompletionObser
     func initialSyncCompleted() {
         requestMarketingConsentIfNeeded()
     }
-}
-
-// MARK: - Observing UIApplication Life Cycle
-
-extension ConversationListViewController.ViewModel {
-
-    @objc
-    private func handleApplicationDidBecomeActiveNotification(_ notification: Notification) {
-        updateE2EICertifiedStatus()
-    }
-}
-
-// MARK: - Observing certificate changes
-
-extension ConversationListViewController.ViewModel {
-
-    @objc
-    private func updateE2EICertificateStatus() {
-        updateE2EICertifiedStatus()
-    }
-
 }
 
 extension Settings {

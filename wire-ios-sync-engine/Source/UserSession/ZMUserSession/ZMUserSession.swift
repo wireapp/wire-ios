@@ -1072,7 +1072,4 @@ extension ZMUserSession: ContextProvider {
 public extension Notification.Name {
     // This notification is used to check the E2EIdentity Certificate expiry status
     static let checkForE2EICertificateExpiryStatus = NSNotification.Name("CheckForE2EICertificateExpiryStatus")
-
-    // This notification is used to notify of end-to-end identity certificate changes
-    static let e2eiCertificateChanged = NSNotification.Name("E2EICertificateStatusChanged")
 }
