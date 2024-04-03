@@ -31,39 +31,39 @@ enum NetworkQualityType: Int, Comparable {
     }
 }
 
-final class NetworkConditionHelper {
+struct NetworkConditionHelper {
 
-    static var shared: NetworkConditionHelper = {
-        return NetworkConditionHelper()
-    }()
+    private let networkInfo = CTTelephonyNetworkInfo()
+    private let serverConnection: ServerConnection
 
-    let networkInfo: CTTelephonyNetworkInfo
-
-    init() {
-        networkInfo = CTTelephonyNetworkInfo()
+    init(serverConnection: ServerConnection) {
+        self.serverConnection = serverConnection
     }
 
     func qualityType() -> NetworkQualityType {
-        let serverConnection = SessionManager.shared?.serverConnection
-
-        if serverConnection?.isOffline == true {
+        if serverConnection.isOffline {
             return .unknown
-        } else if serverConnection?.isMobileConnection == false {
+        }
+
+        guard serverConnection.isMobileConnection else {
             return .typeWifi
         }
 
-        return bestQualityType(cellularTypeDict: networkInfo.serviceCurrentRadioAccessTechnology)
+        return findBestQualityType()
     }
 
-    func bestQualityType(cellularTypeDict: [String: String]?) -> NetworkQualityType {
+    private func findBestQualityType() -> NetworkQualityType {
+        guard let cellularTypeDict = networkInfo.serviceCurrentRadioAccessTechnology else {
+            return .unknown
+        }
 
-        guard let cellularTypeDict = cellularTypeDict else { return .unknown }
-
-        return cellularTypeDict.values.map { cellularTypeString in
-            self.qualityType(from: cellularTypeString)}.sorted().last ?? .unknown
+        return cellularTypeDict.values
+            .map(qualityType(from:))
+            .sorted()
+            .last ?? .unknown
     }
 
-    private func qualityType(from cellularTypeString: String?) -> NetworkQualityType {
+    private func qualityType(from cellularTypeString: String) -> NetworkQualityType {
         switch cellularTypeString {
         case CTRadioAccessTechnologyGPRS,
              CTRadioAccessTechnologyEdge,
