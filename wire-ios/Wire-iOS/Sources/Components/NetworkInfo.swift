@@ -19,18 +19,6 @@ import Foundation
 import CoreTelephony
 import WireSyncEngine
 
-enum NetworkQualityType: Int, Comparable {
-    case unknown = 0
-    case type2G
-    case type3G
-    case type4G
-    case typeWifi
-
-    static func < (lhs: NetworkQualityType, rhs: NetworkQualityType) -> Bool {
-        return lhs.rawValue < rhs.rawValue
-    }
-}
-
 /// An object that provides information of changes to the user’s network conditions.
 struct NetworkInfo {
 
