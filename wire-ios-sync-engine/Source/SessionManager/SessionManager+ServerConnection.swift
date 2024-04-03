@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import class WireTransport.ZMReachability
 
 // sourcery: AutoMockable
 public protocol ServerConnection {
@@ -26,14 +27,11 @@ public protocol ServerConnection {
 
 }
 
-extension SessionManager: ServerConnection {
+extension ZMReachability: ServerConnection {
 
     public var isOffline: Bool {
-        return !reachability.mayBeReachable
+        return !mayBeReachable
     }
 
-    public var isMobileConnection: Bool {
-        return reachability.isMobileConnection
-    }
-
+    // isMobileConnection is declared already
 }

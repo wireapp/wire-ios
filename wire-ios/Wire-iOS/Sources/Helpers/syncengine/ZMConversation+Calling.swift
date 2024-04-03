@@ -97,7 +97,7 @@ extension ZMConversation {
             return
         }
 
-        let networkInfo = NetworkInfo(serverConnection: sessionManager)
+        let networkInfo = NetworkInfo(serverConnection: sessionManager.environment.reachability)
 
         if networkInfo.qualityType() == .type2G {
             let badConnectionController = UIAlertController(

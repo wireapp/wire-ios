@@ -256,7 +256,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     fileprivate let sessionLoadingQueue: DispatchQueue = DispatchQueue(label: "sessionLoadingQueue")
 
-    var environment: BackendEnvironmentProvider {
+    public internal(set) var environment: BackendEnvironmentProvider {
         didSet {
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
