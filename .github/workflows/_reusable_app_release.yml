@@ -212,7 +212,7 @@ jobs:
           **AWS S3 Paths:**
           `${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`
           **Triggered by:** ${{ github.triggering_actor }}
-          **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           EOF
           )
           echo "NOTIFICATION_SUCCESS_TEXT<<EOF" >> $GITHUB_ENV
@@ -228,9 +228,9 @@ jobs:
         id: notification_failure_text
         run: |                          
           NOTIFICATION_FAILURE_TEXT=$(cat << EOF
-          🆘 Build **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) failed 🆘\n
-          **Triggered by:** ${{ github.triggering_actor }}\n
-          **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
+          🆘 Build **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) failed 🆘
+          **Triggered by:** ${{ github.triggering_actor }}
+          **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           EOF
           )
           echo "NOTIFICATION_FAILURE_TEXT<<EOF" >> $GITHUB_ENV
