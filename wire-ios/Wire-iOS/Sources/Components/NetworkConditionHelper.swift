@@ -50,15 +50,16 @@ struct NetworkInfo {
             return .typeWifi
         }
 
-        return findBestQualityType()
-    }
-
-    private func findBestQualityType() -> NetworkQualityType {
-        guard let cellularTypeDict = cellularNetworkInfo.serviceCurrentRadioAccessTechnology else {
+        guard let radioAccessTechnology = cellularNetworkInfo.serviceCurrentRadioAccessTechnology else {
             return .unknown
         }
 
-        return cellularTypeDict.values
+        return findBestQualityType(of: radioAccessTechnology)
+    }
+
+    func findBestQualityType(of radioAccessTechnology: [String: String]) -> NetworkQualityType {
+        radioAccessTechnology
+            .values
             .map(qualityType(from:))
             .sorted()
             .last ?? .unknown

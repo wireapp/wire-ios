@@ -54,14 +54,14 @@ final class NetworkInfoTests: XCTestCase {
         mockServerConnection.isMobileConnection = true
 
         let networkInfo = makeNetworkInfo()
-        let mockServiceCurrentRadioAccessTechnology = [
+        let radioAccessTechnology = [
             "0": CTRadioAccessTechnologyEdge,
             "1": CTRadioAccessTechnologyLTE,
             "2": CTRadioAccessTechnologyHSDPA
         ]
 
         // when & then
-        let qualityType = networkInfo.qualityType()
+        let qualityType = networkInfo.findBestQualityType(of: radioAccessTechnology)
         XCTAssertEqual(qualityType, .type4G)
     }
 
