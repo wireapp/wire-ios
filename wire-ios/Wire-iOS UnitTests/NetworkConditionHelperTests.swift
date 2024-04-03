@@ -16,16 +16,23 @@
 //
 
 import XCTest
-@testable import Wire
 import CoreTelephony
+import WireSyncEngineSupport
+
+@testable import Wire
 
 final class NetworkConditionHelperTests: XCTestCase {
+
+    private var mockServerConnection: MockServerConnection!
 
     var sut: NetworkConditionHelper!
 
     override func setUp() {
         super.setUp()
-        sut = NetworkConditionHelper()
+        mockServerConnection = MockServerConnection()
+        mockServerConnection.isOffline = true
+        mockServerConnection.isMobileConnection = false
+        sut = NetworkConditionHelper(serverConnection: mockServerConnection)
     }
 
     override func tearDown() {
@@ -35,19 +42,20 @@ final class NetworkConditionHelperTests: XCTestCase {
 
     // NOTE: this test can fail if your local network conditions are bad/offline?!
     func testThatSharedInstanceReturnQualityTypeWifi() throws {
-        throw XCTSkip("disabled with the Xcode 15.3 update temporarily!")
-
         SessionManager.shared?.markNetworkSessionsAsReady(true)
-        XCTAssertEqual(NetworkConditionHelper.shared.qualityType(), .typeWifi)
+        XCTAssertEqual(sut.qualityType(), .typeWifi)
     }
 
     func testThatBestQualityTypeIsChosen() {
         // GIVEN
-        let mockServiceCurrentRadioAccessTechnology = ["0": CTRadioAccessTechnologyEdge,
-                                                       "1": CTRadioAccessTechnologyLTE,
-                                                       "2": CTRadioAccessTechnologyHSDPA]
+        let mockServiceCurrentRadioAccessTechnology = [
+            "0": CTRadioAccessTechnologyEdge,
+            "1": CTRadioAccessTechnologyLTE,
+            "2": CTRadioAccessTechnologyHSDPA
+        ]
 
         // WHEN & THEN
-        XCTAssertEqual(sut.bestQualityType(cellularTypeDict: mockServiceCurrentRadioAccessTechnology), .type4G)
+        let qualityType = sut.qualityType()
+        XCTAssertEqual(qualityType, .type4G)
     }
 }
