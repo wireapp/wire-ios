@@ -503,6 +503,7 @@
 		E608F4B22B5EACE000FF98A1 /* OneOnOneResolvedState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E608F4B12B5EACE000FF98A1 /* OneOnOneResolvedState.swift */; };
 		E61B3F382BA85923005FF9F8 /* OneOnOneConversationMigrationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61B3F372BA85923005FF9F8 /* OneOnOneConversationMigrationAction.swift */; };
 		E61B3F3A2BA9C9FC005FF9F8 /* MigrateMLSOneOnOneConversationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61B3F392BA9C9FC005FF9F8 /* MigrateMLSOneOnOneConversationError.swift */; };
+		E6707E902BBD683F00469D57 /* PINCache in Frameworks */ = {isa = PBXBuildFile; productRef = E6707E8F2BBD683F00469D57 /* PINCache */; };
 		E68D9FF12B0F595100EFE04F /* store2-108-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E68D9FF02B0F594600EFE04F /* store2-108-0.wiredatabase */; };
 		E68D9FF32B0F5B4600EFE04F /* store2-105-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E68D9FF22B0F5B4600EFE04F /* store2-105-0.wiredatabase */; };
 		E6A239902B7F6F50004E48C2 /* MockActorOneOnOneMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A2398F2B7F6F50004E48C2 /* MockActorOneOnOneMigrator.swift */; };
@@ -515,7 +516,6 @@
 		E6BFE8382B3320C7000F0FBE /* DatabaseMigrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BFE8372B3320C7000F0FBE /* DatabaseMigrationHelper.swift */; };
 		E6BFE83A2B332DDB000F0FBE /* DatabaseMigrationTests+ParticipantRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BFE8392B332DDB000F0FBE /* DatabaseMigrationTests+ParticipantRole.swift */; };
 		E6C4B3802B6B87B1008BF384 /* CoreDataStackTestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C4B37F2B6B87B1008BF384 /* CoreDataStackTestError.swift */; };
-		E6E1FF282B879A3A00014769 /* PINCache in Frameworks */ = {isa = PBXBuildFile; productRef = E6E1FF272B879A3A00014769 /* PINCache */; };
 		E6F443232B16294400D2B08A /* zmessaging.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E6F443042B16294000D2B08A /* zmessaging.xcdatamodeld */; };
 		E90AAE34279719D8003C7DB0 /* store2-98-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E90AAE33279719D8003C7DB0 /* store2-98-0.wiredatabase */; };
 		E94FD49A2B8F432200F2B4F3 /* MockActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169FF3A427157B3800330C2E /* MockActionHandler.swift */; };
@@ -1827,7 +1827,7 @@
 				EE8DA9672954A02B00F58B79 /* WireCryptobox.framework in Frameworks */,
 				F9C9A66F1CAD77930039E10C /* CoreData.framework in Frameworks */,
 				EE8DA96D2954A03800F58B79 /* WireLinkPreview.framework in Frameworks */,
-				E6E1FF282B879A3A00014769 /* PINCache in Frameworks */,
+				E6707E902BBD683F00469D57 /* PINCache in Frameworks */,
 				EE8DA9632954A02400F58B79 /* WireProtos.framework in Frameworks */,
 				EE8DA9702954A03E00F58B79 /* WireImages.framework in Frameworks */,
 				F9C9A66D1CAD778C0039E10C /* Foundation.framework in Frameworks */,
@@ -3708,7 +3708,7 @@
 			);
 			name = WireDataModel;
 			packageProductDependencies = (
-				E6E1FF272B879A3A00014769 /* PINCache */,
+				E6707E8F2BBD683F00469D57 /* PINCache */,
 			);
 			productName = WireDataModel;
 			productReference = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */;
@@ -3792,7 +3792,7 @@
 			);
 			mainGroup = F9C9A4F21CAD5DF10039E10C;
 			packageReferences = (
-				E6E1FF262B879A3A00014769 /* XCRemoteSwiftPackageReference "PINCache" */,
+				E6707E8E2BBD683F00469D57 /* XCRemoteSwiftPackageReference "PINCache" */,
 			);
 			productRefGroup = F9C9A4FD1CAD5DF10039E10C /* Products */;
 			projectDirPath = "";
@@ -5057,20 +5057,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E6E1FF262B879A3A00014769 /* XCRemoteSwiftPackageReference "PINCache" */ = {
+		E6707E8E2BBD683F00469D57 /* XCRemoteSwiftPackageReference "PINCache" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/wireapp/PINCache";
+			repositoryURL = "https://github.com/pinterest/PINCache";
 			requirement = {
-				branch = wire_xcode15_2;
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.3;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E6E1FF272B879A3A00014769 /* PINCache */ = {
+		E6707E8F2BBD683F00469D57 /* PINCache */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = E6E1FF262B879A3A00014769 /* XCRemoteSwiftPackageReference "PINCache" */;
+			package = E6707E8E2BBD683F00469D57 /* XCRemoteSwiftPackageReference "PINCache" */;
 			productName = PINCache;
 		};
 /* End XCSwiftPackageProductDependency section */
