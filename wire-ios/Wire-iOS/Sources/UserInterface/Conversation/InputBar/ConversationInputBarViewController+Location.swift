@@ -22,7 +22,14 @@ import WireSyncEngine
 extension ConversationInputBarViewController {
     @objc
     func locationButtonPressed(_ sender: IconButton?) {
-        guard let parentViewConvtoller = self.parent else { return }
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+            self.showLocationSelection(from: sender)
+        }
+        checker.performAction()
+    }
+
+    private func showLocationSelection(from sender: IconButton?) {
+        guard let parentViewController = self.parent else { return }
 
         let locationSelectionViewController = LocationSelectionViewController()
         locationSelectionViewController.modalPresentationStyle = .popover
@@ -32,12 +39,12 @@ extension ConversationInputBarViewController {
 
             popover.config(from: self,
                            pointToView: imageView,
-                           sourceView: parentViewConvtoller.view)
+                           sourceView: parentViewController.view)
         }
 
         locationSelectionViewController.title = conversation.displayName
         locationSelectionViewController.delegate = self
-        parentViewConvtoller.present(locationSelectionViewController, animated: true)
+        parentViewController.present(locationSelectionViewController, animated: true)
     }
 }
 

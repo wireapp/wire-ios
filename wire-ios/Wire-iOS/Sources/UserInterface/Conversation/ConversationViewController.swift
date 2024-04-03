@@ -141,6 +141,7 @@ final class ConversationViewController: UIViewController {
         hideAndDestroyParticipantsPopover()
         contentViewController.delegate = nil
     }
+    private var observationToken: NSObjectProtocol?
 
     private func update(conversation: ZMConversation) {
         setupNavigatiomItem()
@@ -158,6 +159,8 @@ final class ConversationViewController: UIViewController {
             self,
             for: userSession.conversationList()
         )
+
+        observationToken = E2EIPrivacyWarningChecker.addPresenter(self)
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
