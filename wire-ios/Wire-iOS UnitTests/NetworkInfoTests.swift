@@ -29,8 +29,6 @@ final class NetworkInfoTests: XCTestCase {
         super.setUp()
 
         mockServerConnection = MockServerConnection()
-        mockServerConnection.isOffline = true
-        mockServerConnection.isMobileConnection = false
     }
 
     override func tearDown() {
@@ -39,9 +37,11 @@ final class NetworkInfoTests: XCTestCase {
         super.tearDown()
     }
 
-    // NOTE: this test can fail if your local network conditions are bad/offline?!
     func testThatSharedInstanceReturnQualityTypeWifi() throws {
         // given
+        mockServerConnection.isOffline = false
+        mockServerConnection.isMobileConnection = false
+
         let networkInfo = makeNetworkInfo()
 
         // when & then
@@ -50,6 +50,9 @@ final class NetworkInfoTests: XCTestCase {
 
     func testThatBestQualityTypeIsChosen() {
         // given
+        mockServerConnection.isOffline = false
+        mockServerConnection.isMobileConnection = true
+
         let networkInfo = makeNetworkInfo()
         let mockServiceCurrentRadioAccessTechnology = [
             "0": CTRadioAccessTechnologyEdge,
