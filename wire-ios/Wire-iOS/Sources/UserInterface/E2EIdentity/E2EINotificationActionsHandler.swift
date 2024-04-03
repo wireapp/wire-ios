@@ -111,7 +111,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     @MainActor
     public func updateCertificate() async {
         do {
-            let result = try await e2eIdentityCertificateUpdateStatus?.invoke() else { return }
+            guard let result = try await e2eIdentityCertificateUpdateStatus?.invoke() else { return }
 
             switch result {
             case .noAction:
