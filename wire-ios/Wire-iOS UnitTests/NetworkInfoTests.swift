@@ -25,6 +25,8 @@ final class NetworkInfoTests: XCTestCase {
 
     private var mockServerConnection: MockServerConnection!
 
+    // MARK: - Init
+
     override func setUp() {
         super.setUp()
 
@@ -36,6 +38,8 @@ final class NetworkInfoTests: XCTestCase {
 
         super.tearDown()
     }
+
+    // MARK: - Tests
 
     func testQualityType_givenNoConnection_thenIsUnknown() throws {
         // given
@@ -75,8 +79,10 @@ final class NetworkInfoTests: XCTestCase {
         let networkInfo = makeNetworkInfo()
         let radioAccessTechnology = [String: String]()
 
-        // when & then
+        // when
         let qualityType = networkInfo.findBestQualityType(of: radioAccessTechnology)
+
+        // then
         XCTAssertEqual(qualityType, .unknown)
     }
 
@@ -87,8 +93,10 @@ final class NetworkInfoTests: XCTestCase {
             "0": CTRadioAccessTechnologyEdge
         ]
 
-        // when & then
+        // when
         let qualityType = networkInfo.findBestQualityType(of: radioAccessTechnology)
+
+        // then
         XCTAssertEqual(qualityType, .type2G)
     }
 
@@ -100,8 +108,10 @@ final class NetworkInfoTests: XCTestCase {
             "1": CTRadioAccessTechnologyLTE
         ]
 
-        // when & then
+        // when
         let qualityType = networkInfo.findBestQualityType(of: radioAccessTechnology)
+
+        // then
         XCTAssertEqual(qualityType, .type4G)
     }
 
@@ -114,8 +124,10 @@ final class NetworkInfoTests: XCTestCase {
             "2": CTRadioAccessTechnologyHSDPA
         ]
 
-        // when & then
+        // when
         let qualityType = networkInfo.findBestQualityType(of: radioAccessTechnology)
+
+        // then
         XCTAssertEqual(qualityType, .type4G)
     }
 
@@ -126,12 +138,14 @@ final class NetworkInfoTests: XCTestCase {
             "0": "some invalid value"
         ]
 
-        // when & then
+        // when
         let qualityType = networkInfo.findBestQualityType(of: radioAccessTechnology)
+
+        // then
         XCTAssertEqual(qualityType, .unknown)
     }
 
-    // MARK: Helpers
+    // MARK: - Helpers
 
     private func makeNetworkInfo() -> NetworkInfo {
         NetworkInfo(serverConnection: mockServerConnection)
