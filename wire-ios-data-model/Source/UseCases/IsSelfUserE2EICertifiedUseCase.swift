@@ -25,6 +25,11 @@ import WireCoreCrypto
 public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol {
 
     private let context: NSManagedObjectContext
+    private let featureRepository: FeatureRepositoryInterface
+    /// The `featureRepository` operates on a context, so every operation must be dispatched
+    /// on that context's queue. Since `FeatureRepositoryInterface` doesn't contain any
+    /// `context` property, we inject the context here.
+    private let featureRepositoryContext: NSManagedObjectContext
     private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
 
     /// - Parameters:
@@ -32,13 +37,22 @@ public struct IsSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProt
     ///   - isUserE2EICertifiedUseCase: The use case which contains the actual business logic.
     public init(
         context: NSManagedObjectContext,
+        featureRepository: FeatureRepositoryInterface,
+        featureRepositoryContext: NSManagedObjectContext,
         isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     ) {
         self.context = context
+        self.featureRepository = featureRepository
+        self.featureRepositoryContext = featureRepositoryContext
         self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
     }
 
     public func invoke() async throws -> Bool {
+
+        let isE2EIEnabled = await featureRepositoryContext.perform {
+            featureRepository.fetchE2EI().isEnabled
+        }
+        guard isE2EIEnabled else { return false }
 
         let (selfUser, selfMLSConversation) = await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
