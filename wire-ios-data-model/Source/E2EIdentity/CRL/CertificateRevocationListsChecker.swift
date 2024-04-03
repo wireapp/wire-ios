@@ -131,7 +131,6 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
                 // check if certificate is "dirty"
                 if registration.dirty {
                     //
-                    //
                     // update verification state for conversations
                     await mlsConversationsVerificationUpdater.updateAllStatuses()
                 }
