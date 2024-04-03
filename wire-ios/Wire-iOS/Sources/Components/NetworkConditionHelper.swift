@@ -31,9 +31,10 @@ enum NetworkQualityType: Int, Comparable {
     }
 }
 
-struct NetworkConditionHelper {
+/// An object that provides information of changes to the user’s network conditions.
+struct NetworkInfo {
 
-    private let networkInfo = CTTelephonyNetworkInfo()
+    private let cellularNetworkInfo = CTTelephonyNetworkInfo()
     private let serverConnection: ServerConnection
 
     init(serverConnection: ServerConnection) {
@@ -53,7 +54,7 @@ struct NetworkConditionHelper {
     }
 
     private func findBestQualityType() -> NetworkQualityType {
-        guard let cellularTypeDict = networkInfo.serviceCurrentRadioAccessTechnology else {
+        guard let cellularTypeDict = cellularNetworkInfo.serviceCurrentRadioAccessTechnology else {
             return .unknown
         }
 

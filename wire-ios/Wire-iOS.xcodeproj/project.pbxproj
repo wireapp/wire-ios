@@ -1311,7 +1311,7 @@
 		E6C25FDB2AFFAFB100406A1C /* NSAttributedString+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C25FD92AFFAFB100406A1C /* NSAttributedString+Attachments.swift */; };
 		E6C25FE62B0274F600406A1C /* CountryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFFE1D3A230D63EA00389290 /* CountryTests.swift */; };
 		E6C25FEB2B02798E00406A1C /* String+WholeRangeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4FFB3422830BD200B69851 /* String+WholeRangeTests.swift */; };
-		E6C25FEC2B027A9500406A1C /* NetworkConditionHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF23740F230D49EC006F53F3 /* NetworkConditionHelperTests.swift */; };
+		E6C25FEC2B027A9500406A1C /* NetworkInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF23740F230D49EC006F53F3 /* NetworkInfoTests.swift */; };
 		E6C25FEE2B027BA000406A1C /* TransformTextViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EBF4A3A21BE984E0021CFFC /* TransformTextViewTests.swift */; };
 		E6C25FEF2B027BD800406A1C /* String+PhoneNumberTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF92B6521A854BA0090DA66 /* String+PhoneNumberTests.swift */; };
 		E6C25FF02B027C0200406A1C /* ZMUserMentionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87240381215B92F00094363B /* ZMUserMentionsTest.swift */; };
@@ -3738,7 +3738,7 @@
 		EF22DC7C224BBE3B001EDE8E /* SearchUserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserViewController.swift; sourceTree = "<group>"; };
 		EF22DC7E224BC5C2001EDE8E /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		EF23740D230D37EE006F53F3 /* NetworkConditionHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConditionHelper.swift; sourceTree = "<group>"; };
-		EF23740F230D49EC006F53F3 /* NetworkConditionHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkConditionHelperTests.swift; sourceTree = "<group>"; };
+		EF23740F230D49EC006F53F3 /* NetworkInfoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkInfoTests.swift; sourceTree = "<group>"; };
 		EF237411230D55B1006F53F3 /* Country.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Country.swift; sourceTree = "<group>"; };
 		EF2388852211A67900331C07 /* UserRight.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRight.swift; sourceTree = "<group>"; };
 		EF2388872211B8C500331C07 /* UserType+DisplayString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserType+DisplayString.swift"; sourceTree = "<group>"; };
@@ -7670,7 +7670,7 @@
 				636E57BC2386BFD9005B4FD8 /* AvailabilityStringBuilderTests.swift */,
 				EFFE1D3A230D63EA00389290 /* CountryTests.swift */,
 				542CDF3F24B32E2100DF0B39 /* HandleChangeStateTests.swift */,
-				EF23740F230D49EC006F53F3 /* NetworkConditionHelperTests.swift */,
+				EF23740F230D49EC006F53F3 /* NetworkInfoTests.swift */,
 				63CE88A32506A83300E457C7 /* OrientationDeltaTests.swift */,
 				A96E230923EAD43A00C2195E /* PhoneNumberTests.swift */,
 				2577CB602B189989007D3443 /* String+FingerprintTests.swift */,
@@ -10748,7 +10748,7 @@
 				E6579E492AFFA003004E7FD8 /* MockUserType+ValidatorType.swift in Sources */,
 				E6579E7C2AFFA979004E7FD8 /* UserRightTests.swift in Sources */,
 				E6C25FE62B0274F600406A1C /* CountryTests.swift in Sources */,
-				E6C25FEC2B027A9500406A1C /* NetworkConditionHelperTests.swift in Sources */,
+				E6C25FEC2B027A9500406A1C /* NetworkInfoTests.swift in Sources */,
 				E6579E6F2AFFA030004E7FD8 /* MockDataTask.swift in Sources */,
 				E6C25FCB2AFFABE000406A1C /* UITraitEnvironmentTests.swift in Sources */,
 				E6579E552AFFA024004E7FD8 /* MockCallPermissions.swift in Sources */,

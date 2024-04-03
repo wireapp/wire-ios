@@ -21,7 +21,7 @@ import WireSyncEngineSupport
 
 @testable import Wire
 
-final class NetworkConditionHelperTests: XCTestCase {
+final class NetworkInfoTests: XCTestCase {
 
     private var mockServerConnection: MockServerConnection!
 
@@ -41,27 +41,30 @@ final class NetworkConditionHelperTests: XCTestCase {
 
     // NOTE: this test can fail if your local network conditions are bad/offline?!
     func testThatSharedInstanceReturnQualityTypeWifi() throws {
-        let helper = makeNetworkConditionHelper()
-        XCTAssertEqual(helper.qualityType(), .typeWifi)
+        // given
+        let networkInfo = makeNetworkInfo()
+
+        // when & then
+        XCTAssertEqual(networkInfo.qualityType(), .typeWifi)
     }
 
     func testThatBestQualityTypeIsChosen() {
-        // GIVEN
-        let helper = makeNetworkConditionHelper()
+        // given
+        let networkInfo = makeNetworkInfo()
         let mockServiceCurrentRadioAccessTechnology = [
             "0": CTRadioAccessTechnologyEdge,
             "1": CTRadioAccessTechnologyLTE,
             "2": CTRadioAccessTechnologyHSDPA
         ]
 
-        // WHEN & THEN
-        let qualityType = helper.qualityType()
+        // when & then
+        let qualityType = networkInfo.qualityType()
         XCTAssertEqual(qualityType, .type4G)
     }
 
     // MARK: Helpers
 
-    private func makeNetworkConditionHelper() -> NetworkConditionHelper {
-        NetworkConditionHelper(serverConnection: mockServerConnection)
+    private func makeNetworkInfo() -> NetworkInfo {
+        NetworkInfo(serverConnection: mockServerConnection)
     }
 }

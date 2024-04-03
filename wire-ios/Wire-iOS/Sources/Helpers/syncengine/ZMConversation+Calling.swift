@@ -97,9 +97,9 @@ extension ZMConversation {
             return
         }
 
-        let networkConditionHelpers = NetworkConditionHelper(serverConnection: sessionManager)
+        let networkInfo = NetworkInfo(serverConnection: sessionManager)
 
-        if networkConditionHelpers.qualityType() == .type2G {
+        if networkInfo.qualityType() == .type2G {
             let badConnectionController = UIAlertController(
                 title: ErrorCallSlowCallLocale.SlowConnection.title,
                 message: ErrorCallSlowCallLocale.slowConnection,
