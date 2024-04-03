@@ -37,7 +37,29 @@ final class NetworkInfoTests: XCTestCase {
         super.tearDown()
     }
 
-    func testThatSharedInstanceReturnQualityTypeWifi() throws {
+    func testQualityType_givenNoConnection_thenIsUnknown() throws {
+        // given
+        mockServerConnection.isOffline = true
+        mockServerConnection.isMobileConnection = false
+
+        let networkInfo = makeNetworkInfo()
+
+        // when & then
+        XCTAssertEqual(networkInfo.qualityType(), .unknown)
+    }
+
+    func testQualityType_givenConnectionAndIsMobileWithoutTechnology_thenIsUnknown() throws {
+        // given
+        mockServerConnection.isOffline = false
+        mockServerConnection.isMobileConnection = true
+
+        let networkInfo = makeNetworkInfo()
+
+        // when & then
+        XCTAssertEqual(networkInfo.qualityType(), .unknown)
+    }
+
+    func testQualityType_givenConnectionAndIsNotMobile_thenIsWifi() throws {
         // given
         mockServerConnection.isOffline = false
         mockServerConnection.isMobileConnection = false
@@ -48,11 +70,43 @@ final class NetworkInfoTests: XCTestCase {
         XCTAssertEqual(networkInfo.qualityType(), .typeWifi)
     }
 
-    func testThatBestQualityTypeIsChosen() {
+    func testfindBestQualityType_givenNoMobileConnection_thenIsUnknown() {
         // given
-        mockServerConnection.isOffline = false
-        mockServerConnection.isMobileConnection = true
+        let networkInfo = makeNetworkInfo()
+        let radioAccessTechnology = [String: String]()
 
+        // when & then
+        let qualityType = networkInfo.findBestQualityType(of: radioAccessTechnology)
+        XCTAssertEqual(qualityType, .unknown)
+    }
+
+    func testfindBestQualityType_givenMobileConnectionEdge_thenIsType2G() {
+        // given
+        let networkInfo = makeNetworkInfo()
+        let radioAccessTechnology = [
+            "0": CTRadioAccessTechnologyEdge
+        ]
+
+        // when & then
+        let qualityType = networkInfo.findBestQualityType(of: radioAccessTechnology)
+        XCTAssertEqual(qualityType, .type2G)
+    }
+
+    func testfindBestQualityType_givenMobileConnectionLTE_thenIsType3G() {
+        // given
+        let networkInfo = makeNetworkInfo()
+        let radioAccessTechnology = [
+            "0": CTRadioAccessTechnologyEdge,
+            "1": CTRadioAccessTechnologyLTE
+        ]
+
+        // when & then
+        let qualityType = networkInfo.findBestQualityType(of: radioAccessTechnology)
+        XCTAssertEqual(qualityType, .type4G)
+    }
+
+    func testfindBestQualityType_givenMobileConnectionHSDPA_thenIsType4G() {
+        // given
         let networkInfo = makeNetworkInfo()
         let radioAccessTechnology = [
             "0": CTRadioAccessTechnologyEdge,
