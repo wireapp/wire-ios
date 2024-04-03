@@ -111,6 +111,10 @@ jobs:
       C1_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C1_APP_CENTER_APP_NAME_RESTRICTED }}
       C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
       C1_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C1_APP_CENTER_APP_NAME_PRODUCTION }}
+      C2_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C2_S3_SUBFOLDER_RESTRICTED }}
+      C2_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C2_APP_CENTER_APP_NAME_RESTRICTED }}
+      C2_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C2_S3_SUBFOLDER_PRODUCTION }}
+      C2_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C2_APP_CENTER_APP_NAME_PRODUCTION }}
       C3_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C3_S3_SUBFOLDER_RESTRICTED }}
       C3_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C3_APP_CENTER_APP_NAME_RESTRICTED }}
       C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
@@ -118,7 +122,11 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Add Masks
+        run: |
+            echo "::add-mask::${{ secrets.CLIENT_NAME_C1_C2_C3 }}"
+            echo "::add-mask::${{ secrets.CLIENT_ID_C1_C2_C3 }}"
+      - uses: actions/checkout@v4
         with:
           token: ${{ secrets.SUBMODULE_PAT }}
           submodules: recursive
