@@ -52,7 +52,8 @@ permissions:
 jobs:
   changelog:
     runs-on: ubuntu-latest
-
+    outputs:
+      changelog-url: ${{ steps.expose-url.outputs.changelog }}
     steps:
       - name: 'Checkout Git repository with history for all branches and tags'
         uses: actions/checkout@v4
@@ -207,7 +208,7 @@ jobs:
       - name: Define notification text as environment variable
           run: |                          
             NOTIFICATION_SUCCESS_TEXT="**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test  🚀\n
-            **CHANGELOG:** ${{ needs.changelog.steps.upload-changelog.outputs.artifact-url }}\n
+            **CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}\n
             **Tap on iOS device to install:** ${{ env.APPCENTER_INSTALL_LINK }}\n
             **AWS S3 Paths:**\n
             `${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`\n
