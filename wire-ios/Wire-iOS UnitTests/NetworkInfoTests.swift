@@ -119,6 +119,18 @@ final class NetworkInfoTests: XCTestCase {
         XCTAssertEqual(qualityType, .type4G)
     }
 
+    func testfindBestQualityType_givenMobileConnectionInvalid_thenIsUnknown() {
+        // given
+        let networkInfo = makeNetworkInfo()
+        let radioAccessTechnology = [
+            "0": "some invalid value"
+        ]
+
+        // when & then
+        let qualityType = networkInfo.findBestQualityType(of: radioAccessTechnology)
+        XCTAssertEqual(qualityType, .unknown)
+    }
+
     // MARK: Helpers
 
     private func makeNetworkInfo() -> NetworkInfo {
