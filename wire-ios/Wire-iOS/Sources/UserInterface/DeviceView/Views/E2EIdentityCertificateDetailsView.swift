@@ -36,7 +36,7 @@ struct E2EIdentityCertificateDetailsView: View {
         HStack {
             Spacer()
             Text(L10n.Localizable.Device.Details.CertificateDetails.title)
-                .font(FontSpec.headerSemiboldFont.swiftUIFont)
+                .font(UIFont.swiftUIFont(for: .headline))
             Spacer()
         }
         .padding(.all, ViewConstants.Padding.standard)
@@ -61,7 +61,7 @@ struct E2EIdentityCertificateDetailsView: View {
     private var certificateView: some View {
         ScrollView {
             Text(certificateDetails)
-                .font(FontSpec.smallFont.swiftUIFont.monospaced())
+                .font(UIFont.swiftUIFont(for: .caption1).monospaced())
                 .padding()
                 .frame(maxHeight: .infinity)
         }
@@ -86,7 +86,7 @@ struct E2EIdentityCertificateDetailsView: View {
             },
             label: {
                 Text(L10n.Localizable.Content.Message.download)
-                    .font(FontSpec.normalBoldFont.swiftUIFont)
+                    .font(UIFont.swiftUIFont(for: .bodyTwoSemibold))
             }
         )
     }
@@ -159,6 +159,14 @@ struct E2EIdentityCertificateDetailsView: View {
             bottomBarView.background(SemanticColors.View.backgroundUserCell.swiftUIColor)
         }
         .ignoresSafeArea()
-        .background(SemanticColors.View.backgroundDefault.swiftUIColor)
+        .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
     }
+}
+
+#Preview {
+    E2EIdentityCertificateDetailsView(
+        certificateDetails: "Sample Certificate Details Here...",
+        isDownloadAndCopyEnabled: true,
+        isMenuPresented: false
+    )
 }
