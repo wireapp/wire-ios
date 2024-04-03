@@ -91,6 +91,7 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             try await e2eiRepository.fetchTrustAnchor()
         } catch {
             logger.warn("failed to register trust anchor: \(error.localizedDescription)")
+            throw error
         }
 
         do {
