@@ -101,6 +101,7 @@ final class ActiveCallRouter: NSObject {
 
 // MARK: - ActiveCallRouterProtocol
 extension ActiveCallRouter: ActiveCallRouterProtocol {
+
     // MARK: - ActiveCall
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
         guard
