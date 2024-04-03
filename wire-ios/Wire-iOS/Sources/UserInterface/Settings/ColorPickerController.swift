@@ -69,7 +69,7 @@ class ColorPickerController: UIViewController {
     }
 
     private func setupConstraints() {
-        [tableView].prepareForLayout()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),

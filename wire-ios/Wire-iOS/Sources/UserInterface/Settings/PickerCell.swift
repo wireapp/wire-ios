@@ -114,7 +114,10 @@ class PickerCell: UITableViewCell {
     // MARK: - Constraints
 
     private func createConstraints() {
-        [checkmarkView, colorView, colorNameLabel].prepareForLayout()
+        checkmarkView.translatesAutoresizingMaskIntoConstraints = false
+        colorView.translatesAutoresizingMaskIntoConstraints = false
+        colorNameLabel.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
             colorView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             colorView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.leftPadding),
