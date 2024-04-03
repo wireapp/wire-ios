@@ -36,7 +36,12 @@ struct E2EIdentityCertificateDetailsView: View {
         HStack {
             Spacer()
             Text(L10n.Localizable.Device.Details.CertificateDetails.title)
+<<<<<<< HEAD
                 .font(FontSpec.headerSemiboldFont.swiftUIFont)
+=======
+                .font(UIFont.swiftUIFont(for: .headline))
+                .accessibilityIdentifier("CertificateDetailsTitle")
+>>>>>>> 3d669a8db0 (fix: There is no alert about certificate expiration WPB-7239 (#1177))
             Spacer()
         }
         .padding(.all, ViewConstants.Padding.standard)
@@ -53,6 +58,7 @@ struct E2EIdentityCertificateDetailsView: View {
                             .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
                     }
                 )
+                .accessibilityIdentifier("CloseButton")
                 .padding(.all, ViewConstants.Padding.standard)
             }
         }
@@ -64,6 +70,7 @@ struct E2EIdentityCertificateDetailsView: View {
                 .font(FontSpec.smallFont.swiftUIFont.monospaced())
                 .padding()
                 .frame(maxHeight: .infinity)
+                .accessibilityIdentifier("CertificateDetailsView")
         }
     }
 
@@ -89,6 +96,7 @@ struct E2EIdentityCertificateDetailsView: View {
                     .font(FontSpec.normalBoldFont.swiftUIFont)
             }
         )
+        .accessibilityIdentifier("DownloadButton")
     }
 
     private var moreButton: some View {
@@ -102,6 +110,7 @@ struct E2EIdentityCertificateDetailsView: View {
                     .padding(.trailing, ViewConstants.Padding.standard)
             }
         )
+        .accessibilityIdentifier("MoreButton")
     }
 
     private var copyToClipboardButton: some View {
