@@ -242,7 +242,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     var deleteAccountToken: Any?
     var callCenterObserverToken: Any?
     var blacklistVerificator: ZMBlacklistVerificator?
-    var reachability: ReachabilityWrapper
     var pushRegistry: PushRegistry
     let notificationsTracker: NotificationsTracker?
     let configuration: SessionManagerConfiguration
@@ -251,10 +250,12 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
 
-    internal var authenticatedSessionFactory: AuthenticatedSessionFactory
-    internal let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
+    var authenticatedSessionFactory: AuthenticatedSessionFactory
+    let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
 
-    fileprivate let sessionLoadingQueue: DispatchQueue = DispatchQueue(label: "sessionLoadingQueue")
+    private let sessionLoadingQueue: DispatchQueue = DispatchQueue(label: "sessionLoadingQueue")
+
+    private(set) var reachability: ReachabilityWrapper
 
     public internal(set) var environment: BackendEnvironmentProvider {
         didSet {
