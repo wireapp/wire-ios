@@ -46,7 +46,7 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         var executed = false
 
         // when
-        sut.executeOrSchedulePostCallAction {
+        sut.executeOrSchedulePostCallAction { _ in
             executed = true
         }
 
@@ -61,14 +61,14 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         var executed = false
 
         // when
-        sut.executeOrSchedulePostCallAction {
+        sut.executeOrSchedulePostCallAction { _ in
             executed = true
         }
 
         // then
         XCTAssertNotNil(sut.scheduledPostCallAction)
         XCTAssertFalse(executed)
-        sut.scheduledPostCallAction?()
+        sut.scheduledPostCallAction?({ })
         XCTAssertTrue(executed)
     }
 
