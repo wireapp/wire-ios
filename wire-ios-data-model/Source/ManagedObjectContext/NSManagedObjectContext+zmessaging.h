@@ -20,7 +20,6 @@
 @import CoreData;
 @import WireSystem;
 @import WireUtilities;
-@import PINCache;
 
 @class NSOperationQueue;
 @class DisplayNameGenerator;
