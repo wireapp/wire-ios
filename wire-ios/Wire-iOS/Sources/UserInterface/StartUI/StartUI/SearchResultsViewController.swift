@@ -397,6 +397,11 @@ final class SearchResultsViewController: UIViewController {
                 let name0 = $0.name ?? ""
                 let name1 = $1.name ?? ""
 
+                if name0 == name1 {
+                    let pseudo0 = $0.handle ?? ""
+                    let pseudo1 = $1.handle ?? ""
+                    return pseudo0.compare(pseudo1) == .orderedAscending
+                }
                 return name0.compare(name1) == .orderedAscending
             }
         } else {
