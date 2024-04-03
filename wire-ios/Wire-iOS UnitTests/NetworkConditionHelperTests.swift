@@ -25,29 +25,29 @@ final class NetworkConditionHelperTests: XCTestCase {
 
     private var mockServerConnection: MockServerConnection!
 
-    var sut: NetworkConditionHelper!
-
     override func setUp() {
         super.setUp()
+
         mockServerConnection = MockServerConnection()
         mockServerConnection.isOffline = true
         mockServerConnection.isMobileConnection = false
-        sut = NetworkConditionHelper(serverConnection: mockServerConnection)
     }
 
     override func tearDown() {
-        sut = nil
+        mockServerConnection = nil
+
         super.tearDown()
     }
 
     // NOTE: this test can fail if your local network conditions are bad/offline?!
     func testThatSharedInstanceReturnQualityTypeWifi() throws {
-        SessionManager.shared?.markNetworkSessionsAsReady(true)
-        XCTAssertEqual(sut.qualityType(), .typeWifi)
+        let helper = makeNetworkConditionHelper()
+        XCTAssertEqual(helper.qualityType(), .typeWifi)
     }
 
     func testThatBestQualityTypeIsChosen() {
         // GIVEN
+        let helper = makeNetworkConditionHelper()
         let mockServiceCurrentRadioAccessTechnology = [
             "0": CTRadioAccessTechnologyEdge,
             "1": CTRadioAccessTechnologyLTE,
@@ -55,7 +55,13 @@ final class NetworkConditionHelperTests: XCTestCase {
         ]
 
         // WHEN & THEN
-        let qualityType = sut.qualityType()
+        let qualityType = helper.qualityType()
         XCTAssertEqual(qualityType, .type4G)
+    }
+
+    // MARK: Helpers
+
+    private func makeNetworkConditionHelper() -> NetworkConditionHelper {
+        NetworkConditionHelper(serverConnection: mockServerConnection)
     }
 }
