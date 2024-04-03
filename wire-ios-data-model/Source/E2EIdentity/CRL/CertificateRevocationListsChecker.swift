@@ -130,9 +130,11 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
                 // check if certificate is "dirty"
                 if registration.dirty {
-                    //
                     // update verification state for conversations
                     await mlsConversationsVerificationUpdater.updateAllStatuses()
+
+                    // notify to inform the user
+
                 }
             } catch {
                 logger.warn("failed to check certificate revocation list: (error: \(error), distributionPoint: \(distributionPoint))")
