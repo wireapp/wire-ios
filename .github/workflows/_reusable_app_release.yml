@@ -87,14 +87,11 @@ jobs:
           echo "{}" > ./package.json
           npx generate-changelog@1.8.0 -t "$PREVIOUS_TAG...$CURRENT_TAG"
       - name: 'Upload changelog'
-        uses: actions/upload-artifact@v2
-        with:
-          name: CHANGELOG.md
-          path: ${{ steps.build-number.outputs.file_path }}
-          if-no-files-found: error
+        uses: actions/upload-artifact@v4
         with:
           name: CHANGELOG.md
           path: ./CHANGELOG.md
+          if-no-files-found: error
       - name: Expose url of changelog
         id: expose-url
         run: echo "changelog=${{ steps.upload-file.outputs.artifact-url }}" >> $GITHUB_OUTPUT
@@ -139,18 +136,18 @@ jobs:
           token: ${{ secrets.SUBMODULE_PAT }}
           submodules: recursive
       - name: Download changelog
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: CHANGELOG.md
       - name: Retrieve Xcode version
         run: |
           echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
         id: xcode-version
-      - uses: maxim-lobanov/setup-xcode@v1.5.1
+      - uses: maxim-lobanov/setup-xcode@v1.6.0
         with:
           xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
       - name: Restore Carthage Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: cache-carthage
         with:
           path: Carthage
@@ -159,7 +156,7 @@ jobs:
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
       - name: Restore Bundler Cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         id: cache-bundler
         with:
           path: vendor/bundle
@@ -175,7 +172,7 @@ jobs:
       - name: Trigger build
         run: bundle exec fastlane ${{ inputs.fastlane_action }}
       - name: Archiving Logs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: build-logs
@@ -187,7 +184,7 @@ jobs:
 
       - name: Archiving env variables
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: post-build-env
           path: |
@@ -197,28 +194,28 @@ jobs:
         uses: xom9ikk/dotenv@v2
         with:
           path: fastlane/.post_build
-      - uses: akiojin/decode-base64-github-action@v0.1.0
+      - uses: akiojin/decode-base64-github-action@v1.0.2
         id: base64-decoded-RELEASE_NOTES
         with:
           base64: ${{ env.RELEASE_NOTES }}
-      - uses: akiojin/decode-base64-github-action@v0.1.0
+      - uses: akiojin/decode-base64-github-action@v1.0.2
         id: base64-decoded-S3_PATHS
         with:
           base64: ${{ env.S3_PATHS }}
       - name: Define notification text as environment variable
-          run: |                          
-            NOTIFICATION_SUCCESS_TEXT="**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test  🚀\n
-            **CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}\n
-            **Tap on iOS device to install:** ${{ env.APPCENTER_INSTALL_LINK }}\n
-            **AWS S3 Paths:**\n
-            `${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`\n
-            **Triggered by:** ${{ github.triggering_actor }}\n
-            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
-  
-            echo "NOTIFICATION_SUCCESS_TEXT<<EOF" >> $GITHUB_ENV
-            # here we can place the command that will generate multi-line text
-            echo $NOTIFICATION_SUCCESS_TEXT >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
+        run: |                          
+          NOTIFICATION_SUCCESS_TEXT="**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test  🚀\n
+          **CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}\n
+          **Tap on iOS device to install:** ${{ env.APPCENTER_INSTALL_LINK }}\n
+          **AWS S3 Paths:**\n
+          `${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`\n
+          **Triggered by:** ${{ github.triggering_actor }}\n
+          **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
+
+          echo "NOTIFICATION_SUCCESS_TEXT<<EOF" >> $GITHUB_ENV
+          # here we can place the command that will generate multi-line text
+          echo $NOTIFICATION_SUCCESS_TEXT >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
       - name: Notify on Wire if succeeded
         if: success()
         uses: 8398a7/action-slack@v3
