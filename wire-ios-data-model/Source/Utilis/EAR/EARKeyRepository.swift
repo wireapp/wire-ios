@@ -50,7 +50,7 @@ final class EARKeyRepository: EARKeyRepositoryInterface {
     }
 
     func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey {
-        if let key = keyCache [description.id] {
+        if let key = keyCache[description.id] {
             return key
         }
 
