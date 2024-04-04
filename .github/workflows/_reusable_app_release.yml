@@ -87,6 +87,7 @@ jobs:
           echo "{}" > ./package.json
           npx generate-changelog@1.8.0 -t "$PREVIOUS_TAG...$CURRENT_TAG"
       - name: 'Upload changelog'
+        id: upload-file
         uses: actions/upload-artifact@v4
         with:
           name: CHANGELOG.md
