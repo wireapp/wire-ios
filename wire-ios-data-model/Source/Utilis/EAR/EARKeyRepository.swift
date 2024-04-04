@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import Security
 
 // sourcery: AutoMockable
 protocol EARKeyRepositoryInterface {
@@ -97,7 +98,7 @@ final class EARKeyRepository: EARKeyRepositoryInterface {
         keyCache[description.id] = nil
     }
 
-    // MARK: - Datatbase keys
+    // MARK: - Database keys
 
     func storeDatabaseKey(description: DatabaseEARKeyDescription, key: Data) throws {
         try KeychainManager.storeItem(description, value: key)
