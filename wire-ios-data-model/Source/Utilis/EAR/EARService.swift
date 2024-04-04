@@ -184,7 +184,7 @@ public class EARService: EARServiceInterface {
         WireLogger.ear.info("turning on EAR")
 
         let enableEAR: (NSManagedObjectContext) throws -> Void = { [weak self] context in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             do {
                 try self.deleteExistingKeys()
@@ -237,7 +237,7 @@ public class EARService: EARServiceInterface {
         }
 
         let disableEAR: (NSManagedObjectContext) throws -> Void = { [weak self] context in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             self.earStorage.enableEAR(false)
             context.encryptMessagesAtRest = false
