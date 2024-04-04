@@ -19,51 +19,41 @@ import Foundation
 import CoreTelephony
 import WireSyncEngine
 
-enum NetworkQualityType: Int, Comparable {
-    case unknown = 0
-    case type2G
-    case type3G
-    case type4G
-    case typeWifi
+/// An object that provides information of changes to the user’s network conditions.
+struct NetworkInfo {
 
-    static func < (lhs: NetworkQualityType, rhs: NetworkQualityType) -> Bool {
-        return lhs.rawValue < rhs.rawValue
-    }
-}
+    private let cellularNetworkInfo = CTTelephonyNetworkInfo()
+    private let serverConnection: ServerConnection
 
-final class NetworkConditionHelper {
-
-    static var shared: NetworkConditionHelper = {
-        return NetworkConditionHelper()
-    }()
-
-    let networkInfo: CTTelephonyNetworkInfo
-
-    init() {
-        networkInfo = CTTelephonyNetworkInfo()
+    init(serverConnection: ServerConnection) {
+        self.serverConnection = serverConnection
     }
 
     func qualityType() -> NetworkQualityType {
-        let serverConnection = SessionManager.shared?.serverConnection
-
-        if serverConnection?.isOffline == true {
+        if serverConnection.isOffline {
             return .unknown
-        } else if serverConnection?.isMobileConnection == false {
+        }
+
+        guard serverConnection.isMobileConnection else {
             return .typeWifi
         }
 
-        return bestQualityType(cellularTypeDict: networkInfo.serviceCurrentRadioAccessTechnology)
+        guard let radioAccessTechnology = cellularNetworkInfo.serviceCurrentRadioAccessTechnology else {
+            return .unknown
+        }
+
+        return findBestQualityType(of: radioAccessTechnology)
     }
 
-    func bestQualityType(cellularTypeDict: [String: String]?) -> NetworkQualityType {
-
-        guard let cellularTypeDict = cellularTypeDict else { return .unknown }
-
-        return cellularTypeDict.values.map { cellularTypeString in
-            self.qualityType(from: cellularTypeString)}.sorted().last ?? .unknown
+    func findBestQualityType(of radioAccessTechnology: [String: String]) -> NetworkQualityType {
+        radioAccessTechnology
+            .values
+            .map(qualityType(from:))
+            .sorted()
+            .last ?? .unknown
     }
 
-    private func qualityType(from cellularTypeString: String?) -> NetworkQualityType {
+    private func qualityType(from cellularTypeString: String) -> NetworkQualityType {
         switch cellularTypeString {
         case CTRadioAccessTechnologyGPRS,
              CTRadioAccessTechnologyEdge,

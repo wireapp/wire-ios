@@ -18,30 +18,10 @@
 
 import Foundation
 
-@objc
+// sourcery: AutoMockable
 public protocol ServerConnection {
 
     var isMobileConnection: Bool { get }
     var isOffline: Bool { get }
-
-}
-
-extension SessionManager {
-
-    @objc public var serverConnection: ServerConnection? {
-        return self
-    }
-
-}
-
-extension SessionManager: ServerConnection {
-
-    public var isOffline: Bool {
-        return !reachability.mayBeReachable
-    }
-
-    public var isMobileConnection: Bool {
-        return reachability.isMobileConnection
-    }
 
 }
