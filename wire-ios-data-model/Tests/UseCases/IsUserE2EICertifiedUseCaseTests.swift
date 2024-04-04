@@ -376,15 +376,18 @@ extension WireIdentity {
     fileprivate static func with(clientID: String, status: DeviceStatus) -> Self {
         .init(
             clientId: clientID,
-            handle: "B",
-            displayName: "C",
-            domain: "D",
-            certificate: "E",
             status: status,
             thumbprint: "F",
-            serialNumber: "G",
-            notBefore: 0,
-            notAfter: 0
+            credentialType: .x509,
+            x509Identity: X509Identity(
+                handle: "B",
+                displayName: "C",
+                domain: "D",
+                certificate: "E",
+                serialNumber: "G",
+                notBefore: 0,
+                notAfter: 0
+            )
         )
     }
 }
