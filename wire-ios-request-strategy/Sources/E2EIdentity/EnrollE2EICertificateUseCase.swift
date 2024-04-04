@@ -91,6 +91,7 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             try await e2eiRepository.fetchTrustAnchor()
         } catch {
             logger.warn("failed to register trust anchor: \(error.localizedDescription)")
+            throw error
         }
 
         do {
@@ -178,6 +179,7 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
                 isUpgradingMLSClient: isUpgradingMLSClient,
                 enrollment: enrollment,
                 certificateChain: certificateChain)
+            notifyE2EICertificateChange()
 
             return certificateChain
         } catch {
@@ -204,4 +206,13 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
         return clientId
     }
 
+    private func notifyE2EICertificateChange() {
+        NotificationCenter.default.post(name: .e2eiCertificateChanged, object: self)
+    }
+
+}
+
+public extension Notification.Name {
+    // This notification is used to notify of end-to-end identity certificate changes
+    static let e2eiCertificateChanged = NSNotification.Name("E2EICertificateStatusChanged")
 }
