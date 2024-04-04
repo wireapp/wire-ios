@@ -202,43 +202,15 @@ jobs:
         id: base64-decoded-S3_PATHS
         with:
           base64: ${{ env.S3_PATHS }}
-      - name: Define notification text as environment variable
-        id: notification_success_text
-        run: |       
-          NOTIFICATION_SUCCESS_TEXT=$(cat << EOF
-          **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test  🚀
-          **CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}
-          **Tap on iOS device to install:** ${{ env.APPCENTER_INSTALL_LINK }}
-          **AWS S3 Paths:**
-          `${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`
-          **Triggered by:** ${{ github.triggering_actor }}
-          **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          EOF
-          )
-          echo "NOTIFICATION_SUCCESS_TEXT<<EOF" >> $GITHUB_ENV
-          echo "$NOTIFICATION_SUCCESS_TEXT" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
       - name: Notify on Wire if succeeded
         if: success()
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: "TEST IGNORE${{ env.NOTIFICATION_SUCCESS_TEXT }}"
-      - name: Define notification text as environment variable
-        id: notification_failure_text
-        run: |                          
-          NOTIFICATION_FAILURE_TEXT=$(cat << EOF
-          🆘 Build **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) failed 🆘
-          **Triggered by:** ${{ github.triggering_actor }}
-          **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-          EOF
-          )
-          echo "NOTIFICATION_FAILURE_TEXT<<EOF" >> $GITHUB_ENV
-          echo $NOTIFICATION_FAILURE_TEXT >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          text: "TEST PLEASE IGNORE**${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test  🚀\n**CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}\n**Tap on iOS device to install:** ${{ env.APPCENTER_INSTALL_LINK }}\n**AWS S3 Paths:**\n`${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
       - name: Notify on Wire if failed
         if: failure()
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          text: "${{ env.NOTIFICATION_FAILURE_TEXT }}"
+          text: "🆘 Build **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) failed 🆘\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
