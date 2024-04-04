@@ -52,7 +52,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         transportSession: TransportSessionType,
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
-        coreCryptoProvider: CoreCryptoProviderProtocol
+        coreCryptoProvider: CoreCryptoProviderProtocol,
+        usecaseFactory: UseCaseFactoryProtocol
     ) {
 
         self.strategies = Self.buildStrategies(
@@ -68,7 +69,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             transportSession: transportSession,
             proteusProvider: proteusProvider,
             mlsService: mlsService,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            usecaseFactory: usecaseFactory
         )
 
         self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy })
@@ -106,7 +108,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         transportSession: TransportSessionType,
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
-        coreCryptoProvider: CoreCryptoProviderProtocol
+        coreCryptoProvider: CoreCryptoProviderProtocol,
+        usecaseFactory: UseCaseFactoryProtocol
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
@@ -313,7 +316,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             UserClientEventConsumer(
                 managedObjectContext: syncMOC,
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
-                clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus),
+                clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
+                useCaseFactory: usecaseFactory
+            ),
             ResetSessionRequestStrategy(
                 managedObjectContext: syncMOC,
                 messageSender: messageSender),

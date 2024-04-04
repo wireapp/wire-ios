@@ -25,18 +25,21 @@ import Foundation
 @objcMembers
 public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
 
-    let managedObjectContext: NSManagedObjectContext
-    let clientRegistrationStatus: ZMClientRegistrationStatus
-    let clientUpdateStatus: ClientUpdateStatus
+    private let managedObjectContext: NSManagedObjectContext
+    private let clientRegistrationStatus: ZMClientRegistrationStatus
+    private let clientUpdateStatus: ClientUpdateStatus
+    private let useCaseFactory: UseCaseFactoryProtocol
 
     public init(
         managedObjectContext: NSManagedObjectContext,
         clientRegistrationStatus: ZMClientRegistrationStatus,
-        clientUpdateStatus: ClientUpdateStatus
+        clientUpdateStatus: ClientUpdateStatus,
+        useCaseFactory: UseCaseFactoryProtocol
     ) {
         self.managedObjectContext = managedObjectContext
         self.clientRegistrationStatus = clientRegistrationStatus
         self.clientUpdateStatus = clientUpdateStatus
+        self.useCaseFactory = useCaseFactory
         super.init()
     }
 
@@ -46,22 +49,26 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
         prefetchResult: ZMFetchRequestBatchResult?
     ) async {
         for event in events {
-            await processUpdateEvent(event)
+            do {
+                try await processUpdateEvent(event)
+            } catch {
+                WireLogger.updateEvent.error("failed to process user client event: \(event): \(error)")
+            }
         }
     }
 
-    fileprivate func processUpdateEvent(_ event: ZMUpdateEvent) async {
+    private func processUpdateEvent(_ event: ZMUpdateEvent) async throws {
         switch event.type {
         case .userClientAdd, .userClientRemove:
-            await processClientListUpdateEvent(event)
+            try await processClientListUpdateEvent(event)
         default:
             break
         }
     }
 
-    fileprivate func processClientListUpdateEvent(_ event: ZMUpdateEvent) async {
+    private func processClientListUpdateEvent(_ event: ZMUpdateEvent) async throws {
         guard let clientInfo = event.payload["client"] as? [String: AnyObject] else {
-            Logging.eventProcessing.error("Client info has unexpected payload")
+            WireLogger.updateEvent.error("Client info has unexpected payload")
             return
         }
 
@@ -94,7 +101,8 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
                 }
             } else {
                 await clientToDelete?.deleteClientAndEndSession()
-                
+                let usecase = useCaseFactory.createResolveOneOnOneUseCase()
+                try await usecase.invoke()
             }
 
         default:
