@@ -193,12 +193,20 @@ extension ConversationViewController {
     @objc
     func voiceCallItemTapped(_ sender: UIBarButtonItem) {
         endEditing()
-        startCallController.startAudioCall(started: ConversationInputBarViewController.endEditingMessage)
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
+            startCallController.startAudioCall(started: ConversationInputBarViewController.endEditingMessage)
+        }
+
+        checker.performAction()
     }
 
     @objc func videoCallItemTapped(_ sender: UIBarButtonItem) {
-        endEditing()
-        startCallController.startVideoCall(started: ConversationInputBarViewController.endEditingMessage)
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
+            endEditing()
+            startCallController.startVideoCall(started: ConversationInputBarViewController.endEditingMessage)
+        }
+
+        checker.performAction()
     }
 
     @objc private dynamic func joinCallButtonTapped(_sender: AnyObject!) {
