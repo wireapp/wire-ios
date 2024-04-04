@@ -41,7 +41,7 @@ public final class AccountStore: NSObject {
     public required init(root: URL) {
         directory = root.appendingPathComponent(AccountStore.directoryName)
         super.init()
-        FileManager.default.createAndProtectDirectory(at: directory)
+        try! FileManager.default.createAndProtectDirectory(at: directory)
     }
 
     // MARK: - Storing and Retrieving

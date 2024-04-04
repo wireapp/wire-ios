@@ -676,7 +676,7 @@ final class ConversationListViewModel: NSObject {
               let persistentDirectory = ConversationListViewModel.persistentDirectory,
               let directoryURL = URL.directoryURL(persistentDirectory) else { return }
 
-        FileManager.default.createAndProtectDirectory(at: directoryURL)
+        try! FileManager.default.createAndProtectDirectory(at: directoryURL)
 
         do {
             try jsonString.write(to: directoryURL.appendingPathComponent(ConversationListViewModel.persistentFilename), atomically: true, encoding: .utf8)

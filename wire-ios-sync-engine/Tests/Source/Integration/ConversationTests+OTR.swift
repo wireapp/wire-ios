@@ -449,8 +449,8 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
 
         // WHEN
         // remove all stored data, like cache is cleared
-        userSession?.managedObjectContext.zm_fileAssetCache.deleteAssetData(assetMessage, format: .medium, encrypted: true)
-        userSession?.managedObjectContext.zm_fileAssetCache.deleteAssetData(assetMessage, format: .medium, encrypted: false)
+        userSession?.managedObjectContext.zm_fileAssetCache.deleteMediumEncryptedImageData(for: assetMessage)
+        userSession?.managedObjectContext.zm_fileAssetCache.deleteMediumImageData(for: assetMessage)
 
         // We no longer process incoming V2 assets so we need to manually set some properties to simulate having received the asset
         userSession?.perform {

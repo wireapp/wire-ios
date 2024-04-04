@@ -71,7 +71,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
             return
         }
 
-        FileManager.default.createAndProtectDirectory(at: emojiDirectory)
+        try! FileManager.default.createAndProtectDirectory(at: emojiDirectory)
         (emojis as NSArray).write(to: recentlyUsedEmojisURL, atomically: true)
     }
 

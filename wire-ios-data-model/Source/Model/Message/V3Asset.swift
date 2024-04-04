@@ -183,31 +183,21 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 
 extension V3Asset: AssetProxyType {
 
-    private var hasImageData: Bool {
-        guard let cache = moc.zm_fileAssetCache else {
-            return false
-        }
-
-        return cache.hasEncryptedMediumImageData(for: assetClientMessage)
-        || cache.hasMediumImageData(for: assetClientMessage)
-        || cache.hasOriginalImageData(for: assetClientMessage)
-    }
-
     public var hasDownloadedPreview: Bool {
         guard !isImage else { return false }
-        return hasImageData
+        return moc.zm_fileAssetCache.hasImageData(for: assetClientMessage)
     }
 
     public var hasDownloadedFile: Bool {
         if isImage {
-            return hasImageData
+            return moc.zm_fileAssetCache.hasImageData(for: assetClientMessage)
         } else {
-            return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, encrypted: true) || moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, encrypted: false)
+            return moc.zm_fileAssetCache.hasFileData(for: assetClientMessage)
         }
     }
 
     public var fileURL: URL? {
-        if moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, encrypted: true) {
+        if moc.zm_fileAssetCache.hasEncryptedFileData(for: assetClientMessage) {
             guard let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded else {
                 return nil
             }
@@ -217,7 +207,7 @@ extension V3Asset: AssetProxyType {
                 encryptionKey: asset.otrKey,
                 sha256Digest: asset.sha256
             )
-        } else if moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, encrypted: false) {
+        } else if moc.zm_fileAssetCache.hasOriginalFileData(for: assetClientMessage) {
             return moc.zm_fileAssetCache.accessAssetURL(assetClientMessage)
         } else {
             return nil

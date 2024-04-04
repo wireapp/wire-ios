@@ -128,7 +128,7 @@
     // when
     self.imagePreprocessingQueue.suspended = YES;
     [self.sut objectsDidChange:objects];
-    [self.coreDataStack.viewContext.zm_fileAssetCache deleteAssetData:self.linkPreviewMessage1 format:ZMImageFormatOriginal encrypted:NO];
+    [self.coreDataStack.viewContext.zm_fileAssetCache deleteOriginalImageDataFor:self.linkPreviewMessage1];
     [self.sut objectsDidChange:objects];
     
     // then
@@ -149,8 +149,8 @@
     [self.sut objectsDidChange:objects];
     self.imagePreprocessingQueue.suspended = NO;
     [self.imagePreprocessingQueue waitUntilAllOperationsAreFinished];
-    [self.coreDataStack.viewContext.zm_fileAssetCache deleteAssetData:self.linkPreviewMessage1 format:ZMImageFormatOriginal encrypted:NO];
-    [self.coreDataStack.viewContext.zm_fileAssetCache deleteAssetData:self.linkPreviewMessage2 format:ZMImageFormatOriginal encrypted:NO];
+    [self.coreDataStack.viewContext.zm_fileAssetCache deleteOriginalImageDataFor:self.linkPreviewMessage1];
+    [self.coreDataStack.viewContext.zm_fileAssetCache deleteOriginalImageDataFor:self.linkPreviewMessage2];
     [self.sut objectsDidChange:objects];
     XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout:0.3]);
     

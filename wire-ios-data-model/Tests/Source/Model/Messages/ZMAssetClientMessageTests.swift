@@ -176,7 +176,7 @@ extension ZMAssetClientMessageTests {
     func testThatItHasNoDownloadedFileWhenTheFileIsNotOnDisk() {
         // given
         let sut = appendFileMessage(to: conversation)!
-        self.uiMOC.zm_fileAssetCache.deleteAssetData(sut, encrypted: false)
+        self.uiMOC.zm_fileAssetCache.deleteOriginalFileData(for: sut)
 
         // then
         XCTAssertFalse(sut.hasDownloadedFile)
@@ -187,7 +187,7 @@ extension ZMAssetClientMessageTests {
         let sut = appendFileMessage(to: conversation)!
 
         self.uiMOC.zm_fileAssetCache.storeMediumImage(data: .secureRandomData(length: 100), for: sut)
-        defer { self.uiMOC.zm_fileAssetCache.deleteAssetData(sut, format: .medium, encrypted: false) }
+        defer { self.uiMOC.zm_fileAssetCache.deleteMediumImageData(for: sut) }
 
         // then
         XCTAssertTrue(sut.hasDownloadedPreview)
@@ -198,7 +198,7 @@ extension ZMAssetClientMessageTests {
         let sut = appendFileMessage(to: conversation)!
 
         self.uiMOC.zm_fileAssetCache.storeOriginalImage(data: .secureRandomData(length: 100), for: sut)
-        defer { self.uiMOC.zm_fileAssetCache.deleteAssetData(sut, format: .medium, encrypted: false) }
+        defer { self.uiMOC.zm_fileAssetCache.deleteMediumImageData(for: sut) }
 
         // then
         XCTAssertTrue(sut.hasDownloadedPreview)
@@ -948,7 +948,7 @@ extension ZMAssetClientMessageTests {
         let message = try self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: true)
 
         // when
-        self.uiMOC.zm_fileAssetCache.deleteAssetData(message, format: .medium, encrypted: false)
+        self.uiMOC.zm_fileAssetCache.deleteMediumImageData(for: message)
 
         // then
         XCTAssertFalse(message.hasDownloadedFile)
@@ -1233,7 +1233,7 @@ extension ZMAssetClientMessageTests {
 
         sut.update(with: updateEventForOriginal(nonce: nonce, name: "document.pdf"), initialUpdate: true)
         sut.update(with: updateEventForUploaded(nonce: nonce, assetId: assetId), initialUpdate: false)
-        uiMOC.zm_fileAssetCache.storeAssetData(sut, encrypted: false, data: assetData)
+        uiMOC.zm_fileAssetCache.storeOriginalFile(data: assetData, for: sut)
 
         // then
         XCTAssertTrue(sut.hasDownloadedFile)

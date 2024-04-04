@@ -40,7 +40,7 @@ import Foundation
                 let genericMessage = message.underlyingMessage,
                 genericMessage.textData != nil,
                 let preview = genericMessage.linkPreviews.first,
-                !managedObjectContext.zm_fileAssetCache.hasMediumImageData(for: message)
+                !managedObjectContext.zm_fileAssetCache.hasImageData(for: message)
             else {
                 return false
             }

@@ -36,7 +36,7 @@ final class AssetColletionBatchedTests: ModelObjectsTests {
         delegate = nil
         sut?.tearDown()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        uiMOC.zm_fileAssetCache.wipeCaches()
+        try? uiMOC.zm_fileAssetCache.wipeCaches()
         sut = nil
         conversation = nil
         super.tearDown()
