@@ -70,24 +70,29 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
                     selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(clientSet)
                 }
             }
+
         case .userClientRemove:
-            let selfUser = await managedObjectContext.perform { ZMUser.selfUser(in: self.managedObjectContext) }
-            let selfClientId = await managedObjectContext.perform { selfUser.selfClient()?.remoteIdentifier }
+            guard let clientID = clientInfo["id"] as? String else {
+                return
+            }
 
-            guard let clientId = clientInfo["id"] as? String else { return }
+            let (clientToDelete, isSelfClient) = await managedObjectContext.perform {
+                let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
+                let client = selfUser.clients.first { $0.remoteIdentifier == clientID }
+                return (client, client?.isSelfClient())
+            }
 
-            if selfClientId != clientId {
-                let deletedClient = await managedObjectContext.perform {
-                    selfUser.clients.first { $0.remoteIdentifier == clientId }
-                }
-                await deletedClient?.deleteClientAndEndSession()
-            } else {
+            if isSelfClient == true {
                 await managedObjectContext.perform {
                     self.clientRegistrationStatus.didDetectCurrentClientDeletion()
                     self.clientUpdateStatus.didDetectCurrentClientDeletion()
                 }
+            } else {
+                await clientToDelete?.deleteClientAndEndSession()
             }
-        default: break
+
+        default:
+            break
         }
     }
 
