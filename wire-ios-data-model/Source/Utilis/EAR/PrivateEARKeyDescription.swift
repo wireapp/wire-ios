@@ -26,6 +26,11 @@ import LocalAuthentication
 
 public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
 
+    private enum Constant {
+        static let labelPrivatePrimary = "private"
+        static let labelPrivateSecondary = "secondary-private"
+    }
+
     // MARK: - Life cycle
 
     init(
@@ -62,9 +67,7 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
         return [:]
     }
 
-}
-
-extension PrivateEARKeyDescription {
+    // MARK: - Static Access
 
     static func primaryKeyDescription(
         accountID: UUID,
@@ -72,7 +75,7 @@ extension PrivateEARKeyDescription {
     ) -> PrivateEARKeyDescription {
         return PrivateEARKeyDescription(
             accountID: accountID,
-            label: "private",
+            label: Constant.labelPrivatePrimary,
             context: context
         )
     }
@@ -80,8 +83,7 @@ extension PrivateEARKeyDescription {
     static func secondaryKeyDescription(accountID: UUID) -> PrivateEARKeyDescription {
         return PrivateEARKeyDescription(
             accountID: accountID,
-            label: "secondary-private"
+            label: Constant.labelPrivatePrimary
         )
     }
-
 }
