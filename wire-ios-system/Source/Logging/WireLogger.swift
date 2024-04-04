@@ -164,6 +164,8 @@ extension String: LogConvertible {
 
 public extension WireLogger {
 
+    static let appLock = WireLogger(tag: "AppLock")
+    static let backgroundActivity = WireLogger(tag: "background-activity")
     static let proteus = WireLogger(tag: "proteus")
     static let shareExtension = WireLogger(tag: "share-extension")
     static let notifications = WireLogger(tag: "notifications")
