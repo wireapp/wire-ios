@@ -29,17 +29,22 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
     let clientRegistrationStatus: ZMClientRegistrationStatus
     let clientUpdateStatus: ClientUpdateStatus
 
-    public init (managedObjectContext: NSManagedObjectContext,
-                 clientRegistrationStatus: ZMClientRegistrationStatus,
-                 clientUpdateStatus: ClientUpdateStatus) {
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        clientRegistrationStatus: ZMClientRegistrationStatus,
+        clientUpdateStatus: ClientUpdateStatus
+    ) {
         self.managedObjectContext = managedObjectContext
         self.clientRegistrationStatus = clientRegistrationStatus
         self.clientUpdateStatus = clientUpdateStatus
-
         super.init()
     }
 
-    public func processEvents(_ events: [WireTransport.ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
+    public func processEvents(
+        _ events: [ZMUpdateEvent],
+        liveEvents: Bool,
+        prefetchResult: ZMFetchRequestBatchResult?
+    ) async {
         for event in events {
             await processUpdateEvent(event)
         }
@@ -89,6 +94,7 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
                 }
             } else {
                 await clientToDelete?.deleteClientAndEndSession()
+                
             }
 
         default:
