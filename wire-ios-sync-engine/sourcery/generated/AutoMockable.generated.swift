@@ -333,58 +333,6 @@ public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneCon
 
 }
 
-public class MockSelfClientCertificateProviderProtocol: SelfClientCertificateProviderProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-    // MARK: - hasCertificate
-
-    public var hasCertificateCallsCount = 0
-    public var hasCertificateCalled: Bool {
-        return hasCertificateCallsCount > 0
-    }
-
-    public var hasCertificate: Bool {
-        get async {
-            hasCertificateCallsCount += 1
-            if let hasCertificateClosure = hasCertificateClosure {
-                return await hasCertificateClosure()
-            } else {
-                return underlyingHasCertificate
-            }
-        }
-    }
-    public var underlyingHasCertificate: Bool!
-    public var hasCertificateClosure: (() async -> Bool)?
-
-
-    // MARK: - getCertificate
-
-    public var getCertificate_Invocations: [Void] = []
-    public var getCertificate_MockError: Error?
-    public var getCertificate_MockMethod: (() async throws -> E2eIdentityCertificate?)?
-    public var getCertificate_MockValue: E2eIdentityCertificate??
-
-    public func getCertificate() async throws -> E2eIdentityCertificate? {
-        getCertificate_Invocations.append(())
-
-        if let error = getCertificate_MockError {
-            throw error
-        }
-
-        if let mock = getCertificate_MockMethod {
-            return try await mock()
-        } else if let mock = getCertificate_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `getCertificate`")
-        }
-    }
-
-}
-
 public class MockSessionManagerDelegate: SessionManagerDelegate {
 
     // MARK: - Life cycle

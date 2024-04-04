@@ -86,6 +86,14 @@ final class AuthenticatedRouter: NSObject {
         ) { [weak self] notification in
             self?.notifyFeatureChange(notification)
         }
+
+        NotificationCenter.default.addObserver(
+            forName: .presentRevokedCertificateWarningAlert,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.notifyRevokedCertificate()
+        }
     }
 
     private func notifyFeatureChange(_ note: Notification) {
@@ -103,6 +111,16 @@ final class AuthenticatedRouter: NSObject {
 
         if change == .e2eIEnabled && e2eiActivationDateRepository.e2eiActivatedAt == nil {
             e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
+        }
+
+        _viewController?.presentAlert(alert)
+    }
+
+    private func notifyRevokedCertificate() {
+        guard let session = SessionManager.shared else { return }
+
+        let alert = UIAlertController.revokedCertificateWarning {
+            session.logoutCurrentSession()
         }
 
         _viewController?.presentAlert(alert)
