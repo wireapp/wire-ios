@@ -792,8 +792,8 @@ public final class ZMUserSession: NSObject {
 
     // MARK: - Caches
 
-    func purgeTemporaryAssets() {
-        assetCache.purgeTemporaryAssets()
+    func purgeTemporaryAssets() throws {
+        try assetCache.purgeTemporaryAssets()
     }
 
 }
