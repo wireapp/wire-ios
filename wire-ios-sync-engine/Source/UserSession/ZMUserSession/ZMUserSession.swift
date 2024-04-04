@@ -1033,6 +1033,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
     func checkE2EICertificateExpiryStatus() {
         guard e2eiFeature.isEnabled else { return }
+
         NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
     }
 }
