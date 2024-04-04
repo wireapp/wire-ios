@@ -920,7 +920,7 @@ class CallKitManagerTest: DatabaseTest {
         self.sut.callCenterDidChange(callState: state, conversation: conversation, caller: otherUser, timestamp: Date(), previousCallState: nil)
 
         // when
-        sut.callCenterDidChange(callState: .terminating(reason: .anweredElsewhere), conversation: conversation, caller: otherUser, timestamp: nil, previousCallState: nil)
+        sut.callCenterDidChange(callState: .terminating(reason: .answeredElsewhere), conversation: conversation, caller: otherUser, timestamp: nil, previousCallState: nil)
 
         // then
         XCTAssertEqual(self.callKitProvider.lastEndedReason, .answeredElsewhere)

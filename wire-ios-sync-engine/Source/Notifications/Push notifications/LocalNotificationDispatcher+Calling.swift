@@ -24,7 +24,7 @@ extension LocalNotificationDispatcher {
         // Missed call notification are handled separately, except if call was answered
         // elsewhere for 1-1 conversations.
         switch (callState, conversation.conversationType) {
-        case (.terminating(.anweredElsewhere), .oneOnOne):
+        case (.terminating(.answeredElsewhere), .oneOnOne):
             break
         case (.terminating(.rejectedElsewhere), .oneOnOne):
             break

@@ -1017,8 +1017,13 @@ extension WireCallCenterV3 {
 
         var callState = callState
 
-        if case .terminating(reason: .stillOngoing) = callState, canJoinCall(conversationId: conversationId) {
-            callState = .incoming(video: false, shouldRing: false, degraded: isDegraded(conversationId: conversationId))
+        if case .terminating(reason: .stillOngoing) = callState {
+
+            if isDegraded(conversationId: conversationId) {
+                callState = .terminating(reason: .securityDegraded)
+            } else if canJoinCall(conversationId: conversationId) {
+                callState = .incoming(video: false, shouldRing: false, degraded: false)
+            }
         }
 
         if case .incoming = callState, isGroup(conversationId: conversationId), activeCalls.isEmpty {

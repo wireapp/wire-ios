@@ -138,7 +138,7 @@ final class LocalNotificationDispatcherCallingTests: DatabaseTest {
 
         // when
         syncMOC.performAndWait {
-            sut.process(callState: .terminating(reason: .anweredElsewhere), in: conversation, caller: sender)
+            sut.process(callState: .terminating(reason: .answeredElsewhere), in: conversation, caller: sender)
         }
         // then
         XCTAssertEqual(sut.callingNotifications.notifications.count, 0)

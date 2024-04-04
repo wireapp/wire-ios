@@ -158,7 +158,7 @@ final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestH
     func testThatCallFailureDebugAlertIsNotPresented_WhenCallIsTerminated() {
         // GIVEN
         let establishedCallState: CallState = .established
-        let terminatingCallState: CallState = .terminating(reason: .anweredElsewhere)
+        let terminatingCallState: CallState = .terminating(reason: .answeredElsewhere)
         conversation.remoteIdentifier = UUID()
         callConversationProvider.priorityCallConversation = conversation
 

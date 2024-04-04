@@ -47,7 +47,7 @@ extension ZMLocalNotification {
             switch callState {
             case .incoming(let video, shouldRing: true, degraded: _):
                 self.callState = .incomingCall(video: video)
-            case .terminating(reason: .anweredElsewhere), .terminating(reason: .normal), .terminating(reason: .rejectedElsewhere):
+            case .terminating(reason: .answeredElsewhere), .terminating(reason: .normal), .terminating(reason: .rejectedElsewhere):
                 return nil
             case .terminating(reason: .timeout):
                 self.callState = .missedCall(cancelled: false)
