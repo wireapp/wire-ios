@@ -30,7 +30,7 @@ public enum CallClosedReason: Int32 {
     /// Incoming call was canceled by remote
     case canceled
     /// Incoming call was answered on another device
-    case anweredElsewhere
+    case answeredElsewhere
     /// Incoming call was rejected on another device
     case rejectedElsewhere
     /// Outgoing call timed out
@@ -73,7 +73,7 @@ public enum CallClosedReason: Int32 {
         case WCALL_REASON_CANCELED:
             self = .canceled
         case WCALL_REASON_ANSWERED_ELSEWHERE:
-            self = .anweredElsewhere
+            self = .answeredElsewhere
         case WCALL_REASON_REJECTED:
             self = .rejectedElsewhere
         case WCALL_REASON_TIMEOUT:
@@ -108,7 +108,7 @@ public enum CallClosedReason: Int32 {
             return WCALL_REASON_NORMAL
         case .canceled:
             return WCALL_REASON_CANCELED
-        case .anweredElsewhere:
+        case .answeredElsewhere:
             return WCALL_REASON_ANSWERED_ELSEWHERE
         case .rejectedElsewhere:
             return WCALL_REASON_REJECTED
