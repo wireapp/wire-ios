@@ -84,10 +84,10 @@ final class EARKeyRepository: EARKeyRepositoryInterface {
             keyCache[description.id] = key
             return key
         } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
-            WireLogger.ear.warn("private key not found in keychain")
+            WireLogger.ear.warn("private key not found in keychain", attributes: .safePublic)
             throw EARKeyRepositoryFailure.keyNotFound
         } catch {
-            WireLogger.ear.warn("failed to fetch private key: \(error)")
+            WireLogger.ear.warn("failed to fetch private key: \(error)", attributes: .safePublic)
             throw error
         }
     }
@@ -120,6 +120,7 @@ final class EARKeyRepository: EARKeyRepositoryInterface {
     // MARK: - Cache
 
     func clearCache() {
+        WireLogger.ear.info("clear key cache", attributes: .safePublic)
         keyCache.removeAll()
     }
 
