@@ -18,10 +18,8 @@
 
 import Foundation
 
-/**
- * An object that provides
- */
-
+/// Abstracts access to the system pastboard.
+// sourcery: AutoMockable
 public protocol Pasteboard: AnyObject {
 
     /// The text copied by the user, if any.
