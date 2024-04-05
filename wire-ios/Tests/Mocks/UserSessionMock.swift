@@ -26,6 +26,7 @@ import WireRequestStrategySupport
 @testable import Wire
 
 final class UserSessionMock: UserSession {
+
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
     func fetchSelfConversationMLSGroupID() async -> WireDataModel.MLSGroupID? {
@@ -119,6 +120,7 @@ final class UserSessionMock: UserSession {
     func evaluateAppLockAuthentication(
         passcodePreference: AppLockPasscodePreference,
         description: String,
+        context: (any LAContextProtocol)?,
         callback: @escaping (
             AppLockAuthenticationResult,
             LAContextProtocol
