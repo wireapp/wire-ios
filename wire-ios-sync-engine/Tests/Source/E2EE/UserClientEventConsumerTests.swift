@@ -26,12 +26,13 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
     var clientUpdateStatus: ZMMockClientUpdateStatus!
     var cookieStorage: ZMPersistentCookieStorage!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
-    var usecaseFactory: MockUseCaseFactoryProtocol!
+    var resolveOneOnOneConversations: MockResolveOneOnOneConversationsUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
 
-        usecaseFactory = MockUseCaseFactoryProtocol()
+        resolveOneOnOneConversations = MockResolveOneOnOneConversationsUseCaseProtocol()
+        resolveOneOnOneConversations.invoke_MockMethod = {}
 
         self.syncMOC.performGroupedBlockAndWait {
             self.cookieStorage = ZMPersistentCookieStorage(
@@ -55,7 +56,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
                 managedObjectContext: self.syncMOC,
                 clientRegistrationStatus: self.clientRegistrationStatus,
                 clientUpdateStatus: self.clientUpdateStatus,
-                useCaseFactory: self.usecaseFactory
+                resolveOneOnOneConversations: self.resolveOneOnOneConversations
             )
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -253,12 +254,6 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             return
         }
 
-        let resolveOneOnOneConversationsUseCase = MockResolveOneOnOneConversationsUseCaseProtocol()
-        resolveOneOnOneConversationsUseCase.invoke_MockMethod = { }
-        usecaseFactory.createResolveOneOnOneUseCase_MockMethod = {
-            return resolveOneOnOneConversationsUseCase
-        }
-
         // when
         await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
 
@@ -272,7 +267,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             XCTAssertEqual(newClient, existingClient1)
         }
 
-        XCTAssertEqual(resolveOneOnOneConversationsUseCase.invoke_Invocations.count, 1)
+        XCTAssertEqual(resolveOneOnOneConversations.invoke_Invocations.count, 1)
     }
 
     func testThatItInvalidatesTheCurrentSelfClientAndWipeCryptoBoxWhenReceivingAPush() async {

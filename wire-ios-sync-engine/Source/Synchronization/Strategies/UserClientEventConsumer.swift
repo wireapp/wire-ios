@@ -28,18 +28,18 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
     private let managedObjectContext: NSManagedObjectContext
     private let clientRegistrationStatus: ZMClientRegistrationStatus
     private let clientUpdateStatus: ClientUpdateStatus
-    private let useCaseFactory: UseCaseFactoryProtocol
+    private let resolveOneOnOneConversations: ResolveOneOnOneConversationsUseCaseProtocol
 
     public init(
         managedObjectContext: NSManagedObjectContext,
         clientRegistrationStatus: ZMClientRegistrationStatus,
         clientUpdateStatus: ClientUpdateStatus,
-        useCaseFactory: UseCaseFactoryProtocol
+        resolveOneOnOneConversations: ResolveOneOnOneConversationsUseCaseProtocol
     ) {
         self.managedObjectContext = managedObjectContext
         self.clientRegistrationStatus = clientRegistrationStatus
         self.clientUpdateStatus = clientUpdateStatus
-        self.useCaseFactory = useCaseFactory
+        self.resolveOneOnOneConversations = resolveOneOnOneConversations
         super.init()
     }
 
@@ -101,8 +101,7 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
                 }
             } else {
                 await clientToDelete?.deleteClientAndEndSession()
-                let usecase = useCaseFactory.createResolveOneOnOneUseCase()
-                try await usecase.invoke()
+                try await resolveOneOnOneConversations.invoke()
             }
 
         default:
