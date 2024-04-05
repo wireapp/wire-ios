@@ -18,7 +18,7 @@
 
 import Foundation
 
-/// Abstracts access to the system pastboard.
+/// Abstracts access to the system's pasteboard.
 // sourcery: AutoMockable
 public protocol Pasteboard: AnyObject {
 
