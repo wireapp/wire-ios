@@ -619,7 +619,8 @@ public final class ZMUserSession: NSObject {
             transportSession: transportSession,
             proteusProvider: self.proteusProvider,
             mlsService: mlsService,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            usecaseFactory: useCaseFactory
         )
     }
 
