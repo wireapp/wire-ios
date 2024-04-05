@@ -378,14 +378,14 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
             case .configureDevicePermissions:
                 guard
-                    let session = ZMUserSession.shared(),
+                    let session: UserSession = ZMUserSession.shared(),
                     session.encryptMessagesAtRest
                 else {
                     eventResponderChain.handleEvent(ofType: .deviceConfigurationComplete)
                     return
                 }
 
-                session.appLockController.evaluateAuthentication(
+                session.evaluateAppLockAuthentication(
                     passcodePreference: .deviceOnly,
                     description: L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.description,
                     context: nil
