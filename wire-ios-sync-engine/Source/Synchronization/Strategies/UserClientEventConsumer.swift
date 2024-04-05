@@ -52,7 +52,7 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
             do {
                 try await processUpdateEvent(event)
             } catch {
-                WireLogger.updateEvent.error("failed to process user client event: \(event): \(error)")
+                WireLogger.updateEvent.error("failed to process user client event: \(event.safeForLogging): \(error)", attributes: .safePublic)
             }
         }
     }
