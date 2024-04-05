@@ -98,16 +98,3 @@ public protocol AppLockType {
     func evaluateAuthentication(customPasscode: String) -> AppLockAuthenticationResult
 
 }
-
-public extension AppLockType {
-
-    func evaluateAuthentication(passcodePreference: AppLockPasscodePreference,
-                                description: String,
-                                callback: @escaping (AppLockAuthenticationResult, LAContextProtocol) -> Void) {
-
-        evaluateAuthentication(passcodePreference: passcodePreference,
-                               description: description,
-                               context: LAContext(),
-                               callback: callback)
-    }
-}

@@ -93,6 +93,7 @@ extension ZMUserSession: UserSession {
         return appLockController.evaluateAuthentication(
             passcodePreference: passcodePreference,
             description: description,
+            context: LAContext(),
             callback: callback
         )
     }
