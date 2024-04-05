@@ -24,8 +24,4 @@ extension Logging {
 
     public static let apiMigration = ZMSLog(tag: "API Migration")
 
-    /// For logs related to Cryptobox migrations
-
-    public static let cryptoboxMigration = ZMSLog(tag: "Cryptobox Migration")
-
 }
