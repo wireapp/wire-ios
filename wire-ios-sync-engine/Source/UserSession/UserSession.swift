@@ -93,6 +93,7 @@ public protocol UserSession: AnyObject {
     func evaluateAppLockAuthentication(
         passcodePreference: AppLockPasscodePreference,
         description: String,
+        context: LAContextProtocol?,
         callback: @escaping (
             AppLockAuthenticationResult,
             LAContextProtocol

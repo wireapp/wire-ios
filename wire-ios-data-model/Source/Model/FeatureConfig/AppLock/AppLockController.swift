@@ -153,11 +153,12 @@ public final class AppLockController: AppLockType {
 
     public func evaluateAuthentication(passcodePreference: AppLockPasscodePreference,
                                        description: String,
-                                       context: LAContextProtocol = LAContext(),
+                                       context: LAContextProtocol?,
                                        callback: @escaping (AppLockAuthenticationResult, LAContextProtocol) -> Void) {
         WireLogger.appLock.info("evaluating authentication for app lock")
 
         let policy = passcodePreference.policy
+        let context = context ?? LAContext()
         var error: NSError?
         let canEvaluatePolicy = context.canEvaluatePolicy(policy, error: &error)
 

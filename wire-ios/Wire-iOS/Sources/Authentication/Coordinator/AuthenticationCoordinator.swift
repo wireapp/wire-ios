@@ -387,7 +387,8 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
                 session.appLockController.evaluateAuthentication(
                     passcodePreference: .deviceOnly,
-                    description: L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.description
+                    description: L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.description,
+                    context: nil
                 ) { [weak self] _, _  in
                     DispatchQueue.main.performAsync {
                         self?.eventResponderChain.handleEvent(ofType: .deviceConfigurationComplete)

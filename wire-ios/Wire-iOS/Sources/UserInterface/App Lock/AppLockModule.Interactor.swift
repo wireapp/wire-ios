@@ -118,6 +118,7 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
             userSession.evaluateAppLockAuthentication(
                 passcodePreference: preference,
                 description: deviceAuthenticationDescription,
+                context: nil,
                 callback: handleAuthenticationResult
             )
 
@@ -128,7 +129,7 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
 
     private func handleAuthenticationResult(_ result: AppLockModule.AuthenticationResult, context: LAContextProtocol?) {
         DispatchQueue.main.async(group: dispatchGroup) { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             switch result {
             case .granted:
