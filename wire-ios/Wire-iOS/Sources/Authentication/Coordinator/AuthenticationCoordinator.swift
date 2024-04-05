@@ -389,7 +389,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                     passcodePreference: .deviceOnly,
                     description: L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.description
                 ) { [weak self] _, _  in
-                    DispatchQueue.main.performAsync {
+                    DispatchQueue.main.async {
                         self?.eventResponderChain.handleEvent(ofType: .deviceConfigurationComplete)
                     }
                 }
