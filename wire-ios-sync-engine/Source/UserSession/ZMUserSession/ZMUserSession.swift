@@ -998,6 +998,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
             self?.delegate?.clientRegistrationDidSucceed(accountId: accountId)
         }
+
+        if userClient.hasRegisteredMLSClient {
+            syncStatus.forceSlowSync()
+        }
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {
