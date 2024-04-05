@@ -324,7 +324,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await uiMOC.perform {
             self.setMocksForConversationRepair(
                 parentGroupID: groupID,
-                epoch: conversation.epoch + 1,
+                epoch: conversation.epoch - 1,
                 onJoinGroup: { joinedGroupID in
                     XCTAssertEqual(groupID, joinedGroupID)
                     expectation.fulfill()
@@ -1352,7 +1352,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 }
 
                 let epoch = await self.uiMOC.perform { tuple.conversation.epoch }
-                return tuple.isOutOfSync ? epoch + 1 : epoch
+                return tuple.isOutOfSync ? epoch - 1 : epoch
             }
         }
 
@@ -1388,7 +1388,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await uiMOC.perform { [self] in
             setMocksForConversationRepair(
                 parentGroupID: groupID,
-                epoch: conversation.epoch + 1,
+                epoch: conversation.epoch - 1,
                 onJoinGroup: { joinedGroupID in
                     XCTAssertEqual(groupID, joinedGroupID)
                     expectation.fulfill()
@@ -1456,7 +1456,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await uiMOC.perform {
             self.setMocksForConversationRepair(
                 parentGroupID: groupID,
-                epoch: UInt64(subgroup.epoch + 1),
+                epoch: UInt64(subgroup.epoch - 1),
                 subgroup: subgroup,
                 onJoinGroup: { joinedGroupID in
                     XCTAssertEqual(subgroupID, joinedGroupID)
