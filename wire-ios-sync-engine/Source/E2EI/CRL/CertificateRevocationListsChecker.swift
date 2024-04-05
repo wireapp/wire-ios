@@ -18,21 +18,6 @@
 
 import Foundation
 
-// `CertificateRevocationListAPIProtocol` needs to be defined at the DataModel level for visibility but needs to be
-// implemented on the RequestStrategy level because of dependencies on HttpClientE2EI
-
-public protocol SelfClientCertificateProviderProtocol {
-
-    var hasCertificate: Bool { get async }
-    func getCertificate() async throws -> E2eIdentityCertificate?
-
-}
-
-// sourcery: AutoMockable
-public protocol CertificateRevocationListAPIProtocol {
-    func getRevocationList(from distributionPoint: URL) async throws -> Data
-}
-
 // sourcery: AutoMockable
 public protocol CertificateRevocationListsChecking {
     func checkNewCRLs(from distributionPoints: CRLsDistributionPoints) async
