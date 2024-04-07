@@ -19,7 +19,7 @@
 import Foundation
 import avs
 import Combine
-
+import OSLog
 private let zmLog = ZMSLog(tag: "calling")
 
 /**
@@ -32,7 +32,7 @@ private let zmLog = ZMSLog(tag: "calling")
 public class WireCallCenterV3: NSObject {
 
     static let logger = WireLogger.calling
-
+    let signposter = OSSignposter(subsystem: Bundle.main.bundleIdentifier ?? "main", category: "calling")
     /// The maximum number of participants for a legacy video call.
 
     let legacyVideoParticipantsLimit = 4
@@ -547,7 +547,7 @@ extension WireCallCenterV3 {
     /// - Throws: WireCallCenterV3.Failure
 
     public func startCall(in conversation: ZMConversation, isVideo: Bool) throws {
-        Self.logger.info("starting call")
+        self.signposter.emitEvent("starting call")
 
         guard let conversationId = conversation.avsIdentifier else {
             throw Failure.missingAVSIdentifier
@@ -758,6 +758,7 @@ extension WireCallCenterV3 {
      */
 
     public func rejectCall(conversationId: AVSIdentifier) {
+        self.signposter.emitEvent("rejecting call")
         Self.logger.info("rejecting call")
         avsWrapper.rejectCall(conversationId: conversationId)
 
@@ -774,6 +775,7 @@ extension WireCallCenterV3 {
      */
 
     public func endAllCalls(exluding: AVSIdentifier? = nil) {
+        self.signposter.emitEvent("ending all calls")
         Self.logger.info("ending all calls")
         nonIdleCalls.forEach { (key: AVSIdentifier, callState: CallState) in
             guard exluding == nil || key != exluding else { return }
@@ -794,6 +796,7 @@ extension WireCallCenterV3 {
      */
 
     public func setVideoState(conversationId: AVSIdentifier, videoState: VideoState) {
+        self.signposter.emitEvent("setting video state")
         Self.logger.info("setting video state")
         guard videoState != .badConnection else { return }
 
@@ -844,6 +847,7 @@ extension WireCallCenterV3 {
 
     /// Sends a call OTR message when requested by AVS through `wcall_send_h`.
     func send(token: WireCallMessageToken, conversationId: AVSIdentifier, targets: AVSClientList?, data: Data, dataLength: Int, overMLSSelfConversation: Bool = false) {
+        self.signposter.emitEvent("sending call message for AVS")
         Self.logger.info("sending call message for AVS")
         zmLog.debug("\(self): send call message, transport = \(String(describing: transport))")
         transport?.send(data: data, conversationId: conversationId, targets: targets.map(\.clients), overMLSSelfConversation: overMLSSelfConversation, completionHandler: { [weak self] status in
@@ -854,6 +858,8 @@ extension WireCallCenterV3 {
     /// Sends an SFT call message when requested by AVS through `wcall_sft_req_h`.
     func sendSFT(token: WireCallMessageToken, url: String, data: Data) {
         Self.logger.info("sending SFT message for AVS")
+        self.signposter.emitEvent("sending SFT message for AVS")
+
         zmLog.debug("\(self): send SFT call message, transport = \(String(describing: transport))")
 
         guard let endpoint = URL(string: url) else {

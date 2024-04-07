@@ -117,7 +117,7 @@ extension Settings {
             "terminate federation",
             "feature configurations",
             "rich-profile",
-            "Request Configuration",
+//            "Request Configuration",
             "Asset V3",
             "AssetPreviewDownloading",
             "link-attachments",
