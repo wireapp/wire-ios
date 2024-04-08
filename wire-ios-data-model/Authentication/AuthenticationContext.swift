@@ -31,7 +31,7 @@ struct AuthenticationContext: AuthenticationContextProtocol {
 
     private let storage: LAContextStorable
 
-    init(storage: LAContextStorable = LAContextStorage.shared) {
+    init(storage: LAContextStorable) {
         self.storage = storage
     }
 
