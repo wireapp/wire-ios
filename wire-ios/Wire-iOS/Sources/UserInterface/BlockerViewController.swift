@@ -124,7 +124,6 @@ final class BlockerViewController: LaunchImageViewController {
 
         getCertificateAlert.addAction(learnMoreAction)
         getCertificateAlert.addAction(getCertificateAction)
-
         present(getCertificateAlert, animated: true)
     }
 
