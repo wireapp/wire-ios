@@ -251,7 +251,7 @@ private class DebugCommandLogEncryption: DebugCommandMixin {
         self.currentlyEnabledLogs = Set(logs.compactMap {
             EncryptionSessionIdentifier(string: $0)
         })
-        userSession.syncManagedObjectContext.performAsync {
+        userSession.syncManagedObjectContext.performGroupedBlock {
             guard let keyStore = userSession.syncManagedObjectContext.zm_cryptKeyStore else {
                 return
             }
