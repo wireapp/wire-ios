@@ -35,6 +35,7 @@ protocol EARKeyRepositoryInterface {
 
 }
 
+/// Caches keys for reuse and avoid prompting the user to authenticate for each key access.
 final class EARKeyRepository: EARKeyRepositoryInterface {
 
     private var keyCache = [String: SecKey]()
