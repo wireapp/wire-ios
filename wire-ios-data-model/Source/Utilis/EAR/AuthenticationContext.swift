@@ -19,7 +19,21 @@
 import Foundation
 import LocalAuthentication
 
-struct AuthenticationContext {
+public protocol AuthenticationContextProtocol {
+
+    func canEvaluatePolicy(_ policy: LAPolicy) async throws -> Bool
+    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String) async throws -> Bool
+    func evaluatedPolicyDomainState() async -> Data?
+
+}
+
+enum AuthenticationContextError: Error {
+    case wrappedError(NSError)
+}
+
+struct AuthenticationContext: AuthenticationContextProtocol {
+
+    var evaluatedPolicyDomainState: Data?
 
     private let storage: LAContextStorable
 
@@ -27,6 +41,36 @@ struct AuthenticationContext {
         self.storage = storage
     }
 
+    func canEvaluatePolicy(_ policy: LAPolicy) async throws -> Bool {
+        var error: NSError?
+        let success = await getContext().canEvaluatePolicy(policy, error: &error)
+
+        if let error {
+            throw AuthenticationContextError.wrappedError(error)
+        }
+
+        return success
+    }
+
+    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String) async throws -> Bool {
+        try await getContext().evaluatePolicy(policy, localizedReason: localizedReason)
+    }
+
+    func evaluatedPolicyDomainState() async -> Data? {
+        await getContext().evaluatedPolicyDomainState
+    }
+
+    // MARK: Helpers
+
+    private func getContext() async -> LAContext {
+        if let context = await storage.context {
+            return context
+        } else {
+            let context = LAContext()
+            await storage.setContext(context)
+            return context
+        }
+    }
 }
 
 protocol LAContextStorable {
