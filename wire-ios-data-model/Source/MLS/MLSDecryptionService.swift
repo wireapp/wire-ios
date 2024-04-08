@@ -54,7 +54,7 @@ protocol DecryptedMessageBundle {
     var commitDelay: UInt64? { get }
     var senderClientId: WireCoreCrypto.ClientId? { get }
     var hasEpochChanged: Bool { get }
-    var identity: WireCoreCrypto.WireIdentity? { get }
+    var identity: WireCoreCrypto.WireIdentity { get }
 
 }
 

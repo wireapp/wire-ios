@@ -129,7 +129,7 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
         self.directory = accountContainer.appendingPathComponent(directoryName)
         self.url = directory.appendingPathComponent(fileName)
         super.init()
-        FileManager.default.createAndProtectDirectory(at: directory)
+        try! FileManager.default.createAndProtectDirectory(at: directory)
     }
 
     @discardableResult public func store(_ object: T) -> Bool {

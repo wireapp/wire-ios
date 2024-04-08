@@ -242,7 +242,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     var deleteAccountToken: Any?
     var callCenterObserverToken: Any?
     var blacklistVerificator: ZMBlacklistVerificator?
-    var reachability: ReachabilityWrapper
     var pushRegistry: PushRegistry
     let notificationsTracker: NotificationsTracker?
     let configuration: SessionManagerConfiguration
@@ -251,12 +250,14 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
 
-    internal var authenticatedSessionFactory: AuthenticatedSessionFactory
-    internal let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
+    var authenticatedSessionFactory: AuthenticatedSessionFactory
+    let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
 
-    fileprivate let sessionLoadingQueue: DispatchQueue = DispatchQueue(label: "sessionLoadingQueue")
+    private let sessionLoadingQueue: DispatchQueue = DispatchQueue(label: "sessionLoadingQueue")
 
-    var environment: BackendEnvironmentProvider {
+    private(set) var reachability: ReachabilityWrapper
+
+    public internal(set) var environment: BackendEnvironmentProvider {
         didSet {
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
@@ -1071,12 +1072,14 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     deinit {
-        backgroundUserSessions.forEach { (_, session) in
-            session.tearDown()
+        DispatchQueue.main.async { [backgroundUserSessions, blacklistVerificator, unauthenticatedSession, reachability] in
+            backgroundUserSessions.values.forEach { session in
+                session.tearDown()
+            }
+            blacklistVerificator?.tearDown()
+            unauthenticatedSession?.tearDown()
+            reachability.tearDown()
         }
-        blacklistVerificator?.tearDown()
-        unauthenticatedSession?.tearDown()
-        reachability.tearDown()
 
         if let memoryWarningObserver {
             NotificationCenter.default.removeObserver(memoryWarningObserver)
@@ -1416,6 +1419,8 @@ extension SessionManager {
 
     @objc fileprivate func applicationDidBecomeActive(_ note: Notification) {
         notificationsTracker?.dispatchEvent()
+        guard let session = activeUserSession, session.isLoggedIn else { return }
+        session.checkE2EICertificateExpiryStatus()
     }
 
 }

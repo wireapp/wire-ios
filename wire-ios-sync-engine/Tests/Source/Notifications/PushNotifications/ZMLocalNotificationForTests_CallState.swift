@@ -157,7 +157,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     func testCallClosedReasonsWhichShouldBeIgnored() {
 
         // given
-        let ignoredCallClosedReasons: [CallClosedReason] = [.anweredElsewhere, .normal]
+        let ignoredCallClosedReasons: [CallClosedReason] = [.answeredElsewhere, .normal]
 
         for reason in ignoredCallClosedReasons {
             syncMOC.performAndWait {
