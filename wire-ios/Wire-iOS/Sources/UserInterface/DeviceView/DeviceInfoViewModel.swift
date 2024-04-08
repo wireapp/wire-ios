@@ -48,7 +48,7 @@ final class DeviceInfoViewModel: ObservableObject {
     var userClient: UserClientType
 
     var isCopyEnabled: Bool {
-        return Settings.isClipboardEnabled
+        Settings.isClipboardEnabled
     }
 
     var isCertificateExpiringSoon: Bool? {
@@ -59,7 +59,7 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 
     var isE2eIdentityEnabled: Bool {
-        return e2eIdentityCertificate != nil && mlsThumbprint != nil
+        e2eIdentityCertificate != nil && mlsThumbprint != nil
     }
 
     var mlsThumbprint: String? {

@@ -83,7 +83,6 @@ struct DeviceDetailsView: View {
                 if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
                     mlsView
                 }
-
                 e2eIdentityCertificateView
             }
             proteusView
