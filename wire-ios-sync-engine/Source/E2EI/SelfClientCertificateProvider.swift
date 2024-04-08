@@ -19,12 +19,12 @@
 import Foundation
 
 // sourcery: AutoMockable
- public protocol SelfClientCertificateProviderProtocol {
+public protocol SelfClientCertificateProviderProtocol {
 
     var hasCertificate: Bool { get async }
     func getCertificate() async throws -> E2eIdentityCertificate?
 
- }
+}
 
 public final class SelfClientCertificateProvider: SelfClientCertificateProviderProtocol {
 
