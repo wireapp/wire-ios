@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-protocol E2EIPrivacyWarningPresenter {
+protocol E2EIPrivacyWarningPresenter: AnyObject {
     func presentE2EIPrivacyWarningAlert(_ notification: Notification)
 }
 
@@ -77,8 +77,8 @@ struct E2EIPrivacyWarningChecker {
     static func addPresenter(_ observer: E2EIPrivacyWarningPresenter) -> NSObjectProtocol {
         NotificationCenter.default.addObserver(forName: .presentE2EIPrivacyWarningAlert,
                                                object: nil,
-                                               queue: .main) { note in
-            observer.presentE2EIPrivacyWarningAlert(note)
+                                               queue: .main) { [weak observer] note in
+            observer?.presentE2EIPrivacyWarningAlert(note)
         }
     }
 
