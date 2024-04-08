@@ -21,6 +21,7 @@ import LocalAuthentication
 
 /// An abstraction around authentication via `LAContext`.
 public protocol AuthenticationContextProtocol {
+    var laContext: LAContext { get }
     var evaluatedPolicyDomainState: Data? { get }
 
     func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool
@@ -28,6 +29,10 @@ public protocol AuthenticationContextProtocol {
 }
 
 public struct AuthenticationContext: AuthenticationContextProtocol {
+
+    public var laContext: LAContext {
+        storedContext()
+    }
 
     public var evaluatedPolicyDomainState: Data? {
         storedContext().evaluatedPolicyDomainState
