@@ -89,7 +89,7 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
     static func secondaryKeyDescription(accountID: UUID) -> PrivateEARKeyDescription {
         return PrivateEARKeyDescription(
             accountID: accountID,
-            label: Constant.labelPrivatePrimary,
+            label: Constant.labelPrivateSecondary,
             context: nil
         )
     }
