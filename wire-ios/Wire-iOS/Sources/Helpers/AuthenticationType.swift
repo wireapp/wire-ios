@@ -42,7 +42,7 @@ struct AuthenticationTypeDetector: AuthenticationTypeProvider {
         }
 
         switch context.biometryType {
-        case .none:
+        case .none, .opticID:
             return .passcode
         case .touchID:
             return .touchID
