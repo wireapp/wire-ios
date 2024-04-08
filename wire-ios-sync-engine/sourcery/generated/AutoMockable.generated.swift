@@ -385,6 +385,33 @@ public class MockSelfClientCertificateProviderProtocol: SelfClientCertificatePro
 
 }
 
+public class MockServerConnection: ServerConnection {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - isMobileConnection
+
+    public var isMobileConnection: Bool {
+        get { return underlyingIsMobileConnection }
+        set(value) { underlyingIsMobileConnection = value }
+    }
+
+    public var underlyingIsMobileConnection: Bool!
+
+    // MARK: - isOffline
+
+    public var isOffline: Bool {
+        get { return underlyingIsOffline }
+        set(value) { underlyingIsOffline = value }
+    }
+
+    public var underlyingIsOffline: Bool!
+
+
+}
+
 public class MockSessionManagerDelegate: SessionManagerDelegate {
 
     // MARK: - Life cycle

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,23 +17,13 @@
 //
 
 import Foundation
+import class WireTransport.ZMReachability
 
-/// Abstraction of queue
-public protocol GenericAsyncQueue {
+extension ZMReachability: ServerConnection {
 
-    func performAsync(_ block: @escaping () -> Void)
-}
-
-extension DispatchQueue: GenericAsyncQueue {
-
-    public func performAsync(_ block: @escaping () -> Void) {
-        self.async(execute: block)
+    public var isOffline: Bool {
+        return !mayBeReachable
     }
-}
 
-extension NSManagedObjectContext: GenericAsyncQueue {
-
-    public func performAsync(_ block: @escaping () -> Void) {
-        self.performGroupedBlock(block)
-    }
+    // isMobileConnection is declared already
 }
