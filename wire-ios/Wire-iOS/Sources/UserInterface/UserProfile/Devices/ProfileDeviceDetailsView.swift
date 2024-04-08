@@ -20,19 +20,12 @@ import SwiftUI
 import WireCommonComponents
 
 struct ProfileDeviceDetailsView: View {
-    @Environment(\.dismiss)
-    private var dismiss
+
+    @Environment(\.dismiss) private var dismiss
 
     @ObservedObject var viewModel: DeviceInfoViewModel
     @State private var isCertificateViewPresented: Bool = false
     @State private var isDebugViewPresented: Bool = false
-
-    private let onDisappear: (() -> Void)?
-
-    init(viewModel: DeviceInfoViewModel, onDisappear: (() -> Void)?) {
-        self.viewModel = viewModel
-        self.onDisappear = onDisappear
-    }
 
     private var e2eIdentityCertificateView: some View {
         VStack(alignment: .leading) {
@@ -103,7 +96,7 @@ struct ProfileDeviceDetailsView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationView { // TODO [WPB-7397]: remove
             ScrollView {
                 VStack(alignment: .leading) {
                     if viewModel.isE2eIdentityEnabled {
@@ -126,7 +119,7 @@ struct ProfileDeviceDetailsView: View {
                     VStack {
                         if viewModel.isActionInProgress {
                             Spacer()
-                            SwiftUI.ProgressView()
+                            ProgressView()
                             Spacer()
                         }
                     }
@@ -135,7 +128,7 @@ struct ProfileDeviceDetailsView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    SwiftUI.Button(
+                    Button(
                         action: {
                             dismiss()
                         },
@@ -150,7 +143,7 @@ struct ProfileDeviceDetailsView: View {
                     DeviceView(viewModel: viewModel).titleView
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    SwiftUI.Button(
+                    Button(
                         action: {
                             isDebugViewPresented.toggle()
                         },
@@ -169,9 +162,6 @@ struct ProfileDeviceDetailsView: View {
         .onAppear {
             viewModel.onAppear()
         }
-        .onDisappear {
-            onDisappear?()
-        }
         .onReceive(viewModel.$shouldDismiss) { shouldDismiss in
             if shouldDismiss {
                 dismiss()
@@ -189,16 +179,16 @@ struct ProfileDeviceDetailsView: View {
             }
         }
         .alert("Debug options", isPresented: $isDebugViewPresented, actions: {
-            SwiftUI.Button("Delete Device", action: {
+            Button("Delete Device", action: {
                   viewModel.onDeleteDeviceTapped()
               })
-            SwiftUI.Button("Duplicate Session", action: {
+            Button("Duplicate Session", action: {
                   viewModel.onDuplicateClientTapped()
               })
-            SwiftUI.Button("Corrupt Session", action: {
+            Button("Corrupt Session", action: {
                 viewModel.onCorruptSessionTapped()
             })
-            SwiftUI.Button("Cancel", role: .cancel, action: {
+            Button("Cancel", role: .cancel, action: {
                 isDebugViewPresented.toggle()
             })
             }, message: {
