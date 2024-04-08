@@ -223,14 +223,9 @@ final class ClientListViewController: UIViewController,
         }
         selectedDeviceInfoViewModel = viewModel
 
-        let detailsView = DeviceDetailsView(viewModel: viewModel) {
-            self.navigationController?.setNavigationBarHidden(false, animated: false)
-        }
+        let detailsView = DeviceDetailsView(viewModel: viewModel)
         let hostingViewController = UIHostingController(rootView: detailsView)
-        hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-
         navigationController.pushViewController(hostingViewController, animated: true)
-        navigationController.isNavigationBarHidden = true
     }
 
     private func makeDeviceInfoViewModel(
