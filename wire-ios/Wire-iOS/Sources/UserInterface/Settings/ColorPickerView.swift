@@ -21,43 +21,54 @@ import WireSyncEngine
 import WireCommonComponents
 
 struct ColorPickerView: View {
-    let colors: [AccentColor]
+
     @State var selectedColor: AccentColor?
+
+    let colors: [AccentColor]
     var onColorSelect: ((AccentColor) -> Void)?
 
     private let colorViewSize: CGFloat = 28
     private let colorViewCornerRadius: CGFloat = 14
     private let leftPadding: CGFloat = 6
-    private let rightPadding: CGFloat = 20
+    private let rightPadding: CGFloat = 30
 
     var body: some View {
-        List(colors, id: \.self) { color in
-            HStack {
-                // Color view
-                Circle()
-                    .fill(Color(uiColor: UIColor(for: color)))
-                    .frame(width: colorViewSize, height: colorViewSize)
-                    .padding(.leading, 2)
+        NavigationView {
+            List(colors, id: \.self) { color in
+                HStack {
+                    // Color view
+                    Circle()
+                        .fill(Color(uiColor: UIColor(for: color)))
+                        .frame(width: colorViewSize, height: colorViewSize)
+                        .padding(.leading, 2)
 
-                Text(color.name)
+                    Text(color.name)
 
-                Spacer()
+                    Spacer()
 
-                // Checkmark view
-                if selectedColor == color {
-                    Image(systemName: "checkmark")
-                        .foregroundColor(Color(.label))
-                        .padding(.trailing, rightPadding)
+                    // Checkmark view
+                    if selectedColor == color {
+                        Image(systemName: "checkmark")
+                            .foregroundColor(Color(.label))
+                            .padding(.trailing, rightPadding)
+                    }
                 }
-            }
-            .background(Color(SemanticColors.View.backgroundUserCell))
-            .onTapGesture {
-                withAnimation {
-                    self.selectedColor = color
-                    onColorSelect?(color)
+                .background(Color(SemanticColors.View.backgroundUserCell))
+                .onTapGesture {
+                    withAnimation {
+                        self.selectedColor = color
+                        onColorSelect?(color)
+                    }
                 }
             }
         }
-        .navigationBarTitle(L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized, displayMode: .inline)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                VStack {
+                    Text(L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized)
+                        .font(UIFont.swiftUIFont(for: .headline))
+                }
+            }
+        }
     }
 }
