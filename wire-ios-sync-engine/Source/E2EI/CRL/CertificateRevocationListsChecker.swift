@@ -109,7 +109,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
     private func checkCertificateRevocationLists(from distributionPoints: Set<URL>) async {
 
-        var checkE2EICertificateForSelfClient = false
+        var shouldNotifyAboutRevokedCertificate = false
         for distributionPoint in distributionPoints {
             do {
                 // fetch the CRL from the distribution point
