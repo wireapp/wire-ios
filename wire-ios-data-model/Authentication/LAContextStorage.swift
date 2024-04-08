@@ -40,7 +40,6 @@ public final class LAContextStorage: LAContextStorable {
         get {
             return internalQueue.sync { internalContext }
         }
-
         set {
             internalQueue.sync { internalContext = newValue }
         }
@@ -49,6 +48,6 @@ public final class LAContextStorage: LAContextStorable {
     // MARK: Funcs
 
     public func clear() {
-        self.context = nil
+        context = nil
     }
 }
