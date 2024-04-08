@@ -131,7 +131,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
                     // update verification state for conversations
                     await mlsConversationsVerificationUpdater.updateAllStatuses()
 
-                    checkE2EICertificateForSelfClient = true
+                    shouldNotifyAboutRevokedCertificate = true
 
                 }
             } catch {
@@ -139,7 +139,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
             }
         }
 
-        if checkE2EICertificateForSelfClient {
+        if shouldNotifyAboutRevokedCertificate {
             await notifyAboutRevokedCertificateIfNeeded()
         }
     }
