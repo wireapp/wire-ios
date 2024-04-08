@@ -56,11 +56,8 @@ public protocol EARServiceInterface: AnyObject {
     func lockDatabase()
 
     /// Unlock the database.
-    ///
-    /// - Parameters:
-    ///   - context: a user authenticated context.
 
-    func unlockDatabase(context: LAContextProtocol) throws
+    func unlockDatabase() throws
 
     /// Fetch all public keys.
     ///
@@ -472,9 +469,7 @@ public class EARService: EARServiceInterface {
         keyRepository.clearCache()
     }
 
-    // TODO: remove not used context
-
-    public func unlockDatabase(context: LAContextProtocol) throws {
+    public func unlockDatabase() throws {
         do {
             WireLogger.ear.info("unlocking database")
             let databaseKey = try fetchDecyptedDatabaseKey()

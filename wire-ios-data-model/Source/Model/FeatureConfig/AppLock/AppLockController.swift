@@ -154,12 +154,11 @@ public final class AppLockController: AppLockType {
 
     // MARK: - Authentication
 
-    // TODO: context parameter is never used?
-
-    public func evaluateAuthentication(passcodePreference: AppLockPasscodePreference,
-                                       description: String,
-                                       context: LAContextProtocol?,
-                                       callback: @escaping (AppLockAuthenticationResult, LAContextProtocol) -> Void) {
+    public func evaluateAuthentication(
+        passcodePreference: AppLockPasscodePreference,
+        description: String,
+        callback: @escaping (AppLockAuthenticationResult, LAContextProtocol) -> Void
+    ) {
         WireLogger.appLock.info("evaluating authentication for app lock")
 
         let policy = passcodePreference.policy

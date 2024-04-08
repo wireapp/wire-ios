@@ -597,14 +597,13 @@ extension ShareExtensionViewController {
 
         appLock.evaluateAuthentication(
             passcodePreference: passcodePreference,
-            description: description,
-            context: nil
-        ) { [weak self] result, context in
+            description: description
+        ) { [weak self] result, _ in
             guard let self else { return }
 
             DispatchQueue.main.async {
-                if case .granted = result, let context = context as? LAContext {
-                    try? self.sharingSession?.unlockDatabase(with: context)
+                if case .granted = result {
+                    try? self.sharingSession?.unlockDatabase()
                 }
 
                 self.authenticationEvaluated(with: result, completion: completion)

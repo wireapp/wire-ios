@@ -82,13 +82,15 @@ public protocol AppLockType {
     /// - Parameters:
     ///     - passcodePreference: Used to determine which type of passcode is used.
     ///     - description: The message to dispaly in the authentication UI.
-    ///     - context: The context in which authentication happens. If nil a new context is created internally.
     ///     - callback: Invoked with the authentication result.
 
-    func evaluateAuthentication(passcodePreference: AppLockPasscodePreference,
-                                description: String,
-                                context: LAContextProtocol?,
-                                callback: @escaping (AppLockAuthenticationResult, LAContextProtocol) -> Void)
+    // TODO: remove LAContextProtocol in callback?
+
+    func evaluateAuthentication(
+        passcodePreference: AppLockPasscodePreference,
+        description: String,
+        callback: @escaping (AppLockAuthenticationResult, LAContextProtocol) -> Void
+    )
 
     /// Authenticate with a custom passcode.
     ///

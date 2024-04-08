@@ -387,7 +387,8 @@ public final class SharingSession {
                 coreDataStack.viewContext,
                 coreDataStack.syncContext
             ],
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: LAContextStorage.shared)
         )
         let proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
         let mlsDecryptionService = MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor)

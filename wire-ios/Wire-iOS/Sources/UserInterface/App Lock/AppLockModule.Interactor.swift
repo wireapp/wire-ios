@@ -118,7 +118,6 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
             userSession.evaluateAppLockAuthentication(
                 passcodePreference: preference,
                 description: deviceAuthenticationDescription,
-                context: nil,
                 callback: handleAuthenticationResult
             )
 
@@ -127,13 +126,15 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
         }
     }
 
+    // TODO: remove context from callback
+
     private func handleAuthenticationResult(_ result: AppLockModule.AuthenticationResult, context: LAContextProtocol?) {
         DispatchQueue.main.async(group: dispatchGroup) { [weak self] in
             guard let self else { return }
 
             switch result {
             case .granted:
-                self.unlockDatabase(with: context)
+                self.unlockDatabase()
                 self.openAppLock()
 
             case .denied:
@@ -148,9 +149,8 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
         }
     }
 
-    private func unlockDatabase(with context: LAContextProtocol?) {
-        guard let context else { return }
-        try? userSession.unlockDatabase(with: context)
+    private func unlockDatabase() {
+        try? userSession.unlockDatabase()
     }
 
     private func openAppLock() {
