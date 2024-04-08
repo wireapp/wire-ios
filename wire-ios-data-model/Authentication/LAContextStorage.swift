@@ -33,7 +33,20 @@ public final class LAContextStorage: LAContextStorable {
 
     public static let shared = LAContextStorage()
 
-    public var context: LAContext?
+    private let internalQueue = DispatchQueue(label: "LAContextStorage.internal")
+    private var internalContext: LAContext?
+
+    public var context: LAContext? {
+        get {
+            return internalQueue.sync { internalContext }
+        }
+
+        set {
+            internalQueue.sync { internalContext = newValue }
+        }
+    }
+
+    // MARK: Funcs
 
     public func clear() {
         self.context = nil

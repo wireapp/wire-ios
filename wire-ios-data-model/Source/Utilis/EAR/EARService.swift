@@ -136,7 +136,7 @@ public class EARService: EARServiceInterface {
         self.authenticationContext = authenticationContext
 
         primaryPublicKeyDescription = .primaryKeyDescription(accountID: accountID)
-        primaryPrivateKeyDescription = .primaryKeyDescription(accountID: accountID)
+        primaryPrivateKeyDescription = .primaryKeyDescription(accountID: accountID, context: authenticationContext)
         secondaryPublicKeyDescription = .secondaryKeyDescription(accountID: accountID)
         secondaryPrivateKeyDescription = .secondaryKeyDescription(accountID: accountID)
         databaseKeyDescription = .keyDescription(accountID: accountID)

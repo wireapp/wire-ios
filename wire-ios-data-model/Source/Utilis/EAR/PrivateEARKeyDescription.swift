@@ -31,19 +31,27 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
         static let labelPrivateSecondary = "secondary-private"
     }
 
+    private let context: AuthenticationContextProtocol?
+
     // MARK: - Life cycle
 
     init(
         accountID: UUID,
         label: String,
-        context: AuthenticationContextProtocol? = nil
+        context: AuthenticationContextProtocol?
     ) {
+        self.context = context
+
         super.init(
             accountID: accountID,
             label: label
         )
+    }
 
-        getQuery = [
+    // MARK: - Keychain item
+
+    var getQuery: [CFString: Any] {
+        var query: [CFString: Any] = [
             kSecClass: kSecClassKey,
             kSecAttrKeyClass: kSecAttrKeyClassPrivate,
             kSecAttrLabel: tag,
@@ -51,16 +59,14 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
         ]
 
         #if !targetEnvironment(simulator)
-        if let context = context?.laContext {
-            getQuery[kSecUseAuthenticationContext] = context
-            getQuery[kSecUseAuthenticationUI] = kSecUseAuthenticationUISkip
+        if let laContext = context?.laContext {
+            query[kSecUseAuthenticationContext] = laContext
+            query[kSecUseAuthenticationUI] = kSecUseAuthenticationUISkip
         }
         #endif
+
+        return query
     }
-
-    // MARK: - Keychain item
-
-    private(set) var getQuery = [CFString: Any]()
 
     func setQuery<T>(value: T) -> [CFString: Any] {
         // Private keys are stored in the Secure Enclave.
@@ -71,7 +77,7 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
 
     static func primaryKeyDescription(
         accountID: UUID,
-        context: AuthenticationContextProtocol? = nil
+        context: AuthenticationContextProtocol
     ) -> PrivateEARKeyDescription {
         return PrivateEARKeyDescription(
             accountID: accountID,
@@ -83,7 +89,8 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
     static func secondaryKeyDescription(accountID: UUID) -> PrivateEARKeyDescription {
         return PrivateEARKeyDescription(
             accountID: accountID,
-            label: Constant.labelPrivatePrimary
+            label: Constant.labelPrivatePrimary,
+            context: nil
         )
     }
 }
