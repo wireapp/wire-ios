@@ -621,7 +621,6 @@
 		EEB5DE112837BD52009B4741 /* store2-101-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EEB5DE102837BD52009B4741 /* store2-101-0.wiredatabase */; };
 		EEB803AB283F61E600412F62 /* Feature.MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB803AA283F61E600412F62 /* Feature.MLS.swift */; };
 		EEB930B52ABD5A9B00FB35B2 /* FetchSupportedProtocolsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB930B42ABD5A9B00FB35B2 /* FetchSupportedProtocolsAction.swift */; };
-		EEBACDA525B9C243000210AC /* LAContextProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDA425B9C243000210AC /* LAContextProtocol.swift */; };
 		EEBACDA725B9C2C6000210AC /* AppLockType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDA625B9C2C6000210AC /* AppLockType.swift */; };
 		EEBACDA925B9C47E000210AC /* AppLockController.Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDA825B9C47E000210AC /* AppLockController.Config.swift */; };
 		EEBACDAB25B9C4B0000210AC /* AppLockAuthenticationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEBACDAA25B9C4B0000210AC /* AppLockAuthenticationResult.swift */; };
@@ -1557,7 +1556,6 @@
 		EEB5DE102837BD52009B4741 /* store2-101-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-101-0.wiredatabase"; sourceTree = "<group>"; };
 		EEB803AA283F61E600412F62 /* Feature.MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.MLS.swift; sourceTree = "<group>"; };
 		EEB930B42ABD5A9B00FB35B2 /* FetchSupportedProtocolsAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchSupportedProtocolsAction.swift; sourceTree = "<group>"; };
-		EEBACDA425B9C243000210AC /* LAContextProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LAContextProtocol.swift; sourceTree = "<group>"; };
 		EEBACDA625B9C2C6000210AC /* AppLockType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockType.swift; sourceTree = "<group>"; };
 		EEBACDA825B9C47E000210AC /* AppLockController.Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockController.Config.swift; sourceTree = "<group>"; };
 		EEBACDAA25B9C4B0000210AC /* AppLockAuthenticationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockAuthenticationResult.swift; sourceTree = "<group>"; };
@@ -1935,7 +1933,6 @@
 				EE8B09AE25B86BB20057E85C /* AppLockPasscodePreference.swift */,
 				EEBACDAA25B9C4B0000210AC /* AppLockAuthenticationResult.swift */,
 				EE8B09AC25B86AB10057E85C /* AppLockError.swift */,
-				EEBACDA425B9C243000210AC /* LAContextProtocol.swift */,
 				066A96FE25A88E510083E317 /* BiometricsState.swift */,
 			);
 			path = AppLock;
@@ -4297,7 +4294,6 @@
 				5E0FB215205176B400FD9867 /* Set+ServiceUser.swift in Sources */,
 				013887A62B9A5C6B00323DD0 /* PrimaryKeyGenerator.swift in Sources */,
 				F9A706A81CAEE01D00C2F5FE /* DependentObjectsKeysForObservedObjectKeysCache.swift in Sources */,
-				EEBACDA525B9C243000210AC /* LAContextProtocol.swift in Sources */,
 				1670D01C231823DC003A143B /* ZMUser+Permissions.swift in Sources */,
 				EE428C5029F1247400ECB715 /* EARKeyGenerator.swift in Sources */,
 				54FB03AA1E41F204000E13DC /* LegacyPersistedDataPatches+Directory.swift in Sources */,

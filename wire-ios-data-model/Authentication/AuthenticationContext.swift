@@ -19,6 +19,14 @@
 import Foundation
 import LocalAuthentication
 
+/// An abstraction around `LAContext`.
+public protocol LAContextProtocol {
+    var evaluatedPolicyDomainState: Data? { get }
+
+    func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool
+    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void)
+}
+
 public struct AuthenticationContext: LAContextProtocol {
 
     public var evaluatedPolicyDomainState: Data? {
