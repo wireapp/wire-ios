@@ -19,15 +19,11 @@
 import Foundation
 import LocalAuthentication
 
-public protocol AuthenticationContextProtocol {
-    func canEvaluatePolicy(_ policy: LAPolicy) async throws -> Bool
-    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String) async throws -> Bool
-    func evaluatedPolicyDomainState() async -> Data?
-}
+struct AuthenticationContext: LAContextProtocol {
 
-struct AuthenticationContext: AuthenticationContextProtocol {
-
-    var evaluatedPolicyDomainState: Data?
+    var evaluatedPolicyDomainState: Data? {
+        storedContext().evaluatedPolicyDomainState
+    }
 
     private let storage: LAContextStorable
 
@@ -35,33 +31,22 @@ struct AuthenticationContext: AuthenticationContextProtocol {
         self.storage = storage
     }
 
-    func canEvaluatePolicy(_ policy: LAPolicy) async throws -> Bool {
-        var error: NSError?
-        let success = await storedContext().canEvaluatePolicy(policy, error: &error)
-
-        if let error {
-            throw AuthenticationContextError.underlyingLAError(error)
-        }
-
-        return success
+    func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
+        storedContext().canEvaluatePolicy(policy, error: error)
     }
 
-    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String) async throws -> Bool {
-        try await storedContext().evaluatePolicy(policy, localizedReason: localizedReason)
-    }
-
-    func evaluatedPolicyDomainState() async -> Data? {
-        await storedContext().evaluatedPolicyDomainState
+    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, (any Error)?) -> Void) {
+        storedContext().evaluatePolicy(policy, localizedReason: localizedReason, reply: reply)
     }
 
     // MARK: Helpers
 
-    private func storedContext() async -> LAContext {
-        if let context = await storage.context {
+    private func storedContext() -> LAContext {
+        if let context = storage.context {
             return context
         } else {
             let context = LAContext()
-            await storage.setContext(context)
+            storage.context = context
             return context
         }
     }

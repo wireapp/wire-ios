@@ -19,29 +19,23 @@
 import Foundation
 import LocalAuthentication
 
-protocol LAContextStorable {
-    var context: LAContext? { get async }
-
-    func setContext(_ context: LAContext) async
-    func clear() async
+/// Stores a `LAContext`  to avoid repeatative authention prompts to the user.
+protocol LAContextStorable: AnyObject {
+    var context: LAContext? { get set }
+    func clear()
 }
 
 // `LAContextStorage` was supposed to be an actor to give thread-safe access!
 // Unfortunatly the consequences are huge refactorings to Swift Concurrency
 // that we could not afford in this case.
 
-/// Stores a `LAContext`  to avoid repeatative authention prompts to the user.
 final class LAContextStorage: LAContextStorable {
 
     static let shared = LAContextStorage()
 
     var context: LAContext?
 
-    func setContext(_ context: LAContext) async {
-        self.context = context
-    }
-
-    func clear() async {
+    func clear() {
         self.context = nil
     }
 }
