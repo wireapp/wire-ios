@@ -598,7 +598,7 @@ extension ShareExtensionViewController {
         appLock.evaluateAuthentication(
             passcodePreference: passcodePreference,
             description: description
-        ) { [weak self] result, _ in
+        ) { [weak self] result in
             guard let self else { return }
 
             DispatchQueue.main.async {

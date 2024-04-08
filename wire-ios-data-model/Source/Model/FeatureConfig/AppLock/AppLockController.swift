@@ -157,7 +157,7 @@ public final class AppLockController: AppLockType {
     public func evaluateAuthentication(
         passcodePreference: AppLockPasscodePreference,
         description: String,
-        callback: @escaping (AppLockAuthenticationResult, LAContextProtocol) -> Void
+        callback: @escaping (AppLockAuthenticationResult) -> Void
     ) {
         WireLogger.appLock.info("evaluating authentication for app lock")
 
@@ -171,19 +171,19 @@ public final class AppLockController: AppLockType {
         // to accept the new biometrics state.
         if biometricsState.biometricsChanged(in: context) && !passcodePreference.allowsDevicePasscode {
             WireLogger.appLock.info("need custom passcode because biometrics changed")
-            callback(.needCustomPasscode, context)
+            callback(.needCustomPasscode)
             return
         }
 
         // No device authentication possible, but can fall back to the custom passcode.
         if !canEvaluatePolicy && passcodePreference.allowsCustomPasscode {
             WireLogger.appLock.info("need custom passcode because device auth is not possible")
-            callback(.needCustomPasscode, context)
+            callback(.needCustomPasscode)
             return
         }
 
         guard canEvaluatePolicy else {
-            callback(.unavailable, context)
+            callback(.unavailable)
             WireLogger.appLock.warn("Local authentication error: \(String(describing: error?.localizedDescription))")
             return
         }
@@ -200,7 +200,7 @@ public final class AppLockController: AppLockType {
             }
 
             WireLogger.appLock.info("app lock auth concluded with (result: \(result), policy: \(policy))")
-            callback(result, context)
+            callback(result)
         }
     }
 

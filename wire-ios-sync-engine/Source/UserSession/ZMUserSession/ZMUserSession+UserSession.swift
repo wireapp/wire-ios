@@ -85,10 +85,7 @@ extension ZMUserSession: UserSession {
     public func evaluateAppLockAuthentication(
         passcodePreference: AppLockPasscodePreference,
         description: String,
-        callback: @escaping (
-            AppLockAuthenticationResult,
-            LAContextProtocol
-        ) -> Void
+        callback: @escaping (AppLockAuthenticationResult) -> Void
     ) {
         return appLockController.evaluateAuthentication(
             passcodePreference: passcodePreference,

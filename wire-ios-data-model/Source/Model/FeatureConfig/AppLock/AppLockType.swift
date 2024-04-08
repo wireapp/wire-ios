@@ -84,12 +84,10 @@ public protocol AppLockType {
     ///     - description: The message to dispaly in the authentication UI.
     ///     - callback: Invoked with the authentication result.
 
-    // TODO: remove LAContextProtocol in callback?
-
     func evaluateAuthentication(
         passcodePreference: AppLockPasscodePreference,
         description: String,
-        callback: @escaping (AppLockAuthenticationResult, LAContextProtocol) -> Void
+        callback: @escaping (AppLockAuthenticationResult) -> Void
     )
 
     /// Authenticate with a custom passcode.

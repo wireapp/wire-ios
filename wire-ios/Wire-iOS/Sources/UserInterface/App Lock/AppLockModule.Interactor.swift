@@ -111,7 +111,7 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
 
         case .evaluateAuthentication:
             guard let preference = passcodePreference else {
-                handleAuthenticationResult(.granted, context: nil)
+                handleAuthenticationResult(.granted)
                 return
             }
 
@@ -126,9 +126,7 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
         }
     }
 
-    // TODO: remove context from callback
-
-    private func handleAuthenticationResult(_ result: AppLockModule.AuthenticationResult, context: LAContextProtocol?) {
+    private func handleAuthenticationResult(_ result: AppLockModule.AuthenticationResult) {
         DispatchQueue.main.async(group: dispatchGroup) { [weak self] in
             guard let self else { return }
 

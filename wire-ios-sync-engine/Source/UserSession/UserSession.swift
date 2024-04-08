@@ -92,10 +92,7 @@ public protocol UserSession: AnyObject {
     func evaluateAppLockAuthentication(
         passcodePreference: AppLockPasscodePreference,
         description: String,
-        callback: @escaping (
-            AppLockAuthenticationResult,
-            LAContextProtocol
-        ) -> Void
+        callback: @escaping (AppLockAuthenticationResult) -> Void
     )
 
     /// Authenticate with a custom passcode.
