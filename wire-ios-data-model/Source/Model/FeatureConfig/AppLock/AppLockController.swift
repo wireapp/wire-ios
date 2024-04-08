@@ -163,7 +163,7 @@ public final class AppLockController: AppLockType {
         let canEvaluatePolicy = context.canEvaluatePolicy(policy, error: &error)
 
         // Changing biometrics in device settings is protected by the device passcode, but if
-        // the device passcode isn't considered secure enough, then ask for the custon passcode
+        // the device passcode isn't considered secure enough, then ask for the custom passcode
         // to accept the new biometrics state.
         if biometricsState.biometricsChanged(in: context) && !passcodePreference.allowsDevicePasscode {
             WireLogger.appLock.info("need custom passcode because biometrics changed")
@@ -237,6 +237,7 @@ public final class AppLockController: AppLockType {
 
 // MARK: - TEST ONLY!
 
+@_spi(AppLockControllerState)
 extension AppLockController {
 
     func _setState(_ state: State) {

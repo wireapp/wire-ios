@@ -18,7 +18,7 @@
 
 import XCTest
 import LocalAuthentication
-@testable import WireDataModel
+@_spi(AppLockControllerState) @testable import WireDataModel
 
 final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
