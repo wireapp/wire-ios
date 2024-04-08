@@ -432,7 +432,16 @@ public class EARService: EARServiceInterface {
 
     private func fetchPrimaryPrivateKey() throws -> SecKey {
         WireLogger.ear.info("fetching private primary key")
-        return try keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
+
+        // create a new description instead of the stored `primaryPrivateKeyDescription`,
+        // because it doesn't not use the `authenticationContext`.
+
+        let authenticatedKeyDescription: PrivateEARKeyDescription = .primaryKeyDescription(
+            accountID: accountID,
+            context: authenticationContext
+        )
+
+        return try keyRepository.fetchPrivateKey(description: authenticatedKeyDescription)
     }
 
     private func fetchSecondaryPrivateKey() throws -> SecKey {
