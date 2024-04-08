@@ -60,7 +60,7 @@ public protocol EARServiceInterface: AnyObject {
     /// - Parameters:
     ///   - context: a user authenticated context.
 
-    func unlockDatabase(context: LAContext) throws
+    func unlockDatabase(context: LAContextProtocol) throws
 
     /// Fetch all public keys.
     ///
@@ -424,7 +424,7 @@ public class EARService: EARServiceInterface {
         }
     }
 
-    private func fetchPrimaryPrivateKey(context: LAContext? = nil) throws -> SecKey {
+    private func fetchPrimaryPrivateKey(context: LAContextProtocol? = nil) throws -> SecKey {
         if let context = context {
 
             WireLogger.ear.info("fetching private primary key with LAContext")
@@ -448,7 +448,7 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Database key
 
-    private func fetchDecyptedDatabaseKey(context: LAContext) throws -> VolatileData {
+    private func fetchDecyptedDatabaseKey(context: LAContextProtocol) throws -> VolatileData {
         let privateKey = try fetchPrimaryPrivateKey(context: context)
         let encryptedDatabaseKeyData = try fetchEncryptedDatabaseKey()
         let databaseKeyData = try keyEncryptor.decryptDatabaseKey(
@@ -470,7 +470,7 @@ public class EARService: EARServiceInterface {
         keyRepository.clearCache()
     }
 
-    public func unlockDatabase(context: LAContext) throws {
+    public func unlockDatabase(context: LAContextProtocol) throws {
         do {
             WireLogger.ear.info("unlocking database")
             let databaseKey = try fetchDecyptedDatabaseKey(context: context)

@@ -25,7 +25,7 @@ public protocol UserSessionEncryptionAtRestInterface {
     var isDatabaseLocked: Bool { get }
 
     func setEncryptionAtRest(enabled: Bool, skipMigration: Bool) throws
-    func unlockDatabase(with context: LAContext) throws
+    func unlockDatabase(with context: LAContextProtocol) throws
     func registerDatabaseLockedHandler(_ handler: @escaping (_ isDatabaseLocked: Bool) -> Void) -> Any
 }
 

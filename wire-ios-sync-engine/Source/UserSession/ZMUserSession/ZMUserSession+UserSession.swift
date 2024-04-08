@@ -103,7 +103,7 @@ extension ZMUserSession: UserSession {
         appLockController.evaluateAuthentication(customPasscode: customPasscode)
     }
 
-    public func unlockDatabase(with context: LAContext) throws {
+    public func unlockDatabase(with context: LAContextProtocol) throws {
         try earService.unlockDatabase(context: context)
 
         DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: managedObjectContext.notificationContext)

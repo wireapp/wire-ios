@@ -149,7 +149,7 @@ extension AppLockModule.Interactor: AppLockInteractorPresenterInterface {
     }
 
     private func unlockDatabase(with context: LAContextProtocol?) {
-        guard let context = context as? LAContext else { return }
+        guard let context else { return }
         try? userSession.unlockDatabase(with: context)
     }
 

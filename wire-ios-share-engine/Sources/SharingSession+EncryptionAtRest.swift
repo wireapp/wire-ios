@@ -23,7 +23,7 @@ import LocalAuthentication
 public protocol SharingSessionEncryptionAtRestInterface {
     var encryptMessagesAtRest: Bool { get }
     var isDatabaseLocked: Bool { get }
-    func unlockDatabase(with context: LAContext) throws
+    func unlockDatabase(with context: LAContextProtocol) throws
 }
 
 extension SharingSession: SharingSessionEncryptionAtRestInterface {
@@ -36,7 +36,7 @@ extension SharingSession: SharingSessionEncryptionAtRestInterface {
         return userInterfaceContext.isLocked
     }
 
-    public func unlockDatabase(with context: LAContext) throws {
+    public func unlockDatabase(with context: LAContextProtocol) throws {
         try earService.unlockDatabase(context: context)
     }
 

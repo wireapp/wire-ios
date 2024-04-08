@@ -76,7 +76,7 @@ public protocol UserSession: AnyObject {
 
     /// Unlock the database using the given authentication context.
 
-    func unlockDatabase(with context: LAContext) throws
+    func unlockDatabase(with context: LAContextProtocol) throws
 
     /// Open the app lock.
 

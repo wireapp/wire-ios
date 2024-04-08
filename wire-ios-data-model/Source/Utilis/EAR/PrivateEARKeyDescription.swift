@@ -71,7 +71,7 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
 
     static func primaryKeyDescription(
         accountID: UUID,
-        context: LAContext? = nil
+        context: LAContextProtocol? = nil
     ) -> PrivateEARKeyDescription {
         return PrivateEARKeyDescription(
             accountID: accountID,
