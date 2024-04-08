@@ -26,7 +26,12 @@ protocol LAContextStorable {
     func clear() async
 }
 
-actor LAContextStorage: LAContextStorable {
+// `LAContextStorage` was supposed to be an actor to give thread-safe access!
+// Unfortunatly the consequences are huge refactorings to Swift Concurrency
+// that we could not afford in this case.
+
+/// Stores a `LAContext`  to avoid repeatative authention prompts to the user.
+final class LAContextStorage: LAContextStorable {
 
     static let shared = LAContextStorage()
 
