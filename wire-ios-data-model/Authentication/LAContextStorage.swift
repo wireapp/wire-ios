@@ -33,9 +33,6 @@ public final class LAContextStorage: LAContextStorable {
 
     public static let shared = LAContextStorage()
 
-    private let internalQueue = DispatchQueue(label: "LAContextStorage.internal")
-    private var internalContext: LAContext?
-
     public var context: LAContext? {
         get {
             return internalQueue.sync { internalContext }
@@ -43,6 +40,35 @@ public final class LAContextStorage: LAContextStorable {
         set {
             internalQueue.sync { internalContext = newValue }
         }
+    }
+
+    private let internalQueue = DispatchQueue(label: "LAContextStorage.internal")
+    private var internalContext: LAContext?
+
+    private let notificationCenter = NotificationCenter.default
+    private var observerToken: NSObjectProtocol?
+
+    // MARK: Init
+
+    private init() {
+        setupObservers()
+    }
+
+    deinit {
+        if let observerToken {
+            notificationCenter.removeObserver(observerToken)
+        }
+    }
+
+    private func setupObservers() {
+        observerToken = notificationCenter.addObserver(
+            forName: UIApplication.didEnterBackgroundNotification,
+            object: nil,
+            queue: .main,
+            using: { [weak self] _ in
+                self?.clear()
+            }
+        )
     }
 
     // MARK: Funcs
