@@ -60,8 +60,8 @@ extension AppLockModule {
         func evaluateAuthentication(
             passcodePreference: AppLockPasscodePreference,
             description: String,
-            context: (any LAContextProtocol)?,
-            callback: @escaping (AppLockAuthenticationResult, any LAContextProtocol) -> Void
+            context: (any AuthenticationContextProtocol)?,
+            callback: @escaping (AppLockAuthenticationResult, any AuthenticationContextProtocol) -> Void
         ) {
             methodCalls.evaluateAuthentication.append((passcodePreference, description, callback))
             callback(_authenticationResult, _evaluationContext)

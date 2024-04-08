@@ -55,7 +55,7 @@ final class MockAppLock: AppLockType {
         // No op
     }
 
-    func evaluateAuthentication(passcodePreference: AppLockPasscodePreference, description: String, context: LAContextProtocol, callback: @escaping (AppLockAuthenticationResult, LAContextProtocol) -> Void) {
+    func evaluateAuthentication(passcodePreference: AppLockPasscodePreference, description: String, context: AuthenticationContextProtocol, callback: @escaping (AppLockAuthenticationResult, AuthenticationContextProtocol) -> Void) {
         fatalError("Not implemented")
     }
 

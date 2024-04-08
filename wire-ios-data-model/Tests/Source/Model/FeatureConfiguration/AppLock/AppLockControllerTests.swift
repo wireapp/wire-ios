@@ -408,7 +408,7 @@ extension AppLockControllerTests {
 
         let context = MockLAContext(canEvaluate: input.canEvaluate)
 
-        let assertion: (Output, LAContextProtocol) -> Void = { result, _ in
+        let assertion: (Output, AuthenticationContextProtocol) -> Void = { result, _ in
             XCTAssertEqual(result, output, file: file, line: line)
 
             if output == .granted {

@@ -95,7 +95,7 @@ public class EARService: EARServiceInterface {
     private let databaseKeyDescription: DatabaseEARKeyDescription
     private let earStorage: EARStorage
 
-    private let authenticationContext: any LAContextProtocol
+    private let authenticationContext: any AuthenticationContextProtocol
 
     // MARK: - Life cycle
 
@@ -104,7 +104,7 @@ public class EARService: EARServiceInterface {
         databaseContexts: [NSManagedObjectContext] = [],
         canPerformKeyMigration: Bool = false,
         sharedUserDefaults: UserDefaults,
-        authenticationContext: any LAContextProtocol
+        authenticationContext: any AuthenticationContextProtocol
     ) {
         let earStorage = EARStorage(userID: accountID, sharedUserDefaults: sharedUserDefaults)
 
@@ -126,7 +126,7 @@ public class EARService: EARServiceInterface {
         databaseContexts: [NSManagedObjectContext],
         canPerformKeyMigration: Bool,
         earStorage: EARStorage,
-        authenticationContext: LAContextProtocol
+        authenticationContext: AuthenticationContextProtocol
     ) {
         self.accountID = accountID
         self.keyRepository = keyRepository

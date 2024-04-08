@@ -36,7 +36,7 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
     init(
         accountID: UUID,
         label: String,
-        context: LAContextProtocol? = nil
+        context: AuthenticationContextProtocol? = nil
     ) {
         super.init(
             accountID: accountID,
@@ -71,7 +71,7 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
 
     static func primaryKeyDescription(
         accountID: UUID,
-        context: LAContextProtocol? = nil
+        context: AuthenticationContextProtocol? = nil
     ) -> PrivateEARKeyDescription {
         return PrivateEARKeyDescription(
             accountID: accountID,

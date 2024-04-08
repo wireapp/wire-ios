@@ -87,7 +87,7 @@ public final class AppLockController: AppLockType {
 
     private let selfUser: ZMUser
     private let featureRepository: FeatureRepository
-    private let authenticationContext: any LAContextProtocol
+    private let authenticationContext: any AuthenticationContextProtocol
 
     private(set) var state = State.locked
 
@@ -119,7 +119,7 @@ public final class AppLockController: AppLockType {
         userId: UUID,
         selfUser: ZMUser,
         legacyConfig: LegacyConfig?,
-        authenticationContext: any LAContextProtocol
+        authenticationContext: any AuthenticationContextProtocol
     ) {
         precondition(selfUser.isSelfUser, "AppLockController initialized with non-self user")
 

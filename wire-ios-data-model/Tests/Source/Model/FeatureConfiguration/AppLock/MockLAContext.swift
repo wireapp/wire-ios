@@ -19,7 +19,7 @@
 import Foundation
 import LocalAuthentication
 
-struct MockLAContext: LAContextProtocol {
+struct MockLAContext: AuthenticationContextProtocol {
 
     var evaluatedPolicyDomainState: Data?
     var canEvaluate = true
