@@ -158,7 +158,6 @@ struct ProfileDeviceDetailsView: View {
         }
         .navigationViewStyle(.stack)
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
-        .navigationBarBackButtonHidden(true)
         .onAppear {
             viewModel.onAppear()
         }

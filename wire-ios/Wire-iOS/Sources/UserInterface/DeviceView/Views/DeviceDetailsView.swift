@@ -116,7 +116,6 @@ struct DeviceDetailsView: View {
 //            }
 //        }
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
-        .navigationBarBackButtonHidden(true)
         .onAppear {
             viewModel.onAppear()
         }
