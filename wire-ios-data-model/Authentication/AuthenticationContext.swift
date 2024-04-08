@@ -20,15 +20,9 @@ import Foundation
 import LocalAuthentication
 
 public protocol AuthenticationContextProtocol {
-
     func canEvaluatePolicy(_ policy: LAPolicy) async throws -> Bool
     func evaluatePolicy(_ policy: LAPolicy, localizedReason: String) async throws -> Bool
     func evaluatedPolicyDomainState() async -> Data?
-
-}
-
-enum AuthenticationContextError: Error {
-    case wrappedError(NSError)
 }
 
 struct AuthenticationContext: AuthenticationContextProtocol {
@@ -43,26 +37,26 @@ struct AuthenticationContext: AuthenticationContextProtocol {
 
     func canEvaluatePolicy(_ policy: LAPolicy) async throws -> Bool {
         var error: NSError?
-        let success = await getContext().canEvaluatePolicy(policy, error: &error)
+        let success = await storedContext().canEvaluatePolicy(policy, error: &error)
 
         if let error {
-            throw AuthenticationContextError.wrappedError(error)
+            throw AuthenticationContextError.underlyingLAError(error)
         }
 
         return success
     }
 
     func evaluatePolicy(_ policy: LAPolicy, localizedReason: String) async throws -> Bool {
-        try await getContext().evaluatePolicy(policy, localizedReason: localizedReason)
+        try await storedContext().evaluatePolicy(policy, localizedReason: localizedReason)
     }
 
     func evaluatedPolicyDomainState() async -> Data? {
-        await getContext().evaluatedPolicyDomainState
+        await storedContext().evaluatedPolicyDomainState
     }
 
     // MARK: Helpers
 
-    private func getContext() async -> LAContext {
+    private func storedContext() async -> LAContext {
         if let context = await storage.context {
             return context
         } else {
@@ -70,27 +64,5 @@ struct AuthenticationContext: AuthenticationContextProtocol {
             await storage.setContext(context)
             return context
         }
-    }
-}
-
-protocol LAContextStorable {
-    var context: LAContext? { get async }
-
-    func setContext(_ context: LAContext) async
-    func clear() async
-}
-
-private actor LAContextStorage: LAContextStorable {
-
-    static let shared = LAContextStorage()
-
-    var context: LAContext?
-
-    func setContext(_ context: LAContext) async {
-        self.context = context
-    }
-
-    func clear() async {
-        self.context = nil
     }
 }
