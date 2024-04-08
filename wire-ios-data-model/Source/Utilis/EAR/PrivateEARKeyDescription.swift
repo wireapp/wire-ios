@@ -77,9 +77,9 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
 
     static func primaryKeyDescription(
         accountID: UUID,
-        context: AuthenticationContextProtocol
+        context: AuthenticationContextProtocol?
     ) -> PrivateEARKeyDescription {
-        return PrivateEARKeyDescription(
+        PrivateEARKeyDescription(
             accountID: accountID,
             label: Constant.labelPrivatePrimary,
             context: context
@@ -87,7 +87,7 @@ public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItem
     }
 
     static func secondaryKeyDescription(accountID: UUID) -> PrivateEARKeyDescription {
-        return PrivateEARKeyDescription(
+        PrivateEARKeyDescription(
             accountID: accountID,
             label: Constant.labelPrivateSecondary,
             context: nil
