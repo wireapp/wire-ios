@@ -19,23 +19,23 @@
 import Foundation
 import LocalAuthentication
 
-struct AuthenticationContext: LAContextProtocol {
+public struct AuthenticationContext: LAContextProtocol {
 
-    var evaluatedPolicyDomainState: Data? {
+    public var evaluatedPolicyDomainState: Data? {
         storedContext().evaluatedPolicyDomainState
     }
 
     private let storage: LAContextStorable
 
-    init(storage: LAContextStorable) {
+    public init(storage: LAContextStorable) {
         self.storage = storage
     }
 
-    func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
+    public func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
         storedContext().canEvaluatePolicy(policy, error: error)
     }
 
-    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, (any Error)?) -> Void) {
+    public func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, (any Error)?) -> Void) {
         storedContext().evaluatePolicy(policy, localizedReason: localizedReason, reply: reply)
     }
 

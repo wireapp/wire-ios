@@ -98,21 +98,27 @@ public class EARService: EARServiceInterface {
     private let databaseKeyDescription: DatabaseEARKeyDescription
     private let earStorage: EARStorage
 
+    private let authenticationContext: any LAContextProtocol
+
     // MARK: - Life cycle
 
     public convenience init(
         accountID: UUID,
         databaseContexts: [NSManagedObjectContext] = [],
         canPerformKeyMigration: Bool = false,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        authenticationContext: any LAContextProtocol
     ) {
+        let earStorage = EARStorage(userID: accountID, sharedUserDefaults: sharedUserDefaults)
+
         self.init(
             accountID: accountID,
             keyRepository: EARKeyRepository(),
             keyEncryptor: EARKeyEncryptor(),
             databaseContexts: databaseContexts,
             canPerformKeyMigration: canPerformKeyMigration,
-            earStorage: EARStorage(userID: accountID, sharedUserDefaults: sharedUserDefaults)
+            earStorage: earStorage,
+            authenticationContext: authenticationContext
         )
     }
 
@@ -122,13 +128,16 @@ public class EARService: EARServiceInterface {
         keyEncryptor: EARKeyEncryptorInterface = EARKeyEncryptor(),
         databaseContexts: [NSManagedObjectContext],
         canPerformKeyMigration: Bool,
-        earStorage: EARStorage
+        earStorage: EARStorage,
+        authenticationContext: LAContextProtocol
     ) {
         self.accountID = accountID
         self.keyRepository = keyRepository
         self.keyEncryptor = keyEncryptor
         self.earStorage = earStorage
         self.databaseContexts = databaseContexts
+        self.authenticationContext = authenticationContext
+
         primaryPublicKeyDescription = .primaryKeyDescription(accountID: accountID)
         primaryPrivateKeyDescription = .primaryKeyDescription(accountID: accountID)
         secondaryPublicKeyDescription = .secondaryKeyDescription(accountID: accountID)
@@ -189,7 +198,7 @@ public class EARService: EARServiceInterface {
             do {
                 try self.deleteExistingKeys()
                 try self.generateKeys()
-                let databaseKey = try self.fetchDecyptedDatabaseKey(context: LAContext())
+                let databaseKey = try self.fetchDecyptedDatabaseKey()
 
                 if !skipMigration {
                     try context.migrateTowardEncryptionAtRest(databaseKey: databaseKey)
@@ -424,22 +433,15 @@ public class EARService: EARServiceInterface {
         }
     }
 
-    private func fetchPrimaryPrivateKey(context: LAContextProtocol? = nil) throws -> SecKey {
-        if let context = context {
+    private func fetchPrimaryPrivateKey() throws -> SecKey {
+        WireLogger.ear.info("fetching private primary key")
 
-            WireLogger.ear.info("fetching private primary key with LAContext")
+        let authenticatedKeyDescription = PrivateEARKeyDescription.primaryKeyDescription(
+            accountID: accountID,
+            context: authenticationContext
+        )
 
-            let authenticatedKeyDescription = PrivateEARKeyDescription.primaryKeyDescription(
-                accountID: accountID,
-                context: context
-            )
-
-            return try keyRepository.fetchPrivateKey(description: authenticatedKeyDescription)
-        } else {
-            WireLogger.ear.info("fetching private primary key without LAContext")
-
-            return try keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
-        }
+        return try keyRepository.fetchPrivateKey(description: authenticatedKeyDescription)
     }
 
     private func fetchSecondaryPrivateKey() throws -> SecKey {
@@ -448,8 +450,8 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Database key
 
-    private func fetchDecyptedDatabaseKey(context: LAContextProtocol) throws -> VolatileData {
-        let privateKey = try fetchPrimaryPrivateKey(context: context)
+    private func fetchDecyptedDatabaseKey() throws -> VolatileData {
+        let privateKey = try fetchPrimaryPrivateKey()
         let encryptedDatabaseKeyData = try fetchEncryptedDatabaseKey()
         let databaseKeyData = try keyEncryptor.decryptDatabaseKey(
             encryptedDatabaseKeyData,
@@ -470,10 +472,12 @@ public class EARService: EARServiceInterface {
         keyRepository.clearCache()
     }
 
+    // TODO: remove not used context
+
     public func unlockDatabase(context: LAContextProtocol) throws {
         do {
             WireLogger.ear.info("unlocking database")
-            let databaseKey = try fetchDecyptedDatabaseKey(context: context)
+            let databaseKey = try fetchDecyptedDatabaseKey()
             setDatabaseKeyInAllContexts(databaseKey)
         } catch {
             WireLogger.ear.error("failed to unlock database: \(String(describing: error))")

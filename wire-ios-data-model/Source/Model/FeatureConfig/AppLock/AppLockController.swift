@@ -87,6 +87,7 @@ public final class AppLockController: AppLockType {
 
     private let selfUser: ZMUser
     private let featureRepository: FeatureRepository
+    private let authenticationContext: any LAContextProtocol
 
     private(set) var state = State.locked
 
@@ -117,7 +118,8 @@ public final class AppLockController: AppLockType {
     public init(
         userId: UUID,
         selfUser: ZMUser,
-        legacyConfig: LegacyConfig?
+        legacyConfig: LegacyConfig?,
+        authenticationContext: any LAContextProtocol
     ) {
         precondition(selfUser.isSelfUser, "AppLockController initialized with non-self user")
 
@@ -125,6 +127,7 @@ public final class AppLockController: AppLockType {
         self.keychainItem = PasscodeKeychainItem(userId: userId)
         self.selfUser = selfUser
         self.legacyConfig = legacyConfig
+        self.authenticationContext = authenticationContext
 
         featureRepository = FeatureRepository(context: selfUser.managedObjectContext!)
     }
@@ -151,6 +154,8 @@ public final class AppLockController: AppLockType {
 
     // MARK: - Authentication
 
+    // TODO: context parameter is never used?
+
     public func evaluateAuthentication(passcodePreference: AppLockPasscodePreference,
                                        description: String,
                                        context: LAContextProtocol?,
@@ -158,7 +163,7 @@ public final class AppLockController: AppLockType {
         WireLogger.appLock.info("evaluating authentication for app lock")
 
         let policy = passcodePreference.policy
-        let context = context ?? LAContext()
+        let context = authenticationContext
         var error: NSError?
         let canEvaluatePolicy = context.canEvaluatePolicy(policy, error: &error)
 

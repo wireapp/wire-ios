@@ -247,6 +247,12 @@ public final class NotificationSession {
 
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
 
+        let earService = EARService(
+            accountID: accountIdentifier,
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: LAContextStorage.shared)
+        )
+
         try self.init(
             coreDataStack: coreDataStack,
             transportSession: transportSession,
@@ -257,7 +263,7 @@ public final class NotificationSession {
             accountIdentifier: accountIdentifier,
             pushNotificationStrategy: pushNotificationStrategy,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
-            earService: EARService(accountID: accountIdentifier, sharedUserDefaults: sharedUserDefaults),
+            earService: earService,
             proteusService: ProteusService(coreCryptoProvider: coreCryptoProvider),
             mlsDecryptionService: MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor)
         )

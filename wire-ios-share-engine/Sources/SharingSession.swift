@@ -303,7 +303,12 @@ public final class SharingSession {
         self.earService = earService
 
         let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
-        self.appLockController = AppLockController(userId: accountIdentifier, selfUser: selfUser, legacyConfig: appLockConfig)
+        self.appLockController = AppLockController(
+            userId: accountIdentifier,
+            selfUser: selfUser,
+            legacyConfig: appLockConfig,
+            authenticationContext: AuthenticationContext(storage: LAContextStorage.shared)
+        )
 
         guard applicationStatusDirectory.authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
 
