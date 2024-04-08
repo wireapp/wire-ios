@@ -619,7 +619,8 @@ public final class ZMUserSession: NSObject {
             transportSession: transportSession,
             proteusProvider: self.proteusProvider,
             mlsService: mlsService,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            usecaseFactory: useCaseFactory
         )
     }
 
@@ -932,7 +933,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
         }
-        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
     }
 
     func processEvents() {
@@ -1034,6 +1034,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
             self?.delegate?.authenticationInvalidated(error as NSError, accountId: accountId)
         }
+    }
+
+    func checkE2EICertificateExpiryStatus() {
+        guard e2eiFeature.isEnabled else { return }
+        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
     }
 }
 

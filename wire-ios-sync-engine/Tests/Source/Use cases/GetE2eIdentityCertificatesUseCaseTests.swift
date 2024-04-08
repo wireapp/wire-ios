@@ -63,15 +63,18 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
     ) -> WireCoreCrypto.WireIdentity {
         return .init(
             clientId: clientID,
-            handle: "wireapp://%40\(handle)",
-            displayName: name,
-            domain: "local.com",
-            certificate: mockCertificate,
             status: status,
             thumbprint: "QrsvPI0PDiJyAgsF-p3HoSyWLGWjyKwMdqlL0zWZOew",
-            serialNumber: "00eac2d1d30f517a891231648a4322dfb2",
-            notBefore: 1709112038,
-            notAfter: 1716888038
+            credentialType: .x509,
+            x509Identity: X509Identity(
+                handle: "wireapp://%40\(handle)",
+                displayName: name,
+                domain: "local.com",
+                certificate: mockCertificate,
+                serialNumber: "00eac2d1d30f517a891231648a4322dfb2",
+                notBefore: 1709112038,
+                notAfter: 1716888038
+            )
         )
     }
 

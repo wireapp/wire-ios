@@ -105,7 +105,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 commitDelay: nil,
                 senderClientId: nil,
                 hasEpochChanged: false,
-                identity: nil,
+                identity: .withBasicCredentials(),
                 bufferedMessages: nil,
                 crlNewDistributionPoints: nil
             )
@@ -152,7 +152,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 commitDelay: nil,
                 senderClientId: sender.rawValue.data(using: .utf8)!,
                 hasEpochChanged: false,
-                identity: nil,
+                identity: .withBasicCredentials(),
                 bufferedMessages: nil,
                 crlNewDistributionPoints: nil
             )
@@ -199,7 +199,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 commitDelay: nil,
                 senderClientId: sender.rawValue.data(using: .utf8)!,
                 hasEpochChanged: false,
-                identity: nil,
+                identity: .withBasicCredentials(),
                 bufferedMessages: nil,
                 crlNewDistributionPoints: nil
             )
@@ -249,7 +249,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 commitDelay: nil,
                 senderClientId: nil,
                 hasEpochChanged: false,
-                identity: nil,
+                identity: .withBasicCredentials(),
                 bufferedMessages: [
                     BufferedDecryptedMessage(
                         message: messageData,
@@ -258,7 +258,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                         commitDelay: nil,
                         senderClientId: sender.rawValue.data(using: .utf8)!,
                         hasEpochChanged: false,
-                        identity: nil,
+                        identity: .withBasicCredentials(),
                         crlNewDistributionPoints: nil)
                 ], crlNewDistributionPoints: nil
             )
@@ -308,7 +308,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 commitDelay: nil,
                 senderClientId: sender.rawValue.data(using: .utf8)!,
                 hasEpochChanged: hasEpochChanged,
-                identity: nil,
+                identity: .withBasicCredentials(),
                 bufferedMessages: nil,
                 crlNewDistributionPoints: nil
             )
@@ -351,7 +351,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
                 commitDelay: nil,
                 senderClientId: senderData,
                 hasEpochChanged: false,
-                identity: nil,
+                identity: .withBasicCredentials(),
                 bufferedMessages: nil,
                 crlNewDistributionPoints: [distributionPoint]
             )
@@ -374,5 +374,18 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         // Then
         await fulfillment(of: [expectation])
         cancellable.cancel()
+    }
+}
+
+extension WireIdentity {
+
+    static func withBasicCredentials() -> Self {
+        .init(
+            clientId: "",
+            status: .valid,
+            thumbprint: "",
+            credentialType: .basic,
+            x509Identity: nil
+        )
     }
 }
