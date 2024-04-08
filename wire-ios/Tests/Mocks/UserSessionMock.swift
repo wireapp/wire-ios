@@ -57,6 +57,8 @@ final class UserSessionMock: UserSession {
 
     var setEncryptionAtRest: [(enabled: Bool, skipMigration: Bool)] = []
 
+    var unlockDatabase_MockInvocations: [Void] = []
+
     var openApp: [Void] = []
 
     var evaluateAuthentication: [(preference: Preference, description: String, callback: Callback)] = []
@@ -130,7 +132,7 @@ final class UserSessionMock: UserSession {
     }
 
     func unlockDatabase() throws {
-
+        unlockDatabase_MockInvocations.append(())
     }
 
     var maxAudioMessageLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)

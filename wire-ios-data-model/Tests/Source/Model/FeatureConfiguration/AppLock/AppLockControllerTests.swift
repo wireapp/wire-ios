@@ -408,7 +408,7 @@ extension AppLockControllerTests {
 
         let context = MockLAContext(canEvaluate: input.canEvaluate)
 
-        let assertion: (Output, AuthenticationContextProtocol) -> Void = { result, _ in
+        let assertion: (Output) -> Void = { result in
             XCTAssertEqual(result, output, file: file, line: line)
 
             if output == .granted {
@@ -418,14 +418,20 @@ extension AppLockControllerTests {
             }
         }
 
-        sut.evaluateAuthentication(passcodePreference: input.passcodePreference,
-                                   description: "",
-                                   context: context,
-                                   callback: assertion)
+        sut.evaluateAuthentication(
+            passcodePreference: input.passcodePreference,
+            description: "",
+            callback: assertion
+        )
     }
 
     private func createSut(legacyConfig: AppLockController.LegacyConfig? = nil) -> AppLockController {
-        return AppLockController(userId: selfUser.remoteIdentifier, selfUser: selfUser, legacyConfig: legacyConfig)
+        AppLockController(
+            userId: selfUser.remoteIdentifier,
+            selfUser: selfUser,
+            legacyConfig: legacyConfig,
+            authenticationContext: MockLAContext()
+        )
     }
 
     private func createSut(forceAppLock: Bool = false, timeout: UInt = 10) -> AppLockController {
@@ -433,7 +439,12 @@ extension AppLockControllerTests {
         let appLock = Feature.fetch(name: .appLock, context: uiMOC)!
         appLock.config = try! JSONEncoder().encode(config)
 
-        return AppLockController(userId: selfUser.remoteIdentifier, selfUser: selfUser, legacyConfig: nil)
+        return AppLockController(
+            userId: selfUser.remoteIdentifier,
+            selfUser: selfUser,
+            legacyConfig: nil,
+            authenticationContext: MockLAContext()
+        )
     }
 
     class Delegate: AppLockDelegate {

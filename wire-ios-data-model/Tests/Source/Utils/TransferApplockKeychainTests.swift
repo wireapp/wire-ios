@@ -28,7 +28,12 @@ final class TransferAppLockKeychainTests: DiskDatabaseTest {
 
         let selfUser = ZMUser.selfUser(in: moc)
         let config = AppLockController.LegacyConfig(isForced: false, timeout: 900, requireCustomPasscode: false)
-        appLock = AppLockController(userId: selfUser.remoteIdentifier!, selfUser: selfUser, legacyConfig: config)
+        appLock = AppLockController(
+            userId: selfUser.remoteIdentifier!,
+            selfUser: selfUser,
+            legacyConfig: config,
+            authenticationContext: MockLAContext()
+        )
     }
 
     override func tearDown() {

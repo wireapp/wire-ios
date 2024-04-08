@@ -3044,22 +3044,22 @@ public class MockEARServiceInterface: EARServiceInterface {
 
     // MARK: - unlockDatabase
 
-    public var unlockDatabaseContext_Invocations: [LAContext] = []
-    public var unlockDatabaseContext_MockError: Error?
-    public var unlockDatabaseContext_MockMethod: ((LAContext) throws -> Void)?
+    public var unlockDatabase_Invocations: [Void] = []
+    public var unlockDatabase_MockError: Error?
+    public var unlockDatabase_MockMethod: (() throws -> Void)?
 
-    public func unlockDatabase(context: LAContext) throws {
-        unlockDatabaseContext_Invocations.append(context)
+    public func unlockDatabase() throws {
+        unlockDatabase_Invocations.append(())
 
-        if let error = unlockDatabaseContext_MockError {
+        if let error = unlockDatabase_MockError {
             throw error
         }
 
-        guard let mock = unlockDatabaseContext_MockMethod else {
-            fatalError("no mock for `unlockDatabaseContext`")
+        guard let mock = unlockDatabase_MockMethod else {
+            fatalError("no mock for `unlockDatabase`")
         }
 
-        try mock(context)
+        try mock()
     }
 
     // MARK: - fetchPublicKeys

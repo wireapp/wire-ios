@@ -60,11 +60,10 @@ extension AppLockModule {
         func evaluateAuthentication(
             passcodePreference: AppLockPasscodePreference,
             description: String,
-            context: (any AuthenticationContextProtocol)?,
-            callback: @escaping (AppLockAuthenticationResult, any AuthenticationContextProtocol) -> Void
+            callback: @escaping (AppLockAuthenticationResult) -> Void
         ) {
             methodCalls.evaluateAuthentication.append((passcodePreference, description, callback))
-            callback(_authenticationResult, _evaluationContext)
+            callback(_authenticationResult)
         }
 
         func evaluateAuthentication(customPasscode: String) -> AuthenticationResult {
@@ -91,7 +90,7 @@ extension AppLockModule.MockAppLockController {
     struct MethodCalls {
 
         typealias Preference = AppLockPasscodePreference
-        typealias Callback = (AppLockModule.AuthenticationResult, LAContext) -> Void
+        typealias Callback = (AppLockModule.AuthenticationResult) -> Void
 
         var beginTimer: [Void] = []
         var open: [Void] = []
