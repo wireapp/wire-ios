@@ -2434,6 +2434,7 @@
 		E6031AF62BC3E7340015FC18 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
+				EE22F81029DD82290053E1C6 /* EAR */,
 				E6031AF92BC3E9590015FC18 /* LAContextStorage.swift */,
 				E6031AF42BC3E27B0015FC18 /* AuthenticationContext.swift */,
 			);
@@ -3048,7 +3049,6 @@
 			children = (
 				EE5316412A13B59500A9E0B1 /* LastUpdateEventIDRepository.swift */,
 				F963E9671D9ADD5A00098AD3 /* Protos */,
-				EE22F81029DD82290053E1C6 /* EAR */,
 				F9331C851CB419B500139ECC /* NSFetchRequest+ZMRelationshipKeyPaths.h */,
 				F9331C861CB419B500139ECC /* NSFetchRequest+ZMRelationshipKeyPaths.m */,
 				F9331C811CB4191B00139ECC /* NSPredicate+ZMSearch.h */,
