@@ -531,6 +531,7 @@
 		E6E504412BC542C5004948E7 /* PublicEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E5042F2BC542C5004948E7 /* PublicEARKeyDescription.swift */; };
 		E6E504422BC542C5004948E7 /* AuthenticationContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E504312BC542C5004948E7 /* AuthenticationContext.swift */; };
 		E6E504432BC542C5004948E7 /* LAContextStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E504322BC542C5004948E7 /* LAContextStorage.swift */; };
+		E6E5044C2BC56EA0004948E7 /* EARServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E5044A2BC56EA0004948E7 /* EARServiceTests.swift */; };
 		E6F443232B16294400D2B08A /* zmessaging.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E6F443042B16294000D2B08A /* zmessaging.xcdatamodeld */; };
 		E90AAE34279719D8003C7DB0 /* store2-98-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E90AAE33279719D8003C7DB0 /* store2-98-0.wiredatabase */; };
 		E94FD49A2B8F432200F2B4F3 /* MockActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169FF3A427157B3800330C2E /* MockActionHandler.swift */; };
@@ -556,7 +557,6 @@
 		EE3EFE95253053B1009499E5 /* PotentialChangeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFE94253053B1009499E5 /* PotentialChangeDetector.swift */; };
 		EE3EFE9725305A84009499E5 /* ModifiedObjects+Mergeable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFE9625305A84009499E5 /* ModifiedObjects+Mergeable.swift */; };
 		EE3EFEA1253090E0009499E5 /* PotentialChangeDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFEA0253090E0009499E5 /* PotentialChangeDetectorTests.swift */; };
-		EE428C4E29F01E4800ECB715 /* EARServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE428C4D29F01E4800ECB715 /* EARServiceTests.swift */; };
 		EE42938A252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE429389252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift */; };
 		EE42938C252C443000E70670 /* ManagedObjectObserverToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE42938B252C443000E70670 /* ManagedObjectObserverToken.swift */; };
 		EE42938E252C460000E70670 /* Changes.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE42938D252C460000E70670 /* Changes.swift */; };
@@ -1434,6 +1434,7 @@
 		E6E5042F2BC542C5004948E7 /* PublicEARKeyDescription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublicEARKeyDescription.swift; sourceTree = "<group>"; };
 		E6E504312BC542C5004948E7 /* AuthenticationContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthenticationContext.swift; sourceTree = "<group>"; };
 		E6E504322BC542C5004948E7 /* LAContextStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LAContextStorage.swift; sourceTree = "<group>"; };
+		E6E5044A2BC56EA0004948E7 /* EARServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EARServiceTests.swift; sourceTree = "<group>"; };
 		E6E68B2A2B18D7B4003C29D2 /* ZMMessage+ServerTimestamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMMessage+ServerTimestamp.swift"; sourceTree = "<group>"; };
 		E6F443052B16294000D2B08A /* zmessaging2.98.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.98.0.xcdatamodel; sourceTree = "<group>"; };
 		E6F443062B16294000D2B08A /* zmessaging2.102.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.102.0.xcdatamodel; sourceTree = "<group>"; };
@@ -1489,7 +1490,6 @@
 		EE3EFE94253053B1009499E5 /* PotentialChangeDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PotentialChangeDetector.swift; sourceTree = "<group>"; };
 		EE3EFE9625305A84009499E5 /* ModifiedObjects+Mergeable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModifiedObjects+Mergeable.swift"; sourceTree = "<group>"; };
 		EE3EFEA0253090E0009499E5 /* PotentialChangeDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PotentialChangeDetectorTests.swift; sourceTree = "<group>"; };
-		EE428C4D29F01E4800ECB715 /* EARServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EARServiceTests.swift; path = Tests/Source/EAR/EARServiceTests.swift; sourceTree = SOURCE_ROOT; };
 		EE429389252C437900E70670 /* Notification.Name+ManagedObjectObservation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Notification.Name+ManagedObjectObservation.swift"; sourceTree = "<group>"; };
 		EE42938B252C443000E70670 /* ManagedObjectObserverToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedObjectObserverToken.swift; sourceTree = "<group>"; };
 		EE42938D252C460000E70670 /* Changes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Changes.swift; sourceTree = "<group>"; };
@@ -2485,6 +2485,22 @@
 			path = Authentication;
 			sourceTree = "<group>";
 		};
+		E6E504442BC56DF1004948E7 /* Authentication */ = {
+			isa = PBXGroup;
+			children = (
+				E6E5044B2BC56EA0004948E7 /* EAR */,
+			);
+			path = Authentication;
+			sourceTree = "<group>";
+		};
+		E6E5044B2BC56EA0004948E7 /* EAR */ = {
+			isa = PBXGroup;
+			children = (
+				E6E5044A2BC56EA0004948E7 /* EARServiceTests.swift */,
+			);
+			path = EAR;
+			sourceTree = "<group>";
+		};
 		EE032B3429A62CD600E1DDF3 /* Proteus */ = {
 			isa = PBXGroup;
 			children = (
@@ -2542,15 +2558,6 @@
 				EE85C8AF2B557A2F00D3182D /* OneOnOneConversationMigrationPolicy.swift */,
 			);
 			path = "2.113-2.114";
-			sourceTree = "<group>";
-		};
-		EE91911829F0196600514A2D /* EAR */ = {
-			isa = PBXGroup;
-			children = (
-				EE428C4D29F01E4800ECB715 /* EARServiceTests.swift */,
-			);
-			name = EAR;
-			path = Source/EAR;
 			sourceTree = "<group>";
 		};
 		EE98879028882C6D002340D2 /* MLS */ = {
@@ -3545,9 +3552,9 @@
 		F9C9A79A1CAEA8FC0039E10C /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				E6E504442BC56DF1004948E7 /* Authentication */,
 				069BCC632B3098F500DF4EC2 /* E2EIdentity */,
 				638941F42AF521050051ABFD /* UseCases */,
-				EE91911829F0196600514A2D /* EAR */,
 				54FB03AB1E41F6C2000E13DC /* Utils */,
 				F9A7085D1CAEEF4700C2F5FE /* Helper */,
 				F9A708031CAEEB7400C2F5FE /* ManagedObjectContext */,
@@ -4471,7 +4478,6 @@
 				BF3493EB1EC34C0B00B0C314 /* TeamTests.swift in Sources */,
 				F9A7085C1CAEED1B00C2F5FE /* ZMBaseManagedObjectTest.m in Sources */,
 				1670D01E231825BE003A143B /* ZMUserTests+Permissions.swift in Sources */,
-				EE428C4E29F01E4800ECB715 /* EARServiceTests.swift in Sources */,
 				59AAB6492AFCF541005B39E6 /* MessageProtocolTests.swift in Sources */,
 				EE82625129A8D6BD0023B13A /* ZMClientMessageTests+OTR.swift in Sources */,
 				8767E8682163B9EE00390F75 /* ZMConversationTests+Mute.swift in Sources */,
@@ -4488,6 +4494,7 @@
 				A9EEFEFA23A6D0CB0007828A /* RolesMigrationTests.swift in Sources */,
 				069D07B82562671D00DBA592 /* FeatureTests.swift in Sources */,
 				A9128AD02398067E0056F591 /* ZMConversationTests+Participants.swift in Sources */,
+				E6E5044C2BC56EA0004948E7 /* EARServiceTests.swift in Sources */,
 				167BCB512600C70F00E9D7E3 /* CoreDataStackTests+Backup.swift in Sources */,
 				BF3493F01EC3569800B0C314 /* MemberTests.swift in Sources */,
 				631A0586240439470062B387 /* UserClientTests+SafeLogging.swift in Sources */,
