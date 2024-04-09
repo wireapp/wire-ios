@@ -20,7 +20,7 @@ import Foundation
 
 public struct CRLsDistributionPoints: Equatable {
 
-    let urls: Set<URL>
+    public let urls: Set<URL>
 
     public init?(from stringArray: [String]?) {
         let urls = stringArray?.compactMap { URL(string: $0) }

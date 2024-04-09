@@ -43,6 +43,8 @@ final class AuthenticatedRouter: NSObject {
     private let featureRepositoryProvider: FeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
     private let e2eiActivationDateRepository: E2EIActivationDateRepository
+    private var featureChangeObserverToken: Any?
+    private var revokedCertificateObserverToken: Any?
 
     // MARK: - Public Property
 
@@ -79,12 +81,30 @@ final class AuthenticatedRouter: NSObject {
 
         super.init()
 
-        NotificationCenter.default.addObserver(
+        featureChangeObserverToken = NotificationCenter.default.addObserver(
             forName: .featureDidChangeNotification,
             object: nil,
             queue: .main
         ) { [weak self] notification in
             self?.notifyFeatureChange(notification)
+        }
+
+        revokedCertificateObserverToken = NotificationCenter.default.addObserver(
+            forName: .presentRevokedCertificateWarningAlert,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.notifyRevokedCertificate()
+        }
+    }
+
+    deinit {
+        if let featureChangeObserverToken {
+            NotificationCenter.default.removeObserver(featureChangeObserverToken)
+        }
+
+        if let revokedCertificateObserverToken {
+            NotificationCenter.default.removeObserver(revokedCertificateObserverToken)
         }
     }
 
@@ -103,6 +123,16 @@ final class AuthenticatedRouter: NSObject {
 
         if change == .e2eIEnabled && e2eiActivationDateRepository.e2eiActivatedAt == nil {
             e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
+        }
+
+        _viewController?.presentAlert(alert)
+    }
+
+    private func notifyRevokedCertificate() {
+        guard let session = SessionManager.shared else { return }
+
+        let alert = UIAlertController.revokedCertificateWarning {
+            session.logoutCurrentSession()
         }
 
         _viewController?.presentAlert(alert)

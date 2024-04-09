@@ -19,8 +19,8 @@
 import Foundation
 import XCTest
 import Combine
-@testable import WireRequestStrategy
-@testable import WireDataModelSupport
+@testable import WireSyncEngine
+@testable import WireSyncEngineSupport
 
 class CRLsDistributionPointsObserverTests: XCTestCase {
 

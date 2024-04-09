@@ -287,6 +287,37 @@ public class MockAcmeAPIInterface: AcmeAPIInterface {
     }
 
 }
+public class MockCertificateRevocationListAPIProtocol: CertificateRevocationListAPIProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - getRevocationList
+
+    public var getRevocationListFrom_Invocations: [URL] = []
+    public var getRevocationListFrom_MockError: Error?
+    public var getRevocationListFrom_MockMethod: ((URL) async throws -> Data)?
+    public var getRevocationListFrom_MockValue: Data?
+
+    public func getRevocationList(from distributionPoint: URL) async throws -> Data {
+        getRevocationListFrom_Invocations.append(distributionPoint)
+
+        if let error = getRevocationListFrom_MockError {
+            throw error
+        }
+
+        if let mock = getRevocationListFrom_MockMethod {
+            return try await mock(distributionPoint)
+        } else if let mock = getRevocationListFrom_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getRevocationListFrom`")
+        }
+    }
+
+}
 public class MockConversationParticipantsServiceInterface: ConversationParticipantsServiceInterface {
 
     // MARK: - Life cycle

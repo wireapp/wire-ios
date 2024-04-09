@@ -54,6 +54,45 @@ import AppKit
 
 
 
+public class MockCertificateRevocationListsChecking: CertificateRevocationListsChecking {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - checkNewCRLs
+
+    public var checkNewCRLsFrom_Invocations: [CRLsDistributionPoints] = []
+    public var checkNewCRLsFrom_MockMethod: ((CRLsDistributionPoints) async -> Void)?
+
+    public func checkNewCRLs(from distributionPoints: CRLsDistributionPoints) async {
+        checkNewCRLsFrom_Invocations.append(distributionPoints)
+
+        guard let mock = checkNewCRLsFrom_MockMethod else {
+            fatalError("no mock for `checkNewCRLsFrom`")
+        }
+
+        await mock(distributionPoints)
+    }
+
+    // MARK: - checkExpiredCRLs
+
+    public var checkExpiredCRLs_Invocations: [Void] = []
+    public var checkExpiredCRLs_MockMethod: (() async -> Void)?
+
+    public func checkExpiredCRLs() async {
+        checkExpiredCRLs_Invocations.append(())
+
+        guard let mock = checkExpiredCRLs_MockMethod else {
+            fatalError("no mock for `checkExpiredCRLs`")
+        }
+
+        await mock()
+    }
+
+}
+
 public class MockE2EIdentityCertificateUpdateStatusUseCaseProtocol: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
     // MARK: - Life cycle
