@@ -1817,6 +1817,12 @@ Enter your identity provider’s credentials in the next step to update the cert
 "failed_to_update_certificate.alert.title" = "Certificate couldn’t be updated.";
 "failed_to_update_certificate.alert.message" = "You can retry to update the certificate now, or you will get a reminder later.";
 
+// End-to-end identity revoked certificate
+"revoked_certificate.alert.title" = "End-to-end certificate revoked";
+"revoked_certificate.alert.message" = "Log out to reduce security risks. Then log in again, get a new certificate, and reset your password. If you keep using this device, your conversations are no longer verified.";
+"revoked_certificate.alert.log_out" = "Log out";
+"revoked_certificate.alert.continue" = "Continue Using This Device";
+
 // Jailbroken alert
 "jailbrokendevice.alert.title" = "Jailbreak detected";
 "jailbrokendevice.alert.message" = "For security reasons, Wire can't be used on this device. Any existing Wire data has been erased.";
