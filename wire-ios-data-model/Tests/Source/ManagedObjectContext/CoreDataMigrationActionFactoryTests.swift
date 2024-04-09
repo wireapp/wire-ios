@@ -23,6 +23,7 @@ final class CoreDataMigrationActionFactoryTests: XCTestCase {
 
     // add version with actions here - aka custom migration
     let excludedVersions: [CoreDataMessagingMigrationVersion] = [
+        .version2_116,
         .version2_114,
         .version2_111,
         .version2_107
