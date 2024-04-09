@@ -18,7 +18,7 @@
 
 import XCTest
 import LocalAuthentication
-import WireDataModelSupport
+@testable import WireDataModelSupport
 @_spi(AppLockControllerState) @testable import WireDataModel
 
 final class AppLockControllerTests: ZMBaseManagedObjectTest {
@@ -319,7 +319,8 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         let sut = createSut()
         try sut.updatePasscode("boo!")
 
-        let mockBiometricsState = MockBiometricsState()
+        let mockBiometricsState = MockBiometricsStateProtocol()
+        mockBiometricsState.persistState_MockMethod = { }
         sut.biometricsState = mockBiometricsState
 
         // When
@@ -328,7 +329,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         // Then
         XCTAssertEqual(result, .granted)
         XCTAssertFalse(sut.isLocked)
-        XCTAssertTrue(mockBiometricsState.didCallPersistState)
+        XCTAssertEqual(mockBiometricsState.persistState_Invocations.count, 1)
 
         // Clean up
         try sut.deletePasscode()
@@ -340,7 +341,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         let sut = createSut()
         try sut.updatePasscode("boo!")
 
-        let mockBiometricsState = MockBiometricsState()
+        let mockBiometricsState = MockBiometricsStateProtocol()
         sut.biometricsState = mockBiometricsState
 
         // When
@@ -349,7 +350,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         // Then
         XCTAssertEqual(result, .denied)
         XCTAssertTrue(sut.isLocked)
-        XCTAssertFalse(mockBiometricsState.didCallPersistState)
+        XCTAssert(mockBiometricsState.persistState_Invocations.isEmpty)
 
         // Clean up
         try sut.deletePasscode()
@@ -415,8 +416,8 @@ extension AppLockControllerTests {
 
         let sut = createSut()
 
-        let mockBiometricsState = MockBiometricsState()
-        mockBiometricsState._biometricsChanged = input.biometricsChanged
+        let mockBiometricsState = MockBiometricsStateProtocol()
+        mockBiometricsState.biometricsChangedIn_MockValue = input.biometricsChanged
         sut.biometricsState = mockBiometricsState
 
         let assertion: (Output) -> Void = { result in

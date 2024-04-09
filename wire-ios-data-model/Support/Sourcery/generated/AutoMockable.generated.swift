@@ -112,6 +112,47 @@ public class MockAuthenticationContextProtocol: AuthenticationContextProtocol {
 
 }
 
+class MockBiometricsStateProtocol: BiometricsStateProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - biometricsChanged
+
+    var biometricsChangedIn_Invocations: [AuthenticationContextProtocol] = []
+    var biometricsChangedIn_MockMethod: ((AuthenticationContextProtocol) -> Bool)?
+    var biometricsChangedIn_MockValue: Bool?
+
+    func biometricsChanged(in context: AuthenticationContextProtocol) -> Bool {
+        biometricsChangedIn_Invocations.append(context)
+
+        if let mock = biometricsChangedIn_MockMethod {
+            return mock(context)
+        } else if let mock = biometricsChangedIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `biometricsChangedIn`")
+        }
+    }
+
+    // MARK: - persistState
+
+    var persistState_Invocations: [Void] = []
+    var persistState_MockMethod: (() -> Void)?
+
+    func persistState() {
+        persistState_Invocations.append(())
+
+        guard let mock = persistState_MockMethod else {
+            fatalError("no mock for `persistState`")
+        }
+
+        mock()
+    }
+
+}
+
 public class MockCRLExpirationDatesRepositoryProtocol: CRLExpirationDatesRepositoryProtocol {
 
     // MARK: - Life cycle

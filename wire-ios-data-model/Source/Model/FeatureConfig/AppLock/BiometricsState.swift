@@ -18,6 +18,7 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 protocol BiometricsStateProtocol {
 
    func biometricsChanged(in context: AuthenticationContextProtocol) -> Bool
