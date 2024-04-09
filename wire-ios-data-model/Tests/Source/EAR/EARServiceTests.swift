@@ -65,7 +65,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
             databaseContexts: [uiMOC, syncMOC],
             canPerformKeyMigration: canPerformMigration,
             earStorage: earStorage,
-            authenticationContext: MockLAContext()
+            authenticationContext: MockAuthenticationContextProtocol()
         )
 
         sut.delegate = self
@@ -864,7 +864,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
             accountID: userIdentifier,
             databaseContexts: [uiMOC],
             sharedUserDefaults: .temporary(),
-            authenticationContext: MockLAContext()
+            authenticationContext: MockAuthenticationContextProtocol()
         )
 
         let oldDatabaseKey = try sut.generateKeys()

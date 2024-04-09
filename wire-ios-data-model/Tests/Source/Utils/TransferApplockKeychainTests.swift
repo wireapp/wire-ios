@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireDataModelSupport
 @testable import WireDataModel
 
 final class TransferAppLockKeychainTests: DiskDatabaseTest {
@@ -32,7 +33,7 @@ final class TransferAppLockKeychainTests: DiskDatabaseTest {
             userId: selfUser.remoteIdentifier!,
             selfUser: selfUser,
             legacyConfig: config,
-            authenticationContext: MockLAContext()
+            authenticationContext: MockAuthenticationContextProtocol()
         )
     }
 

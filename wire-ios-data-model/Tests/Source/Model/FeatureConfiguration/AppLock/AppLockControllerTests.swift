@@ -18,6 +18,7 @@
 
 import XCTest
 import LocalAuthentication
+import WireDataModelSupport
 @_spi(AppLockControllerState) @testable import WireDataModel
 
 final class AppLockControllerTests: ZMBaseManagedObjectTest {
@@ -406,7 +407,8 @@ extension AppLockControllerTests {
         mockBiometricsState._biometricsChanged = input.biometricsChanged
         sut.biometricsState = mockBiometricsState
 
-        let context = MockLAContext(canEvaluate: input.canEvaluate)
+        // let context = MockLAContext(canEvaluate: input.canEvaluate)
+        let context = MockAuthenticationContextProtocol()
 
         let assertion: (Output) -> Void = { result in
             XCTAssertEqual(result, output, file: file, line: line)
@@ -430,7 +432,7 @@ extension AppLockControllerTests {
             userId: selfUser.remoteIdentifier,
             selfUser: selfUser,
             legacyConfig: legacyConfig,
-            authenticationContext: MockLAContext()
+            authenticationContext: MockAuthenticationContextProtocol()
         )
     }
 
@@ -443,7 +445,7 @@ extension AppLockControllerTests {
             userId: selfUser.remoteIdentifier,
             selfUser: selfUser,
             legacyConfig: nil,
-            authenticationContext: MockLAContext()
+            authenticationContext: MockAuthenticationContextProtocol()
         )
     }
 

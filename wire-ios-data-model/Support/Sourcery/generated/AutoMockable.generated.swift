@@ -57,6 +57,61 @@ import WireCoreCrypto
 
 
 
+public class MockAuthenticationContextProtocol: AuthenticationContextProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - laContext
+
+    public var laContext: LAContext {
+        get { return underlyingLaContext }
+        set(value) { underlyingLaContext = value }
+    }
+
+    public var underlyingLaContext: LAContext!
+
+    // MARK: - evaluatedPolicyDomainState
+
+    public var evaluatedPolicyDomainState: Data?
+
+
+    // MARK: - canEvaluatePolicy
+
+    public var canEvaluatePolicyError_Invocations: [(policy: LAPolicy, error: NSErrorPointer)] = []
+    public var canEvaluatePolicyError_MockMethod: ((LAPolicy, NSErrorPointer) -> Bool)?
+    public var canEvaluatePolicyError_MockValue: Bool?
+
+    public func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
+        canEvaluatePolicyError_Invocations.append((policy: policy, error: error))
+
+        if let mock = canEvaluatePolicyError_MockMethod {
+            return mock(policy, error)
+        } else if let mock = canEvaluatePolicyError_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `canEvaluatePolicyError`")
+        }
+    }
+
+    // MARK: - evaluatePolicy
+
+    public var evaluatePolicyLocalizedReasonReply_Invocations: [(policy: LAPolicy, localizedReason: String, reply: (Bool, Error?) -> Void)] = []
+    public var evaluatePolicyLocalizedReasonReply_MockMethod: ((LAPolicy, String, @escaping (Bool, Error?) -> Void) -> Void)?
+
+    public func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void) {
+        evaluatePolicyLocalizedReasonReply_Invocations.append((policy: policy, localizedReason: localizedReason, reply: reply))
+
+        guard let mock = evaluatePolicyLocalizedReasonReply_MockMethod else {
+            fatalError("no mock for `evaluatePolicyLocalizedReasonReply`")
+        }
+
+        mock(policy, localizedReason, reply)
+    }
+
+}
+
 public class MockCRLExpirationDatesRepositoryProtocol: CRLExpirationDatesRepositoryProtocol {
 
     // MARK: - Life cycle
