@@ -247,7 +247,9 @@ extension CallingBottomSheetViewController: WireCallCenterCallParticipantObserve
 
 extension CallingBottomSheetViewController: WireCallCenterCallStateObserver {
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+        let signpostState = WireLogger.signposter.beginInterval("CallingBottomSheetViewController callCenterDidChange")
         updateVisibleVoiceChannelViewController()
+        WireLogger.signposter.endInterval("CallingBottomSheetViewController callCenterDidChange", signpostState)
     }
 }
 

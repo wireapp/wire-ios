@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import OSLog
 
 public struct WireLogger: LoggerProtocol {
 
@@ -191,6 +192,7 @@ public extension WireLogger {
     static let featureConfigs = WireLogger(tag: "feature-configurations")
     static let assets = WireLogger(tag: "assets")
 
+    static let signposter = OSSignposter(subsystem: Bundle.main.bundleIdentifier ?? "main", category: "PointsOfInterest")
 }
 
 /// Class to proxy WireLogger methods to Objective-C

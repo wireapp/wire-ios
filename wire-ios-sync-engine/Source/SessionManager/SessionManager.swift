@@ -1469,6 +1469,7 @@ extension SessionManager: ZMConversationListObserver {
 extension SessionManager: WireCallCenterCallStateObserver {
 
     public func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+        let signpostState = WireLogger.signposter.beginInterval("SessionManager callCenterDidChange")
         guard let moc = conversation.managedObjectContext else { return }
 
         switch callState {
@@ -1479,6 +1480,7 @@ extension SessionManager: WireCallCenterCallStateObserver {
         default:
             return
         }
+        WireLogger.signposter.endInterval("SessionManager callCenterDidChange", signpostState)
     }
 
 }

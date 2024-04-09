@@ -66,6 +66,8 @@ public final class CallStateObserver: NSObject {
 extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMissedCallObserver {
 
     public func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+        let signpostState = WireLogger.signposter.beginInterval("CallStateObserver callCenterDidChange")
+
         let callerId = caller.remoteIdentifier
         let callerDomain = caller.domain
         let conversationId = conversation.remoteIdentifier
@@ -112,6 +114,8 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
 
                 self.syncContext.enqueueDelayedSave()
             }
+
+            WireLogger.signposter.endInterval("CallStateObserver callCenterDidChange", signpostState)
         }
     }
 

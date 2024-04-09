@@ -253,7 +253,9 @@ extension ConversationViewController: CollectionsViewControllerDelegate {
 extension ConversationViewController: WireCallCenterCallStateObserver {
 
     public func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+        let signpostState = WireLogger.signposter.beginInterval("ConversationViewController callCenterDidChange")
         updateRightNavigationItemsButtons()
+        WireLogger.signposter.endInterval("ConversationViewController callCenterDidChange", signpostState)
     }
 
 }

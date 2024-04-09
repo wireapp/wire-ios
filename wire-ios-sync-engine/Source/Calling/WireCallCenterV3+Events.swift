@@ -115,9 +115,8 @@ extension WireCallCenterV3 {
 
     private func handleEvent(_ description: String, _ handlerBlock: @escaping () -> Void) {
         let event = "handle avs event: \(description)"
-
         let id = signposter.makeSignpostID(from: self)
-        let state = signposter.beginInterval("handle avs event", id: id)
+        let state = signposter.beginInterval("handle avs event", id: id, "\(description), privacy: .public)")
 
         Self.logger.info("handle avs event: \(description)")
         zmLog.debug("Handle AVS event: \(description)")
@@ -219,6 +218,9 @@ extension WireCallCenterV3 {
 
     /// Handles call metrics.
     func handleCallMetrics(conversationId: AVSIdentifier, metrics: String) {
+        let id = signposter.makeSignpostID(from: self)
+        let state = signposter.beginInterval("handleCallMetrics", id: id, "metrics: \(metrics), privacy: .public)")
+
         do {
             let metricsData = Data(metrics.utf8)
             let jsonObject = try JSONSerialization.jsonObject(with: metricsData, options: .mutableContainers)
@@ -227,6 +229,7 @@ extension WireCallCenterV3 {
         } catch {
             zmLog.error("Unable to parse call metrics JSON: \(error)")
         }
+        signposter.endInterval("handleCallMetrics", state)
     }
 
     /// Handle requests for refreshing the calling configuration.

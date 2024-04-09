@@ -32,7 +32,7 @@ private let zmLog = ZMSLog(tag: "calling")
 public class WireCallCenterV3: NSObject {
 
     static let logger = WireLogger.calling
-    let signposter = OSSignposter(subsystem: Bundle.main.bundleIdentifier ?? "main", category: "calling")
+    let signposter = WireLogger.signposter
     /// The maximum number of participants for a legacy video call.
 
     let legacyVideoParticipantsLimit = 4
@@ -727,6 +727,7 @@ extension WireCallCenterV3 {
 
     public func closeCall(conversationId: AVSIdentifier, reason: CallClosedReason = .normal) {
         Self.logger.info("closing call")
+        self.signposter.emitEvent("closing call")
         avsWrapper.endCall(conversationId: conversationId)
 
         if let previousSnapshot = callSnapshots[conversationId] {
@@ -814,13 +815,16 @@ extension WireCallCenterV3 {
      */
 
     public func setVideoCaptureDevice(_ captureDevice: CaptureDevice, for conversationId: AVSIdentifier) {
+        self.signposter.emitEvent("setVideoCaptureDevice")
         flowManager.setVideoCaptureDevice(captureDevice, for: conversationId)
     }
 
     public func setVideoGridPresentationMode(_ presentationMode: VideoGridPresentationMode, for conversationId: AVSIdentifier) {
+        let state = self.signposter.beginInterval("setVideoGridPresentationMode")
         if let snapshot = callSnapshots[conversationId] {
             callSnapshots[conversationId] = snapshot.updateVideoGridPresentationMode(presentationMode)
         }
+        self.signposter.endInterval("setVideoGridPresentationMode", state)
     }
 
     /// Requests AVS to load video streams for the given clients list
@@ -828,8 +832,11 @@ extension WireCallCenterV3 {
     ///   - conversationId: The identifier of the conversation where the video call is hosted.
     ///   - clients: The list of clients for which AVS should load video streams.
     public func requestVideoStreams(conversationId: AVSIdentifier, clients: [AVSClient]) {
+        let state = self.signposter.beginInterval("requestVideoStreams")
         let videoStreams = AVSVideoStreams(conversationId: conversationId.serialized, clients: clients)
         avsWrapper.requestVideoStreams(videoStreams, conversationId: conversationId)
+        self.signposter.endInterval("requestVideoStreams", state)
+
     }
 
     private func callType(for conversation: ZMConversation, startedWithVideo: Bool, isConferenceCall: Bool) -> AVSCallType {
@@ -893,6 +900,7 @@ extension WireCallCenterV3 {
     /// Tags a call as missing when requested by AVS through `wcall_missed_h`.
     func missed(conversationId: AVSIdentifier, userId: AVSIdentifier, timestamp: Date, isVideoCall: Bool) {
         zmLog.debug("missed call")
+        self.signposter.emitEvent("missed call")
 
         if let context = uiMOC {
             WireCallCenterMissedCallNotification(context: context, conversationId: conversationId, callerId: userId, timestamp: timestamp, video: isVideoCall).post(in: context.notificationContext)
@@ -905,24 +913,29 @@ extension WireCallCenterV3 {
     /// - parameter callEvent: calling event to process.
     /// - parameter completionHandler: called after the call event has been processed (this will for example wait for AVS to signal that it's ready).
     func processCallEvent(_ callEvent: CallEvent, completionHandler: @escaping () -> Void) {
+        let state = self.signposter.beginInterval("processCallEvent")
+
         Self.logger.info("process call event")
         if isReady {
             handleCallEvent(callEvent, completionHandler: completionHandler)
         } else {
             bufferedEvents.append((callEvent, completionHandler))
         }
+        self.signposter.endInterval("processCallEvent", state)
     }
 
     private func handleCallEvent(
         _ callEvent: CallEvent,
         completionHandler: @escaping () -> Void
     ) {
+        let state = self.signposter.beginInterval("handleCallEvent")
         Self.logger.info("handle call event (timestamp: \(callEvent.currentTimestamp))")
 
         guard
             let context = uiMOC,
             let conversationType = self.conversationType(from: callEvent)
         else {
+            self.signposter.emitEvent("can't handle call event: unable to determine conversation type")
             Self.logger.warn("can't handle call event: unable to determine conversation type")
             completionHandler()
             return
@@ -942,6 +955,7 @@ extension WireCallCenterV3 {
         }
 
         completionHandler()
+        self.signposter.endInterval("handleCallEvent", state)
     }
 
     private func conversationType(from callEvent: CallEvent) -> AVSConversationType? {
@@ -1019,6 +1033,7 @@ extension WireCallCenterV3 {
     ///     - messageTime: The timestamp of the event.
 
     func handle(callState: CallState, conversationId: AVSIdentifier, messageTime: Date? = nil, userId: AVSIdentifier? = nil) {
+        let state = self.signposter.beginInterval("handle(callState")
         callState.logState()
 
         var callState = callState
@@ -1062,7 +1077,7 @@ extension WireCallCenterV3 {
                                                                    previousCallState: previousCallState)
             notification.post(in: context.notificationContext)
         }
-
+        self.signposter.endInterval("handle(callState", state)
     }
 
 }

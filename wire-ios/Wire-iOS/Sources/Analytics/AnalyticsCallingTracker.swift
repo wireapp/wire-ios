@@ -81,6 +81,7 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
                              caller: UserType,
                              timestamp: Date?,
                              previousCallState: CallState?) {
+        let signpostState = WireLogger.signposter.beginInterval("AnalyticsCallingTracker callCenterDidChange")
 
         let conversationId = conversation.remoteIdentifier!
 
@@ -136,7 +137,7 @@ extension AnalyticsCallingTracker: WireCallCenterCallStateObserver {
         default:
             break
         }
-
+        WireLogger.signposter.endInterval("AnalyticsCallingTracker callCenterDidChange", signpostState)
     }
 
     func presentIOErrorAlertIfAllowed() {

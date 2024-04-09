@@ -227,6 +227,7 @@ extension ConversationInputBarViewController: AudioRecordViewControllerDelegate 
 extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
 
     public func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+        let signpostState = WireLogger.signposter.beginInterval("ConversationInputBarViewController callCenterDidChange")
         let isRecording = audioRecordKeyboardViewController?.isRecording
 
         switch (callState, isRecording, wasRecordingBeforeCall) {
@@ -243,6 +244,7 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
         if 0 == callCountWhileCameraKeyboardWasVisible, wasRecordingBeforeCall {
             displayRecordKeyboard() // -> show the audio record keyboard again
         }
+        WireLogger.signposter.endInterval("ConversationInputBarViewController callCenterDidChange", signpostState)
     }
 
     private func displayRecordKeyboard() {

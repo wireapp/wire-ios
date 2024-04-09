@@ -591,10 +591,12 @@ extension CameraKeyboardViewController: AssetLibraryDelegate {
 
 extension CameraKeyboardViewController: WireCallCenterCallStateObserver {
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+        let signpostState = WireLogger.signposter.beginInterval("CameraKeyboardViewController callCenterDidChange")
         // swiftlint:disable todo_requires_jira_link
         // TODO: fix undesired camera keyboard openings here
         // swiftlint:enable todo_requires_jira_link
         self.collectionView.reloadItems(at: [IndexPath(item: 0, section: 0)])
+        WireLogger.signposter.endInterval("CameraKeyboardViewController callCenterDidChange", signpostState)
     }
 }
 

@@ -142,6 +142,7 @@ extension SoundEventListener: ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObse
 extension SoundEventListener: WireCallCenterCallStateObserver {
 
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+        let signpostState = WireLogger.signposter.beginInterval("SoundEventListener callCenterDidChange")
 
         guard let mediaManager = AVSMediaManager.sharedInstance(),
               let userSession = userSession,
@@ -192,7 +193,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
             mediaManager.stop(sound: .ringingFromThemInCallSound)
             mediaManager.stop(sound: .ringingFromThemSound)
         }
-
+        WireLogger.signposter.endInterval("SoundEventListener callCenterDidChange", signpostState)
     }
 
 }

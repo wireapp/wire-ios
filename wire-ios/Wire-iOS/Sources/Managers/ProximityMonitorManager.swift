@@ -114,7 +114,9 @@ final class ProximityMonitorManager: NSObject {
 extension ProximityMonitorManager: WireCallCenterCallStateObserver {
 
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+        let signpostState = WireLogger.signposter.beginInterval("ProximityMonitorManager callCenterDidChange")
         updateProximityMonitorState()
+        WireLogger.signposter.endInterval("ProximityMonitorManager callCenterDidChange", signpostState)
     }
 
 }

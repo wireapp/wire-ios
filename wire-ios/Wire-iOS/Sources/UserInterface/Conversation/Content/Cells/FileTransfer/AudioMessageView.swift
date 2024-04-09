@@ -491,6 +491,7 @@ extension AudioMessageView: WireCallCenterCallStateObserver {
                              caller: UserType,
                              timestamp: Date?,
                              previousCallState: CallState?) {
+        let signpostState = WireLogger.signposter.beginInterval("AudioMessageView callCenterDidChange")
         guard let player = audioTrackPlayer else { return }
         guard isOwnTrackPlayingInAudioPlayer() else { return }
 
@@ -510,6 +511,7 @@ extension AudioMessageView: WireCallCenterCallStateObserver {
         default:
             break
         }
+        WireLogger.signposter.endInterval("AudioMessageView callCenterDidChange", signpostState)
     }
 }
 

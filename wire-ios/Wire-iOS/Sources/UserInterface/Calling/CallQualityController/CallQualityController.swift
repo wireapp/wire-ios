@@ -143,6 +143,7 @@ class CallQualityController: NSObject {
 extension CallQualityController: WireCallCenterCallStateObserver {
 
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+        let signpostState = WireLogger.signposter.beginInterval("CallQualityController callCenterDidChange")
         guard canPresentCallQualitySurvey else { return }
         let eventDate = Date()
 
@@ -157,6 +158,7 @@ extension CallQualityController: WireCallCenterCallStateObserver {
         default:
             return
         }
+        WireLogger.signposter.endInterval("CallQualityController callCenterDidChange", signpostState)
     }
 }
 

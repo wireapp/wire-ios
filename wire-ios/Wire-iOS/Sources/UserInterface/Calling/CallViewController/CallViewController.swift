@@ -421,9 +421,11 @@ extension CallViewController: ZMConversationObserver {
 extension CallViewController: WireCallCenterCallStateObserver {
 
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+        let signpostState = WireLogger.signposter.beginInterval("CallViewController callCenterDidChange")
         updateConfiguration()
         hideOverlayAfterCallEstablishedIfNeeded()
         hapticsController.updateCallState(callState)
+        WireLogger.signposter.endInterval("CallViewController callCenterDidChange", signpostState)
     }
 
 }

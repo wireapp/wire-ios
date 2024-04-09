@@ -144,13 +144,14 @@ extension CallController: WireCallCenterCallStateObserver {
                              caller: UserType,
                              timestamp: Date?,
                              previousCallState: CallState?) {
-
+        let signpostState = WireLogger.signposter.beginInterval("CallController callCenterDidChange")
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
         presentSecurityDegradedAlertIfNecessary(for: conversation, callState: callState) { continueCall in
             if continueCall {
                 self.updateActiveCallPresentationState()
             }
         }
+        WireLogger.signposter.endInterval("CallController callCenterDidChange", signpostState)
     }
 
     private func presentUnsupportedVersionAlertIfNecessary(callState: CallState) {

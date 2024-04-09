@@ -88,12 +88,6 @@ final class ZClientViewController: UIViewController {
             "media": "external "
         ])
 
-        if let appGroupIdentifier = Bundle.main.appGroupIdentifier,
-           let remoteIdentifier = userSession.selfUser.remoteIdentifier {
-            let sharedContainerURL = FileManager.sharedContainerDirectory(for: appGroupIdentifier)
-
-            _ = sharedContainerURL.appendingPathComponent("AccountData", isDirectory: true).appendingPathComponent(remoteIdentifier.uuidString, isDirectory: true)
-        }
 
         NotificationCenter.default.post(name: NSNotification.Name.ZMUserSessionDidBecomeAvailable, object: nil)
 
