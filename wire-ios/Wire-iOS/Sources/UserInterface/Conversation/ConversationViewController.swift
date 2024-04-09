@@ -141,7 +141,7 @@ final class ConversationViewController: UIViewController {
         hideAndDestroyParticipantsPopover()
         contentViewController.delegate = nil
     }
-    private var observationToken: NSObjectProtocol?
+    private var observationToken: SelfUnregisteringNotificationCenterToken?
 
     private func update(conversation: ZMConversation) {
         setupNavigatiomItem()
