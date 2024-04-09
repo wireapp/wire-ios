@@ -40,7 +40,10 @@ public final class LAContextStorage: LAContextStorable {
         }
     }
 
-    private let internalQueue = DispatchQueue(label: "LAContextStorage.internal")
+    private let internalQueue = DispatchQueue(
+        label: "LAContextStorage.internal",
+        qos: .userInteractive
+    )
     private var internalContext: LAContext?
 
     private let notificationCenter = NotificationCenter.default
