@@ -198,7 +198,7 @@ public final class SharingSession {
 
     public let appLockController: AppLockType
 
-    private let contextStorage: LAContextStorage
+    private let contextStorage: LAContextStorable
 
     let earService: EARServiceInterface
 
@@ -289,7 +289,7 @@ public final class SharingSession {
         appLockConfig: AppLockController.LegacyConfig?,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         earService: EARServiceInterface,
-        contextStorage: LAContextStorage,
+        contextStorage: LAContextStorable,
         proteusService: ProteusServiceInterface,
         mlsDecryptionService: MLSDecryptionServiceInterface,
         sharedUserDefaults: UserDefaults
