@@ -149,6 +149,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
               let callCenter = userSession.callCenter,
               let conversationId = conversation.avsIdentifier
         else {
+            WireLogger.signposter.endInterval("SoundEventListener callCenterDidChange", signpostState)
             return
         }
 
@@ -157,7 +158,10 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
 
         switch callState {
         case .incoming(video: _, shouldRing: true, degraded: _):
-            guard let sessionManager = SessionManager.shared, conversation.mutedMessageTypesIncludingAvailability == .none else { return }
+            guard let sessionManager = SessionManager.shared, conversation.mutedMessageTypesIncludingAvailability == .none else {
+                WireLogger.signposter.endInterval("SoundEventListener callCenterDidChange", signpostState)
+                return
+            }
 
             let otherNonIdleCalls = callCenter.nonIdleCalls.filter({ (key: AVSIdentifier, _) -> Bool in
                 return key != conversationId
@@ -187,6 +191,7 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
             break
         default:
             if case .outgoing = previousCallState {
+                WireLogger.signposter.endInterval("SoundEventListener callCenterDidChange", signpostState)
                 return
             }
 

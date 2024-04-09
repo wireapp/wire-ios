@@ -144,7 +144,10 @@ extension CallQualityController: WireCallCenterCallStateObserver {
 
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
         let signpostState = WireLogger.signposter.beginInterval("CallQualityController callCenterDidChange")
-        guard canPresentCallQualitySurvey else { return }
+        guard canPresentCallQualitySurvey else {
+            WireLogger.signposter.endInterval("CallQualityController callCenterDidChange", signpostState)
+            return
+        }
         let eventDate = Date()
 
         switch callState {
@@ -156,6 +159,7 @@ extension CallQualityController: WireCallCenterCallStateObserver {
             // When call incoming, dismiss CallQuality VC in CallController.presentCall
             break
         default:
+            WireLogger.signposter.endInterval("CallQualityController callCenterDidChange", signpostState)
             return
         }
         WireLogger.signposter.endInterval("CallQualityController callCenterDidChange", signpostState)

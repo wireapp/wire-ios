@@ -1477,10 +1477,12 @@ extension SessionManager: WireCallCenterCallStateObserver {
             for (_, session) in backgroundUserSessions where session.managedObjectContext == moc && activeUserSession != session {
                 showConversation(conversation, at: nil, in: session)
             }
+            WireLogger.signposter.endInterval("SessionManager callCenterDidChange", signpostState)
         default:
+            WireLogger.signposter.endInterval("SessionManager callCenterDidChange", signpostState)
             return
         }
-        WireLogger.signposter.endInterval("SessionManager callCenterDidChange", signpostState)
+
     }
 
 }
