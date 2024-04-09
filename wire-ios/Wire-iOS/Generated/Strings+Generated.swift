@@ -4919,14 +4919,14 @@ internal enum L10n {
           }
         }
         internal enum E2ei {
+          /// [Learn more](%@)
+          internal static func learnMore(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "registration.signin.e2ei.learn_more", String(describing: p1), fallback: "[Learn more](%@)")
+          }
           /// Your team now uses end-to-end identity to make Wire's usage more secure.
           /// 
-          ///  Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device. 
-          /// 
-          ///  [Learn more about end-to-end identity](%@)
-          internal static func subtitle(_ p1: Any) -> String {
-            return L10n.tr("Localizable", "registration.signin.e2ei.subtitle", String(describing: p1), fallback: "Your team now uses end-to-end identity to make Wire's usage more secure.\n\n Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device. \n\n [Learn more about end-to-end identity](%@)")
-          }
+          ///  Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device.
+          internal static let subtitle = L10n.tr("Localizable", "registration.signin.e2ei.subtitle", fallback: "Your team now uses end-to-end identity to make Wire's usage more secure.\n\n Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device.")
           /// End-to-end identity certificate
           internal static let title = L10n.tr("Localizable", "registration.signin.e2ei.title", fallback: "End-to-end identity certificate")
           internal enum Error {
@@ -5026,6 +5026,18 @@ internal enum L10n {
         internal static func resendPlaceholder(_ p1: Float) -> String {
           return L10n.tr("Localizable", "registration.verify_phone_number.resend_placeholder", p1, fallback: "No code showing up?\nYou can request a new one in %.0f seconds")
         }
+      }
+    }
+    internal enum RevokedCertificate {
+      internal enum Alert {
+        /// Continue Using This Device
+        internal static let `continue` = L10n.tr("Localizable", "revoked_certificate.alert.continue", fallback: "Continue Using This Device")
+        /// Log out
+        internal static let logOut = L10n.tr("Localizable", "revoked_certificate.alert.log_out", fallback: "Log out")
+        /// Log out to reduce security risks. Then log in again, get a new certificate, and reset your password. If you keep using this device, your conversations are no longer verified.
+        internal static let message = L10n.tr("Localizable", "revoked_certificate.alert.message", fallback: "Log out to reduce security risks. Then log in again, get a new certificate, and reset your password. If you keep using this device, your conversations are no longer verified.")
+        /// End-to-end certificate revoked
+        internal static let title = L10n.tr("Localizable", "revoked_certificate.alert.title", fallback: "End-to-end certificate revoked")
       }
     }
     internal enum SecurityClassification {
