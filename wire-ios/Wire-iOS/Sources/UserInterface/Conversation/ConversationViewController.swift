@@ -531,6 +531,10 @@ extension ConversationViewController: ZMConversationObserver {
             note.legalHoldStatusChanged {
             setupNavigatiomItem()
         }
+
+        if note.mlsVerificationStatusChanged {
+            setupNavigatiomItem()
+        }
     }
 
     func dismissProfileClientViewController(_ sender: UIBarButtonItem?) {

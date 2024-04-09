@@ -112,7 +112,7 @@ public final class ZMUserSession: NSObject {
     private(set) var proteusProvider: ProteusProviding!
     let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     let mlsConversationVerificationStatusUpdater: MLSConversationVerificationStatusUpdating
-    let observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol
+    let mlsGroupVerificationStatusObserver: ObserveMLSGroupVerificationStatusUseCaseProtocol
     public let updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol
 
     public var syncStatus: SyncStatusProtocol {
@@ -419,7 +419,7 @@ public final class ZMUserSession: NSObject {
         proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating? = nil,
         sharedUserDefaults: UserDefaults,
         useCaseFactory: UseCaseFactoryProtocol? = nil,
-        observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol? = nil
+        mlsGroupVerificationStatusObserver: ObserveMLSGroupVerificationStatusUseCaseProtocol? = nil
     ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
@@ -511,7 +511,7 @@ public final class ZMUserSession: NSObject {
             syncContext: coreDataStack.syncContext
         )
 
-        self.observeMLSGroupVerificationStatus = observeMLSGroupVerificationStatus ?? ObserveMLSGroupVerificationStatusUseCase(
+        self.mlsGroupVerificationStatusObserver = mlsGroupVerificationStatusObserver ?? ObserveMLSGroupVerificationStatusUseCase(
             mlsService: self.mlsService,
             updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatus,
             syncContext: coreDataStack.syncContext)
@@ -562,13 +562,6 @@ public final class ZMUserSession: NSObject {
             self.applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
             self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
-
-            if e2eiFeature.isEnabled {
-                self.observeMLSGroupVerificationStatus.invoke()
-                self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
-                    from: self.mlsService.onNewCRLsDistributionPoints()
-                )
-            }
         }
 
         registerForCalculateBadgeCountNotification()
@@ -935,7 +928,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
+            self?.observeMLSGroupVerificationStatus()
+            self?.observeNewCRLsDistributionPoints()
         }
+
     }
 
     func processEvents() {
@@ -1039,6 +1035,23 @@ extension ZMUserSession: ZMSyncStateDelegate {
         guard e2eiFeature.isEnabled else { return }
         NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
     }
+
+    // MARK: - Observers
+
+    private func observeMLSGroupVerificationStatus() {
+        guard e2eiFeature.isEnabled else { return }
+
+        mlsGroupVerificationStatusObserver.invoke()
+    }
+
+    private func observeNewCRLsDistributionPoints() {
+        guard e2eiFeature.isEnabled else { return }
+
+        cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
+            from: mlsService.onNewCRLsDistributionPoints()
+        )
+    }
+
 }
 
 extension ZMUserSession: URLActionProcessor {
