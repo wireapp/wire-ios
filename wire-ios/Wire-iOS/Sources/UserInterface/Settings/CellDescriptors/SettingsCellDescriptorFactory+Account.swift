@@ -300,9 +300,7 @@ extension SettingsCellDescriptorFactory {
             },
             presentationStyle: .navigation,
             presentationAction: {
-                // Safely unwrap ZMUser's accentColorValue
                 guard let zmAccentColor = ZMUser.selfUser()?.accentColorValue else {
-                    // Handle nil case appropriately, e.g., return a default value or handle error
                     return nil
                 }
 
@@ -312,8 +310,7 @@ extension SettingsCellDescriptorFactory {
                     },
                     set: { newColor in
                         ZMUserSession.shared()?.perform {
-                            // Provide a default ZMAccentColor value if newColor is nil
-                            let defaultZMAccentColor = ZMAccentColor.strongBlue // Replace with your default value
+                            let defaultZMAccentColor = ZMAccentColor.strongBlue
                             ZMUser.selfUser()?.accentColorValue = newColor?.zmAccentColor ?? defaultZMAccentColor
                         }
                     }
