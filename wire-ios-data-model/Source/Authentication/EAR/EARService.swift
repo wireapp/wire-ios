@@ -195,7 +195,7 @@ public class EARService: EARServiceInterface {
             do {
                 try self.deleteExistingKeys()
                 try self.generateKeys()
-                let databaseKey = try self.fetchDecyptedDatabaseKey()
+                let databaseKey = try self.fetchDecryptedDatabaseKey()
 
                 if !skipMigration {
                     try context.migrateTowardEncryptionAtRest(databaseKey: databaseKey)
@@ -450,7 +450,7 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Database key
 
-    private func fetchDecyptedDatabaseKey() throws -> VolatileData {
+    private func fetchDecryptedDatabaseKey() throws -> VolatileData {
         let privateKey = try fetchPrimaryPrivateKey()
         let encryptedDatabaseKeyData = try fetchEncryptedDatabaseKey()
         let databaseKeyData = try keyEncryptor.decryptDatabaseKey(
@@ -475,7 +475,7 @@ public class EARService: EARServiceInterface {
     public func unlockDatabase() throws {
         do {
             WireLogger.ear.info("unlocking database")
-            let databaseKey = try fetchDecyptedDatabaseKey()
+            let databaseKey = try fetchDecryptedDatabaseKey()
             setDatabaseKeyInAllContexts(databaseKey)
         } catch {
             WireLogger.ear.error("failed to unlock database: \(String(describing: error))")
