@@ -18,18 +18,10 @@
 
 import Foundation
 
-public struct CRLsDistributionPoints: Equatable {
+extension ZMUpdateEvent: SafeForLoggingStringConvertible {
 
-    public let urls: Set<URL>
-
-    public init?(from stringArray: [String]?) {
-        let urls = stringArray?.compactMap { URL(string: $0) }
-
-        guard let urls = urls, !urls.isEmpty else {
-            return nil
-        }
-
-        self.urls = Set(urls)
+    public var safeForLoggingDescription: String {
+        return type.stringValue ?? "unknown"
     }
 
 }
