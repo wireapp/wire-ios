@@ -93,6 +93,7 @@ jobs:
           name: CHANGELOG-$(date +'%Y-%m-%d_%H-%M-%S').md
           path: ./CHANGELOG.md
           if-no-files-found: error
+          overwrite: true
 
       - name: Expose url of changelog
         id: expose-url
