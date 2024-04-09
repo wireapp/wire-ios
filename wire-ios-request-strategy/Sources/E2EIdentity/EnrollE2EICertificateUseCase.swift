@@ -92,7 +92,6 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             try await e2eiRepository.fetchTrustAnchor()
         } catch {
             logger.warn("failed to register trust anchor: \(error.localizedDescription)")
-            throw error
         }
 
         do {
@@ -135,6 +134,7 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
         guard let selfClientId else {
             throw Failure.missingSelfClientID
         }
+
         let isUpgradingMLSClient = await context.perform {
             ZMUser.selfUser(in: self.context).selfClient()?.hasRegisteredMLSClient ?? false
         }
