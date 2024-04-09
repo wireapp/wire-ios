@@ -21,18 +21,11 @@ import WireCommonComponents
 import WireDataModel
 import SwiftUI
 
-final class DeviceDetailsViewController: UIHostingController<DeviceDetailsView> {
+/// A customized hosting controller for `DeviceDetailsView` and `ProfileDeviceDetailsView` in order to allow displaying
+/// a custom navigation item title view and a debug menu button in the navigation bar.
+final class DeviceInfoViewController<Content>: UIHostingController<Content> where Content: DeviceInfoView {
 
     private var cancellables = Set<AnyCancellable>()
-
-    init(viewModel: DeviceInfoViewModel) {
-        super.init(rootView: DeviceDetailsView(viewModel: viewModel))
-    }
-
-    @MainActor @available(*, unavailable)
-    required dynamic init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) is not supported")
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,3 +86,12 @@ final class DeviceDetailsViewController: UIHostingController<DeviceDetailsView> 
         }
     }
 }
+
+// `DeviceDetailsView` and `ProfileDeviceDetailsView` are similar and even use the same view model type.
+// The `DeviceInfoView` protocol allows for using the same custom hosting controller for both.
+protocol DeviceInfoView: View {
+    var viewModel: DeviceInfoViewModel { get }
+    init(viewModel: DeviceInfoViewModel)
+}
+extension DeviceDetailsView: DeviceInfoView {}
+extension ProfileDeviceDetailsView: DeviceInfoView {}

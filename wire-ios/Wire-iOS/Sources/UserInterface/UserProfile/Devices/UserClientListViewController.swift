@@ -173,7 +173,7 @@ final class UserClientListViewController: UIViewController,
             client: client,
             contextProvider: contextProvider
         )
-        let detailsViewController = ProfileDeviceDetailsViewController(viewModel: viewModel)
+        let detailsViewController = DeviceInfoViewController(rootView: DeviceDetailsView(viewModel: viewModel))
         navigationController.pushViewController(detailsViewController, animated: true)
     }
 

@@ -223,7 +223,7 @@ final class ClientListViewController: UIViewController,
         }
         selectedDeviceInfoViewModel = viewModel
 
-        let detailsViewController = DeviceDetailsViewController(viewModel: viewModel)
+        let detailsViewController = DeviceInfoViewController(rootView: DeviceDetailsView(viewModel: viewModel))
         navigationController.pushViewController(detailsViewController, animated: true)
     }
 
@@ -253,7 +253,7 @@ final class ClientListViewController: UIViewController,
             actionsHandler: deviceActionsHandler,
             conversationClientDetailsActions: deviceActionsHandler,
             debugMenuActionsHandler: deviceActionsHandler,
-            isDebugMenuAvailable: Bundle.developerModeEnabled
+            isDebugMenuAvailable: false
         )
     }
 

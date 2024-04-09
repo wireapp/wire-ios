@@ -26,9 +26,9 @@ struct DeviceDetailsView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    @ObservedObject var viewModel: DeviceInfoViewModel
-    @State var isCertificateViewPresented: Bool = false
-    @State var didEnrollCertificateFail: Bool = false
+    @ObservedObject private(set) var viewModel: DeviceInfoViewModel
+    @State private var isCertificateViewPresented = false
+    @State private var didEnrollCertificateFail = false
 
     @ViewBuilder
     var e2eIdentityCertificateView: some View {
@@ -97,24 +97,6 @@ struct DeviceDetailsView: View {
                 }
             }
         )
-        .navigationBarTitleDisplayMode(.inline)
-//        .toolbar {
-//            ToolbarItem(placement: .navigationBarLeading) {
-//                Button(
-//                    action: {
-//                        dismiss()
-//                    },
-//                    label: {
-//                        Image(.backArrow)
-//                            .renderingMode(.template)
-//                            .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
-//                    }
-//                )
-//            }
-//            ToolbarItem(placement: .principal) {
-//                DeviceView(viewModel: viewModel).titleView
-//            }
-//        }
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
         .onAppear {
             viewModel.onAppear()
