@@ -90,7 +90,7 @@ jobs:
         id: upload-file
         uses: actions/upload-artifact@v4
         with:
-          name: CHANGELOG-$(date +"%Y-%m-%d_%H-%M-%S").md
+          name: CHANGELOG-$(date +'%Y-%m-%d_%H-%M-%S').md
           path: ./CHANGELOG.md
           if-no-files-found: error
 
