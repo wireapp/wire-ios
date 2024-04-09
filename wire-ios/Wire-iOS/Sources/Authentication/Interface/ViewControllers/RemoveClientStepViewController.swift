@@ -40,6 +40,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
             guard let email = $0.email, let password = $0.password else {
                 return nil
             }
+
             return ZMEmailCredentials(email: email, password: password)
         }
 
