@@ -173,9 +173,8 @@ final class UserClientListViewController: UIViewController,
             client: client,
             contextProvider: contextProvider
         )
-        let detailsView = ProfileDeviceDetailsView(viewModel: viewModel)
-        let hostingViewController = UIHostingController(rootView: detailsView)
-        navigationController.pushViewController(hostingViewController, animated: true)
+        let detailsViewController = ProfileDeviceDetailsViewController(viewModel: viewModel)
+        navigationController.pushViewController(detailsViewController, animated: true)
     }
 
     private func makeDeviceInfoViewModel(

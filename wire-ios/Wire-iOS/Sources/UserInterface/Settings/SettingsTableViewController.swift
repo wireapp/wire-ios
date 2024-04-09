@@ -215,6 +215,7 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     }
 
     private func setupNavigationBar() {
+        navigationItem.backButtonDisplayMode = .minimal
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
         setupAccessibility()
     }

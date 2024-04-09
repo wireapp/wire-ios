@@ -318,6 +318,7 @@
 		5922E92E2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */; };
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
 		597A3BBA2B641F280020E337 /* UserStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB92B641F280020E337 /* UserStatus.swift */; };
+		59A0A6952BC53DAA00FBFCF5 /* ProfileDeviceDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0A6942BC53DAA00FBFCF5 /* ProfileDeviceDetailsViewController.swift */; };
 		59A1F1472B7BA226002CB679 /* UserStatus+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */; };
 		59A1F1492B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1482B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift */; };
 		59A1F14B2B7BBA22002CB679 /* ConversationListTopBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F14A2B7BBA22002CB679 /* ConversationListTopBarView.swift */; };
@@ -2371,6 +2372,7 @@
 		5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+initWithUserType.swift"; sourceTree = "<group>"; };
 		597A3BB92B641F280020E337 /* UserStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatus.swift; sourceTree = "<group>"; };
+		59A0A6942BC53DAA00FBFCF5 /* ProfileDeviceDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDeviceDetailsViewController.swift; sourceTree = "<group>"; };
 		59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+Helpers.swift"; sourceTree = "<group>"; };
 		59A1F1482B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatusViewControllerDelegate.swift; sourceTree = "<group>"; };
 		59A1F14A2B7BBA22002CB679 /* ConversationListTopBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListTopBarView.swift; sourceTree = "<group>"; };
@@ -5231,6 +5233,7 @@
 				16814843228D89EC0069F16F /* UserClientListViewController.swift */,
 				1681483F228C6E120069F16F /* UserClientCell.swift */,
 				259BB5D22B7FC04100F1B552 /* ProfileDeviceDetailsView.swift */,
+				59A0A6942BC53DAA00FBFCF5 /* ProfileDeviceDetailsViewController.swift */,
 				259BB5D12B7FC04100F1B552 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsActions.swift */,
 				253C67482B88A3BB00965DE1 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsDebugActions.swift */,
 			);
@@ -10290,6 +10293,7 @@
 				1639A80D225F604100868AB9 /* Settings+Availability.swift in Sources */,
 				F10F46D420288CEB00261449 /* ConversationCreationController.swift in Sources */,
 				A965F89E23DB3359005209E1 /* ConversationInputBarViewController.swift in Sources */,
+				59A0A6952BC53DAA00FBFCF5 /* ProfileDeviceDetailsViewController.swift in Sources */,
 				87E8D0BB2182179F00BD26AC /* ConversationInputBarViewController+Reply.swift in Sources */,
 				BF0555BD1E6D785C00D3E9D4 /* ConversationMissedCallSystemMessageViewModel.swift in Sources */,
 				63A5E6F624C87E0000F7D401 /* SettingsCellDescriptorFactory+SoundAlert.swift in Sources */,

@@ -133,6 +133,7 @@ final class SelfProfileViewController: UIViewController {
 
         settingsController.tableView.isScrollEnabled = false
 
+        navigationItem.backButtonDisplayMode = .minimal
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
         configureAccountTitle()
         createConstraints()

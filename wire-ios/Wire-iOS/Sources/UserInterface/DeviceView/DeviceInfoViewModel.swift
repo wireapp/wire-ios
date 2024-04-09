@@ -43,7 +43,7 @@ final class DeviceInfoViewModel: ObservableObject {
     let gracePeriod: TimeInterval
     let isFromConversation: Bool
 
-    var title: String
+    let title: String
     var isSelfClient: Bool
     var userClient: UserClientType
 
