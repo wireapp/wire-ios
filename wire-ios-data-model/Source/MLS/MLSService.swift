@@ -1067,7 +1067,7 @@ public final class MLSService: MLSServiceInterface {
             let localEpoch = try await coreCrypto.conversationEpoch(conversationId: groupID.data)
 
             logger.info("epochs(remote: \(epoch), local: \(localEpoch)) for (\(groupID.safeForLoggingDescription))")
-            return localEpoch != epoch
+            return localEpoch < epoch
         } catch {
             logger.info("cannot resolve conversation epoch \(String(describing: error)) for (\(groupID.safeForLoggingDescription))")
             return false
