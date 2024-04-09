@@ -774,6 +774,10 @@
 "call.mls.degraded.alert.message" = "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to start the call?";
 "call.mls.degraded.alert.action.continue" = "Ring ändå";
 
+"call.mls.degraded.incoming.alert.message" = "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to join the call?";
+"call.mls.degraded.incoming.alert.action.continue" = "Join anyway";
+
+
 "call.mls.degraded.ended.alert.title" = "Conversation no longer verified";
 "call.mls.degraded.ended.alert.message" = "The call was disconnected as at least one participant started using a new device or has an invalid certificate.";
 
@@ -1600,7 +1604,8 @@
 "registration.signin.alert.password_needed.message" = "Ange ditt lösenord för att logga in.";
 
 "registration.signin.e2ei.title" = "End-to-end identity certificate";
-"registration.signin.e2ei.subtitle" = "Your team now uses end-to-end identity to make Wire's usage more secure.\n\n Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device. \n\n [Learn more about end-to-end identity](%@)";
+"registration.signin.e2ei.subtitle" = "Your team now uses end-to-end identity to make Wire's usage more secure.\n\n Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device.";
+"registration.signin.e2ei.learn_more" = "[Läs mer](%@)";
 "registration.signin.e2ei.get_certificate_button.title" = "Get Certificate";
 "registration.signin.e2ei.error.alert.title" = "Något gick fel";
 "registration.signin.e2ei.error.alert.message" = "Failed to retrieve certificate";
@@ -1796,7 +1801,7 @@
 "feature_config.alert.mls_e2ei.reminder_message" = "You can get the certificate in your 'Wire Settings' during the next %@. Open 'Devices' and select 'Get Certificate' for your current device.";
 "feature_config.alert.mls_e2ei.update_message" = "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now.\nEnter your identity provider’s credentials in the next step to update the certificate automatically.";
 "feature_config.alert.mls_e2ei.alert.update_certificate.title" = "End-to-end identity certificate";
-"failed_to_get_certificate.alert.title" = "Certifikat kunde inte utfärdas.";
+"failed_to_get_certificate.alert.title" = "Certificate couldn’t be issued.";
 "failed_to_get_certificate.alert.message" = "You can retry to get the certificate now, or you will get a reminder later.";
 "failed_to_get_certificate.alert.forced_message" = "Please try again, or reach out to your team admin.";
 "failed_to_get_certificate.button.retry" = "Försök igen";
@@ -1810,6 +1815,12 @@
 
 "failed_to_update_certificate.alert.title" = "Certificate couldn’t be updated.";
 "failed_to_update_certificate.alert.message" = "You can retry to update the certificate now, or you will get a reminder later.";
+
+// End-to-end identity revoked certificate
+"revoked_certificate.alert.title" = "End-to-end certificate revoked";
+"revoked_certificate.alert.message" = "Log out to reduce security risks. Then log in again, get a new certificate, and reset your password. If you keep using this device, your conversations are no longer verified.";
+"revoked_certificate.alert.log_out" = "Logga ut";
+"revoked_certificate.alert.continue" = "Continue Using This Device";
 
 // Jailbroken alert
 "jailbrokendevice.alert.title" = "Jailbreak detected";
