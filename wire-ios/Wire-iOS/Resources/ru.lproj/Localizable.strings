@@ -774,6 +774,10 @@
 "call.mls.degraded.alert.message" = "По крайней мере, один из участников начал использовать новое устройство или имеет недействительный сертификат.\n\nВы все еще хотите позвонить?";
 "call.mls.degraded.alert.action.continue" = "Все равно позвонить";
 
+"call.mls.degraded.incoming.alert.message" = "По крайней мере, один из участников начал использовать новое устройство или имеет недействительный сертификат.\n\nВы все еще хотите присоединиться к вызову?";
+"call.mls.degraded.incoming.alert.action.continue" = "Все равно присоединиться";
+
+
 "call.mls.degraded.ended.alert.title" = "Беседа больше не является верифицированной";
 "call.mls.degraded.ended.alert.message" = "Вызов был прерван, поскольку по крайней мере один из участников начал использовать новое устройство или имеет недействительный сертификат.";
 
@@ -1600,7 +1604,8 @@
 "registration.signin.alert.password_needed.message" = "Для входа необходимо ввести пароль.";
 
 "registration.signin.e2ei.title" = "Сертификат сквозной идентификации";
-"registration.signin.e2ei.subtitle" = "Теперь ваша команда использует сквозную идентификацию, чтобы сделать использование Wire более безопасным.\n\n На следующем шаге введите учетные данные провайдера идентификационных данных, чтобы автоматически получить сертификат верификации для этого устройства. \n\n [Узнайте больше о сквозной идентификации](%@)";
+"registration.signin.e2ei.subtitle" = "Теперь ваша команда использует сквозную идентификацию, чтобы сделать использование Wire более безопасным.\n\n На следующем шаге введите учетные данные провайдера идентификационных данных, чтобы автоматически получить сертификат верификации для этого устройства.";
+"registration.signin.e2ei.learn_more" = "[Подробнее](%@)";
 "registration.signin.e2ei.get_certificate_button.title" = "Получить сертификат";
 "registration.signin.e2ei.error.alert.title" = "Что-то пошло не так";
 "registration.signin.e2ei.error.alert.message" = "Не удалось извлечь сертификат";
@@ -1612,8 +1617,8 @@
 "enroll_e2ei_certificate.ok_button" = "OK";
 
 // Update e2ei certificate
-"update_e2ei_certificate.title" = "Certificate updated";
-"update_e2ei_certificate.subtitle" = "The certificate is updated and your device is verified.";
+"update_e2ei_certificate.title" = "Сертификат обновлен";
+"update_e2ei_certificate.subtitle" = "Сертификат обновлен, а устройство верифицировано.";
 
 "registration.signin.username.title" = "Ваш псевдоним";
 "registration.signin.username.message" = "Введите свой псевдоним. Это поможет другим найти вас в Wire и связаться.";
@@ -1794,22 +1799,28 @@
 "feature_config.alert.mls_e2ei.button.learn_more" = "Подробнее";
 "feature_config.alert.mls_e2ei.button.ok" = "OK";
 "feature_config.alert.mls_e2ei.reminder_message" = "Вы можете получить сертификат в настройках Wire во время следующего %@. Откройте Устройства и выберите Получить сертификат для вашего текущего устройства. ";
-"feature_config.alert.mls_e2ei.update_message" = "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now.\nEnter your identity provider’s credentials in the next step to update the certificate automatically.";
+"feature_config.alert.mls_e2ei.update_message" = "Срок действия сертификата сквозной идентификации для этого устройства истекает в ближайшее время. Для обеспечения безопасности общения обновите сертификат сейчас.\nНа следующем шаге введите учетные данные поставщика идентификационных данных для автоматического обновления сертификата.";
 "feature_config.alert.mls_e2ei.alert.update_certificate.title" = "Сертификат сквозной идентификации";
-"failed_to_get_certificate.alert.title" = "Certificate couldn’t be issued.";
-"failed_to_get_certificate.alert.message" = "You can retry to get the certificate now, or you will get a reminder later.";
-"failed_to_get_certificate.alert.forced_message" = "Please try again, or reach out to your team admin.";
+"failed_to_get_certificate.alert.title" = "Не удалось выпустить сертификат.";
+"failed_to_get_certificate.alert.message" = "Вы можете повторить попытку получения сертификата сейчас или получить напоминание позже.";
+"failed_to_get_certificate.alert.forced_message" = "Пожалуйста, попробуйте еще раз или свяжитесь с администратором вашей команды.";
 "failed_to_get_certificate.button.retry" = "Повторить";
 "failed_to_get_certificate.button.ok" = "OK";
 
 // Update end-to-end identity certificate
 "update_certificate.alert.title" = "Обновить сертификат";
 "update_certificate.alert.message" = "Срок действия сертификата сквозной идентификации для этого устройства истекает в ближайшее время. Для обеспечения безопасности общения обновите сертификат сейчас. На следующем шаге введите учетные данные поставщика идентификационных данных для автоматического обновления сертификата.";
-"update_certificate.alert.expired-message" = "The end-to-end identity certificate for this device has expired. Enter your identity provider’s credentials in the next step to update the certificate automatically.";
+"update_certificate.alert.expired-message" = "Срок действия сертификата сквозной идентификации для данного устройства истек. Для автоматического обновления сертификата введите учетные данные поставщика услуг идентификации на следующем шаге.";
 "update_certificate.button.update_certificate" = "Обновить сертификат";
 
-"failed_to_update_certificate.alert.title" = "Certificate couldn’t be updated.";
-"failed_to_update_certificate.alert.message" = "You can retry to update the certificate now, or you will get a reminder later.";
+"failed_to_update_certificate.alert.title" = "Не удалось обновить сертификат.";
+"failed_to_update_certificate.alert.message" = "Вы можете повторить попытку обновления сертификата сейчас или получить напоминание позже.";
+
+// End-to-end identity revoked certificate
+"revoked_certificate.alert.title" = "Сертификат сквозной идентификации отозван";
+"revoked_certificate.alert.message" = "Для снижения рисков безопасности следует осуществить выход. После авторизации получите новый сертификат и сбросьте пароль. Если вы продолжите использование этого устройства, ваши разговоры больше не будут являться верифицированными.";
+"revoked_certificate.alert.log_out" = "Выйти";
+"revoked_certificate.alert.continue" = "Продолжить использование этого устройства";
 
 // Jailbroken alert
 "jailbrokendevice.alert.title" = "Обнаружен Jailbreak";
