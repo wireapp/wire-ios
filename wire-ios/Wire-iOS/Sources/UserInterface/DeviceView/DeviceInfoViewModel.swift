@@ -87,7 +87,8 @@ final class DeviceInfoViewModel: ObservableObject {
     var actionsHandler: DeviceDetailsViewActions
     var conversationClientDetailsActions: ConversationUserClientDetailsActions
     var debugMenuActionsHandler: ConversationUserClientDetailsDebugActions?
-    let showDebugMenu: Bool
+    let isDebugMenuAvailable: Bool
+    @Published var isDebugMenuPresented = false
 
     init(
         title: String,
@@ -100,7 +101,7 @@ final class DeviceInfoViewModel: ObservableObject {
         actionsHandler: DeviceDetailsViewActions,
         conversationClientDetailsActions: ConversationUserClientDetailsActions,
         debugMenuActionsHandler: ConversationUserClientDetailsDebugActions? = nil,
-        showDebugMenu: Bool
+        isDebugMenuAvailable: Bool
     ) {
         self.title = title
         self.addedDate = addedDate
@@ -112,7 +113,7 @@ final class DeviceInfoViewModel: ObservableObject {
         self.isFromConversation = isFromConversation
         self.conversationClientDetailsActions = conversationClientDetailsActions
         self.debugMenuActionsHandler = debugMenuActionsHandler
-        self.showDebugMenu = showDebugMenu
+        self.isDebugMenuAvailable = isDebugMenuAvailable
         self.actionsHandler.isProcessing = { [weak self] isProcessing in
             DispatchQueue.main.async {
                 self?.isActionInProgress = isProcessing

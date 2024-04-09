@@ -205,7 +205,7 @@ final class UserClientListViewController: UIViewController,
             actionsHandler: deviceActionsHandler,
             conversationClientDetailsActions: deviceActionsHandler,
             debugMenuActionsHandler: deviceActionsHandler,
-            showDebugMenu: Bundle.developerModeEnabled
+            isDebugMenuAvailable: Bundle.developerModeEnabled
         )
     }
 }

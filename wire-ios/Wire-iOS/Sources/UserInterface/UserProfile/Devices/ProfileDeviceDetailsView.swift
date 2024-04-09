@@ -25,7 +25,6 @@ struct ProfileDeviceDetailsView: View {
 
     @ObservedObject var viewModel: DeviceInfoViewModel
     @State private var isCertificateViewPresented: Bool = false
-    @State private var isDebugViewPresented: Bool = false
 
     private var e2eIdentityCertificateView: some View {
         VStack(alignment: .leading) {
@@ -145,10 +144,10 @@ struct ProfileDeviceDetailsView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(
                         action: {
-                            isDebugViewPresented.toggle()
+                            viewModel.isDebugMenuPresented.toggle()
                         },
                         label: {
-                            if viewModel.showDebugMenu {
+                            if viewModel.isDebugMenuAvailable {
                                 Text("Debug")
                             }
                         }
@@ -177,7 +176,7 @@ struct ProfileDeviceDetailsView: View {
                 )
             }
         }
-        .alert("Debug options", isPresented: $isDebugViewPresented, actions: {
+        .alert("Debug options", isPresented: $viewModel.isDebugMenuPresented, actions: {
             Button("Delete Device", action: {
                   viewModel.onDeleteDeviceTapped()
               })
@@ -188,11 +187,11 @@ struct ProfileDeviceDetailsView: View {
                 viewModel.onCorruptSessionTapped()
             })
             Button("Cancel", role: .cancel, action: {
-                isDebugViewPresented.toggle()
+                viewModel.isDebugMenuPresented.toggle()
             })
-            }, message: {
-              Text("Tap to perform an action")
-            })
+        }, message: {
+            Text("Tap to perform an action")
+        })
     }
 
     @ViewBuilder

@@ -37,12 +37,24 @@ final class ProfileDeviceDetailsViewController: UIHostingController<ProfileDevic
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        rootView.viewModel.$e2eIdentityCertificate
-            .combineLatest(rootView.viewModel.$isProteusVerificationEnabled)
+        // setup and update navigation item title
+        let certificatePublisher = rootView.viewModel.$e2eIdentityCertificate
+        let isProtuesVerifiedPublisher = rootView.viewModel.$isProteusVerificationEnabled
+        certificatePublisher.combineLatest(isProtuesVerifiedPublisher)
             .sink { [weak self] certificate, isProteusVerified in
                 self?.updateNavigationItemTitle(certificate, isProteusVerified)
             }
             .store(in: &cancellables)
+
+        // show debug button if needed
+        if rootView.viewModel.isDebugMenuAvailable {
+            navigationItem.rightBarButtonItem = .init(
+                title: "Debug",
+                style: .done,
+                target: self,
+                action: #selector(toggleDebugMenuVisibility)
+            )
+        }
     }
 
     private func updateNavigationItemTitle(
@@ -50,7 +62,6 @@ final class ProfileDeviceDetailsViewController: UIHostingController<ProfileDevic
         _ isProteusVerified: Bool
     ) {
 
-        // show the device name as navigation item title
         let deviceName = NSMutableAttributedString(string: rootView.viewModel.title)
         if
             rootView.viewModel.isE2eIdentityEnabled,
@@ -72,5 +83,10 @@ final class ProfileDeviceDetailsViewController: UIHostingController<ProfileDevic
         label.attributedText = deviceName
         label.font = FontSpec(.header, .semibold).font
         navigationItem.titleView = label
+    }
+
+    @objc
+    private func toggleDebugMenuVisibility() {
+        rootView.viewModel.isDebugMenuPresented.toggle()
     }
 }
