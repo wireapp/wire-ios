@@ -642,7 +642,7 @@ struct ConversationEventPayloadProcessor {
             conversation.conversationType = .connection
 
             updateAttributes(from: payload, for: conversation, context: context)
-            updateMessageProtocol(from: payload, for: conversation, in: context)
+            assignMessageProtocol(from: payload, for: conversation, in: context)
             updateMetadata(from: payload, for: conversation, context: context)
             updateMembers(from: payload, for: conversation, context: context)
             updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
@@ -677,7 +677,7 @@ struct ConversationEventPayloadProcessor {
 
             conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
             updateAttributes(from: payload, for: conversation, context: context)
-            updateMessageProtocol(from: payload, for: conversation, in: context)
+            assignMessageProtocol(from: payload, for: conversation, in: context)
             updateMetadata(from: payload, for: conversation, context: context)
             updateMembers(from: payload, for: conversation, context: context)
             updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)

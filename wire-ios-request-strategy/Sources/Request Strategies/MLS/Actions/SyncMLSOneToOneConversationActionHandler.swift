@@ -85,6 +85,10 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
             Task { [action] in
                 var action = action
 
+                // TODO: [WPB-7415] backend doesn't always include the other member
+                var payload = payload
+                payload.addMissingMember(userID: QualifiedID(uuid: action.userID, domain: action.domain))
+
                 guard
                     let conversation = await processor.updateOrCreateConversation(
                         from: payload,
@@ -109,5 +113,33 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
             let errorInfo = response.errorInfo
             action.fail(with: .unknown(status: errorInfo.status, label: errorInfo.label, message: errorInfo.message))
         }
+    }
+}
+
+private extension Payload.Conversation {
+
+    mutating func addMissingMember(userID: QualifiedID) {
+        guard
+            let selfMember = members?.selfMember,
+            members?.others.isEmpty == true
+        else { return }
+
+        members = Payload.ConversationMembers(
+            selfMember: selfMember,
+            others: [Payload.ConversationMember(
+                id: userID.uuid,
+                qualifiedID: userID,
+                target: nil,
+                qualifiedTarget: nil,
+                service: nil,
+                mutedStatus: nil,
+                mutedReference: nil,
+                archived: nil,
+                archivedReference: nil,
+                hidden: nil,
+                hiddenReference: nil,
+                conversationRole: nil
+            )]
+        )
     }
 }
