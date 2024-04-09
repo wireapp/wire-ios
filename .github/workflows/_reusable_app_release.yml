@@ -90,9 +90,10 @@ jobs:
         id: upload-file
         uses: actions/upload-artifact@v4
         with:
-          name: CHANGELOG.md
+          name: CHANGELOG-${{GITHUB_JOB}}.md
           path: ./CHANGELOG.md
           if-no-files-found: error
+
       - name: Expose url of changelog
         id: expose-url
         run: echo "changelog=${{ steps.upload-file.outputs.artifact-url }}" >> $GITHUB_OUTPUT
