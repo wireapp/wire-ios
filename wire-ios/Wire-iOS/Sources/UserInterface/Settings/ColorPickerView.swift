@@ -29,8 +29,7 @@ struct ColorPickerView: View {
 
     private let colorViewSize: CGFloat = 28
     private let colorViewCornerRadius: CGFloat = 14
-    private let leftPadding: CGFloat = 6
-    private let rightPadding: CGFloat = 30
+    private let leftPaddingForColorView: CGFloat = -10
 
     var body: some View {
         NavigationView {
@@ -40,8 +39,7 @@ struct ColorPickerView: View {
                     Circle()
                         .fill(Color(uiColor: UIColor(for: color)))
                         .frame(width: colorViewSize, height: colorViewSize)
-                        .padding(.leading, 2)
-
+                        .padding(.leading, leftPaddingForColorView)
                     Text(color.name)
 
                     Spacer()
@@ -49,11 +47,10 @@ struct ColorPickerView: View {
                     // Checkmark view
                     if selectedColor == color {
                         Image(systemName: "checkmark")
-                            .foregroundColor(Color(.label))
-                            .padding(.trailing, rightPadding)
+                            .foregroundColor(Color(SemanticColors.Icon.foregroundDefaultBlack))
                     }
                 }
-                .background(Color(SemanticColors.View.backgroundUserCell))
+                .listRowBackground(Color(SemanticColors.View.backgroundUserCell))
                 .onTapGesture {
                     withAnimation {
                         self.selectedColor = color
@@ -61,6 +58,7 @@ struct ColorPickerView: View {
                     }
                 }
             }
+            .background(Color(SemanticColors.View.backgroundDefault))
         }
         .toolbar {
             ToolbarItem(placement: .principal) {
