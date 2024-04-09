@@ -90,7 +90,7 @@ jobs:
         id: upload-file
         uses: actions/upload-artifact@v4
         with:
-          name: CHANGELOG-${{ github.job }}.md
+          name: CHANGELOG-${{ github.run_number }}.md
           path: ./CHANGELOG.md
           if-no-files-found: error
 
