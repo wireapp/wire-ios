@@ -223,9 +223,8 @@ final class ClientListViewController: UIViewController,
         }
         selectedDeviceInfoViewModel = viewModel
 
-        let detailsView = DeviceDetailsView(viewModel: viewModel)
-        let hostingViewController = UIHostingController(rootView: detailsView)
-        navigationController.pushViewController(hostingViewController, animated: true)
+        let detailsViewController = DeviceDetailsViewController(viewModel: viewModel)
+        navigationController.pushViewController(detailsViewController, animated: true)
     }
 
     private func makeDeviceInfoViewModel(

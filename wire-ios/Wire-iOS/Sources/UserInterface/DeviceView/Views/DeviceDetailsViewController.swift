@@ -21,12 +21,12 @@ import WireCommonComponents
 import WireDataModel
 import SwiftUI
 
-final class ProfileDeviceDetailsViewController: UIHostingController<ProfileDeviceDetailsView> {
+final class DeviceDetailsViewController: UIHostingController<DeviceDetailsView> {
 
     private var cancellables = Set<AnyCancellable>()
 
     init(viewModel: DeviceInfoViewModel) {
-        super.init(rootView: ProfileDeviceDetailsView(viewModel: viewModel))
+        super.init(rootView: DeviceDetailsView(viewModel: viewModel))
     }
 
     @MainActor @available(*, unavailable)
