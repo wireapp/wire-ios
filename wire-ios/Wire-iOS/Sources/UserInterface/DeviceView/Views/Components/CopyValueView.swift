@@ -35,11 +35,11 @@ struct CopyValueView: View {
             HStack {
                 Text(value)
                     .font(FontSpec.normalRegularFont.swiftUIFont.monospaced())
+                Spacer()
 
                 if isCopyEnabled {
-                    Spacer()
                     VStack {
-                        SwiftUI.Button(action: copy) {
+                        Button(action: copy) {
                             Image(.copy)
                                 .renderingMode(.template)
                                 .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
