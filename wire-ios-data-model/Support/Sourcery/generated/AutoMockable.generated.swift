@@ -3688,6 +3688,34 @@ public class MockIsUserE2EICertifiedUseCaseProtocol: IsUserE2EICertifiedUseCaseP
 
 }
 
+public class MockLAContextStorable: LAContextStorable {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - context
+
+    public var context: LAContext?
+
+
+    // MARK: - clear
+
+    public var clear_Invocations: [Void] = []
+    public var clear_MockMethod: (() -> Void)?
+
+    public func clear() {
+        clear_Invocations.append(())
+
+        guard let mock = clear_MockMethod else {
+            fatalError("no mock for `clear`")
+        }
+
+        mock()
+    }
+
+}
+
 class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
     // MARK: - Life cycle

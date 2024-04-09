@@ -19,6 +19,7 @@
 import Foundation
 import LocalAuthentication
 
+// sourcery: AutoMockable
 /// Stores a `LAContext`  to avoid repeatative authention prompts to the user.
 public protocol LAContextStorable: AnyObject {
     var context: LAContext? { get set }
