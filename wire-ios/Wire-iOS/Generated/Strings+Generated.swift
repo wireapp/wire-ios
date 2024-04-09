@@ -5028,6 +5028,18 @@ internal enum L10n {
         }
       }
     }
+    internal enum RevokedCertificate {
+      internal enum Alert {
+        /// Continue Using This Device
+        internal static let `continue` = L10n.tr("Localizable", "revoked_certificate.alert.continue", fallback: "Continue Using This Device")
+        /// Log out
+        internal static let logOut = L10n.tr("Localizable", "revoked_certificate.alert.log_out", fallback: "Log out")
+        /// Log out to reduce security risks. Then log in again, get a new certificate, and reset your password. If you keep using this device, your conversations are no longer verified.
+        internal static let message = L10n.tr("Localizable", "revoked_certificate.alert.message", fallback: "Log out to reduce security risks. Then log in again, get a new certificate, and reset your password. If you keep using this device, your conversations are no longer verified.")
+        /// End-to-end certificate revoked
+        internal static let title = L10n.tr("Localizable", "revoked_certificate.alert.title", fallback: "End-to-end certificate revoked")
+      }
+    }
     internal enum SecurityClassification {
       /// Security level:
       internal static let securityLevel = L10n.tr("Localizable", "security_classification.security_level", fallback: "Security level:")

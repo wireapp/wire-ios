@@ -18,7 +18,9 @@
 
 import Foundation
 import XCTest
-@testable import WireDataModel
+@testable import WireSyncEngine
+@testable import WireSyncEngineSupport
+@testable import WireRequestStrategySupport
 @testable import WireDataModelSupport
 
 class CertificateRevocationListsCheckerTests: XCTestCase {
@@ -28,6 +30,7 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
     private var mockCoreCrypto: MockCoreCryptoProtocol!
     private var mockCRLAPI: MockCertificateRevocationListAPIProtocol!
     private var mockConversationVerificationStatusUpdater: MockMLSConversationVerificationStatusUpdating!
+    private var mockSelfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
     private var mockCRLExpirationDatesRepository: MockCRLExpirationDatesRepositoryProtocol!
     private var mockCoreDataStack: CoreDataStack!
 
@@ -44,12 +47,14 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
 
         mockCRLAPI = MockCertificateRevocationListAPIProtocol()
         mockConversationVerificationStatusUpdater = MockMLSConversationVerificationStatusUpdating()
+        mockSelfClientCertificateProvider = MockSelfClientCertificateProviderProtocol()
         mockCRLExpirationDatesRepository = MockCRLExpirationDatesRepositoryProtocol()
 
         sut = CertificateRevocationListsChecker(
             crlAPI: mockCRLAPI,
             crlExpirationDatesRepository: mockCRLExpirationDatesRepository,
             mlsConversationsVerificationUpdater: mockConversationVerificationStatusUpdater,
+            selfClientCertificateProvider: mockSelfClientCertificateProvider,
             coreCryptoProvider: provider,
             context: mockCoreDataStack.syncContext
         )
@@ -60,6 +65,7 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
         mockCoreCrypto = nil
         mockCRLAPI = nil
         mockConversationVerificationStatusUpdater = nil
+        mockSelfClientCertificateProvider = nil
         mockCRLExpirationDatesRepository = nil
         mockCoreDataStack = nil
         try coreDataHelper.cleanupDirectory()
@@ -255,6 +261,9 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
 
         // Mock updating the conversation verification status
         mockConversationVerificationStatusUpdater.updateAllStatuses_MockMethod = {}
+
+        // Mock getting a certificate for a self client
+        mockSelfClientCertificateProvider.getCertificate_MockMethod = { return nil }
     }
 
     private func mockCRLExpirationDateExists(for distributionPoints: [String]) {
