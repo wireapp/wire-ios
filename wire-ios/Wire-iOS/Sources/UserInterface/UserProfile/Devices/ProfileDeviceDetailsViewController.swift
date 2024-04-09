@@ -48,12 +48,12 @@ final class ProfileDeviceDetailsViewController: UIHostingController<ProfileDevic
 
         // show debug button if needed
         if rootView.viewModel.isDebugMenuAvailable {
-            navigationItem.rightBarButtonItem = .init(
-                title: "Debug",
-                style: .done,
-                target: self,
-                action: #selector(toggleDebugMenuVisibility)
-            )
+            let toggleDebugMenu = UIAction(title: "Debug") { [weak self] _ in
+                self?.rootView.viewModel.isDebugMenuPresented.toggle()
+            }
+            let button = UIButton(primaryAction: toggleDebugMenu)
+            button.titleLabel?.font = FontSpec(.normal, .regular).font
+            navigationItem.rightBarButtonItem = .init(customView: button)
         }
     }
 
@@ -68,12 +68,14 @@ final class ProfileDeviceDetailsViewController: UIHostingController<ProfileDevic
             let certificate,
             let imageForStatus = certificate.status.uiImage {
             let attachment = NSTextAttachment(image: imageForStatus)
+            attachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageForStatus.size)
             deviceName.append(.init(string: " "))
             deviceName.append(.init(attachment: attachment))
         }
         if isProteusVerified {
             let verifiedShield = UIImage(resource: .verifiedShield)
             let attachment = NSTextAttachment(image: verifiedShield)
+            attachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: verifiedShield.size)
             deviceName.append(.init(string: " "))
             deviceName.append(.init(attachment: attachment))
         }
@@ -85,7 +87,6 @@ final class ProfileDeviceDetailsViewController: UIHostingController<ProfileDevic
         navigationItem.titleView = label
     }
 
-    @objc
     private func toggleDebugMenuVisibility() {
         rootView.viewModel.isDebugMenuPresented.toggle()
     }

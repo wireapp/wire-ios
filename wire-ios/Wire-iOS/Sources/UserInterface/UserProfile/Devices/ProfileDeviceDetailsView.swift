@@ -95,67 +95,34 @@ struct ProfileDeviceDetailsView: View {
     }
 
     var body: some View {
-        NavigationView { // TODO [WPB-7397]: remove
-            ScrollView {
-                VStack(alignment: .leading) {
-                    if viewModel.isE2eIdentityEnabled {
-                        if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
-                            mlsView
-                        }
-                        e2eIdentityCertificateView
+        ScrollView {
+            VStack(alignment: .leading) {
+                if viewModel.isE2eIdentityEnabled {
+                    if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
+                        mlsView
                     }
-                    proteusView
-                    showDeviceFingerPrintView.onTapGesture {
-                        viewModel.onShowMyDeviceTapped()
-                    }
+                    e2eIdentityCertificateView
                 }
-            }
-            .background(SemanticColors.View.backgroundDefault.swiftUIColor)
-            .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
-            .listStyle(.plain)
-            .overlay(
-                content: {
-                    VStack {
-                        if viewModel.isActionInProgress {
-                            Spacer()
-                            ProgressView()
-                            Spacer()
-                        }
-                    }
-                }
-            )
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(
-                        action: {
-                            dismiss()
-                        },
-                        label: {
-                            Image(.backArrow)
-                                .renderingMode(.template)
-                                .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
-                        }
-                    )
-                }
-                ToolbarItem(placement: .principal) {
-                    DeviceView(viewModel: viewModel).titleView
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(
-                        action: {
-                            viewModel.isDebugMenuPresented.toggle()
-                        },
-                        label: {
-                            if viewModel.isDebugMenuAvailable {
-                                Text("Debug")
-                            }
-                        }
-                    )
+                proteusView
+                showDeviceFingerPrintView.onTapGesture {
+                    viewModel.onShowMyDeviceTapped()
                 }
             }
         }
-        .navigationViewStyle(.stack)
+        .background(SemanticColors.View.backgroundDefault.swiftUIColor)
+        .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
+        .listStyle(.plain)
+        .overlay(
+            content: {
+                VStack {
+                    if viewModel.isActionInProgress {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
+                }
+            }
+        )
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
         .onAppear {
             viewModel.onAppear()
