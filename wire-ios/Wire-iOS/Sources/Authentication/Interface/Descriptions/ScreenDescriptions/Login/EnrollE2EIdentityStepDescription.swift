@@ -40,7 +40,8 @@ class EnrollE2EIdentityStepDescription: AuthenticationStepDescription {
         )
         secondaryView = nil
         headline = E2ei.title
-        subtext = .markdown(from: E2ei.subtitle(URL.wr_e2eiLearnMore), style: .login)
+        let details = [E2ei.subtitle, E2ei.learnMore(URL.wr_e2eiLearnMore)].joined(separator: "\n")
+        subtext = .markdown(from: details, style: .login)
     }
 
 }
