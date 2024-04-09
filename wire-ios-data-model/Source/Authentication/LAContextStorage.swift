@@ -46,13 +46,16 @@ public final class LAContextStorage: LAContextStorable {
     )
     private var internalContext: LAContext?
 
-    private let notificationCenter = NotificationCenter.default
+    private let notificationCenter: NotificationCenter
     private var observerToken: NSObjectProtocol?
 
     // MARK: Init
 
-    public init() {
+    public init(notificationCenter: NotificationCenter = .default) {
         WireLogger.ear.info("LAContextStore: init")
+
+        self.notificationCenter = notificationCenter
+
         setupObservers()
     }
 
