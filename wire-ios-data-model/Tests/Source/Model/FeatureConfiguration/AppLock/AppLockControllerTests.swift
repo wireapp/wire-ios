@@ -25,15 +25,25 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     var selfUser: ZMUser!
 
+    private var mockAuthenticationContext: MockAuthenticationContextProtocol!
+
     override func setUp() {
         super.setUp()
+
         selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = .create()
         selfUser.isAppLockActive = true
+
+        mockAuthenticationContext = MockAuthenticationContextProtocol()
+        mockAuthenticationContext.evaluatePolicyLocalizedReasonReply_MockMethod = { _, _, completion in
+            completion(true, nil)
+        }
     }
 
     override func tearDown() {
+        mockAuthenticationContext = nil
         selfUser = nil
+
         super.tearDown()
     }
 
@@ -401,14 +411,13 @@ extension AppLockControllerTests {
     typealias Output = AppLockAuthenticationResult
 
     private func assert(input: Input, output: Output, file: StaticString = #file, line: UInt = #line) {
+        mockAuthenticationContext.canEvaluatePolicyError_MockValue = input.canEvaluate
+
         let sut = createSut()
 
         let mockBiometricsState = MockBiometricsState()
         mockBiometricsState._biometricsChanged = input.biometricsChanged
         sut.biometricsState = mockBiometricsState
-
-        // let context = MockLAContext(canEvaluate: input.canEvaluate)
-        let context = MockAuthenticationContextProtocol()
 
         let assertion: (Output) -> Void = { result in
             XCTAssertEqual(result, output, file: file, line: line)
@@ -432,7 +441,7 @@ extension AppLockControllerTests {
             userId: selfUser.remoteIdentifier,
             selfUser: selfUser,
             legacyConfig: legacyConfig,
-            authenticationContext: MockAuthenticationContextProtocol()
+            authenticationContext: mockAuthenticationContext
         )
     }
 
@@ -445,7 +454,7 @@ extension AppLockControllerTests {
             userId: selfUser.remoteIdentifier,
             selfUser: selfUser,
             legacyConfig: nil,
-            authenticationContext: MockAuthenticationContextProtocol()
+            authenticationContext: mockAuthenticationContext
         )
     }
 
