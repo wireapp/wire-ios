@@ -89,7 +89,7 @@ jobs:
 
       - name: 'Set date variable'
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d_%H-%M-%S')"
+        run: echo "::set-output name=date::$(date +%s%N)"
   
       - name: 'Upload changelog'
         id: upload-file
