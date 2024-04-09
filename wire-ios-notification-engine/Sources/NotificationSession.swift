@@ -250,7 +250,7 @@ public final class NotificationSession {
         let earService = EARService(
             accountID: accountIdentifier,
             sharedUserDefaults: sharedUserDefaults,
-            authenticationContext: AuthenticationContext(storage: LAContextStorage.shared)
+            authenticationContext: AuthenticationContext(storage: LAContextStorage())
         )
 
         try self.init(

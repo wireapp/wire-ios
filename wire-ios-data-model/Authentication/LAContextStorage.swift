@@ -31,8 +31,6 @@ public protocol LAContextStorable: AnyObject {
 
 public final class LAContextStorage: LAContextStorable {
 
-    public static let shared = LAContextStorage()
-
     public var context: LAContext? {
         get {
             return internalQueue.sync { internalContext }
@@ -50,7 +48,8 @@ public final class LAContextStorage: LAContextStorable {
 
     // MARK: Init
 
-    private init() {
+    public init() {
+        WireLogger.ear.info("LAContextStore: init")
         setupObservers()
     }
 
@@ -58,6 +57,7 @@ public final class LAContextStorage: LAContextStorable {
         if let observerToken {
             notificationCenter.removeObserver(observerToken)
         }
+        WireLogger.ear.info("LAContextStore: deinit")
     }
 
     private func setupObservers() {
@@ -74,6 +74,7 @@ public final class LAContextStorage: LAContextStorable {
     // MARK: Funcs
 
     public func clear() {
+        WireLogger.ear.info("LAContextStore: clear")
         context = nil
     }
 }

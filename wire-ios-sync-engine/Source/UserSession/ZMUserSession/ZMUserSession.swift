@@ -125,6 +125,7 @@ public final class ZMUserSession: NSObject {
     let earService: EARServiceInterface
 
     public internal(set) var appLockController: AppLockType
+    private let contextStorage = LAContextStorage()
 
     public var fileSharingFeature: Feature.FileSharing {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
@@ -431,7 +432,7 @@ public final class ZMUserSession: NSObject {
             userId: userId,
             selfUser: .selfUser(in: coreDataStack.viewContext),
             legacyConfig: configuration.appLockConfig,
-            authenticationContext: AuthenticationContext(storage: LAContextStorage.shared)
+            authenticationContext: AuthenticationContext(storage: contextStorage)
         )
         self.coreCryptoProvider = CoreCryptoProvider(
             selfUserID: userId,
@@ -466,7 +467,7 @@ public final class ZMUserSession: NSObject {
             ],
             canPerformKeyMigration: true,
             sharedUserDefaults: sharedUserDefaults,
-            authenticationContext: AuthenticationContext(storage: LAContextStorage.shared)
+            authenticationContext: AuthenticationContext(storage: contextStorage)
         )
 
         let mlsService = mlsService ?? MLSService(
