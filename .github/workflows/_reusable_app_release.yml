@@ -95,10 +95,10 @@ jobs:
         id: upload-file
         uses: actions/upload-artifact@v4
         with:
-          name: CHANGELOG-${{ steps.date.outputs.date }}.md
+          name: CHANGELOG-${{ github.run_number }}-${{ steps.date.outputs.date }}.md
           path: ./CHANGELOG.md
           if-no-files-found: error
-          # overwrite: true
+          overwrite: true
 
       - name: Expose url of changelog
         id: expose-url
