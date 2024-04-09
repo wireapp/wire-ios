@@ -19,6 +19,7 @@
 import Foundation
 import LocalAuthentication
 
+// sourcery: AutoMockable
 /// An abstraction around authentication via `LAContext`.
 public protocol AuthenticationContextProtocol {
     var laContext: LAContext { get }
@@ -38,9 +39,9 @@ public struct AuthenticationContext: AuthenticationContextProtocol {
         storedContext().evaluatedPolicyDomainState
     }
 
-    private let storage: LAContextStorable
+    private let storage: any LAContextStorable
 
-    public init(storage: LAContextStorable) {
+    public init(storage: any LAContextStorable) {
         self.storage = storage
     }
 
