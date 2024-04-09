@@ -77,7 +77,7 @@ extension ObjectChangeInfo {
     }
 
     public func mergeLastChanges() {
-        let changedObjects =  mergeLastChangesWithoutNotifying()
+        let changedObjects = mergeLastChangesWithoutNotifying()
         self.dispatcher.didMergeChanges(Set(changedObjects))
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -94,7 +94,7 @@ extension ObjectChangeInfo {
 
 }
 
-class NotificationDispatcherTests: NotificationDispatcherTestBase {
+final class NotificationDispatcherTests: NotificationDispatcherTestBase {
 
     class Wrapper {
         let dispatcher: NotificationDispatcher

@@ -57,7 +57,7 @@ final class SharingSessionTests: BaseSharingSessionTests {
 
     func testThatWriteableNonArchivedConversationsAreReturned() {
         let conversations = Set(sharingSession.writeableNonArchivedConversations.map { $0 as! ZMConversation })
-        let activeConversationsSet: Set<ZMConversation?> =  [activeConversation1, activeConversation2]
+        let activeConversationsSet: Set<ZMConversation?> = [activeConversation1, activeConversation2]
         XCTAssertEqual(conversations, activeConversationsSet)
     }
 

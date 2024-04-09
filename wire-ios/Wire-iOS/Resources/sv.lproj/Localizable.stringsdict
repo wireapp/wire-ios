@@ -184,9 +184,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>lu</string>
         <key>one</key>
-        <string>1 participant</string>
+        <string>1 deltagare</string>
         <key>other</key>
-        <string>%lu participants</string>
+        <string>%lu deltagare</string>
       </dict>
     </dict>
     <key>conversation.silenced.status.message.generic_message</key>
@@ -200,9 +200,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>1 message</string>
+        <string>1 meddelande</string>
         <key>other</key>
-        <string>%d messages</string>
+        <string>%d meddelanden</string>
       </dict>
     </dict>
     <key>conversation.silenced.status.message.mention</key>
@@ -232,9 +232,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>1 reply</string>
+        <string>1 svar</string>
         <key>other</key>
-        <string>%d replies</string>
+        <string>%d svar</string>
       </dict>
     </dict>
     <key>conversation.silenced.status.message.knock</key>
@@ -264,7 +264,7 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>1 missed call</string>
+        <string>1 missat samtal</string>
         <key>other</key>
         <string>%d missade samtal</string>
       </dict>
@@ -282,7 +282,7 @@
         <key>one</key>
         <string>Missat samtal</string>
         <key>other</key>
-        <string>Missed calls</string>
+        <string>Missade samtal</string>
       </dict>
     </dict>
     <key>content.system.federation_termination.participants_removed</key>
@@ -312,25 +312,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Missed call from %2$@</string>
+        <string>Missat samtal från %2$@</string>
         <key>other</key>
-        <string>Missed calls from %2$@</string>
-      </dict>
-    </dict>
-    <key>content.system.call.missed-call.groups-you</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%#@missed_call_from@</string>
-      <key>missed_call_from</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>one</key>
-        <string>Missed call from %2$@</string>
-        <key>other</key>
-        <string>Missed calls from %2$@</string>
+        <string>Missade samtal från %2$@</string>
       </dict>
     </dict>
     <key>registration.password.rules.min_length</key>

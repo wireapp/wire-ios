@@ -52,7 +52,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         transportSession: TransportSessionType,
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
-        coreCryptoProvider: CoreCryptoProviderProtocol
+        coreCryptoProvider: CoreCryptoProviderProtocol,
+        usecaseFactory: UseCaseFactoryProtocol
     ) {
 
         self.strategies = Self.buildStrategies(
@@ -68,7 +69,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             transportSession: transportSession,
             proteusProvider: proteusProvider,
             mlsService: mlsService,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            usecaseFactory: usecaseFactory
         )
 
         self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy })
@@ -106,7 +108,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         transportSession: TransportSessionType,
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
-        coreCryptoProvider: CoreCryptoProviderProtocol
+        coreCryptoProvider: CoreCryptoProviderProtocol,
+        usecaseFactory: UseCaseFactoryProtocol
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
@@ -134,8 +137,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
                 context: syncMOC,
-                proteusProvider: proteusProvider,
-                coreCryptoProvider: coreCryptoProvider
+                proteusProvider: proteusProvider
             ),
             ZMMissingUpdateEventsTranscoder(
                 managedObjectContext: syncMOC,
@@ -221,12 +223,14 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ConnectionRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
-                syncProgress: applicationStatusDirectory.syncStatus),
+                syncProgress: applicationStatusDirectory.syncStatus,
+                oneOneOneResolver: OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+            ),
             ConversationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
-mlsService: mlsService,
+                mlsService: mlsService,
                 removeLocalConversation: RemoveLocalConversationUseCase()),
             UserProfileRequestStrategy(
                 managedObjectContext: syncMOC,
@@ -265,6 +269,10 @@ mlsService: mlsService,
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncStatus: applicationStatusDirectory.syncStatus),
+            TeamMembersDownloadRequestStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: applicationStatusDirectory,
+                syncStatus: applicationStatusDirectory.syncStatus),
             PermissionsDownloadRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
@@ -297,7 +305,9 @@ mlsService: mlsService,
                 applicationStatus: applicationStatusDirectory),
             FeatureConfigRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory,
+                syncProgress: applicationStatusDirectory.syncStatus
+            ),
             TerminateFederationRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory),
@@ -306,7 +316,9 @@ mlsService: mlsService,
             UserClientEventConsumer(
                 managedObjectContext: syncMOC,
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
-                clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus),
+                clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
+                resolveOneOnOneConversations: usecaseFactory.createResolveOneOnOneUseCase()
+            ),
             ResetSessionRequestStrategy(
                 managedObjectContext: syncMOC,
                 messageSender: messageSender),
@@ -318,6 +330,17 @@ mlsService: mlsService,
             MLSRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory
+            ),
+            SelfSupportedProtocolsRequestStrategy(
+                context: syncMOC,
+                applicationStatus: applicationStatusDirectory,
+                syncProgress: applicationStatusDirectory.syncStatus,
+                userRepository: UserRepository(context: syncMOC)
+            ),
+            EvaluateOneOnOneConversationsStrategy(
+                withManagedObjectContext: syncMOC,
+                applicationStatus: applicationStatusDirectory,
+                syncProgress: applicationStatusDirectory.syncStatus
             )
         ]
 

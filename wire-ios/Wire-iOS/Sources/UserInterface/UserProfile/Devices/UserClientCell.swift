@@ -48,9 +48,9 @@ final class UserClientCell: SeparatorCollectionViewCell {
 
     var viewModel: ClientTableViewCellModel? {
         didSet {
-            nameLabel.text = viewModel?.title.clippedValue(offsetValue: 35)
-            proteusIdLabel.text = viewModel?.proteusLabelText.clippedValue(offsetValue: 35)
-            mlsThumbprintLabel.text = viewModel?.mlsThumbprintLabelText.clippedValue(offsetValue: 50)
+            nameLabel.text = viewModel?.title.truncated(afterCharacterCount: 35)
+            proteusIdLabel.text = viewModel?.proteusLabelText.truncated(afterCharacterCount: 35)
+            mlsThumbprintLabel.text = viewModel?.mlsThumbprintLabelText.truncated(afterCharacterCount: 50)
             statusStackView.removeArrangedSubviews()
             if let e2eIdentityStatusImage = viewModel?.e2eIdentityStatus?.uiImage {
                 statusStackView.addArrangedSubview(UIImageView(image: e2eIdentityStatusImage))
@@ -89,7 +89,7 @@ final class UserClientCell: SeparatorCollectionViewCell {
         addBorder(for: .bottom)
         accessoryIconView.translatesAutoresizingMaskIntoConstraints = false
         accessoryIconView.contentMode = .center
-        accessoryIconView.setTemplateIcon(.disclosureIndicator, size: 12)
+        accessoryIconView.image = Asset.Images.rightChevron.image.withRenderingMode(.alwaysTemplate)
         accessoryIconView.tintColor = IconColors.foregroundDefault
     }
 

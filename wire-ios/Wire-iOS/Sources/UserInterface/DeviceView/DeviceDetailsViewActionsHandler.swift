@@ -21,12 +21,14 @@ import WireDataModel
 import WireSyncEngine
 
 final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, ObservableObject {
-    private let logger: LoggerProtocol
-    private var userClient: UserClient
-    private var userSession: UserSession
-    private var clientRemovalObserver: ClientRemovalObserver?
-    private var credentials: ZMEmailCredentials?
-    private let getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
+    let logger = WireLogger.e2ei
+    var userClient: UserClient
+    var userSession: UserSession
+    var clientRemovalObserver: ClientRemovalObserver?
+    var credentials: ZMEmailCredentials?
+    let getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
+    private let contextProvider: ContextProvider
+    private let e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseProtocol
 
     var isProcessing: ((Bool) -> Void)?
 
@@ -41,50 +43,48 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         userSession: UserSession,
         credentials: ZMEmailCredentials?,
         saveFileManager: SaveFileActions,
-        logger: LoggerProtocol = WireLogger.e2ei,
-        getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol
+        getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
+        contextProvider: ContextProvider,
+        e2eiCertificateEnrollment: EnrollE2EICertificateUseCaseProtocol
     ) {
         self.userClient = userClient
         self.credentials = credentials
         self.userSession = userSession
         self.saveFileManager = saveFileManager
-        self.logger = logger
         self.getProteusFingerprint = getProteusFingerprint
+        self.contextProvider = contextProvider
+        self.e2eiCertificateEnrollment = e2eiCertificateEnrollment
     }
 
-    func updateCertificate() async -> E2eIdentityCertificate? {
-        // TODO: [WPB-6439]
-        return nil
-    }
-
-    func enrollClient() async -> E2eIdentityCertificate? {
-        // TODO: [WPB-6439]
-        return nil
+    @MainActor
+    func enrollClient() async throws -> String {
+        do {
+            return try await startE2EIdentityEnrollment()
+        } catch {
+            logger.error(error.localizedDescription, attributes: nil)
+            throw error
+        }
     }
 
     @MainActor
     func removeDevice() async -> Bool {
         return await withCheckedContinuation {[weak self] continuation in
-            guard let self = self else {
-                return
+            guard let self else {
+                return continuation.resume(returning: false)
             }
-            // (Continuation)[https://developer.apple.com/documentation/swift/checkedcontinuation]
-            // Using the same continuation twice results in a crash.
-            var optionalContinuation: CheckedContinuation<Bool, Never>? = continuation
+
             clientRemovalObserver = ClientRemovalObserver(
                 userClientToDelete: userClient,
                 delegate: self,
-                credentials: credentials,
-                completion: { error in
-                    defer {
-                        optionalContinuation = nil
-                    }
-                    optionalContinuation?.resume(returning: error == nil)
-                    if let error = error {
-                        WireLogger.e2ei.error(error.localizedDescription)
-                    }
+                credentials: credentials
+            ) { [logger] error in
+                if let error {
+                    logger.error("failed to remove client: \(String(reflecting: error))")
+                    continuation.resume(returning: false)
+                } else {
+                    continuation.resume(returning: true)
                 }
-            )
+            }
             clientRemovalObserver?.startRemoval()
         }
     }
@@ -126,9 +126,44 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     func getProteusFingerPrint() async -> String {
         guard let data = await getProteusFingerprint.invoke(userClient: userClient),
                 let fingerPrint = String(data: data, encoding: .utf8) else {
+            logger.error("Valid fingerprint data is missing")
             return ""
         }
         return fingerPrint.splitStringIntoLines(charactersPerLine: 16).uppercased()
+    }
+
+    @MainActor
+    private func startE2EIdentityEnrollment() async throws -> String {
+        guard let topmostViewController = UIApplication.shared.topmostViewController() else {
+            let errorDescription = "Failed to fetch RootViewController instance"
+            logger.error(errorDescription)
+            throw DeviceDetailsActionsError.failedAction(errorDescription)
+        }
+        let oauthUseCase = OAuthUseCase(targetViewController: topmostViewController)
+        return try await e2eiCertificateEnrollment.invoke(
+            authenticate: oauthUseCase.invoke
+        )
+    }
+
+    @MainActor
+    private func fetchE2eIdentityCertificate() async throws -> E2eIdentityCertificate? {
+        guard let mlsClientID = MLSClientID(userClient: userClient),
+        let mlsGroupId = await fetchSelfConversationMLSGroupID() else {
+            logger.error("MLSGroupID for self was not found")
+            return nil
+        }
+        return try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupId,
+                                                                clientIds: [mlsClientID]).first
+    }
+
+    @MainActor
+    private func fetchSelfConversationMLSGroupID() async -> MLSGroupID? {
+        await contextProvider.syncContext.perform { [weak self] in
+            guard let self = self else {
+                return nil
+            }
+            return ZMConversation.fetchSelfMLSConversation(in: self.contextProvider.syncContext)?.mlsGroupID
+        }
     }
 }
 
@@ -138,7 +173,7 @@ extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
         viewControllerToPresent: UIViewController
     ) {
         if !(UIApplication.shared.topmostViewController()?.presentedViewController is UIAlertController) {
-                    UIViewController.presentTopmost(viewController: viewControllerToPresent)
+                    UIViewController.presentTopMost(viewController: viewControllerToPresent)
         }
     }
 
@@ -148,4 +183,8 @@ extension DeviceDetailsViewActionsHandler: ClientRemovalObserverDelegate {
     ) {
         isProcessing?(isVisible)
     }
+}
+
+enum DeviceDetailsActionsError: Error {
+    case failedAction(String)
 }

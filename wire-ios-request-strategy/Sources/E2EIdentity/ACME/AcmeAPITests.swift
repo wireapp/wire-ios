@@ -24,6 +24,7 @@ class AcmeAPITests: ZMTBaseTest {
     var acmeApi: AcmeAPI?
     var mockHttpClient: MockHttpClient?
     let backendDomainBackup = BackendInfo.domain
+    private let encoder: JSONEncoder = .defaultEncoder
 
     override func setUp() {
         super.setUp()
@@ -60,12 +61,10 @@ class AcmeAPITests: ZMTBaseTest {
             return XCTFail("Failed to get ACME directory.")
         }
 
-        guard let acmeDirectory = try? JSONDecoder.defaultDecoder.decode(AcmeDirectoriesResponse.self, from: acmeDirectoryData) else {
-            return XCTFail("Failed to decode.")
-        }
+        let acmeDirectoryResponse = try JSONDecoder.defaultDecoder.decode(AcmeDirectoriesResponse.self, from: acmeDirectoryData)
 
         // then
-        XCTAssertEqual(acmeDirectory, expectedAcmeDirectory)
+        XCTAssertEqual(acmeDirectoryResponse, expectedAcmeDirectory)
     }
 
     func testThatResponseHeaderContainsNonce() async throws {
@@ -110,7 +109,7 @@ class AcmeAPITests: ZMTBaseTest {
         do {
             // when
             let nonce = try await acmeApi?.getACMENonce(path: path)
-        } catch NetworkError.errorDecodingResponseNew {
+        } catch NetworkError.errorDecodingURLResponse {
             // then
             return
         } catch {
@@ -127,7 +126,7 @@ class AcmeAPITests: ZMTBaseTest {
 
         // given
         let path = "https://acme.elna.wire.link/acme/defaultteams/new-account"
-        let requestBody =  Data()
+        let requestBody = Data()
 
         // mock
         let mockResponse = HTTPURLResponse(
@@ -170,7 +169,7 @@ class AcmeAPITests: ZMTBaseTest {
         do {
             // when
             let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
-        } catch NetworkError.errorDecodingResponseNew {
+        } catch NetworkError.errorDecodingURLResponse {
             // then
             return
         } catch {
@@ -199,7 +198,7 @@ class AcmeAPITests: ZMTBaseTest {
         do {
             // when
             let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: Data())
-        } catch NetworkError.errorDecodingResponseNew {
+        } catch NetworkError.errorDecodingURLResponse {
             // then
             return
         } catch {
@@ -227,7 +226,7 @@ class AcmeAPITests: ZMTBaseTest {
             httpVersion: "",
             headerFields: ["Replay-Nonce": headerNonce]
         ))
-        let challengeResponseData = try JSONEncoder.defaultEncoder.encode(expectation)
+        let challengeResponseData = try encoder.encode(expectation)
         mockHttpClient?.mockResponse = (challengeResponseData, mockResponse)
 
         do {
@@ -263,6 +262,37 @@ class AcmeAPITests: ZMTBaseTest {
         XCTAssertEqual(request.httpMethod, "GET")
     }
 
+    func testThatItSendsFederationCertificateRequest() async throws {
+        // given
+        let path = "https://acme/federation"
+
+        // mock
+        let mockResponse = HTTPURLResponse(
+            url: URL(string: path)!,
+            statusCode: 200,
+            httpVersion: "",
+            headerFields: nil
+        )!
+
+        let mockCertificates = [
+            "certificate_1",
+            "certificate_2",
+            "certificate_3"
+        ]
+        let mockPayload = FederationCertificates(certificates: mockCertificates)
+        let mockData = try encoder.encode(mockPayload)
+        mockHttpClient?.mockResponse = (mockData, mockResponse)
+
+        // when
+        let certificates = try await acmeApi?.getFederationCertificates()
+        let request = try XCTUnwrap(mockHttpClient?.sentRequests.first)
+
+        // then
+        XCTAssertEqual(request.url?.absoluteString, "https://acme/federation")
+        XCTAssertEqual(request.httpMethod, "GET")
+        XCTAssertEqual(certificates, mockCertificates)
+    }
+
 }
 
 class MockHttpClient: HttpClientCustom {
@@ -273,7 +303,7 @@ class MockHttpClient: HttpClientCustom {
     func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
         sentRequests.append(request)
         guard let mockResponse = mockResponse else {
-            throw NetworkError.errorDecodingResponseNew(mockResponse!.1)
+            throw NetworkError.errorDecodingURLResponse(mockResponse!.1)
         }
         return mockResponse
     }

@@ -21,6 +21,7 @@ import WireCommonComponents
 
 struct DeviceDetailsBottomView: View {
     @ObservedObject var viewModel: DeviceInfoViewModel
+    var showRemoveDeviceButton = true
 
     var fingerPrintInfoTextView: some View {
         Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
@@ -60,9 +61,9 @@ struct DeviceDetailsBottomView: View {
                 }
             } label: {
                 Text(L10n.Localizable.Self.Settings.AccountDetails.RemoveDevice.title)
-                .padding(.all, ViewConstants.Padding.standard)
-                .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
-                .font(FontSpec.normalRegularFont.swiftUIFont.bold())
+                    .padding(.all, ViewConstants.Padding.standard)
+                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                    .font(FontSpec.normalRegularFont.swiftUIFont.bold())
             }
             Spacer()
         }
@@ -80,7 +81,9 @@ struct DeviceDetailsBottomView: View {
         fingerPrintInfoTextView
         resetSessionView
         resetSessionInfoView
-        removeDeviceView
-        removeDeviceInfoView
+        if showRemoveDeviceButton {
+            removeDeviceView
+            removeDeviceInfoView
+        }
     }
 }

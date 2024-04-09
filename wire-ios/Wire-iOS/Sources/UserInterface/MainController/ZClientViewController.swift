@@ -70,7 +70,6 @@ final class ZClientViewController: UIViewController {
             account: account,
             selfUser: userSession.selfLegalHoldSubject,
             userSession: userSession,
-            isSelfUserProteusVerifiedUseCase: userSession.isSelfUserProteusVerifiedUseCase,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
         colorSchemeController = ColorSchemeController(userSession: userSession)
@@ -202,10 +201,14 @@ final class ZClientViewController: UIViewController {
 
     // MARK: keyboard shortcut
     override var keyCommands: [UIKeyCommand]? {
-        return [
-            UIKeyCommand(action: #selector(openStartUI(_:)),
-                         input: "n", modifierFlags: [.command],
-                         discoverabilityTitle: L10n.Localizable.Keyboardshortcut.openPeople)]
+        [
+            UIKeyCommand(
+                action: #selector(openStartUI(_:)),
+                input: "n",
+                modifierFlags: [.command],
+                discoverabilityTitle: L10n.Localizable.Keyboardshortcut.openPeople
+            )
+        ]
     }
 
     @objc
@@ -351,7 +354,11 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter conversation: conversation to open
     func openDetailScreen(for conversation: ZMConversation) {
-        let controller = GroupDetailsViewController(conversation: conversation, userSession: userSession)
+        let controller = GroupDetailsViewController(
+            conversation: conversation,
+            userSession: userSession,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+        )
         let navController = controller.wrapInNavigationController(setBackgroundColor: true)
         navController.modalPresentationStyle = .formSheet
 

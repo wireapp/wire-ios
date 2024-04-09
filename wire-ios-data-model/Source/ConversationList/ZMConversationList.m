@@ -1,20 +1,20 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 
 #import "NSManagedObjectContext+zmessaging.h"
@@ -91,9 +91,19 @@
         self.sortDescriptors = [ZMConversation defaultSortDescriptors];
         [self calculateKeysAffectingPredicateAndSort];
         [self createBackingList:conversations];
-        [moc.conversationListObserverCenter startObservingList:self];
+
+        [moc performBlockAndWait:^{
+            [moc.conversationListObserverCenter startObservingList:self];
+        }];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [self.moc performBlockAndWait:^{
+        [self.moc.conversationListObserverCenter removeConversationList:self];
+    }];
 }
 
 - (NSManagedObjectContext *)managedObjectContext
@@ -101,10 +111,14 @@
     return self.moc;
 }
 
-- (void)recreateWithAllConversations:(NSArray *)conversations
+- (void)recreateWithAllConversations:(NSArray *)conversations predicate:(NSPredicate *)predicate
 {
+    self.filteringPredicate = predicate;
     [self createBackingList:conversations];
-    [self.moc.conversationListObserverCenter startObservingList:self];
+
+    [self.moc performBlockAndWait:^{
+        [self.moc.conversationListObserverCenter startObservingList:self];
+    }];
 }
 
 - (void)calculateKeysAffectingPredicateAndSort;
@@ -123,11 +137,6 @@
 {
     NSArray *filtered = [conversations filteredArrayUsingPredicate:self.filteringPredicate];
     self.backingList = [[filtered sortedArrayUsingDescriptors:[ZMConversation defaultSortDescriptors]] mutableCopy];
-}
-
-- (void)dealloc
-{
-    [self.managedObjectContext.conversationListObserverCenter removeConversationList:self];
 }
 
 - (void)sortInsertConversation:(ZMConversation *)conversation

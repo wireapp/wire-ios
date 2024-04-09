@@ -29,7 +29,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             let userConnection = ZMConnection.insertNewSentConnection(to: user)
             userConnection.status = .accepted
             userClient.user = user
-            user.name = "createdUser \(i+1)"
+            user.name = "createdUser \(i + 1)"
             return user
         }
     }
@@ -400,7 +400,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         self.creationCounter += 1
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         let client = UserClient.insertNewObject(in: moc)
-        client.user  = user
+        client.user = user
         if userIsTrusted {
             selfClient.trustClient(client)
         } else {
@@ -524,11 +524,11 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
                                               in: self.syncMOC,
                                               created: nil)!
 
-            _ = Member.getOrCreateMember(for: selfUser, in: mainTeam, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: mainTeam, context: self.syncMOC)
 
             // WHEN
             let user = self.insertUser(conversation: conversation, userIsTrusted: true, moc: self.syncMOC)
-            _ = Member.getOrCreateMember(for: user, in: mainTeam, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: user, in: mainTeam, context: self.syncMOC)
 
             // THEN
             XCTAssertTrue(conversation.allUsersTrusted)
@@ -548,7 +548,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
                                               in: self.syncMOC,
                                               created: nil)!
 
-            _ = Member.getOrCreateMember(for: selfUser, in: mainTeam, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: mainTeam, context: self.syncMOC)
 
             // WHEN
             _ = self.insertUser(conversation: conversation, userIsTrusted: true, moc: self.syncMOC)

@@ -81,9 +81,11 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
         }
     }
 
-    let actionButton: Button = Button(style: .accentColorTextButtonStyle,
-                                      cornerRadius: 4,
-                                      fontSpec: .mediumSemiboldFont)
+    let actionButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 4,
+        fontSpec: .mediumSemiboldFont
+    )
 
     var actionButtonHandler: ContactsCellActionButtonHandler?
 
@@ -216,10 +218,7 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
             return
         }
 
-        let userStatus = UserStatus(
-            user: user,
-            isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
-        )
+        let userStatus = UserStatus(user: user, isE2EICertified: false)
         titleLabel.attributedText = userStatus.title(
             color: LabelColors.textDefault,
             includeAvailability: selfUser.isTeamMember,

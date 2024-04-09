@@ -96,7 +96,7 @@ extension CallParticipantsListView: UICollectionViewDataSource {
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cellConfiguration = rows[indexPath.row]
-        let cell =  collectionView.dequeueReusableCell(withReuseIdentifier: cellConfiguration.cellType.reuseIdentifier, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellConfiguration.cellType.reuseIdentifier, for: indexPath)
 
         if let configurableCell = cell as? CallParticipantsListCellConfigurable {
             configurableCell.configure(with: cellConfiguration,
@@ -150,7 +150,6 @@ extension UserCell: CallParticipantsListCellConfigurable {
         }
         configure(
             user: user,
-            isCertified: false, // TODO [WPB-765]: provide value after merging into `epic/e2ei`
             isSelfUserPartOfATeam: selfUser.hasTeam
         )
         backgroundColor = SemanticColors.View.backgroundDefaultWhite

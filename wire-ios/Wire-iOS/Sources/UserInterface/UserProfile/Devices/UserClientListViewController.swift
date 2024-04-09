@@ -151,21 +151,67 @@ final class UserClientListViewController: UIViewController,
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: UserClientCell.self, for: indexPath)
         let client = clients[indexPath.row]
-        cell.viewModel = .from(userClient: client)
-
+        cell.viewModel = .init(userClient: client)
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let client = clients[indexPath.row] as? UserClient else { return }
-        let profileClientViewController = ProfileClientViewController(
-            client: client,
-            fromConversation: true,
-            userSession: userSession
-        )
-        profileClientViewController.showBackButton = false
+        openDetailsOfClient(client)
+    }
 
-        show(profileClientViewController, sender: nil)
+    private func openDetailsOfClient(_ client: UserClient) {
+        guard
+            let navigationController,
+            let contextProvider = contextProvider
+        else {
+            assertionFailure("Unable to display details from conversations as navigation instance is nil")
+            return
+        }
+
+        let viewModel = makeDeviceInfoViewModel(
+            client: client,
+            contextProvider: contextProvider
+        )
+        let detailsView = ProfileDeviceDetailsView(viewModel: viewModel) { [weak navigationController] in
+            navigationController?.setNavigationBarHidden(false, animated: false)
+        }
+        let hostingViewController = UIHostingController(rootView: detailsView)
+        hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationController.pushViewController(hostingViewController, animated: true)
+        navigationController.isNavigationBarHidden = true
+    }
+
+    private func makeDeviceInfoViewModel(
+        client: UserClient,
+        contextProvider: ContextProvider
+    ) -> DeviceInfoViewModel {
+        let title = client.isLegalHoldDevice
+            ? L10n.Localizable.Device.Class.legalhold
+            : (client.deviceClass?.localizedDescription.capitalized ?? client.type.localizedDescription.capitalized)
+        let saveFileManager = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
+        let deviceActionsHandler = DeviceDetailsViewActionsHandler(
+            userClient: client,
+            userSession: userSession,
+            credentials: .none,
+            saveFileManager: saveFileManager,
+            getProteusFingerprint: userSession.getUserClientFingerprint,
+            contextProvider: contextProvider,
+            e2eiCertificateEnrollment: userSession.enrollE2EICertificate
+        )
+        return DeviceInfoViewModel(
+            title: title,
+            addedDate: "",
+            proteusID: client.proteusSessionID?.clientID.uppercased().splitStringIntoLines(charactersPerLine: 16) ?? "",
+            userClient: client,
+            isSelfClient: client.isSelfClient(),
+            gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+            isFromConversation: true,
+            actionsHandler: deviceActionsHandler,
+            conversationClientDetailsActions: deviceActionsHandler,
+            debugMenuActionsHandler: deviceActionsHandler,
+            showDebugMenu: Bundle.developerModeEnabled
+        )
     }
 }
 
@@ -198,9 +244,8 @@ extension Array where Element: UserClientType {
             return self
         }
         var updatedUserClients = [UserClientType]()
-        let mlsResolver = MLSClientResolver()
         let mlsClients: [Int: MLSClientID] = Dictionary(uniqueKeysWithValues: userClients.compactMap {
-            if let mlsClientId = mlsResolver.mlsClientId(for: $0) {
+            if let mlsClientId = MLSClientID(userClient: $0) {
                 ($0.clientId.hashValue, mlsClientId)
             } else {
                 nil

@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 @testable import Wire
 
-class ActiveCallRouterTests: ZMSnapshotTestCase {
+final class ActiveCallRouterTests: ZMSnapshotTestCase {
 
     var sut: ActiveCallRouter!
     var userSession: UserSessionMock!
@@ -46,7 +46,7 @@ class ActiveCallRouterTests: ZMSnapshotTestCase {
         var executed = false
 
         // when
-        sut.executeOrSchedulePostCallAction {
+        sut.executeOrSchedulePostCallAction { _ in
             executed = true
         }
 
@@ -61,14 +61,14 @@ class ActiveCallRouterTests: ZMSnapshotTestCase {
         var executed = false
 
         // when
-        sut.executeOrSchedulePostCallAction {
+        sut.executeOrSchedulePostCallAction { _ in
             executed = true
         }
 
         // then
         XCTAssertNotNil(sut.scheduledPostCallAction)
         XCTAssertFalse(executed)
-        sut.scheduledPostCallAction?()
+        sut.scheduledPostCallAction?({ })
         XCTAssertTrue(executed)
     }
 
@@ -98,7 +98,7 @@ class ActiveCallRouterTests: ZMSnapshotTestCase {
 
         let mockConversation = ZMConversation.insertNewObject(in: uiMOC)
         mockConversation.messageProtocol = .proteus
-        mockConversation.add(participants: selfUser)
+        mockConversation.addParticipantAndUpdateConversationState(user: selfUser)
         mockConversation.conversationType = .oneOnOne
         mockConversation.remoteIdentifier = UUID.create()
         mockConversation.oneOnOneUser = otherUser

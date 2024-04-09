@@ -46,7 +46,7 @@ extension NSDataDetector {
 
         switch host {
         case "youtube.com", "m.youtube.com", "www.youtube.com":
-            guard url.pathComponents.element(atIndex: 1) ==  "watch" else { return nil }
+            guard url.pathComponents.element(atIndex: 1) == "watch" else { return nil }
             return .youTubeVideo
 
         case "youtu.be":

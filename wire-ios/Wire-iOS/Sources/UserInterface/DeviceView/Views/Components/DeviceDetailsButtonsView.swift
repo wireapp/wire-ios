@@ -38,7 +38,7 @@ struct DeviceDetailsButtonsView: View {
     var updateCertificateButton: some View {
         SwiftUI.Button {
             Task {
-                await viewModel.updateCertificate()
+                await viewModel.enrollClient()
             }
         } label: {
             VStack(alignment: .leading) {
@@ -72,23 +72,25 @@ struct DeviceDetailsButtonsView: View {
         if let status = viewModel.e2eIdentityCertificate?.status {
             switch status {
             case .valid:
-                if let isExpiring = viewModel.isCertificateExpiringSoon, isExpiring {
+                if viewModel.isSelfClient, viewModel.isCertificateExpiringSoon == true {
                     Divider()
                     updateCertificateButton.padding()
                 }
                 Divider()
                 showCertificateButton.padding()
             case .notActivated:
-                Divider()
-                getCertificateButton.padding()
-                Divider()
-                showCertificateButton.padding()
-            case .revoked:
+                if !viewModel.isFromConversation && viewModel.isSelfClient {
+                    Divider()
+                    getCertificateButton.padding()
+                }
+            case .revoked, .invalid:
                 Divider()
                 showCertificateButton.padding()
             case .expired:
-                Divider()
-                updateCertificateButton.padding()
+                if !viewModel.isFromConversation, viewModel.isSelfClient {
+                    Divider()
+                    updateCertificateButton.padding()
+                }
                 Divider()
                 showCertificateButton.padding()
             }

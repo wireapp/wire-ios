@@ -46,6 +46,10 @@ public protocol ConversationServiceInterface {
         qualifiedID: QualifiedID
     ) async
 
+    func syncConversationIfMissing(
+        qualifiedID: QualifiedID
+    ) async
+
 }
 
 public enum ConversationCreationFailure: Error {
@@ -354,7 +358,9 @@ public final class ConversationService: ConversationServiceInterface {
         }
 
         guard let syncParticipants: [ZMUser] = await syncContext.perform({
-            return participantObjectIDs.existingObjects(in: syncContext)
+            var participants: [ZMUser] = participantObjectIDs.existingObjects(in: syncContext) ?? []
+            participants.append(ZMUser.selfUser(in: syncContext))
+            return participants
         }) else {
             return
         }
@@ -374,13 +380,11 @@ public final class ConversationService: ConversationServiceInterface {
         guard let mlsGroupID, let mlsService else { return }
 
         self.createGroupFlow.checkpoint(description: "create MLS group with ID (\(mlsGroupID))")
-        try await mlsService.createGroup(for: mlsGroupID, with: [])
+        try await mlsService.createGroup(for: mlsGroupID, parentGroupID: nil)
 
         let participantsService = participantsServiceBuilder(syncContext)
-        if !syncParticipants.isEmpty {
-            self.createGroupFlow.checkpoint(description: MLSAddParticipantLog(users: syncParticipants, groupId: mlsGroupID))
-            try await participantsService.addParticipants(syncParticipants, to: syncConversation)
-        }
+        self.createGroupFlow.checkpoint(description: MLSAddParticipantLog(users: syncParticipants, groupId: mlsGroupID))
+        try await participantsService.addParticipants(syncParticipants, to: syncConversation)
     }
 
     // MARK: - Sync conversation
@@ -393,6 +397,17 @@ public final class ConversationService: ConversationServiceInterface {
         action.perform(in: context.notificationContext) { _ in
             completion()
         }
+    }
+
+    public func syncConversationIfMissing(
+        qualifiedID: QualifiedID
+    ) async {
+        guard await context.perform({
+            ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.context)
+        }) == nil else {
+            return
+        }
+        await syncConversation(qualifiedID: qualifiedID)
     }
 
     public func syncConversation(

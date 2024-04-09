@@ -30,31 +30,43 @@ struct E2EIdentityCertificateDetailsView: View {
     var performDownload: (() -> Void)?
 
     var performCopy: ((String) -> Void)?
+    var didDismiss: (() -> Void)?
 
     private var titleView: some View {
         HStack {
             Spacer()
             Text(L10n.Localizable.Device.Details.CertificateDetails.title)
-                .font(FontSpec.headerSemiboldFont.swiftUIFont)
+                .font(UIFont.swiftUIFont(for: .headline))
+                .accessibilityIdentifier("CertificateDetailsTitle")
             Spacer()
-            SwiftUI.Button(
-                action: {
-                    dismiss()
-                },
-                label: {
-                    Image(.close)
-                        .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
-                }
-            ).padding(.all, ViewConstants.Padding.standard)
+        }
+        .padding(.all, ViewConstants.Padding.standard)
+        .overlay {
+            HStack {
+                Spacer()
+                SwiftUI.Button(
+                    action: {
+                        dismiss()
+                        didDismiss?()
+                    },
+                    label: {
+                        Image(.close)
+                            .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                    }
+                )
+                .accessibilityIdentifier("CloseButton")
+                .padding(.all, ViewConstants.Padding.standard)
+            }
         }
     }
 
     private var certificateView: some View {
         ScrollView {
             Text(certificateDetails)
-                .font(FontSpec.smallFont.swiftUIFont.monospaced())
+                .font(UIFont.swiftUIFont(for: .caption1).monospaced())
                 .padding()
                 .frame(maxHeight: .infinity)
+                .accessibilityIdentifier("CertificateDetailsView")
         }
     }
 
@@ -77,9 +89,10 @@ struct E2EIdentityCertificateDetailsView: View {
             },
             label: {
                 Text(L10n.Localizable.Content.Message.download)
-                    .font(FontSpec.normalBoldFont.swiftUIFont)
+                    .font(UIFont.swiftUIFont(for: .bodyTwoSemibold))
             }
         )
+        .accessibilityIdentifier("DownloadButton")
     }
 
     private var moreButton: some View {
@@ -93,6 +106,7 @@ struct E2EIdentityCertificateDetailsView: View {
                     .padding(.trailing, ViewConstants.Padding.standard)
             }
         )
+        .accessibilityIdentifier("MoreButton")
     }
 
     private var copyToClipboardButton: some View {
@@ -138,12 +152,26 @@ struct E2EIdentityCertificateDetailsView: View {
     }
 
     var body: some View {
-        titleView.background(SemanticColors.View.backgroundDefault.swiftUIColor)
-        certificateView.background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
-        .safeAreaInset(edge: .bottom, spacing: .zero) {
+
+        titleView
+            .background(SemanticColors.View.backgroundDefault.swiftUIColor)
+
+        certificateView
+            .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+
+        .safeAreaInset(edge: .bottom,
+                       spacing: .zero) {
             bottomBarView.background(SemanticColors.View.backgroundUserCell.swiftUIColor)
         }
         .ignoresSafeArea()
-        .background(SemanticColors.View.backgroundDefault.swiftUIColor)
+        .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
     }
+}
+
+#Preview {
+    E2EIdentityCertificateDetailsView(
+        certificateDetails: "Sample Certificate Details Here...",
+        isDownloadAndCopyEnabled: true,
+        isMenuPresented: false
+    )
 }

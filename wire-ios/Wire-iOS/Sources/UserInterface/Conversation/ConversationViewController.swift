@@ -88,8 +88,11 @@ final class ConversationViewController: UIViewController {
 
         switch conversation.conversationType {
         case .group:
-            let groupDetailsViewController = GroupDetailsViewController(conversation: conversation, userSession: userSession)
-            viewController = groupDetailsViewController
+            viewController = GroupDetailsViewController(
+                conversation: conversation,
+                userSession: userSession,
+                isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+            )
         case .`self`, .oneOnOne, .connection:
             viewController = createUserDetailViewController()
         case .invalid:
@@ -138,6 +141,7 @@ final class ConversationViewController: UIViewController {
         hideAndDestroyParticipantsPopover()
         contentViewController.delegate = nil
     }
+    private var observationToken: SelfUnregisteringNotificationCenterToken?
 
     private func update(conversation: ZMConversation) {
         setupNavigatiomItem()
@@ -155,6 +159,8 @@ final class ConversationViewController: UIViewController {
             self,
             for: userSession.conversationList()
         )
+
+        observationToken = E2EIPrivacyWarningChecker.addPresenter(self)
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
@@ -182,6 +188,7 @@ final class ConversationViewController: UIViewController {
         }
 
         resolveConversationIfOneOnOne()
+        updateVerificationStatusIfNeeded()
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -388,18 +395,14 @@ final class ConversationViewController: UIViewController {
         }
 
         Task {
-
             do {
                 guard let mlsService = await syncContext.perform({ syncContext.mlsService }) else {
                     assertionFailure("mlsService is missing")
                     return
                 }
 
-                let service = OneOnOneResolver(
-                    protocolSelector: OneOnOneProtocolSelector(),
-                    migrator: OneOnOneMigrator(mlsService: mlsService)
-                )
-                let resolvedState = try await service.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
+                let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+                let resolvedState = try await resolver.resolveOneOnOneConversation(with: otherUserID, in: syncContext)
 
                 if case .migratedToMLSGroup(let identifier) = resolvedState {
                     await navigateToNewMLSConversation(mlsGroupIdentifier: identifier, in: viewContext)
@@ -432,6 +435,35 @@ final class ConversationViewController: UIViewController {
     private func hideAndDestroyParticipantsPopover() {
         if (presentedViewController is GroupDetailsViewController) || (presentedViewController is ProfileViewController) {
             dismiss(animated: true)
+        }
+    }
+
+    // MARK: - Update verification status for MLS groups
+
+    private func updateVerificationStatusIfNeeded() {
+        guard
+            conversation.conversationType.isOne(of: .group, .oneOnOne),
+            conversation.messageProtocol == .mls
+        else {
+            return
+        }
+
+        guard
+            let mlsGroupID = conversation.mlsGroupID
+        else {
+            WireLogger.conversation.warn("missing mlsGroupID to update verification status!")
+            return
+        }
+
+        Task {
+            do {
+                try await userSession.updateMLSGroupVerificationStatus.invoke(
+                    for: conversation,
+                    groupID: mlsGroupID)
+                setupNavigatiomItem()
+            } catch {
+                WireLogger.e2ei.error("failed to update conversation's verification status: \(String(reflecting: error))")
+            }
         }
     }
 }

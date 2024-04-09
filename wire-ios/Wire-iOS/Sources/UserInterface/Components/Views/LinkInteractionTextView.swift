@@ -155,7 +155,7 @@ extension LinkInteractionTextView: UITextDragDelegate {
     func textDraggableView(_ textDraggableView: UIView & UITextDraggable, itemsForDrag dragRequest: UITextDragRequest) -> [UIDragItem] {
 
         func isMentionLink(_ attributeTuple: (NSAttributedString.Key, Any)) -> Bool {
-            return attributeTuple.0 == NSAttributedString.Key.link && (attributeTuple.1 as? NSURL)?.scheme ==  Mention.mentionScheme
+            return attributeTuple.0 == NSAttributedString.Key.link && (attributeTuple.1 as? NSURL)?.scheme == Mention.mentionScheme
         }
 
         if let attributes = textStyling(at: dragRequest.dragRange.start, in: .forward) {

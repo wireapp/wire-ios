@@ -125,8 +125,8 @@ final class ApplicationStatusDirectory: ApplicationStatus {
         return transportSession
     }
 
-    func requestSlowSync() {
-        // we don't do slow syncing in the share engine
+    func requestResyncResources() {
+        // we don't resync Resources in the share engine
     }
 
 }
@@ -251,7 +251,7 @@ public final class SharingSession {
 
         let credentials = environment.proxy.flatMap { ProxyCredentials.retrieve(for: $0) }
 
-        let transportSession =  ZMTransportSession(
+        let transportSession = ZMTransportSession(
             environment: environment,
             proxyUsername: credentials?.username,
             proxyPassword: credentials?.password,

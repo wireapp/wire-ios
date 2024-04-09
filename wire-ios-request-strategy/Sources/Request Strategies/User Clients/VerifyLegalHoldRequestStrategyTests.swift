@@ -90,7 +90,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let conversation = self.createGroupConversation(with: self.otherUser)
-            let conversationSet: Set<NSManagedObject> =  [conversation]
+            let conversationSet: Set<NSManagedObject> = [conversation]
 
             // WHEN
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))

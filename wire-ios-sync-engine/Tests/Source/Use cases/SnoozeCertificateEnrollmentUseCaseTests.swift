@@ -28,7 +28,8 @@ class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
     private var mockRecurringActionService: MockRecurringActionServiceInterface!
     private var mockFeatureRepository: MockFeatureRepositoryInterface!
     private var selfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
-    private var gracePeriodRepository: GracePeriodRepository!
+
+    private var context: NSManagedObjectContext { syncMOC }
 
     override func setUp() {
         super.setUp()
@@ -38,15 +39,10 @@ class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
         mockFeatureRepository.fetchE2EI_MockValue = .init(status: .enabled)
         selfClientCertificateProvider = MockSelfClientCertificateProviderProtocol()
         let accountID = UUID.create()
-        gracePeriodRepository = GracePeriodRepository(
-            userID: accountID,
-            sharedUserDefaults: sharedUserDefaults)
-        gracePeriodRepository.storeEndGracePeriodDate(Date.now)
         snoozer = SnoozeCertificateEnrollmentUseCase(
-            e2eiFeature: mockFeatureRepository.fetchE2EI(),
-            gracePeriodRepository: gracePeriodRepository,
+            featureRepository: mockFeatureRepository,
+            featureRepositoryContext: context,
             recurringActionService: mockRecurringActionService,
-            selfClientCertificateProvider: selfClientCertificateProvider,
             accountId: accountID)
     }
 
@@ -54,7 +50,6 @@ class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
         snoozer = nil
         mockRecurringActionService = nil
         selfClientCertificateProvider = nil
-        gracePeriodRepository = nil
 
         super.tearDown()
     }
@@ -66,25 +61,10 @@ class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
 
         // When
         XCTAssertEqual(mockRecurringActionService.registerAction_Invocations.count, 0)
-        await snoozer.start()
+        await snoozer.invoke(endOfPeriod: .now)
 
         // Then
         XCTAssertEqual(mockRecurringActionService.registerAction_Invocations.count, 1)
     }
 
-    func testItRemovesRecurringAction() async {
-        // Given
-        selfClientCertificateProvider.underlyingHasCertificate = false
-        mockRecurringActionService.registerAction_MockMethod = { _ in }
-        mockRecurringActionService.removeActionId_MockMethod = { _ in }
-
-        await snoozer.start()
-        XCTAssertEqual(mockRecurringActionService.registerAction_Invocations.count, 1)
-
-        // When
-        snoozer.stop()
-
-        // Then
-        XCTAssertEqual(mockRecurringActionService.removeActionId_Invocations.count, 1)
-    }
 }

@@ -21,11 +21,14 @@ import Combine
 import WireCommonComponents
 
 struct DeviceDetailsView: View {
+    typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
+
     @Environment(\.dismiss)
     private var dismiss
 
-    @StateObject var viewModel: DeviceInfoViewModel
+    @ObservedObject var viewModel: DeviceInfoViewModel
     @State var isCertificateViewPresented: Bool = false
+    @State var didEnrollCertificateFail: Bool = false
 
     var dismissedView: (() -> Void)?
 
@@ -44,12 +47,13 @@ struct DeviceDetailsView: View {
         }
         .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         .padding(.top, ViewConstants.Padding.medium)
+        .frame(maxWidth: .infinity)
     }
 
     var proteusView: some View {
         VStack(alignment: .leading) {
             sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title)
-            DeviceDetailsProteusView(viewModel: viewModel, isVerfied: viewModel.isProteusVerificationEnabled)
+            DeviceDetailsProteusView(viewModel: viewModel, isVerified: viewModel.isProteusVerificationEnabled)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
             if viewModel.isSelfClient {
                 Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
@@ -60,6 +64,7 @@ struct DeviceDetailsView: View {
                 DeviceDetailsBottomView(viewModel: viewModel)
             }
         }
+        .frame(maxWidth: .infinity)
     }
 
     var mlsView: some View {
@@ -68,16 +73,18 @@ struct DeviceDetailsView: View {
             DeviceMLSView(viewModel: viewModel)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         }
+        .frame(maxWidth: .infinity)
     }
 
     var body: some View {
         NavigationView {
             ScrollView {
-                if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
-                    mlsView
-                    if viewModel.isE2eIdentityEnabled {
-                        e2eIdentityCertificateView
+                if viewModel.isE2eIdentityEnabled {
+                    if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
+                        mlsView
                     }
+
+                    e2eIdentityCertificateView
                 }
                 proteusView
             }
@@ -111,6 +118,7 @@ struct DeviceDetailsView: View {
 
             }
         }
+        .navigationViewStyle(.stack)
 
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
         .navigationBarBackButtonHidden(true)
@@ -120,11 +128,14 @@ struct DeviceDetailsView: View {
         .onDisappear {
             dismissedView?()
         }
-        .onReceive(viewModel.$isRemoved) { isRemoved in
-            if isRemoved {
+        .onReceive(viewModel.$shouldDismiss) { shouldDismiss in
+            if shouldDismiss {
                 dismiss()
             }
         }
+        .onReceive(viewModel.$showEnrollmentCertificateError, perform: { _ in
+            didEnrollCertificateFail = viewModel.showEnrollmentCertificateError
+        })
         .sheet(isPresented: $isCertificateViewPresented) {
             if let certificate = viewModel.e2eIdentityCertificate {
                 E2EIdentityCertificateDetailsView(
@@ -134,6 +145,11 @@ struct DeviceDetailsView: View {
                     performDownload: viewModel.downloadE2EIdentityCertificate,
                     performCopy: viewModel.copyToClipboard
                 )
+            }
+        }
+        .alert(E2ei.Error.Alert.title, isPresented: $didEnrollCertificateFail) {
+            SwiftUI.Button(L10n.Localizable.General.ok) {
+                didEnrollCertificateFail = false
             }
         }
     }

@@ -16,18 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SwiftUI
 import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 
+// sourcery: AutoMockable
 protocol DeviceDetailsViewActions {
     var isSelfClient: Bool { get }
     var isProcessing: ((Bool) -> Void)? { get set }
 
-    func enrollClient() async -> E2eIdentityCertificate?
-    func updateCertificate() async -> E2eIdentityCertificate?
+    /// Method to enroll and update E2E Identity certificates.
+    /// - Returns: Certificate chain of all the clients
+    func enrollClient() async throws -> String
     func removeDevice() async -> Bool
     func resetSession()
     func updateVerified(_ value: Bool) async -> Bool
@@ -39,12 +40,12 @@ protocol DeviceDetailsViewActions {
 final class DeviceInfoViewModel: ObservableObject {
     let addedDate: String
     let proteusID: String
-    let userClient: UserClient
     let gracePeriod: TimeInterval
-    let mlsThumbprint: String?
+    let isFromConversation: Bool
 
     var title: String
     var isSelfClient: Bool
+    var userClient: UserClientType
 
     var isCopyEnabled: Bool {
         return Settings.isClipboardEnabled
@@ -61,6 +62,12 @@ final class DeviceInfoViewModel: ObservableObject {
         return e2eIdentityCertificate != nil && mlsThumbprint != nil
     }
 
+    var mlsThumbprint: String? {
+        e2eIdentityCertificate?
+            .mlsThumbprint
+            .splitStringIntoLines(charactersPerLine: 16)
+    }
+
     var serialNumber: String? {
         e2eIdentityCertificate?.serialNumber
             .uppercased()
@@ -68,75 +75,83 @@ final class DeviceInfoViewModel: ObservableObject {
             .replacingOccurrences(of: " ", with: ":")
     }
 
-    @Published
-    var e2eIdentityCertificate: E2eIdentityCertificate?
-    @Published var isRemoved: Bool = false
+    var showCertificateUpdateSuccess: ((String) -> Void)?
+
+    @Published var e2eIdentityCertificate: E2eIdentityCertificate?
+    @Published var shouldDismiss: Bool = false
     @Published var isProteusVerificationEnabled: Bool = false
     @Published var isActionInProgress: Bool = false
     @Published var proteusKeyFingerprint: String = ""
+    @Published var showEnrollmentCertificateError = false
 
-    private var actionsHandler: DeviceDetailsViewActions
+    var actionsHandler: DeviceDetailsViewActions
+    var conversationClientDetailsActions: ConversationUserClientDetailsActions
+    var debugMenuActionsHandler: ConversationUserClientDetailsDebugActions?
+    let showDebugMenu: Bool
 
     init(
-        certificate: E2eIdentityCertificate?,
         title: String,
         addedDate: String,
         proteusID: String,
-        mlsThumbprint: String?,
-        isProteusVerificationEnabled: Bool,
-        actionsHandler: DeviceDetailsViewActions,
-        userClient: UserClient,
+        userClient: UserClientType,
         isSelfClient: Bool,
-        gracePeriod: TimeInterval
+        gracePeriod: TimeInterval,
+        isFromConversation: Bool,
+        actionsHandler: DeviceDetailsViewActions,
+        conversationClientDetailsActions: ConversationUserClientDetailsActions,
+        debugMenuActionsHandler: ConversationUserClientDetailsDebugActions? = nil,
+        showDebugMenu: Bool
     ) {
-        self.e2eIdentityCertificate = certificate
         self.title = title
         self.addedDate = addedDate
         self.proteusID = proteusID
-        self.mlsThumbprint = mlsThumbprint
-        self.isProteusVerificationEnabled = isProteusVerificationEnabled
         self.actionsHandler = actionsHandler
         self.userClient = userClient
         self.isSelfClient = isSelfClient
         self.gracePeriod = gracePeriod
-        self.actionsHandler.isProcessing = {[weak self] isProcessing in
+        self.isFromConversation = isFromConversation
+        self.conversationClientDetailsActions = conversationClientDetailsActions
+        self.debugMenuActionsHandler = debugMenuActionsHandler
+        self.showDebugMenu = showDebugMenu
+        self.actionsHandler.isProcessing = { [weak self] isProcessing in
             DispatchQueue.main.async {
                 self?.isActionInProgress = isProcessing
             }
         }
+
+        e2eIdentityCertificate = userClient.e2eIdentityCertificate
+        isProteusVerificationEnabled = userClient.verified
     }
 
-    @MainActor
-    func updateCertificate() async {
-        self.isActionInProgress = true
-        let certificate = await actionsHandler.updateCertificate()
-        self.e2eIdentityCertificate = certificate
-        self.isActionInProgress = false
+    func update(from userClient: UserClientType) {
+        e2eIdentityCertificate = userClient.e2eIdentityCertificate
+        self.userClient = userClient
     }
 
     @MainActor
     func enrollClient() async {
         self.isActionInProgress = true
-        let certificate = await actionsHandler.enrollClient()
-        self.e2eIdentityCertificate = certificate
+        do {
+            let certificateChain = try await actionsHandler.enrollClient()
+            showCertificateUpdateSuccess?(certificateChain)
+        } catch {
+            showEnrollmentCertificateError = true
+        }
         self.isActionInProgress = false
     }
 
     @MainActor
     func removeDevice() async {
-        let isRemoved = await actionsHandler.removeDevice()
-        self.isRemoved = isRemoved
+        self.shouldDismiss = await actionsHandler.removeDevice()
     }
 
     func resetSession() {
         actionsHandler.resetSession()
     }
 
+    @MainActor
     func updateVerifiedStatus(_ value: Bool) async {
-        let isVerified = await actionsHandler.updateVerified(value)
-        await MainActor.run {
-            isProteusVerificationEnabled = isVerified
-        }
+        isProteusVerificationEnabled = await actionsHandler.updateVerified(value)
     }
 
     func copyToClipboard(_ value: String) {
@@ -152,8 +167,7 @@ final class DeviceInfoViewModel: ObservableObject {
 
     @MainActor
     func getProteusFingerPrint() async {
-        let result = await actionsHandler.getProteusFingerPrint()
-        self.proteusKeyFingerprint = result
+        self.proteusKeyFingerprint = await actionsHandler.getProteusFingerPrint()
     }
 
     func onAppear() {
@@ -161,69 +175,38 @@ final class DeviceInfoViewModel: ObservableObject {
             await getProteusFingerPrint()
         }
     }
-}
 
-extension DeviceInfoViewModel {
-    static func map(
-        certificate: E2eIdentityCertificate?,
-        userClient: UserClient,
-        title: String,
-        addedDate: String,
-        proteusID: String?,
-        isSelfClient: Bool,
-        userSession: UserSession,
-        credentials: ZMEmailCredentials?,
-        gracePeriod: TimeInterval,
-        mlsThumbprint: String?,
-        getProteusFingerprint: GetUserClientFingerprintUseCaseProtocol,
-        saveFileManager: SaveFileActions = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
-    ) -> DeviceInfoViewModel {
-        return DeviceInfoViewModel(
-            certificate: certificate,
-            title: title,
-            addedDate: addedDate,
-            proteusID: proteusID ?? "",
-            mlsThumbprint: mlsThumbprint,
-            isProteusVerificationEnabled: userClient.verified,
-            actionsHandler: DeviceDetailsViewActionsHandler(
-                userClient: userClient,
-                userSession: userSession,
-                credentials: credentials,
-                saveFileManager: saveFileManager,
-                getProteusFingerprint: getProteusFingerprint
-            ),
-            userClient: userClient,
-            isSelfClient: isSelfClient,
-            gracePeriod: gracePeriod
-        )
-    }
-}
+    // MARK: ConversationUserClientDetailsActions
 
-extension E2eIdentityCertificate {
-
-    // current default days the certificate is retained on server
-    private var kServerRetainedDays: Double { 28 * 24 * 60 * 60 }
-
-    // Randomising time so that not all clients update certificate at the same time
-    private var kRandomInterval: Double { Double(Int.random(in: 0..<86400)) }
-
-    private var isExpired: Bool {
-        return expiryDate > comparedDate
+    func onShowMyDeviceTapped() {
+        conversationClientDetailsActions.showMyDevice()
     }
 
-    private var isValid: Bool {
-        status == .valid
+    func onHowToDoThatTapped() {
+        conversationClientDetailsActions.howToDoThat()
     }
 
-    private var isActivated: Bool {
-        return notValidBefore <= comparedDate
+    // MARK: ConversationUserClientDetailsDebugActions
+
+    func onDeleteDeviceTapped() {
+        Task {
+            await debugMenuActionsHandler?.deleteDevice()
+            await MainActor.run {
+                shouldDismiss = true
+            }
+        }
     }
 
-    private var lastUpdateDate: Date {
-        return notValidBefore + kServerRetainedDays + kRandomInterval
+    func onCorruptSessionTapped() {
+        Task {
+            await debugMenuActionsHandler?.corruptSession()
+            await MainActor.run {
+                shouldDismiss = true
+            }
+        }
     }
 
-    func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
-        return isActivated && isExpired && (lastUpdateDate + gracePeriod) < comparedDate
+    func onDuplicateClientTapped() {
+        debugMenuActionsHandler?.duplicateClient()
     }
 }

@@ -71,10 +71,11 @@ indirect enum AuthenticationFlowStep: Equatable {
     case deleteClient(clients: [UserClient], credentials: ZMCredentials?)
     case addEmailAndPassword
     case enrollE2EIdentity
+    case enrollE2EIdentitySuccess(String)
     case addUsername
     case registerEmailCredentials(ZMEmailCredentials, isResend: Bool)
     case pendingEmailLinkVerification(ZMEmailCredentials)
-    case pendingInitialSync(next: AuthenticationFlowStep?)
+    case pendingInitialSync
 
     // Registration
     case createCredentials(UnregisteredUser)
@@ -114,6 +115,7 @@ indirect enum AuthenticationFlowStep: Equatable {
         case .deleteClient: return true
         case .addEmailAndPassword: return true
         case .enrollE2EIdentity: return true
+        case .enrollE2EIdentitySuccess: return true
         case .addUsername: return true
         case .pendingInitialSync: return false
         case .pendingEmailLinkVerification: return true

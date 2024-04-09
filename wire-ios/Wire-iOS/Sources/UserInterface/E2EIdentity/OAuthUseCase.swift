@@ -24,12 +24,7 @@ import WireRequestStrategy
 
 public protocol OAuthUseCaseInterface {
 
-    func invoke(
-        for identityProvider: URL,
-        clientID: String,
-        keyauth: String,
-        acmeAudience: String
-    ) async throws -> (idToken: String, refreshToken: String)
+    func invoke(parameters: OAuthParameters) async throws -> OAuthResponse
 
 }
 
@@ -37,27 +32,21 @@ public class OAuthUseCase: OAuthUseCaseInterface {
 
     private let logger = WireLogger.e2ei
     private var currentAuthorizationFlow: OIDExternalUserAgentSession?
-    private var rootViewController: UIViewController
+    private var targetViewController: UIViewController
 
-    init(rootViewController: UIViewController) {
-        self.rootViewController = rootViewController
+    init(targetViewController: UIViewController) {
+        self.targetViewController = targetViewController
     }
 
-    public func invoke(
-        for identityProvider: URL,
-        clientID: String,
-        keyauth: String,
-        acmeAudience: String
-    ) async throws -> (idToken: String, refreshToken: String) {
+    public func invoke(parameters: OAuthParameters) async throws -> OAuthResponse {
         logger.info("invoke authentication flow")
 
-        guard let bundleID = Bundle.main.bundleIdentifier,
-              let redirectURI = URL(string: "\(bundleID):/oauth2redirect")
-        else {
+        guard let redirectURI = URL(string: "wire://e2ei/oauth2redirect") else {
             throw OAuthError.missingRequestParameters
         }
+
         let request: OIDAuthorizationRequest = try await withCheckedThrowingContinuation { continuation in
-            OIDAuthorizationService.discoverConfiguration(forIssuer: identityProvider) { configuration, error in
+            OIDAuthorizationService.discoverConfiguration(forIssuer: parameters.identityProvider) { configuration, error in
                 if let error = error {
                     return continuation.resume(throwing: OAuthError.failedToRetrieveConfiguration(error))
                 }
@@ -66,14 +55,17 @@ public class OAuthUseCase: OAuthUseCaseInterface {
                     return continuation.resume(throwing: OAuthError.missingServiceConfiguration)
                 }
 
-                let claims = self.createAdditionalParameters(with: keyauth, acmeAudience: acmeAudience)
+                let claims = self.createAdditionalParameters(
+                    with: parameters.keyauth,
+                    acmeAudience: parameters.acmeAudience)
 
-                let request = OIDAuthorizationRequest(configuration: config,
-                                                      clientId: clientID,
-                                                      scopes: [OIDScopeOpenID, OIDScopeProfile, OIDScopeEmail],
-                                                      redirectURL: redirectURI,
-                                                      responseType: OIDResponseTypeCode,
-                                                      additionalParameters: claims)
+                let request = OIDAuthorizationRequest(
+                    configuration: config,
+                    clientId: parameters.clientID,
+                    scopes: [OIDScopeOpenID, OIDScopeProfile, OIDScopeEmail],
+                    redirectURL: redirectURI,
+                    responseType: OIDResponseTypeCode,
+                    additionalParameters: claims)
 
                 return continuation.resume(returning: request)
             }
@@ -115,8 +107,11 @@ public class OAuthUseCase: OAuthUseCaseInterface {
     }
 
     @MainActor
-    private func execute(authorizationRequest: OIDAuthorizationRequest) async throws -> (idToken: String, refreshToken: String) {
-        guard let userAgent = OIDExternalUserAgentIOS(presenting: rootViewController) else {
+    private func execute(authorizationRequest: OIDAuthorizationRequest) async throws -> OAuthResponse {
+        guard let userAgent = OIDExternalUserAgentIOS(
+            presenting: targetViewController,
+            prefersEphemeralSession: true
+        ) else {
             throw OAuthError.missingOIDExternalUserAgent
         }
 
@@ -124,19 +119,21 @@ public class OAuthUseCase: OAuthUseCaseInterface {
             self?.currentAuthorizationFlow = OIDAuthState.authState(byPresenting: authorizationRequest,
                                                                     externalUserAgent: userAgent,
                                                                     callback: { authState, error in
-                if let error = error {
-                    return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
+                if let error = error as NSError? {
+                    if error.domain == OIDGeneralErrorDomain, error.code == OIDErrorCode.userCanceledAuthorizationFlow.rawValue {
+                        return continuation.resume(throwing: OAuthError.userCancelled)
+                    } else {
+                        return continuation.resume(throwing: OAuthError.failedToSendAuthorizationRequest(error))
+                    }
                 }
 
                 guard let idToken = authState?.lastTokenResponse?.idToken else {
                     return continuation.resume(throwing: OAuthError.missingIdToken)
                 }
 
-                guard let refreshToken = authState?.lastTokenResponse?.refreshToken else {
-                    return continuation.resume(throwing: OAuthError.missingRefreshToken)
-                }
+                let refreshToken = authState?.lastTokenResponse?.refreshToken
 
-                return continuation.resume(returning: (idToken, refreshToken))
+                return continuation.resume(returning: OAuthResponse(idToken: idToken, refreshToken: refreshToken))
             })
         }
 
@@ -151,6 +148,6 @@ enum OAuthError: Error {
     case missingServiceConfiguration
     case missingOIDExternalUserAgent
     case missingIdToken
-    case missingRefreshToken
+    case userCancelled
 
 }

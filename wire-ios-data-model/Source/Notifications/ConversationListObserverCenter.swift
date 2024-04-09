@@ -28,20 +28,16 @@ extension Notification.Name {
 
 extension NSManagedObjectContext {
 
-    static let ConversationListObserverCenterKey = "ConversationListObserverCenterKey"
+    static let conversationListObserverCenterKey = "ConversationListObserverCenterKey"
 
+    /// Note: uses `self.userInfo` and must be accessed from NSManagedObjectContext queue!
     @objc public var conversationListObserverCenter: ConversationListObserverCenter {
-        // swiftlint:disable todo_requires_jira_link
-        // FIXME: Uncomment and fix crash when running tests
-        // swiftlint:enable todo_requires_jira_link
-        // assert(zm_isUserInterfaceContext, "ConversationListObserver does not exist in syncMOC")
-
-        if let observer = self.userInfo[NSManagedObjectContext.ConversationListObserverCenterKey] as? ConversationListObserverCenter {
+        if let observer = userInfo[NSManagedObjectContext.conversationListObserverCenterKey] as? ConversationListObserverCenter {
             return observer
         }
 
         let newObserver = ConversationListObserverCenter(managedObjectContext: self)
-        self.userInfo[NSManagedObjectContext.ConversationListObserverCenterKey] = newObserver
+        userInfo[NSManagedObjectContext.conversationListObserverCenterKey] = newObserver
         return newObserver
     }
 }
@@ -144,11 +140,22 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
 
     /// Handles updated conversations, updates lists and notifies observers
     public func conversationDidChange(_ changes: ConversationChangeInfo) {
-        guard    changes.nameChanged              || changes.connectionStateChanged  || changes.isArchivedChanged
-              || changes.mutedMessageTypesChanged || changes.lastModifiedDateChanged || changes.conversationListIndicatorChanged
-              || changes.clearedChanged           || changes.securityLevelChanged    || changes.teamChanged
-              || changes.messagesChanged          || changes.labelsChanged           || changes.mlsStatusChanged
-        else { return }
+        let hasChanged = changes.nameChanged
+            || changes.connectionStateChanged
+            || changes.isArchivedChanged
+            || changes.mutedMessageTypesChanged
+            || changes.lastModifiedDateChanged
+            || changes.conversationListIndicatorChanged
+            || changes.clearedChanged
+            || changes.securityLevelChanged
+            || changes.teamChanged
+            || changes.messagesChanged
+            || changes.labelsChanged
+            || changes.mlsStatusChanged
+            || changes.oneOnOneUserChanged
+
+        guard hasChanged else { return }
+
         zmLog.debug("conversationDidChange with changes \(changes.customDebugDescription)")
         forwardToSnapshots { $0.processConversationChanges(changes) }
     }

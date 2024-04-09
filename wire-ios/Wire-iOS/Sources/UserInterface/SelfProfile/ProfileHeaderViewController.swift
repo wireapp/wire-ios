@@ -23,9 +23,7 @@ import WireCommonComponents
 final class ProfileHeaderViewController: UIViewController {
 
     /// The options to customize the appearance and behavior of the view.
-    var options: Options {
-        didSet { applyOptions() }
-    }
+    private let options: Options
 
     /// Associated conversation, if displayed in the context of a conversation
     private let conversation: ZMConversation?
@@ -34,16 +32,11 @@ final class ProfileHeaderViewController: UIViewController {
     private let user: UserType
 
     private var userStatus: UserStatus {
-        didSet {
-            nameLabel.text = userStatus.name
-            userStatusViewController.userStatus = userStatus
-            e2eiCertifiedImageView.isHidden = !userStatus.isCertified
-            proteusVerifiedImageView.isHidden = !userStatus.isVerified
-        }
+        didSet { applyUserStatus() }
     }
 
     private let userSession: UserSession
-    private let isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol
+    private let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
     private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
 
     /// The user who is viewing this view
@@ -94,7 +87,7 @@ final class ProfileHeaderViewController: UIViewController {
     private let handleLabel = DynamicFontLabel(fontSpec: .mediumRegularFont, color: LabelColors.textDefault)
     private let teamNameLabel = DynamicFontLabel(fontSpec: .accountTeam, color: LabelColors.textDefault)
     private let remainingTimeLabel = DynamicFontLabel(fontSpec: .mediumSemiboldFont, color: LabelColors.textDefault)
-    let imageView =  UserImageView(size: .big)
+    let imageView = UserImageView(size: .big)
     private let userStatusViewController: UserStatusViewController
 
     private let guestIndicatorStack = UIStackView()
@@ -108,14 +101,13 @@ final class ProfileHeaderViewController: UIViewController {
     private var userObserver: NSObjectProtocol?
     private var teamObserver: NSObjectProtocol?
 
-    ///
     /// Creates a profile view for the specified user and options.
     /// - parameter user: The user to display the profile of.
     /// - parameter conversation: The conversation.
     /// - parameter options: The options for the appearance and behavior of the view.
     /// - parameter userSession: The user session.
-    /// - parameter isSelfUserProteusVerifiedUseCase: Use case for getting the self user's Proteus verification status.
-    /// - parameter isSelfUserE2EICertifiedUseCase: Use case for getting the self user's MLS verification status.
+    /// - parameter isUserE2EICertifiedUseCase: Use case for getting the user's MLS verification status.
+    /// - parameter isSelfUserE2EICertifiedUseCase: Use case for getting the self user's MLS verification status, if `user.isSelfUser` is `true`.
     /// Note: You can change the options later through the `options` property.
     init(
         user: UserType,
@@ -123,33 +115,24 @@ final class ProfileHeaderViewController: UIViewController {
         conversation: ZMConversation?,
         options: Options,
         userSession: UserSession,
-        isSelfUserProteusVerifiedUseCase: IsSelfUserProteusVerifiedUseCaseProtocol,
+        isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
     ) {
-        userStatus = .init(
-            user: user,
-            isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
-        )
+        userStatus = .init(user: user, isE2EICertified: false)
         self.user = user
         self.userSession = userSession
-        self.isSelfUserProteusVerifiedUseCase = isSelfUserProteusVerifiedUseCase
+        self.isUserE2EICertifiedUseCase = isUserE2EICertifiedUseCase
         self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
         isAdminRole = conversation.map(self.user.isGroupAdmin) ?? false
         self.viewer = viewer
         self.conversation = conversation
         self.options = options
-        self.userStatusViewController = .init(
+        userStatusViewController = .init(
             options: options.contains(.allowEditingAvailability) ? [.allowSettingStatus] : [.hideActionHint],
             settings: .shared
         )
-
         super.init(nibName: nil, bundle: nil)
-
         userStatusViewController.delegate = self
-        userStatusViewController.userStatus = .init(
-            user: user,
-            isCertified: false // TODO [WPB-765]: provide value after merging into `epic/e2ei`
-        )
     }
 
     @available(*, unavailable)
@@ -191,8 +174,6 @@ final class ProfileHeaderViewController: UIViewController {
         teamNameLabel.accessibilityIdentifier = "team name"
         teamNameLabel.setContentHuggingPriority(UILayoutPriority.required, for: .vertical)
         teamNameLabel.setContentCompressionResistancePriority(UILayoutPriority.required, for: .vertical)
-
-        userStatus.name = user.name ?? ""
 
         let remainingTimeString = user.expirationDisplayString
         remainingTimeLabel.text = remainingTimeString
@@ -243,6 +224,7 @@ final class ProfileHeaderViewController: UIViewController {
         view.backgroundColor = UIColor.clear
 
         configureConstraints()
+        applyUserStatus()
         applyOptions()
 
         userStatusViewController.didMove(toParent: self)
@@ -250,20 +232,12 @@ final class ProfileHeaderViewController: UIViewController {
         if let team = user.membership?.team {
             teamObserver = TeamChangeInfo.add(observer: self, for: team)
         }
-        view.backgroundColor = UIColor.clear
+        view.backgroundColor = .clear
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        Task {
-            do {
-                userStatus.isCertified = try await isSelfUserE2EICertifiedUseCase.invoke()
-                userStatus.isVerified = await isSelfUserProteusVerifiedUseCase.invoke()
-            } catch {
-                WireLogger.e2ei.error("failed to get self user's verification status: \(String(reflecting: error))")
-            }
-        }
+        updateE2EICertifiedStatus()
     }
 
     private func configureConstraints() {
@@ -280,6 +254,13 @@ final class ProfileHeaderViewController: UIViewController {
             // stackView
             widthImageConstraint, leadingSpaceConstraint, topSpaceConstraint, trailingSpaceConstraint, bottomSpaceConstraint
         ])
+    }
+
+    private func applyUserStatus() {
+        nameLabel.text = userStatus.name
+        userStatusViewController.userStatus = userStatus
+        e2eiCertifiedImageView.isHidden = !userStatus.isE2EICertified
+        proteusVerifiedImageView.isHidden = !userStatus.isProteusVerified
     }
 
     private func updateGuestIndicator() {
@@ -355,6 +336,24 @@ final class ProfileHeaderViewController: UIViewController {
         }
     }
 
+    private func updateE2EICertifiedStatus() {
+        guard let user = user as? ZMUser else { return }
+
+        Task { @MainActor [conversation] in
+            do {
+                userStatus.isE2EICertified = if let conversation {
+                    try await isUserE2EICertifiedUseCase.invoke(conversation: conversation, user: user)
+                } else if user.isSelfUser {
+                    try await isSelfUserE2EICertifiedUseCase.invoke()
+                } else {
+                    false
+                }
+            } catch {
+                WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
+            }
+        }
+    }
+
     // MARK: -
 
     /// The options to customize the appearance and behavior of the view.
@@ -403,6 +402,10 @@ extension ProfileHeaderViewController: UserObserving {
         }
         if changeInfo.availabilityChanged {
             updateAvailabilityVisibility()
+        }
+        if changeInfo.trustLevelChanged {
+            userStatus.isProteusVerified = changeInfo.user.isVerified
+            updateE2EICertifiedStatus()
         }
     }
 }

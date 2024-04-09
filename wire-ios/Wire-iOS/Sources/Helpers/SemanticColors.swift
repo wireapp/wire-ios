@@ -68,6 +68,9 @@ public enum SemanticColors {
         static let textCertificateValid = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
         static let textCertificateInvalid = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let textCertificateVerified = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
+
+        // UserCell: e.g. "Paul Nagel (You)"
+        static let textYouSuffix = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
     }
 
     public enum SearchBar {
@@ -97,7 +100,6 @@ public enum SemanticColors {
         static let foregroundAvailabilityBusy = UIColor(light: Asset.Colors.amber500Light, dark: Asset.Colors.amber500Dark)
         static let foregroundAvailabilityAway = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let backgroundPasswordRuleCheck = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray20)
-        static let backgroundPhoneCall = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
         static let backgroundMissedPhoneCall = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let foregroundMicrophone = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let emojiCategoryDefault = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray60)
@@ -193,7 +195,7 @@ public enum SemanticColors {
         static let borderSecondaryEnabled = UIColor(light: Asset.Colors.gray40, dark: Asset.Colors.gray80)
         static let borderSecondaryHighlighted = UIColor(light: Asset.Colors.gray40, dark: Asset.Colors.gray60)
         static let backgroundPrimaryEnabled = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
-        static let backgroundPrimaryHighlighted = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue400Light)
+        static let backgroundPrimaryHighlighted = UIColor(light: Asset.Colors.blue600Light, dark: Asset.Colors.blue400Light)
         static let backgroundPrimaryDisabled = UIColor(light: Asset.Colors.gray50, dark: Asset.Colors.gray70)
         static let textPrimaryEnabled = UIColor(light: Asset.Colors.white, dark: Asset.Colors.black)
         static let textPrimaryDisabled = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.black)

@@ -150,6 +150,8 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
         let observer = ConversationListChangeObserver(conversationList: sut, managedObjectContext: self.uiMOC)
 
+        let factory = ConversationPredicateFactory(selfTeam: team)
+
         // when inserting a new conversation while in the background
         dispatcher.applicationDidEnterBackground()
         let conversation2 = createGroupConversation(in: team)
@@ -161,7 +163,10 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         XCTAssertEqual(observer.notifications.count, 0)
 
         // when refresing the list
-        sut.recreate(withAllConversations: [conversation1, conversation2])
+        sut.recreate(
+            withAllConversations: [conversation1, conversation2],
+            predicate: factory.predicateForConversationsIncludingArchived()
+        )
 
         // then
         XCTAssertEqual(sut.arrayValue, [conversation1, conversation2])
@@ -361,7 +366,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
 }
 
-fileprivate extension ZMConversationList {
+extension ZMConversationList {
 
     var setValue: Set<ZMConversation> {
         return Set(arrayValue)

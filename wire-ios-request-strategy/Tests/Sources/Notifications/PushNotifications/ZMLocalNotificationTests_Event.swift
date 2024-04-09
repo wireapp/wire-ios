@@ -369,6 +369,21 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         }
     }
 
+    func testThatItDoesNotCreateANotificationWhenConversationIsForceReadonly() {
+        // given
+        syncMOC.performGroupedBlockAndWait {
+            self.oneOnOneConversation.isForcedReadOnly = true
+            let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: GenericMessage(content: Text(content: "Stimpy just joined Wire")))
+            var note: ZMLocalNotification?
+
+            // when
+            note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
+
+            // then
+            XCTAssertNil(note)
+        }
+    }
+
     func testThatItDoesNotCreateANotificationForConfirmationEvents() {
         // given
         syncMOC.performGroupedBlockAndWait {

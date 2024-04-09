@@ -52,7 +52,7 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
     private let service: ConversationServiceInterface
 
     init(
-        protocolSelector: OneOnOneProtocolSelectorInterface,
+        protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
         migrator: OneOnOneMigratorInterface?,
         service: ConversationServiceInterface
     ) {
@@ -83,7 +83,7 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
             )
         }
 
-        switch await protocolSelector.getProtocolForUser(
+        switch try await protocolSelector.getProtocolForUser(
             with: userID,
             in: syncContext
         ) {
@@ -103,6 +103,8 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
             throw Error.noCommonProtocols
         }
     }
+
+    // MARK: MLS
 
     private func createMLSConversation(
         userID: QualifiedID,
@@ -131,6 +133,8 @@ struct CreateTeamOneOnOneConversationUseCase: CreateTeamOneOnOneConversationUseC
             return conversation.objectID
         }
     }
+
+    // MARK: Proteus
 
     private func createProteusConversation(
         with user: ZMUser,

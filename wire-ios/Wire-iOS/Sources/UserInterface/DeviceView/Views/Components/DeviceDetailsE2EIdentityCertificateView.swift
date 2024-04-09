@@ -49,6 +49,14 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
                         textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
                         image: status.image
                     )
+
+                case .invalid:
+                    viewForStatus(
+                        statusText: status.title,
+                        textColor: SemanticColors.Label.textCertificateInvalid.swiftUIColor,
+                        image: status.image
+                    )
+
                 case .valid:
                     viewForStatus(
                         titleText: L10n.Localizable.Device.Details.Section.E2ei.Status.title,
@@ -78,13 +86,17 @@ struct DeviceDetailsE2EIdentityCertificateView: View {
         textColor: Color,
         image: Image?
     ) -> some View {
-        Text(titleText)
-            .font(FontSpec.mediumSemiboldFont.swiftUIFont)
-            .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
-            .multilineTextAlignment(.leading)
-        Text(statusText)
-            .foregroundColor(textColor)
-            .font(FontSpec.normalMediumFont.swiftUIFont)
-        image
+        VStack(alignment: .leading) {
+            Text(titleText)
+                .font(FontSpec.mediumSemiboldFont.swiftUIFont)
+                .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
+                .multilineTextAlignment(.leading)
+            HStack {
+                Text(statusText)
+                    .foregroundColor(textColor)
+                    .font(FontSpec.normalMediumFont.swiftUIFont)
+                image
+            }
+        }
     }
 }

@@ -19,10 +19,12 @@
 import Foundation
 import WireCoreCrypto
 
+// sourcery: AutoMockable
 public protocol AcmeAPIInterface {
     func getACMEDirectory() async throws -> Data
     func getACMENonce(path: String) async throws -> String
     func getTrustAnchor() async throws -> String
+    func getFederationCertificates() async throws -> [String]
     func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse
     func sendAuthorizationRequest(path: String, requestBody: Data) async throws -> ACMEAuthorizationResponse
     func sendChallengeRequest(path: String, requestBody: Data) async throws -> ChallengeResponse
@@ -34,12 +36,14 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
     // MARK: - Properties
 
     private let rootCertificatePath = "roots.pem"
+    private let federationCertificatePath = "federation"
     private let acmeDiscoveryPath: String
     private let httpClient: HttpClientCustom
+    private let decoder = JSONDecoder()
 
     // MARK: - Life cycle
 
-    /// TODO: it would be nice to use HttpClient
+    // TODO: [WPB-6785] refactor HttpClientE2EI
     public init(acmeDiscoveryPath: String,
                 httpClient: HttpClientCustom = HttpClientE2EI()) {
         self.acmeDiscoveryPath = acmeDiscoveryPath
@@ -72,7 +76,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
 
         guard let httpResponse = response as? HTTPURLResponse,
               let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce) else {
-            throw NetworkError.errorDecodingResponseNew(response)
+            throw NetworkError.errorDecodingURLResponse(response)
         }
 
         return replayNonce
@@ -95,10 +99,32 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         guard
             let certificateChain = String(bytes: data, encoding: .utf8)
         else {
-            throw NetworkError.errorDecodingResponseNew(response)
+            throw NetworkError.errorDecodingURLResponse(response)
         }
 
         return certificateChain
+    }
+
+    public func getFederationCertificates() async throws -> [String] {
+        guard
+            let baseURL = URL(string: acmeDiscoveryPath)?.extractBaseURL,
+            let url = URL(string: federationCertificatePath, relativeTo: baseURL)
+        else {
+            throw NetworkError.errorEncodingRequest
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.get
+
+        let (data, response) = try await httpClient.send(request)
+
+        guard
+            let certificates = try? decoder.decode(FederationCertificates.self, from: data).certificates
+        else {
+            throw NetworkError.errorDecodingURLResponse(response)
+        }
+
+        return certificates
     }
 
     public func sendACMERequest(path: String, requestBody: Data) async throws -> ACMEResponse {
@@ -116,7 +142,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
             let httpResponse = response as? HTTPURLResponse,
             let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce)
         else {
-            throw NetworkError.errorDecodingResponseNew(response)
+            throw NetworkError.errorDecodingURLResponse(response)
         }
         let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location) ?? ""
         return ACMEResponse(nonce: replayNonce, location: location, response: data)
@@ -136,12 +162,12 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
         let (data, response) = try await httpClient.send(request)
 
         guard
-            let authorizationResponse = try? JSONDecoder().decode(AuthorizationResponse.self, from: data),
+            let authorizationResponse = try? decoder.decode(AuthorizationResponse.self, from: data),
             let type = authorizationResponse.challenges.first?.type,
             let httpResponse = response as? HTTPURLResponse,
             let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce)
         else {
-            throw NetworkError.errorDecodingResponseNew(response)
+            throw NetworkError.errorDecodingURLResponse(response)
         }
 
         let location = httpResponse.value(forHTTPHeaderField: HeaderKey.location) ?? ""
@@ -167,7 +193,7 @@ public class AcmeAPI: NSObject, AcmeAPIInterface {
             let replayNonce = httpResponse.value(forHTTPHeaderField: HeaderKey.replayNonce),
             let challengeResponse = Challenge(data)
         else {
-            throw NetworkError.errorDecodingResponseNew(response)
+            throw NetworkError.errorDecodingURLResponse(response)
         }
 
         return ChallengeResponse(type: challengeResponse.type,
@@ -231,8 +257,18 @@ public protocol HttpClientCustom {
 
 public class HttpClientE2EI: NSObject, HttpClientCustom {
 
+    private let urlSession: URLSession
+
+    public override init() {
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.urlCache = nil
+        configuration.requestCachePolicy = .reloadIgnoringLocalCacheData
+        self.urlSession = URLSession(configuration: configuration)
+        super.init()
+    }
+
     public func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
-        return try await URLSession.shared.data(for: request)
+        return try await urlSession.data(for: request)
     }
 
 }

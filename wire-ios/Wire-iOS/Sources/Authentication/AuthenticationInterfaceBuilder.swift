@@ -184,6 +184,14 @@ final class AuthenticationInterfaceBuilder {
         case .enrollE2EIdentity:
             let viewController = EnrollE2EIdentityStepDescription()
             return makeViewController(for: viewController)
+
+        case .enrollE2EIdentitySuccess(let certificateDetails):
+            let viewController = SuccessfulCertificateEnrollmentViewController()
+            viewController.certificateDetails = certificateDetails
+            viewController.onOkTapped = { viewController in
+                viewController.authenticationCoordinator?.executeAction(.completeE2EIEnrollment)
+            }
+            return viewController
         default:
             return nil
         }

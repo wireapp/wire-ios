@@ -26,7 +26,8 @@ public extension ZMLocalNotification {
         var builderType: EventNotificationBuilder.Type?
 
         switch event.type {
-        case .conversationOtrMessageAdd:
+        case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
+            guard conversation?.isForcedReadOnly != true else { break }
             guard let message = GenericMessage(from: event) else { break }
             builderType = message.hasReaction ? ReactionEventNotificationBuilder.self : NewMessageNotificationBuilder.self
 

@@ -76,7 +76,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     fileprivate func createFileMessageWithAssetId(
         in conversation: ZMConversation,
         otrKey: Data = Data.randomEncryptionKey(),
-        sha: Data  = Data.randomEncryptionKey()
+        sha: Data = Data.randomEncryptionKey()
     ) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String, domain: String?)? {
 
         let isFederationEnabled = apiVersion > .v0
@@ -134,7 +134,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
 
             // Given
             guard let (message, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, encrypted: false, data: Data())
+            self.syncMOC.zm_fileAssetCache.storeOriginalFile(data: Data(), for: message)
             assetMessage = message
 
             // When

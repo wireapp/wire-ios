@@ -157,7 +157,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
     func testCallClosedReasonsWhichShouldBeIgnored() {
 
         // given
-        let ignoredCallClosedReasons: [CallClosedReason] = [.anweredElsewhere, .normal]
+        let ignoredCallClosedReasons: [CallClosedReason] = [.answeredElsewhere, .normal]
 
         for reason in ignoredCallClosedReasons {
             syncMOC.performAndWait {
@@ -213,7 +213,7 @@ final class ZMLocalNotificationTests_CallState: MessagingTest {
             let team = Team.insertNewObject(in: self.syncMOC)
             team.name = "Wire Amazing Team"
             let user = ZMUser.selfUser(in: self.syncMOC)
-            _ = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
             self.syncMOC.saveOrRollback()
 
             XCTAssertNotNil(user.team)

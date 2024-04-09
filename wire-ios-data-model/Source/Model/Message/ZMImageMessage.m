@@ -137,7 +137,7 @@
 
 - (BOOL)isDownloaded
 {
-    return [self.managedObjectContext.zm_fileAssetCache hasDataOnDisk:self format:ZMImageFormatMedium encrypted:NO] || [self.managedObjectContext.zm_fileAssetCache hasDataOnDisk:self format:ZMImageFormatOriginal encrypted:NO];
+    return [self.managedObjectContext.zm_fileAssetCache hasImageDataForMessage:self];
 }
 
 - (void)removeMessageClearingSender:(BOOL)clearingSender
@@ -199,20 +199,23 @@
 - (void)setImageData:(NSData *)imageData forFormat:(ZMImageFormat)format properties:(ZMIImageProperties * __unused)properties;
 {
     if (imageData == nil) {
-        [self.managedObjectContext.zm_fileAssetCache deleteAssetData:self format:format encrypted:NO];
+        return;
     }
     else {
-        [self.managedObjectContext.zm_fileAssetCache storeAssetData:self format:format encrypted:NO data:imageData];
+        FileAssetCache *cache = self.managedObjectContext.zm_fileAssetCache;
+
         switch (format) {
             case ZMImageFormatMedium:
+                [cache storeMediumImageData:imageData forMessage:self];
                 self.mediumDataLoaded = YES;
                 self.isAnimatedGIF = [imageData isDataAnimatedGIF];
                 self.imageType = [ZMImageMessage imageTypeForData:imageData];
-                
                 break;
             case ZMImageFormatPreview:
+                [cache storePreviewImageData:imageData forMessage:self];
                 break;
             case ZMImageFormatOriginal:
+                [cache storeOriginalImageData:imageData forMessage:self];
                 self.isAnimatedGIF = [imageData isDataAnimatedGIF];
                 break;
             default:
@@ -222,18 +225,15 @@
     }
 }
 
-- (void)deleteImageDataForFormat:(ZMImageFormat)format;
-{
-    [self.managedObjectContext.zm_fileAssetCache deleteAssetData:self format:format encrypted:NO];
-}
-
 - (NSData *)imageDataForFormat:(ZMImageFormat)format
 {
     switch (format) {
         case ZMImageFormatPreview:
+            return [self.managedObjectContext.zm_fileAssetCache previewImageDataFor:self];
         case ZMImageFormatMedium:
+            return [self.managedObjectContext.zm_fileAssetCache mediumImageDataFor:self];
         case ZMImageFormatOriginal:
-            return [self.managedObjectContext.zm_fileAssetCache assetData:self format:format encrypted:NO];
+            return [self.managedObjectContext.zm_fileAssetCache originalImageDataFor:self];
         default:
             return nil;
     }
@@ -251,17 +251,31 @@
 
 - (void)setOriginalImageData:(NSData *)originalImageData
 {
-    [self setImageData:originalImageData forFormat:ZMImageFormatOriginal properties:nil];
+    if (originalImageData) {
+        [self setImageData:originalImageData forFormat:ZMImageFormatOriginal properties:nil];
+    } else {
+        [self.managedObjectContext.zm_fileAssetCache deleteOriginalImageDataFor:self];
+    }
+
 }
 
 - (void)setMediumData:(NSData *)mediumData
 {
-    [self setImageData:mediumData forFormat:ZMImageFormatMedium properties:nil];
+    if (mediumData) {
+        [self setImageData:mediumData forFormat:ZMImageFormatMedium properties:nil];
+    } else {
+        [self.managedObjectContext.zm_fileAssetCache deleteMediumImageDataFor:self];
+    }
+
 }
 
 - (void)setPreviewData:(NSData *)previewData
 {
-    [self setImageData:previewData forFormat:ZMImageFormatPreview properties:nil];
+    if (previewData) {
+        [self setImageData:previewData forFormat:ZMImageFormatPreview properties:nil];
+    } else {
+        [self.managedObjectContext.zm_fileAssetCache deletePreviewImageDataFor:self];
+    }
 }
 
 - (NSOrderedSet *)requiredImageFormats;
@@ -271,8 +285,8 @@
 
 - (void)processingDidFinish;
 {
-    [self deleteImageDataForFormat:ZMImageFormatOriginal];
-    
+    [self.managedObjectContext.zm_fileAssetCache deleteOriginalImageDataFor:self];
+
     self.originalDataProcessed = YES;
     [self.managedObjectContext enqueueDelayedSave];
 }

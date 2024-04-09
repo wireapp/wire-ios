@@ -24,7 +24,6 @@ import WireCoreCrypto
 public protocol SafeCoreCryptoProtocol {
     func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T
     func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T
-    func mlsInit(clientID: String) async throws
     func tearDown() throws
 }
 
@@ -78,15 +77,6 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         self.init(coreCrypto: coreCrypto, databasePath: path)
     }
 
-    public func mlsInit(clientID: String) async throws {
-        guard let clientIdBytes = ClientId(from: clientID) else {
-            throw CoreCryptoSetupFailure.failedToGetClientIDBytes
-        }
-        try await coreCrypto.mlsInit(clientId: clientIdBytes,
-                                     ciphersuites: [CiphersuiteName.default.rawValue],
-                                     nbKeyPackage: nil)
-    }
-
     init(coreCrypto: CoreCryptoProtocol, databasePath: String) {
         self.coreCrypto = coreCrypto
         self.databasePath = databasePath
@@ -114,7 +104,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         do {
             result = try await block(coreCrypto)
         } catch {
-            WireLogger.coreCrypto.error("failed to perform block on core crypto")
+            WireLogger.coreCrypto.error("failed to perform block on core crypto: \(error)")
             throw error
         }
 
@@ -129,7 +119,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         do {
             try await coreCrypto.restoreFromDisk()
         } catch {
-            WireLogger.coreCrypto.error(error.localizedDescription)
+            WireLogger.coreCrypto.error("coreCrypto.restoreFromDisk() failed: \(error)")
         }
     }
 }

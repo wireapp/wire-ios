@@ -20,73 +20,181 @@ import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
 
-final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
+final class OneOnOneResolverTests: XCTestCase {
 
-    var sut: OneOnOneResolver!
-    var protocolSelector: MockOneOnOneProtocolSelectorInterface!
-    var migrator: MockOneOnOneMigratorInterface!
+    private var coreDataStackHelper: CoreDataStackHelper!
+    private var modelHelper: ModelHelper!
 
-    override func setUp() {
-        super.setUp()
-        protocolSelector = MockOneOnOneProtocolSelectorInterface()
-        migrator = MockOneOnOneMigratorInterface()
-        sut = OneOnOneResolver(protocolSelector: protocolSelector, migrator: migrator)
+    private var mockCoreDataStack: CoreDataStack!
+    private var mockMigrator: MockActorOneOnOneMigrator!
+    private var mockProtocolSelector: MockActorOneOnOneProtocolSelector!
+
+    private var syncContext: NSManagedObjectContext { mockCoreDataStack.syncContext }
+
+    override func setUp() async throws {
+        try await super.setUp()
+
+        coreDataStackHelper = CoreDataStackHelper()
+        modelHelper = ModelHelper()
+
+        mockCoreDataStack = try await coreDataStackHelper.createStack()
+
+        mockProtocolSelector = MockActorOneOnOneProtocolSelector()
+        mockMigrator = MockActorOneOnOneMigrator()
     }
 
-    override func tearDown() {
-        sut = nil
-        protocolSelector = nil
-        migrator = nil
-        super.tearDown()
+    override func tearDown() async throws {
+        mockProtocolSelector = nil
+        mockCoreDataStack = nil
+
+        try coreDataStackHelper.cleanupDirectory()
+        coreDataStackHelper = nil
+        modelHelper = nil
+
+        try await super.tearDown()
     }
 
     // MARK: - Tests
 
-    func test_ResolveOneOnOneConversation_MLSSupported() async throws {
+    func test_resolveAllOneOnOneConversations_givenZeroUsers() async throws {
         // Given
-        let userID = QualifiedID.random()
-
-        // Mock
-        protocolSelector.getProtocolForUserWithIn_MockValue = .mls
-        migrator.migrateToMLSUserIDIn_MockMethod = { _, _ in .random() }
+        let resolver = makeResolver()
 
         // When
-        try await sut.resolveOneOnOneConversation(with: userID, in: uiMOC)
+        try await resolver.resolveAllOneOnOneConversations(in: syncContext)
 
         // Then
-        XCTAssertEqual(migrator.migrateToMLSUserIDIn_Invocations.count, 1)
-        let invocation = try XCTUnwrap(migrator.migrateToMLSUserIDIn_Invocations.first)
-        XCTAssertEqual(invocation.userID, userID)
+        let selectorInvocationsIsEmpty = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.isEmpty
+        XCTAssertTrue(selectorInvocationsIsEmpty)
+    }
+
+    func test_resolveAllOneOnOneConversations_givenMultipleUsers_thenMigrateAll() async throws {
+        // Given
+        let resolver = makeResolver()
+
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.some(.none))
+
+        await syncContext.perform { [self] in
+            makeOneOnOneConversation(in: syncContext)
+            makeOneOnOneConversation(in: syncContext)
+        }
+
+        // When
+        try await resolver.resolveAllOneOnOneConversations(in: syncContext)
+
+        // Then
+        let selectorInvocationsCount = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.count
+        XCTAssertEqual(selectorInvocationsCount, 2)
+    }
+
+    func test_resolveAllOneOnOneConversations_givenUserWithoutDomain_thenSkipOneMigration() async throws {
+        // Given
+        let resolver = makeResolver()
+
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
+        await mockMigrator.setMigrateToMLSUserIDIn_MockMethod { _, _ in .random() }
+
+        // mockHandler must be retained to catch notifications
+        await syncContext.perform { [self] in
+            makeOneOnOneConversation(
+                domain: nil,
+                in: syncContext
+            )
+            makeOneOnOneConversation(
+                domain: "local@domain.com",
+                in: syncContext
+            )
+        }
+
+        // When
+        try await resolver.resolveAllOneOnOneConversations(in: syncContext)
+
+        // Then
+        let selectorInvocationsCount = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.count
+        XCTAssertEqual(selectorInvocationsCount, 1)
+
+        let migratorInvocationsCount = await mockMigrator.migrateToMLSUserIDIn_Invocations.count
+        XCTAssertEqual(migratorInvocationsCount, 1)
+    }
+
+    func test_resolveAllOneOnOneConversations_givenMigrationFailure() async throws {
+        // Given
+        let resolver = makeResolver()
+
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
+        await mockMigrator.setMigrateToMLSUserIDMlsGroupIDIn_MockError(MockOneOnOneResolverError.failed)
+
+        await syncContext.perform { [self] in
+            makeOneOnOneConversation(in: syncContext)
+            makeOneOnOneConversation(in: syncContext)
+        }
+
+        // When
+        try await resolver.resolveAllOneOnOneConversations(in: syncContext)
+
+        // Then
+        let selectorCount = await mockProtocolSelector.getProtocolForUserWithIn_Invocations.count
+        XCTAssertEqual(selectorCount, 2)
+
+        let migratorCount = await mockMigrator.migrateToMLSUserIDIn_Invocations.count
+        XCTAssertEqual(migratorCount, 2)
+    }
+
+    func test_resolveOneOnOneConversation_givenMLS() async throws {
+        // Given
+        let userID: QualifiedID = .random()
+        let resolver = makeResolver()
+
+        // Mock
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
+        await mockMigrator.setMigrateToMLSUserIDIn_MockValue(.random())
+
+        await syncContext.perform { [self] in
+            let conversation = makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
+            conversation.messageProtocol = .proteus
+        }
+
+        // When
+        let result = try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
+
+        // Then
+        guard case .migratedToMLSGroup = result else {
+            XCTFail("expected result '.noAction'")
+            return
+        }
+
+        let invocations = await mockMigrator.migrateToMLSUserIDIn_Invocations
+        XCTAssertEqual(invocations.count, 1)
+        XCTAssertEqual(invocations.first?.userID, userID)
     }
 
     func test_ResolveOneOnOneConversation_ProteusSupported() async throws {
         // Given
-        let userID = QualifiedID.random()
+        let resolver = makeResolver()
 
         // Mock
-        protocolSelector.getProtocolForUserWithIn_MockValue = .proteus
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.proteus)
 
         // When
-        try await sut.resolveOneOnOneConversation(with: userID, in: uiMOC)
+        let result = try await resolver.resolveOneOnOneConversation(with: .random(), in: syncContext)
 
         // Then
-        XCTAssertEqual(migrator.migrateToMLSUserIDIn_Invocations.count, 0)
+        guard case .noAction = result else {
+            XCTFail("expected result '.noAction'")
+            return
+        }
+
+        let invocations = await mockMigrator.migrateToMLSUserIDIn_Invocations
+        XCTAssert(invocations.isEmpty)
     }
 
-    func test_ResolveOneOnOneConversation_NoCommonProtocols() async throws {
+    func test_ResolveOneOnOneConversation_NoCommonProtocols_forSelfUser() async throws {
         // Given
-        let userID = QualifiedID.random()
+        let userID: QualifiedID = .random()
+        let resolver = makeResolver()
 
-        let conversation = await uiMOC.perform { [self] in
-            let user = createUser(in: uiMOC)
-            user.remoteIdentifier = userID.uuid
-            user.domain = userID.domain
-
-            let (_, conversation) = createConnection(
-                status: .pending,
-                to: user,
-                in: uiMOC
-            )
+        let conversation = await syncContext.perform { [self] in
+            let conversation = makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
 
             XCTAssertEqual(conversation.messageProtocol, .proteus)
             XCTAssertFalse(conversation.isForcedReadOnly)
@@ -95,16 +203,62 @@ final class OneOnOneResolverTests: ZMBaseManagedObjectTest {
         }
 
         // Mock
-        protocolSelector.getProtocolForUserWithIn_MockValue = .some(nil)
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.some(nil))
 
         // When
-        try await sut.resolveOneOnOneConversation(with: userID, in: uiMOC)
+        let result = try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
 
         // Then
-        await uiMOC.perform {
+        guard case .archivedAsReadOnly = result else {
+            XCTFail("expected result '.noAction'")
+            return
+        }
+
+        await syncContext.perform {
             XCTAssertEqual(conversation.messageProtocol, .proteus)
             XCTAssertTrue(conversation.isForcedReadOnly)
+            XCTAssertEqual(conversation.lastMessage?.systemMessageData?.systemMessageType, .mlsNotSupportedSelfUser)
         }
     }
 
+    // MARK: Helpers
+
+    private func makeResolver() -> OneOnOneResolver {
+        OneOnOneResolver(
+            protocolSelector: mockProtocolSelector,
+            migrator: mockMigrator
+        )
+    }
+
+    @discardableResult
+    private func makeOneOnOneConversation(
+        domain: String? = "local@domain.com",
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
+        let user = modelHelper.createUser(
+            domain: domain,
+            in: context
+        )
+        let (_, conversation) = modelHelper.createConnection(status: .accepted, to: user, in: context)
+        return conversation
+    }
+
+    @discardableResult
+    private func makeOneOnOneConversation(
+        qualifiedID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
+        let user = modelHelper.createUser(
+            qualifiedID: qualifiedID,
+            in: context
+        )
+        let (_, conversation) = modelHelper.createConnection(status: .accepted, to: user, in: context)
+        return conversation
+    }
+}
+
+// MARK: - Mock Error
+
+private enum MockOneOnOneResolverError: Error {
+    case failed
 }

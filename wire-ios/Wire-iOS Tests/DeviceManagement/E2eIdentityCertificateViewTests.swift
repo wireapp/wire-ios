@@ -23,10 +23,15 @@ import SwiftUI
 
 final class E2eIdentityCertificateViewTests: BaseSnapshotTestCase {
 
+    // MARK: - Properties
+
     var sut: UIHostingController<E2EIdentityCertificateDetailsView>!
-    lazy var kCertificate: String  = {
-        return .mockCertificate()
+
+    lazy var kCertificate: String = {
+        return .mockCertificate
     }()
+
+    // MARK: - Helper Method
 
     func setupSut(
         certificateDetails: String,
@@ -43,6 +48,8 @@ final class E2eIdentityCertificateViewTests: BaseSnapshotTestCase {
         sut.view.frame = UIScreen.main.bounds
         sut.overrideUserInterfaceStyle = mode
     }
+
+    // MARK: - Light Mode
 
     func testGivenCopyIsDisabledWhenCertificateIsAvailableThenRightViewIsShown() {
         setupSut(

@@ -195,8 +195,10 @@
 
 - (void)setupCaches
 {
+    NSURL *location = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] firstObject];
+
     self.uiMOC.zm_userImageCache = [[UserImageLocalCache alloc] initWithLocation:nil];
-    self.uiMOC.zm_fileAssetCache = [[FileAssetCache alloc] initWithLocation:nil];
+    self.uiMOC.zm_fileAssetCache = [[FileAssetCache alloc] initWithLocation:location];
 
     [self.syncMOC performGroupedBlockAndWait:^{
         self.syncMOC.zm_fileAssetCache = self.uiMOC.zm_fileAssetCache;
@@ -206,11 +208,11 @@
 
 - (void)wipeCaches
 {
-    [self.uiMOC.zm_fileAssetCache wipeCaches];
+    [self.uiMOC.zm_fileAssetCache wipeCachesAndReturnError:nil];
     [self.uiMOC.zm_userImageCache wipeCache];
 
     [self.syncMOC performGroupedBlockAndWait:^{
-        [self.syncMOC.zm_fileAssetCache wipeCaches];
+        [self.syncMOC.zm_fileAssetCache wipeCachesAndReturnError:nil];
         [self.syncMOC.zm_userImageCache wipeCache];
     }];
     [PersonName.stringsToPersonNames removeAllObjects];

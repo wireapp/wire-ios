@@ -36,7 +36,7 @@ class AssetColletionBatchedTests: ModelObjectsTests {
         delegate = nil
         sut?.tearDown()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        uiMOC.zm_fileAssetCache.wipeCaches()
+        try? uiMOC.zm_fileAssetCache.wipeCaches()
         sut = nil
         conversation = nil
         super.tearDown()
@@ -78,7 +78,7 @@ class AssetColletionBatchedTests: ModelObjectsTests {
         let receivedMessageCount = delegate.messagesByFilter.first?[defaultMatchPair]?.count
         XCTAssertEqual(receivedMessageCount, totalMessageCount)
 
-        guard let lastMessage =  delegate.messagesByFilter.last?[defaultMatchPair]?.last,
+        guard let lastMessage = delegate.messagesByFilter.last?[defaultMatchPair]?.last,
             let context = lastMessage.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }
@@ -130,7 +130,7 @@ class AssetColletionBatchedTests: ModelObjectsTests {
         let receivedMessageCount = delegate.messagesByFilter.first?[defaultMatchPair]?.count
         XCTAssertEqual(receivedMessageCount, totalMessageCount)
 
-        guard let lastMessage =  delegate.messagesByFilter.last?[defaultMatchPair]?.last,
+        guard let lastMessage = delegate.messagesByFilter.last?[defaultMatchPair]?.last,
             let context = lastMessage.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }
@@ -153,7 +153,7 @@ class AssetColletionBatchedTests: ModelObjectsTests {
         let receivedMessages = delegate.allMessages(for: defaultMatchPair)
         XCTAssertEqual(receivedMessages.count, totalMessageCount)
 
-        guard let lastMessage =  receivedMessages.last,
+        guard let lastMessage = receivedMessages.last,
             let context = lastMessage.managedObjectContext else { return XCTFail() }
         XCTAssertTrue(context.zm_isUserInterfaceContext)
     }

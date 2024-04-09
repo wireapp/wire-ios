@@ -93,7 +93,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     // MARK: - Properties
 
     let router: AppRootRouter?
-    var onDismiss: (() -> Void)?
+    let onDismiss: (_ completion: @escaping () -> Void) -> Void
 
     // MARK: - State
 
@@ -109,7 +109,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     init(
         router: AppRootRouter? = nil,
-        onDismiss: (() -> Void)? = nil
+        onDismiss: @escaping (_ completion: @escaping () -> Void) -> Void = { $0() }
     ) {
         self.router = router
         self.onDismiss = onDismiss
@@ -122,7 +122,9 @@ final class DeveloperToolsViewModel: ObservableObject {
         sections.append(Section(
             header: "Actions",
             items: [
-                .button(ButtonItem(title: "Enroll e2ei certificate", action: enrollE2EICertificate)),
+                .destination(DestinationItem(title: "E2E Identity", makeView: {
+                    AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel()))
+                })),
                 .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
                     AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self?.selfClient)))
                 })),
@@ -132,7 +134,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .destination(DestinationItem(title: "Deep links", makeView: { [weak self] in
                     AnyView(DeepLinksView(viewModel: DeepLinksViewModel(
                         router: self?.router,
-                        onDismiss: self?.onDismiss
+                        onDismiss: self?.onDismiss ?? { $0() }
                     )))
                 }))
             ]
@@ -227,7 +229,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     func handleEvent(_ event: Event) {
         switch event {
         case .dismissButtonTapped:
-            onDismiss?()
+            onDismiss {}
 
         case let .itemCopyRequested(.text(textItem)):
             UIPasteboard.general.string = textItem.value
@@ -241,24 +243,6 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     // MARK: - Actions
-
-    private func enrollE2EICertificate() {
-        guard let session = ZMUserSession.shared() else { return }
-        let e2eiCertificateUseCase = session.enrollE2eICertificate
-        guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
-            return
-        }
-        let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
-
-        Task {
-            do {
-                _ = try await e2eiCertificateUseCase?.invoke(
-                    authenticate: oauthUseCase.invoke)
-            } catch {
-                WireLogger.e2ei.error("failed to enroll e2ei: \(error)")
-            }
-        }
-    }
 
     private func checkRegisteredTokens() {
         guard
