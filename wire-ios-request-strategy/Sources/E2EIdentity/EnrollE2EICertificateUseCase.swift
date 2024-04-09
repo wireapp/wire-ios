@@ -134,6 +134,7 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
         guard let selfClientId else {
             throw Failure.missingSelfClientID
         }
+
         let isUpgradingMLSClient = await context.perform {
             ZMUser.selfUser(in: self.context).selfClient()?.hasRegisteredMLSClient ?? false
         }
