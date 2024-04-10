@@ -97,7 +97,7 @@ jobs:
 
       - name: 'Set date variable'
         id: date
-        run: echo "::set-output name=date::$(date +%s%N)"
+        run: echo "date::$(date +%s%N)" >> $GITHUB_OUTPUT
   
       - name: 'Upload changelog'
         id: upload-file
@@ -199,7 +199,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: post-build-env
+          name: post-build-env-${{ inputs.fastlane_action }}
           path: |
             **/.post_build/*.env
       - name: Load .env file
@@ -207,10 +207,6 @@ jobs:
         uses: xom9ikk/dotenv@v2.3.0
         with:
           path: fastlane/.post_build
-      - uses: akiojin/decode-base64-github-action@v1.0.2
-        id: base64-decoded-RELEASE_NOTES
-        with:
-          base64: ${{ env.RELEASE_NOTES }}
       - uses: akiojin/decode-base64-github-action@v1.0.2
         id: base64-decoded-S3_PATHS
         with:

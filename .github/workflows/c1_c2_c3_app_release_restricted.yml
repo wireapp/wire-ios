@@ -1,25 +1,37 @@
 name: C1 C2 C3 Restricted
 
-on: workflow_dispatch
-
-permissions: 
-  checks: write
+on: 
+  workflow_dispatch:
+    inputs:
+      column:
+        description: 'Select the column to release (C1, C2, C3, all)'
+        type: choice
+        options:
+          - C1
+          - C2
+          - C3
+          - all
+        required: true
+        default: 'all'
 
 jobs:
-  column_1_restricted:
+  changelog:
+    uses: ./.github/workflows/changelog.yml
+    with:
+      cloud: false
+  release:
+    needs: changelog
+    strategy:
+      matrix:
+        app_config:
+          - column: C1
+            fastlane_action: "appstore_col_1_restricted"
+          - column: C2
+            fastlane_action: "appstore_col_2_restricted"
+          - column: C3
+            fastlane_action: "appstore_col_3_restricted"
+    if: contains(inputs.column, matrix.app_config.column) || inputs.column == 'all'
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
-      fastlane_action: appstore_col_1_restricted
-    secrets: inherit
-
-  column_2_restricted:
-    uses: ./.github/workflows/_reusable_app_release.yml
-    with:
-      fastlane_action: appstore_col_2_restricted
-    secrets: inherit
-
-  column_3_restricted:
-    uses: ./.github/workflows/_reusable_app_release.yml
-    with:
-      fastlane_action: appstore_col_3_restricted
-    secrets: inherit
+      fastlane_action: ${{ matrix.app_config.fastlane_action }}
+      changelog-url: ${{ needs.changelog.outputs.changelog-url }}
