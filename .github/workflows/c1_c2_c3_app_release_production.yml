@@ -1,6 +1,18 @@
 name: C1 C2 C3 Production
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      column:
+        description: 'Column (C1, C2, C3, all)'
+        type: choice
+        options:
+          - C1
+          - C2
+          - C3
+          - all
+        required: true
+        default: 'all'
 
 permissions: 
   checks: write

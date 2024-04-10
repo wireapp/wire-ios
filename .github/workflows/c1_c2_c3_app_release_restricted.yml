@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       column:
-        description: 'Select the column to release (C1, C2, C3, all)'
+        description: 'Column (C1, C2, C3, all)'
         type: choice
         options:
           - C1
