@@ -19,6 +19,5 @@
 
 /// Common log tags
 #define ZMTAG_CORE_DATA @"core-data"
-#define ZMTAG_NETWORK @"Network"
 #define ZMTAG_EVENT_PROCESSING @"event-processing"
 

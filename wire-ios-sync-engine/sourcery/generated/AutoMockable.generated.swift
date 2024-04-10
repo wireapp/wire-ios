@@ -275,6 +275,19 @@ public class MockIsE2EICertificateEnrollmentRequiredProtocol: IsE2EICertificateE
 
 }
 
+public class MockPasteboard: Pasteboard {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - text
+
+    public var text: String?
+
+
+}
+
 class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
 
     // MARK: - Life cycle
