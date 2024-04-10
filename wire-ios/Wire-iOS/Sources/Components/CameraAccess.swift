@@ -42,9 +42,14 @@ final class CameraAccess: NSObject {
         return false
     }
 
-    static private func displayCameraAlertForOngoingCall(at feature: CameraAccessFeature, from viewController: UIViewController) {
-        let alert = UIAlertController.alertWithOKButton(title: "conversation.input_bar.ongoing_call_alert.title".localized,
-                                            message: feature.message.localized)
+    static private func displayCameraAlertForOngoingCall(
+        at feature: CameraAccessFeature,
+        from viewController: UIViewController
+    ) {
+        let alert = UIAlertController.alertWithOKButton(
+            title: L10n.Localizable.Conversation.InputBar.OngoingCallAlert.title,
+            message: feature.message
+        )
 
         viewController.present(alert, animated: true)
     }
@@ -53,9 +58,9 @@ final class CameraAccess: NSObject {
 fileprivate extension CameraAccessFeature {
     var message: String {
         switch self {
-        case .recordVideo: return "conversation.input_bar.ongoing_call_alert.video.message"
-        case .recordAudioMessage: return "conversation.input_bar.ongoing_call_alert.audio.message"
-        case .takePhoto: return "conversation.input_bar.ongoing_call_alert.photo.message"
+        case .recordVideo: return L10n.Localizable.Conversation.InputBar.OngoingCallAlert.Video.message
+        case .recordAudioMessage: return L10n.Localizable.Conversation.InputBar.OngoingCallAlert.Audio.message
+        case .takePhoto: return L10n.Localizable.Conversation.InputBar.OngoingCallAlert.Photo.message
         }
     }
 }

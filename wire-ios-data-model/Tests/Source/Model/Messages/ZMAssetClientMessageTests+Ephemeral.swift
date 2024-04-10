@@ -70,7 +70,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         }
         XCTAssertTrue(message.underlyingMessage!.hasAsset)
         XCTAssertTrue(message.underlyingMessage!.ephemeral.hasAsset)
-        XCTAssertEqual(message.underlyingMessage!.ephemeral.expireAfterMillis, Int64(10*1000))
+        XCTAssertEqual(message.underlyingMessage!.ephemeral.expireAfterMillis, Int64(10 * 1000))
     }
 
     func assetWithImage() -> WireProtos.Asset {
@@ -113,7 +113,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
             return XCTFail()
         }
         XCTAssertTrue(message.underlyingMessage!.ephemeral.hasAsset)
-        XCTAssertEqual(message.underlyingMessage!.ephemeral.expireAfterMillis, Int64(10*1000))
+        XCTAssertEqual(message.underlyingMessage!.ephemeral.expireAfterMillis, Int64(10 * 1000))
     }
 
     func testThatItStartsTheTimerForMultipartMessagesWhenTheAssetIsUploaded() {
@@ -221,23 +221,25 @@ extension ZMAssetClientMessageTests_Ephemeral {
     }
 
     func testThatItStartsAObuscationTimerForImageAssetMessagesIfTheMessageIsAMessageOfTheCurrentUser() throws {
-        // given
-        syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
-        syncConversation.lastReadServerTimeStamp = Date()
-        let sender = ZMUser.selfUser(in: syncMOC)
+        try syncMOC.performAndWait {
+            // given
+            syncConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+            syncConversation.lastReadServerTimeStamp = Date()
+            let sender = ZMUser.selfUser(in: syncMOC)
 
-        let fileMetadata = self.createFileMetadata()
-        let message = appendImageMessage(to: syncConversation)
-        message.sender = sender
-        try message.setUnderlyingMessage(GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: Data(), sha256: Data()), nonce: message.nonce!))
-        XCTAssertTrue(message.underlyingMessage!.assetData!.hasUploaded)
+            _ = self.createFileMetadata()
+            let message = appendImageMessage(to: syncConversation)
+            message.sender = sender
+            try message.setUnderlyingMessage(GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: Data(), sha256: Data()), nonce: message.nonce!))
+            XCTAssertTrue(message.underlyingMessage!.assetData!.hasUploaded)
 
-        // when
-        XCTAssertTrue(message.startDestructionIfNeeded())
+            // when
+            XCTAssertTrue(message.startDestructionIfNeeded())
 
-        // then
-        XCTAssertEqual(self.obfuscationTimer?.runningTimersCount, 1)
-        XCTAssertEqual(self.obfuscationTimer?.isTimerRunning(for: message), true)
+            // then
+            XCTAssertEqual(self.obfuscationTimer?.runningTimersCount, 1)
+            XCTAssertEqual(self.obfuscationTimer?.isTimerRunning(for: message), true)
+        }
     }
 
     func testThatItStartsATimerIfTheMessageIsAMessageOfTheOtherUser() throws {

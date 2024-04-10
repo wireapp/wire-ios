@@ -36,13 +36,13 @@ struct CallSnapshot {
     let isConstantBitRate: Bool
     let videoState: VideoState
     let networkQuality: NetworkQuality
-    let isConferenceCall: Bool
+    let conversationType: AVSConversationType
     let degradedUser: ZMUser?
     let activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker]
     let videoGridPresentationMode: VideoGridPresentationMode
     var conversationObserverToken: NSObjectProtocol?
-    var onConferenceInfoChangedToken: AnyCancellable?
     var mlsConferenceStaleParticipantsRemover: MLSConferenceStaleParticipantsRemover?
+    var updateConferenceInfoTask: Task<Void, Never>?
 
     var isDegradedCall: Bool {
         return degradedUser != nil
@@ -65,13 +65,13 @@ struct CallSnapshot {
             isConstantBitRate: isConstantBitRate,
             videoState: videoState,
             networkQuality: networkQuality,
-            isConferenceCall: isConferenceCall,
+            conversationType: conversationType,
             degradedUser: degradedUser,
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
-            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover,
+            updateConferenceInfoTask: updateConferenceInfoTask
         )
     }
 
@@ -92,13 +92,13 @@ struct CallSnapshot {
             isConstantBitRate: enabled,
             videoState: videoState,
             networkQuality: networkQuality,
-            isConferenceCall: isConferenceCall,
+            conversationType: conversationType,
             degradedUser: degradedUser,
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
-            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover,
+            updateConferenceInfoTask: updateConferenceInfoTask
         )
     }
 
@@ -119,13 +119,13 @@ struct CallSnapshot {
             isConstantBitRate: isConstantBitRate,
             videoState: videoState,
             networkQuality: networkQuality,
-            isConferenceCall: isConferenceCall,
+            conversationType: conversationType,
             degradedUser: degradedUser,
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
-            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover,
+            updateConferenceInfoTask: updateConferenceInfoTask
         )
     }
 
@@ -146,13 +146,13 @@ struct CallSnapshot {
             isConstantBitRate: isConstantBitRate,
             videoState: videoState,
             networkQuality: networkQuality,
-            isConferenceCall: isConferenceCall,
+            conversationType: conversationType,
             degradedUser: degradedUser,
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
-            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover,
+            updateConferenceInfoTask: updateConferenceInfoTask
         )
     }
 
@@ -177,13 +177,13 @@ struct CallSnapshot {
             isConstantBitRate: isConstantBitRate,
             videoState: videoState,
             networkQuality: networkQuality,
-            isConferenceCall: isConferenceCall,
+            conversationType: conversationType,
             degradedUser: degradedUser,
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
-            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover,
+            updateConferenceInfoTask: updateConferenceInfoTask
         )
     }
 
@@ -204,13 +204,13 @@ struct CallSnapshot {
             isConstantBitRate: isConstantBitRate,
             videoState: videoState,
             networkQuality: networkQuality,
-            isConferenceCall: isConferenceCall,
+            conversationType: conversationType,
             degradedUser: degradedUser,
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
-            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover,
+            updateConferenceInfoTask: updateConferenceInfoTask
         )
     }
 
@@ -231,13 +231,13 @@ struct CallSnapshot {
             isConstantBitRate: isConstantBitRate,
             videoState: videoState,
             networkQuality: networkQuality,
-            isConferenceCall: isConferenceCall,
+            conversationType: conversationType,
             degradedUser: degradedUser,
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: presentationMode,
             conversationObserverToken: conversationObserverToken,
-            onConferenceInfoChangedToken: onConferenceInfoChangedToken,
-            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover
+            mlsConferenceStaleParticipantsRemover: mlsConferenceStaleParticipantsRemover,
+            updateConferenceInfoTask: updateConferenceInfoTask
         )
     }
 }

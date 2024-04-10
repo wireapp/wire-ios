@@ -50,7 +50,7 @@ enum DebugActions {
         if let convo = allConversations.first(where: { predicate.evaluate(with: $0) }) {
 
             let message = ["Found an unread conversation:",
-                       "\(convo.displayName)",
+                           "\(String(describing: convo.displayName))",
                         "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>"
                 ].joined(separator: "\n")
             let textToCopy = convo.remoteIdentifier?.uuidString
@@ -63,7 +63,7 @@ enum DebugActions {
     /// Shows the user ID of the self user
     static func showUserId(_ type: SettingsCellDescriptorType) {
         guard let userSession = ZMUserSession.shared(),
-            let selfUser = (userSession.selfUser as? ZMUser)
+            let selfUser = (userSession.providedSelfUser as? ZMUser)
         else { return }
 
         alert(
@@ -81,7 +81,7 @@ enum DebugActions {
         if let convo = (ZMConversationList.conversations(inUserSession: userSession) as! [ZMConversation])
             .first(where: predicate.evaluate) {
             let message = ["Found an unread conversation:",
-                             "\(convo.displayName)",
+                           "\(String(describing: convo.displayName))",
                 "<\(convo.remoteIdentifier?.uuidString ?? "n/a")>"
                 ].joined(separator: "\n")
             let textToCopy = convo.remoteIdentifier?.uuidString
@@ -133,7 +133,7 @@ enum DebugActions {
 
         func sendNext(count: Int) {
             userSession.enqueue {
-                try! conversation.appendText(content: "Message #\(count+1), series \(nonce)")
+                try! conversation.appendText(content: "Message #\(count + 1), series \(nonce)")
             }
             guard count + 1 < amount else { return }
             DispatchQueue.main.asyncAfter(
@@ -145,9 +145,15 @@ enum DebugActions {
         sendNext(count: 0)
     }
 
+    static func triggerResyncResources(_ type: SettingsCellDescriptorType) {
+        ZMUserSession.shared()?.syncManagedObjectContext.performGroupedBlock {
+            ZMUserSession.shared()?.requestResyncResources()
+        }
+    }
+
     static func triggerSlowSync(_ type: SettingsCellDescriptorType) {
         ZMUserSession.shared()?.syncManagedObjectContext.performGroupedBlock {
-            ZMUserSession.shared()?.requestSlowSync()
+            ZMUserSession.shared()?.syncStatus.forceSlowSync()
         }
     }
 
@@ -251,7 +257,7 @@ enum DebugActions {
     }
 
     static func appendMessagesToDatabase(count: Int) {
-        let userSession = ZMUserSession.shared()!
+        guard let userSession = ZMUserSession.shared() else { return }
         let conversation = ZMConversationList.conversations(inUserSession: userSession).firstObject! as! ZMConversation
         let conversationId = conversation.objectID
 
@@ -313,7 +319,7 @@ enum DebugActions {
             preferredStyle: .alert
         )
 
-        let okAction = UIAlertAction(title: "general.ok".localized, style: .default) { [controller] _ in
+        let okAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { [controller] _ in
             callback(controller.textFields?.first?.text ?? "")
         }
 

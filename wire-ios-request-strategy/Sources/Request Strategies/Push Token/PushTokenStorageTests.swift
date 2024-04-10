@@ -16,22 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSystem
 import XCTest
+
 @testable import WireRequestStrategy
 
-class PushTokenStorageTests: MessagingTestBase {
+final class PushTokenStorageTests: MessagingTestBase {
+
+    private let userDefaultsSuiteName = "PushTokenStorageTests"
 
     // MARK: - Set up
 
     override func setUp() {
         super.setUp()
-        PushTokenStorage.storage = UserDefaults(suiteName: "PushTokenStorageTests")!
+        PushTokenStorage.storage = UserDefaults(suiteName: userDefaultsSuiteName)!
         PushTokenStorage.pushToken = nil
     }
 
     override func tearDown() {
         PushTokenStorage.pushToken = nil
-        PushTokenStorage.storage.reset()
+        PushTokenStorage.storage.removePersistentDomain(forName: userDefaultsSuiteName)
         super.tearDown()
     }
 

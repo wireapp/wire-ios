@@ -91,12 +91,14 @@ final class FileTransferView: UIView, TransferView {
     }
 
     private func createConstraints() {
-        [topLabel,
-         actionButton,
-         fileTypeIconView,
-         progressView,
-         bottomLabel,
-         loadingView].prepareForLayout()
+        [
+            topLabel,
+            actionButton,
+            fileTypeIconView,
+            progressView,
+            bottomLabel,
+            loadingView
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             topLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12),
@@ -163,7 +165,7 @@ final class FileTransferView: UIView, TransferView {
 
         case .uploading:
             if fileMessageData.size == 0 { fallthrough }
-            let statusText = "content.file.uploading".localized(uppercased: true) && labelFont && labelTextBlendedColor
+            let statusText = L10n.Localizable.Content.File.uploading.localizedUppercase && labelFont && labelTextBlendedColor
             let firstLine = fileNameAttributed
             let secondLine = fileSizeAttributed + dot + statusText
             topLabel.attributedText = firstLine
@@ -176,14 +178,14 @@ final class FileTransferView: UIView, TransferView {
                 topLabel.attributedText = firstLine
                 bottomLabel.attributedText = secondLine
             case .downloading:
-                let statusText = "content.file.downloading".localized(uppercased: true) && labelFont && labelTextBlendedColor
+                let statusText = L10n.Localizable.Content.File.downloading.localizedUppercase && labelFont && labelTextBlendedColor
                 let firstLine = fileNameAttributed
                 let secondLine = fileSizeAttributed + dot + statusText
                 topLabel.attributedText = firstLine
                 bottomLabel.attributedText = secondLine
             }
         case .uploadingFailed, .uploadingCancelled:
-            let statusText = fileMessageData.transferState == .uploadingFailed ? "content.file.upload_failed".localized : "content.file.upload_cancelled".localized
+            let statusText = fileMessageData.transferState == .uploadingFailed ? L10n.Localizable.Content.File.uploadFailed : L10n.Localizable.Content.File.uploadCancelled
             let attributedStatusText = statusText.localizedUppercase && labelFont && SemanticColors.Label.textErrorDefault
 
             let firstLine = fileNameAttributed
@@ -244,17 +246,21 @@ final class FileTransferView: UIView, TransferView {
     // MARK: - Actions
 
     @objc func onActionButtonPressed(_ sender: UIButton) {
-        guard let message = fileMessage, let fileMessageData = message.fileMessageData else {
+        guard
+            let message = fileMessage,
+            let fileMessageData = message.fileMessageData
+        else {
             return
         }
 
         switch fileMessageData.transferState {
         case .uploading:
-            if .none != message.fileMessageData!.fileURL {
-                delegate?.transferView(self, didSelect: .cancel)
-            }
+            guard fileMessageData.hasLocalFileData else { return }
+            delegate?.transferView(self, didSelect: .cancel)
+
         case .uploadingFailed, .uploadingCancelled:
             delegate?.transferView(self, didSelect: .resend)
+
         case .uploaded:
             if case .downloading = fileMessageData.downloadState {
                 progressView.setProgress(0, animated: false)

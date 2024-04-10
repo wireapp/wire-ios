@@ -21,15 +21,11 @@ import XCTest
 @testable import Wire
 
 final class SearchGroupSelectorSnapshotTests: XCTestCase {
-    var sut: SearchGroupSelector!
 
-    override func setUp() {
-        super.setUp()
-    }
+    var sut: SearchGroupSelector!
 
     override func tearDown() {
         sut = nil
-
         super.tearDown()
     }
 
@@ -41,7 +37,7 @@ final class SearchGroupSelectorSnapshotTests: XCTestCase {
     func testForInitState_WhenSelfUserCanNotCreateService() {
         // GIVEN
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
-        SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
+        SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
         createSut()
 
         // WHEN & THEN
@@ -52,7 +48,7 @@ final class SearchGroupSelectorSnapshotTests: XCTestCase {
         // GIVEN
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         mockSelfUser.canCreateService = true
-        SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
+        SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
 
         createSut()
 

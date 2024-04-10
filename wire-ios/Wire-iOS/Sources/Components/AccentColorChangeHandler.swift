@@ -19,25 +19,23 @@
 import Foundation
 import WireSyncEngine
 
-typealias AccentColorChangeHandlerBlock = (UIColor?, Any?) -> Void
+final class AccentColorChangeHandler: UserObserving {
 
-final class AccentColorChangeHandler: NSObject, ZMUserObserver {
-
+    typealias AccentColorChangeHandlerBlock = (_ newColor: UIColor?, _ observer: Any?) -> Void
     private var handlerBlock: AccentColorChangeHandlerBlock?
     private var observer: Any?
     private var userObserverToken: Any?
 
-    class func addObserver(_ observer: Any?, handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock) -> Self {
-        return self.init(observer: observer, handlerBlock: changeHandler)
+    class func addObserver(_ observer: Any?, userSession: UserSession, handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock) -> Self {
+        return self.init(observer: observer, handlerBlock: changeHandler, userSession: userSession)
     }
 
-    init(observer: Any?, handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock) {
-        super.init()
+    init(observer: Any?, handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock, userSession: UserSession) {
         handlerBlock = changeHandler
         self.observer = observer
 
-        if let selfUser = SelfUser.provider?.selfUser, let userSession = ZMUserSession.shared() {
-            userObserverToken = UserChangeInfo.add(observer: self, for: selfUser, in: userSession)
+        if let selfUser = SelfUser.provider?.providedSelfUser {
+            userObserverToken = userSession.addUserObserver(self, for: selfUser)
         }
     }
 

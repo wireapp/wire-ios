@@ -37,7 +37,7 @@ extension ZMOperationLoopTests {
 
     func testThatMOCIsSavedOnSuccessfulRequest() {
         // given
-        let request = ZMTransportRequest(path: "/boo", method: .methodGET, payload: nil, apiVersion: APIVersion.v0.rawValue)
+        let request = ZMTransportRequest(path: "/boo", method: .get, payload: nil, apiVersion: APIVersion.v0.rawValue)
         request.add(ZMCompletionHandler(on: syncMOC,
                                         block: { [weak self] _ in
                                             _ = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: self!.syncMOC)
@@ -48,7 +48,7 @@ extension ZMOperationLoopTests {
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // expect
-        expectation(
+        customExpectation(
             forNotification: .NSManagedObjectContextDidSave,
             object: nil,
             handler: nil)
@@ -65,7 +65,7 @@ extension ZMOperationLoopTests {
 
     func testThatMOCIsSavedOnFailedRequest() {
         // given
-        let request = ZMTransportRequest(path: "/boo", method: .methodGET, payload: nil, apiVersion: APIVersion.v0.rawValue)
+        let request = ZMTransportRequest(path: "/boo", method: .get, payload: nil, apiVersion: APIVersion.v0.rawValue)
         request.add(ZMCompletionHandler(on: syncMOC,
                                         block: { [weak self] _ in
                                             _ = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: self!.syncMOC)
@@ -76,7 +76,7 @@ extension ZMOperationLoopTests {
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // expect
-        expectation(
+        customExpectation(
             forNotification: .NSManagedObjectContextDidSave,
             object: nil,
             handler: nil)

@@ -21,28 +21,21 @@ import Foundation
 @testable import WireSyncEngine
 
 @objcMembers
-public class MockUpdateEventProcessor: NSObject, WireSyncEngine.UpdateEventProcessor {
+public class MockUpdateEventProcessor: NSObject, UpdateEventProcessor {
 
-    public var eventConsumers: [ZMEventConsumer] = []
     public var processedEvents: [ZMUpdateEvent] = []
-    public var storedEvents: [ZMUpdateEvent] = []
+    public var bufferedEvents: [ZMUpdateEvent] = []
 
-    public func processEventsIfReady() -> Bool {
-        processedEvents.append(contentsOf: storedEvents)
-        storedEvents = []
-        return false
+    public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
+        bufferedEvents.append(contentsOf: events)
     }
 
-    public func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
-        processedEvents.append(contentsOf: updateEvents)
+    public func processEvents(_ events: [WireTransport.ZMUpdateEvent]) async {
+        processedEvents.append(contentsOf: events)
     }
 
-    public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
-        storedEvents.append(contentsOf: updateEvents)
+    public func processBufferedEvents() async {
+        processedEvents.append(contentsOf: bufferedEvents)
+        bufferedEvents.removeAll()
     }
-
-    public func processPendingCallEvents() throws {
-
-    }
-
 }

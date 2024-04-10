@@ -19,6 +19,7 @@
 import Foundation
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 final class ProfilePresenter: NSObject, ViewControllerDismisser {
 
@@ -60,7 +61,12 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
     func presentProfileViewController(for user: UserType,
                                       in controller: UIViewController?,
                                       from rect: CGRect,
+                                      userSession: UserSession,
                                       onDismiss: @escaping () -> Void) {
+        guard let viewer = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
 
         profileOpenedFromPeoplePicker = true
         viewToPresentOn = controller?.view
@@ -69,7 +75,12 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
 
         self.onDismiss = onDismiss
 
-        let profileViewController = ProfileViewController(user: user, viewer: SelfUser.current, context: .search)
+        let profileViewController = ProfileViewController(
+            user: user,
+            viewer: viewer,
+            context: .search,
+            userSession: userSession
+        )
         profileViewController.delegate = self
         profileViewController.viewControllerDismisser = self
 

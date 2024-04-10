@@ -32,13 +32,12 @@ protocol UnlockViewControllerDelegate: AnyObject {
 /// This VC should be wrapped in KeyboardAvoidingViewController as the "unlock" button would be covered on 4 inch iPhone
 final class UnlockViewController: UIViewController {
 
-    typealias Session = ZMUserSessionInterface & UserSessionAppLockInterface
     typealias Unlock = L10n.Localizable.Unlock
 
     weak var delegate: UnlockViewControllerDelegate?
 
     private let selfUser: UserType
-    private var userSession: Session?
+    private var userSession: UserSession?
 
     private let stackView: UIStackView = UIStackView.verticalStackView()
     private let upperStackView = UIStackView.verticalStackView()
@@ -47,14 +46,12 @@ final class UnlockViewController: UIViewController {
 
     private static let errorFont = FontSpec.smallLightFont.font!
 
-    private lazy var unlockButton: Button = {
-        let button = Button(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
-
+    private lazy var unlockButton = {
+        let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
         button.setTitle(Unlock.SubmitButton.title, for: .normal)
         button.isEnabled = false
         button.addTarget(self, action: #selector(onUnlockButtonPressed(sender:)), for: .touchUpInside)
         button.accessibilityIdentifier = "unlock_screen.button.unlock"
-
         return button
     }()
 
@@ -106,34 +103,29 @@ final class UnlockViewController: UIViewController {
     }()
 
     private let errorLabel: UILabel = {
-        let label = DynamicFontLabel(fontSpec: .smallLightFont,
-                                     color: SemanticColors.Label.textErrorDefault)
+        let label = DynamicFontLabel(
+            fontSpec: .smallLightFont,
+            color: SemanticColors.Label.textErrorDefault
+        )
         label.text = " "
-
         return label
     }()
 
-    private lazy var wipeButton: Button = {
-        let button = Button(style: .secondaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumRegularFont)
-
+    private lazy var wipeButton = {
+        let button = ZMButton(style: .secondaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumRegularFont)
         button.setTitle(Unlock.wipeButton, for: .normal)
-
         button.addTarget(self, action: #selector(onWipeButtonPressed(sender:)), for: .touchUpInside)
-
         return button
     }()
 
-    init(selfUser: UserType, userSession: Session? = nil) {
+    init(selfUser: UserType, userSession: UserSession? = nil) {
         self.selfUser = selfUser
         self.userSession = userSession
 
         super.init(nibName: nil, bundle: nil)
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        [contentView].forEach {
-            view.addSubview($0)
-        }
+        view.addSubview(contentView)
 
         stackView.distribution = .fill
 
@@ -142,12 +134,14 @@ final class UnlockViewController: UIViewController {
 
         contentView.addSubview(stackView)
 
-        [accountIndicator,
-         titleLabel,
-         UILabel.createHintLabel(),
-         validatedTextField,
-         errorLabel,
-         wipeButton].forEach(upperStackView.addArrangedSubview)
+        [
+            accountIndicator,
+            titleLabel,
+            UILabel.createHintLabel(),
+            validatedTextField,
+            errorLabel,
+            wipeButton
+        ].forEach(upperStackView.addArrangedSubview)
 
         [upperStackView, unlockButton].forEach(stackView.addArrangedSubview)
 
@@ -166,11 +160,13 @@ final class UnlockViewController: UIViewController {
 
     private func createConstraints() {
 
-        [userImageView,
-         nameLabel,
-         contentView,
-         upperStackView,
-         stackView].prepareForLayout()
+        [
+            userImageView,
+            nameLabel,
+            contentView,
+            upperStackView,
+            stackView
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let widthConstraint = contentView.createContentWidthConstraint()
 
@@ -213,8 +209,8 @@ final class UnlockViewController: UIViewController {
     private func unlock() -> Bool {
         guard
             let passcode = validatedTextField.text,
-            let session = userSession,
-            session.appLockController.evaluateAuthentication(customPasscode: passcode) == .granted
+            let userSession = userSession,
+            userSession.evaluateAuthentication(customPasscode: passcode) == .granted
         else {
             return false
         }

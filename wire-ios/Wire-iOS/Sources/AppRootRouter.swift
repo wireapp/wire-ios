@@ -22,13 +22,14 @@ import avs
 import WireCommonComponents
 
 // MARK: - AppRootRouter
-public class AppRootRouter: NSObject {
+public final class AppRootRouter: NSObject {
 
     // MARK: - Public Property
+
     let screenCurtain = ScreenCurtain()
 
     // MARK: - Private Property
-    private let navigator: NavigatorProtocol
+
     private var appStateCalculator: AppStateCalculator
     private var urlActionRouter: URLActionRouter
 
@@ -48,6 +49,7 @@ public class AppRootRouter: NSObject {
     private let teamMetadataRefresher = TeamMetadataRefresher()
 
     // MARK: - Private Set Property
+
     private(set) var sessionManager: SessionManager
 
     // TO DO: This should be private
@@ -57,13 +59,12 @@ public class AppRootRouter: NSObject {
 
     // MARK: - Initialization
 
-    init(viewController: RootViewController,
-         navigator: NavigatorProtocol,
-         sessionManager: SessionManager,
-         appStateCalculator: AppStateCalculator
+    init(
+        viewController: RootViewController,
+        sessionManager: SessionManager,
+        appStateCalculator: AppStateCalculator
     ) {
         self.rootViewController = viewController
-        self.navigator = navigator
         self.sessionManager = sessionManager
         self.appStateCalculator = appStateCalculator
         self.urlActionRouter = URLActionRouter(viewController: viewController)
@@ -185,6 +186,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         enqueueTransition(to: appState, completion: completion)
     }
 
+    @MainActor
     private func transition(to appState: AppState, completion: @escaping () -> Void) {
         applicationWillTransition(to: appState)
 
@@ -202,31 +204,33 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showBlacklisted(reason: reason, completion: completionBlock)
         case .jailbroken:
             showJailbroken(completion: completionBlock)
-        case .databaseFailure:
-            showDatabaseLoadingFailure(completion: completionBlock)
+        case .certificateEnrollmentRequired:
+            showCertificateEnrollRequest(completion: completionBlock)
+        case .databaseFailure(let error):
+            showDatabaseLoadingFailure(error: error, completion: completionBlock)
         case .migrating:
             showLaunchScreen(isLoading: true, completion: completionBlock)
         case .unauthenticated(error: let error):
-            screenCurtain.delegate = nil
+            screenCurtain.userSession = nil
             configureUnauthenticatedAppearance()
             showUnauthenticatedFlow(error: error, completion: completionBlock)
-        case .authenticated(completedRegistration: let completedRegistration):
+        case let .authenticated(userSession):
             configureAuthenticatedAppearance()
             executeAuthenticatedBlocks()
-            // TODO: [John] Avoid singleton.
-            screenCurtain.delegate = ZMUserSession.shared()
-            showAuthenticated(isComingFromRegistration: completedRegistration,
-                              completion: completionBlock)
+            screenCurtain.userSession = userSession
+            showAuthenticated(
+                userSession: userSession,
+                completion: completionBlock
+            )
         case .headless:
             showLaunchScreen(completion: completionBlock)
         case .loading(account: let toAccount, from: let fromAccount):
             showSkeleton(fromAccount: fromAccount,
                          toAccount: toAccount,
                          completion: completionBlock)
-        case .locked:
-            // TODO: [John] Avoid singleton.
-            screenCurtain.delegate = ZMUserSession.shared()
-            showAppLock(completion: completionBlock)
+        case let .locked(userSession):
+            screenCurtain.userSession = userSession
+            showAppLock(userSession: userSession, completion: completionBlock)
         }
     }
 
@@ -281,10 +285,19 @@ extension AppRootRouter {
                                completion: completion)
     }
 
-    private func showDatabaseLoadingFailure(completion: @escaping () -> Void) {
+    private func showCertificateEnrollRequest(completion: @escaping () -> Void) {
+        let blockerViewController = BlockerViewController(
+            context: .pendingCertificateEnroll,
+            sessionManager: sessionManager)
+        rootViewController.set(childViewController: blockerViewController,
+                               completion: completion)
+    }
+
+    private func showDatabaseLoadingFailure(error: Error, completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(
             context: .databaseFailure,
-            sessionManager: sessionManager
+            sessionManager: sessionManager,
+            error: error
         )
 
         rootViewController.set(childViewController: blockerViewController,
@@ -344,20 +357,27 @@ extension AppRootRouter {
                                completion: completion)
     }
 
-    private func showAuthenticated(isComingFromRegistration: Bool, completion: @escaping () -> Void) {
+    @MainActor
+    private func showAuthenticated(
+        userSession: UserSession,
+        completion: @escaping () -> Void
+    ) {
         guard
             let selectedAccount = SessionManager.shared?.accountManager.selectedAccount,
-            let authenticatedRouter = buildAuthenticatedRouter(account: selectedAccount,
-                                                               isComingFromRegistration: isComingFromRegistration)
+            let authenticatedRouter = buildAuthenticatedRouter(
+                account: selectedAccount,
+                userSession: userSession
+            )
         else {
             completion()
             return
         }
 
         self.authenticatedRouter = authenticatedRouter
-
-        rootViewController.set(childViewController: authenticatedRouter.viewController,
-                               completion: completion)
+        rootViewController.set(
+            childViewController: authenticatedRouter.viewController,
+            completion: completion
+        )
     }
 
     private func showSkeleton(fromAccount: Account?, toAccount: Account, completion: @escaping () -> Void) {
@@ -366,10 +386,13 @@ extension AppRootRouter {
                                completion: completion)
     }
 
-    private func showAppLock(completion: @escaping () -> Void) {
-        guard let session = ZMUserSession.shared() else { fatalError() }
-        rootViewController.set(childViewController: AppLockModule.build(session: session),
-                               completion: completion)
+    private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {
+        rootViewController.set(
+            childViewController: AppLockModule.build(
+                userSession: userSession
+            ),
+            completion: completion
+        )
     }
 
     private func retryStart(completion: @escaping () -> Void) {
@@ -393,8 +416,7 @@ extension AppRootRouter {
 
     private func setupAnalyticsSharing() {
         guard
-            appStateCalculator.wasUnauthenticated,
-            let selfUser = SelfUser.provider?.selfUser,
+            let selfUser = SelfUser.provider?.providedSelfUser,
             selfUser.isTeamMember
         else {
             return
@@ -405,20 +427,43 @@ extension AppRootRouter {
         Analytics.shared.provider?.selfUser = selfUser
     }
 
-    private func buildAuthenticatedRouter(account: Account, isComingFromRegistration: Bool) -> AuthenticatedRouter? {
+    @MainActor
+    private func buildAuthenticatedRouter(
+        account: Account,
+        userSession: UserSession
+    ) -> AuthenticatedRouter? {
+        guard let userSession = ZMUserSession.shared() else { return  nil }
 
-        let needToShowDataUsagePermissionDialog = appStateCalculator.wasUnauthenticated && !SelfUser.current.isTeamMember
+        let isTeamMember: Bool
+        if let user = SelfUser.provider?.providedSelfUser {
+            isTeamMember = user.isTeamMember
+        } else {
+            assertionFailure("expected available 'user'!")
+            isTeamMember = false
+        }
 
-        return AuthenticatedRouter(rootViewController: rootViewController,
-                                   account: account,
-                                   selfUser: ZMUser.selfUser(),
-                                   isComingFromRegistration: isComingFromRegistration,
-                                   needToShowDataUsagePermissionDialog: needToShowDataUsagePermissionDialog,
-                                   featureRepositoryProvider: ZMUserSession.shared()!)
+        let needToShowDialog = appStateCalculator.wasUnauthenticated && !isTeamMember
+        return AuthenticatedRouter(
+            rootViewController: rootViewController,
+            account: account,
+            userSession: userSession,
+            needToShowDataUsagePermissionDialog: needToShowDialog,
+            featureRepositoryProvider: userSession,
+            featureChangeActionsHandler: E2EINotificationActionsHandler(
+                enrollCertificateUseCase: userSession.enrollE2EICertificate,
+                snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
+                stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
+                e2eiActivationDateRepository: userSession.e2eiActivationDateRepository,
+                e2eiFeature: userSession.e2eiFeature,
+                lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
+                e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
+                selfClientCertificateProvider: userSession.selfClientCertificateProvider,
+                targetVC: rootViewController),
+            e2eiActivationDateRepository: userSession.e2eiActivationDateRepository
+        )
     }
 }
 
-// TO DO: THIS PART MUST BE CLENED UP
 extension AppRootRouter {
     private func applicationWillTransition(to appState: AppState) {
         appStateTransitionGroup.enter()

@@ -16,15 +16,18 @@
 //
 
 import XCTest
-@testable import WireRequestStrategy
 
-class AddParticipantActionHandlerTests: MessagingTestBase {
+@testable import WireRequestStrategy
+@testable import WireRequestStrategySupport
+
+final class AddParticipantActionHandlerTests: MessagingTestBase {
 
     typealias ErrorResponse = AddParticipantActionHandler.ErrorResponse
 
     var sut: AddParticipantActionHandler!
     var user: ZMUser!
     var conversation: ZMConversation!
+    var mockConversationService: MockConversationServiceInterface!
 
     override func setUp() {
         super.setUp()
@@ -44,18 +47,26 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             self.conversation = conversation
         }
 
+        mockConversationService = MockConversationServiceInterface()
+        mockConversationService.syncConversationIfMissingQualifiedID_MockMethod = { _ in }
+        mockConversationService.syncConversationQualifiedID_MockMethod = { _ in }
+        mockConversationService.syncConversationQualifiedIDCompletion_MockMethod = { _, completion in
+            completion()
+        }
+
         sut = AddParticipantActionHandler(
             context: syncMOC,
             eventProcessor: ConversationEventProcessor(
                 context: syncMOC,
-                conversationService: MockConversationService()
+                conversationService: mockConversationService,
+                mlsEventProcessor: MockMLSEventProcessing()
             )
         )
     }
 
     override func tearDown() {
         sut = nil
-
+        mockConversationService = nil
         super.tearDown()
     }
 
@@ -133,10 +144,13 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItProcessMemberJoinEventInTheResponse() throws {
+        var response: ZMTransportResponse!
+        var action: AddParticipantAction!
+
         syncMOC.performGroupedAndWait { [self] _ in
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let action = AddParticipantAction(users: [user], conversation: conversation)
+            action = AddParticipantAction(users: [user], conversation: conversation)
             let member = Payload.ConversationMember(
                 id: user.remoteIdentifier,
                 qualifiedID: user.qualifiedID,
@@ -152,19 +166,29 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                 senderID: selfUser.qualifiedID
             )
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(
+            response = ZMTransportResponse(
                 payload: payloadAsString as ZMTransportData,
                 httpStatus: 200,
                 transportSessionError: nil,
                 apiVersion: APIVersion.v0.rawValue
             )
+        }
 
-            // when
-            self.sut.handleResponse(response, action: action)
+        let waitForHandler = self.customExpectation(description: "wait for Handler to be called")
 
-            // then
+        action.resultHandler = { _ in
+            waitForHandler.fulfill()
+        }
+        // when
+        self.sut.handleResponse(response, action: action)
+
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+        // then
+        syncMOC.performAndWait {
             XCTAssertTrue(conversation.localParticipants.contains(user))
         }
+
     }
 
     func testThatItRefetchTeamUsers_On403() {
@@ -181,8 +205,8 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             nonTeamUser.remoteIdentifier = UUID()
             nonTeamUser.needsToBeUpdatedFromBackend = false
 
-            _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.syncMOC)
-            _ = Member.getOrCreateMember(for: teamUser, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: teamUser, in: team, context: self.syncMOC)
 
             let action = AddParticipantAction(users: [teamUser, nonTeamUser], conversation: conversation)
             let response = ZMTransportResponse(payload: nil,
@@ -200,14 +224,19 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_On200() {
+        var action: AddParticipantAction!
+
+        var response: ZMTransportResponse!
         syncMOC.performGroupedAndWait { [self] _ in
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            var action = AddParticipantAction(users: [user], conversation: conversation)
-            let expectation = self.expectation(description: "Result Handler was called")
+            action = AddParticipantAction(users: [user], conversation: conversation)
+            let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { (result) in
                 if case .success = result {
                     expectation.fulfill()
+                } else {
+                    XCTFail("called the wrong result")
                 }
             }
 
@@ -226,19 +255,19 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                 senderID: selfUser.qualifiedID
             )
             let payloadAsString = String(bytes: conversationEvent.payloadData()!, encoding: .utf8)!
-            let response = ZMTransportResponse(
+            response = ZMTransportResponse(
                 payload: payloadAsString as ZMTransportData,
                 httpStatus: 200,
                 transportSessionError: nil,
                 apiVersion: APIVersion.v0.rawValue
             )
-
-            // when
-            self.sut.handleResponse(response, action: action)
-
-            // then
-            XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
+
+        // when
+        self.sut.handleResponse(response, action: action)
+
+        // then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
     func testThatItCallsResultHandler_On204() {
@@ -246,7 +275,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             // given
             var action = AddParticipantAction(users: [user], conversation: conversation)
 
-            let expectation = self.expectation(description: "Result Handler was called")
+            let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { (result) in
                 if case .success = result {
                     expectation.fulfill()
@@ -270,7 +299,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
             // given
             var action = AddParticipantAction(users: [user], conversation: conversation)
 
-            let expectation = self.expectation(description: "Result Handler was called")
+            let expectation = self.customExpectation(description: "Result Handler was called")
             action.onResult { (result) in
                 if case .failure = result {
                     expectation.fulfill()
@@ -309,7 +338,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                 conversation: conversation
             )
 
-            let isDone = self.expectation(description: "isDone")
+            let isDone = self.customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {
@@ -353,7 +382,7 @@ class AddParticipantActionHandlerTests: MessagingTestBase {
                 conversation: conversation
             )
 
-            let isDone = self.expectation(description: "isDone")
+            let isDone = self.customExpectation(description: "isDone")
 
             action.onResult {
                 switch $0 {

@@ -83,6 +83,9 @@
 "conversationSearch.item.hint" = "Zum Öffnen doppeltippen";
 "conversationSearch.itemPlay.hint" = "Doppeltippen zum Abspielen";
 
+"conversation.scrollToBottomButton.description" = "Scroll to the bottom of the conversation";
+"conversation.scrollToBottomButton.hint" = "Tap to scroll to the bottom of the conversation";
+
 "audioRecord.stopButton.description" = "Aufnahme stoppen";
 "audioRecord.startButton.description" = "Aufnahme starten";
 "audioRecord.startButton.hint" = "Doppeltippen zum Aufnehmen";
@@ -226,6 +229,11 @@
 "conversationAnnouncement.file.description" = "Datei %@ von %@ erhalten";
 "conversationAnnouncement.deletedMessage.description" = "%@ hat eine Nachricht gelöscht";
 "conversationAnnouncement.editedMessage.description" = "%@ hat eine Nachricht bearbeitet";
+
+"groupDetails.conversation.participants.allYourDevicesProteusVerified" = "all Ihre Geräte sind überprüft (Proteus)";
+"groupDetails.conversation.participants.allYourDevicesHaveValidCertificates" = "all Ihre Geräte haben ein gültiges Ende-zu-Ende-Identitätszertifikat";
+"groupDetails.conversation.participants.allDevicesProteusVerified" = "alle Geräte sind überprüft (Proteus)";
+"groupDetails.conversation.participants.allDevicesHaveValidCertificates" = "alle Geräte haben ein gültiges Ende-zu-Ende-Identitätszertifikat";
 
 "calling.flipCameraBackButton.description" = "Kamera auf der Rückseite verwenden";
 "calling.flipCameraFrontButton.description" = "Frontkamera verwenden";

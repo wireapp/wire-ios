@@ -83,7 +83,8 @@ extension ConversationContentViewController: ConversationMessageCellDelegate {
         return delegate?.conversationContentViewController(self, shouldBecomeFirstResponderWhenShowMenuFromCell: cell) ?? false
     }
 
-    func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, messageDetailsViewController: MessageDetailsViewController) {
+    func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, for message: ZMConversationMessage, preferredDisplayMode: MessageDetailsDisplayMode) {
+        let messageDetailsViewController = MessageDetailsViewController(message: message, preferredDisplayMode: preferredDisplayMode, userSession: userSession)
         parent?.present(messageDetailsViewController, animated: true)
     }
 

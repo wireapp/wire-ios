@@ -31,16 +31,18 @@
 
 - (NSMutableDictionary *)payloadtoRegisterClient:(NSUInteger)keysCount password:(NSString *)password
 {
+    NSUInteger keyLength = 16;
+
     NSMutableDictionary *payload = [NSMutableDictionary new];
     NSString *type = @"permanent";
     NSString *label = @"testClient";
     NSString *time = [NSDate dateWithTimeIntervalSince1970:1234444444].transportString;
     NSMutableArray *prekeysPayload = [NSMutableArray new];
     for (NSUInteger i = 0; i < keysCount; i++) {
-        [prekeysPayload addObject:@{@"id": @(i), @"key": [NSString createAlphanumericalString]}];
+        [prekeysPayload addObject:@{@"id": @(i), @"key": [NSString randomAlphanumericalWithLength:keyLength]}];
     }
-    NSMutableDictionary *lastPreKeyPayload = [@{@"id": @(0xFFFF), @"key": [NSString createAlphanumericalString]} mutableCopy];
-    NSMutableDictionary *sigkeysPayload = [@{@"enckey": [NSString createAlphanumericalString], @"mackey": [NSString createAlphanumericalString]} mutableCopy];
+    NSMutableDictionary *lastPreKeyPayload = [@{@"id": @(0xFFFF), @"key": [NSString randomAlphanumericalWithLength:keyLength]} mutableCopy];
+    NSMutableDictionary *sigkeysPayload = [@{@"enckey": [NSString randomAlphanumericalWithLength:keyLength], @"mackey": [NSString randomAlphanumericalWithLength:keyLength]} mutableCopy];
     payload[@"type"] = type;
     payload[@"label"] = label;
     payload[@"lastkey"] = lastPreKeyPayload;
@@ -86,7 +88,7 @@
     NSMutableDictionary *payload = [self payloadtoRegisterClient:keysCount password:selfUser.password];
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/clients" method:ZMMethodPOST apiVersion:0];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/clients" method:ZMTransportRequestMethodPost apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -151,7 +153,7 @@
     NSUInteger keysCount = 100;
     NSMutableDictionary *payload = [self payloadtoRegisterClient:keysCount];
 
-    (void)[self responseForPayload:payload path:@"/clients" method:ZMMethodPOST apiVersion:0];
+    (void)[self responseForPayload:payload path:@"/clients" method:ZMTransportRequestMethodPost apiVersion:0];
 
     // WHEN
     //uploading second client
@@ -160,7 +162,7 @@
     payload[@"label"] = secondLabel;
     payload[@"password"] = selfUser.password;
     
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/clients" method:ZMMethodPOST apiVersion:0];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/clients" method:ZMTransportRequestMethodPost apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -214,7 +216,7 @@
     NSUInteger keysCount = 100;
     NSMutableDictionary *payload = [self payloadtoRegisterClient:keysCount];
     
-    (void)[self responseForPayload:payload path:@"/clients" method:ZMMethodPOST apiVersion:0];
+    (void)[self responseForPayload:payload path:@"/clients" method:ZMTransportRequestMethodPost apiVersion:0];
     
     // WHEN
     //uploading second client
@@ -222,7 +224,7 @@
     NSString *secondLabel = @"anotherClient";
     payload[@"label"] = secondLabel;
     
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/clients" method:ZMMethodPOST apiVersion:0];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/clients" method:ZMTransportRequestMethodPost apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -247,7 +249,7 @@
     NSUInteger keysCount = 100;
     NSMutableDictionary *payload = [self payloadtoRegisterClient:keysCount];
     
-    (void)[self responseForPayload:payload path:@"/clients" method:ZMMethodPOST apiVersion:0];
+    (void)[self responseForPayload:payload path:@"/clients" method:ZMTransportRequestMethodPost apiVersion:0];
     
     // WHEN
     //uploading second client
@@ -256,7 +258,7 @@
     payload[@"label"] = secondLabel;
     payload[@"password"] = @"wrong pass";
     
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/clients" method:ZMMethodPOST apiVersion:0];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/clients" method:ZMTransportRequestMethodPost apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -281,7 +283,7 @@
     NSUInteger keysCount = 100;
     NSMutableDictionary *payload = [self payloadtoRegisterClient:keysCount];
     
-    (void)[self responseForPayload:payload path:@"/clients" method:ZMMethodPOST apiVersion:0];
+    (void)[self responseForPayload:payload path:@"/clients" method:ZMTransportRequestMethodPost apiVersion:0];
     
     // WHEN
     //uploading second client
@@ -290,11 +292,11 @@
     payload[@"label"] = secondLabel;
     payload[@"password"] = selfUser.password;
     
-    (void)[self responseForPayload:payload path:@"/clients" method:ZMMethodPOST apiVersion:0];
+    (void)[self responseForPayload:payload path:@"/clients" method:ZMTransportRequestMethodPost apiVersion:0];
     
     // uploading third client
     payload[@"label"] = @"third client";
-    ZMTransportResponse *response = [self responseForPayload:payload path:@"/clients" method:ZMMethodPOST apiVersion:0];
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/clients" method:ZMTransportRequestMethodPost apiVersion:0];
 
     XCTAssertNotNil(response);
     if (!response) {
@@ -384,7 +386,7 @@
     final[@"password"] = selfUser.password;
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:[final copy] path:@"/clients" method:ZMMethodPOST apiVersion:0];
+    ZMTransportResponse *response = [self responseForPayload:[final copy] path:@"/clients" method:ZMTransportRequestMethodPost apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -419,7 +421,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // WHEN
-    ZMTransportResponse *response = [self responseForPayload:nil path:@"/clients" method:ZMMethodGET apiVersion:0];
+    ZMTransportResponse *response = [self responseForPayload:nil path:@"/clients" method:ZMTransportRequestMethodGet apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -454,7 +456,7 @@
     
     // WHEN
     NSString *path = [NSString stringWithFormat:@"/users/%@/clients", user1.identifier];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMTransportRequestMethodGet apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -502,7 +504,7 @@
     
     // WHEN
     NSString *path = [NSString stringWithFormat:@"/clients/%@", client.identifier];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMTransportRequestMethodGet apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -534,7 +536,7 @@
     
     // WHEN
     NSString *path = [NSString stringWithFormat:@"/clients/%@", client.identifier];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodDELETE apiVersion:0];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMTransportRequestMethodDelete apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response);
@@ -542,7 +544,7 @@
     XCTAssertNil(response.transportSessionError);
     
     // and when
-    ZMTransportResponse *response2 = [self responseForPayload:nil path:@"/clients" method:ZMMethodGET apiVersion:0];
+    ZMTransportResponse *response2 = [self responseForPayload:nil path:@"/clients" method:ZMTransportRequestMethodGet apiVersion:0];
     
     // THEN
     XCTAssertNotNil(response2);

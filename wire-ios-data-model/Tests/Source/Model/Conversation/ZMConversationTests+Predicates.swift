@@ -31,7 +31,7 @@ class ZMConversationTests_Predicates: ZMConversationTestsBase {
             conversation.mlsStatus = .ready
 
             // when
-            let sut = ZMConversation.predicateForConversationsIncludingArchived()
+            let sut = ConversationPredicateFactory().predicateForConversationsIncludingArchived()
 
             // then
             XCTAssertTrue(sut.evaluate(with: conversation))
@@ -47,7 +47,7 @@ class ZMConversationTests_Predicates: ZMConversationTestsBase {
             conversation.mlsStatus = .pendingJoin
 
             // when
-            let sut = ZMConversation.predicateForConversationsIncludingArchived()
+            let sut = ConversationPredicateFactory().predicateForConversationsIncludingArchived()
 
             // then
             XCTAssertFalse(sut.evaluate(with: conversation))

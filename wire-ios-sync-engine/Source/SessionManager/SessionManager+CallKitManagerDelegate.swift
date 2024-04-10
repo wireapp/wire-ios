@@ -30,10 +30,10 @@ extension SessionManager: CallKitManagerDelegate {
 
     func lookupConversation(
         by handle: CallHandle,
-        completionHandler: @escaping (Result<ZMConversation>) -> Void
+        completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     ) {
         WireLogger.calling.info("lookup conversation for: \(handle)")
-        guard let account  = accountManager.account(with: handle.accountID) else {
+        guard let account = accountManager.account(with: handle.accountID) else {
             return completionHandler(.failure(ConversationLookupError.accountDoesNotExist))
         }
 
@@ -48,11 +48,11 @@ extension SessionManager: CallKitManagerDelegate {
 
     func lookupConversationAndProcessPendingCallEvents(
         by handle: CallHandle,
-        completionHandler: @escaping (Result<ZMConversation>) -> Void
+        completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     ) {
         WireLogger.calling.info("lookup conversation and process pending call events for: \(handle)")
 
-        guard let account  = accountManager.account(with: handle.accountID) else {
+        guard let account = accountManager.account(with: handle.accountID) else {
             return completionHandler(.failure(ConversationLookupError.accountDoesNotExist))
         }
 
@@ -64,13 +64,9 @@ extension SessionManager: CallKitManagerDelegate {
                 return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
             }
 
-            do {
-                try userSession.processPendingCallEvents()
+            userSession.processPendingCallEvents {
                 WireLogger.calling.info("did process call events, returning conversation...")
                 completionHandler(.success(conversation))
-            } catch {
-                WireLogger.calling.error("failed to process call events: \(error)")
-                completionHandler(.failure(ConversationLookupError.failedToProcessCallEvents))
             }
         }
     }

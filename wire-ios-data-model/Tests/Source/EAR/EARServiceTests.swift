@@ -19,7 +19,9 @@
 import Foundation
 import XCTest
 import LocalAuthentication
+
 @testable import WireDataModel
+@testable import WireDataModelSupport
 
 final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
@@ -37,7 +39,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
         keyRepository = MockEARKeyRepositoryInterface()
         keyEncryptor = MockEARKeyEncryptorInterface()
-        earStorage = .init(userID: userIdentifier, sharedUserDefaults: .random()!)
+        earStorage = .init(userID: userIdentifier, sharedUserDefaults: .temporary())
         earStorage.enableEAR(true)
         sut = createSUT()
         prepareForMigrationCalls = 0
@@ -861,7 +863,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         // Given
         let sut = EARService(accountID: userIdentifier,
                          databaseContexts: [uiMOC],
-                         sharedUserDefaults: .random()!)
+                         sharedUserDefaults: .temporary())
 
         let oldDatabaseKey = try sut.generateKeys()
 

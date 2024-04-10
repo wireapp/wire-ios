@@ -185,7 +185,7 @@ extension NSManagedObjectContext {
 
         set {
             setPersistentStoreMetadata(
-                NSNumber(booleanLiteral: newValue),
+                NSNumber(value: newValue),
                 key: PersistentMetadataKey.encryptMessagesAtRest.rawValue
             )
         }
@@ -282,6 +282,7 @@ extension NSManagedObjectContext {
             let selfClientId = selfClient.remoteIdentifier,
             let context = (selfUserId + selfClientId).data(using: .utf8)
         else {
+            WireLogger.ear.error("Could not obtain self user id and self client id")
             assertionFailure("Could not obtain self user id and self client id")
             return nil
         }

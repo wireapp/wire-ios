@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,8 +41,11 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
 
     private let eventProcessor: ConversationEventProcessorProtocol
 
-    convenience required init(context: NSManagedObjectContext) {
-        self.init(context: context, eventProcessor: ConversationEventProcessor(context: context))
+    convenience override init(context: NSManagedObjectContext) {
+        self.init(
+            context: context,
+            eventProcessor: ConversationEventProcessor(context: context)
+        )
     }
 
     init(
@@ -58,7 +62,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
             return v0Request(for: action)
         case .v1:
             return v1Request(for: action)
-        case .v2, .v3, .v4, .v5:
+        case .v2, .v3, .v4, .v5, .v6:
             return v2Request(for: action, apiVersion: apiVersion)
         }
     }
@@ -70,7 +74,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
             let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
             let conversationID = conversation.remoteIdentifier?.transportString(),
             let users: [ZMUser] = action.userIDs.existingObjects(in: context),
-            let payload =  Payload.ConversationAddMember(userIDs: users.compactMap(\.remoteIdentifier)),
+            let payload = Payload.ConversationAddMember(userIDs: users.compactMap(\.remoteIdentifier)),
             let payloadData = payload.payloadData(encoder: .defaultEncoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
         else {
@@ -80,7 +84,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
         }
 
         let path = "/conversations/\(conversationID)/members"
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData, apiVersion: 0)
+        return ZMTransportRequest(path: path, method: .post, payload: payloadAsString as ZMTransportData, apiVersion: 0)
     }
 
     private func v1Request(for action: AddParticipantAction) -> ZMTransportRequest? {
@@ -97,7 +101,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
         }
 
         let path = "/conversations/\(conversationID.uuid)/members/v2"
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payload, apiVersion: 1)
+        return ZMTransportRequest(path: path, method: .post, payload: payload, apiVersion: 1)
     }
 
     private func v2Request(for action: AddParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -114,7 +118,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
         }
 
         let path = "/conversations/\(conversationID.domain)/\(conversationID.uuid)/members"
-        return ZMTransportRequest(path: path, method: .methodPOST, payload: payload, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .post, payload: payload, apiVersion: apiVersion.rawValue)
     }
 
     private func payload(for action: AddParticipantAction) -> ZMTransportData? {
@@ -144,9 +148,14 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
                 action.fail(with: .unknown)
                 return
             }
-
-            eventProcessor.processConversationEvents([updateEvent])
-            action.succeed()
+            let success = {
+                action.succeed()
+            }
+            Task {
+                await eventProcessor.processConversationEvents([updateEvent])
+                await context.perform { _ = self.context.saveOrRollback() }
+                success()
+            }
 
         case 204:
             action.succeed()

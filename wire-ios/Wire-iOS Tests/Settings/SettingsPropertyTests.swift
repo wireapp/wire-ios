@@ -18,6 +18,7 @@
 
 import XCTest
 import WireCommonComponents
+import avs
 @testable import Wire
 
 final class MockZMEditableUser: MockUser, ZMEditableUser, ValidatorType {
@@ -51,15 +52,20 @@ final class ZMMockTracking: TrackingInterface {
 }
 
 final class SettingsPropertyTests: XCTestCase {
+
     var userDefaults: UserDefaults!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
         userDefaults = .standard
+        userSession = UserSessionMock()
     }
 
     override func tearDown() {
         userDefaults = nil
+        userSession = nil
+
         super.tearDown()
     }
 
@@ -92,14 +98,22 @@ final class SettingsPropertyTests: XCTestCase {
 
     func testThatIntegerUserDefaultsSettingSave() {
         // given
-        let property = SettingsUserDefaultsProperty(propertyName: SettingsPropertyName.darkMode, userDefaultsKey: SettingKey.colorScheme.rawValue, userDefaults: self.userDefaults)
+        let property = SettingsUserDefaultsProperty(
+            propertyName: SettingsPropertyName.darkMode,
+            userDefaultsKey: SettingKey.colorScheme.rawValue,
+            userDefaults: self.userDefaults
+        )
         // when & then
         try! self.saveAndCheck(property, value: "light")
     }
 
     func testThatBoolUserDefaultsSettingSave() {
         // given
-        let property = SettingsUserDefaultsProperty(propertyName: SettingsPropertyName.chatHeadsDisabled, userDefaultsKey: SettingKey.chatHeadsDisabled.rawValue, userDefaults: self.userDefaults)
+        let property = SettingsUserDefaultsProperty(
+            propertyName: SettingsPropertyName.chatHeadsDisabled,
+            userDefaultsKey: SettingKey.chatHeadsDisabled.rawValue,
+            userDefaults: self.userDefaults
+        )
         // when & then
         try! self.saveAndCheck(property, value: NSNumber(value: true))
     }
@@ -107,7 +121,6 @@ final class SettingsPropertyTests: XCTestCase {
     func testThatNamePropertySetsValue() {
         // given
         let selfUser = MockZMEditableUser()
-        let userSession = MockZMUserSession()
         let mediaManager = ZMMockAVSMediaManager()
         let tracking = ZMMockTracking()
 
@@ -120,11 +133,16 @@ final class SettingsPropertyTests: XCTestCase {
 
     private var settingsPropertyFactory: SettingsPropertyFactory {
         let selfUser = MockZMEditableUser()
-        let userSession = MockZMUserSession()
         let mediaManager = ZMMockAVSMediaManager()
         let tracking = ZMMockTracking()
 
-        return SettingsPropertyFactory(userDefaults: userDefaults, tracking: tracking, mediaManager: mediaManager, userSession: userSession, selfUser: selfUser)
+        return SettingsPropertyFactory(
+            userDefaults: userDefaults,
+            tracking: tracking,
+            mediaManager: mediaManager,
+            userSession: userSession,
+            selfUser: selfUser
+        )
     }
 
     func testThatDarkThemePropertySetsValue() {
@@ -148,11 +166,16 @@ final class SettingsPropertyTests: XCTestCase {
     func testThatAnalyticsPropertySetsValue() {
         // given
         let selfUser = MockZMEditableUser()
-        let userSession = MockZMUserSession()
         let mediaManager = ZMMockAVSMediaManager()
         let tracking = ZMMockTracking()
 
-        let factory = SettingsPropertyFactory(userDefaults: self.userDefaults, tracking: tracking, mediaManager: mediaManager, userSession: userSession, selfUser: selfUser)
+        let factory = SettingsPropertyFactory(
+            userDefaults: self.userDefaults,
+            tracking: tracking,
+            mediaManager: mediaManager,
+            userSession: userSession,
+            selfUser: selfUser
+        )
 
         let property = factory.property(SettingsPropertyName.disableCrashSharing)
         // when & then
@@ -162,11 +185,16 @@ final class SettingsPropertyTests: XCTestCase {
     func testThatIntegerBlockSettingSave() {
         // given
         let selfUser = MockZMEditableUser()
-        let userSession = MockZMUserSession()
         let mediaManager = ZMMockAVSMediaManager()
         let tracking = ZMMockTracking()
 
-        let factory = SettingsPropertyFactory(userDefaults: self.userDefaults, tracking: tracking, mediaManager: mediaManager, userSession: userSession, selfUser: selfUser)
+        let factory = SettingsPropertyFactory(
+            userDefaults: self.userDefaults,
+            tracking: tracking,
+            mediaManager: mediaManager,
+            userSession: userSession,
+            selfUser: selfUser
+        )
 
         let property = factory.property(SettingsPropertyName.soundAlerts)
         // when & then
@@ -179,7 +207,7 @@ final class SettingsPropertyTests: XCTestCase {
             userDefaults: userDefaults,
             tracking: ZMMockTracking(),
             mediaManager: ZMMockAVSMediaManager(),
-            userSession: MockZMUserSession(),
+            userSession: userSession,
             selfUser: MockZMEditableUser()
         )
 

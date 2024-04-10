@@ -24,6 +24,10 @@ import WireSyncEngine
 private let zmLog = ZMSLog(tag: "MessagePresenter")
 
 final class MessagePresenter: NSObject {
+    enum MessagePresenterError: Error {
+        case missingFileURL
+        case failedInitializingViewController
+    }
 
     /// Container of the view that hosts popover controller.
     weak var targetViewController: UIViewController?
@@ -51,10 +55,12 @@ final class MessagePresenter: NSObject {
     func openDocumentController(for message: ZMConversationMessage,
                                 targetView: UIView,
                                 withPreview preview: Bool) {
-        guard let fileURL = message.fileMessageData?.fileURL,
-              fileURL.isFileURL,
-              !fileURL.path.isEmpty else {
-            let errorMessage = "File URL is missing: \(message.fileMessageData?.fileURL.debugDescription ?? "") (\(message.fileMessageData.debugDescription))"
+        guard
+            let fileURL = message.fileMessageData?.temporaryURLToDecryptedFile(),
+            fileURL.isFileURL,
+            !fileURL.path.isEmpty
+        else {
+            let errorMessage = "File URL is missing: \(message.fileMessageData.debugDescription)"
             assert(false, errorMessage)
 
             zmLog.error(errorMessage)
@@ -79,9 +85,9 @@ final class MessagePresenter: NSObject {
 
         documentInteractionController = UIDocumentInteractionController(url: URL(fileURLWithPath: tmpPath))
         documentInteractionController?.delegate = self
-        if (!preview || false == documentInteractionController?.presentPreview(animated: true)),
-            let rect = targetViewController?.view.convert(targetView.bounds, from: targetView),
-        let view = targetViewController?.view {
+        if !preview || false == documentInteractionController?.presentPreview(animated: true),
+           let rect = targetViewController?.view.convert(targetView.bounds, from: targetView),
+           let view = targetViewController?.view {
 
             documentInteractionController?.presentOptionsMenu(from: rect, in: view, animated: true)
         }
@@ -96,7 +102,7 @@ final class MessagePresenter: NSObject {
         }
     }
 
-// MARK: - AVPlayerViewController dismissial
+    // MARK: - AVPlayerViewController dismissial
 
     fileprivate func observePlayerDismissial() {
         videoPlayerObserver = NotificationCenter.default.addObserver(forName: .dismissingAVPlayer, object: nil, queue: OperationQueue.main) { _ in
@@ -127,16 +133,24 @@ final class MessagePresenter: NSObject {
             return
         }
 
-        guard let fileURL = message.fileMessageData?.fileURL else { return }
+        guard
+            let fileMessageData = message.fileMessageData,
+            fileMessageData.hasLocalFileData
+        else {
+            return
+        }
 
         _ = message.startSelfDestructionIfNeeded()
 
-        if let fileMessageData = message.fileMessageData, fileMessageData.isPass,
-            let addPassesViewController = createAddPassesViewController(fileMessageData: fileMessageData) {
-            targetViewController?.present(addPassesViewController, animated: true)
-
-        } else if let fileMessageData = message.fileMessageData, fileMessageData.isVideo,
-            let mediaPlaybackManager = mediaPlaybackManager {
+        if fileMessageData.isPass {
+            Task {
+                await openPassesViewController(fileMessageData: fileMessageData)
+            }
+        } else if
+            fileMessageData.isVideo,
+            let fileURL = fileMessageData.temporaryURLToDecryptedFile(),
+            let mediaPlaybackManager = mediaPlaybackManager
+        {
             let player = AVPlayer(url: fileURL)
             mediaPlayerController = MediaPlayerController(player: player, message: message, delegate: mediaPlaybackManager)
             let playerViewController = AVPlayerViewController()
@@ -158,7 +172,7 @@ final class MessagePresenter: NSObject {
     ///   - message: message to open
     ///   - targetView: target view when opens the message
     ///   - delegate: the receiver of action callbacks for the message. Currently only forward and reveal in conversation actions are supported.
-    func open(_ message: ZMConversationMessage, targetView: UIView, actionResponder delegate: MessageActionResponder) {
+    func open(_ message: ZMConversationMessage, targetView: UIView, actionResponder delegate: MessageActionResponder, userSession: UserSession) {
         fileAvailabilityObserver = nil
         modalTargetController?.view.window?.endEditing(true)
 
@@ -169,7 +183,7 @@ final class MessagePresenter: NSObject {
         } else if Message.isFileTransfer(message), message.canBeDownloaded {
             openFileMessage(message, targetView: targetView)
         } else if Message.isImage(message), message.canBeShared {
-            openImageMessage(message, actionResponder: delegate)
+            openImageMessage(message, actionResponder: delegate, userSession: userSession)
         } else if let openableURL = message.textMessageData?.linkPreview?.openableURL {
             openableURL.open()
         }
@@ -182,8 +196,9 @@ final class MessagePresenter: NSObject {
     }
 
     func openImageMessage(_ message: ZMConversationMessage,
-                          actionResponder delegate: MessageActionResponder) {
-        let imageViewController = viewController(forImageMessage: message, actionResponder: delegate)
+                          actionResponder delegate: MessageActionResponder,
+                          userSession: UserSession) {
+        let imageViewController = viewController(forImageMessage: message, actionResponder: delegate, userSession: userSession)
         if let imageViewController = imageViewController {
             // to allow image rotation, present the image viewer in full screen style
             imageViewController.modalPresentationStyle = .fullScreen
@@ -191,41 +206,54 @@ final class MessagePresenter: NSObject {
         }
     }
 
-    func viewController(forImageMessage message: ZMConversationMessage, actionResponder delegate: MessageActionResponder) -> UIViewController? {
+    func viewController(forImageMessage message: ZMConversationMessage, actionResponder delegate: MessageActionResponder, userSession: UserSession) -> UIViewController? {
         guard Message.isImage(message),
-            message.imageMessageData != nil else {
-                return nil
+              message.imageMessageData != nil else {
+            return nil
         }
 
         return imagesViewController(for: message,
                                     actionResponder: delegate,
-                                    isPreviewing: false)
+                                    isPreviewing: false,
+                                    userSession: userSession)
     }
 
-    func viewController(forImageMessagePreview message: ZMConversationMessage, actionResponder delegate: MessageActionResponder) -> UIViewController? {
+    func viewController(forImageMessagePreview message: ZMConversationMessage, actionResponder delegate: MessageActionResponder, userSession: UserSession) -> UIViewController? {
         guard Message.isImage(message),
-            message.imageMessageData != nil else {
-                return nil
+              message.imageMessageData != nil else {
+            return nil
         }
 
-        return imagesViewController(for: message, actionResponder: delegate, isPreviewing: true)
+        return imagesViewController(for: message, actionResponder: delegate, isPreviewing: true, userSession: userSession)
     }
 
     // MARK: - Pass
 
-    func createAddPassesViewController(fileMessageData: ZMFileMessageData) -> PKAddPassesViewController? {
-        guard let fileURL = fileMessageData.fileURL,
-            let passData = try? Data.init(contentsOf: fileURL) else {
-                return nil
+    @MainActor
+    func openPassesViewController(fileMessageData: ZMFileMessageData) async {
+        guard PKAddPassesViewController.canAddPasses() else { return } // suggestion: implement error visible for the user
+
+        do {
+            guard let fileURL = fileMessageData.temporaryURLToDecryptedFile() else {
+                throw MessagePresenterError.missingFileURL
+            }
+
+            let viewController = try await makePassesViewController(fileURL: fileURL)
+            targetViewController?.present(viewController, animated: true)
+        } catch {
+            assertionFailure("failed to present passes view controller!")
+        }
+    }
+
+    func makePassesViewController(fileURL: URL) async throws -> PKAddPassesViewController {
+        let passData = try Data(contentsOf: fileURL)
+        let pass = try PKPass(data: passData)
+
+        guard let viewController = await PKAddPassesViewController(pass: pass) else {
+            throw MessagePresenterError.failedInitializingViewController
         }
 
-        guard let pass = try? PKPass.init(data: passData) else { return nil }
-
-        if PKAddPassesViewController.canAddPasses() {
-            return PKAddPassesViewController(pass: pass)
-        } else {
-            return nil
-        }
+        return viewController
     }
 }
 

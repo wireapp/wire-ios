@@ -46,6 +46,8 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var isIgnored: Bool = false
 
+    var membership: Member?
+
     var hasTeam: Bool = false
 
     var isTrusted: Bool = false
@@ -54,7 +56,7 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var needsRichProfileUpdate: Bool = false
 
-    var availability: AvailabilityKind = .none
+    var availability: Availability = .none
 
     var teamName: String?
 
@@ -72,7 +74,7 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var isUnderLegalHold: Bool = false
 
-    var allClients: [UserClientType]  = []
+    var allClients: [UserClientType] = []
 
     var expiresAfter: TimeInterval = 0
 
@@ -287,29 +289,36 @@ final class ServiceUserTests: IntegrationTest {
 
     func testThatItAddsServiceToExistingConversation() throws {
         // given
-        let jobIsDone = expectation(description: "service is added")
+        let jobIsDone = customExpectation(description: "service is added")
         let service = self.createService()
         let conversation = self.conversation(for: self.groupConversation)!
 
         // when
-        conversation.add(serviceUser: service, in: userSession!) { (result) in
-            XCTAssertNil(result.error)
+        var result: Result<Void, Error>!
+        conversation.add(serviceUser: service, in: userSession!) {
+            result = $0
             jobIsDone.fulfill()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertNoThrow(try result.get())
     }
 
     func testThatItCreatesConversationAndAddsUser() {
         // given
-        let jobIsDone = expectation(description: "service is added")
+        let jobIsDone = customExpectation(description: "service is added")
         let service = self.createService()
 
         // when
-        service.createConversation(in: userSession!) { (result) in
-            XCTAssertNotNil(result.value)
+        service.createConversation(in: userSession!) { result in
+            switch result {
+            case .success:
+                break
+            case .failure:
+                XCTFail("expected '.success'")
+            }
             jobIsDone.fulfill()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

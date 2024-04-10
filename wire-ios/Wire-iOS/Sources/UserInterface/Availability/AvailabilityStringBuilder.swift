@@ -16,24 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
 import WireDataModel
 import WireCommonComponents
 
-final class AvailabilityStringBuilder: NSObject {
+enum AvailabilityStringBuilder {
 
-    static func string(for user: UserType, with style: AvailabilityLabelStyle, color: UIColor? = nil) -> NSAttributedString? {
+    static func titleForUser(
+        name: String,
+        availability: Availability,
+        isE2EICertified: Bool,
+        isProteusVerified: Bool,
+        appendYouSuffix: Bool,
+        style: AvailabilityLabelStyle,
+        color: UIColor? = nil
+    ) -> NSAttributedString? {
 
         let fallbackTitle = L10n.Localizable.Profile.Details.Title.unavailable
-        var title: String = ""
+        var title: String
         var color = color
         var iconColor = color
-        let availability = user.availability
         var fontSize: FontSize = .small
 
         switch style {
         case .list:
             do {
-                if let name = user.name, !name.isEmpty {
+                if !name.isEmpty {
                     title = name
                 } else {
                     title = fallbackTitle
@@ -49,20 +57,39 @@ final class AvailabilityStringBuilder: NSObject {
             }
         case .participants:
             do {
-                title = (user.name ?? "").localizedUppercase
+                title = name.localizedUppercase
                 color = SemanticColors.Label.textDefault
                 iconColor = self.color(for: availability)
             }
         }
 
-        guard let textColor = color,
-              let iconColor = iconColor else { return nil }
+        let youSuffix = L10n.Localizable.UserCell.Title.youSuffix
+        if appendYouSuffix {
+            title += youSuffix
+        }
+
+        guard let textColor = color, let iconColor = iconColor else { return nil }
         let icon = AvailabilityStringBuilder.icon(for: availability, with: iconColor, and: fontSize)
-        let attributedText = IconStringsBuilder.iconString(with: icon, title: title, interactive: false, color: textColor)
+        var attributedText = IconStringsBuilder.iconString(
+            leadingIcons: [icon].compactMap(\.self),
+            title: title,
+            trailingIcons: [
+                isE2EICertified ? e2eiCertifiedShield : nil,
+                isProteusVerified ? proteusVerifiedShield : nil
+            ].compactMap { $0 },
+            interactive: false,
+            color: textColor
+        )
+        if appendYouSuffix {
+            attributedText = attributedText.setAttributes(
+                [.foregroundColor: SemanticColors.Label.textYouSuffix],
+                toSubstring: youSuffix
+            )
+        }
         return attributedText
     }
 
-    static func icon(for availability: AvailabilityKind, with color: UIColor, and size: FontSize) -> NSTextAttachment? {
+    static func icon(for availability: Availability, with color: UIColor, and size: FontSize) -> NSTextAttachment? {
         guard availability != .none, let iconType = availability.iconType
             else { return nil }
 
@@ -78,8 +105,9 @@ final class AvailabilityStringBuilder: NSObject {
         return NSTextAttachment.textAttachment(for: iconType, with: color, iconSize: 12, verticalCorrection: verticalCorrection)
     }
 
-    static func color(for availability: AvailabilityKind) -> UIColor {
+    static func color(for availability: Availability) -> UIColor {
         typealias IconColors = SemanticColors.Icon
+
         switch availability {
         case .none:
             return UIColor.clear
@@ -90,5 +118,21 @@ final class AvailabilityStringBuilder: NSObject {
         case .away:
             return IconColors.foregroundAvailabilityAway
         }
+    }
+
+    private static var e2eiCertifiedShield: NSTextAttachment {
+        let textAttachment = NSTextAttachment(imageResource: .certificateValid)
+        if let imageSize = textAttachment.image?.size {
+            textAttachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageSize)
+        }
+        return textAttachment
+    }
+
+    private static var proteusVerifiedShield: NSTextAttachment {
+        let textAttachment = NSTextAttachment(imageResource: .verifiedShield)
+        if let imageSize = textAttachment.image?.size {
+            textAttachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageSize)
+        }
+        return textAttachment
     }
 }

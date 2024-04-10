@@ -24,20 +24,39 @@ import WireCommonComponents
 class DynamicFontLabel: UILabel, DynamicTypeCapable {
 
     // MARK: - Properties
-    private let fontSpec: FontSpec
+
+    private let onRedrawFont: () -> UIFont?
 
     // MARK: - initialization
-    init(text: String? = nil,
-         fontSpec: FontSpec = .normalRegularFont,
-         color: UIColor
-     ) {
-         self.fontSpec = fontSpec
-         super.init(frame: .zero)
 
-         self.text = text
-         self.font = fontSpec.font
-         self.textColor = color
-     }
+    init(
+        text: String = "",
+        style: UIFont.FontStyle = .body,
+        color: UIColor
+    ) {
+        // Not needed when we use a font style.
+        onRedrawFont = { return nil }
+        super.init(frame: .zero)
+        self.text = text
+        self.textColor = color
+        self.font = .font(for: style)
+        self.adjustsFontForContentSizeCategory = true
+    }
+
+    @available(*, deprecated, message: "Use `init(text:style:color)` instead")
+    init(
+        text: String? = nil,
+        fontSpec: FontSpec = .normalRegularFont,
+        color: UIColor
+    ) {
+        self.onRedrawFont = { return fontSpec.font }
+
+        super.init(frame: .zero)
+
+        self.text = text
+        self.font = fontSpec.font
+        self.textColor = color
+    }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -45,7 +64,7 @@ class DynamicFontLabel: UILabel, DynamicTypeCapable {
 
     // MARK: Methods
     func redrawFont() {
-        self.font = fontSpec.font
+        guard let newFont = onRedrawFont() else { return }
+        self.font = newFont
     }
-
 }

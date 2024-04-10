@@ -34,10 +34,10 @@ final class PasscodeSetupViewController: UIViewController {
         var infoLabelString: String {
             switch self {
             case .createPasscode:
-                return "create_passcode.info_label".localized
+                return L10n.Localizable.CreatePasscode.infoLabel
 
             case .forcedForTeam:
-                return "warning_screen.main_info.forced_applock".localized + "\n\n" + "create_passcode.info_label_forced_applock".localized
+                return L10n.Localizable.WarningScreen.MainInfo.forcedApplock + "\n\n" + L10n.Localizable.CreatePasscode.infoLabelForcedApplock
             }
         }
     }
@@ -53,10 +53,10 @@ final class PasscodeSetupViewController: UIViewController {
     private let contentView: UIView = UIView()
 
     private lazy var createButton: LegacyButton = {
-        let button = Button(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
+        let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
         button.accessibilityIdentifier = "createPasscodeButton"
 
-        button.setTitle("create_passcode.create_button.title".localized, for: .normal)
+        button.setTitle(L10n.Localizable.CreatePasscode.CreateButton.title, for: .normal)
         button.isEnabled = false
 
         button.addTarget(self, action: #selector(onCreateCodeButtonPressed(sender:)), for: .touchUpInside)
@@ -65,8 +65,8 @@ final class PasscodeSetupViewController: UIViewController {
     }()
 
     lazy var passcodeTextField: ValidatedTextField = {
-        let textField = ValidatedTextField.createPasscodeTextField(kind: .passcode(.applockPasscode, isNew: true), delegate: self, setNewColors: true)
-        textField.placeholder = "create_passcode.textfield.placeholder".localized
+        let textField = ValidatedTextField.createPasscodeTextField(kind: .passcode(isNew: true), delegate: self, setNewColors: true)
+        textField.placeholder = L10n.Localizable.CreatePasscode.Textfield.placeholder
         textField.delegate = self
 
         textField.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: .editingChanged)
@@ -78,9 +78,9 @@ final class PasscodeSetupViewController: UIViewController {
         let label = UILabel.createMultiLineCenterdLabel()
         switch context {
         case .createPasscode:
-            label.text = "create_passcode.title_label".localized
+            label.text = L10n.Localizable.CreatePasscode.titleLabel
         case .forcedForTeam:
-            label.text = "warning_screen.title_label".localized
+            label.text = L10n.Localizable.WarningScreen.titleLabel
         }
 
         label.accessibilityIdentifier = "createPasscodeTitle"
@@ -100,14 +100,11 @@ final class PasscodeSetupViewController: UIViewController {
     }()
 
     private let validationLabels: [PasscodeError: UILabel] = {
-
-        let myDictionary = PasscodeError.allCases.reduce([PasscodeError: UILabel]()) { (dict, errorReason) -> [PasscodeError: UILabel] in
-            var dict = dict
-            dict[errorReason] = UILabel()
-            return dict
-        }
-
-        return myDictionary
+        PasscodeError
+            .allCases
+            .reduce(into: [:]) { partialResult, errorReason in
+                partialResult[errorReason] = UILabel()
+            }
     }()
 
     private var callback: ResultHandler?
@@ -146,12 +143,14 @@ final class PasscodeSetupViewController: UIViewController {
 
         contentView.addSubview(stackView)
 
-        [titleLabel,
-         SpacingView(useCompactLayout ? 1 : 10),
-         infoLabel,
-         UILabel.createHintLabel(),
-         passcodeTextField,
-         SpacingView(useCompactLayout ? 2 : 16)].forEach {
+        [
+            titleLabel,
+            SpacingView(useCompactLayout ? 1 : 10),
+            infoLabel,
+            UILabel.createHintLabel(),
+            passcodeTextField,
+            SpacingView(useCompactLayout ? 2 : 16)
+        ].forEach {
             stackView.addArrangedSubview($0)
         }
 
@@ -180,8 +179,7 @@ final class PasscodeSetupViewController: UIViewController {
 
     private func createConstraints() {
 
-        [contentView,
-         stackView].prepareForLayout()
+        [contentView, stackView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let widthConstraint = contentView.createContentWidthConstraint()
 

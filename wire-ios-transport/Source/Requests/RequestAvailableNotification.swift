@@ -18,7 +18,11 @@
 
 import Foundation
 
-private let RequestsAvailableNotificationName = "RequestAvailableNotification"
+public extension NSNotification.Name {
+
+    static let requestAvailableNotification = RequestAvailableNotification.name
+
+}
 
 @objc(ZMRequestAvailableObserver) public protocol RequestAvailableObserver: NSObjectProtocol {
 
@@ -28,18 +32,37 @@ private let RequestsAvailableNotificationName = "RequestAvailableNotification"
 
 /// ZMRequestAvailableNotification is used by transport to signal the operation loop that
 /// there are new potential requests available to process.
-@objc(ZMRequestAvailableNotification) public class RequestAvailableNotification: NSObject {
+@objc(ZMRequestAvailableNotification)
+public final class RequestAvailableNotification: NSObject {
 
-    @objc public static func notifyNewRequestsAvailable(_ sender: NSObjectProtocol?) {
-        NotificationCenter.default.post(name: Notification.Name(rawValue: RequestsAvailableNotificationName), object: nil)
+    @objc
+    public static let name = NSNotification.Name(rawValue: "RequestAvailableNotification")
+
+    @objc
+    public static func notifyNewRequestsAvailable(_ sender: NSObjectProtocol?) {
+        NotificationCenter.default.post(
+            name: name,
+            object: nil
+        )
     }
 
-    @objc public static func addObserver(_ observer: RequestAvailableObserver) {
-        NotificationCenter.default.addObserver(observer, selector: #selector(RequestAvailableObserver.newRequestsAvailable), name: NSNotification.Name(rawValue: RequestsAvailableNotificationName), object: nil)
+    @objc
+    public static func addObserver(_ observer: RequestAvailableObserver) {
+        NotificationCenter.default.addObserver(
+            observer,
+            selector: #selector(RequestAvailableObserver.newRequestsAvailable),
+            name: name,
+            object: nil
+        )
     }
 
-    @objc public static func removeObserver(_ observer: RequestAvailableObserver) {
-        NotificationCenter.default.removeObserver(observer, name: NSNotification.Name(rawValue: RequestsAvailableNotificationName), object: nil)
+    @objc
+    public static func removeObserver(_ observer: RequestAvailableObserver) {
+        NotificationCenter.default.removeObserver(
+            observer,
+            name: name,
+            object: nil
+        )
     }
 
 }

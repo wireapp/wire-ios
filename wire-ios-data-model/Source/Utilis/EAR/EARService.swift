@@ -282,7 +282,7 @@ public class EARService: EARServiceInterface {
             try delegate.prepareForMigration { context in
                 try disableEAR(context)
             }
-        }  else {
+        } else {
             throw EARServiceFailure.cannotPerformMigration
         }
     }
@@ -442,6 +442,9 @@ public class EARService: EARServiceInterface {
 
     private func fetchPrimaryPrivateKey(context: LAContext? = nil) throws -> SecKey {
         if let context = context {
+
+            WireLogger.ear.info("fetching private primary key with LAContext")
+
             let authenticatedKeyDescription = PrivateEARKeyDescription.primaryKeyDescription(
                 accountID: accountID,
                 context: context
@@ -449,6 +452,8 @@ public class EARService: EARServiceInterface {
 
             return try keyRepository.fetchPrivateKey(description: authenticatedKeyDescription)
         } else {
+            WireLogger.ear.info("fetching private primary key without LAContext")
+
             return try keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
         }
     }

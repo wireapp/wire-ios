@@ -52,7 +52,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
 
     private var headlineLabel: DynamicFontLabel!
     private var headlineLabelContainer: ContentInsetView!
-    private var subtextLabel: UILabel!
+    private var subtextLabel: WebLinkTextView!
     private var subtextLabelContainer: ContentInsetView!
     private var mainView: UIView!
     private var errorLabel: UILabel!
@@ -113,10 +113,6 @@ class AuthenticationStepController: AuthenticationStepViewController {
         UIAccessibility.post(notification: .screenChanged, argument: headlineLabel)
     }
 
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-    }
-
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         updateConstraints(forRegularLayout: traitCollection.horizontalSizeClass == .regular)
@@ -150,14 +146,15 @@ class AuthenticationStepController: AuthenticationStepViewController {
         headlineLabel.accessibilityTraits.insert(.header)
 
         if stepDescription.subtext != nil {
-            subtextLabel = DynamicFontLabel(fontSpec: .normalRegularFont,
-                                            color: labelColor)
+            subtextLabel = WebLinkTextView()
             subtextLabelContainer = ContentInsetView(subtextLabel, inset: textPadding)
+            subtextLabel.tintColor = labelColor
             subtextLabel.textAlignment = .center
-            subtextLabel.text = stepDescription.subtext
+            subtextLabel.attributedText = stepDescription.subtext
             subtextLabel.font = AuthenticationStepController.subtextFont
-            subtextLabel.numberOfLines = 0
-            subtextLabel.lineBreakMode = .byWordWrapping
+            subtextLabel.linkTextAttributes = [
+                NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue
+            ]
             subtextLabelContainer.isHidden = stepDescription.subtext == nil
         }
 
@@ -311,7 +308,8 @@ class AuthenticationStepController: AuthenticationStepViewController {
         let button = AuthenticationNavigationBar.makeBackButton()
         button.accessibilityLabel = L10n.Accessibility.Authentication.BackButton.description
         button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: button)
+        navigationItem.backBarButtonItem = UIBarButtonItem(customView: button)
+        navigationItem.backButtonDisplayMode = .minimal
     }
 
     @objc private func backButtonTapped() {

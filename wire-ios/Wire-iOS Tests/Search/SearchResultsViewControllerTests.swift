@@ -24,7 +24,15 @@ final class SearchResultsViewControllerTests: XCTestCase {
     func testThatSearchResultsViewControllerIsNotRetained() {
         autoreleasepool {
             // GIVEN
-            var searchResultsViewController: SearchResultsViewController! = SearchResultsViewController(userSelection: UserSelection(), isAddingParticipants: false, shouldIncludeGuests: true, isFederationEnabled: false)
+            let selfUser = MockUserType.createSelfUser(name: "Bobby McFerrin")
+            let mockUserSession = UserSessionMock(mockUser: selfUser)
+            var searchResultsViewController: SearchResultsViewController! = .init(
+                userSelection: UserSelection(),
+                userSession: mockUserSession,
+                isAddingParticipants: false,
+                shouldIncludeGuests: true,
+                isFederationEnabled: false
+            )
             sut = searchResultsViewController
 
             // WHEN

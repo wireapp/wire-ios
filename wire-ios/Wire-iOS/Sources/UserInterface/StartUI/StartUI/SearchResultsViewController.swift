@@ -32,7 +32,11 @@ extension SearchGroup {
         case .people:
             return true
         case .services:
-            return SelfUser.current.canCreateService
+            guard let user = SelfUser.provider?.providedSelfUser else {
+                assertionFailure("expected available 'user'!")
+                return false
+            }
+            return user.canCreateService
         }
     }
 
@@ -48,9 +52,9 @@ extension SearchGroup {
     var name: String {
         switch self {
         case .people:
-            return "peoplepicker.header.people".localized
+            return L10n.Localizable.Peoplepicker.Header.people
         case .services:
-            return "peoplepicker.header.services".localized
+            return L10n.Localizable.Peoplepicker.Header.services
         }
     }
 }
@@ -87,7 +91,7 @@ enum SearchResultsViewControllerSection: Int {
 }
 
 extension UIViewController {
-    class ControllerHierarchyIterator: IteratorProtocol {
+    final class ControllerHierarchyIterator: IteratorProtocol {
         private var current: UIViewController
 
         init(controller: UIViewController) {
@@ -134,7 +138,7 @@ final class SearchResultsViewController: UIViewController {
     }()
 
     private lazy var searchDirectory: SearchDirectory? = {
-        guard let session = ZMUserSession.shared() else {
+        guard let session = userSession as? ZMUserSession else {
             return nil
         }
 
@@ -142,6 +146,7 @@ final class SearchResultsViewController: UIViewController {
     }()
 
     let userSelection: UserSelection
+    let userSession: UserSession
 
     let sectionController: SectionCollectionViewController = SectionCollectionViewController()
     let contactsSection: ContactsSectionController = ContactsSectionController()
@@ -151,7 +156,11 @@ final class SearchResultsViewController: UIViewController {
     let federationSection = FederationSectionController()
 
     lazy var topPeopleSection: TopPeopleSectionController = {
-        return TopPeopleSectionController(topConversationsDirectory: ZMUserSession.shared()?.topConversationsDirectory)
+        let userSession = (userSession as? ZMUserSession)
+
+        return TopPeopleSectionController(
+            topConversationsDirectory: userSession?.topConversationsDirectory
+        )
     }()
 
     let servicesSection: SearchServicesSectionController
@@ -182,27 +191,31 @@ final class SearchResultsViewController: UIViewController {
         searchDirectory?.tearDown()
     }
 
-    init(userSelection: UserSelection,
-         isAddingParticipants: Bool = false,
-         shouldIncludeGuests: Bool,
-         isFederationEnabled: Bool) {
+    init(
+        userSelection: UserSelection,
+        userSession: UserSession,
+        isAddingParticipants: Bool = false,
+        shouldIncludeGuests: Bool,
+        isFederationEnabled: Bool
+    ) {
         self.userSelection = userSelection
+        self.userSession = userSession
         self.isAddingParticipants = isAddingParticipants
         self.mode = .list
         self.shouldIncludeGuests = shouldIncludeGuests
         self.isFederationEnabled = isFederationEnabled
 
-        let team = ZMUser.selfUser().team
+        let team = userSession.selfUser.membership?.team
         let teamName = team?.name
 
         contactsSection.selection = userSelection
-        contactsSection.title = "peoplepicker.header.contacts_personal".localized
+        contactsSection.title = L10n.Localizable.Peoplepicker.Header.contactsPersonal
         contactsSection.allowsSelection = isAddingParticipants
         teamMemberAndContactsSection.allowsSelection = isAddingParticipants
         teamMemberAndContactsSection.selection = userSelection
-        teamMemberAndContactsSection.title = "peoplepicker.header.contacts".localized
-        servicesSection = SearchServicesSectionController(canSelfUserManageTeam: ZMUser.selfUser().canManageTeam)
-        conversationsSection.title = team != nil ? "peoplepicker.header.team_conversations".localized(args: teamName ?? "") : "peoplepicker.header.conversations".localized
+        teamMemberAndContactsSection.title = L10n.Localizable.Peoplepicker.Header.contacts
+        servicesSection = SearchServicesSectionController(canSelfUserManageTeam: userSession.selfUser.canManageTeam)
+        conversationsSection.title = team != nil ? L10n.Localizable.Peoplepicker.Header.teamConversations(teamName ?? "") : L10n.Localizable.Peoplepicker.Header.conversations
         inviteTeamMemberSection = InviteTeamMemberSection(team: team)
 
         super.init(nibName: nil, bundle: nil)
@@ -251,16 +264,24 @@ final class SearchResultsViewController: UIViewController {
     }
 
     private func performSearch(query: String, options: SearchOptions) {
+        let selfUser = userSession.selfUser
 
         pendingSearchTask?.cancel()
         searchResultsView.emptyResultContainer.isHidden = true
 
         var options = options
-        options.updateForSelfUserTeamRole(selfUser: ZMUser.selfUser())
+        options.updateForSelfUserTeamRole(selfUser: selfUser)
 
-        let request = SearchRequest(query: query.trim(), searchOptions: options, team: ZMUser.selfUser().team)
+        let request = SearchRequest(
+            query: query.trim(),
+            searchOptions: options,
+            team: selfUser.membership?.team
+        )
+
         if let task = searchDirectory?.perform(request) {
-            task.onResult({ [weak self] in self?.handleSearchResult(result: $0, isCompleted: $1)})
+            task.addResultHandler { [weak self] result, isCompleted in
+                self?.handleSearchResult(result: result, isCompleted: isCompleted)
+            }
             task.start()
 
             pendingSearchTask = task
@@ -277,15 +298,15 @@ final class SearchResultsViewController: UIViewController {
             options.formUnion(.federated)
         }
 
-        self.performSearch(query: query, options: options)
+        performSearch(query: query, options: options)
     }
 
     func searchForLocalUsers(withQuery query: String) {
-        self.performSearch(query: query, options: [.contacts, .teamMembers, .localResultsOnly])
+        performSearch(query: query, options: [.contacts, .teamMembers])
     }
 
     func searchForServices(withQuery query: String) {
-        self.performSearch(query: query, options: [.services])
+        performSearch(query: query, options: [.services])
     }
 
     func searchContactList() {
@@ -308,7 +329,7 @@ final class SearchResultsViewController: UIViewController {
 
     func updateVisibleSections() {
         var sections: [CollectionViewSectionController]
-        let team = ZMUser.selfUser().team
+        let team = userSession.selfUser.membership?.team
 
         switch(self.searchGroup, isAddingParticipants) {
         case (.services, _):
@@ -376,6 +397,11 @@ final class SearchResultsViewController: UIViewController {
                 let name0 = $0.name ?? ""
                 let name1 = $1.name ?? ""
 
+                if name0 == name1 {
+                    let pseudo0 = $0.handle ?? ""
+                    let pseudo1 = $1.handle ?? ""
+                    return pseudo0.compare(pseudo1) == .orderedAscending
+                }
                 return name0.compare(name1) == .orderedAscending
             }
         } else {

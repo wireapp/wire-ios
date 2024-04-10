@@ -1,20 +1,20 @@
-/*
- * Wire
- * Copyright (C) 2021 Wire Swiss GmbH
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- */
+//
+// Wire
+// Copyright (C) 2024 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
 
 import Foundation
 import avs
@@ -75,20 +75,16 @@ public class WireCallCenterV3: NSObject {
 
     var usePackagingFeatureConfig: Bool = false
 
-    var muted: Bool {
-        get {
-            return avsWrapper.muted
-        }
-        set {
-            avsWrapper.muted = newValue
-        }
+    var isMuted: Bool {
+        get { avsWrapper.isMuted }
+        set { avsWrapper.isMuted = newValue }
     }
 
     /// The snaphot of the call state for each non-idle conversation.
     var callSnapshots: [AVSIdentifier: CallSnapshot] = [:]
 
     /// Used to collect incoming events (e.g. from fetching the notification stream) until AVS is ready to process them.
-    var bufferedEvents: [(event: CallEvent, completionHandler: () -> Void)]  = []
+    var bufferedEvents: [(event: CallEvent, completionHandler: () -> Void)] = []
 
     /// Set to true once AVS calls the ReadyHandler. Setting it to `true` forwards all previously buffered events to AVS.
     var isReady: Bool = false {
@@ -179,7 +175,7 @@ extension WireCallCenterV3 {
      * - parameter conversationId: The identifier of the conversation that hosts the call.
      */
 
-    func createSnapshot(callState: CallState, members: [AVSCallMember], callStarter: AVSIdentifier, video: Bool, for conversationId: AVSIdentifier, isConferenceCall: Bool) {
+    func createSnapshot(callState: CallState, members: [AVSCallMember], callStarter: AVSIdentifier, video: Bool, for conversationId: AVSIdentifier, conversationType: AVSConversationType) {
         guard
             let moc = uiMOC,
             let conversation = ZMConversation.fetch(with: conversationId.identifier,
@@ -202,7 +198,7 @@ extension WireCallCenterV3 {
             isConstantBitRate: false,
             videoState: video ? .started : .stopped,
             networkQuality: .normal,
-            isConferenceCall: isConferenceCall,
+            conversationType: conversationType,
             degradedUser: nil,
             activeSpeakers: [],
             videoGridPresentationMode: .allVideoStreams,
@@ -295,9 +291,14 @@ extension WireCallCenterV3 {
      */
 
     public func isDegraded(conversationId: AVSIdentifier) -> Bool {
-        guard isEnabled else { return  false }
-        let conversation = ZMConversation.fetch(with: conversationId.identifier, domain: conversationId.domain, in: uiMOC!)
-        let isConversationDegraded = conversation?.securityLevel == .secureWithIgnored
+        guard
+            isEnabled,
+            let uiMOC,
+            let conversation = ZMConversation.fetch(with: conversationId.identifier, domain: conversationId.domain, in: uiMOC)
+        else {
+            return  false
+        }
+        let isConversationDegraded = conversation.isDegraded
         let isCallDegraded = callSnapshots[conversationId]?.isDegradedCall ?? false
         return isConversationDegraded || isCallDegraded
     }
@@ -351,7 +352,11 @@ extension WireCallCenterV3 {
     }
 
     public func isConferenceCall(conversationId: AVSIdentifier) -> Bool {
-        return callSnapshots[conversationId]?.isConferenceCall ?? false
+        return callSnapshots[conversationId]?.conversationType.isConference ?? false
+    }
+
+    public func isMLSConferenceCall(conversationId: AVSIdentifier) -> Bool {
+        return callSnapshots[conversationId]?.conversationType == .mlsConference
     }
 
     func degradedUser(conversationId: AVSIdentifier) -> ZMUser? {
@@ -524,10 +529,11 @@ extension WireCallCenterV3 {
         }
 
         switch conversation.messageProtocol {
-        case .proteus:
+        case .proteus, .mixed:
             break
 
         case .mls:
+            guard conversation.avsConversationType == .mlsConference else { return }
             try setUpMLSConference(in: conversation)
         }
     }
@@ -590,7 +596,7 @@ extension WireCallCenterV3 {
             callStarter: selfUserId,
             video: isVideo,
             for: conversationId,
-            isConferenceCall: conversationType.isConference
+            conversationType: conversationType
         )
 
         if let context = uiMOC {
@@ -605,10 +611,10 @@ extension WireCallCenterV3 {
         }
 
         switch conversation.messageProtocol {
-        case .proteus:
+        case .proteus, .mixed:
             break
-
         case .mls:
+            guard conversationType == .mlsConference else { return }
             try setUpMLSConference(in: conversation)
         }
     }
@@ -652,22 +658,34 @@ extension WireCallCenterV3 {
                         parentID: parentGroupID
                     )
 
-                    let initialConferenceInfo = try mlsService.generateConferenceInfo(
+                    let initialConferenceInfo = try await mlsService.generateConferenceInfo(
                         parentGroupID: parentGroupID,
                         subconversationGroupID: subgroupID
                     )
 
-                    let onConferenceInfoChanged = mlsService.onConferenceInfoChange(
-                        parentGroupID: parentGroupID,
-                        subConversationGroupID: subgroupID
-                    ).prepend(initialConferenceInfo)
+                    self.avsWrapper.setMLSConferenceInfo(
+                        conversationId: conversationID,
+                        info: initialConferenceInfo
+                    )
 
-                    let token = onConferenceInfoChanged.sink { [weak self] newConferenceInfo in
-                        Self.logger.debug("passing MLS conference info to AVS")
-                        self?.avsWrapper.setMLSConferenceInfo(
-                            conversationId: conversationID,
-                            info: newConferenceInfo
+                    let updateConferenceInfoTask = Task {
+
+                        let onConferenceInfoChange = mlsService.onConferenceInfoChange(
+                            parentGroupID: parentGroupID,
+                            subConversationGroupID: subgroupID
                         )
+
+                        do {
+                            for try await conferenceInfo in onConferenceInfoChange {
+                                try Task.checkCancellation()
+                                self.avsWrapper.setMLSConferenceInfo(
+                                    conversationId: conversationID,
+                                    info: conferenceInfo
+                                )
+                            }
+                        } catch {
+                            WireLogger.calling.error("Error updating conference info: \(error)")
+                        }
                     }
 
                     let staleParticipantsRemover = MLSConferenceStaleParticipantsRemover(
@@ -682,7 +700,7 @@ extension WireCallCenterV3 {
                     if var snapshot = self.callSnapshots[conversationID] {
                         snapshot.qualifiedID = parentQualifiedID
                         snapshot.groupIDs = (parentGroupID, subgroupID)
-                        snapshot.onConferenceInfoChangedToken = token
+                        snapshot.updateConferenceInfoTask = updateConferenceInfoTask
                         snapshot.mlsConferenceStaleParticipantsRemover = staleParticipantsRemover
                         self.callSnapshots[conversationID] = snapshot
                     }
@@ -721,7 +739,12 @@ extension WireCallCenterV3 {
         }
 
         if let mlsParentIDs = mlsParentIDS(for: conversationId) {
-            cancelPendingStaleParticipantsRemovals(callSnapshot: callSnapshots[conversationId])
+            var snapshot = callSnapshots[conversationId]
+            snapshot?.updateConferenceInfoTask?.cancel()
+            snapshot?.updateConferenceInfoTask = nil
+            cancelPendingStaleParticipantsRemovals(callSnapshot: snapshot)
+            snapshot?.mlsConferenceStaleParticipantsRemover?.stopSubscribing()
+            snapshot?.mlsConferenceStaleParticipantsRemover = nil
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
                 parentGroupID: mlsParentIDs.1
@@ -916,14 +939,18 @@ extension WireCallCenterV3 {
     }
 
     private func conversationType(from callEvent: CallEvent) -> AVSConversationType? {
+        return conversationType(from: callEvent.conversationId)
+    }
+
+    func conversationType(from conversationId: AVSIdentifier) -> AVSConversationType? {
         guard let context = uiMOC else { return nil }
 
         var conversationType: AVSConversationType?
 
         context.performAndWait {
             let conversation = ZMConversation.fetch(
-                with: callEvent.conversationId.identifier,
-                domain: callEvent.conversationId.domain,
+                with: conversationId.identifier,
+                domain: conversationId.domain,
                 in: context
             )
 
@@ -931,6 +958,51 @@ extension WireCallCenterV3 {
         }
 
         return conversationType
+    }
+
+    /// Set MLSConferenceInfo to AVSWrapper in case this is a MLS conference
+    func setMLSConferenceInfoIfNeeded(for conversationId: AVSIdentifier) {
+        Task {
+            guard let syncContext = await self.uiMOC?.perform({ self.uiMOC?.zm_sync }) else { return }
+
+            let result: (MLSServiceInterface?, QualifiedID?, MLSGroupID?) = await syncContext.perform {
+                let conversation = ZMConversation.fetch(
+                    with: conversationId.identifier,
+                    domain: conversationId.domain,
+                    in: syncContext
+                )
+                guard let conversation, conversation.avsConversationType == .mlsConference else {
+                    return (nil, nil, nil)
+                }
+                return (syncContext.mlsService,
+                        conversation.qualifiedID,
+                        conversation.mlsGroupID)
+            }
+
+            guard
+                let mlsService = result.0,
+                let parentQualifiedID = result.1,
+                let parentGroupID = result.2
+            else {
+                return
+            }
+
+            do {
+                let subgroupID = try await mlsService.createOrJoinSubgroup(
+                    parentQualifiedID: parentQualifiedID,
+                    parentID: parentGroupID
+                )
+
+                let conferenceInfo = try await mlsService.generateConferenceInfo(
+                    parentGroupID: parentGroupID,
+                    subconversationGroupID: subgroupID
+                )
+
+                self.avsWrapper.setMLSConferenceInfo(conversationId: conversationId, info: conferenceInfo)
+            } catch {
+                WireLogger.mls.error("error while setMLSConferenceInfo: \(error.localizedDescription)")
+            }
+        }
     }
 
     /// Handles a change in calling state.
@@ -945,12 +1017,17 @@ extension WireCallCenterV3 {
 
         var callState = callState
 
-        if case .terminating(reason: .stillOngoing) = callState, canJoinCall(conversationId: conversationId) {
-            callState = .incoming(video: false, shouldRing: false, degraded: isDegraded(conversationId: conversationId))
+        if case .terminating(reason: .stillOngoing) = callState {
+
+            if isDegraded(conversationId: conversationId) {
+                callState = .terminating(reason: .securityDegraded)
+            } else if canJoinCall(conversationId: conversationId) {
+                callState = .incoming(video: false, shouldRing: false, degraded: false)
+            }
         }
 
         if case .incoming = callState, isGroup(conversationId: conversationId), activeCalls.isEmpty {
-            muted = true
+            isMuted = true
         }
 
         let callerId = initiatorForCall(conversationId: conversationId) ?? userId
@@ -991,7 +1068,7 @@ private extension ZMConversation {
         case (.oneOnOne, _):
             return .oneToOne
 
-        case (.group, .proteus):
+        case (.group, .proteus), (.group, .mixed):
             return .conference
 
         case (.group, .mls), (.`self`, .mls):
@@ -999,20 +1076,6 @@ private extension ZMConversation {
 
         default:
             return nil
-        }
-    }
-
-}
-
-private extension AVSConversationType {
-
-    var isConference: Bool {
-        switch self {
-        case .conference, .mlsConference:
-            return true
-
-        default:
-            return false
         }
     }
 

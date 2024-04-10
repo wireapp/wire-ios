@@ -39,7 +39,10 @@ public enum MessageDestructionTimerError: Error {
 
 extension ZMTransportResponse {
     var updateEvent: ZMUpdateEvent? {
-        return payload.flatMap(papply(flip(ZMUpdateEvent.init), nil))
+        guard let payload else {
+            return nil
+        }
+        return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
     }
 }
 
@@ -48,8 +51,10 @@ extension ZMConversation {
     /// Changes the conversation message destruction timeout
     public func setMessageDestructionTimeout(
         _ timeout: MessageDestructionTimeoutValue,
-        in userSession: ZMUserSession, _
-        completion: @escaping (VoidResult) -> Void) {
+        in userSession: ZMUserSession,
+        _ completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        // TODO: [WPB-5730] move this method to a useCase
 
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(WirelessLinkError.unknown))
@@ -59,11 +64,11 @@ extension ZMConversation {
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus.isOne(of: 200, 204), let event = response.updateEvent {
                 // Process `conversation.message-timer-update` event
-                userSession.syncManagedObjectContext.performGroupedBlock {
-                    // TODO jacob maybe skip the event decoder since we know these events will never be encrypted.
-                    userSession.updateEventProcessor?.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
-                }
-                completion(.success)
+                // swiftlint:disable todo_requires_jira_link
+                // FIXME: [jacob] replace with ConversationEventProcessor
+                // swiftlint:enable todo_requires_jira_link
+                userSession.processConversationEvents([event])
+                completion(.success(()))
             } else {
                 let error = WirelessLinkError(response: response) ?? .unknown
                 log.debug("Error updating message destruction timeout \(error): \(response)")
@@ -89,7 +94,7 @@ private struct MessageDestructionTimeoutRequestFactory {
             let timeoutInMS: Int64 = Int64(timeout) * 1000
             payload = ["message_timer": timeoutInMS]
         }
-        return .init(path: "/conversations/\(identifier)/message-timer", method: .methodPUT, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return .init(path: "/conversations/\(identifier)/message-timer", method: .put, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
 }

@@ -27,8 +27,8 @@ enum LegalHoldAlertFactory {
 
     static func makeLegalHoldDeactivatedAlert(for user: SelfUserType, suggestedStateChangeHandler: SuggestedStateChangeHandler?) -> UIAlertController {
         return UIAlertController.alertWithOKButton(
-            title: "legal_hold.deactivated.title".localized,
-            message: "legal_hold.deactivated.message".localized,
+            title: L10n.Localizable.LegalHold.Deactivated.title,
+            message: L10n.Localizable.LegalHold.Deactivated.message,
             okActionHandler: { _ in
                 user.acceptLegalHoldChangeAlert()
                 suggestedStateChangeHandler?(.none)
@@ -38,8 +38,8 @@ enum LegalHoldAlertFactory {
 
     static func makeLegalHoldActivatedAlert(for user: SelfUserType, suggestedStateChangeHandler: SuggestedStateChangeHandler?) -> UIAlertController {
         let alert = UIAlertController.alertWithOKButton(
-            title: "legalhold_active.alert.title".localized,
-            message: "legalhold_active.alert.message".localized,
+            title: L10n.Localizable.LegalholdActive.Alert.title,
+            message: L10n.Localizable.LegalholdActive.Alert.message,
             okActionHandler: { _ in
                 user.acceptLegalHoldChangeAlert()
                 suggestedStateChangeHandler?(.none)
@@ -49,7 +49,8 @@ enum LegalHoldAlertFactory {
         return alert
     }
 
-    static func makeLegalHoldActivationAlert(for legalHoldRequest: LegalHoldRequest, user: SelfUserType, suggestedStateChangeHandler: SuggestedStateChangeHandler?) -> UIAlertController {
+    static func makeLegalHoldActivationAlert(for legalHoldRequest: LegalHoldRequest, fingerprint: String, user: SelfUserType, suggestedStateChangeHandler: SuggestedStateChangeHandler?) -> UIAlertController {
+
         func handleLegalHoldActivationResult(_ error: LegalHoldActivationError?) {
             (UIApplication.shared.topmostViewController() as? SpinnerCapableViewController)?.isLoadingViewVisible = false
 
@@ -58,9 +59,9 @@ enum LegalHoldAlertFactory {
                 user.acceptLegalHoldChangeAlert()
 
                 let alert = UIAlertController.alertWithOKButton(
-                    title: "legalhold_request.alert.error_wrong_password".localized,
-                    message: "general.failure.try_again".localized,
-                    okActionHandler: { _ in suggestedStateChangeHandler?(.warningAboutPendingRequest(legalHoldRequest)) }
+                    title: L10n.Localizable.LegalholdRequest.Alert.errorWrongPassword,
+                    message: L10n.Localizable.General.Failure.tryAgain,
+                    okActionHandler: { _ in suggestedStateChangeHandler?(.warningAboutPendingRequest(legalHoldRequest, fingerprint)) }
                 )
 
                 suggestedStateChangeHandler?(.warningAboutAcceptationResult(alert))
@@ -69,9 +70,9 @@ enum LegalHoldAlertFactory {
                 user.acceptLegalHoldChangeAlert()
 
                 let alert = UIAlertController.alertWithOKButton(
-                    title: "general.failure".localized,
-                    message: "general.failure.try_again".localized,
-                    okActionHandler: { _ in suggestedStateChangeHandler?(.warningAboutPendingRequest(legalHoldRequest)) }
+                    title: L10n.Localizable.General.failure,
+                    message: L10n.Localizable.General.Failure.tryAgain,
+                    okActionHandler: { _ in suggestedStateChangeHandler?(.warningAboutPendingRequest(legalHoldRequest, fingerprint)) }
                 )
 
                 suggestedStateChangeHandler?(.warningAboutAcceptationResult(alert))
@@ -87,15 +88,16 @@ enum LegalHoldAlertFactory {
             suggestedStateChangeHandler?(.none)
         }
 
-        let request = user.makeLegalHoldInputRequest(for: legalHoldRequest, cancellationHandler: cancellationHandler) { password in
+        let request = user.makeLegalHoldInputRequest(with: fingerprint, cancellationHandler: cancellationHandler) { password in
+
             (UIApplication.shared.topmostViewController() as? SpinnerCapableViewController)?.isLoadingViewVisible = true
             suggestedStateChangeHandler?(.acceptingRequest)
 
             ZMUserSession.shared()?.accept(legalHoldRequest: legalHoldRequest, password: password) { error in
                 handleLegalHoldActivationResult(error)
             }
-        }
 
+        }
         return UIAlertController(inputRequest: request)
     }
 

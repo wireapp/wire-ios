@@ -23,7 +23,7 @@ import WireCryptobox
 
 @testable import WireRequestStrategy
 
-class FetchClientRequestStrategyTests: MessagingTestBase {
+final class FetchClientRequestStrategyTests: MessagingTestBase {
 
     var sut: FetchingClientRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
@@ -53,6 +53,7 @@ class FetchClientRequestStrategyTests: MessagingTestBase {
         sut = nil
         NotificationCenter.default.removeObserver(self)
         apiVersion = nil
+        BackendInfo.storage = .standard
         super.tearDown()
     }
 
@@ -60,11 +61,7 @@ class FetchClientRequestStrategyTests: MessagingTestBase {
 
     }
 
-}
-
-// MARK: - Fetching client based on needsToBeUpdatedFromBackend flag
-
-extension FetchClientRequestStrategyTests {
+    // MARK: - Fetching client based on needsToBeUpdatedFromBackend flag
 
     func testThatItCreatesARequestForV0_WhenUserClientNeedsToBeUpdatedFromBackend() {
         // Given
@@ -73,7 +70,7 @@ extension FetchClientRequestStrategyTests {
 
         createsARequest_WhenUserClientNeedsToBeUpdatedFromBackend(for: apiVersion, clientUUID: clientUUID) { request in
             XCTAssertEqual(request.path, "/users/\(self.otherUser.remoteIdentifier!.transportString())/clients/\(clientUUID.transportString())")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
         }
     }
 
@@ -84,7 +81,7 @@ extension FetchClientRequestStrategyTests {
 
         createsARequest_WhenUserClientNeedsToBeUpdatedFromBackend(for: apiVersion, clientUUID: clientUUID) { request in
             XCTAssertEqual(request.path, "/v1/users/\(self.otherUser.remoteIdentifier!.transportString())/clients/\(clientUUID.transportString())")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
         }
     }
 
@@ -94,7 +91,7 @@ extension FetchClientRequestStrategyTests {
 
         createsARequest_WhenUserClientNeedsToBeUpdatedFromBackend(for: apiVersion) { request in
             XCTAssertEqual(request.path, "/v2/users/list-clients")
-            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertEqual(request.method, .post)
         }
     }
 
@@ -107,7 +104,7 @@ extension FetchClientRequestStrategyTests {
             reportObjectsChanged: false
         ) { request in
             XCTAssertEqual(request.path, "/v2/users/list-clients")
-            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertEqual(request.method, .post)
         }
     }
 
@@ -149,7 +146,7 @@ extension FetchClientRequestStrategyTests {
             self.otherUser.domain = nil
             let clientUUID = UUID()
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
-            let clientSet: Set<NSManagedObject> =  [client]
+            let clientSet: Set<NSManagedObject> = [client]
 
             // WHEN
             client.needsToBeUpdatedFromBackend = true
@@ -165,11 +162,7 @@ extension FetchClientRequestStrategyTests {
         }
     }
 
-}
-
-// MARK: - Fetching clients in batches
-
-extension FetchClientRequestStrategyTests {
+    // MARK: - Fetching clients in batches
 
     func testThatItCreatesABatchRequest_WhenUserClientNeedsToBeUpdatedFromBackend_AndDomainIsAvailble() {
         syncMOC.performGroupedBlockAndWait {
@@ -311,15 +304,15 @@ extension FetchClientRequestStrategyTests {
         }
     }
 
-}
-
-// MARK: - Fetching Other Users Clients
-
-extension FetchClientRequestStrategyTests {
+    // MARK: - Fetching Other Users Clients
 
     func payloadForOtherClients(_ identifiers: String...) -> ZMTransportData {
-        return identifiers.reduce([]) { $0 + [["id": $1,
-                                               "class": "phone"]] } as ZMTransportData
+        identifiers.reduce(into: []) { partialResult, identifier in
+            partialResult.append([
+                "id": identifier,
+                "class": "phone"
+            ])
+        } as ZMTransportData
     }
 
     func testThatItCreatesOtherUsersClientsCorrectly() {
@@ -445,7 +438,7 @@ extension FetchClientRequestStrategyTests {
             if let request = request {
                 let path = "/users/\(user.remoteIdentifier!.transportString())/clients"
                 XCTAssertEqual(request.path, path)
-                XCTAssertEqual(request.method, .methodGET)
+                XCTAssertEqual(request.method, .get)
             } else {
                 XCTFail("Failed to create request")
             }
@@ -472,7 +465,7 @@ extension FetchClientRequestStrategyTests {
             if let request = request {
                 let path = "/v1/users/list-clients/v2"
                 XCTAssertEqual(request.path, path)
-                XCTAssertEqual(request.method, .methodPOST)
+                XCTAssertEqual(request.method, .post)
             } else {
                 XCTFail("Failed to create request")
             }
@@ -499,16 +492,14 @@ extension FetchClientRequestStrategyTests {
             if let request = request {
                 let path = "/v2/users/list-clients"
                 XCTAssertEqual(request.path, path)
-                XCTAssertEqual(request.method, .methodPOST)
+                XCTAssertEqual(request.method, .post)
             } else {
                 XCTFail("Failed to create request")
             }
         }
     }
-}
 
-// MARK: - Fetching other user's clients / RemoteIdentifierObjectSync
-extension FetchClientRequestStrategyTests {
+    // MARK: - Fetching other user's clients / RemoteIdentifierObjectSync
 
     func testThatItDoesNotDeleteAnObjectWhenResponseContainsRemoteID() {
 
@@ -566,7 +557,6 @@ extension FetchClientRequestStrategyTests {
         var client: UserClient!
         self.syncMOC.performGroupedBlockAndWait {
             client = self.createClient(user: self.otherUser)
-            XCTAssertFalse(client.hasSessionWithSelfClient)
             self.otherUser.fetchUserClients()
             payload = [["id": client.remoteIdentifier!, "class": "phone"]] as NSArray
         }
@@ -596,7 +586,9 @@ extension FetchClientRequestStrategyTests {
             sessionIdentifier = EncryptionSessionIdentifier(userId: self.otherUser!.remoteIdentifier.uuidString, clientId: remoteIdentifier)
             self.otherUser.fetchUserClients()
             payload = [["id": remoteIdentifier, "class": "phone"]] as NSArray
+            // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
+            // swiftlint:enable todo_requires_jira_link
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform {
                 try! $0.createClientSession(sessionIdentifier, base64PreKeyString: self.syncMOC.zm_cryptKeyStore.lastPreKey()) // just a bogus key is OK
             }
@@ -642,11 +634,9 @@ extension FetchClientRequestStrategyTests {
             XCTAssertTrue(self.otherClient.isZombieObject)
         }
     }
-}
 
-// MARK: - Helper Methods
+    // MARK: - Helper Methods
 
-extension FetchClientRequestStrategyTests {
     func createsARequest_WhenUserClientNeedsToBeUpdatedFromBackend(
         for apiVersion: APIVersion,
         clientUUID: UUID = UUID(),

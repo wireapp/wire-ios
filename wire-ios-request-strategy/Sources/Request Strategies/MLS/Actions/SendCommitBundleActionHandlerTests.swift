@@ -26,6 +26,7 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
     override func setUp() {
         super.setUp()
         action = SendCommitBundleAction(commitBundle: commitBundle)
+        handler = SendCommitBundleActionHandler(context: syncMOC)
     }
 
     // MARK: - Request generation
@@ -33,7 +34,7 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v5/mls/commit-bundles",
-            expectedMethod: .methodPOST,
+            expectedMethod: .post,
             expectedData: commitBundle,
             expectedContentType: "message/mls",
             apiVersion: .v5
@@ -57,6 +58,7 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
     }
 
     // MARK: - Response handling
+
     func test_itHandlesSuccess() throws {
         // Given
         let payload: [AnyHashable: Any] = [
@@ -112,5 +114,23 @@ class SendCommitBundleActionHandlerTests: ActionHandlerTestBase<SendCommitBundle
             .failure(status: 422, error: .mlsUnsupportedMessage, label: "mls-unsupported-message"),
             .failure(status: 999, error: .unknown(status: 999, label: "foo", message: "?"), label: "foo")
         ])
+    }
+
+    func test_itHandlesUnreachableBackendsFailure() {
+        let domains = ["example.com"]
+        let payload = ["unreachable_backends": domains]
+        test_itHandlesFailure(
+            status: 533,
+            payload: payload as ZMTransportData,
+            expectedError: SendCommitBundleAction.Failure.unreachableDomains(Set(domains)))
+    }
+
+    func test_itHandlesNonFederatingBackendsFailure() {
+        let domains = ["example.com"]
+        let payload = ["non_federating_backends": domains]
+        test_itHandlesFailure(
+            status: 409,
+            payload: payload as ZMTransportData,
+            expectedError: SendCommitBundleAction.Failure.nonFederatingDomains(Set(domains)))
     }
 }

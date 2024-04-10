@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ enum MockPaginatedResponse {
     case error(Error)
 }
 
-class MockPaginatedRequester: ZiphyURLRequester {
+final class MockPaginatedRequester: ZiphyURLRequester {
 
     private let networkQueue = DispatchQueue(label: "MockZiphyRequester.Network")
     private var completionHandler: MockZiphyRequesterCompletionHandler?

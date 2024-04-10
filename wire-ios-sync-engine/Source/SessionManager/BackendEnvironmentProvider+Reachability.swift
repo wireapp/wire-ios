@@ -22,9 +22,9 @@ public typealias Reachability = ReachabilityProvider & TearDownCapable
 
 extension BackendEnvironmentProvider {
 
-    var reachability: ZMReachability {
+    public var reachability: ZMReachability {
 
-        let group = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Reachability")!
+        let group = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Reachability")
 
         let serverNames: [String]
         if let proxy = self.proxy {

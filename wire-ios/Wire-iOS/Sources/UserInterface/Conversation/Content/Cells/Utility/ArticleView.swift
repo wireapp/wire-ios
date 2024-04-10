@@ -100,7 +100,9 @@ final class ArticleView: UIView {
     private func setupConstraints(_ imagePlaceholder: Bool) {
         let imageHeight: CGFloat = imagePlaceholder ? self.imageHeight : 0
 
-        [messageLabel, authorLabel, imageView, obfuscationView].prepareForLayout()
+        [messageLabel, authorLabel, imageView, obfuscationView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         NSLayoutConstraint.activate([
             imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -194,7 +196,7 @@ final class ArticleView: UIView {
 
     private func configure(withTwitterStatus twitterStatus: TwitterStatusMetadata) {
         let author = twitterStatus.author ?? "-"
-        authorLabel.attributedText = "twitter_status.on_twitter".localized(args: author).attributedString.addAttributes(authorHighlightAttributes, toSubstring: author)
+        authorLabel.attributedText = L10n.Localizable.TwitterStatus.onTwitter(author).attributedString.addAttributes(authorHighlightAttributes, toSubstring: author)
 
         messageLabel.text = twitterStatus.message
     }

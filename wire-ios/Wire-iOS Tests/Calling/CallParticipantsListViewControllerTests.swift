@@ -50,24 +50,26 @@ final class CallParticipantsListViewControllerTests: BaseSnapshotTestCase {
 
     var sut: CallParticipantsListViewController!
     var mockParticipants: CallParticipantsList!
+    var selfUser: UserType!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
-        mockParticipants = CallParticipantsListHelper.participants(
-            count: 10,
-            videoState: .stopped,
-            microphoneState: .muted,
-            mockUsers: SwiftMockLoader.mockUsers()
-        )
+        mockParticipants = CallParticipantsListHelper.participants(count: 10, videoState: .stopped, microphoneState: .muted, mockUsers: SwiftMockLoader.mockUsers())
+        selfUser = ZMUser.selfUser()
+        guard selfUser != nil else {
+            XCTFail("ZMUser.selfUser() is nil")
+            return
+        }
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
-        sut = nil
+        selfUser = nil
         mockParticipants = nil
+        sut = nil
         super.tearDown()
     }
 
@@ -78,7 +80,7 @@ final class CallParticipantsListViewControllerTests: BaseSnapshotTestCase {
         sut = CallParticipantsListViewController(
             participants: mockParticipants,
             showParticipants: true,
-            selfUser: ZMUser.selfUser()
+            selfUser: selfUser
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.setNeedsLayout()
@@ -94,7 +96,7 @@ final class CallParticipantsListViewControllerTests: BaseSnapshotTestCase {
         sut = CallParticipantsListViewController(
             participants: mockParticipants,
             showParticipants: true,
-            selfUser: ZMUser.selfUser()
+            selfUser: selfUser
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.setNeedsLayout()
@@ -111,7 +113,7 @@ final class CallParticipantsListViewControllerTests: BaseSnapshotTestCase {
         sut = CallParticipantsListViewController(
             participants: mockParticipants,
             showParticipants: false,
-            selfUser: ZMUser.selfUser()
+            selfUser: selfUser
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.backgroundColor = .white
@@ -125,7 +127,7 @@ final class CallParticipantsListViewControllerTests: BaseSnapshotTestCase {
         sut = CallParticipantsListViewController(
             participants: mockParticipants,
             showParticipants: false,
-            selfUser: ZMUser.selfUser()
+            selfUser: selfUser
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.backgroundColor = .black
@@ -141,7 +143,7 @@ final class CallParticipantsListViewControllerTests: BaseSnapshotTestCase {
         sut = CallParticipantsListViewController(
             participants: participants,
             showParticipants: true,
-            selfUser: ZMUser.selfUser()
+            selfUser: selfUser
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.backgroundColor = .white
@@ -156,7 +158,7 @@ final class CallParticipantsListViewControllerTests: BaseSnapshotTestCase {
         sut = CallParticipantsListViewController(
             participants: participants,
             showParticipants: true,
-            selfUser: ZMUser.selfUser()
+            selfUser: selfUser
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 325, height: 336)
         sut.view.backgroundColor = .black
@@ -165,5 +167,4 @@ final class CallParticipantsListViewControllerTests: BaseSnapshotTestCase {
         // THEN
         verify(matching: sut.view)
     }
-
 }

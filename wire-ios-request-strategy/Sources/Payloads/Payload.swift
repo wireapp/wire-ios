@@ -18,19 +18,19 @@
 import Foundation
 import WireDataModel
 
-enum Payload {
+public enum Payload {
 
-    typealias UserClients = [Payload.UserClient]
-    typealias UserClientByUserID = [String: UserClients]
-    typealias UserClientByDomain = [String: UserClientByUserID]
-    typealias PrekeyByClientID = [String: Prekey?]
-    typealias PrekeyByUserID = [String: PrekeyByClientID]
-    typealias PrekeyByQualifiedUserID = [String: PrekeyByUserID]
-    typealias ClientList = [String]
-    typealias ClientListByUserID = [String: ClientList]
-    typealias ClientListByQualifiedUserID = [String: ClientListByUserID]
-    typealias ClientListByUser = [ZMUser: ClientList]
-    typealias UserProfiles = [Payload.UserProfile]
+    public typealias UserClients = [Payload.UserClient]
+    public typealias UserClientByUserID = [String: UserClients]
+    public typealias UserClientByDomain = [String: UserClientByUserID]
+    public typealias PrekeyByClientID = [String: Prekey?]
+    public typealias PrekeyByUserID = [String: PrekeyByClientID]
+    public typealias PrekeyByQualifiedUserID = [String: PrekeyByUserID]
+    public typealias ClientList = [String]
+    public typealias ClientListByUserID = [String: ClientList]
+    public typealias ClientListByQualifiedUserID = [String: ClientListByUserID]
+    public typealias ClientListByUser = [ZMUser: ClientList]
+    public typealias UserProfiles = [Payload.UserProfile]
 
     struct EventContainer<T: Codable>: Codable {
         enum CodingKeys: String, CodingKey {
@@ -49,9 +49,14 @@ enum Payload {
         var qualifiedIDs: [QualifiedID]
     }
 
-    struct Prekey: Codable {
+    public struct Prekey: Codable {
         let key: String
         let id: Int?
+
+        public init(key: String, id: Int?) {
+            self.key = key
+            self.id = id
+        }
     }
 
     struct PrekeyByQualifiedUserIDV4: Codable {
@@ -77,7 +82,7 @@ enum Payload {
         let latitide: Double
     }
 
-    struct UserClient: Codable, Equatable {
+    public struct UserClient: Codable, Equatable {
 
         enum CodingKeys: String, CodingKey {
             case id
@@ -168,7 +173,14 @@ enum Payload {
 
     }
 
-    struct UserProfile: Codable {
+    public struct UserProfile: Codable {
+
+        enum MessageProtocol: String, Codable {
+
+            case proteus
+            case mls
+
+        }
 
         enum CodingKeys: String, CodingKey, CaseIterable {
             case id
@@ -186,6 +198,7 @@ enum Payload {
             case isDeleted = "deleted"
             case expiresAt = "expires_at"
             case legalholdStatus = "legalhold_status"
+            case supportedProtocols = "supported_protocols"
         }
 
         let id: UUID?
@@ -203,6 +216,7 @@ enum Payload {
         let isDeleted: Bool?
         let expiresAt: Date?
         let legalholdStatus: LegalholdStatus?
+        let supportedProtocols: Set<MessageProtocol>?
 
         /// All keys which were present in the original payload even if they
         /// contained a null value.
@@ -226,6 +240,7 @@ enum Payload {
              isDeleted: Bool? = nil,
              expiresAt: Date? = nil,
              legalholdStatus: LegalholdStatus? = nil,
+             supportedProtocols: Set<MessageProtocol>? = nil,
              updatedKeys: Set<CodingKeys>? = nil) {
 
             self.id = id
@@ -243,10 +258,11 @@ enum Payload {
             self.isDeleted = isDeleted
             self.expiresAt = expiresAt
             self.legalholdStatus = legalholdStatus
+            self.supportedProtocols = supportedProtocols
             self.updatedKeys = updatedKeys ?? Set(CodingKeys.allCases)
         }
 
-        init(from decoder: Decoder) throws {
+        public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             self.id = try container.decodeIfPresent(UUID.self, forKey: .id)
             self.qualifiedID = try container.decodeIfPresent(QualifiedID.self, forKey: .qualifiedID)
@@ -263,19 +279,26 @@ enum Payload {
             self.isDeleted = try container.decodeIfPresent(Bool.self, forKey: .isDeleted)
             self.expiresAt = try container.decodeIfPresent(Date.self, forKey: .expiresAt)
             self.legalholdStatus = try container.decodeIfPresent(LegalholdStatus.self, forKey: .legalholdStatus)
+            self.supportedProtocols = try container.decodeIfPresent(Set<MessageProtocol>.self, forKey: .supportedProtocols)
             self.updatedKeys = Set(container.allKeys)
         }
     }
 
-    struct ResponseFailure: Codable {
+    public struct ResponseFailure: Codable, Equatable {
 
         /// Endpoints involving federated calls to other domains can return some extra failure responses.
         /// The error response contains the following extra fields:
-        struct FederationFailure: Codable {
+        public struct FederationFailure: Codable, Equatable {
 
-            enum FailureType: String, Codable {
+            public enum FailureType: String, Codable, Equatable {
                 case federation
                 case unknown
+            }
+
+            public init(domain: String, path: String, type: FailureType) {
+                self.domain = domain
+                self.path = path
+                self.type = type
             }
 
             let domain: String
@@ -284,7 +307,7 @@ enum Payload {
 
         }
 
-        enum Label: String, Codable {
+        public enum Label: String, Codable, Equatable {
             case notFound = "not-found"
             case noEndpoint = "no-endpoint"
             case noIdentity = "no-identity"
@@ -297,16 +320,23 @@ enum Payload {
             case mlsStaleMessage = "mls-stale-message"
             case unknown
 
-            init(from decoder: Decoder) throws {
+            public init(from decoder: Decoder) throws {
                 let container = try decoder.singleValueContainer()
                 let label = try container.decode(String.self)
                 self = Label(rawValue: label) ?? .unknown
             }
 
-            func encode(to encoder: Encoder) throws {
+            public func encode(to encoder: Encoder) throws {
                 var container = encoder.singleValueContainer()
                 try container.encode(self.rawValue)
             }
+        }
+
+        public init(code: Int, label: Label, message: String, data: FederationFailure?) {
+            self.code = code
+            self.label = label
+            self.message = message
+            self.data = data
         }
 
         let code: Int
@@ -316,7 +346,30 @@ enum Payload {
 
     }
 
-    struct MessageSendingStatus: Codable {
+    public struct MessageSendingStatusV0: Codable {
+
+        enum CodingKeys: String, CodingKey {
+            case time
+            case missing
+            case redundant
+            case deleted
+        }
+
+        /// Time of sending message.
+        let time: Date
+
+        /// Clients that the message should have been encrypted for, but wasn't.
+        let missing: ClientListByUserID
+
+        /// Clients that the message was encrypted for, but isn't necessary. For
+        /// example for a client who's user has been removed from the conversation.
+        let redundant: ClientListByUserID
+
+        /// Clients that the message was encrypted for, but has since been deleted.
+        let deleted: ClientListByUserID
+    }
+
+    public struct MessageSendingStatus: Codable, Equatable {
 
         enum CodingKeys: String, CodingKey {
             case time
@@ -325,6 +378,15 @@ enum Payload {
             case deleted
             case failedToSend = "failed_to_send"
             case failedToConfirm = "failed_to_confirm_clients"
+        }
+
+        public init(time: Date, missing: ClientListByQualifiedUserID, redundant: ClientListByQualifiedUserID, deleted: ClientListByQualifiedUserID, failedToSend: ClientListByQualifiedUserID, failedToConfirm: ClientListByQualifiedUserID) {
+            self.time = time
+            self.missing = missing
+            self.redundant = redundant
+            self.deleted = deleted
+            self.failedToSend = failedToSend
+            self.failedToConfirm = failedToConfirm
         }
 
         /// Time of sending message.
@@ -348,12 +410,18 @@ enum Payload {
         let failedToConfirm: ClientListByQualifiedUserID
     }
 
-    struct MLSMessageSendingStatus: Codable {
+    public struct MLSMessageSendingStatus: Codable {
 
         enum CodingKeys: String, CodingKey {
             case time
             case events
             case failedToSend = "failed_to_send"
+        }
+
+        public init(time: Date, events: [Data], failedToSend: [QualifiedID]?) {
+            self.time = time
+            self.events = events
+            self.failedToSend = failedToSend
         }
 
         /// Time of sending message.

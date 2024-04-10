@@ -25,30 +25,41 @@ typealias SelfUserType = UserType & SelfLegalHoldSubject
 
 final class ConversationListTopBarViewController: UIViewController {
 
-    private var observerToken: Any?
-    private var availabilityViewController: AvailabilityTitleViewController?
-    private var account: Account
+    private let account: Account
+
+    /// Name, availability and verification info about the self user.
+    public var selfUserStatus = UserStatus() {
+        didSet { updateTitleView() }
+    }
+
     private let selfUser: SelfUserType
+    private var userSession: UserSession
+    private var observerToken: NSObjectProtocol?
 
     var topBar: TopBar? {
-        return view as? TopBar
+        view as? TopBar
     }
+
+    private weak var userStatusViewController: UserStatusViewController?
+    private weak var titleViewLabel: UILabel?
 
     /// init a ConversationListTopBarViewController
     ///
     /// - Parameters:
     ///   - account: the Account of the user
     ///   - selfUser: the self user object. Allow to inject a mock self user for testing
-    init(account: Account,
-         selfUser: SelfUserType = ZMUser.selfUser()) {
+    init(
+        account: Account,
+        selfUser: SelfUserType,
+        userSession: UserSession
+    ) {
         self.account = account
         self.selfUser = selfUser
+        self.userSession = userSession
 
         super.init(nibName: nil, bundle: nil)
 
-        if let sharedSession = ZMUserSession.shared() {
-            observerToken = UserChangeInfo.add(observer: self, for: ZMUser.selfUser(), in: sharedSession)
-        }
+        observerToken = userSession.addUserObserver(self, for: userSession.selfUser)
 
         viewRespectsSystemMinimumLayoutMargins = false
     }
@@ -67,8 +78,6 @@ final class ConversationListTopBarViewController: UIViewController {
         view.backgroundColor = SemanticColors.View.backgroundConversationList
         view.addBorder(for: .bottom)
 
-        availabilityViewController?.didMove(toParent: self)
-
         updateTitleView()
         updateAccountView()
         updateLegalHoldIndictor()
@@ -77,30 +86,37 @@ final class ConversationListTopBarViewController: UIViewController {
     // MARK: - Title View
 
     func updateTitleView() {
-        topBar?.middleView = createTitleView()
-    }
-
-    private func createTitleView() -> UIView {
         if selfUser.isTeamMember {
-            let availabilityViewController = AvailabilityTitleViewController(user: selfUser, options: .header)
-            addChild(availabilityViewController)
-            self.availabilityViewController = availabilityViewController
+            defer { userStatusViewController?.userStatus = selfUserStatus }
+            guard userStatusViewController == nil else { return }
 
-            return availabilityViewController.view
+            let userStatusViewController = UserStatusViewController(options: .header, settings: .shared)
+            addChild(userStatusViewController)
+            topBar?.middleView = userStatusViewController.view
+            userStatusViewController.didMove(toParent: self)
+            userStatusViewController.delegate = self
+            self.userStatusViewController = userStatusViewController
+
         } else {
-            let titleLabel = UILabel()
+            defer {
+                titleViewLabel?.text = selfUserStatus.name
+                titleViewLabel?.accessibilityValue = selfUserStatus.name
+            }
+            guard titleViewLabel == nil else { return }
+            if let userStatusViewController {
+                removeChild(userStatusViewController)
+            }
 
-            titleLabel.text = selfUser.name
+            let titleLabel = UILabel()
             titleLabel.font = FontSpec(.normal, .semibold).font
             titleLabel.textColor = SemanticColors.Label.textDefault
             titleLabel.accessibilityTraits = .header
-            titleLabel.accessibilityValue = selfUser.name
             titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
             titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
             titleLabel.setContentHuggingPriority(.required, for: .horizontal)
             titleLabel.setContentHuggingPriority(.required, for: .vertical)
-
-            return titleLabel
+            topBar?.middleView = titleLabel
+            self.titleViewLabel = titleLabel
         }
     }
 
@@ -141,7 +157,7 @@ final class ConversationListTopBarViewController: UIViewController {
         button.setIconColor(UIColor.white.withAlphaComponent(0.5), for: .highlighted)
 
         button.setLegalHoldAccessibility()
-        button.accessibilityValue = "legalhold_request.button.accessibility".localized
+        button.accessibilityValue = L10n.Localizable.LegalholdRequest.Button.accessibility
 
         button.addTarget(self, action: #selector(presentLegalHoldRequest), for: .touchUpInside)
 
@@ -158,8 +174,12 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     private func createAccountView() -> UIView {
-        let session = ZMUserSession.shared() ?? nil
-        let user = session == nil ? nil : ZMUser.selfUser(inUserSession: session!)
+        guard let session = ZMUserSession.shared() else {
+            return UIView()
+        }
+
+        let user = ZMUser.selfUser(inUserSession: session)
+
         let accountView = AccountViewFactory.viewFor(account: account, user: user, displayContext: .conversationListHeader)
 
         accountView.unreadCountStyle = .current
@@ -174,7 +194,7 @@ final class ConversationListTopBarViewController: UIViewController {
 
         if let selfUser = ZMUser.selfUser(),
            selfUser.clientsRequiringUserAttention.count > 0 {
-            accountView.accessibilityLabel = "self.new-device.voiceover.label".localized
+            accountView.accessibilityLabel = L10n.Localizable.Self.NewDevice.Voiceover.label
         }
 
         return accountView.wrapInAvatarSizeContainer()
@@ -193,7 +213,12 @@ final class ConversationListTopBarViewController: UIViewController {
 
     @objc
     func presentLegalHoldInfo() {
-        LegalHoldDetailsViewController.present(in: self, user: ZMUser.selfUser())
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
+        LegalHoldDetailsViewController.present(in: self, user: selfUser, userSession: userSession)
     }
 
     @objc
@@ -207,12 +232,15 @@ final class ConversationListTopBarViewController: UIViewController {
 
     @objc
     func presentSettings() {
-        let settingsViewController = createSettingsViewController()
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
+
+        let settingsViewController = createSettingsViewController(selfUser: selfUser)
         let keyboardAvoidingViewController = KeyboardAvoidingViewController(viewController: settingsViewController)
 
         if wr_splitViewController?.layoutSize == .compact {
-            keyboardAvoidingViewController.modalPresentationStyle = .currentContext
-            keyboardAvoidingViewController.transitioningDelegate = self
             present(keyboardAvoidingViewController, animated: true)
         } else {
             keyboardAvoidingViewController.modalPresentationStyle = .formSheet
@@ -221,8 +249,10 @@ final class ConversationListTopBarViewController: UIViewController {
         }
     }
 
-    func createSettingsViewController() -> UIViewController {
-        let selfProfileViewController = SelfProfileViewController(selfUser: ZMUser.selfUser())
+    func createSettingsViewController(selfUser: ZMUser) -> UIViewController {
+        // instead of having the dependency for `SelfProfileViewController` we could inject a factory
+        // returning the `UIViewController` subclass and only have the presentation logic at this place
+        let selfProfileViewController = SelfProfileViewController(selfUser: selfUser, userSession: userSession)
         return selfProfileViewController.wrapInNavigationController(navigationControllerClass: NavigationController.self)
     }
 
@@ -243,166 +273,44 @@ extension ConversationListTopBarViewController: UIViewControllerTransitioningDel
     }
 }
 
-extension ConversationListTopBarViewController: ZMUserObserver {
+extension ConversationListTopBarViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.nameChanged || changeInfo.teamsChanged {
-            updateTitleView()
             updateAccountView()
         }
-
         if changeInfo.legalHoldStatusChanged {
             updateLegalHoldIndictor()
         }
     }
 }
 
+// MARK: - UserStatusViewControllerDelegate
+
+extension ConversationListTopBarViewController: UserStatusViewControllerDelegate {
+
+    func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
+        guard viewController === userStatusViewController else { return }
+
+        // this should be done by some use case instead of accessing the `session` and the `UserType` directly here
+        userSession.perform { [weak self] in
+            self?.selfUser.availability = availability
+        }
+    }
+}
+
 extension UIView {
+
     func wrapInAvatarSizeContainer() -> UIView {
         let container = UIView()
-
         container.addSubview(self)
-
         NSLayoutConstraint.activate([
             container.widthAnchor.constraint(equalToConstant: CGFloat.ConversationAvatarView.iconSize),
             container.heightAnchor.constraint(equalToConstant: CGFloat.ConversationAvatarView.iconSize),
 
             container.centerYAnchor.constraint(equalTo: centerYAnchor),
-            container.centerXAnchor.constraint(equalTo: centerXAnchor)])
-
+            container.centerXAnchor.constraint(equalTo: centerXAnchor)
+        ])
         return container
-
-    }
-}
-
-final class TopBar: UIView {
-
-    var leftView: UIView? = .none {
-        didSet {
-            oldValue?.removeFromSuperview()
-
-            guard let new = leftView else {
-                return
-            }
-
-            addSubview(new)
-
-            new.translatesAutoresizingMaskIntoConstraints = false
-
-            var constraints = [
-                new.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-                new.centerYAnchor.constraint(equalTo: centerYAnchor)]
-
-            if let middleView = middleView {
-                constraints.append(new.trailingAnchor.constraint(lessThanOrEqualTo: middleView.leadingAnchor))
-            }
-
-            NSLayoutConstraint.activate(constraints)
-        }
-    }
-
-    var rightView: UIView? = .none {
-        didSet {
-            oldValue?.removeFromSuperview()
-
-            guard let new = rightView else {
-                return
-            }
-
-            addSubview(new)
-
-            new.translatesAutoresizingMaskIntoConstraints = false
-
-            var constraints = [
-                new.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-                new.centerYAnchor.constraint(equalTo: centerYAnchor)]
-
-            if let middleView = middleView {
-                constraints.append(new.leadingAnchor.constraint(greaterThanOrEqualTo: middleView.trailingAnchor))
-            }
-
-            NSLayoutConstraint.activate(constraints)
-        }
-
-    }
-
-    private let middleViewContainer = UIView()
-
-    var middleView: UIView? = .none {
-        didSet {
-            oldValue?.removeFromSuperview()
-
-            guard let new = middleView else {
-                return
-            }
-
-            middleViewContainer.addSubview(new)
-
-            new.translatesAutoresizingMaskIntoConstraints = false
-
-            NSLayoutConstraint.activate([
-                new.centerYAnchor.constraint(equalTo: middleViewContainer.centerYAnchor),
-                new.centerXAnchor.constraint(equalTo: middleViewContainer.centerXAnchor),
-
-                new.widthAnchor.constraint(equalTo: middleViewContainer.widthAnchor),
-                new.heightAnchor.constraint(equalTo: middleViewContainer.heightAnchor)])
-        }
-    }
-
-    var splitSeparator: Bool = true {
-        didSet {
-            leftSeparatorInsetConstraint.isActive = splitSeparator
-            rightSeparatorInsetConstraint.isActive = splitSeparator
-            self.layoutIfNeeded()
-        }
-    }
-
-    let leftSeparatorLineView = OverflowSeparatorView()
-    let rightSeparatorLineView = OverflowSeparatorView()
-
-    private var leftSeparatorInsetConstraint: NSLayoutConstraint!
-    private var rightSeparatorInsetConstraint: NSLayoutConstraint!
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        layoutMargins = UIEdgeInsets(top: 0, left: CGFloat.ConversationList.horizontalMargin, bottom: 0, right: CGFloat.ConversationList.horizontalMargin)
-        let spacing: CGFloat = 7
-        [leftSeparatorLineView, rightSeparatorLineView, middleViewContainer].forEach {
-            addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
-
-        let leftTrailingConstraint = leftSeparatorLineView.trailingAnchor.constraint(equalTo: centerXAnchor)
-        leftTrailingConstraint.priority = .defaultHigh
-
-        let rightLeadingConstraint = rightSeparatorLineView.leadingAnchor.constraint(equalTo: centerXAnchor)
-        rightLeadingConstraint.priority = .defaultHigh
-
-        leftSeparatorInsetConstraint = leftSeparatorLineView.trailingAnchor.constraint(equalTo: middleViewContainer.leadingAnchor, constant: -spacing)
-        rightSeparatorInsetConstraint = rightSeparatorLineView.leadingAnchor.constraint(equalTo: middleViewContainer.trailingAnchor, constant: spacing)
-
-        NSLayoutConstraint.activate([leftSeparatorLineView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                                     leftSeparatorLineView.bottomAnchor.constraint(equalTo: bottomAnchor),
-
-                                     rightSeparatorLineView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                                     rightSeparatorLineView.bottomAnchor.constraint(equalTo: bottomAnchor),
-
-                                     middleViewContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
-                                     middleViewContainer.centerYAnchor.constraint(equalTo: centerYAnchor),
-
-                                     leftTrailingConstraint,
-                                     rightLeadingConstraint,
-
-                                     leftSeparatorInsetConstraint,
-                                     rightSeparatorInsetConstraint])
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override var intrinsicContentSize: CGSize {
-        return CGSize(width: UIView.noIntrinsicMetric, height: CGFloat.ConversationListHeader.barHeight)
     }
 }

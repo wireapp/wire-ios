@@ -22,12 +22,13 @@ import WireSyncEngine
 enum AppState: Equatable {
     case retryStart
     case headless
-    case locked
-    case authenticated(completedRegistration: Bool)
+    case locked(UserSession)
+    case authenticated(UserSession)
     case unauthenticated(error: NSError?)
     case blacklisted(reason: BlacklistReason)
     case jailbroken
-    case databaseFailure
+    case certificateEnrollmentRequired
+    case databaseFailure(reason: Error)
     case migrating
     case loading(account: Account, from: Account?)
 
@@ -44,6 +45,8 @@ enum AppState: Equatable {
         case let (.blacklisted(reason1), .blacklisted(reason2)):
             return reason1 == reason2
         case (jailbroken, jailbroken):
+            return true
+        case (certificateEnrollmentRequired, certificateEnrollmentRequired):
             return true
         case (databaseFailure, databaseFailure):
             return true
@@ -65,7 +68,7 @@ protocol AppStateCalculatorDelegate: AnyObject {
                             completion: @escaping () -> Void)
 }
 
-class AppStateCalculator {
+final class AppStateCalculator {
 
     init() {
         setupApplicationNotifications()
@@ -77,19 +80,17 @@ class AppStateCalculator {
 
     // MARK: - Public Property
     weak var delegate: AppStateCalculatorDelegate?
-    var wasUnauthenticated: Bool {
-        guard case .unauthenticated = previousAppState else {
-            return false
-        }
-        return true
-    }
+    var wasUnauthenticated: Bool = false
 
     // MARK: - Private Set Property
-    private(set) var previousAppState: AppState = .headless
     private(set) var pendingAppState: AppState?
     private(set) var appState: AppState = .headless {
         willSet {
-            previousAppState = appState
+            if case .unauthenticated = appState {
+                wasUnauthenticated = true
+            } else {
+                wasUnauthenticated = false
+            }
         }
     }
 
@@ -179,8 +180,18 @@ extension AppStateCalculator: SessionManagerDelegate {
         transition(to: .jailbroken)
     }
 
-    func sessionManagerDidFailToLoadDatabase() {
-        transition(to: .databaseFailure)
+    func sessionManagerRequireCertificateEnrollment() {
+        transition(to: .certificateEnrollmentRequired)
+    }
+
+    func sessionManagerDidEnrollCertificate(for activeSession: UserSession?) {
+        if let activeSession {
+            transition(to: .authenticated(activeSession))
+        }
+    }
+
+    func sessionManagerDidFailToLoadDatabase(error: Error) {
+        transition(to: .databaseFailure(reason: error))
     }
 
     func sessionManagerWillMigrateAccount(userSessionCanBeTornDown: @escaping () -> Void) {
@@ -200,38 +211,50 @@ extension AppStateCalculator: SessionManagerDelegate {
         // No op
     }
 
-    func sessionManagerDidReportLockChange(forSession session: UserSessionAppLockInterface) {
+    func sessionManagerDidReportLockChange(forSession session: UserSession) {
         if session.isLocked {
-            transition(to: .locked)
+            transition(to: .locked(session))
         } else {
-            transition(to: .authenticated(completedRegistration: false))
+            transition(to: .authenticated(session))
         }
     }
 
-    func sessionManagerDidPerformFederationMigration(authenticated: Bool) {
-        let state: AppState = authenticated ?
-            .authenticated(completedRegistration: false) :
-            .unauthenticated(error: NSError(code: .needsAuthenticationAfterMigration, userInfo: nil))
-        transition(to: state)
+    func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
+        if let activeSession {
+            transition(to: .authenticated(activeSession))
+        } else {
+            let error = NSError(code: .needsAuthenticationAfterMigration, userInfo: nil)
+            transition(to: .unauthenticated(error: error))
+        }
     }
 
-    func sessionManagerDidPerformAPIMigrations() {
-        transition(to: .authenticated(completedRegistration: false))
+    func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
+        if let activeSession {
+            transition(to: .authenticated(activeSession))
+        } else {
+            let error = NSError(code: .needsAuthenticationAfterMigration, userInfo: nil)
+            transition(to: .unauthenticated(error: error))
+        }
     }
 
     func sessionManagerAsksToRetryStart() {
         transition(to: .retryStart)
     }
+
+    func sessionManagerDidCompleteInitialSync(for activeSession: UserSession?) {
+        if let activeSession {
+            transition(to: .authenticated(activeSession))
+        }
+    }
 }
 
 // MARK: - AuthenticationCoordinatorDelegate
 extension AppStateCalculator: AuthenticationCoordinatorDelegate {
-    func userAuthenticationDidComplete(addedAccount: Bool) {
-        // TODO: [John] Avoid singleton.
-        if ZMUserSession.shared()?.isLocked == true {
-            transition(to: .locked)
+    func userAuthenticationDidComplete(userSession: UserSession) {
+        if userSession.isLocked {
+            transition(to: .locked(userSession))
         } else {
-            transition(to: .authenticated(completedRegistration: addedAccount))
+            transition(to: .authenticated(userSession))
         }
     }
 }

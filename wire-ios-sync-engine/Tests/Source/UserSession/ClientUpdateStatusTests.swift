@@ -19,6 +19,8 @@
 import Foundation
 import WireTesting
 
+@testable import WireSyncEngine
+
 struct ClientUpdateStatusChange {
     let type: ZMClientUpdateNotificationType
     var clientObjectIDs: [NSManagedObjectID]
@@ -32,10 +34,15 @@ class ClientUpdateStatusTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        self.sut = ClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
 
-        clientObserverToken = ZMClientUpdateNotification.addObserver(context: uiMOC) { [weak self] (type, clientObjectIDs, error) in
-            self?.receivedNotifications.append(ClientUpdateStatusChange(type: type, clientObjectIDs: clientObjectIDs, error: error))
+        syncMOC.performAndWait { [self] in
+            self.sut = ClientUpdateStatus(syncManagedObjectContext: syncMOC)
+            self.sut.determineInitialClientStatus()
+        }
+
+        clientObserverToken = ZMClientUpdateNotification.addObserver(context: uiMOC) { [weak self] type, clientObjectIDs, error in
+            let change = ClientUpdateStatusChange(type: type, clientObjectIDs: clientObjectIDs, error: error)
+            self?.receivedNotifications.append(change)
         }
     }
 
@@ -60,15 +67,17 @@ class ClientUpdateStatusTests: MessagingTest {
 
     func insertNewClient(_ isSelfClient: Bool) -> UserClient! {
         var client: UserClient!
-        self.syncMOC.performGroupedBlockAndWait { () -> Void in
-            client = UserClient.insertNewObject(in: self.syncMOC)
+        syncMOC.performGroupedAndWait { syncMOC in
+            client = UserClient.insertNewObject(in: syncMOC)
             client.remoteIdentifier = isSelfClient ? "selfIdentifier" : "identifier"
-            client.user = ZMUser.selfUser(in: self.syncMOC)
-            self.syncMOC.saveOrRollback()
+            client.user = ZMUser.selfUser(in: syncMOC)
+            syncMOC.saveOrRollback()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         if isSelfClient {
-            self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: "PersistedClientId")
+            syncMOC.performAndWait {
+                self.syncMOC.setPersistentStoreMetadata(client.remoteIdentifier, key: "PersistedClientId")
+            }
         }
         return client
     }
@@ -88,11 +97,13 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // when
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        self.sut.didFetchClients([selfClient, otherClient])
+        syncMOC.performGroupedAndWait { _ in
+            self.sut.didFetchClients([selfClient, otherClient])
+        }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.done)
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
 
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
@@ -114,11 +125,14 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // when
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        self.sut.didFetchClients([client, selfClient])
+        syncMOC.performGroupedAndWait { _ in
+            self.sut.didFetchClients([client, selfClient])
+        }
+
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.done)
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
 
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
@@ -160,8 +174,8 @@ class ClientUpdateStatusTests: MessagingTest {
         let client = insertNewClient()
 
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        self.sut.didFetchClients([client, selfClient])
-        XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.done)
+        syncMOC.performAndWait { self.sut.didFetchClients([client, selfClient]) }
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         self.receivedNotifications.removeAll()
 
         // when
@@ -169,11 +183,13 @@ class ClientUpdateStatusTests: MessagingTest {
         self.sut.deleteClients(withCredentials: credentials)
         XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.deletingClients)
 
-        self.sut.didDeleteClient()
+        syncMOC.performGroupedAndWait { _ in
+            self.sut.didDeleteClient()
+        }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.done)
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
         if let note = note {
@@ -193,11 +209,13 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // when
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        self.sut.didFetchClients([otherClient])
+        syncMOC.performGroupedAndWait { _ in
+            self.sut.didFetchClients([otherClient])
+        }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.done)
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
         if let note = note {
@@ -215,11 +233,14 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // when
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        self.sut.didFetchClients([otherClient])
+        syncMOC.performGroupedAndWait { _ in
+            self.sut.didFetchClients([otherClient])
+        }
+
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.done)
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
         if let note = note {
@@ -238,7 +259,9 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         self.sut.needsToFetchClients(andVerifySelfClient: true)
-        self.sut.didFetchClients([client, selfClient])
+        syncMOC.performGroupedAndWait { _ in
+            self.sut.didFetchClients([client, selfClient])
+        }
 
         let error = NSError(domain: "ClientManagement", code: Int(ClientUpdateError.invalidCredentials.rawValue), userInfo: nil)
         self.receivedNotifications.removeAll()
@@ -250,7 +273,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.done)
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
         if let note = note {
@@ -270,21 +293,78 @@ class ClientUpdateStatusTests: MessagingTest {
 
         // delete self client
         let selfClient = insertSelfClient()
-        selfClient.markedToDelete = true
-        selfClient.setLocallyModifiedKeys(Set([ZMUserClientMarkedToDeleteKey]))
-        selfClient.managedObjectContext?.saveOrRollback()
+        self.syncMOC.performAndWait {
+            selfClient.markedToDelete = true
+            selfClient.setLocallyModifiedKeys(Set([ZMUserClientMarkedToDeleteKey]))
+            selfClient.managedObjectContext?.saveOrRollback()
+        }
 
         // WHEN
         // re-create
-        self.sut = ClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
+        self.syncMOC.performAndWait {
+            self.sut = ClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
+            self.sut.determineInitialClientStatus()
+        }
         clientObserverToken = ZMClientUpdateNotification.addObserver(context: uiMOC) { [weak self] (type, clientObjectIDs, error) in
             self?.receivedNotifications.append(ClientUpdateStatusChange(type: type, clientObjectIDs: clientObjectIDs, error: error))
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        XCTAssertFalse(selfClient.markedToDelete)
-        XCTAssertFalse(selfClient.hasLocalModifications(forKey: ZMUserClientMarkedToDeleteKey))
+        self.syncMOC.performAndWait {
+            XCTAssertFalse(selfClient.markedToDelete)
+            XCTAssertFalse(selfClient.hasLocalModifications(forKey: ZMUserClientMarkedToDeleteKey))
+        }
 
+    }
+
+    func testThatItReturnsWaitsForPrekeys_WhenThereAreNoPrekeysAvailable() {
+        // given
+        let selfClient = insertSelfClient()
+        self.sut.didFetchClients([selfClient])
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
+    }
+
+    func testThatItReturnsGeneratesPrekeys_AfterPrekeyGenerationAsBegun() {
+        // given
+        let selfClient = insertSelfClient()
+        self.sut.didFetchClients([selfClient])
+
+        // when
+        sut.willGeneratePrekeys()
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, .generatingPrekeys)
+    }
+
+    func testThatItReturnsDone_AfterPrekeyGenerationIsCompleted() {
+        // given
+        let prekey = IdPrekeyTuple(id: 1, prekey: "prekey1")
+        let selfClient = insertSelfClient()
+        self.sut.didFetchClients([selfClient])
+        sut.willGeneratePrekeys()
+
+        // when
+        sut.didGeneratePrekeys([prekey])
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, .done)
+    }
+
+    func testThatItReturnsWaitingForPrekeys_AfterPrekeysHaveBeenUploaded() {
+        // given
+        let prekey = IdPrekeyTuple(id: 1, prekey: "prekey1")
+        let selfClient = insertSelfClient()
+        self.sut.didFetchClients([selfClient])
+        sut.willGeneratePrekeys()
+        sut.didGeneratePrekeys([prekey])
+
+        // when
+        sut.didUploadPrekeys()
+
+        // then
+        XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
     }
 }

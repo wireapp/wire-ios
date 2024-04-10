@@ -20,7 +20,7 @@ import Foundation
 import WireDataModel
 import WireSyncEngine
 
-class FederationSectionController: SearchSectionController {
+final class FederationSectionController: SearchSectionController {
 
     var users = [ZMSearchUser]()
 
@@ -54,7 +54,14 @@ class FederationSectionController: SearchSectionController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(ofType: UserCell.self, for: indexPath)
         let user = users[indexPath.row]
-        cell.configure(with: user, selfUser: ZMUser.selfUser())
+        if let selfUser = ZMUser.selfUser() {
+            cell.configure(
+                user: user,
+                isSelfUserPartOfATeam: selfUser.hasTeam
+            )
+        } else {
+            assertionFailure("ZMUser.selfUser() is nil")
+        }
         cell.accessoryIconView.isHidden = true
         return cell
     }

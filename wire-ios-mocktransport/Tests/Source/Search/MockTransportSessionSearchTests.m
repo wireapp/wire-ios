@@ -61,7 +61,7 @@
     
     // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"search", @"contacts?q=AA&l=200&d=1"]];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMTransportRequestMethodGet apiVersion:0];
     
     
     // THEN
@@ -74,7 +74,8 @@
                                                   @"id": user1.identifier,
                                                   @"level": @1,
                                                   @"name": user1.name,
-                                                  @"handle": user1.handle
+                                                  @"handle": user1.handle,
+                                                  @"supported_protocols": @[@"proteus"]
                                                   },
                                               
                                               @{
@@ -84,7 +85,8 @@
                                                   @"id": user2.identifier,
                                                   @"level": @1,
                                                   @"name": user2.name,
-                                                  @"handle": user2.handle
+                                                  @"handle": user2.handle,
+                                                  @"supported_protocols": @[@"proteus"]
                                                   }
                                               ]
                                       };
@@ -131,7 +133,7 @@
     
     // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"search", @"contacts?q=aa&l=3&d=1"]];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMTransportRequestMethodGet apiVersion:0];
     
     
     // THEN
@@ -144,7 +146,8 @@
                                                   @"id": user1.identifier,
                                                   @"level": @1,
                                                   @"name": user1.name,
-                                                  @"handle": user1.handle
+                                                  @"handle": user1.handle,
+                                                  @"supported_protocols": @[@"proteus"]
                                                   },
                                               
                                               @{
@@ -154,7 +157,8 @@
                                                   @"id": user2.identifier,
                                                   @"level": @1,
                                                   @"name": user2.name,
-                                                  @"handle": user2.handle
+                                                  @"handle": user2.handle,
+                                                  @"supported_protocols": @[@"proteus"]
                                                   },
                                               
                                               
@@ -165,7 +169,8 @@
                                                   @"id": user3.identifier,
                                                   @"level": @1,
                                                   @"name": user3.name,
-                                                  @"handle": user3.handle
+                                                  @"handle": user3.handle,
+                                                  @"supported_protocols": @[@"proteus"]
                                                   }
                                               ]
                                       };
@@ -194,7 +199,7 @@
     
     // WHEN
     NSString *path = [NSString pathWithComponents:@[@"/", @"search", @"contacts?q=User&l=200&d=1"]];
-    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET apiVersion:0];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMTransportRequestMethodGet apiVersion:0];
     
     
     // THEN
@@ -207,7 +212,8 @@
                                                   @"id": user1.identifier,
                                                   @"level": @1,
                                                   @"name": user1.name,
-                                                  @"handle": user1.handle
+                                                  @"handle": user1.handle,
+                                                  @"supported_protocols": @[@"proteus"]
                                                   }
                                               ]
                                       };

@@ -19,9 +19,7 @@
 import XCTest
 @testable import Wire
 
-final class ConversationImageMessageTests: BaseSnapshotTestCase {
-
-    // MARK: - Properties
+final class ConversationImageMessageTests: ConversationMessageSnapshotTestCase {
 
     var image: UIImage!
     var message: MockMessage!

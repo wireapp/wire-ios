@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,7 +14,6 @@
 		5E13808021A30AB7004A646C /* ProtosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E13807F21A30AB7004A646C /* ProtosTests.swift */; };
 		5EAC172E21A30C390014E671 /* WireProtos.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 090837FE1B872DBF00629095 /* WireProtos.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		638BBCF129150CEF007491FF /* mls.pb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638BBCF029150CEE007491FF /* mls.pb.swift */; };
-		638BBCF329150D4C007491FF /* mls.proto in Sources */ = {isa = PBXBuildFile; fileRef = 638BBCF229150D4C007491FF /* mls.proto */; };
 		EEE25B1D297199A90008B894 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6BE296F05DB001D7C88 /* SwiftProtobuf.xcframework */; };
 		F1FDF2E021B043F400E037A1 /* WireProtos.h in Headers */ = {isa = PBXBuildFile; fileRef = F1FDF2DF21B043F400E037A1 /* WireProtos.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
@@ -103,7 +102,11 @@
 				090837FF1B872DBF00629095 /* Products */,
 				67FFDFDA66F3EEA3F9461130 /* Frameworks */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
+			wrapsLines = 1;
 		};
 		090837FF1B872DBF00629095 /* Products */ = {
 			isa = PBXGroup;
@@ -314,7 +317,6 @@
 				5E13807E21A30A9D004A646C /* otr.pb.swift in Sources */,
 				5E13807D21A30A9D004A646C /* messages.pb.swift in Sources */,
 				638BBCF129150CEF007491FF /* mls.pb.swift in Sources */,
-				638BBCF329150D4C007491FF /* mls.proto in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

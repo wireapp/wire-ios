@@ -120,11 +120,9 @@
         let nameOrder: NameOrder
         if tags.contains("Arab") {
             nameOrder = .arabicGivenName
-        }
-        else if tags.contains(where: {["Hani", "Jpan", "Deva", "Gurj"].contains($0)}) {
+        } else if tags.contains(where: { ["Hani", "Jpan", "Deva", "Gurj"].contains($0) }) {
             nameOrder = tags.contains("Latn") ? .givenNameFirst : .givenNameLast
-        }
-        else {
+        } else {
             nameOrder = .givenNameFirst
         }
         return nameOrder
@@ -143,7 +141,7 @@
             let substring = fullName[substringRange]
             if let aComponent = component {
                 if let lastRangeBound = lastRange?.upperBound, lastRangeBound == substringRange.lowerBound {
-                    component = aComponent+substring
+                    component = aComponent + substring
                     return
                 }
                 components.append(aComponent)
@@ -164,7 +162,7 @@
 
     override public var hash: Int {
         var hash = 0
-        components.forEach {hash ^= $0.hash}
+        components.forEach { hash ^= $0.hash }
         return hash
     }
 

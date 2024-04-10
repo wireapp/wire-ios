@@ -44,6 +44,7 @@ class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClients
             QualifiedID(uuid: userID1, domain: domain1),
             QualifiedID(uuid: userID2, domain: domain2)
         ]))
+        handler = FetchUserClientsActionHandler(context: syncMOC)
     }
 
     override func tearDown() {
@@ -58,7 +59,7 @@ class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClients
         let request = try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v3/users/list-clients",
-            expectedMethod: .methodPOST,
+            expectedMethod: .post,
             apiVersion: .v3
         )
 
@@ -72,7 +73,7 @@ class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClients
         let request = try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v2/users/list-clients",
-            expectedMethod: .methodPOST,
+            expectedMethod: .post,
             apiVersion: .v2
         )
 
@@ -86,7 +87,7 @@ class FetchUserClientsActionHandlerTests: ActionHandlerTestBase<FetchUserClients
         let request = try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v1/users/list-clients",
-            expectedMethod: .methodPOST,
+            expectedMethod: .post,
             apiVersion: .v1
         )
 

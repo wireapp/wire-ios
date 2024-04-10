@@ -22,8 +22,12 @@ import SnapshotTesting
 
 final class UserImageViewContainerSnapshotTests: XCTestCase {
 
+    // MARK: - Properties
+
     var sut: UserImageViewContainer!
     var mockUser: MockUserType!
+
+    // MARK: - setUp
 
     override func setUp() {
         super.setUp()
@@ -33,6 +37,8 @@ final class UserImageViewContainerSnapshotTests: XCTestCase {
         mockUser.mediumProfileImageCacheKey = "test"
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         sut = nil
         mockUser = nil
@@ -40,12 +46,28 @@ final class UserImageViewContainerSnapshotTests: XCTestCase {
         super.tearDown()
     }
 
-    func setupSut(userSession: ZMUserSessionInterface?) {
+    // MARK: - Helper
+
+    func setupSut(userSession: UserSessionMock?) {
         let maxSize = CGFloat(240)
-        sut = UserImageViewContainer(size: .big, maxSize: maxSize, yOffset: 0, userSession: userSession)
-        sut.frame = CGRect(origin: .zero, size: CGSize(width: maxSize, height: maxSize))
+
+        sut = UserImageViewContainer(
+            size: .big,
+            maxSize: maxSize,
+            yOffset: 0,
+            userSession: userSession
+        )
+        sut.frame = CGRect(
+            origin: .zero,
+            size: CGSize(
+                width: maxSize,
+                height: maxSize
+            )
+        )
         sut.user = mockUser
     }
+
+    // MARK: - Snapshot Tests
 
     func testForNoUserImageWithoutSession() {
         setupSut(userSession: nil)
@@ -54,9 +76,13 @@ final class UserImageViewContainerSnapshotTests: XCTestCase {
     }
 
     func testForWithUserImage() {
-        setupSut(userSession: MockZMUserSession())
+        setupSut(userSession: UserSessionMock(mockUser: mockUser))
 
-        XCTAssertTrue(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
+        XCTAssertTrue(
+            waitForGroupsToBeEmpty(
+                [MediaAssetCache.defaultImageCache.dispatchGroup]
+            )
+        )
         verify(matching: sut)
     }
 }

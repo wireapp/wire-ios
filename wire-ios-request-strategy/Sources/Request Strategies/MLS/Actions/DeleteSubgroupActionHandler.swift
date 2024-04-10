@@ -49,7 +49,7 @@ final class DeleteSubgroupActionHandler: ActionHandler<DeleteSubgroupAction> {
 
         return ZMTransportRequest(
             path: "/conversations/\(domain)/\(conversationID)/subconversations/\(subgroupType)",
-            method: .methodDELETE,
+            method: .delete,
             payload: nil,
             apiVersion: apiVersion.rawValue
         )

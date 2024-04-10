@@ -26,12 +26,14 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
 
     var context: ConversationMessageContext!
     var mockSelfUser: MockUserType!
+    var userSession: UserSessionMock!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         mockSelfUser = MockUserType.createDefaultSelfUser()
+        userSession = UserSessionMock(mockUser: mockSelfUser)
         context = ConversationMessageContext(isSameSenderAsPrevious: false,
                                              isTimeIntervalSinceLastMessageSignificant: false,
                                              isTimestampInSameMinuteAsPreviousMessage: false,
@@ -60,7 +62,11 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
     func testThatItReturnsCellsInCorrectOrder_Normal() {
 
         // GIVEN
-        let section = ConversationMessageSectionController(message: MockMessage(), context: context)
+        let section = ConversationMessageSectionController(
+            message: MockMessage(),
+            context: context,
+            userSession: userSession
+        )
         section.cellDescriptions.removeAll()
         section.useInvertedIndices = false
 
@@ -78,7 +84,7 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
 
     func testThatItReturnsCellsInCorrectOrder_UpsideDown() {
         // GIVEN
-        let section = ConversationMessageSectionController(message: MockMessage(), context: context)
+        let section = ConversationMessageSectionController(message: MockMessage(), context: context, userSession: userSession)
         section.cellDescriptions.removeAll()
         section.useInvertedIndices = true
 
@@ -100,9 +106,10 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let context = ConversationMessageContext(isSameSenderAsPrevious: false)
 
         // When
-        let section  = ConversationMessageSectionController(
+        let section = ConversationMessageSectionController(
             message: message,
-            context: context
+            context: context,
+            userSession: userSession
         )
 
         // Then
@@ -123,9 +130,10 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
                                                  isTimestampInSameMinuteAsPreviousMessage: true)
 
         // WHEN
-        let section  = ConversationMessageSectionController(
+        let section = ConversationMessageSectionController(
             message: message,
-            context: context
+            context: context,
+            userSession: userSession
         )
 
         // THEN
@@ -144,9 +152,9 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let context = ConversationMessageContext(previousMessageIsKnock: true)
 
         // When
-        let section  = ConversationMessageSectionController(
+        let section = ConversationMessageSectionController(
             message: message,
-            context: context
+            context: context, userSession: userSession
         )
 
         // Then
@@ -166,9 +174,10 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         let context = ConversationMessageContext(isSameSenderAsPrevious: true,
                                                  isTimestampInSameMinuteAsPreviousMessage: false)
         // WHEN
-        let section  = ConversationMessageSectionController(
+        let section = ConversationMessageSectionController(
             message: message,
-            context: context
+            context: context,
+            userSession: userSession
         )
 
         let cellDescriptions = section.cellDescriptions

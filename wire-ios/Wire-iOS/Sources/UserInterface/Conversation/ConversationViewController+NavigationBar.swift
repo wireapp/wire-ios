@@ -124,7 +124,7 @@ extension ConversationViewController {
 
         if hasUnreadInOtherConversations {
             button.tintColor = UIColor.accent()
-            button.accessibilityValue = "conversation_list.voiceover.unread_messages.hint".localized
+            button.accessibilityValue = L10n.Localizable.ConversationList.Voiceover.UnreadMessages.hint
         }
 
         return button
@@ -133,7 +133,7 @@ extension ConversationViewController {
     var shouldShowCollectionsButton: Bool {
         guard
             SecurityFlags.forceEncryptionAtRest.isEnabled == false,
-            session.encryptMessagesAtRest == false
+            userSession.encryptMessagesAtRest == false
         else {
             return false
         }
@@ -141,7 +141,7 @@ extension ConversationViewController {
         switch self.conversation.conversationType {
         case .group: return true
         case .oneOnOne:
-            if let connection = conversation.connection,
+            if let connection = conversation.oneOnOneUser?.connection,
                connection.status != .pending && connection.status != .sent {
                 return true
             } else {
@@ -193,12 +193,20 @@ extension ConversationViewController {
     @objc
     func voiceCallItemTapped(_ sender: UIBarButtonItem) {
         endEditing()
-        startCallController.startAudioCall(started: ConversationInputBarViewController.endEditingMessage)
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
+            startCallController.startAudioCall(started: ConversationInputBarViewController.endEditingMessage)
+        }
+
+        checker.performAction()
     }
 
     @objc func videoCallItemTapped(_ sender: UIBarButtonItem) {
-        endEditing()
-        startCallController.startVideoCall(started: ConversationInputBarViewController.endEditingMessage)
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation, alertType: .outgoingCall) { [self] in
+            endEditing()
+            startCallController.startVideoCall(started: ConversationInputBarViewController.endEditingMessage)
+        }
+
+        checker.performAction()
     }
 
     @objc private dynamic func joinCallButtonTapped(_sender: AnyObject!) {

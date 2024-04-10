@@ -16,6 +16,7 @@
 //
 
 import XCTest
+import avs
 @testable import Wire
 
 final class AVURLAsset_conversionTests: XCTestCase {

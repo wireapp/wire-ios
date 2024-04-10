@@ -29,6 +29,7 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelf
     override func setUp() {
         super.setUp()
         action = CountSelfMLSKeyPackagesAction(clientID: clientID)
+        handler = CountSelfMLSKeyPackagesActionHandler(context: syncMOC)
     }
 
     // MARK: - Request Generation
@@ -37,7 +38,7 @@ class CountSelfMLSKeyPackagesActionHandlerTests: ActionHandlerTestBase<CountSelf
         try test_itGeneratesARequest(
             for: action,
             expectedPath: requestPath,
-            expectedMethod: .methodGET,
+            expectedMethod: .get,
             apiVersion: .v5
         )
     }

@@ -205,18 +205,18 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 
 + (instancetype)requestGetFromPath:(NSString *)path apiVersion:(int)apiVersion
 {
-    return [self requestWithPath:path method:ZMMethodGET payload:nil apiVersion:apiVersion];
+    return [self requestWithPath:path method:ZMTransportRequestMethodGet payload:nil apiVersion:apiVersion];
 }
 
 + (instancetype)compressedGetFromPath:(NSString *)path apiVersion:(int)apiVersion
 {
-    return [self requestWithPath:path method:ZMMethodGET payload:nil shouldCompress:YES apiVersion:apiVersion];
+    return [self requestWithPath:path method:ZMTransportRequestMethodGet payload:nil shouldCompress:YES apiVersion:apiVersion];
 }
 
 + (instancetype)uploadRequestWithFileURL:(NSURL *)url path:(NSString *)path contentType:(NSString *)contentType apiVersion:(int)apiVersion;
 {
     ZMTransportRequest *request = [[self.class alloc] initWithPath:path
-                                                            method:ZMMethodPOST
+                                                            method:ZMTransportRequestMethodPost
                                                         binaryData:nil
                                                               type:contentType
                                                 contentDisposition:nil
@@ -230,7 +230,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 + (instancetype)emptyPutRequestWithPath:(NSString *)path apiVersion:(int)apiVersion;
 {
     NSString *type = (NSString *) UTTypeJSON.identifier;
-    return [[self alloc] initWithPath:path method:ZMMethodPUT binaryData:[NSData data] type:type contentDisposition:nil apiVersion:apiVersion];
+    return [[self alloc] initWithPath:path method:ZMTransportRequestMethodPut binaryData:[NSData data] type:type contentDisposition:nil apiVersion:apiVersion];
 }
 
 + (instancetype)imageGetRequestFromPath:(NSString *)path apiVersion:(int)apiVersion;
@@ -299,15 +299,15 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 - (BOOL)hasRequiredPayload;
 {
     switch (self.method) {
-        case ZMMethodGET:
-        case ZMMethodHEAD:
+        case ZMTransportRequestMethodGet:
+        case ZMTransportRequestMethodHead:
             return ((self.payload == nil) &&
                     (self.binaryData == nil));
-        case ZMMethodPOST:
-        case ZMMethodDELETE:
+        case ZMTransportRequestMethodPost:
+        case ZMTransportRequestMethodDelete:
             // POST and DELETE payload is optional
             return YES;
-        case ZMMethodPUT:
+        case ZMTransportRequestMethodPut:
             return ((self.payload != nil) ||
                     (self.binaryData != nil));
     }
@@ -672,40 +672,40 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 + (ZMTransportRequestMethod)methodFromString:(NSString *)string
 {
     if([string isEqualToString:@"GET"]) {
-        return ZMMethodGET;
+        return ZMTransportRequestMethodGet;
     }
     if([string isEqualToString:@"POST"]) {
-        return ZMMethodPOST;
+        return ZMTransportRequestMethodPost;
     }
     if([string isEqualToString:@"DELETE"]) {
-        return ZMMethodDELETE;
+        return ZMTransportRequestMethodDelete;
     }
     if([string isEqualToString:@"PUT"]) {
-        return ZMMethodPUT;
+        return ZMTransportRequestMethodPut;
     }
     if([string isEqualToString:@"HEAD"]) {
-        return ZMMethodHEAD;
+        return ZMTransportRequestMethodHead;
     }
 
     RequireString(false, "Invalid HTTP method string");
-    return ZMMethodGET;
+    return ZMTransportRequestMethodGet;
 }
 
 + (NSString *)stringForMethod:(ZMTransportRequestMethod)method
 {
-    if(method == ZMMethodGET) {
+    if(method == ZMTransportRequestMethodGet) {
         return @"GET";
     }
-    if(method == ZMMethodPOST) {
+    if(method == ZMTransportRequestMethodPost) {
         return @"POST";
     }
-    if(method == ZMMethodDELETE) {
+    if(method == ZMTransportRequestMethodDelete) {
         return @"DELETE";
     }
-    if(method == ZMMethodPUT) {
+    if(method == ZMTransportRequestMethodPut) {
         return @"PUT";
     }
-    if(method == ZMMethodHEAD) {
+    if(method == ZMTransportRequestMethodHead) {
         return @"HEAD";
     }
     
@@ -758,7 +758,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     if (! [UTIHelper conformsToImageTypeWithUti:type]) {
         return nil;
     }
-    ZMTransportRequest *result = [[self alloc] initWithPath:path method:ZMMethodPOST binaryData:data type:type contentDisposition:contentDisposition apiVersion:apiVersion];
+    ZMTransportRequest *result = [[self alloc] initWithPath:path method:ZMTransportRequestMethodPost binaryData:data type:type contentDisposition:contentDisposition apiVersion:apiVersion];
     Require(result.hasRequiredPayload);
     return result;
 }
@@ -798,7 +798,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
                                                     boundary:boundary];
     
     ZMTransportRequest *result = [[self alloc] initWithPath:path
-                                                     method:ZMMethodPOST
+                                                     method:ZMTransportRequestMethodPost
                                                  binaryData:multipartData
                                                        type:contentType
                                          contentDisposition:nil

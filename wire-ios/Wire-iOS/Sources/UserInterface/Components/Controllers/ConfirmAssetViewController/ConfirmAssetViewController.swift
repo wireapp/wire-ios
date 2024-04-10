@@ -66,22 +66,25 @@ final class ConfirmAssetViewController: UIViewController {
                                                                 color: SemanticColors.Label.textDefault)
     private let bottomPanel: UIView = UIView()
     private let confirmButtonsStack: UIStackView = UIStackView()
-    private let acceptImageButton: Button = Button(style: .accentColorTextButtonStyle,
-                                                         cornerRadius: 16,
-                                                         fontSpec: .buttonBigSemibold)
-    private let rejectImageButton: Button = Button(style: .secondaryTextButtonStyle,
-                                                   cornerRadius: 16,
-                                                   fontSpec: .buttonBigSemibold)
+    private let acceptImageButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .buttonBigSemibold
+    )
+    private let rejectImageButton = ZMButton(
+        style: .secondaryTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .buttonBigSemibold
+    )
     private let contentLayoutGuide: UILayoutGuide = UILayoutGuide()
     private let imageToolbarSeparatorView: UIView = UIView()
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return wr_supportedInterfaceOrientations
+        wr_supportedInterfaceOrientations
     }
 
     init(context: Context) {
         self.context = context
-
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -230,11 +233,11 @@ final class ConfirmAssetViewController: UIViewController {
         bottomPanel.addSubview(confirmButtonsStack)
 
         rejectImageButton.addTarget(self, action: #selector(rejectImage(_:)), for: .touchUpInside)
-        rejectImageButton.setTitle(NSLocalizedString("image_confirmer.cancel", comment: ""), for: .normal)
+        rejectImageButton.setTitle(L10n.Localizable.ImageConfirmer.cancel, for: .normal)
         confirmButtonsStack.addArrangedSubview(rejectImageButton)
 
         acceptImageButton.addTarget(self, action: #selector(acceptImage(_:)), for: .touchUpInside)
-        acceptImageButton.setTitle(NSLocalizedString("image_confirmer.confirm", comment: ""), for: .normal)
+        acceptImageButton.setTitle(L10n.Localizable.ImageConfirmer.confirm, for: .normal)
         confirmButtonsStack.addArrangedSubview(acceptImageButton)
     }
 

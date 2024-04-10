@@ -19,52 +19,34 @@
 import Foundation
 @testable import WireDataModel
 
-extension ZMConversationTestsBase {
-    @discardableResult
-    @objc(insertConversationWithUnread:)
-    func insertConversation(withUnread hasUnread: Bool) -> ZMConversation {
-        let messageDate = Date(timeIntervalSince1970: 230000000)
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.conversationType = .oneOnOne
-        conversation.lastServerTimeStamp = messageDate
-        if hasUnread {
-            let message = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: syncMOC)
-            message.serverTimestamp = messageDate
-            conversation.lastReadServerTimeStamp = messageDate.addingTimeInterval(-1000)
-            conversation.append(message)
-        }
-        syncMOC.saveOrRollback()
-        return conversation
-    }
-}
-
 final class ZMConversationTests_Knock: ZMConversationTestsBase {
-    func testThatItCanInsertAKnock() {
-        syncMOC.performGroupedBlockAndWait({ [self] in
+    func testThatItCanInsertAKnock() throws {
+        try syncMOC.performGroupedAndWait { context in
 
             // given
-            let conversation = self.createConversationWithMessages()
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let conversation = self.createConversationWithMessages(context: context)
+            let selfUser = ZMUser.selfUser(in: context)
 
             // when
-            let knock = try? conversation?.appendKnock()
-            let msg = conversation?.lastMessage as! ZMMessage
+            let knock = try XCTUnwrap(conversation?.appendKnock() as? ZMMessage)
+            let msg = try XCTUnwrap(conversation?.lastMessage as? ZMMessage)
 
             // then
-            XCTAssertEqual(knock as? ZMMessage, msg)
-            XCTAssertNotNil(knock?.knockMessageData)
-            XCTAssert(knock!.isUserSender(selfUser))
-        })
+            XCTAssertEqual(knock, msg)
+            XCTAssertNotNil(knock.knockMessageData)
+            XCTAssert(knock.isUserSender(selfUser))
+        }
 
     }
 
-    private func createConversationWithMessages() -> ZMConversation? {
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
+    private func createConversationWithMessages(context: NSManagedObjectContext) -> ZMConversation? {
+        let conversation = ZMConversation.insertNewObject(in: context)
         conversation.remoteIdentifier = NSUUID.create()
-        for text in ["A", "B", "C", "D", "E"] {
-            conversation._appendText(content: text)
+        for (index, text) in ["A", "B", "C", "D", "E"].enumerated() {
+            let conversationMessage = try? conversation.appendText(content: text) as? ZMClientMessage
+            conversationMessage?.updateServerTimestamp(with: TimeInterval(index))
         }
-        XCTAssert(syncMOC.saveOrRollback())
+        XCTAssert(context.saveOrRollback())
         return conversation
     }
 }

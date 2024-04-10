@@ -289,6 +289,8 @@ extension ZMConversation {
     public func savePendingLastRead() {
         guard let upperBound = pendingLastReadServerTimestamp else { return }
         let lowerBound = previousLastReadServerTimestamp ?? lastReadServerTimeStamp ?? .distantPast
+        guard lowerBound <= upperBound else { return }
+
         performMarkAsReadUpdate(in: lowerBound...upperBound)
         pendingLastReadServerTimestamp = nil
         previousLastReadServerTimestamp = nil
@@ -336,7 +338,7 @@ extension ZMConversation {
         updateLastUnreadKnock(lastKnockDate)
         updateLastUnreadMissedCall(lastMissedCallDate)
         internalEstimatedUnreadCount = unreadCount
-        WireLogger.badgeCount.info("update internalEstimatedUnreadCount: \(internalEstimatedUnreadCount) in \(remoteIdentifier?.uuidString) timestamp: \(Date())")
+        WireLogger.badgeCount.info("update internalEstimatedUnreadCount: \(internalEstimatedUnreadCount) in \(String(describing: remoteIdentifier?.uuidString)) timestamp: \(Date())")
 
         internalEstimatedUnreadSelfMentionCount = unreadSelfMentionCount
         internalEstimatedUnreadSelfReplyCount = unreadSelfReplyCount

@@ -118,14 +118,13 @@
     
     // then
     ZMUser *selfUser = [self userForMockUser:self.selfUser];
-    NSArray *selfUserClients = selfUser.clients.allObjects;
+    NSSet<UserClient*> *selfUserClients = selfUser.clients;
     XCTAssertEqual(selfUserClients.count, 3u);
 
-    NSArray *fetchedClients = self.observer.fetchedClients;
-    
-    XCTAssertNotEqualObjects(fetchedClients, selfUserClients);
-    XCTAssertEqual(fetchedClients.count, 2u);
-    XCTAssertFalse([fetchedClients containsObject:selfUser.selfClient]);
+    NSSet<UserClient*> *fetchedClients = [NSSet setWithArray:self.observer.fetchedClients];
+    XCTAssertEqual(fetchedClients.count, 3u);
+
+    XCTAssertEqualObjects(fetchedClients, selfUserClients);
     XCTAssertNil(self.observer.fetchError);
     XCTAssertTrue(self.observer.finishedFetching);
 }
@@ -142,7 +141,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSArray *fetchClients = self.observer.fetchedClients;
-    XCTAssertEqual(fetchClients.count, 2u);
+    XCTAssertEqual(fetchClients.count, 3u);
     XCTAssertTrue(self.observer.finishedFetching);
     XCTAssertNil(self.observer.fetchError);
 
@@ -158,15 +157,13 @@
     XCTAssertNil(self.observer.deletionError);
 }
 
-@end
-
-@implementation ClientManagementTests (PushNotifications)
+#pragma mark - PushNotifications
 
 - (void)testThatItAddsAUserClientWhenReceivingANotificationForANewClient
 {
     // given
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-    UserChangeObserver *observer = [[UserChangeObserver alloc] initWithUser:selfUser];
+    ZMUserObserver *observer = [[ZMUserObserver alloc] initWithUser:selfUser];
     
     // when
     __block MockUserClient *mockClient;
@@ -269,7 +266,7 @@
     
     XCTAssertEqual(selfUser.clients.count, 2u);
 
-    UserChangeObserver *observer = [[UserChangeObserver alloc] initWithUser:selfUser];
+    ZMUserObserver *observer = [[ZMUserObserver alloc] initWithUser:selfUser];
     
     // when
     [self.mockTransportSession performRemoteChanges:^ (id<MockTransportSessionObjectCreation>  _Nonnull __strong session) {

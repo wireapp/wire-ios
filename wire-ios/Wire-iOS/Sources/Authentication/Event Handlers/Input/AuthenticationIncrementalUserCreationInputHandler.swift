@@ -22,7 +22,7 @@ import Foundation
  * Handles input during the incremental user creation.
  */
 
-class AuthenticationIncrementalUserCreationInputHandler: AuthenticationEventHandler {
+final class AuthenticationIncrementalUserCreationInputHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
@@ -40,7 +40,7 @@ class AuthenticationIncrementalUserCreationInputHandler: AuthenticationEventHand
         // Only handle input during name and password steps
         switch step {
         case .setName:
-            return [.setUserName(input)]
+            return [.setFullName(input)]
         case .setPassword:
             return [.setUserPassword(input)]
         default:

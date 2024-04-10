@@ -28,12 +28,12 @@ public extension NSManagedObjectContext {
         let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
 
         performAndWait {
-            tp?.resetTime()
+            tp.resetTime()
             result = execute(self)
             groups.apply {
                 dispatchGroupContext?.leave($0)
             }
-            tp?.warnIfLongerThanInterval()
+            tp.warnIfLongerThanInterval()
         }
 
         return result
@@ -47,21 +47,44 @@ public extension NSManagedObjectContext {
 
         performAndWait {
             do {
-                tp?.resetTime()
+                tp.resetTime()
                 result = try execute(self)
                 groups.apply {
                     dispatchGroupContext?.leave($0)
                 }
-                tp?.warnIfLongerThanInterval()
+                tp.warnIfLongerThanInterval()
             } catch {
                 thrownError = error
             }
         }
 
         if let error = thrownError {
+            groups.apply {
+                dispatchGroupContext?.leave($0)
+            }
             throw error
         } else {
             return result
+        }
+    }
+}
+/**
+ Wrapper around Task to make sure tests are waiting for the task to be finished using dispatchGroups attached to NSManagedObjectContext.
+
+ We call ``NSManagedObjectContext/enterAllGroupsExceptSecondary()`` before the Task and leave the groups at the end.
+ */
+public struct WaitingGroupTask {
+    let context: NSManagedObjectContext
+
+    public init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+
+    public func callAsFunction(_ block: @escaping () async -> Void) {
+        let groups = context.enterAllGroupsExceptSecondary()
+        Task {
+            await block()
+            context.leaveAllGroups(groups)
         }
     }
 }

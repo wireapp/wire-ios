@@ -24,8 +24,8 @@ final class GroupDetailsGuestOptionsCell: GroupDetailsDisclosureOptionsCell {
 
     var isOn = false {
         didSet {
-            let key = "group_details.guest_options_cell.\(isOn ? "enabled" : "disabled")"
-            status = key.localized
+            let key = isOn ? L10n.Localizable.GroupDetails.GuestOptionsCell.enabled : L10n.Localizable.GroupDetails.GuestOptionsCell.disabled
+            status = key
         }
     }
 
@@ -35,10 +35,8 @@ final class GroupDetailsGuestOptionsCell: GroupDetailsDisclosureOptionsCell {
         title = L10n.Localizable.GroupDetails.GuestOptionsCell.title
         accessibilityHint = L10n.Accessibility.ConversationDetails.OptionButton.hint
 
+        icon = Asset.Images.guest.image.withRenderingMode(.alwaysTemplate)
         iconColor = SemanticColors.Icon.foregroundDefault
-        guard let iconColor = iconColor else { return }
-        icon = StyleKitIcon.guest.makeImage(size: .tiny,
-                                            color: iconColor).withRenderingMode(.alwaysTemplate)
     }
 
     func configure(with conversation: GroupDetailsConversationType) {

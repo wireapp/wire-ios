@@ -180,7 +180,7 @@ extension AccessoryTextField {
     func rightAccessoryViewRect(forBounds bounds: CGRect, isLeftToRight: Bool) -> CGRect {
         let contentSize = accessoryContainer.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
         var rightViewRect: CGRect
-        let newY = bounds.origin.y + (bounds.size.height -  contentSize.height) / 2
+        let newY = bounds.origin.y + (bounds.size.height - contentSize.height) / 2
         if isLeftToRight {
             rightViewRect = CGRect(x: CGFloat(bounds.maxX - contentSize.width), y: newY, width: contentSize.width, height: contentSize.height)
         } else {

@@ -30,12 +30,13 @@ final class ConversationInputBarSendController: NSObject {
     }
 
     func sendMessage(withImageData imageData: Data,
+                     userSession: UserSession,
                      completion completionHandler: Completion? = nil) {
 
         guard let conversation = conversation as? ZMConversation else { return }
 
         feedbackGenerator.prepare()
-        ZMUserSession.shared()?.enqueue({
+        userSession.enqueue({
             do {
                 try conversation.appendImage(from: imageData)
                 self.feedbackGenerator.impactOccurred()
@@ -43,17 +44,18 @@ final class ConversationInputBarSendController: NSObject {
                 Logging.messageProcessing.warn("Failed to append image message. Reason: \(error.localizedDescription)")
             }
         }, completionHandler: {
-                completionHandler?()
+            completionHandler?()
             Analytics.shared.tagMediaActionCompleted(.photo, inConversation: conversation)
         })
     }
 
     func sendTextMessage(_ text: String,
                          mentions: [Mention],
+                         userSession: UserSession,
                          replyingTo message: ZMConversationMessage?) {
         guard let conversation = conversation as? ZMConversation else { return }
 
-        ZMUserSession.shared()?.enqueue({
+        userSession.enqueue({
             let shouldFetchLinkPreview = !Settings.disableLinkPreviews
 
             do {
@@ -68,12 +70,12 @@ final class ConversationInputBarSendController: NSObject {
         })
     }
 
-    func sendTextMessage(_ text: String, mentions: [Mention], withImageData data: Data) {
+    func sendTextMessage(_ text: String, mentions: [Mention], userSession: UserSession, withImageData data: Data) {
         guard let conversation = conversation as? ZMConversation else { return }
 
         let shouldFetchLinkPreview = !Settings.disableLinkPreviews
 
-        ZMUserSession.shared()?.enqueue({
+        userSession.enqueue({
             do {
                 try conversation.appendText(content: text, mentions: mentions, replyingTo: nil, fetchLinkPreview: shouldFetchLinkPreview)
                 try conversation.appendImage(from: data)

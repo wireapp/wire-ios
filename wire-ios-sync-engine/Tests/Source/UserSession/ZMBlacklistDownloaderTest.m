@@ -161,7 +161,7 @@
         id blackList = [self validBlackListWithMinimumVersion:expectedMinVersion exclude:expectedExclude];
         [self stubRequestWithSuccessfulResponseObject:blackList];
         
-        XCTestExpectation *didComplete = [self expectationWithDescription:@"did complete"];
+        XCTestExpectation *didComplete = [self customExpectationWithDescription:@"did complete"];
         
         // when
         [self createSUTWithCompletionHandler:^(NSString *minVersion, NSArray *excludeVersions) {
@@ -208,7 +208,7 @@
         [self stubRequestWithSuccessfulResponseObject:blackList];
 
         //expect that method will be called for second time after check interval
-        XCTestExpectation *exp = [self expectationWithDescription:@"download called again"];
+        XCTestExpectation *exp = [self customExpectationWithDescription:@"download called again"];
         __block NSUInteger timesCalled = 0;
         ZM_WEAK(self);
         dispatch_block_t didDownload = ^{
@@ -249,7 +249,7 @@ typedef NS_ENUM(int, TestPhase) {
         [self stubRequestWithSuccessfulResponseObject:blackList];
         
         //expect that method will be called for second time after check interval
-        XCTestExpectation *doneExp = [self expectationWithDescription:@"download called again"];
+        XCTestExpectation *doneExp = [self customExpectationWithDescription:@"download called again"];
         
         __block NSUInteger downloadWhileSuspendedCount = 0;
         __block NSUInteger downloadWhileResumedCount = 0;

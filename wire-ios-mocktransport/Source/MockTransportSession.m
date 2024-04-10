@@ -163,7 +163,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 {
     self.shouldKeepPushChannelOpen = keepOpen;
     
-    if (self.shouldKeepPushChannelOpen && !self.shouldSendPushChannelEvents) {
+    if (self.shouldKeepPushChannelOpen) {
         [self simulatePushChannelOpened];
     }
 }
@@ -293,11 +293,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return [ZMTransportResponse responseWithPayload:payload HTTPStatus:code transportSessionError:nil apiVersion:apiVersion];
 }
 
-+ (NSString *)binaryDataTypeAsMIME:(NSString *)type;
-{
-    return [[UTType typeWithIdentifier:type] preferredMIMEType];
-}
-
 - (BOOL)waitForAllRequestsToCompleteWithTimeout:(NSTimeInterval)timeout;
 {
     __block BOOL didComplete = NO;
@@ -394,6 +389,10 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 @implementation MockTransportSession (Mock)
 
+- (void)enqueueRequest:(ZMTransportRequest *)request queue:(id<ZMSGroupQueue>)queue completionHandler:(void (^)(ZMTransportResponse * _Nonnull))completionHandler {
+    [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:queue block:completionHandler]];
+    [self enqueueOneTimeRequest:request];
+}
 
 - (void)enqueueOneTimeRequest:(ZMTransportRequest *)request;
 {

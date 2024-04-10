@@ -27,15 +27,24 @@ class FetchMLSSubconversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoA
     override func setUp() {
         super.setUp()
         action = FetchMLSSubconversationGroupInfoAction(conversationId: conversationId, domain: domain, subgroupType: subgroupType)
+        handler = FetchMLSSubconversationGroupInfoActionHandler(context: syncMOC)
     }
 
     func test_itGeneratesARequest_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v5/conversations/\(domain)/\(conversationId.transportString())/subconversations/\(subgroupType.rawValue)/groupinfo",
-            expectedMethod: .methodGET,
+            expectedMethod: .get,
             expectedAcceptType: .messageMLS,
             apiVersion: .v5
+        )
+    }
+
+    func test_itDoesntGenerateRequests_APIV4() {
+        test_itDoesntGenerateARequest(
+            action: action,
+            apiVersion: .v4,
+            expectedError: .endpointUnavailable
         )
     }
 

@@ -22,35 +22,35 @@ import Foundation
  * An authentication step to ask the user to log in again.
  */
 
-class ReauthenticateStepDescription: AuthenticationStepDescription {
+final class ReauthenticateStepDescription: AuthenticationStepDescription {
 
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String
-    let subtext: String?
+    let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription?
 
     init(prefilledCredentials: AuthenticationPrefilledCredentials?) {
         backButton = BackButtonDescription()
         mainView = EmptyViewDescription()
-        headline = "registration.signin.title".localized
+        headline = L10n.Localizable.Registration.Signin.title
 
         switch prefilledCredentials?.primaryCredentialsType {
         case .email?:
             if prefilledCredentials?.isExpired == true {
-                subtext = "signin_logout.email.subheadline".localized
+                subtext = .markdown(from: L10n.Localizable.SigninLogout.Email.subheadline, style: .login)
             } else {
-                subtext = "signin.email.missing_password.subtitle".localized
+                subtext = .markdown(from: L10n.Localizable.Signin.Email.MissingPassword.subtitle, style: .login)
             }
         case .phone?:
             if prefilledCredentials?.isExpired == true {
-                subtext = "signin_logout.phone.subheadline".localized
+                subtext = .markdown(from: L10n.Localizable.SigninLogout.Phone.subheadline, style: .login)
             } else {
-                subtext = "signin.phone.missing_password.subtitle".localized
+                subtext = .markdown(from: L10n.Localizable.Signin.Phone.MissingPassword.subtitle, style: .login)
             }
         case .none:
-            subtext = "signin_logout.subheadline".localized
+            subtext = .markdown(from: L10n.Localizable.SigninLogout.subheadline, style: .login)
         }
 
         secondaryView = nil

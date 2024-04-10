@@ -295,9 +295,9 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         }
 
         if animated {
-            UIView.animate(easing: .easeOutExpo, duration: 0.55, animations: {() -> Void in
+            UIView.animate(easing: .easeOutExpo, duration: 0.55, animations: {
                 self.view.layoutIfNeeded()
-            }, completion: {(_ finished: Bool) -> Void in
+            }, completion: { _ in
                 if self.layoutSize != .regularLandscape {
                     self.leftViewController?.endAppearanceTransition()
                     self.rightViewController?.endAppearanceTransition()

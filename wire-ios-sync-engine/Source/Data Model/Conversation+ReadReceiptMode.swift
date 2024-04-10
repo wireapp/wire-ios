@@ -37,7 +37,7 @@ public enum ReadReceiptModeError: Error {
 extension ZMConversation {
 
     /// Enable or disable read receipts in a group conversation
-    public func setEnableReadReceipts(_ enabled: Bool, in userSession: ZMUserSession, _ completion: @escaping (VoidResult) -> Void) {
+    public func setEnableReadReceipts(_ enabled: Bool, in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(ReadReceiptModeError.unknown))
         }
@@ -45,19 +45,24 @@ extension ZMConversation {
         guard let conversationId = remoteIdentifier?.transportString() else { return completion(.failure(ReadReceiptModeError.noConversation)) }
 
         let payload = ["receipt_mode": enabled ? 1 : 0] as ZMTransportData
-        let request = ZMTransportRequest(path: "/conversations/\(conversationId)/receipt-mode", method: .methodPUT, payload: payload, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(path: "/conversations/\(conversationId)/receipt-mode", method: .put, payload: payload, apiVersion: apiVersion.rawValue)
 
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus == 200, let event = response.updateEvent {
-                userSession.syncManagedObjectContext.performGroupedBlock {
-                    userSession.updateEventProcessor?.storeAndProcessUpdateEvents([event], ignoreBuffer: true)
+                let groups = userSession.syncContext.enterAllGroupsExceptSecondary()
+                Task {
+                    // swiftlint:disable todo_requires_jira_link
+                    // FIXME: [jacob] replace with ConversationEventProcessor
+                    // swiftlint:enable todo_requires_jira_link
+                    try? await userSession.updateEventProcessor?.processEvents([event])
                     userSession.managedObjectContext.performGroupedBlock {
-                        completion(.success)
+                        completion(.success(()))
                     }
+                    userSession.syncContext.leaveAllGroups(groups)
                 }
             } else if response.httpStatus == 204 {
                 self.hasReadReceiptsEnabled = enabled
-                completion(.success)
+                completion(.success(()))
             } else {
                 completion(.failure(ReadReceiptModeError(response: response) ?? .unknown))
             }

@@ -40,14 +40,17 @@
       </MacroExpansion>
       <TestPlans>
          <TestPlanReference
-            reference = "container:Wire-iOS Tests/TestPlans/AllTests.xctestplan"
+            reference = "container:Tests/TestPlans/AllTests.xctestplan"
             default = "YES">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:Wire-iOS Tests/TestPlans/SecurityTests.xctestplan">
+            reference = "container:Tests/TestPlans/SecurityTests.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:Wire-iOS Tests/TestPlans/GermanLocaleTests.xctestplan">
+            reference = "container:Tests/TestPlans/GermanLocaleTests.xctestplan">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:Tests/TestPlans/UnitTests.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>
@@ -156,6 +159,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      enableUBSanitizer = "YES"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -176,6 +180,10 @@
          <CommandLineArgument
             argument = "-com.apple.CoreData.ConcurrencyDebug 1"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-com.apple.CoreData.MigrationDebug 1"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--disable-interactive-keyboard-dismissal"
@@ -258,10 +266,20 @@
             value = ""
             isEnabled = "NO">
          </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "LIBDISPATCH_COOPERATIVE_POOL_STRICT"
+            value = "1"
+            isEnabled = "NO">
+         </EnvironmentVariable>
+         <EnvironmentVariable
+            key = "IDELogRedirectionPolicy"
+            value = "oslogToStdio"
+            isEnabled = "NO">
+         </EnvironmentVariable>
       </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"

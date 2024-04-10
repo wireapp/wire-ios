@@ -19,21 +19,25 @@
 import Foundation
 import UIKit
 import WireSyncEngine
+import MessageUI
 
 enum BlockerViewControllerContext {
     case blacklist
     case jailbroken
     case databaseFailure
     case backendNotSupported
+    case pendingCertificateEnroll
 }
 
 final class BlockerViewController: LaunchImageViewController {
     private var context: BlockerViewControllerContext = .blacklist
+    private var error: Error?
     private var sessionManager: SessionManager?
 
     private var observerTokens = [Any]()
 
-    init(context: BlockerViewControllerContext, sessionManager: SessionManager? = nil) {
+    init(context: BlockerViewControllerContext, sessionManager: SessionManager? = nil, error: Error? = nil) {
+        self.error = error
         self.context = context
         self.sessionManager = sessionManager
         super.init(nibName: nil, bundle: nil)
@@ -64,10 +68,12 @@ final class BlockerViewController: LaunchImageViewController {
             showDatabaseFailureMessage()
         case .backendNotSupported:
             showBackendNotSupportedMessage()
+        case .pendingCertificateEnroll:
+            showGetCertificateMessage()
         }
     }
 
-    func showBackendNotSupportedMessage() {
+    private func showBackendNotSupportedMessage() {
         typealias BackendNotSupported = L10n.Localizable.BackendNotSupported.Alert
 
         presentAlertWithOKButton(
@@ -76,7 +82,7 @@ final class BlockerViewController: LaunchImageViewController {
         )
     }
 
-    func showBlacklistMessage() {
+    private func showBlacklistMessage() {
 
         presentAlertWithOKButton(title: L10n.Localizable.Force.Update.title,
                                  message: L10n.Localizable.Force.Update.message) { _ in
@@ -84,28 +90,61 @@ final class BlockerViewController: LaunchImageViewController {
         }
     }
 
-    func showJailbrokenMessage() {
+    private func showJailbrokenMessage() {
         presentAlertWithOKButton(title: L10n.Localizable.Jailbrokendevice.Alert.title,
                                  message: L10n.Localizable.Jailbrokendevice.Alert.message)
     }
 
-    func showDatabaseFailureMessage() {
+    private func showGetCertificateMessage() {
+        typealias E2EI = L10n.Localizable.Registration.Signin.E2ei
 
-        let databaseFailureAlert = UIAlertController(
-            title: L10n.Localizable.Databaseloadingfailure.Alert.title,
-            message: L10n.Localizable.Databaseloadingfailure.Alert.message,
+        let getCertificateAlert = UIAlertController(
+            title: E2EI.title,
+            message: E2EI.subtitle,
             preferredStyle: .alert
         )
 
-        let settingsAction = UIAlertAction(
-            title: L10n.Localizable.Databaseloadingfailure.Alert.settings,
+        let learnMoreAction = UIAlertAction(
+            title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.learnMore,
             style: .default,
             handler: { _ in
-                UIApplication.shared.openSettings()
+                UIApplication.shared.open(URL.wr_e2eiLearnMore)
             }
         )
 
-        databaseFailureAlert.addAction(settingsAction)
+        let getCertificateAction = UIAlertAction(
+            title: E2EI.GetCertificateButton.title,
+            style: .default,
+            handler: { [weak self] _ in
+                Task {
+                    await self?.enrollCertificateAction()
+                }
+            }
+        )
+
+        getCertificateAlert.addAction(learnMoreAction)
+        getCertificateAlert.addAction(getCertificateAction)
+        present(getCertificateAlert, animated: true)
+    }
+
+    private func showDatabaseFailureMessage() {
+        let message = L10n.Localizable.Databaseloadingfailure.Alert.message(error?.localizedDescription ?? "-")
+
+        let databaseFailureAlert = UIAlertController(
+            title: L10n.Localizable.Databaseloadingfailure.Alert.title,
+            message: message,
+            preferredStyle: .alert
+        )
+
+        let reportError = UIAlertAction(
+            title: L10n.Localizable.Self.Settings.TechnicalReport.sendReport,
+            style: .default,
+            handler: { [weak self] _ in
+                self?.presentMailComposer(withLogs: true)
+            }
+        )
+
+        databaseFailureAlert.addAction(reportError)
 
         let retryAction = UIAlertAction(
             title: L10n.Localizable.Databaseloadingfailure.Alert.retry,
@@ -131,7 +170,7 @@ final class BlockerViewController: LaunchImageViewController {
         present(databaseFailureAlert, animated: true)
     }
 
-    func showConfirmationDatabaseDeletionAlert() {
+    private func showConfirmationDatabaseDeletionAlert() {
         let deleteDatabaseConfirmationAlert = UIAlertController(
             title: L10n.Localizable.Databaseloadingfailure.Alert.deleteDatabase,
             message: L10n.Localizable.Databaseloadingfailure.Alert.DeleteDatabase.message,
@@ -151,10 +190,20 @@ final class BlockerViewController: LaunchImageViewController {
         let cancelAction = UIAlertAction(
             title: L10n.Localizable.General.cancel,
             style: .default,
-            handler: nil)
+            handler: { [weak self] _ in
+                self?.showDatabaseFailureMessage()
+            })
 
         deleteDatabaseConfirmationAlert.addAction(cancelAction)
         present(deleteDatabaseConfirmationAlert, animated: true)
+    }
+
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        // shown after sending report logs, we should show other choices again
+        // in order not to be stuck on black screen
+        controller.presentingViewController?.dismiss(animated: true) {
+            self.showDatabaseFailureMessage()
+        }
     }
 }
 
@@ -167,4 +216,49 @@ extension BlockerViewController: ApplicationStateObserving {
     func applicationDidBecomeActive() {
         showAlert()
     }
+}
+
+extension BlockerViewController: SendTechnicalReportPresenter {}
+
+// MARK: - Certificate enrollment
+
+extension BlockerViewController {
+
+    private func enrollCertificateAction() async {
+        do {
+            try await enrollCertificate()
+            sessionManager?.didEnrollCertificateSuccessfully()
+        } catch {
+            WireLogger.e2ei.warn("failed to enroll certificate: \(error)")
+
+            let alert = UIAlertController.getCertificateFailed(canCancel: false, isUpdateMode: false) {
+                Task {
+                    await self.enrollCertificateAction()
+                }
+            } cancelled: {}
+        }
+
+    }
+
+    private func enrollCertificate() async throws {
+        guard
+            let activeUserSession = sessionManager?.activeUserSession,
+            let rootViewController = AppDelegate.shared.window?.rootViewController
+        else {
+            return
+        }
+        let oauthUseCase = OAuthUseCase(targetViewController: rootViewController)
+
+        let certificateChain = try await activeUserSession
+            .enrollE2EICertificate
+            .invoke(authenticate: oauthUseCase.invoke)
+
+        let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
+        successEnrollmentViewController.certificateDetails = certificateChain
+        successEnrollmentViewController.onOkTapped = { viewController in
+            viewController.dismiss(animated: true)
+        }
+        successEnrollmentViewController.presentTopmost()
+    }
+
 }

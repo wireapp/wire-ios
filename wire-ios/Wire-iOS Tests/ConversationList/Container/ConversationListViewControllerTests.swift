@@ -17,7 +17,10 @@
 //
 
 import SnapshotTesting
+import WireDataModelSupport
+import WireSyncEngineSupport
 import XCTest
+
 @testable import Wire
 
 // MARK: - MockConversationList
@@ -56,16 +59,31 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
 
     var sut: ConversationListViewController!
     var mockDelegate: MockConversationListDelegate!
+    var userSession: UserSessionMock!
+    private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         accentColor = .strongBlue
+
+        userSession = UserSessionMock()
+
+        mockIsSelfUserE2EICertifiedUseCase = .init()
+        mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
+
         MockConversationList.hasArchivedConversations = false
         let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
         let account = Account.mockAccount(imageData: mockImageData)
-        let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser, conversationListType: MockConversationList.self)
+        let viewModel = ConversationListViewController.ViewModel(
+            account: account,
+            selfUser: selfUser,
+            conversationListType: MockConversationList.self,
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
+        )
+
         sut = ConversationListViewController(viewModel: viewModel)
         viewModel.viewController = sut
         sut.onboardingHint.arrowPointToView = sut.tabBar
@@ -79,10 +97,11 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
 
     override func tearDown() {
         sut = nil
+        mockIsSelfUserE2EICertifiedUseCase = nil
         mockDelegate = nil
+        userSession = nil
 
         super.tearDown()
-
     }
 
     // MARK: - View controller

@@ -45,25 +45,29 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
                     DispatchQueue.main.async {
                         let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: draggedImage),
                                                                          onConfirm: { [unowned self] _ in
-                                                                            self.dismiss(animated: true) {
-                                                                                if let draggedImageData = draggedImage.pngData() {
-                                                                                    self.sendController.sendMessage(withImageData: draggedImageData)
-                                                                                }
-                                                                            }
-                                                                         },
+                            self.dismiss(animated: true) {
+                                if let draggedImageData = draggedImage.pngData() {
+                                    self.sendController.sendMessage(
+                                        withImageData: draggedImageData,
+                                        userSession: self.userSession
+                                    )
+                                }
+                            }
+                        },
                                                                          onCancel: { [unowned self] in
-                                                                            self.dismiss(animated: true)
-                                                                         }
+                            self.dismiss(animated: true)
+                        }
                         )
 
                         let confirmImageViewController = ConfirmAssetViewController(context: context)
-                        confirmImageViewController.previewTitle = self.conversation.displayNameWithFallback.localized
+                        confirmImageViewController.previewTitle = self.conversation.displayNameWithFallback
                         self.present(confirmImageViewController, animated: true) {
                         }
                     }
                 })
-
+                // swiftlint:disable todo_requires_jira_link
                 // TODO: it's a temporary solution to drag only one image, while we have no design for multiple images
+                // swiftlint:enable todo_requires_jira_link
                 break
             }
         }

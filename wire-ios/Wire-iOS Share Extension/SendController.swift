@@ -44,7 +44,7 @@ enum SendingState {
 /// `SendingCallState` in the `send` method. In comparison to the `PostContent` class, the `SendController`
 /// itself has no knowledge about conversation degradation.
 final class SendController {
-    typealias SendableCompletion = (Result<[Sendable]>) -> Void
+    typealias SendableCompletion = (Result<[Sendable], Error>) -> Void
 
     private var observer: SendableBatchObserver?
     private var isCancelled = false
@@ -98,7 +98,7 @@ final class SendController {
         self.timedOut = false
         self.progress = progress
 
-        let completion: SendableCompletion  = { [weak self] sendableResult in
+        let completion: SendableCompletion = { [weak self] sendableResult in
             guard let weakSelf = self else {
                 return
             }

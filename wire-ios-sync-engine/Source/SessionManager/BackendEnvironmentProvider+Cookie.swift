@@ -21,7 +21,7 @@ import WireTransport
 extension BackendEnvironmentProvider {
     func cookieStorage(for account: Account) -> ZMPersistentCookieStorage {
         let backendURL = self.backendURL.host!
-        return ZMPersistentCookieStorage(forServerName: backendURL, userIdentifier: account.userIdentifier)
+        return ZMPersistentCookieStorage(forServerName: backendURL, userIdentifier: account.userIdentifier, useCache: true)
     }
 
     public func isAuthenticated(_ account: Account) -> Bool {

@@ -17,13 +17,20 @@
 //
 
 import XCTest
+@testable import WireRequestStrategy
 @testable import WireSyncEngine
 
-class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
+final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
+
+    override func setUp() {
+        super.setUp()
+
+        mockMLSService.repairOutOfSyncConversations_MockMethod = { }
+    }
 
     // MARK: Helpers
 
-    class InitialSyncObserver: NSObject, ZMInitialSyncCompletionObserver {
+    final class InitialSyncObserver: NSObject, ZMInitialSyncCompletionObserver {
 
         var didNotify: Bool = false
         var initialSyncToken: Any?
@@ -39,21 +46,28 @@ class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     }
 
     func startQuickSync() {
-        sut.applicationStatusDirectory?.syncStatus.currentSyncPhase = .done
-        sut.applicationStatusDirectory?.syncStatus.pushChannelDidOpen()
+        sut.applicationStatusDirectory.syncStatus.currentSyncPhase = .done
+        sut.applicationStatusDirectory.syncStatus.pushChannelDidOpen()
     }
 
     func finishQuickSync() {
-        sut.applicationStatusDirectory?.syncStatus.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
+        syncMOC.performAndWait {
+            sut.applicationStatusDirectory.syncStatus.finishCurrentSyncPhase(phase: .fetchingMissedEvents)
+        }
     }
 
     func startSlowSync() {
-        sut.applicationStatusDirectory?.syncStatus.forceSlowSync()
+        syncMOC.performAndWait {
+            sut.applicationStatusDirectory.syncStatus.forceSlowSync()
+        }
     }
 
     func finishSlowSync() {
-        sut.applicationStatusDirectory?.syncStatus.currentSyncPhase = .lastSlowSyncPhase
-        sut.applicationStatusDirectory?.syncStatus.finishCurrentSyncPhase(phase: .lastSlowSyncPhase)
+        syncMOC.performAndWait {
+            sut.applicationStatusDirectory.syncStatus.currentSyncPhase = .lastSlowSyncPhase
+            sut.applicationStatusDirectory.syncStatus.finishCurrentSyncPhase(phase: .lastSlowSyncPhase)
+
+        }
     }
 
     // MARK: Slow Sync
@@ -66,7 +80,9 @@ class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         XCTAssertTrue(sut.notificationDispatcher.isEnabled)
 
         // when
-        startSlowSync()
+        syncMOC.performAndWait {
+            startSlowSync()
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then

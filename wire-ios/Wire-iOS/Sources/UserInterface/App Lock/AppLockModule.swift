@@ -25,14 +25,13 @@ import WireSyncEngine
 
 enum AppLockModule: ModuleInterface {
 
-    typealias Session = UserSessionAppLockInterface & UserSessionEncryptionAtRestInterface
     typealias PasscodePreference = AppLockPasscodePreference
     typealias AuthenticationResult = AppLockAuthenticationResult
     typealias Strings = L10n.Localizable.AppLockModule
 
-    static func build(session: Session) -> View {
-        let router = Router()
-        let interactor = Interactor(session: session)
+    static func build(userSession: UserSession) -> View {
+        let router = Router(userSession: userSession)
+        let interactor = Interactor(userSession: userSession)
         let presenter = Presenter()
         let view = View()
 

@@ -18,12 +18,6 @@
 import UIKit
 import WireDataModel
 
-extension ButtonMessageState {
-    var localizedName: String {
-        return "button_message_cell.state.\(self)".localized
-    }
-}
-
 final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
     var isSelected: Bool = false
 
@@ -32,7 +26,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 
     var errorMessage: String? {
         didSet {
-            errorLabelTopConstraint?.constant = errorMessage?.isEmpty == false ? 4: 0
+            errorLabelTopConstraint?.constant = errorMessage?.isEmpty == false ? 4 : 0
             errorLabel.text = errorMessage
             errorLabel.invalidateIntrinsicContentSize()
 
@@ -77,19 +71,20 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
             button.legacyStyle = .empty
             button.isLoading = false
             button.isEnabled = true
+            button.accessibilityValue = L10n.Localizable.ButtonMessageCell.State.unselected
         case .selected:
             button.legacyStyle = .empty
             button.isLoading = true
             button.isEnabled = false
+            button.accessibilityValue = L10n.Localizable.ButtonMessageCell.State.selected
         case .confirmed:
             button.legacyStyle = .full
             button.isLoading = false
             button.isEnabled = false
+            button.accessibilityValue = L10n.Localizable.ButtonMessageCell.State.confirmed
         }
 
-        button.accessibilityValue = config.state.localizedName
-
-        errorMessage = config.hasError ? "button_message_cell.generic_error".localized : nil
+        errorMessage = config.hasError ? L10n.Localizable.ButtonMessageCell.genericError : nil
     }
 
     func configure(with object: Configuration, animated: Bool) {
@@ -133,7 +128,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
     }
 
     private func createConstraints() {
-        [button, errorLabel].prepareForLayout()
+        [button, errorLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let errorLabelTopConstraint = errorLabel.topAnchor.constraint(equalTo: button.bottomAnchor, constant: 0)
 
@@ -146,7 +141,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
             errorLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
             errorLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
             errorLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
-            ])
+        ])
 
         self.errorLabelTopConstraint = errorLabelTopConstraint
     }

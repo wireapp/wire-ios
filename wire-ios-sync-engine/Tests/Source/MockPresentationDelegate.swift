@@ -19,7 +19,7 @@
 import Foundation
 
 class MockPresentationDelegate: PresentationDelegate {
-
+    var completedURLActionCallsCompletion: () -> Void = { }
     var showConversationCalls: [ZMConversation] = []
     var showConversationListCalls: Int = 0
     var showUserProfileCalls: [UserType] = []
@@ -45,6 +45,7 @@ class MockPresentationDelegate: PresentationDelegate {
 
     func completedURLAction(_ action: URLAction) {
         completedURLActionCalls.append(action)
+        completedURLActionCallsCompletion()
     }
 
     func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage?) {

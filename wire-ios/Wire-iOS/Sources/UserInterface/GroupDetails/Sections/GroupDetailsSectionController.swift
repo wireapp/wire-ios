@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 
@@ -24,8 +23,11 @@ protocol GroupDetailsUserDetailPresenter: AnyObject {
     func presentDetails(for user: UserType)
 }
 
-protocol GroupDetailsSectionControllerDelegate: GroupDetailsUserDetailPresenter {
-    func presentFullParticipantsList(for users: [UserType], in conversation: GroupDetailsConversationType)
+protocol GroupDetailsSectionControllerDelegate: GroupDetailsUserDetailPresenter, AnyObject {
+    func presentFullParticipantsList(
+        for users: [UserType],
+        in conversation: GroupDetailsConversationType
+    )
 }
 
 class GroupDetailsSectionController: NSObject, CollectionViewSectionController {

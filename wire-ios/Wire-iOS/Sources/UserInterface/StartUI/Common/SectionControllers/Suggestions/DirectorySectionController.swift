@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,15 +33,15 @@ final class DirectorySectionController: SearchSectionController {
     }
 
     override var sectionTitle: String {
-        return "peoplepicker.header.directory".localized
+        return L10n.Localizable.Peoplepicker.Header.directory
     }
 
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
 
         collectionView?.register(UserCell.self, forCellWithReuseIdentifier: UserCell.zm_reuseIdentifier)
-
-        self.token = UserChangeInfo.add(searchUserObserver: self, in: ZMUserSession.shared()!)
+        guard let userSession = ZMUserSession.shared() else { return }
+        self.token = UserChangeInfo.add(searchUserObserver: self, in: userSession)
 
         self.collectionView = collectionView
     }
@@ -53,8 +53,14 @@ final class DirectorySectionController: SearchSectionController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let user = suggestions[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.zm_reuseIdentifier, for: indexPath) as! UserCell
-
-        cell.configure(with: user, selfUser: ZMUser.selfUser())
+        if let selfUser = ZMUser.selfUser() {
+            cell.configure(
+                user: user,
+                isSelfUserPartOfATeam: selfUser.hasTeam
+            )
+        } else {
+            assertionFailure("ZMUser.selfUser() is nil")
+        }
         cell.showSeparator = (suggestions.count - 1) != indexPath.row
         cell.userTypeIconView.isHidden = true
         cell.accessoryIconView.isHidden = true
@@ -78,7 +84,7 @@ final class DirectorySectionController: SearchSectionController {
             user.accept { [weak self] error in
                 guard
                     let strongSelf = self,
-                    let error = error as? UpdateConnectionError
+                    let error = error as? LocalizedError
                 else {
                     return
                 }
@@ -106,7 +112,7 @@ final class DirectorySectionController: SearchSectionController {
 
 }
 
-extension DirectorySectionController: ZMUserObserver {
+extension DirectorySectionController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.connectionStateChanged else { return }

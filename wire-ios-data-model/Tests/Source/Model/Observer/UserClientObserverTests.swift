@@ -44,8 +44,7 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
 
     let userInfoKeys: Set<String> = [
         UserClientChangeInfoKey.TrustedByClientsChanged.rawValue,
-        UserClientChangeInfoKey.IgnoredByClientsChanged.rawValue,
-        UserClientChangeInfoKey.FingerprintChanged.rawValue
+        UserClientChangeInfoKey.IgnoredByClientsChanged.rawValue
     ]
 
     func checkThatItNotifiesTheObserverOfAChange(_ userClient: UserClient, modifier: (UserClient) -> Void, expectedChangedFields: Set<String>, customAffectedKeys: AffectedKeys? = nil) {
@@ -67,7 +66,7 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
 
         // then
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertEqual(clientObserver.receivedChangeInfo.count, changeCount, "Should not have changed further once")
 
             guard let changes = clientObserver.receivedChangeInfo.first else { return }
@@ -99,32 +98,16 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(client,
-                                                     modifier: { otherClient.ignoreClient($0) },
-                                                     expectedChangedFields: [
-                                                        UserClientChangeInfoKey.IgnoredByClientsChanged.rawValue,
-                                                        UserClientChangeInfoKey.TrustedByClientsChanged.rawValue
+        self.checkThatItNotifiesTheObserverOfAChange(
+            client,
+            modifier: { otherClient.ignoreClient($0) },
+            expectedChangedFields: [
+                UserClientChangeInfoKey.IgnoredByClientsChanged.rawValue,
+                UserClientChangeInfoKey.TrustedByClientsChanged.rawValue
             ]
         )
 
         XCTAssertTrue(client.ignoredByClients.contains(otherClient))
-    }
-
-    func testThatItNotifiesTheObserverOfFingerprintChange() {
-        // given
-        let client = UserClient.insertNewObject(in: self.uiMOC)
-        client.fingerprint = NSString.createAlphanumerical().data(using: String.Encoding.utf8)
-        self.uiMOC.saveOrRollback()
-
-        let newFingerprint = NSString.createAlphanumerical().data(using: String.Encoding.utf8)
-
-        // when
-        self.checkThatItNotifiesTheObserverOfAChange(client,
-                                                     modifier: { _ in client.fingerprint = newFingerprint },
-                                                     expectedChangedFields: [UserClientChangeInfoKey.FingerprintChanged.rawValue]
-        )
-
-        XCTAssertTrue(client.fingerprint == newFingerprint)
     }
 
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {

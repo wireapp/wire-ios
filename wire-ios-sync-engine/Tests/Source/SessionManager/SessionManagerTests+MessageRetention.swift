@@ -20,7 +20,7 @@ import XCTest
 import WireTesting
 @testable import WireSyncEngine
 
-class SessionManagerTests_MessageRetention: IntegrationTest {
+final class SessionManagerMessageRetentionTests: IntegrationTest {
 
     override func setUp() {
         super.setUp()

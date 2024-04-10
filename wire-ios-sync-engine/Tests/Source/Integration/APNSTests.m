@@ -59,13 +59,13 @@
     [self.application setBackground];
     
     // when
-    XCTestExpectation *fetchingExpectation = [self expectationWithDescription:@"fetching notification"];
+    XCTestExpectation *fetchingExpectation = [self customExpectationWithDescription:@"fetching notification"];
 
     NSUUID *lastNotificationId = [self.lastEventIDRepository fetchLastEventID];
 
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
         NSString *path = [NSString stringWithFormat:@"/notifications?size=500&since=%@&client=%@", lastNotificationId.transportString ,selfUser.selfClient.remoteIdentifier];
-        if ([request.path isEqualToString:path] && request.method == ZMMethodGET) {
+        if ([request.path isEqualToString:path] && request.method == ZMTransportRequestMethodGet) {
             [fetchingExpectation fulfill];
             return [ZMTransportResponse responseWithPayload:notificationStreamPayload HTTPStatus:200 transportSessionError:nil apiVersion:0];
         };
@@ -113,14 +113,14 @@
     [self.application setBackground];
     
     // when
-    XCTestExpectation *fetchingExpectation = [self expectationWithDescription:@"fetching notification"];
+    XCTestExpectation *fetchingExpectation = [self customExpectationWithDescription:@"fetching notification"];
     
     __block NSUInteger requestCount = 0;
 
     NSUUID *lastNotificationId = [self.lastEventIDRepository fetchLastEventID];
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
         NSString *path = [NSString stringWithFormat:@"/notifications?size=500&since=%@&client=%@", lastNotificationId.transportString, selfUser.selfClient.remoteIdentifier];
-        if ([request.path isEqualToString:path] && request.method == ZMMethodGET) {
+        if ([request.path isEqualToString:path] && request.method == ZMTransportRequestMethodGet) {
             if (++requestCount == 2) {
                 [fetchingExpectation fulfill];
                 return [ZMTransportResponse responseWithPayload:notificationStreamPayload HTTPStatus:200 transportSessionError:nil apiVersion:0];

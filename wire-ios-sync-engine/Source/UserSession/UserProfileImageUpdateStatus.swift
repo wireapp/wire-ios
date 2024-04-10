@@ -112,7 +112,6 @@ public final class UserProfileImageUpdateStatus: NSObject {
     fileprivate var changeDelegates: [UserProfileImageUpdateStateDelegate] = []
     fileprivate var imageOwner: ImageOwner?
     fileprivate let syncMOC: NSManagedObjectContext
-    fileprivate let uiMOC: NSManagedObjectContext
 
     fileprivate var imageState = [ProfileImageSize: ImageState]()
     fileprivate var resizedImages = [ProfileImageSize: Data]()
@@ -128,7 +127,6 @@ public final class UserProfileImageUpdateStatus: NSObject {
         self.queue = queue
         self.preprocessor = preprocessor
         self.syncMOC = managedObjectContext
-        self.uiMOC = managedObjectContext.zm_userInterface
         self.changeDelegate = delegate
         super.init()
         self.preprocessor?.delegate = self

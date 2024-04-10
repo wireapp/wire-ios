@@ -28,7 +28,7 @@ class MockServicesTests: MockTransportSessionTests {
 
         // when
 
-        let response = sut.processTeamsRequest(ZMTransportRequest(path: "/teams/\(teamID.transportString())/services/whitelisted?prefix=Normal", method: .methodGET, payload: nil, apiVersion: APIVersion.v0.rawValue))
+        let response = sut.processTeamsRequest(ZMTransportRequest(path: "/teams/\(teamID.transportString())/services/whitelisted?prefix=Normal", method: .get, payload: nil, apiVersion: APIVersion.v0.rawValue))
         // then
         XCTAssertEqual(response.httpStatus, 200)
         XCTAssertNotNil(response.payload?.asDictionary()?["services"])
@@ -82,7 +82,7 @@ class MockServicesTests: MockTransportSessionTests {
         // when
         let payload = ["service": service.identifier,
                        "provider": service.provider]
-        let response = sut.processServiceRequest(ZMTransportRequest(path: "/conversations/\(conversation.identifier)/bots", method: .methodPOST, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue))
+        let response = sut.processServiceRequest(ZMTransportRequest(path: "/conversations/\(conversation.identifier)/bots", method: .post, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue))
 
         // then
         XCTAssertEqual(response.httpStatus, 201)
@@ -153,7 +153,7 @@ class MockServicesTests: MockTransportSessionTests {
         XCTAssertEqual(conversation.activeUsers.count, 1)
         let payload = ["service": service.identifier,
                        "provider": service.provider]
-        _ = sut.processServiceRequest(ZMTransportRequest(path: "/conversations/\(conversation.identifier)/bots", method: .methodPOST, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue))
+        _ = sut.processServiceRequest(ZMTransportRequest(path: "/conversations/\(conversation.identifier)/bots", method: .post, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue))
 
         let predicate = NSPredicate(format: "%K == %@", #keyPath(MockUser.serviceIdentifier), service.identifier)
 
@@ -163,7 +163,7 @@ class MockServicesTests: MockTransportSessionTests {
         }
 
         // when
-        let request = ZMTransportRequest(path: "/conversations/\(conversation.identifier)/bots/\(botUser.identifier)", method: .methodDELETE, payload: nil, apiVersion: APIVersion.v0.rawValue)
+        let request = ZMTransportRequest(path: "/conversations/\(conversation.identifier)/bots/\(botUser.identifier)", method: .delete, payload: nil, apiVersion: APIVersion.v0.rawValue)
         let response = sut.processDeleteBotRequest(request)
 
         // then

@@ -22,8 +22,18 @@ import WireCommonComponents
 
 extension ConversationInputBarViewController {
     func sendText() {
+
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+            self._sendText()
+        }
+
+        checker.performAction()
+    }
+
+    private func _sendText() {
         let (text, mentions) = inputBar.textView.preparedText
         let quote = quotedMessage
+
         guard !showAlertIfTextIsTooLong(text: text) else { return }
 
         if inputBar.isEditing, let message = editingMessage {
@@ -41,10 +51,14 @@ extension ConversationInputBarViewController {
     }
 
     func showAlertIfTextIsTooLong(text: String) -> Bool {
-        guard text.count > SharedConstants.maximumMessageLength else { return false }
+        let maximumMessageLength = 8000
 
-        let alert = UIAlertController.alertWithOKButton(title: "conversation.input_bar.message_too_long.title".localized,
-                                                        message: "conversation.input_bar.message_too_long.message".localized(args: SharedConstants.maximumMessageLength))
+        guard text.count > maximumMessageLength else { return false }
+
+        let alert = UIAlertController.alertWithOKButton(
+            title: L10n.Localizable.Conversation.InputBar.MessageTooLong.title,
+            message: L10n.Localizable.Conversation.InputBar.MessageTooLong.message(maximumMessageLength)
+        )
 
         present(alert, animated: true)
 

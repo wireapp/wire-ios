@@ -20,6 +20,7 @@ import Foundation
 import UIKit
 import WireDataModel
 import WireCommonComponents
+import WireSyncEngine
 
 extension ConversationLike where Self: SwiftConversationLike {
     var canAddGuest: Bool {
@@ -99,6 +100,8 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         case create(ConversationCreationValues)
     }
 
+    private let userSession: UserSession
+
     private let searchResultsViewController: SearchResultsViewController
     private let searchGroupSelector: SearchGroupSelector
     private let searchHeaderViewController: SearchHeaderViewController
@@ -132,8 +135,14 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         fatalError("init(coder:) has not been implemented")
     }
 
-    convenience init(conversation: GroupDetailsConversationType) {
-        self.init(context: .add(conversation))
+    convenience init(
+        conversation: GroupDetailsConversationType,
+        userSession: UserSession
+    ) {
+        self.init(
+            context: .add(conversation),
+            userSession: userSession
+        )
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -145,8 +154,12 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         return wr_supportedInterfaceOrientations
     }
 
-    init(context: Context,
-         isFederationEnabled: Bool = BackendInfo.isFederationEnabled) {
+    init(
+        isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
+        context: Context,
+        userSession: UserSession
+    ) {
+        self.userSession = userSession
 
         viewModel = AddParticipantsViewModel(with: context)
 
@@ -175,11 +188,13 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         searchGroupSelector = SearchGroupSelector()
 
         searchResultsViewController = SearchResultsViewController(userSelection: userSelection,
+                                                                  userSession: userSession,
                                                                   isAddingParticipants: true,
                                                                   shouldIncludeGuests: viewModel.context.includeGuests,
                                                                   isFederationEnabled: isFederationEnabled)
 
-        emptyResultView = EmptySearchResultsView(isSelfUserAdmin: SelfUser.current.canManageTeam,
+        let user = SelfUser.provider?.providedSelfUser
+        emptyResultView = EmptySearchResultsView(isSelfUserAdmin: user?.canManageTeam == true,
                                                  isFederationEnabled: isFederationEnabled)
         super.init(nibName: nil, bundle: nil)
 
@@ -258,10 +273,12 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
                   return
               }
 
-        [searchHeaderView,
-         searchResultsView,
-         confirmButton,
-         searchGroupSelector].prepareForLayout()
+        [
+            searchHeaderView,
+            searchResultsView,
+            confirmButton,
+            searchGroupSelector
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         var constraints: [NSLayoutConstraint] = [
             searchHeaderView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -309,11 +326,15 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     private func updateSelectionValues() {
         // Update view model after selection changed
         if case .create(let values) = viewModel.context {
-            let updated = ConversationCreationValues(name: values.name,
-                                                     participants: userSelection.users,
-                                                     allowGuests: true,
-                                                     allowServices: true,
-                                                     selfUser: ZMUser.selfUser())
+            let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
+            let updated = ConversationCreationValues(
+                name: values.name,
+                participants: userSelection.users,
+                allowGuests: true,
+                allowServices: true,
+                encryptionProtocol: mlsFeature.config.defaultProtocol,
+                selfUser: userSession.selfUser
+            )
             viewModel = AddParticipantsViewModel(with: .create(updated))
         }
 
@@ -464,10 +485,13 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
     }
 
     func searchResultsViewController(_ searchResultsViewController: SearchResultsViewController, didTapOnSeviceUser user: ServiceUser) {
+
         guard case let .add(conversation) = viewModel.context else { return }
+
         let detail = ServiceDetailViewController(
             serviceUser: user,
-            actionType: .addService(conversation as! ZMConversation)
+            actionType: .addService(conversation as! ZMConversation),
+            userSession: userSession
         ) { [weak self] result in
             guard let `self` = self, let result = result else { return }
             switch result {

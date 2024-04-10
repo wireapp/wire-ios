@@ -26,7 +26,7 @@ struct OpenGraphMockData {
     let urlVersion: String?
 }
 
-class OpenGraphMockDataProvider: NSObject {
+final class OpenGraphMockDataProvider: NSObject {
 
     static func twitterData() -> OpenGraphMockData {
 

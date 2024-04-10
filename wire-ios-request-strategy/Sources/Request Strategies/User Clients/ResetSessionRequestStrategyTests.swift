@@ -16,13 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireRequestStrategySupport
 import XCTest
+
 @testable import WireRequestStrategy
 
 class ResetSessionRequestStrategyTests: MessagingTestBase {
 
     var sut: ResetSessionRequestStrategy!
-    var mockApplicationStatus: MockApplicationStatus!
+    var mockMessageSender: MockMessageSenderInterface!
 
     override var useInMemoryStore: Bool {
         return false
@@ -30,40 +32,39 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        mockApplicationStatus = MockApplicationStatus()
-        mockApplicationStatus.mockSynchronizationState = .online
-        sut = ResetSessionRequestStrategy(managedObjectContext: self.syncMOC,
-                                    applicationStatus: mockApplicationStatus,
-                                    clientRegistrationDelegate: mockApplicationStatus.clientRegistrationDelegate)
+        mockMessageSender = MockMessageSenderInterface()
+        sut = ResetSessionRequestStrategy(
+            managedObjectContext: self.syncMOC,
+            messageSender: mockMessageSender
+        )
     }
 
     override func tearDown() {
-        mockApplicationStatus = nil
         sut = nil
         super.tearDown()
     }
 
     // MARK: Request generation
 
-    func testThatItCreatesARequest_WhenUserClientNeedsToNotifyOtherUserAboutSessionReset() {
+    func testThatItSendsSessionResetMessage_WhenUserClientNeedsToNotifyOtherUserAboutSessionReset() {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let otherUser = self.createUser()
             let otherClient = self.createClient(user: otherUser)
-            let conversation = self.setupOneToOneConversation(with: otherUser)
-            let conversationID = conversation.remoteIdentifier!.transportString()
-            let conversationDomain = conversation.domain!
+            _ = self.setupOneToOneConversation(with: otherUser)
             otherClient.needsToNotifyOtherUserAboutSessionReset = true
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
 
             // WHEN
             self.sut.contextChangeTrackers.forEach {
                 let otherClientSet: Set<NSManagedObject> = [otherClient]
                 $0.objectsDidChange(otherClientSet)
             }
-
-            // THEN
-            XCTAssertEqual(self.sut.nextRequest(for: .v1)?.path, "/v1/conversations/\(conversationDomain)/\(conversationID)/proteus/messages")
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     // MARK: Response handling
@@ -76,17 +77,15 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
             _ = self.setupOneToOneConversation(with: otherUser)
             otherClient = self.createClient(user: otherUser)
             otherClient.needsToNotifyOtherUserAboutSessionReset = true
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
 
+            // WHEN
             self.sut.contextChangeTrackers.forEach {
                 let otherClientSet: Set<NSManagedObject> = [otherClient]
                 $0.objectsDidChange(otherClientSet)
             }
-            let request = self.sut.nextRequest(for: .v0)
-
-            // WHEN
-            request?.complete(with: ZMTransportResponse(payload: [:] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: 0))
         }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         syncMOC.performGroupedBlockAndWait {

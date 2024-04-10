@@ -30,7 +30,7 @@ extension VoiceChannel {
         if case .incoming = state, let initiator = initiator as? ZMUser {
             return initiator
         }
-        let selfUserID = ZMUser.selfUser().remoteIdentifier
+        let selfUserID = ZMUser.selfUser()?.remoteIdentifier
         return participants.first(where: { $0.remoteIdentifier != selfUserID })
     }
 

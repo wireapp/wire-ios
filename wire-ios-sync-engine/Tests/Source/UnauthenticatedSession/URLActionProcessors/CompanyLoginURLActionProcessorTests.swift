@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,10 +19,10 @@
 import Foundation
 @testable import WireSyncEngine
 
-class CompanyLoginURLActionProcessorTests: ZMTBaseTest, WireSyncEngine.UnauthenticatedSessionStatusDelegate {
+final class CompanyLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSessionStatusDelegate {
 
     var isAllowedToCreateNewAccount: Bool = true
-    var sut: WireSyncEngine.CompanyLoginURLActionProcessor!
+    var sut: CompanyLoginURLActionProcessor!
     var authenticationStatus: ZMAuthenticationStatus!
     var delegate: MockAuthenticationStatusDelegate!
 
@@ -31,11 +31,13 @@ class CompanyLoginURLActionProcessorTests: ZMTBaseTest, WireSyncEngine.Unauthent
 
         delegate = MockAuthenticationStatusDelegate()
         let userInfoParser = MockUserInfoParser()
-        let groupQueue = DispatchGroupQueue(queue: DispatchQueue.main)
-        authenticationStatus = ZMAuthenticationStatus(delegate: delegate,
-                                                      groupQueue: groupQueue,
-                                                      userInfoParser: userInfoParser)
-        sut = WireSyncEngine.CompanyLoginURLActionProcessor(delegate: self, authenticationStatus: authenticationStatus)
+        let groupQueue = DispatchGroupQueue(queue: .main)
+        authenticationStatus = ZMAuthenticationStatus(
+            delegate: delegate,
+            groupQueue: groupQueue,
+            userInfoParser: userInfoParser
+        )
+        sut = CompanyLoginURLActionProcessor(delegate: self, authenticationStatus: authenticationStatus)
     }
 
     override func tearDown() {

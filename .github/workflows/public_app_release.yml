@@ -6,7 +6,7 @@ permissions:
   checks: write
 
 jobs:
-  development:
+  public_app_release:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_public

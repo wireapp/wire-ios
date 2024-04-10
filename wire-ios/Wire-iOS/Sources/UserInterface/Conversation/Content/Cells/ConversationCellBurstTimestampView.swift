@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireSyncEngine
 import WireCommonComponents
 
 final class ConversationCellBurstTimestampView: UIView {
@@ -31,7 +32,6 @@ final class ConversationCellBurstTimestampView: UIView {
     private let inset: CGFloat = 16
     private let unreadDotHeight: CGFloat = 8
     private var heightConstraints = [NSLayoutConstraint]()
-    private var accentColorObserver: AccentColorChangeHandler?
     private let burstBoldFont = FontSpec.mediumSemiboldFont.font!
     private let color = SemanticColors.View.backgroundSeparatorConversationView
 
@@ -61,11 +61,6 @@ final class ConversationCellBurstTimestampView: UIView {
         super.init(frame: .zero)
         setupViews()
         createConstraints()
-
-        accentColorObserver = AccentColorChangeHandler.addObserver(self) { [weak self] (color, _) in
-            self?.unreadDot.backgroundColor = color
-        }
-
         setupStyle()
     }
 
@@ -86,12 +81,14 @@ final class ConversationCellBurstTimestampView: UIView {
 
     private func createConstraints() {
 
-        [self,
-         label,
-         leftSeparator,
-         rightSeparator,
-         unreadDotContainer,
-         unreadDot].prepareForLayout()
+        [
+            self,
+            label,
+            leftSeparator,
+            rightSeparator,
+            unreadDotContainer,
+            unreadDot
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         heightConstraints = [
             leftSeparator.heightAnchor.constraint(equalToConstant: separatorHeight),
@@ -128,7 +125,7 @@ final class ConversationCellBurstTimestampView: UIView {
         label.applyStyle(.dateInConversationLabel)
     }
 
-    func configure(with timestamp: Date, includeDayOfWeek: Bool, showUnreadDot: Bool) {
+    func configure(with timestamp: Date, includeDayOfWeek: Bool, showUnreadDot: Bool, accentColor: UIColor) {
         if includeDayOfWeek {
             isSeparatorHidden = false
             label.text = timestamp.olderThanOneWeekdateFormatter.string(from: timestamp).localized
@@ -141,6 +138,7 @@ final class ConversationCellBurstTimestampView: UIView {
         leftSeparator.backgroundColor = color
         rightSeparator.backgroundColor = color
         isShowingUnreadDot = showUnreadDot
+        unreadDot.backgroundColor = accentColor
     }
 
     func prepareForReuse() {

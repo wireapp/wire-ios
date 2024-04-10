@@ -131,12 +131,8 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
     }
 
     public var muted: Bool {
-        get {
-            return callCenter?.muted ?? false
-        }
-        set {
-            callCenter?.muted = newValue
-        }
+        get { callCenter?.isMuted ?? false }
+        set { callCenter?.isMuted = newValue }
     }
 
     public var isConferenceCall: Bool {
@@ -190,18 +186,12 @@ extension VoiceChannelV3: CallActions {
 
     public func continueByDecreasingConversationSecurity(userSession: ZMUserSession) {
         guard let conversation = conversation else { return }
-        conversation.acknowledgePrivacyWarning(withResendIntent: false)
+        conversation.acknowledgePrivacyWarning(withResendIntent: true)
     }
 
     public func leaveAndDecreaseConversationSecurity(userSession: ZMUserSession) {
         guard let conversation = conversation else { return }
         conversation.acknowledgePrivacyWarning(withResendIntent: false)
-        userSession.syncManagedObjectContext.performGroupedBlock {
-            let conversationId = conversation.objectID
-            if let syncConversation = (try? userSession.syncManagedObjectContext.existingObject(with: conversationId)) as? ZMConversation {
-                userSession.syncStrategy?.callingRequestStrategy?.dropPendingCallMessages(for: syncConversation)
-            }
-        }
         leave(userSession: userSession, completion: nil)
     }
 

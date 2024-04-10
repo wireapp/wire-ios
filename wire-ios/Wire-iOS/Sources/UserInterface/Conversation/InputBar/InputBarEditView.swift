@@ -77,7 +77,9 @@ typealias IconColors = SemanticColors.Icon
     }
 
     fileprivate func createConstraints() {
-        [undoButton, confirmButton, cancelButton].prepareForLayout()
+        [undoButton, confirmButton, cancelButton].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         NSLayoutConstraint.activate([
             topAnchor.constraint(equalTo: undoButton.topAnchor),
             topAnchor.constraint(equalTo: confirmButton.topAnchor),

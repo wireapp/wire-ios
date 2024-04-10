@@ -20,6 +20,10 @@ import UIKit
 import WireSyncEngine
 import WireCommonComponents
 
+enum AlertChoice {
+    case cancel, confirm, alreadyPresented, ok
+}
+
 // MARK: - ActiveCallRouterProtocol
 protocol ActiveCallRouterProtocol: AnyObject {
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool)
@@ -27,7 +31,9 @@ protocol ActiveCallRouterProtocol: AnyObject {
     func minimizeCall(animated: Bool, completion: Completion?)
     func showCallTopOverlay(for conversation: ZMConversation)
     func hideCallTopOverlay()
-    func presentSecurityDegradedAlert(degradedUser: UserType?)
+    func presentEndingSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void)
+    func presentIncomingSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void)
+    func dismissSecurityDegradedAlertIfNeeded()
     func presentUnsupportedVersionAlert()
 }
 
@@ -39,8 +45,11 @@ protocol CallQualityRouterProtocol: AnyObject {
     func presentCallQualityRejection()
 }
 
+typealias PostCallAction = ((@escaping Completion) -> Void)
+
 // MARK: - ActiveCallRouter
-class ActiveCallRouter: NSObject {
+
+final class ActiveCallRouter: NSObject {
 
     // MARK: - Public Property
     var isActiveCallShown = false {
@@ -61,15 +70,19 @@ class ActiveCallRouter: NSObject {
 
     private var isCallQualityShown = false
     private var isCallTopOverlayShown = false
-    private(set) var scheduledPostCallAction: (() -> Void)?
+    private(set) var scheduledPostCallAction: PostCallAction?
+    private(set) weak var presentedDegradedAlert: UIAlertController?
 
     private var zClientViewController: ZClientViewController? {
         return rootViewController.firstChild(ofType: ZClientViewController.self)
     }
 
-    init(rootviewController: RootViewController) {
+    private let userSession: UserSession
+
+    init(rootviewController: RootViewController, userSession: UserSession) {
         self.rootViewController = rootviewController
-        callController = CallController()
+        self.userSession = userSession
+        callController = CallController(userSession: userSession)
         callController.callConversationProvider = ZMUserSession.shared()
         callQualityController = CallQualityController()
         transitioningDelegate = CallQualityAnimator()
@@ -88,6 +101,7 @@ class ActiveCallRouter: NSObject {
 
 // MARK: - ActiveCallRouterProtocol
 extension ActiveCallRouter: ActiveCallRouterProtocol {
+
     // MARK: - ActiveCall
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
         guard
@@ -100,9 +114,8 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         // NOTE: We resign first reponder for the input bar since it will attempt to restore
         // first responder when the call overlay is interactively dismissed but canceled.
         UIResponder.currentFirst?.resignFirstResponder()
-
         var activeCallViewController: UIViewController!
-        let bottomSheetActiveCallViewController = CallingBottomSheetViewController(voiceChannel: voiceChannel)
+        let bottomSheetActiveCallViewController = CallingBottomSheetViewController(voiceChannel: voiceChannel, userSession: userSession)
         bottomSheetActiveCallViewController.delegate = callController
         activeCallViewController = bottomSheetActiveCallViewController
 
@@ -122,9 +135,14 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         }
         rootViewController.dismiss(animated: animated, completion: { [weak self] in
             self?.isActiveCallShown = false
-            self?.scheduledPostCallAction?()
+            if let action = self?.scheduledPostCallAction {
+                action {
+                    completion?()
+                }
+            } else {
+                completion?()
+            }
             self?.scheduledPostCallAction = nil
-            completion?()
         })
     }
 
@@ -148,17 +166,81 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     // MARK: - Alerts
-    func presentSecurityDegradedAlert(degradedUser: UserType?) {
-        executeOrSchedulePostCallAction { [weak self] in
-            let alert = UIAlertController.degradedCall(degradedUser: degradedUser, callEnded: true)
+
+    func presentEndingSecurityDegradedAlert(for reason: CallDegradationReason,
+                                            completion: @escaping (AlertChoice) -> Void) {
+
+        guard self.presentedDegradedAlert == nil else {
+            completion(.alreadyPresented)
+            return
+        }
+
+        executeOrSchedulePostCallAction { [weak self] postCallActionCompletion in
+            let alert: UIAlertController
+            switch reason {
+            case .degradedUser(user: let user):
+                alert = UIAlertController.makeDegradedProteusCall(degradedUser: user?.value,
+                                                                  callEnded: true,
+                                                                  confirmationBlock: { continueDegradedCall in
+                    completion(continueDegradedCall ? .confirm : .cancel)
+                    postCallActionCompletion()
+                })
+            case .invalidCertificate:
+                alert = UIAlertController.makeEndingDegradedMLSCall(cancelBlock: {
+                    completion(.ok)
+                    postCallActionCompletion()
+                })
+            }
+
+            self?.presentedDegradedAlert = alert
+
             self?.rootViewController.present(alert, animated: true)
         }
     }
 
-    func presentUnsupportedVersionAlert() {
-        executeOrSchedulePostCallAction { [weak self] in
-            let alert = UIAlertController.unsupportedVersionAlert
+    func presentIncomingSecurityDegradedAlert(for reason: CallDegradationReason,
+                                              completion: @escaping (AlertChoice) -> Void) {
+        guard self.presentedDegradedAlert == nil else {
+            completion(.alreadyPresented)
+            return
+        }
+
+        executeOrSchedulePostCallAction { [weak self] postCallActionCompletion in
+            let alert: UIAlertController
+            switch reason {
+            case .degradedUser(user: let user):
+                alert = UIAlertController.makeDegradedProteusCall(degradedUser: user?.value,
+                                                                  callEnded: false,
+                                                                  confirmationBlock: { continueDegradedCall in
+                    completion(continueDegradedCall ? .confirm : .cancel)
+                    postCallActionCompletion()
+                })
+            case .invalidCertificate:
+                alert = UIAlertController.makeIncomingDegradedMLSCall(confirmationBlock: { answerDegradedCall in
+                    completion(answerDegradedCall ? .confirm : .cancel)
+                    postCallActionCompletion()
+                })
+            }
+
+            self?.presentedDegradedAlert = alert
+
             self?.rootViewController.present(alert, animated: true)
+        }
+    }
+
+    func dismissSecurityDegradedAlertIfNeeded() {
+        guard let alert = self.presentedDegradedAlert else { return }
+
+        alert.dismissIfNeeded()
+        self.presentedDegradedAlert = nil
+    }
+
+    func presentUnsupportedVersionAlert() {
+        executeOrSchedulePostCallAction { [weak self] completion in
+            let alert = UIAlertController.unsupportedVersionAlert
+            self?.rootViewController.present(alert, animated: true) {
+                completion()
+            }
         }
     }
 
@@ -180,9 +262,9 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     // MARK: - Helpers
 
-    func executeOrSchedulePostCallAction(_ action: @escaping () -> Void) {
+    func executeOrSchedulePostCallAction(_ action: @escaping PostCallAction) {
         if !isActiveCallShown {
-            action()
+            action({})
         } else {
             scheduledPostCallAction = action
         }
@@ -194,9 +276,10 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
     func presentCallQualitySurvey(with callDuration: TimeInterval) {
         let qualityController = buildCallQualitySurvey(with: callDuration)
 
-        executeOrSchedulePostCallAction { [weak self] in
+        executeOrSchedulePostCallAction { [weak self] completion in
             self?.rootViewController.present(qualityController, animated: true, completion: { [weak self] in
                 self?.isCallQualityShown = true
+                completion()
             })
         }
     }
@@ -211,20 +294,22 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
 
     func presentCallFailureDebugAlert() {
         let logsMessage = "The call failed. Sending the debug logs can help us troubleshoot the issue and improve the overall app experience."
-        executeOrSchedulePostCallAction {
+        executeOrSchedulePostCallAction { completion in
             DebugAlert.showSendLogsMessage(message: logsMessage)
+            completion()
         }
     }
 
     func presentCallQualityRejection() {
         let logsMessage = "Sending the debug logs can help us improve the quality of calls and the overall app experience."
-        executeOrSchedulePostCallAction {
+        executeOrSchedulePostCallAction { completion in
             DebugAlert.showSendLogsMessage(message: logsMessage)
+            completion()
         }
     }
 
     private func buildCallQualitySurvey(with callDuration: TimeInterval) -> CallQualityViewController {
-        let questionLabelText = NSLocalizedString("calling.quality_survey.question", comment: "")
+        let questionLabelText = L10n.Localizable.Calling.QualitySurvey.question
         let qualityController = CallQualityViewController(questionLabelText: questionLabelText,
                                                           callDuration: Int(callDuration))
         qualityController.delegate = callQualityController

@@ -40,7 +40,7 @@ class UploadSelfMLSKeyPackagesActionHandler: ActionHandler<UploadSelfMLSKeyPacka
 
         return ZMTransportRequest(
             path: "/mls/key-packages/self/\(action.clientID)",
-            method: .methodPOST,
+            method: .post,
             payload: ["key_packages": action.keyPackages] as ZMTransportData,
             apiVersion: apiVersion.rawValue
         )

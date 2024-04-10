@@ -137,7 +137,9 @@ final class AudioEffectsPickerViewController: UIViewController {
         view.addSubview(statusBoxView)
         view.addSubview(collectionView)
 
-        [collectionView, progressView, subtitleLabel, statusBoxView].prepareForLayout()
+        [collectionView, progressView, subtitleLabel, statusBoxView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         NSLayoutConstraint.activate([
           collectionView.leftAnchor.constraint(equalTo: view.leftAnchor),
           collectionView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -233,7 +235,7 @@ final class AudioEffectsPickerViewController: UIViewController {
 
         switch state {
         case .tip:
-            subtitleLabel.text = "conversation.input_bar.audio_message.keyboard.filter_tip".localized(uppercased: true)
+            subtitleLabel.text = L10n.Localizable.Conversation.InputBar.AudioMessage.Keyboard.filterTip.localizedUppercase
             subtitleLabel.textColor = SemanticColors.Label.textDefault
         case .time:
             let duration: Int
@@ -339,7 +341,7 @@ private protocol AudioPlayerControllerDelegate: AnyObject {
 
 }
 
-private class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerDelegate {
+private final class AudioPlayerController: NSObject, MediaPlayer, AVAudioPlayerDelegate {
 
     let player: AVAudioPlayer
     weak var delegate: AudioPlayerControllerDelegate?

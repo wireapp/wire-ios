@@ -24,9 +24,8 @@ private struct LegalHoldParticipantsSectionViewModel {
     let participants: [UserType]
 
     var sectionAccesibilityIdentifier = "label.groupdetails.participants"
-
     var sectionTitle: String {
-        return "legalhold.participants.section.title".localized(uppercased: true, args: participants.count)
+        return L10n.Localizable.Legalhold.Participants.Section.title(participants.count).localizedUppercase
     }
 
     init(participants: [UserType]) {
@@ -95,7 +94,16 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCell.reuseIdentifier, for: indexPath) as! UserCell
         let showSeparator = (viewModel.participants.count - 1) != indexPath.row
 
-        cell.configure(with: participant, selfUser: SelfUser.current, conversation: conversation)
+        if let selfUser = SelfUser.provider?.providedSelfUser {
+            cell.configure(
+                user: participant,
+                isSelfUserPartOfATeam: selfUser.hasTeam,
+                conversation: conversation
+            )
+        } else {
+            assertionFailure("expected available 'user'!")
+        }
+
         cell.accessoryIconView.isHidden = false
         cell.accessibilityIdentifier = "participants.section.participants.cell"
         cell.showSeparator = showSeparator
@@ -111,7 +119,7 @@ final class LegalHoldParticipantsSectionController: GroupDetailsSectionControlle
 
 }
 
-extension LegalHoldParticipantsSectionController: ZMUserObserver {
+extension LegalHoldParticipantsSectionController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.connectionStateChanged || changeInfo.nameChanged || changeInfo.isUnderLegalHoldChanged else { return }

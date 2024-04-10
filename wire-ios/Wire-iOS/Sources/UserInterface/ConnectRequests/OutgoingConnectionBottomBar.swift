@@ -55,7 +55,7 @@ final class OutgoingConnectionViewController: UIViewController {
         cancelButton.setIcon(.undo, size: .tiny, for: .normal)
         cancelButton.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
         cancelButton.setIconColor(SemanticColors.Icon.foregroundDefault.withAlphaComponent(0.4), for: .highlighted)
-        cancelButton.setTitle("profile.cancel_connection_button_title".localized, for: .normal)
+        cancelButton.setTitle(L10n.Localizable.Profile.cancelConnectionButtonTitle, for: .normal)
         cancelButton.titleLabel?.font = FontSpec.normalSemiboldFont.font!
         cancelButton.setTitleColor(SemanticColors.Label.textDefault, for: .normal)
         cancelButton.setTitleImageSpacing(24)
@@ -71,7 +71,7 @@ final class OutgoingConnectionViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [cancelButton, archiveButton].prepareForLayout()
+        [cancelButton, archiveButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
           cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 24),
           cancelButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 12),

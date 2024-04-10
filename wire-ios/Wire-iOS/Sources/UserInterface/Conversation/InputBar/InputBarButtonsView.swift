@@ -20,28 +20,56 @@ import Foundation
 import UIKit
 import WireCommonComponents
 
-private struct InputBarRowConstants {
-    let titleTopMargin: CGFloat = 10
-    let minimumButtonWidthIPhone5: CGFloat = 53
-    let minimumButtonWidth: CGFloat = 56
-    let buttonsBarHeight: CGFloat = 56
-    let iconSize = StyleKitIcon.Size.tiny.rawValue
+// MARK: - InputBarRowConstants
 
-    func minimumButtonWidth(forWidth width: CGFloat) -> CGFloat {
-        return width <= CGFloat.iPhone4Inch.width ? minimumButtonWidthIPhone5 : minimumButtonWidth
+private enum InputBarRowConstants {
+    static let titleTopMargin: CGFloat = 10
+    static let minimumButtonWidthIPhone5: CGFloat = 53
+    static let minimumButtonWidth: CGFloat = 56
+    static let buttonsBarHeight: CGFloat = 56
+    static let iconSize = StyleKitIcon.Size.tiny.rawValue
+
+    static func minimumButtonWidth(forWidth width: CGFloat) -> CGFloat {
+        return width <= CGFloat.iPhone4Inch.width ? InputBarRowConstants.minimumButtonWidthIPhone5 : InputBarRowConstants.minimumButtonWidth
     }
 }
 
+// MARK: - InputBarButtonsView
+
+/// `InputBarButtonsView` is a UIView responsible for managing and displaying a row of buttons within an `InputBar`.
+/// It handles the dynamic layout of buttons, adjusting to various screen sizes and orientations, and responds
+/// to state changes from its parent view. This class encapsulates all button-related interactions and ensures
+/// accessibility compliance, making the button row navigable and usable by all users. It also contributes to the
+/// overall layout of the `InputBar` by defining constraints relative to the `InputBarConstants`.
+///
+/// The view listens to changes in button configurations and updates its layout and accessibility features
+/// accordingly. It also manages button interactions and communicates actions up to the `InputBar`, which can
+/// alter the state of the input bar, such as switching between editing and composing states.
+///
+/// Usage:
+/// Initialize `InputBarButtonsView` with an array of `UIButton` objects that represent the actions available
+/// in the `InputBar`. The view automatically configures constraints and layout based on the provided buttons.
+/// It is a subcomponent of `InputBar` and should be used in conjunction with it.
+///
+/// Example Initialization:
+/// ```
+/// let buttons: [UIButton] = [sendButton, attachButton, emojiButton]
+/// let buttonsView = InputBarButtonsView(buttons: buttons)
+/// // Add `buttonsView` to an `InputBar` instance
+/// ```
+///
+/// - Note: This class is intended for use as part of the `InputBar` and relies on the `InputBarConstants`
+///         for consistent styling and layout metrics.
 final class InputBarButtonsView: UIView {
 
     typealias RowIndex = UInt
 
-    fileprivate(set) var multilineLayout: Bool = false
-    fileprivate(set) var currentRow: RowIndex = 0
+    private(set) var multilineLayout: Bool = false
+    private(set) var currentRow: RowIndex = 0
 
-    fileprivate lazy var buttonRowTopInset: NSLayoutConstraint = buttonOuterContainer.topAnchor.constraint(equalTo: buttonInnerContainer.topAnchor)
+    private lazy var buttonRowTopInset: NSLayoutConstraint = buttonOuterContainer.topAnchor.constraint(equalTo: buttonInnerContainer.topAnchor)
     private lazy var buttonRowHeight: NSLayoutConstraint = buttonInnerContainer.heightAnchor.constraint(equalToConstant: 0)
-    fileprivate var lastLayoutWidth: CGFloat = 0
+    private var lastLayoutWidth: CGFloat = 0
 
     let expandRowButton = IconButton()
     var buttons: [UIButton] {
@@ -49,9 +77,8 @@ final class InputBarButtonsView: UIView {
             layoutAndConstrainButtonRows()
         }
     }
-    fileprivate let buttonInnerContainer = UIView()
-    fileprivate let buttonOuterContainer = UIView()
-    fileprivate let constants = InputBarRowConstants()
+    private let buttonInnerContainer = UIView()
+    private let buttonOuterContainer = UIView()
 
     required init(buttons: [UIButton]) {
         self.buttons = buttons
@@ -69,7 +96,11 @@ final class InputBarButtonsView: UIView {
         addSubview(buttonInnerContainer)
 
         buttons.forEach {
-            $0.addTarget(self, action: #selector(anyButtonPressed), for: .touchUpInside)
+            let action = UIAction { [weak self] _ in
+                self?.anyButtonPressed()
+            }
+
+            $0.addAction(action, for: .touchUpInside)
             buttonInnerContainer.addSubview($0)
         }
 
@@ -78,7 +109,13 @@ final class InputBarButtonsView: UIView {
         expandRowButton.accessibilityLabel = L10n.Accessibility.Conversation.MoreButton.description
         expandRowButton.hitAreaPadding = .zero
         expandRowButton.setIcon(.ellipsis, size: .tiny, for: [])
-        expandRowButton.addTarget(self, action: #selector(ellipsisButtonPressed), for: .touchUpInside)
+
+        let action = UIAction { [weak self] _ in
+            self?.ellipsisButtonPressed()
+        }
+
+        expandRowButton.addAction(action, for: .touchUpInside)
+
         buttonOuterContainer.addSubview(buttonInnerContainer)
         buttonOuterContainer.clipsToBounds = true
         addSubview(buttonOuterContainer)
@@ -90,7 +127,10 @@ final class InputBarButtonsView: UIView {
         let widthConstraint = widthAnchor.constraint(equalToConstant: 600)
         widthConstraint.priority = UILayoutPriority(rawValue: 750)
 
-        [buttonInnerContainer, buttonOuterContainer].prepareForLayout()
+        [buttonInnerContainer, buttonOuterContainer].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+
         NSLayoutConstraint.activate([
             buttonRowTopInset,
             buttonInnerContainer.leadingAnchor.constraint(equalTo: buttonOuterContainer.leadingAnchor),
@@ -98,7 +138,7 @@ final class InputBarButtonsView: UIView {
             buttonInnerContainer.bottomAnchor.constraint(equalTo: buttonOuterContainer.bottomAnchor),
             buttonRowHeight,
 
-            buttonOuterContainer.heightAnchor.constraint(equalToConstant: constants.buttonsBarHeight),
+            buttonOuterContainer.heightAnchor.constraint(equalToConstant: InputBarRowConstants.buttonsBarHeight),
             buttonOuterContainer.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -UIScreen.safeArea.bottom),
             buttonOuterContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
             buttonOuterContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -117,10 +157,11 @@ final class InputBarButtonsView: UIView {
     }
 
     func showRow(_ rowIndex: RowIndex, animated: Bool) {
+        let animationDuration = 0.35
         guard rowIndex != currentRow else { return }
         currentRow = rowIndex
-        buttonRowTopInset.constant = CGFloat(rowIndex) * constants.buttonsBarHeight
-        UIView.animate(easing: .easeInOutExpo, duration: animated ? 0.35 : 0, animations: layoutIfNeeded)
+        buttonRowTopInset.constant = CGFloat(rowIndex) * InputBarRowConstants.buttonsBarHeight
+        UIView.animate(easing: .easeInOutExpo, duration: animated ? animationDuration : 0, animations: layoutIfNeeded)
         setupAccessibility()
     }
 
@@ -131,14 +172,14 @@ final class InputBarButtonsView: UIView {
 
             buttons.forEach {
                 $0.isAccessibilityElement = currentRow == 0
-                   ? firstRowButtons.contains($0)
-                   : secondRowButtons.contains($0)
+                ? firstRowButtons.contains($0)
+                : secondRowButtons.contains($0)
             }
         }
     }
 
     private var customButtonCount: Int {
-        let minButtonWidth: CGFloat = constants.minimumButtonWidth(forWidth: bounds.width)
+        let minButtonWidth: CGFloat = InputBarRowConstants.minimumButtonWidth(forWidth: bounds.width)
         let ratio = floorf(Float(bounds.width / minButtonWidth))
         let numberOfButtons: Int = Int(ratio)
         return numberOfButtons >= 1 ? numberOfButtons - 1 : 0
@@ -146,54 +187,26 @@ final class InputBarButtonsView: UIView {
 
     // MARK: - Button Layout
 
-    fileprivate var buttonMargin: CGFloat {
+    private var buttonMargin: CGFloat {
         return conversationHorizontalMargins.left / 2 - StyleKitIcon.Size.tiny.rawValue / 2
     }
 
     private func layoutAndConstrainButtonRows() {
-        let minButtonWidth = constants.minimumButtonWidth(forWidth: bounds.width)
+        let minButtonWidth = InputBarRowConstants.minimumButtonWidth(forWidth: bounds.width)
+        let maxNumberOfButtonsPerRow = Int(floorf(Float(bounds.width / minButtonWidth)))
 
         guard bounds.size.width >= minButtonWidth * 2 else {
             return
         }
 
-        // Reset the container.
-        buttonInnerContainer.removeSubviews()
+        setupButtonContainer()
 
-        // Reset the buttons.
-        for button in buttons {
-            button.removeRoundedCorners()
-            button.removeFromSuperview()
-            buttonInnerContainer.addSubview(button)
-        }
+        let (firstRow, secondRow, isMultilineLayout) = determineButtonLayout()
+        buttonRowHeight.constant = isMultilineLayout ? InputBarRowConstants.buttonsBarHeight * 2 : InputBarRowConstants.buttonsBarHeight
+        expandRowButton.isHidden = !isMultilineLayout
 
-        // Distribute buttons over rows.
-        let maxNumberOfButtonsPerRow = Int(floorf(Float(bounds.width / minButtonWidth)))
-        let isMultilineLayout = buttons.count > maxNumberOfButtonsPerRow
+        roundButtons(firstRow: firstRow, secondRow: secondRow)
 
-        let firstRow, secondRow: [UIButton]
-
-        if isMultilineLayout {
-            firstRow = buttons.prefix(customButtonCount) + [expandRowButton]
-            secondRow = [UIButton](buttons.suffix(buttons.count - customButtonCount))
-            buttonRowHeight.constant = constants.buttonsBarHeight * 2
-            expandRowButton.isHidden = false
-        } else {
-            firstRow = buttons
-            secondRow = []
-            buttonRowHeight.constant = constants.buttonsBarHeight
-            expandRowButton.isHidden = true
-        }
-
-        // Round buttons
-        if firstRow.count == 1 {
-            firstRow.first?.layer.cornerRadius = 12
-            firstRow.first?.clipsToBounds = true
-        } else {
-            firstRow.first?.roundCorners(edge: .leading, radius: 12)
-            firstRow.last?.roundCorners(edge: .trailing, radius: 12)
-            secondRow.first?.roundCorners(edge: .leading, radius: 12)
-        }
         var constraints = constrainRowOfButtons(
             firstRow,
             inset: 0,
@@ -215,7 +228,7 @@ final class InputBarButtonsView: UIView {
 
         constraints.append(contentsOf: constrainRowOfButtons(
             secondRow,
-            inset: constants.buttonsBarHeight,
+            inset: InputBarRowConstants.buttonsBarHeight,
             rowIsFull: filled,
             referenceButton: referenceButton
         ))
@@ -223,67 +236,175 @@ final class InputBarButtonsView: UIView {
         setupAccessibility()
     }
 
-    private func constrainRowOfButtons(_ buttons: [UIButton],
-                                       inset: CGFloat,
-                                       rowIsFull: Bool,
-                                       referenceButton: UIButton?) -> [NSLayoutConstraint] {
-        guard let firstButton = buttons.first,
-              let lastButton = buttons.last else { return [] }
+    private func setupButtonContainer() {
+        buttonInnerContainer.removeSubviews()
 
+        for button in buttons {
+            button.removeRoundedCorners()
+            button.removeFromSuperview()
+            buttonInnerContainer.addSubview(button)
+        }
+    }
+
+    private func determineButtonLayout() -> (firstRow: [UIButton], secondRow: [UIButton], isMultilineLayout: Bool) {
+        let minButtonWidth = InputBarRowConstants.minimumButtonWidth(forWidth: bounds.width)
+        let maxNumberOfButtonsPerRow = Int(floor(Float(bounds.width / minButtonWidth)))
+        let isMultilineLayout = buttons.count > maxNumberOfButtonsPerRow
+
+        var firstRow: [UIButton], secondRow: [UIButton]
+
+        if isMultilineLayout {
+            firstRow = Array(buttons.prefix(customButtonCount)) + [expandRowButton]
+            secondRow = Array(buttons.suffix(buttons.count - customButtonCount))
+        } else {
+            firstRow = buttons
+            secondRow = []
+        }
+
+        return (firstRow, secondRow, isMultilineLayout)
+    }
+
+    private func roundButtons(firstRow: [UIButton], secondRow: [UIButton]) {
+        if firstRow.count == 1 {
+            firstRow.first?.layer.cornerRadius = 12
+            firstRow.first?.clipsToBounds = true
+        } else {
+            firstRow.first?.roundCorners(edge: .leading, radius: 12)
+            firstRow.last?.roundCorners(edge: .trailing, radius: 12)
+            secondRow.first?.roundCorners(edge: .leading, radius: 12)
+        }
+    }
+
+    private func constrainRowOfButtons(
+        _ buttons: [UIButton],
+        inset: CGFloat,
+        rowIsFull: Bool,
+        referenceButton: UIButton?
+    ) -> [NSLayoutConstraint] {
         let buttonPadding: CGFloat = 12
-        let buttonHeight = constants.buttonsBarHeight - buttonPadding * 2
+        let buttonHeight = InputBarRowConstants.buttonsBarHeight - buttonPadding * 2
+        let offset = InputBarRowConstants.iconSize / 2 + buttonMargin
+        let constraintMultiplier = 0.5
+
+        var constraints = setupInitialConstraints(for: buttons, rowIsFull: rowIsFull, buttonPadding: buttonPadding)
+
+        for button in buttons {
+            constraints.append(
+                contentsOf: constraintsForButton(
+                    button,
+                    in: buttons,
+                    inset: inset,
+                    buttonPadding: buttonPadding,
+                    buttonHeight: buttonHeight
+                )
+            )
+        }
+
+        constraints.append(
+            contentsOf: constraintsBetweenButtons(
+                buttons,
+                rowIsFull: rowIsFull,
+                offset: offset,
+                constraintMultiplier: constraintMultiplier
+            )
+        )
+
+        if let reference = referenceButton, !rowIsFull {
+            [reference, buttons.last!].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+            constraints.append(buttons.last!.widthAnchor.constraint(equalTo: reference.widthAnchor))
+        }
+
+        setupInsets(forButtons: buttons, rowIsFull: rowIsFull)
+
+        return constraints
+    }
+
+    private func setupInitialConstraints(
+        for buttons: [UIButton],
+        rowIsFull: Bool,
+        buttonPadding: CGFloat
+    ) -> [NSLayoutConstraint] {
+        guard let firstButton = buttons.first, let lastButton = buttons.last else { return [] }
 
         var constraints = [NSLayoutConstraint]()
-
         firstButton.translatesAutoresizingMaskIntoConstraints = false
         constraints.append(
-            firstButton.leadingAnchor.constraint(equalTo: firstButton.superview!.leadingAnchor, constant: buttonPadding)
+            firstButton.leadingAnchor.constraint(
+                equalTo: firstButton.superview!.leadingAnchor,
+                constant: buttonPadding
+            )
         )
 
         if rowIsFull {
             lastButton.translatesAutoresizingMaskIntoConstraints = false
             constraints.append(
-                lastButton.trailingAnchor.constraint(equalTo: lastButton.superview!.trailingAnchor, constant: -buttonPadding)
+                lastButton.trailingAnchor.constraint(
+                    equalTo: lastButton.superview!.trailingAnchor,
+                    constant: -buttonPadding
+                )
             )
         }
 
-        for button in buttons {
-            button.translatesAutoresizingMaskIntoConstraints = false
+        return constraints
+    }
 
-            if button == expandRowButton {
-                constraints.append(contentsOf: [
-                    button.topAnchor.constraint(equalTo: topAnchor, constant: buttonPadding),
-                    button.heightAnchor.constraint(equalToConstant: buttonHeight)
-                ])
-            } else {
-                buttonInnerContainer.translatesAutoresizingMaskIntoConstraints = false
+    private func constraintsForButton(
+        _ button: UIButton,
+        in buttons: [UIButton],
+        inset: CGFloat,
+        buttonPadding: CGFloat,
+        buttonHeight: CGFloat
+    ) -> [NSLayoutConstraint] {
+        var constraints = [NSLayoutConstraint]()
+        button.translatesAutoresizingMaskIntoConstraints = false
 
-                constraints.append(contentsOf: [
-                    button.topAnchor.constraint(equalTo: buttonInnerContainer.topAnchor, constant: inset + buttonPadding),
-                    button.heightAnchor.constraint(equalToConstant: buttonHeight)
-                ])
-            }
+        if button == expandRowButton {
+            constraints.append(contentsOf: [
+                button.topAnchor.constraint(equalTo: topAnchor, constant: buttonPadding),
+                button.heightAnchor.constraint(equalToConstant: buttonHeight)
+            ])
+        } else {
+            buttonInnerContainer.translatesAutoresizingMaskIntoConstraints = false
+            constraints.append(contentsOf: [
+                button.topAnchor.constraint(equalTo: buttonInnerContainer.topAnchor, constant: inset + buttonPadding),
+                button.heightAnchor.constraint(equalToConstant: buttonHeight)
+            ])
         }
 
-        var previous: UIButton = firstButton
+        return constraints
+    }
+
+    private func constraintsBetweenButtons(
+        _ buttons: [UIButton],
+        rowIsFull: Bool,
+        offset: CGFloat,
+        constraintMultiplier: CGFloat
+    ) -> [NSLayoutConstraint] {
+        var constraints = [NSLayoutConstraint]()
+        var previous: UIButton = buttons.first!
+
         for current: UIButton in buttons.dropFirst() {
             let isFirstButton = previous == buttons.first
             let isLastButton = rowIsFull && current == buttons.last
-            let offset = constants.iconSize / 2 + buttonMargin
 
-            [previous, current].prepareForLayout()
-
-            constraints.append(
-                previous.trailingAnchor.constraint(equalTo: current.leadingAnchor)
-            )
+            [previous, current].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+            constraints.append(previous.trailingAnchor.constraint(equalTo: current.leadingAnchor))
 
             if isFirstButton {
                 constraints.append(
-                    previous.widthAnchor.constraint(equalTo: current.widthAnchor, multiplier: 0.5, constant: offset)
+                    previous.widthAnchor.constraint(
+                        equalTo: current.widthAnchor,
+                        multiplier: constraintMultiplier,
+                        constant: offset
+                    )
                 )
             } else if isLastButton {
                 constraints.append(
-                    current.widthAnchor.constraint(equalTo: previous.widthAnchor, multiplier: 0.5, constant: offset)
+                    current.widthAnchor.constraint(
+                        equalTo: previous.widthAnchor,
+                        multiplier: constraintMultiplier,
+                        constant: offset
+                    )
                 )
             } else {
                 constraints.append(
@@ -294,54 +415,76 @@ final class InputBarButtonsView: UIView {
             previous = current
         }
 
-        if let reference = referenceButton, !rowIsFull {
-            [reference, lastButton].prepareForLayout()
-            constraints.append(
-                lastButton.widthAnchor.constraint(equalTo: reference.widthAnchor)
-            )
-        }
-
-        setupInsets(forButtons: buttons, rowIsFull: rowIsFull)
-
         return constraints
     }
 
-    private func setupInsets(forButtons buttons: [UIButton], rowIsFull: Bool) {
-        let firstButton = buttons.first!
-        let firstButtonLabelSize = firstButton.titleLabel!.intrinsicContentSize
-        let firstTitleMargin = (conversationHorizontalMargins.left / 2) - constants.iconSize - (firstButtonLabelSize.width / 2)
-        firstButton.contentHorizontalAlignment = .center
-        firstButton.imageView?.contentMode = .center
+    private enum ButtonPosition {
+        case first
+        case middle
+        case last
+    }
 
-        firstButton.titleEdgeInsets = UIEdgeInsets(top: constants.iconSize + firstButtonLabelSize.height + constants.titleTopMargin, left: firstTitleMargin, bottom: 0, right: 0)
+    private func setupInsets(for button: UIButton, position: ButtonPosition) {
+        let labelSize = button.titleLabel!.intrinsicContentSize
+        let iconSize = InputBarRowConstants.iconSize
+        let topMargin = InputBarRowConstants.titleTopMargin
+        let titleMargin = (conversationHorizontalMargins.left / 2) - iconSize - (labelSize.width / 2)
 
-        if rowIsFull {
-            let lastButton = buttons.last!
-            let lastButtonLabelSize = lastButton.titleLabel!.intrinsicContentSize
-            let lastTitleMargin = conversationHorizontalMargins.left / 2.0 - lastButtonLabelSize.width / 2.0
-            lastButton.contentHorizontalAlignment = .center
-            lastButton.imageView?.contentMode = .center
-            lastButton.titleEdgeInsets = UIEdgeInsets(top: constants.iconSize + lastButtonLabelSize.height + constants.titleTopMargin, left: 0, bottom: 0, right: lastTitleMargin - 1)
-            lastButton.titleLabel?.lineBreakMode = .byClipping
+        switch position {
+        case .first:
+            button.titleEdgeInsets = UIEdgeInsets(
+                top: iconSize + labelSize.height + topMargin,
+                left: titleMargin,
+                bottom: 0,
+                right: 0
+            )
+
+        case .last:
+            let rightMargin = titleMargin - 1 // Adjust as needed for the last button
+            button.titleEdgeInsets = UIEdgeInsets(
+                top: iconSize + labelSize.height + topMargin,
+                left: 0,
+                bottom: 0,
+                right: rightMargin
+            )
+            button.titleLabel?.lineBreakMode = .byClipping
+
+        case .middle:
+            button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -labelSize.width)
+            button.titleEdgeInsets = UIEdgeInsets(
+                top: iconSize + labelSize.height + topMargin,
+                left: -iconSize,
+                bottom: 0,
+                right: 0
+            )
         }
 
-        for button in buttons.dropFirst().dropLast() {
-            let buttonLabelSize = button.titleLabel!.intrinsicContentSize
-            button.contentHorizontalAlignment = .center
-            button.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: -buttonLabelSize.width)
-            button.titleEdgeInsets = UIEdgeInsets(top: constants.iconSize + buttonLabelSize.height + constants.titleTopMargin, left: -constants.iconSize, bottom: 0, right: 0)
+        button.contentHorizontalAlignment = .center
+        button.imageView?.contentMode = .center
+    }
+
+    private func setupInsets(forButtons buttons: [UIButton], rowIsFull: Bool) {
+        guard !buttons.isEmpty else { return }
+
+        setupInsets(for: buttons.first!, position: .first)
+
+        if rowIsFull {
+            setupInsets(for: buttons.last!, position: .last)
+        }
+
+        buttons.dropFirst().dropLast().forEach { button in
+            setupInsets(for: button, position: .middle)
         }
     }
 
-}
+    // MARK: - Actions
 
-extension InputBarButtonsView {
-    @objc fileprivate func anyButtonPressed(_ button: UIButton!) {
+    private func anyButtonPressed() {
         showRow(0, animated: true)
     }
 
-    @objc
-    private func ellipsisButtonPressed(_ button: UIButton!) {
+    private func ellipsisButtonPressed() {
         showRow(currentRow == 0 ? 1 : 0, animated: true)
     }
+
 }

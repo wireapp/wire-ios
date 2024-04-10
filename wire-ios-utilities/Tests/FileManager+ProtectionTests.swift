@@ -43,7 +43,7 @@ extension FileManagerProtectionTests {
         XCTAssertFalse(FileManager.default.fileExists(atPath: self.testFolder.path))
 
         // WHEN
-        self.fileManager.createAndProtectDirectory(at: self.testFolder)
+        try self.fileManager.createAndProtectDirectory(at: self.testFolder)
 
         // THEN
         XCTAssertTrue(FileManager.default.fileExists(atPath: self.testFolder.path))
@@ -57,7 +57,7 @@ extension FileManagerProtectionTests {
         try self.createTestFolder()
 
         // WHEN
-        self.fileManager.createAndProtectDirectory(at: self.testFolder)
+        try self.fileManager.createAndProtectDirectory(at: self.testFolder)
 
         // THEN
         XCTAssertTrue(try self.existingLocalURLIsExcludedFromBackup(self.testFolder))
@@ -80,10 +80,10 @@ extension FileManagerProtectionTests {
         XCTAssertTrue(try self.existingLocalURLIsExcludedFromBackup(self.testFolder))
     }
 
-    func testThatItDetectsExcludedFromBackup() {
+    func testThatItDetectsExcludedFromBackup() throws {
 
         // GIVEN
-        self.fileManager.createAndProtectDirectory(at: self.testFolder)
+        try self.fileManager.createAndProtectDirectory(at: self.testFolder)
 
         // THEN
         XCTAssertTrue(self.testFolder.isExcludedFromBackup)
@@ -112,7 +112,7 @@ extension FileManagerProtectionTests {
         try self.createTestFolder()
 
         // WHEN
-        self.fileManager.setProtectionUntilFirstUserAuthentication(self.testFolder)
+        try self.fileManager.setProtectionUntilFirstUserAuthentication(self.testFolder)
 
         // THEN
         XCTAssertTrue(self.fileManager.isFileProtectedUntilFirstUnlock(self.testFolder))
@@ -135,14 +135,14 @@ extension FileManagerProtectionTests {
     }
 
     func existingLocalURLIsExcludedFromBackup(_ folder: URL) throws -> Bool {
-        let values = try folder.resourceValues(forKeys: Set(arrayLiteral: .isExcludedFromBackupKey))
+        let values = try folder.resourceValues(forKeys: [.isExcludedFromBackupKey])
         return values.isExcludedFromBackup == true
     }
 }
 
 /// This helper class is needed as the default file system will not report the value
 /// of the `FileAttributeKey.protectionKey` when reading file attributes
-class FileManagerThatRecordsFileProtectionAttributes: FileManager {
+final class FileManagerThatRecordsFileProtectionAttributes: FileManager {
 
     var recordedAttributes: [String: FileProtectionType] = [:]
 

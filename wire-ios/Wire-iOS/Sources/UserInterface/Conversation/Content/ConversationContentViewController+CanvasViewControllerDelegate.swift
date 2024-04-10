@@ -24,7 +24,7 @@ extension ConversationContentViewController: CanvasViewControllerDelegate {
         parent?.dismiss(animated: true) {
             if let imageData = image.pngData() {
 
-                ZMUserSession.shared()?.enqueue({
+                self.userSession.enqueue({
                     do {
                         try self.conversation.appendImage(from: imageData)
                     } catch {

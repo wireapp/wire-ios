@@ -77,6 +77,8 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         }
     }
 
+    let userSession: UserSession
+
     var dismissAction: DismissAction? = .none {
         didSet {
             if let currentController = self.currentController {
@@ -85,12 +87,13 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         }
     }
 
-    init(collection: AssetCollectionWrapper, initialMessage: ZMConversationMessage, inverse: Bool = false) {
+    init(collection: AssetCollectionWrapper, initialMessage: ZMConversationMessage, inverse: Bool = false, userSession: UserSession) {
         assert(initialMessage.isImage)
 
         self.inverse = inverse
         self.collection = collection
         self.currentMessage = initialMessage
+        self.userSession = userSession
 
         super.init(nibName: .none, bundle: .none)
         let imagesMatch = CategoryMatch(including: .image, excluding: .GIF)
@@ -154,7 +157,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         [pageViewController.view,
          buttonsBar,
          overlay,
-         separator].prepareForLayout()
+         separator].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         pageViewController.view.fitIn(view: view)
         NSLayoutConstraint.activate([
@@ -337,7 +340,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
     }
 
     private func imageController(for message: ZMConversationMessage) -> FullscreenImageViewController {
-        let imageViewController = FullscreenImageViewController(message: message)
+        let imageViewController = FullscreenImageViewController(message: message, userSession: userSession)
         imageViewController.delegate = self
         imageViewController.swipeToDismiss = self.swipeToDismiss
         imageViewController.showCloseButton = false
@@ -356,7 +359,8 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         guard let sender = currentMessage.senderUser, let serverTimestamp = currentMessage.serverTimestamp else {
             return
         }
-        navigationItem.titleView = TwoLineTitleView(first: (sender.name ?? "").localized, second: serverTimestamp.formattedDate)
+        navigationItem.titleView = TwoLineTitleView(first: (sender.name ?? "").localized.attributedString,
+                                                    second: serverTimestamp.formattedDate.attributedString)
         navigationItem.titleView?.accessibilityTraits = .header
         navigationItem.titleView?.accessibilityLabel = "\(sender.name ?? ""), \(serverTimestamp.formattedDate)"
     }

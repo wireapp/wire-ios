@@ -94,3 +94,8 @@ iOSInjectionProject/
 fastlane/appstoreconnect_api_key.json
 vendor/*
 .submodule-ssh-key
+
+# Brew
+#
+# We can ignore the Brewfile lock, because `brew bundle` is just a helper for local machines und not used for CI.
+Brewfile.lock.json

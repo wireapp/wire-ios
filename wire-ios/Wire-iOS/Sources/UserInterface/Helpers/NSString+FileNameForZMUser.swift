@@ -26,8 +26,8 @@ extension String {
     ///
     /// - Parameter suffix: suffix of the file name.
     /// - Returns: a filename <= (214 + length of suffix) characters
-    static func filenameForSelfUser(suffix: String? = nil) -> String {
-        return ZMUser.selfUser().filename(suffix: suffix)
+    static func filename(for selfUser: UserType, suffix: String? = nil) -> String {
+        selfUser.filename(suffix: suffix)
     }
 
 }

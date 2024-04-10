@@ -23,7 +23,6 @@
 
 #import "ZMSelfStrategy+Internal.h"
 #import "ZMSyncStrategy.h"
-#import "ZMClientRegistrationStatus.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 
 static NSString *SelfPath = @"/self";
@@ -202,7 +201,7 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
         payload[@"assets"] = [self profilePictureAssetsPayloadForUser:user];
     }
     
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"/self" method:ZMMethodPUT payload:payload apiVersion:apiVersion];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"/self" method:ZMTransportRequestMethodPut payload:payload apiVersion:apiVersion];
     return [[ZMUpstreamRequest alloc] initWithKeys:keys transportRequest:request];
 }
 
@@ -272,7 +271,9 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
         NSDictionary *payload = [response.payload asDictionary];
         [selfUser updateWithTransportData:payload authoritative:YES];
         
+        // swiftlint:disable todo_requires_jira_link
         // TODO: Write tests for all cases
+        // swiftlint:enable todo_requires_jira_link
         BOOL selfUserHasEmail = (selfUser.emailAddress != nil);
         BOOL needToNotifyAuthState = (clientPhase == ZMClientRegistrationPhaseWaitingForSelfUser) ||
                                      (clientPhase == ZMClientRegistrationPhaseWaitingForEmailVerfication);

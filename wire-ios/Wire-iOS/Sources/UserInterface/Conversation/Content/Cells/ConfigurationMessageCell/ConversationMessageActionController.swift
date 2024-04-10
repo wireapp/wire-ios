@@ -109,6 +109,8 @@ final class ConversationMessageActionController {
             return message.isImage
         case .react:
             return message.canAddReaction
+        case .visitLink:
+            return message.canVisitLink
         case .present,
              .openQuote,
              .resetSession:
@@ -238,4 +240,7 @@ final class ConversationMessageActionController {
         perform(action: .react(reaction))
     }
 
+    @objc func visitLink(path: String) {
+        perform(action: .visitLink(path))
+    }
 }

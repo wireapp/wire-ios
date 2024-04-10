@@ -19,7 +19,7 @@
 import  WireTesting
 @testable import WireTransport
 
-private class MockTask: DataTaskProtocol {
+private final class MockTask: DataTaskProtocol {
 
     var resumeCallCount = 0
 
@@ -29,7 +29,7 @@ private class MockTask: DataTaskProtocol {
 
 }
 
-private class MockURLSession: SessionProtocol {
+private final class MockURLSession: SessionProtocol {
 
     var recordedRequest: URLRequest?
     var recordedCompletionHandler: ((Data?, URLResponse?, Error?) -> Void)?
@@ -47,7 +47,7 @@ private class MockURLSession: SessionProtocol {
 
 }
 
-private class MockReachability: NSObject, ReachabilityProvider, TearDownCapable {
+private final class MockReachability: NSObject, ReachabilityProvider, TearDownCapable {
 
     let mayBeReachable = true
     let isMobileConnection = true
@@ -63,7 +63,7 @@ private class MockReachability: NSObject, ReachabilityProvider, TearDownCapable 
 }
 
 @objcMembers
-class MockCertificateTrust: NSObject, BackendTrustProvider {
+final class MockCertificateTrust: NSObject, BackendTrustProvider {
 
     var isTrustingServer: Bool = true
 
@@ -205,7 +205,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
         // given
         let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: "HTTP/1.1", headerFields: nil)
         sessionMock.nextCompletionParameters = (nil, response, nil)
-        let completionExpectation = expectation(description: "Completion handler should be called")
+        let completionExpectation = customExpectation(description: "Completion handler should be called")
         let request = ZMTransportRequest(getFromPath: "/", apiVersion: 0)
 
         request.add(ZMCompletionHandler(on: fakeUIContext) { response in
@@ -224,8 +224,8 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
     func testThatPostsANewRequestAvailableNotificationAfterCompletingARunningRequest() {
         // given && then
-        _ = expectation(
-            forNotification: NSNotification.Name(rawValue: NSNotification.Name.ZMTransportSessionNewRequestAvailable.rawValue),
+        _ = customExpectation(
+            forNotification: .requestAvailableNotification,
             object: nil,
             handler: nil
         )
@@ -244,7 +244,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
         // given
         let response = URLResponse(url: url, mimeType: "", expectedContentLength: 1, textEncodingName: nil)
         sessionMock.nextCompletionParameters = (nil, response, NSError.requestExpiredError())
-        let completionExpectation = expectation(description: "Completion handler should be called with errors")
+        let completionExpectation = customExpectation(description: "Completion handler should be called with errors")
         let request = ZMTransportRequest(getFromPath: "/", apiVersion: 0)
 
         request.add(ZMCompletionHandler(on: fakeUIContext) { response in

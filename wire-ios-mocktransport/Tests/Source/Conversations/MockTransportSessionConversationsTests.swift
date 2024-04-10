@@ -190,7 +190,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         // when
         let path = "/conversations/\(conversation.identifier)/roles"
-        let response = self.response(forPayload: nil, path: path, method: .methodGET, apiVersion: .v0)
+        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
         XCTAssertNotNil(response?.payload)
@@ -203,8 +203,8 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         }
         XCTAssertNil(conversation.team)
         XCTAssertEqual(conversationRoles.count, conversation.nonTeamRoles!.count)
-        let admin = conversationRoles.first(where: {($0["conversation_role"] as? String) == MockConversation.admin})
-        XCTAssertEqual((admin?["actions"] as? [String]).map({Set($0)}), Set([
+        let admin = conversationRoles.first(where: { ($0["conversation_role"] as? String) == MockConversation.admin })
+        XCTAssertEqual((admin?["actions"] as? [String]).map({ Set($0) }), Set([
             "add_conversation_member",
             "remove_conversation_member",
             "modify_conversation_name",
@@ -213,9 +213,9 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
             "modify_conversation_access",
             "modify_other_conversation_member",
             "leave_conversation", "delete_conversation"
-            ]))
+        ]))
 
-        let member = conversationRoles.first(where: {($0["conversation_role"] as? String) == MockConversation.member})
+        let member = conversationRoles.first(where: { ($0["conversation_role"] as? String) == MockConversation.member })
         XCTAssertEqual(member?["actions"] as? [String], ["leave_conversation"])
     }
 
@@ -235,7 +235,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         // when
         let path = "/conversations/\(conversation.identifier)/roles"
-        let response = self.response(forPayload: nil, path: path, method: .methodGET, apiVersion: .v0)
+        let response = self.response(forPayload: nil, path: path, method: .get, apiVersion: .v0)
         XCTAssertNotNil(response)
         XCTAssertEqual(response?.httpStatus, 200)
         XCTAssertNotNil(response?.payload)
@@ -248,8 +248,8 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         }
         XCTAssertNotNil(conversation.team)
         XCTAssertEqual(conversationRoles.count, team.roles.count)
-        let admin = conversationRoles.first(where: {($0["conversation_role"] as? String) == MockConversation.admin})
-        XCTAssertEqual((admin?["actions"] as? [String]).map({Set($0)}), Set([
+        let admin = conversationRoles.first(where: { ($0["conversation_role"] as? String) == MockConversation.admin })
+        XCTAssertEqual((admin?["actions"] as? [String]).map({ Set($0) }), Set([
             "add_conversation_member",
             "remove_conversation_member",
             "modify_conversation_name",
@@ -258,9 +258,9 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
             "modify_conversation_access",
             "modify_other_conversation_member",
             "leave_conversation", "delete_conversation"
-            ]))
+        ]))
 
-        let member = conversationRoles.first(where: {($0["conversation_role"] as? String) == MockConversation.member})
+        let member = conversationRoles.first(where: { ($0["conversation_role"] as? String) == MockConversation.member })
         XCTAssertEqual(member?["actions"] as? [String], ["leave_conversation"])
     }
 
@@ -305,7 +305,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         // WHEN
         let requestPath = "/conversations/\(conversation!.identifier)/otr/messages"
-        let response = self.response(forProtobufData: messageData, path: requestPath, method: ZMTransportRequestMethod.methodPOST, apiVersion: .v0)
+        let response = self.response(forProtobufData: messageData, path: requestPath, method: ZMTransportRequestMethod.post, apiVersion: .v0)
 
         // THEN
         XCTAssertEqual(response!.httpStatus, 201)
@@ -354,7 +354,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         // WHEN
         let requestPath = "/conversations/\(conversation.identifier)/otr/messages"
-        let response = self.response(forProtobufData: messageData, path: requestPath, method: .methodPOST, apiVersion: .v0)
+        let response = self.response(forProtobufData: messageData, path: requestPath, method: .post, apiVersion: .v0)
 
         // THEN
         XCTAssertNotNil(response)
@@ -410,7 +410,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         // WHEN
         let requestPath = "/conversations/\(conversation.identifier)/otr/messages"
-        let response = self.response(forProtobufData: messageData, path: requestPath, method: .methodPOST, apiVersion: .v0)
+        let response = self.response(forProtobufData: messageData, path: requestPath, method: .post, apiVersion: .v0)
 
         // THEN
         XCTAssertNotNil(response)
@@ -429,7 +429,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         XCTAssertEqual(sut.generatedPushEvents.count, previousNotificationCount + 3)
         if sut.generatedPushEvents.count > 4 {
-            let otrEvents = sut.generatedPushEvents.subarray(with: NSRange(location: sut.generatedPushEvents.count-3, length: 3)) as! [MockPushEvent]
+            let otrEvents = sut.generatedPushEvents.subarray(with: NSRange(location: sut.generatedPushEvents.count - 3, length: 3)) as! [MockPushEvent]
 
             for event in otrEvents {
                 let eventPayload = event.payload.asDictionary()

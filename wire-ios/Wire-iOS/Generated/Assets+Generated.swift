@@ -162,10 +162,18 @@ internal enum Asset {
   internal enum Images {
     internal static let archiveFilled = ImageAsset(name: "Archive Filled")
     internal static let archiveOutline = ImageAsset(name: "Archive Outline")
+    internal static let certificateExpired = ImageAsset(name: "CertificateExpired")
+    internal static let certificateRevoked = ImageAsset(name: "CertificateRevoked")
+    internal static let certificateValid = ImageAsset(name: "CertificateValid")
     internal static let contactsFilled = ImageAsset(name: "Contacts Filled")
     internal static let contactsOutline = ImageAsset(name: "Contacts Outline")
     internal static let conversationsFilled = ImageAsset(name: "Conversations Filled")
     internal static let conversationsOutline = ImageAsset(name: "Conversations Outline")
+    internal enum E2Ei {
+      internal enum Enrollment {
+        internal static let certificateValid = ImageAsset(name: "E2EI/Enrollment/Certificate valid")
+      }
+    }
     internal static let activity = ImageAsset(name: "Activity")
     internal static let addEmojis = ImageAsset(name: "Add Emojis")
     internal static let animalsNature = ImageAsset(name: "Animals & Nature")
@@ -178,10 +186,24 @@ internal enum Asset {
     internal static let travelPlaces = ImageAsset(name: "Travel & Places")
     internal static let foldersFilled = ImageAsset(name: "Folders Filled")
     internal static let foldersOutline = ImageAsset(name: "Folders Outline")
+    internal static let guest = ImageAsset(name: "Guest")
     internal static let attention = ImageAsset(name: "Attention")
+    internal static let backArrow = ImageAsset(name: "BackArrow")
     internal static let check = ImageAsset(name: "Check")
     internal static let shield = ImageAsset(name: "Shield")
+    internal static let chevronRight = ImageAsset(name: "ChevronRight")
+    internal static let close = ImageAsset(name: "Close")
+    internal static let copy = ImageAsset(name: "Copy")
+    internal static let downArrow = ImageAsset(name: "DownArrow")
+    internal static let download = ImageAsset(name: "Download")
+    internal static let more = ImageAsset(name: "More")
+    internal static let notifications = ImageAsset(name: "Notifications")
+    internal static let readReceipts = ImageAsset(name: "ReadReceipts")
+    internal static let rightChevron = ImageAsset(name: "RightChevron")
+    internal static let selfDeletingMessages = ImageAsset(name: "SelfDeletingMessages")
+    internal static let services = ImageAsset(name: "Services")
     internal static let unavailableUser = ImageAsset(name: "Unavailable user")
+    internal static let verifiedShield = ImageAsset(name: "VerifiedShield")
   }
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name

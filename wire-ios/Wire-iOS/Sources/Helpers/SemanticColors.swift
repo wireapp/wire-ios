@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireCommonComponents
+import SwiftUI
 
 /// Naming convention:
 ///
@@ -60,6 +61,12 @@ public enum SemanticColors {
         static let textReactionCounterSelected = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
         static let textInactive = UIColor(light: Asset.Colors.gray60, dark: Asset.Colors.gray70)
         static let textParticipantDisconnected = UIColor(light: Asset.Colors.red300Light, dark: Asset.Colors.red300Dark)
+
+        // UserCell: e.g. "Paul Nagel (You)"
+        static let textYouSuffix = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
+        static let textCertificateValid = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
+        static let textCertificateInvalid = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
+        static let textCertificateVerified = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
     }
 
     public enum SearchBar {
@@ -89,11 +96,17 @@ public enum SemanticColors {
         static let foregroundAvailabilityBusy = UIColor(light: Asset.Colors.amber500Light, dark: Asset.Colors.amber500Dark)
         static let foregroundAvailabilityAway = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let backgroundPasswordRuleCheck = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray20)
-        static let backgroundPhoneCall = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
         static let backgroundMissedPhoneCall = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let foregroundMicrophone = UIColor(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
         static let emojiCategoryDefault = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray60)
         static let emojiCategorySelected = UIColor(light: Asset.Colors.black, dark: Asset.Colors.white)
+
+        // The init here is different because in light mode we would like the color of the border
+        // to be clear. The initializer in all other cases in this file expects a type of ColorAsset
+        // in both light and dark mode.
+        static let borderMutedNotifications = UIColor { traits in
+            traits.userInterfaceStyle == .dark ? Asset.Colors.gray70.color : .clear
+        }
 
         static let foregroundElapsedTimeSelfDeletingMessage = UIColor(light: Asset.Colors.gray50, dark: Asset.Colors.gray80)
         static let foregroundRemainingTimeSelfDeletingMessage = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.gray50)
@@ -124,7 +137,6 @@ public enum SemanticColors {
         static let backgroundConversationList = UIColor(light: Asset.Colors.gray20, dark: Asset.Colors.gray100)
         static let backgroundConversationListTableViewCell = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray95)
         static let borderConversationListTableViewCell = UIColor(light: Asset.Colors.gray40, dark: Asset.Colors.gray90)
-        static let borderConversationListTableViewCellBadgeReverted = UIColor(light: Asset.Colors.gray40, dark: Asset.Colors.gray70)
         static let backgroundCollectionCell = UIColor(light: Asset.Colors.white, dark: Asset.Colors.gray90)
         static let borderCollectionCell = UIColor(light: Asset.Colors.gray30, dark: Asset.Colors.gray80)
         static let backgroundSecurityLevel = UIColor(light: Asset.Colors.gray20, dark: Asset.Colors.gray95)
@@ -179,7 +191,7 @@ public enum SemanticColors {
         static let borderSecondaryEnabled = UIColor(light: Asset.Colors.gray40, dark: Asset.Colors.gray80)
         static let borderSecondaryHighlighted = UIColor(light: Asset.Colors.gray40, dark: Asset.Colors.gray60)
         static let backgroundPrimaryEnabled = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
-        static let backgroundPrimaryHighlighted = UIColor(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue400Light)
+        static let backgroundPrimaryHighlighted = UIColor(light: Asset.Colors.blue600Light, dark: Asset.Colors.blue400Light)
         static let backgroundPrimaryDisabled = UIColor(light: Asset.Colors.gray50, dark: Asset.Colors.gray70)
         static let textPrimaryEnabled = UIColor(light: Asset.Colors.white, dark: Asset.Colors.black)
         static let textPrimaryDisabled = UIColor(light: Asset.Colors.gray80, dark: Asset.Colors.black)
@@ -229,6 +241,9 @@ public enum SemanticColors {
         /// Audio Buttons
         static let backgroundAudioMessageOverlay = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
         static let backgroundconfirmSendingAudioMessage = UIColor(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
+
+        // Scroll To Bottom Button
+        static let backgroundScrollToBottonEnabled = UIColor(light: Asset.Colors.gray70, dark: Asset.Colors.gray60)
     }
 
     public enum DrawingColors {
@@ -262,6 +277,9 @@ extension UIColor {
 }
 
 public extension UIColor {
+    var swiftUIColor: Color {
+        return Color(uiColor: self)
+    }
 
     convenience init(for accentColor: AccentColor) {
         switch accentColor {
@@ -281,6 +299,7 @@ public extension UIColor {
             self.init(light: Asset.Colors.purple500Light, dark: Asset.Colors.purple500Dark)
         }
     }
+
     convenience init(fromZMAccentColor accentColor: ZMAccentColor) {
         let safeAccentColor = AccentColor(ZMAccentColor: accentColor) ?? .blue
         self.init(for: safeAccentColor)

@@ -79,48 +79,4 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
         moc.saveOrRollback()
         return selfClient
     }
-
-    func testThatItDoesNotDeleteSessionWhenDeletingInvalidClient() {
-        let syncMOC = coreDataStack.syncContext
-        syncMOC.performGroupedBlockAndWait {
-            // given
-            let selfClient = self.createSelfClient(in: syncMOC)
-            var preKeys: [(id: UInt16, prekey: String)] = []
-            syncMOC.zm_cryptKeyStore.encryptionContext.perform {
-            // TODO: [John] use flag here
-                preKeys = try! $0.generatePrekeys(0 ..< 2)
-            }
-
-            let otherClient = UserClient.insertNewObject(in: syncMOC)
-            otherClient.remoteIdentifier = UUID.create().transportString()
-            let otherUser = ZMUser.insertNewObject(in: syncMOC)
-            otherUser.remoteIdentifier = UUID.create()
-            otherClient.user = otherUser
-
-            syncMOC.saveOrRollback()
-
-            let duplicateClient = UserClient.insertNewObject(in: syncMOC)
-            duplicateClient.remoteIdentifier = otherClient.remoteIdentifier
-            duplicateClient.user = nil
-
-            guard let preKey = preKeys.first else { XCTFail("could not generate prekeys"); return }
-
-            XCTAssertTrue(selfClient.establishSessionWithClient(otherClient, usingPreKey: preKey.prekey))
-            XCTAssertTrue(otherClient.hasSessionWithSelfClient)
-            let clientId = otherClient.sessionIdentifier!
-            syncMOC.saveOrRollback()
-
-            // when
-            WireDataModel.InvalidClientsRemoval.removeInvalid(in: syncMOC)
-
-            // then
-            syncMOC.zm_cryptKeyStore.encryptionContext.perform {
-                XCTAssertTrue($0.hasSession(for: clientId))
-            }
-            XCTAssertTrue(otherClient.hasSessionWithSelfClient)
-            XCTAssertFalse(otherClient.isZombieObject)
-            XCTAssertTrue(duplicateClient.isZombieObject)
-        }
-    }
-
 }

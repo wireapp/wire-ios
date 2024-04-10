@@ -37,7 +37,7 @@ final class AddressBookCorrelationFormatter: NSObject {
 
     private func addressBookText(for user: UserType, with addressBookName: String) -> NSAttributedString? {
         guard !user.isSelfUser, let userName = user.name else { return nil }
-        let suffix = "conversation.connection_view.in_address_book".localized && lightFont.font! && color
+        let suffix = L10n.Localizable.Conversation.ConnectionView.inAddressBook && lightFont.font! && color
         if addressBookName.lowercased() == userName.lowercased() {
             return suffix
         }
@@ -158,7 +158,9 @@ final class UserNameDetailView: UIView, DynamicTypeCapable {
     }
 
     private func createConstraints() {
-        [subtitleLabel, correlationLabel].prepareForLayout()
+        [subtitleLabel, correlationLabel].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         NSLayoutConstraint.activate([
             subtitleLabel.topAnchor.constraint(equalTo: topAnchor),
             subtitleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),

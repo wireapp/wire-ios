@@ -20,11 +20,11 @@ import UIKit
 import WireUtilities
 import WireDataModel
 
-protocol ConversationMessageCellDelegate: MessageActionResponder {
+protocol ConversationMessageCellDelegate: AnyObject, MessageActionResponder {
 
     func conversationMessageShouldBecomeFirstResponderWhenShowingMenuForCell(_ cell: UIView) -> Bool
     func conversationMessageWantsToOpenUserDetails(_ cell: UIView, user: UserType, sourceView: UIView, frame: CGRect)
-    func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, messageDetailsViewController: MessageDetailsViewController)
+    func conversationMessageWantsToOpenMessageDetails(_ cell: UIView, for message: ZMConversationMessage, preferredDisplayMode: MessageDetailsDisplayMode)
     func conversationMessageWantsToOpenGuestOptionsFromView(_ cell: UIView, sourceView: UIView)
     func conversationMessageWantsToOpenParticipantsDetails(_ cell: UIView, selectedUsers: [UserType], sourceView: UIView)
     func conversationMessageWantsToShowActionsController(_ cell: UIView, actionsController: MessageActionsViewController)
@@ -197,7 +197,7 @@ extension ConversationMessageCellDescription {
     }
 
     func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
-        let cell =  tableView.dequeueConversationCell(with: self, for: indexPath)
+        let cell = tableView.dequeueConversationCell(with: self, for: indexPath)
         cell.cellView.delegate = delegate
         cell.cellView.message = message
         cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
@@ -241,7 +241,7 @@ extension ConversationMessageCellDescription where View.Configuration: Equatable
  * A type erased box containing a conversation message cell description.
  */
 
-class AnyConversationMessageCellDescription: NSObject {
+final class AnyConversationMessageCellDescription: NSObject {
     private let cellGenerator: (UITableView, IndexPath) -> UITableViewCell
     private let viewGenerator: () -> UIView
     private let registrationBlock: (UITableView) -> Void

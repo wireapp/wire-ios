@@ -30,8 +30,8 @@ extension UIAlertController {
     static func showNewsletterSubscriptionDialog(over viewController: UIViewController, completionHandler: @escaping ResultHandler) {
         guard !AutomationHelper.sharedHelper.skipFirstLoginAlerts && !dataCollectionDisabled else { return }
 
-        let alertController = UIAlertController(title: "news_offers.consent.title".localized,
-                                                message: "news_offers.consent.message".localized,
+        let alertController = UIAlertController(title: L10n.Localizable.NewsOffers.Consent.title,
+                                                message: L10n.Localizable.NewsOffers.Consent.message,
                                                 preferredStyle: .alert)
 
         let privacyPolicyActionHandler: ((UIAlertAction) -> Swift.Void) = { _ in
@@ -44,17 +44,17 @@ extension UIAlertController {
             viewController.present(browserViewController, animated: true)
         }
 
-        alertController.addAction(UIAlertAction(title: "news_offers.consent.button.privacy_policy.title".localized,
+        alertController.addAction(UIAlertAction(title: L10n.Localizable.NewsOffers.Consent.Button.PrivacyPolicy.title,
                                                 style: .default,
                                                 handler: privacyPolicyActionHandler))
 
-        alertController.addAction(UIAlertAction(title: "general.decline".localized,
+        alertController.addAction(UIAlertAction(title: L10n.Localizable.General.decline,
                                                 style: .default,
                                                 handler: { (_) in
                                                     completionHandler(false)
         }))
 
-        alertController.addAction(UIAlertAction(title: "general.accept".localized,
+        alertController.addAction(UIAlertAction(title: L10n.Localizable.General.accept,
                                                 style: .cancel,
                                                 handler: { (_) in
                                                     completionHandler(true)

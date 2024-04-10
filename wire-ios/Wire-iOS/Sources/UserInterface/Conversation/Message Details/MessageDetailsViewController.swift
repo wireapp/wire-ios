@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 /**
  * A view controller wrapping the message details.
@@ -77,6 +78,8 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
     let topBar = ModalTopBar()
     let viewControllers: ViewControllers
 
+    let userSession: UserSession
+
     // MARK: - Initialization
 
     /**
@@ -84,8 +87,8 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
      * - parameter message: The message to display the details of.
      */
 
-    convenience init(message: ZMConversationMessage) {
-        self.init(message: message, preferredDisplayMode: .receipts)
+    convenience init(message: ZMConversationMessage, userSession: UserSession) {
+        self.init(message: message, preferredDisplayMode: .receipts, userSession: userSession)
     }
 
     /**
@@ -96,23 +99,39 @@ final class MessageDetailsViewController: UIViewController, ModalTopBarDelegate 
      * if the data source says it is unavailable for the message.
      */
 
-    init(message: ZMConversationMessage, preferredDisplayMode: MessageDetailsDisplayMode) {
+    init(message: ZMConversationMessage, preferredDisplayMode: MessageDetailsDisplayMode, userSession: UserSession) {
         self.message = message
         self.dataSource = MessageDetailsDataSource(message: message)
-
+        self.userSession = userSession
         // Setup the appropriate view controllers
         switch dataSource.displayMode {
         case .combined:
-            let readReceiptsViewController = MessageDetailsContentViewController(contentType: .receipts(enabled: dataSource.supportsReadReceipts), conversation: dataSource.conversation)
-            let reactionsViewController = MessageDetailsContentViewController(contentType: .reactions, conversation: dataSource.conversation)
+            let readReceiptsViewController = MessageDetailsContentViewController(
+                contentType: .receipts(enabled: dataSource.supportsReadReceipts),
+                conversation: dataSource.conversation,
+                userSession: userSession
+            )
+            let reactionsViewController = MessageDetailsContentViewController(
+                contentType: .reactions,
+                conversation: dataSource.conversation,
+                userSession: userSession
+            )
             viewControllers = .combinedView(readReceipts: readReceiptsViewController, reactions: reactionsViewController)
 
         case .reactions:
-            let reactionsViewController = MessageDetailsContentViewController(contentType: .reactions, conversation: dataSource.conversation)
+            let reactionsViewController = MessageDetailsContentViewController(
+                contentType: .reactions,
+                conversation: dataSource.conversation,
+                userSession: userSession
+            )
             viewControllers = .singleView(reactionsViewController)
 
         case .receipts:
-            let readReceiptsViewController = MessageDetailsContentViewController(contentType: .receipts(enabled: dataSource.supportsReadReceipts), conversation: dataSource.conversation)
+            let readReceiptsViewController = MessageDetailsContentViewController(
+                contentType: .receipts(enabled: dataSource.supportsReadReceipts),
+                conversation: dataSource.conversation,
+                userSession: userSession
+            )
             viewControllers = .singleView(readReceiptsViewController)
         }
 

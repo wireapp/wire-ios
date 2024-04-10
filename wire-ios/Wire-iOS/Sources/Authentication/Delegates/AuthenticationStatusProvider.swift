@@ -19,7 +19,7 @@
 import Foundation
 import WireSyncEngine
 
-class AuthenticationStatusProvider {
+final class AuthenticationStatusProvider {
     var sharedUserSession: ZMUserSession? {
         return ZMUserSession.shared()
     }
@@ -38,7 +38,7 @@ class AuthenticationStatusProvider {
     }
 
     var selfUser: UserType? {
-        return sharedUserSession?.selfUser
+        return sharedUserSession?.providedSelfUser
     }
 
     var numberOfAccounts: Int {

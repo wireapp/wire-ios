@@ -19,12 +19,19 @@
 import WireSyncEngine
 
 extension ConversationViewController {
+
     func createUserDetailViewController() -> UIViewController {
         guard let user = (conversation.firstActiveParticipantOtherThanSelf ?? conversation.connectedUser) else {
             fatal("no firstActiveParticipantOtherThanSelf!")
         }
 
-        return UserDetailViewControllerFactory.createUserDetailViewController(user: user, conversation: conversation, profileViewControllerDelegate: self, viewControllerDismisser: self)
+        return UserDetailViewControllerFactory.createUserDetailViewController(
+            user: user,
+            conversation: conversation,
+            profileViewControllerDelegate: self,
+            viewControllerDismisser: self,
+            userSession: userSession
+        )
     }
 }
 

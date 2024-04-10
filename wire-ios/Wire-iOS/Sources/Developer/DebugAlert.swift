@@ -21,6 +21,7 @@ import MessageUI
 import WireDataModel
 import UIKit
 import WireSystem
+import WireCommonComponents
 
 /// Presents debug alerts
 final class DebugAlert {
@@ -93,10 +94,10 @@ final class DebugAlert {
                                                   email: String,
                                                   from controller: UIViewController,
                                                   sourceView: UIView? = nil) {
-        let alert = UIAlertController(title: "self.settings.technical_report_section.title".localized,
-                                      message: "self.settings.technical_report.no_mail_alert".localized + email,
+        let alert = UIAlertController(title: L10n.Localizable.Self.Settings.TechnicalReportSection.title,
+                                      message: L10n.Localizable.Self.Settings.TechnicalReport.noMailAlert + email,
                                       alertAction: .cancel())
-        alert.addAction(UIAlertAction(title: "general.ok".localized, style: .default, handler: { _ in
+        alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: { _ in
             let activity = UIActivityViewController(activityItems: logPaths, applicationActivities: nil)
             activity.configPopover(pointToView: sourceView ?? controller.view)
 
@@ -113,29 +114,37 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
     private var mailViewController: MFMailComposeViewController?
     static private var senderInstance: DebugLogSender?
 
+    static var debugLogs: [URL] {
+        let oslogs = LogFileDestination.allCases.compactMap { $0.log }
+        let currentLog = [ZMSLog.currentLogURL].compactMap { $0 }
+
+        return ZMSLog.previousZipLogURLs + oslogs + currentLog
+    }
+
+    static var areDebugLogsPresent: Bool {
+        return !debugLogs.filter { FileManager.default.fileExists(atPath: $0.path) }.isEmpty
+    }
+
     /// Sends recorded logs by email
     static func sendLogsByEmail(message: String, shareWithAVS: Bool = false) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
         guard self.senderInstance == nil else { return }
 
-        let currentLog = ZMSLog.currentLog
-        let previousLog = ZMSLog.previousLog
-
-        guard currentLog != nil || previousLog != nil else {
+        guard areDebugLogsPresent else {
             DebugAlert.showGeneric(message: "There are no logs to send, have you enabled them from the debug menu > log settings BEFORE the issue happened?\nWARNING: restarting the app will discard all collected logs")
             return
         }
 
         // Prepare subject & body
-        let user = SelfUser.provider?.selfUser as? ZMUser
+        let user = SelfUser.provider?.providedSelfUser as? ZMUser
         let userID = user?.remoteIdentifier?.transportString() ?? ""
         let device = UIDevice.current.name
         let userDescription = "\(user?.name ?? "") [user: \(userID)] [device: \(device)]"
-        let message = "Logs for: \(message)\n\n"
         let mail = shareWithAVS ? WireEmail.shared.callingSupportEmail : WireEmail.shared.supportEmail
 
         guard MFMailComposeViewController.canSendMail() else {
-            DebugAlert.displayFallbackActivityController(logPaths: ZMSLog.pathsForExistingLogs, email: mail, from: controller)
+
+            DebugAlert.displayFallbackActivityController(logPaths: debugLogs, email: mail, from: controller)
             return
         }
 
@@ -146,20 +155,19 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         let mailVC = MFMailComposeViewController()
         mailVC.setToRecipients([mail])
         mailVC.setSubject("iOS logs from \(userDescription)")
-        mailVC.setMessageBody(message, isHTML: false)
-
-        if let currentLog = currentLog, let currentPath = ZMSLog.currentLogPath {
-            mailVC.addAttachmentData(currentLog, mimeType: "text/plain", fileName: currentPath.lastPathComponent)
-        }
-        if let previousLog = previousLog, let previousPath = ZMSLog.previousLogPath {
-            mailVC.addAttachmentData(previousLog, mimeType: "text/plain", fileName: previousPath.lastPathComponent)
-        }
+        let body = mailVC.prefilledBody(withMessage: message)
+        mailVC.setMessageBody(body, isHTML: false)
 
         mailVC.mailComposeDelegate = alert
         alert.mailViewController = mailVC
 
         self.senderInstance = alert
-        controller.present(mailVC, animated: true, completion: nil)
+
+        Task {
+            await mailVC.attachLogs()
+            // as UIViewController is marked @MainActor, this will be executed on mainThread automatically
+            await controller.present(mailVC, animated: true, completion: nil)
+        }
     }
 
     public func mailComposeController(_ controller: MFMailComposeViewController,

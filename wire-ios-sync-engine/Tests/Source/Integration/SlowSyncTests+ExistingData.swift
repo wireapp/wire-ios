@@ -30,16 +30,16 @@ class SlowSyncTests_ExistingData: IntegrationTest {
             session.delete(self.groupConversation)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertFalse(conversation.isZombieObject)
+        XCTAssertFalse(conversation.isDeletedRemotely)
 
         // WHEN
-        performSlowSync()
+        self.performSlowSync()
 
         // THEN
-        XCTAssertTrue(conversation.isZombieObject)
+        XCTAssertTrue(conversation.isDeletedRemotely)
     }
 
-    func testThatSelfUserLeavesConversation_WhenDiscoveredToBeInaccessibledDuringSlowSync() {
+    func testThatSelfUserLeavesConversation_WhenDiscoveredToBeInaccessibledDuringResyncResources() {
         // GIVEN
         XCTAssertTrue(login())
 
@@ -52,7 +52,7 @@ class SlowSyncTests_ExistingData: IntegrationTest {
         XCTAssertTrue(conversation.isSelfAnActiveMember)
 
         // WHEN
-        performSlowSync()
+        performResyncResources()
 
         // THEN
         XCTAssertFalse(conversation.isSelfAnActiveMember)

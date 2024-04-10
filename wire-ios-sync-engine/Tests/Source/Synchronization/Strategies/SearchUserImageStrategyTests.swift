@@ -116,7 +116,7 @@ extension SearchUserImageStrategyTests {
 
         // then
         XCTAssertNotNil(request)
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertTrue(request.needsAuthentication)
 
         XCTAssertTrue(request.path.hasPrefix(UserRequestURL))
@@ -150,7 +150,7 @@ extension SearchUserImageStrategyTests {
 
         // then
         XCTAssertNotNil(request2)
-        XCTAssertEqual(request2.method, .methodGET)
+        XCTAssertEqual(request2.method, .get)
         XCTAssertTrue(request2.needsAuthentication)
 
         let expectedUserIDs = userIDs(from: searchSet2)
@@ -260,7 +260,7 @@ extension SearchUserImageStrategyTests {
 
         // then
         XCTAssertNotNil(request)
-        XCTAssertEqual(request.method, .methodGET)
+        XCTAssertEqual(request.method, .get)
         XCTAssertTrue(request.needsAuthentication)
 
         let expectedPath: String
@@ -269,7 +269,7 @@ extension SearchUserImageStrategyTests {
             expectedPath = "/assets/v3/\(assetID)"
         case .v1:
             expectedPath = "/v1/assets/v4/\(domain)/\(assetID)"
-        case .v2, .v3, .v4, .v5:
+        case .v2, .v3, .v4, .v5, .v6:
             expectedPath = "/v\(apiVersion.rawValue)/assets/\(domain)/\(assetID)"
         }
 
@@ -317,11 +317,11 @@ extension SearchUserImageStrategyTests {
 
         // then
         XCTAssertNotNil(request1)
-        XCTAssertEqual(request1.method, .methodGET)
+        XCTAssertEqual(request1.method, .get)
         XCTAssertTrue(request1.needsAuthentication)
 
         XCTAssertNotNil(request2)
-        XCTAssertEqual(request2.method, .methodGET)
+        XCTAssertEqual(request2.method, .get)
         XCTAssertTrue(request2.needsAuthentication)
 
         let expectedPath1 = "/assets/v3/\(assetID1)" // requestPath(for:assetID1, of:searchUser1.remoteIdentifier!)
@@ -423,7 +423,7 @@ extension SearchUserImageStrategyTests {
 
         let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser1) // This is called when the searchDirectory returns the searchUsers
-        let userObserver = UserChangeObserver(user: searchUser1, managedObjectContext: self.uiMOC)!
+        let userObserver = UserObserver(user: searchUser1, managedObjectContext: uiMOC)!
 
         // when
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -447,7 +447,7 @@ extension SearchUserImageStrategyTests {
 
         let response = ZMTransportResponse(imageData: imageData, httpStatus: 200, transportSessionError: nil, headers: nil, apiVersion: APIVersion.v0.rawValue)
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser1) // This is called when the searchDirectory returns the searchUsers
-        let userObserver = UserChangeObserver(user: searchUser1, managedObjectContext: self.uiMOC)!
+        let userObserver = UserObserver(user: searchUser1, managedObjectContext: uiMOC)!
 
         // when
         guard let request = sut.nextRequest(for: .v0) else { return XCTFail() }

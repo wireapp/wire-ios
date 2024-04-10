@@ -91,7 +91,9 @@ final class LocationPreviewController: TintColorCorrectedViewController {
     }
 
     private func createConstraints() {
-        [view, containerView, mapView, containerView, addressContainerView, addressLabel].prepareForLayout()
+        [view, containerView, mapView, containerView, addressContainerView, addressLabel].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: view.topAnchor),

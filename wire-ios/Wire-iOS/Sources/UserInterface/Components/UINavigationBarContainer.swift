@@ -41,7 +41,7 @@ final class UINavigationBarContainer: UIViewController {
     }
 
     private func createConstraints() {
-        [navigationBar, view].prepareForLayout()
+        [navigationBar, view].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
           navHeight,
           navigationBar.leftAnchor.constraint(equalTo: view.leftAnchor),

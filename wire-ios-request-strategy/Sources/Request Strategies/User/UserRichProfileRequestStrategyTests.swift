@@ -54,7 +54,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
 
             // then
             XCTAssertEqual(request.path, "/users/\(userID)/rich-info")
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
         }
     }
 

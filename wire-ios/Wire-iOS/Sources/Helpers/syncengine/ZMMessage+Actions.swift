@@ -29,7 +29,7 @@ extension ZMConversationMessage {
     /// Whether the message can be digitally signed in.
     var canBeDigitallySigned: Bool {
         guard
-            let selfUser = SelfUser.provider?.selfUser,
+            let selfUser = SelfUser.provider?.providedSelfUser,
             selfUser.phoneNumber != nil,
             selfUser.isTeamMember,
             selfUser.hasDigitalSignatureEnabled
@@ -143,7 +143,7 @@ extension ZMConversationMessage {
         } else if isAudio {
             return audioCanBeSaved()
         } else if isFile, let fileMessageData = self.fileMessageData {
-            return fileMessageData.fileURL != nil
+            return fileMessageData.hasLocalFileData
         } else {
             return false
         }
@@ -158,7 +158,7 @@ extension ZMConversationMessage {
               }
 
         if isFile, let fileMessageData = self.fileMessageData {
-            return fileMessageData.fileURL != nil
+            return fileMessageData.hasLocalFileData
         } else {
             return (isText || isImage || isLocation || isFile)
         }

@@ -41,6 +41,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         case password(PasswordRuleSet, isNew: Bool)
         case passcode(PasswordRuleSet, isNew: Bool)
         case phoneNumber
+        case username
         case unknown
     }
 
@@ -135,7 +136,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         default:
             iconButton = IconButton(style: .circular, variant: .dark)
             iconButton.accessibilityIdentifier = "ConfirmButton"
-            iconButton.accessibilityLabel = "general.next".localized
+            iconButton.accessibilityLabel = L10n.Localizable.General.next
             iconButton.isEnabled = false
         }
         return iconButton
@@ -225,6 +226,10 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
             autocapitalizationType = .words
             accessibilityIdentifier = "NameField"
             textContentType = isTeam ? .organizationName : .name
+        case .username:
+            autocapitalizationType = .none
+            accessibilityIdentifier = "UsernameField"
+            textContentType = .username
         case .phoneNumber:
             textContentType = .telephoneNumber
             keyboardType = .numberPad
@@ -289,14 +294,8 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
                 confirmButton.setBackgroundImageColor(UIColor.Team.inactiveButtonColor, for: .disabled)
             }
         }
-        confirmButton.configurationUpdateHandler = { button in
-            switch button.state {
-            case .disabled:
-                button.imageView?.tintAdjustmentMode = .normal
-            default:
-                break
-            }
-        }
+
+        confirmButton.adjustsImageWhenDisabled = false
     }
 
     private func setup() {
@@ -359,5 +358,4 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         textFieldValidationDelegate?.validationUpdated(sender: self, error: nil)
         updateConfirmButton()
     }
-
 }

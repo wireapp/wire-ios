@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-class MessageActionsViewController: UIAlertController {
+final class MessageActionsViewController: UIAlertController {
 
     // We're using custom marker to add space for custom view in UIAlertController. Solution explained in https://stackoverflow.com/a/47925120
     private static let MessageLabelMarker = "__CUSTOM_CONTENT_MARKER__"
@@ -35,10 +35,6 @@ class MessageActionsViewController: UIAlertController {
     }
 
     private var actionController: ConversationMessageActionController?
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
 
     private func addMessageActions(_ actions: [MessageAction],
                                    withActionController actionController: ConversationMessageActionController) {

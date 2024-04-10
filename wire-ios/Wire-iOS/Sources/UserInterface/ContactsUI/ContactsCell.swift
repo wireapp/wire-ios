@@ -81,9 +81,11 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
         }
     }
 
-    let actionButton: Button = Button(style: .accentColorTextButtonStyle,
-                                      cornerRadius: 4,
-                                      fontSpec: .mediumSemiboldFont)
+    let actionButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 4,
+        fontSpec: .mediumSemiboldFont
+    )
 
     var actionButtonHandler: ContactsCellActionButtonHandler?
 
@@ -187,7 +189,7 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
             contentStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -buttonMargin)
         ])
 
-        [actionButton, buttonSpacer].prepareForLayout()
+        [actionButton, buttonSpacer].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             buttonSpacer.topAnchor.constraint(equalTo: actionButton.topAnchor),
             buttonSpacer.bottomAnchor.constraint(equalTo: actionButton.bottomAnchor),
@@ -212,11 +214,17 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
     }
 
     private func updateTitleLabel() {
-        guard let user = self.user else {
+        guard let user, let selfUser = ZMUser.selfUser() else {
             return
         }
 
-        titleLabel.attributedText = user.nameIncludingAvailability(color: LabelColors.textDefault, selfUser: ZMUser.selfUser())
+        let userStatus = UserStatus(user: user, isE2EICertified: false)
+        titleLabel.attributedText = userStatus.title(
+            color: LabelColors.textDefault,
+            includeAvailability: selfUser.isTeamMember,
+            includeVerificationStatus: false,
+            appendYouSuffix: false
+        )
     }
 
     @objc func actionButtonPressed(sender: Any?) {

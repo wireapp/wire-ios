@@ -112,7 +112,7 @@ public class ZMSearchUser: NSObject, UserType {
     public var providerIdentifier: String?
     public var summary: String?
     public var assetKeys: SearchUserAssetKeys?
-    public var remoteIdentifier: UUID?
+    public var remoteIdentifier: UUID!
     public var teamIdentifier: UUID?
     @objc public var contact: ZMAddressBookContact?
     @objc public var user: ZMUser?
@@ -173,7 +173,7 @@ public class ZMSearchUser: NSObject, UserType {
         return user?.initials ?? internalInitials
     }
 
-    public var availability: AvailabilityKind {
+    public var availability: Availability {
         get { return user?.availability ?? .none }
         set { user?.availability = newValue }
     }
@@ -190,6 +190,10 @@ public class ZMSearchUser: NSObject, UserType {
         guard let user = user else { return false }
 
         return user.isSelfUser
+    }
+
+    public var membership: Member? {
+        user?.membership
     }
 
     public var teamName: String? {
@@ -540,7 +544,7 @@ public class ZMSearchUser: NSObject, UserType {
                   user: user
         )
 
-        self.providerIdentifier =  payload["provider"] as? String
+        self.providerIdentifier = payload["provider"] as? String
         self.summary = payload["summary"] as? String
         self.assetKeys = SearchUserAssetKeys(payload: payload)
         self.internalIsAccountDeleted = payload["deleted"] as? Bool

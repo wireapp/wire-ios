@@ -63,10 +63,12 @@ final class ShareContactsViewController: UIViewController {
     var notNowButtonHidden = false
     private(set) var showingAddressBookAccessDeniedViewController = false
 
-    private lazy var notNowButton: Button = {
-        let notNowButton = Button(style: .secondaryTextButtonStyle,
-                                  cornerRadius: 16,
-                                  fontSpec: .normalSemiboldFont)
+    private lazy var notNowButton = {
+        let notNowButton = ZMButton(
+            style: .secondaryTextButtonStyle,
+            cornerRadius: 16,
+            fontSpec: .normalSemiboldFont
+        )
         notNowButton.setTitle(RegistrationShareContacts.SkipButton.title.capitalized, for: .normal)
         notNowButton.addTarget(self, action: #selector(shareContactsLater(_:)), for: .touchUpInside)
 
@@ -81,10 +83,12 @@ final class ShareContactsViewController: UIViewController {
         return heroLabel
     }()
 
-    private let shareContactsButton: Button = {
-        let shareContactsButton = Button(style: .accentColorTextButtonStyle,
-                                         cornerRadius: 16,
-                                         fontSpec: .normalSemiboldFont)
+    private let shareContactsButton = {
+        let shareContactsButton = ZMButton(
+            style: .accentColorTextButtonStyle,
+            cornerRadius: 16,
+            fontSpec: .normalSemiboldFont
+        )
         shareContactsButton.setTitle(RegistrationShareContacts.FindFriendsButton.title.capitalized, for: .normal)
 
         return shareContactsButton
@@ -146,10 +150,14 @@ final class ShareContactsViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [shareContactsContainerView,
-         addressBookAccessDeniedViewController.view,
-         heroLabel,
-         shareContactsButton].prepareForLayout()
+        [
+            shareContactsContainerView,
+            addressBookAccessDeniedViewController.view,
+            heroLabel,
+            shareContactsButton
+        ].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         let constraints: [NSLayoutConstraint] = [
             shareContactsContainerView.topAnchor.constraint(equalTo: shareContactsContainerView.superview!.topAnchor),

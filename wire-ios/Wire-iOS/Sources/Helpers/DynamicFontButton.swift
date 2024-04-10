@@ -24,11 +24,20 @@ import WireCommonComponents
 class DynamicFontButton: StylableButton, DynamicTypeCapable {
 
     // MARK: - Properties
-    private let fontSpec: FontSpec
 
-    // MARK: - Initilization
+    private let onRedrawFont: () -> UIFont?
+
+    init(style: UIFont.FontStyle = .body) {
+        // Not needed when we use a font style.
+        onRedrawFont = { return nil }
+        super.init(frame: .zero)
+        self.titleLabel?.font = .font(for: style)
+        titleLabel?.adjustsFontForContentSizeCategory = true
+    }
+
+    @available(*, deprecated, message: "Use `init(style:)` instead")
     init(fontSpec: FontSpec = .normalRegularFont) {
-        self.fontSpec = fontSpec
+        self.onRedrawFont = { fontSpec.font }
         super.init(frame: .zero)
 
         titleLabel?.font = fontSpec.font
@@ -39,8 +48,10 @@ class DynamicFontButton: StylableButton, DynamicTypeCapable {
     }
 
     // MARK: - Methods
+
     func redrawFont() {
-        self.titleLabel?.font = fontSpec.font
+        guard let newFont = onRedrawFont() else { return }
+        self.titleLabel?.font = newFont
     }
 
 }

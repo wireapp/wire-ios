@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 protocol IncomingRequestFooterViewDelegate: AnyObject {
@@ -55,18 +54,18 @@ class IncomingRequestFooterView: UIView {
     }
 
     private func configureSubviews() {
-        titleLabel.text = "connection_request_pending_title".localized(uppercased: true)
+        titleLabel.text = L10n.Localizable.connectionRequestPendingTitle.localizedUppercase
         titleLabel.font = .smallSemiboldFont
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 0
 
         acceptButton.accessibilityIdentifier = "accept"
-        acceptButton.setTitle("inbox.connection_request.connect_button_title".localized(uppercased: true), for: .normal)
+        acceptButton.setTitle(L10n.Localizable.Inbox.ConnectionRequest.connectButtonTitle.localizedUppercase, for: .normal)
         acceptButton.addTarget(self, action: #selector(acceptButtonTapped), for: .touchUpInside)
         acceptButton.layer.cornerRadius = 16
 
         ignoreButton.accessibilityIdentifier = "ignore"
-        ignoreButton.setTitle("inbox.connection_request.ignore_button_title".localized(uppercased: true), for: .normal)
+        ignoreButton.setTitle(L10n.Localizable.Inbox.ConnectionRequest.ignoreButtonTitle.localizedUppercase, for: .normal)
         ignoreButton.addTarget(self, action: #selector(ignoreButtonTapped), for: .touchUpInside)
         ignoreButton.layer.cornerRadius = 16
 

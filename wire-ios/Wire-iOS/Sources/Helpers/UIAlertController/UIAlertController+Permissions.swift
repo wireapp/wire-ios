@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 
 extension UIAlertController {
+
     class func cameraPermissionAlert(with completion: AlertActionHandler? = nil) -> UIAlertController {
         return permissionAlert(
-            title: "voice.alert.camera_warning.title".localized,
+            title: L10n.Localizable.Voice.Alert.CameraWarning.title,
             message: "NSCameraUsageDescription".infoPlistLocalized,
             completion: completion
         )
@@ -31,19 +31,23 @@ extension UIAlertController {
 
     class var microphonePermissionAlert: UIAlertController {
         return permissionAlert(
-            title: "voice.alert.microphone_warning.title".localized,
+            title: L10n.Localizable.Voice.Alert.MicrophoneWarning.title,
             message: "NSMicrophoneUsageDescription".infoPlistLocalized
         )
     }
 
     class var photoLibraryPermissionAlert: UIAlertController {
         return permissionAlert(
-            title: "library.alert.permission_warning.title".localized,
-            message: "library.alert.permission_warning.not_allowed.explaination".localized
+            title: L10n.Localizable.Library.Alert.PermissionWarning.title,
+            message: L10n.Localizable.Library.Alert.PermissionWarning.NotAllowed.explaination
         )
     }
 
-    private class func permissionAlert(title: String, message: String, completion: AlertActionHandler? = nil) -> UIAlertController {
+    private class func permissionAlert(
+        title: String,
+        message: String,
+        completion: AlertActionHandler? = nil
+    ) -> UIAlertController {
 
         let alert = UIAlertController(
             title: title,
@@ -59,24 +63,27 @@ extension UIAlertController {
 }
 
 extension UIAlertAction {
+
+    typealias GeneralLocale = L10n.Localizable.General
+
     class func actionLater(with completion: AlertActionHandler?) -> UIAlertAction {
         return UIAlertAction(
-            title: "general.later".localized,
+            title: GeneralLocale.later,
             style: .cancel,
             handler: { action in
                 completion?(action)
-        })
+            })
     }
 
     class func actionSettings(with completion: AlertActionHandler?) -> UIAlertAction {
         return UIAlertAction(
-            title: "general.open_settings".localized,
+            title: GeneralLocale.openSettings,
             style: .default,
             handler: { action in
                 if let url = URL(string: UIApplication.openSettingsURLString) {
                     UIApplication.shared.open(url, options: [:])
                 }
                 completion?(action)
-        })
+            })
     }
 }

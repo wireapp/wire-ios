@@ -20,7 +20,7 @@ import XCTest
 import SnapshotTesting
 @testable import Wire
 
-class ChangeHandleViewControllerTests: BaseSnapshotTestCase {
+final class ChangeHandleViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
@@ -28,7 +28,7 @@ class ChangeHandleViewControllerTests: BaseSnapshotTestCase {
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         mockSelfUser.handle = nil
         mockSelfUser.domain = "wire.com"
-        SelfUser.provider = SelfProvider(selfUser: mockSelfUser)
+        SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
     }
 
     func testThatItRendersCorrectInitially() {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,10 +37,10 @@ class SwitchingAccountRouter: SwitchingAccountRouterProtocol {
             return completion(false)
         }
 
-        let alert = UIAlertController(title: "call.alert.ongoing.alert_title".localized,
-                                      message: "self.settings.switch_account.message".localized,
+        let alert = UIAlertController(title: L10n.Localizable.Call.Alert.Ongoing.alertTitle,
+                                      message: L10n.Localizable.Self.Settings.SwitchAccount.message,
                                       preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "self.settings.switch_account.action".localized,
+        alert.addAction(UIAlertAction(title: L10n.Localizable.Self.Settings.SwitchAccount.action,
                                       style: .default,
                                       handler: { _ in
             completion(true)

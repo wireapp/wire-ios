@@ -33,10 +33,10 @@ class LoggingTest: XCTestCase {
 
         // Assert that some logs have been written to the current log file, which is the file
         // that gets attached to debug reports.
-        XCTAssertNotNil(ZMSLog.currentLog)
-        XCTAssertNotNil(ZMSLog.currentLogPath)
-        XCTAssertFalse(ZMSLog.currentLog!.isEmpty)
-        XCTAssertFalse(FileManager.default.contents(atPath: ZMSLog.currentLogPath!.path)!.isEmpty)
+        XCTAssertNotNil(ZMSLog.currentZipLog)
+        XCTAssertNotNil(ZMSLog.currentLogURL)
+        XCTAssertFalse(ZMSLog.currentZipLog!.isEmpty)
+        XCTAssertFalse(FileManager.default.contents(atPath: ZMSLog.currentLogURL!.path)!.isEmpty)
     }
 
 }

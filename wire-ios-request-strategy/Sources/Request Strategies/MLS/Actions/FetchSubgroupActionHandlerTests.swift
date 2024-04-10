@@ -29,6 +29,7 @@ class FetchSubroupActionHandlerTests: ActionHandlerTestBase<FetchSubgroupAction,
     override func setUp() {
         super.setUp()
         action = FetchSubgroupAction(domain: domain, conversationId: conversationId, type: type)
+        handler = FetchSubgroupActionHandler(context: syncMOC)
     }
 
     override func tearDown() {
@@ -42,7 +43,7 @@ class FetchSubroupActionHandlerTests: ActionHandlerTestBase<FetchSubgroupAction,
         try test_itGeneratesARequest(
             for: action,
             expectedPath: "/v4/conversations/\(domain)/\(conversationId.transportString())/subconversations/\(type)",
-            expectedMethod: .methodGET,
+            expectedMethod: .get,
             apiVersion: .v4
         )
     }

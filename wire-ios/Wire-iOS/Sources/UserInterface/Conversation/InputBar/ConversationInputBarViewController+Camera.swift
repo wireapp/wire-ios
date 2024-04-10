@@ -46,10 +46,10 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
     func cameraKeyboardViewController(_ controller: CameraKeyboardViewController, didSelectVideo videoURL: URL, duration: TimeInterval) {
         // Video can be longer than allowed to be uploaded. Then we need to add user the possibility to trim it.
-        if duration > ZMUserSession.shared()!.maxVideoLength {
+        if duration > userSession.maxVideoLength {
             let videoEditor = StatusBarVideoEditorController()
             videoEditor.delegate = self
-            videoEditor.videoMaximumDuration = ZMUserSession.shared()!.maxVideoLength
+            videoEditor.videoMaximumDuration = userSession.maxVideoLength
             videoEditor.videoPath = videoURL.path
             videoEditor.videoQuality = .typeMedium
 
@@ -89,7 +89,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                                                                             }
                                                             })
             let confirmVideoViewController = ConfirmAssetViewController(context: context)
-            confirmVideoViewController.previewTitle = self.conversation.displayNameWithFallback.localized
+            confirmVideoViewController.previewTitle = self.conversation.displayNameWithFallback
 
             endEditing()
             present(confirmVideoViewController, animated: true)
@@ -153,10 +153,11 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
         let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: mediaAsset),
                                                          onConfirm: { [weak self] (editedImage: UIImage?) in
-                                                                self?.dismiss(animated: true) {
-                                                                    self?.writeToSavedPhotoAlbumIfNecessary(imageData: imageData,
+                                                                guard let `self` = self else { return }
+                                                                    self.dismiss(animated: true) {
+                                                                    self.writeToSavedPhotoAlbumIfNecessary(imageData: imageData,
                                                                                                       isFromCamera: isFromCamera)
-                                                                    self?.sendController.sendMessage(withImageData: editedImage?.pngData() ?? imageData)
+                        self.sendController.sendMessage(withImageData: editedImage?.pngData() ?? imageData, userSession: self.userSession)
                                                                 }
                                                             },
                                                          onCancel: { [weak self] in
@@ -167,7 +168,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                                                                     })
 
         let confirmImageViewController = ConfirmAssetViewController(context: context)
-        confirmImageViewController.previewTitle = conversation.displayNameWithFallback.localized
+        confirmImageViewController.previewTitle = conversation.displayNameWithFallback
 
         endEditing()
         present(confirmImageViewController, animated: true)
@@ -206,7 +207,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 
         let videoURLAsset = AVURLAsset(url: NSURL(fileURLWithPath: inputPath) as URL)
 
-        videoURLAsset.convert(filename: filename, fileLengthLimit: Int64(ZMUserSession.shared()!.maxUploadFileSize)) { URL, videoAsset, error in
+        videoURLAsset.convert(filename: filename, fileLengthLimit: Int64(userSession.maxUploadFileSize)) { URL, videoAsset, error in
             guard let resultURL = URL, error == nil else {
                 completion(false, .none, 0)
                 return
@@ -253,7 +254,7 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 
             self.dismiss(animated: true, completion: {
                 if let imageData = image.pngData() {
-                    self.sendController.sendMessage(withImageData: imageData)
+                    self.sendController.sendMessage(withImageData: imageData, userSession: self.userSession)
                 }
             })
         }
@@ -264,6 +265,22 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 // MARK: - CameraViewController
 
 extension ConversationInputBarViewController {
+
+    func showCameraAndPhotos() {
+        UIApplication.wr_requestVideoAccess({ _ in
+            if SecurityFlags.cameraRoll.isEnabled,
+               MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll {
+                self.executeWithCameraRollPermission { _ in
+                    self.mode = .camera
+                    self.inputBar.textView.becomeFirstResponder()
+                }
+            } else {
+                self.mode = .camera
+                self.inputBar.textView.becomeFirstResponder()
+            }
+        })
+    }
+
     @objc
     func cameraButtonPressed(_ sender: Any?) {
         if mode == .camera {
@@ -273,18 +290,10 @@ extension ConversationInputBarViewController {
                 self.mode = .textInput
             }
         } else {
-            UIApplication.wr_requestVideoAccess({ _ in
-                if SecurityFlags.cameraRoll.isEnabled,
-                   MediaShareRestrictionManager(sessionRestriction: ZMUserSession.shared()).hasAccessToCameraRoll {
-                    self.executeWithCameraRollPermission { _ in
-                        self.mode = .camera
-                        self.inputBar.textView.becomeFirstResponder()
-                    }
-                } else {
-                    self.mode = .camera
-                    self.inputBar.textView.becomeFirstResponder()
-                }
+            let checker = E2EIPrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
+                showCameraAndPhotos()
             })
+            checker.performAction()
         }
     }
 }

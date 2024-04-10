@@ -38,28 +38,21 @@
     self.mockTransportSesssion = [[RecordingMockTransportSession alloc] initWithCookieStorage:self.cookieStorage
                                                                                   pushChannel:self.mockPushChannel];
             
-    self.mockSyncDelegate = [[MockSyncStateDelegate alloc] init];
     self.mockRequestStrategy = [[MockRequestStrategy alloc] init];
     self.mockUpdateEventProcessor = [[MockUpdateEventProcessor alloc] init];
     self.mockRequestCancellation = [[MockRequestCancellation alloc] init];
 
-
-    self.applicationStatusDirectory = [[ApplicationStatusDirectory alloc] initWithManagedObjectContext:self.syncMOC
-                                                                                         cookieStorage:self.cookieStorage
-                                                                                   requestCancellation:self.mockRequestCancellation
-                                                                                           application:self.application
-                                                                                     syncStateDelegate:self.mockSyncDelegate
-                                                                                 lastEventIDRepository:self.lastEventIDRepository
-                                                                                             analytics:nil];
-    
-    self.syncStatus = self.applicationStatusDirectory.syncStatus;
-    self.callEventStatus = self.applicationStatusDirectory.callEventStatus;
-    self.pushNotificationStatus = self.applicationStatusDirectory.pushNotificationStatus;
-        
+    self.operationStatus = [[OperationStatus alloc] init];
+    self.syncStatus = [[SyncStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository];
+    self.callEventStatus = [[CallEventStatus alloc] init];
+    self.pushNotificationStatus = [[PushNotificationStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository];
     self.sut = [[ZMOperationLoop alloc] initWithTransportSession:self.mockTransportSesssion
                                                  requestStrategy:self.mockRequestStrategy
                                             updateEventProcessor:self.mockUpdateEventProcessor
-                                      applicationStatusDirectory:self.applicationStatusDirectory
+                                                 operationStatus:self.operationStatus
+                                                      syncStatus:self.syncStatus
+                                          pushNotificationStatus:self.pushNotificationStatus
+                                                 callEventStatus:self.callEventStatus
                                                            uiMOC:self.uiMOC
                                                          syncMOC:self.syncMOC];
     self.pushChannelObserverToken = [NotificationInContext addObserverWithName:ZMOperationLoop.pushChannelStateChangeNotificationName
@@ -122,7 +115,10 @@
     ZMOperationLoop *op = [[ZMOperationLoop alloc] initWithTransportSession:self.mockTransportSesssion
                                                             requestStrategy:self.mockRequestStrategy
                                                        updateEventProcessor:self.mockUpdateEventProcessor
-                                                 applicationStatusDirectory:self.applicationStatusDirectory
+                                                            operationStatus:self.operationStatus
+                                                                 syncStatus:self.syncStatus
+                                                     pushNotificationStatus:self.pushNotificationStatus
+                                                            callEventStatus:self.callEventStatus
                                                                       uiMOC:self.uiMOC
                                                                     syncMOC:self.syncMOC];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -140,7 +136,7 @@
 
     // given
     ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:@"/test"
-                                                                   method:ZMMethodPOST
+                                                                   method:ZMTransportRequestMethodPost
                                                                   payload:@{@"foo": @"bar"}
                                                                 apiVersion:0];
     self.mockRequestStrategy.mockRequest = request;
@@ -174,7 +170,7 @@
     XCTAssertNil(self.sut.currentAPIVersion);
 
     self.mockRequestStrategy.mockRequest = [[ZMTransportRequest alloc] initWithPath:@"/test"
-                                                                             method:ZMMethodPOST
+                                                                             method:ZMTransportRequestMethodPost
                                                                             payload:@{@"foo": @"bar"}
                                                                           apiVersion:0];
 
@@ -190,7 +186,7 @@
 - (void)testThatItSendsAsManyCallsAsTheTransportSessionCanHandle
 {
     // given
-    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:@"/test" method:ZMMethodPOST payload:@{} apiVersion:0];
+    ZMTransportRequest *request = [[ZMTransportRequest alloc] initWithPath:@"/test" method:ZMTransportRequestMethodPost payload:@{} apiVersion:0];
     self.mockRequestStrategy.mockRequestQueue = @[request, request, request];
 
     // when
@@ -204,7 +200,7 @@
 - (void)testThatExecuteNextOperationIsCalledWhenThePreviousRequestIsCompleted
 {
     // given
-    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"/boo" method:ZMMethodGET payload:nil apiVersion:0];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"/boo" method:ZMTransportRequestMethodGet payload:nil apiVersion:0];
     self.mockRequestStrategy.mockRequest = request;
     [ZMRequestAvailableNotification notifyNewRequestsAvailable:self]; // this will enqueue `request`
     WaitForAllGroupsToBeEmpty(0.5);
@@ -230,7 +226,7 @@
 }
 
 
-- (void)testThatPushChannelDataIsSplitAndForwardedToAllIndividualObjects
+- (void)testThatPushChannelDataBuffered_WhenSyncing
 {
     // given
     NSString *eventType = @"user.update";
@@ -261,6 +257,49 @@
     [(id<ZMPushChannelConsumer>)self.sut pushChannelDidReceiveTransportData:eventData];
     WaitForAllGroupsToBeEmpty(0.5);
     
+    // then
+    XCTAssertEqualObjects(self.mockUpdateEventProcessor.bufferedEvents, expectedEvents);
+}
+
+- (void)testThatPushChannelDataProcessed_WhenOnline
+{
+    // given
+
+    // FIXME: [jacob] use a mock sync status
+    // simulate being online
+    [self.syncStatus pushChannelDidOpen];
+    while (self.syncStatus.isSyncing) {
+        [self.syncStatus finishCurrentSyncPhaseWithPhase:self.syncStatus.currentSyncPhase];
+    }
+
+    NSString *eventType = @"user.update";
+
+    NSDictionary *payload1 = @{
+                               @"type" : eventType,
+                               @"foo" : @"bar"
+                               };
+    NSDictionary *payload2 = @{
+                               @"type" : eventType,
+                               @"bar" : @"xxxxxxx"
+                               };
+    NSDictionary *payload3 = @{
+                               @"type" : eventType,
+                               @"baz" : @"barbar"
+                               };
+
+    NSDictionary *eventData = @{
+                                @"id" : @"5cc1ab91-45f4-49ec-bb7a-a5517b7a4173",
+                                @"payload" : @[payload1, payload2, payload3],
+                                };
+
+    NSMutableArray *expectedEvents = [NSMutableArray array];
+    [expectedEvents addObjectsFromArray:[ZMUpdateEvent eventsArrayFromPushChannelData:eventData]];
+    XCTAssertGreaterThan(expectedEvents.count, 0u);
+
+    // when
+    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidReceiveTransportData:eventData];
+    WaitForAllGroupsToBeEmpty(0.5);
+
     // then
     XCTAssertEqualObjects(self.mockUpdateEventProcessor.processedEvents, expectedEvents);
 }
@@ -483,7 +522,9 @@
 - (void)testThatItForwardsEventsFromEncryptedPushesToThePushNotificationStatus
 {
     // given
-    self.sut.apsSignalKeyStore = [self prepareSelfClientForAPSSignalingStore];
+    [self.syncMOC performBlockAndWait:^{
+        self.sut.apsSignalKeyStore = [self prepareSelfClientForAPSSignalingStore];
+    }];
     NSDictionary *pushPayload = [self encryptedPushPayload];
     
     // when
@@ -498,7 +539,9 @@
 - (void)testThatItForwardsNoticeNotificationsToThePushNotificationStatus
 {
     // given
-    XCTAssertTrue([self.syncMOC saveOrRollback]);
+    [self.syncMOC performBlockAndWait:^{
+        XCTAssertTrue([self.syncMOC saveOrRollback]);
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
 
     NSUUID *notificationID = NSUUID.timeBasedUUID;
@@ -515,14 +558,16 @@
 - (void)testThatItCallsCompletionHandlerWhenEventsAreDownloaded
 {
     // given
-    XCTAssertTrue([self.syncMOC saveOrRollback]);
+    [self.syncMOC performBlockAndWait:^{
+        XCTAssertTrue([self.syncMOC saveOrRollback]);
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSUUID *notificationID = NSUUID.timeBasedUUID;
     NSDictionary *pushPayload = [self noticePushPayloadWithUUID:notificationID];
     
     // expect
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Called completion handler"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Called completion handler"];
     [self.sut fetchEventsFromPushChannelPayload:pushPayload completionHandler:^{
         [expectation fulfill];
     }];
@@ -537,7 +582,9 @@
 - (void)testThatItCallsCompletionHandlerAfterCallEventsHaveBeenProcessed
 {
     // given
-    XCTAssertTrue([self.syncMOC saveOrRollback]);
+    [self.syncMOC performBlockAndWait:^{
+        XCTAssertTrue([self.syncMOC saveOrRollback]);
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSUUID *notificationID = NSUUID.timeBasedUUID;
@@ -545,7 +592,7 @@
     
     // expect
     __block BOOL completionHandlerHasBeenCalled = NO;
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Called completion handler"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Called completion handler"];
     [self.sut fetchEventsFromPushChannelPayload:pushPayload completionHandler:^{
         [expectation fulfill];
         completionHandlerHasBeenCalled = YES;

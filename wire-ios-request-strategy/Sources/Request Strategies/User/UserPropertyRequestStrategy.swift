@@ -58,7 +58,7 @@ extension UserProperty {
 
     func upstreamRequest(newValue: ZMTransportData, apiVersion: APIVersion) -> ZMTransportRequest {
         let path = [UserProperty.propertiesPath, self.serverName].joined(separator: "/")
-        return ZMTransportRequest(path: path, method: .methodPUT, payload: newValue, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .put, payload: newValue, apiVersion: apiVersion.rawValue)
     }
 
     func downstreamRequest(apiVersion: APIVersion) -> ZMTransportRequest {

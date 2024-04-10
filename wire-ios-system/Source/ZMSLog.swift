@@ -19,9 +19,11 @@
 import Foundation
 import os.log
 
+import ZipArchive
+
 /// Represents an entry to be logged.
 @objcMembers
-public class ZMSLogEntry: NSObject {
+public final class ZMSLogEntry: NSObject {
     public let text: String
     public let timestamp: Date
 
@@ -46,7 +48,7 @@ public class ZMSLogEntry: NSObject {
 ///     zmLog.warn("A serious warning!")
 ///
 @objc
-public class ZMSLog: NSObject {
+public final class ZMSLog: NSObject {
 
     public typealias LogHook = (_ level: ZMLogLevel_t, _ tag: String?, _ message: String) -> Void
     public typealias LogEntryHook = (
@@ -85,10 +87,11 @@ extension ZMSLog {
 
     public func safePublic(_ message: @autoclosure () -> SanitizedString,
                            level: ZMLogLevel_t = .info,
+                           osLogOn: Bool = true,
                            file: String = #file,
                            line: UInt = #line) {
         let entry = ZMSLogEntry(text: message().value, timestamp: Date())
-        ZMSLog.logEntry(entry, level: level, isSafe: true, tag: tag, file: file, line: line)
+        ZMSLog.logEntry(entry, level: level, isSafe: true, tag: tag, osLogOn: osLogOn, file: file, line: line)
     }
 
     public func error(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
@@ -199,22 +202,8 @@ extension ZMSLog {
     }
 }
 
-extension ZMLogLevel_t {
-    var logLevel: OSLogType {
-        switch self {
-        case .public, .error, .warn:
-            return .error
-        case .info:
-            return .info
-        case .debug:
-            return .debug
-        @unknown default:
-            return .error
-        }
-    }
-}
-
 // MARK: - Internal stuff
+
 extension ZMSLog {
 
     @objc static public func logWithLevel(_ level: ZMLogLevel_t, message: @autoclosure () -> String, tag: String?, file: String = #file, line: UInt = #line) {
@@ -227,78 +216,125 @@ extension ZMSLog {
         level: ZMLogLevel_t,
         isSafe: Bool,
         tag: String?,
+        osLogOn: Bool = true,
         file: String = #file,
         line: UInt = #line) {
         logQueue.async {
-            if let tag = tag {
-                self.register(tag: tag)
+            guard let tag, level.rawValue <= ZMSLog.getLevelNoLock(tag: tag).rawValue else {
+                return
             }
 
-            if tag == nil || level.rawValue <= ZMSLog.getLevelNoLock(tag: tag!).rawValue {
-                os_log("%{public}@", log: self.logger(tag: tag), type: level.logLevel, entry.text)
-                self.notifyHooks(level: level, tag: tag, entry: entry, isSafe: isSafe)
+            var logLevel: OSLogType {
+                switch level {
+                case .public, .error, .warn:
+                    return .error
+                case .info:
+                    return .info
+                case .debug:
+                    return .debug
+                }
             }
+
+            register(tag: tag)
+            if osLogOn {
+                os_log("%{public}@", log: self.logger(tag: tag), type: logLevel, entry.text)
+            }
+            notifyHooks(level: level, tag: tag, entry: entry, isSafe: isSafe)
         }
     }
 }
 
 // MARK: - Save on disk & file management
+
 extension ZMSLog {
-
-    @objc static public var previousLog: Data? {
-        guard let previousLogPath = self.previousLogPath else { return nil }
-        return readFile(at: previousLogPath)
+    private enum Constant {
+        static let maxNumberOfLogFiles = 5
     }
 
-    @objc static public var currentLog: Data? {
-        guard let currentLogPath = self.currentLogPath else { return nil }
-        return readFile(at: currentLogPath)
+    static var cachesDirectory: URL? {
+        FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
     }
 
-    static private func readFile(at url: URL) -> Data? {
-        guard let handle = try? FileHandle(forReadingFrom: url) else { return nil }
+    @objc static public let currentLogURL: URL? = cachesDirectory?.appendingPathComponent("current.log")
 
-        try? handle.wr_synchronizeFile()
-
-        return handle.readDataToEndOfFile()
+    @objc static public var currentZipLog: Data? {
+        FileManager.default.zipData(from: currentLogURL)
     }
 
-    @objc static public let previousLogPath: URL? = cachesDirectory?.appendingPathComponent("previous.log")
-
-    @objc static public let currentLogPath: URL? = cachesDirectory?.appendingPathComponent("current.log")
+    @objc static public let previousZipLogURLs: [URL] = {
+        [0..<Constant.maxNumberOfLogFiles]
+            .joined()
+            .compactMap { index in
+                cachesDirectory?.appendingPathComponent("previous_\(index).log.zip")
+            }
+    }()
 
     @objc public static func clearLogs() {
-        guard let previousLogPath = previousLogPath, let currentLogPath = currentLogPath else { return }
+        guard let currentLogURL else { return }
+
         logQueue.async {
             closeHandle()
             let manager = FileManager.default
-            try? manager.removeItem(at: previousLogPath)
-            try? manager.removeItem(at: currentLogPath)
+
+            // 2023-12-06: old deprecated previous log can be removed after some time.
+            if let deprecatedPreviousLogURL = cachesDirectory?.appendingPathComponent("previous.log") {
+                try? manager.removeItem(at: deprecatedPreviousLogURL)
+            }
+
+            previousZipLogURLs.forEach {
+                try? manager.removeItem(at: $0)
+            }
+
+            try? manager.removeItem(at: currentLogURL)
         }
     }
 
     @objc public static func switchCurrentLogToPrevious() {
-        guard let previousLogPath = previousLogPath, let currentLogPath = currentLogPath else { return }
+        guard let currentLogURL else { return }
+
         logQueue.async {
             closeHandle()
-            let manager = FileManager.default
-            try? manager.removeItem(at: previousLogPath)
-            try? manager.moveItem(at: currentLogPath, to: previousLogPath)
-        }
-    }
 
-    static var cachesDirectory: URL? {
-        let manager = FileManager.default
-        return manager.urls(for: .cachesDirectory, in: .userDomainMask).first
+            if previousZipLogURLs.isEmpty {
+                assertionFailure("expects 'previousLogPaths' not to be empty!")
+                return
+            }
+
+            let lastIndex = previousZipLogURLs.count - 1
+
+            // remove last item
+            let manager = FileManager.default
+            try? manager.removeItem(at: previousZipLogURLs[lastIndex])
+
+            // move last-1 to 0 items
+            for index in (0..<lastIndex).reversed() {
+                try? manager.moveItem(at: previousZipLogURLs[index], to: previousZipLogURLs[index + 1])
+            }
+
+            // move current log to 0 item
+            if manager.fileExists(atPath: currentLogURL.path) {
+                // create a tmp different name from `current.log` to `previous.log`
+                var tmpURL = currentLogURL.deletingLastPathComponent()
+                tmpURL.appendPathComponent("previous.log")
+
+                try? manager.moveItem(at: currentLogURL, to: tmpURL)
+
+                // zip to position 0 logs
+                SSZipArchive.createZipFile(atPath: previousZipLogURLs[0].path, withFilesAtPaths: [tmpURL.path])
+
+                // remove tmp file
+                try? manager.removeItem(at: tmpURL)
+            }
+        }
     }
 
     static public var pathsForExistingLogs: [URL] {
-        var paths: [URL] =  []
-        if let currentPath = currentLogPath, currentLog != nil {
-            paths.append(currentPath)
+        var paths: [URL] = previousZipLogURLs
+        if let assertionFile = ZMLastAssertionFile(), FileManager.default.fileExists(atPath: assertionFile.path) {
+            paths.append(assertionFile)
         }
-        if let previousPath = previousLogPath, previousLog != nil {
-            paths.append(previousPath)
+        if let currentPath = currentLogURL, FileManager.default.fileExists(atPath: currentPath.path) {
+            paths.append(currentPath)
         }
         return paths
     }
@@ -309,13 +345,13 @@ extension ZMSLog {
     }
 
     static func appendToCurrentLog(_ string: String) {
-
-        guard let currentLogURL = self.currentLogPath else { return }
-        let currentLogPath = currentLogURL.path
+        guard let currentLogPath = currentLogURL?.path else { return }
         let manager = FileManager.default
 
         if !manager.fileExists(atPath: currentLogPath) {
             manager.createFile(atPath: currentLogPath, contents: nil, attributes: nil)
+            // if there was no file, force to recreate the fileHandle
+            updatingHandle = nil
         }
 
         if updatingHandle == nil {
@@ -323,10 +359,9 @@ extension ZMSLog {
             updatingHandle?.seekToEndOfFile()
         }
 
-        let data = Data(string.utf8)
-
         do {
-            try updatingHandle?.wr_write(data)
+            let data = Data(string.utf8)
+            try updatingHandle?.write(contentsOf: data)
         } catch {
             updatingHandle = nil
         }
@@ -335,3 +370,39 @@ extension ZMSLog {
 
 /// Synchronization queue
 let logQueue = DispatchQueue(label: "ZMSLog")
+
+public extension FileManager {
+    func zipData(from url: URL?) -> Data? {
+        guard
+            let url,
+            self.fileExists(atPath: url.path)
+        else {
+            return nil
+        }
+
+        var tmpURL = url.deletingLastPathComponent()
+        tmpURL.appendPathComponent("\(UUID().uuidString).zip")
+
+        SSZipArchive.createZipFile(atPath: tmpURL.path, withFilesAtPaths: [url.path])
+        defer {
+            // clean up
+            try? self.removeItem(at: tmpURL)
+        }
+
+        return try? Data(contentsOf: tmpURL, options: [.uncached])
+    }
+
+    func zipData(from urls: [URL]) -> Data? {
+        var tmpURL = URL(fileURLWithPath: NSTemporaryDirectory(),
+                                        isDirectory: false)
+        tmpURL.appendPathComponent("\(UUID().uuidString).zip")
+
+        SSZipArchive.createZipFile(atPath: tmpURL.path, withFilesAtPaths: urls.map { $0.path })
+        defer {
+            // clean up
+            try? self.removeItem(at: tmpURL)
+        }
+
+        return try? Data(contentsOf: tmpURL, options: [.uncached])
+    }
+}

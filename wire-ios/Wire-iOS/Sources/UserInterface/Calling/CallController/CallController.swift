@@ -37,9 +37,9 @@ final class CallController: NSObject {
     private var alertDebounceInterval: TimeInterval { 15 * .oneMinute  }
 
     // MARK: - Init
-    override init() {
+    init(userSession: UserSession) {
         super.init()
-        addObservers()
+        addObservers(userSession: userSession)
     }
 
     deinit {
@@ -52,17 +52,14 @@ final class CallController: NSObject {
             dismissCall()
             return
         }
-
         showCallTopOverlay(for: priorityCallConversation)
         presentOrMinimizeActiveCall(for: priorityCallConversation)
     }
 
     // MARK: - Private Implementation
-    private func addObservers() {
-        if let userSession = ZMUserSession.shared() {
-            observerTokens.append(WireCallCenterV3.addCallStateObserver(observer: self, userSession: userSession))
-            observerTokens.append(WireCallCenterV3.addCallErrorObserver(observer: self, userSession: userSession))
-        }
+    private func addObservers(userSession: UserSession) {
+        observerTokens.append(userSession.addConferenceCallStateObserver(self))
+        observerTokens.append(userSession.addConferenceCallErrorObserver(self))
     }
 
     private func presentOrMinimizeActiveCall(for conversation: ZMConversation) {
@@ -121,6 +118,22 @@ final class CallController: NSObject {
             return false
         }
     }
+
+    private func acceptDegradedCall(conversation: ZMConversation) {
+        guard let userSession = ZMUserSession.shared() else { return }
+
+        userSession.enqueue({
+            conversation.voiceChannel?.continueByDecreasingConversationSecurity(userSession: userSession)
+        }, completionHandler: {
+            conversation.joinCall()
+        })
+    }
+
+    private func cancelCall(conversation: ZMConversation) {
+        guard let userSession = ZMUserSession.shared() else { return }
+        conversation.voiceChannel?.leave(userSession: userSession, completion: nil)
+    }
+
 }
 
 // MARK: - WireCallCenterCallStateObserver
@@ -131,9 +144,13 @@ extension CallController: WireCallCenterCallStateObserver {
                              caller: UserType,
                              timestamp: Date?,
                              previousCallState: CallState?) {
+
         presentUnsupportedVersionAlertIfNecessary(callState: callState)
-        presentSecurityDegradedAlertIfNecessary(for: conversation.voiceChannel)
-        updateActiveCallPresentationState()
+        presentSecurityDegradedAlertIfNecessary(for: conversation, callState: callState) { continueCall in
+            if continueCall {
+                self.updateActiveCallPresentationState()
+            }
+        }
     }
 
     private func presentUnsupportedVersionAlertIfNecessary(callState: CallState) {
@@ -141,15 +158,54 @@ extension CallController: WireCallCenterCallStateObserver {
         router?.presentUnsupportedVersionAlert()
     }
 
-    private func presentSecurityDegradedAlertIfNecessary(for voiceChannel: VoiceChannel?) {
-        guard let degradationState = voiceChannel?.degradationState else {
+    /// Present warning about incoming call on unverified conversation
+    /// - Parameters:
+    ///   - conversation: unverified conversation
+    ///   - callState: state of the incoming call
+    ///   - continueCallBlock: block to execute if no alert is shown or after user confirm or cancel choice on alert
+    private func presentSecurityDegradedAlertIfNecessary(for conversation: ZMConversation,
+                                                         callState: CallState,
+                                                         continueCallBlock: @escaping (Bool) -> Void) {
+        guard let voiceChannel = conversation.voiceChannel else {
+            // no alert to show, continue
+            continueCallBlock(true)
             return
         }
-        switch degradationState {
-        case .incoming(degradedUser: let user):
-            router?.presentSecurityDegradedAlert(degradedUser: user?.value)
+
+        let degradationState = voiceChannel.degradationState
+
+        let alertCompletion: (AlertChoice) -> Void = { [weak self] choice in
+            switch choice {
+            case .cancel:
+                self?.cancelCall(conversation: conversation)
+                continueCallBlock(false)
+            case .confirm:
+                self?.acceptDegradedCall(conversation: conversation)
+                continueCallBlock(true)
+            case .ok:
+                continueCallBlock(true)
+            case .alreadyPresented:
+                // do nothing
+                break
+            }
+        }
+
+        switch (degradationState, callState) {
+        case (.incoming(reason: let degradationReason),
+              .incoming(video: _, shouldRing: true, degraded: true)):
+            router?.presentIncomingSecurityDegradedAlert(for: degradationReason,
+                                                 completion: alertCompletion)
+        case (_, .terminating(reason: .securityDegraded)):
+            if let reason = voiceChannel.degradationReason {
+                router?.presentEndingSecurityDegradedAlert(for: reason,
+                                                           completion: alertCompletion)
+            }
+
         default:
-            break
+            // no alert to show, continue
+            continueCallBlock(true)
+            // dismiss alert that would be there
+            router?.dismissSecurityDegradedAlertIfNeeded()
         }
     }
 }

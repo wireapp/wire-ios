@@ -41,6 +41,8 @@ final class SelfProfileViewController: UIViewController {
     private let profileHeaderViewController: ProfileHeaderViewController
     private let profileImagePicker = ProfileImagePickerManager()
 
+    let userSession: UserSession
+
     // MARK: - AppLock
     private var callback: ResultHandler?
 
@@ -48,10 +50,6 @@ final class SelfProfileViewController: UIViewController {
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return [.portrait]
-    }
-
-    private var userCanSetProfilePicture: Bool {
-        return userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture)
     }
 
     // MARK: - Initialization
@@ -64,26 +62,48 @@ final class SelfProfileViewController: UIViewController {
 
     init(selfUser: SettingsSelfUser,
          userRightInterfaceType: UserRightInterface.Type = UserRight.self,
-         userSession: UserSessionInterface? = ZMUserSession.shared()) {
+         userSession: UserSession) {
 
         self.selfUser = selfUser
+        self.userSession = userSession
 
         // Create the settings hierarchy
-        let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
-		let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(settingsPropertyFactory: settingsPropertyFactory, userRightInterfaceType: userRightInterfaceType)
-        let rootGroup = settingsCellDescriptorFactory.rootGroup(isTeamMember: selfUser.isTeamMember)
-        settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
-        profileHeaderViewController = ProfileHeaderViewController(user: selfUser, viewer: selfUser, options: selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability])
 
-		self.userRightInterfaceType = userRightInterfaceType
-		self.settingsCellDescriptorFactory = settingsCellDescriptorFactory
+        let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
+
+        let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
+            settingsPropertyFactory: settingsPropertyFactory,
+            userRightInterfaceType: userRightInterfaceType
+        )
+
+        let rootGroup = settingsCellDescriptorFactory.rootGroup(isTeamMember: selfUser.isTeamMember, userSession: userSession)
+
+        settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
+
+        var options: ProfileHeaderViewController.Options
+        options = selfUser.isTeamMember ? [.allowEditingAvailability] : [.hideAvailability]
+        if userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) {
+            options.insert(.allowEditingProfilePicture)
+        }
+        profileHeaderViewController = ProfileHeaderViewController(
+            user: selfUser,
+            viewer: selfUser,
+            conversation: .none,
+            options: options,
+            userSession: userSession,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
+        )
+
+        self.userRightInterfaceType = userRightInterfaceType
+        self.settingsCellDescriptorFactory = settingsCellDescriptorFactory
         self.rootGroup = rootGroup
 
         super.init(nibName: nil, bundle: nil)
         settingsPropertyFactory.delegate = self
 
         if selfUser.isTeamMember {
-            userSession?.enqueue {
+            userSession.enqueue {
                 selfUser.refreshTeamData()
             }
         }
@@ -99,16 +119,13 @@ final class SelfProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        profileHeaderViewController.imageView.addTarget(self, action: #selector(userDidTapProfileImage), for: .touchUpInside)
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(userDidTapProfileImage))
+        profileHeaderViewController.imageView.addGestureRecognizer(tapGestureRecognizer)
 
         addChild(profileHeaderViewController)
         profileContainerView.addSubview(profileHeaderViewController.view)
         view.addSubview(profileContainerView)
         profileHeaderViewController.didMove(toParent: self)
-
-        if userCanSetProfilePicture {
-            profileHeaderViewController.options.insert(.allowEditingProfilePicture)
-        }
 
         addChild(settingsController)
         view.addSubview(settingsController.view)
@@ -178,8 +195,8 @@ final class SelfProfileViewController: UIViewController {
 
     // MARK: - Events
 
-    @objc func userDidTapProfileImage(sender: UserImageView) {
-        guard userCanSetProfilePicture else { return }
+    @objc private func userDidTapProfileImage(_ sender: UIGestureRecognizer) {
+        guard userRightInterfaceType.selfUserIsPermitted(to: .editProfilePicture) else { return }
 
         let alertViewController = profileImagePicker.selectProfileImage()
         alertViewController.configPopover(pointToView: profileHeaderViewController.imageView)
@@ -227,7 +244,7 @@ extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
         }
 
         guard newValue else {
-            try? settingsPropertyFactory.userSession?.appLockController.deletePasscode()
+            try? userSession.deleteAppLockPasscode()
             callback(newValue)
             return
         }

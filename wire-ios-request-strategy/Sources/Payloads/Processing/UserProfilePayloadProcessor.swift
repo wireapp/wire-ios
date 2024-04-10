@@ -18,7 +18,15 @@
 
 import Foundation
 
-final class UserProfilePayloadProcessor {
+// sourcery: AutoMockable
+protocol UserProfilePayloadProcessing {
+    func updateUserProfiles(
+        from userProfiles: Payload.UserProfiles,
+        in context: NSManagedObjectContext
+    )
+}
+
+final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
 
     /// Update all user entities with the data from the user profiles.
     ///
@@ -125,6 +133,12 @@ final class UserProfilePayloadProcessor {
             authoritative: authoritative
         )
 
+        if let supportedProtocols = payload.supportedProtocols {
+            user.supportedProtocols = Set(supportedProtocols.map(\.dataModelMessageProtocol))
+        } else {
+            user.supportedProtocols = [.proteus]
+        }
+
         if authoritative {
             user.needsToBeUpdatedFromBackend = false
         }
@@ -147,8 +161,8 @@ final class UserProfilePayloadProcessor {
         }
 
         let validAssets = payload.assets?.filter(\.key.isValidAssetID)
-        let previewAssetKey = validAssets?.first(where: {$0.size == .preview }).map(\.key)
-        let completeAssetKey = validAssets?.first(where: {$0.size == .complete }).map(\.key)
+        let previewAssetKey = validAssets?.first(where: { $0.size == .preview }).map(\.key)
+        let completeAssetKey = validAssets?.first(where: { $0.size == .complete }).map(\.key)
 
         if previewAssetKey != nil || authoritative {
             user.previewProfileAssetIdentifier = previewAssetKey
@@ -156,6 +170,20 @@ final class UserProfilePayloadProcessor {
 
         if completeAssetKey != nil || authoritative {
             user.completeProfileAssetIdentifier = completeAssetKey
+        }
+    }
+
+}
+
+private extension Payload.UserProfile.MessageProtocol {
+
+    var dataModelMessageProtocol: WireDataModel.MessageProtocol {
+        switch self {
+        case .proteus:
+            return .proteus
+
+        case .mls:
+            return .mls
         }
     }
 

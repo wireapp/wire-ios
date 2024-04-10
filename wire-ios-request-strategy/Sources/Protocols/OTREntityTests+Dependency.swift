@@ -47,21 +47,6 @@ class OTREntityTests_Dependency: MessagingTestBase {
         }
     }
 
-    func testThatItReturnsSelfClientAsDependentObjectForMessageIfItHasMissingClients() {
-        self.syncMOC.performGroupedBlockAndWait {
-
-            // GIVEN
-            let message = try! self.groupConversation.appendText(content: "foo") as! ZMClientMessage
-
-            // WHEN
-            self.selfClient.missesClient(self.otherClient)
-
-            // THEN
-            let dependency = message.dependentObjectNeedingUpdateBeforeProcessing
-            XCTAssertEqual(dependency as? UserClient, self.selfClient)
-        }
-    }
-
     func testThatItReturnsConversationIfNeedsToBeUpdatedFromBackendBeforeMissingClients() {
         self.syncMOC.performGroupedBlockAndWait {
 
@@ -86,11 +71,11 @@ class OTREntityTests_Dependency: MessagingTestBase {
 
             // WHEN
             self.selfClient.missesClient(self.otherClient)
-            self.oneToOneConversation.connection?.needsToBeUpdatedFromBackend = true
+            self.oneToOneConnection?.needsToBeUpdatedFromBackend = true
 
             // THEN
             let dependency = message.dependentObjectNeedingUpdateBeforeProcessing
-            XCTAssertEqual(dependency as? ZMConnection, self.oneToOneConversation.connection)
+            XCTAssertEqual(dependency as? ZMConnection, self.oneToOneConnection)
         }
     }
 
@@ -133,10 +118,11 @@ class OTREntityTests_Dependency: MessagingTestBase {
             message.markAsSent()
 
             let nextMessage = try! self.groupConversation.appendText(content: "bar") as! ZMClientMessage
-            // nextMessage.serverTimestamp = timeZero.addingTimeInterval(100) // this ensures the sorting
+            nextMessage.serverTimestamp = timeZero.addingTimeInterval(1) // this ensures the sorting
 
             // WHEN
             let lastMessage = try! self.groupConversation.appendText(content: "zoo") as! ZMClientMessage
+            lastMessage.serverTimestamp = timeZero.addingTimeInterval(2) // this ensures the sorting
 
             // THEN
             let dependency = lastMessage.dependentObjectNeedingUpdateBeforeProcessing
@@ -159,21 +145,6 @@ class OTREntityTests_Dependency: MessagingTestBase {
             // THEN
             let dependency = lastMessage.dependentObjectNeedingUpdateBeforeProcessing
             XCTAssertNil(dependency)
-        }
-    }
-
-    func testThatItReturnConversationAsDependencyIfSecurityLevelIsSecureWithIgnored() {
-        self.syncMOC.performGroupedBlockAndWait {
-
-            // GIVEN
-            let message = try! self.groupConversation.appendText(content: "foo") as! ZMClientMessage
-
-            // WHEN
-            self.set(conversation: self.groupConversation, securityLevel: .secureWithIgnored)
-
-            // THEN
-            let dependency = message.dependentObjectNeedingUpdateBeforeProcessing
-            XCTAssertEqual(dependency as? ZMConversation, self.groupConversation)
         }
     }
 

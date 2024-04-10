@@ -15,7 +15,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
@@ -31,6 +30,7 @@ final class ConversationListViewController: UIViewController {
     weak var delegate: ConversationListTabBarControllerDelegate?
 
     let viewModel: ViewModel
+
     /// internal View Model
     var state: ConversationListState = .conversationList
 
@@ -44,7 +44,6 @@ final class ConversationListViewController: UIViewController {
     var startCallToken: Any?
 
     var pushPermissionDeniedViewController: PermissionDeniedViewController?
-    var usernameTakeoverViewController: UserNameTakeOverViewController?
 
     private let noConversationLabel: UILabel = {
         let label = UILabel()
@@ -62,12 +61,7 @@ final class ConversationListViewController: UIViewController {
         return view
     }()
 
-    let listContentController: ConversationListContentController = {
-        let conversationListContentController = ConversationListContentController()
-        conversationListContentController.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: ConversationListViewController.contentControllerBottomInset, right: 0)
-
-        return conversationListContentController
-    }()
+    let listContentController: ConversationListContentController
 
     let tabBar: ConversationListTabBar = {
         let conversationListTabBar = ConversationListTabBar()
@@ -87,26 +81,40 @@ final class ConversationListViewController: UIViewController {
         return conversationListOnboardingHint
     }()
 
-    convenience init(account: Account, selfUser: SelfUserType) {
-        let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser)
-
+    convenience init(
+        account: Account,
+        selfUser: SelfUserType,
+        userSession: UserSession,
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+    ) {
+        let viewModel = ConversationListViewController.ViewModel(
+            account: account,
+            selfUser: selfUser,
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
+        )
         self.init(viewModel: viewModel)
-
-        viewModel.viewController = self
-
         delegate = self
-
         onboardingHint.arrowPointToView = tabBar
     }
 
     required init(viewModel: ViewModel) {
-
         self.viewModel = viewModel
 
-        topBarViewController = ConversationListTopBarViewController(account: viewModel.account,
-                                                                    selfUser: viewModel.selfUser)
+        topBarViewController = ConversationListTopBarViewController(
+            account: viewModel.account,
+            selfUser: viewModel.selfUser,
+            userSession: viewModel.userSession
+        )
+        topBarViewController.selfUserStatus = viewModel.selfUserStatus
+
+        let bottomInset = ConversationListViewController.contentControllerBottomInset
+        listContentController = ConversationListContentController(userSession: viewModel.userSession)
+        listContentController.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomInset, right: 0)
 
         super.init(nibName: nil, bundle: nil)
+
+        viewModel.viewController = self
 
         definesPresentationContext = true
 
@@ -149,7 +157,7 @@ final class ConversationListViewController: UIViewController {
         super.viewWillAppear(animated)
 
         viewModel.savePendingLastRead()
-        viewModel.requestSuggestedHandlesIfNeeded()
+        viewModel.requestMarketingConsentIfNeeded()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -167,6 +175,8 @@ final class ConversationListViewController: UIViewController {
         shouldAnimateNetworkStatusView = true
 
         ZClientViewController.shared?.notifyUserOfDisabledAppLockIfNeeded()
+
+        viewModel.updateE2EICertifiedStatus()
 
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
@@ -247,13 +257,15 @@ final class ConversationListViewController: UIViewController {
             return
         }
 
-        [contentContainer,
-        topBarView,
-        conversationList,
-        tabBar,
-        noConversationLabel,
-        onboardingHint,
-        networkStatusViewController.view].forEach {
+        [
+            contentContainer,
+            topBarView,
+            conversationList,
+            tabBar,
+            noConversationLabel,
+            onboardingHint,
+            networkStatusViewController.view
+        ].forEach {
             $0?.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -293,7 +305,7 @@ final class ConversationListViewController: UIViewController {
     }
 
     func createArchivedListViewController() -> ArchivedListViewController {
-        let archivedViewController = ArchivedListViewController()
+        let archivedViewController = ArchivedListViewController(userSession: viewModel.userSession)
         archivedViewController.delegate = viewModel
         return archivedViewController
     }
@@ -333,7 +345,7 @@ final class ConversationListViewController: UIViewController {
     }
 
     func createPeoplePickerController() -> StartUIViewController {
-        let startUIViewController = StartUIViewController()
+        let startUIViewController = StartUIViewController(userSession: viewModel.userSession)
         startUIViewController.delegate = viewModel
         return startUIViewController
     }
@@ -361,10 +373,18 @@ final class ConversationListViewController: UIViewController {
                                      completion: completion)
     }
 
-    var hasUsernameTakeoverViewController: Bool {
-        return usernameTakeoverViewController != nil
+    func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
+        UIAlertController.showNewsletterSubscriptionDialogIfNeeded(presentViewController: self, completionHandler: completionHandler)
     }
+}
 
+// MARK: - ViewModel Delegate
+
+extension ConversationListViewController: ConversationListContainerViewModelDelegate {
+
+    func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
+        topBarViewController.selfUserStatus = selfUserStatus
+    }
 }
 
 // MARK: - UITabBarDelegate
@@ -404,7 +424,7 @@ private extension NSAttributedString {
 
         paragraphStyle.paragraphSpacing = 4
 
-        let titleString = "conversation_list.empty.all_archived.message".localized
+        let titleString = L10n.Localizable.ConversationList.Empty.AllArchived.message
 
         let attributedString = NSAttributedString(string: titleString.uppercased(), attributes: titleAttributes)
 

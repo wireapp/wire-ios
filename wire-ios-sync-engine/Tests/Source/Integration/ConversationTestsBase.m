@@ -209,7 +209,6 @@
         
     XCTAssertNotNil(messageChange);
     XCTAssertTrue(messageChange.messagesChanged);
-    XCTAssertFalse(messageChange.participantsChanged);
     XCTAssertTrue(messageChange.lastModifiedDateChanged);
     XCTAssertFalse(messageChange.connectionStateChanged);
     
@@ -283,7 +282,7 @@
     __block NSArray *messsagesNonces;
     
     // expect
-    XCTestExpectation *exp = [self expectationWithDescription:@"All messages received"];
+    XCTestExpectation *exp = [self customExpectationWithDescription:@"All messages received"];
     observer.notificationCallback = (ObserverCallback) ^(ConversationChangeInfo * __unused note) {
         BOOL hasAllMessages = [self conversation:conversation hasMessagesWithNonces:messsagesNonces];
         if (hasAllMessages) {

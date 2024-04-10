@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
+import WireDataModelSupport
+import WireSyncEngineSupport
+import XCTest
+
 @testable import Wire
 
 final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestCase {
@@ -25,23 +28,30 @@ final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestC
     var sut: ConversationListTopBarViewController!
     var mockAccount: Account!
     var mockSelfUser: MockUserType!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
         mockAccount = Account.mockAccount(imageData: mockImageData)
         mockSelfUser = MockUserType.createSelfUser(name: "James Hetfield")
+        userSession = UserSessionMock(mockUser: mockSelfUser)
     }
 
     override func tearDown() {
         sut = nil
         mockAccount = nil
         mockSelfUser = nil
+        userSession = nil
 
         super.tearDown()
     }
 
     func setupSut() {
-        sut = ConversationListTopBarViewController(account: mockAccount, selfUser: mockSelfUser)
+        sut = ConversationListTopBarViewController(
+            account: mockAccount,
+            selfUser: mockSelfUser,
+            userSession: userSession
+        )
         sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 48)
         sut.view.backgroundColor = .black
         sut.overrideUserInterfaceStyle = .dark

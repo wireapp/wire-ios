@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireSyncEngine
 
 final class UserDetailViewControllerFactory {
 
@@ -29,18 +30,30 @@ final class UserDetailViewControllerFactory {
     ///   - profileViewControllerDelegate: a ProfileViewControllerDelegate for ProfileViewController
     ///   - viewControllerDismisser: a ViewControllerDismisser for returing UIViewController's dismiss action
     /// - Returns: if the user is a serviceUser, return a ProfileHeaderServiceDetailViewController. if the user not a serviceUser, return a ProfileViewController
-    static func createUserDetailViewController(user: UserType,
-                                               conversation: ZMConversation,
-                                               profileViewControllerDelegate: ProfileViewControllerDelegate,
-                                               viewControllerDismisser: ViewControllerDismisser) -> UIViewController {
-        if user.isServiceUser, let serviceUser = user as? ServiceUser {
+    static func createUserDetailViewController(
+        user: UserType,
+        conversation: ZMConversation,
+        profileViewControllerDelegate: ProfileViewControllerDelegate,
+        viewControllerDismisser: ViewControllerDismisser,
+        userSession: UserSession
+    ) -> UIViewController {
 
-            let serviceDetailViewController = ServiceDetailViewController(serviceUser: serviceUser, actionType: .removeService(conversation), completion: nil)
+        if user.isServiceUser, let serviceUser = user as? ServiceUser {
+            let serviceDetailViewController = ServiceDetailViewController(
+                serviceUser: serviceUser,
+                actionType: .removeService(conversation),
+                userSession: userSession
+            )
             serviceDetailViewController.viewControllerDismisser = viewControllerDismisser
             return serviceDetailViewController
+
         } else {
-            // TODO: Do not present the details if the user is not connected.
-            let profileViewController = ProfileViewController(user: user, viewer: SelfUser.current, conversation: conversation)
+            let profileViewController = ProfileViewController(
+                user: user,
+                viewer: userSession.selfUser,
+                conversation: conversation,
+                userSession: userSession
+            )
             profileViewController.delegate = profileViewControllerDelegate
             profileViewController.viewControllerDismisser = viewControllerDismisser
             return profileViewController

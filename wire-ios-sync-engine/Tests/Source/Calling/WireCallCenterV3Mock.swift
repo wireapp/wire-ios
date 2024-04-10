@@ -23,7 +23,7 @@ import Foundation
 @objcMembers
 public class MockAVSWrapper: AVSWrapperType {
 
-    public var muted: Bool = false
+    public var isMuted: Bool = false
 
     public var startCallArguments: (uuid: AVSIdentifier, callType: AVSCallType, conversationType: AVSConversationType, useCBR: Bool)?
     public var answerCallArguments: (uuid: AVSIdentifier, callType: AVSCallType, useCBR: Bool)?
@@ -90,6 +90,10 @@ public class MockAVSWrapper: AVSWrapperType {
 
     public func requestVideoStreams(_ videoStreams: AVSVideoStreams, conversationId: AVSIdentifier) {
         requestVideoStreamsArguments = (conversationId, videoStreams)
+    }
+
+    public func notify(isProcessingNotifications isProcessing: Bool) {
+        // do nothing
     }
 
     var mockSetMLSConferenceInfo: ((AVSIdentifier, MLSConferenceInfo) -> Void)?
@@ -165,7 +169,7 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
 
     func setMockCallState(_ state: CallState, conversationId: AVSIdentifier, callerId: AVSIdentifier, isVideo: Bool) {
         clearSnapshot(conversationId: conversationId)
-        createSnapshot(callState: state, members: [], callStarter: callerId, video: isVideo, for: conversationId, isConferenceCall: false)
+        createSnapshot(callState: state, members: [], callStarter: callerId, video: isVideo, for: conversationId, conversationType: .oneToOne)
     }
 
     func removeMockActiveCalls() {
@@ -181,7 +185,7 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
 
     func setMockCallInitiator(callerId: AVSIdentifier, conversationId: AVSIdentifier) {
         clearSnapshot(conversationId: conversationId)
-        createSnapshot(callState: .established, members: [], callStarter: callerId, video: false, for: conversationId, isConferenceCall: false)
+        createSnapshot(callState: .established, members: [], callStarter: callerId, video: false, for: conversationId, conversationType: .oneToOne)
     }
 
 }

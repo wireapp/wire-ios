@@ -20,16 +20,22 @@ import Foundation
 import XCTest
 @testable import Wire
 
-class ActiveCallRouterTests: XCTestCase {
+final class ActiveCallRouterTests: ZMSnapshotTestCase {
 
     var sut: ActiveCallRouter!
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
-        sut = ActiveCallRouter(rootviewController: RootViewController())
+        userSession = UserSessionMock()
+        sut = ActiveCallRouter(
+            rootviewController: RootViewController(),
+            userSession: userSession
+        )
     }
 
     override func tearDown() {
+        userSession = nil
         sut = nil
         super.tearDown()
     }
@@ -40,7 +46,7 @@ class ActiveCallRouterTests: XCTestCase {
         var executed = false
 
         // when
-        sut.executeOrSchedulePostCallAction {
+        sut.executeOrSchedulePostCallAction { _ in
             executed = true
         }
 
@@ -55,20 +61,20 @@ class ActiveCallRouterTests: XCTestCase {
         var executed = false
 
         // when
-        sut.executeOrSchedulePostCallAction {
+        sut.executeOrSchedulePostCallAction { _ in
             executed = true
         }
 
         // then
         XCTAssertNotNil(sut.scheduledPostCallAction)
         XCTAssertFalse(executed)
-        sut.scheduledPostCallAction?()
+        sut.scheduledPostCallAction?({ })
         XCTAssertTrue(executed)
     }
 
     func testThat_ItSetIsActiveCallShown_ToFalse_When_RestoringCallFromTopOverlay() {
         // given
-        let conversation = ((MockConversation.oneOnOneConversation() as Any) as! ZMConversation)
+        let conversation = createOneOnOneConversation()
         let voiceChannel = MockVoiceChannel(conversation: conversation)
         let mockSelfClient = MockUserClient()
         mockSelfClient.remoteIdentifier = "selfClient123"
@@ -81,6 +87,27 @@ class ActiveCallRouterTests: XCTestCase {
 
         // then
         XCTAssertFalse(sut.isActiveCallShown)
+    }
+
+    private func createOneOnOneConversation() -> ZMConversation {
+
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
+        otherUser.remoteIdentifier = UUID()
+        otherUser.name = "Bruno"
+
+        let mockConversation = ZMConversation.insertNewObject(in: uiMOC)
+        mockConversation.messageProtocol = .proteus
+        mockConversation.addParticipantAndUpdateConversationState(user: selfUser)
+        mockConversation.conversationType = .oneOnOne
+        mockConversation.remoteIdentifier = UUID.create()
+        mockConversation.oneOnOneUser = otherUser
+
+        let connection = ZMConnection.insertNewObject(in: uiMOC)
+        connection.to = otherUser
+        connection.status = .accepted
+
+        return mockConversation
     }
 
 }

@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireSyncEngine
 
 fileprivate extension String {
     var isValidQuery: Bool {
@@ -35,6 +36,11 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
     let selectedParticipants: [UserType]
     let conversation: GroupParticipantsDetailConversation
     var participantsDidChange: (() -> Void)?
+
+    let userSession: UserSession
+    let isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol
+
+    private(set) var userStatuses = [UUID: UserStatus]()
 
     fileprivate var token: NSObjectProtocol?
 
@@ -56,12 +62,16 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
     var admins = [UserType]()
     var members = [UserType]()
 
-    init(selectedParticipants: [UserType],
-         conversation: GroupParticipantsDetailConversation) {
+    init(
+        selectedParticipants: [UserType],
+        conversation: GroupParticipantsDetailConversation,
+        userSession: UserSession
+    ) {
         internalParticipants = conversation.sortedOtherParticipants
         self.conversation = conversation
         self.selectedParticipants = selectedParticipants.sorted { $0.name < $1.name }
-
+        self.userSession = userSession
+        isUserE2EICertifiedUseCase = userSession.isUserE2EICertifiedUseCase
         super.init()
 
         if let conversation = conversation as? ZMConversation {
@@ -69,6 +79,7 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
         }
 
         computeVisibleParticipants()
+        updateUserE2EICertificationStatuses()
     }
 
     private func computeVisibleParticipants() {
@@ -80,8 +91,8 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
     }
 
     private func computeParticipantGroups() {
-        admins = participants.filter({$0.isGroupAdmin(in: conversation)})
-        members = participants.filter({!$0.isGroupAdmin(in: conversation)})
+        admins = participants.filter({ $0.isGroupAdmin(in: conversation) })
+        members = participants.filter({ !$0.isGroupAdmin(in: conversation) })
     }
 
     private func filterPredicate(for query: String) -> NSPredicate {
@@ -109,7 +120,7 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
     func searchHeaderViewController(
         _ searchHeaderViewController: SearchHeaderViewController,
         updatedSearchQuery query: String
-        ) {
+    ) {
         filterQuery = query
         computeVisibleParticipants()
     }
@@ -118,4 +129,26 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
         // no-op
     }
 
+    // MARK: - UserStatuses
+
+    private func updateUserE2EICertificationStatuses() {
+        Task { @MainActor in
+            let participants = conversation.sortedOtherParticipants
+            for user in participants {
+                guard let user = user as? ZMUser else { continue }
+                guard let conversation = conversation as? ZMConversation else { continue }
+                do {
+                    let isE2EICertified = try await isUserE2EICertifiedUseCase.invoke(conversation: conversation, user: user)
+                    if userStatuses.keys.contains(user.remoteIdentifier) {
+                        userStatuses[user.remoteIdentifier]?.isE2EICertified = isE2EICertified
+                    } else {
+                        userStatuses[user.remoteIdentifier] = .init(user: user, isE2EICertified: isE2EICertified)
+                    }
+                } catch {
+                    WireLogger.e2ei.error("Failed to get verification status for user: \(error)")
+                }
+            }
+            participantsDidChange?()
+        }
+    }
 }

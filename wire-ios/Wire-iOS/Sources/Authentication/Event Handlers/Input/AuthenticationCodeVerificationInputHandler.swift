@@ -22,7 +22,7 @@ import Foundation
  * Handles the input of the 6-digit verification code.
  */
 
-class AuthenticationCodeVerificationInputHandler: AuthenticationEventHandler {
+final class AuthenticationCodeVerificationInputHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

@@ -65,7 +65,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 {
     NSDictionary *dictionary = [transportData asDictionary];
     
-    NSUUID *uuid = [[dictionary stringForKey:@"id"] UUID];
+    NSUUID *uuid = [NSUUID uuidWithTransportString:[dictionary stringForKey:@"id"]];
     NSArray *payloadArray = [dictionary arrayForKey:@"payload"];
     BOOL transient = [dictionary optionalNumberForKey:@"transient"].boolValue;
     
@@ -175,7 +175,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    [self responseForPayload:payload path:@"/login" method:ZMMethodPOST apiVersion:0]; // this will simulate the user logging in
+    [self responseForPayload:payload path:@"/login" method:ZMTransportRequestMethodPost apiVersion:0]; // this will simulate the user logging in
     WaitForAllGroupsToBeEmpty(0.5);
     
     [self.sut.mockedTransportSession configurePushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
@@ -219,7 +219,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 
 - (ZMTransportResponse *)responseForImageData:(NSData *)imageData contentDisposition:(NSDictionary *)contentDisposition path:(NSString *)path apiVersion:(APIVersion)apiVersion;
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Got an image response"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Got an image response"];
     
     __block ZMTransportResponse *response;
     ZMTransportRequestGenerator postGenerator = ^ZMTransportRequest*(void) {
@@ -247,7 +247,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 
 - (ZMTransportResponse *)responseForFileData:(NSData *)fileData path:(NSString *)path metadata:(NSData *)metadata contentType:(NSString *)contentType apiVersion:(APIVersion)apiVersion;
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Got a file upload response"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Got a file upload response"];
     __block ZMTransportResponse *response;
     
     ZMTransportRequestGenerator generator = ^ZMTransportRequest *{
@@ -292,7 +292,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 
 - (ZMTransportResponse *)responseForImageData:(NSData *)imageData metaData:(NSData *)metaData imageMediaType:(NSString *)imageMediaType path:(NSString *)path apiVersion:(APIVersion)apiVersion;
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Got an image response"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Got an image response"];
     
     __block ZMTransportResponse *response;
     ZMTransportRequestGenerator postGenerator = ^ZMTransportRequest*(void) {
@@ -314,7 +314,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 
 - (ZMTransportResponse *)responseForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(APIVersion)apiVersion
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Got a response"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Got a response"];
     
     ZMTransportSession *mockedTransportSession = self.sut.mockedTransportSession;
     
@@ -337,7 +337,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 
 - (ZMTransportResponse *)responseForProtobufData:(NSData *)data path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(APIVersion)apiVersion
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Got a response"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Got a response"];
     
     ZMTransportSession *mockedTransportSession = self.sut.mockedTransportSession;
     
@@ -361,9 +361,9 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 - (ZMTransportRequestGenerator)createGeneratorForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method apiVersion:(APIVersion)apiVersion handler:(ZMCompletionHandler *)handler
 {
     switch (method) {
-        case ZMMethodGET:
-        case ZMMethodDELETE:
-        case ZMMethodHEAD:
+        case ZMTransportRequestMethodGet:
+        case ZMTransportRequestMethodDelete:
+        case ZMTransportRequestMethodHead:
             payload = nil;
             break;
         default:
@@ -392,7 +392,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:(id) data];
     FHAssertTrue(fr, [dict isKindOfClass:[NSDictionary class]]);
-    NSArray *keys = @[@"accent_id", @"id", @"name", @"picture", @"handle", @"assets"];
+    NSArray *keys = @[@"accent_id", @"id", @"name", @"picture", @"handle", @"assets", @"supported_protocols"];
     if (isSelf) {
         keys = [keys arrayByAddingObjectsFromArray:@[@"email", @"phone"]];
     }

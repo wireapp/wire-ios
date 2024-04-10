@@ -21,24 +21,27 @@ import Foundation
 
 final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
 
-    func testThatItCreatesPayloadForZMClearedMessages() {
+    func testThatItCreatesPayloadForZMClearedMessages() async {
+        var message: ZMClientMessage?
 
-        self.syncMOC.performGroupedBlockAndWait {
-            // given
+        await self.syncMOC.perform {
             self.syncConversation.clearedTimeStamp = Date()
             self.syncConversation.remoteIdentifier = UUID()
-            guard let message = try? ZMConversation.updateSelfConversation(withClearedOf: self.syncConversation) else { return XCTFail() }
+            message = try? ZMConversation.updateSelfConversation(withClearedOf: self.syncConversation)
 
-            // when
-            guard let payloadAndStrategy = message.encryptForTransport() else { return XCTFail() }
+        }
 
-            // then
-            switch payloadAndStrategy.strategy {
-            case .doNotIgnoreAnyMissingClient:
-                break
-            default:
-                XCTFail()
-            }
+        // given
+        guard let message else { return XCTFail("missing message") }
+        // when
+        guard let payloadAndStrategy = await message.encryptForTransport() else { return XCTFail("encryptForTransport failed") }
+
+        // then
+        switch payloadAndStrategy.strategy {
+        case .doNotIgnoreAnyMissingClient:
+            break
+        default:
+            XCTFail()
         }
     }
 

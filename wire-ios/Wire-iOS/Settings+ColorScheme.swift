@@ -73,7 +73,11 @@ enum SettingsColorScheme: Int, CaseIterable {
     }
 
     var displayString: String {
-        return "dark_theme.option.\(keyValueString)".localized
+        switch self {
+        case .dark: return L10n.Localizable.DarkTheme.Option.dark
+        case .light: return L10n.Localizable.DarkTheme.Option.light
+        case .system: return L10n.Localizable.DarkTheme.Option.system
+        }
     }
 }
 

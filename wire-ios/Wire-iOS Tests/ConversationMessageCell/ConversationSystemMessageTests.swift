@@ -20,11 +20,11 @@ import XCTest
 import SnapshotTesting
 @testable import Wire
 
-final class ConversationSystemMessageTests: BaseSnapshotTestCase {
+final class ConversationSystemMessageTests: ConversationMessageSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        SelfUser.provider = SelfProvider(selfUser: MockUserType.createSelfUser(name: "Alice"))
+        SelfUser.provider = SelfProvider(providedSelfUser: MockUserType.createSelfUser(name: "Alice"))
     }
 
     override func tearDown() {
@@ -122,7 +122,8 @@ final class ConversationSystemMessageTests: BaseSnapshotTestCase {
     }
 
     func testSessionReset_Self() {
-        let message = MockMessageFactory.systemMessage(with: .sessionReset, users: 1, clients: 1, sender: SelfUser.current)!
+        let user = SelfUser.provider?.providedSelfUser
+        let message = MockMessageFactory.systemMessage(with: .sessionReset, users: 1, clients: 1, sender: user)!
 
         verify(message: message)
     }
@@ -207,19 +208,6 @@ final class ConversationSystemMessageTests: BaseSnapshotTestCase {
 
     func testNewClient_manyUsers_manyClients() {
         let message = MockMessageFactory.systemMessage(with: .newClient, users: 3, clients: 4)!
-
-        verify(message: message)
-    }
-
-    func testUsingNewDevice() {
-        let message = MockMessageFactory.systemMessage(with: .usingNewDevice, users: 1, clients: 1)!
-        message.backingSystemMessageData?.userTypes = Set<AnyHashable>([MockUserType.createSelfUser(name: "")])
-
-        verify(message: message)
-    }
-
-    func testReactivatedDevice() {
-        let message = MockMessageFactory.systemMessage(with: .reactivatedDevice)!
 
         verify(message: message)
     }
@@ -361,7 +349,8 @@ final class ConversationSystemMessageTests: BaseSnapshotTestCase {
     }
 
     func testSelfDomainStoppedFederatingWithOtherDomain() {
-        let selfDomain = SelfUser.current.domain ?? ""
+        let selfUser = SelfUser.provider?.providedSelfUser
+        let selfDomain = selfUser?.domain ?? ""
         let message = MockMessageFactory.systemMessage(with: .domainsStoppedFederating,
                                                        users: 1,
                                                        clients: 0,

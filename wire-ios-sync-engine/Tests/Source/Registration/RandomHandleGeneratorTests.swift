@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 @testable import WireSyncEngine
 
-class RandomHandleGeneratorTests: XCTestCase {
+final class RandomHandleGeneratorTests: XCTestCase {
 
     func testNormalizationOfString() {
         XCTAssertEqual("Maria LaRochelle".normalizedForUserHandle, "marialarochelle")
@@ -62,7 +62,7 @@ class RandomHandleGeneratorTests: XCTestCase {
 
         // then with digits 1 to 9
         (1..<10).forEach {
-            XCTAssertEqual(handles.popLast(), expectedNormalized.truncated(at: 20)+"\($0)")
+            XCTAssertEqual(handles.popLast(), expectedNormalized.truncated(at: 20) + "\($0)")
         }
 
         // then 4 with two digits
@@ -87,7 +87,7 @@ class RandomHandleGeneratorTests: XCTestCase {
         }
 
         // now random words
-        XCTAssertGreaterThan(handles.count, variations*4)
+        XCTAssertGreaterThan(handles.count, variations * 4)
         handles.forEach {
             XCTAssertFalse($0.hasPrefix(expectedNormalized))
         }

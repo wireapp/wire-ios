@@ -71,7 +71,7 @@
     NSString *phoneNumber = @"+7123456789";
     [self.authenticationStatus prepareForRequestingPhoneVerificationCodeForLogin:phoneNumber];
 
-    ZMTransportRequest *expectedRequest = [[ZMTransportRequest alloc] initWithPath:@"/login/send" method:ZMMethodPOST payload:@{@"phone": phoneNumber} authentication:ZMTransportRequestAuthNone apiVersion:0];
+    ZMTransportRequest *expectedRequest = [[ZMTransportRequest alloc] initWithPath:@"/login/send" method:ZMTransportRequestMethodPost payload:@{@"phone": phoneNumber} authentication:ZMTransportRequestAuthNone apiVersion:0];
     
     ZMTransportRequest *request = [self.sut nextRequestForAPIVersion:APIVersionV0];
     XCTAssertEqualObjects(request, expectedRequest);
@@ -84,7 +84,7 @@
     [self.authenticationStatus prepareForRequestingEmailVerificationCodeForLogin:email];
 
     ZMTransportRequest *expectedRequest = [[ZMTransportRequest alloc] initWithPath:@"/verification-code/send"
-                                                                            method:ZMMethodPOST
+                                                                            method:ZMTransportRequestMethodPost
                                                                            payload:@{@"email": email, @"action": loginAction}
                                                                     authentication:ZMTransportRequestAuthNone
                                                                         apiVersion:APIVersionV0];

@@ -21,16 +21,16 @@ import XCTest
 import SnapshotTesting
 @testable import Wire
 
-final class ScreenCurtainTests: XCTestCase, ScreenCurtainDelegate {
+final class ScreenCurtainTests: XCTestCase {
 
     var sut: ScreenCurtain!
-    var shouldShowScreenCurtain = false
+    var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
         sut = ScreenCurtain()
-        sut.delegate = self
-        shouldShowScreenCurtain = false
+        userSession = UserSessionMock()
+        sut.userSession = userSession
     }
 
     override func tearDown() {
@@ -42,7 +42,7 @@ final class ScreenCurtainTests: XCTestCase, ScreenCurtainDelegate {
 
     func test_ItIsVisible_IfNeeded() {
         // Given
-        shouldShowScreenCurtain = true
+        userSession.requiresScreenCurtain = true
 
         // When
         sut.applicationWillResignActive()
@@ -53,7 +53,7 @@ final class ScreenCurtainTests: XCTestCase, ScreenCurtainDelegate {
 
     func test_ItIsHidden_IfNeeded() {
         // Given
-        shouldShowScreenCurtain = false
+        userSession.requiresScreenCurtain = false
 
         // When
         sut.applicationWillResignActive()
@@ -64,7 +64,7 @@ final class ScreenCurtainTests: XCTestCase, ScreenCurtainDelegate {
 
     func test_ItIsHidden_IfNoDelegate() {
         // Given
-        sut.delegate = nil
+        sut.userSession = nil
 
         // When
         sut.applicationWillResignActive()

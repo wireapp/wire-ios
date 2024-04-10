@@ -91,7 +91,7 @@ public class ZMClientMessage: ZMOTRMessage {
     }
 
     public override func expire() {
-        WireLogger.messaging.warn("expiring client message \(underlyingMessage?.safeForLoggingDescription)")
+        WireLogger.messaging.warn("expiring client message " + String(describing: underlyingMessage?.safeForLoggingDescription))
 
         guard
             let genericMessage = self.underlyingMessage,
@@ -201,16 +201,12 @@ public class ZMClientMessage: ZMOTRMessage {
         guard
             let textMessageData = self.textMessageData,
             textMessageData.linkPreview != nil,
-            let managedObjectContext = self.managedObjectContext else {
-                return false
+            let cache = managedObjectContext?.zm_fileAssetCache
+        else {
+            return false
         }
-        // processed or downloaded
-        let hasMedium = managedObjectContext.zm_fileAssetCache.hasDataOnDisk(self, format: ZMImageFormat.medium, encrypted: false)
 
-        // original
-        let hasOriginal = managedObjectContext.zm_fileAssetCache.hasDataOnDisk(self, format: ZMImageFormat.original, encrypted: false)
-
-        return hasMedium || hasOriginal
+        return cache.hasImageData(for: self)
     }
 }
 

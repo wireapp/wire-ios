@@ -18,38 +18,73 @@
 
 import Foundation
 import XCTest
-@testable import WireDataModel
 
-class CoreDataStackTests_Backup: DatabaseBaseTest {
+@testable import WireDataModel
+@testable import WireDataModelSupport
+
+final class CoreDataStackTests_Backup: DatabaseBaseTest {
+
+    private var migrator: MockCoreDataMessagingMigratorProtocol!
+
+    override func setUp() {
+        super.setUp()
+
+        migrator = MockCoreDataMessagingMigratorProtocol()
+        migrator.requiresMigrationAtToVersion_MockMethod = { _, _ in
+            return false
+        }
+        migrator.migrateStoreAtToVersion_MockMethod = { _, _ in }
+    }
 
     override func tearDown() {
+        migrator = nil
+
         CoreDataStack.clearBackupDirectory(dispatchGroup: dispatchGroup)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
         XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.backupsDirectory.path))
         XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.importsDirectory.path))
+
         super.tearDown()
     }
 
-    func createBackup(accountIdentifier: UUID, databaseKey: VolatileData? = nil, file: StaticString = #file, line: UInt = #line) -> Result<URL>? {
-        var result: Result<URL>?
-        CoreDataStack.backupLocalStorage(accountIdentifier: accountIdentifier,
-                                         clientIdentifier: name,
-                                         applicationContainer: applicationContainer,
-                                         dispatchGroup: self.dispatchGroup,
-                                         databaseKey: databaseKey) {
+    func createBackup(
+        accountIdentifier: UUID,
+        databaseKey: VolatileData? = nil,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) -> Result<URL, Error> {
+        var result: Result<URL, Error>?
+
+        CoreDataStack.backupLocalStorage(
+            accountIdentifier: accountIdentifier,
+            clientIdentifier: name,
+            applicationContainer: DatabaseBaseTest.applicationContainer,
+            dispatchGroup: self.dispatchGroup,
+            databaseKey: databaseKey
+        ) {
             result = $0.map { $0.url }
         }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
-        return result
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1), file: file, line: line)
+
+        return result ?? .failure(CoreDataStackTests.timedOut)
     }
 
-    func importBackup(accountIdentifier: UUID, backup: URL, file: StaticString = #file, line: UInt = #line) -> Result<URL>? {
+    func importBackup(
+        accountIdentifier: UUID,
+        backup: URL,
+        migrator: CoreDataMessagingMigratorProtocol,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) -> Result<URL, Error>? {
 
-        var result: Result<URL>?
-        CoreDataStack.importLocalStorage(accountIdentifier: accountIdentifier,
-                                         from: backup,
-                                         applicationContainer: applicationContainer,
-                                         dispatchGroup: dispatchGroup) {
+        var result: Result<URL, Error>?
+        CoreDataStack.importLocalStorage(
+            accountIdentifier: accountIdentifier,
+            from: backup,
+            applicationContainer: DatabaseBaseTest.applicationContainer,
+            dispatchGroup: dispatchGroup,
+            messagingMigrator: migrator
+        ) {
             result = $0
         }
 
@@ -57,36 +92,34 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         return result
     }
 
-    func createBackupAndDeleteOriginalAccount(accountIdentifier: UUID, file: StaticString = #file, line: UInt = #line) -> URL? {
+    func createBackupAndDeleteOriginalAccount(accountIdentifier: UUID, file: StaticString = #file, line: UInt = #line) throws -> URL {
+
+        defer { clearStorageFolder() }
+
         // create populated account database
         let directory = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
         _ = ZMConversation.insertGroupConversation(moc: directory.viewContext, participants: [ZMUser]())
         directory.viewContext.saveOrRollback()
 
-        guard let result = createBackup(accountIdentifier: accountIdentifier) else { return nil }
-        guard case .success(let url) = result else { return nil }
-
-        // Delete account
-        clearStorageFolder()
-
-        return url
+        let backup = createBackup(accountIdentifier: accountIdentifier)
+        return try backup.get()
     }
 
     // MARK: - Export
 
     func testThatItFailsWithWrongAccountIdentifier() throws {
         // given
-        let uuid = UUID()
-        _ = createStorageStackAndWaitForCompletion(userID: uuid)
+        _ = createStorageStackAndWaitForCompletion(userID: UUID())
 
         // when
-        guard let result = createBackup(accountIdentifier: UUID()) else { return XCTFail() }
+        let result = createBackup(accountIdentifier: UUID())
 
-        guard case let .failure(error) = result else { return XCTFail() }
-
-        switch error as? CoreDataStack.BackupError {
-        case .failedToRead?: break
-        default: XCTFail("unexpected error type")
+        // then
+        XCTAssertThrowsError(try result.get()) { error in
+            switch error as? CoreDataStack.BackupError {
+            case .failedToRead: break
+            default: XCTFail("unexpected error type")
+            }
         }
     }
 
@@ -96,10 +129,10 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         _ = createStorageStackAndWaitForCompletion(userID: uuid)
 
         // when
-        guard let result = createBackup(accountIdentifier: uuid) else { return XCTFail() }
+        let result = createBackup(accountIdentifier: uuid)
 
         // then
-        guard case let .success(url) = result else { return XCTFail() }
+        let url = try result.get()
 
         let fm = FileManager.default
         XCTAssertTrue(fm.fileExists(atPath: url.path))
@@ -120,7 +153,7 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         try Data().write(to: CoreDataStack.backupsDirectory)
 
         // when
-        guard let result = createBackup(accountIdentifier: uuid) else { return XCTFail() }
+        let result = createBackup(accountIdentifier: uuid)
 
         guard case let .failure(error) = result else { return XCTFail() }
 
@@ -140,29 +173,19 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         directory.viewContext.saveOrRollback()
 
         // when
-        guard let result = createBackup(
-            accountIdentifier: uuid,
-            databaseKey: directory.viewContext.databaseKey
-        ) else {
-            return XCTFail()
-        }
+        let result = createBackup(accountIdentifier: uuid, databaseKey: directory.viewContext.databaseKey)
         directory.viewContext.saveOrRollback()
 
         // then
-        switch result {
-        case let .success(backup):
-
-            let model = CoreDataStack.loadMessagingModel()
-            let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
-            let storeFile = backup.appendingPathComponent("data").appendingStoreFile()
-            let store = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: storeFile, options: [:])
-            XCTAssert(FileManager.default.fileExists(atPath: storeFile.path))
-            let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-            context.persistentStoreCoordinator = coordinator
-            XCTAssertFalse(context.encryptMessagesAtRest)
-        case .failure:
-            XCTFail()
-        }
+        let backup = try result.get()
+        let model = CoreDataStack.loadMessagingModel()
+        let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+        let storeFile = backup.appendingPathComponent("data").appendingStoreFile()
+        _ = try coordinator.addPersistentStore(type: .sqlite, configuration: nil, at: storeFile, options: [:])
+        XCTAssert(FileManager.default.fileExists(atPath: storeFile.path))
+        let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+        context.persistentStoreCoordinator = coordinator
+        XCTAssertFalse(context.encryptMessagesAtRest)
     }
 
     func testThatItFailsWhenEARIsEnabledAndEncryptionKeysAreNil() throws {
@@ -174,23 +197,25 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         directory.viewContext.saveOrRollback()
 
         // when
-        guard let result = createBackup(
-            accountIdentifier: uuid,
-            databaseKey: nil
-        ) else {
-            return XCTFail()
-        }
-
-        guard case let .failure(error) = result else { return XCTFail() }
+        let result = createBackup(accountIdentifier: uuid, databaseKey: nil)
 
         // then
-        switch error as? CoreDataStack.BackupError {
-        case .failedToWrite(let failureError):
-            switch failureError as? CoreDataStack.BackupError {
-            case .missingEAREncryptionKey: break
-            default: XCTFail("unexpected error type")
-        }
-        default: XCTFail("unexpected error type")
+        XCTAssertThrowsError(try result.get()) { error in
+
+            switch error as? CoreDataStack.BackupError {
+            case .failedToWrite(let failureError):
+
+                switch failureError as? CoreDataStack.BackupError {
+                case .missingEAREncryptionKey:
+                    break
+
+                default:
+                    XCTFail("unexpected error type")
+                }
+
+            default:
+                XCTFail("unexpected error type")
+            }
         }
     }
 
@@ -202,7 +227,7 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         directory.viewContext.saveOrRollback()
 
         // when
-        guard let result = createBackup(accountIdentifier: uuid) else { return XCTFail() }
+        let result = createBackup(accountIdentifier: uuid)
 
         // then
         guard case .success = result else { return XCTFail() }
@@ -218,7 +243,7 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         directory.viewContext.saveOrRollback()
 
         // when
-        guard let result = createBackup(accountIdentifier: uuid) else { return XCTFail() }
+        let result = createBackup(accountIdentifier: uuid)
 
         // then
         guard case .success = result else { return XCTFail() }
@@ -229,13 +254,17 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
 
     // MARK: - Import
 
-    func testThatItCanOpenAnImportedBackup() {
+    func testThatItCanOpenAnImportedBackup() throws {
         // given
         let uuid = UUID()
-        guard let backup = createBackupAndDeleteOriginalAccount(accountIdentifier: uuid) else { return XCTFail() }
+        let backup = try createBackupAndDeleteOriginalAccount(accountIdentifier: uuid)
 
         // when
-        guard let result = importBackup(accountIdentifier: uuid, backup: backup) else { return XCTFail() }
+        guard let result = importBackup(
+            accountIdentifier: uuid,
+            backup: backup,
+            migrator: migrator
+        ) else { return XCTFail() }
 
         // then
         guard case .success = result else { return XCTFail() }
@@ -244,7 +273,7 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         XCTAssertEqual(try directory.viewContext.count(for: fetchConversations), 1)
     }
 
-    func testThatMetadataIsDeletedWhenImportingBackup() {
+    func testThatMetadataIsDeletedWhenImportingBackup() throws {
         // given
         let uuid = UUID()
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
@@ -256,13 +285,17 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         directory.viewContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.lastUpdateEventID.rawValue)
         directory.viewContext.forceSaveOrRollback()
 
-        guard let backup = createBackup(accountIdentifier: uuid)?.value else { return XCTFail() }
+        let backup = try createBackup(accountIdentifier: uuid).get()
 
         // Delete account
         clearStorageFolder()
 
         // when
-        guard let result = importBackup(accountIdentifier: uuid, backup: backup) else { return XCTFail() }
+        guard let result = importBackup(
+            accountIdentifier: uuid,
+            backup: backup,
+            migrator: migrator
+        ) else { return XCTFail() }
         guard case .success = result else { return XCTFail() }
         let importedDirectory = createStorageStackAndWaitForCompletion(userID: uuid)
 
@@ -273,14 +306,18 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: PersistentMetadataKey.lastUpdateEventID.rawValue))
     }
 
-    func testThatItFailsWhenImportingBackupIntoWrongAccount() {
+    func testThatItFailsWhenImportingBackupIntoWrongAccount() throws {
         // given
         let uuid = UUID()
-        guard let backup = createBackupAndDeleteOriginalAccount(accountIdentifier: uuid) else { return XCTFail() }
+        let backup = try createBackupAndDeleteOriginalAccount(accountIdentifier: uuid)
 
         // when
         let differentUUID = UUID()
-        guard let result = importBackup(accountIdentifier: differentUUID, backup: backup) else { return XCTFail() }
+        guard let result = importBackup(
+            accountIdentifier: differentUUID,
+            backup: backup,
+            migrator: migrator
+        ) else { return XCTFail() }
 
         // then
         guard case let .failure(error) = result else { return XCTFail() }
@@ -293,10 +330,14 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
     func testThatItFailsWhenImportingNonExistantBackup() {
         // given
         let uuid = UUID()
-        let backup = applicationContainer.appendingPathComponent("non-existing-backup")
+        let backup = DatabaseBaseTest.applicationContainer.appendingPathComponent("non-existing-backup")
 
         // when
-        guard let result = importBackup(accountIdentifier: uuid, backup: backup) else { return XCTFail() }
+        guard let result = importBackup(
+            accountIdentifier: uuid,
+            backup: backup,
+            migrator: migrator
+        ) else { return XCTFail() }
 
         // then
         guard case let .failure(error) = result else { return XCTFail() }
@@ -304,5 +345,26 @@ class CoreDataStackTests_Backup: DatabaseBaseTest {
         case .failedToCopy?: break
         default: XCTFail()
         }
+    }
+
+    func testThatItCallsMigratorDuringImport() throws {
+        // given
+        let accountIdentifier = UUID()
+        let backup = try createBackupAndDeleteOriginalAccount(accountIdentifier: accountIdentifier)
+
+        // when
+        guard let result = importBackup(
+            accountIdentifier: accountIdentifier,
+            backup: backup,
+            migrator: migrator
+        ) else { return XCTFail() }
+
+        // then
+        guard case .success = result else { return XCTFail() }
+        let directory = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
+        let fetchConversations = ZMConversation.sortedFetchRequest()
+        XCTAssertEqual(try directory.viewContext.count(for: fetchConversations), 1)
+
+        XCTAssertEqual(migrator.migrateStoreAtToVersion_Invocations.count, 1)
     }
 }

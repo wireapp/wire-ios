@@ -34,6 +34,7 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
             domain: domain,
             userId: userId
         )
+        handler = ClaimMLSKeyPackageActionHandler(context: syncMOC)
     }
 
     // MARK: - Request generation
@@ -47,7 +48,7 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
             ),
             expectedPath: "/v5/mls/key-packages/claim/\(domain)/\(userId.transportString())",
             expectedPayload: ["skip_own": excludedSelfCliendId],
-            expectedMethod: .methodPOST,
+            expectedMethod: .post,
             apiVersion: .v5
         )
     }
@@ -93,6 +94,28 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
         // Then
         XCTAssertEqual(receivedKeyPackages?.count, 1)
         XCTAssertEqual(receivedKeyPackages?.first, keyPackage)
+    }
+
+    func test_itHandlesEmptyKeyPackagesAsFailure() {
+        test_itHandlesFailure(
+            status: 200,
+            payload: transportData(for: Payload(keyPackages: [])),
+            expectedError: .emptyKeyPackages
+        )
+    }
+
+    func test_itHandlesEmptyKeyPackagesAsSuccessIfSelfUser() {
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        action = ClaimMLSKeyPackageAction(
+            domain: selfUser.domain,
+            userId: selfUser.remoteIdentifier
+        )
+
+        test_itHandlesSuccess(
+            status: 200,
+            payload: transportData(for: Payload(keyPackages: []))
+        )
+
     }
 
     func test_itHandlesFailures() {

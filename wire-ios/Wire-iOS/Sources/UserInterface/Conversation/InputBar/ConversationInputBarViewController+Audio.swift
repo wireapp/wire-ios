@@ -39,6 +39,13 @@ extension ConversationInputBarViewController {
             return
         }
 
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+            self.recordAudio()
+        }
+        checker.performAction()
+    }
+
+    private func recordAudio() {
         if displayAudioMessageAlertIfNeeded() {
             return
         }
@@ -73,7 +80,7 @@ extension ConversationInputBarViewController {
 
         switch sender.state {
         case .began:
-            createAudioViewController()
+            createAudioViewController(userSession: userSession)
             showAudioRecordViewControllerIfGrantedAccess()
         case .changed:
             audioRecordViewController?.updateWithChangedRecognizer(sender)
@@ -92,10 +99,10 @@ extension ConversationInputBarViewController {
         }
     }
 
-    func createAudioViewController(audioRecorder: AudioRecorderType? = nil) {
+    func createAudioViewController(audioRecorder: AudioRecorderType? = nil, userSession: UserSession) {
         removeAudioViewController()
 
-        let audioRecordViewController = AudioRecordViewController(audioRecorder: audioRecorder)
+        let audioRecordViewController = AudioRecordViewController(audioRecorder: audioRecorder, userSession: userSession)
         audioRecordViewController.view.translatesAutoresizingMaskIntoConstraints = false
         audioRecordViewController.delegate = self
 
@@ -109,7 +116,7 @@ extension ConversationInputBarViewController {
         audioRecordViewContainer.fitIn(view: inputBar)
         audioRecordViewContainer.addSubview(audioRecordViewController.view)
 
-        let recordButtonFrame = inputBar.convert(audioButton.bounds, from: audioButton)
+        _ = inputBar.convert(audioButton.bounds, from: audioButton)
 
         NSLayoutConstraint.activate([
             audioRecordViewController.view.trailingAnchor.constraint(equalTo: audioRecordViewContainer.trailingAnchor),
@@ -207,9 +214,12 @@ extension ConversationInputBarViewController: AudioRecordViewControllerDelegate 
 
     func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType) {
 
-        uploadFile(at: recordingURL as URL)
+        let checker = E2EIPrivacyWarningChecker(conversation: self.conversation) { [weak self] in
+            self?.uploadFile(at: recordingURL as URL)
 
-        self.hideAudioRecordViewController()
+            self?.hideAudioRecordViewController()
+        }
+        checker.performAction()
     }
 
 }

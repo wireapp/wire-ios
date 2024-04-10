@@ -102,15 +102,18 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
     private var changeObservers: [Any] = []
 
+    let userSession: UserSession
+
     deinit {
         changeObservers.removeAll()
     }
 
-    init(message: ConversationMessage, context: ConversationMessageContext, selected: Bool = false) {
+    init(message: ConversationMessage, context: ConversationMessageContext, selected: Bool = false, userSession: UserSession) {
         self.message = message
         self.context = context
         self.selected = selected
         self.isCollapsed = true
+        self.userSession = userSession
 
         super.init()
 
@@ -241,7 +244,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         let isSenderVisible = self.shouldShowSenderDetails(in: context)
 
         if isBurstTimestampVisible(in: context) {
-            add(description: BurstTimestampSenderMessageCellDescription(message: message, context: context))
+            add(description: BurstTimestampSenderMessageCellDescription(message: message, context: context, accentColor: userSession.selfUser.accentColor))
         }
 
         if isSenderVisible, let sender = message.senderUser, let timestamp = message.formattedReceivedDate() {
@@ -285,11 +288,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func isBurstTimestampVisible(in context: ConversationMessageContext) -> Bool {
-        return context.isTimeIntervalSinceLastMessageSignificant ||  context.isFirstUnreadMessage || context.isFirstMessageOfTheDay
+        return context.isTimeIntervalSinceLastMessageSignificant || context.isFirstUnreadMessage || context.isFirstMessageOfTheDay
     }
 
     func isToolboxVisible(in context: ConversationMessageContext) -> Bool {
-        guard !message.isSystem || message.isPerformedCall || message.isMissedCall else {
+        guard !message.isSystem || message.isMissedCall else {
             return false
         }
 
@@ -408,7 +411,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 }
 
-extension ConversationMessageSectionController: ZMUserObserver {
+extension ConversationMessageSectionController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: self.message)
     }

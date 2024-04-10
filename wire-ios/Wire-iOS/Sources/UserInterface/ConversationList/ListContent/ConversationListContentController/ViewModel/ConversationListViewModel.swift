@@ -93,13 +93,13 @@ final class ConversationListViewModel: NSObject {
                 case .conversations:
                     return nil
                 case .contactRequests:
-                    return "list.section.requests".localized
+                    return L10n.Localizable.List.Section.requests
                 case .contacts:
-                    return "list.section.contacts".localized
+                    return L10n.Localizable.List.Section.contacts
                 case .groups:
-                    return "list.section.groups".localized
+                    return L10n.Localizable.List.Section.groups
                 case .favorites:
-                    return "list.section.favorites".localized
+                    return L10n.Localizable.List.Section.favorites
                 case .folder(label: let label):
                     return label.name
                 }
@@ -266,9 +266,9 @@ final class ConversationListViewModel: NSObject {
 
     private var conversationDirectoryToken: Any?
 
-    private let userSession: UserSessionInterface?
+    private let userSession: UserSession?
 
-    init(userSession: UserSessionInterface? = ZMUserSession.shared()) {
+    init(userSession: UserSession) {
         self.userSession = userSession
 
         super.init()
@@ -351,7 +351,9 @@ final class ConversationListViewModel: NSObject {
         return items[indexPath.item]
     }
 
-    /// TODO: Question: we may have multiple items in folders now. return array of IndexPaths?
+    // swiftlint:disable todo_requires_jira_link
+    // TODO: Question: we may have multiple items in folders now. return array of IndexPaths?
+    // swiftlint:enable todo_requires_jira_link
     func indexPath(for item: ConversationListItem?) -> IndexPath? {
         guard let item = item else { return nil }
 
@@ -674,7 +676,7 @@ final class ConversationListViewModel: NSObject {
               let persistentDirectory = ConversationListViewModel.persistentDirectory,
               let directoryURL = URL.directoryURL(persistentDirectory) else { return }
 
-        FileManager.default.createAndProtectDirectory(at: directoryURL)
+        try! FileManager.default.createAndProtectDirectory(at: directoryURL)
 
         do {
             try jsonString.write(to: directoryURL.appendingPathComponent(ConversationListViewModel.persistentFilename), atomically: true, encoding: .utf8)
@@ -701,7 +703,7 @@ final class ConversationListViewModel: NSObject {
     }
 }
 
-// MARK: - ZMUserObserver
+// MARK: - ZMUserObserving
 
 private let log = ZMSLog(tag: "ConversationListViewModel")
 
@@ -715,10 +717,12 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
             // so we prefer to do the simple reload instead.
             update()
         } else {
+            // swiftlint:disable todo_requires_jira_link
             // TODO: When 2 sections are visible and a conversation belongs to both, the lower section's update
             // animation is missing since it started after the top section update animation started. To fix this
             // we should calculate the change set in one batch.
             // TODO: wait for SE update for returning multiple items in changeInfo.updatedLists
+            // swiftlint:enable todo_requires_jira_link
             for updatedList in changeInfo.updatedLists {
                 if let kind = self.kind(of: updatedList) {
                     update(for: kind)

@@ -36,25 +36,29 @@ enum ProfileAction: Equatable {
     case connect
     case cancelConnectionRequest
     case openSelfProfile
+    case duplicateUser
+    case duplicateTeam
 
     /// The text of the button for this action.
     var buttonText: String {
         switch self {
-        case .createGroup: return "profile.create_conversation_button_title".localized
+        case .createGroup: return L10n.Localizable.Profile.createConversationButtonTitle
         case .mute(let isMuted): return isMuted
-            ? "meta.menu.silence.unmute".localized
-            : "meta.menu.silence.mute".localized
-        case .manageNotifications: return "meta.menu.configure_notifications".localized
-        case .archive: return "meta.menu.archive".localized
-        case .deleteContents: return "meta.menu.clear_content".localized
+            ? L10n.Localizable.Meta.Menu.Silence.unmute
+            : L10n.Localizable.Meta.Menu.Silence.mute
+        case .manageNotifications: return L10n.Localizable.Meta.Menu.configureNotifications
+        case .archive: return L10n.Localizable.Meta.Menu.archive
+        case .deleteContents: return L10n.Localizable.Meta.Menu.clearContent
         case .block(let isBlocked): return isBlocked
-            ? "profile.unblock_button_title_action".localized
-            : "profile.block_button_title".localized
-        case .openOneToOne: return "profile.open_conversation_button_title".localized
-        case .removeFromGroup: return "profile.remove_dialog_button_remove".localized
-        case .connect: return "profile.connection_request_dialog.button_connect".localized
-        case .cancelConnectionRequest: return "meta.menu.cancel_connection_request".localized
-        case .openSelfProfile: return "meta.menu.open_self_profile".localized
+            ? L10n.Localizable.Profile.unblockButtonTitle
+            : L10n.Localizable.Profile.blockButtonTitle
+        case .openOneToOne: return L10n.Localizable.Profile.openConversationButtonTitle
+        case .removeFromGroup: return L10n.Localizable.Profile.removeDialogButtonRemove
+        case .connect: return L10n.Localizable.Profile.ConnectionRequestDialog.buttonConnect
+        case .cancelConnectionRequest: return L10n.Localizable.Meta.Menu.cancelConnectionRequest
+        case .openSelfProfile: return L10n.Localizable.Meta.Menu.openSelfProfile
+        case .duplicateUser: return "⚠️ DEBUG - Duplicate User"
+        case .duplicateTeam: return "⚠️ DEBUG - Duplicate Team"
         }
     }
 
@@ -71,6 +75,8 @@ enum ProfileAction: Equatable {
         case .connect: return .plus
         case .cancelConnectionRequest: return .undo
         case .openSelfProfile: return .personalProfile
+        case .duplicateUser: return nil
+        case .duplicateTeam: return nil
         }
     }
 
@@ -173,6 +179,14 @@ final class ProfileActionsFactory {
             // If the viewer is not on the same team as the other user, allow blocking
             if !viewer.canAccessCompanyInformation(of: user) && !user.isWirelessUser {
                 actions.append(.block(isBlocked: false))
+            }
+
+            // only for debug
+            if DeveloperFlag.debugDuplicateObjects.isOn {
+                actions.append(.duplicateUser)
+                if user.isTeamMember {
+                    actions.append(.duplicateTeam)
+                }
             }
 
         case (.profileViewer, .none),

@@ -28,7 +28,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
         switch apiVersion {
         case .v0:
             return nonFederatedRequest(for: action, apiVersion: apiVersion)
-        case .v1, .v2, .v3, .v4, .v5:
+        case .v1, .v2, .v3, .v4, .v5, .v6:
             return federatedRequest(for: action, apiVersion: apiVersion)
         }
     }
@@ -46,7 +46,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
         }
 
         return ZMTransportRequest(path: "/connections",
-                                  method: .methodPOST,
+                                  method: .post,
                                   payload: payloadAsString as ZMTransportData,
                                   apiVersion: apiVersion.rawValue)
 
@@ -55,14 +55,14 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
     func federatedRequest(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
             apiVersion > .v0,
-            let domain  = action.domain.nonEmptyValue ?? BackendInfo.domain
+            let domain = action.domain.nonEmptyValue ?? BackendInfo.domain
         else {
             Logging.network.error("Can't create request for connection request")
             return nil
         }
 
         return ZMTransportRequest(path: "/connections/\(domain)/\(action.userID.transportString())",
-                                  method: .methodPOST,
+                                  method: .post,
                                   payload: nil,
                                   apiVersion: apiVersion.rawValue)
     }

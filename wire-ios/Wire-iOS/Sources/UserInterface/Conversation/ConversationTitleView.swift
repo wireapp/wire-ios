@@ -1,30 +1,30 @@
 //
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import UIKit
 import WireCommonComponents
 import WireDataModel
 
 final class ConversationTitleView: TitleView {
-    var conversation: ConversationLike
+    var conversation: GroupDetailsConversationType
     var interactive: Bool = true
 
-    init(conversation: ConversationLike, interactive: Bool = true) {
+    init(conversation: GroupDetailsConversationType, interactive: Bool = true) {
         self.conversation = conversation
         self.interactive = interactive
         super.init()
@@ -40,14 +40,15 @@ final class ConversationTitleView: TitleView {
         titleColor = SemanticColors.Label.textDefault
         titleFont = .normalSemiboldFont
 
-        var attachments: [NSTextAttachment] = []
+        var leadingIcons: [NSTextAttachment] = []
+        var trailingIcons: [NSTextAttachment] = []
 
         if conversation.isUnderLegalHold {
-            attachments.append(.legalHold())
+            leadingIcons.append(.legalHold())
         }
 
-        if conversation.securityLevel == .secure {
-            attachments.append(.verifiedShield())
+        if conversation.isVerified {
+            trailingIcons.append(verifiedShield)
         }
 
         var subtitle: String?
@@ -57,21 +58,34 @@ final class ConversationTitleView: TitleView {
             subtitle = user.handleDisplayString(withDomain: true)
         }
 
-        super.configure(icons: attachments,
-                        title: conversation.displayNameWithFallback.localized,
-                        subtitle: subtitle,
-                        interactive: self.interactive && conversation.relatedConnectionState != .sent)
+        super.configure(
+            leadingIcons: leadingIcons,
+            title: conversation.displayNameWithFallback,
+            trailingIcons: trailingIcons,
+            subtitle: subtitle,
+            interactive: interactive && conversation.relatedConnectionState != .sent,
+            showInteractiveIcon: true
+        )
 
         setupAccessibility()
+    }
+
+    private var verifiedShield: NSTextAttachment {
+        switch conversation.messageProtocol {
+        case .proteus, .mixed:
+            return .proteusVerifiedShield()
+        case .mls:
+            return .e2eiVerifiedShield()
+        }
     }
 
     private func setupAccessibility() {
         typealias Conversation = L10n.Accessibility.Conversation
 
         var components: [String] = []
-        components.append(conversation.displayNameWithFallback.localized)
+        components.append(conversation.displayNameWithFallback)
 
-        if conversation.securityLevel == .secure {
+        if conversation.isVerified {
             components.append(Conversation.VerifiedIcon.description)
         }
 
@@ -99,17 +113,26 @@ final class ConversationTitleView: TitleView {
 }
 
 extension NSTextAttachment {
-    static func verifiedShield() -> NSTextAttachment {
+
+    fileprivate static func proteusVerifiedShield() -> NSTextAttachment {
         let attachment = NSTextAttachment()
-        let shield = WireStyleKit.imageOfShieldverified
+        let shield = Asset.Images.verifiedShield.image
         attachment.image = shield
         let ratio = shield.size.width / shield.size.height
         let height: CGFloat = 12
-        attachment.bounds = CGRect(x: 0, y: -2, width: height * ratio, height: height)
+        attachment.bounds = CGRect(x: 0, y: 0, width: height * ratio, height: height)
         return attachment
     }
 
-    static func legalHold() -> NSTextAttachment {
+    fileprivate static func e2eiVerifiedShield() -> NSTextAttachment {
+        let attachment = NSTextAttachment()
+        let shield = Asset.Images.certificateValid.image
+        attachment.image = shield
+        attachment.bounds = CGRect(x: 0, y: -2, width: shield.size.width, height: shield.size.height)
+        return attachment
+    }
+
+    fileprivate static func legalHold() -> NSTextAttachment {
         let attachment = NSTextAttachment()
         let legalHold = StyleKitIcon.legalholdactive.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefaultRed)
         attachment.image = legalHold
@@ -123,7 +146,6 @@ extension NSTextAttachment {
 extension ConversationLike {
 
     var displayNameWithFallback: String {
-        return displayName ?? L10n.Localizable.Profile.Details.Title.unavailable
+        displayName ?? L10n.Localizable.Profile.Details.Title.unavailable
     }
-
 }

@@ -32,12 +32,12 @@ final class UserSearchResultsViewControllerTests: BaseSnapshotTestCase {
         super.setUp()
         // self user should be a team member and other participants should be guests, in order to show guest icon in the user cells
         SelfUser.setupMockSelfUser(inTeam: UUID())
-        selfUser = (SelfUser.current as! MockUserType)
+        selfUser = SelfUser.provider?.providedSelfUser as? MockUserType
         otherUser = MockUserType.createDefaultOtherUser()
 
         serviceUser = MockServiceUserType.createServiceUser(name: "ServiceUser")
 
-        XCTAssert(SelfUser.current.isTeamMember, "selfUser should be a team member to generate snapshots with guest icon")
+        XCTAssert(selfUser.isTeamMember, "selfUser should be a team member to generate snapshots with guest icon")
     }
 
     // MARK: - tearDown
@@ -118,17 +118,17 @@ final class UserSearchResultsViewControllerTests: BaseSnapshotTestCase {
         let numberOfUsers = MockUserType.usernames.count
 
         // go to top most
-        for _ in 0..<numberOfUsers+5 {
+        for _ in 0..<numberOfUsers + 5 {
             sut.selectPreviousUser()
         }
 
         // go to bottom most
-        for _ in 0..<numberOfUsers+5 {
+        for _ in 0..<numberOfUsers + 5 {
             sut.selectNextUser()
         }
 
         // go to middle
-        for _ in 0..<numberOfUsers/2 {
+        for _ in 0..<numberOfUsers / 2 {
             sut.selectPreviousUser()
         }
 

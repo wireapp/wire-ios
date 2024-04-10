@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 /**
  * A view controller that displays the details for a user.
@@ -38,9 +39,7 @@ final class ProfileDetailsViewController: UIViewController {
 
     /// The current group admin status.
     var isAdminRole: Bool {
-        didSet {
-            profileHeaderViewController.isAdminRole = self.isAdminRole
-        }
+        didSet { profileHeaderViewController.isAdminRole = isAdminRole }
     }
 
     /**
@@ -59,20 +58,20 @@ final class ProfileDetailsViewController: UIViewController {
 
     // MARK: - Initialization
 
-    /**
-     * Creates a new profile details screen for the specified configuration.
-     * - parameter user: The user whose profile is displayed.
-     * - parameter viewer: The user that views the profile.
-     * - parameter conversation: The conversation where the profile is displayed.
-     * - parameter context: The context of the profile screen.
-     */
+    /// Creates a new profile details screen for the specified configuration.
+    /// - parameter user: The user whose profile is displayed.
+    /// - parameter viewer: The user that views the profile.
+    /// - parameter conversation: The conversation where the profile is displayed.
+    /// - parameter context: The context of the profile screen.
+    init(
+        user: UserType,
+        viewer: UserType,
+        conversation: ZMConversation?,
+        context: ProfileViewControllerContext,
+        userSession: UserSession
+    ) {
 
-    init(user: UserType,
-         viewer: UserType,
-         conversation: ZMConversation?,
-         context: ProfileViewControllerContext) {
-
-        var profileHeaderOptions: ProfileHeaderViewController.Options = [.hideUsername, .hideHandle, .hideTeamName]
+        var profileHeaderOptions: ProfileHeaderViewController.Options = [.hideTeamName]
 
         // The availability status has been moved to the left of the user name, so now we can always hide this status in the user's profile.
         profileHeaderOptions.insert(.hideAvailability)
@@ -82,8 +81,20 @@ final class ProfileDetailsViewController: UIViewController {
         self.viewer = viewer
         self.conversation = conversation
         self.context = context
-        profileHeaderViewController = ProfileHeaderViewController(user: user, viewer: viewer, conversation: conversation, options: profileHeaderOptions)
-        contentController = ProfileDetailsContentController(user: user, viewer: viewer, conversation: conversation)
+        profileHeaderViewController = .init(
+            user: user,
+            viewer: viewer,
+            conversation: conversation,
+            options: profileHeaderOptions,
+            userSession: userSession,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
+        )
+        contentController = .init(
+            user: user,
+            viewer: viewer,
+            conversation: conversation
+        )
 
         super.init(nibName: nil, bundle: nil)
 
@@ -176,5 +187,4 @@ extension ProfileDetailsViewController: ProfileDetailsContentControllerDelegate 
     func profileDetailsContentDidChange() {
         tableView.reloadData()
     }
-
 }

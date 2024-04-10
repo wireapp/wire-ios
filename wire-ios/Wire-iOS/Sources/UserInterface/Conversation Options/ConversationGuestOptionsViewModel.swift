@@ -28,10 +28,10 @@ protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     var isConversationFromSelfTeam: Bool { get }
     var allowGuestsChangedHandler: ((Bool) -> Void)? { get set }
     var guestLinkFeatureStatusChangedHandler: ((GuestLinkFeatureStatus) -> Void)? { get set }
-    func setAllowGuests(_ allowGuests: Bool, completion: @escaping (VoidResult) -> Void)
-    func createConversationLink(completion: @escaping (Result<String>) -> Void)
-    func fetchConversationLink(completion: @escaping (Result<String?>) -> Void)
-    func deleteLink(completion: @escaping (VoidResult) -> Void)
+    func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+    func createConversationLink(completion: @escaping (Result<String, Error>) -> Void)
+    func fetchConversationLink(completion: @escaping (Result<String?, Error>) -> Void)
+    func deleteLink(completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 // sourcery: AutoMockable
@@ -110,7 +110,10 @@ final class ConversationGuestOptionsViewModel {
         state.rows = computeVisibleRows()
     }
 
-    private func computeVisibleRows() -> [CellConfiguration] {/// TODO: copy?
+    // swiftlint:disable todo_requires_jira_link
+    // TODO: copy?
+    // swiftlint:enable todo_requires_jira_link
+    private func computeVisibleRows() -> [CellConfiguration] {
         var rows: [CellConfiguration] = [.allowGuestsToogle(
             get: { [unowned self] in return self.configuration.allowGuests },
             set: { [unowned self] in self.setAllowGuests($0, view: $1) },
@@ -195,7 +198,7 @@ final class ConversationGuestOptionsViewModel {
     /// - Parameter view: the source view which triggers shareLink action
     private func shareLink(view: UIView? = nil) {
         guard let link = link else { return }
-        let message = "guest_room.share.message".localized(args: link)
+        let message = L10n.Localizable.GuestRoom.Share.message(link)
         delegate?.viewModel(self, wantsToShareMessage: message, sourceView: view)
     }
 

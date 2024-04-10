@@ -20,7 +20,7 @@ import Foundation
 import LocalAuthentication
 @testable import WireSyncEngine
 
-class MockUserSessionDelegate: NSObject, UserSessionDelegate {
+final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
 
     var prepareForMigration_Invocations = [Account]()
     func prepareForMigration(
@@ -37,6 +37,8 @@ class MockUserSessionDelegate: NSObject, UserSessionDelegate {
     func clientRegistrationDidSucceed(accountId: UUID) { }
 
     func clientRegistrationDidFail(_ error: NSError, accountId: UUID) { }
+
+    func clientCompletedInitialSync(accountId: UUID) { }
 
     var calleduserDidLogout: (Bool, UUID)?
     func userDidLogout(accountId: UUID) {
@@ -81,8 +83,10 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func testThatDelegateIsCalled_WhenEncryptionAtRestIsEnabled() throws {
         // given
-        simulateLoggedInUser()
-        syncMOC.saveOrRollback()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            syncMOC.saveOrRollback()
+        }
         let userSessionDelegate = MockUserSessionDelegate()
         sut.delegate = userSessionDelegate
 
@@ -96,8 +100,10 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func testThatDelegateIsCalled_WhenEncryptionAtRestIsDisabled() throws {
         // given
-        simulateLoggedInUser()
-        syncMOC.saveOrRollback()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            syncMOC.saveOrRollback()
+        }
         setEncryptionAtRest(enabled: true)
         let userSessionDelegate = MockUserSessionDelegate()
         sut.delegate = userSessionDelegate
@@ -113,8 +119,10 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
 
     func testThatDatabaseIsUnlocked_WhenEncryptionAtRestIsDisabled() {
         // given
-        simulateLoggedInUser()
-        syncMOC.saveOrRollback()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            syncMOC.saveOrRollback()
+        }
 
         // when
         setEncryptionAtRest(enabled: false)
@@ -125,8 +133,10 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
 
     func testThatDatabaseIsUnlocked_AfterActivatingEncryptionAtRest() {
         // given
-        simulateLoggedInUser()
-        syncMOC.saveOrRollback()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            syncMOC.saveOrRollback()
+        }
 
         // when
         setEncryptionAtRest(enabled: true)
@@ -137,8 +147,10 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
 
     func testThatDatabaseIsUnlocked_AfterDeactivatingEncryptionAtRest() {
         // given
-        simulateLoggedInUser()
-        syncMOC.saveOrRollback()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            syncMOC.saveOrRollback()
+        }
         setEncryptionAtRest(enabled: true)
 
         // when
@@ -150,8 +162,10 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
 
     func testThatDatabaseIsUnlocked_AfterUnlockingDatabase() throws {
         // given
-        simulateLoggedInUser()
-        syncMOC.saveOrRollback()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            syncMOC.saveOrRollback()
+        }
         setEncryptionAtRest(enabled: true)
         sut.applicationDidEnterBackground(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -168,8 +182,10 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func testThatDatabaseIsLocked_AfterEnteringBackground() throws {
         // given
-        simulateLoggedInUser()
-        syncMOC.saveOrRollback()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            syncMOC.saveOrRollback()
+        }
         setEncryptionAtRest(enabled: true)
 
         // when
@@ -182,8 +198,10 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
 
     func testThatDatabaseIsLocked_AfterBackgroundTaskCompletesInTheBackground() throws {
         // given
-        simulateLoggedInUser()
-        syncMOC.saveOrRollback()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            syncMOC.saveOrRollback()
+        }
         setEncryptionAtRest(enabled: true)
 
         // when
@@ -199,8 +217,10 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
 
     func testThatDatabaseIsNotLocked_IfThereIsAnActiveBackgroundTask() throws {
         // given
-        simulateLoggedInUser()
-        syncMOC.saveOrRollback()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            syncMOC.saveOrRollback()
+        }
         setEncryptionAtRest(enabled: true)
 
         // when
@@ -217,9 +237,10 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     func testThatDatabaseIsLocked_WhenTheCustomTimeoutHasExpiredInTheBackground() throws {
         // given
         factory.backgroundTaskTimeout = 2
-
-        simulateLoggedInUser()
-        syncMOC.saveOrRollback()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            syncMOC.saveOrRollback()
+        }
         setEncryptionAtRest(enabled: true)
 
         // when
@@ -239,12 +260,14 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func testThatDatabaseLockedHandlerIsCalled_AfterDatabaseIsLocked() throws {
         // given
-        simulateLoggedInUser()
-        syncMOC.saveOrRollback()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            syncMOC.saveOrRollback()
+        }
         setEncryptionAtRest(enabled: true)
 
         // expect
-        let databaseIsLocked = expectation(description: "database is locked")
+        let databaseIsLocked = customExpectation(description: "database is locked")
         var token: Any? = sut.registerDatabaseLockedHandler { (isDatabaseLocked) in
             if isDatabaseLocked {
                 databaseIsLocked.fulfill()
@@ -263,14 +286,16 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
 
     func testThatDatabaseLockedHandlerIsCalled_AfterUnlockingDatabase() throws {
         // given
-        simulateLoggedInUser()
-        syncMOC.saveOrRollback()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            syncMOC.saveOrRollback()
+        }
         setEncryptionAtRest(enabled: true)
         sut.applicationDidEnterBackground(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // expect
-        let databaseIsUnlocked = expectation(description: "database is unlocked")
+        let databaseIsUnlocked = customExpectation(description: "database is unlocked")
         var token: Any? = sut.registerDatabaseLockedHandler { (isDatabaseLocked) in
             if !isDatabaseLocked {
                 databaseIsUnlocked.fulfill()
@@ -294,8 +319,10 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func testThatIfDatabaseIsLocked_ThenUserSessionLockIsSet() throws {
         // given
-        simulateLoggedInUser()
-        syncMOC.saveOrRollback()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            syncMOC.saveOrRollback()
+        }
         setEncryptionAtRest(enabled: true)
 
         sut.applicationDidEnterBackground(nil)
@@ -309,8 +336,10 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
 
     func testThatIfDatabaseIsNotLocked_ThenUserSessionLockIsNotSet() throws {
         // given
-        simulateLoggedInUser()
-        syncMOC.saveOrRollback()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            syncMOC.saveOrRollback()
+        }
         setEncryptionAtRest(enabled: false)
         XCTAssertFalse(sut.isDatabaseLocked)
 

@@ -32,7 +32,7 @@ class BaseFetchMLSGroupInfoActionHandler<T: BaseFetchMLSGroupInfoAction>: Action
 
         return ZMTransportRequest(
             path: path,
-            method: .methodGET,
+            method: .get,
             binaryData: nil,
             type: nil,
             acceptHeaderType: .messageMLS,

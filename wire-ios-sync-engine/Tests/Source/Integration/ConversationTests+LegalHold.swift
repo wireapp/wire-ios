@@ -76,34 +76,61 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         XCTAssertEqual(conversation?.legalHoldStatus, .disabled)
     }
 
-    func testThatItInsertsLegalHoldSystemMessage_WhenUserUnderLegalHoldIsJoiningConversation() {
+    func testThatItInsertsLegalHoldSystemMessage_WhenUserUnderLegalHoldIsJoiningConversation() async throws {
         // given
         XCTAssertTrue(login())
 
-        let legalHoldUser = self.user(for: user1)!
-        let groupConversation = self.conversation(for: self.groupConversation)
+        let (legalHoldUser, groupConversation) = await self.userSession!.managedObjectContext.perform({
+            return (
+                self.user(for: self.user1),
+                self.conversation(for: self.groupConversation)
+            )
+        })
+
+        guard let legalHoldUser, let groupConversation else {
+            XCTFail("expect legalHoldUser and groupConversation")
+            return
+        }
+
+        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
         mockTransportSession.performRemoteChanges { (session) in
             session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")
         }
-        legalHoldUser.fetchUserClients()
+        await self.userSession?.managedObjectContext.perform {
+            legalHoldUser.fetchUserClients()
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        groupConversation?.addParticipants([legalHoldUser], completion: { _ in })
+
+        try await conversationParticipantsService.addParticipants([legalHoldUser], to: groupConversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let lastMessage = groupConversation?.lastMessage as? ZMSystemMessage
-        XCTAssertEqual(lastMessage?.systemMessageType, .legalHoldEnabled)
-        XCTAssertEqual(groupConversation?.legalHoldStatus, .pendingApproval)
+        await self.userSession!.managedObjectContext.perform {
+            let lastMessage = groupConversation.lastMessage as? ZMSystemMessage
+            XCTAssertEqual(lastMessage?.systemMessageType, .legalHoldEnabled)
+            XCTAssertEqual(groupConversation.legalHoldStatus, .pendingApproval)
+        }
     }
 
-    func testThatItInsertsLegalHoldSystemMessage_WhenUserUnderLegalHoldIsLeavingConversation() {
+    func testThatItInsertsLegalHoldSystemMessage_WhenUserUnderLegalHoldIsLeavingConversation() async throws {
         // given
         XCTAssertTrue(login())
 
-        let legalHoldUser = self.user(for: user1)!
-        let groupConversation = self.conversation(for: self.groupConversation)
+        let (legalHoldUser, groupConversation) = await self.userSession!.managedObjectContext.perform({
+            return (
+                self.user(for: self.user1),
+                self.conversation(for: self.groupConversation)
+            )
+        })
+
+        guard let legalHoldUser, let groupConversation else {
+            XCTFail("expect legalHoldUser and groupConversation")
+            return
+        }
+
+        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
 
         mockTransportSession.performRemoteChanges { (session) in
             session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")
@@ -111,18 +138,22 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         legalHoldUser.fetchUserClients()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        groupConversation?.addParticipants([legalHoldUser], completion: { _ in })
+        try await conversationParticipantsService.addParticipants([legalHoldUser], to: groupConversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(groupConversation?.legalHoldStatus, .pendingApproval)
+        await self.userSession!.managedObjectContext.perform {
+            XCTAssertEqual(groupConversation.legalHoldStatus, .pendingApproval)
+        }
 
         // when
-        groupConversation?.removeParticipant(legalHoldUser, completion: {_ in })
+        try await conversationParticipantsService.removeParticipant(legalHoldUser, from: groupConversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        let lastMessage = groupConversation?.lastMessage as? ZMSystemMessage
-        XCTAssertEqual(lastMessage?.systemMessageType, .legalHoldDisabled)
-        XCTAssertEqual(groupConversation?.legalHoldStatus, .disabled)
+        await self.userSession!.managedObjectContext.perform {
+            let lastMessage = groupConversation.lastMessage as? ZMSystemMessage
+            XCTAssertEqual(lastMessage?.systemMessageType, .legalHoldDisabled)
+            XCTAssertEqual(groupConversation.legalHoldStatus, .disabled)
+        }
     }
 
     // MARK: Legal hold status flag

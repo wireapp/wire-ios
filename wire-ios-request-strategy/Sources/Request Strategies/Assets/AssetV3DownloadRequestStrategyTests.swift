@@ -36,7 +36,7 @@ public class MockTaskCancellationProvider: NSObject, ZMRequestCancellation {
     }
 }
 
-class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
+final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
 
     var mockApplicationStatus: MockApplicationStatus!
     var sut: AssetV3DownloadRequestStrategy!
@@ -76,7 +76,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     fileprivate func createFileMessageWithAssetId(
         in conversation: ZMConversation,
         otrKey: Data = Data.randomEncryptionKey(),
-        sha: Data  = Data.randomEncryptionKey()
+        sha: Data = Data.randomEncryptionKey()
     ) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String, domain: String?)? {
 
         let isFederationEnabled = apiVersion > .v0
@@ -134,7 +134,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
 
             // Given
             guard let (message, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, encrypted: false, data: Data())
+            self.syncMOC.zm_fileAssetCache.storeOriginalFile(data: Data(), for: message)
             assetMessage = message
 
             // When
@@ -174,7 +174,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("No request generated") }
 
             // Then
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/assets/v3/\(expectedAssetId)")
             XCTAssert(request.needsAuthentication)
         }
@@ -209,7 +209,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("No request generated") }
 
             // Then
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/assets/v3/\(expectedAssetId)")
             XCTAssert(request.needsAuthentication)
         }
@@ -242,7 +242,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("No request generated") }
 
             // Then
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/v1/assets/v4/\(expectedDomain!)/\(expectedAssetId)")
             XCTAssert(request.needsAuthentication)
         }
@@ -279,7 +279,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             guard let request = self.sut.nextRequest(for: self.apiVersion) else { return XCTFail("No request generated") }
 
             // Then
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/v1/assets/v4/\(expectedDomain!)/\(expectedAssetId)")
             XCTAssert(request.needsAuthentication)
         }
@@ -504,7 +504,7 @@ extension AssetV3DownloadRequestStrategyTests {
 
         // EXPECT
         var token: Any?
-        let expectation = self.expectation(description: "Notification fired")
+        let expectation = self.customExpectation(description: "Notification fired")
         token = NotificationInContext.addObserver(name: .NonCoreDataChangeInManagedObject,
                                                   context: self.uiMOC.notificationContext,
                                                   object: nil) { note in
@@ -523,7 +523,7 @@ extension AssetV3DownloadRequestStrategyTests {
         }
 
         // THEN
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
     }
@@ -552,17 +552,21 @@ extension AssetV3DownloadRequestStrategyTests {
                                                          assetToken: "someToken")
 
             let genericMessage = GenericMessage(content: asset, nonce: messageId)
+            let messageData = try! genericMessage.serializedData()
 
-            let messageData = try? genericMessage.serializedData()
-            let dict = ["recipient": self.selfClient.remoteIdentifier!,
-                        "sender": self.selfClient.remoteIdentifier!,
-                        "text": messageData?.base64String()] as NSDictionary
+            let dict = [
+                "recipient": self.selfClient.remoteIdentifier!,
+                "sender": self.selfClient.remoteIdentifier!,
+                "text": messageData.base64String()
+            ] as NSDictionary
+
             let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
                 "type": "conversation.otr-message-add",
                 "data": dict,
                 "from": self.selfClient.user!.remoteIdentifier!,
                 "conversation": self.conversation.remoteIdentifier!.transportString(),
-                "time": Date(timeIntervalSince1970: 555555).transportString()] as NSDictionary), uuid: nil)!
+                "time": Date(timeIntervalSince1970: 555555).transportString()
+            ] as NSDictionary), uuid: nil)!
 
             message = ZMOTRMessage.createOrUpdate(from: updateEvent, in: self.syncMOC, prefetchResult: nil) as? ZMAssetClientMessage
             message.visibleInConversation = self.conversation
@@ -624,17 +628,21 @@ extension AssetV3DownloadRequestStrategyTests {
                                                          assetToken: "someToken")
 
             let genericMessage = GenericMessage(content: asset, nonce: messageId)
+            let messageData = try! genericMessage.serializedData()
 
-            let messageData = try? genericMessage.serializedData()
-            let dict = ["recipient": self.selfClient.remoteIdentifier!,
-                        "sender": self.selfClient.remoteIdentifier!,
-                        "text": messageData?.base64String()] as NSDictionary
+            let dict = [
+                "recipient": self.selfClient.remoteIdentifier!,
+                "sender": self.selfClient.remoteIdentifier!,
+                "text": messageData.base64String()
+            ] as NSDictionary
+
             let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
                 "type": "conversation.otr-message-add",
                 "data": dict,
                 "from": self.selfClient.user!.remoteIdentifier!,
                 "conversation": self.conversation.remoteIdentifier!.transportString(),
-                "time": Date(timeIntervalSince1970: 555555).transportString()] as NSDictionary), uuid: nil)!
+                "time": Date(timeIntervalSince1970: 555555).transportString()
+            ] as NSDictionary), uuid: nil)!
 
             message = ZMOTRMessage.createOrUpdate(from: updateEvent, in: self.syncMOC, prefetchResult: nil) as? ZMAssetClientMessage
             message.visibleInConversation = self.conversation

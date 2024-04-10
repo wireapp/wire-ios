@@ -21,15 +21,12 @@
 final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
     var sut: ConversationRoleDownstreamRequestStrategy!
     var mockSyncStatus: MockSyncStatus!
-    var mockSyncStateDelegate: MockSyncStateDelegate!
     var mockApplicationStatus: MockApplicationStatus!
 
     override func setUp() {
         super.setUp()
-        mockSyncStateDelegate = MockSyncStateDelegate()
         mockSyncStatus = MockSyncStatus(
             managedObjectContext: syncMOC,
-            syncStateDelegate: mockSyncStateDelegate,
             lastEventIDRepository: lastEventIDRepository
         )
         mockApplicationStatus = MockApplicationStatus()
@@ -41,7 +38,6 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
         sut = nil
         mockSyncStatus = nil
         mockApplicationStatus = nil
-        mockSyncStateDelegate = nil
         super.tearDown()
     }
 
@@ -56,18 +52,20 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
 
     func testThatPredicateIsCorrect() {
         // given
-        let convoToDownload = self.createConversationToDownload()
+        syncMOC.performAndWait {
+            let convoToDownload = self.createConversationToDownload()
 
-        let convoNoNeed = self.createConversationToDownload()
-        convoNoNeed.needsToDownloadRoles = false
+            let convoNoNeed = self.createConversationToDownload()
+            convoNoNeed.needsToDownloadRoles = false
 
-        let convoNoIdentifier = self.createConversationToDownload()
-        convoNoIdentifier.remoteIdentifier = nil
+            let convoNoIdentifier = self.createConversationToDownload()
+            convoNoIdentifier.remoteIdentifier = nil
 
-        // then
-        XCTAssert(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: convoToDownload))
-        XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: convoNoNeed))
-        XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: convoNoIdentifier))
+            // then
+            XCTAssert(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: convoToDownload))
+            XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: convoNoNeed))
+            XCTAssertFalse(sut.downstreamSync.predicateForObjectsToDownload.evaluate(with: convoNoIdentifier))
+        }
     }
 
     func testThatItCreatesARequestForConversation() {
@@ -81,7 +79,7 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
 
             // then
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail("No request generated") }
-            XCTAssertEqual(request.method, .methodGET)
+            XCTAssertEqual(request.method, .get)
             XCTAssertEqual(request.path, "/conversations/\(convo1.remoteIdentifier!.transportString())/roles")
         }
     }
@@ -93,7 +91,7 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
             self.mockApplicationStatus.mockSynchronizationState = .online
 
             // when
-            let objs: [ZMConversation] = self.sut.contextChangeTrackers.compactMap({$0.fetchRequestForTrackedObjects()}).flatMap({self.syncMOC.executeFetchRequestOrAssert($0) as! [ZMConversation] })
+            let objs: [ZMConversation] = self.sut.contextChangeTrackers.compactMap({ $0.fetchRequestForTrackedObjects() }).flatMap({ self.syncMOC.executeFetchRequestOrAssert($0) as! [ZMConversation] })
 
             // then            
             XCTAssertEqual(objs, [convo1])
@@ -137,8 +135,8 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
         syncMOC.performGroupedBlockAndWait {
             // then
             XCTAssertEqual(convo1!.nonTeamRoles.count, 2)
-            guard let admin = convo1!.nonTeamRoles.first(where: {$0.name == "wire_admin"}),
-                let member = convo1!.nonTeamRoles.first(where: {$0.name == "wire_member" }) else {
+            guard let admin = convo1!.nonTeamRoles.first(where: { $0.name == "wire_admin" }),
+                let member = convo1!.nonTeamRoles.first(where: { $0.name == "wire_member" }) else {
                     return XCTFail()
             }
             XCTAssertEqual(Set(admin.actions.map { $0.name }), Set(["leave_conversation", "delete_conversation"]))

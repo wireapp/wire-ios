@@ -26,7 +26,7 @@ fileprivate extension AssetRequestFactory {
         switch apiVersion {
         case .v0, .v1:
             path = "/assets/v3/\(identifier)"
-        case .v2, .v3, .v4, .v5:
+        case .v2, .v3, .v4, .v5, .v6:
             guard let domain = BackendInfo.domain else {
                 return nil
             }
@@ -34,13 +34,13 @@ fileprivate extension AssetRequestFactory {
             path = "/assets/\(domain)/\(identifier)"
         }
 
-        let request = ZMTransportRequest(path: path, method: .methodDELETE, payload: nil, apiVersion: apiVersion.rawValue)
+        let request = ZMTransportRequest(path: path, method: .delete, payload: nil, apiVersion: apiVersion.rawValue)
         request.add(ZMCompletionHandler(on: queue, block: block))
         return request
     }
 }
 
-final public class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
+public final class AssetDeletionRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder {
 
     private var requestSync: ZMSingleRequestSync!
     private let identifierProvider: AssetDeletionIdentifierProviderType

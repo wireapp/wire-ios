@@ -120,13 +120,6 @@
         } \
     } while (0)
 
-//This only works if com.apple.CoreData.ConcurrencyDebug is enabled
-#define ZMAssertGroupQueue(_queue)	\
-    do { \
-        ((NSManagedObjectContext *)_queue).userInfo; \
-    } while(0)
-
-
 #pragma mark - OCMock
 
 #define ZM_ARG_SAVE(x) [OCMArg checkWithBlock:^BOOL(id obj) { \

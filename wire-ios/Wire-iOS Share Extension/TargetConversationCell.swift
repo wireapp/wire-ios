@@ -87,16 +87,16 @@ final class TargetConversationCell: UITableViewCell {
         var details: [String] = []
 
         if conversation.legalHoldStatus.denotesEnabledComplianceDevice {
-            details.append("share_extension.voiceover.conversation_under_legal_hold".localized)
+            details.append(L10n.ShareExtension.Voiceover.conversationUnderLegalHold)
         }
 
         switch conversation.securityLevel {
         case .notSecure:
             break
         case .secureWithIgnored:
-            details.append("share_extension.voiceover.conversation_secure_with_ignored".localized)
+            details.append(L10n.ShareExtension.Voiceover.conversationSecureWithIgnored)
         case .secure:
-            details.append("share_extension.voiceover.conversation_secure".localized)
+            details.append(L10n.ShareExtension.Voiceover.conversationSecure)
         }
 
         accessibilityLabel = conversation.name

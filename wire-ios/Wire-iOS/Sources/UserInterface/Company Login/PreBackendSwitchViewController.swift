@@ -20,7 +20,7 @@ import Foundation
 import UIKit
 import WireCommonComponents
 
-protocol PreBackendSwitchViewControllerDelegate {
+protocol PreBackendSwitchViewControllerDelegate: AnyObject {
     func preBackendSwitchViewControllerDidComplete(_ url: URL)
 }
 
@@ -37,8 +37,8 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
 
     // MARK: - UI Styles
 
-    static let informationBlue = UIColor(red: 35/255, green: 145/255, blue: 211/255, alpha: 1)
-    static let informationBackgroundBlue = UIColor(red: 220/255, green: 237/255, blue: 248/255, alpha: 1)
+    static let informationBlue = UIColor(red: 35 / 255, green: 145 / 255, blue: 211 / 255, alpha: 1)
+    static let informationBackgroundBlue = UIColor(red: 220 / 255, green: 237 / 255, blue: 248 / 255, alpha: 1)
 
     // MARK: - UI Elements
     let wireLogoInfoView = WireLogoInfoView(title: Login.title, subtitle: Login.subtitle)
@@ -92,9 +92,11 @@ final class PreBackendSwitchViewController: AuthenticationStepViewController {
     }
 
     private func createConstraints() {
-        [wireLogoInfoView,
-         progressView,
-         informationLabel].prepareForLayout()
+        [
+            wireLogoInfoView,
+            progressView,
+            informationLabel
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             wireLogoInfoView.leadingAnchor.constraint(equalTo: view.leadingAnchor),

@@ -30,7 +30,7 @@
 
 NSString * const ZMLoginURL = @"/login?persist=true";
 NSString * const ZMResendVerificationURL = @"/activate/send";
-static ZMTransportRequestMethod const LoginMethod = ZMMethodPOST;
+static ZMTransportRequestMethod const LoginMethod = ZMTransportRequestMethodPost;
 NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
 
 

@@ -40,7 +40,9 @@ public final class FileMetaDataGenerator: NSObject {
                     completion(ZMAudioMetadata(fileURL: url, duration: asset.duration.seconds, normalizedLoudness: loudness ?? []))
                 }
             } else {
+                // swiftlint:disable todo_requires_jira_link
                 // TODO: set the name of the file (currently there's no API, it always gets it from the URL)
+                // swiftlint:enable todo_requires_jira_link
                 completion(ZMFileMetadata(fileURL: url, thumbnail: thumbnail))
             }
         }
@@ -129,7 +131,7 @@ extension AVAsset {
                         continue
                     }
 
-                    let i16bufptr = UnsafeBufferPointer(start: data.assumingMemoryBound(to: Int16.self), count: Int(buffer.mDataByteSize)/Int(MemoryLayout<Int16>.size))
+                    let i16bufptr = UnsafeBufferPointer(start: data.assumingMemoryBound(to: Int16.self), count: Int(buffer.mDataByteSize) / Int(MemoryLayout<Int16>.size))
 
                     for sample in Array(i16bufptr) {
                         sampleSkipCounter += 1

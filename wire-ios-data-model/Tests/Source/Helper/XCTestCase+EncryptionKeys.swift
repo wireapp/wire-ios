@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
 @testable import WireDataModel
 
 extension XCTestCase {
@@ -27,7 +27,7 @@ extension XCTestCase {
         let keyattributes = [
             kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
             kSecAttrKeySizeInBits as String: 256
-            ] as CFDictionary
+        ] as CFDictionary
         privateKeySec = SecKeyCreateRandomKey(keyattributes, &error)
         if let privateKeySec = privateKeySec {
             publicKeySec = SecKeyCopyPublicKey(privateKeySec)

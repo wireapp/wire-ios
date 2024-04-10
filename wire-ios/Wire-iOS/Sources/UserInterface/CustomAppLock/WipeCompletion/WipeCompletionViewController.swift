@@ -19,15 +19,12 @@ import Foundation
 import UIKit
 
 final class WipeCompletionViewController: UIViewController {
-    let wireLogoInfoView = WireLogoInfoView(title: "wipe_database_completion.title".localized, subtitle: "wipe_database_completion.subtitle".localized)
+    let wireLogoInfoView = WireLogoInfoView(title: L10n.Localizable.WipeDatabaseCompletion.title, subtitle: L10n.Localizable.WipeDatabaseCompletion.subtitle)
 
-    private lazy var loginButton: Button = {
-        let button = Button(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)
-
-        button.setTitle("signin.confirm".localized, for: .normal)
-
+    private lazy var loginButton = {
+        let button = ZMButton(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .smallSemiboldFont)
+        button.setTitle(L10n.Localizable.Signin.confirm, for: .normal)
         button.addTarget(self, action: #selector(onLoginCodeButtonPressed(sender:)), for: .touchUpInside)
-
         return button
     }()
 
@@ -52,8 +49,7 @@ final class WipeCompletionViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [wireLogoInfoView,
-         loginButton].prepareForLayout()
+        [wireLogoInfoView, loginButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             wireLogoInfoView.leadingAnchor.constraint(equalTo: view.leadingAnchor),

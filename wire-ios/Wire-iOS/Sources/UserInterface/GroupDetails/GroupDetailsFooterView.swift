@@ -32,13 +32,18 @@ final class GroupDetailsFooterView: ConversationDetailFooterView {
     }
 
     func update(for conversation: GroupDetailsConversationType) {
-        leftButton.isHidden = !SelfUser.current.canAddUser(to: conversation)
+        guard let user = SelfUser.provider?.providedSelfUser else {
+            assertionFailure("expected available 'user'!")
+            return
+        }
+
+        leftButton.isHidden = !user.canAddUser(to: conversation)
         leftButton.isEnabled = conversation.freeParticipantSlots > 0
     }
 
     override func setupButtons() {
         leftIcon = .plus
-        leftButton.setTitle("participants.footer.add_title".localized, for: .normal)
+        leftButton.setTitle(L10n.Localizable.Participants.Footer.addTitle, for: .normal)
         leftButton.accessibilityIdentifier = "OtherUserMetaControllerLeftButton"
         rightIcon = .ellipsis
         rightButton.accessibilityIdentifier = "OtherUserMetaControllerRightButton"

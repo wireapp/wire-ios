@@ -21,8 +21,7 @@ import XCTest
 
 final class ActionTests: ZMBaseManagedObjectTest {
     func testThatItTracksCorrectKeys() {
-        let expectedKeys = Set(arrayLiteral: Action.nameKey,
-                                             Action.roleKey)
+        let expectedKeys: Set = [Action.nameKey, Action.roleKey]
 
         let sut = Action.insertNewObject(in: uiMOC)
 

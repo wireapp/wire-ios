@@ -85,7 +85,7 @@ static MockBlacklistDownloader *generatedDownloader;
 - (BOOL)checkVersion:(NSString *)version againstMinVersion:(NSString *)minVersion andExcludedVersions:(NSArray *)excludedVersions
 {
     __block BOOL verificationResult = NO;
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     ZMBlacklistVerificator * sut = [[ZMBlacklistVerificator alloc] initWithCheckInterval:1000
                                                                                  version:version
                                                                              environment:[[MockEnvironment alloc] init]

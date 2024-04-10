@@ -70,26 +70,27 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     private var currentEffect: AVSAudioEffectType = .none
     private var currentEffectFilePath: String?
 
-    private var appLock: AppLockType? {
-        return ZMUserSession.shared()?.appLockController
-    }
+    private let userSession: UserSession
 
     private var isAppLockActive: Bool {
-        return appLock?.isActive ?? false
+        return userSession.isAppLockActive
     }
     // MARK: - Life Cycle
 
-    convenience init() {
+    convenience init(userSession: UserSession) {
         self.init(audioRecorder: AudioRecorder(
             format: .wav,
-            maxRecordingDuration: ZMUserSession.shared()?.maxAudioLength,
-            maxFileSize: ZMUserSession.shared()?.maxUploadFileSize))
+            maxRecordingDuration: userSession.maxAudioMessageLength,
+            maxFileSize: userSession.maxUploadFileSize),
+            userSession: userSession
+        )
     }
 
-    init(audioRecorder: AudioRecorderType) {
+    init(audioRecorder: AudioRecorderType, userSession: UserSession) {
         self.recorder = audioRecorder
+        self.userSession = userSession
         super.init(nibName: nil, bundle: nil)
-        configureViews()
+        configureViews(userSession: userSession)
         configureAudioRecorder()
         createConstraints()
 
@@ -115,7 +116,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
     // MARK: - View Configuration
 
-    func configureViews() {
+    func configureViews(userSession: UserSession) {
         let backgroundColor = SemanticColors.View.backgroundDefault
         let textColor = SemanticColors.Label.textDefault
         let separatorColor = SemanticColors.View.backgroundSeparatorCell
@@ -128,7 +129,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         self.audioPreviewView.gradientWidth = 20
         self.audioPreviewView.gradientColor = backgroundColor
 
-        self.accentColorChangeHandler = AccentColorChangeHandler.addObserver(self) { [unowned self] color, _ in
+        self.accentColorChangeHandler = AccentColorChangeHandler.addObserver(self, userSession: userSession) { [unowned self] color, _ in
             if let color = color {
                 self.audioPreviewView.color = color
             }
@@ -158,28 +159,35 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
     private func createTipLabel() {
         let color = SemanticColors.Label.textDefault
-        let text = "conversation.input_bar.audio_message.keyboard.record_tip".localized(uppercased: true)
-        let attrText = NSMutableAttributedString(string: text)
-        let atRange = (text as NSString).range(of: "%@")
 
-        // insert random effect icon
+        let recordingHintText = L10n.Localizable.Conversation.InputBar.AudioMessage.Keyboard.recordTip("%@")
+
+        let effects = AVSAudioEffectType.displayedEffects.filter { $0 != .none }
+        let randomIndex = Int.random(in: 0..<effects.count)
+        let effect = effects[randomIndex]
+        let image = effect.icon.makeImage(size: 14, color: color)
+
+        let attachment = NSTextAttachment()
+        attachment.image = image
+
+        let imageAttrString = NSAttributedString(attachment: attachment)
+
+        let attrText = NSMutableAttributedString(string: recordingHintText)
+        let atRange = (recordingHintText as NSString).range(of: "%@")
         if atRange.location != NSNotFound {
-            let effects = AVSAudioEffectType.displayedEffects.filter { $0 != .none }
-            let max = UInt32(effects.count)
-            let effect = effects[Int.random(in: 0..<Int(max))]
-            let image = effect.icon.makeImage(size: 14, color: color)
-
-            let attachment = NSTextAttachment()
-            attachment.image = image
-
-            attrText.replaceCharacters(in: atRange, with: NSAttributedString(attachment: attachment))
+            attrText.replaceCharacters(in: atRange, with: imageAttrString)
         }
 
         let style = NSMutableParagraphStyle()
         style.lineSpacing = 8
 
-        attrText.addAttribute(.paragraphStyle, value: style, range: attrText.wholeRange)
-        self.tipLabel.attributedText = NSAttributedString(attributedString: attrText)
+        attrText.addAttribute(
+            .paragraphStyle,
+            value: style,
+            range: NSRange(location: 0, length: attrText.length)
+        )
+
+        self.tipLabel.attributedText = attrText
         self.tipLabel.numberOfLines = 2
         self.tipLabel.font = FontSpec(.small, .light).font!
         self.tipLabel.textColor = color
@@ -228,18 +236,19 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     }
 
     private func createConstraints() {
-        [self.audioPreviewView,
-         self.timeLabel,
-         self.tipLabel,
-         self.recordButton,
-         self.stopRecordButton,
-         self.confirmButton,
-         self.redoButton,
-         self.cancelButton,
-         self.bottomToolbar,
-         self.topContainer,
-         self.topSeparator
-        ].prepareForLayout()
+        [
+            audioPreviewView,
+            timeLabel,
+            tipLabel,
+            recordButton,
+            stopRecordButton,
+            confirmButton,
+            redoButton,
+            cancelButton,
+            bottomToolbar,
+            topContainer,
+            topSeparator
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             topContainer.leftAnchor.constraint(equalTo: view.leftAnchor, constant: 16),
@@ -333,13 +342,13 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         }
 
         recorder.recordEndedCallback = { [weak self] result in
-            guard let `self` = self else { return }
-            self.state = .effects
+            guard let self else { return }
 
-            guard let error = result.error as? RecordingError,
-                let alert = self.recorder.alertForRecording(error: error) else { return }
+            state = .effects
 
-            self.present(alert, animated: true, completion: .none)
+            if case .failure(let error) = result, let error = error as? RecordingError, let alert = recorder.alertForRecording(error: error) {
+                present(alert, animated: true, completion: .none)
+            }
         }
 
         recorder.recordLevelCallBack = { [weak self] level in
@@ -414,7 +423,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
                 duration: 0.35,
                 options: [.curveEaseIn],
                 animations: changes,
-                completion: { _ in picker.didMove(toParent: self)}
+                completion: { _ in picker.didMove(toParent: self) }
             )
 
             self.effectPickerViewController = picker
@@ -448,12 +457,16 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
             zmLog.error("No file to send")
             return
         }
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return
+        }
 
         button?.isEnabled = false
 
         let effectName = self.currentEffect == .none ? "Original" : self.currentEffect.description
 
-        let filename = String.filenameForSelfUser(suffix: "-" + effectName).appendingPathExtension("m4a")!
+        let filename = String.filename(for: selfUser, suffix: "-" + effectName).appendingPathExtension("m4a")!
         let convertedPath = (NSTemporaryDirectory() as NSString).appendingPathComponent(filename)
         convertedPath.deleteFileAtPath()
 

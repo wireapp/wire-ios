@@ -225,7 +225,7 @@ final class CallQualityView: UIStackView {
     let defaultTextColor = SemanticColors.Label.textDefault
     let scoreLabel = DynamicFontLabel(fontSpec: FontSpec.mediumRegularFont,
                                       color: SemanticColors.Label.textDefault)
-    let scoreButton = Button()
+    let scoreButton = ZMButton()
     let callback: (Int) -> Void
     let labelText: String
     let buttonScore: Int
@@ -282,7 +282,7 @@ final class CallQualityView: UIStackView {
 }
 
 // MARK: Quality Score Selector View
-class QualityScoreSelectorView: UIView {
+final class QualityScoreSelectorView: UIView {
     private let scoreStackView = UIStackView()
 
     weak var delegate: CallQualityViewControllerDelegate?
@@ -335,7 +335,7 @@ class QualityScoreSelectorView: UIView {
 }
 
 // MARK: Call Quality Animator
-class CallQualityAnimator: NSObject, UIViewControllerTransitioningDelegate {
+final class CallQualityAnimator: NSObject, UIViewControllerTransitioningDelegate {
     func animationController(forPresented presented: UIViewController,
                              presenting: UIViewController,
                              source: UIViewController) -> UIViewControllerAnimatedTransitioning? {

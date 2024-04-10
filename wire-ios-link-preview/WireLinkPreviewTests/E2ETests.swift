@@ -85,7 +85,9 @@ final class E2ETests: XCTestCase {
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
+    // swiftlint:disable todo_requires_jira_link
     // TODO: failed with Xcode 13.1
+    // swiftlint:enable todo_requires_jira_link
     func disable_testThatItParsesSampleDataWire() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "website", siteNameString: nil, userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.wireData()

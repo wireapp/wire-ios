@@ -41,7 +41,6 @@ final class TextSearchResultCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
-        userImageView.userSession = ZMUserSession.shared()
         userImageView.initialsFont = .systemFont(ofSize: 11, weight: .light)
 
         accessibilityIdentifier = "search result cell"
@@ -71,7 +70,9 @@ final class TextSearchResultCell: UITableViewCell {
     }
 
     private func createConstraints() {
-        [userImageView, userImageViewContainer, footerView, messageTextLabel, resultCountView, separatorView].prepareForLayout()
+        [userImageView, userImageViewContainer, footerView, messageTextLabel, resultCountView, separatorView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         NSLayoutConstraint.activate([
           userImageView.heightAnchor.constraint(equalToConstant: 24),
           userImageView.widthAnchor.constraint(equalTo: userImageView.heightAnchor),
@@ -140,16 +141,15 @@ final class TextSearchResultCell: UITableViewCell {
         resultCountView.updateCollapseConstraints(isCollapsed: false)
     }
 
-    func configure(with newMessage: ZMConversationMessage, queries newQueries: [String]) {
+    func configure(with newMessage: ZMConversationMessage, queries newQueries: [String], userSession: UserSession) {
         message = newMessage
         queries = newQueries
-
+        userImageView.userSession = userSession
         userImageView.user = newMessage.senderUser
         footerView.message = newMessage
-        if let userSession = ZMUserSession.shared() {
-            observerToken = MessageChangeInfo.add(observer: self,
-                                                  for: newMessage,
-                                                  userSession: userSession)
+        if !ProcessInfo.processInfo.isRunningTests {
+            observerToken = userSession.addMessageObserver(self, for: newMessage)
+
         }
 
         updateTextView()

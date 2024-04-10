@@ -22,7 +22,7 @@ import UIKit
 
 private let zmLog = ZMSLog(tag: "UI")
 
-class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescriptorType {
+final class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsTextCell.self
     var title: String {
         return settingsProperty.propertyName.settingsPropertyLabelText
@@ -68,7 +68,7 @@ class SettingsPropertyTextValueCellDescriptor: SettingsPropertyCellDescriptorTyp
                 if error.domain == ZMObjectValidationErrorDomain &&
                     error.code == ZMManagedObjectValidationErrorCode.tooShort.rawValue {
 
-                    let alert = UIAlertController.alertWithOKButton(message: "name.guidance.tooshort".localized)
+                    let alert = UIAlertController.alertWithOKButton(message: L10n.Localizable.Name.Guidance.tooshort)
 
                     UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(alert, animated: true)
 

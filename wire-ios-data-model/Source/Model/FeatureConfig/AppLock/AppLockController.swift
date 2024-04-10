@@ -21,8 +21,6 @@ import LocalAuthentication
 
 public final class AppLockController: AppLockType {
 
-    static let log = ZMSLog(tag: "AppLockController")
-
     // MARK: - Properties
 
     public weak var delegate: AppLockDelegate?
@@ -116,7 +114,11 @@ public final class AppLockController: AppLockType {
 
     // MARK: - Life cycle
 
-    public init(userId: UUID, selfUser: ZMUser, legacyConfig: LegacyConfig? = nil) {
+    public init(
+        userId: UUID,
+        selfUser: ZMUser,
+        legacyConfig: LegacyConfig?
+    ) {
         precondition(selfUser.isSelfUser, "AppLockController initialized with non-self user")
 
         // It's safer use userId rather than selfUser.remoteIdentifier!
@@ -153,6 +155,8 @@ public final class AppLockController: AppLockType {
                                        description: String,
                                        context: LAContextProtocol = LAContext(),
                                        callback: @escaping (AppLockAuthenticationResult, LAContextProtocol) -> Void) {
+        WireLogger.appLock.info("evaluating authentication for app lock")
+
         let policy = passcodePreference.policy
         var error: NSError?
         let canEvaluatePolicy = context.canEvaluatePolicy(policy, error: &error)
@@ -161,19 +165,21 @@ public final class AppLockController: AppLockType {
         // the device passcode isn't considered secure enough, then ask for the custon passcode
         // to accept the new biometrics state.
         if biometricsState.biometricsChanged(in: context) && !passcodePreference.allowsDevicePasscode {
+            WireLogger.appLock.info("need custom passcode because biometrics changed")
             callback(.needCustomPasscode, context)
             return
         }
 
         // No device authentication possible, but can fall back to the custom passcode.
         if !canEvaluatePolicy && passcodePreference.allowsCustomPasscode {
+            WireLogger.appLock.info("need custom passcode because device auth is not possible")
             callback(.needCustomPasscode, context)
             return
         }
 
         guard canEvaluatePolicy else {
             callback(.unavailable, context)
-            Self.log.error("Local authentication error: \(String(describing: error?.localizedDescription))")
+            WireLogger.appLock.warn("Local authentication error: \(String(describing: error?.localizedDescription))")
             return
         }
 
@@ -188,6 +194,7 @@ public final class AppLockController: AppLockType {
                 self.state = .unlocked
             }
 
+            WireLogger.appLock.info("app lock auth concluded with (result: \(result), policy: \(policy))")
             callback(result, context)
         }
     }

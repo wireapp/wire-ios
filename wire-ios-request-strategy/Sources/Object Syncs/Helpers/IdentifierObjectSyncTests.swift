@@ -21,7 +21,6 @@ import WireTesting
 @testable import WireRequestStrategy
 
 class MockTranscoder: IdentifierObjectSyncTranscoder {
-
     typealias T = UUID
 
     var fetchLimit: Int = 1
@@ -33,7 +32,7 @@ class MockTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     var lastReceivedResponse: (response: ZMTransportResponse, identifiers: Set<UUID>)?
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>) {
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
         lastReceivedResponse = (response, identifiers)
     }
 
@@ -51,10 +50,6 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
         moc = MockModelObjectContextFactory.testContext()
         transcoder = MockTranscoder()
         sut = IdentifierObjectSync(managedObjectContext: moc, transcoder: transcoder)
-    }
-
-    override func tearDown() {
-        super.tearDown()
     }
 
     func testThatItAsksTranscoderForRequestToSyncIdentifier() {
@@ -127,7 +122,7 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
 
         // then
         XCTAssertNotNil(transcoder.lastReceivedResponse)
-        let uiidSet: Set<UUID> =  [uuid]
+        let uiidSet: Set<UUID> = [uuid]
         XCTAssertEqual(transcoder.lastReceivedResponse?.identifiers, uiidSet)
     }
 

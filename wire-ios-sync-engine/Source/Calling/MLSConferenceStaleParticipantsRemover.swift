@@ -48,14 +48,25 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
         self.removalTimeout = removalTimeout
     }
 
+    deinit {
+        stopSubscribing()
+    }
+    private var subscription: Subscription?
     // MARK: - Subscriber implementation
+    func stopSubscribing() {
+        subscription?.cancel()
+        subscription = nil
+    }
 
     func receive(subscription: Subscription) {
+        self.subscription = subscription
         subscription.request(.unlimited)
     }
 
     func receive(_ input: MLSConferenceParticipantsInfo) -> Subscribers.Demand {
-        process(input: input)
+        WaitingGroupTask(context: syncContext) { [self] in
+            await process(input: input)
+        }
         return .unlimited
     }
 
@@ -71,48 +82,58 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
 
     // MARK: - Participants change handling
 
-    private func process(input: MLSConferenceParticipantsInfo) {
+    private func process(input: MLSConferenceParticipantsInfo) async {
 
-        guard let subconversationMembers = subconversationMembers(for: input.subconversationID) else {
+        guard let subconversationMembers = await subconversationMembers(for: input.subconversationID) else {
             return
         }
 
-        let newAndChangedParticipants = newAndChangedParticipants(
-            between: previousInput?.participants ?? [],
-            and: input.participants
-        )
+        await syncContext.perform { [self] in
+            let newAndChangedParticipants = newAndChangedParticipants(
+                between: previousInput?.participants ?? [],
+                and: input.participants
+            )
 
-        newAndChangedParticipants.excludingParticipant(withID: input.selfUserID).forEach {
+            newAndChangedParticipants.excludingParticipant(withID: input.selfUserID).forEach {
 
-            guard let clientID = MLSClientID(callParticipant: $0) else {
-                return
+                guard let clientID = MLSClientID(callParticipant: $0) else {
+                    return
+                }
+
+                switch (subconversationMembers.contains(clientID), $0.state) {
+                case (true, .connecting):
+                    enqueueRemove(
+                        client: clientID,
+                        from: input.subconversationID,
+                        after: removalTimeout
+                    )
+                case (false, _), (_, .connected):
+                    cancelRemoval(for: clientID)
+                default: break
+                }
             }
 
-            switch (subconversationMembers.contains(clientID), $0.state) {
-            case (true, .connecting):
-                enqueueRemove(
-                    client: clientID,
-                    from: input.subconversationID,
-                    after: removalTimeout
-                )
-            case (false, _), (_, .connected):
-                cancelRemoval(for: clientID)
-            default: break
-            }
+            previousInput = input
         }
-
-        previousInput = input
     }
 
     private func newAndChangedParticipants(between previous: [CallParticipant], and current: [CallParticipant]) -> [CallParticipant] {
         var newAndChanged = [CallParticipant]()
 
-        let previousStates = Dictionary(uniqueKeysWithValues: previous.map { ($0.userId, $0.state) })
+        // Object to uniquely identify and compare participant
+        struct UniqueKey: Hashable {
+            var clientId: String
+            var userId: AVSIdentifier
+        }
+
+        let previousStates = Dictionary(uniqueKeysWithValues: previous.map { (UniqueKey(clientId: $0.clientId, userId: $0.userId), $0.state) })
 
         current.forEach { participant in
-            if let previousState = previousStates[participant.userId], previousState != participant.state {
+            let participantUniqueKey = UniqueKey(clientId: participant.clientId,
+                                                 userId: participant.userId)
+            if let previousState = previousStates[participantUniqueKey], previousState != participant.state {
                 newAndChanged.append(participant)
-            } else if previousStates[participant.userId] == nil {
+            } else if previousStates[participantUniqueKey] == nil {
                 newAndChanged.append(participant)
             }
         }
@@ -122,9 +143,9 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
 
     // MARK: - Helpers
 
-    private func subconversationMembers(for groupID: MLSGroupID) -> [MLSClientID]? {
+    private func subconversationMembers(for groupID: MLSGroupID) async -> [MLSClientID]? {
         do {
-            return try mlsService.subconversationMembers(for: groupID)
+            return try await mlsService.subconversationMembers(for: groupID)
         } catch {
             logger.warn("failed to fetch subconversation members: \(String(describing: error))")
             return nil
@@ -141,12 +162,14 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
                 for: clientID,
                 duration: duration,
                 completion: { [weak self] in
-                    guard let self = self else { return }
+                    guard let self else { return }
 
-                    self.remove(
-                        client: clientID,
-                        from: groupID
-                    )
+                    WaitingGroupTask(context: syncContext) { [self] in
+                        await self.remove(
+                            client: clientID,
+                            from: groupID
+                        )
+                    }
                 }
             )
 
@@ -161,25 +184,18 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
     private func remove(
         client clientID: MLSClientID,
         from groupID: MLSGroupID
-    ) {
-        syncContext.perform { [weak self] in
-            guard let `self` = self else { return }
+    ) async {
+        do {
+            let subconversationMembers = try await mlsService.subconversationMembers(for: groupID)
 
-            Task {
-                do {
-                    let subconversationMembers = try self.mlsService.subconversationMembers(for: groupID)
-
-                    guard subconversationMembers.contains(clientID) else {
-                        self.logger.info("didn't remove participant because they're not a part of the subconversation \(groupID.safeForLoggingDescription)")
-                        return
-                    }
-
-                    try await self.mlsService.removeMembersFromConversation(with: [clientID], for: groupID)
-                    self.logger.info("removed stale participant from subconversation (clientID: \(clientID), groupID: \(groupID.safeForLoggingDescription))")
-                } catch {
-                    self.logger.error("failed to remove stale participant from subconversation: \(String(describing: error))")
-                }
+            guard subconversationMembers.contains(clientID) else {
+                return logger.info("didn't remove participant because they're not a part of the subconversation \(groupID.safeForLoggingDescription)")
             }
+
+            try await mlsService.removeMembersFromConversation(with: [clientID], for: groupID)
+            logger.info("removed stale participant from subconversation (clientID: \(clientID), groupID: \(groupID.safeForLoggingDescription))")
+        } catch {
+            logger.error("failed to remove stale participant from subconversation: \(String(reflecting: error))")
         }
     }
 
@@ -199,7 +215,7 @@ class MLSConferenceStaleParticipantsRemover: Subscriber {
 private extension Array where Element == CallParticipant {
 
     func excludingParticipant(withID userID: AVSIdentifier) -> Self {
-        return self.filter {
+        filter {
             $0.userId != userID
         }
     }
@@ -208,9 +224,17 @@ private extension Array where Element == CallParticipant {
 
 private extension MLSClientID {
     init?(callParticipant: CallParticipant) {
+        // Note: callParticipant user comes from uiMoc and init is called from syncContext
+        guard let context = (callParticipant.user as? ZMUser)?.managedObjectContext else {
+            assertionFailure("expecting ZMUser's context")
+            return nil
+        }
+        let (remoteIdentifier, domain) = context.performAndWait {
+            (callParticipant.user.remoteIdentifier, callParticipant.user.domain)
+        }
         guard
-            let userID = callParticipant.user.remoteIdentifier?.transportString(),
-            let domain = callParticipant.user.domain
+            let userID = remoteIdentifier?.transportString(),
+            let domain = domain
         else {
             return nil
         }

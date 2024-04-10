@@ -22,6 +22,7 @@ import UIKit
 
 protocol ConversationMessageCellMenuPresenter: AnyObject {
     func showMenu()
+    func showSecuredMenu(for text: String)
 }
 
 extension UITableViewCell {
@@ -177,8 +178,18 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
     // MARK: - Menu
 
     func showMenu() {
-        guard let controller = messageActionsMenuController() else { return }
-        cellView.delegate?.conversationMessageWantsToShowActionsController(cellView, actionsController: controller)
+        guard let controller = messageActionsMenuController(with: MessageAction.allCases) else { return }
+        display(messageActionsController: controller)
+    }
+
+    func showSecuredMenu(for text: String) {
+        let actions = [MessageAction.visitLink(text), MessageAction.reply, MessageAction.edit, MessageAction.openDetails, MessageAction.delete, MessageAction.cancel]
+        guard let controller = messageActionsMenuController(with: actions) else { return }
+        display(messageActionsController: controller)
+    }
+
+    func display(messageActionsController: MessageActionsViewController) {
+        cellView.delegate?.conversationMessageWantsToShowActionsController(cellView, actionsController: messageActionsController)
     }
 
     @objc
@@ -188,9 +199,9 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         }
     }
 
-    func messageActionsMenuController() -> MessageActionsViewController? {
+    func messageActionsMenuController(with actions: [MessageAction] = MessageAction.allCases) -> MessageActionsViewController? {
         guard let actionController = cellDescription?.actionController else { return nil }
-        let actionsMenuController = MessageActionsViewController.controller(withActions: MessageAction.allCases, actionController: actionController)
+        let actionsMenuController = MessageActionsViewController.controller(withActions: actions, actionController: actionController)
 
         if let popoverPresentationController = actionsMenuController.popoverPresentationController {
             popoverPresentationController.sourceView = cellView

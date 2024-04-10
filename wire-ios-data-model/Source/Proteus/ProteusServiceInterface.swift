@@ -26,18 +26,11 @@ import Foundation
 // sourcery: AutoMockable
 public protocol ProteusServiceInterface {
 
-    /// Completes the initialization, enabling the serivce to be used.
-    ///
-    /// This should be called after performing a possible cryptobox migration
-    /// via `migrateCryptoboxSessions` and before any other method is called.
-
-    func completeInitialization() throws
-
-    func establishSession(id: ProteusSessionID, fromPrekey: String) throws
-    func deleteSession(id: ProteusSessionID) throws
-    func sessionExists(id: ProteusSessionID) -> Bool
-    func encrypt(data: Data, forSession id: ProteusSessionID) throws -> Data
-    func encryptBatched(data: Data, forSessions sessions: [ProteusSessionID]) throws -> [String: Data]
+    func establishSession(id: ProteusSessionID, fromPrekey: String) async throws
+    func deleteSession(id: ProteusSessionID) async throws
+    func sessionExists(id: ProteusSessionID) async -> Bool
+    func encrypt(data: Data, forSession id: ProteusSessionID) async throws -> Data
+    func encryptBatched(data: Data, forSessions sessions: [ProteusSessionID]) async throws -> [String: Data]
 
     /// Decrypt a proteus message for a given session.
     ///
@@ -54,16 +47,15 @@ public protocol ProteusServiceInterface {
     func decrypt(
         data: Data,
         forSession id: ProteusSessionID
-    ) throws -> (didCreateSession: Bool, decryptedData: Data)
+    ) async throws -> (didCreateNewSession: Bool, decryptedData: Data)
 
-    func generatePrekey(id: UInt16) throws -> String
-    func lastPrekey() throws -> String
-    var lastPrekeyID: UInt16 { get }
-    func generatePrekeys(start: UInt16, count: UInt16) throws -> [IdPrekeyTuple]
-    func localFingerprint() throws -> String
-    func remoteFingerprint(forSession id: ProteusSessionID) throws -> String
-    func fingerprint(fromPrekey prekey: String) throws -> String
-    func migrateCryptoboxSessions(at url: URL) throws
+    func generatePrekey(id: UInt16) async throws -> String
+    func lastPrekey() async throws -> String
+    var lastPrekeyID: UInt16 { get async }
+    func generatePrekeys(start: UInt16, count: UInt16) async throws -> [IdPrekeyTuple]
+    func localFingerprint() async throws -> String
+    func remoteFingerprint(forSession id: ProteusSessionID) async throws -> String
+    func fingerprint(fromPrekey prekey: String) async throws -> String
 
 }
 

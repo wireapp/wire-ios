@@ -39,12 +39,6 @@ extension UIView {
 
 final class MessageReplyPreviewViewTests: BaseSnapshotTestCase {
 
-    // MARK: - setUp
-
-    override func setUp() {
-        super.setUp()
-    }
-
     // MARK: - tearDown
 
     override func tearDown() {

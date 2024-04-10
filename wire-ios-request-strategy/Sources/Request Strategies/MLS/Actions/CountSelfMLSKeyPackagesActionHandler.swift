@@ -41,7 +41,7 @@ class CountSelfMLSKeyPackagesActionHandler: ActionHandler<CountSelfMLSKeyPackage
 
         return ZMTransportRequest(
             path: "/mls/key-packages/self/\(action.clientID)/count",
-            method: .methodGET,
+            method: .get,
             payload: nil,
             apiVersion: apiVersion.rawValue
         )

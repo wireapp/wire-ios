@@ -38,7 +38,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
         switch apiVersion {
         case .v0:
             return nonFederatedRequest(for: action, apiVersion: apiVersion)
-        case .v1, .v2, .v3, .v4, .v5:
+        case .v1, .v2, .v3, .v4, .v5, .v6:
             return federatedRequest(for: action, apiVersion: apiVersion)
         }
     }
@@ -59,7 +59,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
         }
 
         let path = "/conversations/\(conversationID)/members/\(userID)"
-        return ZMTransportRequest(path: path, method: .methodDELETE, payload: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .delete, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
     func federatedRequest(for action: RemoveParticipantAction, apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -78,7 +78,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
         }
         let path = "/conversations/\(conversationID.domain)/\(conversationID.uuid)/members/\(qualifiedUserID.domain)/\(qualifiedUserID.uuid)"
 
-        return ZMTransportRequest(path: path, method: .methodDELETE, payload: nil, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(path: path, method: .delete, payload: nil, apiVersion: apiVersion.rawValue)
     }
 
     override func handleResponse(_ response: ZMTransportResponse, action: RemoveParticipantAction) {
@@ -102,10 +102,13 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
             if let clearedTimestamp = conversation.clearedTimeStamp, clearedTimestamp == conversation.lastServerTimeStamp, user.isSelfUser {
                 conversation.updateCleared(fromPostPayloadEvent: updateEvent)
             }
-
-            eventProcessor.processConversationEvents([updateEvent])
-
-            action.notifyResult(.success(Void()))
+            let success = {
+                action.notifyResult(.success(Void()))
+            }
+            WaitingGroupTask(context: context) { [self] in
+                await eventProcessor.processConversationEvents([updateEvent])
+                success()
+            }
 
         case 204:
             action.notifyResult(.success(Void()))

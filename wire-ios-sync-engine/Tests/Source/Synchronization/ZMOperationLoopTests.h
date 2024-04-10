@@ -26,6 +26,9 @@
 @class MockRequestStrategy;
 @class MockUpdateEventProcessor;
 @class MockRequestCancellation;
+@class MockPushChannel;
+@class ZMPersistentCookieStorage;
+@class RecordingMockTransportSession;
 
 @interface ZMOperationLoopTests : MessagingTest
 
@@ -37,7 +40,7 @@
 @property (nonatomic) PushNotificationStatus *pushNotificationStatus;
 @property (nonatomic) CallEventStatus *callEventStatus;
 @property (nonatomic) SyncStatus *syncStatus;
-@property (nonatomic) MockSyncStateDelegate *mockSyncDelegate;
+@property (nonatomic) OperationStatus *operationStatus;
 @property (nonatomic) MockRequestStrategy *mockRequestStrategy;
 @property (nonatomic) MockUpdateEventProcessor *mockUpdateEventProcessor;
 @property (nonatomic) MockRequestCancellation *mockRequestCancellation;

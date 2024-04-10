@@ -24,7 +24,7 @@ import WireDataModel
 extension StartUIViewController {
 
     var needsAddressBookPermission: Bool {
-        let shouldSkip = AutomationHelper.sharedHelper.skipFirstLoginAlerts || ZMUser.selfUser().hasTeam
+        let shouldSkip = AutomationHelper.sharedHelper.skipFirstLoginAlerts || userSession.selfUser.hasTeam
         return !AddressBookHelper.sharedHelper.isAddressBookAccessGranted && !shouldSkip
     }
 
@@ -33,7 +33,6 @@ extension StartUIViewController {
         shareContactsViewController.delegate = self
         navigationController?.pushViewController(shareContactsViewController, animated: true)
     }
-
 }
 
 extension StartUIViewController: ShareContactsViewControllerDelegate {
