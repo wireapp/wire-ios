@@ -634,13 +634,11 @@ final class ClientListViewController1: UIViewController,
                                 ClientUpdateObserver,
                                 ClientColorVariantProtocol,
                                 SpinnerCapable {
-    // MARK: SpinnerCapable
     var dismissSpinner: SpinnerCompletion?
 
     var removalObserver: ClientRemovalObserver?
 
     var clientsTableView: UITableView?
-    let topSeparator = OverflowSeparatorView()
     weak var delegate: ClientListViewControllerDelegate?
 
     var clients: [UserClient] = [] {
@@ -653,7 +651,6 @@ final class ClientListViewController1: UIViewController,
     private let clientSorter: (UserClient, UserClient) -> Bool
     private let clientFilter: (UserClient) -> Bool
     private let userSession: UserSession?
-    private let contextProvider: ContextProvider?
     private weak var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
 
     var sortedClients: [UserClient] = []
@@ -688,7 +685,6 @@ final class ClientListViewController1: UIViewController,
         selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
         userSession: UserSession? = ZMUserSession.shared(),
         credentials: ZMEmailCredentials? = .none,
-        contextProvider: ContextProvider? = ZMUserSession.shared(),
         detailedView: Bool = false,
         showTemporary: Bool = true,
         showLegalHold: Bool = true
@@ -697,7 +693,6 @@ final class ClientListViewController1: UIViewController,
         self.selfClient = selfClient
         self.detailedView = detailedView
         self.credentials = credentials
-        self.contextProvider = contextProvider
 
         clientFilter = {
             $0 != selfClient && (showTemporary || $0.type != .temporary) && (showLegalHold || $0.type != .legalHold)
@@ -709,7 +704,6 @@ final class ClientListViewController1: UIViewController,
         }
 
         super.init(nibName: nil, bundle: nil)
-        // setupControllerTitle()
 
         self.initalizeProperties(clientsList ?? Array(ZMUser.selfUser()?.clients.filter { !$0.isSelfClient() } ?? []))
         self.clientsObserverToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
@@ -747,23 +741,11 @@ final class ClientListViewController1: UIViewController,
         super.viewDidLoad()
 
         self.createTableView()
-        self.view.addSubview(self.topSeparator)
         self.createConstraints()
 
         self.navigationItem.leftBarButtonItem = leftBarButtonItem
         self.navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.ClientsList.BackButton.description
-        setColor()
 
-        self.navigationItem.setHidesBackButton(true, animated: true)
-        self.clientsTableView?.setEditing(true, animated: true)
-        self.navigationItem.rightBarButtonItem = nil
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.clientsTableView?.reloadData()
-       // self.navigationController?.setNavigationBarHidden(false, animated: false)
-        updateAllClients()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -976,14 +958,6 @@ final class ClientListViewController1: UIViewController,
         cell.layoutMargins = UIEdgeInsets.zero
         cell.preservesSuperviewLayoutMargins = false
     }
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        self.topSeparator.scrollViewDidScroll(scrollView: scrollView)
-    }
-
-//    private func setupControllerTitle() {
-//        navigationItem.setDynamicFontLabel(title: L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title)
-//    }
 
     private func updateAllClients(completed: (() -> Void)? = nil) {
         guard let selfUser = ZMUser.selfUser(), let selfClient = selfUser.selfClient() else {

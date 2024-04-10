@@ -146,9 +146,6 @@ final class ClientTableViewCell1: UITableViewCell {
         style: .caption1,
         color: LabelColors.textCellSubtitle)
 
-    private let activationLabelFont = FontSpec.smallLightFont
-    private let activationLabelDateFont = FontSpec.smallSemiboldFont
-
     var viewModel: ClientTableViewCellModel? {
         didSet {
             deviceNameLabel.text = viewModel?.title
@@ -179,8 +176,7 @@ final class ClientTableViewCell1: UITableViewCell {
         deviceNameLabel.accessibilityIdentifier = "device name"
         proteusIdLabel.accessibilityIdentifier = "device proteus ID"
         activationDateLabel.accessibilityIdentifier = "activation date"
-        proteusIdLabel.numberOfLines = 1
-        activationDateLabel.numberOfLines = 1
+
         backgroundColor = SemanticColors.View.backgroundUserCell
 
         addBorder(for: .bottom)
@@ -195,7 +191,7 @@ final class ClientTableViewCell1: UITableViewCell {
             view.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview(view)
         }
-        // Setting the constraints for the view
+
         NSLayoutConstraint.activate([
             deviceNameLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 16),
             deviceNameLabel.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 16),
@@ -212,8 +208,4 @@ final class ClientTableViewCell1: UITableViewCell {
         ])
     }
 
-    override func prepareForReuse() {
-        viewModel = nil
-        super.prepareForReuse()
-    }
  }
