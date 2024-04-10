@@ -562,6 +562,7 @@ public final class ZMUserSession: NSObject {
             self.applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
             self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
+
             self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
                 from: self.mlsService.onNewCRLsDistributionPoints()
             )
