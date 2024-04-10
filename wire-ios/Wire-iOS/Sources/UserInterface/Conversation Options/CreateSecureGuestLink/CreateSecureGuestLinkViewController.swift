@@ -297,6 +297,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     @objc
     func createSecuredLinkButtonTapped(_ sender: UIButton) {
         if handlePasswordValidation(for: securedGuestLinkPasswordTextfield) {
+            // this needs to be moved to the viewModel
             UIPasteboard.general.string = securedGuestLinkPasswordTextfield.text
 
             UIAlertController.presentPasswordCopiedAlert(
@@ -304,6 +305,8 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
                 title: SecuredGuestLinkWithPasswordLocale.AlertController.title,
                 message: SecuredGuestLinkWithPasswordLocale.AlertController.message
             )
+
+            // tell your viewModel to somehow end up to the backend
         } else {
             // TODO: [AGIS] Sync with Wolfgang on the alert with the error
         }

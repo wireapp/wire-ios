@@ -92,7 +92,7 @@ extension ZMConversation {
     }
 
     /// Updates the conversation access mode if necessary and creates the link to access the conversation.
-    public func updateAccessAndCreateWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<String, Error>) -> Void) {
+    public func updateAccessAndCreateWirelessLink(password: String?, in userSession: ZMUserSession, _ completion: @escaping (Result<String, Error>) -> Void) {
         // Legacy access mode: access and access_mode have to be updated in order to create the link.
         if isLegacyAccessMode {
             setAllowGuests(true, in: userSession) { result in
@@ -100,15 +100,15 @@ extension ZMConversation {
                 case .failure(let error):
                     completion(.failure(error))
                 case .success:
-                    self.createWirelessLink(in: userSession, completion)
+                    self.createWirelessLink(password: password, in: userSession, completion)
                 }
             }
         } else {
-            createWirelessLink(in: userSession, completion)
+            createWirelessLink(password: password, in: userSession, completion)
         }
     }
 
-    func createWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<String, Error>) -> Void) {
+    func createWirelessLink(password: String?, in userSession: ZMUserSession, _ completion: @escaping (Result<String, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -117,7 +117,7 @@ extension ZMConversation {
             return completion(.failure(WirelessLinkError.unknown))
         }
 
-        let request = WirelessRequestFactory.createLinkRequest(for: self, apiVersion: apiVersion)
+        let request = WirelessRequestFactory.createLinkRequest(password: password, for: self, apiVersion: apiVersion)
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus == 201,
                let payload = response.payload,
@@ -275,8 +275,8 @@ internal struct WirelessRequestFactory {
         }
         return .init(getFromPath: "/conversations/\(identifier)/features/conversationGuestLinks", apiVersion: apiVersion.rawValue)
     }
-
-    static func createLinkRequest(for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
+    // Optional password in this method as a reference and then pass it all the way up to the cell
+    static func createLinkRequest(password: String?, for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
         guard let identifier = conversation.remoteIdentifier?.transportString() else {
             fatal("conversation is not yet inserted on the backend")
         }
@@ -285,11 +285,14 @@ internal struct WirelessRequestFactory {
         case .v0, .v1, .v2, .v3:
             return .init(path: "/conversations/\(identifier)/code", method: .post, payload: nil, apiVersion: apiVersion.rawValue)
         case .v4, .v5, .v6:
-            let payload: [String: Any] = [:]
+            var payload: [String: Any] = [:]
+            if let password {
+                payload["password"] = password
+            }
             return .init(path: "/conversations/\(identifier)/code", method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
         }
     }
-
+    // Send the password to POST / v4/conversations/<convID>/ code
     static func deleteLinkRequest(for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
         guard let identifier = conversation.remoteIdentifier?.transportString() else {
             fatal("conversation is not yet inserted on the backend")

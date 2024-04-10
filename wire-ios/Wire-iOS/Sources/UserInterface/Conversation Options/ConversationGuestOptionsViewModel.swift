@@ -29,7 +29,7 @@ protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     var allowGuestsChangedHandler: ((Bool) -> Void)? { get set }
     var guestLinkFeatureStatusChangedHandler: ((GuestLinkFeatureStatus) -> Void)? { get set }
     func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void)
-    func createConversationLink(completion: @escaping (Result<String, Error>) -> Void)
+    func createConversationLink(password: String?, completion: @escaping (Result<String, Error>) -> Void)
     func fetchConversationLink(completion: @escaping (Result<String?, Error>) -> Void)
     func deleteLink(completion: @escaping (Result<Void, Error>) -> Void)
 }
@@ -232,7 +232,7 @@ final class ConversationGuestOptionsViewModel {
             self?.showLoadingCell = true
         }
 
-        configuration.createConversationLink { [weak self] result in
+        configuration.createConversationLink(password: nil) { [weak self] result in
             guard let `self` = self else { return }
             switch result {
             case .success(let link): self.link = link
@@ -251,7 +251,8 @@ final class ConversationGuestOptionsViewModel {
             delegate?.viewModel(self, sourceView: view, presentGuestLinkTypeSelection: { [weak self] guestLinkType in
                 guard let `self` = self else { return }
                 switch guestLinkType {
-                case .secure: break
+                    // Create a delegate method
+                case .secure: delegate.present(CreateSecureGuestLinkViewController().wrapInNavigationController(setBackgroundColor: true), animated: true)
                 case .normal:
                     createLink()
                 }

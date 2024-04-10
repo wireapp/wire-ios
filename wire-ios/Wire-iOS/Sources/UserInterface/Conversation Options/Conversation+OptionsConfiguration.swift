@@ -108,8 +108,8 @@ extension ZMConversation {
             }
         }
 
-        func createConversationLink(completion: @escaping (Result<String, Error>) -> Void) {
-            conversation.updateAccessAndCreateWirelessLink(in: userSession, completion)
+        func createConversationLink(password: String?, completion: @escaping (Result<String, Error>) -> Void) {
+            conversation.updateAccessAndCreateWirelessLink(password: password, in: userSession, completion)
         }
 
         func fetchConversationLink(completion: @escaping (Result<String?, Error>) -> Void) {

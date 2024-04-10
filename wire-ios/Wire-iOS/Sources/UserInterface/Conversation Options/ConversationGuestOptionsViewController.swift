@@ -138,12 +138,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
         presentGuestLinkTypeSelection completion: @escaping (GuestLinkType) -> Void
     ) {
         let alertController = UIAlertController.guestLinkTypeController { guestLinkType in
-            switch guestLinkType {
-            case .secure:
-                self.present(CreateSecureGuestLinkViewController().wrapInNavigationController(setBackgroundColor: true), animated: true)
-            case .normal:
-                completion(.normal)
-            }
+            completion(guestLinkType)
         }
         present(alertController, animated: true)
 
