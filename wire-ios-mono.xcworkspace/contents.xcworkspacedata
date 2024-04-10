@@ -134,4 +134,11 @@
    <FileRef
       location = "group:wire-ios-system/WireSystem.xcodeproj">
    </FileRef>
+   <Group
+      location = "group:Packages"
+      name = "Packages">
+      <FileRef
+         location = "group:ConversationList">
+      </FileRef>
+   </Group>
 </Workspace>

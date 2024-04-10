@@ -16,14 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import ConversationList
 import UIKit
-
-// Conditionally inject App Delegate depending on whether we're running tests or not.
-let appDelegateClass: AnyClass = NSClassFromString("TestingAppDelegate") ?? AppDelegate.self
 
 UIApplicationMain(
     CommandLine.argc,
     CommandLine.unsafeArgv,
-    NSStringFromClass(WireApplication.self),
-    NSStringFromClass(appDelegateClass)
+    NSStringFromClass(UIApplication.self),
+    NSStringFromClass(ApplicationDelegate.self)
 )
+
+final class ApplicationDelegate: NSObject, UIApplicationDelegate {
+
+    func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+
+        let window = UIWindow()
+        window.rootViewController = ConversationListFactory().make()
+        window.makeKeyAndVisible()
+
+        return true
+    }
+}
