@@ -105,12 +105,15 @@ jobs:
         with:
           token: ${{ secrets.SUBMODULE_PAT }}
           submodules: recursive
-      - name: Download changelog
+      - name: Download changelog     
+        id: download_changelog
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.changelog.outputs.changelog-name }}
-          path: CHANGELOG.md
-  
+
+      - name: Rename changelog     
+        run: mv ${{ steps.download_changelog.outputs.download-path }} CHANGELOG.md
+    
       - name: Retrieve Xcode version
         run: |
           echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
