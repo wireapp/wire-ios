@@ -5,6 +5,14 @@ on:
         required: true
         type: boolean
         default: true
+    outputs:
+      changelog-url:
+        description: "The url of the changelog can be downloaded from"
+        value: ${{ jobs.changelog.outputs.changelog-url }}
+      changelog-name:
+        description: "The name of the changelog file"
+        value: ${{ jobs.changelog.outputs.changelog-name }}
+    
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
