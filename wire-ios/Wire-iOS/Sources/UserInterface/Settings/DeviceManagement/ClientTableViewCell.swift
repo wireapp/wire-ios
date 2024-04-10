@@ -131,7 +131,6 @@ final class ClientTableViewCell: UITableViewCell {
 // final class ClientTableViewCell1: UITableViewCell {
 //
 //    typealias LabelColors = SemanticColors.Label
-//
 //    // MARK: - Properties
 //
 //    let deviceNameLabel = DynamicFontLabel(
