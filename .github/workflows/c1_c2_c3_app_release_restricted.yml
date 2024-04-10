@@ -16,20 +16,28 @@ on:
 
 permissions: 
   checks: write
-
+  
 jobs:
-  release:
-    strategy:
-      matrix:
-        app_config:
-          - column: C1
-            fastlane_action: "appstore_col_1_restricted"
-          - column: C2
-            fastlane_action: "appstore_col_2_restricted"
-          - column: C3
-            fastlane_action: "appstore_col_3_restricted"
+  column_1_restricted:
+    if: ${{ inputs.column == 'C1' || inputs.column == 'all' }}
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
-      fastlane_action: ${{ matrix.app_config.fastlane_action }}
+      fastlane_action: appstore_col_1_restricted
+      cloud: false
+    secrets: inherit
+
+  column_2_restricted:
+    if: ${{ inputs.column == 'C2' || inputs.column == 'all' }}
+    uses: ./.github/workflows/_reusable_app_release.yml
+    with:
+      fastlane_action: appstore_col_2_restricted
+      cloud: false
+    secrets: inherit
+  
+  column_3_restricted:
+    if: ${{ inputs.column == 'C3' || inputs.column == 'all' }}
+    uses: ./.github/workflows/_reusable_app_release.yml
+    with:
+      fastlane_action: appstore_col_3_restricted
       cloud: false
     secrets: inherit
