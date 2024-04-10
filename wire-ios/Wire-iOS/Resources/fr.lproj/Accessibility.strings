@@ -103,7 +103,7 @@
 
 "createConversation.backButton.description" = "Go back to contact list";
 
-"pictureView.closeButton.description" = "Close picture view";
+"pictureView.closeButton.description" = "Fermer l'image";
 
 "messageAction.unlikeButton.description" = "Unlike the picture";
 "messageAction.likeButton.description" = "Like the picture";
