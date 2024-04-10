@@ -72,6 +72,10 @@ public final class E2EIRepository: E2EIRepositoryInterface {
     // MARK: - Interface
 
     public func fetchTrustAnchor() async throws {
+        guard try await !e2eiSetupService.isTrustAnchorRegistered() else {
+            logger.info("Trust anchor is already registered, skipping.")
+            return
+        }
         let trustAnchor = try await acmeApi.getTrustAnchor()
         try await e2eiSetupService.registerTrustAnchor(trustAnchor)
     }
