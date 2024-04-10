@@ -88,6 +88,7 @@ open class AuthenticatedSessionFactory {
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
             sharedUserDefaults: sharedUserDefaults
         )
+        userSession.updateEventProcessor = userSession.createUpdateEventProcessor()
 
         userSession.startRequestLoopTracker()
 

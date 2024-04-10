@@ -41,7 +41,6 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             mediaManager: mediaManager,
             flowManager: flowManagerMock,
             analytics: nil,
-            eventProcessor: nil,
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
@@ -52,6 +51,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             sharedUserDefaults: sharedUserDefaults
         )
+        testSession.updateEventProcessor = testSession.createUpdateEventProcessor()
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // then
