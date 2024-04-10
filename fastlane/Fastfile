@@ -317,7 +317,7 @@ platform :ios do
             end
         else
             enable_datadog = [
-            "DATADOG_IMPORT=1"
+            "DATADOG_IMPORT=1",
             "DATADOG_APP_ID=#{ENV['DATADOG_APP_ID']}",
             "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}",
             "GCC_PREPROCESSOR_DEFINITIONS='$GCC_PREPROCESSOR_DEFINITIONS DATADOG_IMPORT'"
