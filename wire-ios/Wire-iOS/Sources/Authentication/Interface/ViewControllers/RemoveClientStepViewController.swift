@@ -24,7 +24,7 @@ import WireSyncEngine
 final class RemoveClientStepViewController: UIViewController, AuthenticationCoordinatedViewController {
 
     var authenticationCoordinator: AuthenticationCoordinator?
-    let clientListController: ClientListViewController
+    let clientListController: ClientListViewController1
     var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = {traitEnvironment in
        return traitEnvironment.traitCollection.horizontalSizeClass
     }
@@ -44,7 +44,8 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
             return ZMEmailCredentials(email: email, password: password)
         }
 
-        clientListController = ClientListViewController(clientsList: clients,
+        // a new VC
+        clientListController = ClientListViewController1(clientsList: clients,
                                                         credentials: emailCredentials,
                                                         showTemporary: false,
                                                         showLegalHold: false)
@@ -61,7 +62,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title.capitalized)
+        navigationItem.setDynamicFontLabel(title: L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title)
         configureSubviews()
         configureConstraints()
         updateBackButton()
@@ -71,7 +72,6 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
         clientListController.view.backgroundColor = .clear
-        clientListController.editingList = true
         clientListController.delegate = self
         addToSelf(clientListController)
     }

@@ -4952,8 +4952,8 @@ internal enum L10n {
             internal static let title = L10n.tr("Localizable", "registration.signin.too_many_devices.manage_button.title", fallback: "Manage devices")
           }
           internal enum ManageScreen {
-            /// Remove a Device
-            internal static let title = L10n.tr("Localizable", "registration.signin.too_many_devices.manage_screen.title", fallback: "Remove a Device")
+            /// Remove a device
+            internal static let title = L10n.tr("Localizable", "registration.signin.too_many_devices.manage_screen.title", fallback: "Remove a device")
           }
           internal enum SignOutButton {
             /// Log out
