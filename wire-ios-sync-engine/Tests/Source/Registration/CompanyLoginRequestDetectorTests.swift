@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireSyncEngineSupport
 @testable import WireSyncEngine
 
 final class CompanyLoginRequestDetectorTests: XCTestCase {
