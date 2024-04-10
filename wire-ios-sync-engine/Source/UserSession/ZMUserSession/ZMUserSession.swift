@@ -563,6 +563,7 @@ public final class ZMUserSession: NSObject {
             self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
 
+            self.mlsGroupVerificationStatusObserver.invoke()
             self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
                 from: self.mlsService.onNewCRLsDistributionPoints()
             )
@@ -932,7 +933,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
-            self?.observeMLSGroupVerificationStatus()
         }
 
     }
@@ -1037,14 +1037,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
     func checkE2EICertificateExpiryStatus() {
         guard e2eiFeature.isEnabled else { return }
         NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
-    }
-
-    // MARK: - Observers
-
-    private func observeMLSGroupVerificationStatus() {
-        guard e2eiFeature.isEnabled else { return }
-
-        mlsGroupVerificationStatusObserver.invoke()
     }
 
 }
