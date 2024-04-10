@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireDataModelSupport
 @testable import WireSyncEngine
 
 final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
@@ -63,6 +64,31 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         activityManager = MockBackgroundActivityManager()
         factory = BackgroundActivityFactory.shared
         factory.activityManager = activityManager
+
+        setUpEARServiceWorkaround()
+    }
+
+    /// This workaround is needed because all tests here are based on assumptions
+    /// that the `managedObjectContext` is changed.
+    /// To remove the workaround simply the `mockEARService` should be used instead of
+    /// a real instance of `EARService`.
+    private func setUpEARServiceWorkaround() {
+        mockEARService = nil
+        sut.tearDown()
+        sut = nil
+
+        let earService = EARService(
+            accountID: coreDataStack.account.userIdentifier,
+            databaseContexts: [
+                coreDataStack.viewContext,
+                coreDataStack.syncContext,
+                coreDataStack.searchContext
+            ],
+            canPerformKeyMigration: true,
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: MockAuthenticationContextProtocol()
+        )
+        sut = createSut(earService: earService)
     }
 
     override func tearDown() {
@@ -210,7 +236,6 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-
         XCTAssertTrue(sut.isDatabaseLocked)
     }
 
