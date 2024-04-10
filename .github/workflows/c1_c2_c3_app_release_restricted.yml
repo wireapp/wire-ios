@@ -14,23 +14,22 @@ on:
         required: true
         default: 'all'
 
+permissions: 
+  checks: write
+
 jobs:
-  changelog:
-    uses: ./.github/workflows/changelog.yml
+  release:
+    strategy:
+      matrix:
+        app_config:
+          - column: C1
+            fastlane_action: "appstore_col_1_restricted"
+          - column: C2
+            fastlane_action: "appstore_col_2_restricted"
+          - column: C3
+            fastlane_action: "appstore_col_3_restricted"
+    uses: ./.github/workflows/_reusable_app_release.yml
     with:
+      fastlane_action: ${{ matrix.app_config.fastlane_action }}
       cloud: false
-  # release:
-  #   needs: changelog
-  #   strategy:
-  #     matrix:
-  #       app_config:
-  #         - column: C1
-  #           fastlane_action: "appstore_col_1_restricted"
-  #         - column: C2
-  #           fastlane_action: "appstore_col_2_restricted"
-  #         - column: C3
-  #           fastlane_action: "appstore_col_3_restricted"
-  #   uses: ./.github/workflows/_reusable_app_release.yml
-  #   with:
-  #     fastlane_action: ${{ matrix.app_config.fastlane_action }}
-  #     changelog-url: ${{ needs.changelog.outputs.changelog-url }}
+    secrets: inherit

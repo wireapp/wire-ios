@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       changelog-url: ${{ steps.expose-url.outputs.changelog }}
+      changelog-name: ${{ steps.expose-url.outputs.changelog-name }}
     steps:
       - name: 'Checkout Git repository with history for all branches and tags'
         uses: actions/checkout@v4
@@ -71,5 +72,7 @@ jobs:
 
       - name: Expose url of changelog
         id: expose-url
-        run: echo "changelog=${{ steps.upload-file.outputs.artifact-url }}" >> $GITHUB_OUTPUT
+        run: |
+          echo "changelog=${{ steps.upload-file.outputs.artifact-url }}" >> $GITHUB_OUTPUT
+          echo "changelog-name=CHANGELOG-${{ github.run_number }}-${{ steps.date.outputs.date }}.md" >> $GITHUB_OUTPUT
 
