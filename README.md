@@ -29,6 +29,7 @@ The sync engine itself is built on top of a few third-party frameworks, and uses
 ### Documentation
 Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
 
+
 ## How to build the open source client
 
 ### What is included in the open source client
