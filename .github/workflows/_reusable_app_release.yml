@@ -4,6 +4,10 @@ on:
       fastlane_action:
         required: true
         type: string
+      cloud:
+        required: true
+        type: boolean
+        default: true
     secrets:
       KEYCHAIN_PASSWORD:
         required: true
@@ -62,28 +66,35 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       changelog-url: ${{ steps.expose-url.outputs.changelog }}
+      changelog-name: ${{ steps.expose-url.outputs.changelog-name }}
     steps:
       - name: 'Checkout Git repository with history for all branches and tags'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: 'Tag regex'
+        id: regex
+        run: |
+          if ${{ inputs.cloud }}; then
+            echo "regex='appstore/[0-9]+\.[0-9]+\.[0-9]*'" >> $GITHUB_ENV
+          else 
+            echo "regex='bk_build/[0-9]+\.[0-9]+\.[0-9]*'" >> $GITHUB_ENV
+          fi
       - name: 'Calculate diff between HEAD and latest tag'
-        run: echo "HEAD_TAG_DIFF=$(git diff HEAD $(git tag | grep -E '[a,A][p,P]+[s,S][t,T][o,O][r,R][e,E]\/[0-9]+\.[0-9]+.*' | tail -n 1) | wc -l | xargs)" >> "$GITHUB_ENV"
-     
+        run: echo "HEAD_TAG_DIFF=$(git diff HEAD $(git tag | grep -E '${{ env.regex }}' | tail -n 1) | wc -l | xargs)" >> "$GITHUB_ENV"
       - name: 'Set current Git tag to HEAD'
         if: "${{ env.HEAD_TAG_DIFF != '0' }}"
         run: echo "CURRENT_TAG=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
       - name: 'Set previous Git tag to latest tag if comparing to head'
         if: "${{ env.HEAD_TAG_DIFF != '0' }}"
-        run: echo "PREVIOUS_TAG=$(git tag | grep -E '[a,A][p,P]+[s,S][t,T][o,O][r,R][e,E]\/[0-9]+\.[0-9]+.*' | tail -n 1)" >> "$GITHUB_ENV"
-
+        run: echo "PREVIOUS_TAG=$(git tag | grep -E '${{ env.regex }}' | tail -n 1)" >> "$GITHUB_ENV"
       - name: 'Set current Git tag to latest tagged commit'
         if: "${{ env.HEAD_TAG_DIFF == '0' }}"
-        run: echo "CURRENT_TAG=$(git tag | grep -E '[a,A][p,P]+[s,S][t,T][o,O][r,R][e,E]\/[0-9]+\.[0-9]+.*' | tail -n 1)" >> "$GITHUB_ENV"
+        run: echo "CURRENT_TAG=$(git tag | grep -E '${{ env.regex }}' | tail -n 1)" >> "$GITHUB_ENV"
       - name: 'Set previous Git tag previous tag because head is latest tag'
         if: "${{ env.HEAD_TAG_DIFF == '0' }}"
-        run: echo "PREVIOUS_TAG=$(git tag | grep -E '[a,A][p,P]+[s,S][t,T][o,O][r,R][e,E]\/[0-9]+\.[0-9]+.*' | tail -n 2 | head -n 1)" >> "$GITHUB_ENV"
-
+        run: echo "PREVIOUS_TAG=$(git tag | grep -E '${{ env.regex }}' | tail -n 2 | head -n 1)" >> "$GITHUB_ENV"
+  
       - name: 'Print environment variables'
         run: |
           echo -e "PREVIOUS_TAG = $PREVIOUS_TAG"
@@ -110,7 +121,9 @@ jobs:
 
       - name: Expose url of changelog
         id: expose-url
-        run: echo "changelog=${{ steps.upload-file.outputs.artifact-url }}" >> $GITHUB_OUTPUT
+        run: |
+          echo "changelog=${{ steps.upload-file.outputs.artifact-url }}" >> $GITHUB_OUTPUT
+          echo "changelog-name=CHANGELOG-${{ github.run_number }}-${{ steps.date.outputs.date }}.md" >> $GITHUB_OUTPUT
 
   build_and_release:
     runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15.3
@@ -151,7 +164,12 @@ jobs:
         with:
           token: ${{ secrets.SUBMODULE_PAT }}
           submodules: recursive
-
+      - name: Download changelog
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.changelog.outputs.changelog-name }}
+          path: CHANGELOG.md
+  
       - name: Retrieve Xcode version
         run: |
           echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
@@ -193,7 +211,6 @@ jobs:
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
             build/**
-
 
       - name: Archiving env variables
         if: always()
