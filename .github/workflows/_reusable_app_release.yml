@@ -31,7 +31,7 @@ on:
       DD_API_KEY:
         required: true
       DATADOG_APP_ID:
-          required: true
+        required: true
       DATADOG_CLIENT_TOKEN:
         required: true
       C1_S3_SUBFOLDER_RESTRICTED:
