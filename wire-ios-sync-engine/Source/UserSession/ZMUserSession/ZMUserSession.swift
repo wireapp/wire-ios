@@ -562,6 +562,10 @@ public final class ZMUserSession: NSObject {
             self.applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
             self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
+
+            self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
+                from: self.mlsService.onNewCRLsDistributionPoints()
+            )
         }
 
         registerForCalculateBadgeCountNotification()
@@ -929,7 +933,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
             self?.observeMLSGroupVerificationStatus()
-            self?.observeNewCRLsDistributionPoints()
         }
 
     }
@@ -1042,14 +1045,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
         guard e2eiFeature.isEnabled else { return }
 
         mlsGroupVerificationStatusObserver.invoke()
-    }
-
-    private func observeNewCRLsDistributionPoints() {
-        guard e2eiFeature.isEnabled else { return }
-
-        cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
-            from: mlsService.onNewCRLsDistributionPoints()
-        )
     }
 
 }
