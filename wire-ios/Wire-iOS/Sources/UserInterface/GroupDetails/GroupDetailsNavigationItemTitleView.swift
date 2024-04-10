@@ -21,11 +21,6 @@ import WireDataModel
 
 final class GroupDetailsNavigationItemTitleView: UIView {
 
-    var title: String {
-        get { titleLabel.text ?? "" }
-        set { titleLabel.text = newValue }
-    }
-
     var verificationStatus: ConversationVerificationStatus {
         get { verificationStatusView.status }
         set {
@@ -63,6 +58,7 @@ final class GroupDetailsNavigationItemTitleView: UIView {
         stackView.addArrangedSubview(titleLabel)
         stackView.addArrangedSubview(verificationStatusView)
 
+        titleLabel.text = L10n.Localizable.Participants.title.capitalized
         titleLabel.textAlignment = .center
         verificationStatusView.isHidden = true
     }
@@ -78,7 +74,6 @@ private struct PreviewViewControllerRepresentable: UIViewControllerRepresentable
     }
     func updateUIViewController(_ navigationController: UINavigationController, context: Context) {
         let viewController = navigationController.viewControllers[0] as! PreviewViewController
-        viewController.navigationItemTitleView.title = title
         viewController.navigationItemTitleView.verificationStatus = verificationStatus
     }
 }

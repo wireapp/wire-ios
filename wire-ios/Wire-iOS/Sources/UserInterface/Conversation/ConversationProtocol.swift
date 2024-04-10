@@ -139,10 +139,9 @@ extension GroupDetailsConversation {
     var isVerified: Bool {
         switch messageProtocol {
         case .proteus, .mixed:
-            return securityLevel == .secure
+            securityLevel == .secure
         case .mls:
-            return isE2EIEnabled && mlsVerificationStatus == .verified
+            isE2EIEnabled && mlsVerificationStatus == .verified
         }
     }
-
 }

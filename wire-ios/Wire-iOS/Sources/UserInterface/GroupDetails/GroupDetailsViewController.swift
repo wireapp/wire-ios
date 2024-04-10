@@ -103,32 +103,36 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         collectionViewController.sections = computeVisibleSections()
     }
 
-    private func setupNavigatiomItem() {
-        navigationItem.titleView = TwoLineTitleView(
-            first: L10n.Localizable.Participants.title.capitalized.attributedString,
-            second: verificationStatus)
-        navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ConversationDetails.CloseButton.description
-        navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.BackButton.description
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        setupNavigationItem()
+        view.backgroundColor = SemanticColors.View.backgroundDefault
+    }
+
+    private func setupNavigationItem() {
+        navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.Profile.BackButton.description
+
         navigationItemTitleView.translatesAutoresizingMaskIntoConstraints = false
         navigationItem.titleView = navigationItemTitleView
-        navigationItemTitleView.title = L10n.Localizable.Participants.title.capitalized
-        navigationItemTitleView.verificationStatus.isProteusVerified = conversation.sortedOtherParticipants.allSatisfy { $0.isVerified }
 
-        view.backgroundColor = SemanticColors.View.backgroundDefault
+        navigationItem.rightBarButtonItem = navigationController?.closeItem()
+        navigationItem.rightBarButtonItem?.accessibilityLabel = L10n.Accessibility.ConversationDetails.CloseButton.description
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         updateLegalHoldIndicator()
-        setupNavigatiomItem()
+        updateNavigatiomItem()
         collectionViewController.collectionView?.reloadData()
+    }
+
+    private func updateNavigatiomItem() {
+//        navigationItem.titleView = TwoLineTitleView(
+//            first: L10n.Localizable.Participants.title.capitalized.attributedString,
+//            second: verificationStatus)
+        navigationItemTitleView.verificationStatus.isProteusVerified = conversation.sortedOtherParticipants.allSatisfy { $0.isVerified }
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -140,7 +144,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        setupNavigatiomItem()
+        updateNavigatiomItem()
     }
 
     func updateLegalHoldIndicator() {
@@ -365,12 +369,12 @@ extension GroupDetailsViewController {
 
 private extension GroupDetailsViewController {
 
-    var verificationStatus: NSAttributedString? {
-        guard conversation.isVerified else {
-            return nil
-        }
-        return attributedString(title: verificationStatusTitle, icon: verificationStatusIcon)
-    }
+//    var verificationStatus: NSAttributedString? {
+//        guard conversation.isVerified else {
+//            return nil
+//        }
+//        return attributedString(title: verificationStatusTitle, icon: verificationStatusIcon)
+//    }
 
     var verificationStatusTitle: String {
         typealias ConversationVerificationStatus = L10n.Localizable.GroupDetails.ConversationVerificationStatus

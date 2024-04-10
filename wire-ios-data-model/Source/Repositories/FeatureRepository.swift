@@ -328,6 +328,7 @@ public class FeatureRepository: FeatureRepositoryInterface {
     // MARK: - E2EId
 
     public func fetchE2EI() -> Feature.E2EI {
+        logger.info("fetching E2EI feature from Core Data")
         guard
             let feature = Feature.fetch(name: .e2ei, context: context),
             let featureConfig = feature.config
