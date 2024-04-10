@@ -4668,6 +4668,30 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
 }
 
+public class MockObserveMLSGroupVerificationStatusUseCaseProtocol: ObserveMLSGroupVerificationStatusUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() -> Void)?
+
+    public func invoke() {
+        invoke_Invocations.append(())
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        mock()
+    }
+
+}
+
 public class MockOneOnOneMigratorInterface: OneOnOneMigratorInterface {
 
     // MARK: - Life cycle
