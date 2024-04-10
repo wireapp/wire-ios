@@ -34,3 +34,4 @@ jobs:
     with:
       fastlane_action: ${{ matrix.app_config.fastlane_action }}
       changelog-url: ${{ needs.changelog.outputs.changelog-url }}
+      cloud: false
