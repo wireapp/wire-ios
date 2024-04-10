@@ -31,6 +31,14 @@ on:
         required: true
       C1_APP_CENTER_APP_NAME_PRODUCTION:
         required: true
+      C2_S3_SUBFOLDER_RESTRICTED:
+        required: true
+      C2_APP_CENTER_APP_NAME_RESTRICTED:
+        required: true
+      C2_S3_SUBFOLDER_PRODUCTION:
+        required: true
+      C2_APP_CENTER_APP_NAME_PRODUCTION:
+        required: true  
       C3_S3_SUBFOLDER_RESTRICTED:
         required: true
       C3_APP_CENTER_APP_NAME_RESTRICTED:
