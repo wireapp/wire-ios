@@ -358,4 +358,8 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         textFieldValidationDelegate?.validationUpdated(sender: self, error: nil)
         updateConfirmButton()
     }
+
+    func validateText(text: String) -> TextFieldValidator.ValidationError? {
+        return textFieldValidator.validate(text: text, kind: kind)
+    }
 }

@@ -5072,6 +5072,18 @@ internal enum L10n {
         }
       }
     }
+    internal enum RevokedCertificate {
+      internal enum Alert {
+        /// Continue Using This Device
+        internal static let `continue` = L10n.tr("Localizable", "revoked_certificate.alert.continue", fallback: "Continue Using This Device")
+        /// Log out
+        internal static let logOut = L10n.tr("Localizable", "revoked_certificate.alert.log_out", fallback: "Log out")
+        /// Log out to reduce security risks. Then log in again, get a new certificate, and reset your password. If you keep using this device, your conversations are no longer verified.
+        internal static let message = L10n.tr("Localizable", "revoked_certificate.alert.message", fallback: "Log out to reduce security risks. Then log in again, get a new certificate, and reset your password. If you keep using this device, your conversations are no longer verified.")
+        /// End-to-end certificate revoked
+        internal static let title = L10n.tr("Localizable", "revoked_certificate.alert.title", fallback: "End-to-end certificate revoked")
+      }
+    }
     internal enum SecuredGuestLinkWithPassword {
       internal enum AlertController {
         /// The password was copied to your device clipboard.
@@ -5109,16 +5121,6 @@ internal enum L10n {
         /// People who want to join the conversation via the guest link need to enter this password first.
         /// **You can’t change the password later. Make sure to copy and store it.**
         internal static let title = L10n.tr("Localizable", "secured_guest_link_with_password.warning_label.title", fallback: "People who want to join the conversation via the guest link need to enter this password first.\n**You can’t change the password later. Make sure to copy and store it.**")
-    internal enum RevokedCertificate {
-      internal enum Alert {
-        /// Continue Using This Device
-        internal static let `continue` = L10n.tr("Localizable", "revoked_certificate.alert.continue", fallback: "Continue Using This Device")
-        /// Log out
-        internal static let logOut = L10n.tr("Localizable", "revoked_certificate.alert.log_out", fallback: "Log out")
-        /// Log out to reduce security risks. Then log in again, get a new certificate, and reset your password. If you keep using this device, your conversations are no longer verified.
-        internal static let message = L10n.tr("Localizable", "revoked_certificate.alert.message", fallback: "Log out to reduce security risks. Then log in again, get a new certificate, and reset your password. If you keep using this device, your conversations are no longer verified.")
-        /// End-to-end certificate revoked
-        internal static let title = L10n.tr("Localizable", "revoked_certificate.alert.title", fallback: "End-to-end certificate revoked")
       }
     }
     internal enum SecurityClassification {

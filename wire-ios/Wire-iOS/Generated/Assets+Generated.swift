@@ -190,7 +190,6 @@ internal enum Asset {
     internal static let attention = ImageAsset(name: "Attention")
     internal static let backArrow = ImageAsset(name: "BackArrow")
     internal static let check = ImageAsset(name: "Check")
-    internal static let shield = ImageAsset(name: "Shield")
     internal static let chevronRight = ImageAsset(name: "ChevronRight")
     internal static let close = ImageAsset(name: "Close")
     internal static let copy = ImageAsset(name: "Copy")
@@ -202,6 +201,7 @@ internal enum Asset {
     internal static let rightChevron = ImageAsset(name: "RightChevron")
     internal static let selfDeletingMessages = ImageAsset(name: "SelfDeletingMessages")
     internal static let services = ImageAsset(name: "Services")
+    internal static let shield = ImageAsset(name: "Shield")
     internal static let unavailableUser = ImageAsset(name: "Unavailable user")
     internal static let verifiedShield = ImageAsset(name: "VerifiedShield")
   }
@@ -366,4 +366,3 @@ private final class BundleToken {
   }()
 }
 // swiftlint:enable convenience_type
-// swiftlint:disable all

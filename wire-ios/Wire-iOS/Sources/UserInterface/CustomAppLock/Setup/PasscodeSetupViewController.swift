@@ -65,7 +65,7 @@ final class PasscodeSetupViewController: UIViewController {
     }()
 
     lazy var passcodeTextField: ValidatedTextField = {
-        let textField = ValidatedTextField.createPasscodeTextField(kind: .passcode(isNew: true), delegate: self, setNewColors: true)
+        let textField = ValidatedTextField.createPasscodeTextField(kind: .passcode(.applockPasscode, isNew: true), delegate: self, setNewColors: true)
         textField.placeholder = L10n.Localizable.CreatePasscode.Textfield.placeholder
         textField.delegate = self
 

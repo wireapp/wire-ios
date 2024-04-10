@@ -93,7 +93,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             style: .default
         )
         textField.addRevealButton(delegate: self)
-      
+
         textField.accessibilityLabel = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.description
         textField.accessibilityHint = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.hint
 
@@ -150,8 +150,8 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         return textField
     }()
 
-    private lazy var createSecuredLinkButton: Button = {
-        let button = Button(
+    private lazy var createSecuredLinkButton: ZMButton = {
+        let button = ZMButton(
             style: .primaryTextButtonStyle,
             cornerRadius: 16,
             fontSpec: .buttonBigSemibold
@@ -222,16 +222,16 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     }
 
     private func setupConstraints() {
-        [warningLabel,
-         generatePasswordButton,
-         setPasswordLabel,
-         securedGuestLinkPasswordTextfield,
-         passwordRequirementsLabel,
-         confirmPasswordLabel,
-         securedGuestLinkPasswordValidatedTextField,
-         createSecuredLinkButton,
-         contentView,
-         scrollView].prepareForLayout()
+        warningLabel.translatesAutoresizingMaskIntoConstraints = false
+        generatePasswordButton.translatesAutoresizingMaskIntoConstraints = false
+        setPasswordLabel.translatesAutoresizingMaskIntoConstraints = false
+        securedGuestLinkPasswordTextfield.translatesAutoresizingMaskIntoConstraints = false
+        passwordRequirementsLabel.translatesAutoresizingMaskIntoConstraints = false
+        confirmPasswordLabel.translatesAutoresizingMaskIntoConstraints = false
+        securedGuestLinkPasswordValidatedTextField.translatesAutoresizingMaskIntoConstraints = false
+        createSecuredLinkButton.translatesAutoresizingMaskIntoConstraints = false
+        contentView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
 
         let heightConstraint = contentView.heightAnchor.constraint(greaterThanOrEqualTo: scrollView.heightAnchor)
         heightConstraint.priority = UILayoutPriority.defaultLow
@@ -325,18 +325,16 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
         return isValid
     }
-  
+
     // MARK: - Accessibility
 
     func announcePasswordValidationErrorForVoiceOver(for textField: ValidatedTextField) {
-       let argument =  textField == securedGuestLinkPasswordTextfield ? SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.announcement : SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordValidatedTextField.announcement
-        
-            UIAccessibility.post(
-                notification: .announcement,
-                argument: argument
-            )
-        }
+        let argument = textField == securedGuestLinkPasswordTextfield ? SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.announcement : SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordValidatedTextField.announcement
 
+        UIAccessibility.post(
+            notification: .announcement,
+            argument: argument
+        )
     }
 
     // MARK: - CreatePasswordSecuredLinkViewModelDelegate
@@ -348,9 +346,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         securedGuestLinkPasswordTextfield.text = password
         securedGuestLinkPasswordValidatedTextField.text = password
     }
-
 }
-
 // MARK: - ValidatedTextFieldDelegate
 
 extension CreateSecureGuestLinkViewController: ValidatedTextFieldDelegate {
