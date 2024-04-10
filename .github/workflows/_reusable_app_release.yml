@@ -8,6 +8,9 @@ on:
         required: true
         type: boolean
         default: true
+      datadog_enabled:
+        type: boolean
+        default: false
     secrets:
       KEYCHAIN_PASSWORD:
         required: true
@@ -26,6 +29,10 @@ on:
       AWS_SECRET_ACCESS_KEY:
         required: true
       DD_API_KEY:
+        required: true
+      DATADOG_APP_ID:
+          required: true
+      DATADOG_CLIENT_TOKEN:
         required: true
       C1_S3_SUBFOLDER_RESTRICTED:
         required: true
@@ -83,6 +90,9 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
       DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+      DATADOG_APP_ID: ${{ secrets.DATADOG_APP_ID }}
+      DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
+      ENABLE_DATADOG: ${{ inputs.datadog_enabled }}
       C1_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C1_S3_SUBFOLDER_RESTRICTED }}
       C1_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C1_APP_CENTER_APP_NAME_RESTRICTED }}
       C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
@@ -96,7 +106,7 @@ jobs:
       C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
       C3_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C3_APP_CENTER_APP_NAME_PRODUCTION }}
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
-
+      
     steps:
       - name: Add Masks
         run: |
