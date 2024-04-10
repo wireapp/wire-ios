@@ -107,7 +107,7 @@ actor EventProcessor: UpdateEventProcessor {
     }
 
     private func processEvents(callEventsOnly: Bool) async throws {
-        WireLogger.updateEvent.info("process pending events (callEventsOnly: \(callEventsOnly)")
+        WireLogger.updateEvent.info("process pending events: callEventsOnly=\(callEventsOnly)")
 
         let encryptMessagesAtRest = await syncContext.perform {
             self.syncContext.encryptMessagesAtRest

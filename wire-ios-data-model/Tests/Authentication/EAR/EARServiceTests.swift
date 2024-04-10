@@ -64,7 +64,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
             keyEncryptor: keyEncryptor,
             databaseContexts: [uiMOC, syncMOC],
             canPerformKeyMigration: canPerformMigration,
-            earStorage: earStorage
+            earStorage: earStorage,
+            authenticationContext: MockAuthenticationContextProtocol()
         )
 
         sut.delegate = self
@@ -606,7 +607,6 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         let keys = try generatePrimaryKeyPair()
         let encryptedDatabaseKey = Data.randomEncryptionKey()
         let decryptedDatabaseKey = Data.randomEncryptionKey()
-        let context = LAContext()
 
         // Mock
         keyRepository.fetchPrivateKeyDescription_MockValue = keys.privateKey
@@ -614,7 +614,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         keyEncryptor.decryptDatabaseKeyPrivateKey_MockValue = decryptedDatabaseKey
 
         // When
-        XCTAssertNoThrow(try sut.unlockDatabase(context: context))
+        XCTAssertNoThrow(try sut.unlockDatabase())
 
         // Then
         XCTAssertEqual(uiMOC.databaseKey?._storage, decryptedDatabaseKey)
@@ -860,9 +860,12 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func test_OldEncryptionKeysAreReplaced_AfterActivatingEncryptionAtRest() throws {
         // Given
-        let sut = EARService(accountID: userIdentifier,
-                         databaseContexts: [uiMOC],
-                         sharedUserDefaults: .temporary())
+        let sut = EARService(
+            accountID: userIdentifier,
+            databaseContexts: [uiMOC],
+            sharedUserDefaults: .temporary(),
+            authenticationContext: MockAuthenticationContextProtocol()
+        )
 
         let oldDatabaseKey = try sut.generateKeys()
 

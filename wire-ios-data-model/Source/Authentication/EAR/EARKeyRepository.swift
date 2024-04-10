@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import Security
 
 // sourcery: AutoMockable
 protocol EARKeyRepositoryInterface {
@@ -34,6 +35,7 @@ protocol EARKeyRepositoryInterface {
 
 }
 
+/// Caches keys for reuse and avoid prompting the user to authenticate for each key access.
 final class EARKeyRepository: EARKeyRepositoryInterface {
 
     private var keyCache = [String: SecKey]()
@@ -49,7 +51,7 @@ final class EARKeyRepository: EARKeyRepositoryInterface {
     }
 
     func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey {
-        if let key = keyCache [description.id] {
+        if let key = keyCache[description.id] {
             return key
         }
 
@@ -97,7 +99,7 @@ final class EARKeyRepository: EARKeyRepositoryInterface {
         keyCache[description.id] = nil
     }
 
-    // MARK: - Datatbase keys
+    // MARK: - Database keys
 
     func storeDatabaseKey(description: DatabaseEARKeyDescription, key: Data) throws {
         try KeychainManager.storeItem(description, value: key)

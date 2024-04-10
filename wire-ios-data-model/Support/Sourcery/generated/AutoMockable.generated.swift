@@ -57,6 +57,102 @@ import WireCoreCrypto
 
 
 
+public class MockAuthenticationContextProtocol: AuthenticationContextProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - laContext
+
+    public var laContext: LAContext {
+        get { return underlyingLaContext }
+        set(value) { underlyingLaContext = value }
+    }
+
+    public var underlyingLaContext: LAContext!
+
+    // MARK: - evaluatedPolicyDomainState
+
+    public var evaluatedPolicyDomainState: Data?
+
+
+    // MARK: - canEvaluatePolicy
+
+    public var canEvaluatePolicyError_Invocations: [(policy: LAPolicy, error: NSErrorPointer)] = []
+    public var canEvaluatePolicyError_MockMethod: ((LAPolicy, NSErrorPointer) -> Bool)?
+    public var canEvaluatePolicyError_MockValue: Bool?
+
+    public func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
+        canEvaluatePolicyError_Invocations.append((policy: policy, error: error))
+
+        if let mock = canEvaluatePolicyError_MockMethod {
+            return mock(policy, error)
+        } else if let mock = canEvaluatePolicyError_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `canEvaluatePolicyError`")
+        }
+    }
+
+    // MARK: - evaluatePolicy
+
+    public var evaluatePolicyLocalizedReasonReply_Invocations: [(policy: LAPolicy, localizedReason: String, reply: (Bool, Error?) -> Void)] = []
+    public var evaluatePolicyLocalizedReasonReply_MockMethod: ((LAPolicy, String, @escaping (Bool, Error?) -> Void) -> Void)?
+
+    public func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void) {
+        evaluatePolicyLocalizedReasonReply_Invocations.append((policy: policy, localizedReason: localizedReason, reply: reply))
+
+        guard let mock = evaluatePolicyLocalizedReasonReply_MockMethod else {
+            fatalError("no mock for `evaluatePolicyLocalizedReasonReply`")
+        }
+
+        mock(policy, localizedReason, reply)
+    }
+
+}
+
+class MockBiometricsStateProtocol: BiometricsStateProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - biometricsChanged
+
+    var biometricsChangedIn_Invocations: [AuthenticationContextProtocol] = []
+    var biometricsChangedIn_MockMethod: ((AuthenticationContextProtocol) -> Bool)?
+    var biometricsChangedIn_MockValue: Bool?
+
+    func biometricsChanged(in context: AuthenticationContextProtocol) -> Bool {
+        biometricsChangedIn_Invocations.append(context)
+
+        if let mock = biometricsChangedIn_MockMethod {
+            return mock(context)
+        } else if let mock = biometricsChangedIn_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `biometricsChangedIn`")
+        }
+    }
+
+    // MARK: - persistState
+
+    var persistState_Invocations: [Void] = []
+    var persistState_MockMethod: (() -> Void)?
+
+    func persistState() {
+        persistState_Invocations.append(())
+
+        guard let mock = persistState_MockMethod else {
+            fatalError("no mock for `persistState`")
+        }
+
+        mock()
+    }
+
+}
+
 public class MockCRLExpirationDatesRepositoryProtocol: CRLExpirationDatesRepositoryProtocol {
 
     // MARK: - Life cycle
@@ -2973,22 +3069,22 @@ public class MockEARServiceInterface: EARServiceInterface {
 
     // MARK: - unlockDatabase
 
-    public var unlockDatabaseContext_Invocations: [LAContext] = []
-    public var unlockDatabaseContext_MockError: Error?
-    public var unlockDatabaseContext_MockMethod: ((LAContext) throws -> Void)?
+    public var unlockDatabase_Invocations: [Void] = []
+    public var unlockDatabase_MockError: Error?
+    public var unlockDatabase_MockMethod: (() throws -> Void)?
 
-    public func unlockDatabase(context: LAContext) throws {
-        unlockDatabaseContext_Invocations.append(context)
+    public func unlockDatabase() throws {
+        unlockDatabase_Invocations.append(())
 
-        if let error = unlockDatabaseContext_MockError {
+        if let error = unlockDatabase_MockError {
             throw error
         }
 
-        guard let mock = unlockDatabaseContext_MockMethod else {
-            fatalError("no mock for `unlockDatabaseContext`")
+        guard let mock = unlockDatabase_MockMethod else {
+            fatalError("no mock for `unlockDatabase`")
         }
 
-        try mock(context)
+        try mock()
     }
 
     // MARK: - fetchPublicKeys
@@ -3517,6 +3613,34 @@ public class MockIsUserE2EICertifiedUseCaseProtocol: IsUserE2EICertifiedUseCaseP
         } else {
             fatalError("no mock for `invokeConversationUser`")
         }
+    }
+
+}
+
+public class MockLAContextStorable: LAContextStorable {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - context
+
+    public var context: LAContext?
+
+
+    // MARK: - clear
+
+    public var clear_Invocations: [Void] = []
+    public var clear_MockMethod: (() -> Void)?
+
+    public func clear() {
+        clear_Invocations.append(())
+
+        guard let mock = clear_MockMethod else {
+            fatalError("no mock for `clear`")
+        }
+
+        mock()
     }
 
 }
@@ -4540,6 +4664,30 @@ public class MockMLSServiceInterface: MLSServiceInterface {
         } else {
             fatalError("no mock for `encryptMessageFor`")
         }
+    }
+
+}
+
+public class MockObserveMLSGroupVerificationStatusUseCaseProtocol: ObserveMLSGroupVerificationStatusUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invoke_Invocations: [Void] = []
+    public var invoke_MockMethod: (() -> Void)?
+
+    public func invoke() {
+        invoke_Invocations.append(())
+
+        guard let mock = invoke_MockMethod else {
+            fatalError("no mock for `invoke`")
+        }
+
+        mock()
     }
 
 }
