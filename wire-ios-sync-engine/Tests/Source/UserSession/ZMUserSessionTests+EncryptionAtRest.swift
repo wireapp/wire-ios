@@ -171,8 +171,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        let context = LAContext()
-        try sut.unlockDatabase(with: context)
+        try sut.unlockDatabase()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -304,9 +303,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         XCTAssertNotNil(token)
 
         // when
-        let context = LAContext()
-
-        try sut.unlockDatabase(with: context)
+        try sut.unlockDatabase()
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
