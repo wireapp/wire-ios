@@ -30,7 +30,7 @@ jobs:
             fastlane_action: "appstore_col_2_restricted"
           - column: C3
             fastlane_action: "appstore_col_3_restricted"
-    if: contains(inputs.column, matrix.app_config.column) || inputs.column == 'all'
+    if: contains(inputs.column, ${{ matrix.app_config.column }}) || inputs.column == 'all'
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: ${{ matrix.app_config.fastlane_action }}
