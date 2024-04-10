@@ -234,7 +234,6 @@ class APIMigrationManagerTests: MessagingTest {
     @MainActor
     private func stubUserSession() -> ZMUserSession {
         let mockStrategyDirectory = MockStrategyDirectory()
-        let mockUpdateEventProcessor = MockUpdateEventProcessor()
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
 
         let cookieStorage = ZMPersistentCookieStorage(
@@ -248,13 +247,12 @@ class APIMigrationManagerTests: MessagingTest {
             pushChannel: MockPushChannel()
         )
 
-        return ZMUserSession(
+        let userSession = ZMUserSession(
             userId: .create(),
             transportSession: mockTransportSession,
             mediaManager: MockMediaManager(),
             flowManager: FlowManagerMock(),
             analytics: nil,
-            eventProcessor: mockUpdateEventProcessor,
             strategyDirectory: mockStrategyDirectory,
             syncStrategy: nil,
             operationLoop: nil,
@@ -265,5 +263,8 @@ class APIMigrationManagerTests: MessagingTest {
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             sharedUserDefaults: sharedUserDefaults
         )
+        userSession.updateEventProcessor = MockUpdateEventProcessor()
+
+        return userSession
     }
 }

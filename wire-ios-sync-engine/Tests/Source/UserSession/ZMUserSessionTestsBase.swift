@@ -20,6 +20,7 @@ import WireDataModelSupport
 import WireSyncEngineSupport
 import WireRequestStrategySupport
 import Combine
+@testable import WireSyncEngine
 
 final class ThirdPartyServices: NSObject, ThirdPartyServicesDelegate {
 
@@ -128,7 +129,6 @@ class ZMUserSessionTestsBase: MessagingTest {
 
     func createSut(earService: EARServiceInterface) -> ZMUserSession {
         let mockStrategyDirectory = MockStrategyDirectory()
-        let mockUpdateEventProcessor = MockUpdateEventProcessor()
 
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
@@ -136,13 +136,12 @@ class ZMUserSessionTestsBase: MessagingTest {
         let mockObserveMLSGroupVerificationStatusUseCase = MockObserveMLSGroupVerificationStatusUseCaseProtocol()
         mockObserveMLSGroupVerificationStatusUseCase.invoke_MockMethod = { }
 
-        return ZMUserSession(
+        let userSession = ZMUserSession(
             userId: coreDataStack.account.userIdentifier,
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManagerMock,
             analytics: nil,
-            eventProcessor: mockUpdateEventProcessor,
             strategyDirectory: mockStrategyDirectory,
             syncStrategy: nil,
             operationLoop: nil,
@@ -157,6 +156,9 @@ class ZMUserSessionTestsBase: MessagingTest {
             useCaseFactory: mockUseCaseFactory,
             observeMLSGroupVerificationStatus: mockObserveMLSGroupVerificationStatusUseCase
         )
+        userSession.updateEventProcessor = MockUpdateEventProcessor()
+
+        return userSession
     }
 
     func didChangeAuthenticationData() {
