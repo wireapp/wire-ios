@@ -136,3 +136,7 @@ struct DeviceDetailsView: View {
             .padding([.leading, .top], ViewConstants.Padding.standard)
     }
 }
+
+// MARK: - DeviceInfoView conformance
+
+extension DeviceDetailsView: DeviceInfoView {}

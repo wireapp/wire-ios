@@ -189,3 +189,7 @@ struct ProfileDeviceDetailsView: View {
         }
     }
 }
+
+// MARK: - DeviceInfoView conformance
+
+extension ProfileDeviceDetailsView: DeviceInfoView {}

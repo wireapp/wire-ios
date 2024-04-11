@@ -25,6 +25,7 @@ import SwiftUI
 /// a custom navigation item title view and a debug menu button in the navigation bar.
 final class DeviceInfoViewController<Content>: UIHostingController<Content> where Content: DeviceInfoView {
 
+    private var viewModel: DeviceInfoViewModel { rootView.viewModel }
     private var cancellables = Set<AnyCancellable>()
 
     override func viewDidLoad() {
@@ -35,8 +36,8 @@ final class DeviceInfoViewController<Content>: UIHostingController<Content> wher
 
     private func setupNavigationItemTitleObservation() {
 
-        let certificatePublisher = rootView.viewModel.$e2eIdentityCertificate
-        let isProtuesVerifiedPublisher = rootView.viewModel.$isProteusVerificationEnabled
+        let certificatePublisher = viewModel.$e2eIdentityCertificate
+        let isProtuesVerifiedPublisher = viewModel.$isProteusVerificationEnabled
         certificatePublisher.combineLatest(isProtuesVerifiedPublisher)
             .sink { [weak self] certificate, isProteusVerified in
                 self?.updateNavigationItemTitle(certificate, isProteusVerified)
@@ -49,11 +50,12 @@ final class DeviceInfoViewController<Content>: UIHostingController<Content> wher
         _ isProteusVerified: Bool
     ) {
 
-        let deviceName = NSMutableAttributedString(string: rootView.viewModel.title)
+        let deviceName = NSMutableAttributedString(string: viewModel.title)
         if
-            rootView.viewModel.isE2eIdentityEnabled,
+            viewModel.isE2eIdentityEnabled,
             let certificate,
             let imageForStatus = certificate.status.uiImage {
+
             let attachment = NSTextAttachment(image: imageForStatus)
             attachment.bounds = .init(origin: .init(x: 0, y: -1.5), size: imageForStatus.size)
             deviceName.append(.init(string: " "))
@@ -76,22 +78,13 @@ final class DeviceInfoViewController<Content>: UIHostingController<Content> wher
 
     private func setupDebugMenuButtonIfNeeded() {
 
-        if rootView.viewModel.isDebugMenuAvailable {
-            let toggleDebugMenu = UIAction(title: "Debug") { [weak self] _ in
-                self?.rootView.viewModel.isDebugMenuPresented.toggle()
-            }
-            let button = UIButton(primaryAction: toggleDebugMenu)
-            button.titleLabel?.font = FontSpec(.normal, .regular).font
-            navigationItem.rightBarButtonItem = .init(customView: button)
+        guard viewModel.isDebugMenuAvailable else { return }
+
+        let toggleDebugMenu = UIAction(title: "Debug") { [weak self] _ in
+            self?.viewModel.isDebugMenuPresented.toggle()
         }
+        let button = UIButton(primaryAction: toggleDebugMenu)
+        button.titleLabel?.font = FontSpec(.normal, .regular).font
+        navigationItem.rightBarButtonItem = .init(customView: button)
     }
 }
-
-// `DeviceDetailsView` and `ProfileDeviceDetailsView` are similar and even use the same view model type.
-// The `DeviceInfoView` protocol allows for using the same custom hosting controller for both.
-protocol DeviceInfoView: View {
-    var viewModel: DeviceInfoViewModel { get }
-    init(viewModel: DeviceInfoViewModel)
-}
-extension DeviceDetailsView: DeviceInfoView {}
-extension ProfileDeviceDetailsView: DeviceInfoView {}
