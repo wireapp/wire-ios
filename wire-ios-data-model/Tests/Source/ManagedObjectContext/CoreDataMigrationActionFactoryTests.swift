@@ -29,6 +29,26 @@ final class CoreDataMigrationActionFactoryTests: XCTestCase {
         .version2_107
     ]
 
+    // MARK: - Version 2.116
+
+    func test_ItReturnsPreActionForVersion2116() {
+        // given
+        // when
+        let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: .version2_116)
+
+        // then
+        XCTAssertNil(action)
+    }
+
+    func test_ItReturnsPostActionForVersion2116() {
+        // given
+        // when
+        let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: .version2_116)
+
+        // then
+        XCTAssertTrue(action is IsPendingInitialFetchMigrationAction)
+    }
+
     // MARK: - Version 2.114
 
     func test_ItReturnsPreActionForVersion2114() {
