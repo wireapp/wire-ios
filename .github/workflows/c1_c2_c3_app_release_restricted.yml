@@ -13,6 +13,10 @@ on:
           - all
         required: true
         default: 'all'
+      datadog_enabled:
+        description: 'Enable DataDog'
+        type: boolean
+        default: false
 
 permissions: 
   checks: write
@@ -24,6 +28,7 @@ jobs:
     with:
       fastlane_action: appstore_col_1_restricted
       is_cloud_build: false
+      datadog_enabled: ${{ inputs.datadog_enabled }}
     secrets: inherit
 
   column_2_restricted:
@@ -32,6 +37,7 @@ jobs:
     with:
       fastlane_action: appstore_col_2_restricted
       is_cloud_build: false
+      datadog_enabled: ${{ inputs.datadog_enabled }}
     secrets: inherit
   
   column_3_restricted:
@@ -40,4 +46,5 @@ jobs:
     with:
       fastlane_action: appstore_col_3_restricted
       is_cloud_build: false
+      datadog_enabled: ${{ inputs.datadog_enabled }}
     secrets: inherit
