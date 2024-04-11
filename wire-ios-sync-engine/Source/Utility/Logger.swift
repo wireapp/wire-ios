@@ -32,12 +32,15 @@ public struct Logger {
     private var onError: LogHandler?
     private var onCritical: LogHandler?
 
+    // Disabled for now, re-enable when you want to debug.
+    private var isDebugLoggingEnabled = false
+
     public init(
         subsystem: String,
         category: String
     ) {
-        // Disabled for now, re-enable when you want to debug.
-        if false {
+
+        if isDebugLoggingEnabled {
             let logger = os.Logger(
                 subsystem: subsystem,
                 category: category

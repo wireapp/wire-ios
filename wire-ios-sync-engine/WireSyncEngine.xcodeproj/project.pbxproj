@@ -3214,6 +3214,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		0145AE9C2B11580B0097E3B8 /* Run Sourcery */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);

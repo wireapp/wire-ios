@@ -23,14 +23,14 @@
 
 @property (nonatomic) XCTestCase *testCase;
 @property (nonatomic, copy) NSString *filePath;
-@property (nonatomic) NSUInteger lineNumber;
+@property (nonatomic) NSInteger lineNumber;
 
 @end
 
 
 @implementation ZMTFailureRecorder
 
-- (instancetype)initWithTestCase:(XCTestCase *)testCase filePath:(const char *)filePath lineNumber:(NSUInteger)lineNumber;
+- (instancetype)initWithTestCase:(XCTestCase *)testCase filePath:(const char *)filePath lineNumber:(NSInteger)lineNumber;
 {
     self = [super init];
     if (self != nil) {
@@ -45,9 +45,19 @@
 {
     va_list ap;
     va_start(ap, format);
-    NSString *d = [[NSString alloc] initWithFormat:format arguments:ap];
+    NSString *description = [[NSString alloc] initWithFormat:format arguments:ap];
     va_end(ap);
-    [self.testCase recordFailureWithDescription:d inFile:self.filePath atLine:self.lineNumber expected:YES];
+
+    XCTSourceCodeLocation *location = [[XCTSourceCodeLocation alloc] initWithFilePath:self.filePath
+                                                                           lineNumber:self.lineNumber];
+    XCTSourceCodeContext *context = [[XCTSourceCodeContext alloc] initWithLocation:location];
+    XCTIssue *issue = [[XCTIssue alloc] initWithType:XCTIssueTypeAssertionFailure
+                                  compactDescription:description
+                                 detailedDescription:nil
+                                   sourceCodeContext:context
+                                     associatedError:nil
+                                         attachments:@[]];
+    [_testCase recordIssue:issue];
 }
 
 @end

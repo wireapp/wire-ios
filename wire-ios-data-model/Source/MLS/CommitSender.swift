@@ -150,7 +150,9 @@ public actor CommitSender: CommitSending {
     private func mergeCommit(in groupID: MLSGroupID) async throws {
         do {
             WireLogger.mls.info("merging commit for group (\(groupID.safeForLoggingDescription))")
-            // TODO: [WPB-5829] handle buffered messages
+            // No need to handle buffered messages here. We will not run into a scenario where we need to handle
+            // buffered decrypted messages, because sending a commit and decrypting a message are non-rentrant
+            // operations and therefore we will never attempt to decrypt a message while sending a commit.
             _ = try await coreCrypto.perform {
                 try await $0.commitAccepted(conversationId: groupID.data)
             }
@@ -176,7 +178,9 @@ public actor CommitSender: CommitSending {
     private func mergePendingGroup(in groupID: MLSGroupID) async throws {
         do {
             WireLogger.mls.info("merging pending group (\(groupID.safeForLoggingDescription))")
-            // TODO: [WPB-5829] handle buffered messages
+            // No need to handle buffered messages here. We will not run into a scenario where we need to handle
+            // buffered decrypted messages, because sending a commit and decrypting a message are non-rentrant
+            // operations and therefore we will never attempt to decrypt a message while sending a commit.
             _ = try await coreCrypto.perform {
                 try await $0.mergePendingGroupFromExternalCommit(
                     conversationId: groupID.data

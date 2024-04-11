@@ -330,6 +330,7 @@ extension ZMUpdateEvent {
 }
 
 extension ZMUpdateEvent {
+
     override open func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? ZMUpdateEvent else {
             return false

@@ -42,7 +42,6 @@ extension NSData {
     }
 
     /// Returns whether the data represents animated GIF
-    /// - Parameter data: image data
     /// - Returns: returns turn if the data is GIF and number of images > 1
     @objc
     public func isDataAnimatedGIF() -> Bool {
