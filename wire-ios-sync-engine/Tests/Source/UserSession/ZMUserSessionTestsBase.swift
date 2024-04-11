@@ -19,6 +19,7 @@
 import WireDataModelSupport
 import WireSyncEngineSupport
 import WireRequestStrategySupport
+import Combine
 
 final class ThirdPartyServices: NSObject, ThirdPartyServicesDelegate {
 
@@ -75,7 +76,13 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockEARService.setInitialEARFlagValue_MockMethod = { _ in }
 
         mockMLSService = MockMLSServiceInterface()
-        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
+        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = { }
+        mockMLSService.onNewCRLsDistributionPoints_MockValue = PassthroughSubject<CRLsDistributionPoints, Never>()
+            .eraseToAnyPublisher()
+        mockMLSService.epochChanges_MockValue = .init { continuation in
+            continuation.yield(MLSGroupID.random())
+            continuation.finish()
+        }
 
         mockUseCaseFactory = MockUseCaseFactoryProtocol()
         mockResolveOneOnOneConversationUseCase = MockResolveOneOnOneConversationsUseCaseProtocol()
@@ -126,6 +133,9 @@ class ZMUserSessionTestsBase: MessagingTest {
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
 
+        let mockObserveMLSGroupVerificationStatusUseCase = MockObserveMLSGroupVerificationStatusUseCaseProtocol()
+        mockObserveMLSGroupVerificationStatusUseCase.invoke_MockMethod = { }
+
         return ZMUserSession(
             userId: coreDataStack.account.userIdentifier,
             transportSession: transportSession,
@@ -145,7 +155,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             sharedUserDefaults: sharedUserDefaults,
             useCaseFactory: mockUseCaseFactory,
-            observeMLSGroupVerificationStatus: MockObserveMLSGroupVerificationStatusUseCaseProtocol()
+            observeMLSGroupVerificationStatus: mockObserveMLSGroupVerificationStatusUseCase
         )
     }
 

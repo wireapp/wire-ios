@@ -31,6 +31,14 @@ on:
         required: true
       C1_APP_CENTER_APP_NAME_PRODUCTION:
         required: true
+      C2_S3_SUBFOLDER_RESTRICTED:
+        required: true
+      C2_APP_CENTER_APP_NAME_RESTRICTED:
+        required: true
+      C2_S3_SUBFOLDER_PRODUCTION:
+        required: true
+      C2_APP_CENTER_APP_NAME_PRODUCTION:
+        required: true  
       C3_S3_SUBFOLDER_RESTRICTED:
         required: true
       C3_APP_CENTER_APP_NAME_RESTRICTED:
@@ -86,13 +94,20 @@ jobs:
         run: |
           echo "{}" > ./package.json
           npx generate-changelog@1.8.0 -t "$PREVIOUS_TAG...$CURRENT_TAG"
+
+      - name: 'Set date variable'
+        id: date
+        run: echo "::set-output name=date::$(date +%s%N)"
+  
       - name: 'Upload changelog'
         id: upload-file
         uses: actions/upload-artifact@v4
         with:
-          name: CHANGELOG.md
+          name: CHANGELOG-${{ github.run_number }}-${{ steps.date.outputs.date }}.md
           path: ./CHANGELOG.md
           if-no-files-found: error
+          overwrite: true
+
       - name: Expose url of changelog
         id: expose-url
         run: echo "changelog=${{ steps.upload-file.outputs.artifact-url }}" >> $GITHUB_OUTPUT
@@ -136,10 +151,7 @@ jobs:
         with:
           token: ${{ secrets.SUBMODULE_PAT }}
           submodules: recursive
-      - name: Download changelog
-        uses: actions/download-artifact@v4
-        with:
-          name: CHANGELOG.md
+
       - name: Retrieve Xcode version
         run: |
           echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT

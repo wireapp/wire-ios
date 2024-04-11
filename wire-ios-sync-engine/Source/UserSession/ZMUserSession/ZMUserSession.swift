@@ -570,12 +570,10 @@ public final class ZMUserSession: NSObject {
             self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
 
-            if e2eiFeature.isEnabled {
-                self.observeMLSGroupVerificationStatus.invoke()
-                self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
-                    from: self.mlsService.onNewCRLsDistributionPoints()
-                )
-            }
+            self.observeMLSGroupVerificationStatus.invoke()
+            self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
+                from: self.mlsService.onNewCRLsDistributionPoints()
+            )
         }
 
         registerForCalculateBadgeCountNotification()
