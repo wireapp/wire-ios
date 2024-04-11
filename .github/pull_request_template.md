@@ -22,7 +22,6 @@ _Optional: attachments like images, videos, etc._
 
 ### Checklist
 
-- [ ] Title conforms to [semantic commits messages](https://github.com/wireapp/.github#usage).
 - [ ] Title contains a reference JIRA issue number like `[WPB-XXX]`.
 - [ ] Description is filled and free of optional paragraphs.
 - [ ] Adds/updates automated tests.
