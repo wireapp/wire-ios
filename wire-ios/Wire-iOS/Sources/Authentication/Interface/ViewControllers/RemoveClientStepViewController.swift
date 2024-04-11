@@ -24,7 +24,7 @@ import WireSyncEngine
 final class RemoveClientStepViewController: UIViewController, AuthenticationCoordinatedViewController {
 
     var authenticationCoordinator: AuthenticationCoordinator?
-    let clientListController: ClientListViewController1
+    let clientListController: RemoveClientsViewController
     var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = {traitEnvironment in
        return traitEnvironment.traitCollection.horizontalSizeClass
     }
@@ -44,11 +44,10 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
             return ZMEmailCredentials(email: email, password: password)
         }
 
-        // a new VC
-        clientListController = ClientListViewController1(clientsList: clients,
-                                                        credentials: emailCredentials,
-                                                        showTemporary: false,
-                                                        showLegalHold: false)
+        clientListController = RemoveClientsViewController(clientsList: clients,
+                                                           credentials: emailCredentials,
+                                                           showTemporary: false,
+                                                           showLegalHold: false)
 
         super.init(nibName: nil, bundle: nil)
     }
