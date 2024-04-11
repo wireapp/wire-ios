@@ -16,7 +16,7 @@ on:
 
 permissions: 
   checks: write
-  
+
 jobs:
   column_1_restricted:
     if: ${{ inputs.column == 'C1' || inputs.column == 'all' }}
@@ -33,7 +33,7 @@ jobs:
       fastlane_action: appstore_col_2_restricted
       is_cloud_build: false
     secrets: inherit
-  
+
   column_3_restricted:
     if: ${{ inputs.column == 'C3' || inputs.column == 'all' }}
     uses: ./.github/workflows/_reusable_app_release.yml
