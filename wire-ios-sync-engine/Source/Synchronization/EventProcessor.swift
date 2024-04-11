@@ -65,12 +65,16 @@ actor EventProcessor: UpdateEventProcessor {
             NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
 
             guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
+
             let publicKeys = try? self.earService.fetchPublicKeys()
             let decryptedEvents = await self.eventDecoder.decryptAndStoreEvents(events, publicKeys: publicKeys)
             await self.processBackgroundEvents(decryptedEvents)
+
             let isLocked = await self.syncContext.perform { self.syncContext.isLocked }
             try await self.processEvents(callEventsOnly: isLocked)
+
             await self.requestToCalculateBadgeCount()
+
             NotificationCenter.default.post(name: .eventProcessorDidFinishProcessingEventsNotification, object: self)
         }
     }
@@ -135,7 +139,7 @@ actor EventProcessor: UpdateEventProcessor {
         await eventDecoder.processStoredEvents(
             with: privateKeys,
             callEventsOnly: callEventsOnly
-        ) { [weak self] (decryptedUpdateEvents) in
+        ) { [weak self] decryptedUpdateEvents in
             WireLogger.updateEvent.info("retrieved \(decryptedUpdateEvents.count) events from the database")
 
             guard let self else { return }
