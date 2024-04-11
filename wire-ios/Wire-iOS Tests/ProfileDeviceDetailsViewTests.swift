@@ -32,7 +32,7 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
         .splitStringIntoLines(charactersPerLine: 16)
 
     private var coreDataFixture: CoreDataFixture!
-    private var sut: UIHostingController<ProfileDeviceDetailsView>!
+    private var sut: DeviceInfoViewController<ProfileDeviceDetailsView>!
     private var client: UserClient!
     private var mockContextProvider: ContextProvider!
 
@@ -95,7 +95,7 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
                                             isFromConversation: true,
                                             actionsHandler: deviceActions,
                                             conversationClientDetailsActions: MockConversationUserClientDetailsActions(),
-                                            showDebugMenu: showDebugMenu)
+                                            isDebugMenuAvailable: showDebugMenu)
         viewModel.e2eIdentityCertificate = isE2eIdentityEnabled ? certificate : nil
         viewModel.proteusKeyFingerprint = proteusKeyFingerPrint
         viewModel.isProteusVerificationEnabled = isProteusVerificationEnabled
@@ -106,7 +106,7 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
         mode: UIUserInterfaceStyle = .light,
         viewModel: DeviceInfoViewModel
     ) -> UINavigationController {
-        sut = UIHostingController(rootView: ProfileDeviceDetailsView(viewModel: viewModel, onDisappear: nil))
+        sut = DeviceInfoViewController(rootView: ProfileDeviceDetailsView(viewModel: viewModel))
         sut.overrideUserInterfaceStyle = mode
         return sut.wrapInNavigationController()
     }
