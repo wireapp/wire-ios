@@ -321,7 +321,9 @@ platform :ios do
             "DATADOG_APP_ID=#{ENV['DATADOG_APP_ID']}",
             "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}"
             ]
-
+            # DataDog values needs to go through WireCommonComponents
+            # this is done by this SHARED_CUSTOM_VALUES
+            # that is again set to GCC_PREPROCESSOR_DEFINITIONS
             shared_custom_values = datadog_values.join(' ')
 
             enable_datadog_args = datadog_values + [
