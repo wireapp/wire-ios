@@ -292,7 +292,7 @@ internal struct WirelessRequestFactory {
             return .init(path: "/conversations/\(identifier)/code", method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
         }
     }
-    // Send the password to POST / v4/conversations/<convID>/ code
+
     static func deleteLinkRequest(for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
         guard let identifier = conversation.remoteIdentifier?.transportString() else {
             fatal("conversation is not yet inserted on the backend")

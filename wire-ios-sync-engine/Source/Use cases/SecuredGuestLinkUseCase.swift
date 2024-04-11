@@ -25,12 +25,12 @@ public protocol SecuredGuestLinkUseCaseProtocol {
 
 }
 
-struct SecuredGuestLinkUseCase: SecuredGuestLinkUseCaseProtocol {
+public struct SecuredGuestLinkUseCase: SecuredGuestLinkUseCaseProtocol {
 
     private let conversation: ZMConversation
     private let userSession: ZMUserSession
 
-    init(
+    public init(
         conversation: ZMConversation,
         userSession: ZMUserSession
     ) {
@@ -38,7 +38,7 @@ struct SecuredGuestLinkUseCase: SecuredGuestLinkUseCaseProtocol {
         self.userSession = userSession
     }
 
-    func invoke(password: String, completion: @escaping (Result<String, Error>) -> Void) {
+    public func invoke(password: String, completion: @escaping (Result<String, Error>) -> Void) {
         conversation.updateAccessAndCreateWirelessLink(password: password, in: userSession, completion)
     }
 }

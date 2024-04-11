@@ -372,6 +372,30 @@ public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneCon
 
 }
 
+public class MockSecuredGuestLinkUseCaseProtocol: SecuredGuestLinkUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokePasswordCompletion_Invocations: [(password: String, completion: (Result<String, Error>) -> Void)] = []
+    public var invokePasswordCompletion_MockMethod: ((String, @escaping (Result<String, Error>) -> Void) -> Void)?
+
+    public func invoke(password: String, completion: @escaping (Result<String, Error>) -> Void) {
+        invokePasswordCompletion_Invocations.append((password: password, completion: completion))
+
+        guard let mock = invokePasswordCompletion_MockMethod else {
+            fatalError("no mock for `invokePasswordCompletion`")
+        }
+
+        mock(password, completion)
+    }
+
+}
+
 public class MockSelfClientCertificateProviderProtocol: SelfClientCertificateProviderProtocol {
 
     // MARK: - Life cycle
