@@ -31,7 +31,7 @@ final class DeviceInfoViewModelTests: XCTestCase {
         userClient.e2eIdentityCertificate = .mockExpired
         userClient.verified = true
 
-        self.deviceInfoViewModel = DeviceInfoViewModel(
+        deviceInfoViewModel = DeviceInfoViewModel(
             title: "",
             addedDate: "",
             proteusID: "",
@@ -41,7 +41,7 @@ final class DeviceInfoViewModelTests: XCTestCase {
             isFromConversation: false,
             actionsHandler: mockDeviceActionsHandler,
             conversationClientDetailsActions: mockConversationUserClientDetailsActions,
-            showDebugMenu: false
+            isDebugMenuAvailable: false
         )
     }
 

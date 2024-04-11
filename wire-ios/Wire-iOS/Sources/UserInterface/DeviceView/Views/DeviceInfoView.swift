@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,20 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 
-extension UIViewController {
-
-    func hideDefaultButtonTitle() {
-        guard navigationItem.backBarButtonItem == nil else { return }
-
-        hideBackButtonTitle()
-    }
-
-    func hideBackButtonTitle() {
-        let item = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        item.accessibilityLabel = L10n.Localizable.General.back
-        navigationItem.backBarButtonItem = item
-    }
-
+// `DeviceDetailsView` and `ProfileDeviceDetailsView` are similar and even use the same view model type.
+// The `DeviceInfoView` protocol allows for using the same custom hosting controller for both.
+protocol DeviceInfoView: View {
+    var viewModel: DeviceInfoViewModel { get }
+    init(viewModel: DeviceInfoViewModel)
 }

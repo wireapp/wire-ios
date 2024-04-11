@@ -21,17 +21,16 @@ import Combine
 import WireCommonComponents
 
 struct DeviceDetailsView: View {
+
     typealias E2ei = L10n.Localizable.Registration.Signin.E2ei
 
-    @Environment(\.dismiss)
-    private var dismiss
+    @Environment(\.dismiss) private var dismiss
 
-    @ObservedObject var viewModel: DeviceInfoViewModel
-    @State var isCertificateViewPresented: Bool = false
-    @State var didEnrollCertificateFail: Bool = false
+    @ObservedObject private(set) var viewModel: DeviceInfoViewModel
+    @State private var isCertificateViewPresented = false
+    @State private var didEnrollCertificateFail = false
 
-    var dismissedView: (() -> Void)?
-
+    @ViewBuilder
     var e2eIdentityCertificateView: some View {
         VStack(alignment: .leading) {
             DeviceDetailsE2EIdentityCertificateView(
@@ -50,6 +49,7 @@ struct DeviceDetailsView: View {
         .frame(maxWidth: .infinity)
     }
 
+    @ViewBuilder
     var proteusView: some View {
         VStack(alignment: .leading) {
             sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title)
@@ -67,6 +67,7 @@ struct DeviceDetailsView: View {
         .frame(maxWidth: .infinity)
     }
 
+    @ViewBuilder
     var mlsView: some View {
         VStack(alignment: .leading) {
             sectionTitleView(title: L10n.Localizable.Device.Details.Section.Mls.signature.uppercased())
@@ -77,56 +78,28 @@ struct DeviceDetailsView: View {
     }
 
     var body: some View {
-        NavigationView {
-            ScrollView {
-                if viewModel.isE2eIdentityEnabled {
-                    if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
-                        mlsView
-                    }
-
-                    e2eIdentityCertificateView
+        ScrollView {
+            if viewModel.isE2eIdentityEnabled {
+                if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
+                    mlsView
                 }
-                proteusView
+                e2eIdentityCertificateView
             }
-            .background(SemanticColors.View.backgroundDefault.swiftUIColor)
-            .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
-            .listStyle(.plain)
-            .overlay(
-                content: {
-                        if viewModel.isActionInProgress {
-                            SwiftUI.ProgressView()
-                        }
-                    }
-            )
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    SwiftUI.Button(
-                        action: {
-                            dismiss()
-                        },
-                        label: {
-                            Image(.backArrow)
-                                .renderingMode(.template)
-                                .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
-                        }
-                    )
-                }
-                ToolbarItem(placement: .principal) {
-                    DeviceView(viewModel: viewModel).titleView
-                }
-
-            }
+            proteusView
         }
-        .navigationViewStyle(.stack)
-
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
-        .navigationBarBackButtonHidden(true)
+        .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
+        .listStyle(.plain)
+        .overlay(
+            content: {
+                if viewModel.isActionInProgress {
+                    ProgressView()
+                }
+            }
+        )
+        .background(SemanticColors.View.backgroundDefault.swiftUIColor)
         .onAppear {
             viewModel.onAppear()
-        }
-        .onDisappear {
-            dismissedView?()
         }
         .onReceive(viewModel.$shouldDismiss) { shouldDismiss in
             if shouldDismiss {
@@ -148,7 +121,7 @@ struct DeviceDetailsView: View {
             }
         }
         .alert(E2ei.Error.Alert.title, isPresented: $didEnrollCertificateFail) {
-            SwiftUI.Button(L10n.Localizable.General.ok) {
+            Button(L10n.Localizable.General.ok) {
                 didEnrollCertificateFail = false
             }
         }
@@ -163,3 +136,7 @@ struct DeviceDetailsView: View {
             .padding([.leading, .top], ViewConstants.Padding.standard)
     }
 }
+
+// MARK: - DeviceInfoView conformance
+
+extension DeviceDetailsView: DeviceInfoView {}

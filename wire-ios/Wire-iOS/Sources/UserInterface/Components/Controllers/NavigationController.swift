@@ -19,7 +19,7 @@
 import UIKit
 import WireUtilities
 
-class NavigationController: UINavigationController, SpinnerCapable {
+final class NavigationController: UINavigationController, SpinnerCapable {
     var dismissSpinner: SpinnerCompletion?
 
     private lazy var pushTransition = NavigationTransition(operation: .push)
@@ -55,10 +55,10 @@ class NavigationController: UINavigationController, SpinnerCapable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         self.view.backgroundColor = SemanticColors.View.backgroundDefault
         self.useDefaultPopGesture = false
         self.navigationBar.tintColor = SemanticColors.Label.textDefault
-
         self.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
 
         self.dismissGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(NavigationController.onEdgeSwipe(gestureRecognizer:)))
