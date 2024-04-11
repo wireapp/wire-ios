@@ -17,8 +17,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="conversation0" translatesAutoresizingMaskIntoConstraints="NO" id="iGz-LB-oDX">
-                                <rect key="frame" x="0.0" y="103" width="393" height="500"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="conversation0" translatesAutoresizingMaskIntoConstraints="NO" id="iGz-LB-oDX">
+                                <rect key="frame" x="0.0" y="103" width="393" height="694"/>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="conversation1" translatesAutoresizingMaskIntoConstraints="NO" id="UHh-GN-kYa">
                                 <rect key="frame" x="0.0" y="758" width="393" height="60"/>
@@ -46,7 +46,7 @@
         <!--Sidebar-->
         <scene sceneID="ZQK-an-QqK">
             <objects>
-                <viewController id="VSa-Bj-Bzw" sceneMemberID="viewController">
+                <viewController id="VSa-Bj-Bzw" customClass="SidebarViewController" customModule="ConversationList" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="SIc-5V-xFl">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -63,6 +63,7 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="wcd-K3-pIz"/>
                         <color key="backgroundColor" red="0.92941176470588238" green="0.93725490196078431" blue="0.94117647058823528" alpha="1" colorSpace="calibratedRGB"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="wcd-K3-pIz" firstAttribute="trailing" secondItem="23M-hx-BaI" secondAttribute="trailing" id="26x-k1-HrY"/>
                             <constraint firstItem="23M-hx-BaI" firstAttribute="top" secondItem="wcd-K3-pIz" secondAttribute="top" id="AH3-rY-BEb"/>
@@ -74,10 +75,18 @@
                             <constraint firstItem="uYk-Vn-eFZ" firstAttribute="bottom" secondItem="wcd-K3-pIz" secondAttribute="bottom" id="pfS-zR-7Uz"/>
                             <constraint firstItem="8Bp-fL-Mcs" firstAttribute="leading" secondItem="23M-hx-BaI" secondAttribute="leading" id="w0k-Cr-beF"/>
                         </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="yOW-r4-Q9o" appends="YES" id="V9Y-ky-ddt"/>
+                        </connections>
                     </view>
                     <navigationItem key="navigationItem" title="Sidebar" id="q0D-As-PEp"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="tzc-Mz-pI6" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="yOW-r4-Q9o">
+                    <connections>
+                        <action selector="tap:" destination="VSa-Bj-Bzw" id="dwr-fw-fNa"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="734" y="-663"/>
         </scene>
@@ -111,10 +120,10 @@
             </objects>
             <point key="canvasLocation" x="-1076" y="-359"/>
         </scene>
-        <!--View Controller-->
+        <!--Conversation List View Controller-->
         <scene sceneID="lAw-Lb-Lua">
             <objects>
-                <viewController id="xBb-po-ahx" sceneMemberID="viewController">
+                <viewController id="xBb-po-ahx" customClass="ConversationListViewController" customModule="ConversationList" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="PsG-R3-aQy">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -138,6 +147,7 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Rb3-Cx-CRq"/>
                         <color key="backgroundColor" red="0.98039215686274506" green="0.98039215686274506" blue="0.98039215686274506" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="4QT-cE-jcB" firstAttribute="width" secondItem="Rb3-Cx-CRq" secondAttribute="width" id="44f-B8-0nT"/>
                             <constraint firstItem="pQm-RW-7Mp" firstAttribute="leading" secondItem="PsG-R3-aQy" secondAttribute="leading" id="95F-eK-ZX2"/>
@@ -145,9 +155,17 @@
                             <constraint firstAttribute="bottom" secondItem="pQm-RW-7Mp" secondAttribute="bottom" id="aL4-Qz-dLX"/>
                             <constraint firstAttribute="trailing" secondItem="pQm-RW-7Mp" secondAttribute="trailing" id="etV-B2-IeZ"/>
                         </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="0ir-CM-SbT" appends="YES" id="LoF-hd-LH3"/>
+                        </connections>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QiV-SS-AoW" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="0ir-CM-SbT">
+                    <connections>
+                        <action selector="tap:" destination="xBb-po-ahx" id="ybz-vw-BfR"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="-172" y="48"/>
         </scene>
