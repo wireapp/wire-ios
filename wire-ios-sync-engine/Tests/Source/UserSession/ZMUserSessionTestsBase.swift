@@ -19,6 +19,7 @@
 import WireDataModelSupport
 import WireSyncEngineSupport
 import WireRequestStrategySupport
+import Combine
 
 final class ThirdPartyServices: NSObject, ThirdPartyServicesDelegate {
 
@@ -114,6 +115,15 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockResolveOneOnOneConversationUseCase.invoke_MockMethod = { }
 
         mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
+
+        let newCRLsDistributionPointsFromDecryptionSerivce = PassthroughSubject<CRLsDistributionPoints, Never>()
+        mockMLSService.onNewCRLsDistributionPoints_MockValue = newCRLsDistributionPointsFromDecryptionSerivce.eraseToAnyPublisher()
+
+        let mlsGroupID = MLSGroupID.random()
+        mockMLSService.epochChanges_MockValue = .init { continuation in
+            continuation.yield(mlsGroupID)
+            continuation.finish()
+        }
 
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
         sut = ZMUserSession(
