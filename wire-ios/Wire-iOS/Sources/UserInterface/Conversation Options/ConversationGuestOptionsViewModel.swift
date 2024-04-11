@@ -42,6 +42,7 @@ protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, presentGuestLinkTypeSelection completion: @escaping (GuestLinkType) -> Void)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmRevokingLink completion: @escaping (Bool) -> Void)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, wantsToShareMessage message: String, sourceView: UIView?)
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, presentCreateSecureGuestLink viewController: UIViewController, animated: Bool)
 }
 
 final class ConversationGuestOptionsViewModel {
@@ -251,8 +252,8 @@ final class ConversationGuestOptionsViewModel {
             delegate?.viewModel(self, sourceView: view, presentGuestLinkTypeSelection: { [weak self] guestLinkType in
                 guard let `self` = self else { return }
                 switch guestLinkType {
-                    // Create a delegate method
-                case .secure: delegate.present(CreateSecureGuestLinkViewController().wrapInNavigationController(setBackgroundColor: true), animated: true)
+                case .secure:
+                    delegate?.viewModel(self, presentCreateSecureGuestLink: CreateSecureGuestLinkViewController().wrapInNavigationController(setBackgroundColor: true), animated: true)
                 case .normal:
                     createLink()
                 }

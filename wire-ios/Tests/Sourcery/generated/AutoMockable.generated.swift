@@ -192,6 +192,21 @@ class MockConversationGuestOptionsViewModelDelegate: ConversationGuestOptionsVie
         mock(viewModel, message, sourceView)
     }
 
+    // MARK: - viewModel
+
+    var viewModelPresentCreateSecureGuestLinkAnimated_Invocations: [(viewModel: ConversationGuestOptionsViewModel, viewController: UIViewController, animated: Bool)] = []
+    var viewModelPresentCreateSecureGuestLinkAnimated_MockMethod: ((ConversationGuestOptionsViewModel, UIViewController, Bool) -> Void)?
+
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, presentCreateSecureGuestLink viewController: UIViewController, animated: Bool) {
+        viewModelPresentCreateSecureGuestLinkAnimated_Invocations.append((viewModel: viewModel, viewController: viewController, animated: animated))
+
+        guard let mock = viewModelPresentCreateSecureGuestLinkAnimated_MockMethod else {
+            fatalError("no mock for `viewModelPresentCreateSecureGuestLinkAnimated`")
+        }
+
+        mock(viewModel, viewController, animated)
+    }
+
 }
 
 class MockConversationUserClientDetailsActions: ConversationUserClientDetailsActions {

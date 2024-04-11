@@ -159,6 +159,10 @@ final class ConversationGuestOptionsViewController: UIViewController,
         activityController.configPopover(pointToView: sourceView ?? view)
     }
 
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, presentCreateSecureGuestLink viewController: UIViewController, animated: Bool) {
+        self.present(viewController, animated: animated, completion: nil)
+    }
+
     // MARK: – UITableViewDelegate & UITableViewDataSource
 
     func numberOfSections(in tableView: UITableView) -> Int {
