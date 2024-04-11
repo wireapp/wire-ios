@@ -296,7 +296,10 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
     @objc
     func createSecuredLinkButtonTapped(_ sender: UIButton) {
-        viewModel.createSecuredGuestLinkIfValid(passwordField: securedGuestLinkPasswordTextfield, confirmPasswordField: securedGuestLinkPasswordValidatedTextField)
+        viewModel.createSecuredGuestLinkIfValid(
+            passwordField: securedGuestLinkPasswordTextfield,
+            confirmPasswordField: securedGuestLinkPasswordValidatedTextField
+        )
     }
 
     @objc

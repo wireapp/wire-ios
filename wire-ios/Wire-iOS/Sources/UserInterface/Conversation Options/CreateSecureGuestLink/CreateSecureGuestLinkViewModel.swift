@@ -69,7 +69,7 @@ final class CreateSecureGuestLinkViewModel {
                 UIPasteboard.general.string = passwordField.text
                 delegate?.viewModelDidValidatePasswordSuccessfully(self)
             } else {
-                let reason = "Password validation failed." // Customize based on your validation logic
+                let reason = "Password validation failed."
                 delegate?.viewModel(self, didFailToValidatePasswordWithReason: reason)
             }
         }
