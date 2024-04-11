@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,20 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-extension UIViewController {
+final class IsPendingInitialFetchMigrationAction: CoreDataMigrationAction {
 
-    func hideDefaultButtonTitle() {
-        guard navigationItem.backBarButtonItem == nil else { return }
-
-        hideBackButtonTitle()
-    }
-
-    func hideBackButtonTitle() {
-        let item = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-        item.accessibilityLabel = L10n.Localizable.General.back
-        navigationItem.backBarButtonItem = item
+    override func execute(in context: NSManagedObjectContext) throws {
+        let batchUpdate = NSBatchUpdateRequest(entityName: ZMConversation.entityName())
+        batchUpdate.propertiesToUpdate = ["isPendingInitialFetch": false as NSNumber]
+        try context.execute(batchUpdate)
     }
 
 }
