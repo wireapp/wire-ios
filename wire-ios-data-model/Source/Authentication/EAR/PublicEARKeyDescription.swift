@@ -25,6 +25,11 @@ import Foundation
 
 public final class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
 
+    private enum Constant {
+        static let labelPublicPrimary = "public"
+        static let labelPublicSecondary = "secondary-public"
+    }
+
     // MARK: - Properties
 
     private var baseQuery = [CFString: Any]()
@@ -61,21 +66,19 @@ public final class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemP
         return query
     }
 
-}
-
-extension PublicEARKeyDescription {
+    // MARK: - Static Access
 
     static func primaryKeyDescription(accountID: UUID) -> PublicEARKeyDescription {
         return PublicEARKeyDescription(
             accountID: accountID,
-            label: "public"
+            label: Constant.labelPublicPrimary
         )
     }
 
     static func secondaryKeyDescription(accountID: UUID) -> PublicEARKeyDescription {
         return PublicEARKeyDescription(
             accountID: accountID,
-            label: "secondary-public"
+            label: Constant.labelPublicSecondary
         )
     }
 
