@@ -14,6 +14,7 @@ import PackageDescription
 let package = Package(
     name: "Scripts",
     targets: [
+        .executableTarget(name: "AddFileHeaders"),
         .binaryTarget(
             name: "SwiftLintBinary",
             url: "https://github.com/realm/SwiftLint/releases/download/0.54.0/SwiftLintBinary-macos.artifactbundle.zip",
