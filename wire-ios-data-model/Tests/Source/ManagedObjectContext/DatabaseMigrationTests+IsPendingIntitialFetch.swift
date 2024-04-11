@@ -18,13 +18,15 @@
 
 import XCTest
 import Foundation
+import WireDataModelSupport
 @testable import WireDataModel
 
 class DatabaseMigrationTests_IsPendingInitialFetch: XCTestCase {
 
     private let bundle = Bundle(for: ZMManagedObject.self)
     private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")
-    private let helper = DatabaseMigrationHelper()
+    private let migrationHelper = DatabaseMigrationHelper()
+    private let modelHelper = ModelHelper()
 
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -37,35 +39,25 @@ class DatabaseMigrationTests_IsPendingInitialFetch: XCTestCase {
     }
 
     func testMigratingToMessagingStore_from2_115_resetsIsPendingInitialFetch() throws {
-        let conversation1ID = UUID.create()
-        let conversation2ID = UUID.create()
+        let conversationID1 = UUID()
+        let conversationID2 = UUID()
 
-        try helper.migrateStoreToCurrentVersion(
+        try migrationHelper.migrateStoreToCurrentVersion(
             sourceVersion: "2.115.0",
             preMigrationAction: { context in
-                _ = createConversation(id: conversation1ID, in: context)
-                _ = createConversation(id: conversation2ID, in: context)
+                modelHelper.createGroupConversation(id: conversationID1, in: context)
+                modelHelper.createGroupConversation(id: conversationID2, in: context)
 
                 try context.save()
             },
             postMigrationAction: { context in
                 try context.performGroupedAndWait { context in
-                    let conversation1 = try XCTUnwrap(ZMConversation.fetch(with: conversation1ID, in: context))
-                    let conversation2 = try XCTUnwrap(ZMConversation.fetch(with: conversation2ID, in: context))
+                    let conversation1 = try XCTUnwrap(ZMConversation.fetch(with: conversationID1, in: context))
+                    let conversation2 = try XCTUnwrap(ZMConversation.fetch(with: conversationID2, in: context))
                     XCTAssertFalse(conversation1.isPendingInitialFetch)
                     XCTAssertFalse(conversation2.isPendingInitialFetch)
                 }
             },
             for: self)
     }
-
-    private func createConversation(
-        id: UUID,
-        in context: NSManagedObjectContext
-    ) -> ZMConversation {
-        let conversation = ZMConversation.insertNewObject(in: context)
-        conversation.remoteIdentifier = id
-        return conversation
-    }
-
 }
