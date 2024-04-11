@@ -4,7 +4,7 @@ on:
       fastlane_action:
         required: true
         type: string
-      cloud:
+      is_cloud_build:
         required: true
         type: boolean
         default: true
@@ -65,7 +65,7 @@ jobs:
   changelog:
     uses: ./.github/workflows/changelog.yml
     with:
-      cloud: ${{ inputs.cloud }}
+      is_cloud_build: ${{ inputs.is_cloud_build }}
       
   build_and_release:
     needs: changelog

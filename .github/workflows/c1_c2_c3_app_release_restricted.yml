@@ -23,7 +23,7 @@ jobs:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_1_restricted
-      cloud: false
+      is_cloud_build: false
     secrets: inherit
 
   column_2_restricted:
@@ -31,7 +31,7 @@ jobs:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_2_restricted
-      cloud: false
+      is_cloud_build: false
     secrets: inherit
   
   column_3_restricted:
@@ -39,5 +39,5 @@ jobs:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_3_restricted
-      cloud: false
+      is_cloud_build: false
     secrets: inherit

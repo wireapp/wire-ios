@@ -22,7 +22,7 @@ jobs:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_1_prod
-      cloud: false
+      is_cloud_build: false
     secrets: inherit
 
 
@@ -30,12 +30,12 @@ jobs:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_2_prod
-      cloud: false
+      is_cloud_build: false
     secrets: inherit
   
   column_3_production:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_3_prod
-      cloud: false
+      is_cloud_build: false
     secrets: inherit
