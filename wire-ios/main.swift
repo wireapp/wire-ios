@@ -29,11 +29,27 @@ UIApplicationMain(
 final class ApplicationDelegate: NSObject, UIApplicationDelegate {
 
     func application(_: UIApplication, didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        true
+    }
 
-        let window = UIWindow()
-        window.rootViewController = ConversationListFactory().make()
-        window.makeKeyAndVisible()
+    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
+        let configuration = UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
+        configuration.sceneClass = UIWindowScene.self
+        configuration.delegateClass = SceneDelegate.self
+        return configuration
+    }
+}
 
-        return true
+final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+
+    var window: UIWindow?
+
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+
+        let windowScene = scene as! UIWindowScene
+
+        window = UIWindow(windowScene: windowScene)
+        window?.rootViewController = ConversationListFactory().make()
+        window?.makeKeyAndVisible()
     }
 }
