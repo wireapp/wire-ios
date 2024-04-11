@@ -316,11 +316,17 @@ platform :ios do
                 sh "cd debug && zip -r ../#{build.artifact_path(with_filename: true)}.ipa Payload/"
             end
         else
-            enable_datadog_args = [
+            datadog_values = [
             "DATADOG_IMPORT=1",
             "DATADOG_APP_ID=#{ENV['DATADOG_APP_ID']}",
-            "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}",
-            "GCC_PREPROCESSOR_DEFINITIONS='$GCC_PREPROCESSOR_DEFINITIONS DATADOG_IMPORT'"
+            "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}"
+            ]
+
+            shared_custom_values = datadog_values.join(' ')
+
+            enable_datadog_args = datadog_values + [
+            "GCC_PREPROCESSOR_DEFINITIONS='$GCC_PREPROCESSOR_DEFINITIONS DATADOG_IMPORT'",
+            "SHARED_CUSTOM_VALUES='$SHARED_CUSTOM_VALUES #{shared_custom_values}'"
             ]
             xcargs = ["BUILD_NUMBER=#{build.build_number}"]
             xcargs += enable_datadog_args if build.enable_datadog
