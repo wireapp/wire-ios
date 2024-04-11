@@ -268,6 +268,36 @@ class MockCreatePasswordSecuredLinkViewModelDelegate: CreatePasswordSecuredLinkV
         mock(viewModel, password)
     }
 
+    // MARK: - viewModelDidValidatePasswordSuccessfully
+
+    var viewModelDidValidatePasswordSuccessfully_Invocations: [CreateSecureGuestLinkViewModel] = []
+    var viewModelDidValidatePasswordSuccessfully_MockMethod: ((CreateSecureGuestLinkViewModel) -> Void)?
+
+    func viewModelDidValidatePasswordSuccessfully(_ viewModel: CreateSecureGuestLinkViewModel) {
+        viewModelDidValidatePasswordSuccessfully_Invocations.append(viewModel)
+
+        guard let mock = viewModelDidValidatePasswordSuccessfully_MockMethod else {
+            fatalError("no mock for `viewModelDidValidatePasswordSuccessfully`")
+        }
+
+        mock(viewModel)
+    }
+
+    // MARK: - viewModel
+
+    var viewModelDidFailToValidatePasswordWithReason_Invocations: [(viewModel: CreateSecureGuestLinkViewModel, reason: String)] = []
+    var viewModelDidFailToValidatePasswordWithReason_MockMethod: ((CreateSecureGuestLinkViewModel, String) -> Void)?
+
+    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String) {
+        viewModelDidFailToValidatePasswordWithReason_Invocations.append((viewModel: viewModel, reason: reason))
+
+        guard let mock = viewModelDidFailToValidatePasswordWithReason_MockMethod else {
+            fatalError("no mock for `viewModelDidFailToValidatePasswordWithReason`")
+        }
+
+        mock(viewModel, reason)
+    }
+
 }
 
 class MockDeviceDetailsViewActions: DeviceDetailsViewActions {

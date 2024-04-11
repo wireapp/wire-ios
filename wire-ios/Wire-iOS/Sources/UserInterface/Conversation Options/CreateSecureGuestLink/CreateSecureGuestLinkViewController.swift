@@ -296,21 +296,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
     @objc
     func createSecuredLinkButtonTapped(_ sender: UIButton) {
-        if handlePasswordValidation(for: securedGuestLinkPasswordTextfield) {
-            // this needs to be moved to the viewModel
-            UIPasteboard.general.string = securedGuestLinkPasswordTextfield.text
-
-            UIAlertController.presentPasswordCopiedAlert(
-                on: self,
-                title: SecuredGuestLinkWithPasswordLocale.AlertController.title,
-                message: SecuredGuestLinkWithPasswordLocale.AlertController.message
-            )
-
-            // tell your viewModel to somehow end up to the backend
-        } else {
-            // TODO: [AGIS] Sync with Wolfgang on the alert with the error
-        }
-
+        viewModel.createSecuredGuestLinkIfValid(passwordField: securedGuestLinkPasswordTextfield, confirmPasswordField: securedGuestLinkPasswordValidatedTextField)
     }
 
     @objc
@@ -348,6 +334,21 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     ) {
         securedGuestLinkPasswordTextfield.text = password
         securedGuestLinkPasswordValidatedTextField.text = password
+    }
+
+    func viewModelDidValidatePasswordSuccessfully(_ viewModel: CreateSecureGuestLinkViewModel) {
+
+        UIAlertController.presentPasswordCopiedAlert(
+            on: self,
+            title: SecuredGuestLinkWithPasswordLocale.AlertController.title,
+            message: SecuredGuestLinkWithPasswordLocale.AlertController.message
+        )
+
+        // TODO: - Proceed with any additional steps now that the password is validated and copied
+    }
+
+    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String) {
+        // TODO: - Handle the error, such as displaying an alert with the provided reason
     }
 }
 // MARK: - ValidatedTextFieldDelegate

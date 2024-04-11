@@ -24,6 +24,8 @@ import UIKit
 // sourcery: AutoMockable
 protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
     func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didGeneratePassword password: String)
+    func viewModelDidValidatePasswordSuccessfully(_ viewModel: CreateSecureGuestLinkViewModel)
+    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String)
 }
 
 // MARK: - CreateSecureGuestLinkViewModel
@@ -62,6 +64,17 @@ final class CreateSecureGuestLinkViewModel {
         return true
     }
 
+    func createSecuredGuestLinkIfValid(passwordField: ValidatedTextField, confirmPasswordField: ValidatedTextField) {
+            if validatePassword(for: passwordField, against: confirmPasswordField) {
+                UIPasteboard.general.string = passwordField.text
+                delegate?.viewModelDidValidatePasswordSuccessfully(self)
+            } else {
+                let reason = "Password validation failed." // Customize based on your validation logic
+                delegate?.viewModel(self, didFailToValidatePasswordWithReason: reason)
+            }
+        }
+    }
+
     func generateRandomPassword() -> String {
         let minLength = 15
         let maxLength = 20
@@ -85,5 +98,3 @@ final class CreateSecureGuestLinkViewModel {
 
         return String(characters.shuffled())
     }
-
-}

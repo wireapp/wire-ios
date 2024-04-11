@@ -47,7 +47,7 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
         setAllowGuests?(allowGuests, completion)
     }
 
-    func createConversationLink(completion: @escaping (Result<String, Error>) -> Void) {
+    func createConversationLink(password: String?, completion: @escaping (Result<String, Error>) -> Void) {
         createResult.apply(completion)
     }
 
