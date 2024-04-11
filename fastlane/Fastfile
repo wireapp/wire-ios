@@ -316,7 +316,7 @@ platform :ios do
                 sh "cd debug && zip -r ../#{build.artifact_path(with_filename: true)}.ipa Payload/"
             end
         else
-            enable_datadog = [
+            enable_datadog_args = [
             "DATADOG_IMPORT=1",
             "DATADOG_APP_ID=#{ENV['DATADOG_APP_ID']}",
             "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}",
