@@ -29,6 +29,7 @@ SKIP_INSTALL = YES
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks @executable_path/../../Frameworks @loader_path/Frameworks $(PROJECT_DIR)/../Carthage/Build ;
 
 // Packaging
+DEFINES_MODULE = NO
 INFOPLIST_FILE = Wire Notification Service Extension/Info.plist
 PRODUCT_NAME = $(TARGET_NAME)
 PRODUCT_BUNDLE_IDENTIFIER = $(WIRE_BUNDLE_ID).$(NOTIFICATION_EXTENSION_BUNDLE_SUFFIX)

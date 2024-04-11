@@ -810,7 +810,6 @@
 			baseConfigurationReference = BF3DD2801D25445600D51DED /* WireLinkPreview.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				DEFINES_MODULE = YES;
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
 				INFOPLIST_FILE = "$(SRCROOT)/WireLinkPreview/Info.plist";
 				ONLY_ACTIVE_ARCH = YES;
@@ -827,7 +826,6 @@
 			baseConfigurationReference = BF3DD2801D25445600D51DED /* WireLinkPreview.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
-				DEFINES_MODULE = YES;
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
 				INFOPLIST_FILE = "$(SRCROOT)/WireLinkPreview/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLinkPreview;

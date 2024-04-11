@@ -1305,7 +1305,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 09F027DA1B721EBE00BADDB6 /* WireTransport.xcconfig */;
 			buildSettings = {
-				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = "Resources/WireTransport-Info.plist";
 				MODULEMAP_PRIVATE_FILE = "$(SRCROOT)/testing.modulemap";
 				ONLY_ACTIVE_ARCH = YES;
@@ -1318,7 +1317,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 09F027DA1B721EBE00BADDB6 /* WireTransport.xcconfig */;
 			buildSettings = {
-				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = "Resources/WireTransport-Info.plist";
 				MODULEMAP_PRIVATE_FILE = "$(SRCROOT)/testing.modulemap";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";

@@ -493,7 +493,6 @@
 					x86_64,
 					arm64,
 				);
-				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = Sources/Info.plist;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
@@ -509,7 +508,6 @@
 					x86_64,
 					arm64,
 				);
-				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = Sources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
 				SKIP_INSTALL = YES;

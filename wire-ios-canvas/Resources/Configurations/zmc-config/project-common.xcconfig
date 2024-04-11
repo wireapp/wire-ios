@@ -56,6 +56,7 @@ SWIFT_VERSION = 5.1
 ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO
 SWIFT_COMPILATION_MODE = wholemodule
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @loader_path/Frameworks @loader_path/../Frameworks @executable_path/Frameworks @executable_path/../Frameworks
+DEFINES_MODULE = YES
 
 // Search Paths
 //
