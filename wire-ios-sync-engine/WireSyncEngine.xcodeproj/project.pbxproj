@@ -555,6 +555,7 @@
 		EE1108B723D1B367005DC663 /* TypingUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1108B623D1B367005DC663 /* TypingUsers.swift */; };
 		EE1108F923D1F945005DC663 /* TypingUsersTimeout.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1108F823D1F945005DC663 /* TypingUsersTimeout.swift */; };
 		EE1108FB23D2087F005DC663 /* Typing.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1108FA23D2087F005DC663 /* Typing.swift */; };
+		EE13BD8B2BC948FC006561F8 /* ZMUserSession+APIAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE13BD8A2BC948FC006561F8 /* ZMUserSession+APIAdapter.swift */; };
 		EE1DEBB323D5A6930087EE1F /* TypingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1DEBB223D5A6930087EE1F /* TypingTests.swift */; };
 		EE1DEBB523D5AEE50087EE1F /* TypingUsersTimeoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1DEBB423D5AEE50087EE1F /* TypingUsersTimeoutTests.swift */; };
 		EE1DEBB723D5B62C0087EE1F /* TypingUsersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1DEBB623D5B62C0087EE1F /* TypingUsersTests.swift */; };
@@ -1325,6 +1326,7 @@
 		EE1108F823D1F945005DC663 /* TypingUsersTimeout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingUsersTimeout.swift; sourceTree = "<group>"; };
 		EE1108FA23D2087F005DC663 /* Typing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Typing.swift; sourceTree = "<group>"; };
 		EE1108FC23D59720005DC663 /* IsTypingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsTypingTests.swift; sourceTree = "<group>"; };
+		EE13BD8A2BC948FC006561F8 /* ZMUserSession+APIAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+APIAdapter.swift"; sourceTree = "<group>"; };
 		EE1DEBB223D5A6930087EE1F /* TypingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingTests.swift; sourceTree = "<group>"; };
 		EE1DEBB423D5AEE50087EE1F /* TypingUsersTimeoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingUsersTimeoutTests.swift; sourceTree = "<group>"; };
 		EE1DEBB623D5B62C0087EE1F /* TypingUsersTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingUsersTests.swift; sourceTree = "<group>"; };
@@ -2625,7 +2627,6 @@
 				874F142C1C16FD9700C15118 /* Device.swift */,
 				8796343F1F7BEA4700FC79BA /* DispatchQueue+SerialAsync.swift */,
 				EE2DE5EB29263C5100F42F4C /* Logger.swift */,
-				636826F52951F7F300D904C2 /* Logging.swift */,
 				7AA7112E286DB6F50098F670 /* OptionalString+NonEmptyValue.swift */,
 				5E8EE1F920FDC7D700DB1F9B /* Pasteboard.swift */,
 				1634958A1F0254CB004E80DB /* ServerConnection.swift */,
@@ -2711,6 +2712,7 @@
 			children = (
 				EE419B57256FEA3D004618E2 /* ZMUserSession.Configuration.swift */,
 				166B2B5D23E86522003E8581 /* ZMUserSession.swift */,
+				EE13BD8A2BC948FC006561F8 /* ZMUserSession+APIAdapter.swift */,
 				63CD59562964346400385037 /* ZMUserSession+AccessToken.swift */,
 				164EAF9B1F4455FA00B628C4 /* ZMUserSession+Actions.swift */,
 				EEE186B3259CC92D008707CA /* ZMUserSession+AppLock.swift */,
@@ -3834,6 +3836,7 @@
 				63B1FADB2763A636000766F8 /* ZMUser+AVSIdentifier.swift in Sources */,
 				065FEA122B866462005AE86A /* StopCertificateEnrollmentSnoozerUseCase.swift in Sources */,
 				A95D0B1223F6B75A0057014F /* AVSLogObserver.swift in Sources */,
+				EE13BD8B2BC948FC006561F8 /* ZMUserSession+APIAdapter.swift in Sources */,
 				5E8BB8A22147F89000EEA64B /* CallCenterSupport.swift in Sources */,
 				1660AA0D1ECDB0250056D403 /* SearchTask.swift in Sources */,
 				F9245BED1CBF95A8009D1E85 /* ZMHotFixDirectory+Swift.swift in Sources */,

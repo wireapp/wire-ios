@@ -17,3 +17,91 @@
 //
 
 import Foundation
+import WireAPI
+
+// Note: this is just a tempory helper for debugging
+// purposes and should eventually be removed.
+
+extension ZMUserSession {
+
+    public func makeBackendInfoAPI() -> BackendInfoAPI {
+        let httpClient = HTTPClientImpl(
+            transportSession: transportSession,
+            queue: syncContext
+        )
+
+        let apiProvider = APIProvider(httpClient: httpClient)
+        return apiProvider.backendInfoAPI(for: .v0)
+    }
+
+}
+
+private class HTTPClientImpl: HTTPClient {
+
+    let transportSession: TransportSessionType
+    let queue: ZMSGroupQueue
+
+    public init(
+        transportSession: TransportSessionType,
+        queue: ZMSGroupQueue
+    ) {
+        self.transportSession = transportSession
+        self.queue = queue
+    }
+
+    public func executeRequest(_ request: HTTPRequest) async throws -> HTTPResponse {
+        await withCheckedContinuation { continuation in
+            let request = request.toZMTransportRequest()
+            request.add(ZMCompletionHandler(on: queue, block: { response in
+                let response = response.toHTTPResponse()
+                continuation.resume(returning: response)
+            }))
+
+            transportSession.enqueueOneTime(request)
+        }
+    }
+
+}
+
+private extension HTTPRequest {
+
+    func toZMTransportRequest() -> ZMTransportRequest {
+        return ZMTransportRequest(
+            path: path,
+            method: method.toZMTransportRequestMethod(),
+            payload: body as? ZMTransportData,
+            apiVersion: 0
+        )
+    }
+
+}
+
+private extension HTTPRequest.Method {
+
+    func toZMTransportRequestMethod() -> ZMTransportRequestMethod {
+        switch self {
+        case .delete:
+            return .delete
+        case .get:
+            return .get
+        case .head:
+            return .head
+        case .post:
+            return .post
+        case .put:
+            return .put
+        }
+    }
+
+}
+
+private extension ZMTransportResponse {
+
+    func toHTTPResponse() -> HTTPResponse {
+        return HTTPResponse(
+            code: httpStatus,
+            payload: rawData
+        )
+    }
+
+}
