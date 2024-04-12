@@ -88,7 +88,7 @@ class KeychainManagerTests: XCTestCase {
             let fetchItem: Data = try KeychainManager.fetchItem(item)
             XCTAssertNotNil(fetchItem, "Item should be fetch successfully.")
 
-        } catch let error {
+        } catch {
             XCTFail("Failed to store item with error: \(error).")
         }
     }
@@ -107,7 +107,7 @@ class KeychainManagerTests: XCTestCase {
             XCTAssertNotNil(key, "Failed to generate the key.")
             XCTAssertEqual(fetchedItem, key)
 
-        } catch let error {
+        } catch {
             XCTFail("Failed to fetch the item with error: \(error).")
         }
     }
@@ -124,7 +124,7 @@ class KeychainManagerTests: XCTestCase {
             // When I delete the key
             try KeychainManager.deleteItem(item)
 
-        } catch let error {
+        } catch {
             XCTFail("Failed to Delete item with error: \(error).")
         }
 

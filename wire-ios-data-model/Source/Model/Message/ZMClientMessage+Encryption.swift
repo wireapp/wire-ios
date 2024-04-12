@@ -1161,7 +1161,7 @@ extension GenericMessage: MLSEncryptedPayloadGenerator {
     private func unencryptedData() throws -> Data {
         do {
             return try serializedData()
-        } catch let error {
+        } catch {
             zmLog.warn("failed to get unencrypted data from generic message: \(String(describing: error))")
             throw MLSEncryptedPayloadGeneratorError.noUnencryptedData
         }

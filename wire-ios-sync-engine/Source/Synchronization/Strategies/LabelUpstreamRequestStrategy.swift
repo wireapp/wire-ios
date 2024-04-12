@@ -75,7 +75,7 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
         do {
             let data = try jsonEncoder.encode(labelPayload)
             transportPayload = try JSONSerialization.jsonObject(with: data, options: [])
-        } catch let error {
+        } catch {
             fatal("Couldn't encode label update: \(error)")
         }
 

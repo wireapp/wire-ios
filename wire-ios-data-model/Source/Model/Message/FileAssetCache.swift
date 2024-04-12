@@ -790,7 +790,7 @@ public final class FileAssetCache: NSObject {
     public func deleteAssetsOlderThan(_ date: Date) {
         do {
             try cache.deleteAssetsOlderThan(date)
-        } catch let error {
+        } catch {
             zmLog.error("Error trying to delete assets older than \(date): \(error)")
         }
     }

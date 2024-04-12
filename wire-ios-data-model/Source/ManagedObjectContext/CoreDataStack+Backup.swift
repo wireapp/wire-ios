@@ -252,7 +252,7 @@ extension CoreDataStack {
                 DispatchQueue.main.async(group: dispatchGroup) {
                     completion(.success(accountDirectory))
                 }
-            } catch let error {
+            } catch {
                 fail(.failedToCopy(error))
             }
         }

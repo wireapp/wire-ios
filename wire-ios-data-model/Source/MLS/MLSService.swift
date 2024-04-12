@@ -676,7 +676,7 @@ public final class MLSService: MLSServiceInterface {
             try await uploadKeyPackages(clientID: clientID, keyPackages: keyPackages, context: context.notificationContext)
             userDefaults.set(Date(), forKey: .keyPackageQueriedTime)
             logger.info("success: uploaded key packages for client \(clientID)")
-        } catch let error {
+        } catch {
             logger.warn("failed to upload key packages for client \(clientID). \(String(describing: error))")
         }
     }
@@ -725,7 +725,7 @@ public final class MLSService: MLSServiceInterface {
                 context: context
             )
 
-        } catch let error {
+        } catch {
             self.logger.warn("failed to fetch unclaimed key packages count with error: \(String(describing: error))")
             throw MLSKeyPackagesError.failedToCountUnclaimedKeyPackages
         }
@@ -745,7 +745,7 @@ public final class MLSService: MLSServiceInterface {
                     amountRequested: amountRequested
                 ) }
 
-        } catch let error {
+        } catch {
             logger.warn("failed to generate new key packages: \(String(describing: error))")
             throw MLSKeyPackagesError.failedToGenerateKeyPackages
         }
@@ -771,7 +771,7 @@ public final class MLSService: MLSServiceInterface {
                 context: context
             )
 
-        } catch let error {
+        } catch {
             logger.warn("failed to upload key packages for client (\(clientID)): \(String(describing: error))")
             throw MLSKeyPackagesError.failedToUploadKeyPackages
         }
@@ -1128,7 +1128,7 @@ public final class MLSService: MLSServiceInterface {
 
             await conversationEventProcessor.processConversationEvents(updateEvents)
 
-        } catch let error {
+        } catch {
             logger.warn("failed to send proposal in group (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
             throw MLSSendProposalError.failedToSendProposal
         }

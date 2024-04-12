@@ -54,7 +54,7 @@ import UIKit
                                                 minimumStringLength: 9,
                                                 maximumStringLength: 24,
                                                 maximumByteLength: 24)
-        } catch let error {
+        } catch {
             throw error
         }
 
