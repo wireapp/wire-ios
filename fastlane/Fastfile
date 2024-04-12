@@ -322,7 +322,7 @@ platform :ios do
             "DATADOG_APP_ID=#{ENV['DATADOG_APP_ID']}",
             "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}",
             "OTHER_PREPROCESSOR_FLAGS='DATADOG_IMPORT'"
-            ].join(' ')
+            ]
 
             xcargs = ["BUILD_NUMBER=#{build.build_number}"]
             xcargs += enable_datadog_args if build.enable_datadog
