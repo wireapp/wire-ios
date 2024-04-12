@@ -185,9 +185,6 @@ public enum LogLevel {
     case critical
 
 }
-
-var toto: A // this should break
-
 public final class DatadogWrapper {
 
     public static let shared: DatadogWrapper? = nil
