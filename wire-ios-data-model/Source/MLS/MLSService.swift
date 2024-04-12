@@ -1021,26 +1021,33 @@ public final class MLSService: MLSServiceInterface {
 
     typealias OutOfSyncConversationInfo = (mlsGroupId: MLSGroupID, conversation: ZMConversation)
 
+    // TODO: [jacob] let it throw // swiftlint:disable:this todo_requires_jira_link
     private func outOfSyncConversations(in context: NSManagedObjectContext) async -> [OutOfSyncConversationInfo] {
 
-        let conversations: [ZMConversation] = (try? await coreCrypto.perform { coreCrypto in
-            let mlsConversations = await context.perform { ZMConversation.fetchMLSConversations(in: context) }
-            return await mlsConversations.asyncFilter {
-                await isConversationOutOfSync(
-                    $0,
-                    coreCrypto: coreCrypto,
-                    context: context
-                ) == true
-            } // swiftlint:disable todo_requires_jira_link
-        }) ?? [] // TODO: [jacob] let it throw
-        // swiftlint:enable todo_requires_jira_link
-        return await context.perform { conversations.compactMap {
-            if let groupId = $0.mlsGroupID {
-                return (groupId, $0)
-            } else {
-                return nil
+        do {
+            let conversations: [ZMConversation] = try await coreCrypto.perform { coreCrypto in
+                let mlsConversations = await context.perform { ZMConversation.fetchMLSConversations(in: context) }
+                return await mlsConversations.asyncFilter {
+                    await isConversationOutOfSync(
+                        $0,
+                        coreCrypto: coreCrypto,
+                        context: context
+                    ) == true
+                }
             }
-        } }
+
+            return await context.perform {
+                conversations.compactMap {
+                    if let groupId = $0.mlsGroupID {
+                        return (groupId, $0)
+                    } else {
+                        return nil
+                    }
+                }
+            }
+        } catch {
+            return []
+        }
     }
 
     private func isConversationOutOfSync(

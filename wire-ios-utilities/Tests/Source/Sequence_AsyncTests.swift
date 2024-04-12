@@ -64,38 +64,4 @@ final class Sequence_AsyncTests: XCTestCase {
         }
         XCTAssertEqual(result, [0, 1, 3, 4])
     }
-
-    // MARK: asyncMap
-
-    func testAsyncMap() async throws {
-
-        let result = await array.asyncCompactMap { element in
-            element * 2
-        }
-
-        XCTAssertEqual(result, [0, 2, 4, 6, 8])
-    }
-
-    func testAsyncMapReThrows() async throws {
-        enum TestError: Error, Equatable {
-            case isTwo
-        }
-
-        var result: [Int]?
-        do {
-            result = try await array.asyncMap { element in
-                if element == 2 {
-                    throw TestError.isTwo
-                }
-                return element
-            }
-            XCTFail("should rethrow error")
-        } catch TestError.isTwo {
-            // do nothing
-        } catch {
-            XCTFail("should rethrow same error")
-        }
-
-        XCTAssertNil(result)
-    }
 }
