@@ -89,7 +89,7 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     }
 
     public func perform<T>(_ block: (CoreCryptoProtocol) async throws -> T) async rethrows -> T {
-        var result: T
+
         WireLogger.coreCrypto.info("acquiring directory lock")
         safeContext.acquireDirectoryLock()
         WireLogger.coreCrypto.info("acquired lock. performing restoreFromDisk()")
@@ -102,17 +102,15 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
         }
 
         do {
-            result = try await block(coreCrypto)
+            return try await block(coreCrypto)
         } catch {
             WireLogger.coreCrypto.error("failed to perform block on core crypto: \(error)")
             throw error
         }
-
-        return result
     }
 
     public func unsafePerform<T>(_ block: (CoreCryptoProtocol) throws -> T) rethrows -> T {
-        return try block(coreCrypto)
+        try block(coreCrypto)
     }
 
     private func restoreFromDisk() async {
