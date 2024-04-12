@@ -648,15 +648,19 @@ extension GenericMessage {
         context: NSManagedObjectContext,
         using encryptionFunction: EncryptionFunction
     ) async -> [Proteus_QualifiedUserEntry] {
+
         let recipientsByDomain = await context.perform {
-            Dictionary(grouping: recipients) { (element) -> String in
+            Dictionary(grouping: recipients) { element -> String in
                 element.key.domain ?? selfDomain
             }
         }
 
-        return await recipientsByDomain.asyncCompactMap { domain, recipients in
-            let userEntries: [Proteus_UserEntry] = await recipients.asyncCompactMap { (user, clients) in
-                guard await context.perform({ !user.isAccountDeleted }) else { return nil }
+        var qualifiedUserEntries = [Proteus_QualifiedUserEntry]()
+        for (domain, recipients) in recipientsByDomain {
+
+            var userEntries = [Proteus_UserEntry]()
+            for (user, clients) in recipients {
+                guard await context.perform({ !user.isAccountDeleted }) else { continue }
 
                 let clientEntries = await clientEntriesWithEncryptedData(
                     selfClient,
@@ -664,14 +668,14 @@ extension GenericMessage {
                     context: context,
                     using: encryptionFunction
                 )
-
-                guard !clientEntries.isEmpty else { return nil }
-
-                return await context.perform { Proteus_UserEntry(withUser: user, clientEntries: clientEntries) }
+                if !clientEntries.isEmpty {
+                    let userEntry = await context.perform { Proteus_UserEntry(withUser: user, clientEntries: clientEntries) }
+                    userEntries += [userEntry]
+                }
             }
-
-            return Proteus_QualifiedUserEntry(withDomain: domain, userEntries: userEntries)
+            qualifiedUserEntries += [.init(withDomain: domain, userEntries: userEntries)]
         }
+        return qualifiedUserEntries
     }
 
     private func legacyQualifiedUserEntriesWithEncryptedData(
@@ -713,8 +717,10 @@ extension GenericMessage {
         context: NSManagedObjectContext,
         using encryptionFunction: EncryptionFunction
     ) async -> [Proteus_UserEntry] {
-        return await recipients.asyncCompactMap { (user, clients) in
-            guard await context.perform({ !user.isAccountDeleted }) else { return nil }
+
+        var userEntries = [Proteus_UserEntry]()
+        for (user, clients) in recipients {
+            guard await context.perform({ !user.isAccountDeleted }) else { continue }
 
             let clientEntries = await clientEntriesWithEncryptedData(
                 selfClient,
@@ -722,13 +728,11 @@ extension GenericMessage {
                 context: context,
                 using: encryptionFunction
             )
-
-            guard !clientEntries.isEmpty else { return nil }
-
-            return await context.perform {
-                Proteus_UserEntry(withUser: user, clientEntries: clientEntries)
+            if !clientEntries.isEmpty {
+                userEntries += [.init(withUser: user, clientEntries: clientEntries)]
             }
         }
+        return userEntries
     }
 
     private func legacyUserEntriesWithEncryptedData(
@@ -772,9 +776,13 @@ extension GenericMessage {
             }
         }
 
-        return await filteredClientEntries.asyncCompactMap { client in
-            return await clientEntry(for: client, using: encryptionFunction)
+        var clientEntries = [Proteus_ClientEntry]()
+        for client in filteredClientEntries {
+            if let clientEntry = await clientEntry(for: client, using: encryptionFunction) {
+                clientEntries += [clientEntry]
+            }
         }
+        return clientEntries
     }
 
     private func legacyClientEntriesWithEncryptedData(
