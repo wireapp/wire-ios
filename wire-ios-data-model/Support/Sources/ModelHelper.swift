@@ -195,6 +195,17 @@ public struct ModelHelper {
     // MARK: - Conversations
 
     @discardableResult
+    public func createGroupConversation(
+        id: UUID = .init(),
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.remoteIdentifier = id
+        conversation.conversationType = .group
+        return conversation
+    }
+
+    @discardableResult
     public func createOneOnOne(
         with user: ZMUser,
         in context: NSManagedObjectContext
