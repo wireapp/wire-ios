@@ -316,20 +316,14 @@ platform :ios do
                 sh "cd debug && zip -r ../#{build.artifact_path(with_filename: true)}.ipa Payload/"
             end
         else
-            datadog_values = [
+            # DataDog values needs to go through WireCommonComponents
+            enable_datadog_args = [
             "DATADOG_IMPORT=1",
             "DATADOG_APP_ID=#{ENV['DATADOG_APP_ID']}",
-            "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}"
-            ]
-            # DataDog values needs to go through WireCommonComponents
-            # this is done by this SHARED_CUSTOM_VALUES
-            # that is again set to GCC_PREPROCESSOR_DEFINITIONS
-            shared_custom_values = datadog_values.join(' ')
+            "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}",
+            "OTHER_PREPROCESSOR_FLAGS='DATADOG_IMPORT'"
+            ].join(' ')
 
-            enable_datadog_args = datadog_values + [
-            "GCC_PREPROCESSOR_DEFINITIONS='$GCC_PREPROCESSOR_DEFINITIONS DATADOG_IMPORT'",
-            "SHARED_CUSTOM_VALUES='$SHARED_CUSTOM_VALUES #{shared_custom_values}'"
-            ]
             xcargs = ["BUILD_NUMBER=#{build.build_number}"]
             xcargs += enable_datadog_args if build.enable_datadog
 
