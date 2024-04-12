@@ -54,9 +54,9 @@ extension UIApplication {
         })
     }
 
-    static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: ((Bool) -> Swift.Void)!) {
-        PHPhotoLibrary.requestAuthorization({ status in
-            DispatchQueue.main.async(execute: {
+    static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: ((Bool) -> Void)!) {
+        PHPhotoLibrary.requestAuthorization { status in
+            DispatchQueue.main.async {
                 switch status {
                 case .restricted:
                     self.wr_warnAboutPhotoLibraryRestricted()
@@ -67,11 +67,13 @@ extension UIApplication {
                     grantedHandler(false)
                 case .authorized:
                     grantedHandler(true)
+                case .limited:
+                    fallthrough
                 @unknown default:
                     break
                 }
-            })
-        })
+            }
+        }
     }
 
     class func wr_requestVideoAccess(_ grantedHandler: @escaping (_ granted: Bool) -> Void) {

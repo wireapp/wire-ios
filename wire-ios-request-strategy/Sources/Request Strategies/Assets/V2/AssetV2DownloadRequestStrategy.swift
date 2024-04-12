@@ -91,7 +91,6 @@ import WireTransport
     }
 
     fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
-        var downloadSuccess = false
 
         assetClientMessage.isDownloading = false
 

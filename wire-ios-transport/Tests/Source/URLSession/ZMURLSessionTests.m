@@ -46,18 +46,11 @@
 @property (nonatomic) NSMutableArray *firedTimers;
 @property (nonatomic) MockCertificateTrust *trustProvider;
 
-
-@end
-
-@interface ZMURLSessionTests (Delegate)
-@end
-@interface ZMURLSessionTests (TaskGeneration)
 @end
 
 static NSString * const TaskKey = @"response";
 static NSString * const RequestKey = @"request";
 static NSString * const DataKey = @"data";
-
 
 
 @implementation ZMURLSessionTests
@@ -282,11 +275,9 @@ static NSString * const DataKey = @"data";
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
 }
 
-@end
 
+// MARK: - ZMURLSessionTests + Delegate
 
-
-@implementation ZMURLSessionTests (Delegate)
 
 - (void)testItCallTheDelegateWhenItDetectsAnUnsafeConnection
 {
@@ -492,11 +483,9 @@ willPerformHTTPRedirection:response
     }
 }
 
-@end
 
+// MARK: - ZMURLSessionTests + TaskGeneration
 
-
-@implementation ZMURLSessionTests (TaskGeneration)
 
 - (void)setupMockBackgroundSession
 {    
