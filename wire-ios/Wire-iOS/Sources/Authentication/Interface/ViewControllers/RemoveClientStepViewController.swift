@@ -44,10 +44,9 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
             return ZMEmailCredentials(email: email, password: password)
         }
 
-        clientListController = RemoveClientsViewController(clientsList: clients,
-                                                           credentials: emailCredentials,
-                                                           showTemporary: false,
-                                                           showLegalHold: false)
+        clientListController = RemoveClientsViewController(
+            clientsList: clients,
+            credentials: emailCredentials)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -132,9 +131,9 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
 // MARK: - ClientListViewControllerDelegate
 
-extension RemoveClientStepViewController: ClientListViewControllerDelegate {
+extension RemoveClientStepViewController: RemoveClientsViewControllerDelegate {
 
-    func finishedDeleting(_ clientListViewController: ClientListViewController) {
+    func finishedDeleting(_ clientListViewController: RemoveClientsViewController) {
         authenticationCoordinator?.executeActions([.unwindState(withInterface: true), .showLoadingView])
     }
 
