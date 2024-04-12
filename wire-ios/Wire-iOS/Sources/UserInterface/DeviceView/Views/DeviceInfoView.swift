@@ -16,22 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
 
-/** 
- This class is used to add type safety to C opaque pointers.
- Just subclass this class and add the subclass to all signatures
-
- E.g.
- ```
- class CStruct : PointerWrapper {}
- 
- func foo(struct: CStruct) -> Int {
-    return some_c_function(struct.ptr)
- }
- 
- ```
- */
-class PointerWrapper {
-    var ptr: OpaquePointer?
+// `DeviceDetailsView` and `ProfileDeviceDetailsView` are similar and even use the same view model type.
+// The `DeviceInfoView` protocol allows for using the same custom hosting controller for both.
+protocol DeviceInfoView: View {
+    var viewModel: DeviceInfoViewModel { get }
+    init(viewModel: DeviceInfoViewModel)
 }
