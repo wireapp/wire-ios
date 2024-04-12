@@ -118,7 +118,7 @@ class UserHandleTests: IntegrationTest {
         }
     }
 
-    // FIXME: [WPB-5882] this test is flaky - [jacob]
+    // FIXME: [WPB-5882] this test is flaky - [[jacob]]
     func disabled_testThatItIsNotifiedWhenFailsToSetTheHandleBecauseItExists() {
 
         // GIVEN

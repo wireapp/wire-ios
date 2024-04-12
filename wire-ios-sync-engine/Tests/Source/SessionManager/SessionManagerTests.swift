@@ -479,7 +479,7 @@ final class SessionManagerTests: IntegrationTest {
         XCTAssertTrue(expirationDatesRepository.fetchAllCRLExpirationDates().isEmpty)
     }
 
-    // FIXME: [WPB-5638] this test will hang - [jacob]
+    // FIXME: [WPB-5638] this test will hang - [[jacob]]
     //
     // Since markAllConversationsAsRead() will schedule read up update message
     // which are never sent because the user sessions are not logged in. Refactor
