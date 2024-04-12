@@ -29,7 +29,6 @@ struct ColorPickerView: View {
 
     private let colorViewSize: CGFloat = 28
     private let colorViewCornerRadius: CGFloat = 14
-    private let leftPaddingForColorView: CGFloat = -10
 
     var body: some View {
         NavigationView {
@@ -39,7 +38,7 @@ struct ColorPickerView: View {
                     Circle()
                         .fill(Color(uiColor: UIColor(for: color)))
                         .frame(width: colorViewSize, height: colorViewSize)
-                        .padding(.leading, leftPaddingForColorView)
+                        .padding(.trailing, 10)
                     Text(color.name)
 
                     Spacer()
@@ -58,6 +57,7 @@ struct ColorPickerView: View {
                     }
                 }
             }
+            .listStyle(.plain)
             .modifier(ListBackgroundStyleModifier())
             .background(Color(SemanticColors.View.backgroundDefault))
         }
