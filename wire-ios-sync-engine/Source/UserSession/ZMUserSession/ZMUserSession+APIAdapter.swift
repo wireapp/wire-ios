@@ -17,11 +17,3 @@
 //
 
 import Foundation
-
-/// A type representing all the versions of the Wire api.
-
-public enum APIVersion {
-
-    case v0
-
-}

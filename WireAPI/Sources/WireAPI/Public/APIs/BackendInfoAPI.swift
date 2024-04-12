@@ -18,21 +18,10 @@
 
 import Foundation
 
-/// A type responsible for providing apis to consumers.
+public protocol BackendInfoAPI {
 
-public struct APIProvider {
+    /// Fetch the info of the local backend.
 
-    public let httpClient: HTTPClient
-
-    public init(httpClient: HTTPClient) {
-        self.httpClient = httpClient
-    }
-
-    public func backendInfoAPI(for version: APIVersion) -> BackendInfoAPI {
-        switch version {
-        case .v0:
-            BackendInfoAPIV0(httpClient: httpClient)
-        }
-    }
+    func getBackendInfo() async throws -> BackendInfo
 
 }

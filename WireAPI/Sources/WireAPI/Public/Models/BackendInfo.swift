@@ -18,21 +18,24 @@
 
 import Foundation
 
-/// A type responsible for providing apis to consumers.
+/// Metadata about the local backend.
 
-public struct APIProvider {
+public struct BackendInfo {
 
-    public let httpClient: HTTPClient
+    /// The local domain.
 
-    public init(httpClient: HTTPClient) {
-        self.httpClient = httpClient
-    }
+    public let domain: String
 
-    public func backendInfoAPI(for version: APIVersion) -> BackendInfoAPI {
-        switch version {
-        case .v0:
-            BackendInfoAPIV0(httpClient: httpClient)
-        }
-    }
+    /// Whether federation is enabled on the local backend.
+
+    public let isFederationEnabled: Bool
+
+    /// All production ready api versions supported by the local backend.
+
+    public let supportedVersions: Set<APIVersion>
+
+    /// All api versions currently under development by the local backend.
+
+    public let developmentVersions: Set<APIVersion>
 
 }

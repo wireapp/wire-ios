@@ -30,4 +30,14 @@ public struct HTTPResponse {
 
     public var payload: Data?
 
+    /// Create a new http response.
+
+    public init(
+        code: Int,
+        payload: Data? = nil
+    ) {
+        self.code = code
+        self.payload = payload
+    }
+
 }

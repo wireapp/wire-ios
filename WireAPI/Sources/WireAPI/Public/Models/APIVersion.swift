@@ -18,21 +18,10 @@
 
 import Foundation
 
-/// A type responsible for providing apis to consumers.
+/// A type representing all the versions of the Wire api.
 
-public struct APIProvider {
+public enum APIVersion: UInt {
 
-    public let httpClient: HTTPClient
-
-    public init(httpClient: HTTPClient) {
-        self.httpClient = httpClient
-    }
-
-    public func backendInfoAPI(for version: APIVersion) -> BackendInfoAPI {
-        switch version {
-        case .v0:
-            BackendInfoAPIV0(httpClient: httpClient)
-        }
-    }
+    case v0
 
 }
