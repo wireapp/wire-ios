@@ -16,34 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <XCTest/XCTest.h>
-@import WireUtilities;
-@import WireTesting;
+import SwiftUI
 
-@interface NSUUIDDataTests : XCTestCase
-
-@end
-
-@implementation NSUUIDDataTests
-
-- (void)testThatDataCreateFromUUIDIsNotEmpty;
-{
-    NSUUID *UUID = [NSUUID UUID];
-    NSData *data = [UUID data];
-   
-    XCTAssertNotNil(data);
-    XCTAssertNotEqual([data length], 0lu);
+// `DeviceDetailsView` and `ProfileDeviceDetailsView` are similar and even use the same view model type.
+// The `DeviceInfoView` protocol allows for using the same custom hosting controller for both.
+protocol DeviceInfoView: View {
+    var viewModel: DeviceInfoViewModel { get }
+    init(viewModel: DeviceInfoViewModel)
 }
-
-- (void)testThatDataCreateFromUUIDContainsCorrectData;
-{
-    const uuid_t UUIDBytes = "0123456789abcdef";
-    
-    NSUUID *UUID = [[NSUUID alloc] initWithUUIDBytes:UUIDBytes];
-    NSData *data = [UUID data];
-   
-    int comparasionResult = memcmp([data bytes], UUIDBytes, sizeof(UUIDBytes));
-    XCTAssertEqual(comparasionResult, 0);
-}
-
-@end
