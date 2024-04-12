@@ -35,6 +35,9 @@ struct CoreDataMigrationActionFactory {
 
     static func createPostMigrationAction(for destinationVersion: CoreDataMessagingMigrationVersion) -> CoreDataMigrationAction? {
         switch destinationVersion {
+        case .version2_116:
+            return IsPendingInitialFetchMigrationAction()
+
         case .version2_114:
             return OneOnOneConversationMigrationAction()
 

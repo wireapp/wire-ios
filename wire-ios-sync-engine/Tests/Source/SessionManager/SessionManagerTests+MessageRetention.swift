@@ -64,7 +64,8 @@ final class SessionManagerMessageRetentionTests: IntegrationTest {
         remotelyInsert(text: "Hello 2", from: user2.clients.anyObject() as! MockUserClient, into: groupConversation)
         remotelyInsert(text: "Hello 3", from: user2.clients.anyObject() as! MockUserClient, into: groupConversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertEqual(conversation(for: groupConversation)?.allMessages.count, 4) // text messages + system messages
+
+        XCTAssertEqual(conversation(for: groupConversation)?.allMessages.count, 4) // text messages + system message
 
         // when
         sessionManager?.configuration.messageRetentionInterval = 100
@@ -73,7 +74,10 @@ final class SessionManagerMessageRetentionTests: IntegrationTest {
         XCTAssertTrue(login())
 
         // then
-        XCTAssertEqual(conversation(for: groupConversation)?.allMessages.count, 4)
+
+        // only text messages
+        // system message is ignored due to `messageRetentionInterval`.
+        XCTAssertEqual(conversation(for: groupConversation)?.allMessages.count, 3)
     }
 
     func testThatItKeepsMessagesIfThereIsNoRetentionLimit() {

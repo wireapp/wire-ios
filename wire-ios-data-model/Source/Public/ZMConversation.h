@@ -81,6 +81,7 @@ typedef NS_ENUM(int16_t, ZMConversationListIndicator) {
 @property (nonatomic, nonnull) NSSet<ParticipantRole *> *participantRoles;
 @property (nonatomic, nonnull) NSSet<Role *> *nonTeamRoles;
 @property (nonatomic) BOOL isPendingMetadataRefresh;
+@property (nonatomic) BOOL isPendingInitialFetch;
 
 /// This will return @c nil if the last added by self user message has not yet been sync'd to this device, or if the conversation has no self editable message.
 @property (nonatomic, readonly, nullable) ZMMessage *lastEditableMessage;

@@ -170,7 +170,7 @@ public class MLSEventProcessor: MLSEventProcessing {
 
         let userID: QualifiedID? = await context.perform {
             guard conversation.conversationType == .oneOnOne else {
-                WireLogger.mls.warn("conversation type is not expected 'oneOnOne', aborting.")
+                WireLogger.mls.info("conversation type is not expected 'oneOnOne', aborting.")
                 return nil
             }
 

@@ -74,6 +74,7 @@ NSString *const ZMConversationDomainKey = @"domain";
 NSString *const ZMConversationIsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";
 NSString *const ZMConversationIsDeletedRemotelyKey = @"isDeletedRemotely";
 NSString *const ZMConversationIsForcedReadOnlyKey = @"isForcedReadOnly";
+NSString *const ZMConversationIsPendingInitialFetch = @"isPendingInitialFetch";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -357,7 +358,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversation.epochKey,
             ZMConversation.epochTimestampKey,
             ZMConversationIsDeletedRemotelyKey,
-            PrimaryKey
+            PrimaryKey,
+            ZMConversationIsPendingInitialFetch
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
