@@ -788,7 +788,7 @@ public final class MLSService: MLSServiceInterface {
 
     public func conversationExists(groupID: MLSGroupID) async -> Bool {
         // swiftlint:disable todo_requires_jira_link
-        // TODO: [jacob] let it throw
+        // TODO: [[jacob]] let it throw
         // swiftlint:enable todo_requires_jira_link
         let result = (try? await coreCrypto.perform { await $0.conversationExists(conversationId: groupID.data) }) ?? false
         logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
@@ -919,12 +919,12 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
 
-            guard await isConversationOutOfSync(
+            guard try await isConversationOutOfSync(
                 conversationInfo.conversation,
+                subgroup: nil,
                 context: context
             ) else {
-                logger.info("conversation is not out of sync (\(groupID.safeForLoggingDescription))")
-                return
+                return logger.info("conversation is not out of sync (\(groupID.safeForLoggingDescription))")
             }
 
             try await joinGroupAndAppendGapSystemMessage(
@@ -935,7 +935,6 @@ public final class MLSService: MLSServiceInterface {
         } catch {
             logger.warn("failed to repair conversation (\(groupID.safeForLoggingDescription)). error: \(String(describing: error))")
         }
-
     }
 
     private func joinGroupAndAppendGapSystemMessage(
@@ -986,13 +985,12 @@ public final class MLSService: MLSServiceInterface {
                 context: context.notificationContext
             )
 
-            guard await isConversationOutOfSync(
+            guard try await isConversationOutOfSync(
                 conversationInfo.conversation,
                 subgroup: subgroup,
                 context: context
             ) else {
-                logger.info("subgroup is not out of sync (parent: \(parentGroupID.safeForLoggingDescription), subgroup: \(subgroup.groupID.safeForLoggingDescription))")
-                return
+                return logger.info("subgroup is not out of sync (parent: \(parentGroupID.safeForLoggingDescription), subgroup: \(subgroup.groupID.safeForLoggingDescription))")
             }
 
             try await joinSubgroup(
@@ -1021,7 +1019,7 @@ public final class MLSService: MLSServiceInterface {
 
     typealias OutOfSyncConversationInfo = (mlsGroupId: MLSGroupID, conversation: ZMConversation)
 
-    // TODO: [jacob] let the func throw instead of returning an empty array // swiftlint:disable:this todo_requires_jira_link
+    // TODO: [[jacob]] let the func throw instead of returning an empty array // swiftlint:disable:this todo_requires_jira_link
     private func outOfSyncConversations(in context: NSManagedObjectContext) async -> [OutOfSyncConversationInfo] {
 
         do {
@@ -1083,18 +1081,18 @@ public final class MLSService: MLSServiceInterface {
 
     private func isConversationOutOfSync(
         _ conversation: ZMConversation,
-        subgroup: MLSSubgroup? = nil,
+        subgroup: MLSSubgroup?,
         context: NSManagedObjectContext
-    ) async -> Bool {
-        return (try? await coreCrypto.perform {
-            return await isConversationOutOfSync(
+    ) async throws -> Bool {
+        try await coreCrypto.perform {
+            await isConversationOutOfSync(
                 conversation,
                 subgroup: subgroup,
                 coreCrypto: $0,
                 context: context
-            ) // swiftlint:disable todo_requires_jira_link
-        }) ?? false // TODO: [jacob] let it throw
-    } // swiftlint: enable todo_requires_jira_link
+            )
+        }
+    }
 
     // MARK: - External Proposals
 
