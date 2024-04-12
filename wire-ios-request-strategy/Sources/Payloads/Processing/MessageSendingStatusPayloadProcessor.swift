@@ -55,7 +55,11 @@ final class MessageSendingStatusPayloadProcessor {
             await deletedClient.deleteClientAndEndSession()
         }
 
-        let newMissingClients = await missingClients.flatMap(\.value).asyncFilter { await $0.hasSessionWithSelfClient == false }
+        var newMissingClients = [UserClient]()
+        for missingClient in missingClients.flatMap(\.value) {
+            guard await !missingClient.hasSessionWithSelfClient else { continue }
+            newMissingClients += [missingClient]
+        }
 
         await context.perform {
             if !redundantUsers.isEmpty {
