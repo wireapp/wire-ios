@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,16 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
 
-extension Logging {
-
-    /// For logs related to API migrations
-
-    public static let apiMigration = ZMSLog(tag: "API Migration")
-
-    /// For logs related to Cryptobox migrations
-
-    public static let cryptoboxMigration = ZMSLog(tag: "Cryptobox Migration")
-
+// `DeviceDetailsView` and `ProfileDeviceDetailsView` are similar and even use the same view model type.
+// The `DeviceInfoView` protocol allows for using the same custom hosting controller for both.
+protocol DeviceInfoView: View {
+    var viewModel: DeviceInfoViewModel { get }
+    init(viewModel: DeviceInfoViewModel)
 }

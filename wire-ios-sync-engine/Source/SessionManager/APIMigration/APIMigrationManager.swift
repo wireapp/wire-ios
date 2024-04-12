@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import struct WireSystem.WireLogger
 
 protocol APIMigration {
     func perform(with session: ZMUserSession, clientID: String) async throws
@@ -26,8 +27,6 @@ protocol APIMigration {
 final class APIMigrationManager {
     let migrations: [APIMigration]
     var previousAPIVersion: APIVersion?
-
-    private let logger = Logging.apiMigration
 
     init(migrations: [APIMigration]) {
         self.migrations = migrations
@@ -79,14 +78,14 @@ final class APIMigrationManager {
             return
         }
 
-        logger.info("starting API migrations from api v\(lastVersion.rawValue) to v\(currentVersion.rawValue) for session with clientID \(String(describing: clientID))")
+        WireLogger.apiMigration.info("starting API migrations from api v\(lastVersion.rawValue) to v\(currentVersion.rawValue) for session with clientID \(String(describing: clientID))")
 
         for migration in migrations(between: lastVersion, and: currentVersion) {
             do {
-                logger.info("starting migration (\(String(describing: migration))) for api v\(migration.version.rawValue)")
+                WireLogger.apiMigration.info("starting migration (\(String(describing: migration))) for api v\(migration.version.rawValue)")
                 try await migration.perform(with: session, clientID: clientID)
             } catch {
-                logger.warn("migration (\(String(describing: migration))) failed for session with clientID (\(String(describing: clientID)). error: \(String(describing: error))")
+                WireLogger.apiMigration.warn("migration (\(String(describing: migration))) failed for session with clientID (\(String(describing: clientID)). error: \(String(describing: error))")
             }
         }
     }
@@ -108,7 +107,7 @@ final class APIMigrationManager {
             return
         }
 
-        logger.info("persisting last used API version (v\(apiVersion.rawValue)) for client (\(clientID))")
+        WireLogger.apiMigration.info("persisting last used API version (v\(apiVersion.rawValue)) for client (\(clientID))")
         userDefaults(for: clientID).lastUsedAPIVersion = apiVersion
     }
 
