@@ -123,16 +123,9 @@ extension ZMConversation {
                let payload = response.payload,
                let data = payload.asDictionary()?[ZMConversation.TransportKey.data] as? [String: Any],
                let uri = data[ZMConversation.TransportKey.uri] as? String {
-
+                // The event that's in the payload doesn't need to be processed because we can fetch it from elsewhere
                 completion(.success(uri))
 
-                if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
-                    // Process `conversation.code-update` event
-                    // swiftlint:disable todo_requires_jira_link
-                    // FIXME: [jacob] replace with ConversationEventProcessor
-                    // swiftlint:enable todo_requires_jira_link
-                    userSession.processUpdateEvents([event])
-                }
             } else if response.httpStatus == 200,
                       let payload = response.payload?.asDictionary(),
                       let uri = payload[ZMConversation.TransportKey.uri] as? String {
