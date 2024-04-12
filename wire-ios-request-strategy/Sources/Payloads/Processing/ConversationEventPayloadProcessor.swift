@@ -619,7 +619,7 @@ struct ConversationEventPayloadProcessor {
 
         if await context.perform({ conversation.epoch <= 0 }) {
             await mlsService.createSelfGroup(for: groupID)
-        } else if await !mlsService.conversationExists(groupID: groupID) {
+        } else if try await !mlsService.conversationExists(groupID: groupID) {
             try await mlsService.joinGroup(with: groupID)
         }
     }

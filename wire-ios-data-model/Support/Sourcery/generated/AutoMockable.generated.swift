@@ -4078,14 +4078,19 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - conversationExists
 
     public var conversationExistsGroupID_Invocations: [MLSGroupID] = []
-    public var conversationExistsGroupID_MockMethod: ((MLSGroupID) async -> Bool)?
+    public var conversationExistsGroupID_MockError: Error?
+    public var conversationExistsGroupID_MockMethod: ((MLSGroupID) async throws -> Bool)?
     public var conversationExistsGroupID_MockValue: Bool?
 
-    public func conversationExists(groupID: MLSGroupID) async -> Bool {
+    public func conversationExists(groupID: MLSGroupID) async throws -> Bool {
         conversationExistsGroupID_Invocations.append(groupID)
 
+        if let error = conversationExistsGroupID_MockError {
+            throw error
+        }
+
         if let mock = conversationExistsGroupID_MockMethod {
-            return await mock(groupID)
+            return try await mock(groupID)
         } else if let mock = conversationExistsGroupID_MockValue {
             return mock
         } else {

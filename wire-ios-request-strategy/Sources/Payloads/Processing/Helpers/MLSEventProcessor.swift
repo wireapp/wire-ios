@@ -74,7 +74,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         WireLogger.mls.debug("MLS event processor updating conversation if needed")
 
         let (messageProtocol, mlsGroupID, mlsService) = await context.perform {
-            return (
+            (
                 conversation.messageProtocol,
                 conversation.mlsGroupID,
                 context.mlsService
@@ -99,7 +99,7 @@ public class MLSEventProcessor: MLSEventProcessing {
             return logWarn(aborting: .conversationUpdate, withReason: .missingMLSService)
         }
 
-        let conversationExists = await mlsService.conversationExists(groupID: mlsGroupID)
+        let conversationExists = (try? await mlsService.conversationExists(groupID: mlsGroupID)) ?? false
         let newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
 
         await context.perform {

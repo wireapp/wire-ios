@@ -36,7 +36,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws
 
-    func conversationExists(groupID: MLSGroupID) async -> Bool
+    func conversationExists(groupID: MLSGroupID) async throws -> Bool
 
     func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws
 
@@ -786,13 +786,17 @@ public final class MLSService: MLSServiceInterface {
 
     }
 
-    public func conversationExists(groupID: MLSGroupID) async -> Bool {
-        // swiftlint:disable todo_requires_jira_link
-        // TODO: [[jacob]] let it throw
-        // swiftlint:enable todo_requires_jira_link
-        let result = (try? await coreCrypto.perform { await $0.conversationExists(conversationId: groupID.data) }) ?? false
-        logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
-        return result
+    public func conversationExists(groupID: MLSGroupID) async throws -> Bool {
+        do {
+            let result = try await coreCrypto.perform { coreCrypto in
+                await coreCrypto.conversationExists(conversationId: groupID.data)
+            }
+            logger.info("checking if group (\(groupID)) exists... it does\(result ? "!" : " not!")")
+            return result
+        } catch {
+            logger.error("checking if group (\(groupID)) exists threw an error: \(error)")
+            throw error
+        }
     }
 
     public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
@@ -807,7 +811,7 @@ public final class MLSService: MLSServiceInterface {
             return
         }
 
-        if await !conversationExists(groupID: groupID) {
+        if try await !conversationExists(groupID: groupID) {
             try await createGroup(for: groupID)
         }
 
@@ -1629,7 +1633,7 @@ public final class MLSService: MLSServiceInterface {
                 forType: subconversationType,
                 parentGroupID: parentGroupID
             ),
-            await conversationExists(groupID: subConversationGroupID)
+            try await conversationExists(groupID: subConversationGroupID)
         {
             try await leaveSubconversation(id: subConversationGroupID)
         } else if let context = context?.notificationContext {

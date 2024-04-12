@@ -53,7 +53,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             in: context
         )
 
-        if await mlsService.conversationExists(groupID: mlsGroupID) {
+        if try await mlsService.conversationExists(groupID: mlsGroupID) {
             return mlsGroupID
         }
 
