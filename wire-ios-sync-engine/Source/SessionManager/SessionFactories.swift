@@ -81,6 +81,7 @@ open class AuthenticatedSessionFactory {
             mediaManager: mediaManager,
             flowManager: flowManager,
             analytics: analytics,
+            eventProcessor: nil,
             application: application,
             appVersion: appVersion,
             coreDataStack: coreDataStack,
@@ -88,7 +89,6 @@ open class AuthenticatedSessionFactory {
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
             sharedUserDefaults: sharedUserDefaults
         )
-        userSession.updateEventProcessor = userSession.createUpdateEventProcessor()
 
         userSession.startRequestLoopTracker()
 
