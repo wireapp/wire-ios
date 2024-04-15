@@ -115,11 +115,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        do {
-            try await sut.performMigration(accountDirectory: accountDirectory, coreCrypto: mockSafeCoreCrypto)
-        } catch {
-            XCTFail("failed to perform migration: \(error.localizedDescription)")
-        }
+        try await sut.performMigration(accountDirectory: accountDirectory, coreCrypto: mockSafeCoreCrypto)
 
         // Then
         XCTAssertEqual(mockFileManager.removeItemAt_Invocations, [cryptoboxDirectory])

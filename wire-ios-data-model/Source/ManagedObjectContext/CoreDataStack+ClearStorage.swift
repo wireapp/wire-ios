@@ -110,7 +110,7 @@ extension CoreDataStack {
 
         do {
             try clearStorage()
-        } catch let error {
+        } catch {
             Logging.localStorage.error("Failed to clear storage: \(error)")
         }
     }

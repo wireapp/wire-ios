@@ -229,11 +229,7 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         try await uiMOC.perform {
             var genericMessage = try XCTUnwrap(originalMessage.underlyingMessage)
             genericMessage.setExpectsReadConfirmation(true)
-            do {
-                try originalMessage.setUnderlyingMessage(genericMessage)
-            } catch {
-                XCTFail("Error in adding data: \(error)")
-            }
+            try originalMessage.setUnderlyingMessage(genericMessage)
         }
 
         // when
@@ -260,11 +256,7 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = true
         var genericMessage = originalMessage.underlyingMessage!
         genericMessage.setExpectsReadConfirmation(true)
-        do {
-            try originalMessage.setUnderlyingMessage(genericMessage)
-        } catch {
-            XCTFail("Error in adding data: \(error)")
-        }
+        try originalMessage.setUnderlyingMessage(genericMessage)
 
         // when
         handle(conversationAction: .like, category: .conversation, userInfo: userInfo)

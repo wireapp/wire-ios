@@ -400,7 +400,7 @@ extension ZMClientMessageTests_Editing {
         XCTAssertEqual(message.textMessageData?.quoteMessage as! ZMMessage, quotedMessage)
     }
 
-    func testThatReadExpectationIsKeptAfterEdit() {
+    func testThatReadExpectationIsKeptAfterEdit() throws {
         // given
         let oldText = "Hallo"
         let newText = "Hello"
@@ -416,11 +416,7 @@ extension ZMClientMessageTests_Editing {
         var genericMessage = message.underlyingMessage!
         genericMessage.setExpectsReadConfirmation(true)
 
-        do {
-            try message.setUnderlyingMessage(genericMessage)
-        } catch {
-            XCTFail()
-        }
+        try message.setUnderlyingMessage(genericMessage)
 
         let updateEvent = createMessageEditUpdateEvent(oldNonce: message.nonce!, newNonce: UUID.create(), conversationID: conversation.remoteIdentifier!, senderID: senderID!, newText: newText)
         let oldNonce = message.nonce

@@ -75,14 +75,12 @@ final class SharingSessionTests: BaseSharingSessionTests {
 
             // When
             _ = try createSharingSession()
+            XCTFail("unexpected success")
         } catch SharingSession.InitializationError.pendingCryptoboxMigration {
             // Then
-            return
         } catch {
             XCTFail("unexpected error: \(error.localizedDescription)")
         }
-
-        XCTFail("unexpected success")
     }
 
 }

@@ -789,7 +789,7 @@ public final class FileAssetCache: NSObject {
     public func deleteAssetsOlderThan(_ date: Date) {
         do {
             try cache.deleteAssetsOlderThan(date)
-        } catch let error {
+        } catch {
             WireLogger.assets.error("Error trying to delete assets older than \(date): \(error)")
         }
     }
