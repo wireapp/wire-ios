@@ -388,13 +388,8 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 session.evaluateAppLockAuthentication(
                     passcodePreference: .deviceOnly,
                     description: L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.description
-<<<<<<< HEAD
-                ) { [weak self] _, _  in
-                    DispatchQueue.main.async {
-=======
                 ) { [weak self] _  in
-                    DispatchQueue.main.performAsync {
->>>>>>> 945d3b51a8 (fix: passcode during call [feature][WPB-7111] (#1188))
+                    DispatchQueue.main.async {
                         self?.eventResponderChain.handleEvent(ofType: .deviceConfigurationComplete)
                     }
                 }
