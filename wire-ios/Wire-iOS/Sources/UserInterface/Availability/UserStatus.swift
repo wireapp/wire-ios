@@ -21,43 +21,14 @@ import WireDataModel
 /// The status of the user, consisting of its name and availability.
 public struct UserStatus {
 
-    public var avatar: Avatar
-
     /// The name of the users.
-    public var name: String
+    var name: String
 
-    public var availability: Availability
+    var availability: Availability
 
     /// `true` if the user has a valid certificate (MLS), `false` otherwise.
-    public var isCertified: Bool
+    var isCertified: Bool
 
     /// `true` if the user has been verified (Proteus), `false` otherwise.
-    public var isVerified: Bool
-
-    public init(
-        avatar: Avatar = .text(""),
-        name: String = "",
-        availability: Availability = Availability.none,
-        isCertified: Bool = false,
-        isVerified: Bool = false
-    ) {
-        self.avatar = avatar
-        self.name = name
-        self.availability = availability
-        self.isCertified = isCertified
-        self.isVerified = isVerified
-    }
-
-    // MARK: - Avatar
-
-    /// The different, mutually-exclusive forms of avatars.
-    public enum Avatar: Equatable {
-
-        case image(UIImage)
-        case text(String)
-
-        public init() {
-            self = .image(.init(resource: .unavailableUser))
-        }
-    }
+    var isVerified: Bool
 }
