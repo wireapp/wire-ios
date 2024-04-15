@@ -47,7 +47,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     /// It appears when the user has scrolled up past a certain point in the conversation.
     lazy var scrollToBottomButton = {
         let button = ZMButton(style: .scrollToBottomButtonStyle, cornerRadius: scrollToBottomButtonHeight / 2)
-        let icon = Asset.Images.downArrow.image
+        let icon = .init(resource: .downArrow)
 
         button.setImage(icon, for: .normal)
         button.setImage(icon, for: .highlighted)

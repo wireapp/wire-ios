@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 
@@ -31,7 +30,7 @@ final class ConversationCreateReceiptsCell: IconToggleCell {
     }
 
     private func setupIconForCell() {
-        icon = Asset.Images.readReceipts.image.withRenderingMode(.alwaysTemplate)
+        icon = .init(resource: .readReceipts).withRenderingMode(.alwaysTemplate)
         iconColor = SemanticColors.Icon.foregroundDefault
     }
 }
