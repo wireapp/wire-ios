@@ -123,7 +123,8 @@ public final class ZMUserSession: NSObject {
 
     let earService: EARServiceInterface
 
-    public var appLockController: AppLockType
+    public internal(set) var appLockController: AppLockType
+    private let contextStorage = LAContextStorage()
 
     public var fileSharingFeature: Feature.FileSharing {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
@@ -441,7 +442,12 @@ public final class ZMUserSession: NSObject {
         self.topConversationsDirectory = TopConversationsDirectory(managedObjectContext: coreDataStack.viewContext)
         self.debugCommands = ZMUserSession.initDebugCommands()
         self.legacyHotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
-        self.appLockController = AppLockController(userId: userId, selfUser: .selfUser(in: coreDataStack.viewContext), legacyConfig: configuration.appLockConfig)
+        self.appLockController = AppLockController(
+            userId: userId,
+            selfUser: .selfUser(in: coreDataStack.viewContext),
+            legacyConfig: configuration.appLockConfig,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
+        )
         self.coreCryptoProvider = CoreCryptoProvider(
             selfUserID: userId,
             sharedContainerURL: coreDataStack.applicationContainer,
@@ -475,7 +481,8 @@ public final class ZMUserSession: NSObject {
                 coreDataStack.searchContext
             ],
             canPerformKeyMigration: true,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
         )
 
         let mlsService = mlsService ?? MLSService(

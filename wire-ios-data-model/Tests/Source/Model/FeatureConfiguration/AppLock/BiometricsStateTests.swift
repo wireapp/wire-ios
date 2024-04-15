@@ -18,9 +18,10 @@
 
 import XCTest
 import LocalAuthentication
+import WireDataModelSupport
 @testable import WireDataModel
 
-class BiometricsStateTests: XCTestCase {
+final class BiometricsStateTests: XCTestCase {
 
     private var sut: BiometricsState!
 
@@ -44,7 +45,8 @@ class BiometricsStateTests: XCTestCase {
         // Given
         sut.lastPolicyDomainState = state1
 
-        let context = MockLAContext(evaluatedPolicyDomainState: state2)
+        let context = MockAuthenticationContextProtocol()
+        context.evaluatedPolicyDomainState = state2
 
         // Then
         XCTAssertTrue(sut.biometricsChanged(in: context))
@@ -54,7 +56,8 @@ class BiometricsStateTests: XCTestCase {
         // Given
         sut.lastPolicyDomainState = state1
 
-        let context = MockLAContext(evaluatedPolicyDomainState: state1)
+        let context = MockAuthenticationContextProtocol()
+        context.evaluatedPolicyDomainState = state1
 
         // Then
         XCTAssertFalse(sut.biometricsChanged(in: context))
@@ -64,7 +67,8 @@ class BiometricsStateTests: XCTestCase {
         // Given
         sut.lastPolicyDomainState = nil
 
-        let context = MockLAContext(evaluatedPolicyDomainState: state1)
+        let context = MockAuthenticationContextProtocol()
+        context.evaluatedPolicyDomainState = state1
 
         // Then
         XCTAssertFalse(sut.biometricsChanged(in: context))
@@ -74,7 +78,8 @@ class BiometricsStateTests: XCTestCase {
         // Given
         sut.lastPolicyDomainState = nil
 
-        let context = MockLAContext(evaluatedPolicyDomainState: state1)
+        let context = MockAuthenticationContextProtocol()
+        context.evaluatedPolicyDomainState = state1
         _ = sut.biometricsChanged(in: context)
 
         // When

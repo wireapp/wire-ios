@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,17 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import LocalAuthentication
+import class CoreData.NSManagedObjectContext
 
-/// An abstraction around `LAContext`.
+public protocol EARServiceDelegate: AnyObject {
 
-public protocol LAContextProtocol {
+    /// Prepare for the migration of existing database content.
+    ///
+    /// When the migration can be started, invoke the `onReady` closure.
 
-    var evaluatedPolicyDomainState: Data? { get }
+    func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) rethrows
 
-    func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool
-    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void)
 }
-
-extension LAContext: LAContextProtocol {}

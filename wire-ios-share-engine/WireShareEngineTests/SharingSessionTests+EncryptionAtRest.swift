@@ -68,8 +68,7 @@ final class SharingSessionTestsEncryptionAtRest: BaseSharingSessionTests {
         XCTAssertTrue(sharingSession.isDatabaseLocked)
 
         // when
-        let context = LAContext()
-        try sharingSession.unlockDatabase(with: context)
+        try sharingSession.unlockDatabase()
 
         // then
         XCTAssertFalse(sharingSession.isDatabaseLocked)

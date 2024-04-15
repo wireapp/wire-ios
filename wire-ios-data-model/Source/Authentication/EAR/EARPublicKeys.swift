@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,19 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import LocalAuthentication
+import class Security.SecKey
 
-struct MockLAContext: LAContextProtocol {
+public struct EARPublicKeys {
 
-    var evaluatedPolicyDomainState: Data?
-    var canEvaluate = true
+    public let primary: SecKey
+    public let secondary: SecKey
 
-    func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
-        return canEvaluate
+    public init(
+        primary: SecKey,
+        secondary: SecKey
+    ) {
+        self.primary = primary
+        self.secondary = secondary
     }
 
-    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void) {
-        reply(true, nil)
-    }
 }

@@ -17,6 +17,7 @@
 //
 
 import LocalAuthentication
+import WireSystem
 
 enum AuthenticationType: CaseIterable {
 
@@ -31,6 +32,7 @@ enum AuthenticationType: CaseIterable {
 struct AuthenticationTypeDetector: AuthenticationTypeProvider {
 
     var current: AuthenticationType {
+        WireLogger.ear.info("AuthenticationTypeDetector determines `current`!")
         let context = LAContext()
 
         guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil) else {
@@ -42,15 +44,12 @@ struct AuthenticationTypeDetector: AuthenticationTypeProvider {
         }
 
         switch context.biometryType {
-        case .none:
+        case .none, .opticID:
             return .passcode
         case .touchID:
             return .touchID
         case .faceID:
             return .faceID
-        case .opticID:
-            // opticID is only for visionPro, that we do not support
-            return .passcode
         @unknown default:
             return .passcode
         }

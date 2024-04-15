@@ -83,7 +83,7 @@ final class CallHapticsController {
 
     private func updateParticipantsVideoStateList(_ newParticipants: [CallParticipant]) {
         let newVideoStates = createVideoStateMap(using: newParticipants)
-        Log.haptics.debug("updating video state map: \(newVideoStates), old: \(videoStates)")
+        Log.haptics.debug("updating video state map")
 
         let mappedNewVideoStates = newVideoStates.mapKeys({ $0.hashValue })
         for (participant, wasSending) in videoStates {

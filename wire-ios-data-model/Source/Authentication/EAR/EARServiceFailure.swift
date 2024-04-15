@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,20 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireDataModel
+enum EARServiceFailure: Error {
 
-class MockBiometricsState: BiometricsStateProtocol {
-
-    var _biometricsChanged = false
-    var didCallPersistState = false
-
-    func biometricsChanged(in context: LAContextProtocol) -> Bool {
-        return _biometricsChanged
-    }
-
-    func persistState() {
-        didCallPersistState = true
-    }
+    case cannotPerformMigration
+    case databaseKeyMissing
 
 }

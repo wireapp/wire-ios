@@ -18,9 +18,10 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 protocol BiometricsStateProtocol {
 
-   func biometricsChanged(in context: LAContextProtocol) -> Bool
+   func biometricsChanged(in context: AuthenticationContextProtocol) -> Bool
    func persistState()
 
 }
@@ -44,7 +45,7 @@ final class BiometricsState: BiometricsStateProtocol {
     /// Returns `true` if the biometrics database has changed, e.g if finger prints are
     /// added or removed.
 
-    func biometricsChanged(in context: LAContextProtocol) -> Bool {
+    func biometricsChanged(in context: AuthenticationContextProtocol) -> Bool {
         currentPolicyDomainState = context.evaluatedPolicyDomainState
         guard let lastState = lastPolicyDomainState else { return false }
         return currentPolicyDomainState != lastState

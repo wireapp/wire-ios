@@ -241,7 +241,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
         XCTAssertTrue(waitForGroupsToBeEmpty([sut.dispatchGroup]))
 
         // Then
-        XCTAssertEqual(session.unlockDatabase.count, 1)
+        XCTAssertEqual(session.unlockDatabase_MockInvocations.count, 1)
         XCTAssertEqual(session.openApp.count, 1)
     }
 
@@ -258,7 +258,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
         XCTAssertTrue(waitForGroupsToBeEmpty([sut.dispatchGroup]))
 
         // Then
-        XCTAssertEqual(session.unlockDatabase.count, 0)
+        XCTAssertEqual(session.unlockDatabase_MockInvocations.count, 0)
         XCTAssertEqual(session.openApp.count, 0)
         XCTAssertEqual(presenter.results, [.authenticationDenied(.faceID)])
     }
@@ -273,7 +273,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
         XCTAssertTrue(waitForGroupsToBeEmpty([sut.dispatchGroup]))
 
         // Then
-        XCTAssertEqual(session.unlockDatabase.count, 0)
+        XCTAssertEqual(session.unlockDatabase_MockInvocations.count, 0)
         XCTAssertEqual(session.openApp.count, 0)
         XCTAssertEqual(presenter.results, [.customPasscodeNeeded])
     }
@@ -290,7 +290,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
         XCTAssertTrue(waitForGroupsToBeEmpty([sut.dispatchGroup]))
 
         // Then
-        XCTAssertEqual(session.unlockDatabase.count, 0)
+        XCTAssertEqual(session.unlockDatabase_MockInvocations.count, 0)
         XCTAssertEqual(session.openApp.count, 0)
         XCTAssertEqual(presenter.results, [.authenticationUnavailable])
     }

@@ -237,7 +237,10 @@ extension StarscreamPushChannel: WebSocketDelegate {
             Logging.pushChannel.debug("Received data")
             guard
                 let transportData = try? JSONSerialization.jsonObject(with: data, options: []) as? ZMTransportData
-            else { break }
+            else {
+                Logging.pushChannel.safePublic("Received binary data via push channel cannot be deserialized", level: .error)
+                break
+            }
 
             consumerQueue?.performGroupedBlock { [weak self] in
                 self?.consumer?.pushChannelDidReceive(transportData)
