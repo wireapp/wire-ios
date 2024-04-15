@@ -85,7 +85,7 @@ final class MessagePresenter: NSObject {
 
         documentInteractionController = UIDocumentInteractionController(url: URL(fileURLWithPath: tmpPath))
         documentInteractionController?.delegate = self
-        if !preview || false == documentInteractionController?.presentPreview(animated: true),
+        if !preview || documentInteractionController?.presentPreview(animated: true) == false,
            let rect = targetViewController?.view.convert(targetView.bounds, from: targetView),
            let view = targetViewController?.view {
 

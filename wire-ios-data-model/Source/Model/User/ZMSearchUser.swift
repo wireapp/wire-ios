@@ -69,7 +69,7 @@ public struct SearchUserAssetKeys {
                 }
             }
 
-            if nil != previewKey || nil != completeKey {
+            if previewKey != nil || completeKey != nil {
                 preview = previewKey
                 complete = completeKey
                 return
