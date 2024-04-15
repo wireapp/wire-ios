@@ -17,9 +17,10 @@
 //
 
 import XCTest
+import WireDataModelSupport
 @testable import WireDataModel
 
-class TransferAppLockKeychainTests: DiskDatabaseTest {
+final class TransferAppLockKeychainTests: DiskDatabaseTest {
 
     var appLock: AppLockController!
 
@@ -28,7 +29,12 @@ class TransferAppLockKeychainTests: DiskDatabaseTest {
 
         let selfUser = ZMUser.selfUser(in: moc)
         let config = AppLockController.LegacyConfig(isForced: false, timeout: 900, requireCustomPasscode: false)
-        appLock = AppLockController(userId: selfUser.remoteIdentifier!, selfUser: selfUser, legacyConfig: config)
+        appLock = AppLockController(
+            userId: selfUser.remoteIdentifier!,
+            selfUser: selfUser,
+            legacyConfig: config,
+            authenticationContext: MockAuthenticationContextProtocol()
+        )
     }
 
     override func tearDown() {
@@ -64,7 +70,7 @@ class TransferAppLockKeychainTests: DiskDatabaseTest {
 
     func testItMigratesPasscodes() throws {
         // Given
-        let legacyItem = AppLockController.PasscodeKeychainItem.legacyItem
+        let legacyItem = AppLockController.PasscodeKeychainItem.makeLegacyItem()
         let passcode = "hello".data(using: .utf8)!
 
         try Keychain.updateItem(legacyItem, value: passcode)

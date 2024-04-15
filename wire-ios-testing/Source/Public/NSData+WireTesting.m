@@ -20,8 +20,6 @@
 #import "NSData+WireTesting.h"
 #import <zlib.h>
 
-
-
 @implementation NSData (ZMT_DispatchDataTesting)
 
 - (dispatch_data_t)dispatchData;
@@ -33,8 +31,6 @@
 }
 
 @end
-
-
 
 @implementation NSData (ZMT_HTTPDecompression)
 

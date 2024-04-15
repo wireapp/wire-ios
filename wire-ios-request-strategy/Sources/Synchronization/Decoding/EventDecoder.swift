@@ -94,8 +94,8 @@ extension EventDecoder {
         }
 
         guard proteusProvider.canPerform else {
-                WireLogger.proteus.warn("ignore decrypting events because it is not safe")
-             return []
+            WireLogger.proteus.warn("ignore decrypting events because it is not safe")
+            return []
         }
 
         let decryptedEvents: [ZMUpdateEvent] = await proteusProvider.performAsync(
@@ -161,9 +161,10 @@ extension EventDecoder {
         publicKeys: EARPublicKeys?,
         proteusService: ProteusServiceInterface
     ) async -> [ZMUpdateEvent] {
-        var decryptedEvents = [ZMUpdateEvent]()
 
-        decryptedEvents = Array(await events.asyncMap { event -> [ZMUpdateEvent] in
+        var decryptedEvents = [ZMUpdateEvent]()
+        for event in events {
+
             switch event.type {
             case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
                 let proteusEvent = await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
@@ -172,19 +173,22 @@ extension EventDecoder {
                         forSession: sessionID
                     )
                 }
-                return proteusEvent.map { [$0] } ?? []
+                if let proteusEvent {
+                    decryptedEvents.append(proteusEvent)
+                }
 
             case .conversationMLSWelcome:
                 await self.processWelcomeMessage(from: event, context: self.syncMOC)
-                return [event]
+                decryptedEvents.append(event)
 
             case .conversationMLSMessageAdd:
-                return await self.decryptMlsMessage(from: event, context: self.syncMOC)
+                let events = await self.decryptMlsMessage(from: event, context: self.syncMOC)
+                decryptedEvents.append(contentsOf: events)
 
             default:
-                return [event]
+                decryptedEvents.append(event)
             }
-        }.joined())
+        }
 
         // This call has to be synchronous to ensure that we close the
         // encryption context only if we stored all events in the database.
@@ -201,12 +205,12 @@ extension EventDecoder {
         publicKeys: EARPublicKeys?,
         keyStore: UserClientKeysStore
     ) async -> [ZMUpdateEvent] {
-        var decryptedEvents: [ZMUpdateEvent] = []
+        var decryptedEvents = [ZMUpdateEvent]()
 
         await keyStore.encryptionContext.performAsync { [weak self] sessionsDirectory in
             guard let self else { return }
 
-            decryptedEvents = Array(await events.asyncMap { event -> [ZMUpdateEvent] in
+            for event in events {
                 switch event.type {
                 case .conversationOtrMessageAdd, .conversationOtrAssetAdd:
                     let proteusEvent = await self.decryptProteusEventAndAddClient(event, in: self.syncMOC) { sessionID, encryptedData in
@@ -215,26 +219,28 @@ extension EventDecoder {
                             for: sessionID.mapToEncryptionSessionID()
                         )
                     }
-                    return proteusEvent.map { [$0] } ?? []
+                    if let proteusEvent {
+                        decryptedEvents.append(proteusEvent)
+                    }
 
                 case .conversationMLSWelcome:
                     await self.processWelcomeMessage(from: event, context: self.syncMOC)
-                    return [event]
+                    decryptedEvents.append(event)
 
                 case .conversationMLSMessageAdd:
-                    return await self.decryptMlsMessage(from: event, context: self.syncMOC)
+                    let events = await self.decryptMlsMessage(from: event, context: self.syncMOC)
+                    decryptedEvents.append(contentsOf: events)
 
                 default:
-                    return [event]
+                    decryptedEvents.append(event)
                 }
-            }.joined())
+            }
 
             // This call has to be synchronous to ensure that we close the
             // encryption context only if we stored all events in the database.
             await eventMOC.perform {
                 self.storeUpdateEvents(decryptedEvents, startingAtIndex: startIndex, publicKeys: publicKeys)
             }
-
         }
 
         return decryptedEvents
@@ -277,10 +283,13 @@ extension EventDecoder {
             if firstCall {
                 await consumeBlock([])
             }
+            WireLogger.updateEvent.debug("EventDecoder: process events finished")
             return
         }
 
+        WireLogger.updateEvent.debug("EventDecoder: process batch of \(events.storedEvents.count) events")
         await processBatch(events.updateEvents, storedEvents: events.storedEvents, block: consumeBlock)
+
         await process(with: privateKeys, consumeBlock, firstCall: false, callEventsOnly: callEventsOnly)
     }
 
@@ -288,6 +297,7 @@ extension EventDecoder {
     /// of `StoredEvents` and `ZMUpdateEvent`'s in a `EventsWithStoredEvents` tuple.
 
     private func fetchNextEventsBatch(with privateKeys: EARPrivateKeys?, callEventsOnly: Bool) async -> EventsWithStoredEvents {
+
         var (storedEvents, updateEvents) = ([StoredUpdateEvent](), [ZMUpdateEvent]())
 
         await eventMOC.perform {
