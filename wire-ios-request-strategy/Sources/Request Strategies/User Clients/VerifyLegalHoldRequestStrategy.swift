@@ -95,7 +95,7 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
             var newMissingClients = [UserClient]()
             for missingClient in clientChanges.missingClients {
                 guard await !missingClient.hasSessionWithSelfClient else { continue }
-                newMissingClients += [missingClient]
+                newMissingClients.append(missingClient)
             }
 
             await managedObjectContext.perform {

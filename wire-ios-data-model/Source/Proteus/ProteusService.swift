@@ -284,7 +284,7 @@ public final class ProteusService: ProteusServiceInterface {
         var prekeys = [IdPrekeyTuple]()
         for id in range {
             let prekey = try await generatePrekey(id: id)
-            prekeys += [(id: id, prekey: prekey)]
+            prekeys.append((id: id, prekey: prekey))
         }
         return prekeys
     }

@@ -105,7 +105,7 @@ extension EventDecoder {
                 switch result {
                 case .message(let decryptedData, let senderClientID):
                     if let event = updateEvent.decryptedMLSEvent(decryptedData: decryptedData, senderClientID: senderClientID) {
-                        events += [event]
+                        events.append(event)
                     }
 
                 case .proposal(let commitDelay):

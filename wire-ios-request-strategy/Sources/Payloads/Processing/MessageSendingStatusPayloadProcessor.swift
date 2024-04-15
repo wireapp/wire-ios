@@ -58,7 +58,7 @@ final class MessageSendingStatusPayloadProcessor {
         var newMissingClients = [UserClient]()
         for missingClient in missingClients.flatMap(\.value) {
             guard await !missingClient.hasSessionWithSelfClient else { continue }
-            newMissingClients += [missingClient]
+            newMissingClients.append(missingClient)
         }
 
         await context.perform {

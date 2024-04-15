@@ -670,10 +670,10 @@ extension GenericMessage {
                 )
                 if !clientEntries.isEmpty {
                     let userEntry = await context.perform { Proteus_UserEntry(withUser: user, clientEntries: clientEntries) }
-                    userEntries += [userEntry]
+                    userEntries.append(userEntry)
                 }
             }
-            qualifiedUserEntries += [.init(withDomain: domain, userEntries: userEntries)]
+            qualifiedUserEntries.append(.init(withDomain: domain, userEntries: userEntries))
         }
         return qualifiedUserEntries
     }
@@ -729,7 +729,7 @@ extension GenericMessage {
                 using: encryptionFunction
             )
             if !clientEntries.isEmpty {
-                userEntries += [.init(withUser: user, clientEntries: clientEntries)]
+                userEntries.append(.init(withUser: user, clientEntries: clientEntries))
             }
         }
         return userEntries
@@ -779,7 +779,7 @@ extension GenericMessage {
         var clientEntries = [Proteus_ClientEntry]()
         for client in filteredClientEntries {
             if let clientEntry = await clientEntry(for: client, using: encryptionFunction) {
-                clientEntries += [clientEntry]
+                clientEntries.append(clientEntry)
             }
         }
         return clientEntries

@@ -1032,7 +1032,7 @@ public final class MLSService: MLSServiceInterface {
                 var outOfSyncConversations = [ZMConversation]()
                 for conversation in allMLSConversations {
                     guard await isConversationOutOfSync(conversation, coreCrypto: coreCrypto, context: context) else { continue }
-                    outOfSyncConversations += [conversation]
+                    outOfSyncConversations.append(conversation)
                 }
                 return outOfSyncConversations
             }

@@ -174,19 +174,19 @@ extension EventDecoder {
                     )
                 }
                 if let proteusEvent {
-                    decryptedEvents += [proteusEvent]
+                    decryptedEvents.append(proteusEvent)
                 }
 
             case .conversationMLSWelcome:
                 await self.processWelcomeMessage(from: event, context: self.syncMOC)
-                decryptedEvents += [event]
+                decryptedEvents.append(event)
 
             case .conversationMLSMessageAdd:
                 let events = await self.decryptMlsMessage(from: event, context: self.syncMOC)
-                decryptedEvents += events
+                decryptedEvents.append(event)
 
             default:
-                decryptedEvents += [event]
+                decryptedEvents.append(event)
             }
         }
 
@@ -220,19 +220,19 @@ extension EventDecoder {
                         )
                     }
                     if let proteusEvent {
-                        decryptedEvents += [proteusEvent]
+                        decryptedEvents.append(proteusEvent)
                     }
 
                 case .conversationMLSWelcome:
                     await self.processWelcomeMessage(from: event, context: self.syncMOC)
-                    decryptedEvents += [event]
+                    decryptedEvents.append(event)
 
                 case .conversationMLSMessageAdd:
                     let events = await self.decryptMlsMessage(from: event, context: self.syncMOC)
                     decryptedEvents += events
 
                 default:
-                    decryptedEvents += [event]
+                    decryptedEvents.append(event)
                 }
             }
 
