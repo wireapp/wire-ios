@@ -97,6 +97,11 @@ struct ZMUserSessionBuilder {
 
     // MARK: - Setup Dependencies
 
+    mutating func withAnalytics(_ analytics: AnalyticsType) -> ZMUserSessionBuilder {
+        self.analytics = analytics
+        return self
+    }
+
     mutating func withAppVersion(_ appVersion: String) -> ZMUserSessionBuilder {
         self.appVersion = appVersion
         return self
