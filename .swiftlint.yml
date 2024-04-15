@@ -4,6 +4,7 @@ opt_in_rules:
   - operator_usage_whitespace
   - multiline_parameters
   - reduce_into
+  - yoda_condition
 
 disabled_rules:
   - function_body_length

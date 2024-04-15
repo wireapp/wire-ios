@@ -244,7 +244,7 @@ class IconButton: ButtonWithLargerHitArea {
 
     func setIconColor(_ color: UIColor?,
                       for state: UIControl.State) {
-        if nil != color {
+        if color != nil {
             iconColorsByState[state.rawValue] = color
         } else {
             iconColorsByState.removeValue(forKey: state.rawValue)

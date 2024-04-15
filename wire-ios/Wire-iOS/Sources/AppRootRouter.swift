@@ -46,13 +46,14 @@ public final class AppRootRouter: NSObject {
 
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []
-    private let teamMetadataRefresher = TeamMetadataRefresher()
+    private let teamMetadataRefresher = TeamMetadataRefresher(selfUserProvider: SelfUser.provider)
 
     // MARK: - Private Set Property
 
     private(set) var sessionManager: SessionManager
 
-    // TO DO: This should be private
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: This should be private
     private(set) var rootViewController: RootViewController
 
     private var lastLaunchOptions: LaunchOptions?
