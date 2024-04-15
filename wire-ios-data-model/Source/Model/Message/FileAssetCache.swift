@@ -19,7 +19,6 @@
 import Foundation
 
 private let NSManagedObjectContextFileAssetCacheKey = "zm_fileAssetCache"
-private var zmLog = ZMSLog(tag: "assets")
 
 extension NSManagedObjectContext {
     @objc public var zm_fileAssetCache: FileAssetCache! {
@@ -791,7 +790,7 @@ public final class FileAssetCache: NSObject {
         do {
             try cache.deleteAssetsOlderThan(date)
         } catch let error {
-            zmLog.error("Error trying to delete assets older than \(date): \(error)")
+            WireLogger.assets.error("Error trying to delete assets older than \(date): \(error)")
         }
     }
 
@@ -857,8 +856,6 @@ private func convertToOptionalFileAttributeKeyDictionary(_ input: [String: Any]?
 /// OS will terminate the app before purging the cache.
 private struct FileCache: Cache {
 
-    private let logger = WireLogger(tag: "assets")
-
     private let cacheFolderURL: URL
 
     /// Create FileCahe
@@ -867,7 +864,6 @@ private struct FileCache: Cache {
     init(location: URL) {
         cacheFolderURL = location
         try! FileManager.default.createAndProtectDirectory(at: cacheFolderURL)
-        logger.debug("created cache at: \(cacheFolderURL)")
     }
 
     func assetData(_ key: String) -> Data? {
@@ -881,14 +877,14 @@ private struct FileCache: Cache {
                 data = try Data(contentsOf: url, options: .mappedIfSafe)
             } catch let error as NSError {
                 if error.code != NSFileReadNoSuchFileError {
-                    zmLog.error("\(error)")
+                    WireLogger.assets.error("\(error)")
                 }
             }
         }
 
         if let error = error {
             if error.code != NSFileReadNoSuchFileError {
-                zmLog.error("Failed reading asset data for key = \(key): \(error)")
+                WireLogger.assets.error("Failed reading asset data for key = \(key): \(error)")
             }
         }
 
@@ -896,7 +892,6 @@ private struct FileCache: Cache {
     }
 
     func storeAssetData(_ data: Data, key: String, createdAt creationDate: Date = Date()) {
-        logger.debug("storing data for key: \(key)")
 
         let url = URLForKey(key)
         let coordinator = NSFileCoordinator()
@@ -908,12 +903,11 @@ private struct FileCache: Cache {
         }
 
         if let error = error {
-            zmLog.error("Failed storing asset data for key = \(key): \(error)")
+            WireLogger.assets.error("Failed storing asset data for key = \(key): \(error)")
         }
     }
 
     func storeAssetFromURL(_ fromUrl: URL, key: String, createdAt creationDate: Date = Date()) {
-        logger.debug("storing data from url for key: \(key)")
 
         guard fromUrl.scheme == NSURLFileScheme else { fatal("Can't save remote URL to cache: \(fromUrl)") }
 
@@ -932,12 +926,11 @@ private struct FileCache: Cache {
         }
 
         if let error = error {
-            zmLog.error("Failed to copy asset data from \(fromUrl)  for key = \(key): \(error)")
+            WireLogger.assets.error("Failed to copy asset data from \(fromUrl)  for key = \(key): \(error)")
         }
     }
 
     func deleteAssetData(_ key: String) {
-        logger.debug("deleting data for key: \(key)")
 
         let url = URLForKey(key)
         let coordinator = NSFileCoordinator()
@@ -948,13 +941,13 @@ private struct FileCache: Cache {
                 try FileManager.default.removeItem(at: url)
             } catch let error as NSError {
                 if error.domain != NSCocoaErrorDomain || error.code != NSFileNoSuchFileError {
-                    zmLog.error("Can't delete file \(url.pathComponents.last!): \(error)")
+                    WireLogger.assets.error("Can't delete file \(url.pathComponents.last!): \(error)")
                 }
             }
         }
 
         if let error = error {
-            zmLog.error("Failed deleting asset data for key = \(key): \(error)")
+            WireLogger.assets.error("Failed deleting asset data for key = \(key): \(error)")
         }
     }
 
@@ -981,7 +974,6 @@ private struct FileCache: Cache {
     /// Deletes the contents of the cache.
 
     func wipeCaches() throws {
-        logger.debug("wiping cache")
         if FileManager.default.fileExists(atPath: cacheFolderURL.path) {
             // Delete the entire cache.
             try FileManager.default.removeItem(at: cacheFolderURL)
