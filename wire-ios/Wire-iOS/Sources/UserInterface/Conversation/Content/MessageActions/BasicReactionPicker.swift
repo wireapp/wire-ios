@@ -106,7 +106,7 @@ private extension BasicReactionPicker {
 
         let button = UIButton()
         buttons.append(button)
-        let image = .init(resource: .addEmojis)
+        let image = UIImage(resource: .addEmojis)
         button.setImage(image, for: .normal)
         button.addTarget(self, action: #selector(didTapMoreEmojis), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false

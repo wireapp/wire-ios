@@ -88,7 +88,7 @@ struct ProfileDeviceDetailsView: View {
                 .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
                 .font(UIFont.swiftUIFont(for: .bodyTwoSemibold))
             Spacer()
-            Asset.Images.chevronRight.swiftUIImage
+            Image(.chevronRight)
                 .padding(.trailing, ViewConstants.Padding.standard)
         }
         .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)

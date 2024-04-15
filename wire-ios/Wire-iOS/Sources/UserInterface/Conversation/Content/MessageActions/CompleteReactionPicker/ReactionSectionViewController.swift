@@ -84,7 +84,7 @@ final class ReactionSectionViewController: UIViewController {
     private func createSectionButton(for type: EmojiSectionType) -> ReactionCategoryButton {
         let button: ReactionCategoryButton = {
             let button = ReactionCategoryButton()
-            let image = type.imageAsset.image
+            let image = UIImage(resource: type.imageAsset)
             button.setImage(image, for: .normal)
 
             return button
