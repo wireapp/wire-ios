@@ -167,6 +167,11 @@ internal enum Asset {
     internal static let certificateValid = ImageAsset(name: "CertificateValid")
     internal static let contactsFilled = ImageAsset(name: "Contacts Filled")
     internal static let contactsOutline = ImageAsset(name: "Contacts Outline")
+    internal enum ConversationList {
+      internal enum Header {
+        internal static let newConversation = ImageAsset(name: "ConversationList/Header/New Conversation")
+      }
+    }
     internal static let conversationsFilled = ImageAsset(name: "Conversations Filled")
     internal static let conversationsOutline = ImageAsset(name: "Conversations Outline")
     internal enum E2Ei {
