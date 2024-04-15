@@ -1021,26 +1021,33 @@ public final class MLSService: MLSServiceInterface {
 
     typealias OutOfSyncConversationInfo = (mlsGroupId: MLSGroupID, conversation: ZMConversation)
 
+    // TODO: [jacob] let the func throw instead of returning an empty array // swiftlint:disable:this todo_requires_jira_link
     private func outOfSyncConversations(in context: NSManagedObjectContext) async -> [OutOfSyncConversationInfo] {
 
-        let conversations: [ZMConversation] = (try? await coreCrypto.perform { coreCrypto in
-            let mlsConversations = await context.perform { ZMConversation.fetchMLSConversations(in: context) }
-            return await mlsConversations.asyncFilter {
-                await isConversationOutOfSync(
-                    $0,
-                    coreCrypto: coreCrypto,
-                    context: context
-                ) == true
-            } // swiftlint:disable todo_requires_jira_link
-        }) ?? [] // TODO: [jacob] let it throw
-        // swiftlint:enable todo_requires_jira_link
-        return await context.perform { conversations.compactMap {
-            if let groupId = $0.mlsGroupID {
-                return (groupId, $0)
-            } else {
-                return nil
+        do {
+            let conversations = try await coreCrypto.perform { coreCrypto in
+
+                let allMLSConversations = await context.perform { ZMConversation.fetchMLSConversations(in: context) }
+
+                var outOfSyncConversations = [ZMConversation]()
+                for conversation in allMLSConversations {
+                    guard await isConversationOutOfSync(conversation, coreCrypto: coreCrypto, context: context) else { continue }
+                    outOfSyncConversations.append(conversation)
+                }
+                return outOfSyncConversations
             }
-        } }
+            return await context.perform {
+                conversations.compactMap {
+                    if let groupId = $0.mlsGroupID {
+                        return (groupId, $0)
+                    } else {
+                        return nil
+                    }
+                }
+            }
+        } catch {
+            return []
+        }
     }
 
     private func isConversationOutOfSync(

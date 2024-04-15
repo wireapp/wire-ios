@@ -192,7 +192,7 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
 
             var challenges: [AuthorizationChallengeType: NewAcmeAuthz] = [:]
             var nonce = prevNonce
-            try await authorizationsEndpoints.asyncForEach { endpoint in
+            for endpoint in authorizationsEndpoints {
                 let auth = try await createAuthorization(prevNonce: nonce, authzEndpoint: endpoint)
                 challenges[auth.challengeType] = auth.newAcmeAuthz
                 nonce = auth.nonce

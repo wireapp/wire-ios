@@ -281,10 +281,12 @@ public final class ProteusService: ProteusServiceInterface {
     }
 
     private func generatePrekeys(_ range: CountableRange<UInt16>) async throws -> [IdPrekeyTuple] {
-        return try await range.asyncMap {
-            let prekey = try await generatePrekey(id: $0)
-            return (id: $0, prekey: prekey)
+        var prekeys = [IdPrekeyTuple]()
+        for id in range {
+            let prekey = try await generatePrekey(id: id)
+            prekeys.append((id: id, prekey: prekey))
         }
+        return prekeys
     }
 
     private func prekeysRange(_ count: UInt16, start: UInt16) async -> CountableRange<UInt16> {

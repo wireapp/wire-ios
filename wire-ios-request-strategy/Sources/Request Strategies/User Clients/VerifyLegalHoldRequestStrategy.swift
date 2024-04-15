@@ -91,7 +91,13 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
         let clientChanges = verifyClientsParser.processEmptyUploadResponse(response, in: conversation, clientRegistrationDelegate: applicationStatus!.clientRegistrationDelegate)
 
         WaitingGroupTask(context: managedObjectContext) { [self] in
-            let newMissingClients = await clientChanges.missingClients.asyncFilter { await $0.hasSessionWithSelfClient == false }
+
+            var newMissingClients = [UserClient]()
+            for missingClient in clientChanges.missingClients {
+                guard await !missingClient.hasSessionWithSelfClient else { continue }
+                newMissingClients.append(missingClient)
+            }
+
             await managedObjectContext.perform {
                 let selfClient = ZMUser.selfUser(in: self.managedObjectContext).selfClient()
                 selfClient?.addNewClientsToIgnored(Set(newMissingClients))
@@ -105,9 +111,7 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
                 completionHandler()
             }
         }
-
     }
-
 }
 
 private class VerifyClientsParser: OTREntity {

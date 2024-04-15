@@ -66,8 +66,8 @@ final class SubconversationGroupIDRepositoryTests: XCTestCase {
             parentGroupID: [.conference: subgroupID]
         ]
 
-        await repositoryData.asyncForEach { parent in
-            await parent.value.asyncForEach { subgroup in
+        for parent in repositoryData {
+            for subgroup in parent.value {
                 await sut.storeSubconversationGroupID(subgroup.value, forType: .conference, parentGroupID: parent.key)
             }
         }
