@@ -68,14 +68,14 @@ final class UserNameDetailViewModel: NSObject {
     }
 
     var secondSubtitle: NSAttributedString? {
-        guard nil != handleText else { return nil }
+        guard handleText != nil else { return nil }
         return correlationText
     }
 
     var firstAccessibilityIdentifier: String? {
-        if nil != handleText {
+        if handleText != nil {
             return "username"
-        } else if nil != correlationText {
+        } else if correlationText != nil {
             return "correlation"
         }
 
@@ -83,7 +83,7 @@ final class UserNameDetailViewModel: NSObject {
     }
 
     var secondAccessibilityIdentifier: String? {
-        guard nil != handleText && nil != correlationText else { return nil }
+        guard handleText != nil && correlationText != nil else { return nil }
         return "correlation"
     }
 

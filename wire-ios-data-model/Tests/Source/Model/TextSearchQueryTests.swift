@@ -592,7 +592,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
 
         // Given
         let conversation = conversation ?? ZMConversation.insertNewObject(in: uiMOC)
-        if nil == conversation.remoteIdentifier {
+        if conversation.remoteIdentifier == nil {
             conversation.remoteIdentifier = .create()
         }
         let message = try! conversation.appendText(content: text) as! ZMMessage

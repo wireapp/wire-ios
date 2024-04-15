@@ -230,23 +230,25 @@ extension ZMSnapshotTestCase {
 extension ZMSnapshotTestCase {
 
     func finalIdentifier(deviceName: String?, identifier: String?) -> String? {
-        var finalIdentifier: String?
+        var finalDeviceName: String?
 
-        if 0 == (identifier?.count ?? 0) {
-            if let deviceName = deviceName,
-                deviceName.count > 0 {
-                finalIdentifier = deviceName
-            }
-        } else {
-            if let deviceName = deviceName,
-                deviceName.count > 0 {
-                finalIdentifier = "\(identifier ?? "")-\(deviceName)"
-            } else {
-                finalIdentifier = "\(identifier ?? "")"
-            }
+        if let deviceName, !deviceName.isEmpty {
+            finalDeviceName = deviceName
         }
 
-        return finalIdentifier
+        if let identifier, !identifier.isEmpty {
+            if let finalDeviceName {
+                return "\(identifier)-\(finalDeviceName)"
+            } else {
+                return "\(identifier)"
+            }
+        } else {
+            if let finalDeviceName {
+                return finalDeviceName
+            } else {
+                return nil
+            }
+        }
     }
 
     /// Performs an assertion with the given view and the recorded snapshot.

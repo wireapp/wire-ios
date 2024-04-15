@@ -82,7 +82,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
 
         // In case the `MetaStreamContainer` fails to produce a string to parse, we need to ensure that we still
         // call the completion handler.
-        if let container = containerByTaskID[task.taskIdentifier], !container.reachedEndOfHead && nil == error {
+        if let container = containerByTaskID[task.taskIdentifier], !container.reachedEndOfHead && error == nil {
             return completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: task.taskIdentifier)
         }
     }
