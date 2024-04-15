@@ -31,6 +31,6 @@ class DisclosureCell: RightIconDetailsCell {
     override func setUp() {
         super.setUp()
         accessoryColor = SemanticColors.Icon.foregroundDefault
-        accessory = Asset.Images.rightChevron.image.withRenderingMode(.alwaysTemplate)
+        accessory = .init(resource: .rightChevron).withRenderingMode(.alwaysTemplate)
     }
 }
