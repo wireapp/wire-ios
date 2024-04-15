@@ -247,12 +247,13 @@ class APIMigrationManagerTests: MessagingTest {
             pushChannel: MockPushChannel()
         )
 
-        let userSession = ZMUserSession(
+        return ZMUserSession(
             userId: .create(),
             transportSession: mockTransportSession,
             mediaManager: MockMediaManager(),
             flowManager: FlowManagerMock(),
             analytics: nil,
+            eventProcessor: MockUpdateEventProcessor()
             strategyDirectory: mockStrategyDirectory,
             syncStrategy: nil,
             operationLoop: nil,
@@ -263,8 +264,5 @@ class APIMigrationManagerTests: MessagingTest {
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             sharedUserDefaults: sharedUserDefaults
         )
-        userSession.updateEventProcessor = MockUpdateEventProcessor()
-
-        return userSession
     }
 }

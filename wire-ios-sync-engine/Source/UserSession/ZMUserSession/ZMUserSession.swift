@@ -81,7 +81,7 @@ public final class ZMUserSession: NSObject {
     private(set) var transportSession: TransportSessionType
     let storedDidSaveNotifications: ContextDidSaveNotificationPersistence
     let userExpirationObserver: UserExpirationObserver
-    var updateEventProcessor: UpdateEventProcessor?
+    private(set) var updateEventProcessor: UpdateEventProcessor?
     private(set) var strategyDirectory: StrategyDirectoryProtocol?
     private(set) var syncStrategy: ZMSyncStrategy?
     private(set) var operationLoop: ZMOperationLoop?
@@ -406,6 +406,7 @@ public final class ZMUserSession: NSObject {
         mediaManager: MediaManagerType,
         flowManager: FlowManagerType,
         analytics: AnalyticsType?,
+        eventProcessor: UpdateEventProcessor?,
         strategyDirectory: StrategyDirectoryProtocol? = nil,
         syncStrategy: ZMSyncStrategy? = nil,
         operationLoop: ZMOperationLoop? = nil,
@@ -550,6 +551,7 @@ public final class ZMUserSession: NSObject {
             self.proteusProvider = ProteusProvider(proteusService: self.proteusService,
                                                    keyStore: self.syncManagedObjectContext.zm_cryptKeyStore)
 
+            self.updateEventProcessor = eventProcessor ?? self.createUpdateEventProcessor()
             self.strategyDirectory = strategyDirectory ?? self.createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
             self.syncStrategy = syncStrategy ?? self.createSyncStrategy()
             self.operationLoop = operationLoop ?? self.createOperationLoop()
@@ -630,7 +632,7 @@ public final class ZMUserSession: NSObject {
         )
     }
 
-    func createUpdateEventProcessor() -> EventProcessor {
+    private func createUpdateEventProcessor() -> EventProcessor {
         return EventProcessor(
             storeProvider: self.coreDataStack,
             eventProcessingTracker: eventProcessingTracker,

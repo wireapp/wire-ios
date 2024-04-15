@@ -136,12 +136,13 @@ class ZMUserSessionTestsBase: MessagingTest {
         let mockObserveMLSGroupVerificationStatusUseCase = MockObserveMLSGroupVerificationStatusUseCaseProtocol()
         mockObserveMLSGroupVerificationStatusUseCase.invoke_MockMethod = { }
 
-        let userSession = ZMUserSession(
+        return ZMUserSession(
             userId: coreDataStack.account.userIdentifier,
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManagerMock,
             analytics: nil,
+            eventProcessor: MockUpdateEventProcessor(),
             strategyDirectory: mockStrategyDirectory,
             syncStrategy: nil,
             operationLoop: nil,
@@ -156,9 +157,6 @@ class ZMUserSessionTestsBase: MessagingTest {
             useCaseFactory: mockUseCaseFactory,
             observeMLSGroupVerificationStatus: mockObserveMLSGroupVerificationStatusUseCase
         )
-        userSession.updateEventProcessor = MockUpdateEventProcessor()
-
-        return userSession
     }
 
     func didChangeAuthenticationData() {

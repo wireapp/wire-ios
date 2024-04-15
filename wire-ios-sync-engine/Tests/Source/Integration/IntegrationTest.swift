@@ -50,12 +50,13 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
         configuration: ZMUserSession.Configuration = .init(),
         sharedUserDefaults: UserDefaults
     ) -> ZMUserSession? {
-        let userSession = ZMUserSession(
+        ZMUserSession(
             userId: account.userIdentifier,
             transportSession: transportSession,
             mediaManager: mediaManager,
             flowManager: flowManager,
             analytics: analytics,
+            eventProcessor: nil,
             application: application,
             appVersion: appVersion,
             coreDataStack: coreDataStack,
@@ -63,9 +64,6 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
             sharedUserDefaults: sharedUserDefaults
         )
-        userSession.updateEventProcessor = userSession.createUpdateEventProcessor()
-
-        return userSession
     }
 
 }
