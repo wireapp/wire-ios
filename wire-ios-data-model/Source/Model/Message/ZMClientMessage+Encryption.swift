@@ -729,7 +729,9 @@ extension GenericMessage {
                 using: encryptionFunction
             )
             if !clientEntries.isEmpty {
-                userEntries.append(.init(withUser: user, clientEntries: clientEntries))
+                await context.perform {
+                    userEntries.append(.init(withUser: user, clientEntries: clientEntries))
+                }
             }
         }
         return userEntries
