@@ -349,7 +349,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
             do {
                 try FileManager.default.removeTmpIfNeededAndCopy(fileURL: dataURL, tmpURL: tempFileURL)
-            } catch let error {
+            } catch {
                 error.log(message: "Cannot copy video from \(dataURL) to \(tempFileURL): \(error)")
                 return
             }

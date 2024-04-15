@@ -78,7 +78,7 @@ public struct CallEventContent: Codable {
     public init?(from data: Data, with decoder: JSONDecoder = .init()) {
         do {
             self = try decoder.decode(Self.self, from: data)
-        } catch let error {
+        } catch {
             print(error.localizedDescription)
             return nil
         }

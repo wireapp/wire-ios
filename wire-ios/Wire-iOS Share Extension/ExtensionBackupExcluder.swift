@@ -32,7 +32,7 @@ final class ExtensionBackupExcluder: BackupExcluder {
     static func exclude() {
         do {
             try ExtensionBackupExcluder.exclude(filesToExclude: filesToExclude)
-        } catch let error {
+        } catch {
             zmLog.error("Cannot exclude file from the backup: \(self): \(error)")
         }
     }

@@ -43,7 +43,7 @@ struct EventPayloadDecoder {
 
         do {
             data = try JSONSerialization.data(withJSONObject: eventPayload, options: [])
-        } catch let error {
+        } catch {
             Logging.network.warn("Failed to JSONSerialization data from event payload: \(error)!")
             throw error
         }

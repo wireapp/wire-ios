@@ -287,7 +287,7 @@ public final class AudioRecorder: NSObject, AudioRecorderType {
 
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
-        } catch let error {
+        } catch {
             zmLog.error("Failed change audio category for playback: \(error)")
         }
 

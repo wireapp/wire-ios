@@ -44,19 +44,16 @@ class EncryptionSessionsDirectoryTests: XCTestCase {
 }
 
 // MARK: - Session creation and encoding/decoding
+
 extension EncryptionSessionsDirectoryTests {
-    func testThatItCanDecodeAfterInitializingWithAValidKey() {
+
+    func testThatItCanDecodeAfterInitializingWithAValidKey() throws {
 
         // GIVEN
         let plainText = "foo".data(using: String.Encoding.utf8)!
 
         // WHEN
-        do {
-            try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(2))
-        } catch {
-            XCTFail()
-            return
-        }
+        try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(2))
 
         // THEN
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
@@ -64,31 +61,20 @@ extension EncryptionSessionsDirectoryTests {
         XCTAssertEqual(decoded, plainText)
     }
 
-    func testThatItCanCallCreateSessionWithTheSameKeyMultipleTimes() {
+    func testThatItCanCallCreateSessionWithTheSameKeyMultipleTimes() throws {
 
         // GIVEN
         let plainText = "foo".data(using: String.Encoding.utf8)!
         let prekey = try! statusBob.generatePrekey(34)
-        do {
-            try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: prekey)
-        } catch {
-            XCTFail()
-            return
-        }
+        try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: prekey)
 
         // WHEN
-        do {
-            try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: prekey)
-        } catch {
-            XCTFail()
-            return
-        }
+        try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: prekey)
 
         // THEN
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
         let decoded = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
         XCTAssertEqual(decoded, plainText)
-
     }
 
     func testThatItCanNotCreateANewSessionWithAnInvalidKey() {
@@ -106,21 +92,13 @@ extension EncryptionSessionsDirectoryTests {
         }
     }
 
-    func testThatItCanNotDecodePrekeyMessagesWithTheWrongKey() {
-
-        // GIVEN
+    func testThatItCanNotDecodePrekeyMessagesWithTheWrongKey() throws {
 
         // WHEN
-        do {
-            _ = try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: hardcodedPrekey)
-        } catch {
-            XCTFail()
-            return
-        }
+        _ = try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: hardcodedPrekey)
 
         // THEN
         XCTAssertFalse(checkThatAMessageCanBeSent(.Alice))
-
     }
 }
 

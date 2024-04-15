@@ -146,11 +146,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
 
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
 
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
@@ -260,8 +256,8 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         XCTAssertEqual(existingMessage.textMessageData?.messageText, initialText)
     }
 
-    func testThatItCanUpdateAnExistingLinkPreviewInTheDataSetWithoutCreatingMultipleOnes() {
-        self.syncMOC.performGroupedAndWait {_ in
+    func testThatItCanUpdateAnExistingLinkPreviewInTheDataSetWithoutCreatingMultipleOnes() throws {
+        try syncMOC.performGroupedAndWait { _ in
             // given
             let nonce = UUID.create()
             let message = ZMClientMessage(nonce: nonce, managedObjectContext: self.syncMOC)
@@ -289,11 +285,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
                 $0.linkPreview = [linkPreview]
             }
             let genericMessage = GenericMessage(content: text, nonce: nonce)
-            do {
-                try message.setUnderlyingMessage(genericMessage)
-            } catch {
-                XCTFail()
-            }
+            try message.setUnderlyingMessage(genericMessage)
 
             // then
             XCTAssertEqual(message.dataSet.count, 1)
@@ -320,11 +312,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
             textSecond.linkPreview = [linkPreviewSecond!]
             second.text = textSecond
 
-            do {
-                try message.setUnderlyingMessage(second)
-            } catch {
-                XCTFail()
-            }
+            try message.setUnderlyingMessage(second)
 
             // then
             XCTAssertEqual(message.dataSet.count, 1)
@@ -406,7 +394,7 @@ extension ClientMessageTests {
         XCTAssertNil(sut)
     }
 
-    func testThatItDoesNotCreateKnockMessagesIfThereIsAlreadyOtrKnockWithTheSameNonce() {
+    func testThatItDoesNotCreateKnockMessagesIfThereIsAlreadyOtrKnockWithTheSameNonce() throws {
         // given
         let nonce = UUID.create()
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
@@ -414,11 +402,7 @@ extension ClientMessageTests {
 
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: WireProtos.Knock.with { $0.hotKnock = true }, nonce: UUID.create())
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
 
         let data: NSDictionary = [
@@ -480,11 +464,7 @@ extension ClientMessageTests {
 
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
 
@@ -525,11 +505,7 @@ extension ClientMessageTests {
 
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
@@ -571,11 +547,7 @@ extension ClientMessageTests {
 
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
@@ -619,11 +591,7 @@ extension ClientMessageTests {
 
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
@@ -675,11 +643,7 @@ extension ClientMessageTests {
 
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
@@ -732,11 +696,7 @@ extension ClientMessageTests {
 
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce, expiresAfter: .oneHour)
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier

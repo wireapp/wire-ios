@@ -240,7 +240,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                     prekeys: prekeys,
                     apiVersion: apiVersion
                 )
-            } catch let error {
+            } catch {
                 fatal("Couldn't create request for new pre keys: \(error)")
             }
         }
@@ -263,7 +263,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                     userClient,
                     apiVersion: apiVersion
                 )
-            } catch let error {
+            } catch {
                 fatal("Couldn't create request for new signaling keys: \(error)")
             }
         }
@@ -274,7 +274,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                     userClient,
                     apiVersion: apiVersion
                 )
-            } catch let error {
+            } catch {
                 fatal("Couldn't create request for updating Capabilities: \(error)")
             }
         }
@@ -285,7 +285,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                     userClient,
                     apiVersion: apiVersion
                 )
-            } catch let error {
+            } catch {
                 fatal("Couldn't create request for new mls public keys: \(error)")
             }
         }

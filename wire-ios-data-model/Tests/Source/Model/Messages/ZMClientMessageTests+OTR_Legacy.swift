@@ -447,11 +447,7 @@ extension ClientMessageTests_OTR_Legacy {
 
             let genericMessage = GenericMessage(content: Text(content: "yo"), nonce: UUID.create())
             let clientmessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
-            do {
-                try clientmessage.setUnderlyingMessage(genericMessage)
-            } catch {
-                XCTFail()
-            }
+            try clientmessage.setUnderlyingMessage(genericMessage)
             clientmessage.visibleInConversation = conversation
 
             self.syncMOC.saveOrRollback()
@@ -478,11 +474,7 @@ extension ClientMessageTests_OTR_Legacy {
 
             let genericMessage = GenericMessage(content: Text(content: "yo"), nonce: UUID.create())
             let clientMessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
-            do {
-                try clientMessage.setUnderlyingMessage(genericMessage)
-            } catch {
-                XCTFail()
-            }
+            try clientMessage.setUnderlyingMessage(genericMessage)
             clientMessage.visibleInConversation = conversation
 
             self.syncMOC.saveOrRollback()

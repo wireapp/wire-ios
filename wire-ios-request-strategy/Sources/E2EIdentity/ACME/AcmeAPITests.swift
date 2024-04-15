@@ -136,14 +136,11 @@ final class AcmeAPITests: ZMTBaseTest {
         let mockData = Data()
         mockHttpClient?.mockResponse = (mockData, mockResponse)
 
-        do {
-            // when
-            let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: requestBody)
-            // then
-            XCTAssertEqual(acmeResponse, expectation)
-        } catch {
-            XCTFail("unexpected error: \(error.localizedDescription)")
-        }
+        // when
+        let acmeResponse = try await acmeApi?.sendACMERequest(path: path, requestBody: requestBody)
+
+        // then
+        XCTAssertEqual(acmeResponse, expectation)
     }
 
     func testThatItDoesNotSendACMERequest_WhenNoNonceInTheHeader() async throws {
@@ -226,14 +223,11 @@ final class AcmeAPITests: ZMTBaseTest {
         let challengeResponseData = try encoder.encode(expectation)
         mockHttpClient?.mockResponse = (challengeResponseData, mockResponse)
 
-        do {
-            // when
-            let challengeResponse = try await acmeApi?.sendChallengeRequest(path: path, requestBody: Data())
-            // then
-            XCTAssertEqual(challengeResponse, expectation)
-        } catch {
-            XCTFail("unexpected error: \(error.localizedDescription)")
-        }
+        // when
+        let challengeResponse = try await acmeApi?.sendChallengeRequest(path: path, requestBody: Data())
+
+        // then
+        XCTAssertEqual(challengeResponse, expectation)
     }
 
     func testThatItSendsTrustAnchorRequest() async throws {

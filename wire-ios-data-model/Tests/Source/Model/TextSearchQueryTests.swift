@@ -479,14 +479,10 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertEqual(messageMatch, message)
     }
 
-    func testThatItCanSearchForALargeMessage() {
-        do {
-            let longText = try String(contentsOf: fileURL(forResource: "ExternalMessageTextFixture", extension: "txt"), encoding: .utf8)
-            let text = longText + "search query"
-            verifyThatItFindsMessage(withText: text, whenSearchingFor: "search query")
-        } catch {
-            XCTFail("Unexpected error thrown: \(error)")
-        }
+    func testThatItCanSearchForALargeMessage() throws {
+        let longText = try String(contentsOf: fileURL(forResource: "ExternalMessageTextFixture", extension: "txt"), encoding: .utf8)
+        let text = longText + "search query"
+        verifyThatItFindsMessage(withText: text, whenSearchingFor: "search query")
     }
 
     func testThatItCanSearchForALikedMessage() {

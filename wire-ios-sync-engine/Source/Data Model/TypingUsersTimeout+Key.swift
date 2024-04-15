@@ -32,7 +32,7 @@ extension TypingUsersTimeout {
             if user.objectID.isTemporaryID || conversation.objectID.isTemporaryID {
                 do {
                     try user.managedObjectContext?.obtainPermanentIDs(for: [user, conversation])
-                } catch let error {
+                } catch {
                     log.error("Failed to obtain permanent object ids: \(error.localizedDescription)")
                 }
             }

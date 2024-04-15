@@ -30,7 +30,7 @@ class NSDataMetadataTests: XCTestCase {
         var errorReceived: Error? = .none
         do {
             _ = try data.wr_removingImageMetadata()
-        } catch let error {
+        } catch {
             errorReceived = error
         }
 
@@ -45,7 +45,7 @@ class NSDataMetadataTests: XCTestCase {
         var errorReceived: Error? = .none
         do {
             _ = try data.wr_removingImageMetadata()
-        } catch let error {
+        } catch {
             errorReceived = error
         }
 

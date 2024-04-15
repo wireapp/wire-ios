@@ -31,14 +31,11 @@ final class NotificationSessionTests: BaseTest {
 
             // When
             _ = try createNotificationSession()
+            XCTFail("unexpected success")
         } catch NotificationSession.InitializationError.pendingCryptoboxMigration {
             // Then
-            return
         } catch {
-            XCTFail("unexpected error: \(error.localizedDescription)")
+            XCTFail("unexpected error: \(error)")
         }
-
-        XCTFail("unexpected success")
     }
-
 }

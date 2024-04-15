@@ -58,12 +58,8 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         let sha = encryptedData.zmSHA256Digest()
         let keys = ZMImageAssetEncryptionKeys(otrKey: key, sha256: sha)
 
-        do {
-            try message.setUnderlyingMessage(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium), nonce: message.nonce!))
-            try message.setUnderlyingMessage(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .preview), nonce: message.nonce!))
-        } catch {
-            XCTFail("Could not set generic message")
-        }
+        try message.setUnderlyingMessage(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium), nonce: message.nonce!))
+        try message.setUnderlyingMessage(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .preview), nonce: message.nonce!))
 
         message.version = 2
         message.assetId = assetId

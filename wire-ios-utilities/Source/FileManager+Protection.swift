@@ -79,7 +79,7 @@ public extension URL {
             var resourceValues = URLResourceValues()
             resourceValues.isExcludedFromBackup = true
             try mutableCopy.setResourceValues(resourceValues)
-        } catch let error {
+        } catch {
             throw error
         }
     }

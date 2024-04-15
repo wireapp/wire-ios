@@ -78,7 +78,7 @@ struct PhoneNumber: Equatable {
 
         do {
             _ = try ZMUser.validate(phoneNumber: &validatedNumber)
-        } catch let error {
+        } catch {
             return ValidationResult(error: error)
         }
 
