@@ -21,11 +21,6 @@ import WireDataModel
 
 class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConversationGuestLinkAction> {
 
-    struct ResponsePayload: Codable {
-        // check swagger to construct the Response Payload
-
-    }
-
     // MARK: - Request generation
 
     override func request(
