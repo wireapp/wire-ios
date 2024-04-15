@@ -66,6 +66,7 @@ extension ZMUser: ObjectInSnapshot {
     static let UserClientChangeInfoKey = "clientChanges"
 
     static func changeInfo(for user: ZMUser, changes: Changes) -> UserChangeInfo? {
+        // check what changes
         var originalChanges = changes.originalChanges
         let clientChanges = originalChanges.removeValue(forKey: UserClientChangeInfoKey) as? [NSObject: [String: Any]]
 
@@ -114,7 +115,7 @@ extension ZMUser: ObjectInSnapshot {
                                   #keyPath(ZMUser.isPendingApprovalByOtherUser),
                                   #keyPath(ZMUser.isPendingApprovalBySelfUser))
     }
-
+//
     open var trustLevelChanged: Bool {
         return userClientChangeInfos.count != 0
     }

@@ -114,6 +114,10 @@ extension ZMUser: UserType {
         return [UserClientsKey, "clients.deviceClass"]
     }
 
+//    @objc class func keyPathsForValuesAffectingname() -> Set<String> {
+//        return [UserClientsKey, "clients.e2eIdentityCertificate"]
+//    }
+
     public var allClients: [UserClientType] {
         return Array(clients)
     }

@@ -540,7 +540,7 @@ final class ClientListViewController: UIViewController,
                         nil
                     }
                 })
-
+//
         do {
             let certificates = try await userSession.getE2eIdentityCertificates.invoke(
                 mlsGroupId: selfMlsGroupID,
@@ -551,6 +551,9 @@ final class ClientListViewController: UIViewController,
                     client.e2eIdentityCertificate = e2eiCertificate
                 }
                 client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint
+                client.activationDate = .now
+                client.needsToNotifyUser = !client.needsToNotifyUser
+                print("myTest: activationDate - \(client.activationDate)")
             }
 
         } catch {

@@ -25,6 +25,7 @@ public let ZMUserClientNumberOfKeysRemainingKey = "numberOfKeysRemaining"
 public let ZMUserClientNeedsToUpdateSignalingKeysKey = "needsToUploadSignalingKeys"
 public let ZMUserClientNeedsToUpdateCapabilitiesKey = "needsToUpdateCapabilities"
 
+public let ZMUserClientE2eIdentityCertificateKey = "e2eIdentityCertificate"
 public let ZMUserClientMarkedToDeleteKey = "markedToDelete"
 public let ZMUserClientMissingKey = "missingClients"
 public let ZMUserClientUserKey = "user"
@@ -36,7 +37,7 @@ public let ZMUserClientIgnoredKey = "ignoredClients"
 public let ZMUserClientNeedsToNotifyUserKey = "needsToNotifyUser"
 public let ZMUserClientFingerprintKey = "fingerprint"
 public let ZMUserClientRemoteIdentifierKey = "remoteIdentifier"
-public let ZMUserClientNeedsToNotifyOtherUserAboutSessionResetKey = "needsToNotifyOtherUserAboutSessionReset"
+// public let ZMUserClientNeedsToNotifyOtherUserAboutSessionResetKey = "needsToNotifyOtherUserAboutSessionReset"
 
 private let zmLog = ZMSLog(tag: "UserClient")
 
@@ -127,6 +128,11 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var ignoredByClients: Set<UserClient>
 
     public var e2eIdentityCertificate: E2eIdentityCertificate?
+//    {
+//        didSet {
+//            print("myTest: e2eIdentityCertificate changhed")
+//        }
+//    }
     public var mlsThumbPrint: String?
 
     public var isLegalHoldDevice: Bool {
@@ -152,7 +158,8 @@ public class UserClient: ZMManagedObject, UserClientType {
             ZMUserClientMissingKey,
             ZMUserClientNeedsToUpdateSignalingKeysKey,
             ZMUserClientNeedsToUpdateCapabilitiesKey,
-            UserClient.needsToUploadMLSPublicKeysKey
+            UserClient.needsToUploadMLSPublicKeysKey,
+            ZMUserClientE2eIdentityCertificateKey
         ]
     }
 
