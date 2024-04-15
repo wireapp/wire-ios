@@ -232,7 +232,7 @@ extension ZMSnapshotTestCase {
     func finalIdentifier(deviceName: String?, identifier: String?) -> String? {
         var finalDeviceName: String?
 
-        if let deviceName, deviceName.isEmpty {
+        if let deviceName, !deviceName.isEmpty {
             finalDeviceName = deviceName
         }
 
