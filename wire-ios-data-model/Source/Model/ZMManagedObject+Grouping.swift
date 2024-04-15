@@ -136,7 +136,7 @@ extension NSManagedObjectContext {
 
             return self.fetchOrAssert(request: fetchAllDuplicatesRequest).group(by: keyPath)
 
-        } catch let error {
+        } catch {
             fatal("Cannot perform the fetch: \(error)")
         }
     }

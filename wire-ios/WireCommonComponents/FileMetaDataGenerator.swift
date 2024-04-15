@@ -67,7 +67,7 @@ extension AVAsset {
         let reader: AVAssetReader
         do {
             reader = try AVAssetReader(asset: self)
-        } catch let error {
+        } catch {
             zmLog.error("Cannot read asset metadata for \(self): \(error)")
             return .none
         }

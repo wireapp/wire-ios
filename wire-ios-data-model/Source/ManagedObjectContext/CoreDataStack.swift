@@ -196,7 +196,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         do {
             try closeStores(in: messagesContainer)
             try closeStores(in: eventsContainer)
-        } catch let error {
+        } catch {
             WireLogger.localStorage.error("Error while closing persistent store: \(error)", attributes: .safePublic)
         }
     }
@@ -289,7 +289,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     func loadMessagesStore(completionHandler: @escaping (Error?) -> Void) {
         do {
             try createStoreDirectory(for: messagesContainer)
-        } catch let error {
+        } catch {
             completionHandler(error)
             return
         }
@@ -313,7 +313,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     func loadEventStore(completionHandler: @escaping (Error?) -> Void) {
         do {
             try createStoreDirectory(for: eventsContainer)
-        } catch let error {
+        } catch {
             completionHandler(error)
             return
         }

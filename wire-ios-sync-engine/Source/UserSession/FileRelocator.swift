@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ extension ZMUserSession {
                 zmLog.debug("Moving non-assigned Cache folder from \(oldLocation) to \(newLocation)")
                 do {
                     try fm.moveItem(at: oldLocation, to: newLocation)
-                } catch let error {
+                } catch {
                     zmLog.error("Failed to move non-assigned Cache folder from \(oldLocation) to \(newLocation) - \(error)")
                     do {
                         try fm.removeItem(at: oldLocation)

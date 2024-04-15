@@ -109,7 +109,7 @@ final class CoreDataMessagingMigrator: CoreDataMessagingMigratorProtocol {
                     type: persistentStoreType
                 )
                 WireLogger.localStorage.info("finish migrate store for \(migrationStep.sourceVersion)", attributes: .safePublic)
-            } catch let error {
+            } catch {
                 throw CoreDataMessagingMigratorError.migrateStoreFailed(error: error)
             }
 
