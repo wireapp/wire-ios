@@ -22,26 +22,26 @@ import WireRequestStrategy
 
 struct ZMUserSessionBuilder {
 
-    private var userId: UUID?
-    private var transportSession: TransportSessionType?
-    private var mediaManager: MediaManagerType?
-    private var flowManager: FlowManagerType?
     private var analytics: AnalyticsType?
-    private var eventProcessor: UpdateEventProcessor?
     private var appVersion: String?
-    private var strategyDirectory: StrategyDirectoryProtocol?
-    private var syncStrategy: ZMSyncStrategy?
-    private var operationLoop: ZMOperationLoop?
     private var application: ZMApplication?
-    private var coreDataStack: CoreDataStack?
     private var configuration: ZMUserSession.Configuration?
-    private var earService: EARServiceInterface?
-    private var mlsService: MLSServiceInterface?
+    private var coreDataStack: CoreDataStack?
     private var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface?
+    private var earService: EARServiceInterface?
+    private var eventProcessor: UpdateEventProcessor?
+    private var flowManager: FlowManagerType?
+    private var mediaManager: MediaManagerType?
+    private var mlsService: MLSServiceInterface?
+    private var observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol?
+    private var operationLoop: ZMOperationLoop?
     private var proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating?
     private var sharedUserDefaults: UserDefaults?
+    private var strategyDirectory: StrategyDirectoryProtocol?
+    private var syncStrategy: ZMSyncStrategy?
+    private var transportSession: TransportSessionType?
+    private var userId: UUID?
     private var useCaseFactory: UseCaseFactoryProtocol?
-    private var observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol?
 
     init() { }
 
