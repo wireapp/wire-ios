@@ -18,16 +18,8 @@
 
 import Foundation
 
-/// A type representing all the versions of the Wire api.
+class BackendInfoAPIV5: BackendInfoAPIV4 {
 
-public enum APIVersion: UInt {
-
-    case v0
-    case v1
-    case v2
-    case v3
-    case v4
-    case v5
-    case v6
+    // No changes.
 
 }

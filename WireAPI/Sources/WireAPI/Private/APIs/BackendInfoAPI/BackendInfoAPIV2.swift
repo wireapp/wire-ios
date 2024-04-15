@@ -18,18 +18,9 @@
 
 import Foundation
 
-class BackendInfoAPIV0: BackendInfoAPI {
+class BackendInfoAPIV2: BackendInfoAPIV1 {
 
-    let httpClient: HTTPClient
-
-    init(httpClient: HTTPClient) {
-        self.httpClient = httpClient
-    }
-
-    let path = "/api-version"
-    let decoder = ResponsePayloadDecoder()
-
-    func getBackendInfo() async throws -> BackendInfo {
+    override func getBackendInfo() async throws -> BackendInfo {
         let request = HTTPRequest(
             path: path,
             method: .get
@@ -37,9 +28,10 @@ class BackendInfoAPIV0: BackendInfoAPI {
 
         let response = try await httpClient.executeRequest(request)
 
+        // New: decode V2 payload.
         switch try decoder.decodePayload(
             from: response,
-            as: BackendInfoResponseV0.self
+            as: BackendInfoResponseV2.self
         ) {
         case .success(let payload):
             return payload.toParent()
@@ -51,18 +43,21 @@ class BackendInfoAPIV0: BackendInfoAPI {
 
 }
 
-private struct BackendInfoResponseV0: Decodable {
+private struct BackendInfoResponseV2: Decodable {
 
     var domain: String
     var federation: Bool
     var supported: [UInt]
+
+    // New
+    var development: [UInt]
 
     func toParent() -> BackendInfo {
         .init(
             domain: domain,
             isFederationEnabled: federation,
             supportedVersions: Set(supported.compactMap(APIVersion.init)),
-            developmentVersions: []
+            developmentVersions: Set(development.compactMap(APIVersion.init))
         )
     }
 
