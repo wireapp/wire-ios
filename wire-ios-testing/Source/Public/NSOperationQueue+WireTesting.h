@@ -18,7 +18,6 @@
 
 #import <Foundation/Foundation.h>
 
-
 @interface NSOperationQueue (WireTesting)
 
 - (void)waitUntilAllOperationsAreFinishedWithTimeout:(NSTimeInterval)timeout;
