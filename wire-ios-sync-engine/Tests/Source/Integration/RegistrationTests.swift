@@ -93,7 +93,7 @@ class RegistrationTests: IntegrationTest {
         XCTAssertEqual(delegate.activationCodeSendingFailedCalled, 0)
 
         // When
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             let user = session.insertUser(withName: "john")
             user.email = email
         }
@@ -119,7 +119,7 @@ class RegistrationTests: IntegrationTest {
         XCTAssertEqual(delegate.activationCodeSendingFailedCalled, 0)
 
         // When
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             let user = session.insertUser(withName: "john")
             user.phone = phone
         }
@@ -181,7 +181,7 @@ class RegistrationTests: IntegrationTest {
     func testThatIsActivationCodeIsVerifiedToSpecifiedEmail() {
         // Given
         let email = "john@smith.com"
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             session.whiteListEmail(email)
         }
         let code = self.mockTransportSession.emailActivationCode
@@ -245,7 +245,7 @@ class RegistrationTests: IntegrationTest {
 
     func testThatItSignalsAnErrorIfTeamCreationFails() {
         // Given
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             let user = session.insertUser(withName: "john")
             user.email = self.teamToRegister.email
         }
@@ -290,7 +290,7 @@ class RegistrationTests: IntegrationTest {
 
     func testThatItSignalsAnErrorIfUserCreationFails() {
         // Given
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             let user = session.insertUser(withName: "john")
             user.email = self.email
         }

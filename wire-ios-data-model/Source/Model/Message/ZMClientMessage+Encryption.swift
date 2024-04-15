@@ -686,13 +686,13 @@ extension GenericMessage {
         using encryptionFunction: LegacyEncryptionFunction
     ) -> [Proteus_QualifiedUserEntry] {
         let recipientsByDomain = context.performAndWait {
-            Dictionary(grouping: recipients) { (element) -> String in
+            Dictionary(grouping: recipients) { element -> String in
                 element.key.domain ?? selfDomain
             }
         }
 
         return recipientsByDomain.compactMap { domain, recipients in
-            let userEntries: [Proteus_UserEntry] = recipients.compactMap { (user, clients) in
+            let userEntries: [Proteus_UserEntry] = recipients.compactMap { user, clients in
                 guard context.performAndWait({ !user.isAccountDeleted }) else { return nil }
 
                 let clientEntries = legacyClientEntriesWithEncryptedData(
@@ -744,7 +744,7 @@ extension GenericMessage {
          using encryptionFunction: LegacyEncryptionFunction
      ) -> [Proteus_UserEntry] {
          context.performAndWait {
-             recipients.compactMap { (user, clients) in
+             recipients.compactMap { user, clients in
                  guard !user.isAccountDeleted else { return nil }
 
                  let clientEntries = legacyClientEntriesWithEncryptedData(

@@ -82,7 +82,7 @@ class SearchTaskTests: DatabaseTest {
         // given
         let remoteResultArrived = customExpectation(description: "received remote result")
 
-        mockTransportSession.performRemoteChanges { (remoteChanges) in
+        mockTransportSession.performRemoteChanges { remoteChanges in
             let mockUser = remoteChanges.insertUser(withName: "Dale Cooper")
             mockUser.handle = "bob"
         }
@@ -91,7 +91,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             remoteResultArrived.fulfill()
             XCTAssertEqual(result.directory.count, 1)
             let user = result.directory.first
@@ -111,7 +111,7 @@ class SearchTaskTests: DatabaseTest {
         var selfUserID: UUID!
 
         // create self user remotely
-        mockTransportSession.performRemoteChanges { (remoteChanges) in
+        mockTransportSession.performRemoteChanges { remoteChanges in
             let selfUser = remoteChanges.insertSelfUser(withName: "albert")
             selfUser.handle = "einstein"
             selfUserID = UUID(uuidString: selfUser.identifier)!
@@ -128,7 +128,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             remoteResultArrived.fulfill()
             XCTAssertEqual(result.directory.count, 0)
         }
@@ -150,7 +150,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertTrue(result.contacts.compactMap(\.user).contains(user))
         }
@@ -169,7 +169,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.contacts.count, 1)
         }
@@ -188,7 +188,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertTrue(result.contacts.compactMap(\.user).contains(user))
         }
@@ -209,7 +209,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.contacts.compactMap(\.user), [user1])
         }
@@ -230,7 +230,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.contacts.compactMap(\.user), [user1, user2])
         }
@@ -249,7 +249,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.contacts.compactMap(\.user), [user1])
         }
@@ -268,7 +268,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.contacts.compactMap(\.user), [user1])
         }
@@ -291,7 +291,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.contacts.compactMap(\.user), [user3])
         }
@@ -312,7 +312,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.contacts.compactMap(\.user), [user])
         }
@@ -342,7 +342,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.teamMembers.compactMap(\.user), [user])
         }
@@ -381,7 +381,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.teamMembers.compactMap(\.user), [userA])
         }
@@ -415,7 +415,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.teamMembers.compactMap(\.user), [userA])
         }
@@ -463,7 +463,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.teamMembers.compactMap(\.user), [userA, userB])
         }
@@ -493,7 +493,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.teamMembers.compactMap(\.user), [userA])
         }
@@ -524,7 +524,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.teamMembers.compactMap(\.user), [userA])
         }
@@ -545,7 +545,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.conversations, [conversation])
         }
@@ -564,7 +564,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.conversations, [conversation])
         }
@@ -585,7 +585,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.conversations, [conversation1, conversation2])
         }
@@ -604,7 +604,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.conversations, [conversation])
         }
@@ -623,7 +623,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.conversations, [conversation])
         }
@@ -648,7 +648,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.conversations, [groupConversation])
         }
@@ -676,7 +676,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.conversations, [conversation])
             XCTAssertEqual(result.contacts.compactMap(\.user), [user3])
@@ -700,7 +700,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.conversations, [conversation])
         }
@@ -721,7 +721,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.conversations, [conversation1, conversation3, conversation2])
         }
@@ -751,7 +751,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.conversations, [conversation1, conversation3, conversation4])
         }
@@ -771,7 +771,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.conversations, [])
         }
@@ -796,7 +796,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(Set(result.conversations), Set([conversationInTeam, conversationNotInTeam]))
         }
@@ -888,12 +888,12 @@ class SearchTaskTests: DatabaseTest {
         let request = SearchRequest(query: "User", searchOptions: [.directory])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
-        mockTransportSession.performRemoteChanges { (remoteChanges) in
+        mockTransportSession.performRemoteChanges { remoteChanges in
             remoteChanges.insertUser(withName: "User A")
         }
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.directory.first?.name, "User A")
         }
@@ -911,7 +911,7 @@ class SearchTaskTests: DatabaseTest {
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
-        mockTransportSession.performRemoteChanges { (remoteChanges) in
+        mockTransportSession.performRemoteChanges { remoteChanges in
             let userA = remoteChanges.insertUser(withName: "User A")
             let team = remoteChanges.insertTeam(withName: "Team A", isBound: true)
             team.identifier = self.teamIdentifier.transportString()
@@ -935,7 +935,7 @@ class SearchTaskTests: DatabaseTest {
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers, .localResultsOnly])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
-        mockTransportSession.performRemoteChanges { (remoteChanges) in
+        mockTransportSession.performRemoteChanges { remoteChanges in
             let userA = remoteChanges.insertUser(withName: "User A")
             let team = remoteChanges.insertTeam(withName: "Team A", isBound: true)
             team.identifier = self.teamIdentifier.transportString()
@@ -958,7 +958,7 @@ class SearchTaskTests: DatabaseTest {
         let request = SearchRequest(query: "User", searchOptions: [.directory, .teamMembers])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
-        mockTransportSession.performRemoteChanges { (remoteChanges) in
+        mockTransportSession.performRemoteChanges { remoteChanges in
             let userA = remoteChanges.insertUser(withName: "User A")
             let selfUser = remoteChanges.insertSelfUser(withName: "Self User")
             let team = remoteChanges.insertTeam(withName: "Team A", isBound: true)
@@ -970,7 +970,7 @@ class SearchTaskTests: DatabaseTest {
         }
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.teamMembers.first?.name, "User A")
             XCTAssertEqual(result.teamMembers.first?.teamRole, .admin)
@@ -1015,14 +1015,14 @@ class SearchTaskTests: DatabaseTest {
         let request = SearchRequest(query: "Service", searchOptions: [.services])
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
-        mockTransportSession.performRemoteChanges { (remoteChanges) in
+        mockTransportSession.performRemoteChanges { remoteChanges in
             remoteChanges.insertService(withName: "Service A",
                                         identifier: UUID().transportString(),
                                         provider: UUID().transportString())
         }
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.services.first?.name, "Service A")
         }
@@ -1073,14 +1073,14 @@ class SearchTaskTests: DatabaseTest {
         let resultArrived = customExpectation(description: "received result")
 
         var userId: UUID!
-        mockTransportSession.performRemoteChanges { (remoteChanges) in
+        mockTransportSession.performRemoteChanges { remoteChanges in
             let mockUser = remoteChanges.insertUser(withName: "User A")
             userId = UUID(uuidString: mockUser.identifier)!
         }
         let task = SearchTask(lookupUserId: userId, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.directory.first?.name, "User A")
         }
@@ -1129,7 +1129,7 @@ class SearchTaskTests: DatabaseTest {
         let resultArrived = customExpectation(description: "received result")
 
         mockTransportSession.federatedDomains = [federatedDomain]
-        mockTransportSession.performRemoteChanges { (remoteChanges) in
+        mockTransportSession.performRemoteChanges { remoteChanges in
             let mockUser = remoteChanges.insertUser(withName: "John Doe")
             mockUser.handle = "john"
             mockUser.domain = federatedDomain
@@ -1142,7 +1142,7 @@ class SearchTaskTests: DatabaseTest {
                               transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertEqual(result.directory.first?.name, "John Doe")
         }
@@ -1165,7 +1165,7 @@ class SearchTaskTests: DatabaseTest {
                               transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             resultArrived.fulfill()
             XCTAssertTrue(result.directory.isEmpty)
         }
@@ -1183,7 +1183,7 @@ class SearchTaskTests: DatabaseTest {
         let localResultArrived = customExpectation(description: "received local result")
         let user = createConnectedUser(withName: "userA")
 
-        mockTransportSession.performRemoteChanges { (remoteChanges) in
+        mockTransportSession.performRemoteChanges { remoteChanges in
             remoteChanges.insertUser(withName: "UserB")
         }
 
@@ -1191,7 +1191,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             localResultArrived.fulfill()
             XCTAssertTrue(result.contacts.compactMap(\.user).contains(user))
         }
@@ -1204,7 +1204,7 @@ class SearchTaskTests: DatabaseTest {
         let remoteResultArrived = customExpectation(description: "received remote result")
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             remoteResultArrived.fulfill()
             XCTAssertTrue(result.contacts.compactMap(\.user).contains(user))
         }
@@ -1220,7 +1220,7 @@ class SearchTaskTests: DatabaseTest {
         let remoteResultArrived = customExpectation(description: "received remote result")
         _ = createConnectedUser(withName: "userA")
 
-        mockTransportSession.performRemoteChanges { (remoteChanges) in
+        mockTransportSession.performRemoteChanges { remoteChanges in
             remoteChanges.insertUser(withName: "UserB")
         }
 
@@ -1228,7 +1228,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             remoteResultArrived.fulfill()
             XCTAssertEqual(result.directory.count, 1)
         }
@@ -1241,7 +1241,7 @@ class SearchTaskTests: DatabaseTest {
         let localResultArrived = customExpectation(description: "received local result")
 
         // expect
-        task.addResultHandler { (result, _) in
+        task.addResultHandler { result, _ in
             localResultArrived.fulfill()
             XCTAssertEqual(result.directory.count, 1)
         }
@@ -1259,7 +1259,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, completed) in
+        task.addResultHandler { result, completed in
             localResultArrived.fulfill()
             XCTAssertTrue(result.contacts.compactMap(\.user).contains(user))
             XCTAssertTrue(completed)
@@ -1274,7 +1274,7 @@ class SearchTaskTests: DatabaseTest {
         // given
         setCurrentAPIVersion(.v2)
         let remoteResultArrived = customExpectation(description: "received remote result")
-        mockTransportSession.performRemoteChanges { (remoteChanges) in
+        mockTransportSession.performRemoteChanges { remoteChanges in
             remoteChanges.insertUser(withName: "UserB")
         }
 
@@ -1282,7 +1282,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (result, completed) in
+        task.addResultHandler { result, completed in
             remoteResultArrived.fulfill()
             XCTAssertEqual(result.directory.count, 1)
             XCTAssertTrue(completed)
@@ -1299,7 +1299,7 @@ class SearchTaskTests: DatabaseTest {
         let finalResultsArrived = customExpectation(description: "received final result")
         _ = createConnectedUser(withName: "userA")
 
-        mockTransportSession.performRemoteChanges { (remoteChanges) in
+        mockTransportSession.performRemoteChanges { remoteChanges in
             remoteChanges.insertUser(withName: "UserB")
         }
 
@@ -1307,7 +1307,7 @@ class SearchTaskTests: DatabaseTest {
         let task = SearchTask(request: request, searchContext: searchMOC, contextProvider: coreDataStack!, transportSession: mockTransportSession)
 
         // expect
-        task.addResultHandler { (_, completed) in
+        task.addResultHandler { _, completed in
             if completed {
                 finalResultsArrived.fulfill()
             } else {

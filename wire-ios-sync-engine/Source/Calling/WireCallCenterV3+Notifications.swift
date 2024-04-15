@@ -212,7 +212,7 @@ extension WireCallCenterV3 {
     /// Register observer of the call center call state in all user sessions.
     /// Returns a token which needs to be retained as long as the observer should be active.
     class func addGlobalCallStateObserver(observer: WireCallCenterCallStateObserver) -> Any {
-        return NotificationInContext.addUnboundedObserver(name: WireCallCenterCallStateNotification.notificationName, context: nil) { [weak observer] (note) in
+        return NotificationInContext.addUnboundedObserver(name: WireCallCenterCallStateNotification.notificationName, context: nil) { [weak observer] note in
             if let note = note.userInfo[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification,
                let context = note.context,
                let caller = ZMUser.fetch(with: note.callerId.identifier,

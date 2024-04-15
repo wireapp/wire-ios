@@ -29,7 +29,7 @@ import WireTransport
 
         configuration = [.allowsRequestsWhileOnline]
 
-        let downloadPredicate = NSPredicate { (object, _) -> Bool in
+        let downloadPredicate = NSPredicate { object, _ -> Bool in
             guard let message = object as? ZMAssetClientMessage else { return false }
             guard message.version < 3 else { return false }
 

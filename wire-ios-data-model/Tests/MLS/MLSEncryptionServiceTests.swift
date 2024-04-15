@@ -88,7 +88,7 @@ final class MLSEncryptionServiceTests: XCTestCase {
         let unencryptedMessage = Data.random()
 
         // Mock
-        mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = { (_, _) in
+        mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = { _, _ in
             throw CryptoError.InvalidByteArrayError(message: "bad bytes!")
         }
 

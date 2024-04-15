@@ -900,7 +900,7 @@ extension ZMAssetClientMessageTests {
         let expectation = self.customExpectation(description: "Image arrived")
 
         // when
-        message.imageMessageData?.fetchImageData(with: DispatchQueue.global(qos: .background), completionHandler: { (imageData) in
+        message.imageMessageData?.fetchImageData(with: DispatchQueue.global(qos: .background), completionHandler: { imageData in
             XCTAssertNotNil(imageData)
             expectation.fulfill()
         })
@@ -1322,7 +1322,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.version, 3)
 
         let expectation = self.customExpectation(description: "preview data was retreived")
-        sut.fileMessageData?.fetchImagePreviewData(queue: .global(qos: .background), completionHandler: { (previewDataResult) in
+        sut.fileMessageData?.fetchImagePreviewData(queue: .global(qos: .background), completionHandler: { previewDataResult in
             XCTAssertEqual(previewDataResult, previewData)
             expectation.fulfill()
         })

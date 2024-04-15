@@ -32,7 +32,7 @@ class UserTests_AccountDeletion: IntegrationTest {
         XCTAssertTrue(login())
 
         // when
-        mockTransportSession.performRemoteChanges { (mockTransport) in
+        mockTransportSession.performRemoteChanges { mockTransport in
             mockTransport.deleteAccount(for: self.user1)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -47,7 +47,7 @@ class UserTests_AccountDeletion: IntegrationTest {
         XCTAssertTrue(login())
 
         // when
-        mockTransportSession.performRemoteChanges { (foo) in
+        mockTransportSession.performRemoteChanges { foo in
             foo.deleteAccount(for: self.user1)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

@@ -62,7 +62,7 @@ class DatabaseTest: ZMTBaseTest {
                                   inMemoryStore: true,
                                   dispatchGroup: dispatchGroup)
 
-        stack.loadStores { (error) in
+        stack.loadStores { error in
             XCTAssertNil(error)
         }
 

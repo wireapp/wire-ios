@@ -92,7 +92,7 @@ extension PasscodeSetupPresenter: PasscodeSetupInteractorOutput {
 extension PasscodeSetupPresenter {
     private func passcodeError(from violations: [PasswordValidationResult.Violation]) -> Set<PasscodeError> {
         var passcodeErrors: Set<PasscodeError> = Set()
-        violations.forEach { (violation) in
+        violations.forEach { violation in
             switch violation {
             case .tooShort:
                 passcodeErrors.insert(.tooShort)

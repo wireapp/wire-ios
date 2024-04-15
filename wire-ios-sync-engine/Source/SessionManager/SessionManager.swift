@@ -550,7 +550,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 working: nil,
                 application: application,
                 minTLSVersion: minTLSVersion,
-                blacklistCallback: { [weak self] (blacklisted) in
+                blacklistCallback: { [weak self] blacklisted in
                     guard let `self` = self, !self.isAppVersionBlacklisted else { return }
 
                     if blacklisted {

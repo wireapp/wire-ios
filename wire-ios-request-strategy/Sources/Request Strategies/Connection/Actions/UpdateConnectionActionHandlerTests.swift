@@ -125,7 +125,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
                                                apiVersion: APIVersion.v0.rawValue)
 
             let expectation = self.customExpectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
                 }
@@ -146,7 +146,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
                                                 newStatus: .blocked)
 
             let expectation = self.customExpectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            action.onResult { result in
                 if case .failure = result {
                     expectation.fulfill()
                 }
@@ -173,7 +173,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
             var action = UpdateConnectionAction(connection: self.oneToOneConnection, newStatus: .accepted)
 
             let expectation = self.customExpectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            action.onResult { result in
                 if case .failure(let error) = result {
                     if expectedError == error {
                         expectation.fulfill()

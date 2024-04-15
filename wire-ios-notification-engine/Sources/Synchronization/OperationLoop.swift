@@ -133,10 +133,10 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
 
         RequestAvailableNotification.addObserver(self)
 
-        tokens.append(setupObserver(for: userContext) { [weak self] (note, inserted, updated) in
+        tokens.append(setupObserver(for: userContext) { [weak self] note, inserted, updated in
             self?.userInterfaceContextDidSave(notification: note, insertedObjects: inserted, updatedObjects: updated)
         })
-        tokens.append(setupObserver(for: syncContext) { [weak self] (note, inserted, updated) in
+        tokens.append(setupObserver(for: syncContext) { [weak self] note, inserted, updated in
             self?.syncContextDidSave(notification: note, insertedObjects: inserted, updatedObjects: updated)
         })
     }

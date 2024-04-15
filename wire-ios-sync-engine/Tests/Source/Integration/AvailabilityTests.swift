@@ -28,7 +28,7 @@ final class AvailabilityTests: IntegrationTest {
 
     func remotelyInsertTeam(members: [MockUser], isBound: Bool = true) -> MockTeam {
         var mockTeam: MockTeam!
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             mockTeam = session.insertTeam(withName: "Super-Team", isBound: isBound, users: Set(members))
             mockTeam.creator = members.first
         }

@@ -32,7 +32,7 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
         let conversation = self.conversation(for: self.groupConversation)
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: messageText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
             self.groupConversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
                                                         to: self.selfUser.clients.anyObject() as! MockUserClient,
@@ -58,7 +58,7 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
                                                         data: try! message.serializedData())
         }
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             (0..<4).forEach { _ in
                 insertMessage()
             }
@@ -108,12 +108,12 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
         let genericMessage1 = GenericMessage(content: Text(content: expectedText1, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce1)
         let genericMessage2 = GenericMessage(content: Text(content: expectedText2, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce2)
 
-        self.testThatItAppendsMessage(to: self.groupConversation, with: { (_) -> [UUID]? in
+        self.testThatItAppendsMessage(to: self.groupConversation, with: { _ -> [UUID]? in
             self.groupConversation.insertClientMessage(from: self.user2, data: try! genericMessage1.serializedData())
             self.spinMainQueue(withTimeout: 0.2)
             self.groupConversation.insertClientMessage(from: self.user3, data: try! genericMessage2.serializedData())
             return [nonce1, nonce2]
-        }, verify: { (conversation) in
+        }, verify: { conversation in
             let msg1 = conversation?.lastMessages(limit: 50)[1] as! ZMClientMessage
             XCTAssertEqual(msg1.nonce, nonce1, "msg1 timestamp \(String(describing: msg1.serverTimestamp?.timeIntervalSince1970))")
             XCTAssertEqual(msg1.underlyingMessage?.text.content, expectedText1)
@@ -134,7 +134,7 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
             self.groupConversation.encryptAndInsertData(from: self.user2.clients.anyObject() as! MockUserClient,
                                                         to: self.selfUser.clients.anyObject() as! MockUserClient,
                                                         data: try! message.serializedData())
-        }, verify: { (conversation) in
+        }, verify: { conversation in
             let msg = conversation?.lastMessage
             XCTAssertEqual(msg?.textMessageData?.messageText, expectedText)
         })
@@ -146,7 +146,7 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
 
         self.testThatItSendsANotification(in: self.groupConversation, ignoreLastRead: false, onRemoteMessageCreatedWith: {
             self.groupConversation.insertClientMessage(from: self.user2, data: try! message.serializedData())
-        }, verify: { (conversation) in
+        }, verify: { conversation in
             let msg = conversation?.lastMessage as! ZMClientMessage
             XCTAssertEqual(msg.underlyingMessage?.text.content, expectedText)
         })
@@ -173,7 +173,7 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
         let fromClient = self.user2.clients.anyObject() as! MockUserClient
 
         // when
-        simulateNotificationStreamInterruption(changesAfterInterruption: { (_) in
+        simulateNotificationStreamInterruption(changesAfterInterruption: { _ in
             self.remotelyInsert(text: messageText, from: fromClient, into: self.groupConversation)
         })
 
@@ -262,7 +262,7 @@ class SendAndReceiveMessagesTests_Swift: ConversationTestsBase {
         // when
         // adding new user to conversation
         var newMockUser: MockUser?
-        simulateNotificationStreamInterruption(changesBeforeInterruption: { (session) in
+        simulateNotificationStreamInterruption(changesBeforeInterruption: { session in
             newMockUser = session.insertUser(withName: "Bruno")
             self.groupConversation.addUsers(by: self.user2, addedUsers: [newMockUser!])
         })
@@ -307,7 +307,7 @@ extension SendAndReceiveMessagesTests_Swift {
         let genericMessage = GenericMessage(content: MessageHide(conversationId: (groupConversation?.remoteIdentifier)!, messageId: messageNonce!), nonce: UUID.create())
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             self.selfConversation.insertClientMessage(from: self.selfUser, data: try! genericMessage.serializedData())
         }
 

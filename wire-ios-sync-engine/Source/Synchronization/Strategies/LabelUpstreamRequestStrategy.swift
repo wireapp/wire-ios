@@ -80,7 +80,7 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
         }
 
         let request = ZMTransportRequest(path: "/properties/labels", method: .put, payload: transportPayload as? ZMTransportData, apiVersion: apiVersion.rawValue)
-        request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] (response) in
+        request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] response in
             self?.didReceive(response, updatedKeys: updatedKeys)
         }))
 

@@ -98,7 +98,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 
         switch apiVersion {
         case .v0:
-            localConnectionListSync.fetch { [weak self] (result) in
+            localConnectionListSync.fetch { [weak self] result in
                 switch result {
                 case .success(let connectionList):
                     self?.createConnectionsAndFinishSyncPhase(connectionList.connections,

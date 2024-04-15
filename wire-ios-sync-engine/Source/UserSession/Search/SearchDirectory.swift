@@ -77,7 +77,7 @@ import Foundation
     public func lookup(userId: UUID) -> SearchTask {
         let task = SearchTask(task: .lookup(userId: userId), searchContext: searchContext, contextProvider: contextProvider, transportSession: transportSession)
 
-        task.addResultHandler { [weak self] (result, _) in
+        task.addResultHandler { [weak self] result, _ in
             self?.observeSearchUsers(result)
         }
 

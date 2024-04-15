@@ -63,7 +63,7 @@ extension ContactAddressBook: AddressBookAccessor {
         let request = CNContactFetchRequest(keysToFetch: ContactAddressBook.keysToFetch)
         request.sortOrder = .userDefault
         do {
-            try store.enumerateContacts(with: request) { (contact, stop) in
+            try store.enumerateContacts(with: request) { contact, stop in
                 let shouldContinue = block(contact)
                 stop.initialize(to: ObjCBool(!shouldContinue))
             }

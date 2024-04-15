@@ -28,7 +28,7 @@ class ConversationTests_LastRead: ConversationTestsBase {
         let fromClient = self.user1.clients.anyObject()  as! MockUserClient
         var toClient = self.selfUser.clients.anyObject() as! MockUserClient
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: "Will insert this to have a message to read", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
             self.selfToUser1Conversation.encryptAndInsertData(from: fromClient,
                                                               to: toClient,
@@ -44,7 +44,7 @@ class ConversationTests_LastRead: ConversationTestsBase {
 
         XCTAssertEqual(conversation!.estimatedUnreadCount, 0)
 
-        toClient = self.selfUser.clients.first(where: { (client) -> Bool in
+        toClient = self.selfUser.clients.first(where: { client -> Bool in
             guard let client = client as? MockUserClient else {
                 return false
             }
@@ -52,7 +52,7 @@ class ConversationTests_LastRead: ConversationTestsBase {
         }) as! MockUserClient
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: "This should increase the unread count", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
             self.selfToUser1Conversation.encryptAndInsertData(from: fromClient,
                                                               to: toClient,
