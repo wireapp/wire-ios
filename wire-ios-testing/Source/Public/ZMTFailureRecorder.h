@@ -22,11 +22,11 @@
 
 @interface ZMTFailureRecorder : NSObject
 
-- (instancetype)initWithTestCase:(XCTestCase *)testCase filePath:(char const *)filePath lineNumber:(NSUInteger)lineNumber;
+- (instancetype)initWithTestCase:(XCTestCase *)testCase filePath:(char const *)filePath lineNumber:(NSInteger)lineNumber;
 
 @property (nonatomic, readonly) XCTestCase *testCase;
 @property (nonatomic, readonly, copy) NSString *filePath;
-@property (nonatomic, readonly) NSUInteger lineNumber;
+@property (nonatomic, readonly) NSInteger lineNumber;
 
 - (void)recordFailure:(NSString *)format, ... NS_FORMAT_FUNCTION(1,2);
 
