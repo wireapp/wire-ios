@@ -27,11 +27,12 @@ struct PayloadPager<Payload>: AsyncSequence {
     typealias PageFetcher = (String) async throws -> Page
     typealias Page = (Element, hasMore: Bool, nextStart: String)
 
+    var start: String
     let fetchPage: PageFetcher
 
     func makeAsyncIterator() -> Iterator {
         return Iterator(
-            start: "",
+            start: start,
             fetchPage: fetchPage
         )
     }
