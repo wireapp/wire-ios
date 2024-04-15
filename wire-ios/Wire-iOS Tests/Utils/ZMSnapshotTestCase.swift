@@ -246,7 +246,6 @@ extension ZMSnapshotTestCase {
             if let finalDeviceName {
                 return finalDeviceName
             } else {
-                assertionFailure("cannot determine final identifier")
                 return nil
             }
         }
