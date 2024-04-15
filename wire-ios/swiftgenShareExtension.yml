@@ -10,5 +10,5 @@ strings:
     - Resources/Base.lproj/Localizable.strings
   filter:
   outputs:
-    - templateName: structured-swift5
-      output: Strings+Generated.swift
+    templateName: structured-swift5
+    output: Strings+Generated.swift

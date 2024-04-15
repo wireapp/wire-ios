@@ -16,11 +16,12 @@ strings:
   outputs:
     - templateName: structured-swift5
       output: Strings+Generated.swift
+
 xcassets:
   inputs:
     - Resources/Colors/Colors.xcassets
   outputs:
     templateName: swift5
-    params:
-       forceProvidesNamespaces: true
     output: Assets+Generated.swift
+    params:
+      forceFileNameEnum: true
