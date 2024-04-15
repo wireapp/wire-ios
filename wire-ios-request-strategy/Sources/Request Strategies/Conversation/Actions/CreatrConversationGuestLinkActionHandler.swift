@@ -21,6 +21,11 @@ import WireDataModel
 
 class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConversationGuestLinkAction> {
 
+    struct ResponsePayload: Codable {
+        // check swagger to construct the Response Payload
+
+    }
+
     // MARK: - Request generation
 
     override func request(
@@ -28,26 +33,32 @@ class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConversation
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
 
-        guard let conversation = ZMConversation.existingObject(for: action.parameters.conversationID, in: context),
-              let identifier = conversation.remoteIdentifier?.transportString() else {
-            fatalError("Conversation is not yet inserted on the backend")
-        }
+        let identifier = action.parameters.conversationID.transportString()
 
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
-            // For these versions, no payload is required.
-            return ZMTransportRequest(path: "/conversations/\(identifier)/code", method: .post, payload: nil, apiVersion: apiVersion.rawValue)
+            return ZMTransportRequest(
+                path: "/conversations/\(identifier)/code",
+                method: .post,
+                payload: nil,
+                apiVersion: apiVersion.rawValue
+            )
         case .v4, .v5, .v6:
             // For these versions, a payload may include a password.
             var payload: [String: Any] = [:]
             if let password = action.parameters.password {
                 payload["password"] = password
             }
-            return ZMTransportRequest(path: "/conversations/\(identifier)/code", method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+            return ZMTransportRequest(
+                path: "/conversations/\(identifier)/code",
+                method: .post,
+                payload: payload as ZMTransportData,
+                apiVersion: apiVersion.rawValue
+            )
         }
     }
 
-    // MARK: - Request handling 
+    // MARK: - Request handling
 
     override func handleResponse(_ response: ZMTransportResponse, action: CreateConversationGuestLinkAction) {
 
@@ -58,15 +69,28 @@ class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConversation
             guard let payload = response.payload?.asDictionary(),
                   let data = payload["data"] as? [String: Any],
                   let uri = data["uri"] as? String else {
-                let errorInfo = response.errorInfo
-                action.fail(with: .unknownError(code: errorInfo.status, label: errorInfo.label, message: errorInfo.message))
+
+                let errorInfo = CreateConversationGuestLinkError(response: response)
+                action.fail(with: errorInfo ?? .unknown)
                 return
             }
+
+            action.succeed(with: uri)
+
+        case 200:
+            guard let payload = response.payload?.asDictionary(),
+                  let uri = payload["uri"] as? String else {
+
+                let errorInfo = CreateConversationGuestLinkError(response: response)
+                action.fail(with: errorInfo ?? .unknown)
+                return
+            }
+
             action.succeed(with: uri)
 
         default:
-            let errorInfo = response.errorInfo
-            action.fail(with: .unknownError(code: errorInfo.status, label: errorInfo.label, message: errorInfo.message))
+            let errorInfo = CreateConversationGuestLinkError(response: response)
+            action.fail(with: errorInfo ?? .unknown)
         }
     }
 

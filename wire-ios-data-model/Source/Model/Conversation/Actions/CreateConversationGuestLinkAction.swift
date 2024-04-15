@@ -20,13 +20,33 @@ import Foundation
 
 public enum CreateConversationGuestLinkError: Error, Equatable {
 
-    case unknownError(code: Int, label: String, message: String)
+    case noCode
+    case invalidResponse
+    case invalidOperation
+    case guestLinksDisabled
+    case noConversation
+    case unknown
 
+    public init?(response: ZMTransportResponse) {
+        switch (response.httpStatus, response.payloadLabel()) {
+        case (403, "invalid-op"?): self = .invalidOperation
+        case (404, "no-conversation-code"?): self = .noCode
+        case (404, "no-conversation"?): self = .noConversation
+        case (409, "guest-links-disabled"?): self = .guestLinksDisabled
+        case (400..<499, _): self = .unknown
+        default: return nil
+        }
+    }
 }
 
 public struct CreateConversationGuestLinkParameters {
     public let password: String?
-    public let conversationID: NSManagedObjectID
+    public let conversationID: UUID
+
+    public init(password: String?, conversationID: UUID) {
+        self.password = password
+        self.conversationID = conversationID
+    }
 }
 
 public final class CreateConversationGuestLinkAction: EntityAction {
