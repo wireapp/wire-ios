@@ -19,7 +19,7 @@
 import Foundation
 import LocalAuthentication
 
-public final class EARKeyGenerator {
+public struct EARKeyGenerator {
 
     public init() {}
 

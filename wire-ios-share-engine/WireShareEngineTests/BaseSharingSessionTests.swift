@@ -22,7 +22,7 @@ import WireMockTransport
 import WireTesting
 import WireRequestStrategy
 import WireLinkPreview
-import WireDataModelSupport
+@testable import WireDataModelSupport
 @testable import WireShareEngine
 
 final class FakeAuthenticationStatus: AuthenticationStatusProvider {
@@ -140,7 +140,7 @@ class BaseTest: ZMTBaseTest {
         mockEARService = MockEARServiceInterface()
         mockEARService.enableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
         mockEARService.disableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
-        mockEARService.unlockDatabaseContext_MockMethod = { _ in }
+        mockEARService.unlockDatabase_MockMethod = { }
         mockEARService.lockDatabase_MockMethod = { }
 
         mockProteusService = MockProteusServiceInterface()
@@ -173,7 +173,8 @@ class BaseTest: ZMTBaseTest {
         let earService = EARService(
             accountID: accountIdentifier,
             databaseContexts: [coreDataStack.viewContext, coreDataStack.syncContext],
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: MockAuthenticationContextProtocol()
         )
         return try SharingSession(
             accountIdentifier: accountIdentifier,
@@ -188,6 +189,7 @@ class BaseTest: ZMTBaseTest {
             appLockConfig: AppLockController.LegacyConfig(),
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             earService: earService,
+            contextStorage: MockLAContextStorable(),
             proteusService: mockProteusService,
             mlsDecryptionService: mockMLSDecryptionService,
             sharedUserDefaults: .temporary()
