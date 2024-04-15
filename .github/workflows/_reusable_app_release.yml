@@ -4,6 +4,10 @@ on:
       fastlane_action:
         required: true
         type: string
+      is_cloud_build:
+        required: true
+        type: boolean
+        default: true
     secrets:
       KEYCHAIN_PASSWORD:
         required: true
@@ -51,55 +55,13 @@ permissions:
 
 jobs:
   changelog:
-    runs-on: ubuntu-latest
-    outputs:
-      changelog-url: ${{ steps.expose-url.outputs.changelog }}
-    steps:
-      - name: 'Checkout Git repository with history for all branches and tags'
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: 'Calculate diff between HEAD and latest tag'
-        run: echo "HEAD_TAG_DIFF=$(git diff HEAD $(git tag | grep -E '[a,A][p,P]+[s,S][t,T][o,O][r,R][e,E]\/[0-9]+\.[0-9]+.*' | tail -n 1) | wc -l | xargs)" >> "$GITHUB_ENV"
-     
-      - name: 'Set current Git tag to HEAD'
-        if: "${{ env.HEAD_TAG_DIFF != '0' }}"
-        run: echo "CURRENT_TAG=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
-      - name: 'Set previous Git tag to latest tag if comparing to head'
-        if: "${{ env.HEAD_TAG_DIFF != '0' }}"
-        run: echo "PREVIOUS_TAG=$(git tag | grep -E '[a,A][p,P]+[s,S][t,T][o,O][r,R][e,E]\/[0-9]+\.[0-9]+.*' | tail -n 1)" >> "$GITHUB_ENV"
-
-      - name: 'Set current Git tag to latest tagged commit'
-        if: "${{ env.HEAD_TAG_DIFF == '0' }}"
-        run: echo "CURRENT_TAG=$(git tag | grep -E '[a,A][p,P]+[s,S][t,T][o,O][r,R][e,E]\/[0-9]+\.[0-9]+.*' | tail -n 1)" >> "$GITHUB_ENV"
-      - name: 'Set previous Git tag previous tag because head is latest tag'
-        if: "${{ env.HEAD_TAG_DIFF == '0' }}"
-        run: echo "PREVIOUS_TAG=$(git tag | grep -E '[a,A][p,P]+[s,S][t,T][o,O][r,R][e,E]\/[0-9]+\.[0-9]+.*' | tail -n 2 | head -n 1)" >> "$GITHUB_ENV"
-
-      - name: 'Print environment variables'
-        run: |
-          echo -e "PREVIOUS_TAG = $PREVIOUS_TAG"
-          echo -e "CURRENT_TAG = $CURRENT_TAG"
-          echo -e "Node.js version = $(node --version)"
-
-      - name: 'Generate changelog'
-        run: |
-          echo "{}" > ./package.json
-          npx generate-changelog@1.8.0 -t "$PREVIOUS_TAG...$CURRENT_TAG"
-      - name: 'Upload changelog'
-        id: upload-file
-        uses: actions/upload-artifact@v4
-        with:
-          name: CHANGELOG.md
-          path: ./CHANGELOG.md
-          if-no-files-found: error
-      - name: Expose url of changelog
-        id: expose-url
-        run: echo "changelog=${{ steps.upload-file.outputs.artifact-url }}" >> $GITHUB_OUTPUT
-
+    uses: ./.github/workflows/changelog.yml
+    with:
+      is_cloud_build: ${{ inputs.is_cloud_build }}
+      
   build_and_release:
-    runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15.3
     needs: changelog
+    runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15.3
     env:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -136,10 +98,11 @@ jobs:
         with:
           token: ${{ secrets.SUBMODULE_PAT }}
           submodules: recursive
-      - name: Download changelog
+      - name: Download changelog     
+        id: download_changelog
         uses: actions/download-artifact@v4
         with:
-          name: CHANGELOG.md
+          name: ${{ needs.changelog.outputs.changelog-name }}    
       - name: Retrieve Xcode version
         run: |
           echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
@@ -182,12 +145,11 @@ jobs:
             ~/Library/Logs/DiagnosticReports/**
             build/**
 
-
       - name: Archiving env variables
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: post-build-env
+          name: post-build-env-${{ inputs.fastlane_action }}
           path: |
             **/.post_build/*.env
       - name: Load .env file
@@ -195,10 +157,6 @@ jobs:
         uses: xom9ikk/dotenv@v2.3.0
         with:
           path: fastlane/.post_build
-      - uses: akiojin/decode-base64-github-action@v1.0.2
-        id: base64-decoded-RELEASE_NOTES
-        with:
-          base64: ${{ env.RELEASE_NOTES }}
       - uses: akiojin/decode-base64-github-action@v1.0.2
         id: base64-decoded-S3_PATHS
         with:
