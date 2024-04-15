@@ -183,7 +183,7 @@ extension EventDecoder {
 
             case .conversationMLSMessageAdd:
                 let events = await self.decryptMlsMessage(from: event, context: self.syncMOC)
-                decryptedEvents.append(event)
+                decryptedEvents.append(contentsOf: events)
 
             default:
                 decryptedEvents.append(event)
@@ -229,7 +229,7 @@ extension EventDecoder {
 
                 case .conversationMLSMessageAdd:
                     let events = await self.decryptMlsMessage(from: event, context: self.syncMOC)
-                    decryptedEvents += events
+                    decryptedEvents.append(contentsOf: events)
 
                 default:
                     decryptedEvents.append(event)
