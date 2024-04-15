@@ -201,6 +201,9 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     func updateLegalHoldIndictor() {
+        // TODO [WPB-7298]: Check how legal hold should be visible
+        return
+
         switch selfUser.legalHoldStatus {
         case .disabled:
             topBar?.rightView = nil
