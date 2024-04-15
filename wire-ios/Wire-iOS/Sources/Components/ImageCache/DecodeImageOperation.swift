@@ -25,7 +25,7 @@ import UIKit
  * operation has completed.
  */
 
-class DecodeImageOperation: Operation {
+final class DecodeImageOperation: Operation {
 
     /// The initial data of the image.
     let imageData: Data

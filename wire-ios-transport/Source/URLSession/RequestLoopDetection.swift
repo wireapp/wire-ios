@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,8 @@ import Foundation
 
 /// Monitors the REST requests that are sent over the network
 /// to detect suspicious request loops
-@objcMembers public class RequestLoopDetection: NSObject {
+@objcMembers
+public final class RequestLoopDetection: NSObject {
 
     /// List of requests
     fileprivate var recordedRequests: [IdentifierDate] = []
@@ -96,7 +97,7 @@ extension RequestLoopDetection: RequestRecorder {
         // search backwards
         var insertionIndex = 0
         for i in (0..<recordedRequests.count).lazy.reversed() where recordedRequests[i].date < identifier.date {
-            insertionIndex = i+1
+            insertionIndex = i + 1
             break
         }
         self.recordedRequests.insert(identifier, at: insertionIndex)

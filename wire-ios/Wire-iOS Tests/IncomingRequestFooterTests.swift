@@ -18,9 +18,20 @@
 
 import XCTest
 import SnapshotTesting
+
 @testable import Wire
 
-class IncomingRequestFooterTests: BaseSnapshotTestCase {
+final class IncomingRequestFooterTests: BaseSnapshotTestCase {
+
+    override func setUp() {
+        super.setUp()
+        UIColor.setAccentOverride(.strongBlue)
+    }
+
+    override func tearDown() {
+        UIColor.setAccentOverride(.undefined)
+        super.tearDown()
+    }
 
     // MARK: - Snapshot Tests
 

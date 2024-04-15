@@ -32,7 +32,7 @@ protocol AuthenticatedRouterProtocol: AnyObject {
     func navigate(to destination: NavigationDestination)
 }
 
-class AuthenticatedRouter: NSObject {
+final class AuthenticatedRouter: NSObject {
 
     // MARK: - Private Property
 
@@ -41,6 +41,10 @@ class AuthenticatedRouter: NSObject {
     private let activeCallRouter: ActiveCallRouter
     private weak var _viewController: ZClientViewController?
     private let featureRepositoryProvider: FeatureRepositoryProvider
+    private let featureChangeActionsHandler: E2EINotificationActions
+    private let e2eiActivationDateRepository: E2EIActivationDateRepository
+    private var featureChangeObserverToken: Any?
+    private var revokedCertificateObserverToken: Any?
 
     // MARK: - Public Property
 
@@ -56,9 +60,10 @@ class AuthenticatedRouter: NSObject {
         rootViewController: RootViewController,
         account: Account,
         userSession: UserSession,
-        isComingFromRegistration: Bool,
         needToShowDataUsagePermissionDialog: Bool,
-        featureRepositoryProvider: FeatureRepositoryProvider
+        featureRepositoryProvider: FeatureRepositoryProvider,
+        featureChangeActionsHandler: E2EINotificationActionsHandler,
+        e2eiActivationDateRepository: E2EIActivationDateRepository
     ) {
         self.rootViewController = rootViewController
         activeCallRouter = ActiveCallRouter(rootviewController: rootViewController, userSession: userSession)
@@ -71,24 +76,63 @@ class AuthenticatedRouter: NSObject {
         )
 
         self.featureRepositoryProvider = featureRepositoryProvider
+        self.featureChangeActionsHandler = featureChangeActionsHandler
+        self.e2eiActivationDateRepository = e2eiActivationDateRepository
 
         super.init()
 
-        NotificationCenter.default.addObserver(
+        featureChangeObserverToken = NotificationCenter.default.addObserver(
             forName: .featureDidChangeNotification,
             object: nil,
             queue: .main
         ) { [weak self] notification in
             self?.notifyFeatureChange(notification)
         }
+
+        revokedCertificateObserverToken = NotificationCenter.default.addObserver(
+            forName: .presentRevokedCertificateWarningAlert,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.notifyRevokedCertificate()
+        }
+    }
+
+    deinit {
+        if let featureChangeObserverToken {
+            NotificationCenter.default.removeObserver(featureChangeObserverToken)
+        }
+
+        if let revokedCertificateObserverToken {
+            NotificationCenter.default.removeObserver(revokedCertificateObserverToken)
+        }
     }
 
     private func notifyFeatureChange(_ note: Notification) {
         guard
             let change = note.object as? FeatureRepository.FeatureChange,
-            let alert = UIAlertController.fromFeatureChange(change, acknowledger: featureRepositoryProvider.featureRepository)
+            let alert = change.hasFurtherActions
+                ? UIAlertController.fromFeatureChangeWithActions(change,
+                                                                 acknowledger: featureRepositoryProvider.featureRepository,
+                                                                 actionsHandler: featureChangeActionsHandler)
+                : UIAlertController.fromFeatureChange(change,
+                                                      acknowledger: featureRepositoryProvider.featureRepository)
         else {
             return
+        }
+
+        if change == .e2eIEnabled && e2eiActivationDateRepository.e2eiActivatedAt == nil {
+            e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
+        }
+
+        _viewController?.presentAlert(alert)
+    }
+
+    private func notifyRevokedCertificate() {
+        guard let session = SessionManager.shared else { return }
+
+        let alert = UIAlertController.revokedCertificateWarning {
+            session.logoutCurrentSession()
         }
 
         _viewController?.presentAlert(alert)
@@ -140,7 +184,10 @@ struct AuthenticatedWireFrame {
     }
 
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
-        let viewController = ZClientViewController(account: account, userSession: userSession)
+        let viewController = ZClientViewController(
+            account: account,
+            userSession: userSession
+        )
         viewController.isComingFromRegistration = isComingFromRegistration
         viewController.needToShowDataUsagePermissionDialog = needToShowDataUsagePermissionDialog
         viewController.router = router

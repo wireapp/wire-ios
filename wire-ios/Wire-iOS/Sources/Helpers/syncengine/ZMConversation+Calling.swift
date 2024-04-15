@@ -91,7 +91,15 @@ extension ZMConversation {
 
         typealias ErrorCallSlowCallLocale = L10n.Localizable.Error.Call
 
-        if NetworkConditionHelper.shared.qualityType() == .type2G {
+        guard let sessionManager = SessionManager.shared else {
+            assertionFailure("requires session manager to init NetworkConditionHelper!")
+            handler(false)
+            return
+        }
+
+        let networkInfo = NetworkInfo(serverConnection: sessionManager.environment.reachability)
+
+        if networkInfo.qualityType() == .type2G {
             let badConnectionController = UIAlertController(
                 title: ErrorCallSlowCallLocale.SlowConnection.title,
                 message: ErrorCallSlowCallLocale.slowConnection,

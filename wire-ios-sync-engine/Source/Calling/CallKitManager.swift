@@ -940,7 +940,7 @@ extension CallClosedReason {
             return .unanswered
         case .normal, .canceled:
             return .remoteEnded
-        case .anweredElsewhere:
+        case .answeredElsewhere:
             return .answeredElsewhere
         case .rejectedElsewhere:
             return .declinedElsewhere

@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,13 +18,15 @@
 
 import Foundation
 
-@objc public protocol URLSessionsDirectory: NSObjectProtocol {
+@objc
+public protocol URLSessionsDirectory: NSObjectProtocol {
     @objc var foregroundSession: ZMURLSession { get }
     @objc var backgroundSession: ZMURLSession { get }
     @objc var allSessions: [ZMURLSession] { get }
 }
 
-@objcMembers public class CurrentURLSessionsDirectory: NSObject, URLSessionsDirectory {
+@objcMembers
+public final class CurrentURLSessionsDirectory: NSObject, URLSessionsDirectory {
     public var foregroundSession: ZMURLSession
     public var backgroundSession: ZMURLSession
     public var allSessions: [ZMURLSession] {

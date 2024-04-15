@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
     var environment: BackendEnvironmentProvider { get }
 }
 
-@objcMembers public class UserInfo: NSObject {
+@objcMembers public final class UserInfo: NSObject {
     public let identifier: UUID
     public let cookieData: Data
 
@@ -66,7 +66,7 @@ fileprivate extension ZMTransportResponse {
 /// be notified when a cookie was parsed from a response of a request made using this transport session.
 /// When cookie data became available it should be used to create a `ZMPersistentCookieStorage` and
 /// to create a regular transport session with it.
-final public class UnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
+public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
 
     private let maximumNumberOfRequests: Int = 3
     private var numberOfRunningRequests = ZMAtomicInteger(integer: 0)

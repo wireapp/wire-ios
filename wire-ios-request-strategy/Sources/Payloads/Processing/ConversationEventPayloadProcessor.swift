@@ -81,6 +81,17 @@ struct ConversationEventPayloadProcessor {
             Logging.eventProcessing.error("Conversation creation missing timestamp in event, aborting...")
             return
         }
+        guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
+            Flow.createGroup.fail(ConversationEventPayloadProcessorError.noBackendConversationId)
+            Logging.eventProcessing.error("Conversation creation missing conversationID in event, aborting...")
+            return
+        }
+        guard await context.perform({
+            ZMConversation.fetch(with: conversationID, domain: payload.qualifiedID?.domain, in: context) == nil
+        }) else {
+            Logging.eventProcessing.warn("Conversation already exists, aborting...")
+            return
+        }
 
         await updateOrCreateConversation(
             from: payload.data,
@@ -213,17 +224,16 @@ struct ConversationEventPayloadProcessor {
                 in: context
             )!
         }) {
-            let selfUser = ZMUser.selfUser(in: context)
             let users = Set(usersAndRoles.map { $0.0 })
             let newUsers = !users.subtracting(conversation.localParticipants).isEmpty
 
-            if (users.contains(selfUser) || newUsers) && conversation.conversationType == .group {
+            if newUsers && conversation.conversationType == .group {
                 // TODO jacob refactor to append method on conversation
                 _ = ZMSystemMessage.createOrUpdate(from: originalEvent, in: context)
             }
 
             conversation.addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
-        } else if let users = payload.data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context)}) {
+        } else if let users = payload.data.userIDs?.map({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context) }) {
             // NOTE: legacy code path for backwards compatibility with servers without role support
 
             let users = Set(users)
@@ -292,7 +302,7 @@ struct ConversationEventPayloadProcessor {
             }
         }
 
-        if let role = payload.data.conversationRole.map({conversation.fetchOrCreateRoleForConversation(name: $0) }) {
+        if let role = payload.data.conversationRole.map({ conversation.fetchOrCreateRoleForConversation(name: $0) }) {
             conversation.addParticipantAndUpdateConversationState(user: targetUser, role: role)
         }
     }
@@ -441,26 +451,22 @@ struct ConversationEventPayloadProcessor {
         case .connection:
             // Conversations are of type `connection` while the connection
             // is pending.
-            return await context.perform {
-                self.updateOrCreateConnectionConversation(
-                    from: payload,
-                    in: context,
-                    serverTimestamp: serverTimestamp,
-                    source: source
-                )
-            }
+            return await updateOrCreateConnectionConversation(
+                from: payload,
+                in: context,
+                serverTimestamp: serverTimestamp,
+                source: source
+            )
 
         case .oneOnOne:
             // Conversations are of type `oneOnOne` when the connection
             // is accepted.
-            return await context.perform {
-                self.updateOrCreateOneToOneConversation(
-                    from: payload,
-                    in: context,
-                    serverTimestamp: serverTimestamp,
-                    source: source
-                )
-            }
+            return await self.updateOrCreateOneToOneConversation(
+                from: payload,
+                in: context,
+                serverTimestamp: serverTimestamp,
+                source: source
+            )
 
         default:
             return nil
@@ -480,25 +486,32 @@ struct ConversationEventPayloadProcessor {
             return nil
         }
 
-        var created = false
+        var isInitialFetch = false
         let conversation = await context.perform {
 
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
-                in: context,
-                created: &created
+                in: context
             )
+
+            isInitialFetch = conversation.isPendingInitialFetch
 
             conversation.conversationType = .group
             conversation.remoteIdentifier = conversationID
             conversation.isPendingMetadataRefresh = false
+            conversation.isPendingInitialFetch = false
             self.updateAttributes(from: payload, for: conversation, context: context)
             self.updateMetadata(from: payload, for: conversation, context: context)
             self.updateMembers(from: payload, for: conversation, context: context)
             self.updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
             self.updateConversationStatus(from: payload, for: conversation)
-            self.updateMessageProtocol(from: payload, for: conversation, in: context)
+
+            if isInitialFetch {
+                self.assignMessageProtocol(from: payload, for: conversation, in: context)
+            } else {
+                self.updateMessageProtocol(from: payload, for: conversation, in: context)
+            }
 
             Flow.createGroup.checkpoint(description: "conversation created remote id: \(conversation.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")")
 
@@ -508,10 +521,10 @@ struct ConversationEventPayloadProcessor {
         await updateMLSStatus(from: payload, for: conversation, context: context, source: source)
         await context.perform {
 
-            if created {
+            if isInitialFetch {
                 // we just got a new conversation, we display new conversation header
                 conversation.appendNewConversationSystemMessage(
-                    at: serverTimestamp,
+                    at: .distantPast,
                     users: conversation.localParticipants
                 )
 
@@ -553,13 +566,11 @@ struct ConversationEventPayloadProcessor {
             return nil
         }
 
-        var created = false
         let (conversation, mlsGroupID) = await context.perform { [self] in
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
-                in: context,
-                created: &created
+                in: context
             )
 
             conversation.conversationType = .`self`
@@ -569,6 +580,9 @@ struct ConversationEventPayloadProcessor {
             updateMembers(from: payload, for: conversation, context: context)
             updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
             updateMessageProtocol(from: payload, for: conversation, in: context)
+
+            conversation.isPendingInitialFetch = false
+            conversation.needsToBeUpdatedFromBackend = false
 
             return (conversation, conversation.mlsGroupID)
         }
@@ -588,12 +602,16 @@ struct ConversationEventPayloadProcessor {
         guard let context = conversation.managedObjectContext else {
             return WireLogger.mls.warn("conversation.managedObjectContext is nil")
         }
-        let (groupID, mlsService) = await context.perform {
-            (conversation.mlsGroupID, conversation.managedObjectContext?.mlsService)
+        let (groupID, mlsService, hasRegisteredMLSClient) = await context.perform {
+            (
+                conversation.mlsGroupID,
+                context.mlsService,
+                ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient == true
+            )
         }
 
-        guard let groupID, let mlsService else {
-            WireLogger.mls.warn("no mlsService to createOrJoinSelfConversation")
+        guard let groupID, let mlsService, hasRegisteredMLSClient else {
+            WireLogger.mls.warn("no mlsService or not registered mls client to createOrJoinSelfConversation")
             return
         }
 
@@ -612,22 +630,32 @@ struct ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext,
         serverTimestamp: Date,
         source: Source
-    ) -> ZMConversation? {
+    ) async -> ZMConversation? {
         guard let conversationID = payload.id ?? payload.qualifiedID?.uuid else {
             Logging.eventProcessing.error("Missing conversation or type in 1:1 conversation payload, aborting...")
             return nil
         }
 
-        let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: payload.qualifiedID?.domain, in: context)
-        conversation.conversationType = .connection
-        updateAttributes(from: payload, for: conversation, context: context)
-        updateMessageProtocol(from: payload, for: conversation, in: context)
-        updateMetadata(from: payload, for: conversation, context: context)
-        updateMembers(from: payload, for: conversation, context: context)
-        updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-        updateConversationStatus(from: payload, for: conversation)
-        conversation.needsToBeUpdatedFromBackend = false
-        return conversation
+        return await context.perform {
+            let conversation = ZMConversation.fetchOrCreate(
+                with: conversationID,
+                domain: payload.qualifiedID?.domain,
+                in: context
+            )
+            conversation.conversationType = .connection
+
+            updateAttributes(from: payload, for: conversation, context: context)
+            assignMessageProtocol(from: payload, for: conversation, in: context)
+            updateMetadata(from: payload, for: conversation, context: context)
+            updateMembers(from: payload, for: conversation, context: context)
+            updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+            updateConversationStatus(from: payload, for: conversation)
+
+            conversation.needsToBeUpdatedFromBackend = false
+            conversation.isPendingInitialFetch = false
+
+            return conversation
+        }
     }
 
     @discardableResult
@@ -636,7 +664,7 @@ struct ConversationEventPayloadProcessor {
         in context: NSManagedObjectContext,
         serverTimestamp: Date,
         source: Source
-    ) -> ZMConversation? {
+    ) async -> ZMConversation? {
         guard
             let conversationID = payload.id ?? payload.qualifiedID?.uuid,
             let conversationType = payload.type.map(BackendConversationType.clientConversationType)
@@ -645,23 +673,30 @@ struct ConversationEventPayloadProcessor {
             return nil
         }
 
-        let conversation = ZMConversation.fetchOrCreate(
-            with: conversationID,
-            domain: payload.qualifiedID?.domain,
-            in: context
-        )
+        let conversation = await context.perform {
+            let conversation = ZMConversation.fetchOrCreate(
+                with: conversationID,
+                domain: payload.qualifiedID?.domain,
+                in: context
+            )
 
-        conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
-        updateAttributes(from: payload, for: conversation, context: context)
-        updateMessageProtocol(from: payload, for: conversation, in: context)
-        updateMetadata(from: payload, for: conversation, context: context)
-        updateMembers(from: payload, for: conversation, context: context)
-        updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
-        updateConversationStatus(from: payload, for: conversation)
-        conversation.needsToBeUpdatedFromBackend = false
+            conversation.conversationType = self.conversationType(for: conversation, from: conversationType)
+            updateAttributes(from: payload, for: conversation, context: context)
+            assignMessageProtocol(from: payload, for: conversation, in: context)
+            updateMetadata(from: payload, for: conversation, context: context)
+            updateMembers(from: payload, for: conversation, context: context)
+            updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
+            updateConversationStatus(from: payload, for: conversation)
+            linkOneOnOneUserIfNeeded(for: conversation)
 
-        if let otherUser = conversation.localParticipantsExcludingSelf.first {
-            conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
+            conversation.needsToBeUpdatedFromBackend = false
+            conversation.isPendingInitialFetch = false
+
+            if let otherUser = conversation.localParticipantsExcludingSelf.first {
+                conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
+            }
+
+            return conversation
         }
 
         return conversation
@@ -776,11 +811,30 @@ struct ConversationEventPayloadProcessor {
         }
     }
 
+    private func assignMessageProtocol(
+        from payload: Payload.Conversation,
+        for conversation: ZMConversation,
+        in context: NSManagedObjectContext
+    ) {
+        guard let messageProtocolString = payload.messageProtocol else {
+            Logging.eventProcessing.warn("message protocol is missing")
+            return
+        }
+
+        guard let newMessageProtocol = MessageProtocol(rawValue: messageProtocolString) else {
+            Logging.eventProcessing.warn("message protocol is invalid, got: \(messageProtocolString)")
+            return
+        }
+
+        conversation.messageProtocol = newMessageProtocol
+    }
+
     private func updateMessageProtocol(
         from payload: Payload.Conversation,
         for conversation: ZMConversation,
         in context: NSManagedObjectContext
     ) {
+
         guard let messageProtocolString = payload.messageProtocol else {
             Logging.eventProcessing.warn("message protocol is missing")
             return

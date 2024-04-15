@@ -38,7 +38,7 @@ class EventDecoderTest: MessagingTestBase {
         sut = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC)
 
         syncMOC.performGroupedBlockAndWait {
-            self.mockMLSService.commitPendingProposals_MockMethod = {}
+            self.mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
             self.syncMOC.mlsService = self.mockMLSService
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.accountIdentifier
@@ -564,10 +564,10 @@ extension EventDecoderTest {
         // Then
         XCTAssertTrue(decryptedEvents.isEmpty)
         XCTAssertTrue(wait(withTimeout: 3.0) { [self] in
-            !mockMLSService.commitPendingProposals_Invocations.isEmpty
+            !mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty
         })
 
-        XCTAssertEqual(1, mockMLSService.commitPendingProposals_Invocations.count)
+        XCTAssertEqual(1, mockMLSService.commitPendingProposalsIfNeeded_Invocations.count)
     }
 
     func test_DecryptMLSMessage_CommitsPendingsProposalsIsNotCalled_WhenReceivingProposalViaDownload() async {
@@ -591,7 +591,7 @@ extension EventDecoderTest {
         // Then
         XCTAssertTrue(decryptedEvents.isEmpty)
         spinMainQueue(withTimeout: 1)
-        XCTAssertTrue(mockMLSService.commitPendingProposals_Invocations.isEmpty)
+        XCTAssertTrue(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
     }
 
     func test_DecryptMLSMessage_ReturnsNoEvent_WhenPayloadIsInvalid() async {
@@ -661,9 +661,40 @@ extension EventDecoderTest {
         // Then
         XCTAssertTrue(decryptedEvents.isEmpty)
     }
+
+    func test_DecryptWelcomeMessage_ReturnsEvent() async {
+        // Given
+        let conversationID = QualifiedID.random()
+        let groupID = MLSGroupID.random()
+        let event = mlsWelcomeMessageEvent(data: Data.random(), conversationID: conversationID)
+
+        mockMLSService.processWelcomeMessageWelcomeMessage_MockValue = groupID
+
+        // When
+        let result = await sut.decryptAndStoreEvents([event])
+
+        // Then
+        XCTAssertEqual(result, [event])
+    }
+
+    func test_DecryptWelcomeMessage_ProcessWelcomeMessage() async {
+        // Given
+        let conversationID = QualifiedID.random()
+        let groupID = MLSGroupID.random()
+        let event = mlsWelcomeMessageEvent(data: Data.random(), conversationID: conversationID)
+
+        mockMLSService.processWelcomeMessageWelcomeMessage_MockValue = groupID
+
+        // When
+        _ = await sut.decryptAndStoreEvents([event])
+
+        // Then
+        XCTAssertEqual(mockMLSService.processWelcomeMessageWelcomeMessage_Invocations.count, 1)
+    }
 }
 
 // MARK: - Helpers
+
 extension EventDecoderTest {
     /// Returns an event from the notification stream
     func eventStreamEvent(uuid: UUID? = nil) -> ZMUpdateEvent {
@@ -696,6 +727,20 @@ extension EventDecoderTest {
             type: "conversation.mls-message-add",
             data: data,
             time: Date()
+        )
+
+        return ZMUpdateEvent(fromEventStreamPayload: payload!, uuid: UUID().create())!
+    }
+
+    /// Returns a `conversation.mls-message-add` event
+    func mlsWelcomeMessageEvent(data: Data, conversationID: QualifiedID) -> ZMUpdateEvent {
+        let payload = self.payloadForMessage(
+            conversationID: conversationID.uuid,
+            domain: conversationID.domain,
+            type: "conversation.mls-welcome",
+            data: data.base64EncodedString(),
+            time: Date(),
+            fromID: UUID()
         )
 
         return ZMUpdateEvent(fromEventStreamPayload: payload!, uuid: UUID().create())!

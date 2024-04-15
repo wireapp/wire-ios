@@ -308,7 +308,7 @@ extension ZMUserTests_Swift {
             noteExpectation.fulfill()
         }
 
-        let user =  ZMUser.insertNewObject(in: uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = UUID.create()
         userObjectId = user.objectID
         user.requestCompleteProfileImage()
@@ -1067,10 +1067,9 @@ extension ZMUserTests_Swift {
         }
 
         let user = try XCTUnwrap(ZMUser.fetch(with: userID, in: uiMOC))
-        let proteusConversation = try XCTUnwrap(ZMConversation.fetch(with: proteusConversationID, in: uiMOC))
 
         // Mock successful connection updates.
-        _ = MockActionHandler<UpdateConnectionAction>(
+        let handler = MockActionHandler<UpdateConnectionAction>(
             result: .success(()),
             context: uiMOC.notificationContext
         )
@@ -1082,7 +1081,7 @@ extension ZMUserTests_Swift {
         let didSucceed = XCTestExpectation(description: "didSucceed")
 
         // When I accept the connection request from the other user.
-        user.accept(oneOnOneResolver: oneOneOneResolver) { error in
+        user.accept(oneOnOneResolver: oneOneOneResolver, context: syncMOC) { error in
             if let error {
                 XCTFail("unexpected error: \(error)")
             } else {
@@ -1092,9 +1091,11 @@ extension ZMUserTests_Swift {
 
         // Then
         wait(for: [didSucceed], timeout: 0.5)
-        XCTAssertEqual(oneOneOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 1)
-        let invocation = try XCTUnwrap(oneOneOneResolver.resolveOneOnOneConversationWithIn_Invocations.first)
-        XCTAssertEqual(invocation.userID, userID)
+        try withExtendedLifetime(handler) {
+            XCTAssertEqual(oneOneOneResolver.resolveOneOnOneConversationWithIn_Invocations.count, 1)
+            let invocation = try XCTUnwrap(oneOneOneResolver.resolveOneOnOneConversationWithIn_Invocations.first)
+            XCTAssertEqual(invocation.userID, userID)
+        }
     }
 
     func testThatBlockSendsAUpdateConnectionAction() {

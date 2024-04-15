@@ -22,13 +22,14 @@ import avs
 import WireCommonComponents
 
 // MARK: - AppRootRouter
-public class AppRootRouter: NSObject {
+public final class AppRootRouter: NSObject {
 
     // MARK: - Public Property
+
     let screenCurtain = ScreenCurtain()
 
     // MARK: - Private Property
-    private let navigator: NavigatorProtocol
+
     private var appStateCalculator: AppStateCalculator
     private var urlActionRouter: URLActionRouter
 
@@ -48,6 +49,7 @@ public class AppRootRouter: NSObject {
     private let teamMetadataRefresher = TeamMetadataRefresher()
 
     // MARK: - Private Set Property
+
     private(set) var sessionManager: SessionManager
 
     // TO DO: This should be private
@@ -57,13 +59,12 @@ public class AppRootRouter: NSObject {
 
     // MARK: - Initialization
 
-    init(viewController: RootViewController,
-         navigator: NavigatorProtocol,
-         sessionManager: SessionManager,
-         appStateCalculator: AppStateCalculator
+    init(
+        viewController: RootViewController,
+        sessionManager: SessionManager,
+        appStateCalculator: AppStateCalculator
     ) {
         self.rootViewController = viewController
-        self.navigator = navigator
         self.sessionManager = sessionManager
         self.appStateCalculator = appStateCalculator
         self.urlActionRouter = URLActionRouter(viewController: viewController)
@@ -185,6 +186,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         enqueueTransition(to: appState, completion: completion)
     }
 
+    @MainActor
     private func transition(to appState: AppState, completion: @escaping () -> Void) {
         applicationWillTransition(to: appState)
 
@@ -202,6 +204,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             showBlacklisted(reason: reason, completion: completionBlock)
         case .jailbroken:
             showJailbroken(completion: completionBlock)
+        case .certificateEnrollmentRequired:
+            showCertificateEnrollRequest(completion: completionBlock)
         case .databaseFailure(let error):
             showDatabaseLoadingFailure(error: error, completion: completionBlock)
         case .migrating:
@@ -210,13 +214,12 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             screenCurtain.userSession = nil
             configureUnauthenticatedAppearance()
             showUnauthenticatedFlow(error: error, completion: completionBlock)
-        case let .authenticated(userSession, completedRegistration):
+        case let .authenticated(userSession):
             configureAuthenticatedAppearance()
             executeAuthenticatedBlocks()
             screenCurtain.userSession = userSession
             showAuthenticated(
                 userSession: userSession,
-                isComingFromRegistration: completedRegistration,
                 completion: completionBlock
             )
         case .headless:
@@ -278,6 +281,14 @@ extension AppRootRouter {
 
     private func showJailbroken(completion: @escaping () -> Void) {
         let blockerViewController = BlockerViewController(context: .jailbroken)
+        rootViewController.set(childViewController: blockerViewController,
+                               completion: completion)
+    }
+
+    private func showCertificateEnrollRequest(completion: @escaping () -> Void) {
+        let blockerViewController = BlockerViewController(
+            context: .pendingCertificateEnroll,
+            sessionManager: sessionManager)
         rootViewController.set(childViewController: blockerViewController,
                                completion: completion)
     }
@@ -346,17 +357,16 @@ extension AppRootRouter {
                                completion: completion)
     }
 
+    @MainActor
     private func showAuthenticated(
         userSession: UserSession,
-        isComingFromRegistration: Bool,
         completion: @escaping () -> Void
     ) {
         guard
             let selectedAccount = SessionManager.shared?.accountManager.selectedAccount,
             let authenticatedRouter = buildAuthenticatedRouter(
                 account: selectedAccount,
-                userSession: userSession,
-                isComingFromRegistration: isComingFromRegistration
+                userSession: userSession
             )
         else {
             completion()
@@ -364,9 +374,10 @@ extension AppRootRouter {
         }
 
         self.authenticatedRouter = authenticatedRouter
-
-        rootViewController.set(childViewController: authenticatedRouter.viewController,
-                               completion: completion)
+        rootViewController.set(
+            childViewController: authenticatedRouter.viewController,
+            completion: completion
+        )
     }
 
     private func showSkeleton(fromAccount: Account?, toAccount: Account, completion: @escaping () -> Void) {
@@ -405,7 +416,6 @@ extension AppRootRouter {
 
     private func setupAnalyticsSharing() {
         guard
-            appStateCalculator.wasUnauthenticated,
             let selfUser = SelfUser.provider?.providedSelfUser,
             selfUser.isTeamMember
         else {
@@ -417,10 +427,10 @@ extension AppRootRouter {
         Analytics.shared.provider?.selfUser = selfUser
     }
 
+    @MainActor
     private func buildAuthenticatedRouter(
         account: Account,
-        userSession: UserSession,
-        isComingFromRegistration: Bool
+        userSession: UserSession
     ) -> AuthenticatedRouter? {
         guard let userSession = ZMUserSession.shared() else { return  nil }
 
@@ -433,19 +443,27 @@ extension AppRootRouter {
         }
 
         let needToShowDialog = appStateCalculator.wasUnauthenticated && !isTeamMember
-
         return AuthenticatedRouter(
             rootViewController: rootViewController,
             account: account,
             userSession: userSession,
-            isComingFromRegistration: isComingFromRegistration,
             needToShowDataUsagePermissionDialog: needToShowDialog,
-            featureRepositoryProvider: userSession
+            featureRepositoryProvider: userSession,
+            featureChangeActionsHandler: E2EINotificationActionsHandler(
+                enrollCertificateUseCase: userSession.enrollE2EICertificate,
+                snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
+                stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
+                e2eiActivationDateRepository: userSession.e2eiActivationDateRepository,
+                e2eiFeature: userSession.e2eiFeature,
+                lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
+                e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
+                selfClientCertificateProvider: userSession.selfClientCertificateProvider,
+                targetVC: rootViewController),
+            e2eiActivationDateRepository: userSession.e2eiActivationDateRepository
         )
     }
 }
 
-// TO DO: THIS PART MUST BE CLENED UP
 extension AppRootRouter {
     private func applicationWillTransition(to appState: AppState) {
         appStateTransitionGroup.enter()

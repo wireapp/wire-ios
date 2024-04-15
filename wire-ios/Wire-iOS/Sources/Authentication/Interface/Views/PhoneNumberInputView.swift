@@ -32,7 +32,7 @@ protocol PhoneNumberInputViewDelegate: AnyObject {
  * A view providing an input field for phone numbers and a button for choosing the country.
  */
 
-class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidationDelegate, TextContainer {
+final class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidationDelegate, TextContainer {
 
     typealias RegistrationEnterPhoneNumber = L10n.Localizable.Registration.EnterPhoneNumber
 
@@ -81,9 +81,11 @@ class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidationDele
     private let countryPickerButton = IconButton()
 
     private let inputStack = UIStackView()
-    let loginButton = Button(style: .accentColorTextButtonStyle,
-                             cornerRadius: 16,
-                             fontSpec: .normalSemiboldFont)
+    let loginButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .normalSemiboldFont
+    )
     private let countryCodeInputView = IconButton()
     private let textField = ValidatedTextField(kind: .phoneNumber, leftInset: 8, style: .default)
 

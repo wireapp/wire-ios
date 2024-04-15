@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers open class StringLengthValidator: NSObject {
+@objcMembers
+open class StringLengthValidator: NSObject {
 
     private static let controlSet: CharacterSet = {
         var controlSet = CharacterSet.controlCharacters
@@ -26,7 +27,7 @@ import Foundation
         return controlSet
     }()
 
-    public class StringLengthError: NSError {
+    public final class StringLengthError: NSError {
         static let tooShort = StringLengthError(domain: ZMObjectValidationErrorDomain,
                                                 code: ZMManagedObjectValidationErrorCode.tooShort.rawValue,
                                                 userInfo: nil)

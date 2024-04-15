@@ -15,30 +15,49 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
+import WireSyncEngineSupport
 import Foundation
 
-class UserClientEventConsumerTests: RequestStrategyTestBase {
+final class UserClientEventConsumerTests: RequestStrategyTestBase {
 
     var sut: UserClientEventConsumer!
     var clientRegistrationStatus: ZMMockClientRegistrationStatus!
     var clientUpdateStatus: ZMMockClientUpdateStatus!
     var cookieStorage: ZMPersistentCookieStorage!
+    var coreCryptoProvider: MockCoreCryptoProviderProtocol!
+    var resolveOneOnOneConversations: MockResolveOneOnOneConversationsUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
+
+        resolveOneOnOneConversations = MockResolveOneOnOneConversationsUseCaseProtocol()
+        resolveOneOnOneConversations.invoke_MockMethod = {}
+
         self.syncMOC.performGroupedBlockAndWait {
-            self.cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer",
-                                                           userIdentifier: self.userIdentifier,
-                                                           useCache: true)
+            self.cookieStorage = ZMPersistentCookieStorage(
+                forServerName: "myServer",
+                userIdentifier: self.userIdentifier,
+                useCache: true
+            )
+            self.coreCryptoProvider = MockCoreCryptoProviderProtocol()
 
-            self.clientUpdateStatus = ZMMockClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
+            self.clientUpdateStatus = ZMMockClientUpdateStatus(
+                syncManagedObjectContext: self.syncMOC
+            )
 
-            self.clientRegistrationStatus = ZMMockClientRegistrationStatus(managedObjectContext: self.syncMOC,
-                                                                           cookieStorage: self.cookieStorage)
+            self.clientRegistrationStatus = ZMMockClientRegistrationStatus(
+                context: self.syncMOC,
+                cookieProvider: self.cookieStorage,
+                coreCryptoProvider: self.coreCryptoProvider
+            )
 
-            self.sut = UserClientEventConsumer(managedObjectContext: self.syncMOC,
-                                               clientRegistrationStatus: self.clientRegistrationStatus,
-                                               clientUpdateStatus: self.clientUpdateStatus)
+            self.sut = UserClientEventConsumer(
+                managedObjectContext: self.syncMOC,
+                clientRegistrationStatus: self.clientRegistrationStatus,
+                clientUpdateStatus: self.clientUpdateStatus,
+                resolveOneOnOneConversations: self.resolveOneOnOneConversations
+            )
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.userIdentifier
@@ -47,16 +66,16 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
     }
 
     override func tearDown() {
-        self.clientRegistrationStatus.tearDown()
         self.clientRegistrationStatus = nil
         self.clientUpdateStatus = nil
         self.sut = nil
         super.tearDown()
     }
 
-    static func payloadForAddingClient(_ clientId: String,
-                                       label: String = "device label",
-                                       time: Date = Date(timeIntervalSince1970: 12345)
+    static func payloadForAddingClient(
+        _ clientId: String,
+        label: String = "device label",
+        time: Date = Date(timeIntervalSince1970: 12345)
     ) -> ZMTransportData {
 
         return [
@@ -71,7 +90,6 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
     }
 
     static func payloadForDeletingClient(_ clientId: String) -> ZMTransportData {
-
         return [
             "client": [
                 "id": clientId
@@ -118,7 +136,7 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
         syncMOC.performGroupedBlockAndWait {
             // then
             XCTAssertEqual(selfUser.clients.count, 2)
-            guard let newClient = selfUser.clients.filter({ $0 != selfClient}).first else {
+            guard let newClient = selfUser.clients.filter({ $0 != selfClient }).first else {
                 XCTFail()
                 return
             }
@@ -230,6 +248,7 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
             let events = ZMUpdateEvent.eventsArray(fromPushChannelData: payload as ZMTransportData)
             event = events?.first
         }
+
         guard let event else {
             XCTFail("missing event")
             return
@@ -247,6 +266,8 @@ class UserClientEventConsumerTests: RequestStrategyTestBase {
             }
             XCTAssertEqual(newClient, existingClient1)
         }
+
+        XCTAssertEqual(resolveOneOnOneConversations.invoke_Invocations.count, 1)
     }
 
     func testThatItInvalidatesTheCurrentSelfClientAndWipeCryptoBoxWhenReceivingAPush() async {

@@ -23,26 +23,26 @@ import Wire_Notification_Service_Extension
 
 final class LegacyNotificationServiceTests: XCTestCase {
 
-    var sut: LegacyNotificationService!
-    var request: UNNotificationRequest!
-    var notificationContent: UNNotificationContent!
-    var contentResult: UNNotificationContent?
+    private var sut: LegacyNotificationService!
+    private var request: UNNotificationRequest!
+    private var notificationContent: UNNotificationContent!
+    private var contentResult: UNNotificationContent?
 
-    var coreDataFixture: CoreDataFixture!
-    var mockConversation: ZMConversation!
-    var currentUserIdentifier: UUID!
+    private var coreDataFixture: CoreDataFixture!
+    private var mockConversation: ZMConversation!
+    private var currentUserIdentifier: UUID!
 
-    var callEventHandlerMock: CallEventHandlerMock!
+    private var callEventHandlerMock: CallEventHandlerMock!
 
-    var otherUser: ZMUser! {
+    private var otherUser: ZMUser {
         return coreDataFixture.otherUser
     }
 
-    var selfUser: ZMUser! {
+    private var selfUser: ZMUser {
         return coreDataFixture.selfUser
     }
 
-    var client: UserClient! {
+    private var client: UserClient {
         coreDataFixture.mockUserClient()
     }
 
@@ -80,6 +80,8 @@ final class LegacyNotificationServiceTests: XCTestCase {
         super.tearDown()
     }
 
+    // MARK: - Tests
+
     func disable_testThatItHandlesGeneratedNotification() {
         // GIVEN
         let unreadConversationCount = 5
@@ -112,11 +114,8 @@ final class LegacyNotificationServiceTests: XCTestCase {
         // THEN
         XCTAssertTrue(callEventHandlerMock.reportIncomingVoIPCallCalled)
     }
-}
 
-// MARK: - Helpers
-
-extension LegacyNotificationServiceTests {
+    // MARK: - Helpers
 
     private func createAccount(with id: UUID) {
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
@@ -143,28 +142,42 @@ extension LegacyNotificationServiceTests {
     }
 
     private func textNotification(_ conversation: ZMConversation, sender: ZMUser) -> ZMLocalNotification? {
-        let event = createEvent()
+        guard let event = createEvent() else {
+            return nil
+        }
         return ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: coreDataFixture.uiMOC)
     }
 
-    private func createEvent() -> ZMUpdateEvent {
-        let genericMessage = GenericMessage(content: Text(content: "Hello Hello!", linkPreviews: []),
-                                            nonce: UUID.create())
+    private func createEvent() -> ZMUpdateEvent? {
+        let genericMessage = GenericMessage(
+            content: Text(
+                content: "Hello Hello!",
+                linkPreviews: []
+            ),
+            nonce: UUID.create()
+        )
+
         let payload: [String: Any] = [
             "id": UUID.create().transportString(),
             "conversation": mockConversation.remoteIdentifier!.transportString(),
             "from": otherUser.remoteIdentifier.transportString(),
             "time": Date().transportString(),
-            "data": ["text": try? genericMessage.serializedData().base64String(),
-                     "sender": otherUser.clients.first?.remoteIdentifier],
+            "data": [
+                "text": try? genericMessage.serializedData().base64String(),
+                "sender": otherUser.clients.first?.remoteIdentifier
+            ],
             "type": "conversation.otr-message-add"
         ]
 
-        return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID.create())!
+        return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID.create())
     }
 
     private func createTeamGroupConversation() -> ZMConversation {
-        return ZMConversation.createTeamGroupConversation(moc: coreDataFixture.uiMOC, otherUser: otherUser, selfUser: selfUser)
+        ZMConversation.createTeamGroupConversation(
+            moc: coreDataFixture.uiMOC,
+            otherUser: otherUser,
+            selfUser: selfUser
+        )
     }
 
     private func contentHandlerMock(_ content: UNNotificationContent) {
@@ -173,7 +186,9 @@ extension LegacyNotificationServiceTests {
 
 }
 
-class CallEventHandlerMock: CallEventHandlerProtocol {
+// MARK: - CallEventHandlerMock
+
+private final class CallEventHandlerMock: CallEventHandlerProtocol {
 
     var reportIncomingVoIPCallCalled: Bool = false
 

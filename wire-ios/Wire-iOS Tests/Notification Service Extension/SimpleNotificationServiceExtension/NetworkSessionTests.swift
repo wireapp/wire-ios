@@ -19,7 +19,7 @@
 import XCTest
 import WireTransport
 
-class NetworkSessionTests: XCTestCase {
+final class NetworkSessionTests: XCTestCase {
 
     var mockURLSession: URLSessionMock!
     var mockNetworkRequest: NetworkRequest!
@@ -69,7 +69,7 @@ class NetworkSessionTests: XCTestCase {
     }
 
     var successResponse: (Data, URLResponse) {
-        let response =  HTTPURLResponse(
+        let response = HTTPURLResponse(
             url: URL(string: "wire.com")!,
             statusCode: 200,
             httpVersion: "",
@@ -181,15 +181,17 @@ class NetworkSessionTests: XCTestCase {
 
 }
 
-class MockCookieStorage: CookieProvider {
+final class MockCookieStorage: CookieProvider {
 
     var isAuthenticated: Bool = true
 
     func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest) {}
 
+    func deleteKeychainItems() { }
+
 }
 
-class URLSessionMock: URLRequestable {
+final class URLSessionMock: URLRequestable {
 
     var mockedResponse = (Data(), URLResponse())
 

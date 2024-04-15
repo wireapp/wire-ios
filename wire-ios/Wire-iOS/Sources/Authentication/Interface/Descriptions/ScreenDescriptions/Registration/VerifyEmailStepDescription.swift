@@ -18,7 +18,7 @@
 
 import Foundation
 
-class VerifyEmailStepSecondaryView: AuthenticationFooterViewDescription {
+final class VerifyEmailStepSecondaryView: AuthenticationFooterViewDescription {
     let views: [ViewDescriptor]
     weak var actioner: AuthenticationActioner?
 
@@ -54,7 +54,7 @@ final class VerifyEmailStepDescription: AuthenticationStepDescription {
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String
-    let subtext: String?
+    let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription?
 
@@ -63,7 +63,7 @@ final class VerifyEmailStepDescription: AuthenticationStepDescription {
         backButton = nil
         mainView = VerificationCodeFieldDescription()
         headline = L10n.Localizable.Team.ActivationCode.headline
-        subtext = L10n.Localizable.Team.ActivationCode.subheadline(email)
+        subtext = .markdown(from: L10n.Localizable.Team.ActivationCode.subheadline(email), style: .login)
         secondaryView = nil
         footerView = VerifyEmailStepSecondaryView(canChangeEmail: canChangeEmail)
     }

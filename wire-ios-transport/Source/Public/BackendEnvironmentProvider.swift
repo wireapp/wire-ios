@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import Foundation
 }
 
 // Wrapper around Swift-only EnvironmentType so that it would be useable in Objective-C
-@objc public class EnvironmentTypeProvider: NSObject {
+@objc public final class EnvironmentTypeProvider: NSObject {
     public var value: EnvironmentType
     public init(environmentType: EnvironmentType) {
         self.value = environmentType

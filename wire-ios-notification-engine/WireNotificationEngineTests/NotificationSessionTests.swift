@@ -20,7 +20,7 @@
 import XCTest
 import Foundation
 
-class NotificationSessionTests: BaseTest {
+final class NotificationSessionTests: BaseTest {
 
     // MARK: - Init errors
 

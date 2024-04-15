@@ -23,7 +23,7 @@ import WireSyncEngine
  * Handles the event that informs the app when the email login verification code is available.
  */
 
-class AuthenticationEmailVerificationRequiredErrorHandler: AuthenticationEventHandler {
+final class AuthenticationEmailVerificationRequiredErrorHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 
@@ -39,7 +39,7 @@ class AuthenticationEmailVerificationRequiredErrorHandler: AuthenticationEventHa
             return nil
         }
 
-        guard let email  = credentials.email else { return nil }
+        guard let email = credentials.email else { return nil }
         guard let password = credentials.password else { return nil }
 
         return [.hideLoadingView, .requestEmailVerificationCode(email: email, password: password)]

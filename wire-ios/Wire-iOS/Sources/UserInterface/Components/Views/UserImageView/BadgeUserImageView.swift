@@ -16,13 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/**
- * A user image view that can display a badge on top for different connection states.
- */
 import UIKit
 import WireCommonComponents
 import WireSyncEngine
 
+/// A user image view that can display a badge on top for different connection states.
 final class BadgeUserImageView: UserImageView {
 
     /// The color of the badge.
@@ -76,6 +74,12 @@ final class BadgeUserImageView: UserImageView {
         badgeShadow.translatesAutoresizingMaskIntoConstraints = false
         badgeImageView.translatesAutoresizingMaskIntoConstraints = false
 
+        // default size if no image is set
+        let badgeImageViewWidthConstraint = badgeImageView.widthAnchor.constraint(equalToConstant: 0)
+        badgeImageViewWidthConstraint.priority = .defaultLow
+        let badgeImageViewHeightConstraint = badgeImageView.heightAnchor.constraint(equalToConstant: 0)
+        badgeImageViewHeightConstraint.priority = .defaultLow
+
         NSLayoutConstraint.activate([
             // badgeShadow
             badgeShadow.leadingAnchor.constraint(equalTo: container.leadingAnchor),
@@ -83,6 +87,8 @@ final class BadgeUserImageView: UserImageView {
             badgeShadow.trailingAnchor.constraint(equalTo: container.trailingAnchor),
             badgeShadow.bottomAnchor.constraint(equalTo: container.bottomAnchor),
             // badgeImageView
+            badgeImageViewWidthConstraint,
+            badgeImageViewHeightConstraint,
             badgeImageView.centerXAnchor.constraint(equalTo: container.centerXAnchor),
             badgeImageView.centerYAnchor.constraint(equalTo: container.centerYAnchor)
         ])
@@ -127,7 +133,7 @@ final class BadgeUserImageView: UserImageView {
      * - parameter animated: Whether to animate the change.
      */
 
-    func updateIconView(with icon: StyleKitIcon?, animated: Bool) {
+    private func updateIconView(with icon: StyleKitIcon?, animated: Bool) {
         badgeImageView.image = nil
 
         if let icon = icon {

@@ -93,7 +93,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     // MARK: - Properties
 
     let router: AppRootRouter?
-    var onDismiss: (() -> Void)?
+    let onDismiss: (_ completion: @escaping () -> Void) -> Void
 
     // MARK: - State
 
@@ -109,7 +109,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     init(
         router: AppRootRouter? = nil,
-        onDismiss: (() -> Void)? = nil
+        onDismiss: @escaping (_ completion: @escaping () -> Void) -> Void = { $0() }
     ) {
         self.router = router
         self.onDismiss = onDismiss
@@ -122,6 +122,9 @@ final class DeveloperToolsViewModel: ObservableObject {
         sections.append(Section(
             header: "Actions",
             items: [
+                .destination(DestinationItem(title: "E2E Identity", makeView: {
+                    AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel()))
+                })),
                 .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
                     AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self?.selfClient)))
                 })),
@@ -131,7 +134,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .destination(DestinationItem(title: "Deep links", makeView: { [weak self] in
                     AnyView(DeepLinksView(viewModel: DeepLinksViewModel(
                         router: self?.router,
-                        onDismiss: self?.onDismiss
+                        onDismiss: self?.onDismiss ?? { $0() }
                     )))
                 }))
             ]
@@ -210,7 +213,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         items.append(.button(ButtonItem(title: "Stop federating with Foma", action: stopFederatingFoma)))
         items.append(.button(ButtonItem(title: "Stop federating with Bella", action: stopFederatingBella)))
         items.append(.button(ButtonItem(title: "Stop Bella Foma federating", action: stopBellaFomaFederating)))
-
         return Section(
             header: header,
             items: items
@@ -227,7 +229,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     func handleEvent(_ event: Event) {
         switch event {
         case .dismissButtonTapped:
-            onDismiss?()
+            onDismiss {}
 
         case let .itemCopyRequested(.text(textItem)):
             UIPasteboard.general.string = textItem.value

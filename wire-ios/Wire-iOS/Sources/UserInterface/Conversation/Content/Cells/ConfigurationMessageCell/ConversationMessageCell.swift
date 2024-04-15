@@ -197,7 +197,7 @@ extension ConversationMessageCellDescription {
     }
 
     func makeCell(for tableView: UITableView, at indexPath: IndexPath) -> UITableViewCell {
-        let cell =  tableView.dequeueConversationCell(with: self, for: indexPath)
+        let cell = tableView.dequeueConversationCell(with: self, for: indexPath)
         cell.cellView.delegate = delegate
         cell.cellView.message = message
         cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
@@ -241,7 +241,7 @@ extension ConversationMessageCellDescription where View.Configuration: Equatable
  * A type erased box containing a conversation message cell description.
  */
 
-class AnyConversationMessageCellDescription: NSObject {
+final class AnyConversationMessageCellDescription: NSObject {
     private let cellGenerator: (UITableView, IndexPath) -> UITableViewCell
     private let viewGenerator: () -> UIView
     private let registrationBlock: (UITableView) -> Void

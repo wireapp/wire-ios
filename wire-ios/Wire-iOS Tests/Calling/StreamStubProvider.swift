@@ -19,7 +19,7 @@
 import Foundation
 @testable import Wire
 
-class StreamStubProvider {
+final class StreamStubProvider {
     func stream(
         user: UserType = MockUserType.createUser(name: "Bob"),
         client: AVSClient = AVSClient(userId: AVSIdentifier.stub, clientId: UUID().transportString()),

@@ -78,7 +78,6 @@ extension MessagingTestBase {
             return
         }
 
-        let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()!
         var prekey: String?
         self.encryptionContext(for: client).perform { (session) in
             prekey = try! session.generateLastPrekey()
@@ -135,7 +134,7 @@ extension MessagingTestBase {
         if client.remoteIdentifier == nil {
             client.remoteIdentifier = UUID.create().transportString()
         }
-        let url =  self.otherClientsEncryptionContextsURL.appendingPathComponent("client-\(client.remoteIdentifier!)")
+        let url = self.otherClientsEncryptionContextsURL.appendingPathComponent("client-\(client.remoteIdentifier!)")
         try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: [:])
         let encryptionContext = EncryptionContext(path: url)
         return encryptionContext

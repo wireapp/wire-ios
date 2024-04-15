@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 import Foundation
 
-public class TimerManager<Identifier: Hashable> {
+public final class TimerManager<Identifier: Hashable> {
 
     public enum TimerError: Error {
         case timerAlreadyExists

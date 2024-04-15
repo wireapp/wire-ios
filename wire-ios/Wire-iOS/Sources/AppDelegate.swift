@@ -37,10 +37,7 @@ extension Notification.Name {
     static let ZMUserSessionDidBecomeAvailable = Notification.Name("ZMUserSessionDidBecomeAvailableNotification")
 }
 
-private let zmLog = ZMSLog(tag: "AppDelegate")
-private let pushLog = ZMSLog(tag: "Push")
-
-class AppDelegate: UIResponder, UIApplicationDelegate {
+final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     // MARK: - Private Property
 
@@ -114,17 +111,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ = Settings.shared
         // switch logs
         ZMSLog.switchCurrentLogToPrevious()
-        zmLog.info("application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
+
+        WireLogger.appDelegate.info("application:willFinishLaunchingWithOptions \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
+
         DatadogWrapper.shared?.startMonitoring()
         DatadogWrapper.shared?.log(level: .info, message: "start app")
+
         // Initial log line to indicate the client version and build
-        zmLog.safePublic(SanitizedString(stringLiteral: Bundle.main.appInfo.safeForLoggingDescription))
+        WireLogger.appDelegate.info(
+            Bundle.main.appInfo.safeForLoggingDescription,
+            attributes: .safePublic
+        )
 
         return true
     }
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        pushLog.safePublic("application did register for remote notifications, storing standard token")
+        WireLogger.push.info(
+"application did register for remote notifications, storing standard token",
+            attributes: .safePublic
+        )
         pushTokenService.storeLocalToken(.createAPNSToken(from: deviceToken))
     }
 
@@ -133,7 +139,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         temporaryFilesService.removeTemporaryData()
 
-        zmLog.info("application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
+        WireLogger.appDelegate.info("application:didFinishLaunchingWithOptions START \(String(describing: launchOptions)) (applicationState = \(application.applicationState.rawValue))")
 
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(userSessionDidBecomeAvailable(_:)),
@@ -146,17 +152,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             createAppRootRouterAndInitialiazeOperations(launchOptions: launchOptions ?? [:])
         }
 
-        zmLog.info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
-        zmLog.info("Application was launched with arguments: \(ProcessInfo.processInfo.arguments)")
+        WireLogger.appDelegate.info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
+        WireLogger.appDelegate.info("Application was launched with arguments: \(ProcessInfo.processInfo.arguments)")
         return true
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        zmLog.info("applicationWillEnterForeground: (applicationState = \(application.applicationState.rawValue)")
+        WireLogger.appDelegate.info(
+            "applicationWillEnterForeground: (applicationState = \(application.applicationState.rawValue)",
+            attributes: .safePublic
+        )
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        zmLog.info("applicationDidBecomeActive (applicationState = \(application.applicationState.rawValue))")
+        WireLogger.appDelegate.info(
+            "applicationDidBecomeActive (applicationState = \(application.applicationState.rawValue))",
+            attributes: .safePublic
+        )
 
         switch launchType {
         case .url,
@@ -168,11 +180,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
-        zmLog.info("applicationWillResignActive:  (applicationState = \(application.applicationState.rawValue))")
+        WireLogger.appDelegate.info(
+            "applicationWillResignActive: (applicationState = \(application.applicationState.rawValue))",
+            attributes: .safePublic
+        )
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        zmLog.info("applicationDidEnterBackground:  (applicationState = \(application.applicationState.rawValue))")
+        WireLogger.appDelegate.info(
+            "applicationDidEnterBackground: (applicationState = \(application.applicationState.rawValue))",
+            attributes: .safePublic
+        )
 
         launchType = .unknown
 
@@ -182,11 +200,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ app: UIApplication,
                      open url: URL,
                      options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        WireLogger.appDelegate.info(
+            "application:openURL:options",
+            attributes: .safePublic
+        )
         return appRootRouter?.openDeepLinkURL(url) ?? false
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-        zmLog.info("applicationWillTerminate:  (applicationState = \(application.applicationState.rawValue))")
+        WireLogger.appDelegate.info(
+            "applicationWillTerminate: (applicationState = \(application.applicationState.rawValue))",
+            attributes: .safePublic
+        )
     }
 
     func application(_ application: UIApplication,
@@ -213,7 +238,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      continue userActivity: NSUserActivity,
                      restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        zmLog.info("application:continueUserActivity:restorationHandler: \(userActivity)")
+        WireLogger.appDelegate.info("application:continueUserActivity:restorationHandler: \(userActivity)")
 
         return SessionManager.shared?.continueUserActivity(userActivity) ?? false
     }
@@ -221,13 +246,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     // MARK: - BackgroundUpdates
 
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        zmLog.info("application:didReceiveRemoteNotification:fetchCompletionHandler: notification: \(userInfo)")
+        WireLogger.appDelegate.info("application:didReceiveRemoteNotification:fetchCompletionHandler: notification: \(userInfo)")
 
         launchType = (application.applicationState == .inactive || application.applicationState == .background) ? .push : .direct
     }
 
     func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        zmLog.info("application:performFetchWithCompletionHandler:")
+        WireLogger.appDelegate.info("application:performFetchWithCompletionHandler:")
 
         appRootRouter?.performWhenAuthenticated {
             ZMUserSession.shared()?.application(application, performFetchWithCompletionHandler: completionHandler)
@@ -235,7 +260,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
-        zmLog.info("application:handleEventsForBackgroundURLSession:completionHandler: session identifier: \(identifier)")
+        WireLogger.appDelegate.info("application:handleEventsForBackgroundURLSession:completionHandler: session identifier: \(identifier)")
 
         appRootRouter?.performWhenAuthenticated {
             ZMUserSession.shared()?.application(application, handleEventsForBackgroundURLSession: identifier, completionHandler: completionHandler)
@@ -266,11 +291,11 @@ private extension AppDelegate {
             fatalError("sessionManager is not created")
         }
 
-        let navigator = Navigator(NoBackTitleNavigationController())
-        appRootRouter = AppRootRouter(viewController: viewController,
-                                      navigator: navigator,
-                                      sessionManager: sessionManager,
-                                      appStateCalculator: appStateCalculator)
+        appRootRouter = AppRootRouter(
+            viewController: viewController,
+            sessionManager: sessionManager,
+            appStateCalculator: appStateCalculator
+        )
     }
 
     private func createSessionManager(launchOptions: LaunchOptions) -> SessionManager? {
@@ -304,7 +329,8 @@ private extension AppDelegate {
             callKitManager: voIPPushManager.callKitManager,
             isDeveloperModeEnabled: Bundle.developerModeEnabled,
             sharedUserDefaults: .applicationGroup,
-            minTLSVersion: SecurityFlags.minTLSVersion.stringValue
+            minTLSVersion: SecurityFlags.minTLSVersion.stringValue,
+            deleteUserLogs: LogFileDestination.deleteAllLogs
         )
 
         voIPPushManager.delegate = sessionManager

@@ -213,7 +213,7 @@ extension GenericMessage {
 
 public extension Text {
     func isMentioningSelf(_ selfUser: ZMUser) -> Bool {
-        return mentions.any {$0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
+        return mentions.any { $0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
     }
 
     func isQuotingSelf(_ quotedMessage: ZMOTRMessage?) -> Bool {
@@ -644,7 +644,7 @@ public extension WireDataModel.Mention {
 
             guard let domain = user.domain else { return }
 
-            $0.qualifiedUserID =  WireProtos.QualifiedUserId.with {
+            $0.qualifiedUserID = WireProtos.QualifiedUserId.with {
                 $0.id = userID
                 $0.domain = domain
             }
@@ -773,7 +773,7 @@ public extension Tweet {
 
 extension ImageAsset {
     public func imageFormat() -> ZMImageFormat {
-        return ImageFormatFromString(self.tag)
+        return ZMImageFormat(self.tag)
     }
 }
 

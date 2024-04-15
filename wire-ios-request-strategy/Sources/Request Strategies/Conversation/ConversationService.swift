@@ -46,6 +46,10 @@ public protocol ConversationServiceInterface {
         qualifiedID: QualifiedID
     ) async
 
+    func syncConversationIfMissing(
+        qualifiedID: QualifiedID
+    ) async
+
 }
 
 public enum ConversationCreationFailure: Error {
@@ -298,7 +302,9 @@ public final class ConversationService: ConversationServiceInterface {
                 case .success(let objectID):
                     Task {
                         do {
-                            try await self.handleMLSConversationIfNeeded(for: objectID, participants: usersExcludingSelfUser)
+                            try await self.handleMLSConversationIfNeeded(
+                                for: objectID,
+                                participantObjectIDs: Set(usersExcludingSelfUser.map(\.objectID)))
                         } catch {
                             if error.isFailedToAddSomeUsersError {
                                 // we ignore the error a system message is inserted
@@ -332,7 +338,8 @@ public final class ConversationService: ConversationServiceInterface {
         }
     }
 
-    private func handleMLSConversationIfNeeded(for conversationObjectId: NSManagedObjectID, participants: Set<ZMUser>) async throws {
+    private func handleMLSConversationIfNeeded(for conversationObjectId: NSManagedObjectID,
+                                               participantObjectIDs: Set<NSManagedObjectID>) async throws {
         guard let syncContext = await context.perform({ self.context.zm_sync }) else {
             assertionFailure("handleMLSConversationIfNeeded must be done on syncContext")
             return
@@ -346,6 +353,14 @@ public final class ConversationService: ConversationServiceInterface {
                 return ZMConversation?.none
             }
             return conversation
+        }) else {
+            return
+        }
+
+        guard let syncParticipants: [ZMUser] = await syncContext.perform({
+            var participants: [ZMUser] = participantObjectIDs.existingObjects(in: syncContext) ?? []
+            participants.append(ZMUser.selfUser(in: syncContext))
+            return participants
         }) else {
             return
         }
@@ -365,13 +380,11 @@ public final class ConversationService: ConversationServiceInterface {
         guard let mlsGroupID, let mlsService else { return }
 
         self.createGroupFlow.checkpoint(description: "create MLS group with ID (\(mlsGroupID))")
-        try await mlsService.createGroup(for: mlsGroupID, with: [])
+        try await mlsService.createGroup(for: mlsGroupID, parentGroupID: nil)
 
         let participantsService = participantsServiceBuilder(syncContext)
-        if !participants.isEmpty {
-            self.createGroupFlow.checkpoint(description: MLSAddParticipantLog(users: Array(participants), groupId: mlsGroupID))
-            try await participantsService.addParticipants(Array(participants), to: syncConversation)
-        }
+        self.createGroupFlow.checkpoint(description: MLSAddParticipantLog(users: syncParticipants, groupId: mlsGroupID))
+        try await participantsService.addParticipants(syncParticipants, to: syncConversation)
     }
 
     // MARK: - Sync conversation
@@ -384,6 +397,17 @@ public final class ConversationService: ConversationServiceInterface {
         action.perform(in: context.notificationContext) { _ in
             completion()
         }
+    }
+
+    public func syncConversationIfMissing(
+        qualifiedID: QualifiedID
+    ) async {
+        guard await context.perform({
+            ZMConversation.fetch(with: qualifiedID.uuid, domain: qualifiedID.domain, in: self.context)
+        }) == nil else {
+            return
+        }
+        await syncConversation(qualifiedID: qualifiedID)
     }
 
     public func syncConversation(

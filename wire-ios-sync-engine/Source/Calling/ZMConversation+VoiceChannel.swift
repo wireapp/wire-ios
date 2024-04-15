@@ -27,13 +27,13 @@ public extension ZMConversation {
             return nil
         }
 
-            if let voiceChannel = objc_getAssociatedObject(self, &voiceChannelAssociatedKey) as? VoiceChannel {
-                return voiceChannel
-            } else {
-                let voiceChannel = WireCallCenterV3Factory.voiceChannelClass.init(conversation: self)
-                objc_setAssociatedObject(self, &voiceChannelAssociatedKey, voiceChannel, .OBJC_ASSOCIATION_RETAIN)
-                return voiceChannel
-            }
+        if let voiceChannel = objc_getAssociatedObject(self, &voiceChannelAssociatedKey) as? VoiceChannel {
+            return voiceChannel
+        } else {
+            let voiceChannel = WireCallCenterV3Factory.voiceChannelClass.init(conversation: self)
+            objc_setAssociatedObject(self, &voiceChannelAssociatedKey, voiceChannel, .OBJC_ASSOCIATION_RETAIN)
+            return voiceChannel
+        }
     }
 
 }

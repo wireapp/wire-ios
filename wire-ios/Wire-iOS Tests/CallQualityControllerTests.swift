@@ -158,7 +158,7 @@ final class CallQualityControllerTests: ZMSnapshotTestCase, CoreDataFixtureTestH
     func testThatCallFailureDebugAlertIsNotPresented_WhenCallIsTerminated() {
         // GIVEN
         let establishedCallState: CallState = .established
-        let terminatingCallState: CallState = .terminating(reason: .anweredElsewhere)
+        let terminatingCallState: CallState = .terminating(reason: .answeredElsewhere)
         conversation.remoteIdentifier = UUID()
         callConversationProvider.priorityCallConversation = conversation
 
@@ -190,7 +190,7 @@ extension CallQualityControllerTests {
 }
 
 // MARK: - ActiveCallRouterMock
-class CallQualityRouterProtocolMock: CallQualityRouterProtocol {
+final class CallQualityRouterProtocolMock: CallQualityRouterProtocol {
 
     var presentCallQualitySurveyIsCalled: Bool = false
     func presentCallQualitySurvey(with callDuration: TimeInterval) {
@@ -211,7 +211,7 @@ class CallQualityRouterProtocolMock: CallQualityRouterProtocol {
 }
 
 // MARK: - ActiveCallRouterMock
-class MockCallQualityController: CallQualityController {
+final class MockCallQualityController: CallQualityController {
     override var canPresentCallQualitySurvey: Bool {
         return true
     }

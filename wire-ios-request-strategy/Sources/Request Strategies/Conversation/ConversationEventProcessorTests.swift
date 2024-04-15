@@ -31,6 +31,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         super.setUp()
         conversationService = MockConversationServiceInterface()
         conversationService.syncConversationQualifiedID_MockMethod = { _ in }
+        conversationService.syncConversationIfMissingQualifiedID_MockMethod = { _ in }
 
         conversationService.syncConversationQualifiedIDCompletion_MockMethod = { _, completion in
             completion()
@@ -79,6 +80,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
             let selfUser = ZMUser.selfUser(in: syncMOC)
             let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID)
+            groupConversation.removeParticipantAndUpdateConversationState(user: selfUser)
 
             let payload = ConversationEventProcessor.MemberJoinPayload(
                 id: groupConversation.remoteIdentifier,
@@ -104,10 +106,9 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         await sut.processConversationEvents([event])
 
         // Then
-        let updateConversationCalls = mockMLSEventProcessor.updateConversationIfNeededConversationFallbackGroupIDContext_Invocations
-        XCTAssertEqual(updateConversationCalls.count, 1)
-        XCTAssertEqual(updateConversationCalls.first?.conversation, groupConversation)
-
+        await syncMOC.perform {
+            XCTAssertTrue(self.groupConversation.isSelfAnActiveMember)
+        }
     }
 
     // MARK: - MLS: Welcome Message
@@ -739,7 +740,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         await syncMOC.perform {
             // THEN
             guard let participant = self.groupConversation.participantRoles
-                .first(where: {$0.user == user}) else {
+                .first(where: { $0.user == user }) else {
                 return XCTFail("No user in convo")
             }
             XCTAssertEqual(participant.role, newRole)
@@ -783,7 +784,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         await syncMOC.perform {
             // THEN
             guard let participant = self.groupConversation.participantRoles
-                .first(where: {$0.user == selfUser}) else {
+                .first(where: { $0.user == selfUser }) else {
                 return XCTFail("No user in convo")
             }
             XCTAssertEqual(participant.role, newRole)

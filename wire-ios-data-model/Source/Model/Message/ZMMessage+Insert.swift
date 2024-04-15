@@ -30,16 +30,31 @@ extension ZMMessage {
         guard let currentMoc = self.managedObjectContext else { return }
         guard let syncMoc = currentMoc.zm_sync else { return }
         guard let uiMoc = currentMoc.zm_userInterface else { return }
-        if conversation.securityLevel == .secureWithIgnored && self.deliveryState == .pending {
+        if conversation.isDegraded && self.deliveryState == .pending {
+            let verificationStatusKey = verificationStatusKey(for: conversation.messageProtocol)
+
             currentMoc.saveOrRollback()
             syncMoc.performGroupedBlock {
                 guard let message = (try? syncMoc.existingObject(with: self.objectID)) as? ZMOTRMessage else { return }
                 message.causedSecurityLevelDegradation = true
                 WireLogger.messaging.warn("expiring message because inserting into degraded conversation " + String(describing: message.nonce?.transportString().readableHash))
                 message.expire()
+
                 syncMoc.saveOrRollback()
-                NotificationDispatcher.notifyNonCoreDataChanges(objectID: conversation.objectID, changedKeys: [#keyPath(ZMConversation.securityLevel)], uiContext: uiMoc)
+                NotificationDispatcher.notifyNonCoreDataChanges(
+                    objectID: conversation.objectID,
+                    changedKeys: [verificationStatusKey],
+                    uiContext: uiMoc)
             }
+        }
+    }
+
+    private func verificationStatusKey(for messageProtocol: MessageProtocol) -> String {
+        switch messageProtocol {
+        case .proteus:
+            return #keyPath(ZMConversation.securityLevel)
+        case .mls, .mixed:
+            return ZMConversation.mlsVerificationStatusKey
         }
     }
 }

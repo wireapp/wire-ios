@@ -342,52 +342,52 @@ struct CacheAsset: AssetType {
 
     var hasOriginal: Bool {
         if case .file = type {
-            return cache.hasDataOnDisk(owner, encrypted: false)
+            return cache.hasOriginalFileData(for: owner)
         } else {
-            return cache.hasDataOnDisk(owner, format: .original, encrypted: false)
+            return cache.hasOriginalImageData(for: owner)
         }
     }
 
     var original: Data? {
         if case .file = type {
-            return cache.assetData(owner, encrypted: false)
+            return cache.originalFileData(for: owner)
         } else {
-            return cache.assetData(owner, format: .original, encrypted: false)
+            return cache.originalImageData(for: owner)
         }
     }
 
     var hasPreprocessed: Bool {
         guard needsPreprocessing else { return false }
-
-        return cache.hasDataOnDisk(owner, format: .medium, encrypted: false)
+        return cache.hasMediumImageData(for: owner)
     }
 
     var preprocessed: Data? {
         guard needsPreprocessing else { return nil }
-
-        return cache.assetData(owner, format: .medium, encrypted: false)
+        return cache.mediumImageData(for: owner)
     }
 
     var hasEncrypted: Bool {
         switch type {
         case .file:
-            return cache.hasDataOnDisk(owner, encrypted: true)
+            return cache.hasEncryptedFileData(for: owner)
         case .image, .thumbnail:
-            return cache.hasDataOnDisk(owner, format: .medium, encrypted: true)
+            return cache.hasEncryptedMediumImageData(for: owner)
         }
     }
 
     var encrypted: Data? {
         switch type {
         case .file:
-            return cache.assetData(owner, encrypted: true)
+            return cache.encryptedFileData(for: owner)
         case .image, .thumbnail:
-            return cache.assetData(owner, format: .medium, encrypted: true)
+            return cache.encryptedMediumImageData(for: owner)
         }
     }
 
     var isUploaded: Bool {
-        guard let genericMessage = owner.underlyingMessage else { return false }
+        guard let genericMessage = owner.underlyingMessage else {
+            return false
+        }
 
         switch type {
         case .thumbnail:
@@ -395,17 +395,30 @@ struct CacheAsset: AssetType {
         case .file, .image:
             return genericMessage.assetData?.uploaded.hasAssetID ?? false
         }
-
     }
 
-    func updateWithAssetId(_ assetId: String, token: String?, domain: String?) {
-        guard var genericMessage = owner.underlyingMessage else { return }
+    func updateWithAssetId(
+        _ assetId: String,
+        token: String?,
+        domain: String?
+    ) {
+        guard var genericMessage = owner.underlyingMessage else {
+            return
+        }
 
         switch type {
         case .thumbnail:
-            genericMessage.updatePreview(assetId: assetId, token: token, domain: domain)
+            genericMessage.updatePreview(
+                assetId: assetId,
+                token: token,
+                domain: domain
+            )
         case .image, .file:
-            genericMessage.updateUploaded(assetId: assetId, token: token, domain: domain)
+            genericMessage.updateUploaded(
+                assetId: assetId,
+                token: token,
+                domain: domain
+            )
         }
 
         do {
@@ -414,21 +427,22 @@ struct CacheAsset: AssetType {
             Logging.messageProcessing.warn("Failed to update asset id. Reason: \(error.localizedDescription)")
             return
         }
-
-        // Now that we've stored the assetId when can safely delete the encrypted data
-        switch type {
-        case .file:
-            cache.deleteAssetData(owner, encrypted: true)
-        case .image, .thumbnail:
-            cache.deleteAssetData(owner, format: .medium, encrypted: true)
-        }
     }
 
-    func updateWithPreprocessedData(_ preprocessedImageData: Data, imageProperties: ZMIImageProperties) {
-        guard needsPreprocessing else { return }
-        guard var genericMessage = owner.underlyingMessage else { return }
+    func updateWithPreprocessedData(
+        _ preprocessedImageData: Data,
+        imageProperties: ZMIImageProperties
+    ) {
+        guard
+            needsPreprocessing,
+            var genericMessage = owner.underlyingMessage
+        else {
+            return
+        }
 
-        cache.storeAssetData(owner, format: .medium, encrypted: false, data: preprocessedImageData)
+        // Now we have the preprocessed data, delete the original.
+        cache.storeMediumImage(data: preprocessedImageData, for: owner)
+        cache.deleteOriginalImageData(for: owner)
 
         switch type {
         case .file:
@@ -447,23 +461,28 @@ struct CacheAsset: AssetType {
     }
 
     func encrypt() {
-        guard var genericMessage = owner.underlyingMessage else { return }
+        guard var genericMessage = owner.underlyingMessage else {
+            return
+        }
 
         switch type {
         case .file:
+            WireLogger.assets.debug("encrypting file")
             if let keys = cache.encryptFileAndComputeSHA256Digest(owner) {
                 genericMessage.updateAsset(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)
             }
         case .image:
             if !needsPreprocessing, let original = original {
                 // Even if we don't do any preprocessing on an image we still need to copy it to .medium
-                cache.storeAssetData(owner, format: .medium, encrypted: false, data: original)
+                cache.storeMediumImage(data: original, for: owner)
             }
 
+            WireLogger.assets.debug("encrypting image")
             if let keys = cache.encryptImageAndComputeSHA256Digest(owner, format: .medium) {
                 genericMessage.updateAsset(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)
             }
         case .thumbnail:
+            WireLogger.assets.debug("encrypting thumbnail")
             if let keys = cache.encryptImageAndComputeSHA256Digest(owner, format: .medium) {
                 genericMessage.updateAssetPreview(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)
             }
@@ -481,22 +500,22 @@ struct CacheAsset: AssetType {
 extension ZMAssetClientMessage: AssetMessage {
 
     public var assets: [AssetType] {
-        guard let cache = managedObjectContext?.zm_fileAssetCache else { return [] }
+        guard let cache = managedObjectContext?.zm_fileAssetCache else {
+            return []
+        }
 
-        var assets: [AssetType] = []
+        var assets = [AssetType]()
 
         if isFile {
-            if cache.hasDataOnDisk(self, encrypted: false) {
+            if cache.hasFileData(for: self) {
                 assets.append(CacheAsset(owner: self, type: .file, cache: cache))
             }
 
-            if cache.hasDataOnDisk(self, format: .original, encrypted: false) {
+            if cache.hasImageData(for: self) {
                 assets.append(CacheAsset(owner: self, type: .thumbnail, cache: cache))
             }
-        } else {
-            if cache.hasDataOnDisk(self, format: .original, encrypted: false) {
-                assets.append(CacheAsset(owner: self, type: .image, cache: cache))
-            }
+        } else if cache.hasImageData(for: self) {
+            assets.append(CacheAsset(owner: self, type: .image, cache: cache))
         }
 
         return assets
@@ -505,11 +524,17 @@ extension ZMAssetClientMessage: AssetMessage {
     public var processingState: AssetProcessingState {
         let assets = self.assets
 
-        if assets.filter({$0.needsPreprocessing && !$0.hasPreprocessed || !$0.isUploaded && !$0.hasEncrypted}).count > 0 {
+        // There is an asset that still needs encrypting and uploading.
+        if assets.contains(where: {
+            !$0.isUploaded && !$0.hasEncrypted
+        }) {
             return .preprocessing
         }
 
-        if assets.filter({!$0.isUploaded}).count > 0 {
+        // There is some asset that isn't uploaded.
+        if assets.contains(where: {
+            !$0.isUploaded
+        }) {
             return .uploading
         }
 

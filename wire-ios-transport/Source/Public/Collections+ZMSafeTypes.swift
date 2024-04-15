@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -92,11 +92,11 @@ extension NSDictionary {
     }
 
     @objc public func uuid(forKey key: String) -> UUID? {
-        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key) {UUID(uuidString: $0)}
+        return requiredObjectWhichIsKindOfClass(dictionary: self, key: key) { UUID(uuidString: $0) }
     }
 
     @objc public func optionalUuid(forKey key: String) -> UUID? {
-        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key) {UUID(uuidString: $0)}
+        return optionalObjectWhichIsKindOfClass(dictionary: self, key: key) { UUID(uuidString: $0) }
     }
 
     @objc

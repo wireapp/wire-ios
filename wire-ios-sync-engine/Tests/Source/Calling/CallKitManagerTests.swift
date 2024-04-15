@@ -210,12 +210,12 @@ class CallKitManagerTest: DatabaseTest {
     }
 
     func createOneOnOneConversation(user: ZMUser) {
-        let oneToOne = ZMConversation.insertNewObject(in: self.uiMOC)
+        let oneToOne = ZMConversation.insertNewObject(in: uiMOC)
         oneToOne.conversationType = .oneOnOne
         oneToOne.remoteIdentifier = UUID()
         oneToOne.oneOnOneUser = user
 
-        let connection = ZMConnection.insertNewObject(in: self.uiMOC)
+        let connection = ZMConnection.insertNewObject(in: uiMOC)
         connection.status = .accepted
         connection.to = user
     }
@@ -920,7 +920,7 @@ class CallKitManagerTest: DatabaseTest {
         self.sut.callCenterDidChange(callState: state, conversation: conversation, caller: otherUser, timestamp: Date(), previousCallState: nil)
 
         // when
-        sut.callCenterDidChange(callState: .terminating(reason: .anweredElsewhere), conversation: conversation, caller: otherUser, timestamp: nil, previousCallState: nil)
+        sut.callCenterDidChange(callState: .terminating(reason: .answeredElsewhere), conversation: conversation, caller: otherUser, timestamp: nil, previousCallState: nil)
 
         // then
         XCTAssertEqual(self.callKitProvider.lastEndedReason, .answeredElsewhere)

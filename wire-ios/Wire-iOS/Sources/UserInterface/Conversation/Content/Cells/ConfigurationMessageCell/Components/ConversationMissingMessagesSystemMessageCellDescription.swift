@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 
-class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessageCellDescription {
+final class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
     typealias LabelColors = SemanticColors.Label
@@ -44,7 +44,7 @@ class ConversationMissingMessagesSystemMessageCellDescription: ConversationMessa
 
     init(message: ZMConversationMessage, data: ZMSystemMessageData) {
         let title = ConversationMissingMessagesSystemMessageCellDescription.makeAttributedString(systemMessageData: data)
-        configuration =  View.Configuration(icon: StyleKitIcon.exclamationMark.makeImage(size: .tiny,
+        configuration = View.Configuration(icon: StyleKitIcon.exclamationMark.makeImage(size: .tiny,
                                                                                          color: IconColors.foregroundExclamationMarkInSystemMessage),
                                             attributedText: title,
                                             showLine: true)

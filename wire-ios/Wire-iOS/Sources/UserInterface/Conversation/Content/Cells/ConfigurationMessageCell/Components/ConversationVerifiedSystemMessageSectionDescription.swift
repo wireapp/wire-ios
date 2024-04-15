@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 
-class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCellDescription {
+final class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCellDescription {
 
     typealias View = ConversationSystemMessageCell
     typealias LabelColors = SemanticColors.Label
@@ -42,13 +42,10 @@ class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCe
     let accessibilityLabel: String?
 
     init() {
-        let title = NSAttributedString(
-            string: L10n.Localizable.Content.System.isVerified,
-            attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
-        )
+        let title = NSAttributedString.markdown(from: L10n.Localizable.Content.System.Mls.conversationIsVerified(URL.wr_e2eiLearnMore), style: .systemMessage)
 
         configuration = View.Configuration(
-            icon: WireStyleKit.imageOfShieldverified,
+            icon: Asset.Images.certificateValid.image,
             attributedText: title,
             showLine: true
         )

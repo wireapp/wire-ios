@@ -24,6 +24,8 @@ import WireRequestStrategy
 // swiftlint:enable todo_requires_jira_link
 class SwiftMockConversation: NSObject, Conversation {
 
+    var isMLSConversationDegraded: Bool = false
+
 	var relatedConnectionState: ZMConnectionStatus = .invalid
 
 	var sortedOtherParticipants: [UserType] = []
@@ -63,6 +65,7 @@ class SwiftMockConversation: NSObject, Conversation {
     var accessRoles: Set<ConversationAccessRoleV2> = [.teamMember]
 
     var isUnderLegalHold: Bool = false
+    var isE2EIEnabled: Bool = false
     var securityLevel: ZMConversationSecurityLevel = .notSecure
 
     var mutedMessageTypes: MutedMessageTypes = .none
@@ -88,7 +91,9 @@ final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsCon
 
     var messageProtocol: MessageProtocol = .proteus
 
-    var mlsGroupID: WireDataModel.MLSGroupID?
+    var mlsGroupID: MLSGroupID?
+
+    var mlsVerificationStatus: MLSVerificationStatus?
 
 }
 

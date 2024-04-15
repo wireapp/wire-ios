@@ -20,7 +20,7 @@ import XCTest
 import WireTesting
 @testable import WireSyncEngine
 
-final class SessionManagerTests_Backup: IntegrationTest {
+final class SessionManagerBackupTests: IntegrationTest {
 
     override var useInMemoryStore: Bool {
         return false

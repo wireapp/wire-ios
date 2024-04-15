@@ -47,7 +47,7 @@ class ProtobufUtilitiesTests: BaseZMClientMessageTests {
         // then
         XCTAssertTrue(sut.audio.hasNormalizedLoudness)
         XCTAssertEqual(extractedLoudness.count, loudness.count)
-        XCTAssertEqual(loudness.map { Float(UInt8(roundf($0*255)))/255.0 }, sut.normalizedLoudnessLevels)
+        XCTAssertEqual(loudness.map { Float(UInt8(roundf($0 * 255))) / 255.0 }, sut.normalizedLoudnessLevels)
     }
 
     func testThatItDoesNotReturnTheLoudnessIfEmpty() {

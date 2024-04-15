@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 import WireTransport
 
-class TestTrustVerificator: NSObject, URLSessionDelegate {
+final class TestTrustVerificator: NSObject, URLSessionDelegate {
 
     var session: URLSession!
     var trustProvider: BackendTrustProvider!

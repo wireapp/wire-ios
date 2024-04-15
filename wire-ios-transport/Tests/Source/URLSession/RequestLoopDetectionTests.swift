@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ class RequestLoopDetectionTests: XCTestCase {
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach { _ in
             sut.recordRequest(path: path, contentHash: hash, date: startDate)
-            startDate.addTimeInterval(10*60)
+            startDate.addTimeInterval(10 * 60)
         }
     }
 
@@ -75,7 +75,7 @@ class RequestLoopDetectionTests: XCTestCase {
         // when
         (0..<RequestLoopDetection.repetitionTriggerThreshold).forEach { _ in
             sut.recordRequest(path: path, contentHash: hash, date: startDate)
-            startDate.addTimeInterval(-4*60)
+            startDate.addTimeInterval(-4 * 60)
         }
     }
 
@@ -119,7 +119,7 @@ class RequestLoopDetectionTests: XCTestCase {
         }
 
         // when
-        (0..<RequestLoopDetection.repetitionTriggerThreshold*3).forEach { _ in
+        (0..<RequestLoopDetection.repetitionTriggerThreshold * 3).forEach { _ in
             sut.recordRequest(path: path, contentHash: hash, date: nil)
         }
 
@@ -139,7 +139,7 @@ class RequestLoopDetectionTests: XCTestCase {
         }
 
         // when
-        (0..<RequestLoopDetection.repetitionTriggerThreshold*4).forEach {
+        (0..<RequestLoopDetection.repetitionTriggerThreshold * 4).forEach {
             let path = paths[$0 % paths.count] // this will insert them in interleaved order
             sut.recordRequest(path: path, contentHash: hash, date: nil)
          }
@@ -160,7 +160,7 @@ class RequestLoopDetectionTests: XCTestCase {
         }
 
         // when
-        (0..<RequestLoopDetection.repetitionTriggerThreshold*4).forEach {
+        (0..<RequestLoopDetection.repetitionTriggerThreshold * 4).forEach {
             sut.recordRequest(path: path, contentHash: UInt($0 % 3), date: nil)
         }
 

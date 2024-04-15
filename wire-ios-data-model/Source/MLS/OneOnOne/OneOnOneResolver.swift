@@ -21,17 +21,13 @@ import Foundation
 // sourcery: AutoMockable
 public protocol OneOnOneResolverInterface {
 
+    func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws
+
     @discardableResult
     func resolveOneOnOneConversation(
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution
-
-}
-
-public enum OneOnOneResolverError: Error {
-
-    case migratorNotFound
 
 }
 
@@ -42,79 +38,146 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
     private let protocolSelector: OneOnOneProtocolSelectorInterface
     private let migrator: OneOnOneMigratorInterface?
 
-    // MARK: - Life cycle
-
-    public convenience init(syncContext: NSManagedObjectContext) {
-        let mlsService = syncContext.performAndWait {
-            syncContext.mlsService
-        }
-
-        self.init(migrator: mlsService.map(OneOnOneMigrator.init))
-    }
+    // MARK: - Initializer
 
     public init(
         protocolSelector: OneOnOneProtocolSelectorInterface = OneOnOneProtocolSelector(),
-        migrator: OneOnOneMigratorInterface? = nil
+        migrator: OneOnOneMigratorInterface?
     ) {
         self.protocolSelector = protocolSelector
         self.migrator = migrator
     }
 
-    // MARK: - Methods
+    // MARK: - Resolve
+
+    public func resolveAllOneOnOneConversations(in context: NSManagedObjectContext) async throws {
+        let usersIDs = try await fetchUserIdsWithOneOnOneConversation(in: context)
+
+        await withTaskGroup(of: Void.self) { group in
+            for userID in usersIDs {
+                group.addTask {
+                    do {
+                        try await self.resolveOneOnOneConversation(with: userID, in: context)
+                    } catch {
+                        // skip conversation migration for this user
+                        WireLogger.conversation.error("resolve 1-1 conversation with userID \(userID) failed!")
+                    }
+                }
+            }
+        }
+    }
 
     @discardableResult
     public func resolveOneOnOneConversation(
         with userID: QualifiedID,
         in context: NSManagedObjectContext
     ) async throws -> OneOnOneConversationResolution {
-        WireLogger.conversation.debug("resolving one on one with user: \(userID)")
+        WireLogger.conversation.debug("resolving 1-1 conversation with user: \(userID)")
 
-        let messageProtocol = await protocolSelector.getProtocolForUser(
-            with: userID,
-            in: context
-        )
+        let messageProtocol = try await protocolSelector.getProtocolForUser(with: userID, in: context)
 
         switch messageProtocol {
         case .none:
-            WireLogger.conversation.debug("no common protocols found")
-            await context.perform {
-                guard
-                    let otherUser = ZMUser.fetch(with: userID, in: context),
-                    let conversation = otherUser.oneOnOneConversation
-                else {
-                    return
-                }
-
-                conversation.isForcedReadOnly = true
-            }
-            return .archivedAsReadOnly
-
+            return await resolveCommonUserProtocolNone(with: userID, in: context)
         case .mls:
-            WireLogger.conversation.debug("should resolve to mls one on one")
-
-            guard let migrator else {
-                throw OneOnOneResolverError.migratorNotFound
-            }
-
-            let mlsGroupIdentifier = try await migrator.migrateToMLS(
-                userID: userID,
-                in: context
-            )
-
-            return .migratedToMLSGroup(identifier: mlsGroupIdentifier)
-
+            return try await resolveCommonUserProtocolMLS(with: userID, in: context)
         case .proteus:
-            WireLogger.conversation.debug("should resolve to proteus one on one")
-            return .noAction
-
-        // This should never happen:
-        // Users can only support proteus and mls protocols.
-        // Mixed protocol is used by conversations to represent
-        // the migration state when migrating from proteus to mls.
+            return resolveCommonUserProtocolProteus()
         case .mixed:
+            // This should never happen:
+            // Users can only support proteus and mls protocols.
+            // Mixed protocol is used by conversations to represent
+            // the migration state when migrating from proteus to mls.
             assertionFailure("users should not have mixed protocol")
             return .noAction
         }
     }
 
+    // MARK: Resolve - None
+
+    private func resolveCommonUserProtocolNone(
+        with userID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) async -> OneOnOneConversationResolution {
+        WireLogger.conversation.debug("no common protocols found")
+
+        await context.perform {
+            guard
+                let otherUser = ZMUser.fetch(with: userID, in: context),
+                let conversation = otherUser.oneOnOneConversation
+            else {
+                return
+            }
+
+            self.makeConversationReadOnly(
+                selfUser: ZMUser.selfUser(in: context),
+                otherUser: otherUser,
+                conversation: conversation
+            )
+        }
+
+        return .archivedAsReadOnly
+    }
+
+    private func makeConversationReadOnly(
+        selfUser: ZMUser,
+        otherUser: ZMUser,
+        conversation: ZMConversation
+    ) {
+        if conversation.isForcedReadOnly { return }
+
+        if !selfUser.supportedProtocols.contains(.mls) {
+            conversation.appendMLSMigrationMLSNotSupportedForSelfUser(user: selfUser)
+        } else if !otherUser.supportedProtocols.contains(.mls) {
+            conversation.appendMLSMigrationMLSNotSupportedForOtherUser(user: otherUser)
+        }
+
+        conversation.isForcedReadOnly = true
+    }
+
+    // MARK: Resolve - MLS
+
+    private func resolveCommonUserProtocolMLS(
+        with userID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) async throws -> OneOnOneConversationResolution {
+        WireLogger.conversation.debug("should resolve to mls 1-1 conversation")
+
+        guard let migrator else {
+            throw OneOnOneResolverError.migratorNotFound
+        }
+
+        let mlsGroupID = try await migrator.migrateToMLS(
+            userID: userID,
+            in: context
+        )
+
+        return .migratedToMLSGroup(identifier: mlsGroupID)
+    }
+
+    // MARK: Resolve - Proteus
+
+    private func resolveCommonUserProtocolProteus() -> OneOnOneConversationResolution {
+        WireLogger.conversation.debug("should resolve to proteus 1-1 conversation")
+        return .noAction
+    }
+
+    // MARK: - Helpers
+
+    private func fetchUserIdsWithOneOnOneConversation(in context: NSManagedObjectContext) async throws -> [QualifiedID] {
+        try await context.perform {
+            let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+            request.predicate = ZMUser.predicateForUsersWithOneOnOneConversation()
+
+            return try context
+                .fetch(request)
+                .compactMap { user in
+                    guard let userID = user.qualifiedID else {
+                        WireLogger.conversation.error("missing user's qualifiedID to resolve 1-1 conversation!")
+                        return nil
+                    }
+                    return userID
+                }
+        }
+    }
 }

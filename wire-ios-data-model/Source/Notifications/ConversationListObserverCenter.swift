@@ -28,20 +28,16 @@ extension Notification.Name {
 
 extension NSManagedObjectContext {
 
-    static let ConversationListObserverCenterKey = "ConversationListObserverCenterKey"
+    static let conversationListObserverCenterKey = "ConversationListObserverCenterKey"
 
+    /// Note: uses `self.userInfo` and must be accessed from NSManagedObjectContext queue!
     @objc public var conversationListObserverCenter: ConversationListObserverCenter {
-        // swiftlint:disable todo_requires_jira_link
-        // FIXME: Uncomment and fix crash when running tests
-        // swiftlint:enable todo_requires_jira_link
-        // assert(zm_isUserInterfaceContext, "ConversationListObserver does not exist in syncMOC")
-
-        if let observer = self.userInfo[NSManagedObjectContext.ConversationListObserverCenterKey] as? ConversationListObserverCenter {
+        if let observer = userInfo[NSManagedObjectContext.conversationListObserverCenterKey] as? ConversationListObserverCenter {
             return observer
         }
 
         let newObserver = ConversationListObserverCenter(managedObjectContext: self)
-        self.userInfo[NSManagedObjectContext.ConversationListObserverCenterKey] = newObserver
+        userInfo[NSManagedObjectContext.conversationListObserverCenterKey] = newObserver
         return newObserver
     }
 }
@@ -99,11 +95,11 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
         }
 
         if let convChanges = changes[ZMConversation.classIdentifier] as? [ConversationChangeInfo] {
-            convChanges.forEach {conversationDidChange($0)}
+            convChanges.forEach { conversationDidChange($0) }
         } else if let messageChanges = changes[ZMClientMessage.classIdentifier] as? [MessageChangeInfo] {
-            messageChanges.forEach {messagesDidChange($0)}
+            messageChanges.forEach { messagesDidChange($0) }
         } else if let labelChanges = changes[Label.classIdentifier] as? [LabelChangeInfo] {
-            labelChanges.forEach {labelDidChange($0)}
+            labelChanges.forEach { labelDidChange($0) }
         }
 
         let insertedConversations = self.insertedConversations
@@ -144,13 +140,24 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
 
     /// Handles updated conversations, updates lists and notifies observers
     public func conversationDidChange(_ changes: ConversationChangeInfo) {
-        guard    changes.nameChanged              || changes.connectionStateChanged  || changes.isArchivedChanged
-              || changes.mutedMessageTypesChanged || changes.lastModifiedDateChanged || changes.conversationListIndicatorChanged
-              || changes.clearedChanged           || changes.securityLevelChanged    || changes.teamChanged
-              || changes.messagesChanged          || changes.labelsChanged           || changes.mlsStatusChanged
-        else { return }
+        let hasChanged = changes.nameChanged
+            || changes.connectionStateChanged
+            || changes.isArchivedChanged
+            || changes.mutedMessageTypesChanged
+            || changes.lastModifiedDateChanged
+            || changes.conversationListIndicatorChanged
+            || changes.clearedChanged
+            || changes.securityLevelChanged
+            || changes.teamChanged
+            || changes.messagesChanged
+            || changes.labelsChanged
+            || changes.mlsStatusChanged
+            || changes.oneOnOneUserChanged
+
+        guard hasChanged else { return }
+
         zmLog.debug("conversationDidChange with changes \(changes.customDebugDescription)")
-        forwardToSnapshots {$0.processConversationChanges(changes)}
+        forwardToSnapshots { $0.processConversationChanges(changes) }
     }
 
     /// Stores inserted or deleted folders temporarily until save / merge completes
@@ -189,7 +196,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
         }
 
         // clean up snapshotlist
-        snapshotsToRemove.forEach {listSnapshots.removeValue(forKey: $0)}
+        snapshotsToRemove.forEach { listSnapshots.removeValue(forKey: $0) }
     }
 
     public func stopObserving() {
@@ -272,8 +279,8 @@ class ConversationListSnapshot: NSObject {
     func conversationsChanges(inserted: [ZMConversation], deleted: [ZMConversation]) {
         guard let list = conversationList else { return }
 
-        let conversationsToInsert = Set(inserted.filter { list.predicateMatchesConversation($0)})
-        let conversationsToRemove = Set(deleted.filter { list.contains($0)})
+        let conversationsToInsert = Set(inserted.filter { list.predicateMatchesConversation($0) })
+        let conversationsToRemove = Set(deleted.filter { list.contains($0) })
         zmLog.debug("List \(list.identifier) is inserting \(conversationsToInsert.count) and deletes \(conversationsToRemove.count) conversations")
 
         list.insertConversations(conversationsToInsert)
@@ -298,7 +305,7 @@ class ConversationListSnapshot: NSObject {
             needsToRecalculate = false
         }
 
-        let changedSet = Set(conversationChanges.compactMap {$0.conversation})
+        let changedSet = Set(conversationChanges.compactMap { $0.conversation })
         guard let newStateUpdate = self.state.updatedState(changedSet, observedObject: list, newSet: list.toOrderedSetState())
         else {
             zmLog.debug("Recalculated list \(list.identifier), but old state is same as new state")
@@ -337,7 +344,7 @@ class ConversationListSnapshot: NSObject {
 
     func logMessage(for conversationChanges: [ConversationChangeInfo], listChanges: ConversationListChangeInfo?) -> String {
         var message = "Posting notification for list \(String(describing: conversationList?.identifier)) with conversationChanges: \n"
-        message.append(conversationChanges.map {$0.customDebugDescription}.joined(separator: "\n"))
+        message.append(conversationChanges.map { $0.customDebugDescription }.joined(separator: "\n"))
 
         guard let changeInfo = listChanges else { return message }
         message.append("\n ConversationListChangeInfo: \(changeInfo.description)")

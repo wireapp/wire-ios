@@ -16,10 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import XCTest
+
+@testable import WireRequestStrategy
 @testable import WireSyncEngine
 
-class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
+final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     typealias Category = WireSyncEngine.PushNotificationCategory
     typealias ConversationAction = WireSyncEngine.ConversationNotificationAction
@@ -314,24 +317,24 @@ extension ZMUserSessionTests_PushNotifications {
         XCTAssertTrue(containsReadConfirmation, "expected read confirmation for message with nonce = \(nonce)", file: file, line: line)
     }
 
-    func handle(conversationAction: ConversationAction?, category: Category, userInfo: NotificationUserInfo, userText: String? = nil) {
-        handle(action: conversationAction?.rawValue ?? "", category: category.rawValue, userInfo: userInfo, userText: userText)
+    func handle(conversationAction: ConversationAction?, category: Category, userInfo: NotificationUserInfo, userText: String? = nil, file: StaticString = #filePath, line: UInt = #line) {
+        handle(action: conversationAction?.rawValue ?? "", category: category.rawValue, userInfo: userInfo, userText: userText, file: file, line: line)
     }
 
-    func handle(callAction: CallAction, category: Category, userInfo: NotificationUserInfo) {
-        handle(action: callAction.rawValue, category: category.rawValue, userInfo: userInfo)
+    func handle(callAction: CallAction, category: Category, userInfo: NotificationUserInfo, file: StaticString = #filePath, line: UInt = #line) {
+        handle(action: callAction.rawValue, category: category.rawValue, userInfo: userInfo, file: file, line: line)
     }
 
-    func handle(action: String, category: String, userInfo: NotificationUserInfo, userText: String? = nil) {
+    func handle(action: String, category: String, userInfo: NotificationUserInfo, userText: String? = nil, file: StaticString = #filePath, line: UInt = #line) {
         uiMOC.performAndWait {
             sut.handleNotificationResponse(actionIdentifier: action, categoryIdentifier: category, userInfo: userInfo, userText: userText) {}
         }
 
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         syncMOC.performAndWait {
             sut.didFinishQuickSync()
         }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
     }
 
     func userInfoWithConversation(hasMessage: Bool = false) -> NotificationUserInfo {

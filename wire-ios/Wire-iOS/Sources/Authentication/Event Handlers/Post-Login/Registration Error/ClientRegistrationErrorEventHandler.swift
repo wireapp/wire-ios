@@ -22,7 +22,7 @@ import Foundation
  * A fallback error handler for registration errors.
  */
 
-class ClientRegistrationErrorEventHandler: AuthenticationEventHandler {
+final class ClientRegistrationErrorEventHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
 

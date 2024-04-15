@@ -175,7 +175,9 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
             return nil
         }
 
-        await context.perform { self.updateUnderlayingMessageBeforeSending(in: context) }
+        let underlyingMessage = await context.perform { self.updateUnderlayingMessageBeforeSending(in: context)
+            return self.underlyingMessage
+        }
         return await underlyingMessage?.encryptForTransport(for: conversation, in: context)
     }
 
@@ -455,7 +457,7 @@ extension GenericMessage {
                 )
             }
 
-            if useQualifiedIdentifiers, let selfDomain = context.performAndWait({ZMUser.selfUser(in: context).domain }) {
+            if useQualifiedIdentifiers, let selfDomain = context.performAndWait({ ZMUser.selfUser(in: context).domain }) {
                 let message = legacyProteusMessage(
                     selfClient,
                     selfDomain: selfDomain,

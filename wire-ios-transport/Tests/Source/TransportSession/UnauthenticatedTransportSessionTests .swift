@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import  WireTesting
 @testable import WireTransport
 
-private class MockTask: DataTaskProtocol {
+private final class MockTask: DataTaskProtocol {
 
     var resumeCallCount = 0
 
@@ -29,7 +29,7 @@ private class MockTask: DataTaskProtocol {
 
 }
 
-private class MockURLSession: SessionProtocol {
+private final class MockURLSession: SessionProtocol {
 
     var recordedRequest: URLRequest?
     var recordedCompletionHandler: ((Data?, URLResponse?, Error?) -> Void)?
@@ -47,7 +47,7 @@ private class MockURLSession: SessionProtocol {
 
 }
 
-private class MockReachability: NSObject, ReachabilityProvider, TearDownCapable {
+private final class MockReachability: NSObject, ReachabilityProvider, TearDownCapable {
 
     let mayBeReachable = true
     let isMobileConnection = true
@@ -63,7 +63,7 @@ private class MockReachability: NSObject, ReachabilityProvider, TearDownCapable 
 }
 
 @objcMembers
-class MockCertificateTrust: NSObject, BackendTrustProvider {
+final class MockCertificateTrust: NSObject, BackendTrustProvider {
 
     var isTrustingServer: Bool = true
 
@@ -225,7 +225,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
     func testThatPostsANewRequestAvailableNotificationAfterCompletingARunningRequest() {
         // given && then
         _ = customExpectation(
-            forNotification: NSNotification.Name(rawValue: NSNotification.Name.ZMTransportSessionNewRequestAvailable.rawValue),
+            forNotification: .requestAvailableNotification,
             object: nil,
             handler: nil
         )

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 import Starscream
 
 @objcMembers
-class StarscreamPushChannel: NSObject, PushChannelType {
+final class StarscreamPushChannel: NSObject, PushChannelType {
 
     var webSocket: WebSocket?
     var workQueue: OperationQueue
@@ -259,7 +259,7 @@ extension StarscreamPushChannel: WebSocketDelegate {
 
 }
 
-class StarscreamCertificatePinning: CertificatePinning {
+final class StarscreamCertificatePinning: CertificatePinning {
 
     let environment: BackendEnvironmentProvider
 

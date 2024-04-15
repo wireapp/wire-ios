@@ -310,7 +310,7 @@ extension ZMConversation {
             return
         }
 
-        zmLog.debug("Sender: \(user.remoteIdentifier?.transportString() ?? "n/a") missing from participant list: \(localParticipants.map { $0.remoteIdentifier})")
+        zmLog.debug("Sender: \(user.remoteIdentifier?.transportString() ?? "n/a") missing from participant list: \(localParticipants.map { $0.remoteIdentifier })")
 
         switch conversationType {
         case .group:
@@ -387,12 +387,26 @@ extension ZMConversation {
 // MARK: - Messages resend/expiration
 extension ZMConversation {
 
-    private func acknowledgePrivacyChanges() {
+    public var isDegraded: Bool {
+        switch messageProtocol {
+        case .proteus, .mixed:
+            return securityLevel == .secureWithIgnored
+        case .mls:
+            return mlsVerificationStatus == .degraded
+        }
+    }
+
+    public func acknowledgePrivacyChanges() {
         precondition(managedObjectContext?.zm_isUserInterfaceContext == true)
 
         // Downgrade the conversation to be unverified
-        if securityLevel == .secureWithIgnored {
-            securityLevel = .notSecure
+        if isDegraded {
+            switch messageProtocol {
+            case .proteus, .mixed:
+                securityLevel = .notSecure
+            case .mls:
+                mlsVerificationStatus = .notVerified
+            }
         }
 
         // Accept legal hold

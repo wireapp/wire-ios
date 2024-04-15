@@ -20,18 +20,21 @@ import Foundation
 import WireTransport
 
 /// An ID representing a identifying a single user client.
-
 public struct MLSClientID: Equatable, Hashable {
 
     // MARK: - Properties
 
-    public let userID: String
-    public let clientID: String
-    public let domain: String
+    public var userID: String
+    public var clientID: String
+    public var domain: String
 
-    // The string representation of the id.
+    public var rawValue: String {
+        "\(self.userID):\(self.clientID)@\(self.domain)"
+    }
 
-    public let rawValue: String
+    public var data: Data? {
+        rawValue.data(using: .utf8)
+    }
 
     // MARK: - Life cycle
 
@@ -40,7 +43,7 @@ public struct MLSClientID: Equatable, Hashable {
         self.init(userClient: selfClient)
     }
 
-    public init?(userClient: UserClient) {
+    public init?(userClient: UserClientType) {
         guard
             let userID = userClient.user?.remoteIdentifier.transportString(),
             let clientID = userClient.remoteIdentifier,
@@ -95,27 +98,12 @@ public struct MLSClientID: Equatable, Hashable {
         self.userID = userID.lowercased()
         self.clientID = clientID.lowercased()
         self.domain = domain.lowercased()
-        self.rawValue = "\(self.userID):\(self.clientID)@\(self.domain)"
     }
-
 }
 
 extension MLSClientID: CustomStringConvertible {
 
     public var description: String {
-        return rawValue
+        rawValue
     }
-
-}
-
-public extension MLSClientID {
-
-    static func random() -> MLSClientID {
-        return MLSClientID(
-            userID: UUID().transportString(),
-            clientID: .randomAlphanumerical(length: 8),
-            domain: .randomDomain()
-        )
-    }
-
 }

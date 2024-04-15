@@ -20,7 +20,7 @@ import Foundation
 import LocalAuthentication
 @testable import WireSyncEngine
 
-class MockUserSessionDelegate: NSObject, UserSessionDelegate {
+final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
 
     var prepareForMigration_Invocations = [Account]()
     func prepareForMigration(
@@ -37,6 +37,8 @@ class MockUserSessionDelegate: NSObject, UserSessionDelegate {
     func clientRegistrationDidSucceed(accountId: UUID) { }
 
     func clientRegistrationDidFail(_ error: NSError, accountId: UUID) { }
+
+    func clientCompletedInitialSync(accountId: UUID) { }
 
     var calleduserDidLogout: (Bool, UUID)?
     func userDidLogout(accountId: UUID) {

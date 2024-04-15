@@ -173,7 +173,7 @@ extension AppCenterOperation: DistributeDelegate {
             })
         }
 
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .default) {_ in })
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .default) { _ in })
 
         window.endEditing(true)
         rootViewController.present(alertController, animated: true)
@@ -191,11 +191,11 @@ extension AppCenterOperation: CrashesDelegate {
     }
 
     internal func crashes(_ crashes: Crashes, didSucceedSending errorReport: ErrorReport) {
-        zmLog.error("AppCenter: finished sending the crash report")
+        WireLogger.system.error("AppCenter: finished sending the crash report", attributes: .safePublic)
     }
 
     internal func crashes(_ crashes: Crashes, didFailSending errorReport: ErrorReport, withError error: Error?) {
-        zmLog.error("AppCenter: failed sending the crash report with error: \(String(describing: error?.localizedDescription))")
+        WireLogger.system.error("AppCenter: failed sending the crash report with error: \(String(describing: error?.localizedDescription))", attributes: .safePublic)
     }
 }
 #endif

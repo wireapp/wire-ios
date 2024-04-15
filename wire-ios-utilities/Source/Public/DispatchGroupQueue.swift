@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers public class DispatchGroupQueue: NSObject, ZMSGroupQueue {
+@objcMembers
+public final class DispatchGroupQueue: NSObject, ZMSGroupQueue {
 
     let queue: DispatchQueue
     let dispatchGroupContext: DispatchGroupContext

@@ -1,0 +1,41 @@
+name: C1 C2 C3 Production
+
+on: 
+  workflow_dispatch:
+    inputs:
+      column:
+        description: 'Column (C1, C2, C3, all)'
+        type: choice
+        options:
+          - C1
+          - C2
+          - C3
+          - all
+        required: true
+        default: 'all'
+
+permissions: 
+  checks: write
+
+jobs:
+  column_1_production:
+    uses: ./.github/workflows/_reusable_app_release.yml
+    with:
+      fastlane_action: appstore_col_1_prod
+      is_cloud_build: false
+    secrets: inherit
+
+
+  column_2_production:
+    uses: ./.github/workflows/_reusable_app_release.yml
+    with:
+      fastlane_action: appstore_col_2_prod
+      is_cloud_build: false
+    secrets: inherit
+  
+  column_3_production:
+    uses: ./.github/workflows/_reusable_app_release.yml
+    with:
+      fastlane_action: appstore_col_3_prod
+      is_cloud_build: false
+    secrets: inherit

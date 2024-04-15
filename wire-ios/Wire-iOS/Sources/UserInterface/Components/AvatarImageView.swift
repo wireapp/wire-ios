@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,51 +19,29 @@
 import UIKit
 
 /// A view that displays the avatar of a user, either as text initials or as an image.
-class AvatarImageView: UIControl {
-
-    /**
-     * The different shapes of avatars.
-     */
-
-    enum Shape {
-        case rectangle, circle, relative
-    }
+class AvatarImageView: UIView {
 
     // MARK: - Properties
 
     /// The avatar to display.
-    var avatar = UserStatus.Avatar() {
-        didSet {
-            if avatar != oldValue {
-                updateAvatar()
-            }
-        }
+    var avatar = Avatar() {
+        didSet { avatar != oldValue ? updateAvatar() : () }
     }
 
     /// The shape of the avatar
     var shape: Shape = .circle {
-        didSet {
-            if shape != oldValue {
-                updateShape()
-            }
-        }
+        didSet { shape != oldValue ? updateShape() : () }
     }
 
     /// Whether to allow initials.
     var allowsInitials = true {
-        didSet {
-            if allowsInitials != oldValue {
-                updateAvatar()
-            }
-        }
+        didSet { allowsInitials != oldValue ? updateAvatar() : () }
     }
 
     /// The background color for the image.
     var imageBackgroundColor: UIColor? {
         get { return container.backgroundColor }
-        set {
-            container.backgroundColor = newValue
-        }
+        set { container.backgroundColor = newValue }
     }
 
     /// The font to use of the initials label.
@@ -79,11 +57,7 @@ class AvatarImageView: UIControl {
     }
 
     override var contentMode: UIView.ContentMode {
-        didSet {
-            if contentMode != oldValue {
-                imageView.contentMode = contentMode
-            }
-        }
+        didSet { imageView.contentMode = contentMode }
     }
 
     /// The view that contains the avatar.
@@ -96,16 +70,18 @@ class AvatarImageView: UIControl {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+
         configureSubviews()
         configureConstraints()
     }
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init?(coder aDecoder: NSCoder) is not implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     private func configureSubviews() {
-        contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFill
 
         isOpaque = false
         imageView.isOpaque = false
@@ -153,12 +129,9 @@ class AvatarImageView: UIControl {
         ])
     }
 
-    /**
-     * Updates the image constraints hugging and resistance priorities.
-     * - parameter resistance: The compression resistance priority.
-     * - parameter hugging: The content hugging priority.
-     */
-
+    /// Updates the image constraints hugging and resistance priorities.
+    /// - parameter resistance: The compression resistance priority.
+    /// - parameter hugging: The content hugging priority.
     func setImageConstraint(resistance: Float, hugging: Float) {
         imageView.setContentHuggingPriority(UILayoutPriority(rawValue: hugging), for: .vertical)
         imageView.setContentHuggingPriority(UILayoutPriority(rawValue: hugging), for: .horizontal)
@@ -203,8 +176,29 @@ class AvatarImageView: UIControl {
         case .rectangle:
             container.shape = .rectangle
         case .relative:
-            container.shape = .relative(multiplier: 1/6, dimension: .height)
+            container.shape = .relative(multiplier: 1 / 6, dimension: .height)
         }
     }
 
+    // MARK: -
+
+    /// The different, mutually-exclusive forms of avatars.
+    public enum Avatar: Equatable {
+
+        case image(UIImage)
+        case text(String)
+
+        public init() {
+            self = .image(resource: .unavailableUser)
+        }
+
+        static func image(resource: ImageResource) -> Self {
+            .image(.init(resource: resource))
+        }
+    }
+
+    /// The different shapes of avatars.
+    enum Shape {
+        case rectangle, circle, relative
+    }
 }

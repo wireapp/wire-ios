@@ -23,7 +23,7 @@ import WireCommonComponents
  * A view that displays a solid button.
  */
 
-class SolidButtonDescription: ValueSubmission {
+final class SolidButtonDescription: ValueSubmission {
     let title: String
     let accessibilityIdentifier: String
 

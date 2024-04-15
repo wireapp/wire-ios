@@ -98,8 +98,6 @@ public extension NSURL {
 
 }
 
-private let log = ZMSLog(tag: "core-data")
-
 @objcMembers
 public class CoreDataStack: NSObject, ContextProvider {
 
@@ -199,8 +197,7 @@ public class CoreDataStack: NSObject, ContextProvider {
             try closeStores(in: messagesContainer)
             try closeStores(in: eventsContainer)
         } catch let error {
-            Logging.localStorage.error("Error while closing persistent store: \(error)")
-            log.safePublic("Error while closing persistent store: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
+            WireLogger.localStorage.error("Error while closing persistent store: \(error)", attributes: .safePublic)
         }
     }
 
@@ -220,28 +217,28 @@ public class CoreDataStack: NSObject, ContextProvider {
         }
         DispatchQueue.global(qos: .userInitiated).async {
             if self.needsMessagingStoreMigration() {
-                log.safePublic("[setup] start migration of core data messaging store!")
-                WireLogger.localStorage.info("start migration of core data messaging store!")
+                let tp = ZMSTimePoint(interval: 60.0, label: "db migration")
+                WireLogger.localStorage.info("[setup] start migration of core data messaging store!", attributes: .safePublic)
 
                 do {
                     try self.migrateMessagingStore()
-                    log.safePublic("[setup] finished migration of core data messaging store!")
-                    WireLogger.localStorage.info("finished migration of core data messaging store!")
+                    WireLogger.localStorage.info("[setup] finished migration of core data messaging store!", attributes: .safePublic)
                 } catch {
-                    let logMessage = "failed migration of core data messaging store: \(error.localizedDescription)."
-                    log.safePublic("[setup] \(SanitizedString(stringLiteral: logMessage))", level: .error)
-                    WireLogger.localStorage.error(logMessage)
+                    let logMessage = "[setup] failed migration of core data messaging store: \(error.localizedDescription)."
+                    WireLogger.localStorage.error(logMessage, attributes: .safePublic)
 
                     DispatchQueue.main.async {
                         onFailure(error)
                     }
                     return
                 }
+                if tp.warnIfLongerThanInterval() == false {
+                    WireLogger.localStorage.info("time spent in migration only: \(tp.elapsedTime)", attributes: .safePublic)
+                }
             }
 
             DispatchQueue.main.async {
-                WireLogger.localStorage.debug("load core data stores!")
-                log.safePublic("[setup] load core data stores!", level: .debug)
+                WireLogger.localStorage.info("[setup] load core data stores!", attributes: .safePublic)
                 self.loadStores { error in
                     if DeveloperFlag.forceDatabaseLoadingFailure.isOn {
                         // flip off the flag in order not to be stuck in failure
@@ -269,8 +266,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         dispatchGroup.enter()
         loadMessagesStore { (error) in
             if let error = error {
-                WireLogger.localStorage.error("failed to load message store: \(error)")
-                log.safePublic("failed to load message store: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
+                WireLogger.localStorage.error("failed to load message store: \(error)", attributes: .safePublic)
             }
             loadingStoreError = loadingStoreError ?? error
             dispatchGroup.leave()
@@ -280,7 +276,6 @@ public class CoreDataStack: NSObject, ContextProvider {
         loadEventStore { (error) in
             if let error = error {
                 WireLogger.localStorage.error("failed to load event store: \(error)")
-                log.safePublic("failed to load event store: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
             }
             loadingStoreError = loadingStoreError ?? error
             dispatchGroup.leave()

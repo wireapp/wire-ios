@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireSyncEngine
 
-class ZMLocalNotificationTests_Alerts: ZMLocalNotificationTests {
+final class ZMLocalNotificationTests_Alerts: ZMLocalNotificationTests {
 
     func addSelfUserToTeam() {
 
@@ -27,7 +27,7 @@ class ZMLocalNotificationTests_Alerts: ZMLocalNotificationTests {
         team.name = "Team-A"
         let user = ZMUser.selfUser(in: self.uiMOC)
         self.performPretendingUiMocIsSyncMoc {
-            _ = Member.getOrCreateMember(for: user, in: team, context: self.uiMOC)
+            _ = Member.getOrUpdateMember(for: user, in: team, context: self.uiMOC)
         }
     }
 

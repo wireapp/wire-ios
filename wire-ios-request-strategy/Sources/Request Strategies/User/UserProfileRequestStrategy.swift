@@ -136,7 +136,7 @@ extension UserProfileRequestStrategy: ZMContextChangeTracker {
         guard let apiVersion = BackendInfo.apiVersion else { return }
 
         let usersNeedingToBeUpdated = objects
-            .compactMap { $0 as? ZMUser}
+            .compactMap { $0 as? ZMUser }
             .filter(\.needsToBeUpdatedFromBackend)
 
         fetch(users: Set(usersNeedingToBeUpdated), for: apiVersion)
@@ -227,7 +227,7 @@ class UserProfileByIDTranscoder: IdentifierObjectSyncTranscoder {
 
     public typealias T = UUID
 
-    var fetchLimit: Int =  1600 / 25 // UUID as string is 24 + 1 for the comma
+    var fetchLimit: Int = 1600 / 25 // UUID as string is 24 + 1 for the comma
 
     let context: NSManagedObjectContext
     let decoder: JSONDecoder = .defaultDecoder

@@ -257,7 +257,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         conversation.isArchived = true
         conversation.mutedStatus = MutedMessageOptionValue.all.rawValue
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
-        selfUser.remoteIdentifier =  UUID.create()
+        selfUser.remoteIdentifier = UUID.create()
 
         // when
         conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
@@ -274,7 +274,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         conversation.isArchived = true
         conversation.remoteIdentifier = UUID.create()
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
-        selfUser.remoteIdentifier =  UUID.create()
+        selfUser.remoteIdentifier = UUID.create()
 
         // when
         conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
@@ -289,7 +289,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         conversation.conversationType = .group
         let user1 = self.createUser()
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
-        selfUser.remoteIdentifier =  UUID.create()
+        selfUser.remoteIdentifier = UUID.create()
 
         conversation.addParticipantsAndUpdateConversationState(users: Set([selfUser, user1]), role: nil)
 
@@ -520,7 +520,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 2)
-        XCTAssertEqual(conversation.participantRoles.compactMap { $0.role}, [role1, role1])
+        XCTAssertEqual(conversation.participantRoles.compactMap { $0.role }, [role1, role1])
     }
 
     func testThatItAddsParticipantsWithTheGivenRole() {
@@ -545,8 +545,8 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 2)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user1}?.role, role1)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user2}?.role, role2)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user1 }?.role, role1)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user2 }?.role, role2)
     }
 
     func testThatItDoesNotAddDeletedParticipants() {
@@ -571,7 +571,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 1)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user1}?.role, role1)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user1 }?.role, role1)
     }
 
     func testThatItUpdateParticipantWithTheGivenRole() {
@@ -590,18 +590,18 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         conversation.addParticipantsAndUpdateConversationState(usersAndRoles: [
             (user1, role1),
             (user2, role1)
-            ])
+        ])
 
         // when
         conversation.addParticipantsAndUpdateConversationState(usersAndRoles: [
             (user1, role1),
             (user2, role2)
-            ])
+        ])
 
         // then
         XCTAssertEqual(conversation.participantRoles.count, 2)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user1}?.role, role1)
-        XCTAssertEqual(conversation.participantRoles.first {$0.user == user2}?.role, role2)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user1 }?.role, role1)
+        XCTAssertEqual(conversation.participantRoles.first { $0.user == user2 }?.role, role2)
     }
 
     func testThatItRefetchesRolesIfNoRoles() {

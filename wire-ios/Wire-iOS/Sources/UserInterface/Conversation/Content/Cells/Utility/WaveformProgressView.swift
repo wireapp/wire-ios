@@ -18,7 +18,7 @@
 
 import UIKit
 
-final private class WaveformBarsView: UIView {
+private final class WaveformBarsView: UIView {
 
     var samples: [Float] = [] {
         didSet {

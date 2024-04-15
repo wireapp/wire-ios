@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import struct WireSystem.WireLogger
 
 protocol AccessTokenRenewalObserver {
     func accessTokenRenewalDidSucceed()
@@ -33,7 +34,6 @@ class AccessTokenMigration: APIMigration, AccessTokenRenewalObserver {
     let version: APIVersion = .v3
 
     private var continuation: CheckedContinuation<Void, Swift.Error>?
-    private let logger = Logging.apiMigration
 
     enum Error: Swift.Error {
         case failedToRenewAccessToken
@@ -44,7 +44,7 @@ class AccessTokenMigration: APIMigration, AccessTokenRenewalObserver {
     }
 
     func perform(withTokenRenewer tokenRenewer: AccessTokenRenewing, clientID: String) async throws {
-        logger.info("performing access token migration for clientID \(clientID)")
+        WireLogger.apiMigration.info("performing access token migration for clientID \(clientID)")
 
         tokenRenewer.setAccessTokenRenewalObserver(self)
 
@@ -55,13 +55,13 @@ class AccessTokenMigration: APIMigration, AccessTokenRenewalObserver {
     }
 
     func accessTokenRenewalDidSucceed() {
-        logger.info("successfully renewed access token")
+        WireLogger.apiMigration.info("successfully renewed access token")
         continuation?.resume()
         teardownContinuation()
     }
 
     func accessTokenRenewalDidFail() {
-        logger.warn("failed to renew access token")
+        WireLogger.apiMigration.warn("failed to renew access token")
         continuation?.resume(throwing: Self.Error.failedToRenewAccessToken)
         teardownContinuation()
     }

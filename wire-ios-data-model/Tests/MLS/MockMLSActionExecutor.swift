@@ -29,6 +29,30 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
     // `MockMLSActionExecutor` could be declared as actor.
     private let serialQueue = DispatchQueue(label: "MockMLSActionExecutor")
 
+    // MARK: - Process welcome message
+
+    typealias ProcessWelcomeMessageMock = ((Data) async throws -> MLSGroupID)
+    private var mockProcessWelcomeMessage_: ProcessWelcomeMessageMock?
+    var mockProcessWelcomeMessage: ProcessWelcomeMessageMock? {
+        get { serialQueue.sync { mockProcessWelcomeMessage_ } }
+        set { serialQueue.sync { mockProcessWelcomeMessage_ = newValue } }
+    }
+
+    private var processWelcomeMessageCount_ = 0
+    var processWelcomeMessageCount: Int {
+        get { serialQueue.sync { processWelcomeMessageCount_ } }
+        set { serialQueue.sync { processWelcomeMessageCount_ = newValue } }
+    }
+
+    func processWelcomeMessage(_ message: Data) async throws -> MLSGroupID {
+        guard let mock = mockProcessWelcomeMessage else {
+            fatalError("no mock for `processWelcomeMessage`")
+        }
+
+        processWelcomeMessageCount_ += 1
+        return try await mock(message)
+    }
+
     // MARK: - Add members
 
     typealias AddMembersMock = (([KeyPackage], MLSGroupID) async throws -> [ZMUpdateEvent])
@@ -180,4 +204,22 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         mockOnEpochChangedCount += 1
         return mock()
     }
+
+    // MARK: - On new CRLs distribution points
+
+    typealias OnNewCRLsDistributionPointsMock = () -> AnyPublisher<CRLsDistributionPoints, Never>
+    private var mockOnNewCRLsDistributionPoints_: OnNewCRLsDistributionPointsMock?
+    var mockOnNewCRLsDistributionPoints: OnNewCRLsDistributionPointsMock? {
+        get { serialQueue.sync { mockOnNewCRLsDistributionPoints_ } }
+        set { serialQueue.sync { mockOnNewCRLsDistributionPoints_ = newValue } }
+    }
+
+    func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
+        guard let mock = mockOnNewCRLsDistributionPoints else {
+            fatalError("no mock for `onNewCRLsDistributionPoints`")
+        }
+
+        return mock()
+    }
+
 }

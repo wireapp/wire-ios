@@ -23,8 +23,8 @@ class ActionHandler<T: EntityAction>: NSObject, EntityActionHandler, ZMRequestGe
 
     let context: NSManagedObjectContext
 
-    private var pendingActions: [Action] = []
-    private var token: Any?
+    private(set) var pendingActions: [Action] = []
+    private var token: NSObjectProtocol?
 
     init(context: NSManagedObjectContext) {
         self.context = context
@@ -58,7 +58,13 @@ class ActionHandler<T: EntityAction>: NSObject, EntityActionHandler, ZMRequestGe
         let request = self.request(for: action, apiVersion: apiVersion)
 
         request?.add(ZMCompletionHandler(on: context, block: { [weak self] (response) in
-            self?.handleResponse(response, action: action)
+            if response.httpStatus.isOne(of: TooManyRequestsStatusCode, EnhanceYourCalmStatusCode) {
+                // We're being rate limited, put the action back so we can try again
+                // next time the operation loop polls.
+                self?.pendingActions.append(action)
+            } else {
+                self?.handleResponse(response, action: action)
+            }
         }))
 
         return request

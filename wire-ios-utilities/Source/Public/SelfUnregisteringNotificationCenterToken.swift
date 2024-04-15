@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,16 +19,15 @@
 import Foundation
 
 @objcMembers
-public class SelfUnregisteringNotificationCenterToken: NSObject {
+public final class SelfUnregisteringNotificationCenterToken: NSObject {
 
-    private let token: Any
+    private let token: NSObjectProtocol
+
+    public init(_ token: NSObjectProtocol) {
+        self.token = token
+    }
 
     deinit {
         NotificationCenter.default.removeObserver(token)
     }
-
-    public init(_ token: Any) {
-        self.token = token
-    }
-
 }
