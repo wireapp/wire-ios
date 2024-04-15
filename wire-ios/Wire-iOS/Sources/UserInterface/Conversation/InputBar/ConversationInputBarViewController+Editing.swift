@@ -65,7 +65,7 @@ extension ConversationInputBarViewController {
     }
 
     func updateWritingState(animated: Bool) {
-        guard nil == editingMessage else { return }
+        guard editingMessage == nil else { return }
         inputBar.setInputBarState(.writing(ephemeral: ephemeralState), animated: animated)
         updateRightAccessoryView()
         updateMarkdownButton()

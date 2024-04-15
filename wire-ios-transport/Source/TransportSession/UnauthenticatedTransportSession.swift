@@ -166,7 +166,7 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
                 transportResponse = ZMTransportResponse(transportSessionError: error, apiVersion: request.apiVersion)
             }
 
-            if nil == transportResponse {
+            if transportResponse == nil {
                 preconditionFailure()
             }
 

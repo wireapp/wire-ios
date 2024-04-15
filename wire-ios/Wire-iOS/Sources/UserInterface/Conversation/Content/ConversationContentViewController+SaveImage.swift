@@ -39,7 +39,7 @@ extension ConversationContentViewController {
             let sourceRect = sourceView.convert(sourceView.frame, from: sourceView.superview)
 
             savableImage.saveToLibrary { success in
-                guard nil != self.view.window, success else { return }
+                guard self.view.window != nil, success else { return }
                 snapshot?.translatesAutoresizingMaskIntoConstraints = true
                 self.delegate?.conversationContentViewController(self, performImageSaveAnimation: snapshot, sourceRect: sourceRect)
             }

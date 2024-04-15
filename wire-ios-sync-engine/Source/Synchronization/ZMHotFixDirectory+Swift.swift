@@ -54,7 +54,7 @@ import Foundation
 
         messages.forEach { message in
             message.updateTransferState(.uploadingFailed, synchronize: false)
-            if nil != message.imageMessageData {
+            if message.imageMessageData != nil {
                 message.expire()
             }
         }

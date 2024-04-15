@@ -178,7 +178,7 @@ final class LocationSelectionViewController: UIViewController {
     fileprivate func formatAndUpdateAddress() {
         guard mapDidRender else { return }
         geocoder.reverseGeocodeLocation(mapView.centerCoordinate.location) { [weak self] placemarks, error in
-            guard nil == error, let placemark = placemarks?.first else { return }
+            guard error == nil, let placemark = placemarks?.first else { return }
             if let address = placemark.formattedAddress(false), !address.isEmpty {
                 self?.sendViewController.address = address
             } else {

@@ -185,7 +185,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     }
 
     public func fetchImagePreviewData(queue: DispatchQueue, completionHandler: @escaping (Data?) -> Void) {
-        guard nil != fileMessageData, !isImage else { return completionHandler(nil) }
+        guard fileMessageData != nil, !isImage else { return completionHandler(nil) }
 
         asset?.fetchImageData(with: queue, completionHandler: completionHandler)
     }

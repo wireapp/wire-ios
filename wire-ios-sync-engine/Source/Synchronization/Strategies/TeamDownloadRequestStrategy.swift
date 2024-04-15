@@ -177,7 +177,7 @@ public final class TeamDownloadRequestStrategy: AbstractRequestStrategy, ZMConte
     }
 
     private func processUpdatedMember(with event: ZMUpdateEvent) {
-        guard nil != event.teamId, let data = event.dataPayload else { return }
+        guard event.teamId != nil, let data = event.dataPayload else { return }
         guard let userId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init(transportString:)) else { return }
         guard let member = Member.fetch(with: userId, in: managedObjectContext) else { return }
         member.needsToBeUpdatedFromBackend = true

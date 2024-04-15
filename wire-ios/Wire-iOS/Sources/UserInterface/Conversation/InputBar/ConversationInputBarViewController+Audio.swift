@@ -240,7 +240,7 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
         default: break
         }
 
-        if 0 == callCountWhileCameraKeyboardWasVisible, wasRecordingBeforeCall {
+        if callCountWhileCameraKeyboardWasVisible == 0, wasRecordingBeforeCall {
             displayRecordKeyboard() // -> show the audio record keyboard again
         }
     }

@@ -627,7 +627,14 @@ extension CallViewController {
 
     private func hideOverlayAfterCallEstablishedIfNeeded() {
         let isNotAnimating = callInfoRootViewController.view.layer.animationKeys()?.isEmpty ?? true
-        guard nil == overlayTimer, canHideOverlay, isOverlayVisible, isNotAnimating else { return }
+
+        guard
+            overlayTimer == nil,
+            canHideOverlay,
+            isOverlayVisible,
+            isNotAnimating
+        else { return }
+
         animateOverlay(show: false)
     }
 
@@ -654,7 +661,7 @@ extension CallViewController {
     }
 
     private func restartOverlayTimerIfNeeded() {
-        guard nil != overlayTimer, canHideOverlay else { return }
+        guard overlayTimer != nil, canHideOverlay else { return }
         startOverlayTimer()
     }
 

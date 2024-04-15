@@ -129,7 +129,7 @@ fileprivate extension ZMConversation {
         var count = 0
         for message in lastMessages() {
             guard let timestamp = message.serverTimestamp else { continue }
-            guard nil == message.systemMessageData else { continue }
+            guard message.systemMessageData == nil else { continue }
             guard timestamp >= oneMonthAgo else { return count }
             count += 1
         }

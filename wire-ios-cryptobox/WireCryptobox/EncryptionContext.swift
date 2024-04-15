@@ -138,7 +138,7 @@ extension EncryptionContext {
         performCount += 1
         block(self.currentSessionsDirectory!)
         performCount -= 1
-        if 0 == performCount {
+        if performCount == 0 {
             self.currentSessionsDirectory = nil
         }
         self.releaseDirectoryLock()
@@ -160,7 +160,7 @@ extension EncryptionContext {
         performCount += 1
         await block(self.currentSessionsDirectory!)
         performCount -= 1
-        if 0 == performCount {
+        if performCount == 0 {
             self.currentSessionsDirectory = nil
         }
         self.releaseDirectoryLock()

@@ -96,7 +96,7 @@ final class UserConnectionView: UIView, Copyable {
     }
 
     private func updateSecondLabel() {
-        guard nil != handleLabelText else { return }
+        guard handleLabelText != nil else { return }
         secondLabel.attributedText = correlationLabelText ?? NSAttributedString(string: "")
         secondLabel.accessibilityIdentifier = "correlation"
     }
