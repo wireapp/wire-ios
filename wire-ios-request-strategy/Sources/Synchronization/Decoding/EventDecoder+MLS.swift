@@ -99,10 +99,14 @@ extension EventDecoder {
                 return []
             }
 
-            return await results.asyncCompactMap { result in
+            var events = [ZMUpdateEvent]()
+            for result in results {
+
                 switch result {
                 case .message(let decryptedData, let senderClientID):
-                    return updateEvent.decryptedMLSEvent(decryptedData: decryptedData, senderClientID: senderClientID)
+                    if let event = updateEvent.decryptedMLSEvent(decryptedData: decryptedData, senderClientID: senderClientID) {
+                        events.append(event)
+                    }
 
                 case .proposal(let commitDelay):
                     let scheduledDate = (updateEvent.timestamp ?? Date()) + TimeInterval(commitDelay)
@@ -114,10 +118,9 @@ extension EventDecoder {
                     if let mlsService, updateEvent.source == .webSocket {
                         mlsService.commitPendingProposalsIfNeeded()
                     }
-
-                    return nil
                 }
             }
+            return events
 
         } catch {
             WireLogger.mls.warn("failed to decrypt mls message: \(String(describing: error))")
