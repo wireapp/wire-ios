@@ -378,18 +378,23 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
             case .configureDevicePermissions:
                 guard
-                    let session = ZMUserSession.shared(),
+                    let session: UserSession = ZMUserSession.shared(),
                     session.encryptMessagesAtRest
                 else {
                     eventResponderChain.handleEvent(ofType: .deviceConfigurationComplete)
                     return
                 }
 
-                session.appLockController.evaluateAuthentication(
+                session.evaluateAppLockAuthentication(
                     passcodePreference: .deviceOnly,
                     description: L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.description
+<<<<<<< HEAD
                 ) { [weak self] _, _  in
                     DispatchQueue.main.async {
+=======
+                ) { [weak self] _  in
+                    DispatchQueue.main.performAsync {
+>>>>>>> 945d3b51a8 (fix: passcode during call [feature][WPB-7111] (#1188))
                         self?.eventResponderChain.handleEvent(ofType: .deviceConfigurationComplete)
                     }
                 }
