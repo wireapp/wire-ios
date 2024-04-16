@@ -121,8 +121,7 @@ extension ConversationListViewController.ViewModel {
 
         if let userSession = ZMUserSession.shared() {
             initialSyncObserverToken = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
-            userObservationToken = UserClientChangeInfo.add(observer: self, for: userSession.selfUserClient!)
-//            userObservationToken = userSession.addUserObserver(self, for: selfUser)
+            userObservationToken = userSession.addUserObserver(self, for: selfUser)
         }
 
         updateObserverTokensForActiveTeam()
@@ -238,27 +237,21 @@ extension ConversationListViewController.ViewModel {
     }
 }
 
-extension ConversationListViewController.ViewModel: /*UserObserving,*/ UserClientObserver {
+extension ConversationListViewController.ViewModel: UserObserving {
 
-//    func userDidChange(_ changeInfo: UserChangeInfo) {
-//        print("myTest: ConversationListViewController")
-//        if changeInfo.nameChanged {
-//            print("myTest: ConversationListViewController - name")
-//            selfUserStatus.name = changeInfo.user.name ?? ""
-//        }
-//        if changeInfo.trustLevelChanged {
-//            print("myTest: ConversationListViewController - trustLevelChanged")
-//            selfUserStatus.isProteusVerified = changeInfo.user.isVerified
-//            updateE2EICertifiedStatus()
-//        }
-//        if changeInfo.availabilityChanged {
-//            selfUserStatus.availability = changeInfo.user.availability
-//        }
-//    }
-
-    func userClientDidChange(_ changeInfo: UserClientChangeInfo) {
-        print("myTest: userClientDidChange - \(changeInfo)")
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+        if changeInfo.nameChanged {
+            selfUserStatus.name = changeInfo.user.name ?? ""
+        }
+        if changeInfo.trustLevelChanged {
+            selfUserStatus.isProteusVerified = changeInfo.user.isVerified
+            updateE2EICertifiedStatus()
+        }
+        if changeInfo.availabilityChanged {
+            selfUserStatus.availability = changeInfo.user.availability
+        }
     }
+
 }
 
 extension ConversationListViewController.ViewModel: ZMInitialSyncCompletionObserver {

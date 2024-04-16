@@ -31,8 +31,7 @@ extension UserClient: ObjectInSnapshot {
         return Set([#keyPath(UserClient.trustedByClients),
                     #keyPath(UserClient.ignoredByClients),
                     #keyPath(UserClient.needsToNotifyUser),
-                    #keyPath(UserClient.needsToNotifyOtherUserAboutSessionReset),
-                    #keyPath(UserClient.lastActiveDate)])
+                    #keyPath(UserClient.needsToNotifyOtherUserAboutSessionReset)])
 
     }
 
@@ -45,7 +44,6 @@ public enum UserClientChangeInfoKey: String {
     case TrustedByClientsChanged = "trustedByClientsChanged"
     case IgnoredByClientsChanged = "ignoredByClientsChanged"
     case FingerprintChanged = "fingerprintChanged"
-    case LastActiveDateChanged = "lastActiveDateChanged"
 }
 
 @objcMembers open class UserClientChangeInfo: ObjectChangeInfo {
@@ -65,10 +63,6 @@ public enum UserClientChangeInfoKey: String {
 
     open var needsToNotifyUserChanged: Bool {
         return changedKeysContain(keys: #keyPath(UserClient.needsToNotifyUser))
-    }
-
-    open var lastActiveDateChanged: Bool {
-        return changedKeysContain(keys: #keyPath(UserClient.lastActiveDate))
     }
 
     open var sessionHasBeenReset: Bool {
