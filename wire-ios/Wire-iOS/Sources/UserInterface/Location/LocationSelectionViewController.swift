@@ -62,7 +62,7 @@ final class LocationSelectionViewController: UIViewController {
     let locationButtonContainer = UIView()
     var sendControllerHeightConstraint: NSLayoutConstraint?
 
-    private var mapView = MKMapView()
+    private var mapManager = MapManager()
     private let toolBar = ModalTopBar()
     private let locationManager = CLLocationManager()
     private let geocoder = CLGeocoder()
@@ -83,8 +83,7 @@ final class LocationSelectionViewController: UIViewController {
         super.viewDidLoad()
 
         AppLocationManager.shared.delegate = self
-
-        mapView.delegate = self
+        mapManager.delegate = self
         toolBar.delegate = self
         sendViewController.delegate = self
 
@@ -94,7 +93,7 @@ final class LocationSelectionViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if !userLocationAuthorized { mapView.restoreLocation(animated: true) }
+        if !userLocationAuthorized { mapManager.mapView.restoreLocation(animated: true) }
         AppLocationManager.shared.requestLocationAuthorization()
         endEditing()
     }
@@ -102,7 +101,7 @@ final class LocationSelectionViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         AppLocationManager.shared.stopUpdatingLocation()
-        mapView.storeLocation()
+        mapManager.mapView.storeLocation()
     }
 
     // MARK: - Configuration
@@ -110,7 +109,11 @@ final class LocationSelectionViewController: UIViewController {
     private func configureViews() {
         addChild(sendViewController)
         sendViewController.didMove(toParent: self)
-        [mapView, sendViewController.view, toolBar, locationButton].forEach(view.addSubview)
+
+        view.addSubview(mapManager.mapView)
+        view.addSubview(sendViewController.view)
+        view.addSubview(toolBar)
+        view.addSubview(locationButton)
 
         let action = UIAction { [weak self] _ in
             self?.locationButtonTapped()
@@ -118,18 +121,13 @@ final class LocationSelectionViewController: UIViewController {
 
         locationButton.addAction(action, for: .touchUpInside)
 
-        mapView.isRotateEnabled = false
-        mapView.isPitchEnabled = false
         toolBar.configure(title: title ?? "", subtitle: nil, topAnchor: safeTopAnchor)
-        pointAnnotation.coordinate = mapView.centerCoordinate
 
-        mapView.addSubview(annotationView)
     }
-
     private func createConstraints() {
         guard let sendController = sendViewController.view else { return }
 
-        [mapView, sendController, annotationView, toolBar, locationButton].forEach {
+        [mapManager.mapView, sendController, annotationView, toolBar, locationButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
@@ -137,18 +135,18 @@ final class LocationSelectionViewController: UIViewController {
         sendControllerHeightConstraint?.isActive = false
 
         NSLayoutConstraint.activate([
-            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            mapView.topAnchor.constraint(equalTo: view.topAnchor),
-            mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            mapManager.mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            mapManager.mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            mapManager.mapView.topAnchor.constraint(equalTo: view.topAnchor),
+            mapManager.mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             sendController.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             sendController.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             sendController.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             toolBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             toolBar.topAnchor.constraint(equalTo: view.topAnchor),
             toolBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            annotationView.centerXAnchor.constraint(equalTo: mapView.centerXAnchor, constant: LayoutConstants.annotationViewCenterXOffset),
-            annotationView.bottomAnchor.constraint(equalTo: mapView.centerYAnchor, constant: LayoutConstants.annotationViewBottomOffset),
+            annotationView.centerXAnchor.constraint(equalTo: mapManager.mapView.centerXAnchor, constant: LayoutConstants.annotationViewCenterXOffset),
+            annotationView.bottomAnchor.constraint(equalTo: mapManager.mapView.centerYAnchor, constant: LayoutConstants.annotationViewBottomOffset),
             annotationView.heightAnchor.constraint(equalToConstant: LayoutConstants.annotationViewHeight),
             annotationView.widthAnchor.constraint(equalToConstant: LayoutConstants.annotationViewWidth),
 
@@ -168,7 +166,7 @@ final class LocationSelectionViewController: UIViewController {
     // MARK: - Helpers
 
     private func updateUserLocation() {
-        mapView.showsUserLocation = userLocationAuthorized
+        mapManager.mapView.showsUserLocation = userLocationAuthorized
         if userLocationAuthorized {
             AppLocationManager.shared.startUpdatingLocation()
         }
@@ -176,8 +174,8 @@ final class LocationSelectionViewController: UIViewController {
 
     private func zoomToUserLocation(_ animated: Bool) {
         guard userLocationAuthorized else { return presentUnauthorizedAlert() }
-        let region = MKCoordinateRegion(center: mapView.userLocation.coordinate, latitudinalMeters: 50, longitudinalMeters: 50)
-        mapView.setRegion(region, animated: animated)
+        let region = MKCoordinateRegion(center: mapManager.mapView.userLocation.coordinate, latitudinalMeters: 50, longitudinalMeters: 50)
+        mapManager.mapView.setRegion(region, animated: animated)
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -211,7 +209,7 @@ final class LocationSelectionViewController: UIViewController {
 
     private func formatAndUpdateAddress() {
         guard mapDidRender else { return }
-        geocoder.reverseGeocodeLocation(mapView.centerCoordinate.location) { [weak self] placemarks, error in
+        geocoder.reverseGeocodeLocation(mapManager.mapView.centerCoordinate.location) { [weak self] placemarks, error in
             guard error == nil, let placemark = placemarks?.first else { return }
             if let address = placemark.formattedAddress(false), !address.isEmpty {
                 self?.sendViewController.address = address
@@ -222,7 +220,7 @@ final class LocationSelectionViewController: UIViewController {
     }
 }
 
-// MARK: - Location Manager Delegate
+// MARK: - LocationSendViewControllerDelegate
 
 extension LocationSelectionViewController: LocationSendViewControllerDelegate {
 
@@ -240,13 +238,13 @@ extension LocationSelectionViewController: LocationSendViewControllerDelegate {
     }
 
     func locationSendViewControllerSendButtonTapped(_ viewController: LocationSendViewController) {
-        let locationData = mapView.locationData(name: viewController.address)
+        let locationData = mapManager.mapView.locationData(name: viewController.address)
         delegate?.locationSelectionViewController(self, didSelectLocationWithData: locationData)
         dismiss(animated: true, completion: nil)
     }
 }
 
-// MARK: - Map View Delegate
+// MARK: - Modal Top Bar Delegate
 
 extension LocationSelectionViewController: ModalTopBarDelegate {
 
@@ -256,39 +254,28 @@ extension LocationSelectionViewController: ModalTopBarDelegate {
 
 }
 
-// MARK: - Location Send View Controller Delegate
+// MARK: - Map Manager Delegate
 
-extension LocationSelectionViewController: CLLocationManagerDelegate {
-
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        updateUserLocation()
+extension LocationSelectionViewController: MapManagerDelegate {
+    func mapManager(_ manager: MapManager, didUpdateUserLocation userLocation: MKUserLocation) {
+        if !userShowedInitially {
+            userShowedInitially = true
+            mapManager.zoomToUserLocation(animated: true)
+        }
     }
 
-}
+    func mapManager(_ manager: MapManager, regionDidChangeAnimated animated: Bool) {
+        formatAndUpdateAddress()
+    }
 
-// MARK: - Modal Top Bar Delegate
-
-extension LocationSelectionViewController: MKMapViewDelegate {
-
-    func mapViewDidFinishRenderingMap(_ mapView: MKMapView, fullyRendered: Bool) {
+    func mapManagerDidFinishRenderingMap(_ manager: MapManager, fullyRendered: Bool) {
         mapDidRender = true
         formatAndUpdateAddress()
     }
 
-    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        formatAndUpdateAddress()
-    }
-
-    func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
-        if !userShowedInitially {
-            userShowedInitially = true
-            zoomToUserLocation(true)
-        }
-    }
-
 }
 
-// MARK: - AppLocationManagerDelegate
+// MARK: - AppLocation Manager Delegate
 
 extension LocationSelectionViewController: AppLocationManagerDelegate {
 
@@ -298,11 +285,12 @@ extension LocationSelectionViewController: AppLocationManagerDelegate {
         if !userShowedInitially {
             userShowedInitially = true
             let region = MKCoordinateRegion(center: newLocation.coordinate, latitudinalMeters: 50, longitudinalMeters: 50)
-            mapView.setRegion(region, animated: true)
+            mapManager.mapView.setRegion(region, animated: true)
         }
     }
 
     func didFailWithError(_ error: Error) {
+
         let alertController = UIAlertController(
             title: "Location Error",
             message: "Failed to obtain location: \(error.localizedDescription)",
@@ -318,12 +306,13 @@ extension LocationSelectionViewController: AppLocationManagerDelegate {
     func didChangeAuthorization(status: CLAuthorizationStatus) {
         switch status {
         case .notDetermined:
-            locationManager.requestWhenInUseAuthorization()
+            AppLocationManager.shared.requestLocationAuthorization()
         case .restricted, .denied:
             presentUnauthorizedAlert()
         case .authorizedAlways, .authorizedWhenInUse:
-            locationManager.startUpdatingLocation()
-            mapView.showsUserLocation = true
+            AppLocationManager.shared.startUpdatingLocation()
+            mapManager.mapView.showsUserLocation = true
+        @unknown default: break
         }
     }
 }
