@@ -325,6 +325,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         analytics: AnalyticsType?,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
+        dispatchGroup: ZMSDispatchGroup? = nil,
         environment: BackendEnvironmentProvider,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
@@ -346,7 +347,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             proxyCredentials = ProxyCredentials.retrieve(for: proxy)
         }
 
-        let dispatchGroup = ZMSDispatchGroup(label: "WireSyncEngine.SessionManager.private")
+        let dispatchGroup = dispatchGroup ?? ZMSDispatchGroup(label: "WireSyncEngine.SessionManager.private")
 
         let unauthenticatedSessionFactory = UnauthenticatedSessionFactory(
             appVersion: appVersion,
@@ -720,8 +721,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func tearDownSessionAndDelete(account: Account) {
-        self.tearDownBackgroundSession(for: account.userIdentifier)
-        self.deleteAccountData(for: account)
+        self.tearDownBackgroundSession(for: account.userIdentifier) {
+            self.deleteAccountData(for: account)
+        }
     }
 
     fileprivate func logout(account: Account, error: Error? = nil) {
@@ -765,6 +767,15 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         self.createUnauthenticatedSession(accountId: deleteAccount ? nil : account.userIdentifier)
 
+        guard let activeUserSession = activeUserSession else {
+            delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: nil)
+
+            if deleteAccount {
+                deleteAccountData(for: account)
+            }
+            return
+        }
+
         delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [weak self] in
 
             if deleteCookie {
@@ -772,24 +783,21 @@ public final class SessionManager: NSObject, SessionManagerType {
             }
 
             if deleteAccount {
-                self?.activeUserSession?.lastEventIDRepository.storeLastEventID(nil)
+                activeUserSession.lastEventIDRepository.storeLastEventID(nil)
             }
 
-            self?.activeUserSession?.e2eiActivationDateRepository.removeE2EIActivationDate()
-            self?.activeUserSession?.close(deleteCookie: deleteCookie)
+            let group = self?.dispatchGroup
+            group?.enter()
+
+            activeUserSession.e2eiActivationDateRepository.removeE2EIActivationDate()
+            activeUserSession.close(deleteCookie: deleteCookie) {
+                if deleteAccount {
+                    self?.deleteAccountData(for: account)
+                    self?.deleteUserLogs?()
+                }
+                group?.leave()
+            }
             self?.activeUserSession = nil
-            self?.clearCRLExpirationDates(for: account)
-
-            if deleteAccount {
-                self?.deleteAccountData(for: account)
-                self?.deleteUserLogs?()
-            }
-
-            // also deletes ZMSLogs from cache
-            self?.clearCacheDirectory()
-
-            // Clear tmp directory when the user logout from the session.
-            self?.deleteTemporaryData()
         })
     }
 
@@ -942,6 +950,14 @@ public final class SessionManager: NSObject, SessionManagerType {
         environment.cookieStorage(for: account).deleteKeychainItems()
         account.deleteKeychainItems()
 
+        clearCRLExpirationDates(for: account)
+
+        // also deletes ZMSLogs from cache
+        clearCacheDirectory()
+
+        // Clear tmp directory when the user logout from the session.
+        deleteTemporaryData()
+
         let accountID = account.userIdentifier
         self.accountManager.remove(account)
 
@@ -1043,16 +1059,23 @@ public final class SessionManager: NSObject, SessionManagerType {
         return newSession
     }
 
-    internal func tearDownBackgroundSession(for accountId: UUID) {
+    internal func tearDownBackgroundSession(for accountId: UUID, completion: (() -> Void)? = nil) {
         guard let userSession = self.backgroundUserSessions[accountId] else {
             WireLogger.session.error("No session to tear down for \(accountId), known sessions: \(self.backgroundUserSessions)")
             log.error("No session to tear down for \(accountId), known sessions: \(self.backgroundUserSessions)")
+            completion?()
             return
         }
-        userSession.close(deleteCookie: false)
-        self.tearDownObservers(account: accountId)
-        self.backgroundUserSessions[accountId] = nil
-        notifyUserSessionDestroyed(accountId)
+        tearDownObservers(account: accountId)
+        backgroundUserSessions[accountId] = nil
+
+        dispatchGroup.enter()
+        userSession.close(deleteCookie: false) { [weak self] in
+            self?.notifyUserSessionDestroyed(accountId)
+            completion?()
+            self?.dispatchGroup.leave()
+        }
+
     }
 
     // Tears down and releases all background user sessions.
