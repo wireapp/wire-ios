@@ -28,7 +28,7 @@ final class GroupDetailsNotificationOptionsCell: GroupDetailsDisclosureOptionsCe
         title = L10n.Localizable.GroupDetails.NotificationOptionsCell.title
         accessibilityHint = L10n.Accessibility.ConversationDetails.OptionButton.hint
 
-        icon = Asset.Images.notifications.image.withRenderingMode(.alwaysTemplate)
+        icon = .init(resource: .notifications).withRenderingMode(.alwaysTemplate)
         iconColor = SemanticColors.Icon.foregroundDefault
     }
 
