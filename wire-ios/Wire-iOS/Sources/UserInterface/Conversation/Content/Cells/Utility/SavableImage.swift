@@ -136,7 +136,7 @@ final class SavableImage: NSObject {
             message: (error as NSError).localizedDescription,
             alertAction: .ok(style: .cancel))
 
-        UIApplication.shared.wr_keyWindow?.rootViewController?.present(alert, animated: true)
+        AppDelegate.shared.window?.rootViewController?.present(alert, animated: true)
     }
 
 }

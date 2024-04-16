@@ -243,7 +243,7 @@ extension BlockerViewController {
     private func enrollCertificate() async throws {
         guard
             let activeUserSession = sessionManager?.activeUserSession,
-            let rootViewController = UIApplication.shared.wr_keyWindow?.rootViewController
+            let rootViewController = AppDelegate.shared.window?.rootViewController
         else {
             return
         }

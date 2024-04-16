@@ -72,6 +72,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     private(set) var launchType: ApplicationLaunchType = .unknown
 
     // MARK: - Public Set Property
+    var window: UIWindow?
 
     // Singletons
     var unauthenticatedSession: UnauthenticatedSession? {
@@ -82,7 +83,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     var launchOptions: LaunchOptions = [:]
 
     static var shared: AppDelegate {
-        UIApplication.shared.delegate as! AppDelegate
+        return UIApplication.shared.delegate as! AppDelegate
     }
 
     var mediaPlaybackManager: MediaPlaybackManager? {
@@ -142,6 +143,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
                                                object: nil)
 
         self.launchOptions = launchOptions ?? [:]
+
+        if UIApplication.shared.isProtectedDataAvailable || ZMPersistentCookieStorage.hasAccessibleAuthenticationCookieData() {
+            createAppRootRouterAndInitialiazeOperations(launchOptions: launchOptions ?? [:])
+        }
 
         WireLogger.appDelegate.info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
         WireLogger.appDelegate.info("Application was launched with arguments: \(ProcessInfo.processInfo.arguments)")
@@ -260,44 +265,25 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationProtectedDataDidBecomeAvailable(_ application: UIApplication) {
         guard appRootRouter == nil else { return }
-        createAppRootRouterAndInitialiazeOperations(application: application, launchOptions: launchOptions)
+        createAppRootRouterAndInitialiazeOperations(launchOptions: launchOptions)
     }
-
-    // MARK: UISceneSession Lifecycle
-
-    /*
-    func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
-        // Called when a new scene session is being created.
-        // Use this method to select a configuration to create the new scene with.
-        return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
-    }
-
-    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
-        // Called when the user discards a scene session.
-        // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
-        // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
-    }
-     */
 }
 
 // MARK: - Private Helpers
-
-extension AppDelegate {
-
-    func createAppRootRouterAndInitialiazeOperations(application: UIApplication, launchOptions: LaunchOptions) {
+private extension AppDelegate {
+    private func createAppRootRouterAndInitialiazeOperations(launchOptions: LaunchOptions) {
         // Fix: set the applicationGroup so updating the callkit enable is set to NSE
         VoIPPushHelperOperation().execute()
-        createAppRootRouter(application: application, launchOptions: launchOptions)
+        createAppRootRouter(launchOptions: launchOptions)
         queueInitializationOperations(launchOptions: launchOptions)
     }
 
-    private func createAppRootRouter(application: UIApplication, launchOptions: LaunchOptions) {
-
-        guard let viewController = application.wr_keyWindow?.rootViewController as? RootViewController else {
+    private func createAppRootRouter(launchOptions: LaunchOptions) {
+        guard let viewController = window?.rootViewController as? RootViewController else {
             fatalError("rootViewController is not of type RootViewController")
         }
 
-        guard let sessionManager = createSessionManager(application: application, launchOptions: launchOptions) else {
+        guard let sessionManager = createSessionManager(launchOptions: launchOptions) else {
             fatalError("sessionManager is not created")
         }
 
@@ -308,7 +294,7 @@ extension AppDelegate {
         )
     }
 
-    private func createSessionManager(application: UIApplication, launchOptions: LaunchOptions) -> SessionManager? {
+    private func createSessionManager(launchOptions: LaunchOptions) -> SessionManager? {
         guard
             let appVersion = Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String,
             let url = Bundle.main.url(forResource: "session_manager", withExtension: "json"),
@@ -330,7 +316,7 @@ extension AppDelegate {
             mediaManager: mediaManager,
             analytics: Analytics.shared,
             delegate: appStateCalculator,
-            application: application,
+            application: UIApplication.shared,
             environment: BackendEnvironment.shared,
             configuration: configuration,
             detector: jailbreakDetector,
@@ -368,4 +354,5 @@ extension AppDelegate {
         // this forces transition to standard ones.
         return .standard
     }
+
 }
