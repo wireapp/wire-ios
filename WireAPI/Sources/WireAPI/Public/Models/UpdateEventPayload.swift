@@ -29,7 +29,7 @@ public enum UpdateEventPayload {
     case conversationDelete(ConversationDeleteEvent)
     case conversationKnock
     case conversationMemberJoin
-    case conversationMemberLeave
+    case conversationMemberLeave(ConversationMemberLeaveEvent)
     case conversationMemberUpdate
     case conversationMessageAdd
     case conversationMessageTimerUpdate(ConversationMessageTimerUpdateEvent)

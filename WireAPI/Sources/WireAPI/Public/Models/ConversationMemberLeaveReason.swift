@@ -18,16 +18,21 @@
 
 import Foundation
 
-/// An object that uniquely idetifies a user across domains.
+/// The reason why a member was removed from a conversation.
 
-public struct UserID: Hashable, Decodable {
+public enum ConversationMemberLeaveReason: String, Decodable {
 
-    /// A unique identifier.
+    /// The user has been removed from the team and therefore removed
+    /// from all conversations.
 
-    public let id: UUID
+    case userDeleted = "user-deleted"
 
-    /// The domain of the user.
+    /// The user left the conversation by themselves.
 
-    public let domain: String
+    case left
+
+    /// The user was removed from the conversation by an admin.
+
+    case removed
 
 }

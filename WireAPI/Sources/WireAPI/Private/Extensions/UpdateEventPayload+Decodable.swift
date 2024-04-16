@@ -46,7 +46,8 @@ extension UpdateEventPayload: Decodable {
         case "conversation.member-join":
             self = .conversationMemberJoin
         case "conversation.member-leave":
-            self = .conversationMemberLeave
+            let event = try container.decodeConversationMemberLeaveEvent()
+            self = .conversationMemberLeave(event)
         case "conversation.member-update":
             self = .conversationMemberUpdate
         case "conversation.message-add":
@@ -153,6 +154,21 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    func decodeConversationMemberLeaveEvent() throws -> ConversationMemberLeaveEvent {
+        let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
+        let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
+        let timestamp = try decode(Date.self, forKey: .timestamp)
+        let payload = try decode(ConversationMemberLeaveEventData.self, forKey: .payload)
+
+        return ConversationMemberLeaveEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            timestamp: timestamp,
+            removedUserIDs: payload.qualified_user_ids,
+            reason: payload.reason ?? .left
+        )
+    }
+
     func decodeConversationMessageTimerUpdateEvent() throws -> ConversationMessageTimerUpdateEvent {
         let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
         let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
@@ -244,6 +260,13 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
             legacyAccessRole: payload.access_role
         )
     }
+
+}
+
+private struct ConversationMemberLeaveEventData: Decodable {
+
+    let qualified_user_ids: Set<UserID>
+    let reason: ConversationMemberLeaveReason?
 
 }
 

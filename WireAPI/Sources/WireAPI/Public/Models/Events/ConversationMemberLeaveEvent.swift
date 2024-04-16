@@ -18,16 +18,28 @@
 
 import Foundation
 
-/// An object that uniquely idetifies a user across domains.
+/// An event where some participants were removed from a conversation.
 
-public struct UserID: Hashable, Decodable {
+public struct ConversationMemberLeaveEvent {
 
-    /// A unique identifier.
+    /// The id of the conversation.
 
-    public let id: UUID
+    public let conversationID: ConversationID
 
-    /// The domain of the user.
+    /// The id of the user who removed the members.
 
-    public let domain: String
+    public let senderID: UserID
+
+    /// When the members were removed.
+
+    public let timestamp: Date
+
+    /// The ids of the members who were removed.
+
+    public let removedUserIDs: Set<UserID>
+
+    /// The reason why the members were removed.
+
+    public let reason: ConversationMemberLeaveReason
 
 }
