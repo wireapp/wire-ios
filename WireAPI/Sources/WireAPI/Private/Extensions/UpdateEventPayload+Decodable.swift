@@ -28,7 +28,8 @@ extension UpdateEventPayload: Decodable {
         case "conversation.asset-add":
             self = .conversationAssetAdd
         case "conversation.access-update":
-            self = .conversationAccessUpdate
+            let event = try container.decodeConversationAccessUpdateEvent()
+            self = .conversationAccessUpdate(event)
         case "conversation.client-message-add":
             self = .conversationClientMessageAdd
         case "conversation.code-update":
@@ -68,7 +69,8 @@ extension UpdateEventPayload: Decodable {
             let event = try container.decodeConversationRenameEvent()
             self = .conversationRename(event)
         case "conversation.typing":
-            self = .conversationTyping
+            let event = try container.decodeConversationTypingEvent()
+            self = .conversationTyping(event)
         case "feature-config.update":
             self = .featureConfigUpdate
         case "federation.connectionRemoved":
@@ -162,10 +164,57 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    func decodeConversationTypingEvent() throws -> ConversationTypingEvent {
+        let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
+        let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
+        let payload = try decode(ConversationTypingEventData.self, forKey: .payload)
+
+        return ConversationTypingEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            isTyping: payload.status == .started
+        )
+    }
+
+    func decodeConversationAccessUpdateEvent() throws -> ConversationAccessUpdateEvent {
+        let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
+        let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
+        let payload = try decode(ConversationAccessUpdateEventData.self, forKey: .payload)
+
+        return ConversationAccessUpdateEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            accessModes: payload.access,
+            accessRoles: payload.access_role_v2 ?? [],
+            legacyAccessRole: payload.access_role
+        )
+    }
+
 }
 
 private struct ConversationRenameEventData: Decodable {
 
     let name: String
+
+}
+
+private struct ConversationTypingEventData: Decodable {
+
+    let status: TypingStatus
+
+    enum TypingStatus: String, Decodable {
+
+        case started
+        case stopped
+
+    }
+
+}
+
+private struct ConversationAccessUpdateEventData: Decodable {
+
+    let access: Set<ConversationAccessMode>
+    let access_role: ConversationAccessRoleLegacy?
+    let access_role_v2: Set<ConversationAccessRole>?
 
 }

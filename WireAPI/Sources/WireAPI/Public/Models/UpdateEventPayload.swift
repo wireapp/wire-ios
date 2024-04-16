@@ -21,7 +21,7 @@ import Foundation
 public enum UpdateEventPayload {
 
     case conversationAssetAdd
-    case conversationAccessUpdate
+    case conversationAccessUpdate(ConversationAccessUpdateEvent)
     case conversationClientMessageAdd
     case conversationCodeUpdate
     case conversationConnectRequest
@@ -40,7 +40,7 @@ public enum UpdateEventPayload {
     case conversationProtocolUpdate
     case conversationReceiptModeUpdate
     case conversationRename(ConversationRenameEvent)
-    case conversationTyping
+    case conversationTyping(ConversationTypingEvent)
     case featureConfigUpdate
     case federationConnectionRemoved
     case federationDelete
