@@ -14,4 +14,5 @@ jobs:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: development
+      is_cloud_build: true
     secrets: inherit

@@ -595,12 +595,15 @@ extension ShareExtensionViewController {
             passcodePreference = .deviceThenCustom
         }
 
-        appLock.evaluateAuthentication(passcodePreference: passcodePreference, description: description) { [weak self] result, context in
-            guard let `self` = self else { return }
+        appLock.evaluateAuthentication(
+            passcodePreference: passcodePreference,
+            description: description
+        ) { [weak self] result in
+            guard let self else { return }
 
             DispatchQueue.main.async {
-                if case .granted = result, let context = context as? LAContext {
-                    try? self.sharingSession?.unlockDatabase(with: context)
+                if case .granted = result {
+                    try? self.sharingSession?.unlockDatabase()
                 }
 
                 self.authenticationEvaluated(with: result, completion: completion)
