@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ final class ConversationViewController: UIViewController {
             break
         }
 
-        return viewController?.wrapInNavigationController(setBackgroundColor: true)
+        return viewController?.wrapInNavigationController()
     }
 
     required init(conversation: ZMConversation,
@@ -661,7 +661,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         collectionController?.shouldTrackOnNextOpen = true
 
-        let navigationController = KeyboardAvoidingViewController(viewController: collectionController!).wrapInNavigationController(setBackgroundColor: true)
+        let navigationController = KeyboardAvoidingViewController(viewController: collectionController!).wrapInNavigationController()
 
         ZClientViewController.shared?.present(navigationController, animated: true)
     }
