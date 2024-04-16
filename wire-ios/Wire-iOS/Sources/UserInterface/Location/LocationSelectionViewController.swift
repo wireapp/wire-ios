@@ -28,6 +28,8 @@ protocol LocationSelectionViewControllerDelegate: AnyObject {
 
 final class LocationSelectionViewController: UIViewController {
 
+    // MARK: - Constants
+
     enum LayoutConstants {
         static let sendControllerHeight: CGFloat = 56
         static let annotationViewCenterXOffset: CGFloat = 8.5
@@ -39,6 +41,8 @@ final class LocationSelectionViewController: UIViewController {
         static let locationButtonWidth: CGFloat = 28
         static let locationButtonHeight: CGFloat = 28
     }
+
+    // MARK: - Properties
 
     weak var delegate: LocationSelectionViewControllerDelegate?
 
@@ -73,6 +77,8 @@ final class LocationSelectionViewController: UIViewController {
         return status == .authorizedAlways || status == .authorizedWhenInUse
     }
 
+    // MARK: - Lifecycle Methods
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -99,6 +105,8 @@ final class LocationSelectionViewController: UIViewController {
         locationManager.stopUpdatingHeading()
         mapView.storeLocation()
     }
+
+    // MARK: - Configuration
 
     private func configureViews() {
         addChild(sendViewController)
@@ -152,9 +160,13 @@ final class LocationSelectionViewController: UIViewController {
         ])
     }
 
+    // MARK: - User Actions
+
     private func locationButtonTapped() {
         zoomToUserLocation(true)
     }
+
+    // MARK: - Helpers
 
     private func updateUserLocation() {
         mapView.showsUserLocation = userLocationAuthorized
@@ -211,6 +223,8 @@ final class LocationSelectionViewController: UIViewController {
     }
 }
 
+// MARK: - Location Manager Delegate
+
 extension LocationSelectionViewController: LocationSendViewControllerDelegate {
 
     func locationSendViewController(_ viewController: LocationSendViewController, shouldChangeHeight isActive: Bool) {
@@ -233,6 +247,8 @@ extension LocationSelectionViewController: LocationSendViewControllerDelegate {
     }
 }
 
+// MARK: - Map View Delegate
+
 extension LocationSelectionViewController: ModalTopBarDelegate {
 
     func modelTopBarWantsToBeDismissed(_ topBar: ModalTopBar) {
@@ -241,6 +257,8 @@ extension LocationSelectionViewController: ModalTopBarDelegate {
 
 }
 
+// MARK: - Location Send View Controller Delegate
+
 extension LocationSelectionViewController: CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -248,6 +266,8 @@ extension LocationSelectionViewController: CLLocationManagerDelegate {
     }
 
 }
+
+// MARK: - Modal Top Bar Delegate
 
 extension LocationSelectionViewController: MKMapViewDelegate {
 
