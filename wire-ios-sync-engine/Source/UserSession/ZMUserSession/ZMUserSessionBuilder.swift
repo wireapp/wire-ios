@@ -32,7 +32,6 @@ struct ZMUserSessionBuilder {
     private var appLock: (any AppLockType)?
     private var application: (any ZMApplication)?
     private var applicationStatusDirectory: ApplicationStatusDirectory?
-    private var configuration: ZMUserSession.Configuration?
     private var contextStorage: (any LAContextStorable)?
     private var coreCryptoProvider: (any CoreCryptoProviderProtocol)?
     private var coreDataStack: CoreDataStack?
@@ -66,7 +65,6 @@ struct ZMUserSessionBuilder {
             let appLock,
             let application,
             let applicationStatusDirectory,
-            let configuration,
             let contextStorage,
             let coreCryptoProvider,
             let coreDataStack,
@@ -249,7 +247,6 @@ struct ZMUserSessionBuilder {
         withAppLock(appLock)
         withApplication(application)
         withApplicationStatusDirectory(applicationStatusDirectory)
-        withConfiguration(configuration)
         withContextStorage(contextStorage)
         withCoreCryptoProvider(coreCryptoProvider)
         withCoreDataStack(coreDataStack)
@@ -290,10 +287,6 @@ struct ZMUserSessionBuilder {
 
     mutating func withApplicationStatusDirectory(_ applicationStatusDirectory: ApplicationStatusDirectory) {
         self.applicationStatusDirectory = applicationStatusDirectory
-    }
-
-    mutating func withConfiguration(_ configuration: ZMUserSession.Configuration) {
-        self.configuration = configuration
     }
 
     mutating func withContextStorage(_ contextStorage: any LAContextStorable) {
