@@ -193,6 +193,7 @@ final class LocationSelectionViewController: UIViewController {
 }
 
 extension LocationSelectionViewController: LocationSendViewControllerDelegate {
+
     func locationSendViewController(_ viewController: LocationSendViewController, shouldChangeHeight isActive: Bool) {
         sendControllerHeightConstraint?.isActive = isActive
         if isActive {
