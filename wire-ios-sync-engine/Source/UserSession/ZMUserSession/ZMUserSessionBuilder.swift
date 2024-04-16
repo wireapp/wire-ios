@@ -68,76 +68,82 @@ struct ZMUserSessionBuilder {
     // MARK: - Build
 
     func build() -> ZMUserSession {
-        // `analytics` is optional
-        assert(appVersion != nil, "expected 'appVersion' to be set!)")
-        assert(appLock != nil, "expected 'appLock' to be set!)")
-        assert(application != nil, "expected 'application' to be set!)")
-        assert(applicationStatusDirectory != nil, "expected 'applicationStatusDirectory' to be set!)")
-        assert(configuration != nil, "expected 'configuration' to be set!)")
-        assert(contextStorage != nil, "expected 'contextStorage' to be set!)")
-        assert(coreCryptoProvider != nil, "expected 'coreCryptoProvider' to be set!)")
-        assert(coreDataStack != nil, "expected 'coreDataStack' to be set!)")
-        assert(cryptoboxMigrationManager != nil, "expected 'cryptoboxMigrationManager' to be set!)")
-        assert(debugCommands != nil, "expected 'debugCommands' to be set!)")
-        assert(e2eiActivationDateRepository != nil, "expected 'e2eiActivationDateRepository' to be set!)")
-        assert(earService != nil, "expected 'earService' to be set!)")
-        assert(flowManager != nil, "expected 'flowManager' to be set!)")
-        assert(lastE2EIUpdateDateRepository != nil, "expected 'lastE2EIUpdateDateRepository' to be set!)")
-        assert(lastEventIDRepository != nil, "expected 'lastEventIDRepository' to be set!)")
-        assert(mediaManager != nil, "expected 'mediaManager' to be set!)")
-        assert(mlsConversationVerificationStatusUpdater != nil, "expected 'mlsConversationVerificationStatusUpdater' to be set!)")
-        assert(mlsService != nil, "expected 'mlsService' to be set!)")
-        assert(observeMLSGroupVerificationStatusUseCase != nil, "expected 'observeMLSGroupVerificationStatusUseCase' to be set!)")
-        assert(proteusToMLSMigrationCoordinator != nil, "expected 'proteusToMLSMigrationCoordinator' to be set!)")
-        assert(sharedUserDefaults != nil, "expected 'sharedUserDefaults' to be set!)")
-        assert(transportSession != nil, "expected 'transportSession' to be set!)")
-        assert(updateMLSGroupVerificationStatusUseCase != nil, "expected 'updateMLSGroupVerificationStatusUseCase' to be set!)")
-        assert(useCaseFactory != nil, "expected 'useCaseFactory' to be set!)")
-        assert(userId != nil, "expected 'userId' to be set!)")
+        guard
+            let appVersion,
+            let appLock,
+            let application,
+            let applicationStatusDirectory,
+            let configuration,
+            let contextStorage,
+            let coreCryptoProvider,
+            let coreDataStack,
+            let cryptoboxMigrationManager,
+            let debugCommands,
+            let e2eiActivationDateRepository,
+            let earService,
+            let flowManager,
+            let lastE2EIUpdateDateRepository,
+            let lastEventIDRepository,
+            let mediaManager,
+            let mlsConversationVerificationStatusUpdater,
+            let mlsService,
+            let observeMLSGroupVerificationStatusUseCase,
+            let proteusToMLSMigrationCoordinator,
+            let sharedUserDefaults,
+            let transportSession,
+            let updateMLSGroupVerificationStatusUseCase,
+            let useCaseFactory,
+            let userId
+        else {
+            fatalError("cannot build 'ZMUserSession' without required dependencies")
+        }
 
-        prepare(
-            coreDataStack: coreDataStack!,
+        prepareCoreDataStack(
+            coreDataStack,
             analytics: analytics
         )
 
         let userSession = ZMUserSession(
-            userId: userId!,
-            transportSession: transportSession!,
-            mediaManager: mediaManager!,
-            flowManager: flowManager!,
+            userId: userId,
+            transportSession: transportSession,
+            mediaManager: mediaManager,
+            flowManager: flowManager,
             analytics: analytics,
-            application: application!,
-            appVersion: appVersion!,
-            coreDataStack: coreDataStack!,
-            earService: earService!,
-            mlsService: mlsService!,
-            cryptoboxMigrationManager: cryptoboxMigrationManager!,
-            proteusToMLSMigrationCoordinator: proteusToMLSMigrationCoordinator!,
-            sharedUserDefaults: sharedUserDefaults!,
-            useCaseFactory: useCaseFactory!,
-            observeMLSGroupVerificationStatusUseCase: observeMLSGroupVerificationStatusUseCase!,
-            debugCommands: debugCommands!,
-            appLock: appLock!,
-            coreCryptoProvider: coreCryptoProvider!,
-            lastEventIDRepository: lastEventIDRepository!,
-            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository!,
-            e2eiActivationDateRepository: e2eiActivationDateRepository!,
-            applicationStatusDirectory: applicationStatusDirectory!,
-            updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatusUseCase!,
-            mlsConversationVerificationStatusUpdater: mlsConversationVerificationStatusUpdater!,
-            contextStorage: contextStorage!
+            application: application,
+            appVersion: appVersion,
+            coreDataStack: coreDataStack,
+            earService: earService,
+            mlsService: mlsService,
+            cryptoboxMigrationManager: cryptoboxMigrationManager,
+            proteusToMLSMigrationCoordinator: proteusToMLSMigrationCoordinator,
+            sharedUserDefaults: sharedUserDefaults,
+            useCaseFactory: useCaseFactory,
+            observeMLSGroupVerificationStatusUseCase: observeMLSGroupVerificationStatusUseCase,
+            debugCommands: debugCommands,
+            appLock: appLock,
+            coreCryptoProvider: coreCryptoProvider,
+            lastEventIDRepository: lastEventIDRepository,
+            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository,
+            e2eiActivationDateRepository: e2eiActivationDateRepository,
+            applicationStatusDirectory: applicationStatusDirectory,
+            updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatusUseCase,
+            mlsConversationVerificationStatusUpdater: mlsConversationVerificationStatusUpdater,
+            contextStorage: contextStorage
         )
 
         setUpUserSession(
             userSession,
-            configuration: configuration!,
-            coreDataStack: coreDataStack!
+            configuration: configuration,
+            coreDataStack: coreDataStack
         )
 
         return userSession
     }
 
-    private func prepare(coreDataStack: CoreDataStack, analytics: (any AnalyticsType)?) {
+    private func prepareCoreDataStack(
+        _ coreDataStack: CoreDataStack,
+        analytics: (any AnalyticsType)?
+    ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
             coreDataStack.syncContext.zm_userInterface = coreDataStack.viewContext
