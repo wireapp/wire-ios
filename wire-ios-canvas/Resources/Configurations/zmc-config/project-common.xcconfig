@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ ARCHS[sdk=iphoneos*] = arm64
 ARCHS[sdk=iphonesimulator*] = x86_64
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator
 
-
 // Code Signing
 //
 CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
@@ -38,8 +37,6 @@ TARGETED_DEVICE_FAMILY = 1,2
 
 DYLIB_INSTALL_NAME_BASE = @rpath
 FRAMEWORK_VERSION = A
-
-
 
 // Linking
 //
@@ -62,13 +59,10 @@ DEFINES_MODULE = YES
 //
 ALWAYS_SEARCH_USER_PATHS = NO
 
-
-
 // Deployment
 //
 COMBINE_HIDPI_IMAGES = YES
 ENABLE_BITCODE = NO
-
 
 // Versioning
 //
@@ -78,12 +72,9 @@ VERSIONING_SYSTEM = apple-generic
 //
 GCC_DYNAMIC_NO_PIC = NO
 
-
 // LLVM - Language
 //
 GCC_C_LANGUAGE_STANDARD = gnu99
-
-
 
 // LLVM - Language - C++
 //
@@ -91,14 +82,10 @@ CLANG_CXX_LANGUAGE_STANDARD = gnu++0x
 CLANG_CXX_LIBRARY = libc++
 GCC_ENABLE_CPP_EXCEPTIONS = NO
 
-
-
 // LLVM - Language - Modules
 //
 CLANG_ENABLE_MODULES = YES
 CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES
-
-
 
 // LLVM - Language - Objective C
 //
@@ -106,11 +93,9 @@ GCC_ENABLE_OBJC_EXCEPTIONS = YES
 CLANG_ENABLE_OBJC_ARC = YES
 ENABLE_STRICT_OBJC_MSGSEND = YES
 
-
 // LLVM - Preprocessing
 //
 ENABLE_NS_ASSERTIONS = YES
-
 
 // info.plist
 INFOPLIST_PREPROCESS = YES
