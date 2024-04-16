@@ -54,7 +54,7 @@ final class AnalyticsCallingTracker: NSObject {
             return
         }
 
-        NotificationCenter.default.addObserver(forName: NSNotification.Name.UserToggledVideoInCall, object: nil, queue: nil) { [weak self] (note) in
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.UserToggledVideoInCall, object: nil, queue: nil) { [weak self] note in
             if let conversationId = note.userInfo?[AnalyticsCallingTracker.conversationIdKey] as? UUID,
                var callInfo = self?.callInfos[conversationId] {
                 callInfo.toggledVideo = true

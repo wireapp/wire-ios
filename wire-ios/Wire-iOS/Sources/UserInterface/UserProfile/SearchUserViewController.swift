@@ -114,7 +114,7 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
             navigationController?.setViewControllers([profileViewController], animated: true)
             resultHandled = true
         } else if isCompleted {
-            presentInvalidUserProfileLinkAlert(okActionHandler: { [weak self] (_) in
+            presentInvalidUserProfileLinkAlert(okActionHandler: { [weak self] _ in
                 self?.dismiss(animated: true)
             })
         }

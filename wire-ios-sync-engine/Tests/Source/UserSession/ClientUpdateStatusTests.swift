@@ -305,7 +305,7 @@ class ClientUpdateStatusTests: MessagingTest {
             self.sut = ClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
             self.sut.determineInitialClientStatus()
         }
-        clientObserverToken = ZMClientUpdateNotification.addObserver(context: uiMOC) { [weak self] (type, clientObjectIDs, error) in
+        clientObserverToken = ZMClientUpdateNotification.addObserver(context: uiMOC) { [weak self] type, clientObjectIDs, error in
             self?.receivedNotifications.append(ClientUpdateStatusChange(type: type, clientObjectIDs: clientObjectIDs, error: error))
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

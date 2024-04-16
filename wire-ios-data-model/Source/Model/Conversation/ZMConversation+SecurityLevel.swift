@@ -509,7 +509,7 @@ extension ZMConversation {
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
         guard let selfClient = selfUser.selfClient() else { return }
 
-        NSOrderedSet(array: lastMessages()).enumerateObjects { (msg, idx, stop) in
+        NSOrderedSet(array: lastMessages()).enumerateObjects { msg, idx, stop in
             guard idx <= 2 else {
                 stop.initialize(to: true)
                 return

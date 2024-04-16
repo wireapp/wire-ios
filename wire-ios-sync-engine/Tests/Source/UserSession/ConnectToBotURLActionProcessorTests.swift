@@ -30,7 +30,7 @@ class ConnectToBotURLActionProcessorTests: IntegrationTest {
 
         createSelfUserAndConversation()
 
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.insertService(withName: self.serviceName,
                                   identifier: self.serviceIdentifier.transportString(),
                                   provider: self.serviceProvider.transportString())

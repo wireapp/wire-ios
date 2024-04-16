@@ -199,7 +199,7 @@ final class ConversationListViewController: UIViewController {
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        self.tabBar.subviews.forEach { (barButton) in
+        self.tabBar.subviews.forEach { barButton in
             if let label = barButton.subviews[1] as? UILabel {
                 label.sizeToFit()
             }

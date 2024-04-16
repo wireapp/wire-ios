@@ -34,7 +34,7 @@ extension ZMTBaseTest {
                                   inMemoryStore: inMemoryStore,
                                   dispatchGroup: dispatchGroup)
 
-        stack.loadStores { (error) in
+        stack.loadStores { error in
             XCTAssertNil(error)
         }
 

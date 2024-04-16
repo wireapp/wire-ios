@@ -153,7 +153,7 @@ final class MessageToolboxDataSource {
                 left.serverTimestamp < right.serverTimestamp
             }.compactMap(timestampString)
 
-            let finalText = childrenTimestamps.reduce(timestamp) { (text, current) in
+            let finalText = childrenTimestamps.reduce(timestamp) { text, current in
                 return "\(text)\n\(current)"
             }
 

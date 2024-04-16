@@ -73,7 +73,7 @@ final class ReactionSectionViewController: UIViewController {
 
     private func createButtons(_ types: [EmojiSectionType]) {
         sectionButtons = types.map(createSectionButton)
-        zip(types, sectionButtons).forEach { (type, button) in
+        zip(types, sectionButtons).forEach { type, button in
             typesByButton[button] = type
         }
     }

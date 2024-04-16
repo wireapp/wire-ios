@@ -25,7 +25,7 @@ class NSManagedObjectContextDebuggingTests: ZMBaseManagedObjectTest {
         // GIVEN
         self.makeChangeThatWillCauseRollback()
         let expectation = self.customExpectation(description: "callback invoked")
-        self.uiMOC.errorOnSaveCallback = { (moc, error) in
+        self.uiMOC.errorOnSaveCallback = { moc, error in
             XCTAssertEqual(moc, self.uiMOC)
             XCTAssertNotNil(error)
             expectation.fulfill()

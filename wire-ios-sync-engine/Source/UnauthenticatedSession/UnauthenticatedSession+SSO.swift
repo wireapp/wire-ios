@@ -63,7 +63,7 @@ extension UnauthenticatedSession {
         let path = "/sso/settings"
         let request = ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
 
-        request.add(ZMCompletionHandler(on: operationLoop.operationQueue!, block: { (response) in
+        request.add(ZMCompletionHandler(on: operationLoop.operationQueue!, block: { response in
 
             switch response.result {
             case .success:
