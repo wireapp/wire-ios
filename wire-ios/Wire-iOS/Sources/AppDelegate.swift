@@ -18,7 +18,7 @@
 
 // Test CI: modify this line to run ci tests, sometimes it's the easiest way.
 
-import UIKit
+import SwiftUI
 import WireCommonComponents
 import WireSyncEngine
 import avs
@@ -154,8 +154,32 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         WireLogger.appDelegate.info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
         WireLogger.appDelegate.info("Application was launched with arguments: \(ProcessInfo.processInfo.arguments)")
+
+        NotificationCenter.default.addObserver(forName: UIApplication.didReceiveMemoryWarningNotification, object: .none, queue: .main) { [weak self] _ in
+
+            guard
+                let self,
+                let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                let keyWindow = windowScene.keyWindow
+            else { return }
+
+            progressWindow = UIWindow(windowScene: windowScene)
+            progressWindow?.windowLevel = .init(keyWindow.windowLevel.rawValue - 1)
+            progressWindow?.frame = keyWindow.frame
+            progressWindow?.frame.size.height = 100
+            progressWindow?.rootViewController = UIHostingController(rootView: Rectangle().fill(.red))
+            progressWindow?.makeKeyAndVisible()
+
+            UIView.animate(withDuration: 1) {
+                keyWindow.frame.origin.y = 100
+                keyWindow.frame.size.height -= 100
+            }
+        }
+
         return true
     }
+
+    var progressWindow: UIWindow?
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         WireLogger.appDelegate.info(
