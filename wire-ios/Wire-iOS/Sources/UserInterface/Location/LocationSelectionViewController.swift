@@ -47,6 +47,7 @@ final class LocationSelectionViewController: UIViewController {
         button.setIcon(.location, size: .tiny, for: [])
         button.borderWidth = 0.5
         button.setBorderColor(SemanticColors.View.borderInputBar, for: .normal)
+
         button.circular = true
         button.backgroundColor = SemanticColors.View.backgroundDefault
         button.setIconColor(SemanticColors.Icon.foregroundDefault, for: .normal)
@@ -103,7 +104,12 @@ final class LocationSelectionViewController: UIViewController {
         addChild(sendViewController)
         sendViewController.didMove(toParent: self)
         [mapView, sendViewController.view, toolBar, locationButton].forEach(view.addSubview)
-        locationButton.addTarget(self, action: #selector(locationButtonTapped), for: .touchUpInside)
+
+        let action = UIAction { [weak self] _ in
+            self?.locationButtonTapped()
+        }
+
+        locationButton.addAction(action, for: .touchUpInside)
 
         mapView.isRotateEnabled = false
         mapView.isPitchEnabled = false
@@ -146,8 +152,7 @@ final class LocationSelectionViewController: UIViewController {
         ])
     }
 
-    @objc
-    private func locationButtonTapped(_ sender: IconButton) {
+    private func locationButtonTapped() {
         zoomToUserLocation(true)
     }
 
