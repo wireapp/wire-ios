@@ -28,7 +28,20 @@ protocol LocationSelectionViewControllerDelegate: AnyObject {
 
 final class LocationSelectionViewController: UIViewController {
 
+    enum LayoutConstants {
+        static let sendControllerHeight: CGFloat = 56
+        static let annotationViewCenterXOffset: CGFloat = 8.5
+        static let annotationViewBottomOffset: CGFloat = 5
+        static let annotationViewHeight: CGFloat = 39
+        static let annotationViewWidth: CGFloat = 32
+        static let locationButtonLeadingOffset: CGFloat = 16
+        static let locationButtonBottomOffset: CGFloat = -16
+        static let locationButtonWidth: CGFloat = 28
+        static let locationButtonHeight: CGFloat = 28
+    }
+
     weak var delegate: LocationSelectionViewControllerDelegate?
+
     let locationButton: IconButton = {
         let button = IconButton()
         button.setIcon(.location, size: .tiny, for: [])
@@ -107,7 +120,7 @@ final class LocationSelectionViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        sendControllerHeightConstraint = sendController.heightAnchor.constraint(equalToConstant: 56 + view.safeAreaLayoutGuide.layoutFrame.size.height)
+        sendControllerHeightConstraint = sendController.heightAnchor.constraint(equalToConstant: LayoutConstants.sendControllerHeight + view.safeAreaLayoutGuide.layoutFrame.size.height)
         sendControllerHeightConstraint?.isActive = false
 
         NSLayoutConstraint.activate([
@@ -121,19 +134,20 @@ final class LocationSelectionViewController: UIViewController {
             toolBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             toolBar.topAnchor.constraint(equalTo: view.topAnchor),
             toolBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            annotationView.centerXAnchor.constraint(equalTo: mapView.centerXAnchor, constant: 8.5),
-            annotationView.bottomAnchor.constraint(equalTo: mapView.centerYAnchor, constant: 5),
-            annotationView.heightAnchor.constraint(equalToConstant: 39),
-            annotationView.widthAnchor.constraint(equalToConstant: 32),
+            annotationView.centerXAnchor.constraint(equalTo: mapView.centerXAnchor, constant: LayoutConstants.annotationViewCenterXOffset),
+            annotationView.bottomAnchor.constraint(equalTo: mapView.centerYAnchor, constant: LayoutConstants.annotationViewBottomOffset),
+            annotationView.heightAnchor.constraint(equalToConstant: LayoutConstants.annotationViewHeight),
+            annotationView.widthAnchor.constraint(equalToConstant: LayoutConstants.annotationViewWidth),
 
-            locationButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            locationButton.bottomAnchor.constraint(equalTo: sendController.topAnchor, constant: -16),
-            locationButton.widthAnchor.constraint(equalToConstant: 28),
-            locationButton.heightAnchor.constraint(equalToConstant: 28)
+            locationButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: LayoutConstants.locationButtonLeadingOffset),
+            locationButton.bottomAnchor.constraint(equalTo: sendController.topAnchor, constant: LayoutConstants.locationButtonBottomOffset),
+            locationButton.widthAnchor.constraint(equalToConstant: LayoutConstants.locationButtonWidth),
+            locationButton.heightAnchor.constraint(equalToConstant: LayoutConstants.locationButtonHeight)
         ])
     }
 
-    @objc private func locationButtonTapped(_ sender: IconButton) {
+    @objc
+    private func locationButtonTapped(_ sender: IconButton) {
         zoomToUserLocation(true)
     }
 
