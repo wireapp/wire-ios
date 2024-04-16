@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 
-final class ZMButton: LegacyButton {
+class ZMButton: LegacyButton {
 
     var style: ButtonStyle?
 

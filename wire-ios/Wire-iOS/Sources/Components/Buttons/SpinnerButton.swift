@@ -20,7 +20,7 @@ import UIKit
 import WireCommonComponents
 
 /// A button with spinner at the trailing side. Title text is non truncated.
-final class SpinnerButton: Button {
+final class SpinnerButton: ZMButton {
 
     private lazy var spinner: Spinner = {
         let spinner = Spinner()
@@ -96,12 +96,8 @@ final class SpinnerButton: Button {
         let states: [UIControl.State] = [.normal, .highlighted, .disabled]
         states.forEach {
             let color: UIColor
-            switch overrideUserInterfaceStyle {
-            case .dark:
-                color = .white
-            case .light:
-                color = SemanticColors.Icon.foregroundDefaultRed
-            }
+
+            color = SemanticColors.Icon.foregroundDefaultRed
 
             setTitleColor(color, for: $0)
             setBorderColor(SemanticColors.Icon.foregroundDefaultRed, for: $0)
