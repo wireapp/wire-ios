@@ -20,7 +20,7 @@ import Foundation
 import UIKit
 import WireCommonComponents
 
-final class Button: LegacyButton {
+class Button: LegacyButton {
 
     var style: ButtonStyle?
 

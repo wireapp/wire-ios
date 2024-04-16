@@ -65,7 +65,6 @@ extension CGFloat {
     enum SpinnerButton {
         static let contentInset: CGFloat = 16
         static let iconSize: CGFloat = StyleKitIcon.Size.tiny.rawValue
-        static let spinnerBackgroundAlpha: CGFloat = 0.93
     }
 
     enum MessageCell {

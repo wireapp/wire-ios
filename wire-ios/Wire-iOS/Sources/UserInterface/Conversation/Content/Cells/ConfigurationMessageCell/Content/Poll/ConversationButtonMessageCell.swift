@@ -40,7 +40,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
     private let errorLabel: UILabel = {
         let label = UILabel()
         label.font = .smallLightFont
-        label.textColor = UIColor.AlarmButton.alarmRed
+        label.textColor = SemanticColors.Label.textErrorDefault
 
         return label
     }()

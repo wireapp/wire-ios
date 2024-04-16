@@ -19,7 +19,7 @@ import XCTest
 @testable import Wire
 import SnapshotTesting
 
-final class SpinnerButtonTests: XCTestCase {
+final class SpinnerButtonTests: BaseSnapshotTestCase {
     var sut: SpinnerButton!
 
     override func tearDown() {
@@ -52,39 +52,39 @@ final class SpinnerButtonTests: XCTestCase {
         // THEN
         verifyInWidths(matching: sut,
                        widths: Set([300]),
-                       snapshotBackgroundColor: UIColor.from(scheme: .contentBackground).withAlphaComponent(CGFloat.SpinnerButton.spinnerBackgroundAlpha))
+                       snapshotBackgroundColor: SemanticColors.View.backgroundDefault)
     }
 
     func testForSpinnerIsHidden() {
         // GIVEN
         createSut()
 
-        // WHEN
-
-        // THEN
+        // WHEN && THEN
         XCTAssert(sut.isEnabled)
         verifyInAllPhoneWidths(matching: sut)
     }
 
     func testForSpinnerIsShown() {
-        // GIVEN
-
-        // WHEN
+        // GIVEN && WHEN
+        createSut()
+        sut.overrideUserInterfaceStyle = .light
+        sut.isLoading = true
 
         // THEN
-        ColorScheme.default.variant = .dark
-        createSut()
-        sut.isLoading = true
-
         verifyInAllPhoneWidths(matching: sut,
-                               snapshotBackgroundColor: UIColor.from(scheme: .contentBackground),
-                               named: "dark")
-
-        ColorScheme.default.variant = .light
-        createSut()
-        sut.isLoading = true
-        verifyInAllPhoneWidths(matching: sut,
-                               snapshotBackgroundColor: UIColor.from(scheme: .contentBackground),
+                               snapshotBackgroundColor: SemanticColors.View.backgroundDefault,
                                named: "light")
+    }
+
+    func testForSpinnerIsShown_DarkMode() {
+        // GIVEN && WHEN
+        createSut()
+        sut.overrideUserInterfaceStyle = .dark
+        sut.isLoading = true
+
+        // THEN
+        verifyInAllPhoneWidths(matching: sut,
+                               snapshotBackgroundColor: SemanticColors.View.backgroundDefault,
+                               named: "dark")
     }
 }

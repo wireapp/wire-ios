@@ -19,21 +19,15 @@ import Foundation
 import UIKit
 import WireCommonComponents
 
-extension UIColor {
-    enum AlarmButton {
-        static let alarmRed = UIColor(rgb: 0xfb0807)
-    }
-}
-
 /// A button with spinner at the trailing side. Title text is non truncated.
-final class SpinnerButton: LegacyButton {
+final class SpinnerButton: Button {
 
     private lazy var spinner: Spinner = {
         let spinner = Spinner()
 
         // the spinner covers the text with alpha BG
-        spinner.backgroundColor = UIColor.from(scheme: .contentBackground).withAlphaComponent(CGFloat.SpinnerButton.spinnerBackgroundAlpha)
-        spinner.color = UIColor.AlarmButton.alarmRed
+        spinner.backgroundColor = SemanticColors.View.backgroundDefault
+        spinner.color = SemanticColors.Icon.foregroundDefaultRed
         spinner.iconSize = CGFloat.SpinnerButton.iconSize
 
         addSubview(spinner)
@@ -83,14 +77,12 @@ final class SpinnerButton: LegacyButton {
 
     /// custom full style with accent color for disabled state.
     override func updateFullStyle() {
-        setBackgroundImageColor(UIColor.AlarmButton.alarmRed, for: .disabled)
-        setBackgroundImageColor(UIColor.AlarmButton.alarmRed, for: .normal)
+        setBackgroundImageColor(SemanticColors.Icon.foregroundDefaultRed, for: .disabled)
+        setBackgroundImageColor(SemanticColors.Icon.foregroundDefaultRed, for: .normal)
 
         setTitleColor(.white, for: .normal)
         setTitleColor(.white, for: .highlighted)
         setTitleColor(.white, for: .disabled)
-
-        setTitleColor(UIColor.from(scheme: .textDimmed, variant: variant), for: .highlighted)
     }
 
     /// custom empty style with accent color for disabled state.
@@ -104,15 +96,15 @@ final class SpinnerButton: LegacyButton {
         let states: [UIControl.State] = [.normal, .highlighted, .disabled]
         states.forEach {
             let color: UIColor
-            switch variant {
+            switch overrideUserInterfaceStyle {
             case .dark:
                 color = .white
             case .light:
-                color = UIColor.AlarmButton.alarmRed
+                color = SemanticColors.Icon.foregroundDefaultRed
             }
 
             setTitleColor(color, for: $0)
-            setBorderColor(UIColor.AlarmButton.alarmRed, for: $0)
+            setBorderColor(SemanticColors.Icon.foregroundDefaultRed, for: $0)
         }
     }
 
