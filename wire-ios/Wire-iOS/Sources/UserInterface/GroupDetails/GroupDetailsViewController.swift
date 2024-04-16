@@ -103,7 +103,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     }
 
     private func setupNavigatiomItem() {
-        navigationController?.navigationBar.backgroundColor  = SemanticColors.View.backgroundDefault
+        navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
         navigationItem.titleView = TwoLineTitleView(
             first: L10n.Localizable.Participants.title.capitalized.attributedString,
             second: verificationStatus)
