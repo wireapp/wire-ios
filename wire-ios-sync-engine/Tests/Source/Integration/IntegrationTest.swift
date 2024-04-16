@@ -19,9 +19,10 @@
 import Foundation
 import WireTesting
 import WireDataModel
+import WireDataModelSupport
 import WireTransport.Testing
 import avs
-
+import WireSyncEngineSupport
 @testable import WireSyncEngine
 
 final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
@@ -50,20 +51,40 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
         configuration: ZMUserSession.Configuration = .init(),
         sharedUserDefaults: UserDefaults
     ) -> ZMUserSession? {
-        ZMUserSession(
-            userId: account.userIdentifier,
-            transportSession: transportSession,
-            mediaManager: mediaManager,
-            flowManager: flowManager,
+        let mockContextStorage = MockLAContextStorable()
+        mockContextStorage.clear_MockMethod = { }
+
+        var builder = ZMUserSessionBuilder()
+        builder.withAllDependencies(
             analytics: analytics,
-            eventProcessor: nil,
-            application: application,
             appVersion: appVersion,
+            application: application,
+            cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreDataStack: coreDataStack,
             configuration: configuration,
-            cryptoboxMigrationManager: CryptoboxMigrationManager(),
-            sharedUserDefaults: sharedUserDefaults
+            contextStorage: mockContextStorage,
+            earService: nil,
+            flowManager: flowManager,
+            mediaManager: mediaManager,
+            mlsService: nil,
+            observeMLSGroupVerificationStatus: nil,
+            proteusToMLSMigrationCoordinator: nil,
+            sharedUserDefaults: sharedUserDefaults,
+            transportSession: transportSession,
+            useCaseFactory: nil,
+            userId: account.userIdentifier
         )
+
+        let userSession = builder.build()
+        userSession.setup(
+            eventProcessor: nil,
+            strategyDirectory: nil,
+            syncStrategy: nil,
+            operationLoop: nil,
+            configuration: configuration
+        )
+
+        return userSession
     }
 
 }

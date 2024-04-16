@@ -5104,6 +5104,35 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
 }
 
+public class MockProteusToMLSMigrationCoordinating: ProteusToMLSMigrationCoordinating {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - updateMigrationStatus
+
+    public var updateMigrationStatus_Invocations: [Void] = []
+    public var updateMigrationStatus_MockError: Error?
+    public var updateMigrationStatus_MockMethod: (() async throws -> Void)?
+
+    public func updateMigrationStatus() async throws {
+        updateMigrationStatus_Invocations.append(())
+
+        if let error = updateMigrationStatus_MockError {
+            throw error
+        }
+
+        guard let mock = updateMigrationStatus_MockMethod else {
+            fatalError("no mock for `updateMigrationStatus`")
+        }
+
+        try await mock()
+    }
+
+}
+
 class MockProteusToMLSMigrationStorageInterface: ProteusToMLSMigrationStorageInterface {
 
     // MARK: - Life cycle

@@ -19,6 +19,8 @@
 import Foundation
 import XCTest
 import WireTransport
+import WireDataModelSupport
+import WireSyncEngineSupport
 @testable import WireSyncEngine
 
 class APIMigrationMock: APIMigration {
@@ -247,22 +249,40 @@ class APIMigrationManagerTests: MessagingTest {
             pushChannel: MockPushChannel()
         )
 
-        return ZMUserSession(
-            userId: .create(),
-            transportSession: mockTransportSession,
-            mediaManager: MockMediaManager(),
-            flowManager: FlowManagerMock(),
+        let mockContextStorable = MockLAContextStorable()
+        mockContextStorable.clear_MockMethod = { }
+        let configuration = ZMUserSession.Configuration()
+
+        var builder = ZMUserSessionBuilder()
+        builder.withAllDependencies(
             analytics: nil,
-            eventProcessor: MockUpdateEventProcessor()
+            appVersion: "999",
+            application: application,
+            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
+            coreDataStack: createCoreDataStack(),
+            configuration: configuration,
+            contextStorage: mockContextStorable,
+            earService: nil,
+            flowManager: FlowManagerMock(),
+            mediaManager: MockMediaManager(),
+            mlsService: nil,
+            observeMLSGroupVerificationStatus: nil,
+            proteusToMLSMigrationCoordinator: nil,
+            sharedUserDefaults: sharedUserDefaults,
+            transportSession: mockTransportSession,
+            useCaseFactory: nil,
+            userId: .create()
+        )
+
+        let userSession = builder.build()
+        userSession.setup(
+            eventProcessor: MockUpdateEventProcessor(),
             strategyDirectory: mockStrategyDirectory,
             syncStrategy: nil,
             operationLoop: nil,
-            application: application,
-            appVersion: "999",
-            coreDataStack: createCoreDataStack(),
-            configuration: .init(),
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
-            sharedUserDefaults: sharedUserDefaults
+            configuration: configuration
         )
+
+        return userSession
     }
 }
