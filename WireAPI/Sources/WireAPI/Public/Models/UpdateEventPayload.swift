@@ -34,7 +34,7 @@ public enum UpdateEventPayload {
     case conversationMessageAdd
     case conversationMessageTimerUpdate(ConversationMessageTimerUpdateEvent)
     case conversationMLSMessageAdd
-    case conversationMLSWelcome
+    case conversationMLSWelcome(ConversationMLSWelcomeEvent)
     case conversationOTRAssetAdd
     case conversationOTRMessageAdd
     case conversationProtocolUpdate

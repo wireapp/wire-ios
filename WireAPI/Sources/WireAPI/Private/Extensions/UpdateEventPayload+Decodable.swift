@@ -57,7 +57,8 @@ extension UpdateEventPayload: Decodable {
         case "conversation.mls-message-add":
             self = .conversationMLSMessageAdd
         case "conversation.mls-welcome":
-            self = .conversationMLSWelcome
+            let event = try container.decodeConversationMLSWelcomeEvent()
+            self = .conversationMLSWelcome(event)
         case "conversation.otr-asset-add":
             self = .conversationOTRAssetAdd
         case "conversation.otr-message-add":
@@ -161,6 +162,18 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
             senderID: senderID,
             timestamp: timestamp,
             newTimer: payload.message_timer
+        )
+    }
+
+    func decodeConversationMLSWelcomeEvent() throws -> ConversationMLSWelcomeEvent {
+        let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
+        let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
+        let payload = try decode(String.self, forKey: .payload)
+
+        return ConversationMLSWelcomeEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            welcomeMessage: payload
         )
     }
 
