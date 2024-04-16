@@ -272,7 +272,7 @@
 "conversation.invite_more_people.button_title" = "Personen hinzufügen";
 
 // Conversation names
-"conversation.displayname.emptygroup" = "Leere Gruppe - Gespräch";
+"conversation.displayname.emptygroup" = "Leere Gruppenunterhaltung";
 
 "conversation.input_bar.verified" = "Überprüft";
 "conversation.input_bar.placeholder" = "Eine Nachricht schreiben";
@@ -330,6 +330,10 @@
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Teilnehmerliste bearbeiten";
 "conversation.create.non_federating_domains_error.learn_more" = "Mehr erfahren";
 "conversation.create.non_federating_domains_error.abort" = "Gruppenerstellung verwerfen";
+"conversation.create.protocol_selection.mls" = "MLS";
+"conversation.create.protocol_selection.mls_default" = "MLS (Standard)";
+"conversation.create.protocol_selection.proteus" = "Proteus";
+"conversation.create.protocol_selection.proteus_default" = "Proteus (Standard)";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Aktiver Anruf";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Audionachrichten können während eines Anrufs nicht aufgenommen werden.";
@@ -483,18 +487,18 @@
 
 // New conversation participants added / removed / started system message
 
-"content.system.conversation.other.started" = "%@ hat ein Gespräch mit %@ begonnen";
+"content.system.conversation.other.started" = "%@ hat eine Unterhaltung mit %@ begonnen";
 "content.system.conversation.other.added" = "%@ hat %@ hinzugefügt";
 "content.system.conversation.other.removed" = "%@ hat %@ entfernt";
 "content.system.conversation.other.removed.legalhold" = "%@ wurde aus dieser Unterhaltung entfernt, da die gesetzliche Aufbewahrung aktiviert wurde.";
 "content.system.conversation.others.removed.legalhold" = "%@ wurden aus dieser Unterhaltung entfernt, da die gesetzliche Aufbewahrung aktiviert wurde.";
-"content.system.conversation.other.left" = "%@ hat das Gespräch verlassen";
+"content.system.conversation.other.left" = "%@ hat die Unterhaltung verlassen";
 
-"content.system.conversation.you.started" = "%@ haben ein Gespräch mit %@ begonnen";
+"content.system.conversation.you.started" = "%@ haben eine Unterhaltung mit %@ begonnen";
 "content.system.conversation.you.added" = "%@ haben %@ hinzugefügt";
 "content.system.conversation.you.removed" = "%@ haben %@ entfernt";
 "content.system.conversation.you.removed.legalhold" = "%@ wurden aus dieser Unterhaltung entfernt, da die gesetzliche Aufbewahrung aktiviert wurde.";
-"content.system.conversation.you.left" = "%@ haben das Gespräch verlassen";
+"content.system.conversation.you.left" = "%@ haben die Unterhaltung verlassen";
 "content.system.conversation.team.member-leave" = "%@ wurde aus dem Team entfernt.";
 "content.system.conversation.guest.joined" = "%@ ist beigetreten";
 "content.system.conversation.guest.you_joined" = "Sie sind beigetreten";
@@ -533,16 +537,8 @@
 
 "content.system.you_started" = "Sie";
 
-"content.system.call.called" = "%@ hat angerufen";
-"content.system.call.called-you" = "%@ haben angerufen";
-"content.system.call.called.you" = "Sie";
-
 "content.system.call.missed-call" = "Verpasster Anruf";
-"content.system.call.missed-call-you" = "Verpasster Anruf";
-
 "content.system.call.missed-call.groups" = "Verpasster Anruf von %@";
-"content.system.call.missed-call.groups-you" = "Verpasster Anruf von %2$@";
-"content.system.call.missed-call.groups.you" = "Sie";
 
 "content.system.renamed_conv.title" = "%@ hat die Unterhaltung umbenannt";
 "content.system.renamed_conv.title-you" = "%@ haben die Unterhaltung umbenannt";
@@ -580,8 +576,9 @@
 "content.system.message_legal_hold.learn_more" = "Mehr erfahren";
 
 //
-
 "content.system.is_verified" = "Alle Fingerabdrücke sind überprüft";
+"content.system.mls.conversation_is_verified" = "Alle Geräte sind durch Ende-zu-Ende-Identität überprüft. [Mehr erfahren](%@)";
+"content.system.mls.conversation_is_degraded" = "Diese Unterhaltung ist nicht mehr überprüft, da mindestens ein Teilnehmer ein neues Gerät verwendet oder ein ungültiges Zertifikat hat.";
 
 "content.system.new_users" = "Teilnehmer hinzugefügt.";
 "content.system.verify_devices" = "Überprüfe Geräte";
@@ -773,6 +770,17 @@
 "call.degraded.ended.alert.message.user" = "Der Anruf wurde unterbrochen, weil %@ kein verifizierter Kontakt mehr ist.";
 "call.degraded.ended.alert.message.unknown" = "Der Anruf wurde unterbrochen, weil jemand nicht mehr als verifizierter Kontakt gilt.";
 
+"call.mls.degraded.alert.title" = "Unterhaltung nicht mehr überprüft";
+"call.mls.degraded.alert.message" = "Mindestens ein Teilnehmer hat begonnen, ein neues Gerät zu verwenden oder hat ein ungültiges Zertifikat.\n\nMöchten Sie trotzdem anrufen?";
+"call.mls.degraded.alert.action.continue" = "Trotzdem anrufen";
+
+"call.mls.degraded.incoming.alert.message" = "Mindestens ein Teilnehmer hat begonnen, ein neues Gerät zu verwenden oder hat ein ungültiges Zertifikat.\n\nMöchten Sie dem Anruf trotzdem beitreten?";
+"call.mls.degraded.incoming.alert.action.continue" = "Trotzdem beitreten";
+
+
+"call.mls.degraded.ended.alert.title" = "Unterhaltung nicht mehr überprüft";
+"call.mls.degraded.ended.alert.message" = "Der Anruf wurde unterbrochen, da mindestens ein Teilnehmer ein neues Gerät verwendet oder ein ungültiges Zertifikat hat.";
+
 "call.alert.ongoing.alert_title" = "Dies wird den anderen Anruf beenden.";
 
 "call.alert.ongoing.start.message" = "In einer anderen Unterhaltung ist ein Anruf aktiv.\nEin Anruf hier beendet den anderen.";
@@ -874,6 +882,9 @@
 "meta.degraded.cancel_sending_button" = "Abbrechen";
 "meta.legalhold.info_button" = "Was ist gesetzliche Aufbewahrung?";
 "meta.legalhold.send_alert_title" = "Die Unterhaltung unterliegt der gesetzlichen Aufbewahrung.";
+
+"meta.mls.degraded.alert.title" = "Unterhaltung nicht mehr überprüft";
+"meta.mls.degraded.alert.message" = "Mindestens ein Teilnehmer hat begonnen, ein neues Gerät zu verwenden oder hat ein ungültiges Zertifikat. \n\nMöchten Sie die Nachricht trotzdem senden?";
 
 // Remove from conversation dialogue
 "profile.remove_dialog_title" = "Entfernen?";
@@ -999,6 +1010,8 @@
 "group_details.conversation_admins_header.title" = "Gruppen-Admins";
 "group_details.conversation_members_header.title" = "Gruppen-Mitglieder";
 
+"group_details.conversation_verification_status.e2ei" = "Überprüft (Ende-zu-Ende-Identität)";
+"group_details.conversation_verification_status.proteus" = "Überprüft (Proteus)";
 
 // Legal hold details
 
@@ -1590,6 +1603,23 @@
 "registration.signin.alert.password_needed.title" = "Passwort erforderlich";
 "registration.signin.alert.password_needed.message" = "Bitte zum Anmelden Passwort eingeben.";
 
+"registration.signin.e2ei.title" = "Ende-zu-Ende-Identitätszertifikat";
+"registration.signin.e2ei.subtitle" = "Ihr Team verwendet jetzt Ende-zu-Ende-Identität, um die Nutzung von Wire sicherer zu machen. \n\n Geben Sie im nächsten Schritt die Anmeldedaten Ihres Identity-Providers ein, um automatisch ein Zertifikat für dieses Gerät zu erhalten.";
+"registration.signin.e2ei.learn_more" = "[Mehr erfahren](%@)";
+"registration.signin.e2ei.get_certificate_button.title" = "Zertifikat erhalten";
+"registration.signin.e2ei.error.alert.title" = "Ein Fehler ist aufgetreten";
+"registration.signin.e2ei.error.alert.message" = "Zertifikat konnte nicht abgerufen werden";
+
+// Enroll e2ei certificate
+"enroll_e2ei_certificate.title" = "Zertifikat ausgestellt";
+"enroll_e2ei_certificate.subtitle" = "Das Zertifikat ist aktiv und Ihr Gerät überprüft.";
+"enroll_e2ei_certificate.certificate_details_button" = "Zertifikatsdetails";
+"enroll_e2ei_certificate.ok_button" = "OK";
+
+// Update e2ei certificate
+"update_e2ei_certificate.title" = "Zertifikat aktualisiert";
+"update_e2ei_certificate.subtitle" = "Zertifikat wurde aktualisiert und Ihr Gerät wurde überprüft.";
+
 "registration.signin.username.title" = "Ihr Benutzername";
 "registration.signin.username.message" = "Geben Sie Ihren Benutzernamen ein. Andere können Sie so leichter in Wire finden und sich mit Ihnen verbinden.";
 "registration.signin.username.placeholder" = "Benutzername";
@@ -1760,6 +1790,37 @@
 // Feature configs: conversation guest links
 "feature_config.alert.conversation_guest_links.message.disabled" = "Erstellen von Gäste-Links ist nun für alle Gruppen-Admins deaktiviert.";
 "feature_config.alert.conversation_guest_links.message.enabled" = "Erstellen von Gäste-Links ist nun für alle Gruppen-Admins aktiviert.";
+
+// Feature configs: mlsE2EId
+"feature_config.alert.mls_e2ei.title" = "Ende-zu-Ende-Identitätszertifikat";
+"feature_config.alert.mls_e2ei.message" = "Ihr Team verwendet von heute an Ende-zu-Ende-Identität, um die Nutzung von Wire sicherer und praktikabler zu machen.\nGeben Sie im nächsten Schritt die Anmeldedaten Ihres Identity-Providers ein, um automatisch ein Zertifikat für dieses Gerät zu erhalten.";
+"feature_config.alert.mls_e2ei.button.get_certificate" = "Zertifikat erhalten";
+"feature_config.alert.mls_e2ei.button.remind_me_later" = "Später erinnern";
+"feature_config.alert.mls_e2ei.button.learn_more" = "Mehr erfahren";
+"feature_config.alert.mls_e2ei.button.ok" = "OK";
+"feature_config.alert.mls_e2ei.reminder_message" = "Sie können das Zertifikat in Ihren Wire Einstellungen in der/den nächsten %@ erhalten. Öffnen Sie 'Geräte' und wählen Sie 'Zertifikat erhalten' für Ihr aktuelles Gerät. ";
+"feature_config.alert.mls_e2ei.update_message" = "Das Ende-zu-Ende-Identitätszertifikat für dieses Gerät läuft bald ab. Aktualisieren Sie Ihr Zertifikat jetzt, damit Ihre Kommunikation sicher bleibt. Geben Sie im nächsten Schritt die Anmeldedaten Ihres Identity-Providers ein, um das Zertifikat automatisch zu aktualisieren.";
+"feature_config.alert.mls_e2ei.alert.update_certificate.title" = "Ende-zu-Ende-Identitätszertifikat";
+"failed_to_get_certificate.alert.title" = "Zertifikat konnte nicht ausgestellt werden.";
+"failed_to_get_certificate.alert.message" = "Sie können jetzt erneut versuchen, das Zertifikat zu erhalten, oder Sie erhalten später eine Erinnerung.";
+"failed_to_get_certificate.alert.forced_message" = "Bitte versuchen Sie es erneut oder wenden Sie sich an Ihren Team-Admin.";
+"failed_to_get_certificate.button.retry" = "Wiederholen";
+"failed_to_get_certificate.button.ok" = "OK";
+
+// Update end-to-end identity certificate
+"update_certificate.alert.title" = "Zertifikat aktualisieren";
+"update_certificate.alert.message" = "Das Ende-zu-Ende-Identitätszertifikat für dieses Gerät läuft bald ab. Um Ihre Kommunikation auf dem höchsten Sicherheitsniveau zu halten, aktualisieren Sie Ihr Zertifikat jetzt. Geben Sie im nächsten Schritt die Anmeldedaten Ihres Identity-Providers ein, um das Zertifikat automatisch zu aktualisieren.";
+"update_certificate.alert.expired-message" = "Das Ende-zu-Ende-Identitätszertifikat für dieses Gerät ist abgelaufen. Geben Sie im nächsten Schritt die Anmeldedaten Ihres Identity-Providers ein, um das Zertifikat automatisch zu aktualisieren.";
+"update_certificate.button.update_certificate" = "Zertifikat aktualisieren";
+
+"failed_to_update_certificate.alert.title" = "Zertifikat konnte nicht aktualisiert werden.";
+"failed_to_update_certificate.alert.message" = "Sie können jetzt erneut versuchen, das Zertifikat zu aktualisieren, oder Sie erhalten später eine Erinnerung.";
+
+// End-to-end identity revoked certificate
+"revoked_certificate.alert.title" = "Ende-zu-Ende-Identitätszertifikat widerrufen";
+"revoked_certificate.alert.message" = "Melden Sie sich ab, um Sicherheitsrisiken zu verringern. Melden Sie sich dann erneut an, laden Sie ein neues Zertifikat herunter und setzen Sie Ihr Passwort zurück. Wenn Sie dieses Gerät weiter verwenden, sind Ihre Unterhaltungen nicht mehr überprüft.";
+"revoked_certificate.alert.log_out" = "Abmelden";
+"revoked_certificate.alert.continue" = "Mit diesem Gerät fortfahren";
 
 // Jailbroken alert
 "jailbrokendevice.alert.title" = "Jailbreak erkannt";
@@ -2067,3 +2128,26 @@
 // MARK: - Time
 
 "time.just_now" = "Gerade eben";
+
+// MARK: - Device Details
+"device.details.section.proteus.title" = "PROTEUS-GERÄTEDETAILS";
+"device.details.section.proteus.id" = "Proteus-ID";
+"device.details.section.proteus.value" = "Proteus-ID: %@";
+"device.details.section.proteus.activated" = "Aktiviert";
+"device.details.section.proteus.key_fingerprint" = "Proteus-Schlüssel-Fingerabdruck";
+"device.details.section.e2ei.title" = "Ende-zu-Ende-Identitätszertifikat";
+"device.details.section.e2ei.show_certificate_details" = "Zertifikatsdetails anzeigen";
+"device.details.section.e2ei.get_certificate" = "Zertifikat erhalten";
+"device.details.section.e2ei.update_certificate" = "Zertifikat aktualisieren";
+"device.details.section.e2ei.status.title" = "Status";
+"device.details.section.e2ei.status.not_activated" = "Nicht aktiviert";
+"device.details.section.e2ei.status.valid" = "Gültig";
+"device.details.section.e2ei.status.revoked" = "Widerrufen";
+"device.details.section.e2ei.status.expired" = "Abgelaufen";
+"device.details.section.e2ei.status.invalid" = "Ungültig";
+"device.details.section.e2ei.serial_number" = "Seriennummer";
+"device.details.section.mls.signature" = "MLS mit Ed25519 Signatur";
+"device.details.section.mls.title" = "MLS-Daumenabdruck";
+"device.details.section.mls.thumbprint" = "MLS-Daumenabdruck: %@";
+"device.details.certificate_details.title" = "Zertifikatsdetails";
+"device.details.certificate_details.copy_to_clipboard" = "In Zwischenablage kopieren";

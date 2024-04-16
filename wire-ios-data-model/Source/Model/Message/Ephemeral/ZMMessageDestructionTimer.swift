@@ -95,7 +95,7 @@ enum MessageDestructionType: String {
 
     override init(managedObjectContext: NSManagedObjectContext!) {
         super.init(managedObjectContext: managedObjectContext)
-        timerCompletionBlock = { [weak self] (message, userInfo) in
+        timerCompletionBlock = { [weak self] message, userInfo in
             guard let strongSelf = self, let message = message, !message.isZombieObject else {
                 return log.debug("not forwarding timer, nil message or zombie")
             }

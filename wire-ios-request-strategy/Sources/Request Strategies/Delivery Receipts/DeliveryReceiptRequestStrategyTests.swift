@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -63,8 +63,6 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     func testThatDeliveryReceiptIsScheduled_WhenProcessingEventWhichNeedsDeliveryReceipt() throws {
         syncMOC.performGroupedAndWait { _ in
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
-            let conversationID = self.oneToOneConversation.remoteIdentifier!.transportString()
-            let conversationDomain = self.oneToOneConversation.domain!
             let event = self.createTextUpdateEvent(from: self.otherUser, in: self.oneToOneConversation)
 
             // when

@@ -20,13 +20,15 @@ import WireDataModel
 
 extension ZMConversationMessage {
     func audioCanBeSaved() -> Bool {
-        if let fileMessageData = self.fileMessageData,
-            fileMessageData.fileURL != nil,
-            fileMessageData.isAudio {
-            return true
-        } else {
+        guard
+            let fileMessageData,
+            fileMessageData.hasLocalFileData,
+            fileMessageData.isAudio
+        else {
             return false
         }
+
+        return true
     }
 
     var audioTrack: AudioTrack? {
@@ -50,14 +52,7 @@ extension ZMAssetClientMessage: AudioTrack {
     }
 
     var streamURL: URL? {
-        guard
-            let fileMessageData = self.fileMessageData,
-            let fileURL = fileMessageData.fileURL
-        else {
-            return .none
-        }
-
-        return fileURL as URL?
+        return fileMessageData?.temporaryURLToDecryptedFile()
     }
 
     var failedToLoad: Bool {

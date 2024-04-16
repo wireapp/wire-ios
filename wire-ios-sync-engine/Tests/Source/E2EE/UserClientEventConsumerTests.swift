@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +17,7 @@
 //
 
 import WireDataModelSupport
+import WireSyncEngineSupport
 import Foundation
 
 final class UserClientEventConsumerTests: RequestStrategyTestBase {
@@ -25,24 +27,38 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
     var clientUpdateStatus: ZMMockClientUpdateStatus!
     var cookieStorage: ZMPersistentCookieStorage!
     var coreCryptoProvider: MockCoreCryptoProviderProtocol!
+    var resolveOneOnOneConversations: MockResolveOneOnOneConversationsUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
+
+        resolveOneOnOneConversations = MockResolveOneOnOneConversationsUseCaseProtocol()
+        resolveOneOnOneConversations.invoke_MockMethod = {}
+
         self.syncMOC.performGroupedBlockAndWait {
-            self.cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer",
-                                                           userIdentifier: self.userIdentifier,
-                                                           useCache: true)
+            self.cookieStorage = ZMPersistentCookieStorage(
+                forServerName: "myServer",
+                userIdentifier: self.userIdentifier,
+                useCache: true
+            )
             self.coreCryptoProvider = MockCoreCryptoProviderProtocol()
 
-            self.clientUpdateStatus = ZMMockClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
+            self.clientUpdateStatus = ZMMockClientUpdateStatus(
+                syncManagedObjectContext: self.syncMOC
+            )
 
-            self.clientRegistrationStatus = ZMMockClientRegistrationStatus(context: self.syncMOC,
-                                                                           cookieProvider: self.cookieStorage,
-                                                                           coreCryptoProvider: self.coreCryptoProvider)
+            self.clientRegistrationStatus = ZMMockClientRegistrationStatus(
+                context: self.syncMOC,
+                cookieProvider: self.cookieStorage,
+                coreCryptoProvider: self.coreCryptoProvider
+            )
 
-            self.sut = UserClientEventConsumer(managedObjectContext: self.syncMOC,
-                                               clientRegistrationStatus: self.clientRegistrationStatus,
-                                               clientUpdateStatus: self.clientUpdateStatus)
+            self.sut = UserClientEventConsumer(
+                managedObjectContext: self.syncMOC,
+                clientRegistrationStatus: self.clientRegistrationStatus,
+                clientUpdateStatus: self.clientUpdateStatus,
+                resolveOneOnOneConversations: self.resolveOneOnOneConversations
+            )
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.userIdentifier
@@ -57,9 +73,10 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         super.tearDown()
     }
 
-    static func payloadForAddingClient(_ clientId: String,
-                                       label: String = "device label",
-                                       time: Date = Date(timeIntervalSince1970: 12345)
+    static func payloadForAddingClient(
+        _ clientId: String,
+        label: String = "device label",
+        time: Date = Date(timeIntervalSince1970: 12345)
     ) -> ZMTransportData {
 
         return [
@@ -74,7 +91,6 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
     }
 
     static func payloadForDeletingClient(_ clientId: String) -> ZMTransportData {
-
         return [
             "client": [
                 "id": clientId
@@ -233,6 +249,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             let events = ZMUpdateEvent.eventsArray(fromPushChannelData: payload as ZMTransportData)
             event = events?.first
         }
+
         guard let event else {
             XCTFail("missing event")
             return
@@ -250,6 +267,8 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             }
             XCTAssertEqual(newClient, existingClient1)
         }
+
+        XCTAssertEqual(resolveOneOnOneConversations.invoke_Invocations.count, 1)
     }
 
     func testThatItInvalidatesTheCurrentSelfClientAndWipeCryptoBoxWhenReceivingAPush() async {
@@ -266,7 +285,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
             // swiftlint:enable todo_requires_jira_link
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
+            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 fingerprint = sessionsDirectory.localFingerprint
             }
             previousLastPrekey = try? self.syncMOC.zm_cryptKeyStore.lastPreKey()
@@ -291,7 +310,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         syncMOC.performGroupedBlockAndWait {
             // then
             var newFingerprint: Data?
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
+            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 newFingerprint = sessionsDirectory.localFingerprint
             }
             let newLastPrekey = try? self.syncMOC.zm_cryptKeyStore.lastPreKey()

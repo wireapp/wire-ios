@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@ import Foundation
 @objc
 public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
 
-    fileprivate let requestFactory =  ClientMessageRequestFactory()
+    fileprivate let requestFactory = ClientMessageRequestFactory()
     fileprivate var conversationSync: IdentifierObjectSync<VerifyLegalHoldRequestStrategy>!
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -91,7 +92,13 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
         let clientChanges = verifyClientsParser.processEmptyUploadResponse(response, in: conversation, clientRegistrationDelegate: applicationStatus!.clientRegistrationDelegate)
 
         WaitingGroupTask(context: managedObjectContext) { [self] in
-            let newMissingClients = await clientChanges.missingClients.asyncFilter { await $0.hasSessionWithSelfClient == false }
+
+            var newMissingClients = [UserClient]()
+            for missingClient in clientChanges.missingClients {
+                guard await !missingClient.hasSessionWithSelfClient else { continue }
+                newMissingClients.append(missingClient)
+            }
+
             await managedObjectContext.perform {
                 let selfClient = ZMUser.selfUser(in: self.managedObjectContext).selfClient()
                 selfClient?.addNewClientsToIgnored(Set(newMissingClients))
@@ -105,9 +112,7 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
                 completionHandler()
             }
         }
-
     }
-
 }
 
 private class VerifyClientsParser: OTREntity {

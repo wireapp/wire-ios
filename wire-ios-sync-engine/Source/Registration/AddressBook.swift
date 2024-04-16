@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ extension AddressBookAccessor {
         // never blocked indefinitely as this is the only function using it
         groupQueue.dispatchGroup.async(on: addressBookProcessingQueue) {
 
-            let range: Range<UInt> = startingContactIndex..<(startingContactIndex+maxNumberOfContacts)
+            let range: Range<UInt> = startingContactIndex..<(startingContactIndex + maxNumberOfContacts)
             let cards = self.generateContactCards(range: range)
 
             guard cards.count > 0 || startingContactIndex > 0 else {
@@ -87,7 +87,7 @@ extension AddressBookAccessor {
                 return
             }
 
-            let cardsRange = startingContactIndex..<(startingContactIndex+UInt(cards.count))
+            let cardsRange = startingContactIndex..<(startingContactIndex + UInt(cards.count))
             let encodedAB = EncodedAddressBookChunk(numberOfTotalContacts: self.numberOfContacts,
                                                     otherContactsHashes: cards,
                                                     includedContacts: cardsRange)
@@ -117,7 +117,7 @@ extension AddressBookAccessor {
         contacts.reserveCapacity(maxElements)
 
         var skipped: UInt = 0
-        self.enumerateValidContacts { (contact) -> (Bool) in
+        self.enumerateValidContacts { contact -> (Bool) in
             if skipped < range.lowerBound {
                 skipped += 1
                 return true

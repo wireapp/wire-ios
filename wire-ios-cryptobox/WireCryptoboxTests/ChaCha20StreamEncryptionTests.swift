@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import XCTest
 @testable import WireCryptobox
@@ -151,7 +151,7 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
         // given
         let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
         let message = "123456789"
-        let messageData =  message.data(using: .utf8)!
+        let messageData = message.data(using: .utf8)!
 
         // when
         let encryptedMessage = try encrypt(messageData, passphrase: passphrase)
@@ -166,7 +166,7 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
         // given
         let expectedMessage = "123456789"
         let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID(uuidString: "71DE4781-9EC7-4ED4-BADE-690C5A9732C6")!)
-        let encryptedMessage =  Data(base64Encoded: "V0JVSQAAAT5xxW76YX91IgLvJwXeC5x+q/8To15mBzbsA6rc5Dzf7xRyWH+LYv+bscKxj3c7Fl7trr/9qt78lgA5ZtyjK7d2ZBdSYl4HLskPjyUIseTjAZjGKt+7MEXp8aVBey8ooGep")!
+        let encryptedMessage = Data(base64Encoded: "V0JVSQAAAT5xxW76YX91IgLvJwXeC5x+q/8To15mBzbsA6rc5Dzf7xRyWH+LYv+bscKxj3c7Fl7trr/9qt78lgA5ZtyjK7d2ZBdSYl4HLskPjyUIseTjAZjGKt+7MEXp8aVBey8ooGep")!
 
         // when
         let decryptedMessage = try decrypt(encryptedMessage, passphrase: passphrase)
@@ -180,7 +180,7 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
         // given
         let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
         let message = "123456789"
-        let messageData =  message.data(using: .utf8)!
+        let messageData = message.data(using: .utf8)!
 
         // when
         let encryptedDataURL = try encryptToURL(messageData, passphrase: passphrase)
@@ -194,7 +194,7 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
 
         // given
         let message = "123456789"
-        let messageData =  message.data(using: .utf8)!
+        let messageData = message.data(using: .utf8)!
         let inputStream = InputStream(data: messageData)
         var outputBuffer = [UInt8](repeating: 0, count: 1)
         let outputStream = OutputStream(toBuffer: &outputBuffer, capacity: 1)
@@ -216,7 +216,7 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
 
         // given
         let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
-        let malformedMessageData =  "".data(using: .utf8)!
+        let malformedMessageData = "".data(using: .utf8)!
         var outputBuffer = [UInt8](repeating: 0, count: 256)
         let outputStream = OutputStream(toBuffer: &outputBuffer, capacity: 256)
         let inputStream = InputStream(data: malformedMessageData)
@@ -237,7 +237,7 @@ class ChaCha20StreamEncryptionTests: XCTestCase {
 
         // given
         let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
-        let malformedMessageData =  "malformed12345678901234567890123456789012345678901234567890".data(using: .utf8)!
+        let malformedMessageData = "malformed12345678901234567890123456789012345678901234567890".data(using: .utf8)!
         var outputBuffer = [UInt8](repeating: 0, count: 256)
         let outputStream = OutputStream(toBuffer: &outputBuffer, capacity: 256)
         let inputStream = InputStream(data: malformedMessageData)

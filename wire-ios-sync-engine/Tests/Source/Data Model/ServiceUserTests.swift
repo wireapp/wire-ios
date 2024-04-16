@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var isUnderLegalHold: Bool = false
 
-    var allClients: [UserClientType]  = []
+    var allClients: [UserClientType] = []
 
     var expiresAfter: TimeInterval = 0
 
@@ -274,7 +274,7 @@ final class ServiceUserTests: IntegrationTest {
     func createService() -> ServiceUser {
         var mockServiceId: String!
         var mockProviderId: String!
-        mockTransportSession.performRemoteChanges { (remoteChanges) in
+        mockTransportSession.performRemoteChanges { remoteChanges in
             let mockService = remoteChanges.insertService(withName: "Service A",
                                                           identifier: UUID().transportString(),
                                                           provider: UUID().transportString())

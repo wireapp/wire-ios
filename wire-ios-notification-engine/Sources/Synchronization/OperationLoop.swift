@@ -133,10 +133,10 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
 
         RequestAvailableNotification.addObserver(self)
 
-        tokens.append(setupObserver(for: userContext) { [weak self] (note, inserted, updated) in
+        tokens.append(setupObserver(for: userContext) { [weak self] note, inserted, updated in
             self?.userInterfaceContextDidSave(notification: note, insertedObjects: inserted, updatedObjects: updated)
         })
-        tokens.append(setupObserver(for: syncContext) { [weak self] (note, inserted, updated) in
+        tokens.append(setupObserver(for: syncContext) { [weak self] note, inserted, updated in
             self?.syncContextDidSave(notification: note, insertedObjects: inserted, updatedObjects: updated)
         })
     }
@@ -178,7 +178,7 @@ final class OperationLoop: NSObject, RequestAvailableObserver {
         merge(changes: notification, intoContext: syncContext)
 
         let insertedObjectsIds = insertedObjects.map({ $0.objectID })
-        let updatedObjectsIds  =  updatedObjects.map({ $0.objectID })
+        let updatedObjectsIds = updatedObjects.map({ $0.objectID })
 
         syncContext.performGroupedBlock {
             let insertedObjects = insertedObjectsIds.compactMap(self.syncContext.object)

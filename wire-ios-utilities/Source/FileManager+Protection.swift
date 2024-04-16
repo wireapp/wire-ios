@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,12 +19,21 @@
 import Foundation
 import WireSystem
 
+public enum FileManagerError: Error {
+
+    case failedToCreateDirectory(Error)
+    case failedToSetProtection(Error)
+
+}
+
 extension FileManager {
 
     /// Creates a new directory if needed, sets the file protection 
-    /// to `completeUntilFirstUserAuthentication` and excludes the URL from backups
-    public func createAndProtectDirectory(at url: URL) {
+    /// to `completeUntilFirstUserAuthentication` and excludes the URL from backups.
+    ///
+    /// Throws: FileManagerError
 
+    public func createAndProtectDirectory(at url: URL) throws {
         if !fileExists(atPath: url.path) {
             do {
                 try createDirectory(at: url, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
@@ -38,24 +47,24 @@ extension FileManager {
                 }
                 #endif
 
-                fatal("Failed to create directory: \(url), error: \(error)")
+                throw FileManagerError.failedToCreateDirectory(error)
             }
         }
 
-        // Make sure it's not accessible until first unlock
-        self.setProtectionUntilFirstUserAuthentication(url)
+        // Make sure it's not accessible until first unlock.
+        try setProtectionUntilFirstUserAuthentication(url)
 
-        // Make sure this is not backed up:
-        try? url.excludeFromBackup()
+        // Make sure this is not backed up.
+        try url.excludeFromBackup()
     }
 
     /// Sets the protection to FileProtectionType.completeUntilFirstUserAuthentication
-    public func setProtectionUntilFirstUserAuthentication(_ url: URL) {
+    public func setProtectionUntilFirstUserAuthentication(_ url: URL) throws {
         do {
             let attributes = [FileAttributeKey.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication]
             try self.setAttributes(attributes, ofItemAtPath: url.path)
-        } catch let error {
-            fatal("Failed to set protection until first user authentication: \(url), error: \(error)")
+        } catch {
+            throw FileManagerError.failedToSetProtection(error)
         }
     }
 
@@ -70,7 +79,7 @@ public extension URL {
             var resourceValues = URLResourceValues()
             resourceValues.isExcludedFromBackup = true
             try mutableCopy.setResourceValues(resourceValues)
-        } catch let error {
+        } catch {
             throw error
         }
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ final class SessionManagerAPIVersionResolverTests: IntegrationTest {
         let userRemoteIdentifier = UUID()
         let conversationRemoteIdentifier = UUID()
         // Create user and conversation
-        let (user, conversation) = session.syncContext.performAndWait {
+        session.syncContext.performAndWait {
             let user = ZMUser.insertNewObject(in: session.syncContext)
             let conversation = ZMConversation.insertNewObject(in: session.syncContext)
             user.remoteIdentifier = userRemoteIdentifier
@@ -49,7 +49,6 @@ final class SessionManagerAPIVersionResolverTests: IntegrationTest {
 
             XCTAssertNil(user.domain)
             XCTAssertNil(conversation.domain)
-            return (user, conversation)
         }
 
         // Setup domain
@@ -90,6 +89,7 @@ final class SessionManagerAPIVersionResolverTests: IntegrationTest {
 }
 
 private class MockSessionManagerExpectationDelegate: SessionManagerDelegate {
+
     var didCallDidPerformFederationMigration: Bool = false
     var expectation: XCTestExpectation?
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
@@ -138,11 +138,23 @@ private class MockSessionManagerExpectationDelegate: SessionManagerDelegate {
         // no op
     }
 
+    func sessionManagerRequireCertificateEnrollment() {
+        // no-op
+    }
+
+    func sessionManagerDidEnrollCertificate(for activeSession: UserSession?) {
+        // no-op
+    }
+
     func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
         // no op
     }
 
     public func sessionManagerAsksToRetryStart() {
+        // no op
+    }
+
+    func sessionManagerDidCompleteInitialSync(for activeSession: WireSyncEngine.UserSession?) {
         // no op
     }
 

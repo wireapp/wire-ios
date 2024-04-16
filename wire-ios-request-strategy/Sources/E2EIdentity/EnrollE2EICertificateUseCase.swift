@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,11 +30,11 @@ public struct OAuthParameters {
 public struct OAuthResponse {
 
     let idToken: String
-    let refreshToken: String
+    let refreshToken: String?
 
     public init(
         idToken: String,
-        refreshToken: String) {
+        refreshToken: String?) {
             self.idToken = idToken
             self.refreshToken = refreshToken
         }
@@ -58,6 +58,7 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
     enum Failure: Error {
         case missingIdentityProvider
         case missingClientId
+        case missingSelfClientID
         case failedToDecodeCertificate
         case failedToEnrollCertificate(_ underlyingError: Error)
     }
@@ -72,17 +73,18 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
 
     public init(
         e2eiRepository: E2EIRepositoryInterface,
-        context: NSManagedObjectContext) {
-            self.e2eiRepository = e2eiRepository
-            self.context = context
-        }
+        context: NSManagedObjectContext
+    ) {
+        self.e2eiRepository = e2eiRepository
+        self.context = context
+    }
 
     /// Invokes enrollment flow
     /// - Parameter authenticate: Block that performs OAUTH authentication
     /// - Returns: Chain of certificates for the clients
     /// - Description: **Visit the link below to understand the entire flow**  https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/800820113/Use+case+End-to-end+identity+enrollment#Detailed-enrolment-flow
     public func invoke(authenticate: @escaping OAuthBlock) async throws -> String {
-        return try await invoke(authenticate: authenticate, expirySec: nil)
+        try await invoke(authenticate: authenticate, expirySec: nil)
     }
 
     public func invoke(authenticate: @escaping OAuthBlock, expirySec: UInt32?) async throws -> String {
@@ -90,6 +92,14 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             try await e2eiRepository.fetchTrustAnchor()
         } catch {
             logger.warn("failed to register trust anchor: \(error.localizedDescription)")
+            throw error
+        }
+
+        do {
+            try await e2eiRepository.fetchFederationCertificates()
+        } catch {
+            logger.warn("failed to register intermediate certificates: \(String(describing: error))")
+            throw error
         }
 
         let enrollment = try await e2eiRepository.createEnrollment(
@@ -121,6 +131,11 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
         let selfClientId = await context.perform {
             ZMUser.selfUser(in: self.context).selfClient()?.remoteIdentifier
         }
+
+        guard let selfClientId else {
+            throw Failure.missingSelfClientID
+        }
+
         let isUpgradingMLSClient = await context.perform {
             ZMUser.selfUser(in: self.context).selfClient()?.hasRegisteredMLSClient ?? false
         }
@@ -132,13 +147,11 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             acmeAudience: acmeAudience)
         let oAuthResponse = try await authenticate(parameters)
 
-        let wireNonce = try await enrollment.getWireNonce(clientId: selfClientId ?? "")
+        let wireNonce = try await enrollment.getWireNonce(clientId: selfClientId)
         let dpopToken = try await enrollment.getDPoPToken(wireNonce)
         let wireAccessToken = try await enrollment.getWireAccessToken(
-            clientId: selfClientId ?? "",
+            clientId: selfClientId,
             dpopToken: dpopToken)
-
-        let refreshTokenFromCC = try? await enrollment.getOAuthRefreshToken()
 
         let dpopChallengeResponse = try await enrollment.validateDPoPChallenge(
             accessToken: wireAccessToken.token,
@@ -147,7 +160,7 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
 
         let oidcChallengeResponse = try await enrollment.validateOIDCChallenge(
             idToken: oAuthResponse.idToken,
-            refreshToken: refreshTokenFromCC ?? oAuthResponse.refreshToken,
+            refreshToken: oAuthResponse.refreshToken ?? " ",
             prevNonce: dpopChallengeResponse.nonce,
             acmeChallenge: oidcAuthorization.challenge)
 
@@ -172,6 +185,7 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
                 isUpgradingMLSClient: isUpgradingMLSClient,
                 enrollment: enrollment,
                 certificateChain: certificateChain)
+            notifyE2EICertificateChange()
 
             return certificateChain
         } catch {
@@ -198,4 +212,13 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
         return clientId
     }
 
+    private func notifyE2EICertificateChange() {
+        NotificationCenter.default.post(name: .e2eiCertificateChanged, object: self)
+    }
+
+}
+
+public extension Notification.Name {
+    // This notification is used to notify of end-to-end identity certificate changes
+    static let e2eiCertificateChanged = NSNotification.Name("E2EICertificateStatusChanged")
 }

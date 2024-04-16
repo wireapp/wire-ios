@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
     case debugDuplicateObjects
-    case forceCRLExpiryAfterThirtyMinutes
+    case forceCRLExpiryAfterOneMinute
 
     public var description: String {
         switch self {
@@ -54,8 +54,8 @@ public enum DeveloperFlag: String, CaseIterable {
         case .debugDuplicateObjects:
             return "Turn on to have actions to insert duplicate users, conversations, teams"
 
-        case .forceCRLExpiryAfterThirtyMinutes:
-            return "Turn on to force CRLs to expire after 30 minutes"
+        case .forceCRLExpiryAfterOneMinute:
+            return "Turn on to force CRLs to expire after 1 minute"
         }
     }
 
@@ -92,7 +92,7 @@ public enum DeveloperFlag: String, CaseIterable {
             return "ProteusByCoreCryptoEnabled"
         case .forceDatabaseLoadingFailure:
             return "ForceDatabaseLoadingFailure"
-        case .nseV2, .debugDuplicateObjects, .forceCRLExpiryAfterThirtyMinutes:
+        case .nseV2, .debugDuplicateObjects, .forceCRLExpiryAfterOneMinute:
             return nil
         case .ignoreIncomingEvents:
             return "IgnoreIncomingEventsEnabled"

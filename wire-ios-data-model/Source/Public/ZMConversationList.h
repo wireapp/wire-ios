@@ -31,7 +31,7 @@
 
 /// Call this when the app enters the background and reenters the foreground
 /// It recreates the backinglist and notifies the conversationlist observer center about the update
-- (void)recreateWithAllConversations:( NSArray * _Nonnull )conversations;
+- (void)recreateWithAllConversations:(NSArray * _Nonnull)conversations  predicate:(NSPredicate * _Nonnull)predicate;
 
 @end
 

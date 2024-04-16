@@ -31,11 +31,8 @@ final class ConversationCreateGuestsCell: IconToggleCell {
     }
 
     private func setupIconForCell() {
-        let color = SemanticColors.Icon.foregroundDefault
-        icon = StyleKitIcon.guest.makeImage(
-            size: .tiny,
-            color: color).withRenderingMode(.alwaysTemplate)
-        iconColor = color
+        icon = .init(resource: .guest).withRenderingMode(.alwaysTemplate)
+        iconColor = SemanticColors.Icon.foregroundDefault
     }
 }
 

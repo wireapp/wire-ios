@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ class URLActionTests: ZMTBaseTest {
         let url = URL(string: "wire://start-sso/wire-4B1BEDB9-8899-4855-96AF")!
 
         // when
-        XCTAssertThrowsError(try URLAction(url: url)) { (error) in
+        XCTAssertThrowsError(try URLAction(url: url)) { error in
             // then
             XCTAssertEqual(error as? ConmpanyLoginRequestError, .invalidLink)
         }
@@ -52,7 +52,7 @@ class URLActionTests: ZMTBaseTest {
         let url = URL(string: "wire://start-sso/wire-\(id)/content")!
 
         // when
-        XCTAssertThrowsError(try URLAction(url: url)) { (error) in
+        XCTAssertThrowsError(try URLAction(url: url)) { error in
             // then
             XCTAssertEqual(error as? ConmpanyLoginRequestError, .invalidLink)
         }
@@ -105,7 +105,7 @@ class URLActionTests: ZMTBaseTest {
         let url = URL(string: "wire://conversation-join/?key=\(key)")!
 
         // when
-        XCTAssertThrowsError(try URLAction(url: url)) { (error) in
+        XCTAssertThrowsError(try URLAction(url: url)) { error in
             // then
             XCTAssertEqual(error as? DeepLinkRequestError, .malformedLink)
         }
@@ -116,7 +116,7 @@ class URLActionTests: ZMTBaseTest {
         let url = URL(string: "wire://user/blahBlah)")!
 
         // when
-        XCTAssertThrowsError(try URLAction(url: url)) { (error) in
+        XCTAssertThrowsError(try URLAction(url: url)) { error in
             // then
             XCTAssertEqual(error as? DeepLinkRequestError, .invalidUserLink)
         }
@@ -127,7 +127,7 @@ class URLActionTests: ZMTBaseTest {
         let url = URL(string: "wire://conversation/foobar)")!
 
         // when
-        XCTAssertThrowsError(try URLAction(url: url)) { (error) in
+        XCTAssertThrowsError(try URLAction(url: url)) { error in
             // then
             XCTAssertEqual(error as? DeepLinkRequestError, .invalidConversationLink)
         }
@@ -138,7 +138,7 @@ class URLActionTests: ZMTBaseTest {
         let url = URL(string: "wire://userx/abc/def)")!
 
         // when
-        XCTAssertThrowsError(try URLAction(url: url)) { (error) in
+        XCTAssertThrowsError(try URLAction(url: url)) { error in
             // then
             XCTAssertEqual(error as? DeepLinkRequestError, .malformedLink)
         }
@@ -149,7 +149,7 @@ class URLActionTests: ZMTBaseTest {
         let url = URL(string: "wire://connect/something)")!
 
         // when
-        XCTAssertThrowsError(try URLAction(url: url)) { (error) in
+        XCTAssertThrowsError(try URLAction(url: url)) { error in
             // then
             XCTAssertEqual(error as? DeepLinkRequestError, .malformedLink)
         }
@@ -173,7 +173,7 @@ class URLActionTests: ZMTBaseTest {
         let url = URL(string: "wire://access/?noconfig")!
 
         // when
-        XCTAssertThrowsError(try URLAction(url: url)) { (error) in
+        XCTAssertThrowsError(try URLAction(url: url)) { error in
             // then
             XCTAssertEqual(error as? DeepLinkRequestError, .malformedLink)
         }

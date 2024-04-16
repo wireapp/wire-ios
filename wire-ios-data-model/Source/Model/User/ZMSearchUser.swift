@@ -69,7 +69,7 @@ public struct SearchUserAssetKeys {
                 }
             }
 
-            if nil != previewKey || nil != completeKey {
+            if previewKey != nil || completeKey != nil {
                 preview = previewKey
                 complete = completeKey
                 return
@@ -544,7 +544,7 @@ public class ZMSearchUser: NSObject, UserType {
                   user: user
         )
 
-        self.providerIdentifier =  payload["provider"] as? String
+        self.providerIdentifier = payload["provider"] as? String
         self.summary = payload["summary"] as? String
         self.assetKeys = SearchUserAssetKeys(payload: payload)
         self.internalIsAccountDeleted = payload["deleted"] as? Bool

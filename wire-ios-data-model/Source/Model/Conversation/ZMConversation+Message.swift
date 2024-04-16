@@ -225,7 +225,7 @@ extension ZMConversation {
                                      size: UInt64(imageData.count))
 
         return try append(asset: asset, nonce: nonce, expires: true, prepareMessage: { message in
-            moc.zm_fileAssetCache.storeAssetData(message, format: .original, encrypted: false, data: imageData)
+            moc.zm_fileAssetCache.storeOriginalImage(data: imageData, for: message)
         })
     }
 
@@ -242,20 +242,36 @@ extension ZMConversation {
     ///     The appended message.
 
     @discardableResult
-    public func appendFile(with fileMetadata: ZMFileMetadata, nonce: UUID = UUID()) throws -> ZMConversationMessage {
+    public func appendFile(
+        with fileMetadata: ZMFileMetadata,
+        nonce: UUID = UUID()
+    ) throws -> ZMConversationMessage {
         guard let moc = managedObjectContext else {
             throw AppendMessageError.missingManagedObjectContext
         }
 
-        guard let data = try? Data.init(contentsOf: fileMetadata.fileURL, options: .mappedIfSafe) else {
+        guard let data = try? Data(
+            contentsOf: fileMetadata.fileURL,
+            options: .mappedIfSafe
+        ) else {
             throw AppendMessageError.invalidFileUrl
         }
 
-        return try append(asset: fileMetadata.asset, nonce: nonce, expires: false) { (message) in
-            moc.zm_fileAssetCache.storeAssetData(message, encrypted: false, data: data)
+        return try append(
+            asset: fileMetadata.asset,
+            nonce: nonce,
+            expires: false
+        ) { message in
+            moc.zm_fileAssetCache.storeOriginalFile(
+                data: data,
+                for: message
+            )
 
             if let thumbnailData = fileMetadata.thumbnail {
-                moc.zm_fileAssetCache.storeAssetData(message, format: .original, encrypted: false, data: thumbnailData)
+                moc.zm_fileAssetCache.storeOriginalImage(
+                    data: thumbnailData,
+                    for: message
+                )
             }
         }
     }

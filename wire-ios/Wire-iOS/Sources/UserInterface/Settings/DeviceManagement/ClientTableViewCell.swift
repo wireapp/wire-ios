@@ -52,7 +52,7 @@ final class ClientTableViewCell: UITableViewCell {
 
     var wr_editable: Bool
 
-    private let verifiedImage = Asset.Images.verifiedShield.image.resizableImage(withCapInsets: .zero)
+    private let verifiedImage = UIImage(resource: .verifiedShield).resizableImage(withCapInsets: .zero)
     private var mlsInfoHeighConstraint: NSLayoutConstraint { mlsThumbprintLabel.heightAnchor.constraint(equalToConstant: 0)
     }
 

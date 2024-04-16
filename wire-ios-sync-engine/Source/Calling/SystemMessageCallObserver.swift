@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,13 @@ final class CallSystemMessageGenerator: NSObject {
     var startDateByConversation = [ZMConversation: Date]()
     var connectDateByConversation = [ZMConversation: Date]()
 
-    func appendSystemMessageIfNeeded(callState: CallState, conversation: ZMConversation, caller: ZMUser, timestamp: Date?, previousCallState: CallState?) -> ZMSystemMessage? {
+    func appendSystemMessageIfNeeded(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: ZMUser,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) -> ZMSystemMessage? {
         var systemMessage: ZMSystemMessage?
 
         switch callState {
@@ -37,39 +43,47 @@ final class CallSystemMessageGenerator: NSObject {
             log.info("Setting call connect date for \(conversation.displayName ?? "")")
             connectDateByConversation[conversation] = Date()
         case .terminating(reason: let reason):
-        systemMessage = appendCallEndedSystemMessage(reason: reason, conversation: conversation, caller: caller, timestamp: timestamp, previousCallState: previousCallState)
+            systemMessage = appendCallEndedSystemMessage(
+                reason: reason,
+                conversation: conversation,
+                caller: caller,
+                timestamp: timestamp,
+                previousCallState: previousCallState
+            )
         case .none, .unknown, .answered, .establishedDataChannel, .incoming, .mediaStopped:
             break
         }
         return systemMessage
     }
 
-    private func appendCallEndedSystemMessage(reason: CallClosedReason, conversation: ZMConversation, caller: ZMUser, timestamp: Date?, previousCallState: CallState?) -> ZMSystemMessage? {
-
+    private func appendCallEndedSystemMessage(
+        reason: CallClosedReason,
+        conversation: ZMConversation,
+        caller: ZMUser,
+        timestamp: Date?,
+        previousCallState: CallState?
+    ) -> ZMSystemMessage? {
         var systemMessage: ZMSystemMessage?
-        if let connectDate = connectDateByConversation[conversation] {
-            let duration = -connectDate.timeIntervalSinceNow
-            log.info("Appending performed call message: \(duration), \(caller.name ?? ""), \"\(conversation.displayName ?? "")\"")
-            systemMessage =  conversation.appendPerformedCallMessage(with: duration, caller: caller)
-        } else {
-            if caller.isSelfUser {
-                log.info("Appending performed call message: \(caller.name ?? ""), \"\(conversation.displayName ?? "")\"")
-                systemMessage =  conversation.appendPerformedCallMessage(with: 0, caller: caller)
-            } else if reason.isOne(of: .canceled, .timeout, .normal) {
-                log.info("Appending missed call message: \(caller.name ?? ""), \"\(conversation.displayName ?? "")\"")
 
-                var isRelevant = true
-                if case .incoming(video: _, shouldRing: false, degraded: _)? = previousCallState {
-                    // Call was ignored by recipient
-                    isRelevant = false
-                }
+        if connectDateByConversation[conversation] == nil, !caller.isSelfUser, reason.isOne(of: .canceled, .timeout, .normal) {
+            log.info("Appending missed call message: \(caller.name ?? ""), \"\(conversation.displayName ?? "")\"")
 
-                systemMessage = conversation.appendMissedCallMessage(fromUser: caller, at: timestamp ?? Date(), relevantForStatus: isRelevant)
+            var isRelevant = true
+            if case .incoming(video: _, shouldRing: false, degraded: _)? = previousCallState {
+                // Call was ignored by recipient
+                isRelevant = false
             }
+
+            systemMessage = conversation.appendMissedCallMessage(
+                fromUser: caller,
+                at: timestamp ?? Date(),
+                relevantForStatus: isRelevant
+            )
         }
 
         startDateByConversation[conversation] = nil
         connectDateByConversation[conversation] = nil
+
         return systemMessage
     }
 

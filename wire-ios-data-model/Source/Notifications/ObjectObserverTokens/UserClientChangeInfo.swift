@@ -90,7 +90,7 @@ extension UserClientChangeInfo {
         guard let managedObjectContext = client.managedObjectContext else {
             return nil
         }
-        return ManagedObjectObserverToken(name: .UserClientChange, managedObjectContext: managedObjectContext, object: client) { [weak observer] (note) in
+        return ManagedObjectObserverToken(name: .UserClientChange, managedObjectContext: managedObjectContext, object: client) { [weak observer] note in
             guard let `observer` = observer,
                   let changeInfo = note.changeInfo as? UserClientChangeInfo
             else { return }

@@ -99,7 +99,7 @@ final class ZClientViewController: UIViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
-        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] (note) in
+        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] note in
             guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
             switch change {
@@ -384,7 +384,7 @@ final class ZClientViewController: UIViewController {
                 // we have to restore the proper pre-presentation state here.
                 let conversationView = self.conversationListViewController.view
                 if let transform = conversationView?.layer.transform {
-                    if !CATransform3DIsIdentity(transform) || 1 != conversationView?.alpha {
+                    if !CATransform3DIsIdentity(transform) || conversationView?.alpha != 1 {
                         conversationView?.layer.transform = CATransform3DIdentity
                         conversationView?.alpha = 1
                     }
@@ -632,7 +632,7 @@ final class ZClientViewController: UIViewController {
 
         let isRegularContainer = traitCollection.horizontalSizeClass == .regular
 
-        if isRegularContainer && nil == topOverlayViewController {
+        if isRegularContainer && topOverlayViewController == nil {
             contentTopCompactConstraint.isActive = false
             contentTopRegularConstraint.isActive = true
         } else {

@@ -196,7 +196,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         do {
             try closeStores(in: messagesContainer)
             try closeStores(in: eventsContainer)
-        } catch let error {
+        } catch {
             WireLogger.localStorage.error("Error while closing persistent store: \(error)", attributes: .safePublic)
         }
     }
@@ -217,6 +217,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         }
         DispatchQueue.global(qos: .userInitiated).async {
             if self.needsMessagingStoreMigration() {
+                let tp = ZMSTimePoint(interval: 60.0, label: "db migration")
                 WireLogger.localStorage.info("[setup] start migration of core data messaging store!", attributes: .safePublic)
 
                 do {
@@ -231,10 +232,13 @@ public class CoreDataStack: NSObject, ContextProvider {
                     }
                     return
                 }
+                if tp.warnIfLongerThanInterval() == false {
+                    WireLogger.localStorage.info("time spent in migration only: \(tp.elapsedTime)", attributes: .safePublic)
+                }
             }
 
             DispatchQueue.main.async {
-                WireLogger.localStorage.debug("[setup] load core data stores!")
+                WireLogger.localStorage.info("[setup] load core data stores!", attributes: .safePublic)
                 self.loadStores { error in
                     if DeveloperFlag.forceDatabaseLoadingFailure.isOn {
                         // flip off the flag in order not to be stuck in failure
@@ -260,7 +264,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         var loadingStoreError: Error?
 
         dispatchGroup.enter()
-        loadMessagesStore { (error) in
+        loadMessagesStore { error in
             if let error = error {
                 WireLogger.localStorage.error("failed to load message store: \(error)", attributes: .safePublic)
             }
@@ -269,7 +273,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         }
 
         dispatchGroup.enter()
-        loadEventStore { (error) in
+        loadEventStore { error in
             if let error = error {
                 WireLogger.localStorage.error("failed to load event store: \(error)")
             }
@@ -285,12 +289,12 @@ public class CoreDataStack: NSObject, ContextProvider {
     func loadMessagesStore(completionHandler: @escaping (Error?) -> Void) {
         do {
             try createStoreDirectory(for: messagesContainer)
-        } catch let error {
+        } catch {
             completionHandler(error)
             return
         }
 
-        messagesContainer.loadPersistentStores { (_, error) in
+        messagesContainer.loadPersistentStores { _, error in
 
             guard error == nil else {
                 completionHandler(error)
@@ -309,12 +313,12 @@ public class CoreDataStack: NSObject, ContextProvider {
     func loadEventStore(completionHandler: @escaping (Error?) -> Void) {
         do {
             try createStoreDirectory(for: eventsContainer)
-        } catch let error {
+        } catch {
             completionHandler(error)
             return
         }
 
-        eventsContainer.loadPersistentStores { (_, error) in
+        eventsContainer.loadPersistentStores { _, error in
 
             guard error == nil else {
                 completionHandler(error)

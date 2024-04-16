@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import CoreData
 @objc(StoredUpdateEvent)
 public final class StoredUpdateEvent: NSManagedObject {
 
-    private static let entityName =  "StoredUpdateEvent"
+    private static let entityName = "StoredUpdateEvent"
     private static let SortIndexKey = "sortIndex"
 
     /// The key under which the event payload is encrypted by the public key.
@@ -188,9 +188,11 @@ public final class StoredUpdateEvent: NSManagedObject {
                 result.eventsToDelete.append(storedEvent)
 
             case .failure(.permanent):
+                WireLogger.updateEvent.warn("StoredUpdateEvent: eventsFromStoredEvents failure permanent")
                 result.eventsToDelete.append(storedEvent)
 
             case .failure(.temporary):
+                WireLogger.updateEvent.warn("StoredUpdateEvent: eventsFromStoredEvents failure temporary, continue")
                 continue
             }
         }
@@ -223,6 +225,7 @@ public final class StoredUpdateEvent: NSManagedObject {
                     source: eventSource
                 )
             else {
+                WireLogger.updateEvent.error("StoreUpdateEvent: decryption failed permanently", attributes: .safePublic)
                 return .failure(.permanent)
             }
 
@@ -234,8 +237,10 @@ public final class StoredUpdateEvent: NSManagedObject {
 
         } catch DecryptionFailure.privateKeyUnavailable {
             // The required key isn't available now, but it may be later.
+            WireLogger.updateEvent.warn("StoreUpdateEvent: decryption failed temporary", attributes: .safePublic)
             return .failure(.temporary)
         } catch {
+            WireLogger.updateEvent.error("StoreUpdateEvent: decryption failed permanently", attributes: .safePublic)
             return .failure(.permanent)
         }
     }
@@ -316,6 +321,8 @@ public final class StoredUpdateEvent: NSManagedObject {
     }
 
     private static func decrypt(payload: Data, privateKey: SecKey) throws -> NSDictionary {
+        WireLogger.updateEvent.debug("StoreUpdateEvent: decrypt payload")
+
         guard let decryptedData = SecKeyCreateDecryptedData(
             privateKey,
             .eciesEncryptionCofactorX963SHA256AESGCM,

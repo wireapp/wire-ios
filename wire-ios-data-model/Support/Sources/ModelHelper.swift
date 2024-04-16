@@ -40,6 +40,18 @@ public struct ModelHelper {
     }
 
     @discardableResult
+    public func createSelfUser(
+        qualifiedID: QualifiedID,
+        domain: String? = nil,
+        in context: NSManagedObjectContext
+    ) -> ZMUser {
+        let selfUser = ZMUser.selfUser(in: context)
+        selfUser.remoteIdentifier = qualifiedID.uuid
+        selfUser.domain = domain
+        return selfUser
+    }
+
+    @discardableResult
     public func createUser(
         id: UUID = .init(),
         domain: String? = nil,
@@ -48,6 +60,17 @@ public struct ModelHelper {
         let user = ZMUser.insertNewObject(in: context)
         user.remoteIdentifier = id
         user.domain = domain
+        return user
+    }
+
+    @discardableResult
+    public func createUser(
+        qualifiedID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) -> ZMUser {
+        let user = ZMUser.insertNewObject(in: context)
+        user.remoteIdentifier = qualifiedID.uuid
+        user.domain = qualifiedID.domain
         return user
     }
 
@@ -100,11 +123,12 @@ public struct ModelHelper {
     ) -> (Team, Set<ZMUser>) {
         let team = createTeam(id: id, in: context)
 
-        var users = (0..<numberOfUsers).map { _ in
-            let user = self.createUser(in: context)
-            addUser(user, to: team, in: context)
-            return user
-        }
+        let users = (0..<numberOfUsers)
+            .map { _ in
+                let user = self.createUser(in: context)
+                addUser(user, to: team, in: context)
+                return user
+            }
 
         return (team, Set(users))
     }
@@ -145,7 +169,41 @@ public struct ModelHelper {
         return member
     }
 
+    // MARK: - Connection
+
+    @discardableResult
+    public func createConnection(
+        status: ZMConnectionStatus,
+        to user: ZMUser,
+        in context: NSManagedObjectContext
+    ) -> (ZMConnection, ZMConversation) {
+        let connection = ZMConnection.insertNewObject(in: context)
+        connection.to = user
+        connection.status = status
+        connection.message = "Connect to me"
+        connection.lastUpdateDate = .now
+
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.conversationType = .connection
+        conversation.remoteIdentifier = UUID()
+        conversation.domain = "local@domain.com"
+        user.oneOnOneConversation = conversation
+
+        return (connection, conversation)
+    }
+
     // MARK: - Conversations
+
+    @discardableResult
+    public func createGroupConversation(
+        id: UUID = .init(),
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.remoteIdentifier = id
+        conversation.conversationType = .group
+        return conversation
+    }
 
     @discardableResult
     public func createOneOnOne(

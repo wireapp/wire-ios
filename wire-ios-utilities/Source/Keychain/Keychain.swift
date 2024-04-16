@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,6 +37,8 @@ public enum Keychain {
     // MARK: - Keychain access
 
     public static func storeItem<T: KeychainItem>(_ item: T, value: T.Value) throws {
+        WireLogger.keychain.info("storing item (\(item))")
+
         let query = item.queryForSetting(value: value) as CFDictionary
         let status = SecItemAdd(query, nil)
 
@@ -46,6 +48,8 @@ public enum Keychain {
     }
 
     public static func fetchItem<T: KeychainItem>(_ item: T) throws -> T.Value {
+        WireLogger.keychain.info("fetching item (\(item))")
+
         var value: CFTypeRef?
         let status = SecItemCopyMatching(item.queryForGettingValue as CFDictionary, &value)
 
@@ -61,6 +65,8 @@ public enum Keychain {
     }
 
     public static func deleteItem<T: KeychainItem>(_ item: T) throws {
+        WireLogger.keychain.info("deleting item (\(item))")
+
         let status = SecItemDelete(item.queryForGettingValue as CFDictionary)
 
         guard status == errSecSuccess || status == errSecItemNotFound else {

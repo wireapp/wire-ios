@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -149,7 +149,7 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
             guard
                 let callerId = callerId,
                 let conversationId = conversationId,
-                let conversation =  ZMConversation.fetch(with: conversationId, in: self.syncContext),
+                let conversation = ZMConversation.fetch(with: conversationId, in: self.syncContext),
                 let caller = ZMUser.fetch(with: callerId, in: self.syncContext)
                 else {
                     return

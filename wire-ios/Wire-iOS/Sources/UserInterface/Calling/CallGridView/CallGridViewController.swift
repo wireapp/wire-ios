@@ -180,7 +180,7 @@ final class CallGridViewController: SpinnerCapableViewController {
             pageIndicator.centerXAnchor.constraint(equalTo: view.safeTrailingAnchor, constant: -22)
         ])
 
-        pageIndicator.transform = pageIndicator.transform.rotated(by: .pi/2)
+        pageIndicator.transform = pageIndicator.transform.rotated(by: .pi / 2)
     }
 
     @objc func didChangePage(sender: UIPageControl) {
@@ -355,7 +355,7 @@ final class CallGridViewController: SpinnerCapableViewController {
         }
 
         // We have a stream but don't have a preview view yet.
-        if nil == thumbnailViewController.contentView, let previewView = selfCallParticipantView {
+        if thumbnailViewController.contentView == nil, let previewView = selfCallParticipantView {
             Log.calling.debug("Adding self video to floating preview")
             thumbnailViewController.setThumbnailContentView(previewView, contentSize: .previewSize(for: traitCollection))
         }

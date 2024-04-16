@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ class PrekeyGenerator {
     static var _test_overrideNumberOfKeys: UInt16?
 
     let proteusProvider: ProteusProviding
-    let keyCount: UInt16 = _test_overrideNumberOfKeys ??  100
+    let keyCount: UInt16 = _test_overrideNumberOfKeys ?? 100
 
     init(proteusProvider: ProteusProviding) {
         self.proteusProvider = proteusProvider

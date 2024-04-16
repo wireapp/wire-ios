@@ -65,7 +65,7 @@ final class ImageResourceView: FLAnimatedImageView {
             return
         }
 
-        imageResource.fetchImage(sizeLimit: imageSizeLimit, completion: { [weak self] (mediaAsset, cacheHit) in
+        imageResource.fetchImage(sizeLimit: imageSizeLimit, completion: { [weak self] mediaAsset, cacheHit in
             guard token == self?.reuseToken, let `self` = self else { return }
 
             let update = {

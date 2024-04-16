@@ -62,7 +62,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
             "name": "Wire GmbH",
             "icon": "",
             "icon_key": "",
-            "binding": (isBound ? true: false)
+            "binding": (isBound ? true : false)
         ]
     }
 
@@ -346,7 +346,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
             context.saveOrRollback()
 
             // then
-            let result = team.members.contains(where: { (member) -> Bool in
+            let result = team.members.contains(where: { member -> Bool in
                 return member.user?.remoteIdentifier == userId
             })
 

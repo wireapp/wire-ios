@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -171,15 +171,6 @@ class ConversationParticipantsServiceTests: MessagingTestBase {
         await assertItThrows(error: ConversationParticipantsError.invalidOperation) {
             // WHEN
             try await sut.addParticipants([user], to: conversation)
-        }
-    }
-
-    func test_AddParticipants_Throws_InvalidOperation_ForSelfUser() async {
-
-        // THEN
-        await assertItThrows(error: ConversationParticipantsError.invalidOperation) {
-            // WHEN
-            try await sut.addParticipants([selfUser], to: conversation)
         }
     }
 

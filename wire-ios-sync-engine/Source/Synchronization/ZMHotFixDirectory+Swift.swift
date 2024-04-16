@@ -1,20 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 
@@ -54,7 +54,7 @@ import Foundation
 
         messages.forEach { message in
             message.updateTransferState(.uploadingFailed, synchronize: false)
-            if nil != message.imageMessageData {
+            if message.imageMessageData != nil {
                 message.expire()
             }
         }
@@ -121,7 +121,7 @@ import Foundation
         let fetchRequest = ZMConversation.sortedFetchRequest()
 
         guard let conversations = context.fetchOrAssert(request: fetchRequest) as? [ZMConversation] else { return }
-        let filteredConversations =  conversations.filter { $0.conversationType == .oneOnOne || $0.conversationType == .group }
+        let filteredConversations = conversations.filter { $0.conversationType == .oneOnOne || $0.conversationType == .group }
 
         // update "you are using this device" message
         filteredConversations.forEach {
@@ -135,7 +135,7 @@ import Foundation
         let PINCacheFolders = ["com.pinterest.PINDiskCache.images", "com.pinterest.PINDiskCache.largeUserImages", "com.pinterest.PINDiskCache.smallUserImages"]
 
         PINCacheFolders.forEach { PINCacheFolder in
-            let cacheDirectory =  cachesDirectory.appendingPathComponent(PINCacheFolder, isDirectory: true)
+            let cacheDirectory = cachesDirectory.appendingPathComponent(PINCacheFolder, isDirectory: true)
             try? fileManager.removeItem(at: cacheDirectory)
         }
     }

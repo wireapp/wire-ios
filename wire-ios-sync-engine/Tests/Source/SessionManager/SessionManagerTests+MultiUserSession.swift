@@ -91,14 +91,15 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         XCTAssertNil(self.sessionManager!.backgroundUserSessions[account.userIdentifier])
     }
 
-    func testThatItDoesNotUnloadActiveUserSessionFromMemoryWarning() {
+    func testThatItDoesNotUnloadActiveUserSessionFromMemoryWarning() throws {
         // GIVEN
         let account = self.createAccount()
-        sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = NSData.secureRandomData(ofLength: 16)
+        let sessionManager = try XCTUnwrap(self.sessionManager)
+        sessionManager.environment.cookieStorage(for: account).authenticationCookieData = NSData.secureRandomData(ofLength: 16)
 
-        guard let application = application else { return XCTFail() }
+        let application = try XCTUnwrap(self.application)
 
-        let sessionManagerExpectation = self.customExpectation(description: "Session manager and session is loaded")
+        let sessionManagerExpectation = self.expectation(description: "Session manager and session is loaded")
 
         // WHEN
         let testSessionManager = SessionManager(
@@ -107,7 +108,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
             analytics: nil,
             delegate: nil,
             application: application,
-            environment: sessionManager!.environment,
+            environment: sessionManager.environment,
             configuration: SessionManagerConfiguration(blacklistDownloadInterval: -1),
             requiredPushTokenType: .standard,
             callKitManager: MockCallKitManager(),
@@ -137,7 +138,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         }
 
         // THEN
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        waitForExpectations(timeout: 0.5)
 
         XCTAssertNotNil(testSessionManager.backgroundUserSessions[account.userIdentifier])
 
@@ -485,7 +486,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
         // Make account 1 the active session
         weak var session1: ZMUserSession?
-        sessionManager?.loadSession(for: account1, completion: { (session) in
+        sessionManager?.loadSession(for: account1, completion: { session in
             session1 = session
         })
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))

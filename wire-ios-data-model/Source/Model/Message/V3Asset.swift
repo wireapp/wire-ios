@@ -32,11 +32,7 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     var imageMessageData: ZMImageMessageData? { get }
     var fileURL: URL? { get }
 
-    var previewData: Data? { get }
     var imagePreviewDataIdentifier: String? { get }
-
-    @objc(imageDataForFormat:encrypted:)
-    func imageData(for: ZMImageFormat, encrypted: Bool) -> Data?
 
     func requestFileDownload()
     func requestPreviewDownload()
@@ -50,11 +46,55 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     @objc(fetchImageDataWithQueue:completionHandler:)
     public func fetchImageData(with queue: DispatchQueue, completionHandler: @escaping ((Data?) -> Void)) {
         let cache = moc.zm_fileAssetCache
-        let mediumKey = FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
-        let originalKey = FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .original)
+
+        let mediumKey = FileAssetCache.cacheKeyForAsset(
+            assetClientMessage,
+            format: .medium,
+            encrypted: true
+        )
+
+        // Just in case we're trying to access an asset that in not stored encrypted.
+        let fallbackKey = FileAssetCache.cacheKeyForAsset(
+            assetClientMessage,
+            format: .medium,
+            encrypted: false
+        )
+
+        var key: Data?
+        var digest: Data?
+
+        if isImage {
+            let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded
+            key = asset?.otrKey
+            digest = asset?.sha256
+        } else {
+            let asset = assetClientMessage.underlyingMessage?.assetData?.preview.remote
+            key = asset?.otrKey
+            digest = asset?.sha256
+        }
 
         queue.async {
-            completionHandler([mediumKey, originalKey].lazy.compactMap({ $0 }).compactMap({ cache?.assetData($0) }).first)
+            guard let cache else {
+                completionHandler(nil)
+                return
+            }
+
+            if
+                let mediumKey,
+                let key,
+                let digest,
+                let data = cache.decryptData(
+                    key: mediumKey,
+                    encryptionKey: key,
+                    sha256Digest: digest
+                )
+            {
+                completionHandler(data)
+            } else if let fallbackKey {
+                completionHandler(cache.assetData(fallbackKey))
+            } else {
+                completionHandler(nil)
+            }
         }
     }
 
@@ -80,14 +120,31 @@ private let zmLog = ZMSLog(tag: "AssetV3")
         return self
     }
 
-    public var mediumData: Data? {
-        guard nil != assetClientMessage.fileMessageData, isImage else { return nil }
-        return imageData(for: .medium, encrypted: false)
-    }
-
     public var imageData: Data? {
-        guard nil != assetClientMessage.fileMessageData, isImage else { return nil }
-        return mediumData ?? imageData(for: .original, encrypted: false)
+        guard
+            assetClientMessage.fileMessageData != nil,
+            isImage,
+            let cache = moc.zm_fileAssetCache
+        else {
+            return nil
+        }
+
+        if
+            let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded,
+            let data = cache.decryptedMediumImageData(
+                for: assetClientMessage,
+                encryptionKey: asset.otrKey,
+                sha256Digest: asset.sha256
+            )
+        {
+            return data
+        } else if let data = cache.mediumImageData(for: assetClientMessage) {
+            return data
+        } else if let data = cache.originalImageData(for: assetClientMessage) {
+            return data
+        } else {
+            return nil
+        }
     }
 
     public var imageDataIdentifier: String? {
@@ -96,11 +153,6 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 
     public var imagePreviewDataIdentifier: String? {
         return FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .preview)
-    }
-
-    public var previewData: Data? {
-        guard nil != assetClientMessage.fileMessageData, !isImage, hasDownloadedPreview else { return nil }
-        return imageData(for: .medium, encrypted: false) ?? imageData(for: .original, encrypted: false)
     }
 
     public var isAnimatedGIF: Bool {
@@ -116,7 +168,7 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public var originalSize: CGSize {
-        guard nil != assetClientMessage.fileMessageData, isImage else { return .zero }
+        guard assetClientMessage.fileMessageData != nil, isImage else { return .zero }
         guard let asset = assetClientMessage.underlyingMessage?.assetData else { return .zero }
         let size = CGSize(width: Int(asset.original.image.width), height: Int(asset.original.image.height))
 
@@ -133,28 +185,33 @@ extension V3Asset: AssetProxyType {
 
     public var hasDownloadedPreview: Bool {
         guard !isImage else { return false }
-
-        return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .medium, encrypted: false) ||
-               moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .original, encrypted: false)
+        return moc.zm_fileAssetCache.hasImageData(for: assetClientMessage)
     }
 
     public var hasDownloadedFile: Bool {
         if isImage {
-            return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .medium, encrypted: false) ||
-                   moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .original, encrypted: false)
+            return moc.zm_fileAssetCache.hasImageData(for: assetClientMessage)
         } else {
-            return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, encrypted: false)
+            return moc.zm_fileAssetCache.hasFileData(for: assetClientMessage)
         }
-
     }
 
     public var fileURL: URL? {
-        return moc.zm_fileAssetCache.accessAssetURL(assetClientMessage)
-    }
+        if moc.zm_fileAssetCache.hasEncryptedFileData(for: assetClientMessage) {
+            guard let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded else {
+                return nil
+            }
 
-    public func imageData(for format: ZMImageFormat, encrypted: Bool) -> Data? {
-        guard assetClientMessage.fileMessageData != nil else { return nil }
-        return moc.zm_fileAssetCache.assetData(assetClientMessage, format: format, encrypted: encrypted)
+            return moc.zm_fileAssetCache.temporaryURLForDecryptedFile(
+                for: assetClientMessage,
+                encryptionKey: asset.otrKey,
+                sha256Digest: asset.sha256
+            )
+        } else if moc.zm_fileAssetCache.hasOriginalFileData(for: assetClientMessage) {
+            return moc.zm_fileAssetCache.accessAssetURL(assetClientMessage)
+        } else {
+            return nil
+        }
     }
 
     public func requestFileDownload() {

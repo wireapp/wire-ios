@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -555,6 +555,25 @@ extension MessagingTestBase {
         return ["conversation": conversation.remoteIdentifier?.transportString() ?? "",
                 "data": data,
                 "from": from.remoteIdentifier.transportString(),
+                "time": time?.transportString() ?? "",
+                "type": type
+        ]
+    }
+
+    public func payloadForMessage(conversationID: UUID,
+                                  domain: String?,
+                                  type: String,
+                                  data: Any,
+                                  time: Date?,
+                                  fromID: UUID) -> NSMutableDictionary? {
+
+        return ["conversation": conversationID.transportString(),
+                "qualified_conversation": [
+                    "id": conversationID.transportString(),
+                    "domain": domain
+                ],
+                "data": data,
+                "from": fromID.transportString(),
                 "time": time?.transportString() ?? "",
                 "type": type
         ]

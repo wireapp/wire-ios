@@ -21,6 +21,8 @@ import WireCoreCrypto
 
 public protocol E2EISetupServiceInterface {
 
+    func isTrustAnchorRegistered()  async throws -> Bool
+
     func registerTrustAnchor(_ trustAnchor: String) async throws
 
     func registerFederationCertificate(_ certificate: String) async throws
@@ -48,10 +50,6 @@ public protocol E2EISetupServiceInterface {
 /// This class setups e2eIdentity object from CoreCrypto.
 public final class E2EISetupService: E2EISetupServiceInterface {
 
-    // TODO: [WPB-6761] temporary workaround for a crash 
-    // The E2eiEnrollment cause a memory corruption when it deinits so we hold on to it forever.
-    private static var enrollment: E2eiEnrollment?
-
     // MARK: - Properties
 
     private let coreCryptoProvider: CoreCryptoProviderProtocol
@@ -68,6 +66,12 @@ public final class E2EISetupService: E2EISetupServiceInterface {
     }
 
     // MARK: - Public interface
+
+    public func isTrustAnchorRegistered() async throws -> Bool {
+        try await coreCryptoProvider.coreCrypto().perform { coreCrypto in
+            await coreCrypto.e2eiIsPkiEnvSetup()
+        }
+    }
 
     public func registerTrustAnchor(_ trustAnchor: String) async throws {
         try await coreCryptoProvider.coreCrypto().perform { coreCrypto in
@@ -90,7 +94,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
         expirySec: UInt32?
     ) async throws -> E2eiEnrollment {
         do {
-            let enrollment = try await setupNewActivationOrRotate(
+            return try await setupNewActivationOrRotate(
                 clientID: clientID,
                 userName: userName,
                 handle: handle,
@@ -98,8 +102,6 @@ public final class E2EISetupService: E2EISetupServiceInterface {
                 isUpgradingClient: isUpgradingClient,
                 expirySec: expirySec
             )
-            Self.enrollment = enrollment
-            return enrollment
         } catch {
             throw Failure.failedToSetupE2eIClient(error)
         }

@@ -58,11 +58,13 @@ extension ZMManagedObject {
         let allKeys = knownKeys.union(changes.keys)
         let mappedKeys: [String] = Array(allKeys).map(keyMapping)
 
-        let keys = mappedKeys.map {
-            keyStore.observableKeysAffectedByValue(classIdentifier, key: $0)
-        }.reduce(Set()) {
-            $0.union($1)
-        }
+        let keys: Set<String> = mappedKeys
+            .map {
+                keyStore.observableKeysAffectedByValue(classIdentifier, key: $0)
+            }
+            .reduce(into: .init()) { partialResult, set in
+                partialResult.formUnion(set)
+            }
 
         guard !keys.isEmpty || originalChangeKey != nil else {
             return [:]
@@ -120,7 +122,11 @@ extension ZMUser: SideEffectSource {
         let otherPartKeys = allChangedKeys.map { "\(#keyPath(ZMConversation.participantRoles.user)).\($0)" }
         let selfUserKeys = allChangedKeys.map { "\(#keyPath(ZMConversation.oneOnOneUser)).\($0)" }
         let mappedKeys = otherPartKeys + selfUserKeys
-        var keys = mappedKeys.map { keyStore.observableKeysAffectedByValue(classIdentifier, key: $0) }.reduce(Set()) { $0.union($1) }
+        var keys: Set<String> = mappedKeys
+            .map { keyStore.observableKeysAffectedByValue(classIdentifier, key: $0) }
+            .reduce(into: .init()) { partialResult, set in
+                partialResult.formUnion(set)
+            }
 
         conversations.forEach {
             if $0.allUsersTrusted {

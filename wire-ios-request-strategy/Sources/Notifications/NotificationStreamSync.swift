@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
 
     @objc(processUpdateEventsAndReturnLastNotificationIDFromPayload:)
     func processUpdateEventsAndReturnLastNotificationID(from payload: ZMTransportData?) -> UUID? {
-        let tp = ZMSTimePoint.init(interval: 10, label: NSStringFromClass(type(of: self)))
+        let tp = ZMSTimePoint(interval: 10, label: NSStringFromClass(type(of: self)))
         var latestEventId: UUID?
         let source = ZMUpdateEventSource.pushNotification
 
@@ -117,9 +117,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
         notificationStreamSyncDelegate?.fetchedEvents(events, hasMoreToFetch: self.listPaginator.hasMoreToFetch)
         latestEventId = events.last(where: { !$0.isTransient })?.uuid
 
-        //        ZMLogWithLevelAndTag(ZMLogLevelInfo, ZMTAG_EVENT_PROCESSING, @"Downloaded %lu event(s)", (unsigned long)parsedEvents.count);
-
-        tp?.warnIfLongerThanInterval()
+        tp.warnIfLongerThanInterval()
         return latestEventId
     }
 

@@ -183,10 +183,10 @@ extension ZMUpdateEventType {
                 guard let stringValue = eventType.stringValue else { return nil }
                 return (eventType, stringValue)
             }
-            .filter { (_, stringValue) -> Bool in
+            .filter { _, stringValue -> Bool in
                 return stringValue == string
             }
-            .map { (eventType, _) -> ZMUpdateEventType in
+            .map { eventType, _ -> ZMUpdateEventType in
                 return eventType
             }
             .first
@@ -221,34 +221,11 @@ open class ZMUpdateEvent: NSObject {
     open var isTransient: Bool
     /// True if the event had encrypted payload but now it has decrypted payload
     open var wasDecrypted: Bool
-    /// True if the event contains cryptobox-encrypted data
-    open var isEncrypted: Bool {
-        switch self.type {
-        case .conversationOtrAssetAdd, .conversationOtrMessageAdd:
-            return true
-        default:
-            return false
-        }
-    }
 
     /// True if the event is encoded with ZMGenericMessage
     open var isGenericMessageEvent: Bool {
         switch self.type {
-        case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd:
-            return true
-        default:
-            return false
-        }
-    }
-
-    /// True if this event type could have two versions, encrypted and non-encrypted, during the transition phase
-    open var hasEncryptedAndUnencryptedVersion: Bool {
-        switch self.type {
-        case .conversationOtrMessageAdd,
-                .conversationOtrAssetAdd,
-                .conversationMessageAdd,
-                .conversationAssetAdd,
-                .conversationKnock:
+        case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd, .conversationMLSMessageAdd:
             return true
         default:
             return false
@@ -353,11 +330,14 @@ extension ZMUpdateEvent {
 }
 
 extension ZMUpdateEvent {
+
     override open func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? ZMUpdateEvent else { return false }
-        return
-        (self.uuid == other.uuid) &&
-        (self.type == other.type) &&
-        (self.payload as NSDictionary).isEqual(to: other.payload)
+        guard let other = object as? ZMUpdateEvent else {
+            return false
+        }
+
+        return (self.uuid == other.uuid)
+            && (self.type == other.type)
+            && (self.payload as NSDictionary).isEqual(to: other.payload)
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -153,7 +153,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
-            let message = self.createMessage(uploaded: true, sender: self.otherUser)
+            _ = self.createMessage(uploaded: true, sender: self.otherUser)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -166,7 +166,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
-            let message = self.createMessage(uploaded: true, expired: true)
+            _ = self.createMessage(uploaded: true, expired: true)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

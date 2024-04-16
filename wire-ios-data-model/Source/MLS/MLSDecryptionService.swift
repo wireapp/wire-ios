@@ -33,6 +33,10 @@ public protocol MLSDecryptionServiceInterface {
         subconversationType: SubgroupType?
     ) async throws -> [MLSDecryptResult]
 
+    func processWelcomeMessage(
+        welcomeMessage: String
+    ) async throws -> MLSGroupID
+
 }
 
 public enum MLSDecryptResult: Equatable {
@@ -50,7 +54,7 @@ protocol DecryptedMessageBundle {
     var commitDelay: UInt64? { get }
     var senderClientId: WireCoreCrypto.ClientId? { get }
     var hasEpochChanged: Bool { get }
-    var identity: WireCoreCrypto.WireIdentity? { get }
+    var identity: WireCoreCrypto.WireIdentity { get }
 
 }
 
@@ -97,6 +101,16 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         case failedToDecodeSenderClientID
         case wrongEpoch
 
+    }
+
+    public func processWelcomeMessage(welcomeMessage: String) async throws -> MLSGroupID {
+        WireLogger.mls.info("processing welcome message")
+
+        guard let messageData = welcomeMessage.base64DecodedData else {
+            throw MLSMessageDecryptionError.failedToConvertMessageToBytes
+        }
+
+        return try await mlsActionExecutor.processWelcomeMessage(messageData)
     }
 
     /// Decrypts an MLS message for the given group
@@ -154,33 +168,39 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             }
 
             return results
-        } catch {
+        } catch CoreCryptoError.CryptoError(let error) {
             WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)")
 
             switch error {
+
             // Received messages targeting a future epoch, we might have lost messages.
-            case CryptoError.WrongEpoch: throw MLSMessageDecryptionError.wrongEpoch
+            case .WrongEpoch: throw MLSMessageDecryptionError.wrongEpoch
 
             // Message arrive in future epoch, it has been buffered and will be consumed later.
-            case CryptoError.BufferedFutureMessage: return []
+            case .BufferedFutureMessage: return []
 
             // Received already sent or received message, can safely be ignored.
-            case CryptoError.DuplicateMessage: return []
+            case .DuplicateMessage: return []
 
             // Received self commit, any pending self commit has now been merged
-            case CryptoError.SelfCommitIgnored: return []
+            case .SelfCommitIgnored: return []
 
             // Received stale commit, this commit is targeting a past epoch and we have already consumed it
-            case CryptoError.StaleCommit: return []
+            case .StaleCommit: return []
 
             // Received stale proposal, this proposal is targeting a past epoch and we have already consumed it
-            case CryptoError.StaleProposal: return []
+            case .StaleProposal: return []
 
             // Message arrive in an unmerged group, it has been buffered and will be consumed later.
-            case CryptoError.UnmergedPendingGroup: return []
+            case .UnmergedPendingGroup: return []
+
             default:
                 throw MLSMessageDecryptionError.failedToDecryptMessage
             }
+        } catch {
+            WireLogger.mls.error("failed to decrypt message for group (\(groupID.safeForLoggingDescription)) and subconversation type (\(String(describing: subconversationType))): \(String(describing: error)) | \(debugInfo)")
+
+            throw MLSMessageDecryptionError.failedToDecryptMessage
         }
     }
 

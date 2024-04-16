@@ -41,12 +41,12 @@ final class MLSMigrationCellDescription: ConversationMessageCellDescription {
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String?
 
-    var message: WireDataModel.ZMConversationMessage?
-    var delegate: ConversationMessageCellDelegate?
-    var actionController: ConversationMessageActionController?
+    weak var message: WireDataModel.ZMConversationMessage?
+    weak var delegate: ConversationMessageCellDelegate?
+    weak var actionController: ConversationMessageActionController?
 
     init(messageType: ZMSystemMessageType) {
-        let icon = Asset.Images.attention.image.withTintColor(SemanticColors.Icon.backgroundDefault)
+        let icon = UIImage(resource: .attention).withTintColor(SemanticColors.Icon.backgroundDefault)
         let content = Self.makeAttributedString(messageType: messageType)
 
         configuration = View.Configuration(icon: icon, attributedText: content, showLine: false)

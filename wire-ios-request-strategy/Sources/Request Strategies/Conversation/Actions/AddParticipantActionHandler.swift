@@ -74,7 +74,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
             let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
             let conversationID = conversation.remoteIdentifier?.transportString(),
             let users: [ZMUser] = action.userIDs.existingObjects(in: context),
-            let payload =  Payload.ConversationAddMember(userIDs: users.compactMap(\.remoteIdentifier)),
+            let payload = Payload.ConversationAddMember(userIDs: users.compactMap(\.remoteIdentifier)),
             let payloadData = payload.payloadData(encoder: .defaultEncoder),
             let payloadAsString = String(bytes: payloadData, encoding: .utf8)
         else {
@@ -153,6 +153,7 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
             }
             Task {
                 await eventProcessor.processConversationEvents([updateEvent])
+                await context.perform { _ = self.context.saveOrRollback() }
                 success()
             }
 

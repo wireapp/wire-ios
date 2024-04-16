@@ -164,7 +164,7 @@ final class ListSkeletonContentView: UITableView, UITableViewDataSource {
         let cell = dequeueReusableCell(withIdentifier: "ListSkeletonCell")
 
         if let skeletonCell = cell as? ListSkeletonCell {
-            skeletonCell.lineInset =  randomizeDummyItem ? Float.random(in: 0..<200) : 0
+            skeletonCell.lineInset = randomizeDummyItem ? Float.random(in: 0..<200) : 0
         }
 
         return cell!
@@ -212,7 +212,7 @@ final class ListSkeletonView: UIView {
     }
 
     func disabledButtons(with iconTypes: [StyleKitIcon]) -> [IconButton] {
-        return iconTypes.map { (iconType) in
+        return iconTypes.map { iconType in
             let button = IconButton()
             button.setIcon(iconType, size: .tiny, for: .normal)
             button.setIconColor(SemanticColors.Icon.foregroundPlainCheckMark.withAlphaComponent(0.32), for: .disabled)

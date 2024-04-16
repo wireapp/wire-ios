@@ -203,7 +203,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
         self.syncMOC.performGroupedBlockAndWait {
             selfClient = self.createSelfClient(onMOC: self.syncMOC)
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ (sessionsDirectory) in
+            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             })
 
@@ -276,7 +276,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
         self.syncMOC.performGroupedBlockAndWait {
             selfClient = self.createSelfClient(onMOC: self.syncMOC)
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ (sessionsDirectory) in
+            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             })
 
@@ -554,7 +554,7 @@ extension UserClientTests {
 
         // given
         let selfClient = createSelfClient()
-        selfClient.apsVerificationKey =  Data()
+        selfClient.apsVerificationKey = Data()
         selfClient.apsDecryptionKey = Data()
 
         XCTAssertNotNil(selfClient.apsVerificationKey)

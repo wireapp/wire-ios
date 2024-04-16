@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
 
         case .mixed:
 
-            guard let mlsParticipantsService else {
+            if mlsParticipantsService == nil {
                 throw ConversationParticipantsError.missingMLSParticipantsService
             }
 
@@ -183,11 +183,10 @@ public class ConversationParticipantsService: ConversationParticipantsServiceInt
         users: [ZMUser],
         conversation: ZMConversation
     ) async throws {
-        try await context.perform { [self] in
+        try await context.perform {
             guard
                 conversation.conversationType == .group,
-                !users.isEmpty,
-                !users.contains(ZMUser.selfUser(in: context))
+                !users.isEmpty
             else {
                 throw ConversationParticipantsError.invalidOperation
             }

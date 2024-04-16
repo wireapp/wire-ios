@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -144,7 +144,7 @@ struct ConsentRequestFactory {
     static func setConsentRequest(for consentType: ConsentType, value: Bool, apiVersion: APIVersion) -> ZMTransportRequest {
         let payload: [String: Any] = [
             "type": consentType.rawValue,
-            "value": value ? 1:0,
+            "value": value ? 1 : 0,
             "source": sourceString
         ]
         return .init(path: consentPath,

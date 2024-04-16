@@ -51,35 +51,31 @@ final class MLSEncryptionServiceTests: XCTestCase {
 
     typealias EncryptionError = MLSEncryptionService.MLSMessageEncryptionError
 
-    func test_Encrypt_IsSuccessful() async {
-        do {
-            // Given
-            let groupID = MLSGroupID.random()
-            let unencryptedMessage = Data.random()
-            let encryptedMessage = Data.random()
+    func test_Encrypt_IsSuccessful() async throws {
 
-            // Mock
-            var mockEncryptMessageCount = 0
-            mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = {
-                mockEncryptMessageCount += 1
-                XCTAssertEqual($0, groupID.data)
-                XCTAssertEqual($1, unencryptedMessage)
-                return encryptedMessage
-            }
+        // Given
+        let groupID = MLSGroupID.random()
+        let unencryptedMessage = Data.random()
+        let encryptedMessage = Data.random()
 
-            // When
-            let result = try await sut.encrypt(
-                message: unencryptedMessage,
-                for: groupID
-            )
-
-            // Then
-            XCTAssertEqual(mockEncryptMessageCount, 1)
-            XCTAssertEqual(result, encryptedMessage)
-
-        } catch {
-            XCTFail("Unexpected error: \(String(describing: error))")
+        // Mock
+        var mockEncryptMessageCount = 0
+        mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = {
+            mockEncryptMessageCount += 1
+            XCTAssertEqual($0, groupID.data)
+            XCTAssertEqual($1, unencryptedMessage)
+            return encryptedMessage
         }
+
+        // When
+        let result = try await sut.encrypt(
+            message: unencryptedMessage,
+            for: groupID
+        )
+
+        // Then
+        XCTAssertEqual(mockEncryptMessageCount, 1)
+        XCTAssertEqual(result, encryptedMessage)
     }
 
     func test_Encrypt_Fails() async {
@@ -88,7 +84,7 @@ final class MLSEncryptionServiceTests: XCTestCase {
         let unencryptedMessage = Data.random()
 
         // Mock
-        mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = { (_, _) in
+        mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = { _, _ in
             throw CryptoError.InvalidByteArrayError(message: "bad bytes!")
         }
 

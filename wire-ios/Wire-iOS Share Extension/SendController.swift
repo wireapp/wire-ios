@@ -98,7 +98,7 @@ final class SendController {
         self.timedOut = false
         self.progress = progress
 
-        let completion: SendableCompletion  = { [weak self] sendableResult in
+        let completion: SendableCompletion = { [weak self] sendableResult in
             guard let weakSelf = self else {
                 return
             }

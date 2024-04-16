@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,12 +58,8 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         let sha = encryptedData.zmSHA256Digest()
         let keys = ZMImageAssetEncryptionKeys(otrKey: key, sha256: sha)
 
-        do {
-            try message.setUnderlyingMessage(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium), nonce: message.nonce!))
-            try message.setUnderlyingMessage(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .preview), nonce: message.nonce!))
-        } catch {
-            XCTFail("Could not set generic message")
-        }
+        try message.setUnderlyingMessage(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium), nonce: message.nonce!))
+        try message.setUnderlyingMessage(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .preview), nonce: message.nonce!))
 
         message.version = 2
         message.assetId = assetId
@@ -90,7 +86,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
 
     func requestToDownloadAsset(withMessage message: ZMAssetClientMessage) -> ZMTransportRequest {
         // remove image data or it won't be downloaded
-        syncMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
+        self.syncMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
         message.imageMessageData?.requestFileDownload()
         return sut.nextRequest(for: .v0)!
     }
@@ -109,7 +105,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
             }
 
             // remove image data or it won't be downloaded
-            self.syncMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
+            self.syncMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
             message.imageMessageData?.requestFileDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -137,7 +133,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
             }
 
             // remove image data or it won't be downloaded
-            self.syncMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
+            self.syncMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
             message.imageMessageData?.requestFileDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -160,7 +156,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
             }
 
             // remove image data or it won't be downloaded
-            self.syncMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
+            self.syncMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -248,7 +244,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
             encryptedData = messageAndEncryptedData.1
 
             // remove image data or it won't be downloaded
-            self.syncMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
+            self.syncMOC.zm_fileAssetCache.deleteOriginalImageData(for: message)
             message.imageMessageData?.requestFileDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

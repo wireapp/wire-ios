@@ -198,7 +198,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
         switch apiVersion {
         case .v0:
-            conversationIDsSync.fetch { [weak self] (result) in
+            conversationIDsSync.fetch { [weak self] result in
                 switch result {
                 case .success(let conversationIDList):
                     self?.conversationByIDListSync.sync(identifiers: conversationIDList.conversations)
@@ -208,7 +208,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             }
 
         case .v1, .v2, .v3, .v4, .v5, .v6:
-            conversationQualifiedIDsSync.fetch { [weak self] (result) in
+            conversationQualifiedIDsSync.fetch { [weak self] result in
                 switch result {
                 case .success(let qualifiedConversationIDList):
 
@@ -371,9 +371,12 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
         // no op
     }
 
-    public func updateUpdatedObject(_ managedObject: ZMManagedObject,
-                                    requestUserInfo: [AnyHashable: Any]? = nil,
-                                    response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
+    public func updateUpdatedObject(
+        _ managedObject: ZMManagedObject,
+        requestUserInfo: [AnyHashable: Any]? = nil,
+        response: ZMTransportResponse,
+        keysToParse: Set<String>
+    ) -> Bool {
 
         guard
             keysToParse.contains(ZMConversationUserDefinedNameKey),

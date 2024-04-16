@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -573,7 +574,7 @@ extension UserClientRequestStrategyTests {
 extension UserClientRequestStrategyTests {
 
     func  payloadForClients() -> ZMTransportData {
-        let payload =  [
+        let payload = [
             [
                 "id": UUID.create().transportString(),
                 "type": "permanent",
@@ -686,7 +687,7 @@ extension UserClientRequestStrategyTests {
         var client: UserClient!
 
         self.syncMOC.performGroupedBlock {
-            client =  UserClient.insertNewObject(in: self.syncMOC)
+            client = UserClient.insertNewObject(in: self.syncMOC)
             client.remoteIdentifier = "\(client.objectID)"
             client.user = ZMUser.selfUser(in: self.syncMOC)
             self.syncMOC.saveOrRollback()
@@ -757,7 +758,7 @@ extension UserClientRequestStrategyTests {
 
             let existingClient = self.createSelfClient()
             let existingClientSet: Set<NSManagedObject> = [existingClient]
-            let userClientNeedsToUpdateSignalingKeysKeySet: Set<AnyHashable> =  [ZMUserClientNeedsToUpdateSignalingKeysKey]
+            let userClientNeedsToUpdateSignalingKeysKeySet: Set<AnyHashable> = [ZMUserClientNeedsToUpdateSignalingKeysKey]
             XCTAssertNil(existingClient.apsVerificationKey)
             XCTAssertNil(existingClient.apsDecryptionKey)
 
@@ -803,7 +804,7 @@ extension UserClientRequestStrategyTests {
 
             existingClient = self.createSelfClient()
             let existingClientSet: Set<NSManagedObject> = [existingClient]
-            let userClientNeedsToUpdateCapabilitiesKeySet: Set<AnyHashable> =  [ZMUserClientNeedsToUpdateCapabilitiesKey]
+            let userClientNeedsToUpdateCapabilitiesKeySet: Set<AnyHashable> = [ZMUserClientNeedsToUpdateCapabilitiesKey]
 
             // when
             existingClient.needsToUpdateCapabilities = true

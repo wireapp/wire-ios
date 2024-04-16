@@ -1,20 +1,20 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 import XCTest
@@ -44,19 +44,16 @@ class EncryptionSessionsDirectoryTests: XCTestCase {
 }
 
 // MARK: - Session creation and encoding/decoding
+
 extension EncryptionSessionsDirectoryTests {
-    func testThatItCanDecodeAfterInitializingWithAValidKey() {
+
+    func testThatItCanDecodeAfterInitializingWithAValidKey() throws {
 
         // GIVEN
         let plainText = "foo".data(using: String.Encoding.utf8)!
 
         // WHEN
-        do {
-            try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(2))
-        } catch {
-            XCTFail()
-            return
-        }
+        try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(2))
 
         // THEN
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
@@ -64,31 +61,20 @@ extension EncryptionSessionsDirectoryTests {
         XCTAssertEqual(decoded, plainText)
     }
 
-    func testThatItCanCallCreateSessionWithTheSameKeyMultipleTimes() {
+    func testThatItCanCallCreateSessionWithTheSameKeyMultipleTimes() throws {
 
         // GIVEN
         let plainText = "foo".data(using: String.Encoding.utf8)!
         let prekey = try! statusBob.generatePrekey(34)
-        do {
-            try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: prekey)
-        } catch {
-            XCTFail()
-            return
-        }
+        try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: prekey)
 
         // WHEN
-        do {
-            try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: prekey)
-        } catch {
-            XCTFail()
-            return
-        }
+        try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: prekey)
 
         // THEN
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
         let decoded = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
         XCTAssertEqual(decoded, plainText)
-
     }
 
     func testThatItCanNotCreateANewSessionWithAnInvalidKey() {
@@ -106,21 +92,13 @@ extension EncryptionSessionsDirectoryTests {
         }
     }
 
-    func testThatItCanNotDecodePrekeyMessagesWithTheWrongKey() {
-
-        // GIVEN
+    func testThatItCanNotDecodePrekeyMessagesWithTheWrongKey() throws {
 
         // WHEN
-        do {
-            _ = try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: hardcodedPrekey)
-        } catch {
-            XCTFail()
-            return
-        }
+        _ = try statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: hardcodedPrekey)
 
         // THEN
         XCTAssertFalse(checkThatAMessageCanBeSent(.Alice))
-
     }
 }
 
@@ -174,7 +152,7 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         let rangeStart = 3
         let rangeLength = 10
-        let prekeyIds: CountableRange<UInt16> = UInt16(rangeStart)..<UInt16(rangeStart+rangeLength)
+        let prekeyIds: CountableRange<UInt16> = UInt16(rangeStart)..<UInt16(rangeStart + rangeLength)
 
         // WHEN
         var prekeys: [(id: UInt16, prekey: String)] = []
@@ -188,7 +166,7 @@ extension EncryptionSessionsDirectoryTests {
             var prekeyRetrievedId: UInt16 = 0
             let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self), prekeyData.count, &prekeyRetrievedId) }
             XCTAssertEqual(result, CBOX_SUCCESS)
-            XCTAssertEqual(Int(prekeyRetrievedId), i+rangeStart)
+            XCTAssertEqual(Int(prekeyRetrievedId), i + rangeStart)
             XCTAssertEqual(prekeyRetrievedId, id)
         }
     }
@@ -573,7 +551,7 @@ extension EncryptionSessionsDirectoryTests {
         let logExpectation = expectation(description: "Encrypting")
 
         // EXPECT
-        let token = ZMSLog.addEntryHook { (level, tag, entry, _) in
+        let token = ZMSLog.addEntryHook { level, tag, entry, _ in
             if level == ZMLogLevel_t.public &&
                 tag == "cryptobox" &&
                 entry.text.contains("encrypted to cyphertext: cyphertext") {
@@ -602,7 +580,7 @@ extension EncryptionSessionsDirectoryTests {
         establishSessionFromAliceToBob()
 
         // EXPECT
-        let token = ZMSLog.addEntryHook { (_, _, _, _) in
+        let token = ZMSLog.addEntryHook { _, _, _, _ in
             XCTFail("Should not have logged")
         }
 
@@ -623,7 +601,7 @@ extension EncryptionSessionsDirectoryTests {
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
 
         // EXPECT
-        let token = ZMSLog.addEntryHook { (level, tag, entry, _) in
+        let token = ZMSLog.addEntryHook { level, tag, entry, _ in
             if level == ZMLogLevel_t.public &&
                 tag == "cryptobox" &&
                 entry.text.contains("decrypting prekey cyphertext:") {
@@ -652,7 +630,7 @@ extension EncryptionSessionsDirectoryTests {
         let message = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
 
         // EXPECT
-        let token = ZMSLog.addEntryHook { (level, tag, entry, _) in
+        let token = ZMSLog.addEntryHook { level, tag, entry, _ in
             if level == ZMLogLevel_t.public &&
                 tag == "cryptobox" &&
                 entry.text.contains("decrypting cyphertext:") {
@@ -683,7 +661,7 @@ extension EncryptionSessionsDirectoryTests {
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
 
         // EXPECT
-        let token = ZMSLog.addEntryHook { (_, _, _, _) in
+        let token = ZMSLog.addEntryHook { _, _, _, _ in
             XCTFail("Should not have logged")
         }
 

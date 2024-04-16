@@ -26,7 +26,7 @@ private let zmLog = ZMSLog(tag: "UI")
 public final class FileMetaDataGenerator: NSObject {
 
     static public func metadataForFileAtURL(_ url: URL, UTI uti: String, name: String, completion: @escaping (ZMFileMetadata) -> Void) {
-        SharedPreviewGenerator.generator.generatePreview(url, UTI: uti) { (preview) in
+        SharedPreviewGenerator.generator.generatePreview(url, UTI: uti) { preview in
             let thumbnail = preview != nil ? preview!.jpegData(compressionQuality: 0.9) : nil
 
             if AVURLAsset.wr_isAudioVisualUTI(uti) {
@@ -67,7 +67,7 @@ extension AVAsset {
         let reader: AVAssetReader
         do {
             reader = try AVAssetReader(asset: self)
-        } catch let error {
+        } catch {
             zmLog.error("Cannot read asset metadata for \(self): \(error)")
             return .none
         }
@@ -131,7 +131,7 @@ extension AVAsset {
                         continue
                     }
 
-                    let i16bufptr = UnsafeBufferPointer(start: data.assumingMemoryBound(to: Int16.self), count: Int(buffer.mDataByteSize)/Int(MemoryLayout<Int16>.size))
+                    let i16bufptr = UnsafeBufferPointer(start: data.assumingMemoryBound(to: Int16.self), count: Int(buffer.mDataByteSize) / Int(MemoryLayout<Int16>.size))
 
                     for sample in Array(i16bufptr) {
                         sampleSkipCounter += 1

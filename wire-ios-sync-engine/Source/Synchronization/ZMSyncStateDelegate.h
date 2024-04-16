@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 @class UserClient;
 
 
-
 @protocol ZMClientRegistrationStatusDelegate <NSObject>
 
 - (void)didRegisterSelfUserClient:(UserClient *_Nonnull)userClient;
@@ -27,7 +26,6 @@
 - (void)didDeleteSelfUserClient:(NSError *_Nonnull)error NS_SWIFT_NAME(didDeleteSelfUserClient(error:));
 
 @end
-
 
 
 @protocol ZMSyncStateDelegate <ZMClientRegistrationStatusDelegate>

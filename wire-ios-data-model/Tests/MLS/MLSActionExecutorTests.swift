@@ -131,7 +131,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
                 commitDelay: 0,
                 senderClientId: nil,
                 hasEpochChanged: false,
-                identity: nil,
+                identity: .withBasicCredentials(),
                 bufferedMessages: nil,
                 crlNewDistributionPoints: nil
             )
@@ -195,7 +195,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
                 commitDelay: 0,
                 senderClientId: nil,
                 hasEpochChanged: false,
-                identity: nil,
+                identity: .withBasicCredentials(),
                 bufferedMessages: nil,
                 crlNewDistributionPoints: nil
             )
@@ -214,6 +214,53 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         await fulfillment(of: [sendCommitExpectation, decryptMessageExpectation], timeout: .tenSeconds)
         XCTAssertEqual(mockCoreCrypto.decryptMessageConversationIdPayload_Invocations.count, 1)
         sendCommitContinuation?.resume()
+    }
+
+    // MARK: - Process welcome message
+
+    func test_processWelcomeMessage_ReturnsGroupID() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+        let message = Data.random()
+        let welcomeBundle = WelcomeBundle(id: groupID.data, crlNewDistributionPoints: nil)
+
+        // Mock
+        mockCoreCrypto.processWelcomeMessageWelcomeMessageCustomConfiguration_MockMethod = { _, _ in
+            welcomeBundle
+        }
+
+        // When
+        let result = try await sut.processWelcomeMessage(message)
+
+        // Then
+        XCTAssertEqual(groupID, result)
+        XCTAssertEqual(mockCoreCrypto.processWelcomeMessageWelcomeMessageCustomConfiguration_Invocations.count, 1)
+    }
+
+    func test_processWelcomeMessage_PublishesNewDistributionPoints() async throws {
+        // Given
+        let distributionPoint = "example.domain.com/dp"
+        let groupID = MLSGroupID.random()
+        let message = Data.random()
+        let welcomeBundle = WelcomeBundle(id: groupID.data, crlNewDistributionPoints: [distributionPoint])
+
+        // Mock
+        mockCoreCrypto.processWelcomeMessageWelcomeMessageCustomConfiguration_MockMethod = { _, _ in
+            welcomeBundle
+        }
+
+        // Set up expectation to receive the new distribution points
+        let expectation = XCTestExpectation(description: "received value")
+        cancellable = sut.onNewCRLsDistributionPoints().sink { value in
+            XCTAssertEqual(value, CRLsDistributionPoints(from: [distributionPoint]))
+            expectation.fulfill()
+        }
+
+        // When
+        _ = try await sut.processWelcomeMessage(message)
+
+        // Then
+        await fulfillment(of: [expectation], timeout: 0.5)
     }
 
     // MARK: - Add members
@@ -320,7 +367,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             domain: "example.com"
         )
 
-        let clientIds =  [mlsClientID].compactMap { $0.rawValue.utf8Data }
+        let clientIds = [mlsClientID].compactMap { $0.rawValue.utf8Data }
 
         let mockCommit = Data.random()
         let mockUpdateEvent = mockMemberLeaveUpdateEvent()
@@ -565,7 +612,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             commitDelay: 0,
             senderClientId: nil,
             hasEpochChanged: false,
-            identity: nil,
+            identity: .withBasicCredentials(),
             bufferedMessages: nil,
             crlNewDistributionPoints: nil
         )

@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,7 +49,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
         }
 
         mockConversationService = MockConversationServiceInterface()
-
+        mockConversationService.syncConversationIfMissingQualifiedID_MockMethod = { _ in }
         mockConversationService.syncConversationQualifiedID_MockMethod = { _ in }
         mockConversationService.syncConversationQualifiedIDCompletion_MockMethod = { _, completion in
             completion()
@@ -232,7 +233,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             action = AddParticipantAction(users: [user], conversation: conversation)
             let expectation = self.customExpectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
                 } else {
@@ -276,7 +277,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             var action = AddParticipantAction(users: [user], conversation: conversation)
 
             let expectation = self.customExpectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
                 }
@@ -300,7 +301,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             var action = AddParticipantAction(users: [user], conversation: conversation)
 
             let expectation = self.customExpectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            action.onResult { result in
                 if case .failure = result {
                     expectation.fulfill()
                 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ public extension String {
 
     func truncated(_ maxCharacters: Int) -> String {
         let result = String(prefix(maxCharacters))
-        let fillCount =  count - result.count
+        let fillCount = count - result.count
         return result + "*".repeat(fillCount)
     }
 }

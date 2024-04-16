@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -297,6 +297,13 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         needsToVerifySelfClient = !needsToRegisterClient
         needsToFetchFeatureConfigs = needsToRegisterClient
         needsRefreshSelfUser = needsToRegisterClient
+
+        if !needsToRegisterClient && needsToRegisterMLSCLient {
+            guard let client = ZMUser.selfUser(in: managedObjectContext).selfClient() else {
+                fatal("Expected a self user client to exist")
+            }
+            createMLSClient(client: client)
+        }
     }
 
     func observeProfileUpdates() {
@@ -453,28 +460,32 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
         lastResortPrekey = nil
 
         if needsToRegisterMLSCLient {
-            if needsToEnrollE2EI {
-                isWaitingForE2EIEnrollment = true
-                notifyE2EIEnrollmentNecessary()
-            } else {
-                guard let mlsClientID = MLSClientID(userClient: client) else {
-                    fatalError("Needs to register MLS client but can't retrieve qualified client ID")
-                }
-
-                WaitingGroupTask(context: managedObjectContext) {
-                    do {
-                        try await self.coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
-                    } catch {
-                        WireLogger.mls.error("Failed to initialise mls client: \(error)")
-                    }
-                }
-                isWaitingForMLSClientToBeRegistered = true
-            }
+            createMLSClient(client: client)
         } else {
             registrationStatusDelegate?.didRegisterSelfUserClient(client)
         }
 
         WireLogger.authentication.debug("current phase: \(currentPhase)")
+    }
+
+    private func createMLSClient(client: UserClient) {
+        if needsToEnrollE2EI {
+            isWaitingForE2EIEnrollment = true
+            notifyE2EIEnrollmentNecessary()
+        } else {
+            guard let mlsClientID = MLSClientID(userClient: client) else {
+                fatalError("Needs to register MLS client but can't retrieve qualified client ID")
+            }
+
+            WaitingGroupTask(context: managedObjectContext) {
+                do {
+                    try await self.coreCryptoProvider.initialiseMLSWithBasicCredentials(mlsClientID: mlsClientID)
+                } catch {
+                    WireLogger.mls.error("Failed to initialise mls client: \(error)")
+                }
+            }
+            isWaitingForMLSClientToBeRegistered = true
+        }
     }
 
     private func fetchExistingSelfClientsAfterRegisteringClient(_ selfClient: UserClient) {

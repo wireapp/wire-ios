@@ -42,13 +42,10 @@ final class ConversationVerifiedSystemMessageSectionDescription: ConversationMes
     let accessibilityLabel: String?
 
     init() {
-        let title = NSAttributedString(
-            string: L10n.Localizable.Content.System.isVerified,
-            attributes: [.font: UIFont.mediumFont, .foregroundColor: LabelColors.textDefault]
-        )
+        let title = NSAttributedString.markdown(from: L10n.Localizable.Content.System.Mls.conversationIsVerified(URL.wr_e2eiLearnMore), style: .systemMessage)
 
         configuration = View.Configuration(
-            icon: WireStyleKit.imageOfShieldverified,
+            icon: .init(resource: .certificateValid),
             attributedText: title,
             showLine: true
         )

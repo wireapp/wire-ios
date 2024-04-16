@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import WireCoreCrypto
 import XCTest
+import WireTesting
 
 @testable import WireDataModel
 @testable import WireDataModelSupport
@@ -36,7 +37,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     var mockSyncStatus: MockSyncStatus!
     var mockActionsProvider: MockMLSActionsProviderProtocol!
     var mockConversationEventProcessor: MockConversationEventProcessorProtocol!
-    var mockStaleMLSKeyDetector: MockStaleMLSKeyDetector!
+    var mockStaleMLSKeyDetector: MockStaleMLSKeyDetectorProtocol!
     var userDefaultsTestSuite: UserDefaults!
     var privateUserDefaults: PrivateUserDefaults<MLSService.Keys>!
     var mockSubconversationGroupIDRepository: MockSubconversationGroupIDRepositoryInterface!
@@ -60,11 +61,12 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockActionsProvider = MockMLSActionsProviderProtocol()
         mockConversationEventProcessor = MockConversationEventProcessorProtocol()
         mockConversationEventProcessor.processConversationEvents_MockMethod = { _ in }
-        mockStaleMLSKeyDetector = MockStaleMLSKeyDetector()
+        mockStaleMLSKeyDetector = MockStaleMLSKeyDetectorProtocol()
         userDefaultsTestSuite = UserDefaults.temporary()
         privateUserDefaults = PrivateUserDefaults(userID: userIdentifier, storage: userDefaultsTestSuite)
         mockSubconversationGroupIDRepository = MockSubconversationGroupIDRepositoryInterface()
 
+        mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_MockMethod = { _ in }
         mockCoreCrypto.e2eiIsEnabledCiphersuite_MockValue = false
         mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
             return 100
@@ -322,7 +324,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await uiMOC.perform {
             self.setMocksForConversationRepair(
                 parentGroupID: groupID,
-                epoch: conversation.epoch + 1,
+                epoch: conversation.epoch - 1,
                 onJoinGroup: { joinedGroupID in
                     XCTAssertEqual(groupID, joinedGroupID)
                     expectation.fulfill()
@@ -371,98 +373,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         XCTAssertEqual(mockCreateConversationCount, 1)
-        XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
-    }
-
-    func test_CreateGroupWithNoUsers_IsSuccessful() async throws {
-        // Given
-        let groupID = MLSGroupID(Data([1, 2, 3]))
-        let removalKey = Data([1, 2, 3])
-
-        mockActionsProvider.fetchBackendPublicKeysIn_MockValue = .init(
-            removal: .init(ed25519: removalKey)
-        )
-        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
-            return []
-        }
-
-        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
-            return []
-        }
-
-        var mockCreateConversationCount = 0
-        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { conversationID, creatorCredentialType, config in
-            mockCreateConversationCount += 1
-
-            XCTAssertEqual(conversationID, groupID.data)
-            XCTAssertEqual(creatorCredentialType, .basic)
-            XCTAssertEqual(config, .init(
-                ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
-                externalSenders: [removalKey],
-                custom: .init(keyRotationSpan: nil, wirePolicy: nil)
-            ))
-        }
-
-        // When
-        try await sut.createGroup(for: groupID, with: [])
-
-        // Then
-        XCTAssertEqual(mockCreateConversationCount, 1)
-        XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
-    }
-
-    func test_CreateGroupWithMultipleUsers_IsSuccessful() async throws {
-        // Given
-        let groupID = MLSGroupID(Data([1, 2, 3]))
-        let removalKey = Data([1, 2, 3])
-        let users = [MLSUser.init(id: UUID(), domain: "example.com"),
-                     MLSUser.init(id: UUID(), domain: "example.com")]
-
-        mockActionsProvider.fetchBackendPublicKeysIn_MockValue = .init(
-            removal: .init(ed25519: removalKey)
-        )
-
-        mockMLSActionExecutor.mockCommitPendingProposals = { _ in [] }
-        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in [] }
-
-        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod = { (_, _, _, _) in
-            users.map {
-                KeyPackage(
-                    client: .randomAlphanumerical(length: 4),
-                    domain: $0.domain,
-                    keyPackage: .randomAlphanumerical(length: 3),
-                    keyPackageRef: .randomAlphanumerical(length: 6),
-                    userID: $0.id
-                )
-            }
-        }
-        var mockAddMembersCalled = false
-        mockMLSActionExecutor.mockAddMembers = { (_, _) in
-            mockAddMembersCalled = true
-            return [ZMUpdateEvent(), ZMUpdateEvent()]
-        }
-
-        var mockCreateConversationCount = 0
-        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { conversationID, creatorCredentialType, config in
-            mockCreateConversationCount += 1
-
-            XCTAssertEqual(conversationID, groupID.data)
-            XCTAssertEqual(creatorCredentialType, .basic)
-            XCTAssertEqual(config, .init(
-                ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
-                externalSenders: [removalKey],
-                custom: .init(keyRotationSpan: nil, wirePolicy: nil)
-            ))
-        }
-
-        // When
-        try await sut.createGroup(for: groupID, with: users)
-
-        // Then
-        XCTAssertEqual(mockCreateConversationCount, 1)
-        XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
-        XCTAssertEqual(mockMLSActionExecutor.updateKeyMaterialCount, 0)
-        XCTAssertTrue(mockAddMembersCalled)
+        XCTAssertEqual(mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_Invocations, [groupID])
     }
 
     func test_CreateGroup_ThrowsError() async throws {
@@ -512,7 +423,143 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         await fulfillment(of: [fetchBackendPublicKeysExpectation], timeout: 0.5)
-        XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
+        XCTAssertEqual(mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_Invocations, [groupID])
+    }
+
+    // MARK: - Establish group
+
+    func test_EstablishGroupWithNoUsers_IsSuccessful() async throws {
+        // Given
+        let groupID = MLSGroupID(Data([1, 2, 3]))
+        let removalKey = Data([1, 2, 3])
+
+        mockActionsProvider.fetchBackendPublicKeysIn_MockValue = .init(
+            removal: .init(ed25519: removalKey)
+        )
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            return []
+        }
+
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in
+            return []
+        }
+
+        var mockCreateConversationCount = 0
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { conversationID, creatorCredentialType, config in
+            mockCreateConversationCount += 1
+
+            XCTAssertEqual(conversationID, groupID.data)
+            XCTAssertEqual(creatorCredentialType, .basic)
+            XCTAssertEqual(config, .init(
+                ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
+                externalSenders: [removalKey],
+                custom: .init(keyRotationSpan: nil, wirePolicy: nil)
+            ))
+        }
+
+        // When
+        try await sut.establishGroup(for: groupID, with: [])
+
+        // Then
+        XCTAssertEqual(mockCreateConversationCount, 1)
+        XCTAssertEqual(mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_Invocations, [groupID])
+    }
+
+    func test_EstablishGroupWithMultipleUsers_IsSuccessful() async throws {
+        // Given
+        let groupID = MLSGroupID(Data([1, 2, 3]))
+        let removalKey = Data([1, 2, 3])
+        let users = [MLSUser.init(id: UUID(), domain: "example.com"),
+                     MLSUser.init(id: UUID(), domain: "example.com")]
+
+        mockActionsProvider.fetchBackendPublicKeysIn_MockValue = .init(
+            removal: .init(ed25519: removalKey)
+        )
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in [] }
+        mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in [] }
+
+        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod = { _, _, _, _ in
+            users.map {
+                KeyPackage(
+                    client: .randomAlphanumerical(length: 4),
+                    domain: $0.domain,
+                    keyPackage: .randomAlphanumerical(length: 3),
+                    keyPackageRef: .randomAlphanumerical(length: 6),
+                    userID: $0.id
+                )
+            }
+        }
+        var mockAddMembersCalled = false
+        mockMLSActionExecutor.mockAddMembers = { _, _ in
+            mockAddMembersCalled = true
+            return [ZMUpdateEvent(), ZMUpdateEvent()]
+        }
+
+        var mockCreateConversationCount = 0
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { conversationID, creatorCredentialType, config in
+            mockCreateConversationCount += 1
+
+            XCTAssertEqual(conversationID, groupID.data)
+            XCTAssertEqual(creatorCredentialType, .basic)
+            XCTAssertEqual(config, .init(
+                ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
+                externalSenders: [removalKey],
+                custom: .init(keyRotationSpan: nil, wirePolicy: nil)
+            ))
+        }
+
+        // When
+        try await sut.establishGroup(for: groupID, with: users)
+
+        // Then
+        XCTAssertEqual(mockCreateConversationCount, 1)
+        XCTAssertEqual(mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_Invocations, [groupID])
+        XCTAssertEqual(mockMLSActionExecutor.updateKeyMaterialCount, 0)
+        XCTAssertTrue(mockAddMembersCalled)
+    }
+
+    func test_EstablishGroup_WipesGroupOnError() async throws {
+        // Given
+        let groupID = MLSGroupID(Data([1, 2, 3]))
+        let removalKey = Data([1, 2, 3])
+        let mlsSelfUser = await uiMOC.perform {
+            return MLSUser(from: self.selfUser)
+        }
+        let users = [MLSUser.init(id: UUID(), domain: "example.com"),
+                     MLSUser.init(id: UUID(), domain: "example.com")]
+        let usersIncludingSelf = users + [mlsSelfUser]
+
+        mockActionsProvider.fetchBackendPublicKeysIn_MockValue = .init(
+            removal: .init(ed25519: removalKey)
+        )
+
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in [] }
+
+        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockError = ClaimMLSKeyPackageAction.Failure.emptyKeyPackages
+
+        var mockCreateConversationCount = 0
+        mockCoreCrypto.createConversationConversationIdCreatorCredentialTypeConfig_MockMethod = { conversationID, creatorCredentialType, config in
+            mockCreateConversationCount += 1
+
+            XCTAssertEqual(conversationID, groupID.data)
+            XCTAssertEqual(creatorCredentialType, .basic)
+            XCTAssertEqual(config, .init(
+                ciphersuite: CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519.rawValue,
+                externalSenders: [removalKey],
+                custom: .init(keyRotationSpan: nil, wirePolicy: nil)
+            ))
+        }
+        mockCoreCrypto.wipeConversationConversationId_MockMethod = { _ in }
+
+        // When
+        await assertItThrows(error: MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: usersIncludingSelf)) {
+            try await sut.establishGroup(for: groupID, with: users)
+        }
+
+        // Then
+        XCTAssertEqual(mockCreateConversationCount, 1)
+        XCTAssertEqual(mockCoreCrypto.wipeConversationConversationId_Invocations.count, 1)
     }
 
     // MARK: - Adding participants
@@ -854,7 +901,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        try await self.sut.commitPendingProposals()
+        await self.sut.commitPendingProposals()
 
         // Then we cleared the pending proposal date.
         await uiMOC.perform {
@@ -888,7 +935,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        try await self.sut.commitPendingProposals()
+        await self.sut.commitPendingProposals()
 
         // Then we committed the pending proposal immediately.
         let (id, commitTime) = try XCTUnwrap(mockCommitPendingProposalArguments.first)
@@ -930,7 +977,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        try await self.sut.commitPendingProposals()
+        await self.sut.commitPendingProposals()
 
         // Then we committed the proposal at the right time.
         let (id, commitTime) = try XCTUnwrap(mockCommitPendingProposalArguments.first)
@@ -998,7 +1045,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // When
-        try await sut.commitPendingProposals()
+        await sut.commitPendingProposals()
 
         // Then pending proposals were committed in order at the right times.
         XCTAssertEqual(mockCommitPendingProposalArguments.count, 3)
@@ -1062,15 +1109,14 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_MockValue = subgroupID
 
         // Mock committing pending proposal.
-        var mockCommitPendingProposalArguments = [(MLSGroupID, Date)]()
-
+        let commitPendingProposalsArgumentsActor = GenericArrayActor<(MLSGroupID, Date)>()
         mockMLSActionExecutor.mockCommitPendingProposals = {
-            mockCommitPendingProposalArguments.append(($0, Date()))
+            await commitPendingProposalsArgumentsActor.append((($0, Date())))
             return []
         }
 
         // When
-        try await self.sut.commitPendingProposals()
+        await self.sut.commitPendingProposals()
 
         // Then we asked for the subgroup id
         let subgroupInvocations = mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_Invocations
@@ -1079,6 +1125,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(subgroupInvocations.first?.parentGroupID, parentGroupdID)
 
         // Then we try to commit pending proposals twice, once for the subgroup, once for the parent
+        var mockCommitPendingProposalArguments = await commitPendingProposalsArgumentsActor.items
         XCTAssertEqual(mockCommitPendingProposalArguments.count, 2)
         let (id1, commitTime1) = try XCTUnwrap(mockCommitPendingProposalArguments.first)
 
@@ -1305,7 +1352,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
                 }
 
                 let epoch = await self.uiMOC.perform { tuple.conversation.epoch }
-                return tuple.isOutOfSync ? epoch + 1 : epoch
+                return tuple.isOutOfSync ? epoch - 1 : epoch
             }
         }
 
@@ -1341,7 +1388,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await uiMOC.perform { [self] in
             setMocksForConversationRepair(
                 parentGroupID: groupID,
-                epoch: conversation.epoch + 1,
+                epoch: conversation.epoch - 1,
                 onJoinGroup: { joinedGroupID in
                     XCTAssertEqual(groupID, joinedGroupID)
                     expectation.fulfill()
@@ -1409,7 +1456,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await uiMOC.perform {
             self.setMocksForConversationRepair(
                 parentGroupID: groupID,
-                epoch: UInt64(subgroup.epoch + 1),
+                epoch: UInt64(subgroup.epoch - 1),
                 subgroup: subgroup,
                 onJoinGroup: { joinedGroupID in
                     XCTAssertEqual(subgroupID, joinedGroupID)
@@ -1429,7 +1476,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
     func test_FetchAndRepairConversation_DoesNothingIfSubgroupIsNotOutOfSync() async throws {
         // GIVEN
         let conversation = await uiMOC.perform({ self.createConversation(outOfSync: true).conversation })
-        guard let groupID =  await uiMOC.perform({ conversation.mlsGroupID }) else {
+        guard let groupID = await uiMOC.perform({ conversation.mlsGroupID }) else {
             XCTFail("missing groupID")
             return
         }
@@ -1735,71 +1782,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         await fulfillment(of: [countUnclaimedKeyPackages, uploadKeyPackages], timeout: 0.5)
     }
 
-    // MARK: - Welcome message
-
-    func test_ProcessWelcomeMessage_Sucess() async throws {
-        // Given
-        let groupID = MLSGroupID.random()
-        let message = Data.random().base64EncodedString()
-        let welcomeBundle = WelcomeBundle(id: groupID.data, crlNewDistributionPoints: nil)
-
-        // Mock
-        mockCoreCrypto.processWelcomeMessageWelcomeMessageCustomConfiguration_MockMethod = { _, _ in
-            welcomeBundle
-        }
-
-        var mockClientValidKeypackagesCountCount = 0
-        mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
-            mockClientValidKeypackagesCountCount += 1
-            return UInt64(self.sut.targetUnclaimedKeyPackageCount)
-        }
-
-        // When
-        _ = try await sut.processWelcomeMessage(welcomeMessage: message)
-
-        // Then
-        XCTAssertEqual(mockClientValidKeypackagesCountCount, 1)
-        XCTAssertEqual(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated, [groupID])
-    }
-
-    func test_ProcessWelcomeMessage_PublishesNewDistributionPoints() async throws {
-        // Given
-        let distributionPoint = "example.domain.com"
-        let message = Data.random().base64EncodedString()
-
-        // Mock processing welcome message return new distribution point
-        mockCoreCrypto.processWelcomeMessageWelcomeMessageCustomConfiguration_MockMethod = { _, _ in
-            return .init(
-                id: .random(),
-                crlNewDistributionPoints: [distributionPoint]
-            )
-        }
-
-        // Mock valid key packages count
-        mockCoreCrypto.clientValidKeypackagesCountCiphersuiteCredentialType_MockMethod = { _, _ in
-            return UInt64(self.sut.targetUnclaimedKeyPackageCount)
-        }
-
-        // Mock new distribution points publishers
-        mockDecryptionService.onNewCRLsDistributionPoints_MockValue = PassthroughSubject<CRLsDistributionPoints, Never>().eraseToAnyPublisher()
-
-        mockMLSActionExecutor.mockOnNewCRLsDistributionPoints = PassthroughSubject<CRLsDistributionPoints, Never>().eraseToAnyPublisher
-
-        // Expect to receive new distribution point value
-        let expectation = XCTestExpectation(description: "received value")
-        let cancellable = sut.onNewCRLsDistributionPoints().sink { value in
-            XCTAssertEqual(value, CRLsDistributionPoints(from: [distributionPoint]))
-            expectation.fulfill()
-        }
-
-        // When
-        _ = try await sut.processWelcomeMessage(welcomeMessage: message)
-
-        // Then
-        await fulfillment(of: [expectation], timeout: 0.5)
-        cancellable.cancel()
-    }
-
     // MARK: - Update key material
 
     func test_UpdateKeyMaterial() async throws {
@@ -1839,7 +1821,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then we informed the detector.
         XCTAssertEqual(
-            Set(mockStaleMLSKeyDetector.calls.keyingMaterialUpdated),
+            Set(mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_Invocations),
             Set([group1, group2])
         )
 

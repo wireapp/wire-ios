@@ -39,6 +39,13 @@ extension ConversationInputBarViewController {
             return
         }
 
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+            self.recordAudio()
+        }
+        checker.performAction()
+    }
+
+    private func recordAudio() {
         if displayAudioMessageAlertIfNeeded() {
             return
         }
@@ -131,7 +138,7 @@ extension ConversationInputBarViewController {
     }
 
     fileprivate func requestMicrophoneAccess() {
-        UIApplication.wr_requestOrWarnAboutMicrophoneAccess { (granted) in
+        UIApplication.wr_requestOrWarnAboutMicrophoneAccess { granted in
             guard granted else { return }
         }
     }
@@ -207,9 +214,12 @@ extension ConversationInputBarViewController: AudioRecordViewControllerDelegate 
 
     func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType) {
 
-        uploadFile(at: recordingURL as URL)
+        let checker = E2EIPrivacyWarningChecker(conversation: self.conversation) { [weak self] in
+            self?.uploadFile(at: recordingURL as URL)
 
-        self.hideAudioRecordViewController()
+            self?.hideAudioRecordViewController()
+        }
+        checker.performAction()
     }
 
 }
@@ -230,7 +240,7 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
         default: break
         }
 
-        if 0 == callCountWhileCameraKeyboardWasVisible, wasRecordingBeforeCall {
+        if callCountWhileCameraKeyboardWasVisible == 0, wasRecordingBeforeCall {
             displayRecordKeyboard() // -> show the audio record keyboard again
         }
     }

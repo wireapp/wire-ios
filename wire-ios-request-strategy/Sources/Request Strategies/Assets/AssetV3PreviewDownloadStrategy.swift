@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         let filter = NSPredicate { object, _ in
-            guard let message = object as? ZMAssetClientMessage, nil != message.fileMessageData else { return false }
+            guard let message = object as? ZMAssetClientMessage, message.fileMessageData != nil else { return false }
             guard message.version >= 3, message.visibleInConversation != nil else { return false }
-            guard nil != message.underlyingMessage?.previewAssetId else { return false }
+            guard message.underlyingMessage?.previewAssetId != nil else { return false }
             return !message.hasDownloadedPreview
         }
 
@@ -71,32 +71,43 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         return downstreamSync.nextRequest(for: apiVersion)
     }
 
-    fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
-        guard let asset = assetClientMessage.underlyingMessage?.assetData, response.result == .success else { return }
-        guard assetClientMessage.visibleInConversation != nil else { return }
+    fileprivate func handleResponse(
+        _ response: ZMTransportResponse,
+        forMessage assetClientMessage: ZMAssetClientMessage
+    ) {
+        guard
+            let asset = assetClientMessage.underlyingMessage?.assetData,
+            response.result == .success,
+            assetClientMessage.visibleInConversation != nil,
+            let data = response.rawData
+        else {
+            return
+        }
 
         let remote = asset.preview.remote
         let cache = managedObjectContext.zm_fileAssetCache!
-        cache.storeAssetData(assetClientMessage, format: .medium, encrypted: true, data: response.rawData!)
 
-        // Decrypt the preview image file
-        let success = cache.decryptImageIfItMatchesDigest(
-            assetClientMessage,
-            format: .medium,
-            encryptionKey: remote.otrKey,
-            sha256Digest: remote.sha256
-        )
-
-        if !success {
+        guard data.zmSHA256Digest() == remote.sha256 else {
+            zmLog.warn("v3 asset (preview): \(asset), message: \(assetClientMessage) digest is not valid, discarding...")
             managedObjectContext.delete(assetClientMessage)
-            zmLog.error("Unable to decrypt preview image for file message: \(assetClientMessage), \(asset)")
+            return
         }
 
+        cache.storeEncryptedMediumImage(
+            data: data,
+            for: assetClientMessage
+        )
+
         // Notify about the changes
-        guard let uiMOC = managedObjectContext.zm_userInterface else { return }
-        NotificationDispatcher.notifyNonCoreDataChanges(objectID: assetClientMessage.objectID,
-                                                        changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedPreview)],
-                                                        uiContext: uiMOC)
+        guard let uiMOC = managedObjectContext.zm_userInterface else {
+            return
+        }
+
+        NotificationDispatcher.notifyNonCoreDataChanges(
+            objectID: assetClientMessage.objectID,
+            changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedPreview)],
+            uiContext: uiMOC
+        )
     }
 
     // MARK: - ZMContextChangeTrackerSource

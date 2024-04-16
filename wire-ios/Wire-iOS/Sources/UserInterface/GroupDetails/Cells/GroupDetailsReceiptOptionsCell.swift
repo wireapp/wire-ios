@@ -30,12 +30,8 @@ final class GroupDetailsReceiptOptionsCell: IconToggleCell {
 
         title = L10n.Localizable.GroupDetails.ReceiptOptionsCell.title
 
+        icon = .init(resource: .readReceipts).withRenderingMode(.alwaysTemplate)
         iconColor = SemanticColors.Icon.foregroundDefault
-        guard let iconColor = iconColor else { return }
-        icon = StyleKitIcon.eye.makeImage(
-            size: .tiny,
-            color: iconColor).withRenderingMode(.alwaysTemplate)
-
     }
 
     override var isHighlighted: Bool {

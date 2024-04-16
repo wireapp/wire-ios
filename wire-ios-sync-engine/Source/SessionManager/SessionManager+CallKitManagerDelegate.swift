@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,11 +33,11 @@ extension SessionManager: CallKitManagerDelegate {
         completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     ) {
         WireLogger.calling.info("lookup conversation for: \(handle)")
-        guard let account  = accountManager.account(with: handle.accountID) else {
+        guard let account = accountManager.account(with: handle.accountID) else {
             return completionHandler(.failure(ConversationLookupError.accountDoesNotExist))
         }
 
-        withSession(for: account) { (userSession) in
+        withSession(for: account) { userSession in
             guard let conversation = ZMConversation.fetch(with: handle.conversationID, in: userSession.managedObjectContext) else {
                 return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
             }
@@ -52,7 +52,7 @@ extension SessionManager: CallKitManagerDelegate {
     ) {
         WireLogger.calling.info("lookup conversation and process pending call events for: \(handle)")
 
-        guard let account  = accountManager.account(with: handle.accountID) else {
+        guard let account = accountManager.account(with: handle.accountID) else {
             return completionHandler(.failure(ConversationLookupError.accountDoesNotExist))
         }
 

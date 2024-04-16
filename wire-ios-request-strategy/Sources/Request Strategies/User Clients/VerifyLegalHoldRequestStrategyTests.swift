@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -90,7 +91,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let conversation = self.createGroupConversation(with: self.otherUser)
-            let conversationSet: Set<NSManagedObject> =  [conversation]
+            let conversationSet: Set<NSManagedObject> = [conversation]
 
             // WHEN
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))

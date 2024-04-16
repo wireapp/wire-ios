@@ -99,7 +99,7 @@ public extension ZMUser {
 
         do {
             result = try ZMUser.validate(name: &name)
-        } catch let error {
+        } catch {
             outError = error
         }
 
@@ -113,7 +113,7 @@ public extension ZMUser {
 
         do {
             result = try ZMUser.validate(emailAddress: &emailAddress)
-        } catch let error {
+        } catch {
             outError = error
         }
 
@@ -127,7 +127,7 @@ public extension ZMUser {
 
         do {
             result = try ZMUser.validate(password: &password)
-        } catch let error {
+        } catch {
             outError = error
         }
 
@@ -141,7 +141,7 @@ public extension ZMUser {
 
         do {
             result = try ZMUser.validate(phoneVerificationCode: &verificationCode)
-        } catch let error {
+        } catch {
             outError = error
         }
 
@@ -155,7 +155,7 @@ public extension ZMUser {
 
         do {
             result = try ZMUser.validate(phoneNumber: &phoneNumber)
-        } catch let error {
+        } catch {
             outError = error
         }
 

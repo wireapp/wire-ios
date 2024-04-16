@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -225,7 +225,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
     func testThatPostsANewRequestAvailableNotificationAfterCompletingARunningRequest() {
         // given && then
         _ = customExpectation(
-            forNotification: NSNotification.Name(rawValue: NSNotification.Name.ZMTransportSessionNewRequestAvailable.rawValue),
+            forNotification: .requestAvailableNotification,
             object: nil,
             handler: nil
         )
