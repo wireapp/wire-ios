@@ -38,7 +38,7 @@ public enum UpdateEventPayload {
     case conversationOTRAssetAdd
     case conversationOTRMessageAdd
     case conversationProtocolUpdate
-    case conversationReceiptModeUpdate
+    case conversationReceiptModeUpdate(ConversationReceiptModeUpdateEvent)
     case conversationRename(ConversationRenameEvent)
     case conversationTyping(ConversationTypingEvent)
     case featureConfigUpdate

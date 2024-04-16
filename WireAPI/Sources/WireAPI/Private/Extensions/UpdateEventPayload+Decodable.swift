@@ -65,7 +65,8 @@ extension UpdateEventPayload: Decodable {
         case "conversation.protocol-update":
             self = .conversationProtocolUpdate
         case "conversation.receipt-mode-update":
-            self = .conversationReceiptModeUpdate
+            let event = try container.decodeConversationRecieptModeUpdateEvent()
+            self = .conversationReceiptModeUpdate(event)
         case "conversation.rename":
             let event = try container.decodeConversationRenameEvent()
             self = .conversationRename(event)
@@ -163,6 +164,18 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
         )
     }
 
+    func decodeConversationRecieptModeUpdateEvent() throws -> ConversationReceiptModeUpdateEvent {
+        let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
+        let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
+        let payload = try decode(ConversationReceiptModeUpdateEventData.self, forKey: .payload)
+
+        return ConversationReceiptModeUpdateEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            newRecieptMode: payload.receipt_mode
+        )
+    }
+
     func decodeConversationRenameEvent() throws -> ConversationRenameEvent {
         let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
         let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
@@ -208,6 +221,12 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
 private struct ConversationMessageTimerUpdateEventData: Decodable {
 
     let message_timer: Int64?
+
+}
+
+private struct ConversationReceiptModeUpdateEventData: Decodable {
+
+    let receipt_mode: Int
 
 }
 
