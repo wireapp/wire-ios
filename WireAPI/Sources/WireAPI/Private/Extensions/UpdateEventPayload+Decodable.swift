@@ -142,119 +142,111 @@ private enum UpdateEventPayloadCodingKeys: String, CodingKey {
 
 private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
 
-    func decodeConversationDeleteEvent() throws -> ConversationDeleteEvent {
-        let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
-        let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
-        let timestamp = try decode(Date.self, forKey: .timestamp)
+    private func decodeConversationID() throws -> ConversationID {
+        try decode(ConversationID.self, forKey: .conversationQualifiedID)
+    }
 
-        return ConversationDeleteEvent(
-            conversationID: conversationID,
-            senderID: senderID,
-            timestamp: timestamp
+    private func decodeSenderID() throws -> UserID {
+        try decode(UserID.self, forKey: .senderQualifiedID)
+    }
+
+    private func decodeTimestamp() throws -> Date {
+        try decode(Date.self, forKey: .timestamp)
+    }
+
+    private func decodeSubconversation() throws -> String? {
+        try decodeIfPresent(String.self, forKey: .subconversation)
+    }
+
+    private func decodePayload<T: Decodable>(_ type: T.Type) throws -> T {
+        try decode(T.self, forKey: .payload)
+    }
+
+    func decodeConversationDeleteEvent() throws -> ConversationDeleteEvent {
+        try ConversationDeleteEvent(
+            conversationID: decodeConversationID(),
+            senderID: decodeSenderID(),
+            timestamp: decodeTimestamp()
         )
     }
 
     func decodeConversationMemberLeaveEvent() throws -> ConversationMemberLeaveEvent {
-        let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
-        let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
-        let timestamp = try decode(Date.self, forKey: .timestamp)
-        let payload = try decode(ConversationMemberLeaveEventData.self, forKey: .payload)
+        let payload = try decodePayload(ConversationMemberLeaveEventData.self)
 
-        return ConversationMemberLeaveEvent(
-            conversationID: conversationID,
-            senderID: senderID,
-            timestamp: timestamp,
+        return try ConversationMemberLeaveEvent(
+            conversationID: decodeConversationID(),
+            senderID: decodeSenderID(),
+            timestamp: decodeTimestamp(),
             removedUserIDs: payload.qualified_user_ids,
             reason: payload.reason ?? .left
         )
     }
 
     func decodeConversationMessageTimerUpdateEvent() throws -> ConversationMessageTimerUpdateEvent {
-        let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
-        let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
-        let timestamp = try decode(Date.self, forKey: .timestamp)
-        let payload = try decode(ConversationMessageTimerUpdateEventData.self, forKey: .payload)
+        let payload = try decodePayload(ConversationMessageTimerUpdateEventData.self)
 
-        return ConversationMessageTimerUpdateEvent(
-            conversationID: conversationID,
-            senderID: senderID,
-            timestamp: timestamp,
+        return try ConversationMessageTimerUpdateEvent(
+            conversationID: decodeConversationID(),
+            senderID: decodeSenderID(),
+            timestamp: decodeTimestamp(),
             newTimer: payload.message_timer
         )
     }
 
     func decodeConversationMLSMessageAddEvent() throws -> ConversationMLSMessageAddEvent {
-        let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
-        let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
-        let subconversation = try decodeIfPresent(String.self, forKey: .subconversation)
-        let payload = try decode(String.self, forKey: .payload)
-
-        return ConversationMLSMessageAddEvent(
-            conversationID: conversationID,
-            senderID: senderID,
-            subconversation: subconversation,
-            message: payload
+        try ConversationMLSMessageAddEvent(
+            conversationID: decodeConversationID(),
+            senderID: decodeSenderID(),
+            subconversation: decodeSubconversation(),
+            message: decodePayload(String.self)
         )
     }
 
     func decodeConversationMLSWelcomeEvent() throws -> ConversationMLSWelcomeEvent {
-        let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
-        let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
-        let payload = try decode(String.self, forKey: .payload)
-
-        return ConversationMLSWelcomeEvent(
-            conversationID: conversationID,
-            senderID: senderID,
-            welcomeMessage: payload
+        try ConversationMLSWelcomeEvent(
+            conversationID: decodeConversationID(),
+            senderID: decodeSenderID(),
+            welcomeMessage: decodePayload(String.self)
         )
     }
 
     func decodeConversationRecieptModeUpdateEvent() throws -> ConversationReceiptModeUpdateEvent {
-        let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
-        let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
-        let payload = try decode(ConversationReceiptModeUpdateEventData.self, forKey: .payload)
+        let payload = try decodePayload(ConversationReceiptModeUpdateEventData.self)
 
-        return ConversationReceiptModeUpdateEvent(
-            conversationID: conversationID,
-            senderID: senderID,
+        return try ConversationReceiptModeUpdateEvent(
+            conversationID: decodeConversationID(),
+            senderID: decodeSenderID(),
             newRecieptMode: payload.receipt_mode
         )
     }
 
     func decodeConversationRenameEvent() throws -> ConversationRenameEvent {
-        let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
-        let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
-        let timestamp = try decode(Date.self, forKey: .timestamp)
-        let payload = try decode(ConversationRenameEventData.self, forKey: .payload)
+        let payload = try decodePayload(ConversationRenameEventData.self)
 
-        return ConversationRenameEvent(
-            conversationID: conversationID,
-            senderID: senderID,
-            timestamp: timestamp,
+        return try ConversationRenameEvent(
+            conversationID: decodeConversationID(),
+            senderID: decodeSenderID(),
+            timestamp: decodeTimestamp(),
             newName: payload.name
         )
     }
 
     func decodeConversationTypingEvent() throws -> ConversationTypingEvent {
-        let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
-        let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
-        let payload = try decode(ConversationTypingEventData.self, forKey: .payload)
+        let payload = try decodePayload(ConversationTypingEventData.self)
 
-        return ConversationTypingEvent(
-            conversationID: conversationID,
-            senderID: senderID,
+        return try ConversationTypingEvent(
+            conversationID: decodeConversationID(),
+            senderID: decodeSenderID(),
             isTyping: payload.status == .started
         )
     }
 
     func decodeConversationAccessUpdateEvent() throws -> ConversationAccessUpdateEvent {
-        let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
-        let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
-        let payload = try decode(ConversationAccessUpdateEventData.self, forKey: .payload)
+        let payload = try decodePayload(ConversationAccessUpdateEventData.self)
 
-        return ConversationAccessUpdateEvent(
-            conversationID: conversationID,
-            senderID: senderID,
+        return try ConversationAccessUpdateEvent(
+            conversationID: decodeConversationID(),
+            senderID: decodeSenderID(),
             accessModes: payload.access,
             accessRoles: payload.access_role_v2 ?? [],
             legacyAccessRole: payload.access_role
