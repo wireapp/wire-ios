@@ -73,7 +73,7 @@ final class LocationSelectionViewController: UIViewController {
     private var mapDidRender = false
 
     private var userLocationAuthorized: Bool {
-        let status = locationManager.authorizationStatus
+        let status = AppLocationManager.shared.authorizationStatus
         return status == .authorizedAlways || status == .authorizedWhenInUse
     }
 
@@ -82,7 +82,8 @@ final class LocationSelectionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        locationManager.delegate = self
+        AppLocationManager.shared.delegate = self
+
         mapView.delegate = self
         toolBar.delegate = self
         sendViewController.delegate = self
@@ -94,15 +95,13 @@ final class LocationSelectionViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if !userLocationAuthorized { mapView.restoreLocation(animated: true) }
-        locationManager.requestWhenInUseAuthorization()
-        updateUserLocation()
-
+        AppLocationManager.shared.requestLocationAuthorization()
         endEditing()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        locationManager.stopUpdatingHeading()
+        AppLocationManager.shared.stopUpdatingLocation()
         mapView.storeLocation()
     }
 
@@ -171,7 +170,7 @@ final class LocationSelectionViewController: UIViewController {
     private func updateUserLocation() {
         mapView.showsUserLocation = userLocationAuthorized
         if userLocationAuthorized {
-            locationManager.startUpdatingLocation()
+            AppLocationManager.shared.startUpdatingLocation()
         }
     }
 
@@ -287,4 +286,44 @@ extension LocationSelectionViewController: MKMapViewDelegate {
         }
     }
 
+}
+
+// MARK: - AppLocationManagerDelegate
+
+extension LocationSelectionViewController: AppLocationManagerDelegate {
+
+    func didUpdateLocations(_ locations: [CLLocation]) {
+        guard let newLocation = locations.first else { return }
+
+        if !userShowedInitially {
+            userShowedInitially = true
+            let region = MKCoordinateRegion(center: newLocation.coordinate, latitudinalMeters: 50, longitudinalMeters: 50)
+            mapView.setRegion(region, animated: true)
+        }
+    }
+
+    func didFailWithError(_ error: Error) {
+        let alertController = UIAlertController(
+            title: "Location Error",
+            message: "Failed to obtain location: \(error.localizedDescription)",
+            preferredStyle: .alert
+        )
+
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(okAction)
+
+        present(alertController, animated: true, completion: nil)
+    }
+
+    func didChangeAuthorization(status: CLAuthorizationStatus) {
+        switch status {
+        case .notDetermined:
+            locationManager.requestWhenInUseAuthorization()
+        case .restricted, .denied:
+            presentUnauthorizedAlert()
+        case .authorizedAlways, .authorizedWhenInUse:
+            locationManager.startUpdatingLocation()
+            mapView.showsUserLocation = true
+        }
+    }
 }
