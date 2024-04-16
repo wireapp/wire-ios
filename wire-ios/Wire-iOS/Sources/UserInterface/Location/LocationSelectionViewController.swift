@@ -134,7 +134,7 @@ final class LocationSelectionViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
-        sendControllerHeightConstraint = sendController.heightAnchor.constraint(equalToConstant: LayoutConstants.sendControllerHeight + view.safeAreaLayoutGuide.layoutFrame.size.height)
+        sendControllerHeightConstraint = sendController.heightAnchor.constraint(equalToConstant: LayoutConstants.sendControllerHeight + UIScreen.safeArea.bottom)
         sendControllerHeightConstraint?.isActive = false
 
         NSLayoutConstraint.activate([
@@ -232,7 +232,7 @@ extension LocationSelectionViewController: LocationSendViewControllerDelegate {
         sendControllerHeightConstraint?.isActive = isActive
 
         if isActive {
-            sendControllerHeightConstraint?.constant = 56 + view.safeAreaLayoutGuide.layoutFrame.size.height
+            sendControllerHeightConstraint?.constant = 56 + UIScreen.safeArea.bottom
         }
 
         UIView.animate(withDuration: 0.3) {
