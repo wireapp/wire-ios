@@ -164,7 +164,7 @@ extension ZMSLog {
                                         tag: String?,
                                         entry: ZMSLogEntry,
                                         isSafe: Bool) {
-        self.logHooks.forEach { (_, hook) in
+        self.logHooks.forEach { _, hook in
             hook(level, tag, entry, isSafe)
         }
     }

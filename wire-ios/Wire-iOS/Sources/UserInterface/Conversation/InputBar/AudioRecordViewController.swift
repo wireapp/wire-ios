@@ -100,7 +100,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     }
 
     func beginRecording() {
-        self.recorder.startRecording { (_) in
+        self.recorder.startRecording { _ in
             let feedbackGenerator = UINotificationFeedbackGenerator()
             feedbackGenerator.prepare()
             feedbackGenerator.notificationOccurred(.success)

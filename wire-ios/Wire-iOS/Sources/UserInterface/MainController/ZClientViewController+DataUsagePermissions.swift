@@ -38,12 +38,12 @@ extension ZClientViewController {
 
         let alertController = UIAlertController(title: L10n.Localizable.ConversationList.DataUsagePermissionAlert.title, message: L10n.Localizable.ConversationList.DataUsagePermissionAlert.message, preferredStyle: .alert)
 
-        alertController.addAction(UIAlertAction(title: L10n.Localizable.ConversationList.DataUsagePermissionAlert.disagree, style: .cancel, handler: { (_) in
+        alertController.addAction(UIAlertAction(title: L10n.Localizable.ConversationList.DataUsagePermissionAlert.disagree, style: .cancel, handler: { _ in
             TrackingManager.shared.disableCrashSharing = true
             TrackingManager.shared.disableAnalyticsSharing = true
         }))
 
-        alertController.addAction(UIAlertAction(title: L10n.Localizable.ConversationList.DataUsagePermissionAlert.agree, style: .default, handler: { (_) in
+        alertController.addAction(UIAlertAction(title: L10n.Localizable.ConversationList.DataUsagePermissionAlert.agree, style: .default, handler: { _ in
             TrackingManager.shared.disableCrashSharing = false
             TrackingManager.shared.disableAnalyticsSharing = false
         }))

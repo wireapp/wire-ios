@@ -117,7 +117,7 @@ extension AddressBookAccessor {
         contacts.reserveCapacity(maxElements)
 
         var skipped: UInt = 0
-        self.enumerateValidContacts { (contact) -> (Bool) in
+        self.enumerateValidContacts { contact -> (Bool) in
             if skipped < range.lowerBound {
                 skipped += 1
                 return true

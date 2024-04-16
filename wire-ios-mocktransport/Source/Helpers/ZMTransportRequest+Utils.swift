@@ -97,7 +97,7 @@ public extension ZMTransportRequest {
             return false
         }
 
-        return zip(expectedComponents, pathComponents).first(where: { (expected, actual) -> Bool in
+        return zip(expectedComponents, pathComponents).first(where: { expected, actual -> Bool in
             return expected != "*" && expected != actual
         }) == nil
     }

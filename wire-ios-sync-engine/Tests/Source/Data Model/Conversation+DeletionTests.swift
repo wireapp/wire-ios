@@ -62,7 +62,7 @@ class Conversation_DeletionTests: DatabaseTest {
         let invalidOperationfailure = customExpectation(description: "Invalid Operation")
 
         // WHEN
-        conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { (result) in
+        conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { result in
             if case .failure(let error) = result {
                 if case ConversationDeletionError.invalidOperation = error {
                     invalidOperationfailure.fulfill()
@@ -82,7 +82,7 @@ class Conversation_DeletionTests: DatabaseTest {
         let invalidOperationfailure = customExpectation(description: "Invalid Operation")
 
         // WHEN
-        conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { (result) in
+        conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { result in
             if case .failure(let error) = result {
                 if case ConversationDeletionError.invalidOperation = error {
                     invalidOperationfailure.fulfill()

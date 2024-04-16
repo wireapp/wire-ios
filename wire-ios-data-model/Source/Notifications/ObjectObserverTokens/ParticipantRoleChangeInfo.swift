@@ -68,7 +68,7 @@ public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
     /// You must hold on to the token and use it to unregister
     @objc(addParticipantRoleObserver:forParticipantRole:managedObjectContext:)
     public static func add(observer: ParticipantRoleObserver, for participantRole: ParticipantRole?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .ParticipantRoleChange, managedObjectContext: managedObjectContext, object: participantRole) { [weak observer] (note) in
+        return ManagedObjectObserverToken(name: .ParticipantRoleChange, managedObjectContext: managedObjectContext, object: participantRole) { [weak observer] note in
             guard let `observer` = observer,
                 let changeInfo = note.changeInfo as? ParticipantRoleChangeInfo
                 else { return }

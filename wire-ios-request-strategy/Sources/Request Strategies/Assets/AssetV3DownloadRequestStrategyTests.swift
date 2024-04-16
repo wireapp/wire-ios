@@ -579,7 +579,7 @@ extension AssetV3DownloadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         self.syncMOC.performGroupedBlockAndWait {
-            self.sut.contextChangeTrackers.forEach { (tracker) in
+            self.sut.contextChangeTrackers.forEach { tracker in
                 tracker.objectsDidChange([message])
             }
 

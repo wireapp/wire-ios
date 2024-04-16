@@ -346,7 +346,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
             context.saveOrRollback()
 
             // then
-            let result = team.members.contains(where: { (member) -> Bool in
+            let result = team.members.contains(where: { member -> Bool in
                 return member.user?.remoteIdentifier == userId
             })
 

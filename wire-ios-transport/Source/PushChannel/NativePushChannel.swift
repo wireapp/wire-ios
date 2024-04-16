@@ -155,7 +155,7 @@ final class NativePushChannel: NSObject, PushChannelType {
     }
 
     func listen() {
-        websocketTask?.receive(completionHandler: { [weak self] (result) in
+        websocketTask?.receive(completionHandler: { [weak self] result in
             switch result {
             case.failure(let error):
                 Logging.pushChannel.debug("Failed to receive message \(error)")

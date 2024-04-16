@@ -28,7 +28,7 @@ extension ProfileSelfPictureViewController: ZMUserObserver {
         profileImageUser.fetchProfileImage(session: userSession,
                                            cache: UIImage.defaultUserImageCache,
                                            sizeLimit: nil,
-                                           desaturate: false) { (image, _) in
+                                           desaturate: false) { image, _ in
             self.selfUserImageView.image = image
         }
     }

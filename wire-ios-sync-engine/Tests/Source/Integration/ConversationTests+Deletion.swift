@@ -29,7 +29,7 @@ class ConversationTests_Deletion: ConversationTestsBase {
         // WHEN
         let conversationIsDeleted = customExpectation(description: "Team conversation is deleted")
         let teamConversation = conversation(for: groupConversationWithWholeTeam)!
-        teamConversation.delete(in: userSession!, completion: { (result) in
+        teamConversation.delete(in: userSession!, completion: { result in
             if case .success = result {
                 conversationIsDeleted.fulfill()
             } else {
@@ -59,7 +59,7 @@ class ConversationTests_Deletion: ConversationTestsBase {
         // WHEN
         let conversationDeletionFailed = customExpectation(description: "Team conversation deletion failed")
         let teamConversation = conversation(for: groupConversationWithWholeTeam)!
-        teamConversation.delete(in: userSession!, completion: { (result) in
+        teamConversation.delete(in: userSession!, completion: { result in
             if case .failure = result {
                 conversationDeletionFailed.fulfill()
             } else {

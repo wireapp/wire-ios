@@ -144,7 +144,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
 
         // then
         let imageDataArrived = customExpectation(description: "completion handler called")
-        searchUser.imageData(for: .preview, queue: .global()) { (imageDataResult) in
+        searchUser.imageData(for: .preview, queue: .global()) { imageDataResult in
             XCTAssertEqual(imageData, imageDataResult)
             imageDataArrived.fulfill()
         }
@@ -161,7 +161,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
 
         // then
         let imageDataArrived = customExpectation(description: "completion handler called")
-        searchUser.imageData(for: .complete, queue: .global()) { (imageDataResult) in
+        searchUser.imageData(for: .complete, queue: .global()) { imageDataResult in
             XCTAssertEqual(imageData, imageDataResult)
             imageDataArrived.fulfill()
         }

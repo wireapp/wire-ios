@@ -63,7 +63,7 @@ final class BackupExcluderTests: XCTestCase {
 
         write(text: "test", to: filename)
 
-        filesToExclude.forEach { (directory, path) in
+        filesToExclude.forEach { directory, path in
             let url = URL.directory(for: directory).appendingPathComponent(path)
 
             XCTAssertFalse(url.isExcludedFromBackup)
@@ -73,7 +73,7 @@ final class BackupExcluderTests: XCTestCase {
         try! MockBackupExcluder.exclude(filesToExclude: filesToExclude)
 
         // THEN
-        filesToExclude.forEach { (directory, path) in
+        filesToExclude.forEach { directory, path in
             let url = URL.directory(for: directory).appendingPathComponent(path)
 
             XCTAssert(url.isExcludedFromBackup)

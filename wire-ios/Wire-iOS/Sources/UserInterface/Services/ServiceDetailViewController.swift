@@ -200,7 +200,7 @@ final class ServiceDetailViewController: UIViewController {
                 if let existingConversation = ZMConversation.existingConversation(in: userSession.managedObjectContext, service: serviceUser, team: userSession.selfUser.membership?.team) {
                     completion?(.success(conversation: existingConversation))
                 } else {
-                    serviceUser.createConversation(in: userSession, completionHandler: { (result) in
+                    serviceUser.createConversation(in: userSession, completionHandler: { result in
                         if case let .success(conversation) = result {
                             Analytics.shared.tag(ServiceAddedEvent(service: serviceUser, conversation: conversation, context: .startUI))
                         }

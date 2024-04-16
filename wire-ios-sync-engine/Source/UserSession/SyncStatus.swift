@@ -80,7 +80,7 @@ extension Notification.Name {
 
         super.init()
 
-        self.resyncResourcesToken = NotificationInContext.addObserver(name: .resyncResources, context: managedObjectContext.notificationContext) { [weak self] (_) in
+        self.resyncResourcesToken = NotificationInContext.addObserver(name: .resyncResources, context: managedObjectContext.notificationContext) { [weak self] _ in
             self?.resyncResources()
         }
 

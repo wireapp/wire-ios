@@ -53,7 +53,7 @@ extension ZMUserSession {
     var ongoingCallConversation: ZMConversation? {
         guard let callCenter = self.callCenter else { return nil }
 
-        return callCenter.nonIdleCallConversations(in: self).first { (conversation) -> Bool in
+        return callCenter.nonIdleCallConversations(in: self).first { conversation -> Bool in
             guard let callState = conversation.voiceChannel?.state else { return false }
 
             switch callState {

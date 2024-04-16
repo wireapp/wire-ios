@@ -152,7 +152,7 @@ final class FileTransferView: UIView, TransferView {
         fileTypeIconView.contentMode = .center
         fileTypeIconView.setTemplateIcon(.document, size: .small)
 
-        fileMessageData.thumbnailImage.fetchImage { [weak self] (image, _) in
+        fileMessageData.thumbnailImage.fetchImage { [weak self] image, _ in
             guard let image = image else { return }
 
             self?.fileTypeIconView.contentMode = .scaleAspectFit

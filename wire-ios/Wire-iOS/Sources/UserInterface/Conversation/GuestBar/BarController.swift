@@ -39,7 +39,7 @@ final class BarController: UIViewController {
 
         bars.append(bar)
 
-        bars.sort { (left, right) -> Bool in
+        bars.sort { left, right -> Bool in
             let leftWeight = (left as? Bar)?.weight ?? 0
             let rightWeight = (right as? Bar)?.weight ?? 0
 

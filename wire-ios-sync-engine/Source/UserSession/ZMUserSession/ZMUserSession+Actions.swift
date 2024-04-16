@@ -114,7 +114,7 @@ import Foundation
             return
         }
 
-        applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] (result) in
+        applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] result in
             guard let `self` = self else { return }
 
             self.messageReplyObserver = nil
@@ -194,7 +194,7 @@ import Foundation
             return
         }
 
-        applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] (result) in
+        applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] result in
             guard let `self` = self else { return }
 
             self.likeMesssageObserver = nil

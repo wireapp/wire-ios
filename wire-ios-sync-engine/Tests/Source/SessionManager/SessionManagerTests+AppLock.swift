@@ -44,7 +44,7 @@ final class SessionManagerAppLockTests: IntegrationTest {
         let account2 = addAccount(name: "Account 2", userIdentifier: .create())
 
         weak var session1: ZMUserSession?
-        sessionManager?.loadSession(for: account1, completion: { (session) in
+        sessionManager?.loadSession(for: account1, completion: { session in
             session1 = session
             session1?.appLockController = self.appLock
         })
@@ -70,7 +70,7 @@ final class SessionManagerAppLockTests: IntegrationTest {
 
         // Make account 1 the active session.
         weak var session1: ZMUserSession?
-        sessionManager?.loadSession(for: account1, completion: { (session) in
+        sessionManager?.loadSession(for: account1, completion: { session in
             session1 = session
             session1?.appLockController = self.appLock
         })

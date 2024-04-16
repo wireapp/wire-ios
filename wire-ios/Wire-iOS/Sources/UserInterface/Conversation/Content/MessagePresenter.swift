@@ -124,7 +124,7 @@ final class MessagePresenter: NSObject {
         if !message.isFileDownloaded() {
             message.fileMessageData?.requestFileDownload()
 
-            fileAvailabilityObserver = MessageKeyPathObserver(message: message, keypath: \.fileAvailabilityChanged) { [weak self] (message) in
+            fileAvailabilityObserver = MessageKeyPathObserver(message: message, keypath: \.fileAvailabilityChanged) { [weak self] message in
                 guard message.isFileDownloaded() else { return }
 
                 self?.openFileMessage(message, targetView: targetView)

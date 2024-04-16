@@ -105,7 +105,7 @@ extension ZMClientMessageTests_Ephemeral {
     }
 
     func testItCreatesAnEphemeralMessageForKnock() {
-        checkItCreatesAnEphemeralMessage { (conv) -> ZMMessage in
+        checkItCreatesAnEphemeralMessage { conv -> ZMMessage in
             let message = try! conv.appendKnock() as! ZMClientMessage
             XCTAssertTrue(message.underlyingMessage!.ephemeral.hasKnock)
             return message
@@ -113,7 +113,7 @@ extension ZMClientMessageTests_Ephemeral {
     }
 
     func testItCreatesAnEphemeralMessageForLocation() {
-        checkItCreatesAnEphemeralMessage { (conv) -> ZMMessage in
+        checkItCreatesAnEphemeralMessage { conv -> ZMMessage in
             let location = LocationData(latitude: 1.0, longitude: 1.0, name: "foo", zoomLevel: 1)
             let message = try! conv.appendLocation(with: location, nonce: UUID.create()) as! ZMClientMessage
             XCTAssertTrue(message.underlyingMessage!.ephemeral.hasLocation)
@@ -122,7 +122,7 @@ extension ZMClientMessageTests_Ephemeral {
     }
 
     func testItCreatesAnEphemeralMessageForImages() {
-        checkItCreatesAnEphemeralMessage { (conv) -> ZMMessage in
+        checkItCreatesAnEphemeralMessage { conv -> ZMMessage in
             let message = try! conv.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
             var hasImage = false
             if case .image? = message.underlyingMessage?.ephemeral.content {

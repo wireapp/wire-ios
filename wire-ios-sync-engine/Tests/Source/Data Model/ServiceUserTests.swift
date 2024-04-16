@@ -274,7 +274,7 @@ final class ServiceUserTests: IntegrationTest {
     func createService() -> ServiceUser {
         var mockServiceId: String!
         var mockProviderId: String!
-        mockTransportSession.performRemoteChanges { (remoteChanges) in
+        mockTransportSession.performRemoteChanges { remoteChanges in
             let mockService = remoteChanges.insertService(withName: "Service A",
                                                           identifier: UUID().transportString(),
                                                           provider: UUID().transportString())

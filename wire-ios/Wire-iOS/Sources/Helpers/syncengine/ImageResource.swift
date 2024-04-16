@@ -258,7 +258,7 @@ extension WireImageResource {
 
         cache.dispatchGroup.enter()
 
-        fetchImageData(queue: cache.processingQueue) { (imageData) in
+        fetchImageData(queue: cache.processingQueue) { imageData in
             var image: MediaAsset?
 
             defer {

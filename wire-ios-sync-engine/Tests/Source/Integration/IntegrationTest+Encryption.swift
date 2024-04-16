@@ -36,7 +36,7 @@ extension IntegrationTest {
         }
 
         var cypherText: Data?
-        self.encryptionContext(for: sender).perform { (session) in
+        self.encryptionContext(for: sender).perform { session in
             if !session.hasSession(for: selfClient.sessionIdentifier!) {
                 // swiftlint:disable todo_requires_jira_link
                 // TODO: [John] use flag here
@@ -145,7 +145,7 @@ extension IntegrationTest {
                 // swiftlint:disable todo_requires_jira_link
                 // TODO: [John] use flag here
                 // swiftlint:enable todo_requires_jira_link
-                syncContext.zm_cryptKeyStore.encryptionContext.perform { (session) in
+                syncContext.zm_cryptKeyStore.encryptionContext.perform { session in
                     try! session.createClientSession(localClient.sessionIdentifier!, base64PreKeyString: lastPrekey!)
                 }
             }
@@ -157,7 +157,7 @@ extension IntegrationTest {
 
         let selfClient = ZMUser.selfUser(in: self.userSession!.syncManagedObjectContext).selfClient()!
         var plainText: Data?
-        self.encryptionContext(for: client).perform { (session) in
+        self.encryptionContext(for: client).perform { session in
             if session.hasSession(for: selfClient.sessionIdentifier!) {
                 do {
                     plainText = try session.decrypt(cypherText, from: selfClient.sessionIdentifier!)

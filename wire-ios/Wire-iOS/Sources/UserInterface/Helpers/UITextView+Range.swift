@@ -26,7 +26,7 @@ extension UITextView {
 
         attributedText.enumerateAttribute(.link,
                                           in: NSRange(location: 0, length: attributedText.length),
-                                          options: []) { (value, range, stop) in
+                                          options: []) { value, range, stop in
                                             if url.isEqual(value) {
                                                 stop.pointee = true
                                                 foundRange = range

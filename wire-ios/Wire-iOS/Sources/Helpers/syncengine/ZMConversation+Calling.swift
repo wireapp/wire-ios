@@ -45,7 +45,7 @@ extension ZMConversation {
             return
         }
 
-        warnAboutSlowConnection { (abortCall) in
+        warnAboutSlowConnection { abortCall in
             guard !abortCall else { return }
             self.joinVoiceChannel(video: true)
         }
@@ -106,11 +106,11 @@ extension ZMConversation {
                 preferredStyle: .alert
             )
 
-            badConnectionController.addAction(UIAlertAction(title: ErrorCallSlowCallLocale.SlowConnection.callAnyway, style: .default, handler: { (_) in
+            badConnectionController.addAction(UIAlertAction(title: ErrorCallSlowCallLocale.SlowConnection.callAnyway, style: .default, handler: { _ in
                 handler(false)
             }))
 
-            badConnectionController.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel, handler: { (_) in
+            badConnectionController.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel, handler: { _ in
                 handler(true)
             }))
 

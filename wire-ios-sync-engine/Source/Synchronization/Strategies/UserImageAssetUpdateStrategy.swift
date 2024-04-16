@@ -59,7 +59,7 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
         downstreamRequestSyncs[.preview] = whitelistUserImageSync(for: .preview)
         downstreamRequestSyncs[.complete] = whitelistUserImageSync(for: .complete)
-        downstreamRequestSyncs.forEach { (_, sync) in
+        downstreamRequestSyncs.forEach { _, sync in
             sync.whiteListObject(ZMUser.selfUser(in: managedObjectContext))
         }
 

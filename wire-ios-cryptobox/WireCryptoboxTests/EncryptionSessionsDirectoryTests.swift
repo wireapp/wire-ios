@@ -551,7 +551,7 @@ extension EncryptionSessionsDirectoryTests {
         let logExpectation = expectation(description: "Encrypting")
 
         // EXPECT
-        let token = ZMSLog.addEntryHook { (level, tag, entry, _) in
+        let token = ZMSLog.addEntryHook { level, tag, entry, _ in
             if level == ZMLogLevel_t.public &&
                 tag == "cryptobox" &&
                 entry.text.contains("encrypted to cyphertext: cyphertext") {
@@ -580,7 +580,7 @@ extension EncryptionSessionsDirectoryTests {
         establishSessionFromAliceToBob()
 
         // EXPECT
-        let token = ZMSLog.addEntryHook { (_, _, _, _) in
+        let token = ZMSLog.addEntryHook { _, _, _, _ in
             XCTFail("Should not have logged")
         }
 
@@ -601,7 +601,7 @@ extension EncryptionSessionsDirectoryTests {
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
 
         // EXPECT
-        let token = ZMSLog.addEntryHook { (level, tag, entry, _) in
+        let token = ZMSLog.addEntryHook { level, tag, entry, _ in
             if level == ZMLogLevel_t.public &&
                 tag == "cryptobox" &&
                 entry.text.contains("decrypting prekey cyphertext:") {
@@ -630,7 +630,7 @@ extension EncryptionSessionsDirectoryTests {
         let message = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
 
         // EXPECT
-        let token = ZMSLog.addEntryHook { (level, tag, entry, _) in
+        let token = ZMSLog.addEntryHook { level, tag, entry, _ in
             if level == ZMLogLevel_t.public &&
                 tag == "cryptobox" &&
                 entry.text.contains("decrypting cyphertext:") {
@@ -661,7 +661,7 @@ extension EncryptionSessionsDirectoryTests {
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
 
         // EXPECT
-        let token = ZMSLog.addEntryHook { (_, _, _, _) in
+        let token = ZMSLog.addEntryHook { _, _, _, _ in
             XCTFail("Should not have logged")
         }
 

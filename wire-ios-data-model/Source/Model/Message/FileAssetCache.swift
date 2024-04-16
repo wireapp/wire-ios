@@ -872,7 +872,7 @@ private struct FileCache: Cache {
         var data: Data?
 
         var error: NSError?
-        coordinator.coordinate(readingItemAt: url, options: .withoutChanges, error: &error) { (url) in
+        coordinator.coordinate(readingItemAt: url, options: .withoutChanges, error: &error) { url in
             do {
                 data = try Data(contentsOf: url, options: .mappedIfSafe)
             } catch let error as NSError {
@@ -897,7 +897,7 @@ private struct FileCache: Cache {
         let coordinator = NSFileCoordinator()
 
         var error: NSError?
-        coordinator.coordinate(writingItemAt: url, options: NSFileCoordinator.WritingOptions.forReplacing, error: &error) { (url) in
+        coordinator.coordinate(writingItemAt: url, options: NSFileCoordinator.WritingOptions.forReplacing, error: &error) { url in
             FileManager.default.createFile(atPath: url.path, contents: data, attributes: [.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication,
                                                                                           .creationDate: creationDate])
         }
@@ -915,7 +915,7 @@ private struct FileCache: Cache {
         let coordinator = NSFileCoordinator()
 
         var error: NSError?
-        coordinator.coordinate(writingItemAt: toUrl, options: .forReplacing, error: &error) { (url) in
+        coordinator.coordinate(writingItemAt: toUrl, options: .forReplacing, error: &error) { url in
             do {
                 try FileManager.default.copyItem(at: fromUrl, to: url)
                 try FileManager.default.setAttributes([.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication,
@@ -936,7 +936,7 @@ private struct FileCache: Cache {
         let coordinator = NSFileCoordinator()
 
         var error: NSError?
-        coordinator.coordinate(writingItemAt: url, options: .forDeleting, error: &error) { (url) in
+        coordinator.coordinate(writingItemAt: url, options: .forDeleting, error: &error) { url in
             do {
                 try FileManager.default.removeItem(at: url)
             } catch let error as NSError {
@@ -997,7 +997,7 @@ private struct FileCache: Cache {
         let fileManager = FileManager.default
         let files = try fileManager.contentsOfDirectory(at: cacheFolderURL, includingPropertiesForKeys: [.creationDateKey], options: [.skipsSubdirectoryDescendants])
 
-        return try files.filter { (file) -> Bool in
+        return try files.filter { file -> Bool in
             let attributes = try fileManager.attributesOfItem(atPath: file.path)
 
             guard let creationDate = attributes[.creationDate] as? Date else { return true }

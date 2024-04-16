@@ -225,7 +225,7 @@ extension MessageChangeInfo {
                            managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
         return ManagedObjectObserverToken(name: .MessageChange,
                                           managedObjectContext: managedObjectContext,
-                                          object: message) { [weak observer] (note) in
+                                          object: message) { [weak observer] note in
             guard let `observer` = observer,
                 let changeInfo = note.changeInfo as? MessageChangeInfo
                 else { return }

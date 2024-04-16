@@ -25,7 +25,7 @@ extension BackendEnvironment {
     }
 
     public static func fetchEnvironment(url: URL, onCompletion: @escaping (Result<BackendEnvironment, Error>) -> Void) {
-        URLSession.shared.dataTask(with: url) { (data, _, error) in
+        URLSession.shared.dataTask(with: url) { data, _, error in
             if let error = error {
                 Logging.backendEnvironment.error("Error fetching configuration from \(url): \(error)")
                 onCompletion(.failure(error))

@@ -29,7 +29,7 @@ extension ZClientViewController {
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction.link(title: learnMore, url: URL.wr_wireEnterpriseLearnMore, presenter: self))
-        alert.addAction(UIAlertAction.ok(style: .default, handler: { [weak self] (_) in
+        alert.addAction(UIAlertAction.ok(style: .default, handler: { [weak self] _ in
             self?.confirmChanges()
         }))
 

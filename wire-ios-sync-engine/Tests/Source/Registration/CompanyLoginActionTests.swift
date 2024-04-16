@@ -63,7 +63,7 @@ final class CompanyLoginActionTests: XCTestCase {
         let url = URL(string: "wire-sso://login/success?userid=\(userID)&validation_token=\(unverifiedToken.uuid)&cookie=\(testCookie)")!
 
         // THEN
-        XCTAssertThrowsError(try URLAction(url: url, validatingIn: userDefaults)) { (error) in
+        XCTAssertThrowsError(try URLAction(url: url, validatingIn: userDefaults)) { error in
             XCTAssertEqual(error as? CompanyLoginError, .tokenNotFound)
         }
     }
@@ -73,7 +73,7 @@ final class CompanyLoginActionTests: XCTestCase {
         let url = URL(string: "wire-sso://login/failure?label=bad-username&validation_token=\(currentToken.uuid)")!
 
         // THEN
-        XCTAssertThrowsError(try URLAction(url: url, validatingIn: userDefaults)) { (error) in
+        XCTAssertThrowsError(try URLAction(url: url, validatingIn: userDefaults)) { error in
             XCTAssertEqual(error as? CompanyLoginError, .badUsername)
         }
     }
@@ -83,7 +83,7 @@ final class CompanyLoginActionTests: XCTestCase {
         let url = URL(string: "wire-sso://login/failure?label=something_went_wrong&validation_token=\(currentToken.uuid)")!
 
         // THEN
-        XCTAssertThrowsError(try URLAction(url: url, validatingIn: userDefaults)) { (error) in
+        XCTAssertThrowsError(try URLAction(url: url, validatingIn: userDefaults)) { error in
             XCTAssertEqual(error as? CompanyLoginError, .unknownLabel)
         }
     }

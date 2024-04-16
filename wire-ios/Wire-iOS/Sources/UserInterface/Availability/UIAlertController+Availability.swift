@@ -44,11 +44,11 @@ extension UIAlertController {
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-        alert.addAction(UIAlertAction(title: AvailabilityReminderLocale.Action.dontRemindMe, style: .default, handler: { (_) in
+        alert.addAction(UIAlertAction(title: AvailabilityReminderLocale.Action.dontRemindMe, style: .default, handler: { _ in
             Settings.shared.dontRemindUserWhenChanging(availability)
         }))
 
-        alert.addAction(UIAlertAction(title: AvailabilityReminderLocale.Action.ok, style: .default, handler: { (_) in }))
+        alert.addAction(UIAlertAction(title: AvailabilityReminderLocale.Action.ok, style: .default, handler: { _ in }))
 
         return alert
     }

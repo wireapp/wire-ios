@@ -33,7 +33,7 @@ class OptionalComparisonTests: XCTestCase {
         ]
 
         // then
-        operands.forEach { (lhs, rhs, expected) in
+        operands.forEach { lhs, rhs, expected in
             XCTAssertEqual(lhs > rhs, expected, "Comparison failed, expected \(String(describing: lhs)) to be greater than \(String(describing: rhs))")
             XCTAssertEqual(lhs < rhs, !expected, "Comparison failed, expected \(String(describing: lhs)) to be less than \(String(describing: rhs))")
         }

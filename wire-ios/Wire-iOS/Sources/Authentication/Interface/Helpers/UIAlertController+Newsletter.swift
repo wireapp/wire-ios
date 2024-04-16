@@ -50,13 +50,13 @@ extension UIAlertController {
 
         alertController.addAction(UIAlertAction(title: L10n.Localizable.General.decline,
                                                 style: .default,
-                                                handler: { (_) in
+                                                handler: { _ in
                                                     completionHandler(false)
         }))
 
         alertController.addAction(UIAlertAction(title: L10n.Localizable.General.accept,
                                                 style: .cancel,
-                                                handler: { (_) in
+                                                handler: { _ in
                                                     completionHandler(true)
         }))
 

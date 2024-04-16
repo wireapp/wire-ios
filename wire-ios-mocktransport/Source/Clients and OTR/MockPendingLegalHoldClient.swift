@@ -63,7 +63,7 @@ extension MockUser {
         var generatedPrekeys: [[String: Any]]?
         var generatedLastPrekey: String?
 
-        encryptionContext.perform { (session) in
+        encryptionContext.perform { session in
             generatedPrekeys = try? session.generatePrekeys(NSRange(location: 0, length: 5))
             generatedLastPrekey = try? session.generateLastPrekey()
         }

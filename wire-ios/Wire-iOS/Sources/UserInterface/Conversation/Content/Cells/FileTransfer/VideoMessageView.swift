@@ -151,7 +151,7 @@ final class VideoMessageView: UIView, TransferView {
             updateTimeLabel(withFileMessageData: fileMessageData)
             self.timeLabel.textColor = SemanticColors.Label.textDefault
 
-            fileMessageData.thumbnailImage.fetchImage { [weak self] (image, _) in
+            fileMessageData.thumbnailImage.fetchImage { [weak self] image, _ in
                 guard let image = image else { return }
                 self?.updatePreviewImage(image)
             }

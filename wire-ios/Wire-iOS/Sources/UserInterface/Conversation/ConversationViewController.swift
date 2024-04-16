@@ -207,7 +207,7 @@ final class ConversationViewController: UIViewController {
 
             switch action {
             case .cancel:
-                self?.conversation.connectedUser?.cancelConnectionRequest(completion: { (error) in
+                self?.conversation.connectedUser?.cancelConnectionRequest(completion: { error in
                     if let error = error as? LocalizedError {
                         self?.presentLocalizedErrorAlert(error)
                     }

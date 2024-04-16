@@ -110,7 +110,7 @@ class ConversationTests_Join: ConversationTestsBase {
                                       code: "existing-conversation-code",
                                       transportSession: userSession!.transportSession,
                                       eventProcessor: userSession!.updateEventProcessor!,
-                                      contextProvider: userSession!.coreDataStack) { (result) in
+                                      contextProvider: userSession!.coreDataStack) { result in
             // THEN
             if case .success((let conversationID, let conversationName)) = result {
                 XCTAssertNotNil(conversationID)
@@ -135,7 +135,7 @@ class ConversationTests_Join: ConversationTestsBase {
                                       code: "test-code",
                                       transportSession: userSession!.transportSession,
                                       eventProcessor: userSession!.updateEventProcessor!,
-                                      contextProvider: userSession!.coreDataStack) { (result) in
+                                      contextProvider: userSession!.coreDataStack) { result in
             // THEN
             if case .success((let conversationID, let conversationName)) = result {
                 XCTAssertNotNil(conversationID)
@@ -160,7 +160,7 @@ class ConversationTests_Join: ConversationTestsBase {
                                       code: "wrong-code",
                                       transportSession: userSession!.transportSession,
                                       eventProcessor: userSession!.updateEventProcessor!,
-                                      contextProvider: userSession!.coreDataStack) { (result) in
+                                      contextProvider: userSession!.coreDataStack) { result in
             // THEN
             if case .failure(let error) = result {
                 XCTAssertEqual(error as! ConversationFetchError, ConversationFetchError.invalidCode)

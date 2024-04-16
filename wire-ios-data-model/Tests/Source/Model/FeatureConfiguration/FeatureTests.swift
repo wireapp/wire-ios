@@ -142,7 +142,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 
         // When
         syncMOC.performGroupedAndWait { _ in
-            Feature.updateOrCreate(havingName: .conferenceCalling, in: self.syncMOC) { (feature) in
+            Feature.updateOrCreate(havingName: .conferenceCalling, in: self.syncMOC) { feature in
                 feature.needsToNotifyUser = false
                 feature.status = .enabled
             }
@@ -169,7 +169,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 
         // When
         syncMOC.performGroupedAndWait { _ in
-            Feature.updateOrCreate(havingName: .conferenceCalling, in: self.syncMOC) { (feature) in
+            Feature.updateOrCreate(havingName: .conferenceCalling, in: self.syncMOC) { feature in
                 feature.status = .enabled
             }
         }

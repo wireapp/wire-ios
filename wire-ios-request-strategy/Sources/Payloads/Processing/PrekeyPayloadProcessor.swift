@@ -149,8 +149,8 @@ private extension UserClient {
 extension Payload.ClientListByQualifiedUserID {
 
     func fetchUsers(in context: NSManagedObjectContext) -> [ZMUser] {
-        return flatMap { (domain, userClientsByUserID) in
-            return userClientsByUserID.compactMap { (userID, _) -> ZMUser? in
+        return flatMap { domain, userClientsByUserID in
+            return userClientsByUserID.compactMap { userID, _ -> ZMUser? in
                 guard
                     let userID = UUID(uuidString: userID),
                     let user = ZMUser.fetch(with: userID, domain: domain, in: context)
@@ -164,8 +164,8 @@ extension Payload.ClientListByQualifiedUserID {
     }
 
     func fetchClients(in context: NSManagedObjectContext) -> [ZMUser: [UserClient]] {
-        let userClientsByUserTuples = flatMap { (domain, userClientsByUserID) in
-            return userClientsByUserID.compactMap { (userID, userClientIDs) -> [ZMUser: [UserClient]]? in
+        let userClientsByUserTuples = flatMap { domain, userClientsByUserID in
+            return userClientsByUserID.compactMap { userID, userClientIDs -> [ZMUser: [UserClient]]? in
                 guard
                     let userID = UUID(uuidString: userID),
                     let user = ZMUser.fetch(with: userID, domain: domain, in: context)
@@ -186,8 +186,8 @@ extension Payload.ClientListByQualifiedUserID {
     }
 
     func fetchOrCreateClients(in context: NSManagedObjectContext) -> [ZMUser: [UserClient]] {
-        let userClientsByUserTuples = flatMap { (domain, userClientsByUserID) in
-            return userClientsByUserID.compactMap { (userID, userClientIDs) -> [ZMUser: [UserClient]]? in
+        let userClientsByUserTuples = flatMap { domain, userClientsByUserID in
+            return userClientsByUserID.compactMap { userID, userClientIDs -> [ZMUser: [UserClient]]? in
                 guard
                     let userID = UUID(uuidString: userID)
                 else {
@@ -195,7 +195,7 @@ extension Payload.ClientListByQualifiedUserID {
                 }
 
                 let user = ZMUser.fetchOrCreate(with: userID, domain: domain, in: context)
-                let userClients = userClientIDs.compactMap { (clientID) -> UserClient? in
+                let userClients = userClientIDs.compactMap { clientID -> UserClient? in
                     guard
                         let userClient = UserClient.fetchUserClient(withRemoteId: clientID,
                                                                     forUser: user,

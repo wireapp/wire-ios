@@ -339,7 +339,7 @@ final class ProfileDetailsContentController: NSObject,
             return
         }
 
-        conversation?.updateRole(of: user, to: role) { (result) in
+        conversation?.updateRole(of: user, to: role) { result in
             if case .failure = result {
                 self.isAdminState.toggle()
                 self.updateUI()

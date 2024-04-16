@@ -98,7 +98,7 @@ final class CallHapticsController {
     }
 
     private func createVideoStateMap(using participants: [CallParticipant]) -> [CallParticipant: Bool] {
-        return Dictionary(participants.map { ($0, $0.state.isSendingVideo) }, uniquingKeysWith: { (first, _) in first })
+        return Dictionary(participants.map { ($0, $0.state.isSendingVideo) }, uniquingKeysWith: { first, _ in first })
     }
 }
 

@@ -643,7 +643,7 @@ public extension UserClient {
         var didEstablishSession = false
         managedObjectContext?.performAndWait {
 
-            keystore.encryptionContext.perform { (sessionsDirectory) in
+            keystore.encryptionContext.perform { sessionsDirectory in
 
                 // Session is already established?
                 if sessionsDirectory.hasSession(for: sessionId) {
@@ -657,7 +657,7 @@ public extension UserClient {
             // if at the end of the block the session is still there. Just to be safe, I split the operations
             // in two separate `perform` blocks.
 
-            keystore.encryptionContext.perform { (sessionsDirectory) in
+            keystore.encryptionContext.perform { sessionsDirectory in
                 do {
                     try sessionsDirectory.createClientSession(sessionId, base64PreKeyString: preKey)
                     didEstablishSession = true

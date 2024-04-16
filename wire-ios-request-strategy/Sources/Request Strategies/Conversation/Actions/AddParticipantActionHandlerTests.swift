@@ -232,7 +232,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             action = AddParticipantAction(users: [user], conversation: conversation)
             let expectation = self.customExpectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
                 } else {
@@ -276,7 +276,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             var action = AddParticipantAction(users: [user], conversation: conversation)
 
             let expectation = self.customExpectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
                 }
@@ -300,7 +300,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             var action = AddParticipantAction(users: [user], conversation: conversation)
 
             let expectation = self.customExpectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            action.onResult { result in
                 if case .failure = result {
                     expectation.fulfill()
                 }

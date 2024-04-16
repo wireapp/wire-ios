@@ -29,7 +29,7 @@ extension ZMAssetClientMessage {
     var ephemeral: Ephemeral? {
         return dataSet.lazy
             .compactMap { ($0 as? ZMGenericMessageData)?.underlyingMessage }
-            .first(where: { (message) -> Bool in
+            .first(where: { message -> Bool in
                 guard case .ephemeral? = message.content else {
                     return false
                 }

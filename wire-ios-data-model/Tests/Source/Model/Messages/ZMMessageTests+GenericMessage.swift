@@ -125,7 +125,7 @@ extension ZMMessageTests_GenericMessage {
 
         // then
         XCTAssertEqual(dataSet.count, 1)
-        dataSet.compactMap { $0 as? ZMGenericMessageData }.forEach { (messageData) in
+        dataSet.compactMap { $0 as? ZMGenericMessageData }.forEach { messageData in
             XCTAssertNil(messageData.managedObjectContext)
         }
         XCTAssertNil(message.managedObjectContext)
@@ -147,7 +147,7 @@ extension ZMMessageTests_GenericMessage {
 
         // then
         XCTAssertEqual(dataSet.count, 1)
-        dataSet.compactMap { $0 as? ZMGenericMessageData }.forEach { (messageData) in
+        dataSet.compactMap { $0 as? ZMGenericMessageData }.forEach { messageData in
             XCTAssertNil(messageData.managedObjectContext)
         }
         XCTAssertNil(message.managedObjectContext)

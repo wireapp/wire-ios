@@ -85,7 +85,7 @@ extension CoreDataStack {
 
         let storeFiles = messageStoreFiles + eventStoreFiles
 
-        try storeFiles.forEach { (storeFile) in
+        try storeFiles.forEach { storeFile in
             if fileManager.fileExists(atPath: storeFile.path) {
                 try fileManager.removeItem(at: storeFile)
             }

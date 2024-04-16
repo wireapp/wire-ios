@@ -153,7 +153,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     private func fetch(userClients: [UserClient]) {
         guard let apiVersion = BackendInfo.apiVersion else { return }
         let initialResult: ([QualifiedID], [UserClientByUserClientIDTranscoder.UserClientID]) = ([], [])
-        let result = userClients.reduce(into: initialResult) { (result, userClient) in
+        let result = userClients.reduce(into: initialResult) { result, userClient in
             switch apiVersion {
             case .v0:
                 guard let userClientID = userClientID(from: userClient) else { return }

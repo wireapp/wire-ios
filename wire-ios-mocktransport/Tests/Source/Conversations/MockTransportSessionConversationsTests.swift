@@ -273,7 +273,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         var conversation: MockConversation?
 
-        self.sut.performRemoteChanges { (session) in
+        self.sut.performRemoteChanges { session in
             session.registerClient(for: self.selfUser!, label: "self user", type: "permanent", deviceClass: "phone")
 
             otherUser = session.insertUser(withName: "bar")

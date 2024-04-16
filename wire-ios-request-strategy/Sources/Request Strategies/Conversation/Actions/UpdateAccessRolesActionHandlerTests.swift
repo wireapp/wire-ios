@@ -160,7 +160,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
                                                  accessMode: accessMode,
                                                  accessRoles: accessRoles)
             let expectation = self.customExpectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
                 }
@@ -194,7 +194,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
                                                  accessRoles: accessRoles)
 
             let expectation = self.customExpectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            action.onResult { result in
                 if case .failure = result {
                     expectation.fulfill()
                 }

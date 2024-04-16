@@ -70,7 +70,7 @@ class UserHandleTests: IntegrationTest {
         // GIVEN
         let handle = "Oscar"
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             self.user1.handle = handle
         }
 
@@ -124,7 +124,7 @@ class UserHandleTests: IntegrationTest {
         // GIVEN
         let handle = "Evelyn"
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             self.user1.handle = handle
         }
 

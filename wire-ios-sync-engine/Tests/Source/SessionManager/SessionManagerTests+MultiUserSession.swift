@@ -486,7 +486,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
         // Make account 1 the active session
         weak var session1: ZMUserSession?
-        sessionManager?.loadSession(for: account1, completion: { (session) in
+        sessionManager?.loadSession(for: account1, completion: { session in
             session1 = session
         })
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))

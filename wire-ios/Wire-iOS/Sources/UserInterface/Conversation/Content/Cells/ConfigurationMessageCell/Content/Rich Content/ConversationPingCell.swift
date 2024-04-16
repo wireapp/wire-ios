@@ -96,7 +96,7 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
 
                             UIView.animate(easing: .easeOutQuart, duration: 0.55, animations: {
                                 self.imageView.alpha = 1.0
-                            }, completion: { (_) in
+                            }, completion: { _ in
                                 self.stopAnimation()
                             })
                         })

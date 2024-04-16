@@ -246,7 +246,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             var action = RemoveParticipantAction(user: user, conversation: conversation)
             let expectation = self.customExpectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
                 }
@@ -280,7 +280,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             var action = RemoveParticipantAction(user: user, conversation: conversation)
 
             let expectation = self.customExpectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
                 }
@@ -304,7 +304,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             var action = RemoveParticipantAction(user: user, conversation: conversation)
 
             let expectation = self.customExpectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            action.onResult { result in
                 if case .failure = result {
                     expectation.fulfill()
                 }

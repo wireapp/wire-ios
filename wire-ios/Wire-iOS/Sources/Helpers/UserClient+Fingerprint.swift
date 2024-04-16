@@ -32,7 +32,7 @@ private let UserClientIdentifierMinimumLength = 16
 extension Sequence where Element: UserClientType {
 
     func sortedByRelevance() -> [UserClientType] {
-        return sorted { (lhs, rhs) -> Bool in
+        return sorted { lhs, rhs -> Bool in
 
             if lhs.deviceClass == .legalHold {
                 return true

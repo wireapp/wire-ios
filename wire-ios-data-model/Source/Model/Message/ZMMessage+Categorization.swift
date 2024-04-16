@@ -266,9 +266,9 @@ extension MessageCategory: CustomDebugStringConvertible {
 
     public var debugDescription: String {
         let categories = MessageCategory.descriptions
-            .filter { (category, _) -> Bool in
+            .filter { category, _ -> Bool in
                 return contains(category)
-            }.map { (_, description) -> String in
+            }.map { _, description -> String in
                 return description
             }
         let description = categories.isEmpty ? "None" : categories.joined(separator: ", ")
