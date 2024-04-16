@@ -156,23 +156,11 @@ struct ZMUserSessionBuilder {
         configuration: ZMUserSession.Configuration,
         coreDataStack: CoreDataStack
     ) {
-        let cacheLocation = FileManager.default.cachesURLForAccount(
-            with: coreDataStack.account.userIdentifier,
-            in: coreDataStack.applicationContainer
-        )
-
-        ZMUserSession.moveCachesIfNeededForAccount(
-            with: coreDataStack.account.userIdentifier,
-            in: coreDataStack.applicationContainer
-        )
-
         userSession.setup(
             eventProcessor: eventProcessor,
             strategyDirectory: strategyDirectory,
             syncStrategy: syncStrategy,
             operationLoop: operationLoop,
-            fileAssetCache: FileAssetCache(location: cacheLocation),
-            userImageLocalCache: UserImageLocalCache(location: cacheLocation),
             configuration: configuration
         )
     }

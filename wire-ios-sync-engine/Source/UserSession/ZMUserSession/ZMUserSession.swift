@@ -466,8 +466,6 @@ public final class ZMUserSession: NSObject {
         strategyDirectory: (any StrategyDirectoryProtocol)?,
         syncStrategy: ZMSyncStrategy?,
         operationLoop: ZMOperationLoop?,
-        fileAssetCache: FileAssetCache,
-        userImageLocalCache: UserImageLocalCache,
         configuration: Configuration
     ) {
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
@@ -477,10 +475,7 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory.syncStatus.syncStateDelegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
 
-        configureCaches(
-            userImageCache: userImageLocalCache,
-            fileAssetCache: fileAssetCache
-        )
+        configureCaches()
 
         syncManagedObjectContext.performGroupedBlockAndWait { [self] in
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
@@ -538,10 +533,20 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    private func configureCaches(
-        userImageCache: UserImageLocalCache,
-        fileAssetCache: FileAssetCache
-    ) {
+    private func configureCaches() {
+        let cacheLocation = FileManager.default.cachesURLForAccount(
+            with: coreDataStack.account.userIdentifier,
+            in: coreDataStack.applicationContainer
+        )
+
+        ZMUserSession.moveCachesIfNeededForAccount(
+            with: coreDataStack.account.userIdentifier,
+            in: coreDataStack.applicationContainer
+        )
+
+        let fileAssetCache = FileAssetCache(location: cacheLocation)
+        let userImageCache = UserImageLocalCache(location: cacheLocation)
+
         self.assetCache = fileAssetCache
 
         managedObjectContext.zm_userImageCache = userImageCache
