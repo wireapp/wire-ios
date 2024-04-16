@@ -409,7 +409,7 @@ extension MessageDetailsContentViewController {
 
     /// Presents a profile view controller as a popover or a modal depending on the context.
     fileprivate func presentDetailsViewController(_ controller: ProfileViewController, above cell: UserCell) {
-        let presentedController = controller.wrapInNavigationController(setBackgroundColor: true)
+        let presentedController = controller.wrapInNavigationController()
         presentedController.modalPresentationStyle = .formSheet
 
         if let popover = presentedController.popoverPresentationController {
