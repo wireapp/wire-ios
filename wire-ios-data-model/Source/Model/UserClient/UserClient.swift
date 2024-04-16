@@ -25,7 +25,6 @@ public let ZMUserClientNumberOfKeysRemainingKey = "numberOfKeysRemaining"
 public let ZMUserClientNeedsToUpdateSignalingKeysKey = "needsToUploadSignalingKeys"
 public let ZMUserClientNeedsToUpdateCapabilitiesKey = "needsToUpdateCapabilities"
 
-public let ZMUserClientE2eIdentityCertificateKey = "e2eIdentityCertificate"
 public let ZMUserClientMarkedToDeleteKey = "markedToDelete"
 public let ZMUserClientMissingKey = "missingClients"
 public let ZMUserClientUserKey = "user"
@@ -37,7 +36,7 @@ public let ZMUserClientIgnoredKey = "ignoredClients"
 public let ZMUserClientNeedsToNotifyUserKey = "needsToNotifyUser"
 public let ZMUserClientFingerprintKey = "fingerprint"
 public let ZMUserClientRemoteIdentifierKey = "remoteIdentifier"
-// public let ZMUserClientNeedsToNotifyOtherUserAboutSessionResetKey = "needsToNotifyOtherUserAboutSessionReset"
+public let ZMUserClientNeedsToNotifyOtherUserAboutSessionResetKey = "needsToNotifyOtherUserAboutSessionReset"
 
 private let zmLog = ZMSLog(tag: "UserClient")
 
@@ -158,8 +157,7 @@ public class UserClient: ZMManagedObject, UserClientType {
             ZMUserClientMissingKey,
             ZMUserClientNeedsToUpdateSignalingKeysKey,
             ZMUserClientNeedsToUpdateCapabilitiesKey,
-            UserClient.needsToUploadMLSPublicKeysKey,
-            ZMUserClientE2eIdentityCertificateKey
+            UserClient.needsToUploadMLSPublicKeysKey
         ]
     }
 

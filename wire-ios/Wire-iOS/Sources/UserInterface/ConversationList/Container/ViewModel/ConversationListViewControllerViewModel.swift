@@ -251,7 +251,6 @@ extension ConversationListViewController.ViewModel: UserObserving {
             selfUserStatus.availability = changeInfo.user.availability
         }
     }
-
 }
 
 extension ConversationListViewController.ViewModel: ZMInitialSyncCompletionObserver {

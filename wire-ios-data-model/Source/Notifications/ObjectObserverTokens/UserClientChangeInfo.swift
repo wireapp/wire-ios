@@ -32,7 +32,6 @@ extension UserClient: ObjectInSnapshot {
                     #keyPath(UserClient.ignoredByClients),
                     #keyPath(UserClient.needsToNotifyUser),
                     #keyPath(UserClient.needsToNotifyOtherUserAboutSessionReset)])
-
     }
 
     public var notificationName: Notification.Name {
