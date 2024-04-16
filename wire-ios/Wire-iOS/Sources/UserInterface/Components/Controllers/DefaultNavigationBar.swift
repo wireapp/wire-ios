@@ -62,7 +62,7 @@ extension UIViewController {
 
     func wrapInNavigationController(
         navigationControllerClass: UINavigationController.Type = RotationAwareNavigationController.self,
-        navigationBarClass: AnyClass? = DefaultNavigationBar.self,
+        navigationBarClass: AnyClass? = DefaultNavigationBar.self
     ) -> UINavigationController {
         let navigationController = navigationControllerClass.init(navigationBarClass: navigationBarClass, toolbarClass: nil)
         navigationController.setViewControllers([self], animated: false)
