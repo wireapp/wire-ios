@@ -318,6 +318,9 @@
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
 		597A3BBA2B641F280020E337 /* UserStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB92B641F280020E337 /* UserStatus.swift */; };
 		5995C7752BC7E0F400F97BA8 /* DeviceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */; };
+		599AA5802BCED97700D0ADD3 /* SyncStatusIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599AA57D2BCED97700D0ADD3 /* SyncStatusIndicatorView.swift */; };
+		599AA5812BCED97700D0ADD3 /* SyncStatusIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599AA57E2BCED97700D0ADD3 /* SyncStatusIndicator.swift */; };
+		599AA5822BCED97700D0ADD3 /* SyncStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599AA57F2BCED97700D0ADD3 /* SyncStatus.swift */; };
 		59A0A6972BC55DCF00FBFCF5 /* DeviceInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0A6962BC55DCF00FBFCF5 /* DeviceInfoViewController.swift */; };
 		59A1F1472B7BA226002CB679 /* UserStatus+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */; };
 		59A1F1492B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1482B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift */; };
@@ -2376,6 +2379,9 @@
 		5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+initWithUserType.swift"; sourceTree = "<group>"; };
 		597A3BB92B641F280020E337 /* UserStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatus.swift; sourceTree = "<group>"; };
 		5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoView.swift; sourceTree = "<group>"; };
+		599AA57D2BCED97700D0ADD3 /* SyncStatusIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncStatusIndicatorView.swift; sourceTree = "<group>"; };
+		599AA57E2BCED97700D0ADD3 /* SyncStatusIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncStatusIndicator.swift; sourceTree = "<group>"; };
+		599AA57F2BCED97700D0ADD3 /* SyncStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncStatus.swift; sourceTree = "<group>"; };
 		59A0A6962BC55DCF00FBFCF5 /* DeviceInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoViewController.swift; sourceTree = "<group>"; };
 		59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+Helpers.swift"; sourceTree = "<group>"; };
 		59A1F1482B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatusViewControllerDelegate.swift; sourceTree = "<group>"; };
@@ -4675,6 +4681,16 @@
 			path = Cells;
 			sourceTree = "<group>";
 		};
+		599AA5752BCED05D00D0ADD3 /* SyncStatusIndicator */ = {
+			isa = PBXGroup;
+			children = (
+				599AA57F2BCED97700D0ADD3 /* SyncStatus.swift */,
+				599AA57E2BCED97700D0ADD3 /* SyncStatusIndicator.swift */,
+				599AA57D2BCED97700D0ADD3 /* SyncStatusIndicatorView.swift */,
+			);
+			path = SyncStatusIndicator;
+			sourceTree = "<group>";
+		};
 		59A1F1452B7BA1E7002CB679 /* UserStatus */ = {
 			isa = PBXGroup;
 			children = (
@@ -6558,6 +6574,7 @@
 		8FC8516F199245760008B66B /* UserInterface */ = {
 			isa = PBXGroup;
 			children = (
+				599AA5752BCED05D00D0ADD3 /* SyncStatusIndicator */,
 				061F34142B1A4F190099CBAB /* E2EIdentity */,
 				EE01D07F25ADA3AD001DB205 /* App Lock */,
 				A9BB638024C1DD910072143A /* CustomAppLock */,
@@ -9162,6 +9179,7 @@
 			files = (
 				E9F2D6482B55E03200133C59 /* ConversationSystemMessageCellDescription.swift in Sources */,
 				D56A2D46207DFE8700DB59F5 /* UIAlertController+ImportWarning.swift in Sources */,
+				599AA5822BCED97700D0ADD3 /* SyncStatus.swift in Sources */,
 				EECA90AC28744A060024B301 /* DeveloperFlagsViewModel.swift in Sources */,
 				EF3CB75321DD0F0C0030C3E8 /* ConversationViewController+ParticipantsPopover.swift in Sources */,
 				BF0BDF881DABEF3B003C61DE /* DestructionCountdownView.swift in Sources */,
@@ -9660,6 +9678,7 @@
 				A90E4AC12381E6D700468F31 /* UIControlState+ExpandState.swift in Sources */,
 				1695B9D62B912E8D00E9342A /* ConversationDegradedSystemMessageSectionDescription.swift in Sources */,
 				CEEEAF071CB562BF00111759 /* PlaceholderConversationView.swift in Sources */,
+				599AA5812BCED97700D0ADD3 /* SyncStatusIndicator.swift in Sources */,
 				D3BF754B29B093FD008459B5 /* WarningLabelView.swift in Sources */,
 				EF701A33223BE3D5007165E4 /* VersionInfoViewController.swift in Sources */,
 				EFDACABB20FF84B900791207 /* ConversationInputBarViewController+FilesPopover.swift in Sources */,
@@ -9958,6 +9977,7 @@
 				0617001523E48B66005C262D /* VerticalTransition.swift in Sources */,
 				5E35F7452180779D00D3F4FE /* ConversationPingCell.swift in Sources */,
 				06C412AC238FCAA80018866F /* Int+Const.swift in Sources */,
+				599AA5802BCED97700D0ADD3 /* SyncStatusIndicatorView.swift in Sources */,
 				A9BBD8D026A5D51D00C768B1 /* LayoutDirection.swift in Sources */,
 				061EF88F2797F74900584C53 /* SettingsCopyButtonCellDescriptor.swift in Sources */,
 				874A02561D1D329B00D0D74A /* AudioEffectCell.swift in Sources */,
