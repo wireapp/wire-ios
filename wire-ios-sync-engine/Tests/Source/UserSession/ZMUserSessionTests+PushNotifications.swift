@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import XCTest
+
+@testable import WireRequestStrategy
 @testable import WireSyncEngine
 
-class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
+final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     typealias Category = WireSyncEngine.PushNotificationCategory
     typealias ConversationAction = WireSyncEngine.ConversationNotificationAction
@@ -85,7 +88,7 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         let conversation = userInfo.conversation(in: uiMOC)!
 
         simulateLoggedInUser()
-        sut.applicationStatusDirectory?.operationStatus.isInBackground = true
+        sut.applicationStatusDirectory.operationStatus.isInBackground = true
 
         // when
         handle(conversationAction: .like, category: .conversation, userInfo: userInfo)
@@ -121,13 +124,15 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     func testThatItCallsShowConversationAndAcceptsCall_ForPushNotificationCategoryIncomingCallWithAcceptAction() {
         // given
-        simulateLoggedInUser()
-        createSelfClient()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            self.createSelfClient()
+        }
 
         let userInfo = userInfoWithConversation()
         let conversation = userInfo.conversation(in: uiMOC)!
 
-        let callCenter = createCallCenter()
+        let callCenter = syncMOC.performAndWait { self.createCallCenter() }
         simulateIncomingCall(fromUser: conversation.connectedUser!, conversation: conversation)
 
         // when
@@ -141,13 +146,15 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     func testThatItDoesNotCallsShowConversationAndRejectsCall_ForPushNotificationCategoryIncomingCallWithIgnoreAction() {
         // given
-        simulateLoggedInUser()
-        createSelfClient()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            self.createSelfClient()
+        }
 
         let userInfo = userInfoWithConversation()
         let conversation = userInfo.conversation(in: uiMOC)!
 
-        let callCenter = createCallCenter()
+        let callCenter = syncMOC.performAndWait { self.createCallCenter() }
         simulateIncomingCall(fromUser: conversation.connectedUser!, conversation: conversation)
 
         // when
@@ -160,11 +167,13 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     func testThatItCallsShowConversationButDoesNotCallBack_ForPushNotificationCategoryMissedCallWithCallBackAction() {
         // given
-        simulateLoggedInUser()
-        createSelfClient()
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+            self.createSelfClient()
+        }
 
         let userInfo = userInfoWithConversation()
-        let callCenter = createCallCenter()
+        let callCenter = syncMOC.performAndWait { self.createCallCenter() }
 
         // when
         handle(callAction: .callBack, category: .missedCall, userInfo: userInfo)
@@ -177,8 +186,10 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     func testThatItDoesNotCallShowConversationAndAppendsAMessage_ForPushNotificationCategoryConversationWithDirectReplyAction() {
         // given
-        simulateLoggedInUser()
-        sut.applicationStatusDirectory?.operationStatus.isInBackground = true
+        syncMOC.performAndWait {
+            simulateLoggedInUser()
+        }
+        sut.applicationStatusDirectory.operationStatus.isInBackground = true
         let userInfo = userInfoWithConversation()
         let conversation = userInfo.conversation(in: uiMOC)!
 
@@ -192,35 +203,49 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     func testThatItAppendsReadReceipt_ForPushNotificationCategoryConversationWithDirectReplyAction() async throws {
         // given
-        self.simulateLoggedInUser()
-        self.sut.applicationStatusDirectory?.operationStatus.isInBackground = true
+        await syncMOC.perform {
+            self.simulateLoggedInUser()
+        }
+        self.sut.applicationStatusDirectory.operationStatus.isInBackground = true
 
         let userInfo = userInfoWithConversation(hasMessage: true)
-        let conversation = userInfo.conversation(in: self.uiMOC)!
 
-        let originalMessage = try XCTUnwrap(conversation.lastMessages().last as? ZMClientMessage)
-        let originaMessageNonce = try XCTUnwrap(originalMessage.nonce)
+        guard let conversation = await uiMOC.perform({ userInfo.conversation(in: self.uiMOC) }) else {
+            XCTFail("no conversation")
+            return
+        }
 
-        ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = true
-        var genericMessage = originalMessage.underlyingMessage!
-        genericMessage.setExpectsReadConfirmation(true)
-        do {
+        let (originalMessage, originaMessageNonce) = try await uiMOC.perform {
+
+            let originalMessage = try XCTUnwrap(conversation.lastMessages().last as? ZMClientMessage)
+            let originaMessageNonce = try XCTUnwrap(originalMessage.nonce)
+            return (originalMessage, originaMessageNonce)
+        }
+
+        await uiMOC.perform {
+            ZMUser.selfUser(in: self.uiMOC).readReceiptsEnabled = true
+        }
+
+        try await uiMOC.perform {
+            var genericMessage = try XCTUnwrap(originalMessage.underlyingMessage)
+            genericMessage.setExpectsReadConfirmation(true)
             try originalMessage.setUnderlyingMessage(genericMessage)
-        } catch {
-            XCTFail("Error in adding data: \(error)")
         }
 
         // when
-        handle(conversationAction: .reply, category: .conversation, userInfo: userInfo, userText: "Hello World")
-
-        // then
-        assertHasReadConfirmationForMessage(nonce: originaMessageNonce, conversation: conversation)
+        self.handle(conversationAction: .reply, category: .conversation, userInfo: userInfo, userText: "Hello World")
+        await uiMOC.perform {
+            // then
+            self.assertHasReadConfirmationForMessage(nonce: originaMessageNonce, conversation: conversation)
+        }
     }
 
     func testThatItAppendsReadReceipt_ForPushNotificationCategoryConversationWithLikeAction() throws {
         // given
-        self.simulateLoggedInUser()
-        self.sut.applicationStatusDirectory?.operationStatus.isInBackground = true
+        syncMOC.performAndWait {
+            self.simulateLoggedInUser()
+        }
+        self.sut.applicationStatusDirectory.operationStatus.isInBackground = true
 
         let userInfo = userInfoWithConversation(hasMessage: true)
         let conversation = userInfo.conversation(in: self.uiMOC)!
@@ -231,11 +256,7 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = true
         var genericMessage = originalMessage.underlyingMessage!
         genericMessage.setExpectsReadConfirmation(true)
-        do {
-            try originalMessage.setUnderlyingMessage(genericMessage)
-        } catch {
-            XCTFail("Error in adding data: \(error)")
-        }
+        try originalMessage.setUnderlyingMessage(genericMessage)
 
         // when
         handle(conversationAction: .like, category: .conversation, userInfo: userInfo)
@@ -246,8 +267,9 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     func testThatOnLaunchItCallsShowConversationList_ForPushNotificationCategoryConversationWithoutConversation() {
         // given
-        simulateLoggedInUser()
-
+        syncMOC.performAndWait {
+            self.simulateLoggedInUser()
+        }
         // when
         handle(conversationAction: nil, category: .conversation, userInfo: NotificationUserInfo())
 
@@ -257,7 +279,9 @@ class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     func testThatOnLaunchItCallsShowConversationConversation_ForPushNotificationCategoryConversation() {
         // given
-        simulateLoggedInUser()
+        syncMOC.performAndWait {
+            self.simulateLoggedInUser()
+        }
 
         let userInfo = userInfoWithConversation()
 
@@ -285,19 +309,24 @@ extension ZMUserSessionTests_PushNotifications {
         XCTAssertTrue(containsReadConfirmation, "expected read confirmation for message with nonce = \(nonce)", file: file, line: line)
     }
 
-    func handle(conversationAction: ConversationAction?, category: Category, userInfo: NotificationUserInfo, userText: String? = nil) {
-        handle(action: conversationAction?.rawValue ?? "", category: category.rawValue, userInfo: userInfo, userText: userText)
+    func handle(conversationAction: ConversationAction?, category: Category, userInfo: NotificationUserInfo, userText: String? = nil, file: StaticString = #filePath, line: UInt = #line) {
+        handle(action: conversationAction?.rawValue ?? "", category: category.rawValue, userInfo: userInfo, userText: userText, file: file, line: line)
     }
 
-    func handle(callAction: CallAction, category: Category, userInfo: NotificationUserInfo) {
-        handle(action: callAction.rawValue, category: category.rawValue, userInfo: userInfo)
+    func handle(callAction: CallAction, category: Category, userInfo: NotificationUserInfo, file: StaticString = #filePath, line: UInt = #line) {
+        handle(action: callAction.rawValue, category: category.rawValue, userInfo: userInfo, file: file, line: line)
     }
 
-    func handle(action: String, category: String, userInfo: NotificationUserInfo, userText: String? = nil) {
-        sut.handleNotificationResponse(actionIdentifier: action, categoryIdentifier: category, userInfo: userInfo, userText: userText) {}
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        sut.didFinishQuickSync()
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    func handle(action: String, category: String, userInfo: NotificationUserInfo, userText: String? = nil, file: StaticString = #filePath, line: UInt = #line) {
+        uiMOC.performAndWait {
+            sut.handleNotificationResponse(actionIdentifier: action, categoryIdentifier: category, userInfo: userInfo, userText: userText) {}
+        }
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
+        syncMOC.performAndWait {
+            sut.didFinishQuickSync()
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
     }
 
     func userInfoWithConversation(hasMessage: Bool = false) -> NotificationUserInfo {
@@ -311,9 +340,9 @@ extension ZMUserSessionTests_PushNotifications {
 
             let sender = ZMUser.insertNewObject(in: self.syncMOC)
             sender.remoteIdentifier = UUID()
+            sender.oneOnOneConversation = conversation
 
             let connection = ZMConnection.insertNewObject(in: self.syncMOC)
-            connection.conversation = conversation
             connection.to = sender
             connection.status = .accepted
 
@@ -340,9 +369,9 @@ extension ZMUserSessionTests_PushNotifications {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .connection
         conversation.remoteIdentifier = UUID()
+        conversation.oneOnOneUser = sender
 
         let connection = ZMConnection.insertNewObject(in: uiMOC)
-        connection.conversation = conversation
         connection.to = sender
         connection.status = .pending
 

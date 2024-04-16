@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 @testable import Wire
 
-class ConversationStatusLineTests: CoreDataSnapshotTestCase {
+final class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     override func setUp() {
         selfUserInTeam = true
@@ -280,8 +280,9 @@ class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     func testNoStatusForSystemMessageIRemovedSomeone() {
         // GIVEN
+        let user = createUser(name: "Vanessa")
         let sut = createGroupConversation()
-        sut.add(participants: [createUser(name: "Vanessa")])
+        sut.addParticipantAndUpdateConversationState(user: user)
         let otherMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         otherMessage.systemMessageType = .participantsRemoved
         otherMessage.sender = self.selfUser
@@ -319,8 +320,10 @@ class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
     func testStatusForSystemMessageSomeoneWasRemoved() {
         // GIVEN
+        let user = createUser(name: "Lilly")
         let sut = createGroupConversation()
-        sut.add(participants: createUser(name: "Lilly"))
+        sut.addParticipantAndUpdateConversationState(user: user)
+
         let otherMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         otherMessage.systemMessageType = .participantsRemoved
         otherMessage.sender = self.otherUser
@@ -332,6 +335,7 @@ class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
         // WHEN
         let status = sut.status.description(for: sut)
+
         // THEN
         XCTAssertEqual(status.string, "")
     }
@@ -350,6 +354,7 @@ class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
         // WHEN
         let status = sut.status.description(for: sut)
+
         // THEN
         XCTAssertEqual(status.string, "\(self.otherUser.name ?? "") started a conversation")
     }
@@ -366,6 +371,7 @@ class ConversationStatusLineTests: CoreDataSnapshotTestCase {
 
         // WHEN
         let status = sut.status.description(for: sut)
+
         // THEN
         XCTAssertEqual(status.string, "")
     }

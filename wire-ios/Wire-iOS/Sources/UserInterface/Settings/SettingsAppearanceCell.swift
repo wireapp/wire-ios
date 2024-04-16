@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 
-class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigurable {
+final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigurable {
 
     // MARK: - Properties
 
@@ -107,7 +107,9 @@ class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigurable {
     // MARK: - Helpers
 
     private func createConstraints() {
-        [titleLabel, subtitleLabel, iconImageView, accessoryIconView].prepareForLayout()
+        [titleLabel, subtitleLabel, iconImageView, accessoryIconView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         let centerConstraint = titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         centerConstraint.priority = .defaultLow

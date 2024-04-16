@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ public enum NetworkError: Error, Equatable {
 
     case errorEncodingRequest
     case errorDecodingResponse(ZMTransportResponse)
+    case errorDecodingURLResponse(URLResponse)
     case endpointNotAvailable
     case missingClients(Payload.MessageSendingStatus, ZMTransportResponse)
     case invalidRequestError(Payload.ResponseFailure, ZMTransportResponse)
@@ -46,6 +47,8 @@ public enum NetworkError: Error, Equatable {
         case .errorEncodingRequest:
             nil
         case .endpointNotAvailable:
+            nil
+        case .errorDecodingURLResponse:
             nil
         case .errorDecodingResponse(let response):
             response

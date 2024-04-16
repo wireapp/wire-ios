@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ final class FetchUserClientsActionHandler: ActionHandler<FetchUserClientsAction>
             action.fail(with: .endpointUnavailable)
             return nil
 
-        case .v1, .v2, .v3, .v4, .v5:
+        case .v1, .v2, .v3, .v4, .v5, .v6:
             guard
                 let payloadData = RequestPayload(qualified_users: action.userIDs).payloadData(),
                 let payloadString = String(bytes: payloadData, encoding: .utf8)
@@ -80,7 +80,7 @@ final class FetchUserClientsActionHandler: ActionHandler<FetchUserClientsAction>
         case .v0:
             return
 
-        case .v1, .v2, .v3, .v4, .v5:
+        case .v1, .v2, .v3, .v4, .v5, .v6:
             switch response.httpStatus {
             case 200:
                 guard let rawData = response.rawData else {

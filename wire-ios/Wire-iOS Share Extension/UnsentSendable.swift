@@ -43,13 +43,16 @@ extension UnsentSendableError: LocalizedError {
         switch self {
         case .fileSizeTooBig:
 
-            let maxSizeString = ByteCountFormatter.string(fromByteCount: Int64(AccountManager.fileSizeLimitInBytes), countStyle: .binary)
+            let maxSizeString = ByteCountFormatter.string(
+                fromByteCount: Int64(AccountManager.fileSizeLimitInBytes),
+                countStyle: .binary
+            )
 
-            return String(format: "content.file.too_big".localized, maxSizeString)
+            return L10n.ShareExtension.Content.File.tooBig(maxSizeString)
         case .unsupportedAttachment:
-            return "content.file.unsupported_attachment".localized
+            return L10n.ShareExtension.Content.File.unsupportedAttachment
         case .conversationDoesNotExist:
-            return "share_extension.error.conversation_not_exist.message".localized
+            return L10n.ShareExtension.Error.ConversationDoesNotExist.message
         }
     }
 }
@@ -87,7 +90,7 @@ class UnsentSendableBase {
 }
 
 /// `UnsentSendable` implementation to send text messages
-class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
+final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
 
     private var text: String
     private let attachment: NSItemProvider?
@@ -116,7 +119,7 @@ class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
 
         if let attachment = self.attachment, attachment.hasURL {
 
-            self.attachment?.fetchURL(completion: { (_) in
+            self.attachment?.fetchURL(completion: { _ in
                 completion()
             })
         } else {
@@ -153,7 +156,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
         // for us ('free' of charge) by using the image URL & ImageIO library.
         //
 
-        attachment.loadItem(forTypeIdentifier: UTType.image.identifier, options: options) { [weak self] (url, error) in
+        attachment.loadItem(forTypeIdentifier: UTType.image.identifier, options: options) { [weak self] url, error in
             error?.log(message: "Unable to load image from attachment")
 
             // Tries to load the content from local URL...
@@ -176,7 +179,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
 
                 // if it fails, it will attach the content directly
 
-                self?.attachment.loadItem(forTypeIdentifier: UTType.image.identifier, options: options) { [weak self] (image, error) in
+                self?.attachment.loadItem(forTypeIdentifier: UTType.image.identifier, options: options) { [weak self] image, error in
 
                     error?.log(message: "Unable to load image from attachment")
 
@@ -259,13 +262,13 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     }
 
     private func prepareAsFile(name: String?, typeIdentifier: String, completion: @escaping () -> Void) {
-        attachment.loadItem(forTypeIdentifier: typeIdentifier, options: [:]) { [weak self] (data, error) in
+        attachment.loadItem(forTypeIdentifier: typeIdentifier, options: [:]) { [weak self] data, error in
             guard let UTIString = self?.attachment.registeredTypeIdentifiers.first, error == nil else {
                 error?.log(message: "Unable to load file from attachment")
                 return completion()
             }
 
-            let prepareColsure: SendingCompletion = { (url, error) in
+            let prepareColsure: SendingCompletion = { url, error in
                 guard let url = url, error == nil else {
                     error?.log(message: "Unable to prepare file attachment for sending")
                     return completion()
@@ -319,7 +322,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
                                       fileURL: URL,
                                       completion: @escaping SendingCompletion) {
         if UTType(UTI)?.conforms(to: UTType.movie) ?? false {
-            AVURLAsset.convertVideoToUploadFormat(at: fileURL) { (url, _, error) in
+            AVURLAsset.convertVideoToUploadFormat(at: fileURL) { url, _, error in
                 completion(url, error)
             }
         } else {
@@ -346,7 +349,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
             do {
                 try FileManager.default.removeTmpIfNeededAndCopy(fileURL: dataURL, tmpURL: tempFileURL)
-            } catch let error {
+            } catch {
                 error.log(message: "Cannot copy video from \(dataURL) to \(tempFileURL): \(error)")
                 return
             }

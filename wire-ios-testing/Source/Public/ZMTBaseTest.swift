@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,9 +21,10 @@ import Foundation
 extension ZMTBaseTest {
     @objc
     public static func checkForMemoryLeaksAfterTestClassCompletes() {
-        if MemoryReferenceDebugger.aliveObjects.count > 0 {
-            print("Leaked: \(MemoryReferenceDebugger.aliveObjectsDescription)")
-            assert(false)
+        let leakedObjects = "Leaked: \(MemoryReferenceDebugger.aliveObjectsDescription)"
+        XCTAssert(MemoryReferenceDebugger.aliveObjects.isEmpty, leakedObjects)
+        if !MemoryReferenceDebugger.aliveObjects.isEmpty {
+            print(leakedObjects)
         }
     }
 
@@ -31,7 +32,7 @@ extension ZMTBaseTest {
                      file: StaticString = #filePath,
                      line: UInt = #line,
                      forAsyncBlock block: @escaping () async throws -> Void) {
-        let expectation = self.expectation(description: "isDone")
+        let expectation = self.customExpectation(description: "isDone")
 
         Task {
             do {
@@ -45,5 +46,4 @@ extension ZMTBaseTest {
 
         XCTAssert(waitForCustomExpectations(withTimeout: timeout), file: file, line: line)
     }
-
 }

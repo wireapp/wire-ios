@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ class RegisterPushTokenActionHandlerTests: MessagingTestBase {
         var action = RegisterPushTokenAction(token: pushToken, clientID: "clientID")
 
         // Expectation
-        let didSucceed = expectation(description: "didSucceed")
+        let didSucceed = customExpectation(description: "didSucceed")
 
         action.onResult { result in
             guard case .success = result else { return }
@@ -92,7 +92,7 @@ class RegisterPushTokenActionHandlerTests: MessagingTestBase {
         var action = RegisterPushTokenAction(token: pushToken, clientID: "clientID")
 
         // Expectation
-        let didFail = expectation(description: "didFail")
+        let didFail = customExpectation(description: "didFail")
 
         action.onResult { result in
             guard case .failure(.appDoesNotExist) = result else { return }
@@ -112,7 +112,7 @@ class RegisterPushTokenActionHandlerTests: MessagingTestBase {
         var action = RegisterPushTokenAction(token: pushToken, clientID: "clientID")
 
         // Expectation
-        let didFail = expectation(description: "didFail")
+        let didFail = customExpectation(description: "didFail")
 
         action.onResult { result in
             guard case .failure(.unknown(999)) = result else { return }

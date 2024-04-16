@@ -36,7 +36,7 @@ class SelfUserParticipantMigrationTests: DiskDatabaseTest {
         WireDataModel.ZMConversation.migrateIsSelfAnActiveMemberToTheParticipantRoles(in: moc)
 
         // Then
-        let hasSelfUser = conversation.participantRoles.contains(where: { (role) -> Bool in
+        let hasSelfUser = conversation.participantRoles.contains(where: { role -> Bool in
             role.user?.isSelfUser == true
         })
         XCTAssertTrue(hasSelfUser)

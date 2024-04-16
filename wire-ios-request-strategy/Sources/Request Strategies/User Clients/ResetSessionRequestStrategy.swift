@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,13 +52,12 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
             return
         }
 
-        let message = GenericMessageEntity(conversation: conversation,
-                                           message: GenericMessage(clientAction: .resetSession),
+        let message = GenericMessageEntity(message: GenericMessage(clientAction: .resetSession),
+                                           context: managedObjectContext,
+                                           conversation: conversation,
                                            completionHandler: nil)
 
-        // Enter groups to enable waiting for message sending to complete in tests
-        let groups = managedObjectContext.enterAllGroupsExceptSecondary()
-        Task {
+        WaitingGroupTask(context: managedObjectContext) { [self] in
             do {
                 try await messageSender.sendMessage(message: message)
                 await managedObjectContext.perform {
@@ -70,8 +69,9 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
 
             await managedObjectContext.perform {
                 completion()
+                // saving since the `needsToNotifyOtherUserAboutSessionReset` are reset in the completion block
+                self.managedObjectContext.enqueueDelayedSave()
             }
-            managedObjectContext.leaveAllGroups(groups)
         }
     }
 

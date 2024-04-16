@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -78,14 +78,12 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
                                                    type: .delivered) else { return }
         let senderUserSet: Set<ZMUser> = [deliveryReceipt.sender]
 
-        // Enter groups to enable waiting for message sending to complete in tests
-        let groups = managedObjectContext.enterAllGroupsExceptSecondary()
-        Task {
-            try? await messageSender.sendMessage(message: GenericMessageEntity(conversation: deliveryReceipt.conversation,
-                                                                               message: GenericMessage(content: confirmation),
+        WaitingGroupTask(context: managedObjectContext) { [self] in
+            try? await messageSender.sendMessage(message: GenericMessageEntity(message: GenericMessage(content: confirmation),
+                                                                               context: managedObjectContext,
+                                                                               conversation: deliveryReceipt.conversation,
                                                                                targetRecipients: .users(senderUserSet),
                                                                                completionHandler: nil))
-            managedObjectContext.leaveAllGroups(groups)
         }
     }
 

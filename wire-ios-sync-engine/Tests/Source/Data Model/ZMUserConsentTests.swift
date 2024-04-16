@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ final class ZMUserConsentTests: DatabaseTest {
             return ZMTransportResponse(payload: ["results": [["type": 2, "value": 1]]] as ZMTransportData, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         }
 
-        let fetchedData = expectation(description: "fetched data")
+        let fetchedData = customExpectation(description: "fetched data")
 
         // when
         selfUser.fetchConsent(for: .marketing, on: mockTransportSession) { result in
@@ -128,13 +128,38 @@ final class ZMUserConsentTests: DatabaseTest {
             return ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         }
 
-        let receivedError = expectation(description: "received error")
+        let receivedError = customExpectation(description: "received error")
         // when
 
         selfUser.fetchConsent(for: .marketing, on: mockTransportSession) { result in
             switch result {
             case .failure(let error):
                 XCTAssertEqual(error as! WireSyncEngine.ConsentRequestError, WireSyncEngine.ConsentRequestError.unknown)
+                receivedError.fulfill()
+            case .success:
+                XCTFail()
+            }
+        }
+
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        mockTransportSession.responseGeneratorBlock = nil
+        mockTransportSession.resetReceivedRequests()
+    }
+
+    func testThatItFailsOn404_get() {
+        // GIVEN
+        mockTransportSession.responseGeneratorBlock = { request in
+            guard request.path == "/self/consent" else { return nil }
+
+            return ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 404, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
+        }
+
+        let receivedError = customExpectation(description: "received error")
+        // WHEN
+        selfUser.fetchConsent(for: .marketing, on: mockTransportSession) { result in
+            switch result {
+            case .failure(let error):
+                XCTAssertEqual(error as! WireSyncEngine.ConsentRequestError, WireSyncEngine.ConsentRequestError.notAvailable)
                 receivedError.fulfill()
             case .success:
                 XCTFail()
@@ -154,7 +179,7 @@ final class ZMUserConsentTests: DatabaseTest {
             return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         }
 
-        let successExpectation = expectation(description: "set is successful")
+        let successExpectation = customExpectation(description: "set is successful")
 
         // when
         selfUser.setConsent(to: true, for: .marketing, on: mockTransportSession) { result in
@@ -179,7 +204,7 @@ final class ZMUserConsentTests: DatabaseTest {
             return ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
         }
 
-        let receivedError = expectation(description: "received error")
+        let receivedError = customExpectation(description: "received error")
 
         // when
         selfUser.setConsent(to: true, for: .marketing, on: mockTransportSession) { result in

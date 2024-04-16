@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,50 +32,58 @@ final class MessageSendingStatusPayloadProcessor {
     func updateClientsChanges(
         from payload: Payload.MessageSendingStatus,
         for message: any ProteusMessage
-    ) -> [ZMUser: [UserClient]] {
-        WireLogger.messaging.debug("update client changes for message \(message.debugInfo)")
+    ) async -> [ZMUser: [UserClient]] {
+        let context = message.context
+        let (deletedClients, redundantUsers, missingClients, failedToConfirmUsers) = await context.perform {
+            WireLogger.messaging.debug("update client changes for message \(message.debugInfo)")
 
-        let deletedClients = payload.deleted.fetchClients(in: message.context)
+            return (payload.deleted.fetchClients(in: context),
+                    payload.redundant.fetchUsers(in: context),
+                    payload.missing.fetchOrCreateClients(in: message.context),
+                    payload.failedToConfirm.fetchUsers(in: message.context))
+        }
 
         if !deletedClients.isEmpty {
             WireLogger.messaging.debug("detected deleted clients")
         }
 
-        for (_, deletedClients) in deletedClients {
-            deletedClients.forEach { $0.deleteClientAndEndSession() }
-        }
-
-        let redundantUsers = payload.redundant.fetchUsers(in: message.context)
-        if !redundantUsers.isEmpty {
-            WireLogger.messaging.debug("detected redundant users")
-
-            // if the BE tells us that these users are not in the
-            // conversation anymore, it means that we are out of sync
-            // with the list of participants
-            message.conversation?.needsToBeUpdatedFromBackend = true
-
-            // The missing users might have been deleted so we need re-fetch their profiles
-            // to verify if that's the case.
-            redundantUsers.forEach { $0.needsToBeUpdatedFromBackend = true }
-
-            message.detectedRedundantUsers(redundantUsers)
-        }
-
-        let missingClients = payload.missing.fetchOrCreateClients(in: message.context)
-
         if !missingClients.isEmpty {
             WireLogger.messaging.debug("detected missing clients")
         }
 
-        for (_, userClients) in missingClients {
-            userClients.forEach({ $0.discoveredByMessage = message as? ZMOTRMessage })
-            message.registersNewMissingClients(Set(userClients))
-            message.conversation?.decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set(userClients), causedBy: message as? ZMOTRMessage)
+        for deletedClient in deletedClients.values.flatMap(\.self) {
+            await deletedClient.deleteClientAndEndSession()
         }
 
-        let failedToConfirmUsers = payload.failedToConfirm.fetchUsers(in: message.context)
-        if !failedToConfirmUsers.isEmpty {
-            message.addFailedToSendRecipients(failedToConfirmUsers)
+        var newMissingClients = [UserClient]()
+        for missingClient in missingClients.flatMap(\.value) {
+            guard await !missingClient.hasSessionWithSelfClient else { continue }
+            newMissingClients.append(missingClient)
+        }
+
+        await context.perform {
+            if !redundantUsers.isEmpty {
+                WireLogger.messaging.debug("detected redundant users")
+
+                // if the BE tells us that these users are not in the
+                // conversation anymore, it means that we are out of sync
+                // with the list of participants
+                message.conversation?.needsToBeUpdatedFromBackend = true
+
+                // The missing users might have been deleted so we need re-fetch their profiles
+                // to verify if that's the case.
+                redundantUsers.forEach { $0.needsToBeUpdatedFromBackend = true }
+
+                message.detectedRedundantUsers(redundantUsers)
+            }
+
+            newMissingClients.forEach({ $0.discoveredByMessage = message as? ZMOTRMessage })
+            message.registersNewMissingClients(Set(newMissingClients))
+            message.conversation?.decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set(newMissingClients), causedBy: message as? ZMOTRMessage)
+
+            if !failedToConfirmUsers.isEmpty {
+                message.addFailedToSendRecipients(failedToConfirmUsers)
+            }
         }
 
         return missingClients

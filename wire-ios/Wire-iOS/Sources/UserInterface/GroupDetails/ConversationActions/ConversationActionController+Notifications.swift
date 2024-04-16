@@ -41,16 +41,11 @@ enum NotificationResult: CaseIterable {
     }
 
     var title: String {
-        return localizationKey.localized
-    }
-
-    private var localizationKey: String {
-        let base = "meta.menu.configure_notification.button_"
         switch self {
-        case .everything: return base + "everything"
-        case .mentionsAndReplies: return base + "mentions_and_replies"
-        case .nothing: return base + "nothing"
-        case .cancel: return base + "cancel"
+        case .everything: return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonEverything
+        case .mentionsAndReplies: return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonMentionsAndReplies
+        case .nothing: return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonNothing
+        case .cancel: return L10n.Localizable.Meta.Menu.ConfigureNotification.buttonCancel
         }
     }
 

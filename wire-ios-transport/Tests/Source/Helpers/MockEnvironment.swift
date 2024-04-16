@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 import Foundation
 
-public class MockEnvironment: NSObject, BackendEnvironmentProvider {
+public final class MockEnvironment: NSObject, BackendEnvironmentProvider {
 
     var isServerTrusted = true
     public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {

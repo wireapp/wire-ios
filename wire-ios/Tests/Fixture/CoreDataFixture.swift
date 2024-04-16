@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import Wire
+@testable import WireDataModel
 
 /// This class provides a `NSManagedObjectContext` in order to test views with real data instead
 /// of mock objects.
@@ -124,8 +125,9 @@ final class CoreDataFixture {
     }
 
     func setUpCaches() {
+        let cacheLocation = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         uiMOC.zm_userImageCache = UserImageLocalCache(location: nil)
-        uiMOC.zm_fileAssetCache = FileAssetCache(location: nil)
+        uiMOC.zm_fileAssetCache = FileAssetCache(location: cacheLocation)
     }
 
     // MARK: – Setup
@@ -143,14 +145,13 @@ final class CoreDataFixture {
     }
 
     private func setupTestObjects() {
-        selfUser = ZMUser.insertNewObject(in: uiMOC)
+        selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID()
         selfUser.name = "selfUser"
         selfUser.accentColorValue = .vividRed
         selfUser.emailAddress = "test@email.com"
         selfUser.phoneNumber = "+123456789"
 
-        ZMUser.boxSelfUser(selfUser, inContextUserInfo: uiMOC)
         if selfUserInTeam {
             setupMember()
         }

@@ -92,7 +92,8 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     // MARK: - Properties
 
-    var onDismiss: (() -> Void)?
+    let router: AppRootRouter?
+    let onDismiss: (_ completion: @escaping () -> Void) -> Void
 
     // MARK: - State
 
@@ -106,18 +107,35 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     // MARK: - Life cycle
 
-    init(onDismiss: (() -> Void)? = nil) {
+    init(
+        router: AppRootRouter? = nil,
+        onDismiss: @escaping (_ completion: @escaping () -> Void) -> Void = { $0() }
+    ) {
+        self.router = router
         self.onDismiss = onDismiss
         sections = []
 
+        setupSections()
+    }
+
+    private func setupSections() {
         sections.append(Section(
             header: "Actions",
             items: [
-                .button(ButtonItem(title: "Send debug logs", action: sendDebugLogs)),
-                .button(ButtonItem(title: "Perform quick sync", action: performQuickSync)),
-                .button(ButtonItem(title: "Break next quick sync", action: breakNextQuickSync)),
-                .destination(DestinationItem(title: "Configure flags", makeView: {
+                .destination(DestinationItem(title: "E2E Identity", makeView: {
+                    AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel()))
+                })),
+                .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
+                    AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(selfClient: self?.selfClient)))
+                })),
+                .destination(DestinationItem(title: "Configure feature flags", makeView: {
                     AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
+                })),
+                .destination(DestinationItem(title: "Deep links", makeView: { [weak self] in
+                    AnyView(DeepLinksView(viewModel: DeepLinksViewModel(
+                        router: self?.router,
+                        onDismiss: self?.onDismiss ?? { $0() }
+                    )))
                 }))
             ]
         ))
@@ -137,11 +155,15 @@ final class DeveloperToolsViewModel: ObservableObject {
             sections.append(Section(
                 header: "Self user",
                 items: [
-                    .text(TextItem(title: "Handle", value: selfUser.handle ?? "None")),
+                    .text(TextItem(title: "Handle", value: selfUser.handleDisplayString(withDomain: true) ?? "None")),
                     .text(TextItem(title: "Email", value: selfUser.emailAddress ?? "None")),
                     .text(TextItem(title: "User ID", value: selfUser.remoteIdentifier.uuidString)),
                     .text(TextItem(title: "Analytics ID", value: selfUser.analyticsIdentifier?.uppercased() ?? "None")),
                     .text(TextItem(title: "Client ID", value: selfClient?.remoteIdentifier?.uppercased() ?? "None")),
+                    .text(TextItem(
+                        title: "Supported protocols",
+                        value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", "))
+                    ),
                     .text(TextItem(title: "MLS public key", value: selfClient?.mlsPublicKeys.ed25519?.uppercased() ?? "None"))
                 ]
             ))
@@ -163,7 +185,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                 header: "Datadog",
                 items: [
                     .text(TextItem(title: "User ID", value: String(describing: dataDogUserId))),
-                    .button(.init(title: "Crash Report Test", action: { fatalError("crash app") }))
+                    .button(.init(title: "Crash Report Test", action: { fatal("crash app") }))
                 ]
             ))
         }
@@ -191,7 +213,6 @@ final class DeveloperToolsViewModel: ObservableObject {
         items.append(.button(ButtonItem(title: "Stop federating with Foma", action: stopFederatingFoma)))
         items.append(.button(ButtonItem(title: "Stop federating with Bella", action: stopFederatingBella)))
         items.append(.button(ButtonItem(title: "Stop Bella Foma federating", action: stopBellaFomaFederating)))
-
         return Section(
             header: header,
             items: items
@@ -208,7 +229,7 @@ final class DeveloperToolsViewModel: ObservableObject {
     func handleEvent(_ event: Event) {
         switch event {
         case .dismissButtonTapped:
-            onDismiss?()
+            onDismiss {}
 
         case let .itemCopyRequested(.text(textItem)):
             UIPasteboard.general.string = textItem.value
@@ -222,21 +243,6 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     // MARK: - Actions
-
-    private func breakNextQuickSync() {
-        ZMUserSession.shared()?.setBogusLastEventID()
-    }
-
-    private func sendDebugLogs() {
-        DebugLogSender.sendLogsByEmail(message: "Send logs")
-    }
-
-    private func performQuickSync() {
-        Task {
-            guard let session = ZMUserSession.shared() else { return }
-            await session.syncStatus?.performQuickSync()
-        }
-    }
 
     private func checkRegisteredTokens() {
         guard

@@ -25,7 +25,7 @@ protocol ReactionPickerDelegate: AnyObject {
     func didTapMoreEmojis()
 }
 
-class BasicReactionPicker: UIView {
+final class BasicReactionPicker: UIView {
     private let titleLabel = DynamicFontLabel(fontSpec: .normalRegularFont,
                                               color: SemanticColors.Label.textUserPropertyCellName)
     private let horizontalStackView = UIStackView(axis: .horizontal)
@@ -106,7 +106,7 @@ private extension BasicReactionPicker {
 
         let button = UIButton()
         buttons.append(button)
-        let image = Asset.Images.addEmojis.image
+        let image = UIImage(resource: .addEmojis)
         button.setImage(image, for: .normal)
         button.addTarget(self, action: #selector(didTapMoreEmojis), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false

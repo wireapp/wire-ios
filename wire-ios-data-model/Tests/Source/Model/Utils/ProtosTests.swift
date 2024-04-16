@@ -24,7 +24,7 @@ import WireProtos
 class ProtosTests: XCTestCase {
 
     func testTextMessageEncodingPerformance() {
-        measure { () -> Void in
+        measure {
             for _ in 0..<1000 {
                 let text = Text(content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
                 let message = GenericMessage(content: text, nonce: UUID.create())
@@ -37,7 +37,7 @@ class ProtosTests: XCTestCase {
         let text = Text(content: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
         var message = GenericMessage(content: text, nonce: UUID.create())
 
-        measure { () -> Void in
+        measure {
             for _ in 0..<1000 {
                 try? message.merge(serializedData: message.serializedData())
             }
@@ -66,7 +66,7 @@ class ProtosTests: XCTestCase {
         XCTAssertEqual(message.image.originalHeight, Int32(mediumProperties.size.height))
         XCTAssertEqual(message.image.size, Int32(processedProperties.length))
         XCTAssertEqual(message.image.mimeType, processedProperties.mimeType)
-        XCTAssertEqual(message.image.tag, StringFromImageFormat(format))
+        XCTAssertEqual(message.image.tag, format.stringValue)
         XCTAssertEqual(message.image.otrKey, Data())
         XCTAssertEqual(message.image.sha256, Data())
         XCTAssertEqual(message.image.mac, NSData() as Data)
@@ -99,7 +99,7 @@ class ProtosTests: XCTestCase {
         XCTAssertEqual(message.image.originalHeight, Int32(mediumProperties.size.height))
         XCTAssertEqual(message.image.size, Int32(processedProperties.length))
         XCTAssertEqual(message.image.mimeType, processedProperties.mimeType)
-        XCTAssertEqual(message.image.tag, StringFromImageFormat(format))
+        XCTAssertEqual(message.image.tag, format.stringValue)
         XCTAssertEqual(message.image.otrKey, otrKey)
         XCTAssertEqual(message.image.sha256, Data())
         XCTAssertEqual(message.image.mac, Data())
@@ -127,7 +127,7 @@ class ProtosTests: XCTestCase {
         XCTAssertEqual(message.messageID, nonce.transportString())
         XCTAssertEqual(message.lastRead.conversationID, conversationID.uuid.transportString())
         XCTAssertEqual(message.lastRead.lastReadTimestamp, Int64(timeStamp.timeIntervalSince1970 * 1000))
-        let storedDate = NSDate(timeIntervalSince1970: Double(message.lastRead.lastReadTimestamp/1000))
+        let storedDate = NSDate(timeIntervalSince1970: Double(message.lastRead.lastReadTimestamp / 1000))
         XCTAssertEqual(storedDate, timeStamp)
     }
 
@@ -142,7 +142,7 @@ class ProtosTests: XCTestCase {
         XCTAssertEqual(message.messageID, nonce.transportString())
         XCTAssertEqual(message.cleared.conversationID, conversationID.transportString())
         XCTAssertEqual(message.cleared.clearedTimestamp, Int64(timeStamp.timeIntervalSince1970 * 1000))
-        let storedDate = NSDate(timeIntervalSince1970: Double(message.cleared.clearedTimestamp/1000))
+        let storedDate = NSDate(timeIntervalSince1970: Double(message.cleared.clearedTimestamp / 1000))
         XCTAssertEqual(storedDate, timeStamp)
     }
 

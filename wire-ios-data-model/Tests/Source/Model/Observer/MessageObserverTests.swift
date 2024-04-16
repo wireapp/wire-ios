@@ -51,7 +51,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         ) {
 
         // given
-        withExtendedLifetime(MessageChangeInfo.add(observer: self.messageObserver, for: message, managedObjectContext: self.uiMOC)) { () -> Void in
+        withExtendedLifetime(MessageChangeInfo.add(observer: self.messageObserver, for: message, managedObjectContext: self.uiMOC)) {
 
             self.uiMOC.saveOrRollback()
 
@@ -139,16 +139,12 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         )
     }
 
-    func testThatItNotifiesObserverWhenTheLinkPreviewStateChanges_NewGenericMessageData() {
+    func testThatItNotifiesObserverWhenTheLinkPreviewStateChanges_NewGenericMessageData() throws {
         // given
         let clientMessage = ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         let nonce = UUID.create()
         let genericMessage = GenericMessage(content: Text(content: name), nonce: nonce)
-        do {
-            try clientMessage.setUnderlyingMessage(genericMessage)
-        } catch {
-            XCTFail()
-        }
+        try clientMessage.setUnderlyingMessage(genericMessage)
 
         let preview = LinkPreview.with {
             $0.url = "www.example.com"
@@ -193,7 +189,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(
             message,
-            modifier: {$0.setReactions(["👻"], forUser: ZMUser.selfUser(in: self.uiMOC))},
+            modifier: { $0.setReactions(["👻"], forUser: ZMUser.selfUser(in: self.uiMOC)) },
             expectedChangedField: #keyPath(MessageChangeInfo.reactionsChanged)
         )
     }
@@ -226,7 +222,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(
             message,
-            modifier: {$0.setReactions([], forUser: selfUser)},
+            modifier: { $0.setReactions([], forUser: selfUser) },
             expectedChangedField: #keyPath(MessageChangeInfo.reactionsChanged)
         )
     }
@@ -285,7 +281,7 @@ class MessageObserverTests: NotificationDispatcherTestBase {
     func testThatItNotifiesWhenTheChildMessagesOfASystemMessageChange() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        let message = conversation.appendPerformedCallMessage(with: 42, caller: .selfUser(in: uiMOC))
+        let message = conversation.appendMissedCallMessage(fromUser: .selfUser(in: uiMOC), at: .now)
         let otherMessage = ZMSystemMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
 
         checkThatItNotifiesTheObserverOfAChange(
@@ -325,16 +321,12 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         )
     }
 
-    func testThatItNotifiesConversationWhenMessageGenericDataIsChanged() {
+    func testThatItNotifiesConversationWhenMessageGenericDataIsChanged() throws {
 
         let clientMessage = ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         let nonce = UUID.create()
         let genericMessage = GenericMessage(content: Text(content: "foo"), nonce: nonce)
-        do {
-            try clientMessage.setUnderlyingMessage(genericMessage)
-        } catch {
-            XCTFail()
-        }
+        try clientMessage.setUnderlyingMessage(genericMessage)
         let update = GenericMessage(content: Text(content: "bar"), nonce: nonce)
         uiMOC.saveOrRollback()
 

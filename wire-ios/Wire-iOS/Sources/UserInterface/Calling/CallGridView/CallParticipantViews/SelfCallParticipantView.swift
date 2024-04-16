@@ -70,7 +70,7 @@ final class SelfCallParticipantView: BaseCallParticipantView {
         userDetailsView.callState = stream.callParticipantState
 
         guard let name = stream.user?.name else { return }
-        userDetailsView.name = name + "user_cell.title.you_suffix".localized
+        userDetailsView.name = name + L10n.Localizable.UserCell.Title.youSuffix
     }
 
     override func didMoveToWindow() {

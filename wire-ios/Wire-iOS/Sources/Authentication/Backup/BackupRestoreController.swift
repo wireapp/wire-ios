@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 import WireSyncEngine
+import UniformTypeIdentifiers
 
 protocol BackupRestoreControllerDelegate: AnyObject {
     func backupResoreControllerDidFinishRestoring(_ controller: BackupRestoreController)
@@ -61,32 +62,51 @@ final class BackupRestoreController: NSObject {
     }
 
     private func showFilePicker() {
-        // Test code to verify restore
+        let picker: UIDocumentPickerViewController
+        if #available(iOS 14.0, *) {
+            picker = UIDocumentPickerViewController(
+                forOpeningContentTypes: BackupRestoreController.WireBackupUTIs.compactMap { UTType($0) },
+                asCopy: true)
+        } else {
+            picker = UIDocumentPickerViewController(documentTypes: BackupRestoreController.WireBackupUTIs, in: .import)
+        }
 
-        let picker = UIDocumentPickerViewController(
-            documentTypes: BackupRestoreController.WireBackupUTIs,
-            in: .`import`)
         picker.delegate = self
         target.present(picker, animated: true)
     }
 
     private func restore(with url: URL) {
-        requestPassword { [performRestore] password in
-            performRestore(password, url)
+        requestPassword { password in
+            self.performRestore(
+                using: password,
+                from: url
+            )
         }
     }
 
-    private func performRestore(using password: String, from url: URL) {
-        guard let sessionManager = SessionManager.shared else { return }
+    private func performRestore(
+        using password: String,
+        from url: URL
+    ) {
+        guard let sessionManager = SessionManager.shared,
+              let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "restore backup") else {
+            return
+        }
         target.isLoadingViewVisible = true
 
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
-            guard let `self` = self else { return }
+            guard let `self` = self else {
+                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
+                zmLog.safePublic("SessionManager.self is `nil` in performRestore", level: .error)
+                WireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")
+                return
+            }
             switch result {
             case .failure(SessionManager.BackupError.decryptionError):
                 zmLog.safePublic("Failed restoring backup: \(SanitizedString(stringLiteral: SessionManager.BackupError.decryptionError.localizedDescription))", level: .error)
                 WireLogger.localStorage.error("Failed restoring backup: \(SessionManager.BackupError.decryptionError)")
                 self.target.isLoadingViewVisible = false
+                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 self.showWrongPasswordAlert { _ in
                     self.restore(with: url)
                 }
@@ -97,11 +117,13 @@ final class BackupRestoreController: NSObject {
                 BackupEvent.importFailed.track()
                 self.showRestoreError(error)
                 self.target.isLoadingViewVisible = false
+                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
 
             case .success:
                 BackupEvent.importSucceeded.track()
                 self.temporaryFilesService.removeTemporaryData()
                 self.delegate?.backupResoreControllerDidFinishRestoring(self)
+                BackgroundActivityFactory.shared.endBackgroundActivity(activity)
             }
         }
     }
@@ -134,7 +156,12 @@ final class BackupRestoreController: NSObject {
 }
 
 extension BackupRestoreController: UIDocumentPickerDelegate {
-    public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentAt url: URL) {
-        self.restore(with: url)
-    }
+    public func documentPicker(
+        _ controller: UIDocumentPickerViewController,
+        didPickDocumentAt url: URL) {
+            WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")
+            zmLog.safePublic(SanitizedString(stringLiteral: "opening file at: \(url.absoluteString)"), level: .debug)
+
+            self.restore(with: url)
+        }
 }

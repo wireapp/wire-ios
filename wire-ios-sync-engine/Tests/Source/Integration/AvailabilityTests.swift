@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 import XCTest
 
-class AvailabilityTests: IntegrationTest {
+final class AvailabilityTests: IntegrationTest {
 
     override func setUp() {
         super.setUp()
@@ -28,7 +28,7 @@ class AvailabilityTests: IntegrationTest {
 
     func remotelyInsertTeam(members: [MockUser], isBound: Bool = true) -> MockTeam {
         var mockTeam: MockTeam!
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             mockTeam = session.insertTeam(withName: "Super-Team", isBound: isBound, users: Set(members))
             mockTeam.creator = members.first
         }

@@ -45,12 +45,15 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
 
     /// A button that, when tapped, scrolls the conversation view to the latest messages.
     /// It appears when the user has scrolled up past a certain point in the conversation.
-    lazy var scrollToBottomButton: Button = {
-        let button = Button(style: .scrollToBottomButtonStyle, cornerRadius: scrollToBottomButtonHeight / 2)
-        let image = Asset.Images.downArrow.image.withTintColor(SemanticColors.Icon.foregroundDefaultWhite)
+    lazy var scrollToBottomButton = {
+        let button = ZMButton(style: .scrollToBottomButtonStyle, cornerRadius: scrollToBottomButtonHeight / 2)
+        let icon = UIImage(resource: .downArrow)
 
-        button.setImage(image, for: .normal)
-        button.setImage(image, for: .highlighted)
+        button.setImage(icon, for: .normal)
+        button.setImage(icon, for: .highlighted)
+
+        button.tintColor = SemanticColors.Icon.foregroundDefaultWhite
+
         button.translatesAutoresizingMaskIntoConstraints = false
 
         button.accessibilityLabel = L10n.Accessibility.Conversation.ScrollToBottomButton.description
@@ -203,9 +206,19 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
 
         setupMentionsResultsView()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(UIApplicationDelegate.applicationDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(applicationDidBecomeActive(_:)),
+            name: UIApplication.didBecomeActiveNotification,
+            object: nil
+        )
 
-        NotificationCenter.default.addObserver(self, selector: #selector(showErrorAlertToSendMessage), name: ZMConversation.failedToSendMessageNotificationName, object: .none)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(showErrorAlertToSendMessage),
+            name: ZMConversation.failedToSendMessageNotificationName,
+            object: .none
+        )
     }
 
     @objc
@@ -219,7 +232,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     }
 
     @objc
-    private func showErrorAlertToSendMessage() {
+    private func showErrorAlertToSendMessage(_ notification: Notification) {
         typealias MessageSendError = L10n.Localizable.Error.Message.Send
         UIAlertController.showErrorAlertWithLink(title: MessageSendError.title,
                                                  message: MessageSendError.missingLegalholdConsent)

@@ -288,11 +288,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 
     func isBurstTimestampVisible(in context: ConversationMessageContext) -> Bool {
-        return context.isTimeIntervalSinceLastMessageSignificant ||  context.isFirstUnreadMessage || context.isFirstMessageOfTheDay
+        return context.isTimeIntervalSinceLastMessageSignificant || context.isFirstUnreadMessage || context.isFirstMessageOfTheDay
     }
 
     func isToolboxVisible(in context: ConversationMessageContext) -> Bool {
-        guard !message.isSystem || message.isPerformedCall || message.isMissedCall else {
+        guard !message.isSystem || message.isMissedCall else {
             return false
         }
 
@@ -411,7 +411,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
     }
 }
 
-extension ConversationMessageSectionController: ZMUserObserver {
+extension ConversationMessageSectionController: UserObserving {
     func userDidChange(_ changeInfo: UserChangeInfo) {
         sectionDelegate?.messageSectionController(self, didRequestRefreshForMessage: self.message)
     }

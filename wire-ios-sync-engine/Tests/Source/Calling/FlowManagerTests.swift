@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import avs
 class FlowManagerTests: MessagingTest {
     func testThatItSendsNotificationWhenFlowManagerIsCreated() {
         // GIVEN
-        let expectation = self.expectation(description: "Notification is sent")
+        let expectation = self.customExpectation(description: "Notification is sent")
         let notificationObserver = NotificationCenter.default.addObserver(forName: FlowManager.AVSFlowManagerCreatedNotification, object: nil, queue: nil) { _ in
             expectation.fulfill()
         }

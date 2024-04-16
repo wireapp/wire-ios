@@ -1,20 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 #import "Tests-Swift.h"
 #import "UserProfileTests.h"
@@ -83,7 +83,7 @@
     ZMUser<ZMEditableUser> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
     XCTAssertNotEqual(selfUser.accentColorValue, accentColor);
     
-    UserChangeObserver *observer = [[UserChangeObserver alloc] initWithUser:selfUser];
+    ZMUserObserver *observer = [[ZMUserObserver alloc] initWithUser:selfUser];
     
     // when
     selfUser.accentColorValue = accentColor;
@@ -119,16 +119,16 @@
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
     XCTAssertEqualObjects(selfUser.phoneNumber, @"");
     
-    id userObserver = [OCMockObject mockForProtocol:@protocol(ZMUserObserver)];
+    id userObserver = [OCMockObject mockForProtocol:@protocol(ZMUserObserving)];
     id userObserverToken = [UserChangeInfo addObserver:userObserver forUser:selfUser inManagedObjectContext:self.userSession.managedObjectContext];
     
     id editableUserObserver = [OCMockObject mockForProtocol:@protocol(UserProfileUpdateObserver)];
     id editableUserObserverToken = [self.userSession.userProfile addObserver:editableUserObserver];
-    
-    [(id<ZMUserObserver>)[userObserver expect] userDidChange:OCMOCK_ANY]; // <- DONE: when receiving this, I know that the phone number was set
-    
+
+    [(id<ZMUserObserving>)[userObserver expect] userDidChange:OCMOCK_ANY]; // <- DONE: when receiving this, I know that the phone number was set
+
     // expect
-    XCTestExpectation *phoneNumberVerificationCodeExpectation = [self expectationWithDescription:@"phoneNumberVerificationCodeExpectation"];
+    XCTestExpectation *phoneNumberVerificationCodeExpectation = [self customExpectationWithDescription:@"phoneNumberVerificationCodeExpectation"];
     [[[editableUserObserver expect] andDo:^(NSInvocation *inv) {
         NOT_USED(inv);
         [phoneNumberVerificationCodeExpectation fulfill];
@@ -383,9 +383,9 @@
     id editUserObserverToken = [self.userSession.userProfile addObserver:editUserObserver];
     [[editUserObserver expect] didSendVerificationEmail];
     
-    id userObserver = [OCMockObject mockForProtocol:@protocol(ZMUserObserver)];
+    id userObserver = [OCMockObject mockForProtocol:@protocol(ZMUserObserving)];
     id userObserverToken = [UserChangeInfo addObserver:userObserver forUser:selfUser inManagedObjectContext:self.userSession.managedObjectContext];
-    [(id<ZMUserObserver>)[userObserver expect] userDidChange:OCMOCK_ANY]; // <- DONE: when receiving this, I know that the email was set
+    [(id<ZMUserObserving>)[userObserver expect] userDidChange:OCMOCK_ANY]; // <- DONE: when receiving this, I know that the email was set
 
     // when
     [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil]; // <- STEP 1
@@ -454,10 +454,10 @@
     
     id editingObserver = [OCMockObject mockForProtocol:@protocol(UserProfileUpdateObserver)];
     id editingToken = [self.userSession.userProfile addObserver:editingObserver];
-    id userObserver = [OCMockObject mockForProtocol:@protocol(ZMUserObserver)];
+    id userObserver = [OCMockObject mockForProtocol:@protocol(ZMUserObserving)];
     id userObserverToken = [UserChangeInfo addObserver:userObserver forUser:selfUser inManagedObjectContext:self.userSession.managedObjectContext];
-    [(id<ZMUserObserver>)[userObserver expect] userDidChange:OCMOCK_ANY]; // when receiving this, I know that the email was set
-    
+    [(id<ZMUserObserving>)[userObserver expect] userDidChange:OCMOCK_ANY]; // when receiving this, I know that the email was set
+
     // expect
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse*(ZMTransportRequest *request) {
         if([request.path isEqualToString:@"/self/password"]) {

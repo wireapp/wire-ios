@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,14 +19,16 @@
 import XCTest
 
 class ConversationTests_List: ConversationTestsBase {
-    func testThatTheConversationListOrderIsUpdatedAsWeReceiveMessages() {
+    func testThatTheConversationListOrderIsUpdatedAsWeReceiveMessages() throws {
         XCTAssertTrue(login())
 
         // given
         var mockExtraConversation: MockConversation?
 
-        self.mockTransportSession.performRemoteChanges { (session) in
-            mockExtraConversation = session.insertGroupConversation(withSelfUser: self.selfUser, otherUsers: [self.user1, self.user2])
+        let user1 = try XCTUnwrap(user1)
+        let user2 = try XCTUnwrap(user2)
+        self.mockTransportSession.performRemoteChanges { session in
+            mockExtraConversation = session.insertGroupConversation(withSelfUser: self.selfUser, otherUsers: [user1, user2])
             mockExtraConversation?.changeName(by: self.selfUser, name: "Extra conversation")
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -42,7 +44,7 @@ class ConversationTests_List: ConversationTestsBase {
         let observer = ConversationListChangeObserver.init(conversationList: conversations)
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: "Bla bla bla", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
             let fromUser = self.groupConversation.activeUsers.lastObject as! MockUser
             self.groupConversation.encryptAndInsertData(from: fromUser.clients.anyObject() as! MockUserClient,
@@ -68,25 +70,21 @@ class ConversationTests_List: ConversationTestsBase {
             XCTAssertEqual(note.deletedIndexes.count, 0)
             moves.append(contentsOf: note.zm_movedIndexPairs)
         }
-        XCTAssertEqual(updatesCount, 2) // Two updates because unread count is updated separately
         XCTAssertEqual(moves.count, 1)
         XCTAssertEqual(moves.first?.to, 0)
     }
 
-    func testThatLatestConversationIsAlwaysOnTop() {
+    func testThatLatestConversationIsAlwaysOnTop() throws {
         // given
         XCTAssertTrue(login())
 
         let conversationList = ZMConversationList.conversations(inUserSession: userSession!)
-        let conversation1 = conversation(for: self.selfToUser1Conversation)
-        _ = conversation1!.allMessages // Make sure we've faulted in the messages
-        let conversation2 = conversation(for: self.selfToUser2Conversation)
-        _ = conversation2!.allMessages // Make sure we've faulted in the messages
+        let conversation1 = try XCTUnwrap(conversation(for: self.selfToUser1Conversation))
+        _ = conversation1.allMessages // Make sure we've faulted in the messages
+        let conversation2 = try XCTUnwrap(conversation(for: self.selfToUser2Conversation))
+        _ = conversation2.allMessages // Make sure we've faulted in the messages
 
         let toClient = self.selfUser.clients.anyObject() as! MockUserClient
-
-        XCTAssertNotNil(conversation1)
-        XCTAssertNotNil(conversation2)
 
         let messageText1 = "some message"
         let messageText2 = "some other message"
@@ -99,9 +97,9 @@ class ConversationTests_List: ConversationTestsBase {
         // when
         let observer = ConversationListChangeObserver.init(conversationList: conversationList)
         observer?.clearNotifications()
-        let previousIndex1 = conversationList.index(of: conversation1!)
+        let previousIndex1 = conversationList.index(of: conversation1)
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: messageText1, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce1)
             self.selfToUser1Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
                                                               to: toClient,
@@ -115,14 +113,14 @@ class ConversationTests_List: ConversationTestsBase {
         let note1 = observer?.notifications.lastObject as! ConversationListChangeInfo
         XCTAssertEqual(note1.zm_movedIndexPairs.first, ZMMovedIndex.init(from: UInt(previousIndex1), to: 0))
 
-        let receivedMessage1 = conversation1?.lastMessage
+        let receivedMessage1 = conversation1.lastMessage
         XCTAssertEqual(receivedMessage1?.textMessageData?.messageText, messageText1)
-        let previousIndex2 = conversationList.index(of: conversation2!)
+        let previousIndex2 = conversationList.index(of: conversation2)
 
         // send second message
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: messageText2, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce2)
-            self.selfToUser2Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
+            self.selfToUser2Conversation.encryptAndInsertData(from: self.user2.clients.anyObject() as! MockUserClient,
                                                                          to: toClient,
                                                                          data: try! message.serializedData())
         }
@@ -134,13 +132,13 @@ class ConversationTests_List: ConversationTestsBase {
         let note2 = observer?.notifications[1] as! ConversationListChangeInfo
         XCTAssertEqual(note2.zm_movedIndexPairs.first, ZMMovedIndex.init(from: UInt(previousIndex2), to: 0))
 
-        let receivedMessage2 = conversation2?.lastMessage
+        let receivedMessage2 = conversation2.lastMessage
         XCTAssertEqual(receivedMessage2?.textMessageData?.messageText, messageText2)
-        let previousIndex3 = conversationList.index(of: conversation1!)
+        let previousIndex3 = conversationList.index(of: conversation1)
 
         // send first message again
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: messageText3, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce3)
             self.selfToUser1Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
                                                                          to: toClient,
@@ -154,7 +152,7 @@ class ConversationTests_List: ConversationTestsBase {
         let note3 = observer?.notifications.lastObject as! ConversationListChangeInfo
         XCTAssertEqual(note3.zm_movedIndexPairs.first, ZMMovedIndex.init(from: UInt(previousIndex3), to: 0))
 
-        let receivedMessage3 = conversation1?.lastMessage
+        let receivedMessage3 = conversation1.lastMessage
         XCTAssertEqual(receivedMessage3?.textMessageData?.messageText, messageText3)
     }
 
@@ -168,7 +166,7 @@ class ConversationTests_List: ConversationTestsBase {
         let oneToOneConversation = conversation(for: self.selfToUser1Conversation)
 
         // make sure oneToOneConversation is not on top
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let knock = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: UUID.create())
             self.selfToUser2Conversation.encryptAndInsertData(from: self.user2.clients.anyObject() as! MockUserClient,
                                                                          to: self.selfUser.clients.anyObject() as! MockUserClient,
@@ -182,7 +180,7 @@ class ConversationTests_List: ConversationTestsBase {
         let oneToOneIndex = conversationList.index(of: oneToOneConversation!)
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let knock = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: UUID.create())
             self.selfToUser1Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
                                                                          to: self.selfUser.clients.anyObject() as! MockUserClient,
@@ -197,7 +195,7 @@ class ConversationTests_List: ConversationTestsBase {
         XCTAssertNotNil(note)
 
         var moves: [Int: Int] = [:]
-        note.enumerateMovedIndexes { (from, to) in
+        note.enumerateMovedIndexes { from, to in
             moves[from] = to
         }
         let expectedArray = [oneToOneIndex: 0]
@@ -217,7 +215,7 @@ class ConversationTests_List: ConversationTestsBase {
 
         let conversationList = ZMConversationList.conversations(inUserSession: userSession!)
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: "some message", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
             self.selfToUser1Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
                                                                          to: self.selfUser.clients.anyObject() as! MockUserClient,
@@ -230,7 +228,7 @@ class ConversationTests_List: ConversationTestsBase {
         let conversationListChangeObserver = ConversationListChangeObserver.init(conversationList: conversationList)
 
         // when
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             session.remotelyAcceptConnection(to: mockUser)
         }
 

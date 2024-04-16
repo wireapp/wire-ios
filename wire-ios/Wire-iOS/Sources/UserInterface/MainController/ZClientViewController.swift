@@ -28,7 +28,6 @@ final class ZClientViewController: UIViewController {
     private(set) var conversationRootViewController: UIViewController?
     private(set) var currentConversation: ZMConversation?
 
-    // TODO: This must be removed from here once we introduce VIPER
     weak var router: AuthenticatedRouterProtocol?
 
     var isComingFromRegistration = false
@@ -57,26 +56,22 @@ final class ZClientViewController: UIViewController {
     private var pendingInitialStateRestore = false
 
     /// init method for testing allows injecting an Account object and self user
-    ///
-    /// - Parameters:
-    ///   - account: an Account object
-    ///   - selfUser: a SelfUserType object
     required init(
         account: Account,
         userSession: UserSession
     ) {
         self.userSession = userSession
+
         backgroundViewController = BackgroundViewController(
             user: userSession.selfUser,
             userSession: userSession as? ZMUserSession
         )
-
         conversationListViewController = ConversationListViewController(
             account: account,
             selfUser: userSession.selfLegalHoldSubject,
-            userSession: userSession
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
-
         colorSchemeController = ColorSchemeController(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
@@ -104,7 +99,7 @@ final class ZClientViewController: UIViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
-        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] (note) in
+        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] note in
             guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
             switch change {
@@ -206,10 +201,14 @@ final class ZClientViewController: UIViewController {
 
     // MARK: keyboard shortcut
     override var keyCommands: [UIKeyCommand]? {
-        return [
-            UIKeyCommand(action: #selector(openStartUI(_:)),
-                         input: "n", modifierFlags: [.command],
-                         discoverabilityTitle: L10n.Localizable.Keyboardshortcut.openPeople)]
+        [
+            UIKeyCommand(
+                action: #selector(openStartUI(_:)),
+                input: "n",
+                modifierFlags: [.command],
+                discoverabilityTitle: L10n.Localizable.Keyboardshortcut.openPeople
+            )
+        ]
     }
 
     @objc
@@ -264,7 +263,7 @@ final class ZClientViewController: UIViewController {
 
     // MARK: - Singleton
     static var shared: ZClientViewController? {
-        return AppDelegate.shared.appRootRouter?.rootViewController.children.first(where: {$0 is ZClientViewController}) as? ZClientViewController
+        return AppDelegate.shared.appRootRouter?.rootViewController.children.first(where: { $0 is ZClientViewController }) as? ZClientViewController
     }
 
     /// Select the connection inbox and optionally move focus to it.
@@ -355,7 +354,11 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter conversation: conversation to open
     func openDetailScreen(for conversation: ZMConversation) {
-        let controller = GroupDetailsViewController(conversation: conversation, userSession: userSession)
+        let controller = GroupDetailsViewController(
+            conversation: conversation,
+            userSession: userSession,
+            isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
+        )
         let navController = controller.wrapInNavigationController(setBackgroundColor: true)
         navController.modalPresentationStyle = .formSheet
 
@@ -381,7 +384,7 @@ final class ZClientViewController: UIViewController {
                 // we have to restore the proper pre-presentation state here.
                 let conversationView = self.conversationListViewController.view
                 if let transform = conversationView?.layer.transform {
-                    if !CATransform3DIsIdentity(transform) || 1 != conversationView?.alpha {
+                    if !CATransform3DIsIdentity(transform) || conversationView?.alpha != 1 {
                         conversationView?.layer.transform = CATransform3DIdentity
                         conversationView?.alpha = 1
                     }
@@ -629,7 +632,7 @@ final class ZClientViewController: UIViewController {
 
         let isRegularContainer = traitCollection.horizontalSizeClass == .regular
 
-        if isRegularContainer && nil == topOverlayViewController {
+        if isRegularContainer && topOverlayViewController == nil {
             contentTopCompactConstraint.isActive = false
             contentTopRegularConstraint.isActive = true
         } else {

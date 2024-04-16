@@ -44,7 +44,7 @@ final class ConversationInputBarViewController: UIViewController,
     let conversation: InputBarConversationType
     weak var delegate: ConversationInputBarViewControllerDelegate?
 
-    private let classificationProvider: ClassificationProviding?
+    private let classificationProvider: SecurityClassificationProviding?
 
     private(set) var inputController: UIViewController? {
         willSet {
@@ -327,7 +327,7 @@ final class ConversationInputBarViewController: UIViewController,
     init(
         conversation: InputBarConversationType,
         userSession: UserSession,
-        classificationProvider: ClassificationProviding? = ZMUserSession.shared()
+        classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared()
     ) {
         self.conversation = conversation
         self.classificationProvider = classificationProvider
@@ -615,30 +615,31 @@ final class ConversationInputBarViewController: UIViewController,
 
     // MARK: - PingButton
 
-        private func confirmPing(completion: @escaping (_ completion: Bool) -> Void) {
-            let participantCount = conversation.localParticipantsCount - 1
-            let title = L10n.Localizable.Conversation.Ping.ManyParticipantsConfirmation.title(participantCount)
+    private func confirmPing(completion: @escaping (_ completion: Bool) -> Void) {
+        let participantCount = conversation.localParticipantsCount - 1
+        let title = L10n.Localizable.Conversation.Ping.ManyParticipantsConfirmation.title(participantCount)
 
-            let controller = UIAlertController(
-                title: title,
-                message: nil,
-                preferredStyle: .alert
-            )
+        let controller = UIAlertController(
+            title: title,
+            message: nil,
+            preferredStyle: .alert
+        )
 
-            controller.addAction(.cancel { completion(false) })
+        controller.addAction(.cancel { completion(false) })
 
-            let sendAction = UIAlertAction(
-                title: L10n.Localizable.Conversation.Ping.Action.title,
-                style: .default,
-                handler: { _ in completion(true) }
-            )
+        let sendAction = UIAlertAction(
+            title: L10n.Localizable.Conversation.Ping.Action.title,
+            style: .default,
+            handler: { _ in completion(true) }
+        )
 
-            controller.addAction(sendAction)
-            self.present(controller, animated: true)
-        }
+        controller.addAction(sendAction)
+        self.present(controller, animated: true)
+    }
 
-        @objc
-        private func pingButtonPressed(_ button: UIButton?) {
+    @objc
+    private func pingButtonPressed(_ button: UIButton?) {
+        presentMLSPrivacyWarningIfNeeded { [self] in
             /// Don't take into account the selfUser when we check against the minimumPingParticipants
             /// That's why participantsIndex is **conversation.localParticipantsCount - 1**
             let participantIndex = conversation.localParticipantsCount - 1
@@ -654,6 +655,7 @@ final class ConversationInputBarViewController: UIViewController,
                 self.appendKnock()
             }
         }
+    }
 
     private func appendKnock() {
         guard let conversation = conversation as? ZMConversation else { return }
@@ -692,6 +694,20 @@ final class ConversationInputBarViewController: UIViewController,
         guard !AppDelegate.isOffline,
               let conversation = conversation as? ZMConversation else { return }
 
+        presentMLSPrivacyWarningIfNeeded {
+            self.showGiphy(for: conversation)
+        }
+    }
+
+    private func presentMLSPrivacyWarningIfNeeded(execute: @escaping () -> Void) {
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+            execute()
+        }
+
+        checker.performAction()
+    }
+
+    private func showGiphy(for conversation: ZMConversation) {
         inputBar.textView.resignFirstResponder()
         let giphySearchViewController = GiphySearchViewController(searchTerm: "", conversation: conversation, userSession: userSession)
         giphySearchViewController.delegate = self
@@ -801,7 +817,9 @@ extension ConversationInputBarViewController: GiphySearchViewControllerDelegate 
 
 extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
-    /// TODO: check this is still necessary on iOS 13?
+    // swiftlint:disable todo_requires_jira_link
+    // TODO: check this is still necessary on iOS 13?
+    // swiftlint:enable todo_requires_jira_link
     private func statusBarBlinksRedFix() {
         // Workaround http://stackoverflow.com/questions/26651355/
         do {
@@ -812,6 +830,15 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+            self.process(picker: picker, info: info)
+        }
+
+        checker.performAction()
+    }
+
+    private func process(picker: UIImagePickerController, info: [UIImagePickerController.InfoKey: Any]) {
         statusBarBlinksRedFix()
 
         let mediaType = info[UIImagePickerController.InfoKey.mediaType] as? String
@@ -860,8 +887,15 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
     @objc
     func sketchButtonPressed(_ sender: Any?) {
-        inputBar.textView.resignFirstResponder()
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
+            sketch()
+        })
 
+        checker.performAction()
+    }
+
+    private func sketch() {
+        inputBar.textView.resignFirstResponder()
         let viewController = CanvasViewController()
         viewController.delegate = self
         viewController.navigationItem.setupNavigationBarTitle(title: conversation.displayNameWithFallback)
@@ -874,6 +908,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
 extension ConversationInputBarViewController: InformalTextViewDelegate {
     func textView(_ textView: UITextView, hasImageToPaste image: MediaAsset) {
+
         let context = ConfirmAssetViewController.Context(asset: .image(mediaAsset: image),
                                                          onConfirm: {[weak self] editedImage in
                                                             self?.dismiss(animated: false)
@@ -886,7 +921,7 @@ extension ConversationInputBarViewController: InformalTextViewDelegate {
 
         let confirmImageViewController = ConfirmAssetViewController(context: context)
 
-        confirmImageViewController.previewTitle = conversation.displayNameWithFallback.localized
+        confirmImageViewController.previewTitle = conversation.displayNameWithFallback
 
         present(confirmImageViewController, animated: false)
     }
@@ -995,7 +1030,9 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     private func createConstraints() {
-        [securityLevelView, inputBar, markdownButton, typingIndicatorView].prepareForLayout()
+        [securityLevelView, inputBar, markdownButton, typingIndicatorView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         let bottomConstraint = inputBar.bottomAnchor.constraint(equalTo: inputBar.superview!.bottomAnchor)
         bottomConstraint.priority = .defaultLow

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,15 +22,12 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
     var sut: LegalHoldRequestStrategy!
     var mockSyncStatus: MockSyncStatus!
-    var mockSyncStateDelegate: MockSyncStateDelegate!
     var mockApplicationStatus: MockApplicationStatus!
 
     override func setUp() {
         super.setUp()
-        mockSyncStateDelegate = MockSyncStateDelegate()
         mockSyncStatus = MockSyncStatus(
             managedObjectContext: syncMOC,
-            syncStateDelegate: mockSyncStateDelegate,
             lastEventIDRepository: lastEventIDRepository
         )
         mockApplicationStatus = MockApplicationStatus()
@@ -47,7 +44,6 @@ class LegalHoldRequestStrategyTests: MessagingTest {
         sut = nil
         mockSyncStatus = nil
         mockApplicationStatus = nil
-        mockSyncStateDelegate = nil
         super.tearDown()
     }
 
@@ -115,7 +111,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = .create()
-            _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: self.syncMOC)
 
             // WHEN
             guard let request = self.sut.nextRequest(for: .v0) else { return XCTFail() }
@@ -164,7 +160,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = .create()
-            _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: self.syncMOC)
             expectedLegalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
 
             let payload = type(of: self).payloadForReceivingLegalHoldRequestStatus(request: expectedLegalHoldRequest)
@@ -189,7 +185,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = .create()
-            _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: self.syncMOC)
 
             let legalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
             selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)
@@ -220,20 +216,20 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        let legalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
-        let payload = type(of: self).payloadForReceivingLegalHoldRequestEvent(request: legalHoldRequest)
-        let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID())!
+        self.syncMOC.performAndWait {
+            let legalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
+            let payload = type(of: self).payloadForReceivingLegalHoldRequestEvent(request: legalHoldRequest)
+            let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID())!
 
-        // WHEN
-        await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
+            // WHEN
+            self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
 
-        syncMOC.performGroupedBlockAndWait {
             // THEN
             XCTAssertEqual(selfUser.legalHoldStatus, .pending(legalHoldRequest))
         }
     }
 
-    func testThatItProcessesLegalHoldDisabledEvent() async {
+    func testThatItProcessesLegalHoldDisabledEvent() {
         // GIVEN
         syncMOC.performGroupedBlockAndWait {
             self.mockSyncStatus.mockPhase = .fetchingLegalHoldStatus
@@ -242,7 +238,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
 
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = .create()
-            _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: selfUser, in: team, context: self.syncMOC)
 
             let legalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
             selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)
@@ -255,7 +251,9 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             "type": "user.legalhold-disable"
         ]
         let event = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID())!
-        await self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
+        syncMOC.performAndWait {
+            self.sut.processEvents([event], liveEvents: true, prefetchResult: .none)
+        }
 
         // THEN
         syncMOC.performGroupedBlockAndWait {

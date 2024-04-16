@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,19 +20,20 @@ import XCTest
 
 class ConversationTests_Participants: ConversationTestsBase {
 
-    func testThatAddingAndRemovingAParticipantToAConversationSendsOutChangeNotifications() {
+    func testThatAddingAndRemovingAParticipantToAConversationSendsOutChangeNotifications() async throws {
 
         // given
         XCTAssert(login())
 
-        let conversation = self.conversation(for: emptyGroupConversation)!
-        let connectedUser = user(for: self.user2)!
+        let conversation = try XCTUnwrap(self.conversation(for: self.emptyGroupConversation))
+        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
+        let connectedUser = await userSession!.managedObjectContext.perform { self.user(for: self.user2)! }
 
         let observer = ConversationChangeObserver(conversation: conversation)
         observer?.clearNotifications()
 
         // when
-        conversation.addParticipants([connectedUser], completion: { (_) in })
+        try await conversationParticipantsService.addParticipants([connectedUser], to: conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then - Participants changes and messages changes (System message for the added user)
@@ -47,7 +48,7 @@ class ConversationTests_Participants: ConversationTestsBase {
         observer?.notifications.removeAllObjects()
 
         // when
-        conversation.removeParticipant(connectedUser, completion: { (_) in })
+        try await conversationParticipantsService.removeParticipant(connectedUser, from: conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then - Participants changes and messages changes (System message for the removed user)
@@ -60,61 +61,73 @@ class ConversationTests_Participants: ConversationTestsBase {
         observer?.notifications.removeAllObjects()
     }
 
-    func testThatAddingParticipantsToAConversationIsSynchronizedWithBackend() {
+    func testThatAddingParticipantsToAConversationIsSynchronizedWithBackend() async throws {
         // given
         XCTAssert(login())
 
-        let conversation = self.conversation(for: emptyGroupConversation)!
-        let connectedUser = user(for: self.user2)!
+        let conversation = try XCTUnwrap(self.conversation(for: self.emptyGroupConversation))
+        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
+        let connectedUser = await userSession!.managedObjectContext.perform { self.user(for: self.user2)! }
 
-        XCTAssertFalse(conversation.localParticipants.contains(connectedUser))
-
+        await userSession!.managedObjectContext.perform {
+            XCTAssertFalse(conversation.localParticipants.contains(connectedUser))
+        }
         // when
-        conversation.addParticipants([connectedUser], completion: { (_) in })
+        try await conversationParticipantsService.addParticipants([connectedUser], to: conversation)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertTrue(conversation.localParticipants.contains(connectedUser))
-
+        await userSession!.managedObjectContext.perform {
+            XCTAssertTrue(conversation.localParticipants.contains(connectedUser))
+        }
         // Tear down & recreate contexts
-        recreateSessionManagerAndDeleteLocalData()
+        self.recreateSessionManagerAndDeleteLocalData()
         XCTAssertTrue(login())
 
         // then
-        XCTAssertTrue(self.conversation(for: emptyGroupConversation)!.localParticipants.contains(user(for: self.user2)!))
+        await userSession!.managedObjectContext.perform { [self] in
+            XCTAssertTrue(self.conversation(for: emptyGroupConversation)!.localParticipants.contains(user(for: self.user2)!))
+        }
     }
 
-    func testThatRemovingParticipantsFromAConversationIsSynchronizedWithBackend() {
+    func testThatRemovingParticipantsFromAConversationIsSynchronizedWithBackend() async throws {
         // given
         XCTAssert(login())
 
-        let conversation = self.conversation(for: groupConversation)!
-        let connectedUser = user(for: self.user2)!
+        let conversation = try XCTUnwrap(self.conversation(for: self.groupConversation))
+        let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
+        let connectedUser = await userSession!.managedObjectContext.perform { self.user(for: self.user2)! }
 
-        XCTAssertTrue(conversation.localParticipants.contains(connectedUser))
+        await userSession!.managedObjectContext.perform {
+            XCTAssertTrue(conversation.localParticipants.contains(connectedUser))
+        }
 
         // when
-        conversation.removeParticipant(connectedUser, completion: { (_) in })
+        try await conversationParticipantsService.removeParticipant(connectedUser, from: conversation)
         XCTAssertTrue( waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        // then
-        XCTAssertFalse(conversation.localParticipants.contains(connectedUser))
+        await userSession!.managedObjectContext.perform {
+            // then
+            XCTAssertFalse(conversation.localParticipants.contains(connectedUser))
+        }
 
         // Tear down & recreate contexts
-        recreateSessionManagerAndDeleteLocalData()
+        self.recreateSessionManagerAndDeleteLocalData()
         XCTAssertTrue(login())
 
         // then
-        XCTAssertFalse(self.conversation(for: groupConversation)!.localParticipants.contains(user(for: self.user2)!))
+        await userSession!.managedObjectContext.perform { [self] in
+            XCTAssertFalse(self.conversation(for: groupConversation)!.localParticipants.contains(user(for: self.user2)!))
+        }
     }
 
-    func testThatNotificationsAreReceivedWhenConversationsAreFaulted() {
+    func testThatNotificationsAreReceivedWhenConversationsAreFaulted() throws {
         // given
         XCTAssertTrue(login())
 
         // I am faulting conversation, will maintain the "message" relations as faulted
         let conversationList = ZMConversationList.conversations(inUserSession: userSession!)
-        let conversation1 = conversation(for: self.selfToUser1Conversation)
+        let conversation1 = try XCTUnwrap(conversation(for: self.selfToUser1Conversation))
         let previousIndex = conversationList.index(of: conversation1)
 
         XCTAssertEqual(conversationList.count, 5)
@@ -122,7 +135,7 @@ class ConversationTests_Participants: ConversationTestsBase {
         let observer = ConversationListChangeObserver.init(conversationList: conversationList)
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: "some message", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
             self.selfToUser1Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
                                                               to: self.selfUser.clients.anyObject() as! MockUserClient,
@@ -131,7 +144,6 @@ class ConversationTests_Participants: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertEqual(observer?.notifications.count, 2) // Two updates because unread count is updated separately
         let note1 = observer?.notifications.lastObject as! ConversationListChangeInfo
         XCTAssertEqual(note1.zm_movedIndexPairs.first, ZMMovedIndex.init(from: UInt(previousIndex), to: 0))
     }

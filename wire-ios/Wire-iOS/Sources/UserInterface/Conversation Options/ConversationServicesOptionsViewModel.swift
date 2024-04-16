@@ -23,7 +23,7 @@ protocol ConversationServicesOptionsViewModelConfiguration: AnyObject {
     var allowServices: Bool { get }
     var areServicePresent: Bool { get }
     var allowServicesChangedHandler: ((Bool) -> Void)? { get set }
-    func setAllowServices(_ allowServices: Bool, completion: @escaping (Swift.Result<Void, Error>) -> Void)
+    func setAllowServices(_ allowServices: Bool, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 protocol ConversationServicesOptionsViewModelDelegate: AnyObject {
@@ -68,7 +68,7 @@ final class ConversationServicesOptionsViewModel {
     }
     private func updateRows() {
         state.rows = [.allowServicesToggle(
-            get: { [unowned self] in return self.configuration.allowServices},
+            get: { [unowned self] in return self.configuration.allowServices },
             set: { [unowned self] in self.setAllowServices($0, view: $1) }
         )]
     }

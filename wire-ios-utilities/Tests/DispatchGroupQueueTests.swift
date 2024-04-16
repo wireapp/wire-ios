@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import WireTesting
 @testable import WireUtilities
 
-class DispatchGroupQueueTests: ZMTBaseTest {
+final class DispatchGroupQueueTests: ZMTBaseTest {
 
     var sut: DispatchGroupQueue!
 
@@ -31,8 +31,8 @@ class DispatchGroupQueueTests: ZMTBaseTest {
 
     func testPerformedGroupedBlockEntersAndLeavesAllGroups() {
         // given
-        let groupIsEmpty = expectation(description: "group1 is emtpy")
-        let group = ZMSDispatchGroup(label: "group1")!
+        let groupIsEmpty = customExpectation(description: "group1 is emtpy")
+        let group = ZMSDispatchGroup(label: "group1")
         sut = DispatchGroupQueue(queue: DispatchQueue.main)
         sut.add(group)
 

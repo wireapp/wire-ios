@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import XCTest
 import WireTesting
 import WireDataModel
+import WireDataModelSupport
 @testable import WireRequestStrategy
-import XCTest
 
-class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
+final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     // MARK: - Text Messages
     // MARK: Helpers
@@ -40,7 +41,7 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
         let expiresAfter: TimeInterval = isEphemeral ? 200 : 0
 
-        let mention = mentionedUser.map(papply(Mention.init, NSRange(location: 0, length: 8)))
+        let mention = mentionedUser.map { Mention(range: NSRange(location: 0, length: 8), user: $0) }
         let mentions = mention.map { [$0] } ?? []
 
         var quotedMessage: ZMClientMessage?
@@ -501,7 +502,7 @@ class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
             team.name = "Wire Amazing Team"
             team.remoteIdentifier = UUID.create()
             let user = ZMUser.selfUser(in: self.syncMOC)
-            _ = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
             user.teamIdentifier = team.remoteIdentifier
 
             // when
@@ -785,7 +786,7 @@ extension ZMLocalNotificationTests_Message {
             let team = Team.insertNewObject(in: self.syncMOC)
             team.name = "Wire Amazing Team"
             let user = ZMUser.selfUser(in: self.syncMOC)
-            _ = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
 
             // WHEN
             let note = self.textNotification(self.oneOnOneConversation, sender: self.sender, text: "Hello", isEphemeral: false)!
@@ -811,7 +812,8 @@ extension ZMLocalNotificationTests_Message {
             let earService = EARService(
                 accountID: self.accountIdentifier,
                 databaseContexts: [self.syncMOC],
-                sharedUserDefaults: UserDefaults.random()!
+                sharedUserDefaults: UserDefaults.temporary(),
+                authenticationContext: MockAuthenticationContextProtocol()
             )
             earService.setInitialEARFlagValue(true)
 
@@ -834,7 +836,8 @@ extension ZMLocalNotificationTests_Message {
             let earService = EARService(
                 accountID: self.accountIdentifier,
                 databaseContexts: [self.syncMOC],
-                sharedUserDefaults: UserDefaults.random()!
+                sharedUserDefaults: UserDefaults.temporary(),
+                authenticationContext: MockAuthenticationContextProtocol()
             )
             earService.setInitialEARFlagValue(true)
 
@@ -847,7 +850,7 @@ extension ZMLocalNotificationTests_Message {
             team.name = "Wire Amazing Team"
 
             let user = ZMUser.selfUser(in: self.syncMOC)
-            _ = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            _ = Member.getOrUpdateMember(for: user, in: team, context: self.syncMOC)
 
             // When
             let note = self.textNotification(self.oneOnOneConversation, sender: self.sender, text: "Hello", isEphemeral: false)!

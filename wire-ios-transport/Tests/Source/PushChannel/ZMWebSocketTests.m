@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import XCTest;
 @import WireTesting;
@@ -139,7 +138,7 @@
 - (void)testThatItAnswersAPingWithAPong
 {
     // given
-    XCTestExpectation *expectation = [self expectationWithDescription:@"didReceiveData"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"didReceiveData"];
     NSString *stringData = [[@[@"HTTP/1.1 101", @"Connection: upgrade", @"Upgrade: websocket", @"Sec-WebSocket-Accept: websocket"] componentsJoinedByString:@"\r\n"] stringByAppendingString:@"\r\n\r\n"];
     [self.fakeUIContext performGroupedBlock:^{
         [self.sut networkSocketDidOpen:self.networkSocketMock];
@@ -169,7 +168,7 @@
 {
     // given
     NSString *stringData = [[@[@"HTTP/1.1 101", @"Connection: upgrade", @"Upgrade: websocket", @"Sec-WebSocket-Accept: websocket"] componentsJoinedByString:@"\r\n"] stringByAppendingString:@"\r\n\r\n"];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"didReceiveData"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"didReceiveData"];
     [self.fakeUIContext performGroupedBlock:^{
         [self.sut networkSocketDidOpen:self.networkSocketMock];
     }];
@@ -203,7 +202,7 @@
 {
     // given
     __block NSData *sentData;
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Did receive data."];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Did receive data."];
     [[(id) self.networkSocketMock expect] writeData:[OCMArg checkWithBlock:^BOOL(id obj) {
         [expectation fulfill];
         sentData = obj;
@@ -253,7 +252,7 @@
                                            trustProvider:self.trustProvider
                                   additionalHeaderFields:extraHeaders];
     __block NSData *sentData;
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Did receive data."];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Did receive data."];
     [[(id) self.networkSocketMock expect] writeData:[OCMArg checkWithBlock:^BOOL(id obj) {
         [expectation fulfill];
         sentData = obj;
@@ -300,7 +299,7 @@
                             @"\r\n" dataUsingEncoding:NSUTF8StringEncoding];
     NSData *dataToBeSent = [NSData dataWithBytes:((char []){'A', 'B'}) length:2];
     
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Did receive data."];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Did receive data."];
     [[(id) self.networkSocketMock stub] writeData:[OCMArg checkWithBlock:^BOOL(id obj) {
         [sentData addObject:obj];
         if (sentData.count == 2) {
@@ -335,7 +334,7 @@
 {
     // given
     NSString *stringData = [[@[@"HTTP/1.1 101", @"Connection: upgrade", @"Upgrade: websocket", @"Sec-WebSocket-Accept: websocket"] componentsJoinedByString:@"\r\n"] stringByAppendingString:@"\r\n\r\n"];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"didReceiveData"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"didReceiveData"];
 
     // when
     [self.fakeUIContext performGroupedBlock:^{
@@ -363,7 +362,7 @@
 {
     // given
     NSString *stringData = [[@[@"HTTP/1.1 101", @"Connection: upgrade", @"Upgrade: websocket", @"Sec-WebSocket-Accept: websocket"] componentsJoinedByString:@"\r\n"] stringByAppendingString:@"\r\n\r"];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"didReceiveData"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"didReceiveData"];
 
     // when
     [self.fakeUIContext performGroupedBlock:^{
@@ -421,7 +420,7 @@
 {
     // given
     NSString *stringData = [[@[@"HTTP/1.1 400", @"Server: Apache"] componentsJoinedByString:@"\r\n"] stringByAppendingString:@"\r\n\r\n"];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"didReceiveData"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"didReceiveData"];
 
     // when
     [self performIgnoringZMLogError:^{

@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -119,7 +120,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
             let action = UpdateAccessRolesAction(conversation: self.conversation,
                                                  accessMode: accessMode,
                                                  accessRoles: accessRoles)
-            let expectation = self.expectation(description: "wait for handler to be called")
+            let expectation = self.customExpectation(description: "wait for handler to be called")
             action.resultHandler = { _ in
                 expectation.fulfill()
             }
@@ -159,8 +160,8 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
             var action = UpdateAccessRolesAction(conversation: self.conversation,
                                                  accessMode: accessMode,
                                                  accessRoles: accessRoles)
-            let expectation = self.expectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            let expectation = self.customExpectation(description: "Result Handler was called")
+            action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
                 }
@@ -193,8 +194,8 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
                                                  accessMode: accessMode,
                                                  accessRoles: accessRoles)
 
-            let expectation = self.expectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            let expectation = self.customExpectation(description: "Result Handler was called")
+            action.onResult { result in
                 if case .failure = result {
                     expectation.fulfill()
                 }

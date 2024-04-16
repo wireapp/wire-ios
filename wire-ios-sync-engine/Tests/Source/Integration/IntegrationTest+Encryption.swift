@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,13 +32,15 @@ extension IntegrationTest {
             selfClient.user!.remoteIdentifier = UUID()
         }
         if selfClient.remoteIdentifier == nil {
-            selfClient.remoteIdentifier = NSString.createAlphanumerical() as String
+            selfClient.remoteIdentifier = .randomRemoteIdentifier()
         }
 
         var cypherText: Data?
-        self.encryptionContext(for: sender).perform { (session) in
+        self.encryptionContext(for: sender).perform { session in
             if !session.hasSession(for: selfClient.sessionIdentifier!) {
+                // swiftlint:disable todo_requires_jira_link
                 // TODO: [John] use flag here
+                // swiftlint:enable todo_requires_jira_link
                 guard let lastPrekey = try? userSession!.syncContext.zm_cryptKeyStore.lastPreKey() else {
                     fatalError("Can't get prekey for self user")
                 }
@@ -56,59 +58,97 @@ extension IntegrationTest {
 
     /// Creates a session between the self client to the given user, if it does not
     /// exists already
-    public func establishSessionFromSelf(to client: UserClient) {
+    public func establishSessionFromSelf(to client: UserClient) async {
+
+        let context = userSession!.syncManagedObjectContext
 
         // this makes sure the client has remote identifier
-        _ = self.encryptionContext(for: client)
+        await context.perform { _ = self.encryptionContext(for: client) }
 
-        if client.hasSessionWithSelfClient {
+        var hasSessionWithSelfClient: Bool = false
+        userSession!.syncContext.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
+            hasSessionWithSelfClient = sessionsDirectory.hasSession(for: client.sessionIdentifier!)
+        }
+
+        if hasSessionWithSelfClient {
             // done!
             return
         }
 
-        let selfClient = ZMUser.selfUser(in: self.userSession!.syncManagedObjectContext).selfClient()!
-        var prekey: String?
-        self.encryptionContext(for: client).perform { (session) in
-            prekey = try! session.generateLastPrekey()
-        }
+        await context.perform {
+            _ = ZMUser.selfUser(in: context).selfClient()!
+            var prekey: String?
+            self.encryptionContext(for: client).perform { session in
+                do {
+                    prekey = try session.generateLastPrekey()
+                } catch {
+                    XCTFail("unexpected error: \(String(reflecting: error))")
+                }
+            }
 
-        // TODO: [John] use flag here
-        userSession!.syncContext.zm_cryptKeyStore.encryptionContext.perform { (session) in
-            try! session.createClientSession(client.sessionIdentifier!, base64PreKeyString: prekey!)
+            // swiftlint:disable todo_requires_jira_link
+            // TODO: [John] use flag here
+            // swiftlint:enable todo_requires_jira_link
+            context.zm_cryptKeyStore.encryptionContext.perform { session in
+                do {
+                    try session.createClientSession(client.sessionIdentifier!, base64PreKeyString: prekey!)
+                } catch {
+                    XCTFail("unexpected error: \(String(reflecting: error))")
+                }
+            }
         }
     }
 
     /// Creates a session between the self client, and a client matching a remote client.
     /// If no such client exists locally, it creates it (and the user associated with it).
-    public func establishSessionFromSelf(toRemote remoteClient: MockUserClient) {
+    public func establishSessionFromSelf(toRemote remoteClient: MockUserClient) async {
 
-        guard let remoteUserIdentifierString = remoteClient.user?.identifier,
-            let remoteUserIdentifier = UUID(uuidString: remoteUserIdentifierString),
-            let remoteClientIdentifier = remoteClient.identifier else {
-                fatalError("You should set up remote client with user and identifier")
+        let mockContext = self.mockTransportSession.managedObjectContext
+            // .syncManagedObjectContext
+        guard let remoteUserIdentifierString = await mockContext.perform({ remoteClient.user?.identifier }),
+              let remoteUserIdentifier = UUID(uuidString: remoteUserIdentifierString),
+              let remoteClientIdentifier = await mockContext.perform({ remoteClient.identifier }) else {
+            fatalError("You should set up remote client with user and identifier")
         }
 
-        // create user
+        let context = userSession!.syncManagedObjectContext
 
-        let localUser = ZMUser.fetchOrCreate(with: remoteUserIdentifier, domain: nil, in: userSession!.syncManagedObjectContext)
+        let (localClient, lastPrekey) = await context.perform {
+            // create user
+            let localUser = ZMUser.fetchOrCreate(with: remoteUserIdentifier, domain: nil, in: context)
 
-        // create client
-        let localClient = localUser.clients.first(where: { $0.remoteIdentifier == remoteClientIdentifier }) ?? { () -> UserClient in
-            let newClient = UserClient.insertNewObject(in: self.userSession!.syncManagedObjectContext)
-            newClient.user = localUser
-            newClient.remoteIdentifier = remoteClientIdentifier
-            return newClient
+            // create client
+            let localClient = localUser.clients.first(where: { $0.remoteIdentifier == remoteClientIdentifier }) ?? { () -> UserClient in
+                let newClient = UserClient.insertNewObject(in: context)
+                newClient.user = localUser
+                newClient.remoteIdentifier = remoteClientIdentifier
+                return newClient
             }()
-        self.userSession!.syncManagedObjectContext.saveOrRollback()
+            context.saveOrRollback()
 
-        var lastPrekey: String?
-        self.mockTransportSession.performRemoteChanges { (_) in
-            lastPrekey = remoteClient.lastPrekey.value
+            var lastPrekey: String!
+            self.mockTransportSession.performRemoteChanges { _ in
+                lastPrekey = remoteClient.lastPrekey.value
+            }
+            return (localClient, lastPrekey)
         }
 
-        let selfClient = ZMUser.selfUser(in: self.userSession!.syncManagedObjectContext).selfClient()!
-        if !localClient.hasSessionWithSelfClient {
-            XCTAssertTrue(selfClient.establishSessionWithClient(localClient, usingPreKey: lastPrekey!))
+        var hasSessionWithLocalClient: Bool = false
+        let syncContext = userSession!.syncContext
+
+        await syncContext.perform {
+            syncContext.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
+                hasSessionWithLocalClient = sessionsDirectory.hasSession(for: localClient.sessionIdentifier!)
+            }
+
+            if !hasSessionWithLocalClient {
+                // swiftlint:disable todo_requires_jira_link
+                // TODO: [John] use flag here
+                // swiftlint:enable todo_requires_jira_link
+                syncContext.zm_cryptKeyStore.encryptionContext.perform { session in
+                    try! session.createClientSession(localClient.sessionIdentifier!, base64PreKeyString: lastPrekey!)
+                }
+            }
         }
     }
 
@@ -117,7 +157,7 @@ extension IntegrationTest {
 
         let selfClient = ZMUser.selfUser(in: self.userSession!.syncManagedObjectContext).selfClient()!
         var plainText: Data?
-        self.encryptionContext(for: client).perform { (session) in
+        self.encryptionContext(for: client).perform { session in
             if session.hasSession(for: selfClient.sessionIdentifier!) {
                 do {
                     plainText = try session.decrypt(cypherText, from: selfClient.sessionIdentifier!)
@@ -153,9 +193,9 @@ extension IntegrationTest {
     /// If the client has no remote identifier, it will create one
     fileprivate func encryptionContext(for client: UserClient) -> EncryptionContext {
         if client.remoteIdentifier == nil {
-            client.remoteIdentifier = NSString.createAlphanumerical() as String
+            client.remoteIdentifier = .randomRemoteIdentifier()
         }
-        let url =  self.otherClientsEncryptionContextsURL.appendingPathComponent("client-\(client.remoteIdentifier!)")
+        let url = self.otherClientsEncryptionContextsURL.appendingPathComponent("client-\(client.remoteIdentifier!)")
         try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: [:])
         let encryptionContext = EncryptionContext(path: url)
         return encryptionContext

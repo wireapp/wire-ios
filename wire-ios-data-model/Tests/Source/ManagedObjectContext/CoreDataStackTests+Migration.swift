@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 import XCTest
+@testable import WireDataModel
 
 class CoreDataStackTests_Migration: DatabaseBaseTest {
 
@@ -31,10 +32,10 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
     }
 
     func performMigration(accountIdentifier: UUID,
-                          migration: @escaping (NSManagedObjectContext) throws -> Void) -> Result<Void>? {
-        var result: Result<Void>?
+                          migration: @escaping (NSManagedObjectContext) throws -> Void) -> Result<Void, Error>? {
+        var result: Result<Void, Error>?
         CoreDataStack.migrateLocalStorage(accountIdentifier: accountIdentifier,
-                                          applicationContainer: applicationContainer,
+                                          applicationContainer: DatabaseBaseTest.applicationContainer,
                                           dispatchGroup: dispatchGroup,
                                           migration: migration,
                                           completion: { result = $0 })
@@ -53,7 +54,7 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         _ = createStorageStackAndWaitForCompletion(userID: uuid)
 
         // when
-        let result = performMigration(accountIdentifier: uuid) { (context) in
+        let result = performMigration(accountIdentifier: uuid) { context in
             context.setPersistentStoreMetadata(metadataValue, key: metadataKey)
         }
 
@@ -73,9 +74,9 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         _ = createStorageStackAndWaitForCompletion(userID: uuid)
 
         // when
-        var result: Result<Void>?
+        var result: Result<Void, Error>?
         performIgnoringZMLogError {
-            result = self.performMigration(accountIdentifier: uuid) { (context) in
+            result = self.performMigration(accountIdentifier: uuid) { context in
                 context.setPersistentStoreMetadata(metadataValue, key: metadataKey)
                 try context.save()
                 throw TestError.somethingWentWrong
@@ -95,9 +96,9 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         let uuid = UUID()
 
         // when
-        var result: Result<Void>?
+        var result: Result<Void, Error>?
         performIgnoringZMLogError {
-            result = self.performMigration(accountIdentifier: uuid) { (_) in }
+            result = self.performMigration(accountIdentifier: uuid) { _ in }
         }
 
         // then
@@ -110,7 +111,7 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         _ = createStorageStackAndWaitForCompletion(userID: uuid)
 
         // when
-        let result = performMigration(accountIdentifier: uuid) { (_) in }
+        let result = performMigration(accountIdentifier: uuid) { _ in }
 
         // then
         guard case .success = result else { return XCTFail() }
@@ -124,9 +125,9 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         _ = createStorageStackAndWaitForCompletion(userID: uuid)
 
         // when
-        var result: Result<Void>?
+        var result: Result<Void, Error>?
         performIgnoringZMLogError {
-            result = self.performMigration(accountIdentifier: uuid) { (_) in
+            result = self.performMigration(accountIdentifier: uuid) { _ in
                 throw TestError.somethingWentWrong
             }
         }
@@ -136,5 +137,4 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
 
         XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.migrationDirectory.path))
     }
-
 }

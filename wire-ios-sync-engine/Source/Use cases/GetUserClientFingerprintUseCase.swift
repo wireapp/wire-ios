@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ public protocol GetUserClientFingerprintUseCaseProtocol {
     func invoke(userClient: UserClient) async -> Data?
 }
 
-public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol {
+public struct GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCaseProtocol {
 
     let proteusProvider: ProteusProviding
     let context: NSManagedObjectContext
@@ -32,8 +32,11 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
 
     // MARK: - Initialization
 
-    convenience init(syncContext: NSManagedObjectContext,
-                     transportSession: TransportSessionType) {
+    init(
+        syncContext: NSManagedObjectContext,
+        transportSession: TransportSessionType,
+        proteusProvider: ProteusProviding
+    ) {
         let httpClient = HttpClientImpl(
             transportSession: transportSession,
             queue: syncContext)
@@ -41,14 +44,15 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
         let sessionEstablisher = SessionEstablisher(
             context: syncContext,
             apiProvider: apiProvider)
-        let proteusProvider = ProteusProvider(context: syncContext)
 
         self.init(proteusProvider: proteusProvider, sessionEstablisher: sessionEstablisher, managedObjectContext: syncContext)
     }
 
-    init(proteusProvider: ProteusProviding,
-         sessionEstablisher: SessionEstablisherInterface,
-         managedObjectContext: NSManagedObjectContext) {
+    init(
+        proteusProvider: ProteusProviding,
+        sessionEstablisher: SessionEstablisherInterface,
+        managedObjectContext: NSManagedObjectContext
+    ) {
         self.proteusProvider = proteusProvider
         self.context = managedObjectContext
         self.sessionEstablisher = sessionEstablisher
@@ -59,22 +63,19 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
     public func invoke(userClient: UserClient) async -> Data? {
         let objectId = userClient.objectID
 
-        var existingUser: UserClient?
-        var shouldEstablishSession = false
-        var clientIds = Set<QualifiedClientID>()
-
-        await self.context.perform {
-            existingUser = try? self.context.existingObject(with: objectId) as? UserClient
-            shouldEstablishSession = existingUser?.hasSessionWithSelfClient == false
-            if let id = existingUser?.qualifiedClientID {
-                clientIds.insert(id)
-            }
+        guard let (existingClient, clientId) = await self.context.perform({
+            let client = try? self.context.existingObject(with: objectId) as? UserClient
+            return (client, client?.qualifiedClientID) as? (UserClient, QualifiedClientID)
+        }) else {
+            return nil
         }
+
+        let shouldEstablishSession = await existingClient.hasSessionWithSelfClient == false
 
         if shouldEstablishSession {
             if let apiVersion = BackendInfo.apiVersion {
                 do {
-                    try await sessionEstablisher.establishSession(with: clientIds, apiVersion: apiVersion)
+                    try await sessionEstablisher.establishSession(with: Set([clientId]), apiVersion: apiVersion)
                 } catch {
                     WireLogger.proteus.error("cannot establishSession while getting fingerprint: \(error)")
                 }
@@ -83,13 +84,11 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
             }
         }
 
-        guard let existingUser else { return nil }
-
         let isSelfClient = await context.perform {
-            existingUser.isSelfClient()
+            existingClient.isSelfClient()
         }
 
-        let canPerform  = await context.perform {
+        let canPerform = await context.perform {
             self.proteusProvider.canPerform
         }
 
@@ -101,7 +100,7 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
         if isSelfClient {
             return await localFingerprint()
         } else {
-            return await fetchRemoteFingerprint(for: existingUser)
+            return await fetchRemoteFingerprint(for: existingClient)
         }
     }
 
@@ -111,7 +110,7 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
         await proteusPerform(
             withProteusService: { proteusService in
                 do {
-                    let fingerprint = try proteusService.localFingerprint()
+                    let fingerprint = try await proteusService.localFingerprint()
                     fingerprintData = fingerprint.utf8Data
                 } catch {
                     WireLogger.proteus.error("Cannot fetch local fingerprint")
@@ -136,7 +135,7 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
         await proteusPerform(
             withProteusService: { proteusService in
                 do {
-                    let fingerprint = try proteusService.remoteFingerprint(forSession: sessionId)
+                    let fingerprint = try await proteusService.remoteFingerprint(forSession: sessionId)
                     fingerprintData = fingerprint.utf8Data
                 } catch {
                     WireLogger.proteus.error("Cannot fetch remote fingerprint for \(userClient)")
@@ -155,11 +154,9 @@ public class GetUserClientFingerprintUseCase: GetUserClientFingerprintUseCasePro
     // MARK: - Helpers
 
     private func proteusPerform<T>(
-        withProteusService proteusServiceBlock: @escaping ProteusServicePerformBlock<T>,
-        withKeyStore keyStoreBlock: @escaping KeyStorePerformBlock<T>
+        withProteusService proteusServiceBlock: @escaping ProteusServicePerformAsyncBlock<T>,
+        withKeyStore keyStoreBlock: @escaping KeyStorePerformAsyncBlock<T>
     ) async rethrows -> T {
-        return try await context.perform {
-            try self.proteusProvider.perform(withProteusService: proteusServiceBlock, withKeyStore: keyStoreBlock)
-        }
+        return try await self.proteusProvider.performAsync(withProteusService: proteusServiceBlock, withKeyStore: keyStoreBlock)
     }
 }

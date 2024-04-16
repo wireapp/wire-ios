@@ -117,7 +117,9 @@ final class ShareDestinationCell<D: ShareDestination>: UITableViewCell {
 
         stackView.addArrangedSubview(avatarViewContainer)
 
-        [avatarViewContainer, shieldView, guestUserIcon, legalHoldIcon, stackView, titleLabel, checkImageView].prepareForLayout()
+        [avatarViewContainer, shieldView, guestUserIcon, legalHoldIcon, stackView, titleLabel, checkImageView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         titleLabel.backgroundColor = .clear
         titleLabel.textColor = SemanticColors.Label.textDefault

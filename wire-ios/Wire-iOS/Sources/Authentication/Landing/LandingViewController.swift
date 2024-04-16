@@ -22,7 +22,7 @@ import WireTransport
 import WireSyncEngine
 import WireCommonComponents
 
-protocol LandingViewControllerDelegate {
+protocol LandingViewControllerDelegate: AnyObject {
     func landingViewControllerDidChooseCreateAccount()
     func landingViewControllerDidChooseLogin()
     func landingViewControllerDidChooseEnterpriseLogin()
@@ -118,10 +118,12 @@ final class LandingViewController: AuthenticationStepViewController {
         return stackView
     }()
 
-    private lazy var loginButton: Button = {
-        let button = Button(style: .primaryTextButtonStyle,
-                            cornerRadius: 16,
-                            fontSpec: .buttonBigSemibold)
+    private lazy var loginButton = {
+        let button = ZMButton(
+            style: .primaryTextButtonStyle,
+            cornerRadius: 16,
+            fontSpec: .buttonBigSemibold
+        )
         button.accessibilityIdentifier = "Login"
         button.setTitle(Landing.Login.Button.title, for: .normal)
         button.addTarget(self,
@@ -131,10 +133,12 @@ final class LandingViewController: AuthenticationStepViewController {
         return button
     }()
 
-    private lazy var enterpriseLoginButton: Button = {
-        let button = Button(style: .secondaryTextButtonStyle,
-                            cornerRadius: 16,
-                            fontSpec: .buttonBigSemibold)
+    private lazy var enterpriseLoginButton = {
+        let button = ZMButton(
+            style: .secondaryTextButtonStyle,
+            cornerRadius: 16,
+            fontSpec: .buttonBigSemibold
+        )
         button.accessibilityIdentifier = "Enterprise Login"
         button.accessibilityLabel = L10n.Accessibility.Landing.LoginEnterpriseButton.description
         button.setTitle(Landing.Login.Enterprise.Button.title, for: .normal)
@@ -145,10 +149,12 @@ final class LandingViewController: AuthenticationStepViewController {
         return button
     }()
 
-    private lazy var loginWithEmailButton: Button = {
-        let button = Button(style: .primaryTextButtonStyle,
-                            cornerRadius: 16,
-                            fontSpec: .buttonBigSemibold)
+    private lazy var loginWithEmailButton = {
+        let button = ZMButton(
+            style: .primaryTextButtonStyle,
+            cornerRadius: 16,
+            fontSpec: .buttonBigSemibold
+        )
         button.accessibilityIdentifier = "Login with email"
         button.setTitle(Landing.Login.Email.Button.title, for: .normal)
         button.addTarget(self,
@@ -169,10 +175,12 @@ final class LandingViewController: AuthenticationStepViewController {
         return label
     }()
 
-    private lazy var createAccountButton: Button = {
-        let button = Button(style: .secondaryTextButtonStyle,
-                            cornerRadius: 12,
-                            fontSpec: .buttonSmallBold)
+    private lazy var createAccountButton = {
+        let button = ZMButton(
+            style: .secondaryTextButtonStyle,
+            cornerRadius: 12,
+            fontSpec: .buttonSmallBold
+        )
         button.accessibilityIdentifier = "Create An Account"
         button.setTitle(Landing.CreateAccount.title, for: .normal)
         button.addTarget(self,
@@ -303,14 +311,18 @@ final class LandingViewController: AuthenticationStepViewController {
     }
 
     private func activateRightConstraint() {
-        [contentViewLeadingConstraint,
-         contentViewTrailingConstraint,
-         createAccountButtomBottomConstraint].forEach {
+        [
+            contentViewLeadingConstraint,
+            contentViewTrailingConstraint,
+            createAccountButtomBottomConstraint
+        ].forEach {
             $0.isActive = traitCollection.horizontalSizeClass == .compact
         }
 
-        [contentViewWidthConstraint,
-         createAccountInfoLabelTopConstraint].forEach {
+        [
+            contentViewWidthConstraint,
+            createAccountInfoLabelTopConstraint
+        ].forEach {
             $0.isActive = traitCollection.horizontalSizeClass != .compact
         }
     }
@@ -332,7 +344,7 @@ final class LandingViewController: AuthenticationStepViewController {
             messageLabel,
             subMessageLabel,
             createAccountInfoLabel
-        ].prepareForLayout()
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
     }
 
     private func createAndAddConstraints() {
@@ -435,6 +447,7 @@ final class LandingViewController: AuthenticationStepViewController {
     }
 
     private func updateBarButtonItem() {
+        navigationItem.backButtonDisplayMode = .minimal
         if SessionManager.shared?.firstAuthenticatedAccount == nil {
             navigationItem.rightBarButtonItem = nil
         } else {

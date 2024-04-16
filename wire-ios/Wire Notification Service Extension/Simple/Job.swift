@@ -60,8 +60,8 @@ final class Job: NSObject, Loggable {
 
         let session = try networkSession ?? NetworkSession(userID: userID)
         self.networkSession = session
-        self.accessAPIClient = accessAPIClient ??  AccessAPIClient(networkSession: session)
-        self.notificationsAPIClient = notificationsAPIClient ??  NotificationsAPIClient(networkSession: session)
+        self.accessAPIClient = accessAPIClient ?? AccessAPIClient(networkSession: session)
+        self.notificationsAPIClient = notificationsAPIClient ?? NotificationsAPIClient(networkSession: session)
         super.init()
     }
 
@@ -80,7 +80,7 @@ final class Job: NSObject, Loggable {
         let event = try await fetchEvent(eventID: eventID)
 
         switch event.type {
-        case .conversationOtrMessageAdd:
+        case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
             logger.trace("\(self.request.identifier, privacy: .public): returning notification for new message")
             let content = UNMutableNotificationContent()
             content.body = "You received a new message"

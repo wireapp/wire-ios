@@ -20,7 +20,9 @@ import Foundation
 import UIKit
 import WireDataModel
 
+// swiftlint:disable todo_requires_jira_link
 // TODO: merge to UserClientType or stay in UI project? It is depends on localized string resource
+// swiftlint:enable todo_requires_jira_link
 protocol UserClientTypeAttributedString {
     func attributedRemoteIdentifier(_ attributes: [NSAttributedString.Key: AnyObject], boldAttributes: [NSAttributedString.Key: AnyObject], uppercase: Bool) -> NSAttributedString
 }
@@ -30,7 +32,7 @@ private let UserClientIdentifierMinimumLength = 16
 extension Sequence where Element: UserClientType {
 
     func sortedByRelevance() -> [UserClientType] {
-        return sorted { (lhs, rhs) -> Bool in
+        return sorted { lhs, rhs -> Bool in
 
             if lhs.deviceClass == .legalHold {
                 return true
@@ -47,7 +49,7 @@ extension Sequence where Element: UserClientType {
 extension UserClientType {
 
     public func attributedRemoteIdentifier(_ attributes: [NSAttributedString.Key: AnyObject], boldAttributes: [NSAttributedString.Key: AnyObject], uppercase: Bool = false) -> NSAttributedString {
-        let identifierPrefixString = NSLocalizedString("registration.devices.id", comment: "") + " "
+        let identifierPrefixString = L10n.Localizable.Registration.Devices.id + " "
         let identifierString = NSMutableAttributedString(string: identifierPrefixString, attributes: attributes)
         let identifier = uppercase ? displayIdentifier.localizedUppercase : displayIdentifier
         let attributedRemoteIdentifier = identifier.fingerprintStringWithSpaces.fingerprintString(attributes: attributes, boldAttributes: boldAttributes)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ class ModifiedKeyObjectSync<Transcoder: ModifiedKeyObjectSyncTranscoder>: NSObje
     }
 
     func objectsDidChange(_ objects: Set<NSManagedObject>) {
-        let trackedObjects = objects.compactMap({ $0 as? Transcoder.Object})
+        let trackedObjects = objects.compactMap({ $0 as? Transcoder.Object })
         let modifiedObjects = trackedObjects.filter({ modifiedPredicate?.evaluate(with: $0) ?? true })
 
         addModifiedObjects(modifiedObjects)
@@ -73,7 +73,7 @@ class ModifiedKeyObjectSync<Transcoder: ModifiedKeyObjectSyncTranscoder>: NSObje
     }
 
     func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        let trackedObjects = objects.compactMap({ $0 as? Transcoder.Object})
+        let trackedObjects = objects.compactMap({ $0 as? Transcoder.Object })
 
         addModifiedObjects(trackedObjects)
     }

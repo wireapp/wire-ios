@@ -733,6 +733,20 @@ internal enum L10n {
         internal static let hint = L10n.tr("Accessibility", "deviceDetails.whyVerifyFingerprint.hint", fallback: "Double tap to learn more about verifications")
       }
     }
+    internal enum GroupDetails {
+      internal enum Conversation {
+        internal enum Participants {
+          /// all devices have a valid end-to-end identity certificate
+          internal static let allDevicesHaveValidCertificates = L10n.tr("Accessibility", "groupDetails.conversation.participants.allDevicesHaveValidCertificates", fallback: "all devices have a valid end-to-end identity certificate")
+          /// all devices are verified (Proteus)
+          internal static let allDevicesProteusVerified = L10n.tr("Accessibility", "groupDetails.conversation.participants.allDevicesProteusVerified", fallback: "all devices are verified (Proteus)")
+          /// all your devices have a valid end-to-end identity certificate
+          internal static let allYourDevicesHaveValidCertificates = L10n.tr("Accessibility", "groupDetails.conversation.participants.allYourDevicesHaveValidCertificates", fallback: "all your devices have a valid end-to-end identity certificate")
+          /// all your devices are verified (Proteus)
+          internal static let allYourDevicesProteusVerified = L10n.tr("Accessibility", "groupDetails.conversation.participants.allYourDevicesProteusVerified", fallback: "all your devices are verified (Proteus)")
+        }
+      }
+    }
     internal enum GuestConversationSettings {
       internal enum CloseButton {
         /// Close guest settings
@@ -1272,6 +1286,42 @@ internal enum L10n {
           internal static let zoom = L10n.tr("Localizable", "call.grid.hints.zoom", fallback: "Pinch to zoom")
         }
       }
+      internal enum Mls {
+        internal enum Degraded {
+          internal enum Alert {
+            /// At least one participant started using a new device or has an invalid certificate.
+            /// 
+            /// Do you still want to start the call?
+            internal static let message = L10n.tr("Localizable", "call.mls.degraded.alert.message", fallback: "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to start the call?")
+            /// Conversation no longer verified
+            internal static let title = L10n.tr("Localizable", "call.mls.degraded.alert.title", fallback: "Conversation no longer verified")
+            internal enum Action {
+              /// Call anyway
+              internal static let `continue` = L10n.tr("Localizable", "call.mls.degraded.alert.action.continue", fallback: "Call anyway")
+            }
+          }
+          internal enum Ended {
+            internal enum Alert {
+              /// The call was disconnected as at least one participant started using a new device or has an invalid certificate.
+              internal static let message = L10n.tr("Localizable", "call.mls.degraded.ended.alert.message", fallback: "The call was disconnected as at least one participant started using a new device or has an invalid certificate.")
+              /// Conversation no longer verified
+              internal static let title = L10n.tr("Localizable", "call.mls.degraded.ended.alert.title", fallback: "Conversation no longer verified")
+            }
+          }
+          internal enum Incoming {
+            internal enum Alert {
+              /// At least one participant started using a new device or has an invalid certificate.
+              /// 
+              /// Do you still want to join the call?
+              internal static let message = L10n.tr("Localizable", "call.mls.degraded.incoming.alert.message", fallback: "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to join the call?")
+              internal enum Action {
+                /// Join anyway
+                internal static let `continue` = L10n.tr("Localizable", "call.mls.degraded.incoming.alert.action.continue", fallback: "Join anyway")
+              }
+            }
+          }
+        }
+      }
       internal enum Overlay {
         internal enum SwitchTo {
           /// ALL
@@ -1780,17 +1830,9 @@ internal enum L10n {
         internal static func peopleStartedUsing(_ p1: Any, _ p2: Int, _ p3: Int) -> String {
           return L10n.tr("Localizable", "content.system.people_started_using", String(describing: p1), p2, p3, fallback: "Plural format key: \"%@%#@d_number_of_others@ started using %#@d_new_devices@\"")
         }
-        /// You started using [this device](%@) again. Messages sent in the meantime will not appear here.
-        internal static func reactivatedDevice(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "content.system.reactivated_device", String(describing: p1), fallback: "You started using [this device](%@) again. Messages sent in the meantime will not appear here.")
-        }
         /// You started using [a new device](%@)
         internal static func selfUserNewClient(_ p1: Any) -> String {
           return L10n.tr("Localizable", "content.system.self_user_new_client", String(describing: p1), fallback: "You started using [a new device](%@)")
-        }
-        /// You started using [this device](%@)
-        internal static func selfUserNewSelfClient(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "content.system.self_user_new_self_client", String(describing: p1), fallback: "You started using [this device](%@)")
         }
         /// You unverified one of [%1$@’s devices](%2$@)
         internal static func unverifiedOtherDevices(_ p1: Any, _ p2: Any) -> String {
@@ -1839,36 +1881,14 @@ internal enum L10n {
           }
         }
         internal enum Call {
-          /// %@ called
-          internal static func called(_ p1: Any) -> String {
-            return L10n.tr("Localizable", "content.system.call.called", String(describing: p1), fallback: "%@ called")
-          }
-          /// %@ called
-          internal static func calledYou(_ p1: Any) -> String {
-            return L10n.tr("Localizable", "content.system.call.called-you", String(describing: p1), fallback: "%@ called")
-          }
           /// Plural format key: "%#@missed_call@"
           internal static func missedCall(_ p1: Int) -> String {
             return L10n.tr("Localizable", "content.system.call.missed-call", p1, fallback: "Plural format key: \"%#@missed_call@\"")
-          }
-          /// Missed call
-          internal static let missedCallYou = L10n.tr("Localizable", "content.system.call.missed-call-you", fallback: "Missed call")
-          internal enum Called {
-            /// You
-            internal static let you = L10n.tr("Localizable", "content.system.call.called.you", fallback: "You")
           }
           internal enum MissedCall {
             /// Plural format key: "%#@missed_call_from@"
             internal static func groups(_ p1: Int) -> String {
               return L10n.tr("Localizable", "content.system.call.missed-call.groups", p1, fallback: "Plural format key: \"%#@missed_call_from@\"")
-            }
-            /// Plural format key: "%#@missed_call_from@"
-            internal static func groupsYou(_ p1: Int) -> String {
-              return L10n.tr("Localizable", "content.system.call.missed-call.groups-you", p1, fallback: "Plural format key: \"%#@missed_call_from@\"")
-            }
-            internal enum Groups {
-              /// You
-              internal static let you = L10n.tr("Localizable", "content.system.call.missed-call.groups.you", fallback: "You")
             }
           }
         }
@@ -2051,8 +2071,10 @@ internal enum L10n {
         internal enum MessageLegalHold {
           /// Legal hold deactivated for this conversation
           internal static let disabled = L10n.tr("Localizable", "content.system.message_legal_hold.disabled", fallback: "Legal hold deactivated for this conversation")
-          /// This conversation is under legal hold
-          internal static let enabled = L10n.tr("Localizable", "content.system.message_legal_hold.enabled", fallback: "This conversation is under legal hold")
+          /// This conversation is under legal hold [LEARN MORE](%@)
+          internal static func enabled(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.message_legal_hold.enabled", String(describing: p1), fallback: "This conversation is under legal hold [LEARN MORE](%@)")
+          }
           /// Learn more
           internal static let learnMore = L10n.tr("Localizable", "content.system.message_legal_hold.learn_more", fallback: "Learn more")
         }
@@ -2109,6 +2131,46 @@ internal enum L10n {
             /// Meanwhile, %@ has been removed.
             internal static func singular(_ p1: Any) -> String {
               return L10n.tr("Localizable", "content.system.missing_messages.users_removed.singular", String(describing: p1), fallback: "You haven’t used this device for a while. Some messages may not appear here.\n\nMeanwhile, %@ has been removed.")
+            }
+          }
+        }
+        internal enum Mls {
+          /// This conversation is no longer verified, as at least one participant started using a new device or has an invalid certificate.
+          internal static let conversationIsDegraded = L10n.tr("Localizable", "content.system.mls.conversation_is_degraded", fallback: "This conversation is no longer verified, as at least one participant started using a new device or has an invalid certificate.")
+          /// All devices are verified by End-to-end Identity. [Learn more](%@)
+          internal static func conversationIsVerified(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "content.system.mls.conversation_is_verified", String(describing: p1), fallback: "All devices are verified by End-to-end Identity. [Learn more](%@)")
+          }
+        }
+        internal enum MlsMigration {
+          /// You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.
+          internal static let joinAfterwards = L10n.tr("Localizable", "content.system.mls_migration.join_afterwards", fallback: "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.")
+          /// Learn more about MLS
+          internal static let learnMore = L10n.tr("Localizable", "content.system.mls_migration.learn_more", fallback: "Learn more about MLS")
+          /// You can't communicate with %@ anymore, as you two now use different protocols. When %@ gets an update, you can call and send messages and files again.
+          internal static func mlsNotSupportedByOtherUser(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "content.system.mls_migration.mls_not_supported_by_otherUser", String(describing: p1), String(describing: p2), fallback: "You can't communicate with %@ anymore, as you two now use different protocols. When %@ gets an update, you can call and send messages and files again.")
+          }
+          /// You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol. [**Download the latest MLS Wire version**](%@) to call, and send messages and files again.
+          internal static func mlsNotSupportedByYou(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "content.system.mls_migration.mls_not_supported_by_you", String(describing: p1), String(describing: p2), fallback: "You can’t communicate with %@ anymore, as your device doesn’t support the suitable protocol. [**Download the latest MLS Wire version**](%@) to call, and send messages and files again.")
+          }
+          /// Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.
+          internal static let ongoingCall = L10n.tr("Localizable", "content.system.mls_migration.ongoing_call", fallback: "Due to migration to MLS, you might have issues with your current call. If that's the case, hang up and call again.")
+          /// You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.
+          internal static let potentialGap = L10n.tr("Localizable", "content.system.mls_migration.potentialGap", fallback: "You haven’t updated this device for a while. In the meantime, the standard messaging protocol changed from Proteus to Messaging Layer Security (MLS). Due to this change, some messages may not appear here.")
+          internal enum Finalized {
+            /// This conversation now uses the new Messaging Layer Security (MLS) protocol. To communicate seamlessly, always use the latest version of Wire on your devices.
+            internal static let done = L10n.tr("Localizable", "content.system.mls_migration.finalized.done", fallback: "This conversation now uses the new Messaging Layer Security (MLS) protocol. To communicate seamlessly, always use the latest version of Wire on your devices.")
+          }
+          internal enum Started {
+            /// The standard messaging protocol is changing from Proteus to the new Messaging Layer Security (MLS).
+            internal static let description = L10n.tr("Localizable", "content.system.mls_migration.started.description", fallback: "The standard messaging protocol is changing from Proteus to the new Messaging Layer Security (MLS).")
+            /// Ensure you use the latest version of Wire to be ready for MLS and continue communicating seamlessly.
+            internal static let updateLatestVersion = L10n.tr("Localizable", "content.system.mls_migration.started.update_latest_version", fallback: "Ensure you use the latest version of Wire to be ready for MLS and continue communicating seamlessly.")
+            /// Update Wire until %@ to be ready for MLS and continue communicating seamlessly.
+            internal static func updateWithDate(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "content.system.mls_migration.started.update_with_date", String(describing: p1), fallback: "Update Wire until %@ to be ready for MLS and continue communicating seamlessly.")
             }
           }
         }
@@ -2235,8 +2297,8 @@ internal enum L10n {
           internal static let cancel = L10n.tr("Localizable", "conversation.create.mls.cancel", fallback: "Cancel")
           /// Select Protocol
           internal static let pickerTitle = L10n.tr("Localizable", "conversation.create.mls.picker_title", fallback: "Select Protocol")
-          /// Select MLS to create a group using Messaging Layer Security protocol (beta version).
-          internal static let subtitle = L10n.tr("Localizable", "conversation.create.mls.subtitle", fallback: "Select MLS to create a group using Messaging Layer Security protocol (beta version).")
+          /// Select MLS to create a group using the Messaging Layer Security protocol.
+          internal static let subtitle = L10n.tr("Localizable", "conversation.create.mls.subtitle", fallback: "Select MLS to create a group using the Messaging Layer Security protocol.")
           /// Protocol
           internal static let title = L10n.tr("Localizable", "conversation.create.mls.title", fallback: "Protocol")
         }
@@ -2262,6 +2324,16 @@ internal enum L10n {
           }
           /// Conversation options
           internal static let title = L10n.tr("Localizable", "conversation.create.options.title", fallback: "Conversation options")
+        }
+        internal enum ProtocolSelection {
+          /// MLS
+          internal static let mls = L10n.tr("Localizable", "conversation.create.protocol_selection.mls", fallback: "MLS")
+          /// MLS (default)
+          internal static let mlsDefault = L10n.tr("Localizable", "conversation.create.protocol_selection.mls_default", fallback: "MLS (default)")
+          /// Proteus
+          internal static let proteus = L10n.tr("Localizable", "conversation.create.protocol_selection.proteus", fallback: "Proteus")
+          /// Proteus (default)
+          internal static let proteusDefault = L10n.tr("Localizable", "conversation.create.protocol_selection.proteus_default", fallback: "Proteus (default)")
         }
         internal enum Receipts {
           /// When this is on, people can see when their messages in this conversation are read.
@@ -2765,6 +2837,66 @@ internal enum L10n {
         /// Unknown
         internal static let unknown = L10n.tr("Localizable", "device.class.unknown", fallback: "Unknown")
       }
+      internal enum Details {
+        internal enum CertificateDetails {
+          /// Copy to Clipboard
+          internal static let copyToClipboard = L10n.tr("Localizable", "device.details.certificate_details.copy_to_clipboard", fallback: "Copy to Clipboard")
+          /// Certificate Details
+          internal static let title = L10n.tr("Localizable", "device.details.certificate_details.title", fallback: "Certificate Details")
+        }
+        internal enum Section {
+          internal enum E2ei {
+            /// Get Certificate
+            internal static let getCertificate = L10n.tr("Localizable", "device.details.section.e2ei.get_certificate", fallback: "Get Certificate")
+            /// Serial Number
+            internal static let serialNumber = L10n.tr("Localizable", "device.details.section.e2ei.serial_number", fallback: "Serial Number")
+            /// Show Certificate Details
+            internal static let showCertificateDetails = L10n.tr("Localizable", "device.details.section.e2ei.show_certificate_details", fallback: "Show Certificate Details")
+            /// End-to-end Identity Certificate
+            internal static let title = L10n.tr("Localizable", "device.details.section.e2ei.title", fallback: "End-to-end Identity Certificate")
+            /// Update Certificate
+            internal static let updateCertificate = L10n.tr("Localizable", "device.details.section.e2ei.update_certificate", fallback: "Update Certificate")
+            internal enum Status {
+              /// Expired
+              internal static let expired = L10n.tr("Localizable", "device.details.section.e2ei.status.expired", fallback: "Expired")
+              /// Invalid
+              internal static let invalid = L10n.tr("Localizable", "device.details.section.e2ei.status.invalid", fallback: "Invalid")
+              /// Not activated
+              internal static let notActivated = L10n.tr("Localizable", "device.details.section.e2ei.status.not_activated", fallback: "Not activated")
+              /// Revoked
+              internal static let revoked = L10n.tr("Localizable", "device.details.section.e2ei.status.revoked", fallback: "Revoked")
+              /// Status
+              internal static let title = L10n.tr("Localizable", "device.details.section.e2ei.status.title", fallback: "Status")
+              /// Valid
+              internal static let valid = L10n.tr("Localizable", "device.details.section.e2ei.status.valid", fallback: "Valid")
+            }
+          }
+          internal enum Mls {
+            /// MLS with Ed25519 Signature
+            internal static let signature = L10n.tr("Localizable", "device.details.section.mls.signature", fallback: "MLS with Ed25519 Signature")
+            /// MLS Thumbprint: %@
+            internal static func thumbprint(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "device.details.section.mls.thumbprint", String(describing: p1), fallback: "MLS Thumbprint: %@")
+            }
+            /// MLS Thumbprint
+            internal static let title = L10n.tr("Localizable", "device.details.section.mls.title", fallback: "MLS Thumbprint")
+          }
+          internal enum Proteus {
+            /// Activated
+            internal static let activated = L10n.tr("Localizable", "device.details.section.proteus.activated", fallback: "Activated")
+            /// Proteus ID
+            internal static let id = L10n.tr("Localizable", "device.details.section.proteus.id", fallback: "Proteus ID")
+            /// Proteus Key Fingerprint
+            internal static let keyFingerprint = L10n.tr("Localizable", "device.details.section.proteus.key_fingerprint", fallback: "Proteus Key Fingerprint")
+            /// PROTEUS DEVICE DETAILS
+            internal static let title = L10n.tr("Localizable", "device.details.section.proteus.title", fallback: "PROTEUS DEVICE DETAILS")
+            /// Proteus ID: %@
+            internal static func value(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "device.details.section.proteus.value", String(describing: p1), fallback: "Proteus ID: %@")
+            }
+          }
+        }
+      }
       internal enum `Type` {
         /// Legal Hold
         internal static let legalhold = L10n.tr("Localizable", "device.type.legalhold", fallback: "Legal Hold")
@@ -2841,6 +2973,16 @@ internal enum L10n {
         /// Email is too short
         internal static let tooshort = L10n.tr("Localizable", "email.guidance.tooshort", fallback: "Email is too short")
       }
+    }
+    internal enum EnrollE2eiCertificate {
+      /// Certificate Details
+      internal static let certificateDetailsButton = L10n.tr("Localizable", "enroll_e2ei_certificate.certificate_details_button", fallback: "Certificate Details")
+      /// OK
+      internal static let okButton = L10n.tr("Localizable", "enroll_e2ei_certificate.ok_button", fallback: "OK")
+      /// The certificate is active and your device is verified.
+      internal static let subtitle = L10n.tr("Localizable", "enroll_e2ei_certificate.subtitle", fallback: "The certificate is active and your device is verified.")
+      /// Certificate issued
+      internal static let title = L10n.tr("Localizable", "enroll_e2ei_certificate.title", fallback: "Certificate issued")
     }
     internal enum Error {
       /// Please enter a valid email address
@@ -2979,6 +3121,30 @@ internal enum L10n {
         internal static let unkownError = L10n.tr("Localizable", "error.user.unkown_error", fallback: "Something went wrong, please try again")
       }
     }
+    internal enum FailedToGetCertificate {
+      internal enum Alert {
+        /// Please try again, or reach out to your team admin.
+        internal static let forcedMessage = L10n.tr("Localizable", "failed_to_get_certificate.alert.forced_message", fallback: "Please try again, or reach out to your team admin.")
+        /// You can retry to get the certificate now, or you will get a reminder later.
+        internal static let message = L10n.tr("Localizable", "failed_to_get_certificate.alert.message", fallback: "You can retry to get the certificate now, or you will get a reminder later.")
+        /// Certificate couldn’t be issued.
+        internal static let title = L10n.tr("Localizable", "failed_to_get_certificate.alert.title", fallback: "Certificate couldn’t be issued.")
+      }
+      internal enum Button {
+        /// OK
+        internal static let ok = L10n.tr("Localizable", "failed_to_get_certificate.button.ok", fallback: "OK")
+        /// Retry
+        internal static let retry = L10n.tr("Localizable", "failed_to_get_certificate.button.retry", fallback: "Retry")
+      }
+    }
+    internal enum FailedToUpdateCertificate {
+      internal enum Alert {
+        /// You can retry to update the certificate now, or you will get a reminder later.
+        internal static let message = L10n.tr("Localizable", "failed_to_update_certificate.alert.message", fallback: "You can retry to update the certificate now, or you will get a reminder later.")
+        /// Certificate couldn’t be updated.
+        internal static let title = L10n.tr("Localizable", "failed_to_update_certificate.alert.title", fallback: "Certificate couldn’t be updated.")
+      }
+    }
     internal enum FeatureConfig {
       internal enum Alert {
         /// Team settings changed
@@ -2989,6 +3155,36 @@ internal enum L10n {
             internal static let disabled = L10n.tr("Localizable", "feature_config.alert.conversation_guest_links.message.disabled", fallback: "Generating guest links is now disabled for all group admins.")
             /// Generating guest links is now enabled for all group admins.
             internal static let enabled = L10n.tr("Localizable", "feature_config.alert.conversation_guest_links.message.enabled", fallback: "Generating guest links is now enabled for all group admins.")
+          }
+        }
+        internal enum MlsE2ei {
+          /// As of today, your team uses end-to-end identity to make Wire’s usage more secure and practicable.
+          /// Enter your identity provider’s credentials in the next step to automatically get a verification certificate for this device.
+          internal static let message = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.message", fallback: "As of today, your team uses end-to-end identity to make Wire’s usage more secure and practicable.\nEnter your identity provider’s credentials in the next step to automatically get a verification certificate for this device.")
+          /// You can get the certificate in your 'Wire Settings' during the next %@. Open 'Devices' and select 'Get Certificate' for your current device.
+          internal static func reminderMessage(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "feature_config.alert.mls_e2ei.reminder_message", String(describing: p1), fallback: "You can get the certificate in your 'Wire Settings' during the next %@. Open 'Devices' and select 'Get Certificate' for your current device.")
+          }
+          /// End-to-end identity certificate
+          internal static let title = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.title", fallback: "End-to-end identity certificate")
+          /// The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now.
+          /// Enter your identity provider’s credentials in the next step to update the certificate automatically.
+          internal static let updateMessage = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.update_message", fallback: "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now.\nEnter your identity provider’s credentials in the next step to update the certificate automatically.")
+          internal enum Alert {
+            internal enum UpdateCertificate {
+              /// End-to-end identity certificate
+              internal static let title = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.alert.update_certificate.title", fallback: "End-to-end identity certificate")
+            }
+          }
+          internal enum Button {
+            /// Get Certificate
+            internal static let getCertificate = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.get_certificate", fallback: "Get Certificate")
+            /// Learn More
+            internal static let learnMore = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.learn_more", fallback: "Learn More")
+            /// OK
+            internal static let ok = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.ok", fallback: "OK")
+            /// Remind Me Later
+            internal static let remindMeLater = L10n.tr("Localizable", "feature_config.alert.mls_e2ei.button.remind_me_later", fallback: "Remind Me Later")
           }
         }
         internal enum SelfDeletingMessages {
@@ -3193,6 +3389,12 @@ internal enum L10n {
         /// Group members
         internal static let title = L10n.tr("Localizable", "group_details.conversation_members_header.title", fallback: "Group members")
       }
+      internal enum ConversationVerificationStatus {
+        /// Verified (End-to-end Identity)
+        internal static let e2ei = L10n.tr("Localizable", "group_details.conversation_verification_status.e2ei", fallback: "Verified (End-to-end Identity)")
+        /// Verified (Proteus)
+        internal static let proteus = L10n.tr("Localizable", "group_details.conversation_verification_status.proteus", fallback: "Verified (Proteus)")
+      }
       internal enum GuestOptionsCell {
         /// Off
         internal static let disabled = L10n.tr("Localizable", "group_details.guest_options_cell.disabled", fallback: "Off")
@@ -3204,8 +3406,8 @@ internal enum L10n {
       internal enum MessageProtocol {
         /// Cipher Suite
         internal static let cipherSuite = L10n.tr("Localizable", "group_details.message_protocol.cipher_suite", fallback: "Cipher Suite")
-        /// Protocol details (beta)
-        internal static let sectionTile = L10n.tr("Localizable", "group_details.message_protocol.section_tile", fallback: "Protocol details (beta)")
+        /// Protocol details
+        internal static let sectionTile = L10n.tr("Localizable", "group_details.message_protocol.section_tile", fallback: "Protocol details")
         /// Protocol
         internal static let title = L10n.tr("Localizable", "group_details.message_protocol.title", fallback: "Protocol")
       }
@@ -3512,8 +3714,10 @@ internal enum L10n {
       }
       internal enum Participants {
         internal enum Section {
-          /// Legal hold subjects
-          internal static let title = L10n.tr("Localizable", "legalhold.participants.section.title", fallback: "Legal hold subjects")
+          /// Legal hold subjects %@
+          internal static func title(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "legalhold.participants.section.title", String(describing: p1), fallback: "Legal hold subjects %@")
+          }
         }
       }
     }
@@ -3854,6 +4058,18 @@ internal enum L10n {
           internal static let mute = L10n.tr("Localizable", "meta.menu.silence.mute", fallback: "Mute")
           /// Unmute
           internal static let unmute = L10n.tr("Localizable", "meta.menu.silence.unmute", fallback: "Unmute")
+        }
+      }
+      internal enum Mls {
+        internal enum Degraded {
+          internal enum Alert {
+            /// At least one participant started using a new device or has an invalid certificate.
+            /// 
+            /// Do you still want to send the message?
+            internal static let message = L10n.tr("Localizable", "meta.mls.degraded.alert.message", fallback: "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to send the message?")
+            /// Conversation no longer verified
+            internal static let title = L10n.tr("Localizable", "meta.mls.degraded.alert.title", fallback: "Conversation no longer verified")
+          }
         }
       }
     }
@@ -4712,6 +4928,30 @@ internal enum L10n {
             internal static let title = L10n.tr("Localizable", "registration.signin.alert.password_needed.title", fallback: "Password needed")
           }
         }
+        internal enum E2ei {
+          /// [Learn more](%@)
+          internal static func learnMore(_ p1: Any) -> String {
+            return L10n.tr("Localizable", "registration.signin.e2ei.learn_more", String(describing: p1), fallback: "[Learn more](%@)")
+          }
+          /// Your team now uses end-to-end identity to make Wire's usage more secure.
+          /// 
+          ///  Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device.
+          internal static let subtitle = L10n.tr("Localizable", "registration.signin.e2ei.subtitle", fallback: "Your team now uses end-to-end identity to make Wire's usage more secure.\n\n Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device.")
+          /// End-to-end identity certificate
+          internal static let title = L10n.tr("Localizable", "registration.signin.e2ei.title", fallback: "End-to-end identity certificate")
+          internal enum Error {
+            internal enum Alert {
+              /// Failed to retrieve certificate
+              internal static let message = L10n.tr("Localizable", "registration.signin.e2ei.error.alert.message", fallback: "Failed to retrieve certificate")
+              /// Something went wrong
+              internal static let title = L10n.tr("Localizable", "registration.signin.e2ei.error.alert.title", fallback: "Something went wrong")
+            }
+          }
+          internal enum GetCertificateButton {
+            /// Get Certificate
+            internal static let title = L10n.tr("Localizable", "registration.signin.e2ei.get_certificate_button.title", fallback: "Get Certificate")
+          }
+        }
         internal enum TooManyDevices {
           /// Remove one of your other devices to start using Wire on this one.
           internal static let subtitle = L10n.tr("Localizable", "registration.signin.too_many_devices.subtitle", fallback: "Remove one of your other devices to start using Wire on this one.")
@@ -4728,6 +4968,26 @@ internal enum L10n {
           internal enum SignOutButton {
             /// Log out
             internal static let title = L10n.tr("Localizable", "registration.signin.too_many_devices.sign_out_button.title", fallback: "Log out")
+          }
+        }
+        internal enum Username {
+          /// Enter your username. It helps others to find you in Wire and connect with you.
+          internal static let message = L10n.tr("Localizable", "registration.signin.username.message", fallback: "Enter your username. It helps others to find you in Wire and connect with you.")
+          /// username
+          internal static let placeholder = L10n.tr("Localizable", "registration.signin.username.placeholder", fallback: "username")
+          /// Your username
+          internal static let title = L10n.tr("Localizable", "registration.signin.username.title", fallback: "Your username")
+          internal enum AlreadyTakenError {
+            /// The username is already taken, please try another one
+            internal static let message = L10n.tr("Localizable", "registration.signin.username.already_taken_error.message", fallback: "The username is already taken, please try another one")
+            /// Username is already taken
+            internal static let title = L10n.tr("Localizable", "registration.signin.username.already_taken_error.title", fallback: "Username is already taken")
+          }
+          internal enum UnknownError {
+            /// Please try again later.
+            internal static let message = L10n.tr("Localizable", "registration.signin.username.unknown_error.message", fallback: "Please try again later.")
+            /// Couldn't update username
+            internal static let title = L10n.tr("Localizable", "registration.signin.username.unknown_error.title", fallback: "Couldn't update username")
           }
         }
       }
@@ -4776,6 +5036,18 @@ internal enum L10n {
         internal static func resendPlaceholder(_ p1: Float) -> String {
           return L10n.tr("Localizable", "registration.verify_phone_number.resend_placeholder", p1, fallback: "No code showing up?\nYou can request a new one in %.0f seconds")
         }
+      }
+    }
+    internal enum RevokedCertificate {
+      internal enum Alert {
+        /// Continue Using This Device
+        internal static let `continue` = L10n.tr("Localizable", "revoked_certificate.alert.continue", fallback: "Continue Using This Device")
+        /// Log out
+        internal static let logOut = L10n.tr("Localizable", "revoked_certificate.alert.log_out", fallback: "Log out")
+        /// Log out to reduce security risks. Then log in again, get a new certificate, and reset your password. If you keep using this device, your conversations are no longer verified.
+        internal static let message = L10n.tr("Localizable", "revoked_certificate.alert.message", fallback: "Log out to reduce security risks. Then log in again, get a new certificate, and reset your password. If you keep using this device, your conversations are no longer verified.")
+        /// End-to-end certificate revoked
+        internal static let title = L10n.tr("Localizable", "revoked_certificate.alert.title", fallback: "End-to-end certificate revoked")
       }
     }
     internal enum SecurityClassification {
@@ -5471,6 +5743,16 @@ internal enum L10n {
             /// Wire Debug Report
             internal static let subject = L10n.tr("Localizable", "self.settings.technical_report.mail.subject", fallback: "Wire Debug Report")
           }
+          internal enum MailBody {
+            /// Please fill in the following
+            internal static let firstline = L10n.tr("Localizable", "self.settings.technical_report.mail_body.firstline", fallback: "Please fill in the following")
+            /// Date and Time of the issue occured:
+            internal static let section1 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section1", fallback: "Date and Time of the issue occured:")
+            /// What Happened:
+            internal static let section2 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section2", fallback: "What Happened:")
+            /// Steps to reproduce (if relevant):
+            internal static let section3 = L10n.tr("Localizable", "self.settings.technical_report.mail_body.section3", fallback: "Steps to reproduce (if relevant):")
+          }
         }
         internal enum TechnicalReportSection {
           /// Technical Report
@@ -5675,6 +5957,26 @@ internal enum L10n {
         /// Enter your passcode
         internal static let placeholder = L10n.tr("Localizable", "unlock.textfield.placeholder", fallback: "Enter your passcode")
       }
+    }
+    internal enum UpdateCertificate {
+      internal enum Alert {
+        /// The end-to-end identity certificate for this device has expired. Enter your identity provider’s credentials in the next step to update the certificate automatically.
+        internal static let expiredMessage = L10n.tr("Localizable", "update_certificate.alert.expired-message", fallback: "The end-to-end identity certificate for this device has expired. Enter your identity provider’s credentials in the next step to update the certificate automatically.")
+        /// The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now. Enter your identity provider’s credentials in the next step to update the certificate automatically.
+        internal static let message = L10n.tr("Localizable", "update_certificate.alert.message", fallback: "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now. Enter your identity provider’s credentials in the next step to update the certificate automatically.")
+        /// Update certificate
+        internal static let title = L10n.tr("Localizable", "update_certificate.alert.title", fallback: "Update certificate")
+      }
+      internal enum Button {
+        /// Update Certificate
+        internal static let updateCertificate = L10n.tr("Localizable", "update_certificate.button.update_certificate", fallback: "Update Certificate")
+      }
+    }
+    internal enum UpdateE2eiCertificate {
+      /// The certificate is updated and your device is verified.
+      internal static let subtitle = L10n.tr("Localizable", "update_e2ei_certificate.subtitle", fallback: "The certificate is updated and your device is verified.")
+      /// Certificate updated
+      internal static let title = L10n.tr("Localizable", "update_e2ei_certificate.title", fallback: "Certificate updated")
     }
     internal enum UrlAction {
       /// Confirm

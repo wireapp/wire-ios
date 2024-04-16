@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,10 +59,10 @@ class Conversation_DeletionTests: DatabaseTest {
         let conversation = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [])!
         conversation.remoteIdentifier = UUID()
         conversation.conversationType = .group
-        let invalidOperationfailure = expectation(description: "Invalid Operation")
+        let invalidOperationfailure = customExpectation(description: "Invalid Operation")
 
         // WHEN
-        conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { (result) in
+        conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { result in
             if case .failure(let error) = result {
                 if case ConversationDeletionError.invalidOperation = error {
                     invalidOperationfailure.fulfill()
@@ -79,10 +79,10 @@ class Conversation_DeletionTests: DatabaseTest {
         let conversation = ZMConversation.insertGroupConversation(moc: uiMOC, participants: [])!
         conversation.conversationType = .group
         conversation.teamRemoteIdentifier = UUID()
-        let invalidOperationfailure = expectation(description: "Invalid Operation")
+        let invalidOperationfailure = customExpectation(description: "Invalid Operation")
 
         // WHEN
-        conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { (result) in
+        conversation.delete(in: coreDataStack!, transportSession: mockTransportSession) { result in
             if case .failure(let error) = result {
                 if case ConversationDeletionError.invalidOperation = error {
                     invalidOperationfailure.fulfill()

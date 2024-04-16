@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 
 /// A wrapper class to simplify observation of Darwin Notifications.
 ///
-public class DarwinNotificationCenter {
+public final class DarwinNotificationCenter {
 
     public static var shared = DarwinNotificationCenter()
 
@@ -37,7 +37,7 @@ public class DarwinNotificationCenter {
         // we only want to internally observe each notification once
         guard handlers[notification] == nil else { return }
 
-        notification.observe { (_, _, name, _, _) in
+        notification.observe { _, _, name, _, _ in
             guard let name = name else { return }
             DarwinNotificationCenter.shared.forward(notification: name.rawValue as String)
         }

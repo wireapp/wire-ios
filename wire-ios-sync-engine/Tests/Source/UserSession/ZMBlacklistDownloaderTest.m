@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import OCMock;
 @import WireTransport;
@@ -161,7 +160,7 @@
         id blackList = [self validBlackListWithMinimumVersion:expectedMinVersion exclude:expectedExclude];
         [self stubRequestWithSuccessfulResponseObject:blackList];
         
-        XCTestExpectation *didComplete = [self expectationWithDescription:@"did complete"];
+        XCTestExpectation *didComplete = [self customExpectationWithDescription:@"did complete"];
         
         // when
         [self createSUTWithCompletionHandler:^(NSString *minVersion, NSArray *excludeVersions) {
@@ -208,7 +207,7 @@
         [self stubRequestWithSuccessfulResponseObject:blackList];
 
         //expect that method will be called for second time after check interval
-        XCTestExpectation *exp = [self expectationWithDescription:@"download called again"];
+        XCTestExpectation *exp = [self customExpectationWithDescription:@"download called again"];
         __block NSUInteger timesCalled = 0;
         ZM_WEAK(self);
         dispatch_block_t didDownload = ^{
@@ -249,7 +248,7 @@ typedef NS_ENUM(int, TestPhase) {
         [self stubRequestWithSuccessfulResponseObject:blackList];
         
         //expect that method will be called for second time after check interval
-        XCTestExpectation *doneExp = [self expectationWithDescription:@"download called again"];
+        XCTestExpectation *doneExp = [self customExpectationWithDescription:@"download called again"];
         
         __block NSUInteger downloadWhileSuspendedCount = 0;
         __block NSUInteger downloadWhileResumedCount = 0;

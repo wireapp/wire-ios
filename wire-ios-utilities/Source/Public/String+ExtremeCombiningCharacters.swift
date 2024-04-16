@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,12 +31,14 @@ public extension CharacterSet {
     private static let diacriticsCombiningCodesHalfMarks     = CharacterSet(charactersIn: UnicodeScalar(0xfe20 as UInt16)!...UnicodeScalar(0xfe2f as UInt16)!)
 
     static var diacriticsCombining: CharacterSet = {
-        return  [diacriticsCombiningCodes,
-                 diacriticsCombiningCodesExtended,
-                 diacriticsCombiningCodesSupplementary,
-                 diacriticsCombiningCodesForSymbols,
-                 diacriticsCombiningCodesHalfMarks].reduce(CharacterSet()) { (current: CharacterSet, new: CharacterSet) -> CharacterSet in
-            return current.union(new)
+        [
+            diacriticsCombiningCodes,
+            diacriticsCombiningCodesExtended,
+            diacriticsCombiningCodesSupplementary,
+            diacriticsCombiningCodesForSymbols,
+            diacriticsCombiningCodesHalfMarks
+        ].reduce(CharacterSet()) { (current: CharacterSet, new: CharacterSet) -> CharacterSet in
+            current.union(new)
         }
     }()
 }

@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import WireUtilities;
 @import WireSystem;
@@ -45,7 +44,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
 @property (nonatomic) id<TransportSessionType> transportSession;
 @property (atomic) BOOL shouldStopEnqueueing;
 @property (nonatomic) BOOL tornDown;
-@property (nonatomic, weak) ApplicationStatusDirectory *applicationStatusDirectory;
+@property (nonatomic) OperationStatus *operationStatus;
 
 @end
 
@@ -59,7 +58,10 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
 - (instancetype)initWithTransportSession:(id<TransportSessionType>)transportSession
                          requestStrategy:(id<RequestStrategy>)requestStrategy
                     updateEventProcessor:(id<UpdateEventProcessor>)updateEventProcessor
-              applicationStatusDirectory:(ApplicationStatusDirectory *)applicationStatusDirectory
+              operationStatus:(OperationStatus *)operationStatus
+                              syncStatus:(SyncStatus *)syncStatus
+                  pushNotificationStatus:(PushNotificationStatus *)pushNotificationStatus
+                         callEventStatus:(CallEventStatus *)callEventStatus
                                    uiMOC:(NSManagedObjectContext *)uiMOC
                                  syncMOC:(NSManagedObjectContext *)syncMOC
 {
@@ -68,21 +70,24 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
     
     self = [super init];
     if (self) {
-        self.applicationStatusDirectory = applicationStatusDirectory;
+        self.operationStatus = operationStatus;
+        self.syncStatus = syncStatus;
+        self.pushNotificationStatus = pushNotificationStatus;
+        self.callEventStatus = callEventStatus;
         self.transportSession = transportSession;
         self.requestStrategy = requestStrategy;
         self.updateEventProcessor = updateEventProcessor;
         self.syncMOC = syncMOC;
         self.shouldStopEnqueueing = NO;
-        applicationStatusDirectory.operationStatus.delegate = self;
-        
+        self.operationStatus.delegate = self;
+
         [ZMRequestAvailableNotification addObserver:self];
         
         NSManagedObjectContext *moc = self.syncMOC;
         // this is needed to avoid loading from syncMOC on the main queue
         [moc performGroupedBlock:^{
             [self.transportSession configurePushChannelWithConsumer:self groupQueue:moc];
-            [self.transportSession.pushChannel setKeepOpen:applicationStatusDirectory.operationStatus.operationState == SyncEngineOperationStateForeground];
+            [self.transportSession.pushChannel setKeepOpen:operationStatus.operationState == SyncEngineOperationStateForeground];
         }];
     }
 
@@ -98,7 +103,7 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
     [ZMRequestAvailableNotification removeObserver:self];
     
     self.transportSession = nil;
-    ///TODO: 
+    // TODO: 
 //    RequireString([NSOperationQueue mainQueue] == [NSOperationQueue currentQueue],
 //                  "Must call be called on the main queue.");
     __block BOOL didStop = NO;
@@ -187,19 +192,6 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
         }
         [BackgroundActivityFactory.sharedFactory endBackgroundActivity:enqueueActivity];
     }];
-}
-
-- (PushNotificationStatus *)pushNotificationStatus
-{
-    return self.applicationStatusDirectory.pushNotificationStatus;
-}
-
-- (CallEventStatus *)callEventStatus {
-    return self.applicationStatusDirectory.callEventStatus;
-}
-
-- (SyncStatus *)syncStatus {
-    return self.applicationStatusDirectory.syncStatus;
 }
 
 @end

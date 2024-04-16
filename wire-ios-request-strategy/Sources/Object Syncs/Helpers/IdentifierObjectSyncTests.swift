@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,6 @@ import WireTesting
 @testable import WireRequestStrategy
 
 class MockTranscoder: IdentifierObjectSyncTranscoder {
-
     typealias T = UUID
 
     var fetchLimit: Int = 1
@@ -33,7 +32,7 @@ class MockTranscoder: IdentifierObjectSyncTranscoder {
     }
 
     var lastReceivedResponse: (response: ZMTransportResponse, identifiers: Set<UUID>)?
-    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>) {
+    func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>, completionHandler: @escaping () -> Void) {
         lastReceivedResponse = (response, identifiers)
     }
 
@@ -123,7 +122,7 @@ class IdentifierObjectSyncTests: ZMTBaseTest {
 
         // then
         XCTAssertNotNil(transcoder.lastReceivedResponse)
-        let uiidSet: Set<UUID> =  [uuid]
+        let uiidSet: Set<UUID> = [uuid]
         XCTAssertEqual(transcoder.lastReceivedResponse?.identifiers, uiidSet)
     }
 

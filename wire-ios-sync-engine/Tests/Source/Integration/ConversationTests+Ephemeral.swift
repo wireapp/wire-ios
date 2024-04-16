@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,15 +21,12 @@ import Foundation
 class ConversationTests_Ephemeral: ConversationTestsBase {
 
     var obfuscationTimer: ZMMessageDestructionTimer? {
-        return userSession!.syncManagedObjectContext.zm_messageObfuscationTimer
+        return userSession!.syncManagedObjectContext.performAndWait { userSession!.syncManagedObjectContext.zm_messageObfuscationTimer }
     }
 
     var deletionTimer: ZMMessageDestructionTimer? {
         return userSession!.managedObjectContext.zm_messageDeletionTimer
     }
-}
-
-extension ConversationTests_Ephemeral {
 
     func testThatItCreatesAndSendsAnEphemeralMessage() {
         // given
@@ -83,6 +80,7 @@ extension ConversationTests_Ephemeral {
         XCTAssertEqual(mockTransportSession?.receivedRequests().count, 2)
         XCTAssertEqual(message.deliveryState, ZMDeliveryState.sent)
         XCTAssertTrue(message.isEphemeral)
+
         XCTAssertEqual(obfuscationTimer?.runningTimersCount, 1)
         XCTAssertEqual(deletionTimer?.runningTimersCount, 0)
     }
@@ -103,7 +101,7 @@ extension ConversationTests_Ephemeral {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
         spinMainQueue(withTimeout: 0.5)
         XCTAssertTrue(ephemeral.isObfuscated)
-        XCTAssertEqual(conversation.allMessages.count, messageCount+1)
+        XCTAssertEqual(conversation.allMessages.count, messageCount + 1)
 
         // when
         // other client deletes ephemeral message
@@ -161,7 +159,7 @@ extension ConversationTests_Ephemeral {
                 return XCTFail()
         }
         XCTAssertEqual(genMessage.ephemeral.expireAfterMillis, 100)
-        XCTAssertEqual(conversation.allMessages.count, messageCount+1)
+        XCTAssertEqual(conversation.allMessages.count, messageCount + 1)
         mockTransportSession?.resetReceivedRequests()
 
         // when

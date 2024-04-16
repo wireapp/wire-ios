@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ class TextSearchTests: ConversationTestsBase {
         XCTAssertEqual(lastMessage?.textMessageData?.messageText, "Hello there!")
 
         // Then
-        verifyThatItCanSearch(for: "There", in: convo, andFinds: lastMessage as! ZMMessage)
+        verifyThatItCanSearch(for: "There", in: convo, andFinds: lastMessage as? ZMMessage)
     }
 
     func testThatItFindsAMessageEditedRemotely() {
@@ -97,7 +97,7 @@ class TextSearchTests: ConversationTestsBase {
         XCTAssertEqual(editedMessage.textMessageData?.messageText, "This is an edit!!")
 
         // Then
-        verifyThatItCanSearch(for: "edit", in: convo, andFinds: editedMessage as! ZMMessage)
+        verifyThatItCanSearch(for: "edit", in: convo, andFinds: editedMessage as? ZMMessage)
         verifyThatItCanSearch(for: "Hello", in: convo, andFinds: nil)
     }
 
@@ -127,7 +127,7 @@ class TextSearchTests: ConversationTestsBase {
         XCTAssertEqual(lastMessage?.textMessageData?.messageText, text)
 
         // Then
-        verifyThatItCanSearch(for: "ephemeral", in: convo, andFinds: lastMessage as! ZMMessage)
+        verifyThatItCanSearch(for: "ephemeral", in: convo, andFinds: lastMessage as? ZMMessage)
     }
 
     func testThatItDoesNotFindAMessageDeletedRemotely() {
@@ -156,7 +156,7 @@ class TextSearchTests: ConversationTestsBase {
         XCTAssertEqual(lastMessage?.textMessageData?.messageText, "Hello there!")
 
         // Then
-        verifyThatItCanSearch(for: "Hello", in: convo, andFinds: lastMessage as! ZMMessage)
+        verifyThatItCanSearch(for: "Hello", in: convo, andFinds: lastMessage as? ZMMessage)
 
         // And when
         mockTransportSession.performRemoteChanges { _ in

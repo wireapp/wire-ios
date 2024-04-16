@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ import WireTesting
  * A controllable objects that mocks the behavior of UIApplication regarding background tasks.
  */
 
-@objc class MockBackgroundActivityManager: NSObject, BackgroundActivityManager {
+@objc final class MockBackgroundActivityManager: NSObject, BackgroundActivityManager {
 
     var backgroundTimeRemaining: TimeInterval = 10
 

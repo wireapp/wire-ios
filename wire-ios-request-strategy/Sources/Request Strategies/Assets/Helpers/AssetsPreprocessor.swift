@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -78,8 +78,8 @@ import Foundation
 
         _ = managedObjectContext.enterAllGroups()
 
-        for asset in message.assets {
-
+        // We only want to start processing originals.
+        for asset in message.assets where asset.hasOriginal {
             if asset.needsPreprocessing, let imageOperations = imageAssetPreprocessor?.operations(forPreprocessingImageOwner: AssetImageOwnerAdapter(asset: asset)) {
                 processingGroup.enter()
                 imageProcessingQueue.addOperations(imageOperations, waitUntilFinished: false)

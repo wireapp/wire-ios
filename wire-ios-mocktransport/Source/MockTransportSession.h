@@ -87,8 +87,6 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 @property (nonatomic, strong, nullable) NSUUID* overrideNextSinceParameter;
 
-+ (NSString *)binaryDataTypeAsMIME:(NSString *)type;
-
 - (void)addPushToken:(NSString *)token payload:(NSDictionary *)payload;
 - (void)removePushToken:(NSString *)token;
 
@@ -130,6 +128,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (void)completeRequest:(ZMTransportRequest *)originalRequest completionHandler:(ZMCompletionHandlerBlock)completionHandler;
 - (ZMTransportEnqueueResult *)attemptToEnqueueSyncRequestWithGenerator:(NS_NOESCAPE ZMTransportRequestGenerator)requestGenerator;
 - (void)enqueueOneTimeRequest:(ZMTransportRequest *)request NS_SWIFT_NAME(enqueueOneTime(_:));
+- (void)enqueueRequest:(ZMTransportRequest *)request queue:(id<ZMSGroupQueue>)queue completionHandler:(void (^)(ZMTransportResponse * _Nonnull))completionHandler;
 
 @end
 

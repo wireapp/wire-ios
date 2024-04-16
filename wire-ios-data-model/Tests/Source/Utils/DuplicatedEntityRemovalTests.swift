@@ -55,16 +55,16 @@ final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
         let addedMessage = self.appendSystemMessage(conversation: conversation,
                                                     type: .newClient,
                                                     sender: ZMUser.selfUser(in: self.moc),
-                                                    users: Set(arrayLiteral: client.user!),
-                                                    addedUsers: Set(arrayLiteral: client.user!),
-                                                    clients: Set(arrayLiteral: client),
+                                                    users: [client.user!],
+                                                    addedUsers: [client.user!],
+                                                    clients: [client],
                                                     timestamp: Date())
 
         let ignoredMessage = self.appendSystemMessage(conversation: conversation,
                                                       type: .ignoredClient,
                                                       sender: ZMUser.selfUser(in: self.moc),
-                                                      users: Set(arrayLiteral: client.user!),
-                                                      clients: Set(arrayLiteral: client),
+                                                      users: [client.user!],
+                                                      clients: [client],
                                                       timestamp: Date())
 
         return [addedMessage, ignoredMessage]

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ class LoginFlowTests_PushToken: IntegrationTest {
         XCTAssertTrue(self.login())
 
         let pushService = try XCTUnwrap(sessionManager?.pushTokenService)
-        let registrationComplete = expectation(description: "registrtation complete")
+        let registrationComplete = customExpectation(description: "registrtation complete")
         pushService.onRegistrationComplete = { registrationComplete.fulfill() }
 
         // when

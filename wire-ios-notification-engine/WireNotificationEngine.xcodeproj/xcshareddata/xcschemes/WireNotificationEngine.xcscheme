@@ -28,7 +28,7 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "067ECB4E2487AB6000701956"
+               BlueprintIdentifier = "EE761664299E60C9005DB75F"
                BuildableName = "WireNotificationEngineTests.xctest"
                BlueprintName = "WireNotificationEngineTests"
                ReferencedContainer = "container:WireNotificationEngine.xcodeproj">
@@ -46,7 +46,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "067ECB4E2487AB6000701956"
+               BlueprintIdentifier = "EE761664299E60C9005DB75F"
                BuildableName = "WireNotificationEngineTests.xctest"
                BlueprintName = "WireNotificationEngineTests"
                ReferencedContainer = "container:WireNotificationEngine.xcodeproj">

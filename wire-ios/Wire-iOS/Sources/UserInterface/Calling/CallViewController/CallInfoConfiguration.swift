@@ -25,19 +25,19 @@ extension VoiceChannel {
     func accessoryType() -> CallInfoViewControllerAccessoryType {
         switch state {
         case .incoming(_, shouldRing: true, _),
-             .answered,
-             .establishedDataChannel,
-             .outgoing:
+                .answered,
+                .establishedDataChannel,
+                .outgoing:
             guard !videoState.isSending,
                   let initiator = initiator
             else { return .none }
             return .avatar(HashBox(value: initiator))
         case .unknown,
-             .none,
-             .terminating,
-             .mediaStopped,
-             .established,
-             .incoming(_, shouldRing: false, _):
+                .none,
+                .terminating,
+                .mediaStopped,
+                .established,
+                .incoming(_, shouldRing: false, _):
             return .participantsList(sortedParticipants().map {
                 .callParticipant(user: HashBox(value: $0.user),
                                  callParticipantState: $0.state,
@@ -116,7 +116,7 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
     let callState: CallStateExtending
     let videoGridPresentationMode: VideoGridPresentationMode
     let allowPresentationModeUpdates: Bool
-    let classification: SecurityClassification
+    let classification: SecurityClassification?
 
     private let voiceChannelSnapshot: VoiceChannelSnapshot
 
@@ -127,7 +127,7 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
         cameraType: CaptureDevice,
         mediaManager: AVSMediaManagerInterface = AVSMediaManager.sharedInstance(),
         userEnabledCBR: Bool,
-        classification: SecurityClassification = .none,
+        classification: SecurityClassification? = .none,
         selfUser: UserType) {
             self.permissions = permissions
             self.cameraType = cameraType
@@ -150,7 +150,7 @@ struct CallInfoConfiguration: CallInfoViewControllerInput {
             callState = voiceChannel.state
             videoGridPresentationMode = voiceChannel.videoGridPresentationMode
             allowPresentationModeUpdates = voiceChannel.allowPresentationModeUpdates
-    }
+        }
 
     // This property has to be computed in order to return the correct call duration
     var state: CallStatusViewState {
@@ -235,8 +235,8 @@ fileprivate extension VoiceChannel {
 
     var isAnyParticipantSendingVideo: Bool {
         return videoState.isSending                                  // Current user is sending video and can toggle off
-            || participants.any { $0.state.isSendingVideo } // Other participants are sending video
-            || isIncomingVideoCall                                   // This is an incoming video call
+        || participants.any { $0.state.isSendingVideo } // Other participants are sending video
+        || isIncomingVideoCall                                   // This is an incoming video call
     }
 
     func sortedParticipants() -> [CallParticipant] {
@@ -262,6 +262,21 @@ extension VoiceChannel {
         return participants(ofKind: .all, activeSpeakersLimit: CallInfoConfiguration.maxActiveSpeakers)
     }
 
+    var degradationState: CallDegradationState {
+        guard let degradationReason else { return .none }
+
+        switch state {
+        case .incoming(video: _, shouldRing: _, degraded: true), .answered(degraded: true):
+            return .incoming(reason: degradationReason)
+        case .outgoing(degraded: true):
+            return .outgoing(reason: degradationReason)
+        case .terminating(reason: .securityDegraded):
+            return .terminating(reason: degradationReason)
+        default:
+            return .none
+        }
+    }
+
     private var hashboxFirstDegradedUser: HashBoxUser? {
         guard let firstDegradedUser = firstDegradedUser else {
             return nil
@@ -270,14 +285,14 @@ extension VoiceChannel {
         return HashBox(value: firstDegradedUser)
     }
 
-    var degradationState: CallDegradationState {
-        switch state {
-        case .incoming(video: _, shouldRing: _, degraded: true):
-            return .incoming(degradedUser: hashboxFirstDegradedUser)
-        case .answered(degraded: true), .outgoing(degraded: true):
-            return .outgoing(degradedUser: hashboxFirstDegradedUser)
-        default:
-            return .none
+    var degradationReason: CallDegradationReason? {
+        guard let conversation else { return nil }
+
+        switch conversation.messageProtocol {
+        case .mls:
+            return .invalidCertificate
+        case .proteus, .mixed:
+            return .degradedUser(user: hashboxFirstDegradedUser)
         }
     }
 

@@ -27,7 +27,7 @@ protocol ContactsDataSourceDelegate: AnyObject {
 
 }
 
-class ContactsDataSource: NSObject {
+final class ContactsDataSource: NSObject {
 
     static let MinimumNumberOfContactsToDisplaySections: UInt = 15
 
@@ -75,7 +75,7 @@ class ContactsDataSource: NSObject {
         let request = SearchRequest(query: searchQuery, searchOptions: [.contacts, .addressBook])
         let task = searchDirectory.perform(request)
 
-        task.onResult { [weak self] (searchResult, _) in
+        task.addResultHandler { [weak self] searchResult, _ in
             guard let `self` = self else { return }
             self.ungroupedSearchResults = searchResult.addressBook
             self.delegate?.dataSource(self, didReceiveSearchResult: searchResult.addressBook)
@@ -104,7 +104,7 @@ class ContactsDataSource: NSObject {
         let numberOfSections = collation.sectionTitles.count
         let emptySections = Array(repeating: [UserType](), count: numberOfSections)
 
-        let unsortedSections = ungroupedSearchResults.reduce(into: emptySections) { (sections, user) in
+        let unsortedSections = ungroupedSearchResults.reduce(into: emptySections) { sections, user in
             let index = collation.section(for: user, collationStringSelector: nameSelector)
             sections[index].append(user)
         }

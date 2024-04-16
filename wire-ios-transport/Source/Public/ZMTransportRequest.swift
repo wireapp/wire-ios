@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -68,5 +68,22 @@ extension ZMTransportRequest: SafeForLoggingStringConvertible {
     @objc public var safeForLoggingDescription: String {
         let identifier = "\(Unmanaged.passUnretained(self).toOpaque())".readableHash
         return "<\(identifier)> \(ZMTransportRequest.string(for: self.method)) \(self.path.removingSensitiveInfo)"
+    }
+}
+
+extension ZMTransportRequestMethod: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .get:
+            return "GET"
+        case .delete:
+            return "DELETE"
+        case .put:
+            return "PUT"
+        case .post:
+            return "POST"
+        case .head:
+            return "HEAD"
+        }
     }
 }

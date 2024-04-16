@@ -96,7 +96,7 @@ final class UserConnectionView: UIView, Copyable {
     }
 
     private func updateSecondLabel() {
-        guard nil != handleLabelText else { return }
+        guard handleLabelText != nil else { return }
         secondLabel.attributedText = correlationLabelText ?? NSAttributedString(string: "")
         secondLabel.accessibilityIdentifier = "correlation"
     }
@@ -118,10 +118,12 @@ final class UserConnectionView: UIView, Copyable {
     }
 
     private func createConstraints() {
-        [userImageView,
-         labelContainer,
-         guestIndicator,
-         guestWarningView].prepareForLayout()
+        [
+            userImageView,
+            labelContainer,
+            guestIndicator,
+            guestWarningView
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             labelContainer.centerXAnchor.constraint(equalTo: centerXAnchor),

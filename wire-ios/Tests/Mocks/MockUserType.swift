@@ -41,7 +41,6 @@ class MockUserType: NSObject, UserType, Decodable {
     }
 
     // MARK: - MockHelpers
-    var hasTeam: Bool = false
 
     var isTrusted: Bool = true
 
@@ -87,7 +86,7 @@ class MockUserType: NSObject, UserType, Decodable {
 
     var accentColorValue: ZMAccentColor = .strongBlue
 
-    var availability: AvailabilityKind = .none
+    var availability: Availability = .none
 
     var allClients: [UserClientType] = []
 
@@ -129,6 +128,8 @@ class MockUserType: NSObject, UserType, Decodable {
     var isTeamMember: Bool {
         return teamIdentifier != nil
     }
+
+    var hasTeam: Bool = false
 
     var hasDigitalSignatureEnabled: Bool = false
 

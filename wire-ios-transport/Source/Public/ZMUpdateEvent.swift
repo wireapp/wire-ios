@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ import WireUtilities
     case download
 }
 
-@objc public enum ZMUpdateEventType: UInt, CaseIterable {
+@objc public enum ZMUpdateEventType: UInt, CaseIterable, Equatable {
     case unknown = 0
     case conversationAssetAdd = 1
     case conversationConnectRequest = 2
@@ -46,6 +46,7 @@ import WireUtilities
     case conversationOtrMessageAdd = 10
     case conversationOtrAssetAdd = 11
     case conversationRename = 12
+    case conversationProtocolUpdate = 45
     case conversationTyping = 13
     case conversationCodeUpdate = 14
     case conversationAccessModeUpdate = 15
@@ -68,9 +69,9 @@ import WireUtilities
     case userPropertiesDelete = 33
     case teamCreate = 23
     case teamDelete = 24
-    case teamUpdate = 25
-    // removed: teamMemberJoin = 26 [WPB-4538]: "team.member-join" should not be handled anymore
-    case teamMemberLeave = 27
+    // removed: teamUpdate = 25 [WPB-4552]: The event is no longer sent, clients must fetch team metadata (e.g. name, icon) every 24h
+    // removed: teamMemberJoin = 26 [WPB-4538]: no need to handle "team.member-join" in clients
+    case teamMemberLeave = 27 // [WPB-4538]: "team.member-leave" is only required for backwards compatibility
     case teamConversationCreate = 28
     case teamConversationDelete = 29
     case teamMemberUpdate = 30
@@ -78,7 +79,7 @@ import WireUtilities
     case federationDelete = 43
     case federationConnectionRemoved = 44
 
-    // Current max value: conversationMLSMessageAdd = 44
+    // Current max value: conversationProtocolUpdate = 45
 }
 
 extension ZMUpdateEventType {
@@ -113,6 +114,8 @@ extension ZMUpdateEventType {
             return "conversation.otr-asset-add"
         case .conversationRename:
             return "conversation.rename"
+        case .conversationProtocolUpdate:
+            return "conversation.protocol-update"
         case .conversationTyping:
             return "conversation.typing"
         case .conversationCodeUpdate:
@@ -151,8 +154,6 @@ extension ZMUpdateEventType {
             return "team.create"
         case .teamDelete:
             return "team.delete"
-        case .teamUpdate:
-            return "team.update"
         case .teamMemberLeave:
             return "team.member-leave"
         case .teamConversationCreate:
@@ -182,10 +183,10 @@ extension ZMUpdateEventType {
                 guard let stringValue = eventType.stringValue else { return nil }
                 return (eventType, stringValue)
             }
-            .filter { (_, stringValue) -> Bool in
+            .filter { _, stringValue -> Bool in
                 return stringValue == string
             }
-            .map { (eventType, _) -> ZMUpdateEventType in
+            .map { eventType, _ -> ZMUpdateEventType in
                 return eventType
             }
             .first
@@ -207,7 +208,8 @@ extension ZMUpdateEvent {
 
 private let zmLog = ZMSLog(tag: "UpdateEvents")
 
-@objcMembers open class ZMUpdateEvent: NSObject {
+@objcMembers
+open class ZMUpdateEvent: NSObject {
 
     open var payload: [AnyHashable: Any]
     open var type: ZMUpdateEventType
@@ -219,34 +221,11 @@ private let zmLog = ZMSLog(tag: "UpdateEvents")
     open var isTransient: Bool
     /// True if the event had encrypted payload but now it has decrypted payload
     open var wasDecrypted: Bool
-    /// True if the event contains cryptobox-encrypted data
-    open var isEncrypted: Bool {
-        switch self.type {
-        case .conversationOtrAssetAdd, .conversationOtrMessageAdd:
-            return true
-        default:
-            return false
-        }
-    }
 
     /// True if the event is encoded with ZMGenericMessage
     open var isGenericMessageEvent: Bool {
         switch self.type {
-        case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd:
-            return true
-        default:
-            return false
-        }
-    }
-
-    /// True if this event type could have two versions, encrypted and non-encrypted, during the transition phase
-    open var hasEncryptedAndUnencryptedVersion: Bool {
-        switch self.type {
-        case .conversationOtrMessageAdd,
-             .conversationOtrAssetAdd,
-             .conversationMessageAdd,
-             .conversationAssetAdd,
-             .conversationKnock:
+        case .conversationOtrMessageAdd, .conversationOtrAssetAdd, .conversationClientMessageAdd, .conversationMLSMessageAdd:
             return true
         default:
             return false
@@ -351,11 +330,14 @@ extension ZMUpdateEvent {
 }
 
 extension ZMUpdateEvent {
+
     override open func isEqual(_ object: Any?) -> Bool {
-        guard let other = object as? ZMUpdateEvent else { return false }
-        return
-            (self.uuid == other.uuid) &&
-            (self.type == other.type) &&
-            (self.payload as NSDictionary).isEqual(to: other.payload)
+        guard let other = object as? ZMUpdateEvent else {
+            return false
+        }
+
+        return (self.uuid == other.uuid)
+            && (self.type == other.type)
+            && (self.payload as NSDictionary).isEqual(to: other.payload)
     }
 }

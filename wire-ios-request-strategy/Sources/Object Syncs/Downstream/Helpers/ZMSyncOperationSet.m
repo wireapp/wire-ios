@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import WireUtilities;
 @import WireTransport;
@@ -88,11 +87,40 @@ static id valueOrNSNull(id obj) {
 
     NSArray *sds = self.sortDescriptors;
     if (sds != nil) {
-        return (ZMManagedObject *)[self.pendingOperationSet firstObjectSortedByDescriptors:sds notInSet:forbiddenSet];
+        return [self firstObjectInSet:self.pendingOperationSet sortedByDescriptors:sds notInSet:forbiddenSet];
     } else {
-        return (ZMManagedObject *)[self.pendingOperationSet firstObjectNotInSet:forbiddenSet];
+        NSMutableOrderedSet *operations = [self.pendingOperationSet mutableCopy];
+        [operations minusSet:forbiddenSet];
+        return (ZMManagedObject*)operations.firstObject;
     }
 }
+
+- (ZMManagedObject *)firstObjectInSet:(NSMutableOrderedSet *)operationSet sortedByDescriptors:(NSArray *)descriptors notInSet:(nullable NSSet *)forbidden;
+{
+    NSComparator comparator = ^NSComparisonResult(id obj1, id obj2){
+        for (NSSortDescriptor *sd in descriptors) {
+            NSComparisonResult const r = [sd compareObject:obj1 toObject:obj2];
+            if (r != NSOrderedSame) {
+                return r;
+            }
+        }
+        return NSOrderedSame;
+    };
+
+    id best;
+    for (id candidate in operationSet) {
+        if ([forbidden containsObject:candidate]) {
+            continue;
+        }
+        if (best == nil) {
+            best = candidate;
+        } else if (comparator(best, candidate) == NSOrderedDescending) {
+            best = candidate;
+        }
+    }
+    return (ZMManagedObject *)best;
+}
+
 
 - (ZMSyncToken *)didStartSynchronizingKeys:(NSSet *)keys forObject:(ZMManagedObject *)mo;
 {

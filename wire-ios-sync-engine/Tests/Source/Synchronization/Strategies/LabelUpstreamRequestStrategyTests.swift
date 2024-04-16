@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,7 +55,9 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
     }
 
     func testThatItGeneratesRequestForUpdatingLabels() throws {
-        let labelUpdate = WireSyncEngine.LabelUpdate(id: Label.fetchFavoriteLabel(in: uiMOC).remoteIdentifier!, type: 1, name: nil, conversations: [conversation1.remoteIdentifier!])
+        let conversation1Id = try XCTUnwrap(syncMOC.performAndWait { conversation1.remoteIdentifier })
+
+        let labelUpdate = WireSyncEngine.LabelUpdate(id: Label.fetchFavoriteLabel(in: uiMOC).remoteIdentifier!, type: 1, name: nil, conversations: [conversation1Id])
         let expectedPayload = WireSyncEngine.LabelPayload(labels: [labelUpdate])
 
         syncMOC.performGroupedBlockAndWait {

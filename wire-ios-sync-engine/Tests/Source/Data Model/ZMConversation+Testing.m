@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import WireDataModel;
 @import WireMockTransport;
@@ -38,9 +37,11 @@
         mockMame = conversation.name;
         mockCreatorIdentifier = conversation.creator.identifier;
         mockIdentifier = conversation.identifier;
-        mockActiveUsersUUID = [NSMutableSet setWithArray:[conversation.activeUsers mapWithBlock:^id(MockUser *activeUser) {
-            return activeUser.identifier;
-        }].array];
+
+        mockActiveUsersUUID = [NSMutableSet new];
+        for (MockUser *user in conversation.activeUsers) {
+            [mockActiveUsersUUID addObject:user.identifier];
+        }
         [mockActiveUsersUUID removeObject:conversation.selfIdentifier];
     }];
     
@@ -48,7 +49,7 @@
         [failureRecorder recordFailure:@"Name doesn't match '%@' != '%@'",
          self.userDefinedName, mockMame];
     }
-    if (!([self.creator.remoteIdentifier isEqual:[mockCreatorIdentifier UUID]])) {
+    if (!([self.creator.remoteIdentifier isEqual:[NSUUID uuidWithTransportString: mockCreatorIdentifier]])) {
         [failureRecorder recordFailure:@"Creator doesn't match '%@' != '%@'",
                        self.creator.remoteIdentifier.transportString, mockCreatorIdentifier];
     }
@@ -64,7 +65,7 @@
          [[mockActiveUsersUUID.allObjects valueForKey:@"transportString"] componentsJoinedByString:@", "]];
     }
     
-    if (![self.remoteIdentifier isEqual:[mockIdentifier UUID]]) {
+    if (![self.remoteIdentifier isEqual:[NSUUID uuidWithTransportString:mockIdentifier]]) {
         [failureRecorder recordFailure:@"Remote ID doesn't match '%@' != '%@'",
          self.remoteIdentifier.transportString, mockIdentifier];
     }

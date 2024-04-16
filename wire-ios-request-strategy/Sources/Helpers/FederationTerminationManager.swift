@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ public protocol FederationTerminationManagerInterface {
 
 }
 
-final public class FederationTerminationManager: FederationTerminationManagerInterface {
+public final class FederationTerminationManager: FederationTerminationManagerInterface {
 
     private var context: NSManagedObjectContext
 
@@ -72,7 +72,7 @@ private extension FederationTerminationManager {
         let fetchRequest = ZMUser.sortedFetchRequest(with: connectedUsersPredicate)
         if let users = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] {
             users
-                .compactMap(\.connection?.conversation)
+                .compactMap(\.oneOnOneConversation)
                 .filter { !$0.isForcedReadOnly }
                 .forEach { conversation in
                     conversation.appendFederationTerminationSystemMessage(domains: [domain, context.selfDomain])

@@ -29,7 +29,7 @@ typealias AuthenticationStepViewController = UIViewController & AuthenticationCo
  * An object that builds view controllers for authentication steps.
  */
 
-class AuthenticationInterfaceBuilder {
+final class AuthenticationInterfaceBuilder {
 
     /// The object to use when checking for features.
     let featureProvider: AuthenticationFeatureProvider
@@ -145,6 +145,11 @@ class AuthenticationInterfaceBuilder {
             )
             return viewController
 
+        case .addUsername:
+            let addUsernameStep = AddUsernameStepDescription()
+            let viewController = makeViewController(for: addUsernameStep)
+            return viewController
+
         case .enterActivationCode(let credentials, _):
             let step: AuthenticationStepDescription
 
@@ -174,6 +179,18 @@ class AuthenticationInterfaceBuilder {
         case .switchBackend(let url):
             let viewController = PreBackendSwitchViewController()
             viewController.backendURL = url
+            return viewController
+
+        case .enrollE2EIdentity:
+            let viewController = EnrollE2EIdentityStepDescription()
+            return makeViewController(for: viewController)
+
+        case .enrollE2EIdentitySuccess(let certificateDetails):
+            let viewController = SuccessfulCertificateEnrollmentViewController()
+            viewController.certificateDetails = certificateDetails
+            viewController.onOkTapped = { viewController in
+                viewController.authenticationCoordinator?.executeAction(.completeE2EIEnrollment)
+            }
             return viewController
         default:
             return nil

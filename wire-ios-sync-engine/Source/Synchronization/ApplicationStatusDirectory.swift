@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,8 +44,8 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         cookieStorage: ZMPersistentCookieStorage,
         requestCancellation: ZMRequestCancellation,
         application: ZMApplication,
-        syncStateDelegate: ZMSyncStateDelegate,
         lastEventIDRepository: LastEventIDRepositoryInterface,
+        coreCryptoProvider: CoreCryptoProviderProtocol,
         analytics: AnalyticsType? = nil
     ) {
         self.requestCancellation = requestCancellation
@@ -56,14 +56,13 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         self.operationStatus.isInBackground = application.applicationState == .background
         self.syncStatus = SyncStatus(
             managedObjectContext: managedObjectContext,
-            syncStateDelegate: syncStateDelegate,
             lastEventIDRepository: lastEventIDRepository
         )
-        self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext)
+        self.userProfileUpdateStatus = UserProfileUpdateStatus(managedObjectContext: managedObjectContext, analytics: analytics)
         self.clientUpdateStatus = ClientUpdateStatus(syncManagedObjectContext: managedObjectContext)
-        self.clientRegistrationStatus = ZMClientRegistrationStatus(managedObjectContext: managedObjectContext,
-                                                                   cookieStorage: cookieStorage,
-                                                                   registrationStatusDelegate: syncStateDelegate)
+        self.clientRegistrationStatus = ZMClientRegistrationStatus(context: managedObjectContext,
+                                                                   cookieProvider: cookieStorage,
+                                                                   coreCryptoProvider: coreCryptoProvider)
         self.pushNotificationStatus = PushNotificationStatus(
             managedObjectContext: managedObjectContext,
             lastEventIDRepository: lastEventIDRepository
@@ -73,17 +72,13 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         self.assetDeletionStatus = AssetDeletionStatus(provider: managedObjectContext, queue: managedObjectContext)
         super.init()
 
-        callInProgressObserverToken = NotificationInContext.addObserver(name: CallStateObserver.CallInProgressNotification, context: managedObjectContext.notificationContext) { [weak self] (note) in
+        callInProgressObserverToken = NotificationInContext.addObserver(name: CallStateObserver.CallInProgressNotification, context: managedObjectContext.notificationContext) { [weak self] note in
             managedObjectContext.performGroupedBlock {
                 if let callInProgress = note.userInfo[CallStateObserver.CallInProgressKey] as? Bool {
                     self?.operationStatus.hasOngoingCall = callInProgress
                 }
             }
         }
-    }
-
-    deinit {
-        clientRegistrationStatus.tearDown()
     }
 
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
@@ -100,7 +95,7 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
     }
 
     public var synchronizationState: SynchronizationState {
-        if !clientRegistrationStatus.clientIsReadyForRequests() {
+        if !clientRegistrationStatus.clientIsReadyForRequests {
             return .unauthenticated
         } else if syncStatus.isSlowSyncing {
             return .slowSyncing
@@ -113,8 +108,8 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         }
     }
 
-    public func requestSlowSync() {
-        syncStatus.forceSlowSync()
+    public func requestResyncResources() {
+        syncStatus.resyncResources()
     }
 
     public func requestQuickSync() {

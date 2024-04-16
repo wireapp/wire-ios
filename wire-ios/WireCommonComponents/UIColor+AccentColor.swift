@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,6 +29,8 @@ public enum AccentColor: Int16, CaseIterable {
     case turquoise
     case purple
 
+    public static var `default`: Self { .blue }
+
     /// Returns a random accent color.
     public static var random: AccentColor {
         return AccentColor.allSelectable().randomElement()!
@@ -39,7 +41,7 @@ public enum AccentColor: Int16, CaseIterable {
     }
 
     public var zmAccentColor: ZMAccentColor {
-        return ZMAccentColor(rawValue: self.rawValue)!
+        return ZMAccentColor(rawValue: rawValue)!
     }
 
     public static func allSelectable() -> [AccentColor] {

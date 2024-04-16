@@ -91,12 +91,14 @@ final class FileTransferView: UIView, TransferView {
     }
 
     private func createConstraints() {
-        [topLabel,
-         actionButton,
-         fileTypeIconView,
-         progressView,
-         bottomLabel,
-         loadingView].prepareForLayout()
+        [
+            topLabel,
+            actionButton,
+            fileTypeIconView,
+            progressView,
+            bottomLabel,
+            loadingView
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             topLabel.topAnchor.constraint(equalTo: topAnchor, constant: 12),
@@ -150,7 +152,7 @@ final class FileTransferView: UIView, TransferView {
         fileTypeIconView.contentMode = .center
         fileTypeIconView.setTemplateIcon(.document, size: .small)
 
-        fileMessageData.thumbnailImage.fetchImage { [weak self] (image, _) in
+        fileMessageData.thumbnailImage.fetchImage { [weak self] image, _ in
             guard let image = image else { return }
 
             self?.fileTypeIconView.contentMode = .scaleAspectFit
@@ -244,17 +246,21 @@ final class FileTransferView: UIView, TransferView {
     // MARK: - Actions
 
     @objc func onActionButtonPressed(_ sender: UIButton) {
-        guard let message = fileMessage, let fileMessageData = message.fileMessageData else {
+        guard
+            let message = fileMessage,
+            let fileMessageData = message.fileMessageData
+        else {
             return
         }
 
         switch fileMessageData.transferState {
         case .uploading:
-            if .none != message.fileMessageData!.fileURL {
-                delegate?.transferView(self, didSelect: .cancel)
-            }
+            guard fileMessageData.hasLocalFileData else { return }
+            delegate?.transferView(self, didSelect: .cancel)
+
         case .uploadingFailed, .uploadingCancelled:
             delegate?.transferView(self, didSelect: .resend)
+
         case .uploaded:
             if case .downloading = fileMessageData.downloadState {
                 progressView.setProgress(0, animated: false)

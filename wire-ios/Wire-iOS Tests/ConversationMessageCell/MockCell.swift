@@ -19,7 +19,7 @@
 import UIKit
 @testable import Wire
 
-class MockCell: UIView, ConversationMessageCell {
+final class MockCell: UIView, ConversationMessageCell {
     struct Configuration {
         let backgroundColor: UIColor
     }
@@ -27,7 +27,7 @@ class MockCell: UIView, ConversationMessageCell {
     weak var message: ZMConversationMessage?
     weak var delegate: ConversationMessageCellDelegate?
 
-    var isConfigured: Bool  = false
+    var isConfigured: Bool = false
     var isSelected: Bool = false
 
     func configure(with object: Configuration, animated: Bool) {

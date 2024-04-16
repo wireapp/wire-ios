@@ -26,16 +26,15 @@ extension ZMConversation {
     static func createOtherUserConversation(moc: NSManagedObjectContext, otherUser: ZMUser) -> ZMConversation {
 
         let otherUserConversation = ZMConversation.insertNewObject(in: moc)
-        otherUserConversation.add(participants: ZMUser.selfUser(in: moc))
+        otherUserConversation.addParticipantsAndUpdateConversationState(users: [ZMUser.selfUser(in: moc), otherUser])
 
         otherUserConversation.conversationType = .oneOnOne
         otherUserConversation.remoteIdentifier = UUID.create()
         let connection = ZMConnection.insertNewObject(in: moc)
         connection.to = otherUser
         connection.status = .accepted
-        connection.conversation = otherUserConversation
 
-        connection.add(user: otherUser)
+        otherUser.oneOnOneConversation = otherUserConversation
 
         return otherUserConversation
     }
@@ -56,7 +55,7 @@ extension ZMConversation {
                                         otherUser: ZMUser,
                                         selfUser: ZMUser) -> ZMConversation {
         let conversation = createGroupConversationOnlyAdmin(moc: moc, selfUser: selfUser)
-        conversation.add(participants: otherUser)
+        conversation.addParticipantAndUpdateConversationState(user: otherUser)
         return conversation
     }
 
@@ -67,21 +66,5 @@ extension ZMConversation {
         conversation.teamRemoteIdentifier = UUID.create()
         conversation.userDefinedName = "Group conversation"
         return conversation
-    }
-}
-
-/// TODO: retire this extension
-extension ZMConversation {
-
-    func add(participants: Set<ZMUser>) {
-        addParticipantsAndUpdateConversationState(users: participants, role: nil)
-    }
-
-    func add(participants: [ZMUser]) {
-        add(participants: Set(participants))
-    }
-
-    func add(participants: ZMUser...) {
-        add(participants: Set(participants))
     }
 }

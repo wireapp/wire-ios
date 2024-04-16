@@ -22,7 +22,6 @@
 		09B977411B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09B9773F1B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m */; };
 		09B977451B669CEC00A30B38 /* NSOperationQueue+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 09B977431B669CEC00A30B38 /* NSOperationQueue+Helpers.m */; };
 		09BCDB591BC664DA0020DCC7 /* ImageOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BCDB581BC664DA0020DCC7 /* ImageOwner.swift */; };
-		09BCDB5D1BC68F720020DCC7 /* ZMImageOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = 09BCDB5C1BC68F410020DCC7 /* ZMImageOwner.m */; };
 		5405B0091BCEBDBF00C0C3BD /* ZMIImageProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 5405B0071BCEBDBF00C0C3BD /* ZMIImageProperties.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5405B00A1BCEBDBF00C0C3BD /* ZMIImageProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 5405B0081BCEBDBF00C0C3BD /* ZMIImageProperties.m */; };
 		54A5A6141E929FC400D56F2E /* WireImages.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -75,6 +74,7 @@
 		EE98A0B6296EFD3F0055E981 /* WireTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EE98A0B4296EFD3F0055E981 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEB4197229548A3D00644D10 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEB4197129548A3D00644D10 /* WireUtilities.framework */; };
 		EEB4197329548A3D00644D10 /* WireUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EEB4197129548A3D00644D10 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EEB7138B2B9F37BB00DB27F6 /* ZMImageFormat+StringValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB7138A2B9F37BB00DB27F6 /* ZMImageFormat+StringValue.swift */; };
 		F1E148CF207CE68100F81833 /* ceiling_rotated_1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C0C1E5C7E5D00A5EC11 /* ceiling_rotated_1.jpg */; };
 /* End PBXBuildFile section */
 
@@ -133,7 +133,6 @@
 		09B977421B669CEC00A30B38 /* NSOperationQueue+Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSOperationQueue+Helpers.h"; sourceTree = "<group>"; };
 		09B977431B669CEC00A30B38 /* NSOperationQueue+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOperationQueue+Helpers.m"; sourceTree = "<group>"; };
 		09BCDB581BC664DA0020DCC7 /* ImageOwner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageOwner.swift; sourceTree = "<group>"; };
-		09BCDB5C1BC68F410020DCC7 /* ZMImageOwner.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMImageOwner.m; sourceTree = "<group>"; };
 		5405B0071BCEBDBF00C0C3BD /* ZMIImageProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMIImageProperties.h; sourceTree = "<group>"; };
 		5405B0081BCEBDBF00C0C3BD /* ZMIImageProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMIImageProperties.m; sourceTree = "<group>"; };
 		5471F81F1B73E6E000460C35 /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
@@ -192,6 +191,7 @@
 		EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE98A0B4296EFD3F0055E981 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEB4197129548A3D00644D10 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEB7138A2B9F37BB00DB27F6 /* ZMImageFormat+StringValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMImageFormat+StringValue.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -264,8 +264,8 @@
 				098CB1371B5FAD5A00712DF9 /* ZMImageLoadOperation.h */,
 				098CB1381B5FAD5A00712DF9 /* ZMImageLoadOperation.m */,
 				098CB1391B5FAD5A00712DF9 /* ZMImageOwner.h */,
-				09BCDB5C1BC68F410020DCC7 /* ZMImageOwner.m */,
 				09BCDB581BC664DA0020DCC7 /* ImageOwner.swift */,
+				EEB7138A2B9F37BB00DB27F6 /* ZMImageFormat+StringValue.swift */,
 				098CB13A1B5FAD5A00712DF9 /* ZMImagePreprocessor.h */,
 				098CB13B1B5FAD5A00712DF9 /* ZMImagePreprocessor.m */,
 				5405B0071BCEBDBF00C0C3BD /* ZMIImageProperties.h */,
@@ -309,7 +309,11 @@
 				098CB1191B5FA6E100712DF9 /* Frameworks */,
 				09DD1EB31B5D41E1005EBCC4 /* Products */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
+			usesTabs = 0;
+			wrapsLines = 1;
 		};
 		09DD1EB31B5D41E1005EBCC4 /* Products */ = {
 			isa = PBXGroup;
@@ -615,11 +619,11 @@
 				09BCDB591BC664DA0020DCC7 /* ImageOwner.swift in Sources */,
 				87B91C041E5C586D00A5EC11 /* NSData+MediaMetadata.swift in Sources */,
 				5405B00A1BCEBDBF00C0C3BD /* ZMIImageProperties.m in Sources */,
+				EEB7138B2B9F37BB00DB27F6 /* ZMImageFormat+StringValue.swift in Sources */,
 				096960351B663EF0006DF53B /* ZMImagePreprocessor.m in Sources */,
 				096960321B663EF0006DF53B /* ZMImageLoadOperation.m in Sources */,
 				0969602E1B663EF0006DF53B /* ZMAssetsPreprocessor.m in Sources */,
 				A9626B4B26932BEA0043CC31 /* ZMImageDownsampleOperation.swift in Sources */,
-				09BCDB5D1BC68F720020DCC7 /* ZMImageOwner.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -748,7 +752,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = "WireImages-iosTestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.zimages-iosTestHost";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_WORKSPACE = YES;
@@ -759,7 +767,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = "WireImages-iosTestHost/Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.zimages-iosTestHost";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_WORKSPACE = YES;

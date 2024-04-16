@@ -20,7 +20,7 @@ import Foundation
 
 /// An EntityActionHandler is responsible for performing actions requested by an EntityAction.
 ///
-public protocol EntityActionHandler {
+public protocol EntityActionHandler: AnyObject {
     associatedtype Action
 
     /// Perform the action represented by Action
@@ -55,10 +55,13 @@ public extension EntityAction {
 
     /// Request the action to be performed
     func send(in context: NotificationContext) {
-        NotificationInContext(name: Self.notificationName,
-                              context: context,
-                              object: nil,
-                              userInfo: [Self.userInfoKey: self]).post()
+        let notification = NotificationInContext(
+            name: Self.notificationName,
+            context: context,
+            object: nil,
+            userInfo: [Self.userInfoKey: self]
+        )
+        notification.post()
     }
 
     /// Called by an `EntityActionHandler` when the action has been performed.
@@ -82,22 +85,21 @@ public extension EntityAction {
     ///   - handler: action handler
     ///   - context: context in which to listen for actions
     ///   - queue: queue on which the `performAction()` will be called
-    static func registerHandler<Handler: EntityActionHandler>(_ handler: Handler,
-                                                              context: NotificationContext,
-                                                              queue: OperationQueue? = nil) -> Any where Handler.Action == Self {
-        return NotificationInContext.addObserver(name: notificationName,
-                                          context: context,
-                                          object: nil,
-                                          queue: queue) { (note) in
-
-            guard let action = note.userInfo[userInfoKey] as? Handler.Action else {
-                return
-            }
-
-            handler.performAction(action)
+    static func registerHandler<Handler: EntityActionHandler>(
+        _ handler: Handler,
+        context: NotificationContext,
+        queue: OperationQueue? = nil
+    ) -> NSObjectProtocol where Handler.Action == Self {
+        NotificationInContext.addObserver(
+            name: notificationName,
+            context: context,
+            object: nil,
+            queue: queue
+        ) { [weak handler] notification in
+            guard let action = notification.userInfo[userInfoKey] as? Handler.Action else { return }
+            handler?.performAction(action)
         }
     }
-
 }
 
 public extension EntityAction {
@@ -161,7 +163,7 @@ public extension EntityAction {
     ///   The action's error.
 
     mutating func perform(in context: NotificationContext) async throws -> Result {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             perform(in: context, resultHandler: continuation.resume(with:))
         }
     }

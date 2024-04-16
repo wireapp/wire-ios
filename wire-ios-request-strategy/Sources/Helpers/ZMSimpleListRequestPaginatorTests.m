@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
 
 @import WireTransport;
 @import WireRequestStrategy;
@@ -164,7 +163,7 @@
     }
 
     UserClient *client = [UserClient insertNewObjectInManagedObjectContext:moc];
-    client.remoteIdentifier = [NSString createAlphanumericalString];
+    client.remoteIdentifier = [NSString randomRemoteIdentifier];
     client.user = selfUser;
 
     [moc setPersistentStoreMetadata:client.remoteIdentifier forKey:ZMPersistedClientIdKey];

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,19 +72,4 @@ extension Dictionary {
         }
         return newDict
     }
-}
-
-extension Sequence {
-
-    /// Returns a dictionary created by key-value association as returned by the transform function.
-    /// Multiple values with the same key will be overwritten by the last element of the sequence to return that key
-    public func dictionary<K: Hashable, V>(_ transform: (Self.Iterator.Element) throws -> (key: K, value: V)) rethrows -> [K: V] {
-        var mapping: [K: V] = [:]
-        for value in self {
-            let keyValue = try transform(value)
-            mapping[keyValue.key] = keyValue.value
-        }
-        return mapping
-    }
-
 }

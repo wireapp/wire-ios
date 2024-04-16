@@ -95,7 +95,7 @@ extension ZMMessage: Shareable {
                 }
             }
         } else if isVideo || isAudio || isFile {
-            let url  = fileMessageData!.fileURL!
+            guard let url = fileMessageData!.temporaryURLToDecryptedFile() else { return }
             FileMetaDataGenerator.metadataForFileAtURL(url, UTI: url.UTI(), name: url.lastPathComponent) { fileMetadata in
                 ZMUserSession.shared()?.perform {
                     conversations.forEachNonEphemeral {
@@ -202,7 +202,7 @@ extension ConversationContentViewController: UIAdaptivePresentationControllerDel
 
         keyboardAvoiding.presentationController?.delegate = self
 
-        shareViewController.onDismiss = { (shareController: ShareViewController<ZMConversation, ZMMessage>, _) -> Void in
+        shareViewController.onDismiss = { (shareController: ShareViewController<ZMConversation, ZMMessage>, _) in
             weak var presentingViewController = shareController.presentingViewController
 
             presentingViewController?.dismiss(animated: true)

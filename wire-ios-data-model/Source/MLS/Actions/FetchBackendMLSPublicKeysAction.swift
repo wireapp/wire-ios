@@ -26,6 +26,7 @@ public class FetchBackendMLSPublicKeysAction: EntityAction {
 
         case endpointUnavailable
         case malformedResponse
+        case mlsNotEnabled
         case unknown(status: Int, label: String, message: String)
 
         public var errorDescription: String? {
@@ -35,6 +36,9 @@ public class FetchBackendMLSPublicKeysAction: EntityAction {
 
             case .malformedResponse:
                 return "Malformed response"
+
+            case .mlsNotEnabled:
+                return "MLS not enabled"
 
             case let .unknown(status, label, message):
                 return "Unknown error response status: \(status), label: \(label), message: \(message)"

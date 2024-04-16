@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2023 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@ extension ZMImageMessage {
     /// Request the download of the image if not already present.
     /// The download will be executed asynchronously. The caller can be notified by observing the message window.
     /// This method can safely be called multiple times, even if the content is already available locally
-    public func requestFileDownload() {
+    @objc
+    func requestFileDownload_Swift() {
         // V2
 
         // objects with temp ID on the UI must just have been inserted so no need to download
@@ -31,12 +32,12 @@ extension ZMImageMessage {
         }
 
         if let moc = managedObjectContext?.zm_userInterface {
-            let note = NotificationInContext(
+            NotificationInContext(
                 name: ZMAssetClientMessage.imageDownloadNotificationName,
                 context: moc.notificationContext,
                 object: objectID,
                 userInfo: nil)
-            note.post()
+            .post()
         }
     }
 }

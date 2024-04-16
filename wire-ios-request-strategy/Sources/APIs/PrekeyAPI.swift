@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -128,13 +128,19 @@ class PrekeyAPIV5: PrekeyAPIV4 {
     }
 }
 
+class PrekeyAPIV6: PrekeyAPIV5 {
+    override var apiVersion: APIVersion {
+        return .v6
+    }
+}
+
 extension Collection where Element == QualifiedClientID {
 
     var clientListByUserID: Payload.ClientListByUserID {
 
         let initial: Payload.ClientListByUserID = [:]
 
-        return self.reduce(into: initial) { (result, client) in
+        return self.reduce(into: initial) { result, client in
             result[client.userID.transportString(), default: []].append(client.clientID)
         }
     }
@@ -142,7 +148,7 @@ extension Collection where Element == QualifiedClientID {
     var clientListByDomain: Payload.ClientListByQualifiedUserID {
         let initial: Payload.ClientListByQualifiedUserID = [:]
 
-        return self.reduce(into: initial) { (result, client) in
+        return self.reduce(into: initial) { result, client in
             result[client.domain, default: Payload.ClientListByUserID()][client.userID.transportString(), default: []].append(client.clientID)
         }
     }

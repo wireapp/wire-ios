@@ -32,7 +32,7 @@ extension ParticipantRole: ObjectInSnapshot {
 }
 
 @objcMembers
-final public class ParticipantRoleChangeInfo: ObjectChangeInfo {
+public final class ParticipantRoleChangeInfo: ObjectChangeInfo {
 
     static let ParticipantRoleChangeInfoKey = "participantRoleChanges"
 
@@ -44,8 +44,10 @@ final public class ParticipantRoleChangeInfo: ObjectChangeInfo {
         participantRole = object as! ParticipantRole
         super.init(object: object)
     }
-
-    public let participantRole: ParticipantRole // TODO: create ParticipantRoleType
+    // swiftlint:disable todo_requires_jira_link
+    // TODO: create ParticipantRoleType
+    // swiftlint:enable todo_requires_jira_link
+    public let participantRole: ParticipantRole
 
     public var roleChanged: Bool {
         return changedKeys.contains(#keyPath(ParticipantRole.role))
@@ -66,7 +68,7 @@ final public class ParticipantRoleChangeInfo: ObjectChangeInfo {
     /// You must hold on to the token and use it to unregister
     @objc(addParticipantRoleObserver:forParticipantRole:managedObjectContext:)
     public static func add(observer: ParticipantRoleObserver, for participantRole: ParticipantRole?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .ParticipantRoleChange, managedObjectContext: managedObjectContext, object: participantRole) { [weak observer] (note) in
+        return ManagedObjectObserverToken(name: .ParticipantRoleChange, managedObjectContext: managedObjectContext, object: participantRole) { [weak observer] note in
             guard let `observer` = observer,
                 let changeInfo = note.changeInfo as? ParticipantRoleChangeInfo
                 else { return }

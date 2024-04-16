@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ public struct CallEventContent: Codable {
 
     public init?(from event: ZMUpdateEvent) {
         guard
-            event.type == .conversationOtrMessageAdd,
+            event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]),
             let message = GenericMessage(from: event),
             message.hasCalling,
             let payload = message.calling.content.data(using: .utf8, allowLossyConversion: false)
@@ -78,7 +78,7 @@ public struct CallEventContent: Codable {
     public init?(from data: Data, with decoder: JSONDecoder = .init()) {
         do {
             self = try decoder.decode(Self.self, from: data)
-        } catch let error {
+        } catch {
             print(error.localizedDescription)
             return nil
         }
@@ -87,7 +87,7 @@ public struct CallEventContent: Codable {
     // MARK: - Methods
 
     public var callerID: UUID? {
-        return callerUserID.flatMap(UUID.init)
+        callerUserID.flatMap(UUID.init(transportString:))
     }
 
     public var callState: LocalNotificationType.CallState? {

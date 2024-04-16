@@ -70,7 +70,9 @@ final class EmojiKeyboardViewController: UIViewController {
     private func createConstraints() {
         guard let sectionViewControllerView = sectionViewController.view else { return }
 
-        [collectionView, sectionViewControllerView].prepareForLayout()
+        [collectionView, sectionViewControllerView].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
 
         let sectionViewControllerViewTrailing = sectionViewControllerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32)
 
@@ -201,14 +203,14 @@ final class EmojiCollectionViewCell: UICollectionViewCell {
 
     func setupViews() {
         titleLabel.textAlignment = .center
-        let fontSize: CGFloat =  UIDevice.current.userInterfaceIdiom == .pad ? 40 : 28
+        let fontSize: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 40 : 28
         titleLabel.font = .systemFont(ofSize: fontSize)
         titleLabel.adjustsFontSizeToFitWidth = true
         addSubview(titleLabel)
     }
 
     private func createConstraints() {
-        [titleLabel].prepareForLayout()
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: topAnchor),
             titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor),

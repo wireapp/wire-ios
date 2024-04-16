@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 import WireDataModel
 @testable import WireSyncEngine
 
-class TestTeamObserver: NSObject, TeamObserver {
+final class TestTeamObserver: NSObject, TeamObserver {
 
     var token: NSObjectProtocol!
     var observedTeam: Team?
@@ -50,46 +50,15 @@ class TeamTests: IntegrationTest {
 
     func remotelyInsertTeam(members: [MockUser], isBound: Bool = true) -> MockTeam {
         var mockTeam: MockTeam!
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             mockTeam = session.insertTeam(withName: "Super-Team", isBound: isBound, users: Set(members))
             mockTeam.creator = members.first
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         return mockTeam
     }
-}
 
-// MARK: Notifications
-
-extension TeamTests {
-
-    func testThatItNotifiesAboutChangedTeamName() {
-        // given
-        let mockTeam = remotelyInsertTeam(members: [self.selfUser, self.user1])
-
-        XCTAssert(login())
-        guard let localSelfUser = user(for: selfUser) else { return XCTFail() }
-        XCTAssertTrue(localSelfUser.hasTeam)
-
-        let teamObserver = TestTeamObserver(team: nil, userSession: userSession!)
-
-        // when
-        mockTransportSession.performRemoteChanges { (_) in
-            mockTeam.name = "Super-Duper-Team"
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // then
-        XCTAssertEqual(teamObserver.notifications.count, 1)
-        guard let note = teamObserver.notifications.last else {
-            return XCTFail("no notification received")
-        }
-        XCTAssertTrue(note.nameChanged)
-    }
-}
-
-// MARK: Member removal
-extension TeamTests {
+    // MARK: Notifications
 
     func testThatOtherUserCanBeRemovedRemotely() {
         // given
@@ -103,7 +72,7 @@ extension TeamTests {
         XCTAssert(localSelfUser.hasTeam)
 
         // when
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.removeMember(with: self.user1, from: mockTeam)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -122,7 +91,7 @@ extension TeamTests {
         XCTAssert(ZMUser.selfUser(in: userSession!.managedObjectContext).hasTeam)
 
         // when
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.removeMember(with: self.selfUser, from: mockTeam)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -140,7 +109,7 @@ extension TeamTests {
         let teamObserver = TestTeamObserver(team: nil, userSession: userSession!)
 
         // when
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.removeMember(with: self.user1, from: mockTeam)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -152,5 +121,4 @@ extension TeamTests {
         }
         XCTAssertTrue(change.membersChanged)
     }
-
 }

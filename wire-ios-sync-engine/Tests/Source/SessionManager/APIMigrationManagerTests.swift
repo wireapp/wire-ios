@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -117,8 +117,8 @@ class APIMigrationManagerTests: MessagingTest {
 
     func test_itPerformsMigrationsForMultipleSessions() async {
         // Given
-        let clientID1 = "client1"
-        let clientID2 = "client2"
+        let clientID1 = UUID().uuidString
+        let clientID2 = UUID().uuidString
         let userSession1 = await setupSession(with: clientID1)
         let userSession2 = await setupSession(with: clientID2)
 

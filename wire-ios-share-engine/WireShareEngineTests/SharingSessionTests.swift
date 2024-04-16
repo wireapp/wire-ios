@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import WireDataModel
 import WireTesting
 @testable import WireShareEngine
 
-class SharingSessionTests: BaseSharingSessionTests {
+final class SharingSessionTests: BaseSharingSessionTests {
 
     func createConversation(type: ZMConversationType, archived: Bool) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: moc)
@@ -57,7 +57,7 @@ class SharingSessionTests: BaseSharingSessionTests {
 
     func testThatWriteableNonArchivedConversationsAreReturned() {
         let conversations = Set(sharingSession.writeableNonArchivedConversations.map { $0 as! ZMConversation })
-        let activeConversationsSet: Set<ZMConversation?> =  [activeConversation1, activeConversation2]
+        let activeConversationsSet: Set<ZMConversation?> = [activeConversation1, activeConversation2]
         XCTAssertEqual(conversations, activeConversationsSet)
     }
 
@@ -75,14 +75,12 @@ class SharingSessionTests: BaseSharingSessionTests {
 
             // When
             _ = try createSharingSession()
+            XCTFail("unexpected success")
         } catch SharingSession.InitializationError.pendingCryptoboxMigration {
             // Then
-            return
         } catch {
             XCTFail("unexpected error: \(error.localizedDescription)")
         }
-
-        XCTFail("unexpected success")
     }
 
 }

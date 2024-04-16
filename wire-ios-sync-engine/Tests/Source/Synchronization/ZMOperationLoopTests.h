@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,6 +26,9 @@
 @class MockRequestStrategy;
 @class MockUpdateEventProcessor;
 @class MockRequestCancellation;
+@class MockPushChannel;
+@class ZMPersistentCookieStorage;
+@class RecordingMockTransportSession;
 
 @interface ZMOperationLoopTests : MessagingTest
 
@@ -37,7 +40,7 @@
 @property (nonatomic) PushNotificationStatus *pushNotificationStatus;
 @property (nonatomic) CallEventStatus *callEventStatus;
 @property (nonatomic) SyncStatus *syncStatus;
-@property (nonatomic) MockSyncStateDelegate *mockSyncDelegate;
+@property (nonatomic) OperationStatus *operationStatus;
 @property (nonatomic) MockRequestStrategy *mockRequestStrategy;
 @property (nonatomic) MockUpdateEventProcessor *mockUpdateEventProcessor;
 @property (nonatomic) MockRequestCancellation *mockRequestCancellation;

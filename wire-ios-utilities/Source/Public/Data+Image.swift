@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,6 @@ extension NSData {
     }
 
     /// Returns whether the data represents animated GIF
-    /// - Parameter data: image data
     /// - Returns: returns turn if the data is GIF and number of images > 1
     @objc
     public func isDataAnimatedGIF() -> Bool {

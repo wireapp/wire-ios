@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,11 +49,11 @@ public final class PushDispatcherTests: ZMTBaseTest {
     static let payload: [AnyHashable: Any] = ["data": [
         "user": userID,
         "type": "notice"
-        ]]
+    ]]
 
     static let payloadWithoutUser: [AnyHashable: Any] = ["data": [
         "type": "notice"
-        ]]
+    ]]
 
     public override func setUp() {
         super.setUp()

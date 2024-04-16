@@ -59,7 +59,7 @@ extension MessageToolboxContent: Comparable {
 
 typealias ConversationMessage = ZMConversationMessage & SwiftConversationMessage
 
-class MessageToolboxDataSource {
+final class MessageToolboxDataSource {
 
     typealias ContentSystem = L10n.Localizable.Content.System
 
@@ -78,8 +78,6 @@ class MessageToolboxDataSource {
     private var attributes: [NSAttributedString.Key: AnyObject] {
         return [.font: statusFont, .foregroundColor: statusTextColor]
     }
-
-    private static let separator = " " + String.MessageToolbox.middleDot + " "
 
     // MARK: - Initialization
 
@@ -106,9 +104,12 @@ class MessageToolboxDataSource {
 
         // Determine the content by priority
 
-        // 1) Call list
-        if message.systemMessageData?.systemMessageType == .performedCall ||
-            message.systemMessageData?.systemMessageType == .missedCall {
+        // [WPB-6988] removed performed call
+        if message.systemMessageData?.systemMessageType == .performedCall {
+            return false
+        }
+        // 1b) Call list for missed calls
+        else if message.systemMessageData?.systemMessageType == .missedCall {
             content = .callList(makeCallList())
         }
         // 2) Failed to send
@@ -152,7 +153,7 @@ class MessageToolboxDataSource {
                 left.serverTimestamp < right.serverTimestamp
             }.compactMap(timestampString)
 
-            let finalText = childrenTimestamps.reduce(timestamp) { (text, current) in
+            let finalText = childrenTimestamps.reduce(timestamp) { text, current in
                 return "\(text)\n\(current)"
             }
 
@@ -266,20 +267,16 @@ class MessageToolboxDataSource {
 
     /// Creates the timestamp text.
     private func timestampString(_ message: ZMConversationMessage) -> String? {
-        let timestampString: String?
+        var timestampString: String?
 
         if let editedTimeString = message.formattedEditedDate() {
             timestampString = ContentSystem.editedMessagePrefixTimestamp(editedTimeString)
-        } else if let dateTimeString = message.formattedReceivedDate() {
-            if let systemMessage = message as? ZMSystemMessage, systemMessage.systemMessageType == .messageDeletedForEveryone {
-                timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)
-            } else if let durationString = message.systemMessageData?.callDurationString() {
-                timestampString = dateTimeString + MessageToolboxDataSource.separator + durationString
-            } else {
-                timestampString = nil
-            }
-        } else {
-            timestampString = nil
+        } else if
+            let dateTimeString = message.formattedReceivedDate(),
+            let systemMessage = message as? ZMSystemMessage,
+            systemMessage.systemMessageType == .messageDeletedForEveryone
+        {
+            timestampString = ContentSystem.deletedMessagePrefixTimestamp(dateTimeString)
         }
 
         return timestampString

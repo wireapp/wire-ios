@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import CoreData
 @objc(StoredUpdateEvent)
 public final class StoredUpdateEvent: NSManagedObject {
 
-    static let entityName =  "StoredUpdateEvent"
+    static let entityName = "StoredUpdateEvent"
     static let SortIndexKey = "sortIndex"
     /// The key under which the event payload is encrypted by the public key.
     static internal let encryptedPayloadKey = "encryptedPayload"

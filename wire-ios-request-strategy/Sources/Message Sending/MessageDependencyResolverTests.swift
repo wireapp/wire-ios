@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,14 +17,16 @@
 //
 
 import XCTest
+@testable import WireDataModel
 
 final class MessageDependencyResolverTests: MessagingTestBase {
 
     func testThatGivenMessageWithoutDependencies_thenDontWait() throws {
         // given
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
         let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
             .arrange()
@@ -42,8 +44,9 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             groupConversation.needsToBeUpdatedFromBackend = true
         }
         let message = GenericMessageEntity(
-            conversation: groupConversation,
             message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
             completionHandler: nil)
         let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
             .arrange()
@@ -52,8 +55,8 @@ final class MessageDependencyResolverTests: MessagingTestBase {
             // Sleeping in order to hit the code path where we start observing RequestAvailable
             try await Task.sleep(nanoseconds: 250_000_000)
 
-            syncMOC.performAndWait {
-                groupConversation.needsToBeUpdatedFromBackend = false
+            await syncMOC.perform {
+                self.groupConversation.needsToBeUpdatedFromBackend = false
             }
 
             RequestAvailableNotification.notifyNewRequestsAvailable(nil)
@@ -62,6 +65,35 @@ final class MessageDependencyResolverTests: MessagingTestBase {
         // then test completes
         wait(timeout: 0.5) {
             try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+        }
+    }
+
+    func testThatGivenMessageWithLegalHoldStatusPendingApproval_thenThrow() async throws {
+        // given
+        await syncMOC.perform { [self] in
+            // make conversatio sync a dependency
+            groupConversation.needsToBeUpdatedFromBackend = true
+            groupConversation.legalHoldStatus = .pendingApproval
+        }
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil)
+
+        let (_, messageDependencyResolver) = Arrangement(coreDataStack: coreDataStack)
+            .arrange()
+
+        // then test completes
+        wait(timeout: 0.5) {
+            do {
+                try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
+                XCTFail()
+            } catch MessageDependencyResolverError.legalHoldPendingApproval {
+                // should pass here
+            } catch {
+                XCTFail()
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 import WireTesting
 @testable import WireSyncEngine
 
-class SessionManagerTests_URLActions: IntegrationTest {
+class SessionManagerURLActionsTests: IntegrationTest {
 
     var presentationDelegate: MockPresentationDelegate!
 
@@ -77,7 +77,7 @@ class SessionManagerTests_URLActions: IntegrationTest {
         let url = URL(string: "wire://connect?service=2e1863a6-4a12-11e8-842f-0ed5f89f718b&provider=3879b1ec-4a12-11e8-842f-0ed5f89f718b")!
 
         // when then
-        XCTAssertThrowsError(try sessionManager?.openURL(url)) { (error) in
+        XCTAssertThrowsError(try sessionManager?.openURL(url)) { error in
             XCTAssertEqual(error as? DeepLinkRequestError, .notLoggedIn)
         }
     }
@@ -108,6 +108,7 @@ class SessionManagerTests_URLActions: IntegrationTest {
 
     func testThatItDelaysURLActionProcessing_UntilUserSessionBecomesUnlocked() throws {
         throw XCTSkip("disable this test for now, possibly flaky")
+
         // given: user session is availablle but it is locked
         XCTAssertTrue(login())
 

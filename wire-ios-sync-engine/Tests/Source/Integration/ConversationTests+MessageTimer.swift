@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ class ConversationMessageTimerTests: IntegrationTest {
         var payload: [String: Any] = [
             "from": user1.identifier,
             "conversation": conversation.remoteIdentifier!.transportString(),
-            "time": NSDate().transportString(),
+            "time": Date().transportString(),
             "type": "conversation.message-timer-update"
         ]
 

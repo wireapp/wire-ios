@@ -19,7 +19,7 @@
 import XCTest
 import WireTransport
 
-class NetworkSessionTests: XCTestCase {
+final class NetworkSessionTests: XCTestCase {
 
     var mockURLSession: URLSessionMock!
     var mockNetworkRequest: NetworkRequest!
@@ -69,7 +69,7 @@ class NetworkSessionTests: XCTestCase {
     }
 
     var successResponse: (Data, URLResponse) {
-        let response =  HTTPURLResponse(
+        let response = HTTPURLResponse(
             url: URL(string: "wire.com")!,
             statusCode: 200,
             httpVersion: "",
@@ -91,7 +91,7 @@ class NetworkSessionTests: XCTestCase {
         )
 
         // When
-        await assertThrows(expectedError: NetworkSession.NetworkError.invalidRequestURL) {
+        await assertItThrows(error: NetworkSession.NetworkError.invalidRequestURL) {
             _ = try await sut.send(request: invalidRequest)
         }
     }
@@ -102,7 +102,7 @@ class NetworkSessionTests: XCTestCase {
         mockURLSession.mockedResponse = invalidResponse
 
         // When
-        await assertThrows(expectedError: NetworkSession.NetworkError.invalidResponse) {
+        await assertItThrows(error: NetworkSession.NetworkError.invalidResponse) {
             _ = try await sut.send(request: self.mockNetworkRequest)
         }
     }
@@ -121,7 +121,7 @@ class NetworkSessionTests: XCTestCase {
         mockURLSession.mockedResponse = (Data(), plainTextResponse)
 
         // When
-        await assertThrows(expectedError: NetworkSession.NetworkError.invalidResponse) {
+        await assertItThrows(error: NetworkSession.NetworkError.invalidResponse) {
             _ = try await sut.send(request: self.mockNetworkRequest)
         }
     }
@@ -181,15 +181,17 @@ class NetworkSessionTests: XCTestCase {
 
 }
 
-class MockCookieStorage: CookieProvider {
+final class MockCookieStorage: CookieProvider {
 
     var isAuthenticated: Bool = true
 
     func setRequestHeaderFieldsOn(_ request: NSMutableURLRequest) {}
 
+    func deleteKeychainItems() { }
+
 }
 
-class URLSessionMock: URLRequestable {
+final class URLSessionMock: URLRequestable {
 
     var mockedResponse = (Data(), URLResponse())
 

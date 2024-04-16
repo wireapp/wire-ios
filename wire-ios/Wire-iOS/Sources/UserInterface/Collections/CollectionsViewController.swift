@@ -275,7 +275,7 @@ final class CollectionsViewController: UIViewController {
         let titleView = ConversationTitleView(conversation: collection.conversation, interactive: false)
         titleViewWrapper.addSubview(titleView)
 
-        [titleView, titleViewWrapper].prepareForLayout()
+        [titleView, titleViewWrapper].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             titleView.topAnchor.constraint(equalTo: titleViewWrapper.topAnchor, constant: 4),
             titleView.leftAnchor.constraint(equalTo: titleViewWrapper.leftAnchor),
@@ -481,7 +481,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             return UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         }
 
-        return elements(for: section).isEmpty ? .zero: UIEdgeInsets(top: 0, left: 16, bottom: 8, right: 16)
+        return elements(for: section).isEmpty ? .zero : UIEdgeInsets(top: 0, left: 16, bottom: 8, right: 16)
     }
 
     // MARK: - Data Source

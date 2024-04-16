@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -173,7 +173,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
 
     func createMemberJoinUpdateEvent(_ nonce: UUID, conversationID: UUID, users: [ZMUser], senderID: UUID = UUID.create()) -> ZMUpdateEvent {
         let userIds = users.map { $0.remoteIdentifier.transportString() }
-        let usersWithRoles = users.map { (user) -> [String: String] in
+        let usersWithRoles = users.map { user -> [String: String] in
             return ["id": user.remoteIdentifier.transportString(),
                     "conversation_role": "wire_admin"]
         }
@@ -181,7 +181,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
         let payload: [String: Any] = [
             "from": senderID.transportString(),
             "conversation": conversationID.transportString(),
-            "time": NSDate().transportString(),
+            "time": Date().transportString(),
             "data": [
                 "user_ids": userIds,
                 "users": usersWithRoles
@@ -196,7 +196,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
         let payload: [String: Any] = [
             "from": senderID.transportString(),
             "conversation": conversationID.transportString(),
-            "time": NSDate().transportString(),
+            "time": Date().transportString(),
             "data": [
                 "user_ids": userIds
             ],
@@ -217,7 +217,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
         "time": timestamp.transportString(),
         "data": ["message_timer": timer],
         "type": "conversation.message-timer-update"
-        ]
+       ]
         return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!
     }
 

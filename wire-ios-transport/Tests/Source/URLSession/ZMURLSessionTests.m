@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import XCTest;
 @import WireTransport;
@@ -46,18 +45,11 @@
 @property (nonatomic) NSMutableArray *firedTimers;
 @property (nonatomic) MockCertificateTrust *trustProvider;
 
-
-@end
-
-@interface ZMURLSessionTests (Delegate)
-@end
-@interface ZMURLSessionTests (TaskGeneration)
 @end
 
 static NSString * const TaskKey = @"response";
 static NSString * const RequestKey = @"request";
 static NSString * const DataKey = @"data";
-
 
 
 @implementation ZMURLSessionTests
@@ -267,7 +259,7 @@ static NSString * const DataKey = @"data";
                                verifyBlock:(void (^)(NSURLSessionTask *, NSArray<NSURLSessionTask *> *))verifyBlock
 {
     // given
-    XCTestExpectation *expectation = [self expectationWithDescription:@"It should call the completionHandler"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"It should call the completionHandler"];
     
     ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"/some/path/" apiVersion:0];
     NSURLSessionTask *task = [self.sut taskWithRequest:self.URLRequestA bodyData:nil transportRequest:request];
@@ -282,11 +274,9 @@ static NSString * const DataKey = @"data";
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
 }
 
-@end
 
+// MARK: - ZMURLSessionTests + Delegate
 
-
-@implementation ZMURLSessionTests (Delegate)
 
 - (void)testItCallTheDelegateWhenItDetectsAnUnsafeConnection
 {
@@ -312,7 +302,7 @@ static NSString * const DataKey = @"data";
 {
     // given
     NSURLResponse *response = [[NSURLResponse alloc] initWithURL:[NSURL URLWithString:@"https://foo.example.com"] MIMEType:@"application/binary" expectedContentLength:1234 textEncodingName:@"utf8"];
-    XCTestExpectation *e = [self expectationWithDescription:@"completion handler"];
+    XCTestExpectation *e = [self customExpectationWithDescription:@"completion handler"];
     
     // when
     [self.sut URLSession:self.sut.backingSession dataTask:(id) self.taskA didReceiveResponse:response completionHandler:^(NSURLSessionResponseDisposition disposition) {
@@ -364,7 +354,7 @@ static NSString * const DataKey = @"data";
     
     NSURLRequest *newRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:finalURL]];
     
-    XCTestExpectation *completionHandlerCalled = [self expectationWithDescription:@"Completion handler invoked"];
+    XCTestExpectation *completionHandlerCalled = [self customExpectationWithDescription:@"Completion handler invoked"];
     
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"foo"] statusCode:302 HTTPVersion:@"1.1" headerFields:@{}];
     
@@ -492,11 +482,9 @@ willPerformHTTPRedirection:response
     }
 }
 
-@end
 
+// MARK: - ZMURLSessionTests + TaskGeneration
 
-
-@implementation ZMURLSessionTests (TaskGeneration)
 
 - (void)setupMockBackgroundSession
 {    

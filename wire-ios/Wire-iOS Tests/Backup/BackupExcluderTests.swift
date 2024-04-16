@@ -22,7 +22,10 @@ import WireCommonComponents
 
 private final class MockBackupExcluder: BackupExcluder {}
 
-final class BackupExcluderTests: XCTestCase { /// TODO: test protocol instead
+// swiftlint:disable todo_requires_jira_link
+// TODO: test protocol instead
+// swiftlint:enable todo_requires_jira_link
+final class BackupExcluderTests: XCTestCase {
     private var sut: MockBackupExcluder!
     let filename = "test.txt"
 
@@ -60,7 +63,7 @@ final class BackupExcluderTests: XCTestCase { /// TODO: test protocol instead
 
         write(text: "test", to: filename)
 
-        filesToExclude.forEach { (directory, path) in
+        filesToExclude.forEach { directory, path in
             let url = URL.directory(for: directory).appendingPathComponent(path)
 
             XCTAssertFalse(url.isExcludedFromBackup)
@@ -70,7 +73,7 @@ final class BackupExcluderTests: XCTestCase { /// TODO: test protocol instead
         try! MockBackupExcluder.exclude(filesToExclude: filesToExclude)
 
         // THEN
-        filesToExclude.forEach { (directory, path) in
+        filesToExclude.forEach { directory, path in
             let url = URL.directory(for: directory).appendingPathComponent(path)
 
             XCTAssert(url.isExcludedFromBackup)

@@ -19,7 +19,7 @@
 import UIKit
 import Foundation
 
-class FolderCreationNameSectionController: NSObject, CollectionViewSectionController {
+final class FolderCreationNameSectionController: NSObject, CollectionViewSectionController {
 
     typealias Cell = FolderCreationNameCell
 
@@ -43,8 +43,7 @@ class FolderCreationNameSectionController: NSObject, CollectionViewSectionContro
     private var header = SectionHeader(frame: .zero)
 
     private lazy var headerText: String = {
-        let key = "folder.creation.name.header"
-        return key.localized(args: self.conversationName)
+        return L10n.Localizable.Folder.Creation.Name.header(conversationName)
     }()
 
     init(delegate: SimpleTextFieldDelegate? = nil, conversationName: String) {

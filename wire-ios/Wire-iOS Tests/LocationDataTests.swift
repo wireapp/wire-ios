@@ -23,8 +23,9 @@ import MapKit
 
 final class LocationDataTests: XCTestCase {
 
-    class override func tearDown() {
+    override func tearDown() {
         Settings.shared.reset()
+        super.tearDown()
     }
 
     func testThatLocationDataCanBeStored() {
@@ -65,7 +66,7 @@ final class LocationDataTests: XCTestCase {
             "LastLocationLatitudeKey": 45.0,
             "LastLocationLongitudeKey": 75.0,
             "LastLocationZoomLevelKey": 5
-            ])
+        ])
 
         // then
         XCTAssertEqual(sut?.latitude, 45)

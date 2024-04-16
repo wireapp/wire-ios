@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class ZMLocalNotificationTests_SystemMessage: ZMLocalNotificationTests {
             let payload = [
                 "from": self.sender.remoteIdentifier!.transportString(),
                 "conversation": self.groupConversation.remoteIdentifier!.transportString(),
-                "time": NSDate().transportString(),
+                "time": Date().transportString(),
                 "data": [
                     "name": "New Name"
                 ],

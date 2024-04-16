@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
         switch apiVersion {
         case .v0:
             return nonFederatedRequest(for: action, apiVersion: apiVersion)
-        case .v1, .v2, .v3, .v4, .v5:
+        case .v1, .v2, .v3, .v4, .v5, .v6:
             return federatedRequest(for: action, apiVersion: apiVersion)
         }
     }
@@ -55,7 +56,7 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
     func federatedRequest(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
         guard
             apiVersion > .v0,
-            let domain  = action.domain.nonEmptyValue ?? BackendInfo.domain
+            let domain = action.domain.nonEmptyValue ?? BackendInfo.domain
         else {
             Logging.network.error("Can't create request for connection request")
             return nil

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
 
 @class ZMUpstreamRequest;
 @class ZMManagedObject;
@@ -56,7 +55,10 @@
 
 /// If implemented, the transcoder can refuse requests until a conditions is fullfilled
 /// Object will be not removed from objects to be synced
-- (BOOL)shouldCreateRequestToSyncObject:(ZMManagedObject * _Nonnull)managedObject forKeys:(NSSet<NSString *>  * _Nonnull )keys withSync:(id _Nonnull)sync;
+- (BOOL)shouldCreateRequestToSyncObject:(ZMManagedObject * _Nonnull)managedObject
+                                forKeys:(NSSet<NSString *>  * _Nonnull )keys
+                               withSync:(id _Nonnull)sync
+                             apiVersion:(APIVersion)apiVersion;
 
 /// If this method is not implemented, inserted sync will delete object.
 /// If this method reutrns TRUE the object will be added back to sync queue.

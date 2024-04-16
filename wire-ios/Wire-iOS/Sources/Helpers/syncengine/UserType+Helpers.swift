@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireCommonComponents
 import WireSyncEngine
 
-typealias ConversationCreatedBlock = (ZMConversation?) -> Void
+typealias ConversationCreatedBlock = (Result<ZMConversation, Error>) -> Void
 
 extension UserType {
 
@@ -33,29 +33,6 @@ extension UserType {
 
     var hasUntrustedClients: Bool {
         return allClients.contains { !$0.verified }
-    }
-
-    func createTeamOneToOneConversation(
-        in context: NSManagedObjectContext,
-        completion: @escaping ConversationCreatedBlock
-    ) {
-        guard
-            self.isTeamMember,
-            let user = self.materialize(in: context)
-        else {
-            return
-        }
-        let conversationService = ConversationService(context: context)
-
-        conversationService.createTeamOneToOneConversation(user: user) { result in
-            switch result {
-            case .success(let conversation):
-                completion(conversation)
-
-            case .failure(let error):
-                WireLogger.conversation.error("failed to create one to one conversation: \(String(describing: error))")
-            }
-        }
     }
 
 }

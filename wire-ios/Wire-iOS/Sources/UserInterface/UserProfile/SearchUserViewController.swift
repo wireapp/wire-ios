@@ -74,7 +74,7 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
         isLoadingViewVisible = true
 
         if let task = searchDirectory?.lookup(userId: userId) {
-            task.onResult({ [weak self] in
+            task.addResultHandler({ [weak self] in
                 self?.handleSearchResult(searchResult: $0, isCompleted: $1)
             })
             task.start()
@@ -114,7 +114,7 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
             navigationController?.setViewControllers([profileViewController], animated: true)
             resultHandled = true
         } else if isCompleted {
-            presentInvalidUserProfileLinkAlert(okActionHandler: { [weak self] (_) in
+            presentInvalidUserProfileLinkAlert(okActionHandler: { [weak self] _ in
                 self?.dismiss(animated: true)
             })
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import WireRequestStrategy
 import WireTransport.ZMRequestCancellation
 import WireLinkPreview
 
-class StrategyFactory {
+final class StrategyFactory {
 
     unowned let syncContext: NSManagedObjectContext
     let applicationStatus: ApplicationStatus
@@ -70,7 +70,6 @@ class StrategyFactory {
     private func createStrategies(linkPreviewPreprocessor: LinkPreviewPreprocessor) -> [AnyObject] {
         return [
             // Clients
-            createMissingClientsStrategy(),
             createFetchingClientsStrategy(),
             createVerifyLegalHoldStrategy(),
 
@@ -93,10 +92,6 @@ class StrategyFactory {
 
     private func createFetchingClientsStrategy() -> FetchingClientRequestStrategy {
         return FetchingClientRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
-    }
-
-    private func createMissingClientsStrategy() -> MissingClientsRequestStrategy {
-        return MissingClientsRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
 
     private func createClientMessageRequestStrategy() -> ClientMessageRequestStrategy {

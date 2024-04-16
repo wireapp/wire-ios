@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +18,7 @@
 
 import Foundation
 import XCTest
+import WireRequestStrategySupport
 @testable import WireRequestStrategy
 
 class UserProfileRequestStrategyTests: MessagingTestBase {
@@ -36,11 +38,16 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
 
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
-        mockSyncProgress = MockSyncProgress()
 
-        sut = UserProfileRequestStrategy(managedObjectContext: syncMOC,
-                                         applicationStatus: mockApplicationStatus,
-                                         syncProgress: mockSyncProgress)
+        mockSyncProgress = MockSyncProgress()
+        mockSyncProgress.currentSyncPhase = .done
+        mockSyncProgress.finishCurrentSyncPhasePhase_MockMethod = { _ in }
+
+        sut = UserProfileRequestStrategy(
+            managedObjectContext: syncMOC,
+            applicationStatus: mockApplicationStatus,
+            syncProgress: mockSyncProgress
+        )
 
         apiVersion = .v0
     }
@@ -197,7 +204,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
 
         syncMOC.performGroupedBlockAndWait {
             // then
-            XCTAssertEqual(self.mockSyncProgress.didFinishCurrentSyncPhase, .fetchingUsers)
+            XCTAssertEqual(self.mockSyncProgress.finishCurrentSyncPhasePhase_Invocations, [.fetchingUsers])
             XCTAssertFalse(self.sut.isFetchingAllConnectedUsers)
         }
     }
@@ -214,7 +221,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             _ = self.sut.nextRequest(for: self.apiVersion)
 
             // then
-            XCTAssertEqual(self.mockSyncProgress.didFinishCurrentSyncPhase, .fetchingUsers)
+            XCTAssertEqual(self.mockSyncProgress.finishCurrentSyncPhasePhase_Invocations, [.fetchingUsers])
             XCTAssertFalse(self.sut.isFetchingAllConnectedUsers)
         }
     }
@@ -477,9 +484,11 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             let event = self.userDeleteEvent(userID: ZMUser.selfUser(in: self.syncMOC).remoteIdentifier)
 
             // expect
-            self.expectation(forNotification: AccountDeletedNotification.notificationName,
-                             object: nil,
-                             handler: nil)
+            self.customExpectation(
+                forNotification: AccountDeletedNotification.notificationName,
+                object: nil,
+                handler: nil
+            )
 
             // when
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
@@ -525,7 +534,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         switch apiVersion {
         case .v0, .v1, .v2, .v3:
             payloadData = userProfiles.payloadData()
-        case .v4, .v5:
+        case .v4, .v5, .v6:
             let userProfiles = Payload.UserProfilesV4(found: userProfiles, failed: failed)
             payloadData = userProfiles.payloadData()
         }

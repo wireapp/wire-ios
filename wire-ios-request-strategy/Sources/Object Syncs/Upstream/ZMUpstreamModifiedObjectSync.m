@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -245,8 +245,8 @@ ZM_EMPTY_ASSERTING_INIT();
     }
 
     id<ZMUpstreamTranscoder> transcoder = self.transcoder;
-    if ([transcoder respondsToSelector:@selector(shouldCreateRequestToSyncObject:forKeys:withSync:)]) {
-        if (![transcoder shouldCreateRequestToSyncObject:objectWithKeys.object forKeys:objectWithKeys.keysToSync withSync:self]) {
+    if ([transcoder respondsToSelector:@selector(shouldCreateRequestToSyncObject:forKeys:withSync:apiVersion:)]) {
+        if (![transcoder shouldCreateRequestToSyncObject:objectWithKeys.object forKeys:objectWithKeys.keysToSync withSync:self apiVersion:apiVersion]) {
             return nil;
         }
     }

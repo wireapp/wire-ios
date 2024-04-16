@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 @testable import WireSyncEngine
 import XCTest
 
-class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
+final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
 
     var previousApiVersion: APIVersion?
 
@@ -59,7 +59,7 @@ class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let credentials = ZMEmailCredentials(email: "john.doe@domain.com", password: "123456")
 
         // when
-        sut.logout(credentials: credentials, {_ in })
+        sut.logout(credentials: credentials, { _ in })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -76,7 +76,7 @@ class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let credentials = ZMEmailCredentials(email: "john.doe@domain.com", password: "")
 
         // when
-        sut.logout(credentials: credentials, {_ in })
+        sut.logout(credentials: credentials, { _ in })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -94,7 +94,7 @@ class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let credentials = ZMEmailCredentials(email: "john.doe@domain.com", password: "123456")
 
         // when
-        sut.logout(credentials: credentials, {_ in })
+        sut.logout(credentials: credentials, { _ in })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         transportSession.lastEnqueuedRequest?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -110,7 +110,7 @@ class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let credentials = ZMEmailCredentials(email: "john.doe@domain.com", password: "123456")
 
         // expect
-        let completionHandlerCalled = expectation(description: "Completion handler called")
+        let completionHandlerCalled = customExpectation(description: "Completion handler called")
 
         // when
         sut.logout(credentials: credentials, {result in
@@ -138,7 +138,7 @@ class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         let credentials = ZMEmailCredentials(email: "john.doe@domain.com", password: "123456")
 
         // expect
-        let completionHandlerCalled = expectation(description: "Completion handler called")
+        let completionHandlerCalled = customExpectation(description: "Completion handler called")
 
         // when
         sut.logout(credentials: credentials, {result in

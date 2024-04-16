@@ -42,7 +42,7 @@ extension ConversationInputBarViewController {
             // Don't crash on Simulator
         }
 
-        let presentController = {() -> Void in
+        let presentController = {
 
             let context = ImagePickerPopoverPresentationContext(presentViewController: rootViewController,
                                                                 sourceType: sourceType)
@@ -101,7 +101,7 @@ extension ConversationInputBarViewController {
 
         do {
             try FileManager.default.removeTmpIfNeededAndCopy(fileURL: videoURL, tmpURL: videoTempURL)
-        } catch let error {
+        } catch {
             zmLog.error("Cannot copy video from \(videoURL) to \(videoTempURL): \(error)")
             return
         }

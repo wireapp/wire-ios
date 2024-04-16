@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import WireMockTransport;
 @import WireRequestStrategy;
@@ -191,8 +190,9 @@ static ZMReachability *sharedReachabilityMock = nil;
 
 - (void)setupCaches
 {
+    NSURL *cacheLocation = [[[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask] firstObject];
     self.uiMOC.zm_userImageCache = [[UserImageLocalCache alloc] initWithLocation:nil];
-    self.uiMOC.zm_fileAssetCache = [[FileAssetCache alloc] initWithLocation:nil];
+    self.uiMOC.zm_fileAssetCache = [[FileAssetCache alloc] initWithLocation:cacheLocation];
 
     [self.syncMOC performGroupedBlockAndWait:^{
         self.syncMOC.zm_fileAssetCache = self.uiMOC.zm_fileAssetCache;
@@ -202,11 +202,11 @@ static ZMReachability *sharedReachabilityMock = nil;
 
 - (void)wipeCaches
 {
-    [self.uiMOC.zm_fileAssetCache wipeCaches];
+    [self.uiMOC.zm_fileAssetCache wipeCachesAndReturnError:nil];
     [self.uiMOC.zm_userImageCache wipeCache];
 
     [self.syncMOC performGroupedBlockAndWait:^{
-        [self.syncMOC.zm_fileAssetCache wipeCaches];
+        [self.syncMOC.zm_fileAssetCache wipeCachesAndReturnError:nil];
         [self.syncMOC.zm_userImageCache wipeCache];
     }];
     [PersonName.stringsToPersonNames removeAllObjects];
@@ -353,7 +353,7 @@ static ZMReachability *sharedReachabilityMock = nil;
     }
     
     UserClient *client = [UserClient insertNewObjectInManagedObjectContext:moc];
-    client.remoteIdentifier = [NSString createAlphanumericalString];
+    client.remoteIdentifier = [NSString randomRemoteIdentifier];
     client.user = selfUser;
     
     [moc setPersistentStoreMetadata:client.remoteIdentifier forKey:ZMPersistedClientIdKey];

@@ -90,47 +90,50 @@ final class VideoMessageView: UIView, TransferView {
     }
 
     private func createConstraints() {
+        [
+            self,
+            previewImageView,
+            progressView,
+            playButton,
+            bottomGradientView,
+            timeLabel,
+            loadingView
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
-        [self,
-         previewImageView,
-         progressView,
-         playButton,
-         bottomGradientView,
-         timeLabel,
-         loadingView].prepareForLayout()
-
-        let sizeConstraint = widthAnchor.constraint(equalTo: heightAnchor, constant: 4/3)
+        let sizeConstraint = widthAnchor.constraint(equalTo: heightAnchor, constant: 4 / 3)
 
         sizeConstraint.priority = UILayoutPriority(750)
 
         NSLayoutConstraint.activate(
-            [sizeConstraint,
-             previewImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-             previewImageView.topAnchor.constraint(equalTo: topAnchor),
-             previewImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-             previewImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            [
+                sizeConstraint,
+                previewImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                previewImageView.topAnchor.constraint(equalTo: topAnchor),
+                previewImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
+                previewImageView.bottomAnchor.constraint(equalTo: bottomAnchor),
 
-             playButton.centerXAnchor.constraint(equalTo: previewImageView.centerXAnchor),
-             playButton.centerYAnchor.constraint(equalTo: previewImageView.centerYAnchor),
-             playButton.widthAnchor.constraint(equalToConstant: 56),
-             playButton.widthAnchor.constraint(equalTo: playButton.heightAnchor),
+                playButton.centerXAnchor.constraint(equalTo: previewImageView.centerXAnchor),
+                playButton.centerYAnchor.constraint(equalTo: previewImageView.centerYAnchor),
+                playButton.widthAnchor.constraint(equalToConstant: 56),
+                playButton.widthAnchor.constraint(equalTo: playButton.heightAnchor),
 
-             progressView.centerXAnchor.constraint(equalTo: playButton.centerXAnchor),
-             progressView.centerYAnchor.constraint(equalTo: playButton.centerYAnchor),
+                progressView.centerXAnchor.constraint(equalTo: playButton.centerXAnchor),
+                progressView.centerYAnchor.constraint(equalTo: playButton.centerYAnchor),
 
-             progressView.widthAnchor.constraint(equalTo: playButton.widthAnchor, constant: -2),
-             progressView.heightAnchor.constraint(equalTo: playButton.heightAnchor, constant: -2),
+                progressView.widthAnchor.constraint(equalTo: playButton.widthAnchor, constant: -2),
+                progressView.heightAnchor.constraint(equalTo: playButton.heightAnchor, constant: -2),
 
-             bottomGradientView.leadingAnchor.constraint(equalTo: leadingAnchor),
-             bottomGradientView.trailingAnchor.constraint(equalTo: trailingAnchor),
-             bottomGradientView.bottomAnchor.constraint(equalTo: bottomAnchor),
-             bottomGradientView.heightAnchor.constraint(equalToConstant: 56),
+                bottomGradientView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                bottomGradientView.trailingAnchor.constraint(equalTo: trailingAnchor),
+                bottomGradientView.bottomAnchor.constraint(equalTo: bottomAnchor),
+                bottomGradientView.heightAnchor.constraint(equalToConstant: 56),
 
-             timeLabel.rightAnchor.constraint(equalTo: bottomGradientView.rightAnchor, constant: -16),
-             timeLabel.bottomAnchor.constraint(equalTo: bottomGradientView.bottomAnchor, constant: -16),
+                timeLabel.rightAnchor.constraint(equalTo: bottomGradientView.rightAnchor, constant: -16),
+                timeLabel.bottomAnchor.constraint(equalTo: bottomGradientView.bottomAnchor, constant: -16),
 
-             loadingView.centerXAnchor.constraint(equalTo: previewImageView.centerXAnchor),
-             loadingView.centerYAnchor.constraint(equalTo: previewImageView.centerYAnchor)]
+                loadingView.centerXAnchor.constraint(equalTo: previewImageView.centerXAnchor),
+                loadingView.centerYAnchor.constraint(equalTo: previewImageView.centerYAnchor)
+            ]
         )
     }
 
@@ -148,7 +151,7 @@ final class VideoMessageView: UIView, TransferView {
             updateTimeLabel(withFileMessageData: fileMessageData)
             self.timeLabel.textColor = SemanticColors.Label.textDefault
 
-            fileMessageData.thumbnailImage.fetchImage { [weak self] (image, _) in
+            fileMessageData.thumbnailImage.fetchImage { [weak self] image, _ in
                 guard let image = image else { return }
                 self?.updatePreviewImage(image)
             }
@@ -234,15 +237,18 @@ final class VideoMessageView: UIView, TransferView {
 
     @objc
     func onActionButtonPressed(_ sender: UIButton) {
-        guard let fileMessageData = self.fileMessage?.fileMessageData else { return }
+        guard let fileMessageData = fileMessage?.fileMessageData else {
+            return
+        }
 
         switch fileMessageData.transferState {
         case .uploading:
-            if .none != fileMessageData.fileURL {
-                self.delegate?.transferView(self, didSelect: .cancel)
-            }
+            guard fileMessageData.hasLocalFileData else { return }
+            self.delegate?.transferView(self, didSelect: .cancel)
+
         case .uploadingCancelled, .uploadingFailed:
             self.delegate?.transferView(self, didSelect: .resend)
+
         case .uploaded:
             if case .downloading = fileMessageData.downloadState {
                 self.progressView.setProgress(0, animated: false)

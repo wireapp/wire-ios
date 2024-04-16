@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@ import Foundation
 @objc
 public final class VerifyLegalHoldRequestStrategy: AbstractRequestStrategy {
 
-    fileprivate let requestFactory =  ClientMessageRequestFactory()
+    fileprivate let requestFactory = ClientMessageRequestFactory()
     fileprivate var conversationSync: IdentifierObjectSync<VerifyLegalHoldRequestStrategy>!
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -53,13 +54,13 @@ extension VerifyLegalHoldRequestStrategy: ZMContextChangeTracker, ZMContextChang
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        let conversationsNeedingToVerifyClients = objects.compactMap({ $0 as? ZMConversation})
+        let conversationsNeedingToVerifyClients = objects.compactMap({ $0 as? ZMConversation })
 
         conversationSync.sync(identifiers: conversationsNeedingToVerifyClients)
     }
 
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        let conversationsNeedingToVerifyClients = object.compactMap({ $0 as? ZMConversation}).filter(\.needsToVerifyLegalHold)
+        let conversationsNeedingToVerifyClients = object.compactMap({ $0 as? ZMConversation }).filter(\.needsToVerifyLegalHold)
 
         if !conversationsNeedingToVerifyClients.isEmpty {
             conversationSync.sync(identifiers: conversationsNeedingToVerifyClients)
@@ -84,15 +85,34 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
         return requestFactory.upstreamRequestForFetchingClients(conversationId: conversationID, domain: conversation.domain, selfClient: selfClient, apiVersion: apiVersion)
     }
 
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<ZMConversation>) {
-        guard let conversation = identifiers.first else { return }
+    public func didReceive(response: ZMTransportResponse, for identifiers: Set<ZMConversation>, completionHandler: @escaping () -> Void) {
+        guard let conversation = identifiers.first else { return completionHandler() }
 
         let verifyClientsParser = VerifyClientsParser(context: managedObjectContext, conversation: conversation)
+        let clientChanges = verifyClientsParser.processEmptyUploadResponse(response, in: conversation, clientRegistrationDelegate: applicationStatus!.clientRegistrationDelegate)
 
-        let changeSet = verifyClientsParser.processEmptyUploadResponse(response, in: conversation, clientRegistrationDelegate: applicationStatus!.clientRegistrationDelegate)
-        conversation.updateSecurityLevelIfNeededAfterFetchingClients(changes: changeSet)
+        WaitingGroupTask(context: managedObjectContext) { [self] in
+
+            var newMissingClients = [UserClient]()
+            for missingClient in clientChanges.missingClients {
+                guard await !missingClient.hasSessionWithSelfClient else { continue }
+                newMissingClients.append(missingClient)
+            }
+
+            await managedObjectContext.perform {
+                let selfClient = ZMUser.selfUser(in: self.managedObjectContext).selfClient()
+                selfClient?.addNewClientsToIgnored(Set(newMissingClients))
+            }
+
+            for deletedClient in clientChanges.deletedClients {
+                await deletedClient.deleteClientAndEndSession()
+            }
+            await managedObjectContext.perform {
+                conversation.updateSecurityLevelIfNeededAfterFetchingClients()
+                completionHandler()
+            }
+        }
     }
-
 }
 
 private class VerifyClientsParser: OTREntity {

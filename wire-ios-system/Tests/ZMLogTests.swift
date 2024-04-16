@@ -1,20 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import XCTest
 @testable import WireSystem
@@ -212,7 +212,7 @@ extension ZMLogTests {
         let message = "PANIC!"
 
         let expectation = self.expectation(description: "Log received")
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -236,7 +236,7 @@ extension ZMLogTests {
         let level = ZMLogLevel_t.info
         let message = "PANIC!"
 
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -260,7 +260,7 @@ extension ZMLogTests {
         let message = "PANIC!"
 
         let expectation = self.expectation(description: "Log received")
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -284,7 +284,7 @@ extension ZMLogTests {
         let level = ZMLogLevel_t.debug
         let message = "PANIC!"
 
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -309,7 +309,7 @@ extension ZMLogTests {
         let message = "PANIC!"
 
         let expectation = self.expectation(description: "Log received")
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -333,7 +333,7 @@ extension ZMLogTests {
         let tag = "Network"
         let message = "PANIC!"
 
-        let token = ZMSLog.addEntryHook { (_, _, _, _) in
+        let token = ZMSLog.addEntryHook { _, _, _, _ in
             XCTFail()
         }
         ZMSLog.removeLogHook(token: token)
@@ -349,7 +349,7 @@ extension ZMLogTests {
         let tag = "Network"
         let message = "PANIC!"
 
-        _ = ZMSLog.addEntryHook { (_, _, _, _) in
+        _ = ZMSLog.addEntryHook { _, _, _, _ in
             XCTFail()
         }
         ZMSLog.removeAllLogHooks()
@@ -369,13 +369,13 @@ extension ZMLogTests {
         let expectation1 = self.expectation(description: "Log received")
         let expectation2 = self.expectation(description: "Log received")
 
-        let token1 = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token1 = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
             expectation1.fulfill()
         }
-        let token2 = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token2 = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -418,13 +418,13 @@ extension ZMLogTests {
 
         // GIVEN
         let sut = ZMSLog(tag: "foo")
-        let currentLog = ZMSLog.currentLog
+        let currentLog = ZMSLog.currentZipLog
 
         // WHEN
         sut.error("PANIC")
 
         // THEN
-        XCTAssertEqual(ZMSLog.currentLog, currentLog)
+        XCTAssertEqual(ZMSLog.currentZipLog, currentLog)
 
     }
 
@@ -465,7 +465,7 @@ extension ZMLogTests {
         sut.safePublic("Item: \(item)")
 
         // THEN
-        let currentLog = ZMSLog.currentLog
+        let currentLog = ZMSLog.currentZipLog
         XCTAssertNil(currentLog)
     }
 
@@ -507,7 +507,7 @@ extension ZMLogTests {
         ZMSLog.stopRecording()
 
         // THEN
-        XCTAssertNil(ZMSLog.currentLog)
+        XCTAssertNil(ZMSLog.currentZipLog)
 
         try ZMSLog.previousZipLogURLs.forEach { url in
             XCTAssertThrowsError(try Data(contentsOf: url))
@@ -531,10 +531,10 @@ extension ZMLogTests {
         Thread.sleep(forTimeInterval: 0.2)
 
         // then
-        XCTAssertNotNil(ZMSLog.currentLog)
+        XCTAssertNotNil(ZMSLog.currentZipLog)
     }
 
-    func testThatSwitchesCurrentLogToPrevious() {
+    func testThatSwitchesCurrentLogToPrevious() throws {
 
         // given
         let sut = ZMSLog(tag: "foo")
@@ -551,7 +551,8 @@ extension ZMLogTests {
         Thread.sleep(forTimeInterval: 0.2)
 
         // then
-        XCTAssertNil(ZMSLog.currentLog)
+        let path = try XCTUnwrap(ZMSLog.currentLogURL?.path)
+        XCTAssertFalse(FileManager.default.fileExists(atPath: path))
     }
 
     func testThatSwitchesCurrentLogToPrevious_multipleFiles() throws {
@@ -581,7 +582,7 @@ extension ZMLogTests {
         Thread.sleep(forTimeInterval: 0.2)
 
         // then
-        XCTAssertNil(ZMSLog.currentLog)
+        XCTAssertNil(ZMSLog.currentZipLog)
 
         try ZMSLog.previousZipLogURLs.forEach {
             let data = try Data(contentsOf: $0, options: [.uncached])
@@ -680,14 +681,15 @@ extension ZMLogTests {
 
     func getLinesFromCurrentLog(file: StaticString = #file, line: UInt = #line) -> [String] {
 
-        guard let currentLog = ZMSLog.currentLog,
-            let logContent = String(data: currentLog, encoding: .utf8) else {
+        guard let currentLog = ZMSLog.currentLogURL,
+              let data = FileManager.default.contents(atPath: currentLog.path),
+            let logContent = String(data: data, encoding: .utf8) else {
                 XCTFail(file: file, line: line)
                 return []
         }
 
         var lines: [String] = []
-        logContent.enumerateLines { (str, _) in
+        logContent.enumerateLines { str, _ in
             lines.append(str)
         }
 

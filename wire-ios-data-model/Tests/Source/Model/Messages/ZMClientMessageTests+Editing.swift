@@ -400,7 +400,7 @@ extension ZMClientMessageTests_Editing {
         XCTAssertEqual(message.textMessageData?.quoteMessage as! ZMMessage, quotedMessage)
     }
 
-    func testThatReadExpectationIsKeptAfterEdit() {
+    func testThatReadExpectationIsKeptAfterEdit() throws {
         // given
         let oldText = "Hallo"
         let newText = "Hello"
@@ -416,11 +416,7 @@ extension ZMClientMessageTests_Editing {
         var genericMessage = message.underlyingMessage!
         genericMessage.setExpectsReadConfirmation(true)
 
-        do {
-            try message.setUnderlyingMessage(genericMessage)
-        } catch {
-            XCTFail()
-        }
+        try message.setUnderlyingMessage(genericMessage)
 
         let updateEvent = createMessageEditUpdateEvent(oldNonce: message.nonce!, newNonce: UUID.create(), conversationID: conversation.remoteIdentifier!, senderID: senderID!, newText: newText)
         let oldNonce = message.nonce
@@ -583,7 +579,7 @@ extension ZMClientMessageTests_Editing {
         XCTAssertEqual(clientMessage.dataSet.count, 0)
     }
 
-    func testThatItClearsReactionsWhenAMessageIsEdited() {
+    func testThatItClearsReactionsWhenAMessageIsEdited() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -597,11 +593,12 @@ extension ZMClientMessageTests_Editing {
 
         XCTAssertFalse(message.reactions.isEmpty)
 
+        let editedText = "Hello"
         let updateEvent = createMessageEditUpdateEvent(oldNonce: message.nonce!,
                                                        newNonce: UUID.create(),
                                                        conversationID: conversation.remoteIdentifier!,
                                                        senderID: message.sender!.remoteIdentifier!,
-                                                       newText: "Hello")
+                                                       newText: editedText)
 
         // when
         var newMessage: ZMClientMessage?
@@ -613,42 +610,10 @@ extension ZMClientMessageTests_Editing {
         XCTAssertTrue(message.reactions.isEmpty)
         XCTAssertEqual(conversation.allMessages.count, 1)
 
-        let editedMessage = conversation.lastMessage as! ZMMessage
+        let editedMessage = try XCTUnwrap(conversation.lastMessage as? ZMMessage)
         XCTAssertTrue(editedMessage.reactions.isEmpty)
-        XCTAssertEqual(editedMessage.textMessageData?.messageText, "Hello")
-    }
-
-    func testThatItClearsReactionsWhenAMessageIsEditedRemotely() {
-        // given
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        conversation.remoteIdentifier = UUID.create()
-        let message: ZMMessage = try! conversation.appendText(content: "Hallo") as! ZMMessage
-
-        let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
-        otherUser.remoteIdentifier = UUID.create()
-
-        message.setReactions(["😱"], forUser: self.selfUser)
-        message.setReactions(["🤗"], forUser: otherUser)
-
-        XCTAssertFalse(message.reactions.isEmpty)
-
-        let updateEvent = createMessageEditUpdateEvent(oldNonce: message.nonce!,
-                                                       newNonce: UUID.create(),
-                                                       conversationID: conversation.remoteIdentifier!,
-                                                       senderID: message.sender!.remoteIdentifier,
-                                                       newText: "Hello")
-
-        // when
-        var newMessage: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
-            newMessage = ZMClientMessage.createOrUpdate(from: updateEvent!, in: self.uiMOC, prefetchResult: nil)
-        }
-
-        // then
-        XCTAssertTrue(message.reactions.isEmpty)
-        let editedMessage = conversation.lastMessage as! ZMMessage
-        XCTAssertTrue(editedMessage.reactions.isEmpty)
-        XCTAssertEqual(editedMessage.textMessageData?.messageText, "Hello")
+        XCTAssertEqual(editedMessage.textMessageData?.messageText, editedText)
+        XCTAssertEqual(editedMessage, newMessage)
     }
 
     func testThatMessageNonPersistedIdentifierDoesNotChangeAfterEdit() {

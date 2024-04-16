@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,9 +22,10 @@ import WireMockTransport
 import WireTesting
 import WireRequestStrategy
 import WireLinkPreview
+@testable import WireDataModelSupport
 @testable import WireShareEngine
 
-class FakeAuthenticationStatus: AuthenticationStatusProvider {
+final class FakeAuthenticationStatus: AuthenticationStatusProvider {
     var state: AuthenticationState = .authenticated
 }
 
@@ -59,6 +60,9 @@ class BaseTest: ZMTBaseTest {
     var operationLoop: RequestGeneratingOperationLoop!
     var strategyFactory: StrategyFactory!
     var mockCryptoboxMigrationManager: MockCryptoboxMigrationManagerInterface!
+    var mockEARService: MockEARServiceInterface!
+    var mockProteusService: MockProteusServiceInterface!
+    var mockMLSDecryptionService: MLSDecryptionServiceInterface!
 
     override func setUp() {
         super.setUp()
@@ -132,7 +136,15 @@ class BaseTest: ZMTBaseTest {
 
         mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
-        mockCryptoboxMigrationManager.completeMigrationSyncContext_MockMethod = { _ in }
+
+        mockEARService = MockEARServiceInterface()
+        mockEARService.enableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
+        mockEARService.disableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
+        mockEARService.unlockDatabase_MockMethod = { }
+        mockEARService.lockDatabase_MockMethod = { }
+
+        mockProteusService = MockProteusServiceInterface()
+        mockMLSDecryptionService = MockMLSDecryptionServiceInterface()
 
         context.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: ZMPersistedClientIdKey)
         context.saveOrRollback()
@@ -151,10 +163,19 @@ class BaseTest: ZMTBaseTest {
         operationLoop = nil
         strategyFactory = nil
         mockCryptoboxMigrationManager = nil
+        mockEARService = nil
+        mockProteusService = nil
+        mockMLSDecryptionService = nil
         super.tearDown()
     }
 
     func createSharingSession() throws -> SharingSession {
+        let earService = EARService(
+            accountID: accountIdentifier,
+            databaseContexts: [coreDataStack.viewContext, coreDataStack.syncContext],
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: MockAuthenticationContextProtocol()
+        )
         return try SharingSession(
             accountIdentifier: accountIdentifier,
             coreDataStack: coreDataStack,
@@ -167,7 +188,11 @@ class BaseTest: ZMTBaseTest {
             strategyFactory: strategyFactory,
             appLockConfig: AppLockController.LegacyConfig(),
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
-            sharedUserDefaults: .random()!
+            earService: earService,
+            contextStorage: MockLAContextStorable(),
+            proteusService: mockProteusService,
+            mlsDecryptionService: mockMLSDecryptionService,
+            sharedUserDefaults: .temporary()
         )
     }
 

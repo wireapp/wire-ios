@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ class RequestStrategyTestBase: MessagingTest {
         var mockUserIdentifier: String!
         var mockClientIdentifier: String!
 
-        self.mockTransportSession.performRemoteChanges { (session) -> Void in
+        self.mockTransportSession.performRemoteChanges { session in
             let mockUser = session.insertUser(withName: "foo")
             let mockClient = session.registerClient(for: mockUser, label: mockUser.name!, type: "permanent", deviceClass: "phone")
             mockClientIdentifier = mockClient.identifier

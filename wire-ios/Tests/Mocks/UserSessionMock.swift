@@ -18,16 +18,35 @@
 
 import Foundation
 import LocalAuthentication
-@testable import Wire
+import WireSyncEngine
 import WireSyncEngineSupport
+import WireDataModelSupport
+import WireRequestStrategySupport
+
+@testable import Wire
 
 final class UserSessionMock: UserSession {
+
+    var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
+
+    func fetchSelfConversationMLSGroupID() async -> WireDataModel.MLSGroupID? {
+        return MLSGroupID(Data())
+    }
+
+    func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
+        MockE2EIdentityCertificateUpdateStatusUseCaseProtocol()
+    }
+
+    var isE2eIdentityEnabled = false
+    var certificate = E2eIdentityCertificate.mockNotActivated
     typealias Preference = AppLockPasscodePreference
-    typealias Callback = (AppLockModule.AuthenticationResult, LAContext) -> Void
+    typealias Callback = (AppLockModule.AuthenticationResult) -> Void
 
     lazy var mockGetUserClientFingerprintUseCaseProtocol: MockGetUserClientFingerprintUseCaseProtocol = {
         let mock = MockGetUserClientFingerprintUseCaseProtocol()
-        mock.invokeUserClient_MockMethod = { _ in return "102030405060708090102030405060708090102030405060708090".data(using: .utf8) }
+        mock.invokeUserClient_MockMethod = { _ in
+            return "102030405060708090102030405060708090102030405060708090".data(using: .utf8)
+        }
         return mock
     }()
 
@@ -38,7 +57,7 @@ final class UserSessionMock: UserSession {
 
     var setEncryptionAtRest: [(enabled: Bool, skipMigration: Bool)] = []
 
-    var unlockDatabase: [LAContext] = []
+    var unlockDatabase_MockInvocations: [Void] = []
 
     var openApp: [Void] = []
 
@@ -53,6 +72,12 @@ final class UserSessionMock: UserSession {
     var selfUser: UserType
     var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
     var mockConversationList: ZMConversationList?
+
+    func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
+        let mock = MockGetMLSFeatureUseCaseProtocol()
+        mock.invoke_MockValue = .init(status: .disabled, config: .init())
+        return mock
+    }
 
     convenience init(mockUser: MockZMEditableUser) {
         self.init(
@@ -84,7 +109,7 @@ final class UserSessionMock: UserSession {
     var isAppLockAvailable: Bool = false
     var isAppLockForced: Bool = false
     var appLockTimeout: UInt = 60
-    var requireCustomAppLockPasscode: Bool  = false
+    var requireCustomAppLockPasscode: Bool = false
     var isCustomAppLockPasscodeSet: Bool = false
     var needsToNotifyUserOfAppLockConfiguration: Bool = false
 
@@ -95,13 +120,10 @@ final class UserSessionMock: UserSession {
     func evaluateAppLockAuthentication(
         passcodePreference: AppLockPasscodePreference,
         description: String,
-        callback: @escaping (
-            AppLockAuthenticationResult,
-            LAContextProtocol
-        ) -> Void
+        callback: @escaping (AppLockAuthenticationResult) -> Void
     ) {
         evaluateAuthentication.append((passcodePreference, description, callback))
-        callback(_authenticationResult, _evaluationContext)
+        callback(_authenticationResult)
     }
 
     func evaluateAuthentication(customPasscode: String) -> AppLockAuthenticationResult {
@@ -109,8 +131,8 @@ final class UserSessionMock: UserSession {
         return _passcode == customPasscode ? .granted : .denied
     }
 
-    func unlockDatabase(with context: LAContext) throws {
-        unlockDatabase.append(context)
+    func unlockDatabase() throws {
+        unlockDatabase_MockInvocations.append(())
     }
 
     var maxAudioMessageLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)
@@ -143,11 +165,11 @@ final class UserSessionMock: UserSession {
         fatalError("not implemented")
     }
 
-    func addUserObserver(_ observer: ZMUserObserver, for user: UserType) -> NSObjectProtocol? {
+    func addUserObserver(_ observer: UserObserving, for user: UserType) -> NSObjectProtocol? {
         return nil
     }
 
-    func addUserObserver(_ observer: ZMUserObserver) -> NSObjectProtocol {
+    func addUserObserver(_ observer: UserObserving) -> NSObjectProtocol {
         return NSObject()
     }
 
@@ -211,7 +233,7 @@ final class UserSessionMock: UserSession {
 
     func fetchMarketingConsent(
         completion: @escaping (
-            Result<Bool>
+            Result<Bool, Error>
         ) -> Void
     ) {
 
@@ -219,15 +241,15 @@ final class UserSessionMock: UserSession {
 
     func setMarketingConsent(
         granted: Bool,
-        completion: @escaping (Swift.Result<Void, Error>) -> Void
+        completion: @escaping (Result<Void, Error>) -> Void
     ) {
 
     }
 
     func classification(
-        with users: [UserType],
+        users: [UserType],
         conversationDomain: String?
-    ) -> SecurityClassification {
+    ) -> SecurityClassification? {
         return .none
     }
 
@@ -248,7 +270,39 @@ final class UserSessionMock: UserSession {
         mockGetUserClientFingerprintUseCaseProtocol
     }
 
+    lazy var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol = {
+        let mock = MockIsUserE2EICertifiedUseCaseProtocol()
+        mock.invokeConversationUser_MockValue = false
+        return mock
+    }()
+
+    lazy var isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol = {
+        let mock = MockIsSelfUserE2EICertifiedUseCaseProtocol()
+        mock.invoke_MockValue = false
+        return mock
+    }()
+
     var selfUserClient: UserClient? {
         return nil
     }
+
+    var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol {
+        MockEnrollE2EICertificateUseCaseProtocol()
+    }
+
+    var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol {
+        MockGetIsE2EIdentityEnabledUseCaseProtocol()
+    }
+
+    var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol {
+        MockGetE2eIdentityCertificatesUseCaseProtocol()
+    }
+
+    var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol {
+        MockUpdateMLSGroupVerificationStatusUseCaseProtocol()
+    }
+
+    var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
+
+    func fetchAllClients() {}
 }

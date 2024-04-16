@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@ class FetchMLSConversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActi
     override func setUp() {
         super.setUp()
         action = FetchMLSConversationGroupInfoAction(conversationId: conversationId, domain: domain)
+        handler = FetchMLSConversationGroupInfoActionHandler(context: syncMOC)
     }
 
     func test_itGeneratesARequest_APIV5() throws {
@@ -34,6 +35,14 @@ class FetchMLSConversationGroupInfoActionHandlerTests: BaseFetchMLSGroupInfoActi
             expectedMethod: .get,
             expectedAcceptType: .messageMLS,
             apiVersion: .v5
+        )
+    }
+
+    func test_itDoesntGenerateRequests_APIV4() {
+        test_itDoesntGenerateARequest(
+            action: action,
+            apiVersion: .v4,
+            expectedError: .endpointUnavailable
         )
     }
 

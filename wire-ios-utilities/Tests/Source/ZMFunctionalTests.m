@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import WireTesting;
 #import <XCTest/XCTest.h>
@@ -37,96 +36,6 @@
 
 @implementation FunctionalTests
 @end
-
-
-
-@implementation FunctionalTests (NSOrderedSet)
-
-- (void)testThatOrderedSetMapsWithABlock
-{
-    // given
-    NSOrderedSet *input = [NSOrderedSet orderedSetWithArray:@[@"a", @"b", @"c"]];
-    
-    // when
-    NSOrderedSet *result = [input mapWithBlock:^(NSString *s) {
-        return [s uppercaseString];
-    }];
-    
-    // then
-    NSOrderedSet *expected = [NSOrderedSet orderedSetWithArray:@[@"A", @"B", @"C"]];
-    XCTAssertEqualObjects(result, expected);
-}
-
-- (void)testThatOrderedSetDoesNotMapNilValuesWithABlock
-{
-    // given
-    NSOrderedSet *input = [NSOrderedSet orderedSetWithArray:@[@"a", @"b", @"c"]];
-    
-    // when
-    NSOrderedSet *result = [input mapWithBlock:^(NSString *s) {
-        if ([s isEqualToString:@"b"]) {
-            return (NSString *) nil;
-        } else {
-            return s;
-        }
-    }];
-    
-    // then
-    NSOrderedSet *expected = [NSOrderedSet orderedSetWithArray:@[@"a", @"c"]];
-    XCTAssertEqualObjects(result, expected);
-}
-
-- (void)testThatOrderedSetMapsWithASelector
-{
-    // given
-    NSOrderedSet *input = [NSOrderedSet orderedSetWithArray:@[@"a", @"b", @"c"]];
-    
-    // when
-    NSOrderedSet *result = [input mapWithSelector:NSSelectorFromString(@"uppercaseString")];
-    
-    // then
-    NSOrderedSet *expected = [NSOrderedSet orderedSetWithArray:@[@"A", @"B", @"C"]];
-    XCTAssertEqualObjects(result, expected);
-}
-
-- (void)testThatOrderedSetDoesNotMapNilValuesWithASelector
-{
-    // given
-    NSOrderedSet *input = [NSOrderedSet orderedSetWithArray:@[@"a", @"b", @"c"]];
-    
-    // when
-    NSOrderedSet *result = [input mapWithSelector:@selector(functionalTests_map)];
-    
-    // then
-    NSOrderedSet *expected = [NSOrderedSet orderedSetWithArray:@[@"a", @"c"]];
-    XCTAssertEqualObjects(result, expected);
-}
-
-
-- (void)testThatOrderedSetFiltersObjectByClass
-{
-    // given
-    NSNumber *n1 = @1;
-    NSNumber *n2 = @35;
-    NSString *s1 = @"ciao";
-    NSString *s2 = @"bip";
-    
-    NSOrderedSet *expectedStrings = [NSOrderedSet orderedSetWithObjects:s1, s2, nil];
-    NSOrderedSet *expectedNumbers = [NSOrderedSet orderedSetWithObjects:n1, n2, nil];
-    NSOrderedSet *testedSet = [NSOrderedSet orderedSetWithObjects:n1, s1, n2, s2, nil];
-    
-    // when
-    NSOrderedSet *computedStrings = [testedSet objectsOfClass:NSString.class];
-    NSOrderedSet *computedNumbers = [testedSet objectsOfClass:NSNumber.class];
-    
-    // then
-    XCTAssertEqualObjects(expectedStrings, computedStrings);
-    XCTAssertEqualObjects(expectedNumbers, computedNumbers);
-}
-
-@end
-
-
 
 
 @implementation FunctionalTests (NSArray)
@@ -163,78 +72,6 @@
     // then
     NSArray *expected = @[@"a", @"c"];
     XCTAssertEqualObjects(result, expected);
-}
-
-- (void)testThatArraysMapsWithASelector
-{
-    // given
-    NSArray *input = @[@"a", @"b", @"c"];
-    
-    // when
-    NSArray *result = [input mapWithSelector:NSSelectorFromString(@"uppercaseString")];
-    
-    // then
-    NSArray *expected = @[@"A", @"B", @"C"];
-    XCTAssertEqualObjects(result, expected);
-}
-
-- (void)testThatArraysDoesNotMapNilValuesWithASelector
-{
-    // given
-    NSArray *input = @[@"a", @"b", @"c"];
-    
-    // when
-    NSArray *result = [input mapWithSelector:@selector(functionalTests_map)];
-    
-    // then
-    NSArray *expected = @[@"a", @"c"];
-    XCTAssertEqualObjects(result, expected);
-}
-
-- (void)testThatArraysReturnsFirstNotNil
-{
-    // given
-    NSArray *input = @[@"b", @"b", @"c"];
-    
-    // when
-    NSString *result = [input firstNonNilReturnedFromSelector:@selector(functionalTests_map)];
-    
-    // then
-    XCTAssertEqualObjects(@"c", result);
-}
-
-- (void)testThatArraysReturnsFirstNotNilAskAllObjects
-{
-    // given
-    NSString *string1 = [OCMockObject mockForClass:NSString.class];
-    [[[(id)string1 expect] andReturn:nil] functionalTests_map];
-    NSString *string2 = [OCMockObject mockForClass:NSString.class];
-    [[[(id)string2 expect] andReturn:nil] functionalTests_map];
-    NSString *string3 = [OCMockObject mockForClass:NSString.class];
-    [[[(id)string3 expect] andReturn:@"ok"] functionalTests_map];
-    NSArray *input = @[ string1, string2, string3 ];
-    
-    // when
-    NSString *result = [input firstNonNilReturnedFromSelector:@selector(functionalTests_map)];
-    
-    // then
-    XCTAssertEqualObjects(@"ok", result);
-    [self verifyMockLater:string1];
-    [self verifyMockLater:string2];
-    [self verifyMockLater:string3];
-}
-
-
-- (void)testThatArrayFirstNotNilReturnsNilIfAllReturnsNil
-{
-    // given
-    NSArray *input = @[@"b", @"b", @"b"];
-    
-    // when
-    NSString *result = [input firstNonNilReturnedFromSelector:@selector(functionalTests_map)];
-    
-    // then
-    XCTAssertNil(result);
 }
 
 - (void)testThatArrayFirstObjectMatchingIsReturned;
@@ -404,38 +241,6 @@
     
     // then
     XCTAssertEqual(filtered.count, 0u);
-}
-
-
-@end
-
-
-@implementation FunctionalTests (NSArray_Set)
-
-- (void)testThatItConvertsArrayIntoSet
-{
-    // given
-    NSArray *words = @[@1, @2, @1, @3, @4, @1, @2];
-    
-    // when
-    NSSet *wordsSet = words.set;
-    
-    // then
-    NSSet *expected = [NSSet setWithObjects:@1, @2, @3, @4, nil];
-    XCTAssertEqualObjects(wordsSet, expected);
-}
-
-- (void)testThatItConvertsArrayIntoOrderedSet
-{
-    // given
-    NSArray *words = @[@2, @1, @3, @4, @1, @2];
-    
-    // when
-    NSOrderedSet *wordsSet = words.orderedSet;
-    
-    // then
-    NSOrderedSet *expected = [NSOrderedSet orderedSetWithObjects:@2, @1, @3, @4, nil];
-    XCTAssertEqualObjects(wordsSet, expected);
 }
 
 

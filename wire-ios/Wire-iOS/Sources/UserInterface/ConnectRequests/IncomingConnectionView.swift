@@ -35,13 +35,17 @@ final class IncomingConnectionView: UIView {
     private let federatedIndicator = LabelIndicator(context: .federated)
     private let incomingConnectionFooter = UIView()
     private let warningView = WarningLabelView()
-    private let acceptButton = Button(style: .accentColorTextButtonStyle,
-                                      cornerRadius: 16,
-                                      fontSpec: .normalSemiboldFont)
-    private let ignoreButton = Button(style: .secondaryTextButtonStyle,
-                                      cornerRadius: 16,
-                                      fontSpec: .normalSemiboldFont)
-    private let classificationProvider: ClassificationProviding?
+    private let acceptButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .normalSemiboldFont
+    )
+    private let ignoreButton = ZMButton(
+        style: .secondaryTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .normalSemiboldFont
+    )
+    private let classificationProvider: SecurityClassificationProviding?
 
     var user: UserType {
         didSet {
@@ -57,7 +61,7 @@ final class IncomingConnectionView: UIView {
 
     init(
         user: UserType,
-        classificationProvider: ClassificationProviding? = ZMUserSession.shared()
+        classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared()
     ) {
         self.user = user
         self.classificationProvider = classificationProvider
@@ -121,15 +125,17 @@ final class IncomingConnectionView: UIView {
     }
 
     private func createConstraints() {
-        [incomingConnectionFooter,
-         acceptButton,
-         ignoreButton,
-         usernameLabel,
-         userDetailView,
-         securityLevelView,
-         federatedIndicator,
-         userImageView,
-         verticalStackView].prepareForLayout()
+        [
+            incomingConnectionFooter,
+            acceptButton,
+            ignoreButton,
+            usernameLabel,
+            userDetailView,
+            securityLevelView,
+            federatedIndicator,
+            userImageView,
+            verticalStackView
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             ignoreButton.leftAnchor.constraint(equalTo: incomingConnectionFooter.leftAnchor, constant: 16),

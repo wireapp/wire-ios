@@ -24,6 +24,7 @@ private enum ExtensionSettingsKey: String, CaseIterable {
     case disableCrashSharing
     case disableAnalyticsSharing
     case disableLinkPreviews
+
     private var defaultValue: Any? {
         switch self {
         // Always disable analytics by default.
@@ -35,27 +36,30 @@ private enum ExtensionSettingsKey: String, CaseIterable {
             return false
         }
     }
+
     static var defaultValueDictionary: [String: Any] {
-        return allCases.reduce([:]) { result, current in
-            var mutableResult = result
-            mutableResult[current.rawValue] = current.defaultValue
-            return mutableResult
+        allCases.reduce(into: [:]) { partialResult, current in
+            partialResult[current.rawValue] = current.defaultValue
         }
     }
 }
 
-public class ExtensionSettings: NSObject {
+public final class ExtensionSettings: NSObject {
 
     public static let shared = ExtensionSettings(defaults: .shared()!)
+
     private let defaults: UserDefaults
+
     public init(defaults: UserDefaults) {
         self.defaults = defaults
         super.init()
         setupDefaultValues()
     }
+
     private func setupDefaultValues() {
         defaults.register(defaults: ExtensionSettingsKey.defaultValueDictionary)
     }
+
     public func reset() {
         ExtensionSettingsKey.allCases.forEach {
             defaults.removeObject(forKey: $0.rawValue)
@@ -64,6 +68,7 @@ public class ExtensionSettings: NSObject {
         // As we purposely crash afterwards we manually call synchronize.
         defaults.synchronize()
     }
+
     public var disableAnalyticsSharing: Bool {
         get {
             return defaults.bool(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue)
@@ -72,6 +77,7 @@ public class ExtensionSettings: NSObject {
             defaults.set(newValue, forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue)
         }
     }
+
     public var disableCrashSharing: Bool {
         get {
             return defaults.bool(forKey: ExtensionSettingsKey.disableCrashSharing.rawValue)
@@ -80,6 +86,7 @@ public class ExtensionSettings: NSObject {
             defaults.set(newValue, forKey: ExtensionSettingsKey.disableCrashSharing.rawValue)
         }
     }
+
     public var disableLinkPreviews: Bool {
         get {
             return defaults.bool(forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue)

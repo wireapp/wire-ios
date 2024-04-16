@@ -185,7 +185,7 @@ extension NSManagedObjectContext {
 
         set {
             setPersistentStoreMetadata(
-                NSNumber(booleanLiteral: newValue),
+                NSNumber(value: newValue),
                 key: PersistentMetadataKey.encryptMessagesAtRest.rawValue
             )
         }

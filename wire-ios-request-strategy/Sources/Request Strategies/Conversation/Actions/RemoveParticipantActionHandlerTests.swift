@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -125,7 +126,11 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let action = RemoveParticipantAction(user: user, conversation: conversation)
-            let memberLeave = Payload.UpdateConverationMemberLeave(userIDs: [user.remoteIdentifier!], qualifiedUserIDs: [user.qualifiedID!])
+            let memberLeave = Payload.UpdateConverationMemberLeave(
+                userIDs: [user.remoteIdentifier!],
+                qualifiedUserIDs: [user.qualifiedID!],
+                reason: .left
+            )
             let conversationEvent = conversationEventPayload(from: memberLeave,
                                                              conversationID: conversation.qualifiedID,
                                                              senderID: selfUser.qualifiedID)
@@ -135,7 +140,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
                                                transportSessionError: nil,
                                                apiVersion: APIVersion.v0.rawValue)
 
-            let waitForHandler = self.expectation(description: "wait for Handler to be called")
+            let waitForHandler = self.customExpectation(description: "wait for Handler to be called")
             action.resultHandler = { _ in
                 waitForHandler.fulfill()
             }
@@ -151,7 +156,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
         }
     }
 
-    func testThatItProcessMemberLeaveEventInTheResponse_Bots() throws {
+    func testThatItProcessesMemberLeaveEventInTheResponse_Bots() throws {
 
         syncMOC.performGroupedAndWait { [self] syncMOC in
             // given
@@ -159,7 +164,11 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
 
             let selfUser = ZMUser.selfUser(in: syncMOC)
             let action = RemoveParticipantAction(user: service, conversation: conversation)
-            let memberLeave = Payload.UpdateConverationMemberLeave(userIDs: [service.remoteIdentifier!], qualifiedUserIDs: [service.qualifiedID!])
+            let memberLeave = Payload.UpdateConverationMemberLeave(
+                userIDs: [service.remoteIdentifier!],
+                qualifiedUserIDs: [service.qualifiedID!],
+                reason: .left
+            )
             let conversationEvent = conversationEventPayload(from: memberLeave,
                                                              conversationID: conversation.qualifiedID,
                                                              senderID: selfUser.qualifiedID)
@@ -180,6 +189,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
         }
 
         // then
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         syncMOC.performAndWait {
             XCTAssertFalse(conversation.localParticipants.contains(service))
@@ -202,13 +212,11 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             self.syncMOC.saveOrRollback()
 
             let action = RemoveParticipantAction(user: selfUser, conversation: self.conversation)
-
-            let waitForHandler = XCTestExpectation(description: "wait for Handler to be called")
-            action.resultHandler = { _ in
-                waitForHandler.fulfill()
-            }
-
-            let memberLeave = Payload.UpdateConverationMemberLeave(userIDs: [selfUser.remoteIdentifier!], qualifiedUserIDs: [selfUser.qualifiedID!])
+            let memberLeave = Payload.UpdateConverationMemberLeave(
+                userIDs: [selfUser.remoteIdentifier!],
+                qualifiedUserIDs: [selfUser.qualifiedID!],
+                reason: .left
+            )
             let conversationEvent = self.conversationEventPayload(
                 from: memberLeave,
                 conversationID: self.conversation.qualifiedID,
@@ -237,14 +245,18 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             conversation.addParticipantAndUpdateConversationState(user: self.user, role: nil)
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             var action = RemoveParticipantAction(user: user, conversation: conversation)
-            let expectation = self.expectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            let expectation = self.customExpectation(description: "Result Handler was called")
+            action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
                 }
             }
 
-            let memberLeave = Payload.UpdateConverationMemberLeave(userIDs: [user.remoteIdentifier!], qualifiedUserIDs: [user.qualifiedID!])
+            let memberLeave = Payload.UpdateConverationMemberLeave(
+                userIDs: [user.remoteIdentifier!],
+                qualifiedUserIDs: [user.qualifiedID!],
+                reason: .left
+            )
             let conversationEvent = conversationEventPayload(from: memberLeave,
                                                              conversationID: conversation.qualifiedID,
                                                              senderID: selfUser.qualifiedID)
@@ -267,8 +279,8 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             // given
             var action = RemoveParticipantAction(user: user, conversation: conversation)
 
-            let expectation = self.expectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            let expectation = self.customExpectation(description: "Result Handler was called")
+            action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
                 }
@@ -291,8 +303,8 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
             // given
             var action = RemoveParticipantAction(user: user, conversation: conversation)
 
-            let expectation = self.expectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            let expectation = self.customExpectation(description: "Result Handler was called")
+            action.onResult { result in
                 if case .failure = result {
                     expectation.fulfill()
                 }

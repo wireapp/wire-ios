@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import WireSyncEngine
+@testable import WireDataModelSupport
 
 class EventProcessorTests: MessagingTest {
 
@@ -31,7 +32,10 @@ class EventProcessorTests: MessagingTest {
 
     override func setUp() {
         super.setUp()
-        createSelfClient()
+
+        syncMOC.performAndWait {
+            _ = createSelfClient()
+        }
 
         mockEventsConsumers = [MockEventConsumer(), MockEventConsumer()]
         mockEventAsyncConsumers = [MockEventAsyncConsumer(), MockEventAsyncConsumer()]
@@ -63,7 +67,7 @@ class EventProcessorTests: MessagingTest {
 
     // MARK: - Helpers
 
-    func createSampleEvents(conversationID: UUID  = UUID(), messageNonce: UUID = UUID()) -> [ZMUpdateEvent] {
+    func createSampleEvents(conversationID: UUID = UUID(), messageNonce: UUID = UUID()) -> [ZMUpdateEvent] {
         let payload1: [String: Any] = ["type": "conversation.member-join",
                                        "conversation": conversationID]
         let payload2: [String: Any] = ["type": "conversation.message-add",
@@ -124,13 +128,16 @@ class EventProcessorTests: MessagingTest {
         let earService = EARService(
             accountID: userIdentifier,
             databaseContexts: [uiMOC, syncMOC],
-            sharedUserDefaults: UserDefaults.random()!
+            sharedUserDefaults: UserDefaults.temporary(),
+            authenticationContext: MockAuthenticationContextProtocol()
         )
         earService.setInitialEARFlagValue(true)
-        try earService.enableEncryptionAtRest(
-            context: syncMOC,
-            skipMigration: true
-        )
+        try syncMOC.performAndWait {
+            try earService.enableEncryptionAtRest(
+                context: syncMOC,
+                skipMigration: true
+            )
+        }
         earService.lockDatabase()
 
         let events = createSampleEvents()

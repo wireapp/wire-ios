@@ -110,7 +110,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
     public func assets(for category: CategoryMatch) -> [ZMConversationMessage] {
         // Remove zombie objects and return remaining
         if let values = assets?[category] {
-            let withoutZombie = values.filter {!$0.isZombieObject}
+            let withoutZombie = values.filter { !$0.isZombieObject }
             assets?[category] = withoutZombie
             return withoutZombie
         }
@@ -150,7 +150,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         }
 
         // Get and categorize next batch
-        let messagesToAnalyze = Array(allMessages[offset..<(offset+numberToAnalyze)])
+        let messagesToAnalyze = Array(allMessages[offset..<(offset + numberToAnalyze)])
         let newAssets = AssetCollectionBatched.messageMap(messages: messagesToAnalyze, matchingCategories: self.matchingCategories)
         managedObjectContext.enqueueDelayedSave()
 
@@ -178,7 +178,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
             // Map assets to UI assets
             var uiAssets = [CategoryMatch: [ZMMessage]]()
             newAssets.forEach {
-                let uiValues = $1.compactMap { (try? self.uiMOC?.existingObject(with: $0.objectID)) as? ZMMessage}
+                let uiValues = $1.compactMap { (try? self.uiMOC?.existingObject(with: $0.objectID)) as? ZMMessage }
                 uiAssets[$0] = uiValues
             }
 
@@ -212,7 +212,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
     static func categorizedMessages<T: ZMMessage>(for conversation: ZMConversation, matchPairs: [CategoryMatch]) -> [T] {
         precondition(conversation.managedObjectContext!.zm_isSyncContext, "Fetch should only be performed on the sync context")
         let request = T.fetchRequestMatching(matchPairs: matchPairs, conversation: conversation)
-        let excludedCategoryPredicate =  NSPredicate(format: "%K & %d == 0", ZMMessageCachedCategoryKey, MessageCategory.excludedFromCollection.rawValue)
+        let excludedCategoryPredicate = NSPredicate(format: "%K & %d == 0", ZMMessageCachedCategoryKey, MessageCategory.excludedFromCollection.rawValue)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [request.predicate!, excludedCategoryPredicate])
         request.sortDescriptors = [NSSortDescriptor(key: "serverTimestamp", ascending: false)]
 
@@ -258,7 +258,7 @@ extension AssetCollectionBatched {
             sorted[matchPair] = []
         }
 
-        let unionIncluding: MessageCategory = matchingCategories.reduce(.none) {$0.union($1.including)}
+        let unionIncluding: MessageCategory = matchingCategories.reduce(.none) { $0.union($1.including) }
         messages.forEach { message in
             let category = message.cachedCategory
             guard     (category.intersection(unionIncluding) != .none)

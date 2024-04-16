@@ -61,7 +61,7 @@ final class ThreeDotsLoadingView: UIView {
     // MARK: - Setup views and constraints
 
     func setupViews() {
-        [dot1, dot2, dot3].forEach { (dot) in
+        [dot1, dot2, dot3].forEach { dot in
             dot.layer.cornerRadius = dotRadius
             dot.backgroundColor = inactiveColor
         }
@@ -69,7 +69,7 @@ final class ThreeDotsLoadingView: UIView {
 
     private func setupConstraints() {
 
-        [dot1, dot2, dot3].prepareForLayout()
+        [dot1, dot2, dot3].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         var constraints: [NSLayoutConstraint] = [
             dot1.leftAnchor.constraint(equalTo: leftAnchor),

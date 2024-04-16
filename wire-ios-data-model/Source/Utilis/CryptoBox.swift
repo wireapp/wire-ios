@@ -84,7 +84,7 @@ public extension FileManager {
     @objc(keyStoreURLForAccountInDirectory:createParentIfNeeded:)
     static func keyStoreURL(accountDirectory: URL, createParentIfNeeded: Bool) -> URL {
         if createParentIfNeeded {
-            FileManager.default.createAndProtectDirectory(at: accountDirectory)
+            try! FileManager.default.createAndProtectDirectory(at: accountDirectory)
         }
         let keyStoreDirectory = accountDirectory.appendingPathComponent(FileManager.keyStoreFolderPrefix)
         return keyStoreDirectory
@@ -102,7 +102,7 @@ public enum UserClientKeyStoreError: Error {
 open class UserClientKeysStore: NSObject {
 
     /// Maximum possible ID for prekey
-    public static let MaxPreKeyID: UInt16 = UInt16.max-1
+    public static let MaxPreKeyID: UInt16 = UInt16.max - 1
 
     open var encryptionContext: EncryptionContext
 
@@ -122,7 +122,7 @@ open class UserClientKeysStore: NSObject {
     }
 
     private static func setupContext(in directory: URL) -> EncryptionContext? {
-        FileManager.default.createAndProtectDirectory(at: directory)
+        try! FileManager.default.createAndProtectDirectory(at: directory)
         return EncryptionContext(path: directory)
     }
 
@@ -135,7 +135,7 @@ open class UserClientKeysStore: NSObject {
     open func lastPreKey() throws -> String {
         var error: NSError?
         if internalLastPreKey == nil {
-            encryptionContext.perform({ [weak self] (sessionsDirectory) in
+            encryptionContext.perform({ [weak self] sessionsDirectory in
                 guard let strongSelf = self  else { return }
                 do {
                     strongSelf.internalLastPreKey = try sessionsDirectory.generateLastPrekey()
@@ -156,14 +156,13 @@ open class UserClientKeysStore: NSObject {
             var newPreKeys: [(id: UInt16, prekey: String)] = []
 
             let range = preKeysRange(count, start: start)
-            encryptionContext.perform({(sessionsDirectory) in
+            encryptionContext.perform({sessionsDirectory in
                 do {
                     newPreKeys = try sessionsDirectory.generatePrekeys(range)
                     if newPreKeys.count == 0 {
                         error = UserClientKeyStoreError.canNotGeneratePreKeys
                     }
-                }
-                catch let anError as NSError {
+                } catch let anError as NSError {
                     error = anError
                 }
             })
@@ -176,7 +175,7 @@ open class UserClientKeysStore: NSObject {
     }
 
     fileprivate func preKeysRange(_ count: UInt16, start: UInt16) -> CountableRange<UInt16> {
-        if start >= UserClientKeysStore.MaxPreKeyID-count {
+        if start >= UserClientKeysStore.MaxPreKeyID - count {
             return 0 ..< count
         }
         return start ..< (start + count)

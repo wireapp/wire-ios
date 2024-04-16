@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,9 +26,9 @@ extension ZMSLog {
     @objc public static func startRecording(isInternal: Bool = true) {
         logQueue.sync {
             if recordingToken == nil {
-                recordingToken = self.nonLockingAddEntryHook(logHook: { (level, tag, entry, isSafe) -> Void in
+                recordingToken = self.nonLockingAddEntryHook(logHook: { level, tag, entry, isSafe in
                     guard isInternal || isSafe else { return }
-                    let tagString = tag.flatMap { "[\($0)] "} ?? ""
+                    let tagString = tag.flatMap { "[\($0)] " } ?? ""
                     let date = dateFormatter.string(from: entry.timestamp)
                     // Add newline if it does not have it yet
                     let text = entry.text.hasSuffix("\n") ? entry.text : entry.text + "\n"

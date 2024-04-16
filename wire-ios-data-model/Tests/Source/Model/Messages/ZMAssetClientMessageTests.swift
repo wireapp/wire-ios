@@ -92,10 +92,10 @@ final class ZMAssetClientMessageTests: BaseZMAssetClientMessageTests {
     func testThatItDeletesCopiesOfDownloadedFilesIntoTemporaryFolder() {
         // given
         let sut = appendFileMessage(to: conversation)!
-        self.uiMOC.zm_fileAssetCache.storeAssetData(sut, format: .medium, encrypted: false, data: Data.secureRandomData(ofLength: 100))
+        self.uiMOC.zm_fileAssetCache.storeMediumImage(data: .secureRandomData(length: 100), for: sut)
         guard let tempFolder = sut.temporaryDirectoryURL else { XCTFail(); return }
 
-        XCTAssertNotNil(sut.fileURL)
+        XCTAssertNotNil(sut.temporaryURLToDecryptedFile())
         XCTAssertTrue(FileManager.default.fileExists(atPath: tempFolder.path))
 
         // when
@@ -118,9 +118,9 @@ extension ZMAssetClientMessageTests {
 
         // then
         XCTAssertNotNil(sut)
-        XCTAssertNotNil(sut?.fileURL)
+        XCTAssertNotNil(sut?.temporaryURLToDecryptedFile())
 
-        guard let absoluteString = sut?.fileURL?.absoluteString else {
+        guard let absoluteString = sut?.temporaryURLToDecryptedFile()?.absoluteString else {
             XCTFail("asset doesn't have a file URL")
             return
         }
@@ -176,7 +176,7 @@ extension ZMAssetClientMessageTests {
     func testThatItHasNoDownloadedFileWhenTheFileIsNotOnDisk() {
         // given
         let sut = appendFileMessage(to: conversation)!
-        self.uiMOC.zm_fileAssetCache.deleteAssetData(sut, encrypted: false)
+        self.uiMOC.zm_fileAssetCache.deleteOriginalFileData(for: sut)
 
         // then
         XCTAssertFalse(sut.hasDownloadedFile)
@@ -186,8 +186,8 @@ extension ZMAssetClientMessageTests {
         // given
         let sut = appendFileMessage(to: conversation)!
 
-        self.uiMOC.zm_fileAssetCache.storeAssetData(sut, format: .medium, encrypted: false, data: Data.secureRandomData(ofLength: 100))
-        defer { self.uiMOC.zm_fileAssetCache.deleteAssetData(sut, format: .medium, encrypted: false) }
+        self.uiMOC.zm_fileAssetCache.storeMediumImage(data: .secureRandomData(length: 100), for: sut)
+        defer { self.uiMOC.zm_fileAssetCache.deleteMediumImageData(for: sut) }
 
         // then
         XCTAssertTrue(sut.hasDownloadedPreview)
@@ -197,8 +197,8 @@ extension ZMAssetClientMessageTests {
         // given
         let sut = appendFileMessage(to: conversation)!
 
-        self.uiMOC.zm_fileAssetCache.storeAssetData(sut, format: .original, encrypted: false, data: Data.secureRandomData(ofLength: 100))
-        defer { self.uiMOC.zm_fileAssetCache.deleteAssetData(sut, format: .medium, encrypted: false) }
+        self.uiMOC.zm_fileAssetCache.storeOriginalImage(data: .secureRandomData(length: 100), for: sut)
+        defer { self.uiMOC.zm_fileAssetCache.deleteMediumImageData(for: sut) }
 
         // then
         XCTAssertTrue(sut.hasDownloadedPreview)
@@ -500,7 +500,7 @@ extension ZMAssetClientMessageTests {
             sut.transferState = .uploaded
             XCTAssertTrue(self.syncMOC.saveOrRollback())
 
-            let expectation = self.expectation(description: "Notification fired")
+            let expectation = self.customExpectation(description: "Notification fired")
             let token = NotificationInContext.addObserver(
                 name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
                 context: self.uiMOC.notificationContext,
@@ -512,7 +512,7 @@ extension ZMAssetClientMessageTests {
             sut.fileMessageData?.cancelTransfer()
 
             // then
-            withExtendedLifetime(token) { () -> Void in
+            withExtendedLifetime(token) {
                 XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
             }
         }
@@ -743,7 +743,7 @@ extension ZMAssetClientMessageTests {
         let sut = appendImageMessage(to: conversation)
 
         // then
-        XCTAssertNotNil(uiMOC.zm_fileAssetCache.assetData(sut, format: .original, encrypted: false))
+        XCTAssertNotNil(uiMOC.zm_fileAssetCache.originalImageData(for: sut))
     }
 
     func testThatItSetsTheOriginalImageSize() throws {
@@ -821,12 +821,12 @@ extension ZMAssetClientMessageTests {
     }
 
     func sampleProcessedImageData(_ format: ZMImageFormat) -> Data {
-        return "\(StringFromImageFormat(format)) fake data".data(using: String.Encoding.utf8, allowLossyConversion: true)!
+        return "\(format.stringValue) fake data".data(using: String.Encoding.utf8, allowLossyConversion: true)!
     }
 
     func sampleImageProperties(_ format: ZMImageFormat) -> ZMIImageProperties {
         let mult = format == .medium ? 100 : 1
-        return ZMIImageProperties(size: CGSize(width: CGFloat(300*mult), height: CGFloat(100*mult)), length: UInt(100*mult), mimeType: "image/jpeg")!
+        return ZMIImageProperties(size: CGSize(width: CGFloat(300 * mult), height: CGFloat(100 * mult)), length: UInt(100 * mult), mimeType: "image/jpeg")!
     }
 
     func createV2AssetClientMessageWithSampleImageAndEncryptionKeys(_ storeOriginal: Bool, storeEncrypted: Bool, storeProcessed: Bool, imageData: Data? = nil) throws -> ZMAssetClientMessage {
@@ -852,16 +852,32 @@ extension ZMAssetClientMessageTests {
 
             genericMessage[format] = GenericMessage(content: imageAsset, nonce: nonce)
 
-            if storeProcessed {
-                directory.storeAssetData(assetMessage, format: format, encrypted: false, data: processedData)
-            }
-            if storeEncrypted {
-                directory.storeAssetData(assetMessage, format: format, encrypted: true, data: encryptedData)
+            switch format {
+            case .medium:
+                if storeProcessed {
+                    directory.storeMediumImage(data: processedData, for: assetMessage)
+                }
+
+                if storeEncrypted {
+                    directory.storeEncryptedMediumImage(data: encryptedData, for: assetMessage)
+                }
+
+            case .preview:
+                if storeProcessed {
+                    directory.storePreviewImage(data: processedData, for: assetMessage)
+                }
+
+                if storeEncrypted {
+                    directory.storeEncryptedPreviewImage(data: encryptedData, for: assetMessage)
+                }
+
+            default:
+                break
             }
         }
 
         if storeOriginal {
-            directory.storeAssetData(assetMessage, format: .original, encrypted: false, data: imageData)
+            directory.storeOriginalImage(data: imageData, for: assetMessage)
         }
 
         do {
@@ -881,10 +897,10 @@ extension ZMAssetClientMessageTests {
         uiMOC.saveOrRollback()
 
         // expect
-        let expectation = self.expectation(description: "Image arrived")
+        let expectation = self.customExpectation(description: "Image arrived")
 
         // when
-        message.imageMessageData?.fetchImageData(with: DispatchQueue.global(qos: .background), completionHandler: { (imageData) in
+        message.imageMessageData?.fetchImageData(with: DispatchQueue.global(qos: .background), completionHandler: { imageData in
             XCTAssertNotNil(imageData)
             expectation.fulfill()
         })
@@ -932,7 +948,7 @@ extension ZMAssetClientMessageTests {
         let message = try self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: true)
 
         // when
-        self.uiMOC.zm_fileAssetCache.deleteAssetData(message, format: .medium, encrypted: false)
+        self.uiMOC.zm_fileAssetCache.deleteMediumImageData(for: message)
 
         // then
         XCTAssertFalse(message.hasDownloadedFile)
@@ -945,7 +961,7 @@ extension ZMAssetClientMessageTests {
         message.managedObjectContext?.saveOrRollback()
 
         // expect
-        let expectation = self.expectation(description: "Notified")
+        let expectation = self.customExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(name: ZMAssetClientMessage.imageDownloadNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       object: message.objectID,
@@ -957,7 +973,7 @@ extension ZMAssetClientMessageTests {
         message.imageMessageData?.requestFileDownload()
 
         // then
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
     }
@@ -982,7 +998,7 @@ extension ZMAssetClientMessageTests {
         let dataPayload = [
             "info": genericMessageData!.base64String(),
             "id": thumbnailId
-            ] as [String: Any]
+        ] as [String: Any]
 
         let payload = self.payloadForMessage(in: conversation, type: EventConversationAddOTRAsset, data: dataPayload)
         let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
@@ -1011,7 +1027,7 @@ extension ZMAssetClientMessageTests {
         let nonce = UUID.create()
         let thumbnailId = "uuid"
         let imageMetadata = WireProtos.Asset.ImageMetaData(width: 4235, height: 324)
-        let original  = WireProtos.Asset.Original(withSize: 12321, mimeType: "image/jpeg", name: nil, imageMetaData: imageMetadata)
+        let original = WireProtos.Asset.Original(withSize: 12321, mimeType: "image/jpeg", name: nil, imageMetaData: imageMetadata)
         let asset = WireProtos.Asset(original: original, preview: nil)
 
         let genericMessage = GenericMessage(content: asset, nonce: nonce)
@@ -1020,7 +1036,7 @@ extension ZMAssetClientMessageTests {
         let dataPayload = [
             "info": genericMessageData!.base64String(),
             "id": thumbnailId
-            ] as [String: Any]
+        ] as [String: Any]
 
         let payload = self.payloadForMessage(in: conversation, type: EventConversationAddOTRAsset, data: dataPayload)
         let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
@@ -1217,7 +1233,7 @@ extension ZMAssetClientMessageTests {
 
         sut.update(with: updateEventForOriginal(nonce: nonce, name: "document.pdf"), initialUpdate: true)
         sut.update(with: updateEventForUploaded(nonce: nonce, assetId: assetId), initialUpdate: false)
-        uiMOC.zm_fileAssetCache.storeAssetData(sut, encrypted: false, data: assetData)
+        uiMOC.zm_fileAssetCache.storeOriginalFile(data: assetData, for: sut)
 
         // then
         XCTAssertTrue(sut.hasDownloadedFile)
@@ -1234,7 +1250,7 @@ extension ZMAssetClientMessageTests {
         let image = WireProtos.Asset.ImageMetaData(width: 123, height: 4569)
         sut.update(with: updateEventForOriginal(nonce: nonce, image: image, preview: nil), initialUpdate: false)
         sut.update(with: updateEventForUploaded(nonce: nonce, assetId: assetId), initialUpdate: false)
-        uiMOC.zm_fileAssetCache.storeAssetData(sut, format: .medium, encrypted: false, data: assetData)
+        uiMOC.zm_fileAssetCache.storeMediumImage(data: assetData, for: sut)
 
         // then
         XCTAssertTrue(sut.hasDownloadedFile)
@@ -1298,15 +1314,15 @@ extension ZMAssetClientMessageTests {
         let (preview, _) = previewGenericMessage(with: nonce)
         let updateEvent = createUpdateEvent(nonce, conversationID: UUID.create(), genericMessage: preview)
         sut.update(with: updateEvent, initialUpdate: false)
-        uiMOC.zm_fileAssetCache.storeAssetData(sut, format: .medium, encrypted: false, data: previewData)
+        uiMOC.zm_fileAssetCache.storeMediumImage(data: previewData, for: sut)
 
         // then
         XCTAssertFalse(sut.hasDownloadedFile)
         XCTAssertTrue(sut.hasDownloadedPreview)
         XCTAssertEqual(sut.version, 3)
 
-        let expectation = self.expectation(description: "preview data was retreived")
-        sut.fileMessageData?.fetchImagePreviewData(queue: .global(qos: .background), completionHandler: { (previewDataResult) in
+        let expectation = self.customExpectation(description: "preview data was retreived")
+        sut.fileMessageData?.fetchImagePreviewData(queue: .global(qos: .background), completionHandler: { previewDataResult in
             XCTAssertEqual(previewDataResult, previewData)
             expectation.fulfill()
         })
@@ -1326,7 +1342,7 @@ extension ZMAssetClientMessageTests {
         sut.update(with: original, initialUpdate: false)
         sut.update(with: uploaded, initialUpdate: false)
 
-        uiMOC.zm_fileAssetCache.storeAssetData(sut, format: .medium, encrypted: false, data: data)
+        uiMOC.zm_fileAssetCache.storeMediumImage(data: data, for: sut)
 
         // then
         XCTAssertTrue(sut.underlyingMessage!.v3_isImage)
@@ -1344,7 +1360,7 @@ extension ZMAssetClientMessageTests {
         uiMOC.saveOrRollback()
 
         // expect
-        let expectation = self.expectation(description: "Notified")
+        let expectation = self.customExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(name: ZMAssetClientMessage.imageDownloadNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       object: sut.objectID,
@@ -1356,7 +1372,7 @@ extension ZMAssetClientMessageTests {
         sut.fileMessageData?.requestImagePreviewDownload()
 
         // then
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
     }
@@ -1374,7 +1390,7 @@ extension ZMAssetClientMessageTests {
         uiMOC.saveOrRollback()
 
         // expect
-        let expectation = self.expectation(description: "Notified")
+        let expectation = self.customExpectation(description: "Notified")
         let token = NotificationInContext.addObserver(name: ZMAssetClientMessage.assetDownloadNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       object: sut.objectID,
@@ -1386,7 +1402,7 @@ extension ZMAssetClientMessageTests {
         sut.imageMessageData?.requestFileDownload()
 
         // then
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         }
     }

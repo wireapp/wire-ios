@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -90,7 +91,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let conversation = self.createGroupConversation(with: self.otherUser)
-            let conversationSet: Set<NSManagedObject> =  [conversation]
+            let conversationSet: Set<NSManagedObject> = [conversation]
 
             // WHEN
             conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
@@ -101,7 +102,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             switch apiVersion {
             case .v0:
                 expectedPath = "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages"
-            case .v1, .v2, .v3, .v4, .v5:
+            case .v1, .v2, .v3, .v4, .v5, .v6:
                 expectedPath = "/v\(apiVersion.rawValue)/conversations/\(conversation.domain!)/\(conversation.remoteIdentifier!.transportString())/proteus/messages"
             }
 
@@ -155,7 +156,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             switch apiVersion {
             case .v0:
                 transportData = ClientUpdateResponse(missing: clientListByUserID).transportData
-            case .v1, .v2, .v3, .v4, .v5:
+            case .v1, .v2, .v3, .v4, .v5, .v6:
                 transportData = Payload.MessageSendingStatus(missing: [self.otherUser.domain!: clientListByUserID]).transportData
 
             }
@@ -199,7 +200,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             switch apiVersion {
             case .v0:
                 transportData = ClientUpdateResponse(missing: clientListByUserID).transportData
-            case .v1, .v2, .v3, .v4, .v5:
+            case .v1, .v2, .v3, .v4, .v5, .v6:
                 transportData = Payload.MessageSendingStatus(missing: [self.otherUser.domain!: clientListByUserID]).transportData
             }
 
@@ -240,7 +241,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             switch apiVersion {
             case .v0:
                 transportData = ClientUpdateResponse(missing: ClientListByUser()).transportData
-            case .v1, .v2, .v3, .v4, .v5:
+            case .v1, .v2, .v3, .v4, .v5, .v6:
                 transportData = Payload.MessageSendingStatus(missing: UserListByDomain()).transportData
             }
 
@@ -280,7 +281,7 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             switch apiVersion {
             case .v0:
                 transportData = ClientUpdateResponse(missing: clientListByUserID).transportData
-            case .v1, .v2, .v3, .v4, .v5:
+            case .v1, .v2, .v3, .v4, .v5, .v6:
                 transportData = Payload.MessageSendingStatus(missing: [selfUser.domain!: clientListByUserID]).transportData
             }
 

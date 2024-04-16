@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import WireTesting;
 
@@ -118,14 +117,13 @@
     
     // then
     ZMUser *selfUser = [self userForMockUser:self.selfUser];
-    NSArray *selfUserClients = selfUser.clients.allObjects;
+    NSSet<UserClient*> *selfUserClients = selfUser.clients;
     XCTAssertEqual(selfUserClients.count, 3u);
 
-    NSArray *fetchedClients = self.observer.fetchedClients;
-    
-    XCTAssertNotEqualObjects(fetchedClients, selfUserClients);
-    XCTAssertEqual(fetchedClients.count, 2u);
-    XCTAssertFalse([fetchedClients containsObject:selfUser.selfClient]);
+    NSSet<UserClient*> *fetchedClients = [NSSet setWithArray:self.observer.fetchedClients];
+    XCTAssertEqual(fetchedClients.count, 3u);
+
+    XCTAssertEqualObjects(fetchedClients, selfUserClients);
     XCTAssertNil(self.observer.fetchError);
     XCTAssertTrue(self.observer.finishedFetching);
 }
@@ -142,7 +140,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSArray *fetchClients = self.observer.fetchedClients;
-    XCTAssertEqual(fetchClients.count, 2u);
+    XCTAssertEqual(fetchClients.count, 3u);
     XCTAssertTrue(self.observer.finishedFetching);
     XCTAssertNil(self.observer.fetchError);
 
@@ -158,15 +156,13 @@
     XCTAssertNil(self.observer.deletionError);
 }
 
-@end
-
-@implementation ClientManagementTests (PushNotifications)
+#pragma mark - PushNotifications
 
 - (void)testThatItAddsAUserClientWhenReceivingANotificationForANewClient
 {
     // given
     ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-    UserChangeObserver *observer = [[UserChangeObserver alloc] initWithUser:selfUser];
+    ZMUserObserver *observer = [[ZMUserObserver alloc] initWithUser:selfUser];
     
     // when
     __block MockUserClient *mockClient;
@@ -269,7 +265,7 @@
     
     XCTAssertEqual(selfUser.clients.count, 2u);
 
-    UserChangeObserver *observer = [[UserChangeObserver alloc] initWithUser:selfUser];
+    ZMUserObserver *observer = [[ZMUserObserver alloc] initWithUser:selfUser];
     
     // when
     [self.mockTransportSession performRemoteChanges:^ (id<MockTransportSessionObjectCreation>  _Nonnull __strong session) {

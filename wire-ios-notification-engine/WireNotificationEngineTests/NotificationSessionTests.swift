@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 import XCTest
 import Foundation
 
-class NotificationSessionTests: BaseTest {
+final class NotificationSessionTests: BaseTest {
 
     // MARK: - Init errors
 
@@ -31,14 +31,11 @@ class NotificationSessionTests: BaseTest {
 
             // When
             _ = try createNotificationSession()
+            XCTFail("unexpected success")
         } catch NotificationSession.InitializationError.pendingCryptoboxMigration {
             // Then
-            return
         } catch {
-            XCTFail("unexpected error: \(error.localizedDescription)")
+            XCTFail("unexpected error: \(error)")
         }
-
-        XCTFail("unexpected success")
     }
-
 }

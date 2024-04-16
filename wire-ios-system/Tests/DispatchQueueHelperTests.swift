@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ class DispatchQueueHelperTests: XCTestCase {
         }
 
         // Then
-        group?.notify(on: .main) {
+        group.notify(on: .main) {
             XCTAssertEqual(result, 42)
             groupExpectation.fulfill()
         }

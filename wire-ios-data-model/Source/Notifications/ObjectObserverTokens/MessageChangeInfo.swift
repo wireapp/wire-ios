@@ -96,7 +96,7 @@ extension ZMSystemMessage {
 
 }
 
-@objcMembers final public class MessageChangeInfo: ObjectChangeInfo {
+@objcMembers public final class MessageChangeInfo: ObjectChangeInfo {
 
     static let UserChangeInfoKey = "userChanges"
     static let ReactionChangeInfoKey = "reactionChanges"
@@ -183,7 +183,7 @@ extension ZMSystemMessage {
     }
 
     public var senderChanged: Bool {
-        if self.usersChanged && (self.userChangeInfo?.user as? ZMUser ==  self.message.sender) {
+        if self.usersChanged && (self.userChangeInfo?.user as? ZMUser == self.message.sender) {
             return true
         }
         return false
@@ -225,7 +225,7 @@ extension MessageChangeInfo {
                            managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
         return ManagedObjectObserverToken(name: .MessageChange,
                                           managedObjectContext: managedObjectContext,
-                                          object: message) { [weak observer] (note) in
+                                          object: message) { [weak observer] note in
             guard let `observer` = observer,
                 let changeInfo = note.changeInfo as? MessageChangeInfo
                 else { return }

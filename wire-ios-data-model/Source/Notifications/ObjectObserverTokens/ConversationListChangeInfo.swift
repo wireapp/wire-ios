@@ -24,7 +24,7 @@ private var zmLog = ZMSLog(tag: "ConversationListObserverCenter")
 extension ZMConversationList {
 
     func toOrderedSetState() -> OrderedSetState<ZMConversation> {
-        return OrderedSetState(array: self.map {$0 as! ZMConversation})
+        return OrderedSetState(array: self.map { $0 as! ZMConversation })
     }
 
 }
@@ -77,7 +77,7 @@ extension ConversationListChangeInfo {
             zmLog.debug("Registering observer \(observer) for all lists")
         }
 
-        return ManagedObjectObserverToken(name: .conversationListDidChange, managedObjectContext: managedObjectContext, object: list) { [weak observer] (note) in
+        return ManagedObjectObserverToken(name: .conversationListDidChange, managedObjectContext: managedObjectContext, object: list) { [weak observer] note in
             guard let `observer` = observer, let aList = note.object as? ZMConversationList else { return }
 
             zmLog.debug("Notifying registered observer \(observer) about changes in list: \(aList.identifier)")

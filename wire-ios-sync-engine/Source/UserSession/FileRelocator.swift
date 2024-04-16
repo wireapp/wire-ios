@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ extension ZMUserSession {
     /// and moves them to a folder named `wire-account-{accountIdentifier}` if there is no user-account folder yet
     /// It asserts if the caches folder contains unassigned files even though there is already an existing user account folder as this would be considered a programmer error
     @objc public static func moveCachesIfNeededForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL) {
+        // swiftlint:disable todo_requires_jira_link
         // FIXME: accountIdentifier should be non-nullable
         guard let accountIdentifier = accountIdentifier else { return }
 
@@ -40,9 +41,9 @@ extension ZMUserSession {
         guard let files = (try? fm.contentsOfDirectory(atPath: oldCacheLocation.path))
         else { return }
 
-        fm.createAndProtectDirectory(at: newCacheLocation)
-
+        try! fm.createAndProtectDirectory(at: newCacheLocation)
         // FIXME: Use dictionary grouping in Swift4
+        // swiftlint:enable todo_requires_jira_link
         // see https://developer.apple.com/documentation/swift/dictionary/2893436-init
         let result = group(fileNames: files.filter { !whitelistedFiles.contains($0) })
         if result.assigned.count == 0 {
@@ -52,7 +53,7 @@ extension ZMUserSession {
                 zmLog.debug("Moving non-assigned Cache folder from \(oldLocation) to \(newLocation)")
                 do {
                     try fm.moveItem(at: oldLocation, to: newLocation)
-                } catch let error {
+                } catch {
                     zmLog.error("Failed to move non-assigned Cache folder from \(oldLocation) to \(newLocation) - \(error)")
                     do {
                         try fm.removeItem(at: oldLocation)
@@ -68,7 +69,7 @@ extension ZMUserSession {
 
     /// Groups files by checking if the fileName starts with the cachesFolderPrefix
     static func group(fileNames: [String]) -> (assigned: [String], unassigned: [String]) {
-        let result: ([String], [String]) = fileNames.reduce(([], [])) { (tempResult, fileName) in
+        let result: ([String], [String]) = fileNames.reduce(([], [])) { tempResult, fileName in
             if fileName.hasPrefix(FileManager.cachesFolderPrefix) {
                 return (tempResult.0 + [fileName], tempResult.1)
             }

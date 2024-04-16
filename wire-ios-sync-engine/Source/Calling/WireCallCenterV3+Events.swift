@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,24 +28,25 @@ extension WireCallCenterV3: ZMConversationObserver {
     public func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
         handleSecurityLevelChange(changeInfo)
         handleActiveParticipantsChange(changeInfo)
+        informMLSMigrationFinalizedIfNeeded(changeInfo)
         endCallIfNeeded(changeInfo)
     }
 
     private func handleSecurityLevelChange(_ changeInfo: ConversationChangeInfo) {
         guard
-            changeInfo.securityLevelChanged,
+            changeInfo.securityLevelChanged || changeInfo.mlsVerificationStatusChanged,
             let conversationId = changeInfo.conversation.avsIdentifier,
             let previousSnapshot = callSnapshots[conversationId]
         else {
             return
         }
 
-        if changeInfo.conversation.securityLevel == .secureWithIgnored, isActive(conversationId: conversationId) {
+        if changeInfo.conversation.isDegraded, isActive(conversationId: conversationId) {
             // If an active call degrades we end it immediately
             return closeCall(conversationId: conversationId, reason: .securityDegraded)
         }
 
-        let updatedCallState = previousSnapshot.callState.update(withSecurityLevel: changeInfo.conversation.securityLevel)
+        let updatedCallState = previousSnapshot.callState.update(isConversationDegraded: changeInfo.conversation.isDegraded)
 
         if updatedCallState != previousSnapshot.callState {
             callSnapshots[conversationId] = previousSnapshot.update(with: updatedCallState)
@@ -72,6 +73,25 @@ extension WireCallCenterV3: ZMConversationObserver {
         }
 
         handleClientsRequest(conversationId: conversationId, completion: completion)
+    }
+
+    private func informMLSMigrationFinalizedIfNeeded(_ changeInfo: ConversationChangeInfo) {
+        let conversation = changeInfo.conversation
+
+        guard
+            let avsIdentifier = conversation.avsIdentifier,
+            let context = conversation.managedObjectContext,
+            changeInfo.messageProtocolChanged,
+            conversation.messageProtocol == .mls,
+            !isMLSConferenceCall(conversationId: avsIdentifier)
+        else {
+            return
+        }
+
+        conversation.appendMLSMigrationOngoingCallSystemMessage(
+            sender: ZMUser.selfUser(in: context),
+            at: .now
+        )
     }
 
     private func endCallIfNeeded(_ changeInfo: ConversationChangeInfo) {
@@ -124,9 +144,8 @@ extension WireCallCenterV3 {
             let isDegraded = self.isDegraded(conversationId: conversationId)
             let callState = CallState.incoming(video: isVideoCall, shouldRing: shouldRing, degraded: isDegraded)
             let members = [AVSCallMember(client: client)]
-            let isConferenceCall = conversationType == .conference
 
-            self.createSnapshot(callState: callState, members: members, callStarter: client.avsIdentifier, video: isVideoCall, for: conversationId, isConferenceCall: isConferenceCall)
+            self.createSnapshot(callState: callState, members: members, callStarter: client.avsIdentifier, video: isVideoCall, for: conversationId, conversationType: conversationType)
             self.handle(callState: callState, conversationId: conversationId)
         }
     }
@@ -397,18 +416,13 @@ extension WireCallCenterV3 {
                 }
 
                 Task {
-                    try await mlsService.generateNewEpoch(groupID: groupIDs.subconversation)
+                    do {
+                        try await mlsService.generateNewEpoch(groupID: groupIDs.subconversation)
+                    } catch {
+                        WireLogger.calling.error("failed to generate new epoch: \(String(reflecting: error))")
+                    }
                 }
             }
-        }
-    }
-}
-
-private extension Set where Element == ZMUser {
-
-    var avsClients: Set<AVSClient> {
-        return reduce(Set<AVSClient>()) { result, user in
-            return result.union(user.clients.compactMap(AVSClient.init))
         }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -559,6 +559,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
         // "delete" the self client
         [self.userSession.managedObjectContext setPersistentStoreMetadata:nil forKey:ZMPersistedClientIdKey];
         [self.userSession.managedObjectContext saveOrRollback];
+        WaitForAllGroupsToBeEmpty(0.5);
 
         [self destroySessionManager];
         [self deleteAuthenticationCookie];

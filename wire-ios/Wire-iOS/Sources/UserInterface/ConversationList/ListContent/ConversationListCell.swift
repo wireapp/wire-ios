@@ -139,7 +139,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
     override var isSelected: Bool {
         didSet {
             if isIPadRegular() {
-                itemView.selected  = isSelected || isHighlighted
+                itemView.selected = isSelected || isHighlighted
             }
         }
     }
@@ -147,9 +147,9 @@ final class ConversationListCell: SwipeMenuCollectionCell,
     override var isHighlighted: Bool {
         didSet {
             if isIPadRegular() {
-                itemView.selected  = isSelected || isHighlighted
+                itemView.selected = isSelected || isHighlighted
             } else {
-                itemView.selected  =  isHighlighted
+                itemView.selected = isHighlighted
             }
         }
     }
@@ -162,7 +162,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
         }
         hasCreatedInitialConstraints = true
 
-        [itemView, menuDotsView, menuView].prepareForLayout()
+        [itemView, menuDotsView, menuView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         itemView.fitIn(view: swipeView)
 

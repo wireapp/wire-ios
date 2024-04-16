@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +26,10 @@ class ConversationByQualifiedIDListTranscoderTests: MessagingTestBase {
 
     func testRequestGeneration_V1() throws {
         // Given
-        let sut = ConversationByQualifiedIDListTranscoder(context: uiMOC)
+        let sut = ConversationByQualifiedIDListTranscoder(
+            context: uiMOC,
+            removeLocalConversationUseCase: RemoveLocalConversationUseCase()
+        )
         let ids: [QualifiedID] = [QualifiedID(uuid: .create(), domain: "example.com")]
 
         // When
@@ -43,7 +47,10 @@ class ConversationByQualifiedIDListTranscoderTests: MessagingTestBase {
 
     func testRequestGeneration_V2() throws {
         // Given
-        let sut = ConversationByQualifiedIDListTranscoder(context: uiMOC)
+        let sut = ConversationByQualifiedIDListTranscoder(
+            context: uiMOC,
+            removeLocalConversationUseCase: RemoveLocalConversationUseCase()
+        )
         let ids: [QualifiedID] = [QualifiedID(uuid: .create(), domain: "example.com")]
 
         // When

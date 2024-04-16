@@ -23,7 +23,7 @@ extension ZMAssetClientMessage {
     func genericMessageDataFromDataSet(for format: ZMImageFormat) -> ZMGenericMessageData? {
         return self.dataSet.lazy
             .compactMap { $0 as? ZMGenericMessageData }
-            .first(where: {$0.underlyingMessage?.imageAssetData?.imageFormat() == format})
+            .first(where: { $0.underlyingMessage?.imageAssetData?.imageFormat() == format })
     }
 
     public var mediumGenericMessage: GenericMessage? {
@@ -31,7 +31,7 @@ extension ZMAssetClientMessage {
     }
 
     static func keyPathsForValuesAffectingMediumGenericMessage() -> Set<String> {
-        return Set([#keyPath(ZMOTRMessage.dataSet), #keyPath(ZMOTRMessage.dataSet)+".data"])
+        return Set([#keyPath(ZMOTRMessage.dataSet), #keyPath(ZMOTRMessage.dataSet) + ".data"])
     }
 
     public var previewGenericMessage: GenericMessage? {
@@ -39,7 +39,7 @@ extension ZMAssetClientMessage {
     }
 
     static func keyPathsForValuesAffectingPreviewGenericMessage() -> Set<String> {
-        return Set([#keyPath(ZMOTRMessage.dataSet), #keyPath(ZMOTRMessage.dataSet)+".data"])
+        return Set([#keyPath(ZMOTRMessage.dataSet), #keyPath(ZMOTRMessage.dataSet) + ".data"])
     }
 
     public var underlyingMessage: GenericMessage? {
@@ -128,7 +128,7 @@ extension ZMAssetClientMessage {
                     else { return nil }
                 return genericMessage
             case .placeholder:
-                return self.underlyingMessageMergedFromDataSet(filter: { (message) -> Bool in
+                return self.underlyingMessageMergedFromDataSet(filter: { message -> Bool in
                     guard let assetData = message.assetData else { return false }
                     guard case .notUploaded? = assetData.status else {
                         return assetData.hasOriginal
@@ -136,7 +136,7 @@ extension ZMAssetClientMessage {
                     return true
                 })
             case .thumbnail:
-                return self.underlyingMessageMergedFromDataSet(filter: { (message) -> Bool in
+                return self.underlyingMessageMergedFromDataSet(filter: { message -> Bool in
                     guard let assetData = message.assetData else { return false }
                     if let status = assetData.status {
                         guard case .notUploaded = status else { return false }

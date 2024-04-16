@@ -18,21 +18,21 @@
 
 import Foundation
 
-class ReauthenticateWithCompanyLoginStepDescription: AuthenticationStepDescription {
+final class ReauthenticateWithCompanyLoginStepDescription: AuthenticationStepDescription {
 
     let backButton: BackButtonDescription?
     let mainView: ViewDescriptor & ValueSubmission
     let headline: String
-    let subtext: String?
+    let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let footerView: AuthenticationFooterViewDescription?
 
     init() {
         backButton = BackButtonDescription()
-        headline = "registration.signin.title".localized
-        subtext = "signin_logout.sso.subheadline".localized
+        headline = L10n.Localizable.Registration.Signin.title
+        subtext = .markdown(from: L10n.Localizable.SigninLogout.Sso.subheadline, style: .login)
 
-        mainView = SolidButtonDescription(title: "signin_logout.sso.buton".localized, accessibilityIdentifier: "company_login")
+        mainView = SolidButtonDescription(title: L10n.Localizable.SigninLogout.Sso.buton, accessibilityIdentifier: "company_login")
         secondaryView = nil
         footerView = nil
     }

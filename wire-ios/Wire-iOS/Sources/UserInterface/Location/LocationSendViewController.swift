@@ -33,7 +33,7 @@ final class LocationSendViewController: UIViewController {
 
     // MARK: - Properties
 
-    private let sendButton = Button(
+    private let sendButton = ZMButton(
         style: .accentColorTextButtonStyle,
         cornerRadius: 12,
         fontSpec: .normalSemiboldFont
@@ -97,8 +97,9 @@ final class LocationSendViewController: UIViewController {
         [addressLabel, sendButton].forEach(containerView.addSubview)
     }
 
-    private func setupConstraints() {
-        [containerView, addressLabel, sendButton].prepareForLayout()
+    private func createConstraints() {
+        [containerView, addressLabel, sendButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        
         NSLayoutConstraint.activate([
             // containerView
             containerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),

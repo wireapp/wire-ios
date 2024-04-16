@@ -42,7 +42,7 @@ extension Settings {
 
     /// Loads from user default the list of logs that are enabled
     func loadEnabledLogs() {
-        var tagsToEnable: Set<String> = [
+        let tagsToEnable: Set<String> = [
             "AVS",
             "Network",
             "SessionManager",
@@ -57,7 +57,6 @@ extension Settings {
             "cryptobox",
             "backend-environment",
             "Backup",
-            "mls",
             // added to defaults
             "TokenField",
             "FileManager",
@@ -165,7 +164,7 @@ extension Settings {
     }
 
     private func enableLogs(_ tags: Set<String>) {
-        tags.forEach { (tag) in
+        tags.forEach { tag in
             ZMSLog.set(level: .debug, tag: tag)
         }
     }

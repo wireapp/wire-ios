@@ -40,8 +40,14 @@ import MobileCoreServices
     /// Currend download / upload progress
     var progress: Float { get set }
 
-    /// The file location on the filesystem
-    var fileURL: URL? { get }
+    /// Whether the file data exists locally.
+    var hasLocalFileData: Bool { get }
+
+    /// Creates a temporary url to the decrypted file data.
+    ///
+    /// To check if the data exists, use `hasLocalFileData` instead to
+    /// avoid unnecessary decryption.
+    func temporaryURLToDecryptedFile() -> URL?
 
     /// The asset ID of the thumbnail, if any
     var thumbnailAssetID: String? { get set }
@@ -51,9 +57,6 @@ import MobileCoreServices
 
     /// Dimensions of the video
     var videoDimensions: CGSize { get }
-
-    /// File thumbnail preview image
-    var previewData: Data? { get }
 
     /// This can be used as a cache key for @c -previewData
     var imagePreviewDataIdentifier: String? { get }
@@ -136,7 +139,11 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         return mimeType.flatMap(RichAssetFileType.init)
     }
 
-    public var fileURL: URL? {
+    public var hasLocalFileData: Bool {
+        return asset?.hasDownloadedFile ?? false
+    }
+
+    public func temporaryURLToDecryptedFile() -> URL? {
         guard
             let assetURL = asset?.fileURL,
             let temporaryDirectoryURL = temporaryDirectoryURL,
@@ -177,12 +184,8 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         return temporaryURL
     }
 
-    public var previewData: Data? {
-        return asset?.previewData
-    }
-
     public func fetchImagePreviewData(queue: DispatchQueue, completionHandler: @escaping (Data?) -> Void) {
-        guard nil != fileMessageData, !isImage else { return completionHandler(nil) }
+        guard fileMessageData != nil, !isImage else { return completionHandler(nil) }
 
         asset?.fetchImageData(with: queue, completionHandler: completionHandler)
     }
@@ -311,7 +314,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         guard
             let managedObjectContext = managedObjectContext,
             let syncContext = managedObjectContext.zm_sync,
-            let fileURL = fileURL,
+            let fileURL = temporaryURLToDecryptedFile(),
             let PDFData = try? Data(contentsOf: fileURL)
         else {
             return nil

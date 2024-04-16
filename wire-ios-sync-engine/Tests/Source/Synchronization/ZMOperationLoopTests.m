@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 #import "MessagingTest.h"
 #import "ZMSyncStrategy.h"
@@ -38,27 +37,21 @@
     self.mockTransportSesssion = [[RecordingMockTransportSession alloc] initWithCookieStorage:self.cookieStorage
                                                                                   pushChannel:self.mockPushChannel];
             
-    self.mockSyncDelegate = [[MockSyncStateDelegate alloc] init];
     self.mockRequestStrategy = [[MockRequestStrategy alloc] init];
     self.mockUpdateEventProcessor = [[MockUpdateEventProcessor alloc] init];
     self.mockRequestCancellation = [[MockRequestCancellation alloc] init];
 
-    self.applicationStatusDirectory = [[ApplicationStatusDirectory alloc] initWithManagedObjectContext:self.syncMOC
-                                                                                         cookieStorage:self.cookieStorage
-                                                                                   requestCancellation:self.mockRequestCancellation
-                                                                                           application:self.application
-                                                                                     syncStateDelegate:self.mockSyncDelegate
-                                                                                 lastEventIDRepository:self.lastEventIDRepository
-                                                                                             analytics:nil];
-    
-    self.syncStatus = self.applicationStatusDirectory.syncStatus;
-    self.callEventStatus = self.applicationStatusDirectory.callEventStatus;
-    self.pushNotificationStatus = self.applicationStatusDirectory.pushNotificationStatus;
-        
+    self.operationStatus = [[OperationStatus alloc] init];
+    self.syncStatus = [[SyncStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository];
+    self.callEventStatus = [[CallEventStatus alloc] init];
+    self.pushNotificationStatus = [[PushNotificationStatus alloc] initWithManagedObjectContext:self.syncMOC lastEventIDRepository:self.lastEventIDRepository];
     self.sut = [[ZMOperationLoop alloc] initWithTransportSession:self.mockTransportSesssion
                                                  requestStrategy:self.mockRequestStrategy
                                             updateEventProcessor:self.mockUpdateEventProcessor
-                                      applicationStatusDirectory:self.applicationStatusDirectory
+                                                 operationStatus:self.operationStatus
+                                                      syncStatus:self.syncStatus
+                                          pushNotificationStatus:self.pushNotificationStatus
+                                                 callEventStatus:self.callEventStatus
                                                            uiMOC:self.uiMOC
                                                          syncMOC:self.syncMOC];
     self.pushChannelObserverToken = [NotificationInContext addObserverWithName:ZMOperationLoop.pushChannelStateChangeNotificationName
@@ -121,7 +114,10 @@
     ZMOperationLoop *op = [[ZMOperationLoop alloc] initWithTransportSession:self.mockTransportSesssion
                                                             requestStrategy:self.mockRequestStrategy
                                                        updateEventProcessor:self.mockUpdateEventProcessor
-                                                 applicationStatusDirectory:self.applicationStatusDirectory
+                                                            operationStatus:self.operationStatus
+                                                                 syncStatus:self.syncStatus
+                                                     pushNotificationStatus:self.pushNotificationStatus
+                                                            callEventStatus:self.callEventStatus
                                                                       uiMOC:self.uiMOC
                                                                     syncMOC:self.syncMOC];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -525,7 +521,9 @@
 - (void)testThatItForwardsEventsFromEncryptedPushesToThePushNotificationStatus
 {
     // given
-    self.sut.apsSignalKeyStore = [self prepareSelfClientForAPSSignalingStore];
+    [self.syncMOC performBlockAndWait:^{
+        self.sut.apsSignalKeyStore = [self prepareSelfClientForAPSSignalingStore];
+    }];
     NSDictionary *pushPayload = [self encryptedPushPayload];
     
     // when
@@ -540,7 +538,9 @@
 - (void)testThatItForwardsNoticeNotificationsToThePushNotificationStatus
 {
     // given
-    XCTAssertTrue([self.syncMOC saveOrRollback]);
+    [self.syncMOC performBlockAndWait:^{
+        XCTAssertTrue([self.syncMOC saveOrRollback]);
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
 
     NSUUID *notificationID = NSUUID.timeBasedUUID;
@@ -557,14 +557,16 @@
 - (void)testThatItCallsCompletionHandlerWhenEventsAreDownloaded
 {
     // given
-    XCTAssertTrue([self.syncMOC saveOrRollback]);
+    [self.syncMOC performBlockAndWait:^{
+        XCTAssertTrue([self.syncMOC saveOrRollback]);
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSUUID *notificationID = NSUUID.timeBasedUUID;
     NSDictionary *pushPayload = [self noticePushPayloadWithUUID:notificationID];
     
     // expect
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Called completion handler"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Called completion handler"];
     [self.sut fetchEventsFromPushChannelPayload:pushPayload completionHandler:^{
         [expectation fulfill];
     }];
@@ -579,7 +581,9 @@
 - (void)testThatItCallsCompletionHandlerAfterCallEventsHaveBeenProcessed
 {
     // given
-    XCTAssertTrue([self.syncMOC saveOrRollback]);
+    [self.syncMOC performBlockAndWait:^{
+        XCTAssertTrue([self.syncMOC saveOrRollback]);
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSUUID *notificationID = NSUUID.timeBasedUUID;
@@ -587,7 +591,7 @@
     
     // expect
     __block BOOL completionHandlerHasBeenCalled = NO;
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Called completion handler"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Called completion handler"];
     [self.sut fetchEventsFromPushChannelPayload:pushPayload completionHandler:^{
         [expectation fulfill];
         completionHandlerHasBeenCalled = YES;

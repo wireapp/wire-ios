@@ -18,7 +18,7 @@
 
 import UIKit
 
-class DescriptionHeaderView: UIView {
+final class DescriptionHeaderView: UIView {
     let descriptionLabel = UILabel()
 
     override init(frame: CGRect) {

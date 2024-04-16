@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireSyncEngine
 
-class CompanyLoginRequesterTests: XCTestCase {
+final class CompanyLoginRequesterTests: XCTestCase {
 
     func testThatItGeneratesLoginURLForToken() {
         // GIVEN
@@ -188,7 +188,7 @@ class CompanyLoginRequesterTests: XCTestCase {
 
 // MARK: - Helper
 
-private class MockSession: NSObject, URLSessionProtocol {
+private final class MockSession: NSObject, URLSessionProtocol {
 
     class MockURLSessionDataTask: URLSessionDataTask {
         override func resume() {

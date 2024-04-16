@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 code: code,
                 transportSession: transportSession,
                 contextProvider: contextProvider
-            ) { [weak self] (response) in
+            ) { [weak self] response in
 
                 guard let strongSelf = self,
                       let delegate = delegate else {
@@ -72,7 +72,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                                 transportSession: strongSelf.transportSession,
                                 eventProcessor: strongSelf.eventProcessor,
                                 contextProvider: strongSelf.contextProvider
-                            ) { [weak self] (response) in
+                            ) { [weak self] response in
 
                                 guard let strongSelf = self else { return }
 
@@ -128,7 +128,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         }
     }
 
-    private func synchronise(_ conversation: ZMConversation, completion: @escaping (Result<ZMConversation>) -> Void) {
+    private func synchronise(_ conversation: ZMConversation, completion: @escaping (Result<ZMConversation, Error>) -> Void) {
         guard let qualifiedID = conversation.qualifiedID else {
             completion(.success(conversation))
             return
@@ -144,7 +144,10 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 return
             }
 
-            guard let groupId = upToDateConversation.mlsGroupID, upToDateConversation.messageProtocol == .mls else {
+            guard
+                let groupId = upToDateConversation.mlsGroupID,
+                upToDateConversation.messageProtocol.isOne(of: .mls, .mixed)
+            else {
                 completion(.success(upToDateConversation))
                 return
             }

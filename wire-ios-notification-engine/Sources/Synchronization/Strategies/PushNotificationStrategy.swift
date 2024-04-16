@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -105,11 +105,12 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
             await managedObjectContext.perform {
                 self.pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: !hasMoreToFetch)
             }
+
+            if !hasMoreToFetch {
+                delegate?.pushNotificationStrategyDidFinishFetchingEvents(self)
+            }
         }
 
-        if !hasMoreToFetch {
-            delegate?.pushNotificationStrategyDidFinishFetchingEvents(self)
-        }
     }
 
     func failedFetchingEvents(recoverable: Bool) {

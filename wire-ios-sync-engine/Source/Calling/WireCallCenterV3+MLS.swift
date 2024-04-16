@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -142,15 +142,20 @@ extension WireCallCenterV3 {
         syncContext.perform {
             guard let mlsService = syncContext.mlsService else {
                 WireLogger.calling.error("failed to leave subconversation: mlsService is missing")
+                assertionFailure("mlsService is nil")
                 return
             }
 
             Task {
-                try await mlsService.leaveSubconversation(
-                    parentQualifiedID: parentQualifiedID,
-                    parentGroupID: parentGroupID,
-                    subconversationType: .conference
-                )
+                do {
+                    try await mlsService.leaveSubconversation(
+                        parentQualifiedID: parentQualifiedID,
+                        parentGroupID: parentGroupID,
+                        subconversationType: .conference
+                    )
+                } catch {
+                    WireLogger.calling.error("failed to leave subconversation: \(String(reflecting: error))")
+                }
             }
         }
     }

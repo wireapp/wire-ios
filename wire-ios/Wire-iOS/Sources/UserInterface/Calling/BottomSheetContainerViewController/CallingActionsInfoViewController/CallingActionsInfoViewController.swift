@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-class CallingActionsInfoViewController: UIViewController, UICollectionViewDelegateFlowLayout {
+final class CallingActionsInfoViewController: UIViewController, UICollectionViewDelegateFlowLayout {
     private let participantsHeaderHeight: CGFloat = 42
     private let cellHeight: CGFloat = 56
     private var topConstraint: NSLayoutConstraint?
@@ -128,11 +128,11 @@ class CallingActionsInfoViewController: UIViewController, UICollectionViewDelega
 
     func updateActionViewHeight() {
         guard UIDevice.current.twoDimensionOrientation.isLandscape else {
-            actionsViewHeightConstraint.constant =  (isIncomingCall ? 250 : 128) + view.safeAreaInsets.bottom
+            actionsViewHeightConstraint.constant = (isIncomingCall ? 250 : 128) + view.safeAreaInsets.bottom
             actionsView.verticalStackView.alignment = .fill
             return
         }
-        actionsViewHeightConstraint.constant =  128.0
+        actionsViewHeightConstraint.constant = 128.0
         actionsView.verticalStackView.alignment = .center
     }
 

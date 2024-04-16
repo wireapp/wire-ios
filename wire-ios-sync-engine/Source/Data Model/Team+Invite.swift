@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ extension Team {
      */
     public func invite(email: String, in userSession: ZMUserSession, completion: @escaping InviteCompletionHandler) {
         userSession.syncManagedObjectContext.performGroupedBlock {
-            userSession.applicationStatusDirectory?.teamInvitationStatus.invite(email, completionHandler: { [weak userSession] result in
+            userSession.applicationStatusDirectory.teamInvitationStatus.invite(email, completionHandler: { [weak userSession] result in
                 userSession?.managedObjectContext.performGroupedBlock {
                     completion(result)
                 }

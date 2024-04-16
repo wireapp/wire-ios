@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,9 @@
 //
 
 import XCTest
+
 @testable import WireRequestStrategy
+@testable import WireRequestStrategySupport
 
 class ClientMessageRequestStrategyTests: MessagingTestBase {
 
@@ -154,7 +156,7 @@ extension ClientMessageRequestStrategyTests {
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
 
-            let expectation = self.expectation(description: "Notification fired")
+            let expectation = self.customExpectation(description: "Notification fired")
             token = NotificationInContext.addObserver(name: ZMConversation.failedToSendMessageNotificationName,
                                                       context: self.uiMOC.notificationContext,
                                                       object: nil) {_ in
@@ -164,7 +166,7 @@ extension ClientMessageRequestStrategyTests {
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        withExtendedLifetime(token) { () -> Void in
+        withExtendedLifetime(token) {
             XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         }
     }
@@ -191,7 +193,7 @@ extension ClientMessageRequestStrategyTests {
                 "conversation": self.groupConversation.remoteIdentifier!.transportString(),
                 "time": Date().transportString(),
                 "from": self.otherUser.remoteIdentifier.transportString()
-                ] as NSDictionary
+            ] as NSDictionary
             guard let event = ZMUpdateEvent.decryptedUpdateEvent(fromEventStreamPayload: eventPayload, uuid: nil, transient: false, source: .webSocket) else {
                 XCTFail("Failed to create event")
                 return
@@ -205,13 +207,13 @@ extension ClientMessageRequestStrategyTests {
         }
     }
 
-    func testThatANewOtrMessageIsCreatedFromADecryptedAPNSEvent() {
-        self.syncMOC.performGroupedBlockAndWait {
-            // GIVEN
-            let eventDecoder = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
-            let text = "Everything"
-            let event = self.decryptedUpdateEventFromOtherClient(text: text, eventDecoder: eventDecoder)
+    func testThatANewOtrMessageIsCreatedFromADecryptedAPNSEvent() async throws {
+        // GIVEN
+        let eventDecoder = EventDecoder(eventMOC: self.eventMOC, syncMOC: self.syncMOC)
+        let text = "Everything"
+        let event = try await self.decryptedUpdateEventFromOtherClient(text: text, eventDecoder: eventDecoder)
 
+        await syncMOC.perform {
             // WHEN
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
 

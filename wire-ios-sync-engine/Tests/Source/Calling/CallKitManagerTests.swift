@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -168,7 +168,7 @@ class MockProvider: CXProvider {
 class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
 
     var mockConversations: [WireSyncEngine.CallHandle: ZMConversation] = [:]
-    func lookupConversation(by handle: WireSyncEngine.CallHandle, completionHandler: @escaping (Result<ZMConversation>) -> Void) {
+    func lookupConversation(by handle: WireSyncEngine.CallHandle, completionHandler: @escaping (Result<ZMConversation, Error>) -> Void) {
         if let conversation = mockConversations[handle] {
             completionHandler(.success(conversation))
         } else {
@@ -179,7 +179,7 @@ class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
     var lookupConversationAndProcessPendingCallEventsCalls = 0
     func lookupConversationAndProcessPendingCallEvents(
         by handle: WireSyncEngine.CallHandle,
-        completionHandler: @escaping (WireUtilities.Result<ZMConversation>
+        completionHandler: @escaping (Result<ZMConversation, Error>
     ) -> Void) {
         lookupConversationAndProcessPendingCallEventsCalls += 1
         lookupConversation(by: handle, completionHandler: completionHandler)
@@ -210,13 +210,13 @@ class CallKitManagerTest: DatabaseTest {
     }
 
     func createOneOnOneConversation(user: ZMUser) {
-        let oneToOne = ZMConversation.insertNewObject(in: self.uiMOC)
+        let oneToOne = ZMConversation.insertNewObject(in: uiMOC)
         oneToOne.conversationType = .oneOnOne
         oneToOne.remoteIdentifier = UUID()
+        oneToOne.oneOnOneUser = user
 
-        let connection = ZMConnection.insertNewObject(in: self.uiMOC)
+        let connection = ZMConnection.insertNewObject(in: uiMOC)
         connection.status = .accepted
-        connection.conversation = oneToOne
         connection.to = user
     }
 
@@ -674,16 +674,16 @@ class CallKitManagerTest: DatabaseTest {
 
     // MARK: Activity & Intents
 
-    func userActivityFor(contacts: [INPerson]?, isVideo: Bool = false) -> NSUserActivity {
+    func userActivityFor(contacts: [INPerson], isVideo: Bool) -> NSUserActivity {
 
-        let intent: INIntent
-
-        if isVideo {
-            intent = INStartCallIntent(audioRoute: .speakerphoneAudioRoute, destinationType: .normal, contacts: contacts, recordTypeForRedialing: .unknown, callCapability: .videoCall)
-        } else {
-            intent = INStartCallIntent(audioRoute: .speakerphoneAudioRoute, destinationType: .normal, contacts: contacts, recordTypeForRedialing: .unknown, callCapability: .audioCall)
-        }
-
+        let intent = INStartCallIntent(
+            callRecordFilter: .none,
+            callRecordToCallBack: .none,
+            audioRoute: .speakerphoneAudioRoute,
+            destinationType: .normal,
+            contacts: contacts,
+            callCapability: isVideo ? .videoCall : .audioCall
+        )
         let interaction = INInteraction(intent: intent, response: .none)
 
         let activity = NSUserActivity(activityType: "voip")
@@ -699,7 +699,7 @@ class CallKitManagerTest: DatabaseTest {
         let handle = INPersonHandle(value: identifier, type: .unknown)
         let person = INPerson(personHandle: handle, nameComponents: .none, displayName: .none, image: .none, contactIdentifier: .none, customIdentifier: identifier)
         let callHandle = WireSyncEngine.CallHandle(encodedString: identifier)!
-        let activity = self.userActivityFor(contacts: [person])
+        let activity = self.userActivityFor(contacts: [person], isVideo: false)
 
         mockCallKitManagerDelegate.mockConversations[callHandle] = conversation
 
@@ -920,7 +920,7 @@ class CallKitManagerTest: DatabaseTest {
         self.sut.callCenterDidChange(callState: state, conversation: conversation, caller: otherUser, timestamp: Date(), previousCallState: nil)
 
         // when
-        sut.callCenterDidChange(callState: .terminating(reason: .anweredElsewhere), conversation: conversation, caller: otherUser, timestamp: nil, previousCallState: nil)
+        sut.callCenterDidChange(callState: .terminating(reason: .answeredElsewhere), conversation: conversation, caller: otherUser, timestamp: nil, previousCallState: nil)
 
         // then
         XCTAssertEqual(self.callKitProvider.lastEndedReason, .answeredElsewhere)

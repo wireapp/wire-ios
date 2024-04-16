@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -63,9 +63,9 @@ public class MockApplicationStatus: NSObject, ApplicationStatus, ClientRegistrat
         return true
     }
 
-    public var didRequestSlowSync = false
-    public func requestSlowSync() {
-        didRequestSlowSync = true
+    public var didRequestResyncResources = false
+    public func requestResyncResources() {
+        didRequestResyncResources = true
     }
 
 }
@@ -91,19 +91,23 @@ class MockAuthenticationStatus: ZMAuthenticationStatus {
 
 @objcMembers
 class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
-    var mockPhase: ZMClientRegistrationPhase?
+    var mockPhase: ClientRegistrationPhase?
     var mockReadiness: Bool = true
 
     convenience init(managedObjectContext: NSManagedObjectContext) {
-        self.init(managedObjectContext: managedObjectContext, cookieStorage: nil, registrationStatusDelegate: nil)
+        self.init(context: managedObjectContext, cookieProvider: nil, coreCryptoProvider: nil)
     }
 
-    override init!(managedObjectContext moc: NSManagedObjectContext!, cookieStorage: ZMPersistentCookieStorage!, registrationStatusDelegate: ZMClientRegistrationStatusDelegate!) {
-        super.init(managedObjectContext: moc, cookieStorage: cookieStorage, registrationStatusDelegate: registrationStatusDelegate)
+    override init(
+        context moc: NSManagedObjectContext!,
+        cookieProvider: CookieProvider!,
+        coreCryptoProvider: CoreCryptoProviderProtocol!
+    ) {
+        super.init(context: moc, cookieProvider: cookieProvider, coreCryptoProvider: coreCryptoProvider)
         self.emailCredentials = ZMEmailCredentials(email: "bla@example.com", password: "secret")
     }
 
-    override var currentPhase: ZMClientRegistrationPhase {
+    override var currentPhase: ClientRegistrationPhase {
         if let phase = mockPhase {
             return phase
         }
@@ -114,14 +118,24 @@ class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
         return true
     }
 
-    override func clientIsReadyForRequests() -> Bool {
+    override var clientIsReadyForRequests: Bool {
         return mockReadiness
+    }
+
+    var isWaitingForLoginValue: Bool = false
+    override var isWaitingForLogin: Bool {
+        return isWaitingForLoginValue
+    }
+
+    var isAddingEmailNecessaryValue: Bool = false
+    override var isAddingEmailNecessary: Bool {
+        return isAddingEmailNecessaryValue
     }
 }
 
 class ZMMockClientUpdateStatus: ClientUpdateStatus {
     var fetchedClients: [UserClient?] = []
-    var mockPhase: ClientUpdatePhase = .done
+    var mockPhase: ClientUpdatePhase?
     var deleteCallCount: Int = 0
     var fetchCallCount: Int = 0
     var mockCredentials: ZMEmailCredentials = ZMEmailCredentials(email: "bla@example.com", password: "secret")
@@ -140,7 +154,10 @@ class ZMMockClientUpdateStatus: ClientUpdateStatus {
     }
 
     override var currentPhase: ClientUpdatePhase {
-        return mockPhase
+        if let mockPhase {
+            return mockPhase
+        }
+        return super.currentPhase
     }
 }
 
@@ -188,6 +205,7 @@ public class MockSyncStatus: SyncStatus {
 @objc public class MockSyncStateDelegate: NSObject, ZMSyncStateDelegate {
 
     var registeredUserClient: UserClient?
+    var registeredMLSClient: UserClient?
     @objc public var didCallStartSlowSync = false
     @objc public var didCallFinishSlowSync = false
     @objc public var didCallStartQuickSync = false
@@ -209,6 +227,10 @@ public class MockSyncStatus: SyncStatus {
 
     public func didFinishQuickSync() {
         didCallFinishQuickSync = true
+    }
+
+    public func didRegisterMLSClient(_ userClient: UserClient) {
+        registeredMLSClient = userClient
     }
 
     public func didRegisterSelfUserClient(_ userClient: UserClient) {

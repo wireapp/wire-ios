@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,6 +53,11 @@ class RecordingMockTransportSession: NSObject, TransportSessionType {
     func prepareForSuspendedState() { }
 
     func cancelTask(with taskIdentifier: ZMTaskIdentifier) { }
+
+    func enqueue(_ request: ZMTransportRequest, queue: ZMSGroupQueue) async -> ZMTransportResponse {
+        lastEnqueuedRequest = request
+        return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: 0)
+    }
 
     var lastEnqueuedRequest: ZMTransportRequest?
     func enqueueOneTime(_ request: ZMTransportRequest) {

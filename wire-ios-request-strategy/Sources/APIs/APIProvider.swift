@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ import Foundation
 public protocol APIProviderInterface {
     func prekeyAPI(apiVersion: APIVersion) -> PrekeyAPI
     func messageAPI(apiVersion: APIVersion) -> MessageAPI
+    func e2eIAPI(apiVersion: APIVersion) -> E2eIAPI?
 }
 
 public struct APIProvider: APIProviderInterface {
@@ -40,6 +41,7 @@ public struct APIProvider: APIProviderInterface {
         case .v3: PrekeyAPIV3(httpClient: httpClient)
         case .v4: PrekeyAPIV4(httpClient: httpClient)
         case .v5: PrekeyAPIV5(httpClient: httpClient)
+        case .v6: PrekeyAPIV6(httpClient: httpClient)
         }
     }
 
@@ -51,6 +53,15 @@ public struct APIProvider: APIProviderInterface {
         case .v3: MessageAPIV3(httpClient: httpClient)
         case .v4: MessageAPIV4(httpClient: httpClient)
         case .v5: MessageAPIV5(httpClient: httpClient)
+        case .v6: MessageAPIV6(httpClient: httpClient)
+        }
+    }
+
+    public func e2eIAPI(apiVersion: APIVersion) -> E2eIAPI? {
+        return switch apiVersion {
+        case .v0, .v1, .v2, .v3, .v4: nil
+        case .v5: E2eIAPIV5(httpClient: httpClient)
+        case .v6: E2eIAPIV6(httpClient: httpClient)
         }
     }
 }

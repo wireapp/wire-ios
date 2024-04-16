@@ -46,14 +46,12 @@ final class UnlockViewController: UIViewController {
 
     private static let errorFont = FontSpec.smallLightFont.font!
 
-    private lazy var unlockButton: Button = {
-        let button = Button(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
-
+    private lazy var unlockButton = {
+        let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
         button.setTitle(Unlock.SubmitButton.title, for: .normal)
         button.isEnabled = false
         button.addTarget(self, action: #selector(onUnlockButtonPressed(sender:)), for: .touchUpInside)
         button.accessibilityIdentifier = "unlock_screen.button.unlock"
-
         return button
     }()
 
@@ -105,20 +103,18 @@ final class UnlockViewController: UIViewController {
     }()
 
     private let errorLabel: UILabel = {
-        let label = DynamicFontLabel(fontSpec: .smallLightFont,
-                                     color: SemanticColors.Label.textErrorDefault)
+        let label = DynamicFontLabel(
+            fontSpec: .smallLightFont,
+            color: SemanticColors.Label.textErrorDefault
+        )
         label.text = " "
-
         return label
     }()
 
-    private lazy var wipeButton: Button = {
-        let button = Button(style: .secondaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumRegularFont)
-
+    private lazy var wipeButton = {
+        let button = ZMButton(style: .secondaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumRegularFont)
         button.setTitle(Unlock.wipeButton, for: .normal)
-
         button.addTarget(self, action: #selector(onWipeButtonPressed(sender:)), for: .touchUpInside)
-
         return button
     }()
 
@@ -129,10 +125,7 @@ final class UnlockViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        [contentView].forEach {
-            view.addSubview($0)
-        }
+        view.addSubview(contentView)
 
         stackView.distribution = .fill
 
@@ -141,12 +134,14 @@ final class UnlockViewController: UIViewController {
 
         contentView.addSubview(stackView)
 
-        [accountIndicator,
-         titleLabel,
-         UILabel.createHintLabel(),
-         validatedTextField,
-         errorLabel,
-         wipeButton].forEach(upperStackView.addArrangedSubview)
+        [
+            accountIndicator,
+            titleLabel,
+            UILabel.createHintLabel(),
+            validatedTextField,
+            errorLabel,
+            wipeButton
+        ].forEach(upperStackView.addArrangedSubview)
 
         [upperStackView, unlockButton].forEach(stackView.addArrangedSubview)
 
@@ -165,11 +160,13 @@ final class UnlockViewController: UIViewController {
 
     private func createConstraints() {
 
-        [userImageView,
-         nameLabel,
-         contentView,
-         upperStackView,
-         stackView].prepareForLayout()
+        [
+            userImageView,
+            nameLabel,
+            contentView,
+            upperStackView,
+            stackView
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let widthConstraint = contentView.createContentWidthConstraint()
 

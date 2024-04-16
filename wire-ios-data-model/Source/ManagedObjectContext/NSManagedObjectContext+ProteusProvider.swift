@@ -24,5 +24,4 @@ public extension NSManagedObjectContext {
         precondition(zm_isSyncContext, "ProteusProvider should only be accessed on the sync context")
         return ProteusProvider(context: self)
     }
-
 }

@@ -1,22 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
-
+//
 
 #import <Foundation/Foundation.h>
 #import <WireSystem/WireSystem.h>
@@ -61,7 +59,7 @@ extern const NSTimeInterval ZMTransportRequestDefaultExpirationInterval;
 @end
 
 
-typedef NS_ENUM(uint8_t, ZMTransportRequestMethod) {
+typedef NS_CLOSED_ENUM(uint8_t, ZMTransportRequestMethod) {
     ZMTransportRequestMethodGet,
     ZMTransportRequestMethodDelete,
     ZMTransportRequestMethodPut,
@@ -69,14 +67,14 @@ typedef NS_ENUM(uint8_t, ZMTransportRequestMethod) {
     ZMTransportRequestMethodHead
 };
 
-typedef NS_ENUM(uint8_t, ZMTransportRequestAuth) {
+typedef NS_CLOSED_ENUM(uint8_t, ZMTransportRequestAuth) {
     ZMTransportRequestAuthNone, ///< Does not needs an access token and does not generate one
     ZMTransportRequestAuthNeedsAccess, ///< Needs an access token
     ZMTransportRequestAuthCreatesCookieAndAccessToken, ///< Does not need an access token, but the response will contain one
     ZMTransportRequestAuthNeedsCookieAndAccessToken, /// < Needs both the cookie and access token
 };
 
-typedef NS_ENUM(int8_t, ZMTransportAccept) {
+typedef NS_CLOSED_ENUM(int8_t, ZMTransportAccept) {
     ZMTransportAcceptAnything, ///< Maps to "Accept: */*" HTTP header
     ZMTransportAcceptTransportData, ///< Maps to "Accept: application/json" HTTP header
     ZMTransportAcceptImage, ///< Maps to "Accept: image/*" HTTP header

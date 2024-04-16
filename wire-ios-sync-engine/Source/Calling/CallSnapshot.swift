@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,13 +36,13 @@ struct CallSnapshot {
     let isConstantBitRate: Bool
     let videoState: VideoState
     let networkQuality: NetworkQuality
-    let isConferenceCall: Bool
+    let conversationType: AVSConversationType
     let degradedUser: ZMUser?
     let activeSpeakers: [AVSActiveSpeakersChange.ActiveSpeaker]
     let videoGridPresentationMode: VideoGridPresentationMode
     var conversationObserverToken: NSObjectProtocol?
     var mlsConferenceStaleParticipantsRemover: MLSConferenceStaleParticipantsRemover?
-    var updateConferenceInfoTask: Task<Void, Error>?
+    var updateConferenceInfoTask: Task<Void, Never>?
 
     var isDegradedCall: Bool {
         return degradedUser != nil
@@ -65,7 +65,7 @@ struct CallSnapshot {
             isConstantBitRate: isConstantBitRate,
             videoState: videoState,
             networkQuality: networkQuality,
-            isConferenceCall: isConferenceCall,
+            conversationType: conversationType,
             degradedUser: degradedUser,
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
@@ -92,7 +92,7 @@ struct CallSnapshot {
             isConstantBitRate: enabled,
             videoState: videoState,
             networkQuality: networkQuality,
-            isConferenceCall: isConferenceCall,
+            conversationType: conversationType,
             degradedUser: degradedUser,
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
@@ -119,7 +119,7 @@ struct CallSnapshot {
             isConstantBitRate: isConstantBitRate,
             videoState: videoState,
             networkQuality: networkQuality,
-            isConferenceCall: isConferenceCall,
+            conversationType: conversationType,
             degradedUser: degradedUser,
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
@@ -146,7 +146,7 @@ struct CallSnapshot {
             isConstantBitRate: isConstantBitRate,
             videoState: videoState,
             networkQuality: networkQuality,
-            isConferenceCall: isConferenceCall,
+            conversationType: conversationType,
             degradedUser: degradedUser,
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
@@ -177,7 +177,7 @@ struct CallSnapshot {
             isConstantBitRate: isConstantBitRate,
             videoState: videoState,
             networkQuality: networkQuality,
-            isConferenceCall: isConferenceCall,
+            conversationType: conversationType,
             degradedUser: degradedUser,
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
@@ -204,7 +204,7 @@ struct CallSnapshot {
             isConstantBitRate: isConstantBitRate,
             videoState: videoState,
             networkQuality: networkQuality,
-            isConferenceCall: isConferenceCall,
+            conversationType: conversationType,
             degradedUser: degradedUser,
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: videoGridPresentationMode,
@@ -231,7 +231,7 @@ struct CallSnapshot {
             isConstantBitRate: isConstantBitRate,
             videoState: videoState,
             networkQuality: networkQuality,
-            isConferenceCall: isConferenceCall,
+            conversationType: conversationType,
             degradedUser: degradedUser,
             activeSpeakers: activeSpeakers,
             videoGridPresentationMode: presentationMode,

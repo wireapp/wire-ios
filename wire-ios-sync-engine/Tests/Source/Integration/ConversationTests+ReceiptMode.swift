@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ class ConversationTests_ReceiptMode: IntegrationTest {
         XCTAssertFalse(sut.hasReadReceiptsEnabled)
 
         // when
-        sut.setEnableReadReceipts(true, in: userSession!) { (result) in
+        sut.setEnableReadReceipts(true, in: userSession!) { result in
             switch result {
             case .failure:
                 XCTFail()
@@ -59,7 +59,7 @@ class ConversationTests_ReceiptMode: IntegrationTest {
         }
 
         // when
-        sut.setEnableReadReceipts(true, in: userSession!) { (result) in
+        sut.setEnableReadReceipts(true, in: userSession!) { result in
             switch result {
             case .failure:
                 XCTFail()
@@ -80,7 +80,7 @@ class ConversationTests_ReceiptMode: IntegrationTest {
         XCTAssertFalse(sut.hasReadReceiptsEnabled)
 
         // when
-        mockTransportSession.performRemoteChanges { (_) in
+        mockTransportSession.performRemoteChanges { _ in
             self.groupConversation.changeReceiptMode(by: self.user1, receiptMode: 1)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
@@ -94,10 +94,10 @@ class ConversationTests_ReceiptMode: IntegrationTest {
         XCTAssert(login())
         let sut = conversation(for: selfToUser1Conversation)!
         XCTAssertFalse(sut.hasReadReceiptsEnabled)
-        let expectation = self.expectation(description: "Invalid Operation")
+        let expectation = self.customExpectation(description: "Invalid Operation")
 
         // when
-        sut.setEnableReadReceipts(true, in: userSession!) { (result) in
+        sut.setEnableReadReceipts(true, in: userSession!) { result in
             switch result {
             case .failure(ReadReceiptModeError.invalidOperation):
                 expectation.fulfill()

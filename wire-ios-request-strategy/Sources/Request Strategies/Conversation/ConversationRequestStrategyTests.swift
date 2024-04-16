@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +19,8 @@
 import Foundation
 import XCTest
 import WireDataModel
+import WireDataModelSupport
+import WireRequestStrategySupport
 @testable import WireRequestStrategy
 
 class ConversationRequestStrategyTests: MessagingTestBase {
@@ -26,6 +29,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
     var mockApplicationStatus: MockApplicationStatus!
     var mockSyncProgress: MockSyncProgress!
     var mockRemoveLocalConversation: MockLocalConversationRemovalUseCase!
+    var mockMLSService: MockMLSServiceInterface!
 
     var apiVersion: APIVersion! {
         didSet {
@@ -38,13 +42,19 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
-        mockSyncProgress = MockSyncProgress()
         mockRemoveLocalConversation = MockLocalConversationRemovalUseCase()
+        mockMLSService = MockMLSServiceInterface()
+
+        mockSyncProgress = MockSyncProgress()
+        mockSyncProgress.currentSyncPhase = .done
+        mockSyncProgress.finishCurrentSyncPhasePhase_MockMethod = { _ in }
+        mockSyncProgress.failCurrentSyncPhasePhase_MockMethod = { _ in }
 
         sut = ConversationRequestStrategy(
             withManagedObjectContext: syncMOC,
             applicationStatus: mockApplicationStatus,
             syncProgress: mockSyncProgress,
+            mlsService: mockMLSService,
             removeLocalConversation: mockRemoveLocalConversation
         )
 
@@ -227,7 +237,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
         // then
         syncMOC.performGroupedBlockAndWait {
-            XCTAssertEqual(self.mockSyncProgress.didFinishCurrentSyncPhase, .fetchingConversations)
+            XCTAssertEqual(self.mockSyncProgress.finishCurrentSyncPhasePhase_Invocations, [.fetchingConversations])
         }
     }
 
@@ -241,7 +251,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
         // then
         syncMOC.performGroupedBlockAndWait {
-            XCTAssertEqual(self.mockSyncProgress.didFinishCurrentSyncPhase, .fetchingConversations)
+            XCTAssertEqual(self.mockSyncProgress.finishCurrentSyncPhasePhase_Invocations, [.fetchingConversations])
         }
     }
 
@@ -255,7 +265,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
 
         // then
         syncMOC.performGroupedBlockAndWait {
-            XCTAssertEqual(self.mockSyncProgress.didFailCurrentSyncPhase, .fetchingConversations)
+            XCTAssertEqual(self.mockSyncProgress.failCurrentSyncPhasePhase_Invocations, [.fetchingConversations])
         }
     }
 
@@ -453,7 +463,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
                             notFound: [QualifiedID],
                             failed: [QualifiedID]) -> ZMTransportResponse {
 
-        let found = request.qualifiedIDs.map({ conversation(uuid: $0.uuid, domain: $0.domain)})
+        let found = request.qualifiedIDs.map({ conversation(uuid: $0.uuid, domain: $0.domain) })
         let payload = Payload.QualifiedConversationList(found: found, notFound: notFound, failed: failed)
         let payloadData = payload.payloadData()!
         let payloadString = String(bytes: payloadData, encoding: .utf8)!

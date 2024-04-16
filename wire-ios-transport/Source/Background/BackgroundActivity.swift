@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ import UIKit
 private var activityCounter = 0
 private let activityCounterQueue = DispatchQueue(label: "wire-transport.background-activity-counter")
 
-@objc public class BackgroundActivity: NSObject {
+@objc public final class BackgroundActivity: NSObject {
 
     /// The name of the task, used for debugging purposes.
     @objc public let name: String

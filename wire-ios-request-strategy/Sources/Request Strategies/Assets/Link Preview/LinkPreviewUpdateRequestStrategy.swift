@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,7 +58,11 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = managedObjectContext.enterAllGroupsExceptSecondary()
         Task {
-            try? await messageSender.sendMessage(message: object)
+            do {
+                try await messageSender.sendMessage(message: object)
+            } catch {
+                WireLogger.calling.error("failed to send message: \(String(reflecting: error))")
+            }
             await managedObjectContext.perform {
                 object.linkPreviewState = .done
                 completion()

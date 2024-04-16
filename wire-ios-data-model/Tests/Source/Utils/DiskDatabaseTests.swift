@@ -22,6 +22,8 @@ import WireTesting
 @testable import WireDataModel
 
 public class DiskDatabaseTest: ZMTBaseTest {
+
+    var cacheURL: URL!
     var sharedContainerURL: URL!
     var accountId: UUID!
     var moc: NSManagedObjectContext {
@@ -41,7 +43,8 @@ public class DiskDatabaseTest: ZMTBaseTest {
         super.setUp()
 
         accountId = .create()
-        sharedContainerURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("\(UUID().uuidString)")
+        cacheURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+        sharedContainerURL = cacheURL.appendingPathComponent("\(UUID().uuidString)")
         cleanUp()
         createDatabase()
         setupCaches()
@@ -54,16 +57,16 @@ public class DiskDatabaseTest: ZMTBaseTest {
             try! self.moc.persistentStoreCoordinator!.remove($0)
         }
 
-        cleanUp()
         coreDataStack = nil
-        sharedContainerURL = nil
         accountId = nil
+        cleanUp()
+        sharedContainerURL = nil
         super.tearDown()
     }
 
     private func setupCaches() {
         coreDataStack.viewContext.zm_userImageCache = UserImageLocalCache(location: nil)
-        coreDataStack.viewContext.zm_fileAssetCache = FileAssetCache(location: nil)
+        coreDataStack.viewContext.zm_fileAssetCache = FileAssetCache(location: cacheURL)
 
         coreDataStack.syncContext.performGroupedBlockAndWait {
             self.coreDataStack.syncContext.zm_fileAssetCache = self.coreDataStack.viewContext.zm_fileAssetCache
@@ -133,7 +136,7 @@ extension DiskDatabaseTest {
     func createConnection(to: ZMUser, conversation: ZMConversation) -> ZMConnection {
         let connection = ZMConnection.insertNewObject(in: self.moc)
         connection.to = to
-        connection.conversation = conversation
+        to.oneOnOneConversation = conversation
         connection.status = .accepted
         return connection
     }

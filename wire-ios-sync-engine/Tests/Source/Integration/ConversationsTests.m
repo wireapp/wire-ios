@@ -1,20 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 @import WireDataModel;
 @import WireSyncEngine;
@@ -94,10 +94,10 @@
     }
 }
 
-- (void)testThatChangeToAConversationNameIsNotResyncedIfNil;
+- (void)testThatChangeToAConversationNameIsNotResyncedIfNil
 {
     ZMConversation *conversation = nil;
-    
+
     NSString *name = nil;
     NSString *formerName = nil;
     {
@@ -106,7 +106,7 @@
         // Get the group conversation
         [self.mockTransportSession resetReceivedRequests];
         conversation = [self conversationForMockConversation:self.groupConversation];
-        
+
         XCTAssertNotNil(conversation);
         // Change the name & save
         formerName = conversation.userDefinedName;
@@ -114,23 +114,27 @@
         [self.userSession saveOrRollbackChanges];
         XCTAssertFalse(conversation.hasChanges, @"Rollback?");
         XCTAssertTrue([conversation hasLocalModificationsForKey:ZMConversationUserDefinedNameKey]);
-        
+
         // Wait for merge ui->sync to be done
         WaitForAllGroupsToBeEmpty(0.5);
-        ZMConversation *syncConversation = [self.userSession.syncManagedObjectContext objectWithID:conversation.objectID];
-        
-        XCTAssertFalse([syncConversation hasLocalModificationsForKey:ZMConversationUserDefinedNameKey]);
+
+        [self.userSession.syncManagedObjectContext performBlockAndWait:^{
+            ZMConversation *syncConversation = [self.userSession.syncManagedObjectContext objectWithID:conversation.objectID];
+
+            XCTAssertFalse([syncConversation hasLocalModificationsForKey:ZMConversationUserDefinedNameKey]);
+        }];
+
         XCTAssertFalse([conversation hasLocalModificationsForKey:ZMConversationUserDefinedNameKey]);
         XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 0lu);
     }
-    
+
     // Tears down context(s) &
     // Re-create contexts
     [self recreateSessionManagerAndDeleteLocalData];
-    
+
     // Wait for sync to be done
     XCTAssertTrue([self login]);
-    
+
     // Check that conversation name is updated:
     {
         // Get the group conversation
@@ -139,9 +143,7 @@
     }
 }
 
-@end
-
-@implementation ConversationTests (DisplayName)
+// MARK: - DisplayName
 
 - (void)testThatReceivingAPushEventForNameChangeChangesTheConversationName
 {
@@ -303,7 +305,9 @@
         [groupConversation addUsersByUser:self.user1 addedUsers:@[self.selfUser]];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
-    [self.userSession.syncManagedObjectContext saveOrRollback];
+    [self.userSession.syncManagedObjectContext performBlockAndWait:^{
+        [self.userSession.syncManagedObjectContext saveOrRollback];
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
 
     //By this moment new conversation should be created and self user should be it's member
@@ -315,10 +319,7 @@
 }
 
 
-@end
-
-#pragma mark - Conversation list
-@implementation ConversationTests (ConversationStatusAndOrder)
+// MARK: - Conversation list
 
 - (void)testThatAConversationListListenerOnlyReceivesNotificationsForTheSpecificListItSignedUpFor
 {
@@ -632,7 +633,7 @@
     
     // then the conversation should not be in the active list anymore
     XCTAssertTrue(user1.isBlocked);
-    XCTAssertEqual(conversation.connection.status, ZMConnectionStatusBlocked);
+    XCTAssertEqual(user1.connection.status, ZMConnectionStatusBlocked);
 
     XCTAssertEqual(active.count, 4u);
     XCTAssertFalse([active containsObject:conversation]);
@@ -785,7 +786,7 @@
 {
     // given
     XCTAssertTrue([self login]);
-    
+
     ZMConversation *conversation = [self conversationForMockConversation:self.selfToUser1Conversation];
     [self.userSession performChanges:^{
         ZMMessage *message = (id)[conversation appendMessageWithText:@"lalala"];
@@ -798,7 +799,7 @@
     // when
     [self remotelyAppendSelfConversationWithZMLastReadForMockConversation:self.selfToUser1Conversation atTime:newLastRead];
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     // then
     XCTAssertEqual([conversation.lastReadServerTimeStamp timeIntervalSince1970], [newLastRead timeIntervalSince1970]);
 }
@@ -983,4 +984,3 @@
 }
 
 @end
-

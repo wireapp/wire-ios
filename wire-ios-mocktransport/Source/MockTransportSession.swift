@@ -33,7 +33,7 @@ public extension MockTransportSession {
     func pushEventsForTeams(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, deleted: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> [MockPushEvent] {
         guard shouldSendEventsToSelfUser else { return [] }
 
-        let updatedEvents =  updated
+        let updatedEvents = updated
             .compactMap { $0 as? MockTeam }
             .sorted(by: ascendingCreationDate)
             .flatMap { self.pushEventForUpdatedTeam(team: $0, insertedObjects: inserted) }
@@ -151,6 +151,16 @@ public extension MockTransportSession {
 }
 
 extension MockTransportSession: TransportSessionType {
+
+    public func enqueue(_ request: ZMTransportRequest, queue: ZMSGroupQueue) async -> ZMTransportResponse {
+        return await withCheckedContinuation { continuation in
+            request.add(ZMCompletionHandler(on: queue, block: { response in
+                continuation.resume(returning: response)
+            }))
+
+            enqueueOneTime(request)
+        }
+    }
 
     public var requestLoopDetectionCallback: ((String) -> Void)? {
         get { return nil }

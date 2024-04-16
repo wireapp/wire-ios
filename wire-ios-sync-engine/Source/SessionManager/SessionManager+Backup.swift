@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,10 +22,9 @@ import ZipArchive
 import WireUtilities
 import WireCryptobox
 
-extension SessionManager {
+private let zmLog = ZMSLog(tag: "SessionManager")
 
-    public typealias BackupResultClosure = (Result<URL>) -> Void
-    public typealias RestoreResultClosure = (Swift.Result<Void, Error>) -> Void
+extension SessionManager {
 
     static private let workerQueue = DispatchQueue(label: "history-backup")
 
@@ -41,7 +40,7 @@ extension SessionManager {
         case unknown
     }
 
-    public func backupActiveAccount(password: String, completion: @escaping BackupResultClosure) {
+    public func backupActiveAccount(password: String, completion: @escaping (Result<URL, Error>) -> Void) {
         guard
             let userId = accountManager.selectedAccount?.userIdentifier,
             let clientId = activeUserSession?.selfUserClient?.remoteIdentifier,
@@ -58,33 +57,39 @@ extension SessionManager {
             dispatchGroup: dispatchGroup,
             databaseKey: activeUserSession.managedObjectContext.databaseKey,
             completion: { [dispatchGroup] in
-                SessionManager.handle(result: $0,
-                                      password: password,
-                                      accountId: userId,
-                                      dispatchGroup: dispatchGroup,
-                                      completion: completion,
-                                      handle: handle)
+                SessionManager.handle(
+                    result: $0,
+                    password: password,
+                    accountId: userId,
+                    dispatchGroup: dispatchGroup,
+                    completion: completion,
+                    handle: handle
+                )
             }
         )
     }
 
     private static func handle(
-        result: Result<CoreDataStack.BackupInfo>,
+        result: Result<CoreDataStack.BackupInfo, Error>,
         password: String,
         accountId: UUID,
-        dispatchGroup: ZMSDispatchGroup? = nil,
-        completion: @escaping BackupResultClosure,
+        dispatchGroup: ZMSDispatchGroup,
+        completion: @escaping (Result<URL, Error>) -> Void,
         handle: String
         ) {
         workerQueue.async(group: dispatchGroup) {
-            let encrypted: Result<URL> = result.map { info in
-                // 1. Compress the backup
-                let compressed = try compress(backup: info)
+            let encrypted = result.flatMap { info in
+                do {
+                    // 1. Compress the backup
+                    let compressed = try compress(backup: info)
 
-                // 2. Encrypt the backup
-                let url = targetBackupURL(for: info, handle: handle)
-                try encrypt(from: compressed, to: url, password: password, accountId: accountId)
-                return url
+                    // 2. Encrypt the backup
+                    let url = targetBackupURL(for: info, handle: handle)
+                    try encrypt(from: compressed, to: url, password: password, accountId: accountId)
+                    return .success(url)
+                } catch {
+                    return .failure(error)
+                }
             }
 
             DispatchQueue.main.async(group: dispatchGroup) {
@@ -98,8 +103,8 @@ extension SessionManager {
     /// Restores the account database from the Wire iOS database back up file.
     /// @param completion called when the restoration is ended. If success, Result.success with the new restored account
     /// is called.
-    public func restoreFromBackup(at location: URL, password: String, completion: @escaping RestoreResultClosure) {
-        func complete(_ result: Swift.Result<Void, Error>) {
+    public func restoreFromBackup(at location: URL, password: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        func complete(_ result: Result<Void, Error>) {
             DispatchQueue.main.async(group: dispatchGroup) {
                 completion(result)
             }
@@ -111,8 +116,16 @@ extension SessionManager {
         guard BackupFileExtensions.allCases.contains(where: { $0.rawValue == location.pathExtension }) else { return completion(.failure(BackupError.invalidFileExtension)) }
 
         SessionManager.workerQueue.async(group: dispatchGroup) { [weak self] in
-            guard let `self` = self else { return }
+            guard let `self` = self else {
+                completion(.failure(NSError(code: .unknownError, userInfo: ["reason": "SessionManager.self is `nil` in restoreFromBackup"])))
+                return
+            }
+
             let decryptedURL = SessionManager.temporaryURL(for: location)
+
+            zmLog.safePublic(SanitizedString(stringLiteral: "coordinated file access at: \(location.absoluteString)"), level: .debug)
+            WireLogger.localStorage.debug("coordinated file access at: \(location.absoluteString)")
+
             do {
                 try SessionManager.decrypt(from: location, to: decryptedURL, password: password, accountId: userId)
             } catch {
@@ -157,9 +170,11 @@ extension SessionManager {
     // MARK: - Helper
 
     /// Deletes all previously exported and imported backups.
-    public static func clearPreviousBackups(dispatchGroup: ZMSDispatchGroup? = nil) {
+    public func clearPreviousBackups() {
         CoreDataStack.clearBackupDirectory(dispatchGroup: dispatchGroup)
     }
+
+    // MARK: - Static Helpers
 
     private static func unzippedBackupURL(for url: URL) -> URL {
         let filename = url.deletingPathExtension().lastPathComponent

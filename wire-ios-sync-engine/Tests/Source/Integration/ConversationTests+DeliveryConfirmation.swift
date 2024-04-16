@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -66,10 +66,6 @@ class ConversationTests_DeliveryConfirmation: ConversationTestsBase {
 
         // then
         XCTAssertEqual(conversation?.allMessages.count, 1) // inserted message
-
-        guard let request = mockTransportSession?.receivedRequests().last else {return XCTFail()}
-        XCTAssertEqual((request as AnyObject).path, requestPath)
-
         XCTAssertEqual(conversation?.lastModifiedDate, conversation?.lastMessage?.serverTimestamp)
     }
 

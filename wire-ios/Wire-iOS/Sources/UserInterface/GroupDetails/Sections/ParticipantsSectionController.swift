@@ -16,27 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
 
-protocol ParticipantsCellConfigurable: Reusable {
-    func configure(with rowType: ParticipantsRowType, conversation: GroupDetailsConversationType, showSeparator: Bool)
-}
-
 enum ParticipantsRowType {
     case user(UserType)
-    case showAll(Int)
+    case showAll(_ totalParticipantsCount: Int)
 
-    init(_ user: UserType) {
-        self = .user(user)
-    }
-
-    var cellType: ParticipantsCellConfigurable.Type {
+    var cellType: UICollectionViewCell.Type {
         switch self {
-        case .user: return UserCell.self
-        case .showAll: return ShowAllParticipantsCell.self
+        case .user:
+            return UserCell.self
+        case .showAll:
+            return ShowAllParticipantsCell.self
         }
     }
 }
@@ -57,6 +50,7 @@ enum ConversationRole {
 private struct ParticipantsSectionViewModel {
     let rows: [ParticipantsRowType]
     let participants: [UserType]
+    let userStatuses: [UUID: UserStatus]
     let conversationRole: ConversationRole
     let userSession: UserSession
     let showSectionCount: Bool
@@ -101,6 +95,7 @@ private struct ParticipantsSectionViewModel {
     ///
     /// - Parameters:
     ///   - users: list of conversation participants
+    ///   - userStatuses: additional status info like the E2EI certification status.
     ///   - conversationRole: participants' ConversationRole
     ///   - totalParticipantsCount: the number of all participants in the conversation
     ///   - clipSection: enable/disable the display of the “ShowAll” button
@@ -109,6 +104,7 @@ private struct ParticipantsSectionViewModel {
     ///   - showSectionCount: current view model - a search result or not
     init(
         users: [UserType],
+        userStatuses: [UUID: UserStatus],
         conversationRole: ConversationRole,
         totalParticipantsCount: Int,
         clipSection: Bool = true,
@@ -117,36 +113,49 @@ private struct ParticipantsSectionViewModel {
         showSectionCount: Bool = true,
         userSession: UserSession
     ) {
-        participants = users.sorted(by: {
-            $0.name < $1.name
-        })
+        participants = users.sorted { $0.name < $1.name }
+        self.userStatuses = userStatuses
         self.conversationRole = conversationRole
         self.showSectionCount = showSectionCount
         self.userSession = userSession
-        rows = clipSection ? ParticipantsSectionViewModel.computeRows(participants,
-                                                                      totalParticipantsCount: totalParticipantsCount,
-                                                                      maxParticipants: maxParticipants,
-                                                                      maxDisplayedParticipants: maxDisplayedParticipants) :
-                             participants.map(ParticipantsRowType.init)
+        rows = clipSection
+        ? ParticipantsSectionViewModel.computeRows(
+            participants,
+            totalParticipantsCount: totalParticipantsCount,
+            maxParticipants: maxParticipants,
+            maxDisplayedParticipants: maxDisplayedParticipants
+        )
+        : participants.map { participant in
+            .user(participant)
+        }
     }
 
     static func computeRows(_ participants: [UserType], totalParticipantsCount: Int, maxParticipants: Int, maxDisplayedParticipants: Int) -> [ParticipantsRowType] {
-        guard participants.count > maxParticipants else { return participants.map(ParticipantsRowType.init) }
-        return participants[0..<maxDisplayedParticipants].map(ParticipantsRowType.init) + [.showAll(totalParticipantsCount)]
+        guard participants.count > maxParticipants else { return participants.map(ParticipantsRowType.user) }
+        return participants[0..<maxDisplayedParticipants].map(ParticipantsRowType.user) + [.showAll(totalParticipantsCount)]
     }
 }
 
-extension UserCell: ParticipantsCellConfigurable {
-    func configure(with rowType: ParticipantsRowType, conversation: GroupDetailsConversationType, showSeparator: Bool) {
-        guard case let .user(user) = rowType else {
-            preconditionFailure("expected different 'ParticipantsRowType'!")
-        }
+extension UserCell {
+
+    func configure(
+        user: UserType,
+        isE2EICertified: Bool,
+        conversation: GroupDetailsConversationType,
+        showSeparator: Bool
+    ) {
         guard let selfUser = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return
         }
 
-        configure(with: user, selfUser: selfUser, conversation: conversation as? ZMConversation)
+        configure(
+            userStatus: .init(user: user, isE2EICertified: isE2EICertified),
+            user: user,
+            userIsSelfUser: user.isSelfUser,
+            isSelfUserPartOfATeam: selfUser.hasTeam,
+            conversation: conversation as? ZMConversation
+        )
         accessoryIconView.isHidden = user.isSelfUser
         accessibilityIdentifier = identifier
         accessibilityHint = L10n.Accessibility.ConversationDetails.ParticipantCell.hint
@@ -158,32 +167,39 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     fileprivate weak var collectionView: UICollectionView? {
         didSet {
-            guard let collectionView =  collectionView else { return }
+            guard let collectionView = collectionView else { return }
             SectionFooter.register(collectionView: collectionView)
         }
     }
     private weak var delegate: GroupDetailsSectionControllerDelegate?
     private var viewModel: ParticipantsSectionViewModel
     private let conversation: GroupDetailsConversationType
-    private var token: AnyObject?
+    private var token: NSObjectProtocol?
 
-    init(participants: [UserType],
-         conversationRole: ConversationRole,
-         conversation: GroupDetailsConversationType,
-         delegate: GroupDetailsSectionControllerDelegate,
-         totalParticipantsCount: Int,
-         clipSection: Bool = true,
-         maxParticipants: Int = Int.ConversationParticipants.maxNumberWithoutTruncation,
-         maxDisplayedParticipants: Int = Int.ConversationParticipants.maxNumberOfDisplayed,
-         showSectionCount: Bool = true,
-         userSession: UserSession) {
-        viewModel = .init(users: participants,
-                          conversationRole: conversationRole,
-                          totalParticipantsCount: totalParticipantsCount,
-                          clipSection: clipSection,
-                          maxParticipants: maxParticipants,
-                          maxDisplayedParticipants: maxDisplayedParticipants,
-                          showSectionCount: showSectionCount, userSession: userSession)
+    init(
+        participants: [UserType],
+        userStatuses: [UUID: UserStatus],
+        conversationRole: ConversationRole,
+        conversation: GroupDetailsConversationType,
+        delegate: GroupDetailsSectionControllerDelegate,
+        totalParticipantsCount: Int,
+        clipSection: Bool = true,
+        maxParticipants: Int = .ConversationParticipants.maxNumberWithoutTruncation,
+        maxDisplayedParticipants: Int = .ConversationParticipants.maxNumberOfDisplayed,
+        showSectionCount: Bool = true,
+        userSession: UserSession
+    ) {
+        viewModel = .init(
+            users: participants,
+            userStatuses: userStatuses,
+            conversationRole: conversationRole,
+            totalParticipantsCount: totalParticipantsCount,
+            clipSection: clipSection,
+            maxParticipants: maxParticipants,
+            maxDisplayedParticipants: maxDisplayedParticipants,
+            showSectionCount: showSectionCount,
+            userSession: userSession
+        )
         self.conversation = conversation
         self.delegate = delegate
         super.init()
@@ -212,19 +228,54 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let configuration = viewModel.rows[indexPath.row]
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: configuration.cellType.reuseIdentifier, for: indexPath) as! ParticipantsCellConfigurable & UICollectionViewCell
         let showSeparator = (viewModel.rows.count - 1) != indexPath.row
-        (cell as? SectionListCellType)?.sectionName = viewModel.accessibilityTitle
-        (cell as? SectionListCellType)?.cellIdentifier = "participants.section.participants.cell"
-        cell.configure(with: configuration, conversation: conversation, showSeparator: showSeparator)
+
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: configuration.cellType.reuseIdentifier,
+            for: indexPath
+        )
+        if let cell = cell as? SectionListCellType {
+            cell.sectionName = viewModel.accessibilityTitle
+            cell.cellIdentifier = "participants.section.participants.cell"
+        }
+
+        let unexpectedCellHandler: () -> UICollectionViewCell = {
+            let message = "Unexpected collection view cell type: \(String(describing: cell.self))"
+            WireLogger.conversation.error(message)
+            assertionFailure(message)
+            return cell
+        }
+
+        switch configuration {
+        case .user(let user):
+            guard let cell = cell as? UserCell else { return unexpectedCellHandler() }
+            let isE2EICertified = if let userID = user.remoteIdentifier, let userStatus = viewModel.userStatuses[userID] { userStatus.isE2EICertified } else { false }
+            cell.configure(
+                user: user,
+                isE2EICertified: isE2EICertified,
+                conversation: conversation,
+                showSeparator: showSeparator
+            )
+
+        case .showAll(let totalParticipantsCount):
+            guard let cell = cell as? ShowAllParticipantsCell else { return unexpectedCellHandler() }
+            cell.configure(
+                totalParticipantsCount: totalParticipantsCount,
+                conversation: conversation,
+                showSeparator: showSeparator
+            )
+        }
+
         return cell
     }
 
     // MARK: - Footer
 
-    func collectionView(_ collectionView: UICollectionView,
-                        layout collectionViewLayout: UICollectionViewLayout,
-                        referenceSizeForFooterInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForFooterInSection section: Int
+    ) -> CGSize {
 
         guard
             viewModel.footerVisible,
@@ -239,9 +290,11 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
         return footer.bounds.size
     }
 
-    override func collectionView(_ collectionView: UICollectionView,
-                                 viewForSupplementaryElementOfKind kind: String,
-                                 at indexPath: IndexPath) -> UICollectionReusableView {
+    override func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
 
         guard kind == UICollectionView.elementKindSectionFooter else {
             return super.collectionView(collectionView, viewForSupplementaryElementOfKind: kind, at: indexPath)
@@ -273,7 +326,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
 }
 
-extension ParticipantsSectionController: ZMUserObserver {
+extension ParticipantsSectionController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.connectionStateChanged || changeInfo.nameChanged else { return }

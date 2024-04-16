@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,10 +65,10 @@ class OperationStatusTests: MessagingTest {
 
         // given
         sut.isInBackground = true
-        let handlerCalled = expectation(description: "background task handler called")
+        let handlerCalled = customExpectation(description: "background task handler called")
 
         // when
-        sut.startBackgroundTask { (_) in
+        sut.startBackgroundTask { _ in
             handlerCalled.fulfill()
         }
 
@@ -87,10 +87,10 @@ class OperationStatusTests: MessagingTest {
 
         // given
         sut.isInBackground = true
-        let handlerCalled = expectation(description: "background fetch handler called")
+        let handlerCalled = customExpectation(description: "background fetch handler called")
 
         // when
-        sut.startBackgroundFetch(withCompletionHandler: { (_) in
+        sut.startBackgroundFetch(withCompletionHandler: { _ in
             handlerCalled.fulfill()
         })
 
@@ -108,11 +108,11 @@ class OperationStatusTests: MessagingTest {
 
     func testThatStartingMultipleBackgroundTasksFail() {
 
-        let successHandler = expectation(description: "background task handler called with success result")
-        let failureHandler = expectation(description: "background task handler called with failure result")
+        let successHandler = customExpectation(description: "background task handler called with success result")
+        let failureHandler = customExpectation(description: "background task handler called with failure result")
 
         // given
-        sut.startBackgroundTask(withCompletionHandler: { (result) in
+        sut.startBackgroundTask(withCompletionHandler: { result in
             // expect
             if result == BackgroundTaskResult.finished {
                 successHandler.fulfill()
@@ -120,7 +120,7 @@ class OperationStatusTests: MessagingTest {
         })
 
         // when
-        sut.startBackgroundTask(withCompletionHandler: { (result) in
+        sut.startBackgroundTask(withCompletionHandler: { result in
             // expect
             if result == BackgroundTaskResult.failed {
                 failureHandler.fulfill()
@@ -132,11 +132,11 @@ class OperationStatusTests: MessagingTest {
 
     func testThatStartingMultipleBackgroundFetchesFail() {
 
-        let successHandler = expectation(description: "background fetch handler called with success result")
-        let failureHandler = expectation(description: "background fetch handler called with failure result")
+        let successHandler = customExpectation(description: "background fetch handler called with success result")
+        let failureHandler = customExpectation(description: "background fetch handler called with failure result")
 
         // given
-        sut.startBackgroundFetch(withCompletionHandler: { (result) in
+        sut.startBackgroundFetch(withCompletionHandler: { result in
             // expect
             if result == UIBackgroundFetchResult.noData {
                 successHandler.fulfill()
@@ -144,7 +144,7 @@ class OperationStatusTests: MessagingTest {
         })
 
         // when
-        sut.startBackgroundFetch(withCompletionHandler: { (result) in
+        sut.startBackgroundFetch(withCompletionHandler: { result in
             // expect
             if result == UIBackgroundFetchResult.failed {
                 failureHandler.fulfill()
@@ -155,10 +155,10 @@ class OperationStatusTests: MessagingTest {
     }
 
     func testBackgroundTaskFailAfterTimeout() {
-        let failureHandler = expectation(description: "background task handler called with failure result")
+        let failureHandler = customExpectation(description: "background task handler called with failure result")
 
         // given
-        sut.startBackgroundTask(timeout: 1.0) { (result) in
+        sut.startBackgroundTask(timeout: 1.0) { result in
             if result == .failed {
                 failureHandler.fulfill()
             }
@@ -172,10 +172,10 @@ class OperationStatusTests: MessagingTest {
     }
 
     func testBackgroundFetchFailAfterTimeout() {
-        let failureHandler = expectation(description: "background fetch handler called with failure result")
+        let failureHandler = customExpectation(description: "background fetch handler called with failure result")
 
         // given
-        sut.startBackgroundFetch(timeout: 1.0) { (result) in
+        sut.startBackgroundFetch(timeout: 1.0) { result in
             if result == .failed {
                 failureHandler.fulfill()
             }

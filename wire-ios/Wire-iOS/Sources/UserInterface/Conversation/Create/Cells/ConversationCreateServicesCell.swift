@@ -31,11 +31,8 @@ final class ConversationCreateServicesCell: IconToggleCell {
     }
 
     private func setupIconForCell() {
-        let color = SemanticColors.Icon.foregroundDefault
-        icon = StyleKitIcon.bot.makeImage(
-            size: .tiny,
-            color: color).withRenderingMode(.alwaysTemplate)
-        iconColor = color
+        icon = .init(resource: .services).withRenderingMode(.alwaysTemplate)
+        iconColor = SemanticColors.Icon.foregroundDefault
     }
 
 }

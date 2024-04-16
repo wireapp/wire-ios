@@ -67,7 +67,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         didSet { updateRecordingState(recordingState) }
     }
 
-    typealias ConversationInputBarAudio  = L10n.Localizable.Conversation.InputBar.AudioMessage
+    typealias ConversationInputBarAudio = L10n.Localizable.Conversation.InputBar.AudioMessage
 
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -100,7 +100,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     }
 
     func beginRecording() {
-        self.recorder.startRecording { (_) in
+        self.recorder.startRecording { _ in
             let feedbackGenerator = UINotificationFeedbackGenerator()
             feedbackGenerator.prepare()
             feedbackGenerator.notificationOccurred(.success)
@@ -194,17 +194,19 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         let button = buttonOverlay.audioButton
         let margin: CGFloat = (conversationHorizontalMargins.left / 2) - (StyleKitIcon.Size.tiny.rawValue / 2)
 
-        [bottomContainerView,
-         topContainerView,
-         button,
-         topTooltipLabel,
-         buttonOverlay,
-         topSeparator,
-         timeLabel,
-         recordingDotView,
-         audioPreviewView,
-         cancelButton,
-         rightSeparator].prepareForLayout()
+        [
+            bottomContainerView,
+            topContainerView,
+            button,
+            topTooltipLabel,
+            buttonOverlay,
+            topSeparator,
+            timeLabel,
+            recordingDotView,
+            audioPreviewView,
+            cancelButton,
+            rightSeparator
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         var constraints: [NSLayoutConstraint] = []
 

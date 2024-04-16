@@ -1,20 +1,20 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 
@@ -22,6 +22,8 @@ public enum ClientUpdatePhase {
     case done
     case fetchingClients
     case deletingClients
+    case waitingForPrekeys
+    case generatingPrekeys
 }
 
 let ClientUpdateErrorDomain = "ClientManagement"
@@ -46,7 +48,10 @@ public enum ClientUpdateError: NSInteger {
     fileprivate var isFetchingClients = false
     fileprivate var isWaitingToDeleteClients = false
     fileprivate var needsToVerifySelfClient = false
+    fileprivate var isGeneratingPrekeys = false
     fileprivate var internalCredentials: ZMEmailCredentials?
+
+    var prekeys: [IdPrekeyTuple]?
 
     open var credentials: ZMEmailCredentials? {
         return internalCredentials
@@ -55,7 +60,9 @@ public enum ClientUpdateError: NSInteger {
     public init(syncManagedObjectContext: NSManagedObjectContext) {
         self.syncManagedObjectContext = syncManagedObjectContext
         super.init()
+    }
 
+    func determineInitialClientStatus() {
         let hasSelfClient = !ZMClientRegistrationStatus.needsToRegisterClient(in: self.syncManagedObjectContext)
 
         needsToFetchClients(andVerifySelfClient: hasSelfClient)
@@ -79,6 +86,13 @@ public enum ClientUpdateError: NSInteger {
         if isWaitingToDeleteClients {
             return .deletingClients
         }
+        if isGeneratingPrekeys && prekeys == nil {
+            return .generatingPrekeys
+        }
+        if prekeys == nil {
+            return .waitingForPrekeys
+        }
+
         return .done
     }
 
@@ -184,7 +198,21 @@ public enum ClientUpdateError: NSInteger {
     var selfUserClientsExcludingSelfClient: [UserClient] {
         let selfUser = ZMUser.selfUser(in: self.syncManagedObjectContext)
         let selfClient = selfUser.selfClient()
-        let remainingClients = selfUser.clients.filter {$0 != selfClient && !$0.isZombieObject}
+        let remainingClients = selfUser.clients.filter { $0 != selfClient && !$0.isZombieObject }
         return Array(remainingClients)
+    }
+
+    public func willGeneratePrekeys() {
+        isGeneratingPrekeys = true
+    }
+
+    public func didGeneratePrekeys(_ prekeys: [IdPrekeyTuple]) {
+        self.prekeys = prekeys
+        self.isGeneratingPrekeys = false
+        RequestAvailableNotification.notifyNewRequestsAvailable(self)
+    }
+
+    public func didUploadPrekeys() {
+        self.prekeys = nil
     }
 }

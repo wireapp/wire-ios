@@ -155,9 +155,9 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     }
 
     init(
+        isFederationEnabled: Bool = BackendInfo.isFederationEnabled,
         context: Context,
-        userSession: UserSession,
-        isFederationEnabled: Bool = BackendInfo.isFederationEnabled
+        userSession: UserSession
     ) {
         self.userSession = userSession
 
@@ -273,10 +273,12 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
                   return
               }
 
-        [searchHeaderView,
-         searchResultsView,
-         confirmButton,
-         searchGroupSelector].prepareForLayout()
+        [
+            searchHeaderView,
+            searchResultsView,
+            confirmButton,
+            searchGroupSelector
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         var constraints: [NSLayoutConstraint] = [
             searchHeaderView.topAnchor.constraint(equalTo: view.topAnchor),
@@ -324,11 +326,15 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
     private func updateSelectionValues() {
         // Update view model after selection changed
         if case .create(let values) = viewModel.context {
-            let updated = ConversationCreationValues(name: values.name,
-                                                     participants: userSelection.users,
-                                                     allowGuests: true,
-                                                     allowServices: true,
-                                                     selfUser: userSession.selfUser)
+            let mlsFeature = userSession.makeGetMLSFeatureUseCase().invoke()
+            let updated = ConversationCreationValues(
+                name: values.name,
+                participants: userSelection.users,
+                allowGuests: true,
+                allowServices: true,
+                encryptionProtocol: mlsFeature.config.defaultProtocol,
+                selfUser: userSession.selfUser
+            )
             viewModel = AddParticipantsViewModel(with: .create(updated))
         }
 
@@ -380,7 +386,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         let firstResponder = UIResponder.currentFirst
         let inputAccessoryHeight = firstResponder?.inputAccessoryView?.bounds.size.height ?? 0
 
-        UIView.animate(withKeyboardNotification: notification, in: self.view, animations: { [weak self] (keyboardFrameInView) in
+        UIView.animate(withKeyboardNotification: notification, in: self.view, animations: { [weak self] keyboardFrameInView in
             guard let weakSelf = self else { return }
 
             let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight

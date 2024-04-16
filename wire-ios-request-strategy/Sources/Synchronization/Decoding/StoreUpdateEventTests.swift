@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import WireTesting
 @testable import WireRequestStrategy
 
-class StoreUpdateEventTests: MessagingTestBase {
+final class StoreUpdateEventTests: MessagingTestBase {
 
     struct Failure: Error {
 
@@ -402,7 +402,7 @@ class StoreUpdateEventTests: MessagingTestBase {
     func test_HighestIndex() throws {
         try eventMOC.performAndWait {
             // Given some events.
-            let storedEvents = try self.createStoredEvents(indices: [0, 1, 2])
+            _ = try self.createStoredEvents(indices: [0, 1, 2])
 
             // When we query the highest index.
             let highestIndex = StoredUpdateEvent.highestIndex(self.eventMOC)

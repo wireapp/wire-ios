@@ -44,7 +44,7 @@ extension UITableViewCell: UITableViewDelegate, UITableViewDataSource {
 
         NSLayoutConstraint.activate([
             tableView.heightAnchor.constraint(equalToConstant: size.height)
-            ])
+        ])
 
         self.layoutSubviews()
         return tableView
@@ -101,7 +101,8 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
         snapshotBackgroundColor = UIColor.clear
 
         // Enable when the design of the view has changed in order to update the reference snapshots
-        recordMode = strcmp(getenv("RECORDING_SNAPSHOTS"), "YES") == 0
+
+        recordMode = ProcessInfo.processInfo.environment["RECORDING_SNAPSHOTS"] == "YES"
         usesDrawViewHierarchyInRect = true
 
         do {
@@ -163,14 +164,15 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
     }
 
     func wipeCaches() {
-        uiMOC.zm_fileAssetCache.wipeCaches()
+        try? uiMOC.zm_fileAssetCache.wipeCaches()
         uiMOC.zm_userImageCache.wipeCache()
         PersonName.stringsToPersonNames().removeAllObjects()
     }
 
     func setUpCaches() {
+        let cacheLocation = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         uiMOC.zm_userImageCache = UserImageLocalCache(location: nil)
-        uiMOC.zm_fileAssetCache = FileAssetCache(location: nil)
+        uiMOC.zm_fileAssetCache = FileAssetCache(location: cacheLocation)
     }
 
 }
@@ -228,23 +230,25 @@ extension ZMSnapshotTestCase {
 extension ZMSnapshotTestCase {
 
     func finalIdentifier(deviceName: String?, identifier: String?) -> String? {
-        var finalIdentifier: String?
+        var finalDeviceName: String?
 
-        if 0 == (identifier?.count ?? 0) {
-            if let deviceName = deviceName,
-                deviceName.count > 0 {
-                finalIdentifier = deviceName
-            }
-        } else {
-            if let deviceName = deviceName,
-                deviceName.count > 0 {
-                finalIdentifier = "\(identifier ?? "")-\(deviceName)"
-            } else {
-                finalIdentifier = "\(identifier ?? "")"
-            }
+        if let deviceName, !deviceName.isEmpty {
+            finalDeviceName = deviceName
         }
 
-        return finalIdentifier
+        if let identifier, !identifier.isEmpty {
+            if let finalDeviceName {
+                return "\(identifier)-\(finalDeviceName)"
+            } else {
+                return "\(identifier)"
+            }
+        } else {
+            if let finalDeviceName {
+                return finalDeviceName
+            } else {
+                return nil
+            }
+        }
     }
 
     /// Performs an assertion with the given view and the recorded snapshot.
@@ -279,74 +283,6 @@ extension ZMSnapshotTestCase {
     }
 
     static let tolerance: CGFloat = 0.3
-    /// Performs an assertion with the given view and the recorded snapshot with the custom width
-    func verifyView(view: UIView,
-                    extraLayoutPass: Bool = false,
-                    width: CGFloat,
-                    tolerance: CGFloat = tolerance,
-                    identifier: String? = nil,
-                    configuration: ((UIView) -> Swift.Void)? = nil,
-                    file: StaticString = #file,
-                    line: UInt = #line
-        ) {
-        let container = containerView(with: view, snapshotBackgroundColor: snapshotBackgroundColor)
-
-        container.addWidthConstraint(width: width)
-
-        if assertEmptyFrame(container, file: file, line: line) {
-            return
-        }
-
-        configuration?(view)
-
-        if extraLayoutPass {
-            RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.1))
-        }
-
-        view.layer.speed = 0 // freeze animations for deterministic tests
-
-        let identifier = finalIdentifier(deviceName: "\(Int(width))", identifier: identifier)
-
-        snapshotVerify(view: container,
-                       identifier: identifier,
-                       tolerance: tolerance,
-                       file: file,
-                       line: line)
-    }
-
-    func verifyInAllPhoneWidths(view: UIView,
-                                extraLayoutPass: Bool = false,
-                                tolerance: CGFloat = tolerance,
-                                configuration: ((UIView) -> Swift.Void)? = nil,
-                                file: StaticString = #file,
-                                line: UInt = #line) {
-        assertAmbigousLayout(view, file: file, line: line)
-        for width in phoneWidths() {
-            verifyView(view: view,
-                       extraLayoutPass: extraLayoutPass,
-                       width: width,
-                       tolerance: tolerance,
-                       configuration: configuration,
-                       file: file,
-                       line: line)
-        }
-    }
-
-    func verifyInAllTabletWidths(view: UIView,
-                                 extraLayoutPass: Bool = false,
-                                 configuration: ((UIView) -> Swift.Void)? = nil,
-                                 file: StaticString = #file,
-                                 line: UInt = #line) {
-        assertAmbigousLayout(view, file: file, line: line)
-        for width in tabletWidths() {
-            verifyView(view: view,
-                       extraLayoutPass: extraLayoutPass,
-                       width: width,
-                       configuration: configuration,
-                       file: file,
-                       line: line)
-        }
-    }
 
     /// verify the snapshot with default iphone size
     ///
@@ -364,7 +300,7 @@ extension ZMSnapshotTestCase {
         NSLayoutConstraint.activate([
             view.heightAnchor.constraint(equalToConstant: size.height),
             view.widthAnchor.constraint(equalToConstant: size.width)
-            ])
+        ])
 
         view.layoutIfNeeded()
 

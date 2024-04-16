@@ -24,7 +24,9 @@ import WireCommonComponents
 // file changes to the minimum instead of renaming the oroginal IconButton
 // class to something else and then had to make changes in a lot more files
 
+// swiftlint:disable todo_requires_jira_link
 // TODO: - [AGIS] Get rid of this class as soon as we make all the appropriate changes to the original class
+// swiftlint:enable todo_requires_jira_link
 class NonLegacyIconButton: IconButton {
 
     override var isSelected: Bool {
@@ -75,9 +77,9 @@ class IconButton: ButtonWithLargerHitArea {
     var adjustsBorderColorWhenHighlighted = false
     var adjustBackgroundImageWhenHighlighted = false
 
-    private var iconColorsByState: [UIControl.State: UIColor] = [:]
-    private var borderColorByState: [UIControl.State: UIColor] = [:]
-    private var iconDefinitionsByState: [UIControl.State: IconDefinition] = [:]
+    private var iconColorsByState: [UIControl.State.RawValue: UIColor] = [:]
+    private var borderColorByState: [UIControl.State.RawValue: UIColor] = [:]
+    private var iconDefinitionsByState: [UIControl.State.RawValue: IconDefinition] = [:]
     private var priorState: UIControl.State?
 
     override init(fontSpec: FontSpec = .smallLightFont) {
@@ -180,7 +182,6 @@ class IconButton: ButtonWithLargerHitArea {
 
     func setBackgroundImageColor(_ color: UIColor,
                                  for state: UIControl.State) {
-        let color = color.resolvedColor(with: traitCollection)
         setBackgroundImage(UIImage.singlePixelImage(with: color), for: state)
 
         if adjustBackgroundImageWhenHighlighted && state.contains(.normal) {
@@ -217,15 +218,15 @@ class IconButton: ButtonWithLargerHitArea {
 
         let newIcon = IconDefinition(type: iconType, size: iconSize, renderingMode: renderingMode)
 
-        guard force || newIcon != iconDefinitionsByState[state] else {
+        guard force || newIcon != iconDefinitionsByState[state.rawValue] else {
             return
         }
 
-        iconDefinitionsByState[state] = newIcon
+        iconDefinitionsByState[state.rawValue] = newIcon
 
         let color: UIColor
         if renderingMode == .alwaysOriginal,
-            let iconColor = iconColor(for: .normal) {
+           let iconColor = iconColor(for: .normal) {
             color = iconColor
         } else {
             color = .black
@@ -237,20 +238,20 @@ class IconButton: ButtonWithLargerHitArea {
     }
 
     func removeIcon(for state: UIControl.State) {
-        iconDefinitionsByState[state] = nil
+        iconDefinitionsByState[state.rawValue] = nil
         setImage(nil, for: state)
     }
 
     func setIconColor(_ color: UIColor?,
                       for state: UIControl.State) {
-        if nil != color {
-            iconColorsByState[state] = color
+        if color != nil {
+            iconColorsByState[state.rawValue] = color
         } else {
-            iconColorsByState.removeValue(forKey: state)
+            iconColorsByState.removeValue(forKey: state.rawValue)
         }
 
-        if let currentIcon = iconDefinitionsByState[state],
-            currentIcon.renderingMode == .alwaysOriginal {
+        if let currentIcon = iconDefinitionsByState[state.rawValue],
+           currentIcon.renderingMode == .alwaysOriginal {
             setIcon(currentIcon.type,
                     iconSize: currentIcon.size,
                     for: state,
@@ -262,15 +263,15 @@ class IconButton: ButtonWithLargerHitArea {
     }
 
     func iconDefinition(for state: UIControl.State) -> IconDefinition? {
-        return iconDefinitionsByState[state]
+        return iconDefinitionsByState[state.rawValue]
     }
 
     func iconColor(for state: UIControl.State) -> UIColor? {
-        return iconColorsByState[state] ?? iconColorsByState[.normal]
+        return iconColorsByState[state.rawValue] ?? iconColorsByState[UIControl.State.normal.rawValue]
     }
 
     func borderColor(for state: UIControl.State) -> UIColor? {
-        return borderColorByState[state] ?? borderColorByState[.normal]
+        return borderColorByState[state.rawValue] ?? borderColorByState[UIControl.State.normal.rawValue]
     }
 
     private func updateBorderColor() {
@@ -319,14 +320,13 @@ class IconButton: ButtonWithLargerHitArea {
     }
 
     func setBorderColor(_ color: UIColor?, for state: UIControl.State) {
-        let color = color?.resolvedColor(with: traitCollection)
         state.expanded.forEach { expandedState in
             if color != nil {
-                borderColorByState[expandedState] = color
+                borderColorByState[expandedState.rawValue] = color
 
                 if adjustsBorderColorWhenHighlighted &&
                     expandedState == .normal {
-                    borderColorByState[.highlighted] = color?.mix(.black, amount: 0.4)
+                    borderColorByState[UIControl.State.highlighted.rawValue] = color?.mix(.black, amount: 0.4)
                 }
             }
         }

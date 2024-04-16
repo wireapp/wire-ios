@@ -1,24 +1,22 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import Foundation;
-
 
 typedef NS_ENUM(NSUInteger, ZMUserSessionErrorCode) {
     ZMUserSessionNoError = 0,
@@ -55,6 +53,11 @@ typedef NS_ENUM(NSUInteger, ZMUserSessionErrorCode) {
     /// is needed to register a new client
     /// Not supported by the backend any more. The error is generated locally.
     ZMUserSessionNeedsToRegisterEmailToRegisterClient,
+    /// The user needs to enroll into end-to-end identity in order to complete the registration
+    /// of a new client.
+    ZMUserSessionNeedsToEnrollE2EIToRegisterClient,
+    /// The user account does not have a handle, and a handle is needed to register a new client.
+    ZMUserSessionNeedsToHandleToRegisterClient,
     /// Too many clients have been registered for this user,
     /// one needs to be deleted before registering a new one
     ZMUserSessionCanNotRegisterMoreClients,

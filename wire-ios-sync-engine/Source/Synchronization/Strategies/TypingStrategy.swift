@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -134,19 +134,19 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         observers.append(
             NotificationInContext.addObserver(name: ZMConversation.typingNotificationName,
                                               context: self.managedObjectContext.notificationContext,
-                                              using: { [weak self] in self?.addConversationForNextRequest(note: $0)})
+                                              using: { [weak self] in self?.addConversationForNextRequest(note: $0) })
             )
 
         observers.append(
             NotificationInContext.addObserver(name: ZMConversation.typingChangeNotificationName,
                                               context: self.managedObjectContext.notificationContext,
-                                              using: { [weak self] in self?.addConversationForNextRequest(note: $0)})
+                                              using: { [weak self] in self?.addConversationForNextRequest(note: $0) })
         )
 
         observers.append(
             NotificationInContext.addObserver(name: ZMConversation.clearTypingNotificationName,
                                               context: self.managedObjectContext.notificationContext,
-                                              using: { [weak self] in self?.shouldClearTypingForConversation(note: $0)})
+                                              using: { [weak self] in self?.shouldClearTypingForConversation(note: $0) })
         )
     }
 
@@ -196,7 +196,7 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
         case .v0, .v1, .v2:
             path = "/conversations/\(remoteIdentifier.transportString())/typing"
 
-        case .v3, .v4, .v5:
+        case .v3, .v4, .v5, .v6:
             guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
             path = "/conversations/\(domain)/\(remoteIdentifier.transportString())/typing"
         }
@@ -222,18 +222,16 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         guard liveEvents else { return }
 
-        events.forEach {process(event: $0, conversationsByID: prefetchResult?.conversationsByRemoteIdentifier)}
+        events.forEach { event in
+            process(event: event, conversationsByID: prefetchResult?.conversationsByRemoteIdentifier)
+        }
     }
 
     func process(event: ZMUpdateEvent, conversationsByID: [UUID: ZMConversation]?) {
         guard
-            event.type == .conversationTyping ||
-                event.type == .conversationOtrMessageAdd ||
-                event.type == .conversationMemberLeave
-            else { return }
-
-        guard let userID = event.senderUUID,
-              let conversationID = event.conversationUUID
+            event.type.isOne(of: [.conversationTyping, .conversationOtrMessageAdd, .conversationMLSMessageAdd, .conversationMemberLeave]),
+            let userID = event.senderUUID,
+            let conversationID = event.conversationUUID
         else { return }
 
         let user = ZMUser.fetchOrCreate(with: userID, domain: event.senderDomain, in: managedObjectContext)
@@ -244,9 +242,8 @@ public class TypingStrategy: AbstractRequestStrategy, TearDownCapable, ZMEventCo
                 let status = payloadData[StatusKey]
                 else { return }
             processIsTypingUpdateEvent(for: user, in: conversation, with: status)
-        } else if event.type == .conversationOtrMessageAdd {
-            if let message = GenericMessage(from: event), message.hasText
-                || message.hasEdited {
+        } else if event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]) {
+            if let message = GenericMessage(from: event), message.hasText || message.hasEdited {
                 typing.setIsTyping(false, for: user, in: conversation)
             }
         } else if event.type == .conversationMemberLeave {

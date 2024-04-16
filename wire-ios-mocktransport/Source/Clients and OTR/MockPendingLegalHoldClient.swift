@@ -54,7 +54,7 @@ extension MockUser {
 
         pendingClient.user = self
 
-        let identifier = NSString.createAlphanumerical() as String
+        let identifier = String.randomClientIdentifier()
         pendingClient.identifier = identifier
 
         // Generate the prekeys
@@ -63,7 +63,7 @@ extension MockUser {
         var generatedPrekeys: [[String: Any]]?
         var generatedLastPrekey: String?
 
-        encryptionContext.perform { (session) in
+        encryptionContext.perform { session in
             generatedPrekeys = try? session.generatePrekeys(NSRange(location: 0, length: 5))
             generatedLastPrekey = try? session.generateLastPrekey()
         }

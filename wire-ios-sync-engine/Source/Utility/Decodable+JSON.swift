@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,18 +25,7 @@ extension Decodable {
     /// - parameter jsonData: JSON data as raw bytes
 
     init?(_ jsonData: Data) {
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
-            let container = try decoder.singleValueContainer()
-            let rawDate = try container.decode(String.self)
-
-            if let date = NSDate(transport: rawDate) {
-                return date as Date
-            } else {
-                throw DecodingError.dataCorruptedError(in: container,
-                                                       debugDescription: "Expected date string to be ISO8601-formatted with fractional seconds")
-            }
-        })
+        let decoder: JSONDecoder = .defaultDecoder
 
         do {
             self = try decoder.decode(Self.self, from: jsonData)

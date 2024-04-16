@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ public protocol NotificationSessionDelegate: AnyObject {
 /// the lifetime of the notification extension, and hold on to that session
 /// for the entire lifetime.
 ///
-public class NotificationSession {
+public final class NotificationSession {
 
     /// The failure reason of a `NotificationSession` initialization
     /// - noAccount: Account doesn't exist
@@ -158,7 +158,7 @@ public class NotificationSession {
         // Don't cache the cookie because if the user logs out and back in again in the main app
         // process, then the cached cookie will be invalid.
         let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier, useCache: false)
-        let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")!
+        let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")
         let serverNames = [environment.backendURL, environment.backendWSURL].compactMap { $0.host }
         let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
 
@@ -227,7 +227,31 @@ public class NotificationSession {
             transportSession: transportSession
         )
 
+        let cryptoboxMigrationManager = CryptoboxMigrationManager()
+        let coreCryptoProvider = CoreCryptoProvider(
+            selfUserID: accountIdentifier,
+            sharedContainerURL: coreDataStack.applicationContainer,
+            accountDirectory: coreDataStack.accountContainer,
+            syncContext: coreDataStack.syncContext,
+            cryptoboxMigrationManager: cryptoboxMigrationManager,
+            allowCreation: false
+        )
+        let commitSender = CommitSender(
+            coreCryptoProvider: coreCryptoProvider,
+            notificationContext: coreDataStack.syncContext.notificationContext
+        )
+        let mlsActionExecutor = MLSActionExecutor(
+            coreCryptoProvider: coreCryptoProvider,
+            commitSender: commitSender
+        )
+
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
+
+        let earService = EARService(
+            accountID: accountIdentifier,
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: LAContextStorage())
+        )
 
         try self.init(
             coreDataStack: coreDataStack,
@@ -238,7 +262,10 @@ public class NotificationSession {
             operationLoop: operationLoop,
             accountIdentifier: accountIdentifier,
             pushNotificationStrategy: pushNotificationStrategy,
-            earService: EARService(accountID: accountIdentifier, sharedUserDefaults: sharedUserDefaults)
+            cryptoboxMigrationManager: cryptoboxMigrationManager,
+            earService: earService,
+            proteusService: ProteusService(coreCryptoProvider: coreCryptoProvider),
+            mlsDecryptionService: MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor)
         )
     }
 
@@ -251,8 +278,11 @@ public class NotificationSession {
         operationLoop: RequestGeneratingOperationLoop,
         accountIdentifier: UUID,
         pushNotificationStrategy: PushNotificationStrategy,
-        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface = CryptoboxMigrationManager(),
-        earService: EARServiceInterface
+        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
+        earService: EARServiceInterface,
+        proteusService: ProteusServiceInterface,
+        mlsDecryptionService: MLSDecryptionServiceInterface
+
     ) throws {
         self.coreDataStack = coreDataStack
         self.transportSession = transportSession
@@ -273,14 +303,14 @@ public class NotificationSession {
         guard !cryptoboxMigrationManager.isMigrationNeeded(accountDirectory: accountDirectory) else {
             throw InitializationError.pendingCryptoboxMigration
         }
-
-        setUpCoreCryptoStack(
-            sharedContainerURL: coreDataStack.applicationContainer,
-            syncContext: coreDataStack.syncContext
-        )
-
         coreDataStack.syncContext.performAndWait {
-            try? cryptoboxMigrationManager.completeMigration(syncContext: coreDataStack.syncContext)
+            if DeveloperFlag.proteusViaCoreCrypto.isOn, coreDataStack.syncContext.proteusService == nil {
+                coreDataStack.syncContext.proteusService = proteusService
+            }
+
+            if DeveloperFlag.enableMLSSupport.isOn, coreDataStack.syncContext.mlsDecryptionService == nil {
+                coreDataStack.syncContext.mlsDecryptionService = mlsDecryptionService
+            }
         }
 
     }
@@ -363,7 +393,10 @@ extension NotificationSession: PushNotificationStrategyDelegate {
             events,
             publicKeys: try? earService.fetchPublicKeys()
         )
-        processDecodedEvents(decodedEvents)
+
+        await context.perform { [self] in
+            processDecodedEvents(decodedEvents)
+        }
     }
 
     private func processDecodedEvents(_ events: [ZMUpdateEvent]) {
@@ -425,6 +458,11 @@ extension NotificationSession: PushNotificationStrategyDelegate {
 
         if conversation.mutedMessageTypesIncludingAvailability != .none {
             WireLogger.calling.info("should not handle call event: conversation is muted or user is not available")
+            return nil
+        }
+
+        if conversation.isForcedReadOnly {
+            WireLogger.calling.info("should not handle call event: conversation is forced readonly")
             return nil
         }
 

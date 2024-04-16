@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-import UIKit
+import SwiftUI
 import WireSyncEngine
 import WireCommonComponents
 
@@ -68,13 +68,16 @@ final class ClientListViewController: UIViewController,
 
     private let clientSorter: (UserClient, UserClient) -> Bool
     private let clientFilter: (UserClient) -> Bool
+    private let userSession: UserSession?
+    private let contextProvider: ContextProvider?
+    private weak var selectedDeviceInfoViewModel: DeviceInfoViewModel? // Details View
 
     var sortedClients: [UserClient] = []
 
-    let selfClient: UserClient?
+    var selfClient: UserClient?
     let detailedView: Bool
     var credentials: ZMEmailCredentials?
-    var clientsObserverToken: Any?
+    var clientsObserverToken: NSObjectProtocol?
     var userObserverToken: NSObjectProtocol?
 
     var leftBarButtonItem: UIBarButtonItem? {
@@ -96,15 +99,21 @@ final class ClientListViewController: UIViewController,
         return nil
     }
 
-    required init(clientsList: [UserClient]?,
-                  selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
-                  credentials: ZMEmailCredentials? = .none,
-                  detailedView: Bool = false,
-                  showTemporary: Bool = true,
-                  showLegalHold: Bool = true) {
+    required init(
+        clientsList: [UserClient]?,
+        selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient,
+        userSession: UserSession? = ZMUserSession.shared(),
+        credentials: ZMEmailCredentials? = .none,
+        contextProvider: ContextProvider? = ZMUserSession.shared(),
+        detailedView: Bool = false,
+        showTemporary: Bool = true,
+        showLegalHold: Bool = true
+    ) {
+        self.userSession = userSession
         self.selfClient = selfClient
         self.detailedView = detailedView
         self.credentials = credentials
+        self.contextProvider = contextProvider
 
         clientFilter = {
             $0 != selfClient && (showTemporary || $0.type != .temporary) && (showLegalHold || $0.type != .legalHold)
@@ -120,7 +129,7 @@ final class ClientListViewController: UIViewController,
 
         self.initalizeProperties(clientsList ?? Array(ZMUser.selfUser()?.clients.filter { !$0.isSelfClient() } ?? []))
         self.clientsObserverToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
-        if let user = ZMUser.selfUser(), let session = ZMUserSession.shared() {
+        if let user = ZMUser.selfUser(), let session = userSession as? ZMUserSession {
             self.userObserverToken = UserChangeInfo.add(observer: self, for: user, in: session)
         }
 
@@ -128,7 +137,7 @@ final class ClientListViewController: UIViewController,
             if clients.isEmpty {
                 (navigationController as? SpinnerCapableViewController ?? self).isLoadingViewVisible = true
             }
-            ZMUserSession.shared()?.fetchAllClients()
+            userSession?.fetchAllClients()
         }
     }
 
@@ -166,6 +175,8 @@ final class ClientListViewController: UIViewController,
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.clientsTableView?.reloadData()
+        self.navigationController?.setNavigationBarHidden(false, animated: false)
+        updateAllClients()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -182,14 +193,68 @@ final class ClientListViewController: UIViewController,
     }
 
     func openDetailsOfClient(_ client: UserClient) {
-        guard let userSession = ZMUserSession.shared() else { return }
-        if let navigationController = self.navigationController {
-            let clientViewController = SettingsClientViewController(userClient: client,
-                                                                    userSession: userSession,
-                                                                    credentials: self.credentials)
-            clientViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-            navigationController.pushViewController(clientViewController, animated: true)
+        guard let userSession = userSession,
+              let contextProvider = contextProvider,
+              let navigationController = self.navigationController
+        else {
+            assertionFailure("Unable to display Devices screen.UserSession and/or navigation instances are nil")
+            return
         }
+
+        let viewModel = makeDeviceInfoViewModel(
+            client: client,
+            userSession: userSession,
+            contextProvider: contextProvider
+        )
+        viewModel.showCertificateUpdateSuccess = {[weak self] certificateChain in
+            guard let self else {
+                return
+            }
+            self.updateAllClients {
+                self.updateE2EIdentityCertificateInDetailsView()
+            }
+
+            let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController(isUpdateMode: true)
+            successEnrollmentViewController.certificateDetails = certificateChain
+            successEnrollmentViewController.onOkTapped = { viewController in
+                viewController.dismiss(animated: true)
+            }
+            successEnrollmentViewController.presentTopmost()
+        }
+        selectedDeviceInfoViewModel = viewModel
+
+        let detailsViewController = DeviceInfoViewController(rootView: DeviceDetailsView(viewModel: viewModel))
+        navigationController.pushViewController(detailsViewController, animated: true)
+    }
+
+    private func makeDeviceInfoViewModel(
+        client: UserClient,
+        userSession: UserSession,
+        contextProvider: ContextProvider
+    ) -> DeviceInfoViewModel {
+        let saveFileManager = SaveFileManager(systemFileSavePresenter: SystemSavePresenter())
+        let deviceActionsHandler = DeviceDetailsViewActionsHandler(
+            userClient: client,
+            userSession: userSession,
+            credentials: credentials,
+            saveFileManager: saveFileManager,
+            getProteusFingerprint: userSession.getUserClientFingerprint,
+            contextProvider: contextProvider,
+            e2eiCertificateEnrollment: userSession.enrollE2EICertificate
+        )
+        return DeviceInfoViewModel(
+            title: client.isLegalHoldDevice ? L10n.Localizable.Device.Class.legalhold : (client.model ?? ""),
+            addedDate: client.activationDate?.formattedDate ?? "",
+            proteusID: client.proteusSessionID?.clientID.uppercased().splitStringIntoLines(charactersPerLine: 16) ?? "",
+            userClient: client,
+            isSelfClient: client.isSelfClient(),
+            gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+            isFromConversation: false,
+            actionsHandler: deviceActionsHandler,
+            conversationClientDetailsActions: deviceActionsHandler,
+            debugMenuActionsHandler: deviceActionsHandler,
+            isDebugMenuAvailable: false
+        )
     }
 
     private func createTableView() {
@@ -260,9 +325,12 @@ final class ClientListViewController: UIViewController,
     // MARK: - ClientRegistrationObserver
 
     func finishedFetching(_ userClients: [UserClient]) {
-        dismissLoadingView()
-
-        self.clients = userClients.filter { !$0.isSelfClient() }
+        Task {
+            await updateCertificates(for: userClients)
+            await MainActor.run {
+                dismissLoadingView()
+            }
+        }
     }
 
     func failedToFetchClients(_ error: Error) {
@@ -312,12 +380,12 @@ final class ClientListViewController: UIViewController,
         switch self.convertSection(section) {
         case 0:
             if self.selfClient != nil {
-                return NSLocalizedString("registration.devices.current_list_header", comment: "")
+                return L10n.Localizable.Registration.Devices.currentListHeader
             } else {
                 return nil
             }
         case 1:
-            return NSLocalizedString("registration.devices.active_list_header", comment: "")
+            return L10n.Localizable.Registration.Devices.activeListHeader
         default:
             return nil
         }
@@ -328,7 +396,7 @@ final class ClientListViewController: UIViewController,
         case 0:
             return nil
         case 1:
-            return NSLocalizedString("registration.devices.active_list_subtitle", comment: "")
+            return L10n.Localizable.Registration.Devices.activeListSubtitle
         default:
             return nil
         }
@@ -350,18 +418,18 @@ final class ClientListViewController: UIViewController,
         if let cell = tableView.dequeueReusableCell(withIdentifier: ClientTableViewCell.zm_reuseIdentifier, for: indexPath) as? ClientTableViewCell {
             cell.selectionStyle = .none
             cell.showDisclosureIndicator()
-            cell.showVerified = self.detailedView
 
             switch self.convertSection((indexPath as NSIndexPath).section) {
             case 0:
-                cell.userClient = self.selfClient
-                cell.wr_editable = false
-                cell.showVerified = false
+                if let selfClient = selfClient {
+                    cell.viewModel = .init(userClient: selfClient, shouldSetType: false)
+                    cell.wr_editable = false
+                }
             case 1:
-                cell.userClient = self.sortedClients[indexPath.row]
+                cell.viewModel = .init(userClient: sortedClients[indexPath.row], shouldSetType: false)
                 cell.wr_editable = true
             default:
-                cell.userClient = nil
+                cell.viewModel = nil
             }
 
             cell.accessibilityTraits = .button
@@ -450,6 +518,79 @@ final class ClientListViewController: UIViewController,
         navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Registration.Devices.title.capitalized)
     }
 
+    @MainActor
+    private func updateCertificates(for userClients: [UserClient]) async {
+        guard
+            let userSession,
+            let selfMlsGroupID = await userSession.fetchSelfConversationMLSGroupID(),
+            // dangerous access: ZMUserSession.e2eiFeature initialises a FeatureRepository using the viewContext, thus the following line must be executed o the main thread
+            userSession.e2eiFeature.isEnabled
+        else {
+            return
+        }
+
+        let mlsClients: [UserClient: MLSClientID] = Dictionary(
+            uniqueKeysWithValues:
+                userClients
+                .filter { $0.mlsPublicKeys.ed25519 != nil }
+                .compactMap {
+                    if let mlsClientId = MLSClientID(userClient: $0) {
+                        ($0, mlsClientId)
+                    } else {
+                        nil
+                    }
+                })
+
+        do {
+            let certificates = try await userSession.getE2eIdentityCertificates.invoke(
+                mlsGroupId: selfMlsGroupID,
+                clientIds: Array(mlsClients.values))
+
+            for (client, mlsClientId) in mlsClients {
+                if let e2eiCertificate = certificates.first(where: { $0.clientId == mlsClientId.rawValue }) {
+                    client.e2eIdentityCertificate = e2eiCertificate
+                }
+                client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint
+            }
+
+        } catch {
+            WireLogger.e2ei.error(String(reflecting: error))
+        }
+    }
+
+    private func updateAllClients(completed: (() -> Void)? = nil) {
+        guard let selfUser = ZMUser.selfUser(), selfUser.selfClient() != nil else {
+            completed?()
+            return
+        }
+        Task {
+            await updateCertificates(for: Array(selfUser.clients))
+            refreshViews()
+            completed?()
+        }
+    }
+
+    @MainActor
+    func refreshViews() {
+        clientsTableView?.reloadData()
+    }
+
+    private func updateE2EIdentityCertificateInDetailsView() {
+        guard let client = findE2EIdentityCertificateClient() else { return }
+        selectedDeviceInfoViewModel?.update(from: client)
+    }
+
+    private func findE2EIdentityCertificateClient() -> UserClient? {
+        if selectedDeviceInfoViewModel?.isSelfClient == true {
+            return selfClient
+        }
+
+        guard let selectedUserClient = selectedDeviceInfoViewModel?.userClient as? UserClient else {
+            return nil
+        }
+
+        return clients.first { $0.clientId == selectedUserClient.clientId }
+    }
 }
 
 // MARK: - ClientRemovalObserverDelegate
@@ -472,17 +613,11 @@ extension ClientListViewController: ClientRemovalObserverDelegate {
     }
 }
 
-extension ClientListViewController: ZMUserObserver {
+extension ClientListViewController: UserObserving {
 
     func userDidChange(_ note: UserChangeInfo) {
         if note.clientsChanged || note.trustLevelChanged {
-            guard let selfUser = ZMUser.selfUser(), let selfClient = selfUser.selfClient() else {
-                return
-            }
-
-            var clients = selfUser.clients
-            clients.remove(selfClient)
-            self.clients = Array(clients)
+            updateAllClients()
         }
     }
 

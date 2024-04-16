@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 public final class CreateGroupConversationAction: EntityAction {
 
@@ -35,7 +36,7 @@ public final class CreateGroupConversationAction: EntityAction {
         case accessDenied
         case unreachableDomains(Set<String>)
         case nonFederatingDomains(Set<String>)
-        case proccessingError
+        case proccessingError(String?)
         case unknown(code: Int, label: String, message: String)
 
     }
@@ -83,7 +84,22 @@ public final class CreateGroupConversationAction: EntityAction {
 
 final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConversationAction> {
 
-    private let processor = ConversationEventPayloadProcessor()
+    private lazy var processor = ConversationEventPayloadProcessor(
+        mlsEventProcessor: MLSEventProcessor(context: context),
+        removeLocalConversation: removeLocalConversationUseCase
+    )
+
+    // This is only needed for the processor to be created but processor needs it only for
+    // Conversation deletion
+    private let removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
+
+    required init(
+        context: NSManagedObjectContext,
+        removeLocalConversationUseCase: RemoveLocalConversationUseCaseProtocol
+    ) {
+        self.removeLocalConversationUseCase = removeLocalConversationUseCase
+        super.init(context: context)
+    }
 
     // MARK: - Request generation
 
@@ -114,7 +130,9 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
 
         switch (response.httpStatus, response.payloadLabel()) {
         case (200, _), (201, _):
-            handleSuccessResponse(response, action: action)
+            Task { [action] in
+                await handleSuccessResponse(response, action: action)
+            }
 
         case (400, "mls-not-enabled"):
             action.fail(with: .mlsNotEnabled)
@@ -148,11 +166,13 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
                 let payload = ErrorResponse(response),
                 let nonFederatingDomains = payload.non_federating_backends
             else {
-                return action.fail(with: .proccessingError)
+                return action.fail(with: .proccessingError(nil))
             }
 
             if nonFederatingDomains.isEmpty {
-                handleSuccessResponse(response, action: action)
+                Task { [action] in
+                    await handleSuccessResponse(response, action: action)
+                }
             } else {
                 action.fail(with: .nonFederatingDomains(Set(nonFederatingDomains)))
             }
@@ -162,11 +182,13 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
                 let payload = ErrorResponse(response),
                 let unreachableDomains = payload.unreachable_backends
             else {
-                return action.fail(with: .proccessingError)
+                return action.fail(with: .proccessingError(nil))
             }
 
             if unreachableDomains.isEmpty {
-                handleSuccessResponse(response, action: action)
+                Task { [action] in
+                    await handleSuccessResponse(response, action: action)
+                }
             } else {
                 action.fail(with: .unreachableDomains(Set(unreachableDomains)))
             }
@@ -184,93 +206,30 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
     private func handleSuccessResponse(
         _ response: ZMTransportResponse,
         action: CreateGroupConversationAction
-    ) {
+    ) async {
         var action = action
-
+        Flow.createGroup.checkpoint(description: "handle response from server")
         guard
             let apiVersion = APIVersion(rawValue: response.apiVersion),
             let rawData = response.rawData,
             let payload = Payload.Conversation(rawData, apiVersion: apiVersion),
-            let newConversation = processor.updateOrCreateConversation(
+            let newConversation = await self.processor.updateOrCreateConversation(
                 from: payload,
-                in: context
+                in: self.context
             )
         else {
             Logging.network.warn("Can't process response, aborting.")
-            action.fail(with: .proccessingError)
+            await context.perform {
+                action.fail(with: .proccessingError("Can't process response, aborting."))
+            }
             return
         }
+        await context.perform {
+            self.context.saveOrRollback()
 
-        switch newConversation.messageProtocol {
-        case .proteus:
-            context.saveOrRollback()
             action.succeed(with: newConversation.objectID)
-
-        case .mls:
-            Logging.mls.info("created new conversation on backend, got group ID (\(String(describing: payload.mlsGroupID)))")
-
-            // Self user is creator, so we don't need to process a welcome message
-            newConversation.mlsStatus = .ready
-
-            guard let mlsService = context.zm_sync.mlsService else {
-                Logging.mls.warn("failed to create mls group: mlsService doesn't exist")
-                action.fail(with: .proccessingError)
-                return
-            }
-
-            guard let groupID = newConversation.mlsGroupID else {
-                Logging.mls.warn("failed to create mls group: conversation is missing group id.")
-                action.fail(with: .proccessingError)
-                return
-            }
-
-            do {
-                try mlsService.createGroup(for: groupID)
-            } catch let error {
-                Logging.mls.error("failed to create mls group: \(String(describing: error))")
-                action.fail(with: .proccessingError)
-                return
-            }
-
-            // If this is an mls conversation, then the initial participants won't have
-            // been added yet on the backend. This means that we must take the list of
-            // participants from the action instead of the local conversation.
-            let pendingParticipants = Set(action.qualifiedUserIDs).union(action.unqualifiedUserIDs.compactMap {
-                guard let localDomain = BackendInfo.domain else { return nil }
-                return QualifiedID(uuid: $0, domain: localDomain)
-            })
-
-            let selfUserID = ZMUser.selfUser(in: context).qualifiedID
-
-            let users = pendingParticipants.map { qualifiedID in
-                if qualifiedID == selfUserID {
-                    return MLSUser(qualifiedID, selfClientID: action.creatorClientID)
-                } else {
-                    return MLSUser(qualifiedID)
-                }
-            }
-
-            let reportSuccess = {
-                action.succeed(with: newConversation.objectID)
-            }
-
-            let reportFailure = {
-                action.fail(with: .proccessingError)
-            }
-
-            Task {
-                do {
-                    try await mlsService.addMembersToConversation(with: users, for: groupID)
-                    reportSuccess()
-                } catch let error {
-                    Logging.mls.error("failed to add members to new mls group: \(String(describing: error))")
-                    reportFailure()
-                    return
-                }
-            }
         }
     }
-
 }
 
 extension CreateGroupConversationActionHandler {

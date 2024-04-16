@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -320,8 +320,8 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // THEN
-        let changes: [ConversationChangeInfo]? = observer?.notifications.compactMap({ $0 as? ConversationChangeInfo})
-        let note = changes?.first(where: { $0.messagesChanged == true})
+        let changes: [ConversationChangeInfo]? = observer?.notifications.compactMap({ $0 as? ConversationChangeInfo })
+        let note = changes?.first(where: { $0.messagesChanged == true })
 
         XCTAssertNotNil(note)
         XCTAssertTrue(note?.messagesChanged ?? false)
@@ -343,8 +343,8 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         try remotelyInsertOTRImage(into: groupConversation, imageFormat: format)
 
         // THEN
-        let changes: [ConversationChangeInfo]? = observer?.notifications.compactMap({ $0 as? ConversationChangeInfo})
-        let note = changes?.first(where: { $0.messagesChanged == true})
+        let changes: [ConversationChangeInfo]? = observer?.notifications.compactMap({ $0 as? ConversationChangeInfo })
+        let note = changes?.first(where: { $0.messagesChanged == true })
 
         XCTAssertTrue(note?.messagesChanged ?? false)
         XCTAssertTrue(note?.lastModifiedDateChanged ?? false)
@@ -420,7 +420,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         XCTAssertNotNil(genericMessage)
     }
 
-    func testThatAssetMediumIsRedownloadedIfNothingIsStored(for useCase: AssetMediumTestUseCase) throws {
+    func testThatAssetMediumIsRedownloadedIfNoMessageDataIsStored() throws {
         // GIVEN
         XCTAssertTrue(login())
 
@@ -448,15 +448,9 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         }
 
         // WHEN
-        switch useCase {
-        case .cacheCleared:
-            // remove all stored data, like cache is cleared
-            userSession?.managedObjectContext.zm_fileAssetCache.deleteAssetData(assetMessage, format: .medium, encrypted: true)
-        case .decryptionCrash:
-            // remove decrypted data, but keep encrypted, like we crashed during decryption
-           userSession?.managedObjectContext.zm_fileAssetCache.storeAssetData(assetMessage, format: .medium, encrypted: true, data: encryptedImageData)
-        }
-        userSession?.managedObjectContext.zm_fileAssetCache.deleteAssetData(assetMessage, format: .medium, encrypted: false)
+        // remove all stored data, like cache is cleared
+        userSession?.managedObjectContext.zm_fileAssetCache.deleteMediumEncryptedImageData(for: assetMessage)
+        userSession?.managedObjectContext.zm_fileAssetCache.deleteMediumImageData(for: assetMessage)
 
         // We no longer process incoming V2 assets so we need to manually set some properties to simulate having received the asset
         userSession?.perform {
@@ -473,14 +467,6 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         XCTAssertNotNil(assetMessage.imageMessageData?.imageData)
-    }
-
-    func testThatAssetMediumIsRedownloadedIfNoDecryptedMessageDataIsStored() throws {
-        try testThatAssetMediumIsRedownloadedIfNothingIsStored(for: .decryptionCrash)
-    }
-
-    func testThatAssetMediumIsRedownloadedIfNoMessageDataIsStored() throws {
-        try testThatAssetMediumIsRedownloadedIfNothingIsStored(for: .cacheCleared)
     }
 
     // MARK: ConversationTestsOTR (Trust)
@@ -753,11 +739,6 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         withExtendedLifetime(token) {}
-    }
-
-    enum AssetMediumTestUseCase {
-        case cacheCleared
-        case decryptionCrash
     }
 
     @discardableResult

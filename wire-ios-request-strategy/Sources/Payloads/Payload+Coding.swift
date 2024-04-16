@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,21 +22,21 @@ import Foundation
 
 extension JSONDecoder {
 
-    static var defaultDecoder: JSONDecoder {
+    public static var defaultDecoder: JSONDecoder {
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
+        decoder.dateDecodingStrategy = .custom { decoder in
             let container = try decoder.singleValueContainer()
             let rawDate = try container.decode(String.self)
 
-            if let date = NSDate(transport: rawDate) {
-                return date as Date
-            } else {
+            guard let date = Date(transportString: rawDate) else {
                 throw DecodingError.dataCorruptedError(
                     in: container,
                     debugDescription: "Expected date string to be ISO8601-formatted with fractional seconds"
                 )
             }
-        })
+
+            return date as Date
+        }
 
         return decoder
     }
@@ -49,9 +50,9 @@ extension JSONEncoder {
 
     static var defaultEncoder: JSONEncoder {
         let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .custom({ (date, encoder) in
+        encoder.dateEncodingStrategy = .custom({ date, encoder in
             var container = encoder.singleValueContainer()
-            try container.encode((date as NSDate).transportString())
+            try container.encode(date.transportString())
         })
 
         return encoder
@@ -73,7 +74,7 @@ extension Decodable {
     init?(_ payloadData: Data, decoder: JSONDecoder = .defaultDecoder) {
         do {
             self = try decoder.decode(Self.self, from: payloadData)
-        } catch let error {
+        } catch {
             Logging.network.warn("Failed to decode \(Self.self) from payload: \(error)")
             return nil
         }
@@ -120,7 +121,7 @@ extension Encodable {
 
         do {
             return try encoder.encode(self)
-        } catch let error {
+        } catch {
             Logging.network.warn("Failed to encode payload: \(error)")
             return nil
         }
@@ -141,7 +142,7 @@ extension Encodable {
     func encodeToJSONString(encoder: JSONEncoder = .defaultEncoder) throws -> String {
         let data = try encodeToJSON(encoder: encoder)
 
-        guard let string =  String(data: data, encoding: .utf8) else {
+        guard let string = String(data: data, encoding: .utf8) else {
             throw JSONEncodingFailure.failedToConvertToString
         }
 

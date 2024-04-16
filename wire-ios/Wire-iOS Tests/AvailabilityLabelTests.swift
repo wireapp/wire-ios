@@ -20,7 +20,7 @@ import XCTest
 import WireCommonComponents
 @testable import Wire
 
-class AvailabilityLabelTests: BaseSnapshotTestCase {
+final class AvailabilityLabelTests: BaseSnapshotTestCase {
 
     // MARK: - List labels
 
@@ -30,6 +30,10 @@ class AvailabilityLabelTests: BaseSnapshotTestCase {
 
     func testThatItRendersCorrectly_List_AvailableAvailability() {
         verify(matching: createLabelForList(.available))
+    }
+
+    func testThatItRendersCorrectly_List_AvailableAvailabilitySelfUser() {
+        verify(matching: createLabelForList(.available, appendYouSuffix: true))
     }
 
     func testThatItRendersCorrectly_List_AwayAvailability() {
@@ -42,10 +46,20 @@ class AvailabilityLabelTests: BaseSnapshotTestCase {
 
     // MARK: - Helper Method
 
-    func createLabelForList(_ availability: AvailabilityKind) -> UILabel {
+    func createLabelForList(
+        _ availability: Availability,
+        appendYouSuffix: Bool = false
+    ) -> UILabel {
         guard let user = ZMUser.selfUser() else { return UILabel() }
         user.availability = availability
-        let attributedString = AvailabilityStringBuilder.string(for: user, with: .list)
+        let attributedString = AvailabilityStringBuilder.titleForUser(
+            name: user.name ?? "",
+            availability: user.availability,
+            isE2EICertified: false,
+            isProteusVerified: false,
+            appendYouSuffix: appendYouSuffix,
+            style: .list
+        )
         let label = UILabel()
         label.attributedText = attributedString
         label.font = FontSpec(.normal, .regular).font
@@ -73,10 +87,17 @@ class AvailabilityLabelTests: BaseSnapshotTestCase {
 
     // MARK: - Helper Method
 
-    func createLabelForParticipants(_ availability: AvailabilityKind) -> UILabel {
+    func createLabelForParticipants(_ availability: Availability) -> UILabel {
         guard let user = ZMUser.selfUser() else { return UILabel() }
         user.availability = availability
-        let attributedString = AvailabilityStringBuilder.string(for: user, with: .participants)
+        let attributedString = AvailabilityStringBuilder.titleForUser(
+            name: user.name ?? "",
+            availability: user.availability,
+            isE2EICertified: false,
+            isProteusVerified: false,
+            appendYouSuffix: false,
+            style: .participants
+        )
         let label = UILabel()
         label.attributedText = attributedString
         label.font = FontSpec(.small, .regular).font

@@ -22,7 +22,7 @@ import UIKit
  * A cell to show a value validation in the settings.
  */
 
-class ValueValidationCell: UITableViewCell {
+final class ValueValidationCell: UITableViewCell {
 
     let label: UILabel = {
         let label = UILabel()

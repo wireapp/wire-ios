@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 
 public struct WireLogger: LoggerProtocol {
 
-  public static var provider: LoggerProtocol? = SystemLogger()
+  public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger()])
 
   public let tag: String
 
@@ -86,11 +86,9 @@ public struct WireLogger: LoggerProtocol {
     attributes: LogAttributes? = nil
   ) {
     var attributes = attributes ?? .init()
-    var message = message.logDescription
 
     if !tag.isEmpty {
       attributes["tag"] = tag
-      message = "[\(tag)] \(message)"
     }
 
     switch level {
@@ -129,6 +127,10 @@ public struct WireLogger: LoggerProtocol {
 
 public typealias LogAttributes = [String: Encodable]
 
+public extension LogAttributes {
+    static var safePublic = ["public": true]
+}
+
 public protocol LoggerProtocol {
 
   func debug(_ message: LogConvertible, attributes: LogAttributes?)
@@ -138,6 +140,12 @@ public protocol LoggerProtocol {
   func error(_ message: LogConvertible, attributes: LogAttributes?)
   func critical(_ message: LogConvertible, attributes: LogAttributes?)
 
+  func persist(fileDestination: FileLoggerDestination) async
+}
+
+extension LoggerProtocol {
+
+    public func persist(fileDestination: FileLoggerDestination) async {}
 }
 
 public protocol LogConvertible {
@@ -156,24 +164,44 @@ extension String: LogConvertible {
 
 public extension WireLogger {
 
-    static let proteus = WireLogger(tag: "proteus")
-    static let shareExtension = WireLogger(tag: "share-extension")
-    static let notifications = WireLogger(tag: "notifications")
-    static let calling = WireLogger(tag: "calling")
-    static let messaging = WireLogger(tag: "messaging")
-    static let backend = WireLogger(tag: "backend")
-    static let ear = WireLogger(tag: "encryption-at-rest")
-    static let keychain = WireLogger(tag: "keychain")
-    static let mls = WireLogger(tag: "mls")
-    static let coreCrypto = WireLogger(tag: "core-crypto")
-    static let environment = WireLogger(tag: "environment")
-    static let updateEvent = WireLogger(tag: "update-event")
-    static let performance = WireLogger(tag: "performance")
-    static let badgeCount = WireLogger(tag: "badge-count")
-    static let userClient = WireLogger(tag: "user-client")
-    static let localStorage = WireLogger(tag: "local-storage")
-    static let conversation = WireLogger(tag: "conversation")
+    static let apiMigration = WireLogger(tag: "api-migration")
+    static let appDelegate = WireLogger(tag: "AppDelegate")
+    static let appLock = WireLogger(tag: "AppLock")
+    static let assets = WireLogger(tag: "assets")
     static let authentication = WireLogger(tag: "authentication")
+    static let backgroundActivity = WireLogger(tag: "background-activity")
+    static let badgeCount = WireLogger(tag: "badge-count")
+    static let backend = WireLogger(tag: "backend")
+    static let calling = WireLogger(tag: "calling")
+    static let conversation = WireLogger(tag: "conversation")
+    static let coreCrypto = WireLogger(tag: "core-crypto")
+    static let e2ei = WireLogger(tag: "end-to-end-identity")
+    static let ear = WireLogger(tag: "encryption-at-rest")
+    static let environment = WireLogger(tag: "environment")
+    static let featureConfigs = WireLogger(tag: "feature-configurations")
+    static let keychain = WireLogger(tag: "keychain")
+    static let localStorage = WireLogger(tag: "local-storage")
+    static let messaging = WireLogger(tag: "messaging")
+    static let mls = WireLogger(tag: "mls")
+    static let notifications = WireLogger(tag: "notifications")
+    static let performance = WireLogger(tag: "performance")
+    static let push = WireLogger(tag: "push")
+    static let proteus = WireLogger(tag: "proteus")
     static let session = WireLogger(tag: "session")
+    static let shareExtension = WireLogger(tag: "share-extension")
+    static let sync = WireLogger(tag: "sync")
+    static let system = WireLogger(tag: "system")
+    static let updateEvent = WireLogger(tag: "update-event")
+    static let userClient = WireLogger(tag: "user-client")
+
+}
+
+/// Class to proxy WireLogger methods to Objective-C
+@objcMembers
+final class WireLoggerObjc: NSObject {
+
+    static func assertionDumpLog(_ message: String) {
+        WireLogger.system.critical(message, attributes: .safePublic)
+    }
 
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -131,12 +131,8 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
     }
 
     public var muted: Bool {
-        get {
-            return callCenter?.muted ?? false
-        }
-        set {
-            callCenter?.muted = newValue
-        }
+        get { callCenter?.isMuted ?? false }
+        set { callCenter?.isMuted = newValue }
     }
 
     public var isConferenceCall: Bool {
@@ -190,7 +186,7 @@ extension VoiceChannelV3: CallActions {
 
     public func continueByDecreasingConversationSecurity(userSession: ZMUserSession) {
         guard let conversation = conversation else { return }
-        conversation.acknowledgePrivacyWarning(withResendIntent: false)
+        conversation.acknowledgePrivacyWarning(withResendIntent: true)
     }
 
     public func leaveAndDecreaseConversationSecurity(userSession: ZMUserSession) {

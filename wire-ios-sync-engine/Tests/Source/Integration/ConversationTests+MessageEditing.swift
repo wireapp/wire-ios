@@ -1,9 +1,19 @@
 //
-//  ConversationTests+MessageEditing.swift
-//  WireSyncEngine-iOS-Tests
+// Wire
+// Copyright (C) 2024 Wire Swiss GmbH
 //
-//  Created by David Henner on 14.05.20.
-//  Copyright © 2020 Zeta Project Gmbh. All rights reserved.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
 import Foundation
@@ -34,7 +44,7 @@ class ConversationTests_MessageEditing_Swift: ConversationTestsBase {
 
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
-        XCTAssertEqual(conversation?.allMessages.count, messageCount+1)
+        XCTAssertEqual(conversation?.allMessages.count, messageCount + 1)
         let receivedMessage = conversation?.lastMessage as? ZMClientMessage
         XCTAssertEqual(receivedMessage?.textMessageData?.messageText, "Foo")
         guard let messageNonce = receivedMessage?.nonce else {
@@ -53,7 +63,7 @@ class ConversationTests_MessageEditing_Swift: ConversationTestsBase {
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
         // THEN
-        XCTAssertEqual(conversation?.allMessages.count, messageCount+1)
+        XCTAssertEqual(conversation?.allMessages.count, messageCount + 1)
         let editedMessage = conversation?.lastMessage as? ZMClientMessage
         XCTAssertEqual(editedMessage?.textMessageData?.messageText, "Bar")
     }

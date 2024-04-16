@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
 
             // Mapping from conversation to message count in the last month
             let countByConversation = conversations.mapToDictionary { $0.lastMonthMessageCount() }
-            let sorted = countByConversation.filter { $0.1 > 0 }.sorted {  $0.1 > $1.1 }.prefix(TopConversationsDirectory.topConversationSize)
+            let sorted = countByConversation.filter { $0.1 > 0 }.sorted { $0.1 > $1.1 }.prefix(TopConversationsDirectory.topConversationSize)
             let identifiers = sorted.compactMap { $0.0.objectID }
             self.updateUIList(with: identifiers)
         }
@@ -73,7 +73,7 @@ private let topConversationsObjectIDKey = "WireTopConversationsObjectIDKey"
 
     /// Top conversations
     public var topConversations: [ZMConversation] {
-        return self.topConversationsCache.filter { !$0.isZombieObject && $0.connection?.status == .accepted }
+        return self.topConversationsCache.filter { !$0.isZombieObject && $0.oneOnOneUser?.connection?.status == .accepted }
     }
 
     /// Persist list of conversations to persistent store
@@ -119,7 +119,7 @@ fileprivate extension ZMConversation {
 
     static var predicateForActiveOneOnOneConversations: NSPredicate {
         let oneOnOnePredicate = NSPredicate(format: "%K == %d", #keyPath(ZMConversation.conversationType), ZMConversationType.oneOnOne.rawValue)
-        let acceptedPredicate = NSPredicate(format: "%K == %d", #keyPath(ZMConversation.connection.status), ZMConnectionStatus.accepted.rawValue)
+        let acceptedPredicate = NSPredicate(format: "%K == %d", #keyPath(ZMConversation.oneOnOneUser.connection.status), ZMConnectionStatus.accepted.rawValue)
         return NSCompoundPredicate(andPredicateWithSubpredicates: [oneOnOnePredicate, acceptedPredicate])
     }
 
@@ -129,7 +129,7 @@ fileprivate extension ZMConversation {
         var count = 0
         for message in lastMessages() {
             guard let timestamp = message.serverTimestamp else { continue }
-            guard nil == message.systemMessageData else { continue }
+            guard message.systemMessageData == nil else { continue }
             guard timestamp >= oneMonthAgo else { return count }
             count += 1
         }

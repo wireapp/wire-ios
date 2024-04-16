@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -119,7 +119,7 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
             // THEN
             XCTAssertEqual(self.mockDetector.downloadCount, 1)
             XCTAssertEqual(message.linkAttachments, [attachment])
-            let data = self.syncMOC.zm_fileAssetCache.assetData(message, format: .original, encrypted: false)
+            let data = self.syncMOC.zm_fileAssetCache.originalImageData(for: message)
             XCTAssertNil(data)
             XCTAssertFalse(message.needsLinkAttachmentsUpdate)
         }
@@ -231,7 +231,7 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
             // THEN
             XCTAssertEqual(self.mockDetector.downloadCount, 1)
             XCTAssertFalse(message.needsLinkAttachmentsUpdate)
-            let data = self.syncMOC.zm_fileAssetCache.assetData(message, format: .original, encrypted: false)
+            let data = self.syncMOC.zm_fileAssetCache.originalImageData(for: message)
             XCTAssertNil(data)
             guard let genericMessage = message.underlyingMessage else { return XCTFail("No generic message") }
             guard case .ephemeral? = genericMessage.content else {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
     func reactionEventInOneOnOneConversation() -> ZMUpdateEvent {
         let message = try! oneOnOneConversation.appendText(content: "text") as! ZMClientMessage
-        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!) as! MessageCapable)
+        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!))
         let event = createUpdateEvent(UUID.create(), conversationID: oneOnOneConversation.remoteIdentifier!, genericMessage: reaction, senderID: sender.remoteIdentifier!)
         return event
     }
@@ -64,7 +64,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
         // given
         let message = try! conversation.appendText(content: "text") as! ZMClientMessage
-        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!) as! MessageCapable)
+        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!))
         let event = createUpdateEvent(UUID.create(), conversationID: conversation.remoteIdentifier!, genericMessage: reaction, senderID: aSender.remoteIdentifier!)
 
         // when
@@ -79,7 +79,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
         // given
         let message = try! conversation.appendText(content: "text") as! ZMClientMessage
-        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!) as! MessageCapable)
+        let reaction = GenericMessage(content: ProtosReactionFactory.createReaction(emojis: ["❤️"], messageID: message.nonce!))
         let event = createUpdateEvent(UUID.create(), conversationID: conversation.remoteIdentifier!, genericMessage: reaction, senderID: aSender.remoteIdentifier!)
 
         // when
@@ -369,6 +369,21 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         }
     }
 
+    func testThatItDoesNotCreateANotificationWhenConversationIsForceReadonly() {
+        // given
+        syncMOC.performGroupedBlockAndWait {
+            self.oneOnOneConversation.isForcedReadOnly = true
+            let event = self.createUpdateEvent(UUID.create(), conversationID: UUID.create(), genericMessage: GenericMessage(content: Text(content: "Stimpy just joined Wire")))
+            var note: ZMLocalNotification?
+
+            // when
+            note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.syncMOC)
+
+            // then
+            XCTAssertNil(note)
+        }
+    }
+
     func testThatItDoesNotCreateANotificationForConfirmationEvents() {
         // given
         syncMOC.performGroupedBlockAndWait {
@@ -389,7 +404,13 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
             let genericMessage = GenericMessage(content: Text(content: "123"))
 
             // when
-            let note = self.noteWithPayload(["text": try? genericMessage.serializedData().base64EncodedString()], from: self.sender, in: nil, type: self.EventaAddOTRMessage)
+            let text = try! genericMessage.serializedData().base64EncodedString()
+            let note = self.noteWithPayload(
+                ["text": text],
+                from: self.sender,
+                in: nil,
+                type: self.EventaAddOTRMessage
+            )
 
             // then
             XCTAssertNotNil(note)

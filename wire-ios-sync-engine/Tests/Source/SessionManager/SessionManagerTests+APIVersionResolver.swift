@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import XCTest
 import WireTesting
 @testable import WireSyncEngine
 
-class SessionManagerTests_APIVersionResolver: IntegrationTest {
+final class SessionManagerAPIVersionResolverTests: IntegrationTest {
 
     func testThatDatabaseIsMigrated_WhenFederationIsEnabled() throws {
         // GIVEN
@@ -38,14 +38,18 @@ class SessionManagerTests_APIVersionResolver: IntegrationTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
+        let userRemoteIdentifier = UUID()
+        let conversationRemoteIdentifier = UUID()
         // Create user and conversation
-        let user = ZMUser.insertNewObject(in: session.syncContext)
-        let conversation = ZMConversation.insertNewObject(in: session.syncContext)
-        user.remoteIdentifier = UUID()
-        conversation.remoteIdentifier = UUID()
+        session.syncContext.performAndWait {
+            let user = ZMUser.insertNewObject(in: session.syncContext)
+            let conversation = ZMConversation.insertNewObject(in: session.syncContext)
+            user.remoteIdentifier = userRemoteIdentifier
+            conversation.remoteIdentifier = conversationRemoteIdentifier
 
-        XCTAssertNil(user.domain)
-        XCTAssertNil(conversation.domain)
+            XCTAssertNil(user.domain)
+            XCTAssertNil(conversation.domain)
+        }
 
         // Setup domain
         let domain = "example.domain.com"
@@ -53,7 +57,7 @@ class SessionManagerTests_APIVersionResolver: IntegrationTest {
 
         // Setup expectation & Session Manager delegate
         let expectation = XCTestExpectation(description: "Migration completed")
-        let delegate = MockSessionManagerDelegate()
+        let delegate = MockSessionManagerExpectationDelegate()
         delegate.expectation = expectation
         sessionManager.delegate = delegate
 
@@ -69,19 +73,23 @@ class SessionManagerTests_APIVersionResolver: IntegrationTest {
         XCTAssertTrue(delegate.didCallDidChangeActiveUserSession)
         let newSession = try XCTUnwrap(delegate.session)
 
-        let migratedUser = ZMUser.fetch(with: user.remoteIdentifier, domain: domain, in: newSession.syncContext)
-        XCTAssertNotNil(migratedUser)
-        XCTAssertEqual(migratedUser?.domain, domain)
+        newSession.syncContext.performAndWait {
+            let migratedUser = ZMUser.fetch(with: userRemoteIdentifier, domain: domain, in: newSession.syncContext)
+            XCTAssertNotNil(migratedUser)
+            XCTAssertEqual(migratedUser?.domain, domain)
+        }
 
-        let migratedConversation = ZMConversation.fetch(with: conversation.remoteIdentifier!, domain: domain, in: newSession.syncContext)
-        XCTAssertNotNil(migratedConversation)
-        XCTAssertEqual(migratedConversation?.domain, domain)
-
+        newSession.syncContext.performAndWait {
+            let migratedConversation = ZMConversation.fetch(with: conversationRemoteIdentifier, domain: domain, in: newSession.syncContext)
+            XCTAssertNotNil(migratedConversation)
+            XCTAssertEqual(migratedConversation?.domain, domain)
+        }
         userSession = nil
     }
 }
 
-private class MockSessionManagerDelegate: SessionManagerDelegate {
+private class MockSessionManagerExpectationDelegate: SessionManagerDelegate {
+
     var didCallDidPerformFederationMigration: Bool = false
     var expectation: XCTestExpectation?
     func sessionManagerDidPerformFederationMigration(activeSession: UserSession?) {
@@ -130,11 +138,23 @@ private class MockSessionManagerDelegate: SessionManagerDelegate {
         // no op
     }
 
+    func sessionManagerRequireCertificateEnrollment() {
+        // no-op
+    }
+
+    func sessionManagerDidEnrollCertificate(for activeSession: UserSession?) {
+        // no-op
+    }
+
     func sessionManagerDidPerformAPIMigrations(activeSession: UserSession?) {
         // no op
     }
 
     public func sessionManagerAsksToRetryStart() {
+        // no op
+    }
+
+    func sessionManagerDidCompleteInitialSync(for activeSession: WireSyncEngine.UserSession?) {
         // no op
     }
 

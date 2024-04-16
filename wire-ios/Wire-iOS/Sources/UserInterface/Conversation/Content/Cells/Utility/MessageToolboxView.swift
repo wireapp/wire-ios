@@ -142,11 +142,13 @@ final class MessageToolboxView: UIView {
             self?.resendMessage()
         }
 
-        [detailsLabel,
-         timestampSeparatorLabel,
-         statusLabel,
-         statusSeparatorLabel,
-         countdownLabel].forEach(contentStack.addArrangedSubview)
+        [
+            detailsLabel,
+            timestampSeparatorLabel,
+            statusLabel,
+            statusSeparatorLabel,
+            countdownLabel
+        ].forEach(contentStack.addArrangedSubview)
 
         [separatorView, contentStack, messageFailureView].forEach(addSubview)
     }

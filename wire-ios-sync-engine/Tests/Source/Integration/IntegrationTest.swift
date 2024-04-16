@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -106,7 +106,7 @@ extension IntegrationTest {
     @objc
     func _setUp() {
 
-        UserClientRequestFactory._test_overrideNumberOfKeys = 1
+        PrekeyGenerator._test_overrideNumberOfKeys = 1
 
         var flag = DeveloperFlag.proteusViaCoreCrypto
         flag.isOn = false
@@ -137,12 +137,14 @@ extension IntegrationTest {
         userSession?.syncManagedObjectContext.performGroupedAndWait {
             $0.zm_teardownMessageObfuscationTimer()
         }
-        userSession?.managedObjectContext.zm_teardownMessageDeletionTimer()
+        userSession?.managedObjectContext.performGroupedAndWait {
+            $0.zm_teardownMessageDeletionTimer()
+        }
     }
 
     @objc
     func _tearDown() {
-        UserClientRequestFactory._test_overrideNumberOfKeys = nil
+        PrekeyGenerator._test_overrideNumberOfKeys = nil
         destroyTimers()
         sharedSearchDirectory?.tearDown()
         sharedSearchDirectory = nil
@@ -182,7 +184,9 @@ extension IntegrationTest {
     @objc
     func destroySessionManager() {
         destroyTimers()
-        userSession?.tearDown()
+        userSession?.managedObjectContext.performGroupedAndWait { _ in
+            self.userSession?.tearDown()
+        }
         userSession = nil
         sessionManager = nil
 
@@ -299,6 +303,7 @@ extension IntegrationTest {
             selfUser.password = IntegrationTest.SelfUserPassword
             selfUser.identifier = self.currentUserIdentifier.transportString()
             selfUser.phone = ""
+            selfUser.domain = "local@domain.com"
             selfUser.accentID = 2
             session.addProfilePicture(to: selfUser)
             session.addV3ProfilePicture(to: selfUser)
@@ -320,6 +325,7 @@ extension IntegrationTest {
             let user1 = session.insertUser(withName: "Extra User1")
             user1.email = "user1@example.com"
             user1.phone = "6543"
+            user1.domain = "local@domain.com"
             user1.accentID = 3
             session.addProfilePicture(to: user1)
             session.addV3ProfilePicture(to: user1)
@@ -328,12 +334,14 @@ extension IntegrationTest {
             let user2 = session.insertUser(withName: "Extra User2")
             user2.email = "user2@example.com"
             user2.phone = "4534"
+            user2.domain = "local@domain.com"
             user2.accentID = 1
             self.user2 = user2
 
             let user3 = session.insertUser(withName: "Extra User3")
             user3.email = "user3@example.com"
             user3.phone = "340958"
+            user2.domain = "local@domain.com"
             user3.accentID = 4
             session.addProfilePicture(to: user3)
             session.addV3ProfilePicture(to: user3)
@@ -342,6 +350,7 @@ extension IntegrationTest {
             let user4 = session.insertUser(withName: "Extra User4")
             user4.email = "user4@example.com"
             user4.phone = "2349857"
+            user4.domain = "local@domain.com"
             user4.accentID = 7
             session.addProfilePicture(to: user4)
             session.addV3ProfilePicture(to: user4)
@@ -350,6 +359,7 @@ extension IntegrationTest {
             let user5 = session.insertUser(withName: "Extra User5")
             user5.email = "user5@example.com"
             user5.phone = "555466434325"
+            user5.domain = "local@domain.com"
             user5.accentID = 7
             self.user5 = user5
 
@@ -457,7 +467,7 @@ extension IntegrationTest {
     @objc(userForMockUser:)
     func user(for mockUser: MockUser) -> ZMUser? {
         let uuid = mockUser.managedObjectContext!.performGroupedAndWait { _ in
-            return mockUser.identifier.uuid()
+            return UUID(transportString: mockUser.identifier)!
         }
         let data = (uuid as NSUUID).data() as NSData
         let predicate = NSPredicate(format: "remoteIdentifier_data == %@", data)
@@ -474,12 +484,14 @@ extension IntegrationTest {
     @objc(conversationForMockConversation:)
     func conversation(for mockConversation: MockConversation) -> ZMConversation? {
         let uuid = mockConversation.managedObjectContext!.performGroupedAndWait { _ in
-            return mockConversation.identifier.uuid()
+            return UUID(transportString: mockConversation.identifier)!
         }
         let data = (uuid as NSUUID).data() as NSData
         let predicate = NSPredicate(format: "remoteIdentifier_data == %@", data)
         let request = ZMConversation.sortedFetchRequest(with: predicate)
-        let result = userSession?.managedObjectContext.executeFetchRequestOrAssert(request) as? [ZMConversation]
+
+        let result = userSession?.managedObjectContext.performAndWait { userSession?.managedObjectContext.executeFetchRequestOrAssert(request) as? [ZMConversation]
+        }
 
         if let conversation = result?.first {
             return conversation
@@ -490,17 +502,22 @@ extension IntegrationTest {
 
     @objc(establishSessionWithMockUser:)
     func establishSession(with mockUser: MockUser) {
-        mockTransportSession.performRemoteChanges({ session in
+        mockTransportSession.performRemoteChanges { session in
             if mockUser.clients.count == 0 {
                 session.registerClient(for: mockUser)
             }
 
-            for client in mockUser.clients {
-                self.userSession?.syncManagedObjectContext.performGroupedBlockAndWait {
-                    self.establishSessionFromSelf(toRemote: client as! MockUserClient)
+            self.userSession.map { userSession in
+                WaitingGroupTask(context: userSession.syncManagedObjectContext) {
+                    let clients = await self.mockTransportSession.managedObjectContext.perform {
+                        mockUser.clients.map { $0 as! MockUserClient }
+                    }
+                    for client in clients {
+                        await self.establishSessionFromSelf(toRemote: client)
+                    }
                 }
             }
-        })
+        }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
@@ -567,7 +584,7 @@ extension IntegrationTest {
 
         closePushChannelAndWaitUntilClosed()
         changesBeforeInterruption.apply(mockTransportSession.performRemoteChanges)
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.clearNotifications()
 
             if let changes = changesAfterInterruption {
@@ -581,13 +598,26 @@ extension IntegrationTest {
     }
 
     func performSlowSync() {
-        userSession?.applicationStatusDirectory?.syncStatus.forceSlowSync()
+        userSession?.syncContext.performAndWait {
+            self.userSession?.applicationStatusDirectory.syncStatus.forceSlowSync()
+        }
+        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
+    func performResyncResources() {
+        userSession?.syncContext.performAndWait {
+            userSession?.applicationStatusDirectory.syncStatus.resyncResources()
+        }
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
 
     func performQuickSync() {
-        userSession?.applicationStatusDirectory?.syncStatus.forceQuickSync()
+        // just for safety make sure syncStatus is modified on syncContext (avoid data races)
+        userSession?.syncContext.performAndWait {
+            userSession?.applicationStatusDirectory.syncStatus.forceQuickSync()
+        }
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
@@ -701,6 +731,14 @@ extension IntegrationTest: SessionManagerDelegate {
         // no-op
     }
 
+    public func sessionManagerRequireCertificateEnrollment() {
+        // no-op
+    }
+
+    public func sessionManagerDidEnrollCertificate(for activeSession: UserSession?) {
+        // no-op
+    }
+
     public func sessionManagerDidFailToLoadDatabase(error: Error) {
         // no-op
     }
@@ -721,6 +759,10 @@ extension IntegrationTest: SessionManagerDelegate {
     }
 
     public func sessionManagerAsksToRetryStart() {
+        // no op
+    }
+
+    public func sessionManagerDidCompleteInitialSync(for activeSession: WireSyncEngine.UserSession?) {
         // no op
     }
 }

@@ -77,20 +77,3 @@ extension UserClient {
         }
     }
 }
-
-extension ZMManagedObject {
-
-    /// Returns the first of two objects that is not null. If both are
-    /// not null, deletes the second one
-    fileprivate static func firstNonNullAndDeleteSecond<Object: ZMManagedObject>(
-        _ obj1: Object?,
-        _ obj2: Object?) -> Object? {
-        if let obj1 = obj1 {
-            if let obj2 = obj2 {
-                obj2.managedObjectContext?.delete(obj2)
-            }
-            return obj1
-        }
-        return obj2
-    }
-}

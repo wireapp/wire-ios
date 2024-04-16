@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 
+import WireDataModelSupport
 @testable import WireSyncEngine
 
 class ApplicationStatusDirectoryTests: MessagingTest {
@@ -36,8 +37,8 @@ class ApplicationStatusDirectoryTests: MessagingTest {
                 cookieStorage: cookieStorage,
                 requestCancellation: self,
                 application: mockApplication,
-                syncStateDelegate: self,
-                lastEventIDRepository: lastEventIDRepository
+                lastEventIDRepository: lastEventIDRepository,
+                coreCryptoProvider: MockCoreCryptoProviderProtocol()
             )
         }
     }
@@ -82,33 +83,3 @@ extension ApplicationStatusDirectoryTests: ZMRequestCancellation {
     }
 
 }
-
-extension ApplicationStatusDirectoryTests: ZMSyncStateDelegate {
-
-    func didStartSlowSync() {
-        // no-op
-    }
-
-    func didFinishSlowSync() {
-        // no-op
-    }
-
-    func didStartQuickSync() {
-        // no-op
-    }
-
-    func didFinishQuickSync() {
-        // no-op
-    }
-
-    func didRegisterSelfUserClient(_ userClient: UserClient) {
-        // nop
-    }
-
-    func didFailToRegisterSelfUserClient(error: Error) {
-        // nop
-    }
-
-    func didDeleteSelfUserClient(error: Error) {
-        // nop
-    }}

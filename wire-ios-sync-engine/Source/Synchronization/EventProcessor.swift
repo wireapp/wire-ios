@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,10 +19,6 @@
 import Foundation
 import WireUtilities
 import WireRequestStrategy
-
-extension NSNotification.Name {
-    static let calculateBadgeCount = NSNotification.Name(rawValue: "calculateBadgeCountNotication")
-}
 
 actor EventProcessor: UpdateEventProcessor {
 
@@ -66,13 +62,20 @@ actor EventProcessor: UpdateEventProcessor {
 
     func processEvents(_ events: [ZMUpdateEvent]) async throws {
         try await enqueueTask {
+            NotificationCenter.default.post(name: .eventProcessorDidStartProcessingEventsNotification, object: self)
+
             guard !DeveloperFlag.ignoreIncomingEvents.isOn else { return }
+
             let publicKeys = try? self.earService.fetchPublicKeys()
             let decryptedEvents = await self.eventDecoder.decryptAndStoreEvents(events, publicKeys: publicKeys)
             await self.processBackgroundEvents(decryptedEvents)
-            await self.requestToCalculateBadgeCount()
+
             let isLocked = await self.syncContext.perform { self.syncContext.isLocked }
             try await self.processEvents(callEventsOnly: isLocked)
+
+            await self.requestToCalculateBadgeCount()
+
+            NotificationCenter.default.post(name: .eventProcessorDidFinishProcessingEventsNotification, object: self)
         }
     }
 
@@ -87,16 +90,9 @@ actor EventProcessor: UpdateEventProcessor {
             _ = await processingTask?.result
             return try await block()
         }
-        guard let taskResult = await processingTask?.result else {
-            return
-        }
 
-        switch taskResult {
-        case .success:
-            break
-        case .failure(let error):
-            throw error
-        }
+        // throw error if any
+        _ = try await processingTask?.value
     }
 
     private func processBackgroundEvents(_ events: [ZMUpdateEvent]) async {
@@ -115,23 +111,23 @@ actor EventProcessor: UpdateEventProcessor {
     }
 
     private func processEvents(callEventsOnly: Bool) async throws {
-            WireLogger.updateEvent.info("process pending events (callEventsOnly: \(callEventsOnly)")
+        WireLogger.updateEvent.info("process pending events: callEventsOnly=\(callEventsOnly)")
 
-            let encryptMessagesAtRest = await syncContext.perform {
-                self.syncContext.encryptMessagesAtRest
+        let encryptMessagesAtRest = await syncContext.perform {
+            self.syncContext.encryptMessagesAtRest
+        }
+        if encryptMessagesAtRest {
+            do {
+                WireLogger.updateEvent.info("trying to get EAR keys")
+                let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !callEventsOnly)
+                await processStoredUpdateEvents(with: privateKeys, callEventsOnly: callEventsOnly)
+            } catch {
+                WireLogger.updateEvent.error("failed to fetch EAR keys: \(String(describing: error))")
+                throw error
             }
-            if encryptMessagesAtRest {
-                do {
-                    WireLogger.updateEvent.info("trying to get EAR keys")
-                    let privateKeys = try earService.fetchPrivateKeys(includingPrimary: !callEventsOnly)
-                    await processStoredUpdateEvents(with: privateKeys, callEventsOnly: callEventsOnly)
-                } catch {
-                    WireLogger.updateEvent.error("failed to fetch EAR keys: \(String(describing: error))")
-                    throw error
-                }
-            } else {
-                await processStoredUpdateEvents(callEventsOnly: callEventsOnly)
-            }
+        } else {
+            await processStoredUpdateEvents(callEventsOnly: callEventsOnly)
+        }
     }
 
     private func processStoredUpdateEvents(
@@ -143,10 +139,10 @@ actor EventProcessor: UpdateEventProcessor {
         await eventDecoder.processStoredEvents(
             with: privateKeys,
             callEventsOnly: callEventsOnly
-        ) { [weak self] (decryptedUpdateEvents) in
+        ) { [weak self] decryptedUpdateEvents in
             WireLogger.updateEvent.info("retrieved \(decryptedUpdateEvents.count) events from the database")
 
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             let date = Date()
             let fetchRequest = await prefetchRequest(updateEvents: decryptedUpdateEvents)
@@ -166,7 +162,9 @@ actor EventProcessor: UpdateEventProcessor {
                         eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
                     }
                 }
+                // swiftlint:disable todo_requires_jira_link
                 // TODO: [F] @Jacob should this be done on syncContext to keep every thing in sync?
+                // swiftlint:enable todo_requires_jira_link
                 for eventConsumer in self.eventAsyncConsumers {
                     await eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
                 }
@@ -203,4 +201,15 @@ actor EventProcessor: UpdateEventProcessor {
 
         return fetchRequest
     }
+}
+
+extension Notification.Name {
+
+    static let calculateBadgeCount = Self(rawValue: "calculateBadgeCountNotication")
+
+    /// Published before the first event is processed.
+    static let eventProcessorDidStartProcessingEventsNotification = Self("EventProcessorDidStartProcessingEvents")
+
+    /// Published after the last event has been processed.
+    static let eventProcessorDidFinishProcessingEventsNotification = Self("EventProcessorDidFinishProcessingEvents")
 }

@@ -225,7 +225,7 @@ final class TokenField: UIView {
         let maxHeight = fontLineHeight * CGFloat(numberOfLines) + lineSpacing * CGFloat(numberOfLines - 1) + textView.textContainerInset.top + textView.textContainerInset.bottom
         let minHeight = fontLineHeight + textView.textContainerInset.top + textView.textContainerInset.bottom
 
-        return CGSize(width: UIView.noIntrinsicMetric, height: isCollapsed ? minHeight: max(min(height, maxHeight), minHeight))
+        return CGSize(width: UIView.noIntrinsicMetric, height: isCollapsed ? minHeight : max(min(height, maxHeight), minHeight))
     }
 
     override func layoutSubviews() {
@@ -319,7 +319,7 @@ final class TokenField: UIView {
 
     // searches by isEqual:
     func token(forRepresentedObject object: NSObjectProtocol) -> Token<NSObjectProtocol>? {
-        return tokens.first(where: { $0.representedObject == HashBox(value: object)})
+        return tokens.first(where: { $0.representedObject == HashBox(value: object) })
     }
 
     private func scrollToBottomOfInputField() {
@@ -763,7 +763,7 @@ extension TokenField: UITextViewDelegate {
         // so don’t do any magic in that case
 
         if !text.isEmpty,
-           let attachmentCharacter = UnicodeScalar.textAttachmentCharacter,
+           let attachmentCharacter = Unicode.Scalar.textAttachmentCharacter,
            let textRange = Range(range, in: textView.text),
            textView.text.suffix(from: textRange.upperBound).unicodeScalars.contains(attachmentCharacter) {
             textView.selectedRange = NSRange(location: textView.text.utf16.count, length: 0)
@@ -774,8 +774,8 @@ extension TokenField: UITextViewDelegate {
     }
 }
 
-extension UnicodeScalar {
-    fileprivate static var textAttachmentCharacter: UnicodeScalar? {
-        return UnicodeScalar(NSTextAttachment.character)
+extension Unicode.Scalar {
+    fileprivate static var textAttachmentCharacter: Self? {
+        .init(NSTextAttachment.character)
     }
 }

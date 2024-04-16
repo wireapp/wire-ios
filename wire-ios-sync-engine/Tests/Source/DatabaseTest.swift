@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,6 +45,10 @@ class DatabaseTest: ZMTBaseTest {
         return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: groupIdentifier)
     }
 
+    var cacheURL: URL {
+        return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+    }
+
     private func cleanUp() {
         try? FileManager.default.contentsOfDirectory(at: sharedContainerURL!, includingPropertiesForKeys: nil, options: .skipsHiddenFiles).forEach {
             try? FileManager.default.removeItem(at: $0)
@@ -58,7 +62,7 @@ class DatabaseTest: ZMTBaseTest {
                                   inMemoryStore: true,
                                   dispatchGroup: dispatchGroup)
 
-        stack.loadStores { (error) in
+        stack.loadStores { error in
             XCTAssertNil(error)
         }
 
@@ -66,7 +70,7 @@ class DatabaseTest: ZMTBaseTest {
     }
 
     private func configureCaches() {
-        let fileAssetCache = FileAssetCache(location: nil)
+        let fileAssetCache = FileAssetCache(location: cacheURL)
         let userImageCache = UserImageLocalCache(location: nil)
 
         uiMOC.zm_fileAssetCache = fileAssetCache

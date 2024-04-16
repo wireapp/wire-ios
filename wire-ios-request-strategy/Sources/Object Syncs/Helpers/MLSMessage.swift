@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,8 +28,8 @@ extension ZMAssetClientMessage: MLSMessage {}
 
 extension GenericMessageEntity: MLSMessage {
 
-    public func encryptForTransport(using encrypt: (Data) throws -> Data) throws -> Data {
-        return try message.encryptForTransport(using: encrypt)
+    public func encryptForTransport(using encrypt: (Data) async throws -> Data) async throws -> Data {
+        return try await message.encryptForTransport(using: encrypt)
     }
 
 }

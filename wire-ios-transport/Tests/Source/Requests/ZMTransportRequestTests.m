@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import XCTest;
 @import WireTesting;
@@ -406,7 +405,7 @@
 - (void)testThatItCallsTaskCreatedHandler
 {
     // given
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Task created handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Task created handler called"];
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMTransportRequestMethodPut payload:@{} apiVersion:0];
     ZMTaskIdentifier *expectedIdentifier = [ZMTaskIdentifier identifierWithIdentifier:2 sessionIdentifier:@"test-session"];
     
@@ -427,8 +426,8 @@
 - (void)testThatItCallsMultipleTaskCreatedHandlers
 {
     // given
-    XCTestExpectation *firstExpectation = [self expectationWithDescription:@"First task created handler called"];
-    XCTestExpectation *secondExpectation = [self expectationWithDescription:@"Second task created handler called"];;
+    XCTestExpectation *firstExpectation = [self customExpectationWithDescription:@"First task created handler called"];
+    XCTestExpectation *secondExpectation = [self customExpectationWithDescription:@"Second task created handler called"];;
     
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMTransportRequestMethodPut payload:@{} apiVersion:0];
     ZMTaskIdentifier *expectedIdentifier = [ZMTaskIdentifier identifierWithIdentifier:2 sessionIdentifier:@"test-session"];
@@ -480,7 +479,7 @@
 - (void)testThatItCallsTheCompletionHandler
 {
     // given
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMTransportRequestMethodPut payload:@{} apiVersion:0];
 
     [transportRequest addCompletionHandler:
@@ -498,8 +497,8 @@
 - (void)testThatItCallsMultipleCompletionHandlers
 {
     // given
-    XCTestExpectation *expectation1 = [self expectationWithDescription:@"Completion 1 handler called"];
-    XCTestExpectation *expectation2 = [self expectationWithDescription:@"Completion 2 handler called"];
+    XCTestExpectation *expectation1 = [self customExpectationWithDescription:@"Completion 1 handler called"];
+    XCTestExpectation *expectation2 = [self customExpectationWithDescription:@"Completion 2 handler called"];
 
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMTransportRequestMethodPut payload:@{} apiVersion:0];
     
@@ -534,7 +533,7 @@
 - (void)testThatCompletionHandlerIsExecutedWithTheResponse;
 {
     // given
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Completion handler called"];
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"name":@"foo"} HTTPStatus:213 transportSessionError:nil apiVersion:0];
     __block ZMTransportResponse *receivedResponse;
     
@@ -557,9 +556,9 @@
 - (void)testThatCompletionHandlersAreExecutedFromFirstToLast
 {
     // given
-    XCTestExpectation *expectation1 = [self expectationWithDescription:@"Completion 1 handler called"];
-    XCTestExpectation *expectation2 = [self expectationWithDescription:@"Completion 2 handler called"];
-    XCTestExpectation *expectation3 = [self expectationWithDescription:@"Completion 3 handler called"];
+    XCTestExpectation *expectation1 = [self customExpectationWithDescription:@"Completion 1 handler called"];
+    XCTestExpectation *expectation2 = [self customExpectationWithDescription:@"Completion 2 handler called"];
+    XCTestExpectation *expectation3 = [self customExpectationWithDescription:@"Completion 3 handler called"];
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{} HTTPStatus:200 transportSessionError:nil apiVersion:0];
 
     __block NSMutableString *responses = [[NSMutableString alloc] init];
@@ -599,7 +598,7 @@
     // given
     const float expectedProgress = 0.5f;
     
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Task progress handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Task progress handler called"];
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMTransportRequestMethodPut payload:@{} apiVersion:0];
     
     [transportRequest addProgressHandler: [ZMTaskProgressHandler handlerOnGroupQueue:self.fakeSyncContext block:^(float progress) {
@@ -620,7 +619,7 @@
     const static float expectedProgress[] = {0.0f, 0.1f, 0.5f, 0.9f, 1.0f};
     const static size_t expectedProgressSize = sizeof(expectedProgress) / sizeof(expectedProgress[0]);
     
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Task progress handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Task progress handler called"];
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMTransportRequestMethodPut payload:@{} apiVersion:0];
     
     NSUInteger __block currentCallIndex = 0;
@@ -649,7 +648,7 @@
     const float randomProgress = 1000234.0f;
     const float expectedProgress = 1.0f;
     
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Task progress handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Task progress handler called"];
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMTransportRequestMethodPut payload:@{} apiVersion:0];
     
     [transportRequest addProgressHandler: [ZMTaskProgressHandler handlerOnGroupQueue:self.fakeSyncContext block:^(float progress) {
@@ -670,7 +669,7 @@
     const float randomProgress = -123.0f;
     const float expectedProgress = 0.0f;
     
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Task progress handler called"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Task progress handler called"];
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMTransportRequestMethodPut payload:@{} apiVersion:0];
     
     [transportRequest addProgressHandler: [ZMTaskProgressHandler handlerOnGroupQueue:self.fakeSyncContext block:^(float progress) {
@@ -690,8 +689,8 @@
     // given
     const float expectedProgress = 0.5f;
     
-    XCTestExpectation *expectation1 = [self expectationWithDescription:@"Task progress handler 1 called"];
-    XCTestExpectation *expectation2 = [self expectationWithDescription:@"Task progress handler 2 called"];
+    XCTestExpectation *expectation1 = [self customExpectationWithDescription:@"Task progress handler 1 called"];
+    XCTestExpectation *expectation2 = [self customExpectationWithDescription:@"Task progress handler 2 called"];
 
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMTransportRequestMethodPut payload:@{} apiVersion:0];
     

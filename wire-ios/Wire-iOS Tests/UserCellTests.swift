@@ -52,20 +52,27 @@ final class UserCellTests: BaseSnapshotTestCase {
 
     // MARK: - Helper method
 
-    private func verify(mockUser: UserType,
-                        conversation: GroupDetailsConversationType,
-                        file: StaticString = #file,
-                        testName: String = #function,
-                        line: UInt = #line) {
-        guard let user = SelfUser.provider?.providedSelfUser else {
+    private func verify(
+        mockUser: UserType,
+        conversation: GroupDetailsConversationType,
+        isE2EICertified: Bool,
+        file: StaticString = #file,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        guard let selfUser = SelfUser.provider?.providedSelfUser else {
             assertionFailure("expected available 'user'!")
             return
         }
 
         sut = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
-        sut.configure(with: mockUser,
-                      selfUser: user,
-                      conversation: conversation)
+        sut.configure(
+            userStatus: .init(user: mockUser, isE2EICertified: false),
+            user: mockUser,
+            userIsSelfUser: mockUser.isSelfUser,
+            isSelfUserPartOfATeam: selfUser.hasTeam,
+            conversation: conversation
+        )
         sut.accessoryIconView.isHidden = false
 
         verifyInAllColorSchemes(matching: sut, file: file, testName: testName, line: line)
@@ -78,7 +85,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.teamRole = .partner
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
     }
 
     func testServiceUser() {
@@ -86,7 +93,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.mockedIsServiceUser = true
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
     }
 
     func testNonTeamUser() {
@@ -95,7 +102,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.isConnected = true
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
     }
 
     func testTrustedNonTeamUser() {
@@ -103,7 +110,20 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.isVerified = true
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
+    }
+
+    func testCertifiedNonTeamUser() {
+        // THEN
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: true)
+    }
+
+    func testTrustedAndCertifiedNonTeamUser() {
+        // GIVEN && WHEN
+        mockUser.isVerified = true
+
+        // THEN
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: true)
     }
 
     func testFederatedUser() {
@@ -112,7 +132,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.domain = "foo.com"
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
     }
 
     func testGuestUser() {
@@ -120,7 +140,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.isGuestInConversation = true
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
     }
 
     func testGuestUser_Wireless() {
@@ -130,7 +150,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.handle = nil
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
     }
 
     func testTrustedGuestUser() {
@@ -139,7 +159,37 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.isGuestInConversation = true
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
+    }
+
+    func testCertifiedGuestUser() {
+        // GIVEN && WHEN
+        mockUser.isGuestInConversation = true
+
+        // THEN
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: true)
+    }
+
+    func testTrustedAndCertifiedGuestUser() {
+        // GIVEN && WHEN
+        mockUser.isVerified = true
+        mockUser.isGuestInConversation = true
+
+        // THEN
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: true)
+    }
+
+    func testSelfUser() throws {
+        // GIVEN && WHEN
+        mockUser = MockUserType.createUser(name: "Tarja Turunen")
+        mockUser.accentColorValue = .vividRed
+        mockUser.isConnected = true
+        mockUser.handle = "tarja_turunen"
+        mockUser.availability = .busy
+        mockUser.isSelfUser = true
+
+        // THEN
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: true)
     }
 
     func testNonTeamUserWithoutHandle() {
@@ -150,7 +200,7 @@ final class UserCellTests: BaseSnapshotTestCase {
         mockUser.handle = nil
 
         // THEN
-        verify(mockUser: mockUser, conversation: conversation)
+        verify(mockUser: mockUser, conversation: conversation, isE2EICertified: false)
     }
 
     func testUserInsideOngoingVideoCall() {
@@ -187,16 +237,20 @@ final class UserCellTests: BaseSnapshotTestCase {
 
     func testThatAccessIDIsGenerated() {
         // GIVEN
-        let user = SwiftMockLoader.mockUsers().map(ParticipantsRowType.init)[0]
+        let user = SwiftMockLoader.mockUsers()[0]
         let cell = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
         cell.sectionName = "Members"
         cell.cellIdentifier = "participants.section.participants.cell"
 
         // WHEN
-        cell.configure(with: user, conversation: conversation, showSeparator: true)
+        cell.configure(
+            user: user,
+            isE2EICertified: false,
+            conversation: conversation,
+            showSeparator: true
+        )
 
         // THEN
         XCTAssertEqual(cell.accessibilityIdentifier, "Members - participants.section.participants.cell")
     }
-
 }

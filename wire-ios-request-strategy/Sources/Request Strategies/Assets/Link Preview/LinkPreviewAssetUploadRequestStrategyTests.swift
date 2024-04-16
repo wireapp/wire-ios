@@ -1,20 +1,20 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 import WireLinkPreview
@@ -129,7 +129,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             // GIVEN
             let article = self.createArticle()
             let message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article)
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: true, data: article.imageData.first!)
+            self.syncMOC.zm_fileAssetCache.storeEncryptedMediumImage(data: article.imageData.first!, for: message)
 
             self.syncMOC.saveOrRollback()
             self.process(self.sut, message: message)
@@ -149,7 +149,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             // GIVEN
             let article = self.createArticle()
             let message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article)
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: true, data: article.imageData.first!)
+            self.syncMOC.zm_fileAssetCache.storeEncryptedMediumImage(data: article.imageData.first!, for: message)
             self.process(self.sut, message: message)
             self.mockApplicationStatus.mockSynchronizationState = .unauthenticated
 
@@ -166,7 +166,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             // GIVEN
             let article = self.createArticle()
             let message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .waitingToBeProcessed, linkPreview: article)
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: true, data: article.imageData.first!)
+            self.syncMOC.zm_fileAssetCache.storeEncryptedMediumImage(data: article.imageData.first!, for: message)
             self.process(self.sut, message: message)
 
             // WHEN
@@ -182,7 +182,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             // GIVEN
             let article = self.createArticle()
             let message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .done, linkPreview: article)
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: true, data: article.imageData.first!)
+            self.syncMOC.zm_fileAssetCache.storeEncryptedMediumImage(data: article.imageData.first!, for: message)
             self.process(self.sut, message: message)
 
             // WHEN
@@ -221,7 +221,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             otrKey = keys.0
             sha256 = keys.1
 
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: true, data: article.imageData.first!)
+            self.syncMOC.zm_fileAssetCache.storeEncryptedMediumImage(data: article.imageData.first!, for: message)
             _ = self.encryptLinkPreview(inMessage: message)
             message.linkPreviewState = .waitingToBeProcessed
             self.syncMOC.saveOrRollback()
@@ -253,7 +253,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             let article = self.createArticle()
             message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article)
             _ = self.encryptLinkPreview(inMessage: message)
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: true, data: article.imageData.first!)
+            self.syncMOC.zm_fileAssetCache.storeEncryptedMediumImage(data: article.imageData.first!, for: message)
             message.linkPreviewState = .processed
             self.syncMOC.saveOrRollback()
 
@@ -295,7 +295,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
             otrKey = keys.0
             sha256 = keys.1
 
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: true, data: article.imageData.first!)
+            self.syncMOC.zm_fileAssetCache.storeEncryptedMediumImage(data: article.imageData.first!, for: message)
             _ = self.encryptLinkPreview(inMessage: message)
             message.linkPreviewState = .waitingToBeProcessed
             self.syncMOC.saveOrRollback()

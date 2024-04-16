@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import WireDataModel;
 #import "ZMHotFixDirectory.h"
@@ -107,12 +106,12 @@ static NSString* ZMLogTag ZM_UNUSED = @"HotFix";
                          [ZMHotFixDirectory refetchConnectedUsers:context];
                      }],
 
-                    /// We need to force a slow sync with the introduction of Teams, as users might have missed
+                    /// We need to force a slow sync (resyncResources) with the introduction of Teams, as users might have missed
                     /// update events when being added to teams or team conversations.
                     [ZMHotFixPatch
                      patchWithVersion:@"88.0.0"
                      patchCode:^(__unused NSManagedObjectContext *context) {
-                         [ZMHotFixDirectory restartSlowSync:context];
+                         [ZMHotFixDirectory resyncResources:context];
                      }],
 
                     /// We need to refetch all team conversations to get data about access levels that were
@@ -195,11 +194,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"HotFix";
                          [ZMHotFixDirectory migrateBackendEnvironmentToSharedUserDefaults];
                      }],
                     
-                    /// We need to restart the slow sync after fixing a connection bug in order restore lost connections.
+                    /// We need to restart the slow sync (resyncResources) after fixing a connection bug in order restore lost connections.
                     [ZMHotFixPatch
                      patchWithVersion:@"354.0.1"
                      patchCode:^(NSManagedObjectContext *context) {
-                        [ZMHotFixDirectory restartSlowSync:context];
+                        [ZMHotFixDirectory resyncResources:context];
                     }],
 
                     /// We need to refetch the users after qualified ID was introduced

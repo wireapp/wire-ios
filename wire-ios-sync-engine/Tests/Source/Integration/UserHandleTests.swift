@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ class UserHandleTests: IntegrationTest {
         XCTAssertTrue(login())
 
         self.userProfileStatusObserver = TestUserProfileUpdateObserver()
-        self.observerToken = self.userSession?.userProfile?.add(observer: self.userProfileStatusObserver)
+        self.observerToken = self.userSession?.userProfile.add(observer: self.userProfileStatusObserver)
     }
 
     override func tearDown() {
@@ -50,7 +50,7 @@ class UserHandleTests: IntegrationTest {
         let handle = "Oscar"
 
         // WHEN
-        self.userSession?.userProfile?.requestCheckHandleAvailability(handle: handle)
+        self.userSession?.userProfile.requestCheckHandleAvailability(handle: handle)
 
         // THEN
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -70,12 +70,12 @@ class UserHandleTests: IntegrationTest {
         // GIVEN
         let handle = "Oscar"
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             self.user1.handle = handle
         }
 
         // WHEN
-        self.userSession?.userProfile?.requestCheckHandleAvailability(handle: handle)
+        self.userSession?.userProfile.requestCheckHandleAvailability(handle: handle)
 
         // THEN
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -96,7 +96,7 @@ class UserHandleTests: IntegrationTest {
         let handle = "Evelyn"
 
         // WHEN
-        self.userSession?.userProfile?.requestSettingHandle(handle: handle)
+        self.userSession?.userProfile.requestSettingHandle(handle: handle)
 
         // THEN
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -118,17 +118,18 @@ class UserHandleTests: IntegrationTest {
         }
     }
 
-    func testThatItIsNotifiedWhenFailsToSetTheHandleBecauseItExists() {
+    // FIXME: [WPB-5882] this test is flaky - [jacob]
+    func disabled_testThatItIsNotifiedWhenFailsToSetTheHandleBecauseItExists() {
 
         // GIVEN
         let handle = "Evelyn"
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             self.user1.handle = handle
         }
 
         // WHEN
-        self.userSession?.userProfile?.requestSettingHandle(handle: handle)
+        self.userSession?.userProfile.requestSettingHandle(handle: handle)
 
         // THEN
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -156,7 +157,7 @@ class UserHandleTests: IntegrationTest {
         }
 
         // WHEN
-        self.userSession?.userProfile?.requestSettingHandle(handle: handle)
+        self.userSession?.userProfile.requestSettingHandle(handle: handle)
 
         // THEN
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))

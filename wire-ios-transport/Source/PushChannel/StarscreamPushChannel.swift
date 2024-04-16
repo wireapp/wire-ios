@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 import Starscream
 
 @objcMembers
-class StarscreamPushChannel: NSObject, PushChannelType {
+final class StarscreamPushChannel: NSObject, PushChannelType {
 
     var webSocket: WebSocket?
     var workQueue: OperationQueue
@@ -237,7 +237,10 @@ extension StarscreamPushChannel: WebSocketDelegate {
             Logging.pushChannel.debug("Received data")
             guard
                 let transportData = try? JSONSerialization.jsonObject(with: data, options: []) as? ZMTransportData
-            else { break }
+            else {
+                Logging.pushChannel.safePublic("Received binary data via push channel cannot be deserialized", level: .error)
+                break
+            }
 
             consumerQueue?.performGroupedBlock { [weak self] in
                 self?.consumer?.pushChannelDidReceive(transportData)
@@ -259,7 +262,7 @@ extension StarscreamPushChannel: WebSocketDelegate {
 
 }
 
-class StarscreamCertificatePinning: CertificatePinning {
+final class StarscreamCertificatePinning: CertificatePinning {
 
     let environment: BackendEnvironmentProvider
 

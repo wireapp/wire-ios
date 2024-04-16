@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -77,19 +77,15 @@ extension UserProfileUpdateStatusTests {
 
 // MARK: - Changing email
 extension UserProfileUpdateStatusTests {
-    func testThatItReturnsErrorWhenPreparingForEmailChangeAndUserUserHasNoEmail() {
+
+    func testThatItReturnsErrorWhenPreparingForEmailChangeAndUserUserHasNoEmail() throws {
 
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         selfUser.setValue(nil, forKey: #keyPath(ZMUser.emailAddress))
 
         // WHEN
-        do {
-            try self.sut.requestEmailChange(email: "foo@example.com")
-        } catch {
-            XCTFail("Should not throw")
-            return
-        }
+        try sut.requestEmailChange(email: "foo@example.com")
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
@@ -103,19 +99,14 @@ extension UserProfileUpdateStatusTests {
         }
     }
 
-    func testThatItPreparesForEmailChangeIfSelfUserHasEmail() {
+    func testThatItPreparesForEmailChangeIfSelfUserHasEmail() throws {
 
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         selfUser.setValue("my@fo.example.com", forKey: #keyPath(ZMUser.emailAddress))
 
         // WHEN
-        do {
-            try self.sut.requestEmailChange(email: "foo@example.com")
-        } catch {
-            XCTFail("Should not throw")
-            return
-        }
+        try sut.requestEmailChange(email: "foo@example.com")
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN
@@ -136,7 +127,7 @@ extension UserProfileUpdateStatusTests {
         XCTAssertNil(self.sut.emailCredentials())
     }
 
-    func testThatItPreparesForEmailAndPasswordChangeIfTheSelfUserHasNoEmail() {
+    func testThatItPreparesForEmailAndPasswordChangeIfTheSelfUserHasNoEmail() throws {
 
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
@@ -144,12 +135,7 @@ extension UserProfileUpdateStatusTests {
         let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
 
         // WHEN
-        do {
-            try self.sut.requestSettingEmailAndPassword(credentials: credentials)
-        } catch {
-            XCTFail()
-            return
-        }
+        try sut.requestSettingEmailAndPassword(credentials: credentials)
 
         // THEN
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -159,7 +145,7 @@ extension UserProfileUpdateStatusTests {
         XCTAssertEqual(self.newRequestCallbackCount, 1)
     }
 
-    func testThatItReturnsErrorWhenPreparingForEmailAndPasswordChangeAndUserUserHasEmail() {
+    func testThatItReturnsErrorWhenPreparingForEmailAndPasswordChangeAndUserUserHasEmail() throws {
 
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
@@ -167,12 +153,7 @@ extension UserProfileUpdateStatusTests {
         let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
 
         // WHEN
-        do {
-            try self.sut.requestSettingEmailAndPassword(credentials: credentials)
-        } catch {
-            XCTFail("Should not throw")
-            return
-        }
+        try sut.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // THEN

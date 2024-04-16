@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ import Foundation
 
 // TODO-SWIFT: convert to struct
 @objc(ZMAccessToken) @objcMembers
-public class AccessToken: NSObject {
+public final class AccessToken: NSObject {
 
     public let token: String
     public let type: String

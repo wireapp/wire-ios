@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,14 +21,15 @@ import WireTransport
 @testable import WireSyncEngine
 import XCTest
 
-class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
+final class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
 
     func test_itRenewsAccessTokenAfterClientRegistration_StartingFromApiV3() {
         syncMOC.performAndWait {
-            _ = createSelfClient()
+            let selfClient = createSelfClient()
 
             APIVersion.allCases.forEach {
                 test_accessTokenRenewalAfterClientRegistration(
+                    userClient: selfClient,
                     apiVersion: $0,
                     shouldRenew: $0 > .v2
                 )
@@ -37,6 +38,7 @@ class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
     }
 
     func test_accessTokenRenewalAfterClientRegistration(
+        userClient: UserClient,
         apiVersion: APIVersion,
         shouldRenew: Bool
     ) {
@@ -48,16 +50,13 @@ class ZMUserSessionTests_AccessToken: ZMUserSessionTestsBase {
         }
         BackendInfo.apiVersion = apiVersion
 
-        let userClient = UserClient.insertNewObject(in: syncMOC)
-        userClient.remoteIdentifier = "1234abcd"
-
         // when
         sut.didRegisterSelfUserClient(userClient)
 
         // then
         if shouldRenew {
             XCTAssertEqual(transportSession.renewAccessTokenCalls.count, 1)
-            XCTAssertEqual(transportSession.renewAccessTokenCalls.first, "1234abcd")
+            XCTAssertEqual(transportSession.renewAccessTokenCalls.first, userClient.remoteIdentifier)
         } else {
             XCTAssertEqual(transportSession.renewAccessTokenCalls.count, 0)
         }

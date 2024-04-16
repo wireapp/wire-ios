@@ -28,9 +28,9 @@ public enum DigitalSignatureVerificationError: Error {
     case otherError
 }
 
-class DigitalSignatureVerificationViewController: UIViewController {
+final class DigitalSignatureVerificationViewController: UIViewController {
 
-    typealias DigitalSignatureCompletion = ((_ result: Swift.Result<Void, Error>) -> Void)
+    typealias DigitalSignatureCompletion = ((_ result: Result<Void, Error>) -> Void)
 
     // MARK: - Private Property
     private var completion: DigitalSignatureCompletion?
@@ -67,12 +67,12 @@ class DigitalSignatureVerificationViewController: UIViewController {
     }
 
     private func updateButtonMode() {
-        let buttonItem = UIBarButtonItem(title: "general.done".localized,
+        let buttonItem = UIBarButtonItem(title: L10n.Localizable.General.done,
                                          style: .done,
                                          target: self,
                                          action: #selector(onClose))
         buttonItem.accessibilityIdentifier = "DoneButton"
-        buttonItem.accessibilityLabel = "general.done".localized
+        buttonItem.accessibilityLabel = L10n.Localizable.General.done
         buttonItem.tintColor = UIColor.black
         navigationItem.leftBarButtonItem = buttonItem
     }
@@ -111,7 +111,7 @@ extension DigitalSignatureVerificationViewController: WKNavigationDelegate {
         }
     }
 
-    func parseVerificationURL(_ url: URL) -> Swift.Result<Void, Error>? {
+    func parseVerificationURL(_ url: URL) -> Result<Void, Error>? {
         let urlComponents = URLComponents(string: url.absoluteString)
         let postCode = urlComponents?.queryItems?
             .first(where: { $0.name == "postCode" })

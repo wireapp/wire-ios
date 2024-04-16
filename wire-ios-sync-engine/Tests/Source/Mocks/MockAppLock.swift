@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 import Foundation
 
-class MockAppLock: AppLockType {
+final class MockAppLock: AppLockType {
 
     // MARK: - Metrics
 
@@ -55,7 +55,11 @@ class MockAppLock: AppLockType {
         // No op
     }
 
-    func evaluateAuthentication(passcodePreference: AppLockPasscodePreference, description: String, context: LAContextProtocol, callback: @escaping (AppLockAuthenticationResult, LAContextProtocol) -> Void) {
+    func evaluateAuthentication(
+        passcodePreference: AppLockPasscodePreference,
+        description: String,
+        callback: @escaping (AppLockAuthenticationResult) -> Void
+    ) {
         fatalError("Not implemented")
     }
 

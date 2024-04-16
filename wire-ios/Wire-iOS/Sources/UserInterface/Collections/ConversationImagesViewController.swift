@@ -157,7 +157,7 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         [pageViewController.view,
          buttonsBar,
          overlay,
-         separator].prepareForLayout()
+         separator].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         pageViewController.view.fitIn(view: view)
         NSLayoutConstraint.activate([
@@ -359,7 +359,8 @@ final class ConversationImagesViewController: TintColorCorrectedViewController {
         guard let sender = currentMessage.senderUser, let serverTimestamp = currentMessage.serverTimestamp else {
             return
         }
-        navigationItem.titleView = TwoLineTitleView(first: (sender.name ?? "").localized, second: serverTimestamp.formattedDate)
+        navigationItem.titleView = TwoLineTitleView(first: (sender.name ?? "").localized.attributedString,
+                                                    second: serverTimestamp.formattedDate.attributedString)
         navigationItem.titleView?.accessibilityTraits = .header
         navigationItem.titleView?.accessibilityLabel = "\(sender.name ?? ""), \(serverTimestamp.formattedDate)"
     }

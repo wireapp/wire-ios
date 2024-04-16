@@ -70,7 +70,7 @@ class StartUIIconCell: UICollectionViewCell {
     fileprivate func createConstraints() {
         let iconSize: CGFloat = 32.0
 
-        [iconView, titleLabel, separator].prepareForLayout()
+        [iconView, titleLabel, separator].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             iconView.widthAnchor.constraint(equalToConstant: iconSize),
             iconView.heightAnchor.constraint(equalToConstant: iconSize),

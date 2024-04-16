@@ -1,20 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 @import WireDataModel;
 @import WireTesting;
@@ -89,7 +89,7 @@
     self.connection1 = [ZMConnection insertNewObjectInManagedObjectContext:self.coreDataStack.viewContext];
     self.connection1.status = ZMConnectionStatusAccepted;
     self.user1.connection = self.connection1;
-    self.connection1.conversation = self.conversation1;
+    self.user1.oneOnOneConversation = self.conversation1;
     self.changeTracker1 = [[FakeChangeTracker alloc] init];
     self.changeTracker2 = [[FakeChangeTracker alloc] init];
     XCTAssert([self.coreDataStack.viewContext saveOrRollback]);
@@ -203,7 +203,7 @@
     
     NSString *entityName = ZMConversation.entityName;
     NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@"userDefinedName == %@", self.conversation1.userDefinedName];
-    NSPredicate *predicate2 = [NSPredicate predicateWithFormat:@"connection != 0 && connection.status == %@", @(self.connection1.status)];
+    NSPredicate *predicate2 = [NSPredicate predicateWithFormat:@"oneOnOneUser.connection != 0 && oneOnOneUser.connection.status == %@", @(self.connection1.status)];
     
     NSFetchRequest *request1 = [NSFetchRequest fetchRequestWithEntityName:entityName];
     request1.predicate = predicate1;

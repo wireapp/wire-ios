@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         setCurrentAPIVersion(nil)
         let domain = "example com"
 
-        let expectation = self.expectation(description: "should get an error")
+        let expectation = self.customExpectation(description: "should get an error")
         var gettingExpectedError = false
         // when
         sut.lookup(domain: domain) { result in
@@ -146,8 +146,8 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
 
     // MARK: - Helpers
 
-    func checkThat(statusCode: Int, isProcessedAs expectedResult: Result<DomainInfo>, payload: ZMTransportData?) {
-        let resultExpectation = expectation(description: "Expected result: \(expectedResult)")
+    func checkThat(statusCode: Int, isProcessedAs expectedResult: Result<DomainInfo, Error>, payload: ZMTransportData?) {
+        let resultExpectation = customExpectation(description: "Expected result: \(expectedResult)")
 
         // given
         sut.lookup(domain: "example.com") { result in

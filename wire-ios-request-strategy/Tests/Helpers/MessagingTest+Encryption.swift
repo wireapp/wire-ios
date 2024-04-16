@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,9 +36,11 @@ extension MessagingTestBase {
         }
 
         var cypherText: Data?
-        self.encryptionContext(for: sender).perform { (session) in
+        self.encryptionContext(for: sender).perform { session in
             if !session.hasSession(for: selfClient.sessionIdentifier!) {
+                // swiftlint:disable todo_requires_jira_link
                 // TODO: [John] use flag here
+                // swiftlint:enable todo_requires_jira_link
                 guard let lastPrekey = try? syncMOC.zm_cryptKeyStore.lastPreKey() else {
                     fatalError("Can't get prekey for self user")
                 }
@@ -62,19 +64,29 @@ extension MessagingTestBase {
         // this makes sure the client has remote identifier
         _ = self.encryptionContext(for: client)
 
-        if client.hasSessionWithSelfClient {
+        var hasSessionWithSelfClient: Bool = false
+        syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
+            if let id = client.sessionIdentifier {
+              hasSessionWithSelfClient = sessionsDirectory.hasSession(for: id)
+            } else {
+              hasSessionWithSelfClient = false
+            }
+        }
+
+        if hasSessionWithSelfClient {
             // done!
             return
         }
 
-        let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()!
         var prekey: String?
-        self.encryptionContext(for: client).perform { (session) in
+        self.encryptionContext(for: client).perform { session in
             prekey = try! session.generateLastPrekey()
         }
 
+        // swiftlint:disable todo_requires_jira_link
         // TODO: [John] use flag here
-        syncMOC.zm_cryptKeyStore.encryptionContext.perform { (session) in
+        // swiftlint:enable todo_requires_jira_link
+        syncMOC.zm_cryptKeyStore.encryptionContext.perform { session in
             try! session.createClientSession(client.sessionIdentifier!, base64PreKeyString: prekey!)
         }
     }
@@ -84,7 +96,7 @@ extension MessagingTestBase {
 
         let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()!
         var plainText: Data?
-        self.encryptionContext(for: client).perform { (session) in
+        self.encryptionContext(for: client).perform { session in
             if session.hasSession(for: selfClient.sessionIdentifier!) {
                 do {
                     plainText = try session.decrypt(cypherText, from: selfClient.sessionIdentifier!)
@@ -122,7 +134,7 @@ extension MessagingTestBase {
         if client.remoteIdentifier == nil {
             client.remoteIdentifier = UUID.create().transportString()
         }
-        let url =  self.otherClientsEncryptionContextsURL.appendingPathComponent("client-\(client.remoteIdentifier!)")
+        let url = self.otherClientsEncryptionContextsURL.appendingPathComponent("client-\(client.remoteIdentifier!)")
         try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: [:])
         let encryptionContext = EncryptionContext(path: url)
         return encryptionContext

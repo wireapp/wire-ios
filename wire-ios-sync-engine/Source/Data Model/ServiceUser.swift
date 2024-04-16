@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -143,7 +143,7 @@ public extension ServiceUser {
 
         let request = serviceUserData.requestToFetchProvider(apiVersion: apiVersion)
 
-        request.add(ZMCompletionHandler(on: userSession.managedObjectContext, block: { (response) in
+        request.add(ZMCompletionHandler(on: userSession.managedObjectContext, block: { response in
 
             guard response.httpStatus == 200,
                   let responseDictionary = response.payload?.asDictionary(),
@@ -170,7 +170,7 @@ public extension ServiceUser {
 
         let request = serviceUserData.requestToFetchDetails(apiVersion: apiVersion)
 
-        request.add(ZMCompletionHandler(on: userSession.managedObjectContext, block: { (response) in
+        request.add(ZMCompletionHandler(on: userSession.managedObjectContext, block: { response in
 
             guard response.httpStatus == 200,
                   let responseDictionary = response.payload?.asDictionary(),
@@ -186,7 +186,7 @@ public extension ServiceUser {
         userSession.transportSession.enqueueOneTime(request)
     }
 
-    func createConversation(in userSession: ZMUserSession, completionHandler: @escaping (Result<ZMConversation>) -> Void) {
+    func createConversation(in userSession: ZMUserSession, completionHandler: @escaping (Result<ZMConversation, Error>) -> Void) {
 
         createConversation(transportSession: userSession.transportSession,
                            eventProcessor: userSession.updateEventProcessor!,
@@ -198,7 +198,7 @@ public extension ServiceUser {
         transportSession: TransportSessionType,
         eventProcessor: UpdateEventProcessor,
         contextProvider: ContextProvider,
-        completionHandler: @escaping (Result<ZMConversation>) -> Void
+        completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     ) {
         guard transportSession.reachability.mayBeReachable else {
             completionHandler(.failure(AddBotError.offline))
@@ -279,7 +279,7 @@ extension AddBotError {
 
 public extension ZMConversation {
 
-    func add(serviceUser: ServiceUser, in userSession: ZMUserSession, completionHandler: @escaping (Swift.Result<Void, Error>) -> Void) {
+    func add(serviceUser: ServiceUser, in userSession: ZMUserSession, completionHandler: @escaping (Result<Void, Error>) -> Void) {
         guard let serviceUserData = serviceUser.serviceUserData else {
             fatal("Not a service user")
         }
@@ -287,7 +287,7 @@ public extension ZMConversation {
         add(serviceUser: serviceUserData, in: userSession, completionHandler: completionHandler)
     }
 
-    func add(serviceUser serviceUserData: ServiceUserData, in userSession: ZMUserSession, completionHandler: @escaping (Swift.Result<Void, Error>) -> Void) {
+    func add(serviceUser serviceUserData: ServiceUserData, in userSession: ZMUserSession, completionHandler: @escaping (Result<Void, Error>) -> Void) {
         add(serviceUser: serviceUserData,
             transportSession: userSession.transportSession,
             eventProcessor: userSession.updateEventProcessor!,
@@ -299,7 +299,7 @@ public extension ZMConversation {
                       transportSession: TransportSessionType,
                       eventProcessor: UpdateEventProcessor,
                       contextProvider: ContextProvider,
-                      completionHandler: @escaping (Swift.Result<Void, Error>) -> Void) {
+                      completionHandler: @escaping (Result<Void, Error>) -> Void) {
 
         guard transportSession.reachability.mayBeReachable else {
             completionHandler(.failure(AddBotError.offline))
@@ -312,7 +312,7 @@ public extension ZMConversation {
 
         let request = serviceUserData.requestToAddService(to: self, apiVersion: apiVersion)
 
-        request.add(ZMCompletionHandler(on: contextProvider.viewContext, block: { (response) in
+        request.add(ZMCompletionHandler(on: contextProvider.viewContext, block: { response in
 
             guard response.httpStatus == 201,
                   let responseDictionary = response.payload?.asDictionary(),

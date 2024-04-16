@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
            let request = request(for: assetKeys, size: .preview, user: previewAssetRequest.key, apiVersion: apiVersion) {
             requestedPreviewAssetsInProgress.insert(previewAssetRequest.key)
 
-            request.add(ZMCompletionHandler(on: syncContext, block: { [weak self] (response) in
+            request.add(ZMCompletionHandler(on: syncContext, block: { [weak self] response in
                 self?.processAsset(response: response, for: previewAssetRequest.key, size: .preview)
             }))
 
@@ -120,7 +120,7 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
            let request = request(for: assetKeys, size: .complete, user: completeAssetRequest.key, apiVersion: apiVersion) {
             requestedCompleteAssetsInProgress.insert(completeAssetRequest.key)
 
-            request.add(ZMCompletionHandler(on: syncContext, block: { [weak self] (response) in
+            request.add(ZMCompletionHandler(on: syncContext, block: { [weak self] response in
                 self?.processAsset(response: response, for: completeAssetRequest.key, size: .complete)
             }))
 
@@ -144,7 +144,7 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
 
                 path = "/assets/v4/\(domain)/\(key)"
 
-            case .v2, .v3, .v4, .v5:
+            case .v2, .v3, .v4, .v5, .v6:
                 guard let domain = requestedUserDomain[user].nonEmptyValue ?? BackendInfo.domain else {
                     return nil
                 }
@@ -194,7 +194,7 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
 
         requestedMissingFullProfilesInProgress.formUnion(missingFullProfiles)
 
-        return SearchUserImageStrategy.requestForFetchingFullProfile(for: missingFullProfiles, apiVersion: apiVersion, completionHandler: ZMCompletionHandler(on: managedObjectContext, block: { (response) in
+        return SearchUserImageStrategy.requestForFetchingFullProfile(for: missingFullProfiles, apiVersion: apiVersion, completionHandler: ZMCompletionHandler(on: managedObjectContext, block: { response in
 
             self.requestedMissingFullProfilesInProgress.subtract(missingFullProfiles)
 
@@ -209,7 +209,7 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
                 guard let userProfilePayloads = response.payload as? [[String: Any]] else { return }
 
                 for userProfilePayload in userProfilePayloads {
-                    guard let userId = (userProfilePayload["id"] as? String).flatMap(UUID.init),
+                    guard let userId = (userProfilePayload["id"] as? String).flatMap(UUID.init(transportString:)),
                           let searchUser = self.uiContext.zm_searchUserCache?.object(forKey: userId as NSUUID) else { continue }
 
                     searchUser.update(from: userProfilePayload)
@@ -237,7 +237,7 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
     }
 
     public static func requestForFetchingFullProfile(for usersWithIDs: Set<UUID>, apiVersion: APIVersion, completionHandler: ZMCompletionHandler) -> ZMTransportRequest {
-        let usersList = usersWithIDs.map {$0.transportString()}.joined(separator: ",")
+        let usersList = usersWithIDs.map { $0.transportString() }.joined(separator: ",")
         let request = ZMTransportRequest(getFromPath: userPath + usersList, apiVersion: apiVersion.rawValue)
         request.add(completionHandler)
         return request

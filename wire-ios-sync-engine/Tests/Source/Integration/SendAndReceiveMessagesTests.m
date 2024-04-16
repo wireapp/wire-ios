@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import WireTransport;
 @import WireMockTransport;
@@ -258,7 +257,7 @@
     
     //we block first request from finishing and check that no other requests are comming in
     __block ZMTransportRequest *firstRequest;
-    XCTestExpectation *firstRequestRecievedExpectation = [self expectationWithDescription:@"Recieved request to add first message"];
+    XCTestExpectation *firstRequestRecievedExpectation = [self customExpectationWithDescription:@"Recieved request to add first message"];
 
     ZM_WEAK(self);
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
@@ -312,7 +311,7 @@
     
     //we block first request from finishing and check that no other requests are comming in
     __block NSInteger recievedRequests = 0;
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Recieved requests for both messages"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"Recieved requests for both messages"];
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(__unused ZMTransportRequest *request) {
         //we should not recieve another request untill we finish this one
         if ([request.path.lastPathComponent containsString:@"messages"]) {

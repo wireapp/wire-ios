@@ -22,6 +22,18 @@ import WireSystem
 
 enum CoreDataStackError: Error {
     case simulateDatabaseLoadingFailure
+    case noDatabaseActivity
+}
+extension CoreDataStackError: LocalizedError {
+
+    var errorDescription: String? {
+        switch self {
+        case .simulateDatabaseLoadingFailure:
+            return "simulateDatabaseLoadingFailure"
+        case .noDatabaseActivity:
+            return "Could not create a background activity for database setup"
+        }
+    }
 }
 
 @objc
@@ -85,8 +97,6 @@ public extension NSURL {
     }
 
 }
-
-private let log = ZMSLog(tag: "core-data")
 
 @objcMembers
 public class CoreDataStack: NSObject, ContextProvider {
@@ -186,16 +196,15 @@ public class CoreDataStack: NSObject, ContextProvider {
         do {
             try closeStores(in: messagesContainer)
             try closeStores(in: eventsContainer)
-        } catch let error {
-            Logging.localStorage.error("Error while closing persistent store: \(error)")
-            log.safePublic("Error while closing persistent store: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
+        } catch {
+            WireLogger.localStorage.error("Error while closing persistent store: \(error)", attributes: .safePublic)
         }
     }
 
     func closeStores(in container: PersistentContainer) throws {
-        try container.persistentStoreCoordinator.persistentStores.forEach({
+        try container.persistentStoreCoordinator.persistentStores.forEach {
             try container.persistentStoreCoordinator.remove($0)
-        })
+        }
     }
 
     public func setup(
@@ -206,29 +215,30 @@ public class CoreDataStack: NSObject, ContextProvider {
         if needsMigration {
             onStartMigration()
         }
-
         DispatchQueue.global(qos: .userInitiated).async {
             if self.needsMessagingStoreMigration() {
-                log.safePublic("[setup] start migration of core data messaging store!")
-                WireLogger.localStorage.info("start migration of core data messaging store!")
+                let tp = ZMSTimePoint(interval: 60.0, label: "db migration")
+                WireLogger.localStorage.info("[setup] start migration of core data messaging store!", attributes: .safePublic)
 
                 do {
                     try self.migrateMessagingStore()
-                    log.safePublic("[setup] finished migration of core data messaging store!")
-                    WireLogger.localStorage.info("finished migration of core data messaging store!")
+                    WireLogger.localStorage.info("[setup] finished migration of core data messaging store!", attributes: .safePublic)
                 } catch {
-                    log.safePublic("[setup] failed migration of core data messaging store: \(SanitizedString(stringLiteral: error.localizedDescription))")
-                    WireLogger.localStorage.error("failed migration of core data messaging store! \(error.localizedDescription)")
+                    let logMessage = "[setup] failed migration of core data messaging store: \(error.localizedDescription)."
+                    WireLogger.localStorage.error(logMessage, attributes: .safePublic)
+
                     DispatchQueue.main.async {
                         onFailure(error)
                     }
                     return
                 }
+                if tp.warnIfLongerThanInterval() == false {
+                    WireLogger.localStorage.info("time spent in migration only: \(tp.elapsedTime)", attributes: .safePublic)
+                }
             }
 
             DispatchQueue.main.async {
-                WireLogger.localStorage.debug("load core data stores!")
-                log.safePublic("[setup] load core data stores!", level: .debug)
+                WireLogger.localStorage.info("[setup] load core data stores!", attributes: .safePublic)
                 self.loadStores { error in
                     if DeveloperFlag.forceDatabaseLoadingFailure.isOn {
                         // flip off the flag in order not to be stuck in failure
@@ -254,20 +264,18 @@ public class CoreDataStack: NSObject, ContextProvider {
         var loadingStoreError: Error?
 
         dispatchGroup.enter()
-        loadMessagesStore { (error) in
+        loadMessagesStore { error in
             if let error = error {
-                WireLogger.localStorage.error("failed to load message store: \(error)")
-                log.safePublic("failed to load message store: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
+                WireLogger.localStorage.error("failed to load message store: \(error)", attributes: .safePublic)
             }
             loadingStoreError = loadingStoreError ?? error
             dispatchGroup.leave()
         }
 
         dispatchGroup.enter()
-        loadEventStore { (error) in
+        loadEventStore { error in
             if let error = error {
                 WireLogger.localStorage.error("failed to load event store: \(error)")
-                log.safePublic("failed to load event store: \(SanitizedString(stringLiteral: error.localizedDescription))", level: .error)
             }
             loadingStoreError = loadingStoreError ?? error
             dispatchGroup.leave()
@@ -281,12 +289,12 @@ public class CoreDataStack: NSObject, ContextProvider {
     func loadMessagesStore(completionHandler: @escaping (Error?) -> Void) {
         do {
             try createStoreDirectory(for: messagesContainer)
-        } catch let error {
+        } catch {
             completionHandler(error)
             return
         }
 
-        messagesContainer.loadPersistentStores { (_, error) in
+        messagesContainer.loadPersistentStores { _, error in
 
             guard error == nil else {
                 completionHandler(error)
@@ -305,12 +313,12 @@ public class CoreDataStack: NSObject, ContextProvider {
     func loadEventStore(completionHandler: @escaping (Error?) -> Void) {
         do {
             try createStoreDirectory(for: eventsContainer)
-        } catch let error {
+        } catch {
             completionHandler(error)
             return
         }
 
-        eventsContainer.loadPersistentStores { (_, error) in
+        eventsContainer.loadPersistentStores { _, error in
 
             guard error == nil else {
                 completionHandler(error)

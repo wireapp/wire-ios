@@ -104,7 +104,7 @@ public class Label: ZMManagedObject, LabelType {
         // (1) the persistent store coordinator and the SQLite engine, and (2) touch the file system.
         // Looping through all objects in the context is way cheaper, because it does not involve (1)
         // taking any locks, nor (2) touching the file system.
-        return context.performAndWait {
+        context.performAndWait {
             guard let entity = context.persistentStoreCoordinator?.managedObjectModel.entitiesByName[entityName()] else {
                 fatal("Label entity not registered in managed object model")
             }

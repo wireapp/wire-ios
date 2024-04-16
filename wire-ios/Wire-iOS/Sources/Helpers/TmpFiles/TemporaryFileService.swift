@@ -17,19 +17,22 @@
 //
 
 import Foundation
+import WireSystem
 
 protocol TemporaryFileServiceInterface {
     func removeTemporaryData()
 }
 
-class TemporaryFileService: TemporaryFileServiceInterface {
+final class TemporaryFileService: TemporaryFileServiceInterface {
     func removeTemporaryData() {
         guard let tmpDirectoryPath = URL(string: NSTemporaryDirectory()) else { return }
         let manager = FileManager.default
+
         try? manager
             .contentsOfDirectory(at: tmpDirectoryPath, includingPropertiesForKeys: nil, options: .skipsSubdirectoryDescendants)
             .forEach { file in
                 try? manager.removeItem(atPath: file.path)
             }
+        WireLogger.localStorage.debug("clearing temp directory!!")
     }
 }

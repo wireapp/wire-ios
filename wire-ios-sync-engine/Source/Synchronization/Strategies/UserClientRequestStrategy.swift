@@ -1,20 +1,20 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 import WireSystem
@@ -45,6 +45,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     fileprivate(set) var fetchAllClientsSync: ZMSingleRequestSync! = nil
     fileprivate var didRetryRegisteringSignalingKeys: Bool = false
     fileprivate var didRetryUpdatingCapabilities: Bool = false
+    let prekeyGenerator: PrekeyGenerator
 
     public var requestsFactory: UserClientRequestFactory
     public var minNumberOfRemainingKeys: UInt = 20
@@ -64,7 +65,8 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     ) {
         self.clientRegistrationStatus = clientRegistrationStatus
         self.clientUpdateStatus = clientUpdateStatus
-        self.requestsFactory = UserClientRequestFactory(proteusProvider: proteusProvider)
+        self.requestsFactory = UserClientRequestFactory()
+        self.prekeyGenerator = PrekeyGenerator(proteusProvider: proteusProvider)
 
         super.init(managedObjectContext: context)
 
@@ -138,6 +140,11 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
     }
 
     public func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {
+        guard let managedObjectContext = managedObjectContext else {
+            assertionFailure("UserClientRequestStrategy has no context")
+            return nil
+        }
+
         guard let clientRegistrationStatus = self.clientRegistrationStatus,
             let clientUpdateStatus = self.clientUpdateStatus else {
                 return nil
@@ -153,8 +160,30 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         }
 
         if clientUpdateStatus.currentPhase == .deletingClients {
-            if let request =  deleteSync.nextRequest(for: apiVersion) {
+            if let request = deleteSync.nextRequest(for: apiVersion) {
                 return request
+            }
+        }
+
+        if clientRegistrationStatus.currentPhase == .generatingPrekeys {
+            return nil
+        }
+
+        if clientRegistrationStatus.currentPhase == .waitingForPrekeys {
+            clientRegistrationStatus.willGeneratePrekeys()
+            WaitingGroupTask(context: managedObjectContext) { [self] in
+                do {
+                    let prekeys = try await prekeyGenerator.generatePrekeys()
+                    let lastResortPrekey = try await prekeyGenerator.generateLastResortPrekey()
+                    await managedObjectContext.perform {
+                        clientRegistrationStatus.didGeneratePrekeys(prekeys, lastResortPrekey: lastResortPrekey)
+                    }
+                } catch {
+                    // swiftlint:disable todo_requires_jira_link
+                    // TODO: [F] check if we need to propagate error
+                    // swiftlint:enable todo_requires_jira_link
+                    WireLogger.proteus.error("prekeys: failed to generatePrekeys: \(error.localizedDescription)")
+                }
             }
         }
 
@@ -164,8 +193,8 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             }
         }
 
-        if let request = modifiedSync.nextRequest(for: apiVersion) {
-            return request
+        if clientRegistrationStatus.currentPhase == .registered || clientRegistrationStatus.currentPhase == .registeringMLSClient {
+            return modifiedSync.nextRequest(for: apiVersion)
         }
 
         return nil
@@ -202,12 +231,16 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         }
 
         if keys.contains(ZMUserClientNumberOfKeysRemainingKey) {
+            guard let prekeys = clientUpdateStatus.prekeys else {
+                fatal("Asked to upload prekeys when there's no prekeys available")
+            }
             do {
                 return try requestsFactory.updateClientPreKeysRequest(
                     userClient,
+                    prekeys: prekeys,
                     apiVersion: apiVersion
                 )
-            } catch let error {
+            } catch {
                 fatal("Couldn't create request for new pre keys: \(error)")
             }
         }
@@ -230,7 +263,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                     userClient,
                     apiVersion: apiVersion
                 )
-            } catch let error {
+            } catch {
                 fatal("Couldn't create request for new signaling keys: \(error)")
             }
         }
@@ -241,7 +274,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                     userClient,
                     apiVersion: apiVersion
                 )
-            } catch let error {
+            } catch {
                 fatal("Couldn't create request for updating Capabilities: \(error)")
             }
         }
@@ -252,7 +285,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
                     userClient,
                     apiVersion: apiVersion
                 )
-            } catch let error {
+            } catch {
                 fatal("Couldn't create request for new mls public keys: \(error)")
             }
         }
@@ -262,12 +295,55 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
     public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?, apiVersion: APIVersion) -> ZMUpstreamRequest? {
         guard let client = managedObject as? UserClient else { fatal("Called requestForInsertingObject() on \(managedObject.safeForLoggingDescription)") }
+        guard let prekeys = clientRegistrationStatus?.prekeys else {
+            fatal("Asked to insert client when there's no prekeys available")
+        }
+        guard let lastResortPrekey = clientRegistrationStatus?.lastResortPrekey else {
+            fatal("Asked to insert client when there's no last resort prekey available")
+        }
+
         return try? requestsFactory.registerClientRequest(
                 client,
                 credentials: clientRegistrationStatus?.emailCredentials,
                 cookieLabel: CookieLabel.current.value,
+                prekeys: prekeys,
+                lastRestortPrekey: lastResortPrekey,
                 apiVersion: apiVersion
             )
+    }
+
+    public func shouldCreateRequest(
+        toSyncObject managedObject: ZMManagedObject,
+        forKeys keys: Set<String>,
+        withSync sync: Any,
+        apiVersion: APIVersion
+    ) -> Bool {
+        if keys.contains(ZMUserClientNumberOfKeysRemainingKey), let userClient = managedObject as? UserClient {
+            if userClient.numberOfKeysRemaining >= minNumberOfRemainingKeys {
+                return false
+            } else if clientUpdateStatus?.currentPhase == .waitingForPrekeys {
+                clientUpdateStatus?.willGeneratePrekeys()
+                let groups = managedObjectContext?.enterAllGroupsExceptSecondary()
+                Task {
+                    do {
+                        let prekeys = try await prekeyGenerator.generatePrekeys()
+                        await managedObjectContext?.perform {
+                            self.clientUpdateStatus?.didGeneratePrekeys(prekeys)
+                        }
+                    } catch {
+                        // swiftlint:disable todo_requires_jira_link
+                        // TODO: [F] check if we need to propagate error
+                        // swiftlint:enable todo_requires_jira_link
+                        WireLogger.proteus.error("prekeys: shouldCreateRequest: failed to generatePrekeys: \(error.localizedDescription)")
+                    }
+                    managedObjectContext?.leaveAllGroups(groups)
+                }
+                return false
+            } else {
+                return clientUpdateStatus?.currentPhase != .generatingPrekeys
+            }
+        }
+        return true
     }
 
     public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
@@ -336,10 +412,10 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
             }
 
             client.remoteIdentifier = remoteIdentifier
-            client.numberOfKeysRemaining = Int32(requestsFactory.keyCount)
+            client.numberOfKeysRemaining = Int32(prekeyGenerator.keyCount)
             guard let moc = self.managedObjectContext else { return }
             _ = UserClient.createOrUpdateSelfUserClient(payload, context: moc)
-            clientRegistrationStatus?.didRegister(client)
+            clientRegistrationStatus?.didRegisterProteusClient(client)
         } else {
             fatal("Called updateInsertedObject() on \(managedObject.safeForLoggingDescription)")
         }
@@ -422,16 +498,18 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         let selfUser = ZMUser.selfUser(in: moc)
         let selfClient = selfUser.selfClient()
         let otherClients = selfUser.clients
+        let deletedClients = otherClients.filter {
+            return $0 != selfClient && $0.remoteIdentifier.map({ foundClientsIdentifier.contains($0) }) == false
+        }
 
-        otherClients.forEach {
-            guard $0 != selfClient, // not current client
-                let identifier = $0.remoteIdentifier, // has remote ID
-                !foundClientsIdentifier.contains(identifier) // not in the list of found ones
-                else {
-                return
+        WaitingGroupTask(context: moc) {
+            for deletedClient in deletedClients {
+                await deletedClient.deleteClientAndEndSession()
             }
-            // not there? delete
-            $0.deleteClientAndEndSession()
+            await moc.perform {
+                moc.saveOrRollback()
+                self.clientUpdateStatus?.didFetchClients(clients)
+            }
         }
 
         moc.saveOrRollback()
@@ -450,14 +528,15 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         if keysToParse.contains(ZMUserClientMarkedToDeleteKey) {
             return processResponseForDeletingClients(managedObject, requestUserInfo: requestUserInfo, responsePayload: response.payload)
         } else if keysToParse.contains(ZMUserClientNumberOfKeysRemainingKey) {
-            (managedObject as! UserClient).numberOfKeysRemaining += Int32(requestsFactory.keyCount)
+            (managedObject as! UserClient).numberOfKeysRemaining += Int32(prekeyGenerator.keyCount)
+            clientUpdateStatus?.didUploadPrekeys()
         } else if keysToParse.contains(ZMUserClientNeedsToUpdateSignalingKeysKey) {
             didRetryRegisteringSignalingKeys = false
         } else if keysToParse.contains(ZMUserClientNeedsToUpdateCapabilitiesKey) {
             didRetryUpdatingCapabilities = false
         } else if keysToParse.contains(UserClient.needsToUploadMLSPublicKeysKey), response.result == .success {
             userClient.needsToUploadMLSPublicKeys = false
-            userClient.managedObjectContext?.mlsService?.uploadKeyPackagesIfNeeded()
+            self.clientRegistrationStatus?.didRegisterMLSClient(userClient)
         }
 
         return false
@@ -465,13 +544,11 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
 
     func processResponseForDeletingClients(_ managedObject: ZMManagedObject!, requestUserInfo: [AnyHashable: Any]!, responsePayload payload: ZMTransportData!) -> Bool {
         // is it safe for ui??
-        if let client = managedObject as? UserClient {
-            managedObject.managedObjectContext?.performGroupedBlock({ () -> Void in
-                // end session and delete client
-                client.deleteClientAndEndSession()
-                // notify the clientStatus
-                self.clientUpdateStatus?.didDeleteClient()
-            })
+        if let client = managedObject as? UserClient, let context = managedObjectContext {
+            WaitingGroupTask(context: context) {
+                await client.deleteClientAndEndSession()
+                await context.perform { self.clientUpdateStatus?.didDeleteClient() }
+            }
         }
         return false
     }

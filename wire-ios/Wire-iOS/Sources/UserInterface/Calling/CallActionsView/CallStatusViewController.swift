@@ -59,7 +59,7 @@ final class CallStatusViewController: UIViewController {
     }
 
     private func setupViews() {
-        [stackView, statusView, securityLevelView].prepareForLayout()
+        [stackView, statusView, securityLevelView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         stackView.axis = .vertical
         stackView.spacing = 12

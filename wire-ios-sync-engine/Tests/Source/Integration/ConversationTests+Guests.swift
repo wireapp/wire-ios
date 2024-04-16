@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -136,7 +136,7 @@ class ConversationTests_Guests: IntegrationTest {
             self.mockTransportSession?.resetReceivedRequests()
 
             // WHEN
-            let didFail  = self.expectation(description: "did fail")
+            let didFail = self.customExpectation(description: "did fail")
             conversation.canGenerateGuestLink(in: self.userSession!) { result in
                 // THEN
                 switch result {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,9 @@ class EmojiOnlyStringTests: XCTestCase {
                            "👩", "👩🏻", "👩🏼", "👩🏽", "👩🏾", "👩🏿", // Fitzpatrick modifiers
                            "👨‍👩‍👧", "🏳️‍🌈", // Joining
                            "🧘🏿‍♀️", "🧡", "🦒", "🧦", "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "🧟‍♂️" // Emoji 5.0
+            // swiftlint:disable todo_requires_jira_link
             // TODO: Test for Emoji 11.0 new emoji "🥮" after iOS 12.1 is released
+            // swiftlint:enable todo_requires_jira_link
         ]
 
         // then

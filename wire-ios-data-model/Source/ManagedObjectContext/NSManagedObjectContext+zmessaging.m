@@ -455,9 +455,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
     {
         ZMLogDebug(@"dispatch_after() entered (%d)", myCount);
         dispatch_time_t when = dispatch_walltime(NULL, delay_ms * NSEC_PER_MSEC);
-        dispatch_queue_t waitQueue = (ZMHasQualityOfServiceSupport() ?
-                                      dispatch_get_global_queue(QOS_CLASS_UTILITY, 0) :
-                                      dispatch_get_global_queue(0, 0));
+        dispatch_queue_t waitQueue = dispatch_get_global_queue(QOS_CLASS_UTILITY, 0);
         dispatch_after(when, waitQueue, ^{
             [secondaryGroup leave];
             ZMLogDebug(@"dispatch_after() completed (%d)", myCount);

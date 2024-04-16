@@ -22,7 +22,7 @@ import WireCommonComponents
 
 final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
-    static let legalHoldURL: URL = URL(string: "action://learn-more-legal-hold")!
+    static let legalHoldURL: URL = .wr_legalHoldLearnMore
     var conversation: ZMConversation?
 
     struct Configuration {
@@ -77,32 +77,25 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
     }
 
     private static func configuration(for systemMessageType: ZMSystemMessageType, in conversation: ZMConversation) -> View.Configuration {
-
-        let baseTemplate = "content.system.message_legal_hold"
-        var template = baseTemplate
-
-        if systemMessageType == .legalHoldEnabled {
-            template += ".enabled"
-        } else if systemMessageType == .legalHoldDisabled {
-            template += ".disabled"
-        }
-
-        var attributedText = NSAttributedString(string: template.localized, attributes: ConversationSystemMessageCell.baseAttributes)
-
-        if systemMessageType == .legalHoldEnabled {
-            let learnMore = NSAttributedString(string: (baseTemplate + ".learn_more").localized.uppercased(),
-                                               attributes: [.font: UIFont.mediumSemiboldFont,
-                                                            .link: ConversationLegalHoldSystemMessageCell.legalHoldURL as AnyObject,
-                                                            .foregroundColor: SemanticColors.Label.textDefault])
-
-            attributedText += " " + String.MessageToolbox.middleDot + " "
-            attributedText += learnMore
-        }
+        let systemMessageTitle = title(for: systemMessageType)
+        let attributedText = NSAttributedString.markdown(from: systemMessageTitle, style: .systemMessage)
 
         let icon = StyleKitIcon.legalholdactive.makeImage(size: .tiny, color: SemanticColors.Icon.foregroundDefaultRed)
 
         return View.Configuration(attributedText: attributedText, icon: icon, conversation: conversation)
     }
+
+    private static func title(for messageType: ZMSystemMessageType) -> String {
+        switch messageType {
+        case .legalHoldEnabled:
+            return L10n.Localizable.Content.System.MessageLegalHold.enabled(ConversationLegalHoldSystemMessageCell.legalHoldURL.absoluteString)
+        case .legalHoldDisabled:
+            return L10n.Localizable.Content.System.MessageLegalHold.disabled
+        default:
+            return ""
+        }
+    }
+
 }
 
 extension ConversationLegalHoldSystemMessageCell {

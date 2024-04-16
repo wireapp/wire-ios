@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -94,8 +94,17 @@ struct UserProfileUpdateNotification: SelfPostingNotification {
 
 extension UserProfileUpdateStatus {
 
-    @objc(addObserver:) public func add(observer: UserProfileUpdateObserver) -> Any {
-        return NotificationInContext.addObserver(name: UserProfileUpdateNotification.notificationName, context: managedObjectContext.notificationContext, queue: .main) { [weak observer] (note) in
+    @objc(addObserver:) public func add(
+        observer: UserProfileUpdateObserver
+    ) -> Any {
+        return Self.add(observer: observer, in: managedObjectContext.notificationContext)
+    }
+
+    @objc(addObserver:in:) public static func add(
+        observer: UserProfileUpdateObserver,
+        in notificationContext: NotificationContext
+    ) -> Any {
+        return NotificationInContext.addObserver(name: UserProfileUpdateNotification.notificationName, context: notificationContext, queue: .main) { [weak observer] note in
             guard let note = note.userInfo[UserProfileUpdateNotification.userInfoKey] as? UserProfileUpdateNotification,
                   let observer = observer else {
                     return

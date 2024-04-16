@@ -92,7 +92,7 @@ final class ArchivedListViewController: UIViewController {
     }
 
     private func createConstraints() {
-        [archivedNavigationBar, collectionView].prepareForLayout()
+        [archivedNavigationBar, collectionView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             archivedNavigationBar.topAnchor.constraint(equalTo: view.topAnchor, constant: UIScreen.safeArea.top),
             archivedNavigationBar.leftAnchor.constraint(equalTo: view.leftAnchor),

@@ -56,10 +56,15 @@ final class Analytics: NSObject {
         }
 
         set {
+            if let newValue {
+                let idProvider = AnalyticsIdentifierProvider(selfUser: newValue)
+                idProvider.setIdentifierIfNeeded()
+            }
             provider?.selfUser = newValue
 
             if let user = newValue, let userSession = ZMUserSession.shared() {
                 userObserverToken = UserChangeInfo.add(observer: self, for: user, in: userSession)
+
             } else {
                 userObserverToken = nil
             }
@@ -107,7 +112,7 @@ extension Analytics: AnalyticsType {
     }
 }
 
-extension Analytics: ZMUserObserver {
+extension Analytics: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard

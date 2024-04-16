@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -66,7 +66,8 @@ public final class CallStateObserver: NSObject {
 extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMissedCallObserver {
 
     public func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
-        let callerId = (caller as? ZMUser)?.remoteIdentifier
+        let callerId = caller.remoteIdentifier
+        let callerDomain = caller.domain
         let conversationId = conversation.remoteIdentifier
 
         syncContext.performGroupedBlock {
@@ -74,7 +75,7 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
                 let callerId = callerId,
                 let conversationId = conversationId,
                 let conversation = ZMConversation.fetch(with: conversationId, in: self.syncContext),
-                let caller = ZMUser.fetch(with: callerId, in: self.syncContext)
+                let caller = ZMUser.fetch(with: callerId, domain: callerDomain, in: self.syncContext)
             else {
                 return
             }
@@ -148,7 +149,7 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
             guard
                 let callerId = callerId,
                 let conversationId = conversationId,
-                let conversation =  ZMConversation.fetch(with: conversationId, in: self.syncContext),
+                let conversation = ZMConversation.fetch(with: conversationId, in: self.syncContext),
                 let caller = ZMUser.fetch(with: callerId, in: self.syncContext)
                 else {
                     return

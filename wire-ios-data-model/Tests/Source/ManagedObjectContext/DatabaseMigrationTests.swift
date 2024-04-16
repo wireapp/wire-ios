@@ -22,6 +22,18 @@ import XCTest
 
 final class DatabaseMigrationTests: DatabaseBaseTest {
 
+    private let helper = DatabaseMigrationHelper()
+
+    private let userPropertiesToFetch = [
+        "accentColorValue",
+        "emailAddress",
+        "modifiedKeys",
+        "name",
+        "normalizedEmailAddress",
+        "normalizedName",
+        "handle"
+    ]
+
     func testMessagingLatestModelHasMigrationVersion() throws {
         // given
         let dataModelVersion = CoreDataStack.loadMessagingModel().version
@@ -39,28 +51,33 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
     }
 
     func testThatItPerformsMigrationFrom_Between_2_80_0_and_PreLast_ToCurrentModelVersion() throws {
-        // NOTICE: When a new version of data model is created, please increase the last number of the array.
-        let allVersions = [80...111]
-            .joined()
-            .map { "2-\($0)-0" }
+        // NOTICE: When a new version of data model is created, please add CoreDataMessagingMigrationVersion new case. And make sure your new data model has a new identifierVersion
+        let allVersions = CoreDataMessagingMigrationVersion.allFixtureVersions
+
         let modelVersion = CoreDataStack.loadMessagingModel().version
-        let fixtureVersion = String(databaseFixtureFileName(for: modelVersion).dropFirst("store".count))
+        let fixtureVersion = String(helper.databaseFixtureFileName(for: modelVersion).dropFirst("store".count))
+        let accountIdentifier = UUID()
 
         // Check that we have current version fixture file
-        guard databaseFixtureURL(version: modelVersion) != nil else {
+        guard helper.databaseFixtureURL(version: modelVersion) != nil else {
             let versionsWithoutCurrent = allVersions.filter { $0 != fixtureVersion }
-            try createDatabaseWithOlderModelVersion(versionName: versionsWithoutCurrent.last!)
-            let directory = createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
-            let currentDatabaseURL = directory.syncContext.persistentStoreCoordinator!.persistentStores.last!.url!
+
+            try helper.createFixtureDatabase(
+                applicationContainer: DatabaseBaseTest.applicationContainer,
+                accountIdentifier: accountIdentifier,
+                versionName: versionsWithoutCurrent.first!
+            )
+            let directory = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
+            let currentDatabaseURL = try XCTUnwrap(directory.syncContext.persistentStoreCoordinator?.persistentStores.last?.url)
 
             XCTFail("\nMissing current version database file: `store\(fixtureVersion).wiredatabase`. \n\n" +
                     "**HOW TO FIX THIS** \n" +
                     "- Run the test, until you hit the assertion\n" +
                     "- **WHILE THE TEST IS PAUSED** on the assertion, do the following:\n" +
                     "- open the the folder in Finder by typing this command in your terminal. IT WILL NOT WORK IF THE TEST IS NOT PAUSED!!!.\n" +
-                    "\t cp \"\(currentDatabaseURL.path)\" ~/Desktop/store\(fixtureVersion).wiredatabase\n\n" +
-                    "- The command will copy a file on your desktop called `store\(fixtureVersion).wiredatabase`\n" +
-                    "- Copy it to test bundle if this project in `WireDataModel/Tests/Resources` with the other stores\n\n")
+                    "\t cp \"\(currentDatabaseURL.path)\" wire-ios-data-model/Tests/Resources/store\(fixtureVersion).wiredatabase\n\n" +
+                    "- The command will copy a file to  `WireDataModel/Tests/Resources/store\(fixtureVersion).wiredatabase`\n" +
+                    "- Add it to WireDataModel project with the other stores\n\n")
             assert(false)
         }
 
@@ -70,12 +87,16 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
                 "and we don't forget to test the migration from that version")
         }
 
-        try allVersions.forEach { storeFile in
+        try allVersions.forEach { version in
             // GIVEN
-            try createDatabaseWithOlderModelVersion(versionName: storeFile)
+            try helper.createFixtureDatabase(
+                applicationContainer: DatabaseBaseTest.applicationContainer,
+                accountIdentifier: accountIdentifier,
+                versionName: version
+            )
 
             // WHEN
-            var directory: CoreDataStack! = createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
+            var directory: CoreDataStack! = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
 
             // THEN
             let conversationCount = try directory.viewContext.count(for: ZMConversation.sortedFetchRequest())
@@ -145,52 +166,5 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             XCTAssertTrue(store.versionIdentifiers.contains(version), "\(version) should be contained")
             processedVersions.insert(version)
         }
-    }
-}
-
-// MARK: - Helpers
-extension DatabaseMigrationTests {
-
-    static let testUUID: UUID = UUID()
-
-    var userPropertiesToFetch: [String] {
-        return [
-            "accentColorValue",
-            "emailAddress",
-            "modifiedKeys",
-            "name",
-            "normalizedEmailAddress",
-            "normalizedName",
-            "handle"
-        ]
-    }
-}
-
-extension DatabaseBaseTest {
-    func createDatabaseWithOlderModelVersion(versionName: String, file: StaticString = #file, line: UInt = #line) throws {
-        let storeFile = CoreDataStack.accountDataFolder(accountIdentifier: DatabaseMigrationTests.testUUID, applicationContainer: self.applicationContainer).appendingPersistentStoreLocation()
-        try FileManager.default.createDirectory(at: storeFile.deletingLastPathComponent(), withIntermediateDirectories: true)
-
-        // copy old version database into the expected location
-        guard let source = databaseFixtureURL(version: versionName, file: file, line: line) else {
-            return
-        }
-        try FileManager.default.copyItem(at: source, to: storeFile)
-    }
-
-    // The naming scheme is slightly different for fixture files
-    func databaseFixtureFileName(for version: String) -> String {
-        let fixedVersion = version.replacingOccurrences(of: ".", with: "-")
-        let name = "store" + fixedVersion
-        return name
-    }
-
-    func databaseFixtureURL(version: String, file: StaticString = #file, line: UInt = #line) -> URL? {
-        let name = databaseFixtureFileName(for: version)
-        guard let source = Bundle(for: type(of: self)).url(forResource: name, withExtension: "wiredatabase") else {
-            XCTFail("Could not find \(name).wiredatabase in test bundle", file: file, line: line)
-            return nil
-        }
-        return source
     }
 }

@@ -52,7 +52,7 @@ final class URL_WireTests: XCTestCase {
 
     func testThatSupportURLsAreLoadedCorrectly() {
         let supportURL = URL(string: "https://support.wire.com")!
-        XCTAssertEqual(WireUrl.shared.support, supportURL)
+        XCTAssertEqual(WireURL.shared.support, supportURL)
         XCTAssertEqual(URL.wr_emailAlreadyInUseLearnMore, supportURL.appendingPathComponent("hc/en-us/articles/115004082129-My-email-address-is-already-in-use-and-I-cannot-create-an-account-What-can-I-do-"))
         XCTAssertEqual(URL.wr_askSupport,
                        supportURL.appendingPathComponent("hc/requests/new"))

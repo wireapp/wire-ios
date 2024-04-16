@@ -33,7 +33,6 @@ enum AuthenticationCoordinatorAction {
     case presentErrorAlert(AuthenticationCoordinatorErrorAlert)
     case completeBackupStep
     case completeLoginFlow
-    case completeRegistrationFlow
     case startPostLoginFlow
     case transition(AuthenticationFlowStep, mode: AuthenticationStateController.StateChangeMode)
     case performPhoneLoginFromRegistration(phoneNumber: String)
@@ -49,7 +48,8 @@ enum AuthenticationCoordinatorAction {
     case switchCredentialsType(AuthenticationCredentialsType)
     case startRegistrationFlow(UnverifiedCredentials)
     case startLoginFlow(AuthenticationLoginRequest, AuthenticationProxyCredentialsInput?)
-    case setUserName(String)
+    case setFullName(String)
+    case setUsername(String)
     case setUserPassword(String)
     case updateBackendEnvironment(url: URL)
     case startCompanyLogin(code: UUID?)
@@ -58,6 +58,8 @@ enum AuthenticationCoordinatorAction {
     case signOut(warn: Bool)
     case addEmailAndPassword(ZMEmailCredentials)
     case configureDevicePermissions
+    case startE2EIEnrollment
+    case completeE2EIEnrollment
 
     var retainsModal: Bool {
         switch self {
@@ -98,8 +100,8 @@ struct AuthenticationCoordinatorAlertAction {
 }
 
 extension AuthenticationCoordinatorAlertAction {
-    static let ok: AuthenticationCoordinatorAlertAction = AuthenticationCoordinatorAlertAction(title: "general.ok".localized, coordinatorActions: [])
-    static let cancel: AuthenticationCoordinatorAlertAction = AuthenticationCoordinatorAlertAction(title: "general.cancel".localized, coordinatorActions: [], style: .cancel)
+    static let ok: AuthenticationCoordinatorAlertAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.ok, coordinatorActions: [])
+    static let cancel: AuthenticationCoordinatorAlertAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.cancel, coordinatorActions: [], style: .cancel)
 }
 
 /**

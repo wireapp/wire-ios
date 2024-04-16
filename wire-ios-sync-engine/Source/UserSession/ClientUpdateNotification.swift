@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,10 @@ import WireDataModel
     private static let typeKey = "notificationType"
     private static let errorKey = "error"
 
-    @objc public static func addObserver(context: NSManagedObjectContext, block: @escaping (ZMClientUpdateNotificationType, [NSManagedObjectID], NSError?) -> Void) -> Any {
+    @objc public static func addObserver(
+        context: NSManagedObjectContext,
+        block: @escaping (ZMClientUpdateNotificationType, [NSManagedObjectID], NSError?) -> Void
+    ) -> NSObjectProtocol {
         return NotificationInContext.addObserver(name: self.name,
                                                  context: context.notificationContext) { note in
             guard let type = note.userInfo[self.typeKey] as? ZMClientUpdateNotificationType else { return }
@@ -43,10 +46,15 @@ import WireDataModel
         }
     }
 
-    static func notify(type: ZMClientUpdateNotificationType, context: NSManagedObjectContext, clients: [UserClient] = [], error: NSError? = nil) {
+    static func notify(
+        type: ZMClientUpdateNotificationType,
+        context: NSManagedObjectContext,
+        clients: [UserClient] = [],
+        error: NSError? = nil
+    ) {
         NotificationInContext(name: self.name, context: context.notificationContext, userInfo: [
             errorKey: error as Any,
-            clientObjectIDsKey: clients.objectIDs,
+            clientObjectIDsKey: clients.map(\.objectID).filter { !$0.isTemporaryID },
             typeKey: type
         ]).post()
     }
@@ -69,15 +77,5 @@ import WireDataModel
     @objc
     public static func notifyDeletionFailed(error: NSError, context: NSManagedObjectContext) {
         self.notify(type: .deletionFailed, context: context, error: error)
-    }
-}
-
-extension Array where Element: NSManagedObject {
-
-    var objectIDs: [NSManagedObjectID] {
-        return self.compactMap { obj in
-            guard !obj.objectID.isTemporaryID else { return nil }
-            return obj.objectID
-        }
     }
 }

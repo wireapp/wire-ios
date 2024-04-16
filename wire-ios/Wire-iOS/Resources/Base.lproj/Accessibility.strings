@@ -233,6 +233,11 @@
 "conversationAnnouncement.deletedMessage.description" = "%@ deleted a message";
 "conversationAnnouncement.editedMessage.description" = "%@ edited a message";
 
+"groupDetails.conversation.participants.allYourDevicesProteusVerified" = "all your devices are verified (Proteus)";
+"groupDetails.conversation.participants.allYourDevicesHaveValidCertificates" = "all your devices have a valid end-to-end identity certificate";
+"groupDetails.conversation.participants.allDevicesProteusVerified" = "all devices are verified (Proteus)";
+"groupDetails.conversation.participants.allDevicesHaveValidCertificates" = "all devices have a valid end-to-end identity certificate";
+
 "calling.flipCameraBackButton.description" = "Flip to back camera";
 "calling.flipCameraFrontButton.description" = "Flip to front camera";
 "calling.videoOnButton.description" = "Turn on camera";

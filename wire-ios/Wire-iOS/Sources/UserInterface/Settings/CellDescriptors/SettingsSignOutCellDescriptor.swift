@@ -32,7 +32,8 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
                    presentationAction: { return nil },
                    previewGenerator: nil,
                    icon: nil,
-                   accessoryViewMode: .default)
+                   accessoryViewMode: .default,
+                   copiableText: nil)
 
     }
 
@@ -44,7 +45,7 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
             topMostViewController?.isLoadingViewVisible = true
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemInCallSound)
             AVSMediaManager.sharedInstance()?.stop(sound: .ringingFromThemSound)
-            ZMUserSession.shared()?.logout(credentials: ZMEmailCredentials(email: "", password: password ?? ""), { (result) in
+            ZMUserSession.shared()?.logout(credentials: ZMEmailCredentials(email: "", password: password ?? ""), { result in
                 topMostViewController?.isLoadingViewVisible = false
 
                 if case .failure(let error) = result {
@@ -76,7 +77,7 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
 
             viewController = alert
         } else {
-            requestPasswordController = RequestPasswordController(context: .logout, callback: { [weak self] (password) in
+            requestPasswordController = RequestPasswordController(context: .logout, callback: { [weak self] password in
                 guard let password = password else { return }
 
                 self?.logout(password: password)

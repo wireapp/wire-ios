@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 import WireSyncEngine
 
-class ZMUserSessionLegalHoldTests: IntegrationTest {
+final class ZMUserSessionLegalHoldTests: IntegrationTest {
 
     override func setUp() {
         super.setUp()
@@ -57,7 +57,7 @@ class ZMUserSessionLegalHoldTests: IntegrationTest {
         }
 
         // WHEN: I accept the legal hold request
-        let completionExpectation = expectation(description: "The request completes.")
+        let completionExpectation = customExpectation(description: "The request completes.")
 
         userSession?.accept(legalHoldRequest: legalHoldRequest, password: IntegrationTest.SelfUserPassword) { error in
             XCTAssertNil(error)
@@ -102,7 +102,7 @@ class ZMUserSessionLegalHoldTests: IntegrationTest {
         }
 
         // WHEN: I accept the legal hold request with the wrong password
-        let completionExpectation = expectation(description: "The request completes.")
+        let completionExpectation = customExpectation(description: "The request completes.")
 
         userSession?.accept(legalHoldRequest: legalHoldRequest, password: "I tRieD 3 tImeS!") { error in
             XCTAssertEqual(error, .invalidPassword)

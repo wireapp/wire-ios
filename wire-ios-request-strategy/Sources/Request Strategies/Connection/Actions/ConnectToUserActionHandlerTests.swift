@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -119,8 +120,8 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
                                                transportSessionError: nil,
                                                apiVersion: APIVersion.v0.rawValue)
 
-            let expectation = self.expectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            let expectation = self.customExpectation(description: "Result Handler was called")
+            action.onResult { result in
                 if case .success = result {
                     expectation.fulfill()
                 }
@@ -141,8 +142,8 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
             let domain = self.owningDomain
             var action = ConnectToUserAction(userID: userID, domain: domain)
 
-            let expectation = self.expectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            let expectation = self.customExpectation(description: "Result Handler was called")
+            action.onResult { result in
                 if case .failure = result {
                     expectation.fulfill()
                 }
@@ -170,8 +171,8 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
             let domain = self.owningDomain
             var action = ConnectToUserAction(userID: userID, domain: domain)
 
-            let expectation = self.expectation(description: "Result Handler was called")
-            action.onResult { (result) in
+            let expectation = self.customExpectation(description: "Result Handler was called")
+            action.onResult { result in
                 if case .failure(let error) = result {
                     if expectedError == error {
                         expectation.fulfill()

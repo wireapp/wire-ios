@@ -135,7 +135,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
         // GIVEN
         var patchApplied = false
-        let patch = LegacyPersistedDataPatch(version: "9999.32.32") { (moc) in
+        let patch = LegacyPersistedDataPatch(version: "9999.32.32") { moc in
             XCTAssertEqual(moc, self.syncMOC)
             patchApplied = true
         }
@@ -153,7 +153,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
         // GIVEN
         var patchApplied = false
-        let patch = LegacyPersistedDataPatch(version: "10000000.32.32") { (moc) in
+        let patch = LegacyPersistedDataPatch(version: "10000000.32.32") { moc in
             XCTAssertEqual(moc, self.syncMOC)
             patchApplied = true
         }
@@ -175,7 +175,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
         // GIVEN
         var patchApplied = false
-        let patch = LegacyPersistedDataPatch(version: "0.0.1") { (_) in
+        let patch = LegacyPersistedDataPatch(version: "0.0.1") { _ in
             XCTFail()
             patchApplied = true
         }
@@ -193,21 +193,29 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(patchApplied, "Version: \(Bundle(for: ZMUser.self).infoDictionary!["CFBundleShortVersionString"] as! String)")
     }
 
-    func testThatItMigratesClientsSessionIdentifiers() throws {
+    func testThatItMigratesClientsSessionIdentifiers() async throws {
+        // GIVEN
+        let hardcodedPrekey = "pQABAQUCoQBYIEIir0myj5MJTvs19t585RfVi1dtmL2nJsImTaNXszRwA6EAoQBYIGpa1sQFpCugwFJRfD18d9+TNJN2ZL3H0Mfj/0qZw0ruBPY="
+        var selfClient: UserClient!
+        var newClient: UserClient!
 
         syncMOC.performGroupedBlockAndWait {
-            // GIVEN
-            let hardcodedPrekey = "pQABAQUCoQBYIEIir0myj5MJTvs19t585RfVi1dtmL2nJsImTaNXszRwA6EAoQBYIGpa1sQFpCugwFJRfD18d9+TNJN2ZL3H0Mfj/0qZw0ruBPY="
-            let selfClient = self.createSelfClient(onMOC: self.syncMOC)
+            selfClient = self.createSelfClient(onMOC: self.syncMOC)
             let newUser = ZMUser.insertNewObject(in: self.syncMOC)
             newUser.remoteIdentifier = UUID.create()
-            let newClient = UserClient.insertNewObject(in: self.syncMOC)
+            newClient = UserClient.insertNewObject(in: self.syncMOC)
             newClient.user = newUser
             newClient.remoteIdentifier = "aabb2d32ab"
+        }
 
+        let didEstablishSession = await selfClient.establishSessionWithClient(newClient, usingPreKey: hardcodedPrekey)
+        XCTAssertTrue(didEstablishSession)
+
+        syncMOC.performGroupedBlockAndWait {
+            // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
+            // swiftlint:enable todo_requires_jira_link
             let otrURL = self.syncMOC.zm_cryptKeyStore.cryptoboxDirectory
-            XCTAssertTrue(selfClient.establishSessionWithClient(newClient, usingPreKey: hardcodedPrekey))
             self.syncMOC.saveOrRollback()
 
             let sessionsURL = otrURL.appendingPathComponent("sessions")
@@ -270,7 +278,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             teamConversation.team = team
             let user = ZMUser.insertNewObject(in: moc)
             user.remoteIdentifier = .create()
-            let member = Member.getOrCreateMember(for: user, in: team, context: moc)
+            let member = Member.getOrUpdateMember(for: user, in: team, context: moc)
             XCTAssert(moc.saveOrRollback())
 
             // when
@@ -296,9 +304,9 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
             user2.remoteIdentifier = userId2
             let team = Team.insertNewObject(in: moc)
 
-            let member1User1 = Member.getOrCreateMember(for: user1, in: team, context: moc)
-            let member2User1 = Member.getOrCreateMember(for: user1, in: team, context: moc)
-            let member1User2 = Member.getOrCreateMember(for: user2, in: team, context: moc)
+            let member1User1 = Member.getOrUpdateMember(for: user1, in: team, context: moc)
+            let member2User1 = Member.getOrUpdateMember(for: user1, in: team, context: moc)
+            let member1User2 = Member.getOrUpdateMember(for: user2, in: team, context: moc)
             XCTAssert(moc.saveOrRollback())
 
             // when
@@ -340,34 +348,41 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
     // MARK: - Proteus session id migration
 
-    func test_MigrateProteusSessionIDFromV2ToV3() throws {
-        assertSuccessfulSessionMigration(simulateCryptoboxMigration: false)
+    func test_MigrateProteusSessionIDFromV2ToV3() async throws {
+        await assertSuccessfulSessionMigration(simulateCryptoboxMigration: false)
     }
 
-    func test_MigrateProteusSessionIDFromV2ToV3_WithTemporaryKeystore() throws {
-        assertSuccessfulSessionMigration(simulateCryptoboxMigration: true)
+    func test_MigrateProteusSessionIDFromV2ToV3_WithTemporaryKeystore() async throws {
+        await assertSuccessfulSessionMigration(simulateCryptoboxMigration: true)
     }
 
-    private func assertSuccessfulSessionMigration(simulateCryptoboxMigration: Bool = false) {
+    private func assertSuccessfulSessionMigration(simulateCryptoboxMigration: Bool = false) async {
+        // Given
+        let hardcodedPrekey = "pQABAQUCoQBYIEIir0myj5MJTvs19t585RfVi1dtmL2nJsImTaNXszRwA6EAoQBYIGpa1sQFpCugwFJRfD18d9+TNJN2ZL3H0Mfj/0qZw0ruBPY="
+        var otherUser: ZMUser!
+        var selfClient: UserClient!
+        var otherUserClient: UserClient!
+
         syncMOC.performGroupedBlockAndWait {
-            // Given
-            let selfClient = self.createSelfClient(onMOC: self.syncMOC)
+            selfClient = self.createSelfClient(onMOC: self.syncMOC)
 
-            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
+            otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
             otherUser.domain = nil
 
-            let otherUserClient = UserClient.insertNewObject(in: self.syncMOC)
+            otherUserClient = UserClient.insertNewObject(in: self.syncMOC)
             otherUserClient.user = otherUser
             otherUserClient.remoteIdentifier = "aabb2d32ab"
+        }
 
-            let hardcodedPrekey = "pQABAQUCoQBYIEIir0myj5MJTvs19t585RfVi1dtmL2nJsImTaNXszRwA6EAoQBYIGpa1sQFpCugwFJRfD18d9+TNJN2ZL3H0Mfj/0qZw0ruBPY="
+        let didEstablishSession = await selfClient.establishSessionWithClient(
+            otherUserClient,
+            usingPreKey: hardcodedPrekey
+        )
+        XCTAssertTrue(didEstablishSession)
+
+        syncMOC.performGroupedBlockAndWait {
             let otrURL = self.syncMOC.zm_cryptKeyStore.cryptoboxDirectory
-            XCTAssertTrue(selfClient.establishSessionWithClient(
-                otherUserClient,
-                usingPreKey: hardcodedPrekey
-            ))
-
             self.syncMOC.saveOrRollback()
 
             let sessionIDV2 = EncryptionSessionIdentifier(

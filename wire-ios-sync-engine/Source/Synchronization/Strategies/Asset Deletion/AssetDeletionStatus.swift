@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ private let log = ZMSLog(tag: "AssetDeletion")
     func didFailToDelete(identifier: String)
 }
 
-final public class AssetDeletionStatus: NSObject, AssetDeletionIdentifierProviderType {
+public final class AssetDeletionStatus: NSObject, AssetDeletionIdentifierProviderType {
 
     private var provider: DeletableAssetIdentifierProvider
     private var identifiersInProgress = Set<String>()

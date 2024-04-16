@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
         switch apiVersion {
         case .v0:
             return nonFederatedRequest(for: action, apiVersion: apiVersion)
-        case .v1, .v2, .v3, .v4, .v5:
+        case .v1, .v2, .v3, .v4, .v5, .v6:
             return federatedRequest(for: action, apiVersion: apiVersion)
         }
     }
@@ -105,7 +106,7 @@ class RemoveParticipantActionHandler: ActionHandler<RemoveParticipantAction> {
             let success = {
                 action.notifyResult(.success(Void()))
             }
-            Task {
+            WaitingGroupTask(context: context) { [self] in
                 await eventProcessor.processConversationEvents([updateEvent])
                 success()
             }

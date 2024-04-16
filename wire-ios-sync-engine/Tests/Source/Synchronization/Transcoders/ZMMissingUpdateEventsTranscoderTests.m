@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import WireTransport;
 @import WireRequestStrategy;
@@ -40,7 +39,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
 @property (nonatomic) MockSyncStatus *mockSyncStatus;
 @property (nonatomic) OperationStatus *mockOperationStatus;
 @property (nonatomic) MockUpdateEventProcessor *mockUpdateEventProcessor;
-@property (nonatomic) id syncStateDelegate;
 @property (nonatomic) id mockApplicationDirectory;
 
 @end
@@ -51,9 +49,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     [super setUp];
     
     self.requestSync = [OCMockObject mockForClass:ZMSingleRequestSync.class];
-    self.syncStateDelegate = [OCMockObject niceMockForProtocol:@protocol(ZMSyncStateDelegate)];
     self.mockSyncStatus = [[MockSyncStatus alloc] initWithManagedObjectContext:self.syncMOC
-                                                             syncStateDelegate:self.syncStateDelegate
                                                          lastEventIDRepository:self.lastEventIDRepository];
     self.mockSyncStatus.mockPhase = SyncPhaseDone;
     self.mockOperationStatus = [[OperationStatus alloc] init];
@@ -99,9 +95,6 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     _mockSyncStatus = nil;
     _mockOperationStatus = nil;
     
-    [_syncStateDelegate stopMocking];
-    _syncStateDelegate = nil;
-    
     [_mockApplicationDirectory stopMocking];
     _mockApplicationDirectory = nil;
     
@@ -110,10 +103,9 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     [super tearDown];
 }
 
-@end
 
+// MARK: - MissingNotifications
 
-@implementation ZMMissingUpdateEventsTranscoderTests (MissingNotifications)
 
 - (NSUUID *)olderNotificationID {
     return [NSUUID uuidWithTransportString:@"a6526b00-000a-11e5-a837-0800200c9a66"];
@@ -447,7 +439,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then
-    NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
+    NSUUID *lastUpdateEventID = [NSUUID uuidWithTransportString:[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey]];
     XCTAssertEqualObjects(lastUpdateEventID, expectedLastUpdateEventID);
 }
 
@@ -460,7 +452,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     [self setLastUpdateEventID:[self newNotificationID] hasMore:NO];
 
     // then
-    NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
+    NSUUID *lastUpdateEventID = [NSUUID uuidWithTransportString:[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey]];
     XCTAssertEqualObjects(lastUpdateEventID, [self newNotificationID]);
 }
 
@@ -473,7 +465,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     [self setLastUpdateEventID:[self olderNotificationID] hasMore:NO];
 
     // then
-    NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
+    NSUUID *lastUpdateEventID = [NSUUID uuidWithTransportString:[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey]];
     XCTAssertEqualObjects(lastUpdateEventID, [self newNotificationID]);
 }
 
@@ -487,7 +479,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     [self setLastUpdateEventID:secondUUID hasMore:NO];
 
     // then
-    NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
+    NSUUID *lastUpdateEventID = [NSUUID uuidWithTransportString:[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey]];
     XCTAssertEqualObjects(lastUpdateEventID, secondUUID);
 }
 
@@ -501,7 +493,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     [self setLastUpdateEventID:[self newNotificationID] hasMore:NO];
 
     // then
-    NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
+    NSUUID *lastUpdateEventID = [NSUUID uuidWithTransportString:[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey]];
     XCTAssertEqualObjects(lastUpdateEventID, [self newNotificationID]);
 }
 
@@ -516,7 +508,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     [self internalTestProcessEvents:@[event] liveEvents:YES];
 
     // then
-    NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
+    NSUUID *lastUpdateEventID = [NSUUID uuidWithTransportString:[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey]];
     XCTAssertEqualObjects(lastUpdateEventID, expectedLastUpdateEventID);
 }
 
@@ -535,21 +527,21 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     [self internalTestProcessEvents:@[websocketEvent] liveEvents:YES];
 
     // then
-    NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
+    NSUUID *lastUpdateEventID = [NSUUID uuidWithTransportString:[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey]];
     XCTAssertEqualObjects(lastUpdateEventID, websocketUpdateEventID);
 
     // when
     [self internalTestProcessEvents:@[downloadedEvent] liveEvents:YES];
 
     // then
-    lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
+    lastUpdateEventID = [NSUUID uuidWithTransportString:[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey]];
     XCTAssertEqualObjects(lastUpdateEventID, downstreamUpdateEventID);
 
     // when
     [self internalTestProcessEvents:@[pushNotificationEvent] liveEvents:YES];
 
     // then
-    lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
+    lastUpdateEventID = [NSUUID uuidWithTransportString:[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey]];
     XCTAssertNotEqualObjects(lastUpdateEventID, notificationUpdateEventID);
     XCTAssertEqualObjects(lastUpdateEventID, downstreamUpdateEventID);
 }
@@ -569,7 +561,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     [self internalTestProcessEvents:@[event] liveEvents:YES];
 
     // then
-    NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
+    NSUUID *lastUpdateEventID = [NSUUID uuidWithTransportString:[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey]];
     XCTAssertEqualObjects(lastUpdateEventID, initialLastUpdateEventID);
 }
 
@@ -595,7 +587,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     [(id)self.sut.listPaginator didReceiveResponse:response forSingleRequest:self.requestSync];
 
     // then
-    NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
+    NSUUID *lastUpdateEventID = [NSUUID uuidWithTransportString:[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey]];
     XCTAssertEqualObjects(lastUpdateEventID, expectedLastUpdateEventID);
 }
 
@@ -620,7 +612,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     [(id)self.sut.listPaginator didReceiveResponse:response forSingleRequest:self.requestSync];
     
     // then
-    NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
+    NSUUID *lastUpdateEventID = [NSUUID uuidWithTransportString:[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey]];
     XCTAssertEqualObjects(lastUpdateEventID, initialLastUpdateEventID);
 }
 
@@ -655,11 +647,9 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     [self.sut processEvents:events liveEvents:liveEvents prefetchResult:nil];
 }
 
-@end
 
+// MARK: - Pagination
 
-
-@implementation ZMMissingUpdateEventsTranscoderTests (Pagination)
 
 - (void)testThatItUsesLastStoredEventIDWhenFetchingNextNotifications
 {
@@ -736,10 +726,9 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
-@end
 
+// MARK: - FallbackCancellation
 
-@implementation ZMMissingUpdateEventsTranscoderTests (FallbackCancellation)
 
 - (void)expectMockPushNotificationStatusHasEventsToFetch:(BOOL)hasEventsToFetch
                                             inBackground:(BOOL)backgrounded
@@ -847,7 +836,7 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then
-    NSUUID *lastUpdateEventID = [[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey] UUID];
+    NSUUID *lastUpdateEventID = [NSUUID uuidWithTransportString:[self.uiMOC persistentStoreMetadataForKey:LastUpdateEventIDStoreKey]];
     XCTAssertEqualObjects(lastUpdateEventID, expectedLastUpdateEventID);
     XCTAssertEqualObjects(self.sut.lastUpdateEventID, expectedLastUpdateEventID);
 }
@@ -919,10 +908,9 @@ static NSString * const LastUpdateEventIDStoreKey = @"LastUpdateEventID";
     XCTAssertTrue(hasSinceQuery);
 }
 
-@end
 
+// MARK: - ServerTimeDelta
 
-@implementation ZMMissingUpdateEventsTranscoderTests (ServerTimeDelta)
 
 - (void)testThatServerTimeDeltaIsUpdatedWhenTimeFieldIsPresent
 {

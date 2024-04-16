@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
-        let downloadPredicate = NSPredicate { (object, _) -> Bool in
+        let downloadPredicate = NSPredicate { object, _ -> Bool in
             guard let message = object as? ZMAssetClientMessage else { return false }
             guard message.version < 3 else { return false }
 
@@ -72,10 +72,20 @@ public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
 
 extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
 
-    public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard let message = object as? ZMAssetClientMessage, let conversation = message.conversation else { return nil }
+    public func request(
+        forFetching object: ZMManagedObject!,
+        downstreamSync: ZMObjectSync!,
+        apiVersion: APIVersion
+    ) -> ZMTransportRequest? {
+        guard
+            let message = object as? ZMAssetClientMessage,
+            let conversation = message.conversation,
+            let cache = managedObjectContext.zm_fileAssetCache
+        else {
+            return nil
+        }
 
-        if let existingData = managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false) {
+        if let existingData = cache.mediumImageData(for: message) {
             updateMediumImage(forMessage: message, imageData: existingData)
             managedObjectContext.enqueueDelayedSave()
             return nil
@@ -90,7 +100,7 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
                     return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!, apiVersion: apiVersion)
                 }
 
-            case .v2, .v3, .v4, .v5:
+            case .v2, .v3, .v4, .v5, .v6:
                 // v2 assets are legacy and no longer supported in API v2
                 return nil
             }
@@ -118,39 +128,44 @@ extension ImageV2DownloadRequestStrategy: ZMDownstreamTranscoder {
                                                         uiContext: uiMOC)
     }
 
-    fileprivate func storeMediumImage(forMessage message: ZMAssetClientMessage, imageData: Data) {
-        managedObjectContext.zm_fileAssetCache.storeAssetData(message,
-                                                              format: .medium,
-                                                              encrypted: message.hasEncryptedAsset,
-                                                              data: imageData)
+    fileprivate func storeMediumImage(
+        forMessage message: ZMAssetClientMessage,
+        imageData: Data
+    ) {
+        guard let cache = managedObjectContext.zm_fileAssetCache else {
+            return
+        }
+
         if message.hasEncryptedAsset {
-            let otrKey: Data?
             let sha256: Data?
 
             if message.fileMessageData != nil {
                 let remote = message.underlyingMessage?.assetData?.preview.remote
-                otrKey = remote?.otrKey
                 sha256 = remote?.sha256
             } else if message.imageMessageData != nil {
                 let imageAsset = message.mediumGenericMessage?.imageAssetData
-                otrKey = imageAsset?.otrKey
                 sha256 = imageAsset?.sha256
             } else {
-                otrKey = nil
                 sha256 = nil
             }
 
-            var decrypted = false
-            if let otrKey = otrKey, let sha256 = sha256 {
-                decrypted = managedObjectContext.zm_fileAssetCache.decryptImageIfItMatchesDigest(message,
-                                                                                                 format: .medium,
-                                                                                                 encryptionKey: otrKey,
-                                                                                                 sha256Digest: sha256)
+            if let sha256, imageData.zmSHA256Digest() != sha256 {
+                if message.imageMessageData != nil {
+                    managedObjectContext.delete(message)
+                }
+
+                return
             }
 
-            if !decrypted && message.imageMessageData != nil {
-                managedObjectContext.delete(message)
-            }
+            cache.storeEncryptedMediumImage(
+                data: imageData,
+                for: message
+            )
+        } else {
+            cache.storeMediumImage(
+                data: imageData,
+                for: message
+            )
         }
     }
 

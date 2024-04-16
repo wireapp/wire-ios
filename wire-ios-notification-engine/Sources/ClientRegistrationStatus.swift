@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 import WireRequestStrategy
 
-class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
+final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     // MARK: - Properties
 
@@ -35,7 +35,9 @@ class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     var clientIsReadyForRequests: Bool {
         if let clientId = context.persistentStoreMetadata(forKey: "PersistedClientId") as? String {
+            // swiftlint:disable todo_requires_jira_link
             // TODO: move constant into shared framework
+            // swiftlint:enable todo_requires_jira_link
             return !clientId.isEmpty
         }
 

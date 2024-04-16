@@ -134,7 +134,7 @@ extension ContactsViewController {
     }
 
     private func unableToSendController(client: InvitationError.MessageType) -> UIAlertController {
-        let unableToSendController = UIAlertController(title: nil, message: client.messageKey.localized, preferredStyle: .alert)
+        let unableToSendController = UIAlertController(title: nil, message: client.messageKey, preferredStyle: .alert)
 
         let okAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel) { _ in
             unableToSendController.dismiss(animated: true)
@@ -156,9 +156,9 @@ extension ContactsViewController {
             var messageKey: String {
                 switch self {
                 case .email, .any:
-                    return "error.invite.no_email_provider"
+                    return L10n.Localizable.Error.Invite.noEmailProvider
                 case .sms:
-                    return "error.invite.no_messaging_provider"
+                    return L10n.Localizable.Error.Invite.noMessagingProvider
                 }
             }
         }

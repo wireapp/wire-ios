@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ class AssetRequestFactoryTests: MessagingTestBase {
 
             // when
             let selfUser = ZMUser.selfUser(in: moc)
-            let membership = Member.getOrCreateMember(for: selfUser, in: team, context: moc)
+            let membership = Member.getOrUpdateMember(for: selfUser, in: team, context: moc)
             XCTAssertNotNil(membership.team)
             XCTAssertTrue(selfUser.hasTeam)
 

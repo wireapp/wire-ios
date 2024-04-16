@@ -45,7 +45,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         let data = [
                 "content": name,
                 "nonce": nonce.transportString()
-            ]
+        ]
 
         let payload = payloadForMessage(in: conversation, type: EventConversationAdd, data: data)
 
@@ -63,17 +63,17 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         XCTAssert(conversation.lastMessage == clientMessage)
     }
 
-    func testThatItCreatesClientMessagesFromUpdateEvent() {
+    func testThatItCreatesClientMessagesFromUpdateEvent() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
         let nonce = UUID.create()
         let message = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-        let contentData = try? message.serializedData()
-        let data = contentData?.base64String()
+        let contentData = try XCTUnwrap(message.serializedData())
+        let data = contentData.base64String()
 
-        let payload = payloadForMessage(in: conversation, type: EventConversationAddClientMessage, data: data!)
+        let payload = payloadForMessage(in: conversation, type: EventConversationAddClientMessage, data: data)
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
         XCTAssertNotNil(event)
 
@@ -95,19 +95,19 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         XCTAssertEqual(messageData, contentData)
     }
 
-    func testThatItCreatesOTRMessagesFromUpdateEvent() {
+    func testThatItCreatesOTRMessagesFromUpdateEvent() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
-        let senderClientID = NSString.createAlphanumerical()
+        let senderClientID: String = .randomClientIdentifier()
         let nonce = UUID.create()
         let message = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-        let contentData = try? message.serializedData()
+        let contentData = try XCTUnwrap(message.serializedData())
 
         let data: NSDictionary = [
             "sender": senderClientID,
-            "text": contentData?.base64String()
+            "text": contentData.base64String()
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
 
@@ -133,7 +133,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         XCTAssertEqual(messageData, contentData)
     }
 
-    func testThatItIgnores_AnyAdditionalFieldsInTheLinkPreviewUpdate() {
+    func testThatItIgnores_AnyAdditionalFieldsInTheLinkPreviewUpdate() throws {
         // given
         let initialText = "initial text"
 
@@ -146,11 +146,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
 
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
 
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
@@ -176,10 +172,10 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         let modifiedMessage = GenericMessage(content: messageText, nonce: nonce)
 
         let modifiedMessageData = try? modifiedMessage.serializedData().base64String()
-        let data: NSDictionary = [
-            "sender": selfClient.remoteIdentifier,
-            "recipient": selfClient.remoteIdentifier,
-            "text": modifiedMessageData
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(selfClient.remoteIdentifier),
+            "recipient": XCTUnwrap(selfClient.remoteIdentifier),
+            "text": XCTUnwrap(modifiedMessageData)
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
 
@@ -199,7 +195,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         XCTAssertEqual(existingMessage.textMessageData?.messageText, initialText)
     }
 
-    func testThatItIgnoresBlacklistedLinkPreview() {
+    func testThatItIgnoresBlacklistedLinkPreview() throws {
         // given
         let initialText = "initial text"
 
@@ -209,13 +205,9 @@ final class ClientMessageTests: BaseZMClientMessageTests {
 
         let selfClient = self.createSelfClient()
 
-       let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
+        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
 
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
@@ -239,10 +231,10 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         }
         let modifiedMessage = GenericMessage(content: messageText, nonce: nonce)
 
-        let modifiedMessageData = try? modifiedMessage.serializedData().base64String()
-        let data: NSDictionary = [
-            "sender": selfClient.remoteIdentifier,
-            "recipient": selfClient.remoteIdentifier,
+        let modifiedMessageData = try modifiedMessage.serializedData().base64String()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(selfClient.remoteIdentifier),
+            "recipient": XCTUnwrap(selfClient.remoteIdentifier),
             "text": modifiedMessageData
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
@@ -264,8 +256,8 @@ final class ClientMessageTests: BaseZMClientMessageTests {
         XCTAssertEqual(existingMessage.textMessageData?.messageText, initialText)
     }
 
-    func testThatItCanUpdateAnExistingLinkPreviewInTheDataSetWithoutCreatingMultipleOnes() {
-        self.syncMOC.performGroupedAndWait {_ in
+    func testThatItCanUpdateAnExistingLinkPreviewInTheDataSetWithoutCreatingMultipleOnes() throws {
+        try syncMOC.performGroupedAndWait { _ in
             // given
             let nonce = UUID.create()
             let message = ZMClientMessage(nonce: nonce, managedObjectContext: self.syncMOC)
@@ -293,11 +285,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
                 $0.linkPreview = [linkPreview]
             }
             let genericMessage = GenericMessage(content: text, nonce: nonce)
-            do {
-                try message.setUnderlyingMessage(genericMessage)
-            } catch {
-                XCTFail()
-            }
+            try message.setUnderlyingMessage(genericMessage)
 
             // then
             XCTAssertEqual(message.dataSet.count, 1)
@@ -324,11 +312,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
             textSecond.linkPreview = [linkPreviewSecond!]
             second.text = textSecond
 
-            do {
-                try message.setUnderlyingMessage(second)
-            } catch {
-                XCTFail()
-            }
+            try message.setUnderlyingMessage(second)
 
             // then
             XCTAssertEqual(message.dataSet.count, 1)
@@ -350,21 +334,50 @@ final class ClientMessageTests: BaseZMClientMessageTests {
 
 extension ClientMessageTests {
 
-    func testThatItDoesNotCreateOTRMessageIfItsIdentifierIsInvalid() {
+    func testThatItDoesNotCreateOTRMessageIfConversationIsForceReadonly() throws {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+        conversation.isForcedReadOnly = true
+
+        let senderClientID: String = .randomClientIdentifier()
+        let nonce = UUID.create()
+        var prototype = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+
+        let contentData = try prototype.serializedData()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(senderClientID),
+            "text": contentData.base64String()
+        ]
+        let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
+        let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
+        XCTAssertNotNil(event)
+
+        // when
+        var sut: ZMClientMessage?
+        self.performPretendingUiMocIsSyncMoc {
+            sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
+        }
+
+        // then
+        XCTAssertNil(sut)
+    }
+
+    func testThatItDoesNotCreateOTRMessageIfItsIdentifierIsInvalid() throws {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
 
-        let senderClientID = NSString.createAlphanumerical()
+        let senderClientID: String = .randomClientIdentifier()
         let nonce = UUID.create()
         var prototype = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
         prototype.messageID = "please-fail"
 
-        let contentData = try? prototype.serializedData()
+        let contentData = try prototype.serializedData()
 
-        let data: NSDictionary = [
-            "sender": senderClientID,
-            "text": contentData?.base64String()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(senderClientID),
+            "text": contentData.base64String()
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
 
@@ -381,7 +394,7 @@ extension ClientMessageTests {
         XCTAssertNil(sut)
     }
 
-    func testThatItDoesNotCreateKnockMessagesIfThereIsAlreadyOtrKnockWithTheSameNonce() {
+    func testThatItDoesNotCreateKnockMessagesIfThereIsAlreadyOtrKnockWithTheSameNonce() throws {
         // given
         let nonce = UUID.create()
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
@@ -389,16 +402,12 @@ extension ClientMessageTests {
 
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: WireProtos.Knock.with { $0.hotKnock = true }, nonce: UUID.create())
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
 
         let data: NSDictionary = [
             "nonce": nonce.transportString()
-               ]
+        ]
         let payload = payloadForMessage(in: conversation, type: EventConversationKnock, data: data)
 
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
@@ -415,16 +424,16 @@ extension ClientMessageTests {
         XCTAssertEqual(conversation.lastMessage as! ZMMessage, existingMessage)
     }
 
-    func testThatItDoesNotCreateMessageFromAvailabilityMessage() {
+    func testThatItDoesNotCreateMessageFromAvailabilityMessage() throws {
         // given
-        let senderClientID = NSString.createAlphanumerical()
+        let senderClientID: String = .randomClientIdentifier()
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let availability = Availability(.away)
-        let contentData = try? GenericMessage(content: availability, nonce: UUID.create()).serializedData()
-        let data: NSDictionary = [
-            "sender": senderClientID,
-            "text": contentData?.base64String()
+        let availability = WireProtos.Availability(.away)
+        let contentData = try GenericMessage(content: availability, nonce: UUID.create()).serializedData()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(senderClientID),
+            "text": contentData.base64String()
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
 
@@ -442,7 +451,7 @@ extension ClientMessageTests {
         XCTAssertEqual(conversation.allMessages.count, 0)
     }
 
-    func testThatItIgnoresUpdates_OnAnAlreadyExistingClientMessageWithoutASenderClientID() {
+    func testThatItIgnoresUpdates_OnAnAlreadyExistingClientMessageWithoutASenderClientID() throws {
         // given
         let initialText = "initial text"
         let modifiedText = "modified text"
@@ -455,20 +464,16 @@ extension ClientMessageTests {
 
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
 
         let modifiedMessage = GenericMessage(content: Text(content: modifiedText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-        let contentData = try? modifiedMessage.serializedData()
-        let data: NSDictionary = [
-            "sender": selfClient.remoteIdentifier,
-            "recipient": selfClient.remoteIdentifier,
-            "text": contentData?.base64String()
+        let contentData = try modifiedMessage.serializedData()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(selfClient.remoteIdentifier),
+            "recipient": XCTUnwrap(selfClient.remoteIdentifier),
+            "text": contentData.base64String()
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
 
@@ -486,7 +491,7 @@ extension ClientMessageTests {
         XCTAssertEqual(existingMessage.textMessageData!.messageText, initialText)
     }
 
-    func testThatItIgnoresUpdates_OnAnAlreadyExistingClientMessageWithTheSameNonceButDifferentClient() {
+    func testThatItIgnoresUpdates_OnAnAlreadyExistingClientMessageWithTheSameNonceButDifferentClient() throws {
         // given
         let initialText = "initial text"
         let modifiedText = "modified text"
@@ -496,26 +501,22 @@ extension ClientMessageTests {
         conversation.remoteIdentifier = UUID.create()
 
         let selfClient = self.createSelfClient()
-        let unknownSender = NSString.createAlphanumerical()
+        let unknownSender: String = .randomClientIdentifier()
 
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
 
         let modifiedMessage = GenericMessage(content: Text(content: modifiedText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
 
-        let contentData = try? modifiedMessage.serializedData()
-        let data: NSDictionary = [
-            "sender": unknownSender,
-            "recipient": selfClient.remoteIdentifier,
-            "text": contentData?.base64String()
+        let contentData = try modifiedMessage.serializedData()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(unknownSender),
+            "recipient": XCTUnwrap(selfClient.remoteIdentifier),
+            "text": contentData.base64String()
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
 
@@ -533,7 +534,7 @@ extension ClientMessageTests {
         XCTAssertEqual(existingMessage.textMessageData!.messageText, initialText)
     }
 
-    func testThatItIgnoresUpdates_OnAnAlreadyExistingClientMessageWhichDoesntContainLinkPreviewUpdate() {
+    func testThatItIgnoresUpdates_OnAnAlreadyExistingClientMessageWhichDoesntContainLinkPreviewUpdate() throws {
         // given
         let initialText = "initial text"
         let modifiedText = "modified text"
@@ -546,22 +547,18 @@ extension ClientMessageTests {
 
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
 
         let modifiedMessage = GenericMessage(content: Text(content: modifiedText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
 
-        let contentData = try? modifiedMessage.serializedData()
-        let data: NSDictionary = [
-            "sender": selfClient.remoteIdentifier,
-            "recipient": selfClient.remoteIdentifier,
-            "text": contentData?.base64String()
+        let contentData = try modifiedMessage.serializedData()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(selfClient.remoteIdentifier),
+            "recipient": XCTUnwrap(selfClient.remoteIdentifier),
+            "text": contentData.base64String()
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
 
@@ -579,11 +576,13 @@ extension ClientMessageTests {
         XCTAssertEqual(existingMessage.textMessageData?.messageText, initialText)
     }
 
-    func testThatItIgnoresUpdates_OnAnAlreadyExistingClientMessageWhichContainLinkPreviewUpdateButModifiedText() {
+    func testThatItIgnoresUpdates_OnAnAlreadyExistingClientMessageWhichContainLinkPreviewUpdateButModifiedText() throws {
         // given
         let initialText = "initial text"
         let modifiedText = "modified text"
-
+        // swiftlint:disable todo_requires_jira_link
+        // TODO: `modifiedText` is not used, is the text correct?
+        // swiftlint:enable todo_requires_jira_link
         let nonce = UUID.create()
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
@@ -592,11 +591,7 @@ extension ClientMessageTests {
 
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
@@ -614,11 +609,11 @@ extension ClientMessageTests {
         }
         let modifiedMessage = GenericMessage(content: messageText, nonce: nonce)
 
-        let contentData = try? modifiedMessage.serializedData()
-        let data: NSDictionary = [
-            "sender": selfClient.remoteIdentifier,
-            "recipient": selfClient.remoteIdentifier,
-            "text": contentData?.base64String()
+        let contentData = try modifiedMessage.serializedData()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(selfClient.remoteIdentifier),
+            "recipient": XCTUnwrap(selfClient.remoteIdentifier),
+            "text": contentData.base64String()
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
 
@@ -636,7 +631,7 @@ extension ClientMessageTests {
         XCTAssertEqual(existingMessage.textMessageData?.messageText, initialText)
     }
 
-    func testThatItUpdates_AnAlreadyExistingClientMessageWhichContainLinkPreviewUpdate() {
+    func testThatItUpdates_AnAlreadyExistingClientMessageWhichContainLinkPreviewUpdate() throws {
         // given
         let initialText = "initial text"
 
@@ -648,11 +643,7 @@ extension ClientMessageTests {
 
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
@@ -670,11 +661,11 @@ extension ClientMessageTests {
         }
         let modifiedMessage = GenericMessage(content: messageText, nonce: nonce)
 
-        let contentData = try? modifiedMessage.serializedData()
-        let data: NSDictionary = [
-            "sender": selfClient.remoteIdentifier,
-            "recipient": selfClient.remoteIdentifier,
-            "text": contentData?.base64String()
+        let contentData = try modifiedMessage.serializedData()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(selfClient.remoteIdentifier),
+            "recipient": XCTUnwrap(selfClient.remoteIdentifier),
+            "text": contentData.base64String()
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
 
@@ -693,7 +684,7 @@ extension ClientMessageTests {
         XCTAssertEqual(existingMessage.textMessageData?.messageText, initialText)
     }
 
-    func testThatItUpdates_AnAlreadyExistingEphemeralClientMessageWhichContainLinkPreviewUpdate() {
+    func testThatItUpdates_AnAlreadyExistingEphemeralClientMessageWhichContainLinkPreviewUpdate() throws {
         // given
         let initialText = "initial text"
 
@@ -705,11 +696,7 @@ extension ClientMessageTests {
 
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce, expiresAfter: .oneHour)
-        do {
-            try existingMessage.setUnderlyingMessage(message)
-        } catch {
-            XCTFail()
-        }
+        try existingMessage.setUnderlyingMessage(message)
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
@@ -728,10 +715,10 @@ extension ClientMessageTests {
         let modifiedMessage = GenericMessage(content: messageText, nonce: nonce, expiresAfter: .oneHour)
 
         let contentData = try? modifiedMessage.serializedData()
-        let data: NSDictionary = [
-            "sender": selfClient.remoteIdentifier,
-            "recipient": selfClient.remoteIdentifier,
-            "text": contentData?.base64String()
+        let data: NSDictionary = try [
+            "sender": XCTUnwrap(selfClient.remoteIdentifier),
+            "recipient": XCTUnwrap(selfClient.remoteIdentifier),
+            "text": XCTUnwrap(contentData?.base64String())
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
 
@@ -751,7 +738,7 @@ extension ClientMessageTests {
         XCTAssertEqual(existingMessage.textMessageData?.messageText, initialText)
     }
 
-    func testThatItReturnsNilIfTheClientMessageIsZombie() {
+    func testThatItReturnsNilIfTheClientMessageIsZombie() throws {
         // given
         let nonce = UUID.create()
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
@@ -762,8 +749,8 @@ extension ClientMessageTests {
         existingMessage.visibleInConversation = conversation
         let message = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
 
-        let contentData = try? message.serializedData()
-        let data = contentData?.base64String()
+        let contentData = try XCTUnwrap(message.serializedData())
+        let data = contentData.base64String()
 
         let payload = payloadForMessage(in: conversation, type: EventConversationAddClientMessage, data: data)
 
@@ -771,7 +758,7 @@ extension ClientMessageTests {
         XCTAssertNotNil(event)
 
         let prefetch = ZMFetchRequestBatch()
-        prefetch.addNonces(toPrefetchMessages: Set(arrayLiteral: existingMessage.nonce!))
+        prefetch.addNonces(toPrefetchMessages: [existingMessage.nonce!])
         let prefetchResult = prefetch.execute(in: self.uiMOC)
         XCTAssertEqual(prefetchResult?.messagesByNonce[existingMessage.nonce!]?.count, 1)
         XCTAssertEqual(prefetchResult?.messagesByNonce[existingMessage.nonce!]?.first, existingMessage)
@@ -804,7 +791,7 @@ extension ClientMessageTests {
     func testThatItDecryptsMessageWithExternalBlobCorrectly() {
         // given
         self.syncMOC.performGroupedAndWait {_ in
-            self.createSelfClient()
+            self.createSelfClient(onMOC: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
             let firstClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)

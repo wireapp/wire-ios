@@ -30,8 +30,7 @@ public final class StringKeyPath: Hashable {
 
         if let keyPath = KeyPathCache[string] {
             return keyPath
-        }
-        else {
+        } else {
             let instance = StringKeyPath(string)
             KeyPathCache[string] = instance
             return instance
@@ -54,7 +53,7 @@ public final class StringKeyPath: Hashable {
     }
 
     public lazy var decompose: (head: StringKeyPath, tail: StringKeyPath?)? = {
-        if 1 <= self.count {
+        if self.count > 0 {
             if let i = self.rawValue.firstIndex(of: ".") {
                 let head = self.rawValue[..<i]
                 var tail: StringKeyPath?

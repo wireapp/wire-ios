@@ -15,8 +15,7 @@
         "enabled" : false
       },
       {
-        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1",
-        "enabled" : false
+        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
       },
       {
         "argument" : "OPTIN_STDERR YES",
@@ -48,7 +47,6 @@
   "testTargets" : [
     {
       "skippedTests" : [
-        "AnalyticsTests",
         "AvailabilityTests",
         "EventProcessingPerformanceTests",
         "SessionManagerTests\/testThatSessionManagerSetsUpAPNSEnvironmentOnLaunch()",

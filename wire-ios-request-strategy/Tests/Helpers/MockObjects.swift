@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,9 +52,9 @@ public class MockApplicationStatus: NSObject, ApplicationStatus {
         return mockClientRegistrationStatus.deletionCalls
     }
 
-    public var slowSyncWasRequested = false
-    public func requestSlowSync() {
-        slowSyncWasRequested = true
+    public var resyncResourcesWasRequested = false
+    public func requestResyncResources() {
+        resyncResourcesWasRequested = true
     }
 
 }
@@ -88,20 +88,4 @@ class MockPushMessageHandler: NSObject, PushMessageHandler {
     }
 
     fileprivate(set) var failedToSend: [ZMMessage] = []
-}
-
-class MockSyncProgress: NSObject, SyncProgress {
-
-    var currentSyncPhase: SyncPhase = .done
-
-    var didFinishCurrentSyncPhase: SyncPhase?
-    func finishCurrentSyncPhase(phase: SyncPhase) {
-        didFinishCurrentSyncPhase = phase
-    }
-
-    var didFailCurrentSyncPhase: SyncPhase?
-    func failCurrentSyncPhase(phase: SyncPhase) {
-        didFailCurrentSyncPhase = phase
-    }
-
 }

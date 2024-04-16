@@ -1,20 +1,20 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 import WireDataModel
@@ -51,9 +51,9 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
             self.sut = nil
             self.mockApplicationStatus = nil
             self.oneToOneconversationOnSync = nil
-            syncMOC.zm_fileAssetCache.wipeCaches()
+            try? syncMOC.zm_fileAssetCache.wipeCaches()
         }
-        uiMOC.zm_fileAssetCache.wipeCaches()
+        try? uiMOC.zm_fileAssetCache.wipeCaches()
         apiVersion = nil
         super.tearDown()
     }
@@ -255,7 +255,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             let genericMessage = GenericMessage(content: text, nonce: nonce)
             let message = try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
-            syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: false, data: .secureRandomData(length: 256))
+            syncMOC.zm_fileAssetCache.storeMediumImage(data: .secureRandomData(length: 256), for: message)
 
             // WHEN
             message.textMessageData?.requestLinkPreviewImageDownload()
@@ -279,7 +279,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             // GIVEN
             message = try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
-            syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: false, data: .secureRandomData(length: 256))
+            syncMOC.zm_fileAssetCache.storeMediumImage(data: .secureRandomData(length: 256), for: message)
 
             // WHEN
             message.textMessageData?.requestLinkPreviewImageDownload()
@@ -292,13 +292,14 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
 
     // MARK: - Response Handling
 
-    func testThatItDecryptsTheImageDataInTheRequestResponseAndDeletesTheEncryptedVersion() throws {
+    func testThatItStoresTheEncryptedImageDataInTheRequestResponse() throws {
 
         let assetID = UUID.create().transportString()
         let data = Data.secureRandomData(length: 256)
         let otrKey = Data.randomEncryptionKey()
         let encrypted = try data.zmEncryptPrefixingPlainTextIV(key: otrKey)
-        let linkPreview = createLinkPreview(assetID, otrKey: otrKey, sha256: encrypted.zmSHA256Digest())
+        let sha256 = encrypted.zmSHA256Digest()
+        let linkPreview = createLinkPreview(assetID, otrKey: otrKey, sha256: sha256)
         let nonce = UUID.create()
 
         var text = Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil)
@@ -325,10 +326,10 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         self.syncMOC.performGroupedAndWait { syncMOC in
             // THEN
-            let actual = syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false)
-            XCTAssertNotNil(actual)
-            XCTAssertEqual(actual, data)
-            XCTAssertNil(syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true))
+            XCTAssertTrue(syncMOC.zm_fileAssetCache.hasEncryptedMediumImageData(for: message))
+            XCTAssertFalse(syncMOC.zm_fileAssetCache.hasMediumImageData(for: message))
+            let decryptedData = syncMOC.zm_fileAssetCache.decryptedMediumImageData(for: message, encryptionKey: otrKey, sha256Digest: sha256)
+            XCTAssertEqual(decryptedData, data)
         }
     }
 
@@ -358,8 +359,8 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         }
         self.syncMOC.performGroupedAndWait { syncMOC in
             // THEN
-            XCTAssertNil(syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false))
-            XCTAssertNil(syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true))
+            XCTAssertNil(syncMOC.zm_fileAssetCache.mediumImageData(for: message))
+            XCTAssertNil(syncMOC.zm_fileAssetCache.encryptedMediumImageData(for: message))
         }
     }
 }

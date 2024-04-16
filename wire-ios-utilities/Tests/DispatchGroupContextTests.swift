@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import WireTesting
 @testable import WireUtilities
 
-class DispatchGroupContextTests: ZMTBaseTest {
+final class DispatchGroupContextTests: ZMTBaseTest {
 
     var sut: DispatchGroupContext!
 
@@ -31,7 +31,7 @@ class DispatchGroupContextTests: ZMTBaseTest {
 
     func testInjectGroupsAreAdded() {
         // given
-        let group = ZMSDispatchGroup(label: "group1")!
+        let group = ZMSDispatchGroup(label: "group1")
         sut = DispatchGroupContext(groups: [group])
 
         // then
@@ -40,7 +40,7 @@ class DispatchGroupContextTests: ZMTBaseTest {
 
     func testGroupsCanBeAdded() {
         // given
-        let group = ZMSDispatchGroup(label: "group1")!
+        let group = ZMSDispatchGroup(label: "group1")
         sut = DispatchGroupContext(groups: [])
 
         // when
@@ -52,7 +52,7 @@ class DispatchGroupContextTests: ZMTBaseTest {
 
     func testGroupsCanBeEntered() {
         // given
-        let group = ZMSDispatchGroup(label: "group1")!
+        let group = ZMSDispatchGroup(label: "group1")
         sut = DispatchGroupContext(groups: [group])
 
         // when
@@ -64,8 +64,8 @@ class DispatchGroupContextTests: ZMTBaseTest {
 
     func testGroupsCanBeEnteredExcludingOne() {
         // given
-        let group1 = ZMSDispatchGroup(label: "group1")!
-        let group2 = ZMSDispatchGroup(label: "group2")!
+        let group1 = ZMSDispatchGroup(label: "group1")
+        let group2 = ZMSDispatchGroup(label: "group2")
         sut = DispatchGroupContext(groups: [group1, group2])
 
         // when
@@ -77,8 +77,8 @@ class DispatchGroupContextTests: ZMTBaseTest {
 
     func testGroupsCanBeLeft() {
         // given
-        let groupIsEmpty = expectation(description: "group did become empty")
-        let group = ZMSDispatchGroup(label: "group1")!
+        let groupIsEmpty = customExpectation(description: "group did become empty")
+        let group = ZMSDispatchGroup(label: "group1")
         sut = DispatchGroupContext(groups: [group])
         let enteredGroups = sut.enterAll()
 
@@ -94,10 +94,10 @@ class DispatchGroupContextTests: ZMTBaseTest {
 
     func testSelectedGroupsCanBeLeft() {
         // given
-        let group1IsEmpty = expectation(description: "group1 did become empty")
-        let group2IsEmpty = expectation(description: "group2 did become empty")
-        let group1 = ZMSDispatchGroup(label: "group1")!
-        let group2 = ZMSDispatchGroup(label: "group2")!
+        let group1IsEmpty = customExpectation(description: "group1 did become empty")
+        let group2IsEmpty = customExpectation(description: "group2 did become empty")
+        let group1 = ZMSDispatchGroup(label: "group1")
+        let group2 = ZMSDispatchGroup(label: "group2")
         sut = DispatchGroupContext(groups: [group1, group2])
         let enteredGroups = sut.enterAll()
 

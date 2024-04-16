@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -69,15 +69,16 @@ extension TerminateFederationRequestStrategy: ZMEventConsumer {
     }
 
     private func processEvent(_ event: ZMUpdateEvent) {
+        let decoder = EventPayloadDecoder()
 
         switch event.type {
         case .federationDelete:
-            if let payload = event.eventPayload(type: Payload.FederationDelete.self) {
+            if let payload = try? decoder.decode(Payload.FederationDelete.self, from: event.payload) {
                 federationTerminationManager.handleFederationTerminationWith(payload.domain)
             }
 
         case .federationConnectionRemoved:
-            if let payload = event.eventPayload(type: Payload.ConnectionRemoved.self),
+            if let payload = try? decoder.decode(Payload.ConnectionRemoved.self, from: event.payload),
                payload.domains.count == 2,
                let firstDomain = payload.domains.first,
                let secondDomain = payload.domains.last {

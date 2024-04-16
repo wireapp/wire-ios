@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 #import "ZMSyncStrategyTests.h"
 #import "ZMSyncStrategy+Internal.h"
@@ -61,41 +60,23 @@
     NOT_USED(taskIdentifier);
 }
 
-- (void)didStartSlowSync { }
-
-- (void)didFinishSlowSync { }
-
-- (void)didStartQuickSync { }
-
-- (void)didFinishQuickSync { }
-
-- (void)didRegisterSelfUserClient:(UserClient *)userClient {
-    NOT_USED(userClient);
-}
-
-- (void)didFailToRegisterSelfUserClient:(NSError *)error {
-    NOT_USED(error);
-}
-
-- (void)didDeleteSelfUserClient:(NSError *)error {
-    NOT_USED(error);
-}
-
 - (void)setUp
 {
     [super setUp];
     
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
-    selfUser.remoteIdentifier = self.userIdentifier;
-    
-    ZMConversation *selfConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-    selfConversation.remoteIdentifier = self.userIdentifier;
-    selfConversation.conversationType = ZMConversationTypeSelf;
+    [self.syncMOC performBlockAndWait:^{
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        selfUser.remoteIdentifier = self.userIdentifier;
 
-    [self.lastEventIDRepository storeLastEventID:[NSUUID UUID]];
-    
-    [self.syncMOC saveOrRollback];
-        
+        ZMConversation *selfConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        selfConversation.remoteIdentifier = self.userIdentifier;
+        selfConversation.conversationType = ZMConversationTypeSelf;
+
+        [self.lastEventIDRepository storeLastEventID:[NSUUID UUID]];
+
+        [self.syncMOC saveOrRollback];
+    }];
+
     self.syncStateDelegate = [[MockSyncStateDelegate alloc] init];
     self.mockEventConsumer = [[MockEventConsumer alloc]  init];
     self.mockContextChangeTracker = [[MockContextChangeTracker alloc] init];
@@ -110,13 +91,7 @@
     self.fetchRequestForTrackedObjects2 = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
     self.fetchRequestForTrackedObjects2.predicate = [NSPredicate predicateWithFormat:@"userDefinedName != nil"];
 
-    self.applicationStatusDirectory = [[ApplicationStatusDirectory alloc] initWithManagedObjectContext:self.syncMOC
-                                                                                         cookieStorage:[[FakeCookieStorage alloc] init]
-                                                                                   requestCancellation:self
-                                                                                           application:self.application
-                                                                                     syncStateDelegate:self
-                                                                                 lastEventIDRepository:self.lastEventIDRepository
-                                                                                             analytics:nil];
+    self.operationStatus = [[OperationStatus alloc] init];
     
     NotificationDispatcher *notificationDispatcher =
     [[NotificationDispatcher alloc] initWithManagedObjectContext:self.coreDataStack.viewContext];
@@ -125,7 +100,7 @@
         
     self.sut = [[ZMSyncStrategy alloc] initWithContextProvider:self.coreDataStack
                                        notificationsDispatcher:notificationDispatcher
-                                    applicationStatusDirectory:self.applicationStatusDirectory
+                                               operationStatus:self.operationStatus
                                                    application:self.application
                                              strategyDirectory:mockStrategyDirectory
                                         eventProcessingTracker:eventProcessingTracker];
@@ -137,7 +112,7 @@
 
 - (void)tearDown;
 {
-    self.applicationStatusDirectory = nil;
+    self.operationStatus = nil;
     self.fetchRequestForTrackedObjects1 = nil;
     self.fetchRequestForTrackedObjects2 = nil;
     self.syncStateDelegate = nil;
@@ -162,7 +137,10 @@
     self.mockContextChangeTracker.fetchRequest = self.fetchRequestForTrackedObjects2;
         
     // when
-    (void)[self.sut nextRequestForAPIVersion:APIVersionV0];
+    [self.syncMOC performBlockAndWait:^{
+        (void)[self.sut nextRequestForAPIVersion:APIVersionV0];
+    }];
+
     
     // then
     XCTAssertTrue(self.mockContextChangeTracker.addTrackedObjectsCalled);
@@ -225,7 +203,7 @@
     __block ZMUser *syncUser;
     
     // expect
-    [self expectationForNotification:NSManagedObjectContextObjectsDidChangeNotification object:self.uiMOC handler:nil];
+    [self customExpectationForNotification:NSManagedObjectContextObjectsDidChangeNotification object:self.uiMOC handler:nil];
     
     // when
     [self.syncMOC performGroupedBlockThenWaitForReasonableTimeout:^{
@@ -242,7 +220,7 @@
     NSString *name = @"very-unique-name_ps9ijsdnmf";
 
     // and expect
-    [self expectationForNotification:NSManagedObjectContextObjectsDidChangeNotification object:self.uiMOC handler:^BOOL(NSNotification *notification ZM_UNUSED) {
+    [self customExpectationForNotification:NSManagedObjectContextObjectsDidChangeNotification object:self.uiMOC handler:^BOOL(NSNotification *notification ZM_UNUSED) {
         return uiUser.name != nil;
     }];
     
@@ -339,9 +317,11 @@
     for (NSNotification *note in didSaveNotificationsA) {
         [[NSNotificationCenter defaultCenter] postNotification:note];
     }
-    for (NSNotification *note in didSaveNotificationsB) {
-        [[NSNotificationCenter defaultCenter] postNotification:note];
-    }
+    [self.syncMOC performGroupedBlock:^{
+        for (NSNotification *note in didSaveNotificationsB) {
+            [[NSNotificationCenter defaultCenter] postNotification:note];
+        }
+    }];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -396,14 +376,14 @@
 - (void)testThatItUpdateOperationStatusWhenTheAppEntersBackground
 {
     // given
-    self.applicationStatusDirectory.operationStatus.isInBackground = NO;
+    self.operationStatus.isInBackground = NO;
     
     // when
     [self goToBackground];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    XCTAssertTrue(self.applicationStatusDirectory.operationStatus.isInBackground);
+    XCTAssertTrue(self.operationStatus.isInBackground);
     
 }
 
@@ -411,19 +391,19 @@
 - (void)testThatItUpdateOperationStatusWhenTheAppWillEnterForeground
 {
     // given
-    self.applicationStatusDirectory.operationStatus.isInBackground = YES;
+    self.operationStatus.isInBackground = YES;
 
     // when
     [self goToForeground];
     
     // then
-    XCTAssertFalse(self.applicationStatusDirectory.operationStatus.isInBackground);
+    XCTAssertFalse(self.operationStatus.isInBackground);
 }
 
 - (void)testThatItNotifiesTheOperationLoopOfNewOperationWhenEnteringBackground
 {
     // expect
-    [self expectationForNotification:@"RequestAvailableNotification" object:nil handler:nil];
+    [self customExpectationForNotification:@"RequestAvailableNotification" object:nil handler:nil];
 
     // when
     [self goToBackground];
@@ -435,7 +415,7 @@
 - (void)testThatItNotifiesTheOperationLoopOfNewOperationWhenEnteringForeground
 {
     // expect
-    [self expectationForNotification:@"RequestAvailableNotification" object:nil handler:nil];
+    [self customExpectationForNotification:@"RequestAvailableNotification" object:nil handler:nil];
     
     // when
     [self goToForeground];

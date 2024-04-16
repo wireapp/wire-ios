@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class CallEventStatusTests: ZMTBaseTest {
     func testThatWaitForCallEventCompleteImmediatelyIfNoCallEventsAreScheduled() {
 
         // expect
-        let processingDidComplete = expectation(description: "processingDidComplete")
+        let processingDidComplete = customExpectation(description: "processingDidComplete")
 
         // when
         let hasUnprocessedCallEvents = sut.waitForCallEventProcessingToComplete {
@@ -58,7 +58,7 @@ class CallEventStatusTests: ZMTBaseTest {
         sut.scheduledCallEventForProcessing()
 
         // expect
-        let processingDidComplete = expectation(description: "processingDidComplete")
+        let processingDidComplete = customExpectation(description: "processingDidComplete")
         let hasUnprocessedCallEvents = sut.waitForCallEventProcessingToComplete {
             processingDidComplete.fulfill()
         }
@@ -76,7 +76,7 @@ class CallEventStatusTests: ZMTBaseTest {
         sut.finishedProcessingCallEvent()
 
         // expect
-        let processingDidComplete = expectation(description: "processingDidComplete")
+        let processingDidComplete = customExpectation(description: "processingDidComplete")
         let hasUnprocessedCallEvents = sut.waitForCallEventProcessingToComplete {
             processingDidComplete.fulfill()
         }

@@ -15,7 +15,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import UserNotifications
 import WireDataModel
 import WireSyncEngine
@@ -25,7 +25,11 @@ typealias Completion = () -> Void
 typealias ResultHandler = (_ succeeded: Bool) -> Void
 
 protocol ConversationListContainerViewModelDelegate: AnyObject {
-    init(viewModel: ConversationListViewController.ViewModel)
+
+    func conversationListViewControllerViewModel(
+        _ viewModel: ConversationListViewController.ViewModel,
+        didUpdate selfUserStatus: UserStatus
+    )
 
     func scrollViewDidScroll(scrollView: UIScrollView!)
 
@@ -35,23 +39,13 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
 
     func showNoContactLabel(animated: Bool)
     func hideNoContactLabel(animated: Bool)
-
-    func openChangeHandleViewController(with handle: String)
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler)
     func updateArchiveButtonVisibilityIfNeeded(showArchived: Bool)
-
-    func removeUsernameTakeover()
-    func showUsernameTakeover(suggestedHandle: String, name: String)
-
     func showPermissionDeniedViewController()
 
     @discardableResult
     func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool
-
-    var hasUsernameTakeoverViewController: Bool { get }
 }
-
-extension ConversationListViewController: ConversationListContainerViewModelDelegate {}
 
 extension ConversationListViewController {
     final class ViewModel: NSObject {
@@ -66,41 +60,83 @@ extension ConversationListViewController {
         }
 
         let account: Account
+
+        private(set) var selfUserStatus: UserStatus {
+            didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: selfUserStatus) }
+        }
+
         let selfUser: SelfUserType
         let conversationListType: ConversationListHelperType.Type
         let userSession: UserSession
+        private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+        private let notificationCenter: NotificationCenter
 
         var selectedConversation: ZMConversation?
 
-        var userProfileObserverToken: Any?
+        private var didBecomeActiveNotificationToken: Any?
+        private var e2eiCertificateChangedToken: Any?
         private var initialSyncObserverToken: Any?
-        private var userObserverToken: Any?
+        private var userObservationToken: NSObjectProtocol?
         /// observer tokens which are assigned when viewDidLoad
-        var allConversationsObserverToken: Any?
-        var connectionRequestsObserverToken: Any?
+        var allConversationsObserverToken: NSObjectProtocol?
+        var connectionRequestsObserverToken: NSObjectProtocol?
 
         var actionsController: ConversationActionController?
 
-        init(account: Account,
-             selfUser: SelfUserType,
-             conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
-             userSession: UserSession) {
+        init(
+            account: Account,
+            selfUser: SelfUserType,
+            conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
+            userSession: UserSession,
+            isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
+            notificationCenter: NotificationCenter = .default
+        ) {
             self.account = account
             self.selfUser = selfUser
             self.conversationListType = conversationListType
             self.userSession = userSession
+            self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
+            selfUserStatus = .init(user: selfUser, isE2EICertified: false)
+            self.notificationCenter = notificationCenter
+            super.init()
+
+            updateE2EICertifiedStatus()
+        }
+
+        deinit {
+            if let didBecomeActiveNotificationToken {
+                notificationCenter.removeObserver(didBecomeActiveNotificationToken)
+            }
+
+            if let e2eiCertificateChangedToken {
+                notificationCenter.removeObserver(e2eiCertificateChangedToken)
+            }
         }
     }
 }
 
 extension ConversationListViewController.ViewModel {
+
     func setupObservers() {
+
         if let userSession = ZMUserSession.shared() {
-            userObserverToken = UserChangeInfo.add(observer: self, for: userSession.providedSelfUser, in: userSession) as Any
             initialSyncObserverToken = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
+            userObservationToken = userSession.addUserObserver(self, for: selfUser)
         }
 
         updateObserverTokensForActiveTeam()
+
+        didBecomeActiveNotificationToken = notificationCenter.addObserver(forName: UIApplication.didBecomeActiveNotification,
+                                                                          object: nil,
+                                                                          queue: .main) { [weak self] _ in
+            self?.updateE2EICertifiedStatus()
+        }
+
+        e2eiCertificateChangedToken = notificationCenter.addObserver(forName: .e2eiCertificateChanged,
+                                                                     object: nil,
+                                                                     queue: .main) { [weak self] _ in
+            self?.updateE2EICertifiedStatus()
+        }
     }
 
     func savePendingLastRead() {
@@ -129,25 +165,33 @@ extension ConversationListViewController.ViewModel {
         }
     }
 
-    private var userProfile: UserProfile? {
-        return ZMUserSession.shared()?.userProfile
-    }
+    func requestMarketingConsentIfNeeded() {
+        if let userSession = ZMUserSession.shared(), let selfUser = ZMUser.selfUser() {
+            guard
+                userSession.hasCompletedInitialSync == true,
+                userSession.isPendingHotFixChanges == false
+            else {
+                return
+            }
 
-    func requestSuggestedHandlesIfNeeded() {
-        guard let session = ZMUserSession.shared(),
-            let userProfile = userProfile else { return }
-
-        if nil == session.providedSelfUser.handle,
-            session.hasCompletedInitialSync == true,
-            session.isPendingHotFixChanges == false {
-
-            userProfileObserverToken = userProfile.add(observer: self)
-            userProfile.suggestHandles()
+            selfUser.fetchMarketingConsent(in: userSession, completion: {[weak self] result in
+                switch result {
+                case .failure(let error):
+                    switch error {
+                    case ConsentRequestError.notAvailable:
+                        // don't show the alert there is no consent to show
+                        break
+                    default:
+                        self?.viewController?.showNewsletterSubscriptionDialogIfNeeded(completionHandler: { marketingConsent in
+                            selfUser.setMarketingConsent(to: marketingConsent, in: userSession, completion: { _ in })
+                        })
+                    }
+                case .success:
+                    // The user already gave a marketing consent, no need to ask for it again.
+                    return
+                }
+            })
         }
-    }
-
-    func setSuggested(handle: String) {
-        userProfile?.requestSettingHandle(handle: handle)
     }
 
     private var isComingFromRegistration: Bool {
@@ -164,9 +208,7 @@ extension ConversationListViewController.ViewModel {
         // and is not coming from the registration flow (where we alreday ask for permissions).
         guard selfUser.handle != nil else { return false }
         guard !isComingFromRegistration else { return false }
-
         guard !AutomationHelper.sharedHelper.skipFirstLoginAlerts else { return false }
-        guard false == viewController?.hasUsernameTakeoverViewController else { return false }
 
         guard Settings.shared.pushAlertHappenedMoreThan1DayBefore else { return false }
 
@@ -184,11 +226,37 @@ extension ConversationListViewController.ViewModel {
         return true
     }
 
+    func updateE2EICertifiedStatus() {
+        Task { @MainActor in
+            do {
+                selfUserStatus.isE2EICertified = try await isSelfUserE2EICertifiedUseCase.invoke()
+            } catch {
+                WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
+            }
+        }
+    }
+}
+
+extension ConversationListViewController.ViewModel: UserObserving {
+
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+        if changeInfo.nameChanged {
+            selfUserStatus.name = changeInfo.user.name ?? ""
+        }
+        if changeInfo.trustLevelChanged {
+            selfUserStatus.isProteusVerified = changeInfo.user.isVerified
+            updateE2EICertifiedStatus()
+        }
+        if changeInfo.availabilityChanged {
+            selfUserStatus.availability = changeInfo.user.availability
+        }
+    }
 }
 
 extension ConversationListViewController.ViewModel: ZMInitialSyncCompletionObserver {
+
     func initialSyncCompleted() {
-        requestSuggestedHandlesIfNeeded()
+        requestMarketingConsentIfNeeded()
     }
 }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,8 @@
 
 import Foundation
 
-@objcMembers public class DispatchGroupContext: NSObject {
+@objcMembers
+public final class DispatchGroupContext: NSObject {
 
     private var isolationQueue = DispatchQueue(label: "context.isolation", attributes: [.concurrent])
     private var _groups: [ZMSDispatchGroup] = []
@@ -48,7 +49,7 @@ import Foundation
 
     @objc(enterAllExcept:)
     func enterAll(except group: ZMSDispatchGroup? = nil) -> [ZMSDispatchGroup] {
-        let groups = self.groups.filter { $0 != group}
+        let groups = self.groups.filter { $0 != group }
 
         groups.forEach {
             $0.enter()

@@ -39,10 +39,8 @@ final class CallViewController: UIViewController {
     private let hapticsController = CallHapticsController()
     private let isOverlayEnabled: Bool
 
-    private var classification: SecurityClassification = .none {
-        didSet {
-            updateConfiguration()
-        }
+    private var classification: SecurityClassification? = .none {
+        didSet { updateConfiguration() }
     }
 
     private var voiceChannelObserverTokens: [Any] = []
@@ -89,7 +87,7 @@ final class CallViewController: UIViewController {
         self.userSession = userSession
 
         if let participants = voiceChannel.conversation?.participants {
-            classification = userSession.classification(with: participants, conversationDomain: nil)
+            classification = userSession.classification(users: participants, conversationDomain: nil)
         }
 
         callInfoConfiguration = CallInfoConfiguration(voiceChannel: voiceChannel,
@@ -281,7 +279,7 @@ final class CallViewController: UIViewController {
     private lazy var establishingCallStatusView = EstablishingCallStatusView()
 
     private func acceptDegradedCall() {
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = userSession as? ZMUserSession else { return }
 
         userSession.enqueue({
             self.voiceChannel.continueByDecreasingConversationSecurity(userSession: userSession)
@@ -330,12 +328,12 @@ final class CallViewController: UIViewController {
         NSLayoutConstraint.activate(
             NSLayoutConstraint.forView(view: establishingCallStatusView, inContainer: view, withInsets: .zero)
         )
-        guard let user = voiceChannel.getSecondParticipant(), let session = ZMUserSession.shared() else { return }
+        guard let user = voiceChannel.getSecondParticipant(), let session = userSession as? ZMUserSession else { return }
         user.fetchProfileImage(session: session,
                                imageCache: UIImage.defaultUserImageCache,
                                sizeLimit: UserImageView.Size.normal.rawValue,
                                isDesaturated: false,
-                               completion: { [weak self] (image, _) in
+                               completion: { [weak self] image, _ in
             guard let image = image else { return }
             self?.establishingCallStatusView.setProfileImage(image: image)
         })
@@ -368,8 +366,8 @@ final class CallViewController: UIViewController {
             return
         }
         let alert = UIAlertController.alertWithOKButton(
-            title: "call.video.too_many.alert.title".localized,
-            message: "call.video.too_many.alert.message".localized
+            title: L10n.Localizable.Call.Video.TooMany.Alert.title,
+            message: L10n.Localizable.Call.Video.TooMany.Alert.message
         )
 
         present(alert, animated: true)
@@ -416,7 +414,7 @@ extension CallViewController: ZMConversationObserver {
             return
         }
 
-        classification = userSession.classification(with: participants, conversationDomain: nil)
+        classification = userSession.classification(users: participants, conversationDomain: nil)
     }
 }
 
@@ -479,7 +477,7 @@ extension CallViewController {
 
         permissions.requestOrWarnAboutAudioPermission { audioGranted in
             guard audioGranted else {
-                guard let userSession = ZMUserSession.shared() else { return }
+                guard let userSession = self.userSession as? ZMUserSession else { return }
                 return self.voiceChannel.leave(userSession: userSession, completion: nil)
             }
 
@@ -540,7 +538,7 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
 
     func callingActionsViewPerformAction(_ action: CallAction) {
         Log.calling.debug("request to perform call action: \(action)")
-        guard let userSession = ZMUserSession.shared() else { return }
+        guard let userSession = userSession as? ZMUserSession else { return }
 
         switch action {
         case .continueDegradedCall: userSession.enqueue { self.voiceChannel.continueByDecreasingConversationSecurity(userSession: userSession) }
@@ -629,7 +627,14 @@ extension CallViewController {
 
     private func hideOverlayAfterCallEstablishedIfNeeded() {
         let isNotAnimating = callInfoRootViewController.view.layer.animationKeys()?.isEmpty ?? true
-        guard nil == overlayTimer, canHideOverlay, isOverlayVisible, isNotAnimating else { return }
+
+        guard
+            overlayTimer == nil,
+            canHideOverlay,
+            isOverlayVisible,
+            isNotAnimating
+        else { return }
+
         animateOverlay(show: false)
     }
 
@@ -656,7 +661,7 @@ extension CallViewController {
     }
 
     private func restartOverlayTimerIfNeeded() {
-        guard nil != overlayTimer, canHideOverlay else { return }
+        guard overlayTimer != nil, canHideOverlay else { return }
         startOverlayTimer()
     }
 

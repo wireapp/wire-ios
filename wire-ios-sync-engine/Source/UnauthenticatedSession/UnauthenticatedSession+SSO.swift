@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ extension UnauthenticatedSession {
     ///
     /// - parameter completion: The result closure with the sso settings
 
-    public func fetchSSOSettings(completion: @escaping (Result<SSOSettings>) -> Void) {
+    public func fetchSSOSettings(completion: @escaping (Result<SSOSettings, Error>) -> Void) {
         guard let apiVersion = BackendInfo.apiVersion else {
             return completion(.failure(SSOSettingsError.unknown))
         }
@@ -63,7 +63,7 @@ extension UnauthenticatedSession {
         let path = "/sso/settings"
         let request = ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
 
-        request.add(ZMCompletionHandler(on: operationLoop.operationQueue!, block: { (response) in
+        request.add(ZMCompletionHandler(on: operationLoop.operationQueue!, block: { response in
 
             switch response.result {
             case .success:

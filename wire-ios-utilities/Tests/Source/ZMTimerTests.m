@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import WireSystem;
 @import WireTesting;
@@ -75,7 +74,7 @@
 
 - (void)setUpTimerExpectation
 {
-    XCTestExpectation *expectation = [self expectationWithDescription:@"timer fired"];
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"timer fired"];
     
     ZM_WEAK(self);
     self.timerClient.block = ^(ZMTimer *timer) {
@@ -163,7 +162,7 @@
     
     // then
     [self spinMainQueueWithTimeout:1.3];
-    XCTAssertFalse([self verifyAllExpectationsNow]); // Should *not* have fire
+    XCTAssertFalse([self waitForCustomExpectationsWithTimeout:0]); // Should *not* have fire
 }
 
 
@@ -188,8 +187,8 @@
     NSOperationQueue *queue = [[NSOperationQueue alloc] init];
     [self.sut cancel];
     self.sut = [ZMTimer timerWithTarget:self.timerClient operationQueue:queue];
-    XCTestExpectation *expectation = [self expectationWithDescription:@"timer fired"];
-    
+    XCTestExpectation *expectation = [self customExpectationWithDescription:@"timer fired"];
+
     ZM_WEAK(self);
     self.timerClient.block = ^(ZMTimer *timer) {
         ZM_STRONG(self);

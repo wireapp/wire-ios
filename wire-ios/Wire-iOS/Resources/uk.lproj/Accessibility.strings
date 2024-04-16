@@ -83,6 +83,9 @@
 "conversationSearch.item.hint" = "Торкніться двічі, щоб відкрити";
 "conversationSearch.itemPlay.hint" = "Торкніться двічі, щоб відтворити";
 
+"conversation.scrollToBottomButton.description" = "Scroll to the bottom of the conversation";
+"conversation.scrollToBottomButton.hint" = "Tap to scroll to the bottom of the conversation";
+
 "audioRecord.stopButton.description" = "Зупинити запис";
 "audioRecord.startButton.description" = "Розпочати запис";
 "audioRecord.startButton.hint" = "Торкніться двічі, щоб почати запис";
@@ -226,6 +229,11 @@
 "conversationAnnouncement.file.description" = "Файл %@ отримано від %@";
 "conversationAnnouncement.deletedMessage.description" = "%@ видалив(-ла) повідомлення";
 "conversationAnnouncement.editedMessage.description" = "%@ відредагував(-ла) повідомлення";
+
+"groupDetails.conversation.participants.allYourDevicesProteusVerified" = "all your devices are verified (Proteus)";
+"groupDetails.conversation.participants.allYourDevicesHaveValidCertificates" = "all your devices have a valid end-to-end identity certificate";
+"groupDetails.conversation.participants.allDevicesProteusVerified" = "all devices are verified (Proteus)";
+"groupDetails.conversation.participants.allDevicesHaveValidCertificates" = "all devices have a valid end-to-end identity certificate";
 
 "calling.flipCameraBackButton.description" = "Перемкнутись на задню камеру";
 "calling.flipCameraFrontButton.description" = "Перемкнутись на передню камеру";

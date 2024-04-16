@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import WireImages;
 @import WireSystem;
@@ -23,7 +22,6 @@
 
 #import "ZMSelfStrategy+Internal.h"
 #import "ZMSyncStrategy.h"
-#import "ZMClientRegistrationStatus.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 
 static NSString *SelfPath = @"/self";
@@ -272,7 +270,9 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
         NSDictionary *payload = [response.payload asDictionary];
         [selfUser updateWithTransportData:payload authoritative:YES];
         
+        // swiftlint:disable todo_requires_jira_link
         // TODO: Write tests for all cases
+        // swiftlint:enable todo_requires_jira_link
         BOOL selfUserHasEmail = (selfUser.emailAddress != nil);
         BOOL needToNotifyAuthState = (clientPhase == ZMClientRegistrationPhaseWaitingForSelfUser) ||
                                      (clientPhase == ZMClientRegistrationPhaseWaitingForEmailVerfication);

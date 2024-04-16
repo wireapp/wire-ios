@@ -64,7 +64,7 @@ final class WipeDatabaseViewController: UIViewController {
             .paragraphStyle: paragraphStyle,
             .foregroundColor: textColor]
 
-        let headingText =  NSAttributedString(string: WipeDatabase.infoLabel) &&
+        let headingText = NSAttributedString(string: WipeDatabase.infoLabel) &&
                                 UIFont.normalRegularFont &&
                                 baseAttributes
         let highlightText = NSAttributedString(string: WipeDatabase.InfoLabel.highlighted) &&
@@ -77,13 +77,10 @@ final class WipeDatabaseViewController: UIViewController {
         return label
     }()
 
-    private lazy var confirmButton: Button = {
-        let button = Button(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
-
+    private lazy var confirmButton = {
+        let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
         button.setTitle(WipeDatabase.Button.title, for: .normal)
-
         button.addTarget(self, action: #selector(onConfirmButtonPressed(sender:)), for: .touchUpInside)
-
         return button
     }()
 
@@ -97,16 +94,20 @@ final class WipeDatabaseViewController: UIViewController {
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
-        [stackView,
-         confirmButton].forEach {
+        [
+            stackView,
+            confirmButton
+        ].forEach {
             view.addSubview($0)
         }
 
         stackView.distribution = .fillProportionally
 
-        [titleLabel,
-         SpacingView(25),
-         infoLabel].forEach {
+        [
+            titleLabel,
+            SpacingView(25),
+            infoLabel
+        ].forEach {
             stackView.addArrangedSubview($0)
         }
 
@@ -115,8 +116,7 @@ final class WipeDatabaseViewController: UIViewController {
 
     private func createConstraints() {
 
-        [stackView,
-         confirmButton].prepareForLayout()
+        [stackView, confirmButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         let widthConstraint = stackView.widthAnchor.constraint(equalToConstant: CGFloat.iPhone4_7Inch.width)
         widthConstraint.priority = .defaultHigh

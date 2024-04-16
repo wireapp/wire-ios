@@ -51,6 +51,26 @@ public class MockMessageSenderInterface: MessageSenderInterface {
         try await mock(message)
     }
 
+    // MARK: - broadcastMessage
+
+    public var broadcastMessageMessage_Invocations: [any ProteusMessage] = []
+    public var broadcastMessageMessage_MockError: Error?
+    public var broadcastMessageMessage_MockMethod: ((any ProteusMessage) async throws -> Void)?
+
+    public func broadcastMessage(message: any ProteusMessage) async throws {
+        broadcastMessageMessage_Invocations.append(message)
+
+        if let error = broadcastMessageMessage_MockError {
+            throw error
+        }
+
+        guard let mock = broadcastMessageMessage_MockMethod else {
+            fatalError("no mock for `broadcastMessageMessage`")
+        }
+
+        try await mock(message)
+    }
+
 }
 
 public class MockSessionEstablisherInterface: SessionEstablisherInterface {

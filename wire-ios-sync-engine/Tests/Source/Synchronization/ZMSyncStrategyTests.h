@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,12 +31,12 @@
 @class MockContextChangeTracker;
 
 
-@interface ZMSyncStrategyTests : MessagingTest <ZMRequestCancellation, ZMSyncStateDelegate>
+@interface ZMSyncStrategyTests : MessagingTest <ZMRequestCancellation>
 
 @property (nonatomic) ZMSyncStrategy *sut;
 
 @property (nonatomic) MockSyncStateDelegate *syncStateDelegate;
-@property (nonatomic) ApplicationStatusDirectory *applicationStatusDirectory;
+@property (nonatomic) OperationStatus *operationStatus;
 
 @property (nonatomic) MockEventConsumer *mockEventConsumer;
 @property (nonatomic) MockContextChangeTracker *mockContextChangeTracker;

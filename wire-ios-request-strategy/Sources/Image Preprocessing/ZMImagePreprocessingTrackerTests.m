@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import WireImages;
 @import WireDataModel;
@@ -104,8 +103,8 @@
 - (void)testThatItHasOutstandingItemsWhenItemsAreAdded
 {
     // given
-    [self.coreDataStack.viewContext.zm_fileAssetCache storeAssetData:self.linkPreviewMessage1 format:ZMImageFormatOriginal encrypted:NO data:[NSData dataWithBytes:"1" length:1]];
-    [self.coreDataStack.viewContext.zm_fileAssetCache storeAssetData:self.linkPreviewMessage2 format:ZMImageFormatOriginal encrypted:NO data:[NSData dataWithBytes:"2" length:1]];
+    [self.coreDataStack.viewContext.zm_fileAssetCache storeOriginalImageData:[NSData dataWithBytes:"1" length:1] forMessage:self.linkPreviewMessage1];
+    [self.coreDataStack.viewContext.zm_fileAssetCache storeOriginalImageData:[NSData dataWithBytes:"2" length:1] forMessage:self.linkPreviewMessage2];
     NSSet *objects = [NSSet setWithArray:@[self.linkPreviewMessage1, self.linkPreviewMessage2]];
     
     // when
@@ -121,14 +120,14 @@
 - (void)testThatItHasOutstandingItemsWhenItemsAreAddedAndOneIsRemoved
 {
     // given
-    [self.coreDataStack.viewContext.zm_fileAssetCache storeAssetData:self.linkPreviewMessage1 format:ZMImageFormatOriginal encrypted:NO data:[NSData dataWithBytes:"1" length:1]];
-    [self.coreDataStack.viewContext.zm_fileAssetCache storeAssetData:self.linkPreviewMessage2 format:ZMImageFormatOriginal encrypted:NO data:[NSData dataWithBytes:"2" length:1]];
+    [self.coreDataStack.viewContext.zm_fileAssetCache storeOriginalImageData:[NSData dataWithBytes:"1" length:1] forMessage:self.linkPreviewMessage1];
+    [self.coreDataStack.viewContext.zm_fileAssetCache storeOriginalImageData:[NSData dataWithBytes:"2" length:1] forMessage:self.linkPreviewMessage2];
     NSSet *objects = [NSSet setWithArray:@[self.linkPreviewMessage1, self.linkPreviewMessage2]];
     
     // when
     self.imagePreprocessingQueue.suspended = YES;
     [self.sut objectsDidChange:objects];
-    [self.coreDataStack.viewContext.zm_fileAssetCache deleteAssetData:self.linkPreviewMessage1 format:ZMImageFormatOriginal encrypted:NO];
+    [self.coreDataStack.viewContext.zm_fileAssetCache deleteOriginalImageDataFor:self.linkPreviewMessage1];
     [self.sut objectsDidChange:objects];
     
     // then
@@ -140,8 +139,8 @@
 - (void)testThatItHasNoOutstandingItemsWhenItemsAreAddedAndThenRemoved;
 {
     // given
-    [self.coreDataStack.viewContext.zm_fileAssetCache storeAssetData:self.linkPreviewMessage1 format:ZMImageFormatOriginal encrypted:NO data:[NSData dataWithBytes:"1" length:1]];
-    [self.coreDataStack.viewContext.zm_fileAssetCache storeAssetData:self.linkPreviewMessage2 format:ZMImageFormatOriginal encrypted:NO data:[NSData dataWithBytes:"2" length:1]];
+    [self.coreDataStack.viewContext.zm_fileAssetCache storeOriginalImageData:[NSData dataWithBytes:"1" length:1] forMessage:self.linkPreviewMessage1];
+    [self.coreDataStack.viewContext.zm_fileAssetCache storeOriginalImageData:[NSData dataWithBytes:"2" length:1] forMessage:self.linkPreviewMessage2];
     NSSet *objects = [NSSet setWithArray:@[self.linkPreviewMessage1, self.linkPreviewMessage2]];
     
     // when
@@ -149,8 +148,8 @@
     [self.sut objectsDidChange:objects];
     self.imagePreprocessingQueue.suspended = NO;
     [self.imagePreprocessingQueue waitUntilAllOperationsAreFinished];
-    [self.coreDataStack.viewContext.zm_fileAssetCache deleteAssetData:self.linkPreviewMessage1 format:ZMImageFormatOriginal encrypted:NO];
-    [self.coreDataStack.viewContext.zm_fileAssetCache deleteAssetData:self.linkPreviewMessage2 format:ZMImageFormatOriginal encrypted:NO];
+    [self.coreDataStack.viewContext.zm_fileAssetCache deleteOriginalImageDataFor:self.linkPreviewMessage1];
+    [self.coreDataStack.viewContext.zm_fileAssetCache deleteOriginalImageDataFor:self.linkPreviewMessage2];
     [self.sut objectsDidChange:objects];
     XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout:0.3]);
     

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@ import Foundation
 public class MockStrategyDirectory: NSObject, StrategyDirectoryProtocol {
 
     public var eventConsumers: [ZMEventConsumer] = []
+
+    public var eventAsyncConsumers: [ZMEventAsyncConsumer] = []
 
     public var requestStrategies: [RequestStrategy] = []
 

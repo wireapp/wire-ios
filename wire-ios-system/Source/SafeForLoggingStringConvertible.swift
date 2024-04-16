@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,13 +37,13 @@ public struct SafeValueForLogging<T: CustomStringConvertible>: SafeForLoggingStr
 
 extension Array: SafeForLoggingStringConvertible where Array.Element: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        return String(describing: map { $0.safeForLoggingDescription})
+        return String(describing: map { $0.safeForLoggingDescription })
     }
 }
 
 extension Dictionary: SafeForLoggingStringConvertible where Key: SafeForLoggingStringConvertible, Value: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        let result = enumerated().map { (_, element) in
+        let result = enumerated().map { _, element in
             return (element.key.safeForLoggingDescription, element.value.safeForLoggingDescription)
         }
 

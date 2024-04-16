@@ -1,20 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 
@@ -25,10 +25,12 @@ import Foundation
         uname(&systemInfo)
 
         let machineMirror = Mirror(reflecting: systemInfo.machine)
-        let identifier = machineMirror.children.reduce("") { identifier, element in
-            guard let value = element.value as? Int8, value != 0 else { return identifier }
-            return identifier + String(UnicodeScalar(UInt8(value)))
-        }
+        let identifier: String = machineMirror
+            .children
+            .reduce(into: "") { identifier, element in
+                guard let value = element.value as? Int8, value != 0 else { return }
+                identifier.append(String(UnicodeScalar(UInt8(value))))
+            }
 
         switch identifier {
         case "iPod5,1":                                     return "iPod Touch 5"
@@ -69,6 +71,10 @@ import Foundation
         case "iPhone14,8":                                  return "iPhone 14 Plus"
         case "iPhone15,2":                                  return "iPhone 14 Pro"
         case "iPhone15,3":                                  return "iPhone 14 Pro Max"
+        case "iPhone15,4":                                  return "iPhone 15"
+        case "iPhone15,5":                                  return "iPhone 15 Plus"
+        case "iPhone16,1":                                  return "iPhone 15 Pro"
+        case "iPhone16,2":                                  return "iPhone 15 Pro Max"
         case "iPad2,1", "iPad2,2", "iPad2,3", "iPad2,4":    return "iPad 2"
         case "iPad3,1", "iPad3,2", "iPad3,3":               return "iPad 3"
         case "iPad3,4", "iPad3,5", "iPad3,6":               return "iPad 4"

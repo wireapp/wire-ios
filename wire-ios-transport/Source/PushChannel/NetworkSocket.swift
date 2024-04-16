@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,8 @@ import Foundation
     func didClose(socket: NetworkSocket)
 }
 
-@objcMembers public class DataBuffer: NSObject {
+@objcMembers
+public final class DataBuffer: NSObject {
     fileprivate var data: DispatchData = DispatchData.empty
 
     public var objcData: __DispatchData {
@@ -180,7 +181,7 @@ import Foundation
 
     @objc(writeData:)
     public func write(data dataToWrite: Data) {
-        dataToWrite.withUnsafeBytes { (unsafeBufferPointer: UnsafeRawBufferPointer) -> Void in
+        dataToWrite.withUnsafeBytes { (unsafeBufferPointer: UnsafeRawBufferPointer) in
             self.write(dispatchData: DispatchData(bytes: unsafeBufferPointer))
         }
     }

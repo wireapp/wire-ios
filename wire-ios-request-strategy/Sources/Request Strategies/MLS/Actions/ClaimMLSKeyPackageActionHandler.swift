@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -67,6 +67,11 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
             // filter it out here.
             let keyPackagesExcludingSelfClient = payload.keyPackages.filter {
                 $0.client != action.excludedSelfClientId
+            }
+            let selfUser = ZMUser.selfUser(in: context)
+            let isSelfUserRequesting = selfUser.remoteIdentifier == action.userId && selfUser.domain == action.domain
+            guard isSelfUserRequesting || keyPackagesExcludingSelfClient.isNonEmpty else {
+                return action.fail(with: .emptyKeyPackages)
             }
 
             action.succeed(with: keyPackagesExcludingSelfClient)

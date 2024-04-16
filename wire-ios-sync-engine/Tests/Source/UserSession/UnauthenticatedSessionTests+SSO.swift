@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ public final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
 
     func testThatItGeneratesCorrectRequest() {
         // when
-        sut.fetchSSOSettings(completion: {_ in })
+        sut.fetchSSOSettings(completion: { _ in })
 
         // then
         XCTAssertNotNil(transportSession.lastEnqueuedRequest)
@@ -108,8 +108,8 @@ public final class UnauthenticatedSessionTests_SSO: ZMTBaseTest {
 
     // MARK: - Helpers
 
-    func checkThat(statusCode: Int, isProcessedAs expectedResult: Result<SSOSettings>, payload: ZMTransportData?) {
-        let resultExpectation = expectation(description: "Expected result: \(expectedResult)")
+    func checkThat(statusCode: Int, isProcessedAs expectedResult: Result<SSOSettings, Error>, payload: ZMTransportData?) {
+        let resultExpectation = customExpectation(description: "Expected result: \(expectedResult)")
 
         // given
         sut.fetchSSOSettings { result in
