@@ -31,7 +31,7 @@ final class ConversationCreateServicesCell: IconToggleCell {
     }
 
     private func setupIconForCell() {
-        icon = Asset.Images.services.image.withRenderingMode(.alwaysTemplate)
+        icon = .init(resource: .services).withRenderingMode(.alwaysTemplate)
         iconColor = SemanticColors.Icon.foregroundDefault
     }
 

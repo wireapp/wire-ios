@@ -74,6 +74,7 @@ NSString *const ZMConversationDomainKey = @"domain";
 NSString *const ZMConversationIsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";
 NSString *const ZMConversationIsDeletedRemotelyKey = @"isDeletedRemotely";
 NSString *const ZMConversationIsForcedReadOnlyKey = @"isForcedReadOnly";
+NSString *const ZMConversationIsPendingInitialFetch = @"isPendingInitialFetch";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -357,7 +358,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversation.epochKey,
             ZMConversation.epochTimestampKey,
             ZMConversationIsDeletedRemotelyKey,
-            PrimaryKey
+            PrimaryKey,
+            ZMConversationIsPendingInitialFetch
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
@@ -656,12 +658,15 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 {
     // remoteID of self-conversation is guaranteed to be the same as remoteID of self-user
     ZMUser *selfUser = [ZMUser selfUserInContext:context];
+    RequireString(selfUser != nil, "selfUser should exist");
+
     return selfUser.remoteIdentifier;
 }
 
 + (ZMConversation *)selfConversationInContext:(NSManagedObjectContext *)managedObjectContext
 {
     NSUUID *selfUserID = [ZMConversation selfConversationIdentifierInContext:managedObjectContext];
+    RequireString(selfUserID != nil, "selfUserID should exist");
     return [ZMConversation fetchWith:selfUserID in:managedObjectContext];
 }
 

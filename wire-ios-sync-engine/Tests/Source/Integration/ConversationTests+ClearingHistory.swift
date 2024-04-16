@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         let fromClient = otherUser.clients.anyObject() as! MockUserClient
         let toClient = self.selfUser.clients.anyObject() as! MockUserClient
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             // If the client is not registered yet we need to account for the added System Message
             for i in 0..<(Int(messagesCount) - conversation!.allMessages.count) {
 
@@ -106,7 +106,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
 
         // when deleting the conversation remotely
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             self.groupConversation.remotelyArchive(from: self.selfUser, referenceDate: Date())
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -146,7 +146,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         let conversationDirectory = self.userSession?.managedObjectContext.conversationListDirectory()
         let conversationID = conversation?.objectID
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             self.groupConversation.remotelyArchive(from: self.selfUser, referenceDate: Date())
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -171,7 +171,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         self.remotelyAppendSelfConversationWithZMCleared(for: self.groupConversation, at: conversation!.lastServerTimeStamp!)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             self.groupConversation.remotelyArchive(from: self.selfUser, referenceDate: Date())
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -190,7 +190,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         let conversationDirectory = self.userSession?.managedObjectContext.conversationListDirectory()
 
         // when archiving the conversation remotely
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             self.groupConversation.remotelyArchive(from: self.selfUser, referenceDate: Date())
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -211,7 +211,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         let conversationID = conversation?.objectID
 
         // when deleting the conversation remotely, whiping the cache and resyncing
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             self.groupConversation.remotelyArchive(from: self.selfUser, referenceDate: Date())
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -247,7 +247,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         XCTAssertEqual(conversation!.allMessages.count, 0)
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             self.spinMainQueue(withTimeout: 1)// if the action happens within the same second the user clears the history, the event is not added
             let message = GenericMessage(content: Text(content: "foo", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
             self.groupConversation.encryptAndInsertData(from: self.user2.clients.anyObject() as! MockUserClient,
@@ -275,7 +275,7 @@ class ConversationTests_ClearingHistory: ConversationTestsBase {
         XCTAssertEqual(conversation!.allMessages.count, 0)
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             self.spinMainQueue(withTimeout: 1)// if the action happens within the same second the user clears the history, the event is not added
             self.groupConversation.removeUsers(by: self.user2, removedUser: self.user3)
         }

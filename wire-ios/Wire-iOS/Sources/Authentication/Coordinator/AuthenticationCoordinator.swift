@@ -378,18 +378,18 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
             case .configureDevicePermissions:
                 guard
-                    let session = ZMUserSession.shared(),
+                    let session: UserSession = ZMUserSession.shared(),
                     session.encryptMessagesAtRest
                 else {
                     eventResponderChain.handleEvent(ofType: .deviceConfigurationComplete)
                     return
                 }
 
-                session.appLockController.evaluateAuthentication(
+                session.evaluateAppLockAuthentication(
                     passcodePreference: .deviceOnly,
                     description: L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.description
-                ) { [weak self] _, _  in
-                    DispatchQueue.main.performAsync {
+                ) { [weak self] _  in
+                    DispatchQueue.main.async {
                         self?.eventResponderChain.handleEvent(ofType: .deviceConfigurationComplete)
                     }
                 }
@@ -850,30 +850,30 @@ extension AuthenticationCoordinator {
 
         guard let session = statusProvider.sharedUserSession else { return }
         let e2eiCertificateUseCase = session.enrollE2EICertificate
-        guard let rootViewController = AppDelegate.shared.window?.rootViewController else {
+        guard let topmostViewController = UIApplication.shared.topmostViewController(onlyFullScreen: false) else {
             return
         }
-        let oauthUseCase = OAuthUseCase(rootViewController: rootViewController)
+        let oauthUseCase = OAuthUseCase(targetViewController: topmostViewController)
 
-        Task {
+        Task { @MainActor in
             do {
                 let certificateChain = try await e2eiCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
-                await MainActor.run {
-                    executeActions([
-                        .hideLoadingView,
-                        .transition(.enrollE2EIdentitySuccess(certificateChain), mode: .reset)
-                    ])
-                }
+                executeActions([
+                    .hideLoadingView,
+                    .transition(.enrollE2EIdentitySuccess(certificateChain), mode: .reset)
+                ])
+            } catch OAuthError.userCancelled {
+                executeActions([
+                    .hideLoadingView
+                ])
             } catch {
-                await MainActor.run {
-                    executeActions([
-                        .hideLoadingView,
-                        .presentAlert(
-                            .init(title: E2ei.Error.Alert.title,
-                                  message: E2ei.Error.Alert.message,
-                                  actions: [.ok]))
-                    ])
-                }
+                executeActions([
+                    .hideLoadingView,
+                    .presentAlert(
+                        .init(title: E2ei.Error.Alert.title,
+                              message: E2ei.Error.Alert.message,
+                              actions: [.ok]))
+                ])
             }
         }
     }

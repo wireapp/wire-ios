@@ -32,8 +32,8 @@ final class GiphyConfirmationViewController: UIViewController {
     typealias Giphy = L10n.Localizable.Giphy
 
     private let imagePreview = FLAnimatedImageView()
-    private let acceptButton = Button(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .normalSemiboldFont)
-    private let cancelButton = Button(style: .secondaryTextButtonStyle, cornerRadius: 16, fontSpec: .normalSemiboldFont)
+    private let acceptButton = ZMButton(style: .accentColorTextButtonStyle, cornerRadius: 16, fontSpec: .normalSemiboldFont)
+    private let cancelButton = ZMButton(style: .secondaryTextButtonStyle, cornerRadius: 16, fontSpec: .normalSemiboldFont)
     private let buttonContainer = UIView()
     weak var delegate: GiphyConfirmationViewControllerDelegate?
     private let searchResultController: ZiphySearchResultsController?

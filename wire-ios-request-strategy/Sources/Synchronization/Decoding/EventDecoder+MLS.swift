@@ -20,6 +20,34 @@ import Foundation
 
 extension EventDecoder {
 
+    func processWelcomeMessage(
+        from updateEvent: ZMUpdateEvent,
+        context: NSManagedObjectContext
+    ) async {
+        guard let decryptionService = await context.perform({ context.mlsDecryptionService }) else {
+            WireLogger.mls.critical("failed to decrypt mls message: mlsDecyptionService is missing")
+            fatalError("failed to decrypt mls message: mlsService is missing")
+        }
+
+        let decoder = EventPayloadDecoder()
+
+        do {
+            let payload = try decoder.decode(Payload.UpdateConversationMLSWelcome.self, from: updateEvent.payload)
+            let groupID = try await decryptionService.processWelcomeMessage(welcomeMessage: payload.data)
+            await context.perform {
+                let conversation = ZMConversation.fetchOrCreate(with: payload.id, domain: payload.qualifiedID?.domain, in: context)
+                conversation.remoteIdentifier = payload.qualifiedID?.uuid
+                conversation.domain = payload.qualifiedID?.domain
+                conversation.mlsGroupID = groupID
+                conversation.mlsStatus = .ready
+                context.saveOrRollback()
+            }
+        } catch {
+            WireLogger.mls.warn("failed to decrypt mls welcome message: \(String(describing: error))")
+            return
+        }
+    }
+
     func decryptMlsMessage(
         from updateEvent: ZMUpdateEvent,
         context: NSManagedObjectContext
@@ -71,10 +99,14 @@ extension EventDecoder {
                 return []
             }
 
-            return await results.asyncCompactMap { result in
+            var events = [ZMUpdateEvent]()
+            for result in results {
+
                 switch result {
                 case .message(let decryptedData, let senderClientID):
-                    return updateEvent.decryptedMLSEvent(decryptedData: decryptedData, senderClientID: senderClientID)
+                    if let event = updateEvent.decryptedMLSEvent(decryptedData: decryptedData, senderClientID: senderClientID) {
+                        events.append(event)
+                    }
 
                 case .proposal(let commitDelay):
                     let scheduledDate = (updateEvent.timestamp ?? Date()) + TimeInterval(commitDelay)
@@ -86,10 +118,9 @@ extension EventDecoder {
                     if let mlsService, updateEvent.source == .webSocket {
                         mlsService.commitPendingProposalsIfNeeded()
                     }
-
-                    return nil
                 }
             }
+            return events
 
         } catch {
             WireLogger.mls.warn("failed to decrypt mls message: \(String(describing: error))")

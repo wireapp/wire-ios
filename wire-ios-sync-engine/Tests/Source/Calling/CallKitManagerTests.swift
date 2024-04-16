@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -920,7 +920,7 @@ class CallKitManagerTest: DatabaseTest {
         self.sut.callCenterDidChange(callState: state, conversation: conversation, caller: otherUser, timestamp: Date(), previousCallState: nil)
 
         // when
-        sut.callCenterDidChange(callState: .terminating(reason: .anweredElsewhere), conversation: conversation, caller: otherUser, timestamp: nil, previousCallState: nil)
+        sut.callCenterDidChange(callState: .terminating(reason: .answeredElsewhere), conversation: conversation, caller: otherUser, timestamp: nil, previousCallState: nil)
 
         // then
         XCTAssertEqual(self.callKitProvider.lastEndedReason, .answeredElsewhere)

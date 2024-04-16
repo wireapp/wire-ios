@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,8 +51,9 @@ extension ZMConversation {
     /// Changes the conversation message destruction timeout
     public func setMessageDestructionTimeout(
         _ timeout: MessageDestructionTimeoutValue,
-        in userSession: ZMUserSession, _
-        completion: @escaping (Result<Void, Error>) -> Void) {
+        in userSession: ZMUserSession,
+        _ completion: @escaping (Result<Void, Error>) -> Void
+    ) {
         // TODO: [WPB-5730] move this method to a useCase
 
         guard let apiVersion = BackendInfo.apiVersion else {

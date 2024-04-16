@@ -333,7 +333,7 @@ final class CallViewController: UIViewController {
                                imageCache: UIImage.defaultUserImageCache,
                                sizeLimit: UserImageView.Size.normal.rawValue,
                                isDesaturated: false,
-                               completion: { [weak self] (image, _) in
+                               completion: { [weak self] image, _ in
             guard let image = image else { return }
             self?.establishingCallStatusView.setProfileImage(image: image)
         })
@@ -627,7 +627,14 @@ extension CallViewController {
 
     private func hideOverlayAfterCallEstablishedIfNeeded() {
         let isNotAnimating = callInfoRootViewController.view.layer.animationKeys()?.isEmpty ?? true
-        guard nil == overlayTimer, canHideOverlay, isOverlayVisible, isNotAnimating else { return }
+
+        guard
+            overlayTimer == nil,
+            canHideOverlay,
+            isOverlayVisible,
+            isNotAnimating
+        else { return }
+
         animateOverlay(show: false)
     }
 
@@ -654,7 +661,7 @@ extension CallViewController {
     }
 
     private func restartOverlayTimerIfNeeded() {
-        guard nil != overlayTimer, canHideOverlay else { return }
+        guard overlayTimer != nil, canHideOverlay else { return }
         startOverlayTimer()
     }
 

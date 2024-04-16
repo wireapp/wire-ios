@@ -53,7 +53,7 @@ final class PasscodeSetupViewController: UIViewController {
     private let contentView: UIView = UIView()
 
     private lazy var createButton: LegacyButton = {
-        let button = Button(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
+        let button = ZMButton(style: .primaryTextButtonStyle, cornerRadius: 16, fontSpec: .mediumSemiboldFont)
         button.accessibilityIdentifier = "createPasscodeButton"
 
         button.setTitle(L10n.Localizable.CreatePasscode.CreateButton.title, for: .normal)
@@ -100,14 +100,11 @@ final class PasscodeSetupViewController: UIViewController {
     }()
 
     private let validationLabels: [PasscodeError: UILabel] = {
-
-        let myDictionary = PasscodeError.allCases.reduce([PasscodeError: UILabel]()) { (dict, errorReason) -> [PasscodeError: UILabel] in
-            var dict = dict
-            dict[errorReason] = UILabel()
-            return dict
-        }
-
-        return myDictionary
+        PasscodeError
+            .allCases
+            .reduce(into: [:]) { partialResult, errorReason in
+                partialResult[errorReason] = UILabel()
+            }
     }()
 
     private var callback: ResultHandler?

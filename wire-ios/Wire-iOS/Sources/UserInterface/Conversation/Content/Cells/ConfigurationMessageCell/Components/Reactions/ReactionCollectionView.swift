@@ -72,7 +72,7 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.fitIn(view: self)
 
-        contentSizeObservation = collectionView.observe(\.contentSize, options: .new, changeHandler: { [weak self] (cell, _) in
+        contentSizeObservation = collectionView.observe(\.contentSize, options: .new, changeHandler: { [weak self] cell, _ in
             guard let self = self else { return }
             self.collectionViewHeightConstraint.constant = cell.contentSize.height
             self.collectionViewHeightConstraint.isActive = true

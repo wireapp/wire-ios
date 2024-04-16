@@ -182,7 +182,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         accessoryIconView.contentMode = .center
         accessoryIconView.accessibilityIdentifier = nil
         accessoryIconView.isHidden = true
-        accessoryIconView.image = Asset.Images.rightChevron.image.withRenderingMode(.alwaysTemplate)
+        accessoryIconView.image = .init(resource: .rightChevron).withRenderingMode(.alwaysTemplate)
         accessoryIconView.tintColor = IconColors.foregroundDefault
 
         // titleLabel
@@ -406,10 +406,18 @@ extension UserCell {
     }
 
     /// Updates the cell with the information in the user instance.
-    @available(*, deprecated, message: "Use `configure(userStatus:userIsSelfUser:isSelfUserPartOfATeam:subtitle:conversation:) instead!")
+    ///
+    /// - Parameters:
+    ///     - user: The user with values to configure the cell.
+    ///     - isE2EICertified: Use `true` when the verification status is needed.
+    ///     - isSelfUserPartOfATeam: Use `true` is the user is part of any team.
+    ///     - overrideSubtitle: Provide a subtitle to override defaults.
+    ///     - conversation: The related conversation.
+    ///
+    /// - Note: Please consider to use configure(userStatus:[...]) to make refactorings easier in future.
     func configure(
         user: UserType,
-        isE2EICertified: Bool = false, // Use `false` when the verification status is not needed
+        isE2EICertified: Bool = false,
         isSelfUserPartOfATeam: Bool,
         subtitle overrideSubtitle: NSAttributedString? = nil,
         conversation: GroupDetailsConversationType? = nil

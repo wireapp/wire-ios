@@ -20,40 +20,54 @@ import Foundation
 import WireSyncEngine
 
 enum E2EIChangeAction: CaseIterable {
-    case getCertificate, remindLater
+    case getCertificate, remindLater, learnMore
 }
 
 extension UIAlertController {
+    private typealias MLSE2EIStrings = L10n.Localizable.FeatureConfig.Alert.MlsE2ei
 
-    static func alertForE2eIChangeWithActions(handler: @escaping (E2EIChangeAction) -> Void) -> UIAlertController {
+    static func alertForE2EIChangeWithActions(
+        title: String = MLSE2EIStrings.title,
+        message: String = MLSE2EIStrings.message,
+        enrollButtonText: String = MLSE2EIStrings.Button.getCertificate,
+        canRemindLater: Bool = true,
+        handler: @escaping (E2EIChangeAction) -> Void) -> UIAlertController {
 
-        typealias MlsE2eiStrings = L10n.Localizable.FeatureConfig.Alert.MlsE2ei
+            let controller = UIAlertController(
+                title: title,
+                message: message,
+                preferredStyle: .alert
+            )
 
-        let controller = UIAlertController(
-            title: MlsE2eiStrings.title,
-            message: MlsE2eiStrings.message,
-            preferredStyle: .alert
-        )
+            let topViewController = UIApplication.shared.topmostViewController(onlyFullScreen: true)
 
-        let topViewController = UIApplication.shared.topmostViewController(onlyFullScreen: true)
+            let learnMoreAction = UIAlertAction.link(
+                title: MLSE2EIStrings.Button.learnMore,
+                url: URL.wr_e2eiLearnMore,
+                presenter: topViewController) {
+                    if !canRemindLater {
+                        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
+                    }
+                    handler(.learnMore)
+                }
 
-        let learnMoreAction = UIAlertAction.link(title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.learnMore,
-                                                 url: URL.wr_e2eiLearnMore,
-                                                 presenter: topViewController)
-        let getCertificateAction = UIAlertAction(title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.getCertificate,
-                                                 style: .default) {_ in
-            handler(.getCertificate)
+            let getCertificateAction = UIAlertAction(title: enrollButtonText,
+                                                     style: .default) {_ in
+                handler(.getCertificate)
+            }
+            let remindLaterAction = UIAlertAction(title: MLSE2EIStrings.Button.remindMeLater,
+                                                  style: .cancel) {_ in
+                handler(.remindLater)
+            }
+
+            controller.addAction(learnMoreAction)
+            controller.addAction(getCertificateAction)
+
+            if canRemindLater {
+                controller.addAction(remindLaterAction)
+            }
+
+            return controller
         }
-        let remindLaterAction = UIAlertAction(title: L10n.Localizable.FeatureConfig.Alert.MlsE2ei.Button.remindMeLater,
-                                              style: .destructive) {_ in
-            handler(.remindLater)
-        }
-
-        controller.addAction(learnMoreAction)
-        controller.addAction(getCertificateAction)
-        controller.addAction(remindLaterAction)
-
-        return controller
-    }
 
 }

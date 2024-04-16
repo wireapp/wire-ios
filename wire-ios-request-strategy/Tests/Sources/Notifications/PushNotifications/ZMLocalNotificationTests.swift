@@ -173,7 +173,7 @@ class ZMLocalNotificationTests: MessagingTestBase {
 
     func createMemberJoinUpdateEvent(_ nonce: UUID, conversationID: UUID, users: [ZMUser], senderID: UUID = UUID.create()) -> ZMUpdateEvent {
         let userIds = users.map { $0.remoteIdentifier.transportString() }
-        let usersWithRoles = users.map { (user) -> [String: String] in
+        let usersWithRoles = users.map { user -> [String: String] in
             return ["id": user.remoteIdentifier.transportString(),
                     "conversation_role": "wire_admin"]
         }

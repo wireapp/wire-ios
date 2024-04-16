@@ -113,7 +113,7 @@ extension UserType {
                                                imageCache: ImageCache<UIImage>,
                                                cacheKey: String,
                                                completion: @escaping ProfileImageCompletion) {
-        imageData(for: imageSize, queue: imageCache.processingQueue) { (imageData) in
+        imageData(for: imageSize, queue: imageCache.processingQueue) { imageData in
             guard let imageData = imageData else {
                 return DispatchQueue.main.async {
                     completion(nil, false)

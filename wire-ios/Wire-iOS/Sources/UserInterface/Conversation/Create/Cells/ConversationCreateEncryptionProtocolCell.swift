@@ -33,7 +33,7 @@ final class ConversationCreateEncryptionProtocolCell: ConversationEncryptionProt
 extension ConversationCreateEncryptionProtocolCell: ConversationCreationValuesConfigurable {
 
     func configure(with values: ConversationCreationValues) {
-        encryptionProtocol = values.encryptionProtocol.rawValue
+        label.text = values.encryptionProtocol.rawValue
     }
 
 }

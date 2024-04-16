@@ -27,6 +27,7 @@ enum AppState: Equatable {
     case unauthenticated(error: NSError?)
     case blacklisted(reason: BlacklistReason)
     case jailbroken
+    case certificateEnrollmentRequired
     case databaseFailure(reason: Error)
     case migrating
     case loading(account: Account, from: Account?)
@@ -44,6 +45,8 @@ enum AppState: Equatable {
         case let (.blacklisted(reason1), .blacklisted(reason2)):
             return reason1 == reason2
         case (jailbroken, jailbroken):
+            return true
+        case (certificateEnrollmentRequired, certificateEnrollmentRequired):
             return true
         case (databaseFailure, databaseFailure):
             return true
@@ -77,19 +80,17 @@ final class AppStateCalculator {
 
     // MARK: - Public Property
     weak var delegate: AppStateCalculatorDelegate?
-    var wasUnauthenticated: Bool {
-        guard case .unauthenticated = previousAppState else {
-            return false
-        }
-        return true
-    }
+    var wasUnauthenticated: Bool = false
 
     // MARK: - Private Set Property
-    private(set) var previousAppState: AppState = .headless
     private(set) var pendingAppState: AppState?
     private(set) var appState: AppState = .headless {
         willSet {
-            previousAppState = appState
+            if case .unauthenticated = appState {
+                wasUnauthenticated = true
+            } else {
+                wasUnauthenticated = false
+            }
         }
     }
 
@@ -177,6 +178,16 @@ extension AppStateCalculator: SessionManagerDelegate {
 
     func sessionManagerDidBlacklistJailbrokenDevice() {
         transition(to: .jailbroken)
+    }
+
+    func sessionManagerRequireCertificateEnrollment() {
+        transition(to: .certificateEnrollmentRequired)
+    }
+
+    func sessionManagerDidEnrollCertificate(for activeSession: UserSession?) {
+        if let activeSession {
+            transition(to: .authenticated(activeSession))
+        }
     }
 
     func sessionManagerDidFailToLoadDatabase(error: Error) {

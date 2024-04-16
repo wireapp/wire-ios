@@ -27,7 +27,7 @@ final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
         emailPasswordFieldDescription
     }
     let headline: String
-    let subtext: String?
+    let subtext: NSAttributedString?
     let secondaryView: AuthenticationSecondaryViewDescription?
     let initialValidation: ValueValidation
     let footerView: AuthenticationFooterViewDescription?
@@ -37,7 +37,7 @@ final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
     init() {
         backButton = BackButtonDescription()
         headline = L10n.Localizable.Registration.AddEmailPassword.Hero.title
-        subtext = L10n.Localizable.Registration.AddEmailPassword.Hero.paragraph
+        subtext = .markdown(from: L10n.Localizable.Registration.AddEmailPassword.Hero.paragraph, style: .login)
         initialValidation = .info(PasswordRuleSet.localizedErrorMessage)
         footerView = nil
 
@@ -86,9 +86,11 @@ private final class CTAFooterDescription: ViewDescriptor, AuthenticationSecondar
 
     var actioner: AuthenticationActioner?
 
-    let ctaButton = Button(style: .accentColorTextButtonStyle,
-                             cornerRadius: 16,
-                             fontSpec: .buttonBigSemibold)
+    let ctaButton = ZMButton(
+        style: .accentColorTextButtonStyle,
+        cornerRadius: 16,
+        fontSpec: .buttonBigSemibold
+    )
 
     init() {
         ctaButton.setTitle(L10n.Localizable.AddEmailPasswordStep.CtaButton.title.capitalized, for: .normal)

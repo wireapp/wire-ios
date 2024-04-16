@@ -20,16 +20,13 @@ import SwiftUI
 import WireCommonComponents
 
 struct ProfileDeviceDetailsView: View {
-    @Environment(\.dismiss)
-    private var dismiss
+
+    @Environment(\.dismiss) private var dismiss
 
     @ObservedObject var viewModel: DeviceInfoViewModel
-    @State var isCertificateViewPresented: Bool = false
-    @State var isDebugViewPresented: Bool = false
+    @State private var isCertificateViewPresented: Bool = false
 
-    var dismissedView: (() -> Void)?
-
-    var e2eIdentityCertificateView: some View {
+    private var e2eIdentityCertificateView: some View {
         VStack(alignment: .leading) {
             DeviceDetailsE2EIdentityCertificateView(
                 viewModel: viewModel,
@@ -44,20 +41,23 @@ struct ProfileDeviceDetailsView: View {
         }
         .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         .padding(.top, ViewConstants.Padding.medium)
-        .frame(width: .infinity)
+        .frame(maxWidth: .infinity)
     }
 
-    var proteusView: some View {
+    private var proteusView: some View {
         VStack(alignment: .leading) {
-            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Proteus.title,
-                             description: L10n.Localizable.Profile.Devices.Detail.verifyMessage(
-                                viewModel.userClient.user?.name ?? ""
-                             ))
+            let userName = viewModel.userClient.user?.name ?? ""
+            sectionTitleView(
+                title: L10n.Localizable.Device.Details.Section.Proteus.title,
+                description: L10n.Localizable.Profile.Devices.Detail.verifyMessage(userName)
+            )
 
-            DeviceDetailsProteusView(viewModel: viewModel,
-                                     isVerfied: viewModel.isProteusVerificationEnabled,
-                                     shouldShowActivatedDate: false)
-                .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+            DeviceDetailsProteusView(
+                viewModel: viewModel,
+                isVerified: viewModel.isProteusVerificationEnabled,
+                shouldShowActivatedDate: false
+            )
+            .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
 
             if viewModel.isSelfClient {
                 Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
@@ -71,97 +71,61 @@ struct ProfileDeviceDetailsView: View {
         .frame(maxWidth: .infinity)
     }
 
-    var mlsView: some View {
+    private var mlsView: some View {
         VStack(alignment: .leading) {
             sectionTitleView(title: L10n.Localizable.Device.Details.Section.Mls.signature.uppercased())
+
             DeviceMLSView(viewModel: viewModel)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
         }
         .frame(maxWidth: .infinity)
     }
 
-    var showDeviceFingerPrintView: some View {
+    private var showDeviceFingerPrintView: some View {
         HStack {
-            SwiftUI.Button {
-                Task {
-                    viewModel.onShowMyDeviceTapped()
-                }
-            } label: {
-                Text(L10n.Localizable.Profile.Devices.Detail.ShowMyDevice.title)
+            Text(L10n.Localizable.Profile.Devices.Detail.ShowMyDevice.title)
                 .padding(.all, ViewConstants.Padding.standard)
                 .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
                 .font(UIFont.swiftUIFont(for: .bodyTwoSemibold))
-            }
             Spacer()
-            Asset.Images.chevronRight.swiftUIImage.padding(.trailing, ViewConstants.Padding.standard)
+            Image(.chevronRight)
+                .padding(.trailing, ViewConstants.Padding.standard)
         }
         .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
     }
 
     var body: some View {
-        NavigationView {
-            ScrollView {
-                if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
-                    mlsView
-                    if viewModel.isE2eIdentityEnabled {
-                        e2eIdentityCertificateView
+        ScrollView {
+            VStack(alignment: .leading) {
+                if viewModel.isE2eIdentityEnabled {
+                    if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
+                        mlsView
                     }
+                    e2eIdentityCertificateView
                 }
                 proteusView
-            }
-            .background(SemanticColors.View.backgroundDefault.swiftUIColor)
-            .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
-            .listStyle(.plain)
-            .overlay(
-                content: {
-                    VStack {
-                        if viewModel.isActionInProgress {
-                            Spacer()
-                            SwiftUI.ProgressView()
-                        }
-                        Spacer()
-                        showDeviceFingerPrintView
-                    }
-                }
-            )
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    SwiftUI.Button(
-                        action: {
-                            dismiss()
-                        },
-                        label: {
-                            Image(.backArrow)
-                                .renderingMode(.template)
-                                .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
-                        }
-                    )
-                }
-                ToolbarItem(placement: .principal) {
-                    DeviceView(viewModel: viewModel).titleView
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    SwiftUI.Button(
-                        action: {
-                            isDebugViewPresented.toggle()
-                        },
-                        label: {
-                            if viewModel.showDebugMenu {
-                                Text("Debug")
-                            }
-                        }
-                    )
+                showDeviceFingerPrintView.onTapGesture {
+                    viewModel.onShowMyDeviceTapped()
                 }
             }
         }
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
-        .navigationBarBackButtonHidden(true)
+        .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
+        .listStyle(.plain)
+        .overlay(
+            content: {
+                VStack {
+                    if viewModel.isActionInProgress {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
+                }
+            }
+        )
+        .background(SemanticColors.View.backgroundDefault.swiftUIColor)
         .onAppear {
             viewModel.onAppear()
-        }
-        .onDisappear {
-            dismissedView?()
         }
         .onReceive(viewModel.$shouldDismiss) { shouldDismiss in
             if shouldDismiss {
@@ -179,22 +143,22 @@ struct ProfileDeviceDetailsView: View {
                 )
             }
         }
-        .alert("Debug options", isPresented: $isDebugViewPresented, actions: {
-            SwiftUI.Button("Delete Device", action: {
+        .alert("Debug options", isPresented: $viewModel.isDebugMenuPresented, actions: {
+            Button("Delete Device", action: {
                   viewModel.onDeleteDeviceTapped()
               })
-            SwiftUI.Button("Duplicate Session", action: {
+            Button("Duplicate Session", action: {
                   viewModel.onDuplicateClientTapped()
               })
-            SwiftUI.Button("Corrupt Session", action: {
+            Button("Corrupt Session", action: {
                 viewModel.onCorruptSessionTapped()
             })
-            SwiftUI.Button("Cancel", role: .cancel, action: {
-                isDebugViewPresented.toggle()
+            Button("Cancel", role: .cancel, action: {
+                viewModel.isDebugMenuPresented.toggle()
             })
-            }, message: {
-              Text("Tap to perform an action")
-            })
+        }, message: {
+            Text("Tap to perform an action")
+        })
     }
 
     @ViewBuilder
@@ -225,3 +189,7 @@ struct ProfileDeviceDetailsView: View {
         }
     }
 }
+
+// MARK: - DeviceInfoView conformance
+
+extension ProfileDeviceDetailsView: DeviceInfoView {}

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SwiftUI
 import WireDataModel
 
@@ -54,15 +53,15 @@ extension E2EIdentityCertificateStatus {
     var uiImage: UIImage? {
         switch self {
         case .notActivated:
-            return Asset.Images.certificateExpired.image
+            return .init(resource: .certificateExpired)
         case .revoked:
-            return Asset.Images.certificateRevoked.image
+            return .init(resource: .certificateRevoked)
         case .expired:
-            return Asset.Images.certificateExpired.image
+            return .init(resource: .certificateExpired)
         case .invalid:
-            return Asset.Images.certificateRevoked.image
+            return .init(resource: .certificateRevoked)
         case .valid:
-            return Asset.Images.certificateValid.image
+            return .init(resource: .certificateValid)
         }
     }
 }

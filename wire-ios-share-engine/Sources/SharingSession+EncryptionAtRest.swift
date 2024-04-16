@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import LocalAuthentication
 public protocol SharingSessionEncryptionAtRestInterface {
     var encryptMessagesAtRest: Bool { get }
     var isDatabaseLocked: Bool { get }
-    func unlockDatabase(with context: LAContext) throws
+    func unlockDatabase() throws
 }
 
 extension SharingSession: SharingSessionEncryptionAtRestInterface {
@@ -36,8 +36,8 @@ extension SharingSession: SharingSessionEncryptionAtRestInterface {
         return userInterfaceContext.isLocked
     }
 
-    public func unlockDatabase(with context: LAContext) throws {
-        try earService.unlockDatabase(context: context)
+    public func unlockDatabase() throws {
+        try earService.unlockDatabase()
     }
 
 }

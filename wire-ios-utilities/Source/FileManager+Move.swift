@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,8 +60,9 @@ extension FileManager {
         operation: FileOperation,
         from source: URL,
         to destination: URL,
-        overwriteExistingFiles: Bool) throws {
-        self.createAndProtectDirectory(at: destination)
+        overwriteExistingFiles: Bool
+    ) throws {
+        try createAndProtectDirectory(at: destination)
 
         var isDirectory: ObjCBool = false
         let enumerator = self.enumerator(at: source, includingPropertiesForKeys: [.nameKey, .isDirectoryKey])!

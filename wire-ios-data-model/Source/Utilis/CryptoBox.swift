@@ -84,7 +84,7 @@ public extension FileManager {
     @objc(keyStoreURLForAccountInDirectory:createParentIfNeeded:)
     static func keyStoreURL(accountDirectory: URL, createParentIfNeeded: Bool) -> URL {
         if createParentIfNeeded {
-            FileManager.default.createAndProtectDirectory(at: accountDirectory)
+            try! FileManager.default.createAndProtectDirectory(at: accountDirectory)
         }
         let keyStoreDirectory = accountDirectory.appendingPathComponent(FileManager.keyStoreFolderPrefix)
         return keyStoreDirectory
@@ -122,7 +122,7 @@ open class UserClientKeysStore: NSObject {
     }
 
     private static func setupContext(in directory: URL) -> EncryptionContext? {
-        FileManager.default.createAndProtectDirectory(at: directory)
+        try! FileManager.default.createAndProtectDirectory(at: directory)
         return EncryptionContext(path: directory)
     }
 
@@ -135,7 +135,7 @@ open class UserClientKeysStore: NSObject {
     open func lastPreKey() throws -> String {
         var error: NSError?
         if internalLastPreKey == nil {
-            encryptionContext.perform({ [weak self] (sessionsDirectory) in
+            encryptionContext.perform({ [weak self] sessionsDirectory in
                 guard let strongSelf = self  else { return }
                 do {
                     strongSelf.internalLastPreKey = try sessionsDirectory.generateLastPrekey()
@@ -156,7 +156,7 @@ open class UserClientKeysStore: NSObject {
             var newPreKeys: [(id: UInt16, prekey: String)] = []
 
             let range = preKeysRange(count, start: start)
-            encryptionContext.perform({(sessionsDirectory) in
+            encryptionContext.perform({sessionsDirectory in
                 do {
                     newPreKeys = try sessionsDirectory.generatePrekeys(range)
                     if newPreKeys.count == 0 {

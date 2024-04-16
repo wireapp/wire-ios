@@ -25,7 +25,7 @@ class NSManagedObjectContextDebuggingTests: ZMBaseManagedObjectTest {
         // GIVEN
         self.makeChangeThatWillCauseRollback()
         let expectation = self.customExpectation(description: "callback invoked")
-        self.uiMOC.errorOnSaveCallback = { (moc, error) in
+        self.uiMOC.errorOnSaveCallback = { moc, error in
             XCTAssertEqual(moc, self.uiMOC)
             XCTAssertNotNil(error)
             expectation.fulfill()
@@ -43,9 +43,10 @@ class NSManagedObjectContextDebuggingTests: ZMBaseManagedObjectTest {
 
 // MARK: - Helper
 
-private let longString = (0..<50).reduce("") { (prev, _) -> String in
-    return prev + "AaAaAaAaAa"
-}
+private let longString = (0..<50)
+    .reduce(into: "") { partialResult, _ in
+        partialResult.append("AaAaAaAaAa")
+    }
 
 extension NSManagedObjectContextDebuggingTests {
 

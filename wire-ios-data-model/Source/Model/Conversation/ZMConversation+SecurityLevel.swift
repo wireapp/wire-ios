@@ -396,7 +396,7 @@ extension ZMConversation {
         }
     }
 
-    private func acknowledgePrivacyChanges() {
+    public func acknowledgePrivacyChanges() {
         precondition(managedObjectContext?.zm_isUserInterfaceContext == true)
 
         // Downgrade the conversation to be unverified
@@ -509,7 +509,7 @@ extension ZMConversation {
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
         guard let selfClient = selfUser.selfClient() else { return }
 
-        NSOrderedSet(array: lastMessages()).enumerateObjects { (msg, idx, stop) in
+        NSOrderedSet(array: lastMessages()).enumerateObjects { msg, idx, stop in
             guard idx <= 2 else {
                 stop.initialize(to: true)
                 return

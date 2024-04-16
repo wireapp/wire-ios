@@ -40,6 +40,18 @@ public struct ModelHelper {
     }
 
     @discardableResult
+    public func createSelfUser(
+        qualifiedID: QualifiedID,
+        domain: String? = nil,
+        in context: NSManagedObjectContext
+    ) -> ZMUser {
+        let selfUser = ZMUser.selfUser(in: context)
+        selfUser.remoteIdentifier = qualifiedID.uuid
+        selfUser.domain = domain
+        return selfUser
+    }
+
+    @discardableResult
     public func createUser(
         id: UUID = .init(),
         domain: String? = nil,
@@ -181,6 +193,17 @@ public struct ModelHelper {
     }
 
     // MARK: - Conversations
+
+    @discardableResult
+    public func createGroupConversation(
+        id: UUID = .init(),
+        in context: NSManagedObjectContext
+    ) -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: context)
+        conversation.remoteIdentifier = id
+        conversation.conversationType = .group
+        return conversation
+    }
 
     @discardableResult
     public func createOneOnOne(

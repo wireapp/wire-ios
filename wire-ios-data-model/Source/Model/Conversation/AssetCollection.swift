@@ -206,7 +206,7 @@ public class AssetCollection: NSObject, ZMCollection {
 
             // Map to ui assets
             var uiAssets = [CategoryMatch: [ZMMessage]]()
-            newAssets.forEach { (category, messages) in
+            newAssets.forEach { category, messages in
                 let uiValues = messages.compactMap { (try? self.uiMOC?.existingObject(with: $0.objectID)) as? ZMMessage }
                 uiAssets[category] = uiValues
             }

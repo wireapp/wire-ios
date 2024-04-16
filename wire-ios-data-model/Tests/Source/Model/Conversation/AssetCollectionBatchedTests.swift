@@ -18,7 +18,7 @@
 
 @testable import WireDataModel
 
-class AssetColletionBatchedTests: ModelObjectsTests {
+final class AssetColletionBatchedTests: ModelObjectsTests {
 
     var sut: AssetCollectionBatched!
     var delegate: MockAssetCollectionDelegate!
@@ -36,7 +36,7 @@ class AssetColletionBatchedTests: ModelObjectsTests {
         delegate = nil
         sut?.tearDown()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        uiMOC.zm_fileAssetCache.wipeCaches()
+        try? uiMOC.zm_fileAssetCache.wipeCaches()
         sut = nil
         conversation = nil
         super.tearDown()

@@ -194,26 +194,26 @@ public class MockAcmeAPIInterface: AcmeAPIInterface {
         }
     }
 
-    // MARK: - getFederationCertificate
+    // MARK: - getFederationCertificates
 
-    public var getFederationCertificate_Invocations: [Void] = []
-    public var getFederationCertificate_MockError: Error?
-    public var getFederationCertificate_MockMethod: (() async throws -> String)?
-    public var getFederationCertificate_MockValue: String?
+    public var getFederationCertificates_Invocations: [Void] = []
+    public var getFederationCertificates_MockError: Error?
+    public var getFederationCertificates_MockMethod: (() async throws -> [String])?
+    public var getFederationCertificates_MockValue: [String]?
 
-    public func getFederationCertificate() async throws -> String {
-        getFederationCertificate_Invocations.append(())
+    public func getFederationCertificates() async throws -> [String] {
+        getFederationCertificates_Invocations.append(())
 
-        if let error = getFederationCertificate_MockError {
+        if let error = getFederationCertificates_MockError {
             throw error
         }
 
-        if let mock = getFederationCertificate_MockMethod {
+        if let mock = getFederationCertificates_MockMethod {
             return try await mock()
-        } else if let mock = getFederationCertificate_MockValue {
+        } else if let mock = getFederationCertificates_MockValue {
             return mock
         } else {
-            fatalError("no mock for `getFederationCertificate`")
+            fatalError("no mock for `getFederationCertificates`")
         }
     }
 
@@ -283,6 +283,37 @@ public class MockAcmeAPIInterface: AcmeAPIInterface {
             return mock
         } else {
             fatalError("no mock for `sendChallengeRequestPathRequestBody`")
+        }
+    }
+
+}
+public class MockCertificateRevocationListAPIProtocol: CertificateRevocationListAPIProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - getRevocationList
+
+    public var getRevocationListFrom_Invocations: [URL] = []
+    public var getRevocationListFrom_MockError: Error?
+    public var getRevocationListFrom_MockMethod: ((URL) async throws -> Data)?
+    public var getRevocationListFrom_MockValue: Data?
+
+    public func getRevocationList(from distributionPoint: URL) async throws -> Data {
+        getRevocationListFrom_Invocations.append(distributionPoint)
+
+        if let error = getRevocationListFrom_MockError {
+            throw error
+        }
+
+        if let mock = getRevocationListFrom_MockMethod {
+            return try await mock(distributionPoint)
+        } else if let mock = getRevocationListFrom_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `getRevocationListFrom`")
         }
     }
 
@@ -402,6 +433,21 @@ public class MockConversationServiceInterface: ConversationServiceInterface {
         await mock(qualifiedID)
     }
 
+    // MARK: - syncConversationIfMissing
+
+    public var syncConversationIfMissingQualifiedID_Invocations: [QualifiedID] = []
+    public var syncConversationIfMissingQualifiedID_MockMethod: ((QualifiedID) async -> Void)?
+
+    public func syncConversationIfMissing(qualifiedID: QualifiedID) async {
+        syncConversationIfMissingQualifiedID_Invocations.append(qualifiedID)
+
+        guard let mock = syncConversationIfMissingQualifiedID_MockMethod else {
+            fatalError("no mock for `syncConversationIfMissingQualifiedID`")
+        }
+
+        await mock(qualifiedID)
+    }
+
 }
 public class MockE2EIKeyPackageRotating: E2EIKeyPackageRotating {
 
@@ -428,24 +474,6 @@ public class MockE2EIKeyPackageRotating: E2EIKeyPackageRotating {
         }
 
         try await mock(enrollment, certificateChain)
-    }
-
-    // MARK: - onNewCRLsDistributionPoints
-
-    public var onNewCRLsDistributionPoints_Invocations: [Void] = []
-    public var onNewCRLsDistributionPoints_MockMethod: (() -> AnyPublisher<CRLsDistributionPoints, Never>)?
-    public var onNewCRLsDistributionPoints_MockValue: AnyPublisher<CRLsDistributionPoints, Never>?
-
-    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
-        onNewCRLsDistributionPoints_Invocations.append(())
-
-        if let mock = onNewCRLsDistributionPoints_MockMethod {
-            return mock()
-        } else if let mock = onNewCRLsDistributionPoints_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `onNewCRLsDistributionPoints`")
-        }
     }
 
 }

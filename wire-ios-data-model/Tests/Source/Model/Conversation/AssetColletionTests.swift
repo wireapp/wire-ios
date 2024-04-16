@@ -18,7 +18,7 @@
 
 @testable import WireDataModel
 
-class MockAssetCollectionDelegate: NSObject, AssetCollectionDelegate {
+final class MockAssetCollectionDelegate: NSObject, AssetCollectionDelegate {
 
     var messagesByFilter = [[CategoryMatch: [ZMMessage]]]()
     var didCallDelegate = false
@@ -45,11 +45,15 @@ class MockAssetCollectionDelegate: NSObject, AssetCollectionDelegate {
     }
 
     func allMessages(for categoryMatch: CategoryMatch) -> [ZMMessage] {
-        return messagesByFilter.reduce([ZMMessage]()) { $0 + ($1[categoryMatch] ?? []) }
+        messagesByFilter.reduce(into: []) { partialResult, value in
+            if let match = value[categoryMatch] {
+                partialResult += match
+            }
+        }
     }
 }
 
-class AssetColletionTests: ModelObjectsTests {
+final class AssetColletionTests: ModelObjectsTests {
 
     var sut: AssetCollection!
     var delegate: MockAssetCollectionDelegate!
@@ -66,7 +70,7 @@ class AssetColletionTests: ModelObjectsTests {
     override func tearDown() {
         delegate = nil
         sut?.tearDown()
-        uiMOC.zm_fileAssetCache.wipeCaches()
+        try? uiMOC.zm_fileAssetCache.wipeCaches()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         sut = nil
         conversation = nil

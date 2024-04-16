@@ -78,13 +78,51 @@ extension ZMClientMessage {
         NotificationInContext(name: ZMClientMessage.linkPreviewImageDownloadNotification, context: moc.notificationContext, object: self.objectID).post()
     }
 
-    public func fetchLinkPreviewImageData(with queue: DispatchQueue, completionHandler: @escaping (_ imageData: Data?) -> Void) {
-        guard let cache = managedObjectContext?.zm_fileAssetCache else { return }
-        let originalKey = FileAssetCache.cacheKeyForAsset(self, format: .original)
-        let mediumKey = FileAssetCache.cacheKeyForAsset(self, format: .medium)
+    public func fetchLinkPreviewImageData(
+        with queue: DispatchQueue,
+        completionHandler: @escaping (_ imageData: Data?) -> Void
+    ) {
+        let cache = managedObjectContext?.zm_fileAssetCache
+
+        let mediumKey = FileAssetCache.cacheKeyForAsset(
+            self,
+            format: .medium,
+            encrypted: true
+        )
+
+        let fallbackKey = FileAssetCache.cacheKeyForAsset(
+            self,
+            format: .medium,
+            encrypted: false
+        )
+
+        let asset = underlyingMessage?.linkPreviews.first?.image.uploaded
+
+        let encryptionKey = asset?.otrKey
+        let digest = asset?.sha256
 
         queue.async {
-            completionHandler([mediumKey, originalKey].lazy.compactMap({ $0 }).compactMap({ cache.assetData($0) }).first)
+            guard let cache else {
+                completionHandler(nil)
+                return
+            }
+
+            if
+                let mediumKey,
+                let encryptionKey,
+                let digest,
+                let data = cache.decryptData(
+                    key: mediumKey,
+                    encryptionKey: encryptionKey,
+                    sha256Digest: digest
+                )
+            {
+                completionHandler(data)
+            } else if let fallbackKey {
+                completionHandler(cache.assetData(fallbackKey))
+            } else {
+                completionHandler(nil)
+            }
         }
     }
 
@@ -113,10 +151,6 @@ extension ZMClientMessage {
 
 extension ZMClientMessage: ZMImageOwner {
 
-    @objc public func imageData(for format: ZMImageFormat) -> Data? {
-        return self.managedObjectContext?.zm_fileAssetCache.assetData(self, format: format, encrypted: false)
-    }
-
     // The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data is preprocessed
     @objc public func requiredImageFormats() -> NSOrderedSet {
         if let genericMessage = self.underlyingMessage, genericMessage.linkPreviews.count > 0 {
@@ -126,7 +160,7 @@ extension ZMClientMessage: ZMImageOwner {
     }
 
     @objc public func originalImageData() -> Data? {
-        return self.managedObjectContext?.zm_fileAssetCache.assetData(self, format: .original, encrypted: false)
+        return managedObjectContext?.zm_fileAssetCache.originalImageData(for: self)
     }
 
     @objc public func originalImageSize() -> CGSize {
@@ -137,13 +171,16 @@ extension ZMClientMessage: ZMImageOwner {
     @objc public func processingDidFinish() {
         self.linkPreviewState = .processed
         guard let moc = self.managedObjectContext else { return }
-        moc.zm_fileAssetCache.deleteAssetData(self, format: .original, encrypted: false)
+        moc.zm_fileAssetCache.deleteOriginalImageData(for: self)
         moc.enqueueDelayedSave()
     }
 
     @objc public var linkPreviewImageData: Data? {
-        return self.managedObjectContext?.zm_fileAssetCache.assetData(self, format: .original, encrypted: false)
-            ?? self.managedObjectContext?.zm_fileAssetCache.assetData(self, format: .medium, encrypted: false)
+        guard let cache = managedObjectContext?.zm_fileAssetCache else {
+            return nil
+        }
+
+        return cache.originalImageData(for: self) ?? cache.mediumImageData(for: self)
     }
 
     public var linkPreviewHasImage: Bool {
@@ -155,23 +192,47 @@ extension ZMClientMessage: ZMImageOwner {
         return self.nonce?.uuidString
     }
 
-    @objc public func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties?) {
-        guard let moc = self.managedObjectContext,
+    @objc public func setImageData(
+        _ imageData: Data,
+        for format: ZMImageFormat,
+        properties: ZMIImageProperties?
+    ) {
+        guard
+            let moc = self.managedObjectContext,
             var linkPreview = self.firstZMLinkPreview,
-            format == .medium else {
-                return
+            format == .medium
+        else {
+            return
         }
 
-        moc.zm_fileAssetCache.storeAssetData(self, format: format, encrypted: false, data: imageData)
-        guard let keys = moc.zm_fileAssetCache.encryptImageAndComputeSHA256Digest(self, format: format) else { return }
+        moc.zm_fileAssetCache.storeMediumImage(
+            data: imageData,
+            for: self
+        )
 
-        let imageMetaData = WireProtos.Asset.ImageMetaData(width: Int32(properties?.size.width ?? 0), height: Int32(properties?.size.height ?? 0))
-        let original = WireProtos.Asset.Original(withSize: UInt64(imageData.count), mimeType: properties?.mimeType ?? "", name: nil, imageMetaData: imageMetaData)
+        guard let keys = moc.zm_fileAssetCache.encryptImageAndComputeSHA256Digest(self, format: format) else {
+            return
+        }
 
-        linkPreview.update(withOtrKey: keys.otrKey, sha256: keys.sha256!, original: original)
+        let imageMetaData = WireProtos.Asset.ImageMetaData(
+            width: Int32(properties?.size.width ?? 0),
+            height: Int32(properties?.size.height ?? 0)
+        )
+
+        let original = WireProtos.Asset.Original(
+            withSize: UInt64(imageData.count),
+            mimeType: properties?.mimeType ?? "",
+            name: nil,
+            imageMetaData: imageMetaData
+        )
+
+        linkPreview.update(
+            withOtrKey: keys.otrKey,
+            sha256: keys.sha256!,
+            original: original
+        )
 
         if let genericMessage = self.underlyingMessage, let textMessageData = textMessageData {
-
             let text = Text.with {
                 $0.content = textMessageData.messageText ?? ""
                 $0.mentions = textMessageData.mentions.compactMap { WireProtos.Mention.createMention($0) }
@@ -179,26 +240,40 @@ extension ZMClientMessage: ZMImageOwner {
             }
 
             let messageUpdate: MessageCapable
+
             guard
                 let content = genericMessage.content,
-                let nonce = nonce else {
-                    return
+                let nonce = nonce
+            else {
+                return
             }
+
             switch content {
             case .text:
                 messageUpdate = text
+
             case .ephemeral(let data):
                 switch data.content {
                 case .text?:
-                    messageUpdate = Ephemeral(content: text, expiresAfter: deletionTimeout)
+                    messageUpdate = Ephemeral(
+                        content: text,
+                        expiresAfter: deletionTimeout
+                    )
+
                 default:
                     return
                 }
+
             case .edited:
                 guard let replacingMessageID = UUID(uuidString: genericMessage.edited.replacingMessageID) else {
                     return
                 }
-                messageUpdate = MessageEdit(replacingMessageID: replacingMessageID, text: text)
+
+                messageUpdate = MessageEdit(
+                    replacingMessageID: replacingMessageID,
+                    text: text
+                )
+
             default:
                 return
             }

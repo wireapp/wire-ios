@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 import WireUtilities
 
-class CallParticipantsSnapshot {
+final class CallParticipantsSnapshot {
 
     // MARK: - Properties
 
@@ -127,10 +127,12 @@ extension CallParticipantsSnapshot {
 
     // Remove duplicates see: https://wearezeta.atlassian.net/browse/ZIOS-8610
     private static func removeDuplicateMembers(_ members: [AVSCallMember]) -> OrderedSetState<AVSCallMember> {
-        let callMembers = members.reduce([AVSCallMember]()) { (filtered, member) in
-            filtered + (filtered.contains(member) ? [] : [member])
-        }
-
-        return callMembers.toOrderedSetState()
+        members
+            .reduce(into: [AVSCallMember]()) { partialResult, member in
+                if !partialResult.contains(member) {
+                    partialResult.append(member)
+                }
+            }
+            .toOrderedSetState()
     }
 }

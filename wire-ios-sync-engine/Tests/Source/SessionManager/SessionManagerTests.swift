@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -449,6 +449,34 @@ final class SessionManagerTests: IntegrationTest {
         // THEN
         XCTAssertEqual(fileCount, 0)
         XCTAssertFalse(FileManager.default.fileExists(atPath: tempUrl.path))
+    }
+
+    func testThatItClearsCRLExpirationDatesAfterLogout() throws {
+        // GIVEN
+        let account = createAccount()
+        let sut = sessionManagerBuilder.build()
+        sut.accountManager.addAndSelect(account)
+        sut.start(launchOptions: [:])
+        sut.delegate = mockDelegate
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        let url = try XCTUnwrap( URL(string: "https://example.com"))
+        let expirationDatesRepository = CRLExpirationDatesRepository(userID: account.userIdentifier)
+        expirationDatesRepository.storeCRLExpirationDate(.now, for: url)
+
+        let expectation = XCTestExpectation(description: "session torn down")
+        mockDelegate.sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod = { _, block in
+            block?()
+            expectation.fulfill()
+        }
+
+        // WHEN
+        sut.logoutCurrentSession()
+
+        // THEN
+        wait(for: [expectation], timeout: 0.5)
+        XCTAssertTrue(expirationDatesRepository.fetchAllCRLExpirationDates().isEmpty)
     }
 
     // FIXME: [WPB-5638] this test will hang - [jacob]

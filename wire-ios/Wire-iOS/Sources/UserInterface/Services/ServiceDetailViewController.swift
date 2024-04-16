@@ -63,7 +63,7 @@ final class ServiceDetailViewController: UIViewController {
     weak var viewControllerDismisser: ViewControllerDismisser?
 
     private let detailView: ServiceDetailView
-    private let actionButton: Button
+    private let actionButton: ZMButton
     private let actionType: ActionType
     private let userSession: UserSession
 
@@ -91,13 +91,13 @@ final class ServiceDetailViewController: UIViewController {
 
         switch actionType {
         case let .addService(conversation):
-            actionButton = Button.createAddServiceButton()
+            actionButton = .createAddServiceButton()
             actionButton.isHidden = !selfUser.canAddService(to: conversation)
         case let .removeService(conversation):
-            actionButton = Button.createDestructiveServiceButton()
+            actionButton = .createDestructiveServiceButton()
             actionButton.isHidden = !selfUser.canRemoveService(from: conversation)
         case .openConversation:
-            actionButton = Button.openServiceConversationButton()
+            actionButton = .openServiceConversationButton()
             actionButton.isHidden = !selfUser.canCreateService
         }
 
@@ -200,7 +200,7 @@ final class ServiceDetailViewController: UIViewController {
                 if let existingConversation = ZMConversation.existingConversation(in: userSession.managedObjectContext, service: serviceUser, team: userSession.selfUser.membership?.team) {
                     completion?(.success(conversation: existingConversation))
                 } else {
-                    serviceUser.createConversation(in: userSession, completionHandler: { (result) in
+                    serviceUser.createConversation(in: userSession, completionHandler: { result in
                         if case let .success(conversation) = result {
                             Analytics.shared.tag(ServiceAddedEvent(service: serviceUser, conversation: conversation, context: .startUI))
                         }
@@ -218,25 +218,29 @@ final class ServiceDetailViewController: UIViewController {
     }
 }
 
-fileprivate extension Button {
+fileprivate extension ZMButton {
 
     typealias PeoplePickerServices = L10n.Localizable.Peoplepicker.Services
 
-    static func openServiceConversationButton() -> Button {
-        return Button(style: .accentColorTextButtonStyle,
-                      title: PeoplePickerServices.OpenConversation.item.capitalized)
+    static func openServiceConversationButton() -> Self {
+        .init(
+            style: .accentColorTextButtonStyle,
+            title: PeoplePickerServices.OpenConversation.item.capitalized
+        )
     }
 
-    static func createAddServiceButton() -> Button {
-        return Button(style: .accentColorTextButtonStyle,
-                      title: PeoplePickerServices.AddService.button.capitalized)
+    static func createAddServiceButton() -> Self {
+        .init(
+            style: .accentColorTextButtonStyle,
+            title: PeoplePickerServices.AddService.button.capitalized
+        )
     }
 
-    static func createDestructiveServiceButton() -> Button {
-        let button = Button(style: .accentColorTextButtonStyle,
-                            title: L10n.Localizable.Participants.Services.RemoveIntegration.button.capitalized)
-
-        return button
+    static func createDestructiveServiceButton() -> Self {
+        .init(
+            style: .accentColorTextButtonStyle,
+            title: L10n.Localizable.Participants.Services.RemoveIntegration.button.capitalized
+        )
     }
 
     convenience init(style: ButtonStyle, title: String) {

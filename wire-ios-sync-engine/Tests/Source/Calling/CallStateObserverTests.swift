@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     func testThatMissedCallMessageIsNotAppendedForCallsOtherCallStates() {
 
         // given
-        let ignoredCallStates: [CallState] = [.terminating(reason: .anweredElsewhere),
+        let ignoredCallStates: [CallState] = [.terminating(reason: .answeredElsewhere),
                                                .terminating(reason: .lostMedia),
                                                .terminating(reason: .internalError),
                                                .terminating(reason: .unknown),
@@ -249,7 +249,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         uiMOC.zm_callCenter = mockCallCenter
 
         // expect
-        customExpectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { (_) -> Bool in
+        customExpectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { _ -> Bool in
             return true
         }
 
@@ -266,7 +266,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         uiMOC.zm_callCenter = mockCallCenter
 
         // expect
-        customExpectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { (_) -> Bool in
+        customExpectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { _ -> Bool in
             return true
         }
 
@@ -285,7 +285,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // expect
-        customExpectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { (note) -> Bool in
+        customExpectation(forNotification: CallStateObserver.CallInProgressNotification, object: nil) { note -> Bool in
             if let open = note.userInfo?[CallStateObserver.CallInProgressKey] as? Bool, open == false {
                 return true
             } else {
@@ -330,7 +330,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
         // when
         self.sut.callCenterDidChange(callState: .incoming(video: false, shouldRing: false, degraded: false), conversation: conversationUI, caller: senderUI, timestamp: nil, previousCallState: nil)
-        self.sut.callCenterDidChange(callState: .terminating(reason: .anweredElsewhere), conversation: conversationUI, caller: self.senderUI, timestamp: nil, previousCallState: nil)
+        self.sut.callCenterDidChange(callState: .terminating(reason: .answeredElsewhere), conversation: conversationUI, caller: self.senderUI, timestamp: nil, previousCallState: nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then

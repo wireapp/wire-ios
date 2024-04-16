@@ -1039,7 +1039,7 @@ extension ZMUserTests_Swift {
         customExpectation(forNotification: ConnectToUserAction.notificationName, object: nil)
 
         // when
-        user.connect { (_) in }
+        user.connect { _ in }
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -1067,7 +1067,6 @@ extension ZMUserTests_Swift {
         }
 
         let user = try XCTUnwrap(ZMUser.fetch(with: userID, in: uiMOC))
-        let proteusConversation = try XCTUnwrap(ZMConversation.fetch(with: proteusConversationID, in: uiMOC))
 
         // Mock successful connection updates.
         let handler = MockActionHandler<UpdateConnectionAction>(
@@ -1082,7 +1081,7 @@ extension ZMUserTests_Swift {
         let didSucceed = XCTestExpectation(description: "didSucceed")
 
         // When I accept the connection request from the other user.
-        user.accept(oneOnOneResolver: oneOneOneResolver) { error in
+        user.accept(oneOnOneResolver: oneOneOneResolver, context: syncMOC) { error in
             if let error {
                 XCTFail("unexpected error: \(error)")
             } else {
@@ -1105,7 +1104,7 @@ extension ZMUserTests_Swift {
         user.connection = ZMConnection.insertNewObject(in: uiMOC)
 
         // expect
-        customExpectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
+        customExpectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { note -> Bool in
             guard let action = note.userInfo?[UpdateConnectionAction.userInfoKey] as? UpdateConnectionAction else {
                 return false
             }
@@ -1114,7 +1113,7 @@ extension ZMUserTests_Swift {
         }
 
         // when
-        user.block { (_) in }
+        user.block { _ in }
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -1126,7 +1125,7 @@ extension ZMUserTests_Swift {
         user.connection = ZMConnection.insertNewObject(in: uiMOC)
 
         // expect
-        customExpectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
+        customExpectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { note -> Bool in
             guard let action = note.userInfo?[UpdateConnectionAction.userInfoKey] as? UpdateConnectionAction else {
                 return false
             }
@@ -1135,7 +1134,7 @@ extension ZMUserTests_Swift {
         }
 
         // when
-        user.ignore { (_) in }
+        user.ignore { _ in }
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -1147,7 +1146,7 @@ extension ZMUserTests_Swift {
         user.connection = ZMConnection.insertNewObject(in: uiMOC)
 
         // expect
-        customExpectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { (note) -> Bool in
+        customExpectation(forNotification: UpdateConnectionAction.notificationName, object: nil) { note -> Bool in
             guard let action = note.userInfo?[UpdateConnectionAction.userInfoKey] as? UpdateConnectionAction else {
                 return false
             }
@@ -1156,7 +1155,7 @@ extension ZMUserTests_Swift {
         }
 
         // when
-        user.cancelConnectionRequest { (_) in }
+        user.cancelConnectionRequest { _ in }
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))

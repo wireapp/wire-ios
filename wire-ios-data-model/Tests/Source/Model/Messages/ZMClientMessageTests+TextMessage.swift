@@ -28,7 +28,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         wipeCaches()
     }
 
-    func testThatItHasImageReturnsTrueWhenLinkPreviewWillContainAnImage() {
+    func testThatItHasImageReturnsTrueWhenLinkPreviewWillContainAnImage() throws {
         // given
         let nonce = UUID()
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
@@ -48,11 +48,8 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
             $0.content = "sample text"
             $0.linkPreview = [linkPreview]
         }
-        do {
-            try clientMessage.setUnderlyingMessage(GenericMessage(content: text, nonce: nonce))
-        } catch {
-            XCTFail()
-        }
+        try clientMessage.setUnderlyingMessage(GenericMessage(content: text, nonce: nonce))
+
         // when
         let willHaveAnImage = clientMessage.textMessageData!.linkPreviewHasImage
 
@@ -60,7 +57,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         XCTAssertTrue(willHaveAnImage)
     }
 
-    func testThatItHasImageReturnsFalseWhenLinkPreviewDoesntContainAnImage() {
+    func testThatItHasImageReturnsFalseWhenLinkPreviewDoesntContainAnImage() throws {
 
         // given
         let nonce = UUID()
@@ -78,11 +75,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
             $0.content = "sample text"
             $0.linkPreview = [LinkPreview(articleMetadata: article)]
         }
-        do {
-            try clientMessage.setUnderlyingMessage(GenericMessage(content: text, nonce: nonce))
-        } catch {
-            XCTFail()
-        }
+        try clientMessage.setUnderlyingMessage(GenericMessage(content: text, nonce: nonce))
 
         // when
         let willHaveAnImage = clientMessage.textMessageData!.linkPreviewHasImage
@@ -91,7 +84,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         XCTAssertFalse(willHaveAnImage)
     }
 
-    func testThatItHasImageReturnsTrueWhenLinkPreviewWillContainAnImage_TwitterStatus() {
+    func testThatItHasImageReturnsTrueWhenLinkPreviewWillContainAnImage_TwitterStatus() throws {
         // given
         let nonce = UUID.create()
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
@@ -112,11 +105,8 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
             $0.content = "Text"
             $0.linkPreview = [updated]
         }
-        do {
-            try clientMessage.setUnderlyingMessage(GenericMessage(content: text, nonce: nonce))
-        } catch {
-            XCTFail()
-        }
+        try clientMessage.setUnderlyingMessage(GenericMessage(content: text, nonce: nonce))
+
         // when
         let willHaveAnImage = clientMessage.textMessageData!.linkPreviewHasImage
 
@@ -124,7 +114,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         XCTAssertTrue(willHaveAnImage)
     }
 
-    func testThatItHasImageReturnsFalseWhenLinkPreviewDoesntContainAnImage_TwitterStatus() {
+    func testThatItHasImageReturnsFalseWhenLinkPreviewDoesntContainAnImage_TwitterStatus() throws {
         // given
         let nonce = UUID.create()
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
@@ -142,11 +132,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
             $0.content = "Text"
             $0.linkPreview = [LinkPreview(twitterMetadata: preview)]
         }
-        do {
-            try clientMessage.setUnderlyingMessage(GenericMessage(content: text, nonce: nonce))
-        } catch {
-            XCTFail()
-        }
+        try clientMessage.setUnderlyingMessage(GenericMessage(content: text, nonce: nonce))
 
         // when
         let willHaveAnImage = clientMessage.textMessageData!.linkPreviewHasImage

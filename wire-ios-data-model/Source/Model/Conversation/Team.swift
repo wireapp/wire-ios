@@ -100,7 +100,7 @@ extension Team {
         return members.filter({ member in
             guard let user = member.user else { return false }
             return !user.isSelfUser && searchPredicate.evaluate(with: user)
-        }).sorted(by: { (first, second) -> Bool in
+        }).sorted(by: { first, second -> Bool in
             return first.user?.normalizedName < second.user?.normalizedName
         })
     }
@@ -108,43 +108,60 @@ extension Team {
 
 // MARK: - Logo Image
 extension Team {
-    static let defaultLogoFormat = ZMImageFormat.medium
 
     @objc static let pictureAssetIdKey = #keyPath(Team.pictureAssetId)
 
     public var imageData: Data? {
         get {
-            return managedObjectContext?.zm_fileAssetCache.assetData(for: self, format: Team.defaultLogoFormat, encrypted: false)
+            guard let cache = managedObjectContext?.zm_fileAssetCache else {
+                return nil
+            }
+
+            return cache.imageData(for: self)
         }
 
         set {
-            defer {
-                if let uiContext = managedObjectContext?.zm_userInterface {
-                    // Notify about a non core data change since the image is persisted in the file cache
-                    NotificationDispatcher.notifyNonCoreDataChanges(objectID: objectID, changedKeys: [#keyPath(Team.imageData)], uiContext: uiContext)
-                }
-            }
-
-            guard let newValue = newValue else {
-                managedObjectContext?.zm_fileAssetCache.deleteAssetData(for: self, format: Team.defaultLogoFormat, encrypted: false)
+            guard let cache = managedObjectContext?.zm_fileAssetCache else {
                 return
             }
 
-            managedObjectContext?.zm_fileAssetCache.storeAssetData(for: self, format: Team.defaultLogoFormat, encrypted: false, data: newValue)
+            if let newValue {
+                cache.storeImage(data: newValue, for: self)
+            } else {
+                cache.deleteImageData(for: self)
+            }
+
+            if let uiContext = managedObjectContext?.zm_userInterface {
+                // Notify about a non core data change since the image is persisted in the file cache
+                NotificationDispatcher.notifyNonCoreDataChanges(
+                    objectID: objectID,
+                    changedKeys: [#keyPath(Team.imageData)],
+                    uiContext: uiContext
+                )
+            }
         }
     }
 
     public func requestImage() {
-        guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_fileAssetCache.hasDataOnDisk(for: self, format: Team.defaultLogoFormat, encrypted: false) else { return }
+        guard
+            let context = self.managedObjectContext,
+            context.zm_isUserInterfaceContext,
+            let cache = context.zm_fileAssetCache,
+            !cache.hasImageData(for: self)
+        else {
+            return
+        }
 
-        NotificationInContext(name: .teamDidRequestAsset,
-                              context: moc.notificationContext,
-                              object: objectID).post()
+        NotificationInContext(
+            name: .teamDidRequestAsset,
+            context: context.notificationContext,
+            object: objectID
+        ).post()
     }
 
     public static var imageDownloadFilter: NSPredicate {
         let assetIdExists = NSPredicate(format: "(%K != nil)", Team.pictureAssetIdKey)
-        let notCached = NSPredicate { (team, _) -> Bool in
+        let notCached = NSPredicate { team, _ -> Bool in
             guard let team = team as? Team else { return false }
             return team.imageData == nil
         }

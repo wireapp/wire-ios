@@ -333,7 +333,7 @@ extension SettingsTableViewController: UserObserving {
             note.user.fetchProfileImage(session: userSession,
                                         imageCache: UIImage.defaultUserImageCache,
                                         sizeLimit: nil,
-                                        isDesaturated: false) { [weak self] (_, _) in
+                                        isDesaturated: false) { [weak self] _, _ in
                 self?.refreshData()
             }
         }

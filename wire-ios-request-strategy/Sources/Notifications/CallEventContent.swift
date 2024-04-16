@@ -64,7 +64,7 @@ public struct CallEventContent: Codable {
 
     public init?(from event: ZMUpdateEvent) {
         guard
-            event.type == .conversationOtrMessageAdd,
+            event.type.isOne(of: [.conversationOtrMessageAdd, .conversationMLSMessageAdd]),
             let message = GenericMessage(from: event),
             message.hasCalling,
             let payload = message.calling.content.data(using: .utf8, allowLossyConversion: false)
@@ -78,7 +78,7 @@ public struct CallEventContent: Codable {
     public init?(from data: Data, with decoder: JSONDecoder = .init()) {
         do {
             self = try decoder.decode(Self.self, from: data)
-        } catch let error {
+        } catch {
             print(error.localizedDescription)
             return nil
         }

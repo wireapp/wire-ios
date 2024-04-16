@@ -25,6 +25,7 @@ public protocol MessageDependencyResolverInterface {
 
 public enum MessageDependencyResolverError: Error, Equatable {
     case securityLevelDegraded
+    case legalHoldPendingApproval
 }
 
 public class MessageDependencyResolver: MessageDependencyResolverInterface {
@@ -39,7 +40,15 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
 
         func dependenciesAreResolved() async throws -> Bool {
             let isSecurityLevelDegraded = await self.context.perform {
-                message.conversation?.securityLevel == .secureWithIgnored
+                message.conversation?.isDegraded == true
+            }
+
+            let legalHoldPendingApproval = await self.context.perform {
+                message.conversation?.legalHoldStatus == .pendingApproval
+            }
+
+            if legalHoldPendingApproval {
+                throw MessageDependencyResolverError.legalHoldPendingApproval
             }
 
             if isSecurityLevelDegraded {

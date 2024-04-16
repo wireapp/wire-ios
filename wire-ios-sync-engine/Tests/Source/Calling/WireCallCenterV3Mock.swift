@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -169,7 +169,7 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
 
     func setMockCallState(_ state: CallState, conversationId: AVSIdentifier, callerId: AVSIdentifier, isVideo: Bool) {
         clearSnapshot(conversationId: conversationId)
-        createSnapshot(callState: state, members: [], callStarter: callerId, video: isVideo, for: conversationId, isConferenceCall: false)
+        createSnapshot(callState: state, members: [], callStarter: callerId, video: isVideo, for: conversationId, conversationType: .oneToOne)
     }
 
     func removeMockActiveCalls() {
@@ -185,7 +185,7 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
 
     func setMockCallInitiator(callerId: AVSIdentifier, conversationId: AVSIdentifier) {
         clearSnapshot(conversationId: conversationId)
-        createSnapshot(callState: .established, members: [], callStarter: callerId, video: false, for: conversationId, isConferenceCall: false)
+        createSnapshot(callState: .established, members: [], callStarter: callerId, video: false, for: conversationId, conversationType: .oneToOne)
     }
 
 }

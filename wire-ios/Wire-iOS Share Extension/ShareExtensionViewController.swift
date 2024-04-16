@@ -249,7 +249,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             return
         }
 
-        urlItems.first?.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil, completionHandler: { (url, error) in
+        urlItems.first?.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil, completionHandler: { url, error in
             error?.log(message: "Unable to fetch URL for type URL")
             guard let url = url as? URL, url.isFileURL else { return }
 
@@ -283,14 +283,14 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             case .preparing:
                 WireLogger.shareExtension.info("progress event: preparing")
                 DispatchQueue.main.asyncAfter(deadline: .now() + progressDisplayDelay) {
-                    guard !postContent.sentAllSendables && nil == self.progressViewController else { return }
+                    guard !postContent.sentAllSendables && self.progressViewController == nil else { return }
                     self.presentSendingProgress(mode: .preparing)
                 }
 
             case .startingSending:
                 WireLogger.shareExtension.info("progress event: start sending")
                 DispatchQueue.main.asyncAfter(deadline: .now() + progressDisplayDelay) {
-                    guard postContent.sentAllSendables && nil == self.progressViewController else { return }
+                    guard postContent.sentAllSendables && self.progressViewController == nil else { return }
                     self.presentSendingProgress(mode: .sending)
                 }
 
@@ -595,12 +595,15 @@ extension ShareExtensionViewController {
             passcodePreference = .deviceThenCustom
         }
 
-        appLock.evaluateAuthentication(passcodePreference: passcodePreference, description: description) { [weak self] result, context in
-            guard let `self` = self else { return }
+        appLock.evaluateAuthentication(
+            passcodePreference: passcodePreference,
+            description: description
+        ) { [weak self] result in
+            guard let self else { return }
 
             DispatchQueue.main.async {
-                if case .granted = result, let context = context as? LAContext {
-                    try? self.sharingSession?.unlockDatabase(with: context)
+                if case .granted = result {
+                    try? self.sharingSession?.unlockDatabase()
                 }
 
                 self.authenticationEvaluated(with: result, completion: completion)

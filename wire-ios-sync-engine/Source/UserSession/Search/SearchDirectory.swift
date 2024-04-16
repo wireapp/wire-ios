@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ import Foundation
     public func lookup(userId: UUID) -> SearchTask {
         let task = SearchTask(task: .lookup(userId: userId), searchContext: searchContext, contextProvider: contextProvider, transportSession: transportSession)
 
-        task.addResultHandler { [weak self] (result, _) in
+        task.addResultHandler { [weak self] result, _ in
             self?.observeSearchUsers(result)
         }
 

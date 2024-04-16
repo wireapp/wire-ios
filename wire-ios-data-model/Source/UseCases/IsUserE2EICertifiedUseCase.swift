@@ -70,19 +70,22 @@ public struct IsUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol {
 
         // make the call to Core Crypto
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
-        let identities = try await coreCrypto.perform { coreCrypto in
-            let result = try await coreCrypto.getUserIdentities(conversationId: mlsGroupID, userIds: [userID])
+        let userIdentities = try await coreCrypto.perform { coreCrypto in
+            // get MLS group members
+            let allUserIdentities = try await coreCrypto.getUserIdentities(conversationId: mlsGroupID, userIds: [userID])
 
             // an empty result means not certified
-            guard !result.isEmpty else { return [WireIdentity]() }
-
-            guard let identities = result[userID] else {
-                throw Error.failedToGetIdentitiesFromCoreCryptoResult(result, userID)
+            guard !allUserIdentities.isEmpty else {
+                return [WireIdentity]()
             }
-            return identities
+
+            guard let userIdentities = allUserIdentities[userID] else {
+                throw Error.failedToGetIdentitiesFromCoreCryptoResult(allUserIdentities, userID)
+            }
+            return userIdentities
         }
 
-        return !identities.isEmpty && identities.allSatisfy { $0.status == .valid }
+        return !userIdentities.isEmpty && userIdentities.allSatisfy { $0.status == .valid && $0.credentialType == .x509 }
     }
 }
 

@@ -560,4 +560,23 @@ extension MessagingTestBase {
         ]
     }
 
+    public func payloadForMessage(conversationID: UUID,
+                                  domain: String?,
+                                  type: String,
+                                  data: Any,
+                                  time: Date?,
+                                  fromID: UUID) -> NSMutableDictionary? {
+
+        return ["conversation": conversationID.transportString(),
+                "qualified_conversation": [
+                    "id": conversationID.transportString(),
+                    "domain": domain
+                ],
+                "data": data,
+                "from": fromID.transportString(),
+                "time": time?.transportString() ?? "",
+                "type": type
+        ]
+    }
+
 }

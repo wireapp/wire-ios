@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ struct CallSnapshotTestFixture {
             isConstantBitRate: false,
             videoState: .stopped,
             networkQuality: .normal,
-            isConferenceCall: true,
+            conversationType: .conference,
             degradedUser: user,
             activeSpeakers: [],
             videoGridPresentationMode: .allVideoStreams,
@@ -64,7 +64,7 @@ struct CallSnapshotTestFixture {
             isConstantBitRate: false,
             videoState: .stopped,
             networkQuality: .normal,
-            isConferenceCall: true,
+            conversationType: .conference,
             degradedUser: nil,
             activeSpeakers: [],
             videoGridPresentationMode: .allVideoStreams,

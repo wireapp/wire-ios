@@ -131,7 +131,7 @@ final class FullscreenImageViewController: UIViewController {
         }
 
         if let coordinator = coordinator {
-            coordinator.animate(alongsideTransition: { (_) in
+            coordinator.animate(alongsideTransition: { _ in
                 animationBlock()
             })
         } else {
@@ -165,10 +165,10 @@ final class FullscreenImageViewController: UIViewController {
     // MARK: - Dismiss
 
     private func dismiss(_ completion: Completion? = nil) {
-        if nil != dismissAction {
-            dismissAction?(completion)
-        } else if nil != navigationController {
-            navigationController?.popViewController(animated: true)
+        if let dismissAction {
+            dismissAction(completion)
+        } else if let navigationController {
+            navigationController.popViewController(animated: true)
             completion?()
         } else {
             dismiss(animated: true, completion: completion)

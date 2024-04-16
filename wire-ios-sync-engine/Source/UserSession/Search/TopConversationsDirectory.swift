@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ fileprivate extension ZMConversation {
         var count = 0
         for message in lastMessages() {
             guard let timestamp = message.serverTimestamp else { continue }
-            guard nil == message.systemMessageData else { continue }
+            guard message.systemMessageData == nil else { continue }
             guard timestamp >= oneMonthAgo else { return count }
             count += 1
         }

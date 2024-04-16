@@ -95,13 +95,12 @@ final class MessagePresenterTests: XCTestCase {
     func testThatCreateAddPassesViewControllerReturnsAViewControllerForPassFileMessage() async throws {
         // GIVEN
         let message = MockMessageFactory.passFileTransferMessage()
-        let fileURL = try XCTUnwrap(message.fileMessageData?.fileURL)
+        let fileURL = try XCTUnwrap(message.fileMessageData?.temporaryURLToDecryptedFile())
 
-        // WHEN && THEN
-        do {
-            _ = try await sut.makePassesViewController(fileURL: fileURL)
-        } catch {
-            XCTFail("expected not to throw an error!")
-        }
+        // WHEN
+        _ = try await sut.makePassesViewController(fileURL: fileURL)
+
+        // THEN
+        // expected not to throw an error!
     }
 }

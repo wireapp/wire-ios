@@ -330,6 +330,10 @@
 "conversation.create.non_federating_domains_error.edit_participant_list" = "Edit Participants List";
 "conversation.create.non_federating_domains_error.learn_more" = "Daha Fazla";
 "conversation.create.non_federating_domains_error.abort" = "Discard Group Creation";
+"conversation.create.protocol_selection.mls" = "MLS";
+"conversation.create.protocol_selection.mls_default" = "MLS (default)";
+"conversation.create.protocol_selection.proteus" = "Proteus";
+"conversation.create.protocol_selection.proteus_default" = "Proteus (default)";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Devam eden arama";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Görüşme sırasında sesli mesaj kaydedemezsiniz.";
@@ -533,16 +537,8 @@
 
 "content.system.you_started" = "Sen";
 
-"content.system.call.called" = "%@ aradı";
-"content.system.call.called-you" = "%@ aradı";
-"content.system.call.called.you" = "Sen";
-
 "content.system.call.missed-call" = "Cevapsız arama";
-"content.system.call.missed-call-you" = "Cevapsız arama";
-
 "content.system.call.missed-call.groups" = "%@ Kaynağından gelen cevapsız çağrı";
-"content.system.call.missed-call.groups-you" = "%2$@ kişisinden cevapsız çağrı";
-"content.system.call.missed-call.groups.you" = "Sen";
 
 "content.system.renamed_conv.title" = "%@ bu konuşmanın adını değiştirdi";
 "content.system.renamed_conv.title-you" = "%@ bu konuşmanın adını değiştirdi";
@@ -580,8 +576,9 @@
 "content.system.message_legal_hold.learn_more" = "Daha fazla bilgi";
 
 //
-
 "content.system.is_verified" = "Tüm parmak izleri doğrulanmış";
+"content.system.mls.conversation_is_verified" = "All devices are verified by End-to-end Identity. [Learn more](%@)";
+"content.system.mls.conversation_is_degraded" = "This conversation is no longer verified, as at least one participant started using a new device or has an invalid certificate.";
 
 "content.system.new_users" = "Yeni biri katıldı.";
 "content.system.verify_devices" = "Cihazları doğrula";
@@ -773,6 +770,17 @@
 "call.degraded.ended.alert.message.user" = "The call was disconnected because %@ is no longer a verified contact.";
 "call.degraded.ended.alert.message.unknown" = "Birisi artık doğrulanmış bir kişi olmadığı için çağrı kesildi.";
 
+"call.mls.degraded.alert.title" = "Conversation no longer verified";
+"call.mls.degraded.alert.message" = "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to start the call?";
+"call.mls.degraded.alert.action.continue" = "Yine de ara";
+
+"call.mls.degraded.incoming.alert.message" = "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to join the call?";
+"call.mls.degraded.incoming.alert.action.continue" = "Yine de katıl";
+
+
+"call.mls.degraded.ended.alert.title" = "Conversation no longer verified";
+"call.mls.degraded.ended.alert.message" = "The call was disconnected as at least one participant started using a new device or has an invalid certificate.";
+
 "call.alert.ongoing.alert_title" = "Bu, diğer aramanıza son verecek.";
 
 "call.alert.ongoing.start.message" = "Bir arama başka bir konuşmada etkin.\nBurada arama yaparsanız diğer arama kapatılır.";
@@ -874,6 +882,9 @@
 "meta.degraded.cancel_sending_button" = "İptal";
 "meta.legalhold.info_button" = "Yasal Tutma Nedir?";
 "meta.legalhold.send_alert_title" = "Konuşma şimdi yasal düzenlemeye tabidir.";
+
+"meta.mls.degraded.alert.title" = "Conversation no longer verified";
+"meta.mls.degraded.alert.message" = "At least one participant started using a new device or has an invalid certificate.\n\nDo you still want to send the message?";
 
 // Remove from conversation dialogue
 "profile.remove_dialog_title" = "Sil?";
@@ -999,6 +1010,8 @@
 "group_details.conversation_admins_header.title" = "Grup Yöneticileri";
 "group_details.conversation_members_header.title" = "Grup üyeleri";
 
+"group_details.conversation_verification_status.e2ei" = "Verified (End-to-end Identity)";
+"group_details.conversation_verification_status.proteus" = "Verified (Proteus)";
 
 // Legal hold details
 
@@ -1590,6 +1603,23 @@
 "registration.signin.alert.password_needed.title" = "Parola gerekli";
 "registration.signin.alert.password_needed.message" = "Giriş yapmak için lütfen şifrenizi giriniz.";
 
+"registration.signin.e2ei.title" = "End-to-end identity certificate";
+"registration.signin.e2ei.subtitle" = "Your team now uses end-to-end identity to make Wire's usage more secure.\n\n Enter your identity provider's credentials in the next step to automatically get a verification certificate for this device.";
+"registration.signin.e2ei.learn_more" = "[Learn more](%@)";
+"registration.signin.e2ei.get_certificate_button.title" = "Get Certificate";
+"registration.signin.e2ei.error.alert.title" = "Bir şeyler yanlış gitti";
+"registration.signin.e2ei.error.alert.message" = "Failed to retrieve certificate";
+
+// Enroll e2ei certificate
+"enroll_e2ei_certificate.title" = "Certificate issued";
+"enroll_e2ei_certificate.subtitle" = "The certificate is active and your device is verified.";
+"enroll_e2ei_certificate.certificate_details_button" = "Certificate Details";
+"enroll_e2ei_certificate.ok_button" = "TAMAM";
+
+// Update e2ei certificate
+"update_e2ei_certificate.title" = "Certificate updated";
+"update_e2ei_certificate.subtitle" = "The certificate is updated and your device is verified.";
+
 "registration.signin.username.title" = "Your username";
 "registration.signin.username.message" = "Enter your username. It helps others to find you in Wire and connect with you.";
 "registration.signin.username.placeholder" = "username";
@@ -1760,6 +1790,37 @@
 // Feature configs: conversation guest links
 "feature_config.alert.conversation_guest_links.message.disabled" = "Generating guest links is now disabled for all group admins.";
 "feature_config.alert.conversation_guest_links.message.enabled" = "Generating guest links is now enabled for all group admins.";
+
+// Feature configs: mlsE2EId
+"feature_config.alert.mls_e2ei.title" = "End-to-end identity certificate";
+"feature_config.alert.mls_e2ei.message" = "As of today, your team uses end-to-end identity to make Wire’s usage more secure and practicable.\nEnter your identity provider’s credentials in the next step to automatically get a verification certificate for this device.";
+"feature_config.alert.mls_e2ei.button.get_certificate" = "Get Certificate";
+"feature_config.alert.mls_e2ei.button.remind_me_later" = "Remind Me Later";
+"feature_config.alert.mls_e2ei.button.learn_more" = "Daha Fazla";
+"feature_config.alert.mls_e2ei.button.ok" = "TAMAM";
+"feature_config.alert.mls_e2ei.reminder_message" = "You can get the certificate in your 'Wire Settings' during the next %@. Open 'Devices' and select 'Get Certificate' for your current device.";
+"feature_config.alert.mls_e2ei.update_message" = "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now.\nEnter your identity provider’s credentials in the next step to update the certificate automatically.";
+"feature_config.alert.mls_e2ei.alert.update_certificate.title" = "End-to-end identity certificate";
+"failed_to_get_certificate.alert.title" = "Certificate couldn’t be issued.";
+"failed_to_get_certificate.alert.message" = "You can retry to get the certificate now, or you will get a reminder later.";
+"failed_to_get_certificate.alert.forced_message" = "Please try again, or reach out to your team admin.";
+"failed_to_get_certificate.button.retry" = "Retry";
+"failed_to_get_certificate.button.ok" = "TAMAM";
+
+// Update end-to-end identity certificate
+"update_certificate.alert.title" = "Update certificate";
+"update_certificate.alert.message" = "The end-to-end identity certificate for this device expires soon. To keep your communication secure, update your certificate now. Enter your identity provider’s credentials in the next step to update the certificate automatically.";
+"update_certificate.alert.expired-message" = "The end-to-end identity certificate for this device has expired. Enter your identity provider’s credentials in the next step to update the certificate automatically.";
+"update_certificate.button.update_certificate" = "Update Certificate";
+
+"failed_to_update_certificate.alert.title" = "Certificate couldn’t be updated.";
+"failed_to_update_certificate.alert.message" = "You can retry to update the certificate now, or you will get a reminder later.";
+
+// End-to-end identity revoked certificate
+"revoked_certificate.alert.title" = "End-to-end certificate revoked";
+"revoked_certificate.alert.message" = "Log out to reduce security risks. Then log in again, get a new certificate, and reset your password. If you keep using this device, your conversations are no longer verified.";
+"revoked_certificate.alert.log_out" = "Çıkış yap";
+"revoked_certificate.alert.continue" = "Continue Using This Device";
 
 // Jailbroken alert
 "jailbrokendevice.alert.title" = "Jailbreak(root) algılandı";
@@ -2067,3 +2128,26 @@
 // MARK: - Time
 
 "time.just_now" = "Just now";
+
+// MARK: - Device Details
+"device.details.section.proteus.title" = "PROTEUS DEVICE DETAILS";
+"device.details.section.proteus.id" = "Proteus ID";
+"device.details.section.proteus.value" = "Proteus ID: %@";
+"device.details.section.proteus.activated" = "Activated";
+"device.details.section.proteus.key_fingerprint" = "Proteus Key Fingerprint";
+"device.details.section.e2ei.title" = "End-to-end Identity Certificate";
+"device.details.section.e2ei.show_certificate_details" = "Show Certificate Details";
+"device.details.section.e2ei.get_certificate" = "Get Certificate";
+"device.details.section.e2ei.update_certificate" = "Update Certificate";
+"device.details.section.e2ei.status.title" = "Status";
+"device.details.section.e2ei.status.not_activated" = "Not activated";
+"device.details.section.e2ei.status.valid" = "Valid";
+"device.details.section.e2ei.status.revoked" = "Revoked";
+"device.details.section.e2ei.status.expired" = "Expired";
+"device.details.section.e2ei.status.invalid" = "Invalid";
+"device.details.section.e2ei.serial_number" = "Serial Number";
+"device.details.section.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.section.mls.title" = "MLS Thumbprint";
+"device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
+"device.details.certificate_details.title" = "Certificate Details";
+"device.details.certificate_details.copy_to_clipboard" = "Copy to Clipboard";

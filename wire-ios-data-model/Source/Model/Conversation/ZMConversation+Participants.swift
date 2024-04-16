@@ -37,7 +37,7 @@ extension ZMConversation {
 
     @objc
     public var isSelfAnActiveMember: Bool {
-        return self.participantRoles.contains(where: { (role) -> Bool in
+        return self.participantRoles.contains(where: { role -> Bool in
             role.user?.isSelfUser == true
         })
     }
@@ -116,7 +116,7 @@ extension ZMConversation {
     /// The method will also check if the addition of the users will change the verification status, the archive
     /// status, etc.
     @objc
-    public func addParticipantAndUpdateConversationState(user: ZMUser, role: Role?) {
+    public func addParticipantAndUpdateConversationState(user: ZMUser, role: Role? = nil) {
         self.addParticipantsAndUpdateConversationState(usersAndRoles: [(user, role)])
     }
 
@@ -132,7 +132,7 @@ extension ZMConversation {
     /// The method will also check if the addition of the users will change the verification status, the archive
     /// status, etc.
     @objc
-    public func addParticipantsAndUpdateConversationState(users: Set<ZMUser>, role: Role?) {
+    public func addParticipantsAndUpdateConversationState(users: Set<ZMUser>, role: Role? = nil) {
         self.addParticipantsAndUpdateConversationState(usersAndRoles: users.map { ($0, role) })
     }
 
@@ -152,7 +152,7 @@ extension ZMConversation {
         // Is this a new conversation, or an existing one that is being updated?
         let doesExistsOnBackend = self.remoteIdentifier != nil
 
-        let addedRoles = usersAndRoles.compactMap { (user, role) -> ParticipantRole? in
+        let addedRoles = usersAndRoles.compactMap { user, role -> ParticipantRole? in
             guard !user.isAccountDeleted else { return nil }
 
             // make sure the role is the right team/conversation role

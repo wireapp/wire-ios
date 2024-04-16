@@ -239,11 +239,11 @@ extension ConversationTests {
             let message = try! conversation.appendImage(from: self.verySmallJPEGData(), nonce: messageID)
 
             // store asset data
-            syncMOC.zm_fileAssetCache.storeAssetData(message, format: ZMImageFormat.original, encrypted: false, data: imageData)
-            syncMOC.zm_fileAssetCache.storeAssetData(message, format: ZMImageFormat.preview, encrypted: false, data: imageData)
-            syncMOC.zm_fileAssetCache.storeAssetData(message, format: ZMImageFormat.medium, encrypted: false, data: imageData)
-            syncMOC.zm_fileAssetCache.storeAssetData(message, format: ZMImageFormat.preview, encrypted: true, data: imageData)
-            syncMOC.zm_fileAssetCache.storeAssetData(message, format: ZMImageFormat.medium, encrypted: true, data: imageData)
+            syncMOC.zm_fileAssetCache.storeOriginalImage(data: imageData, for: message)
+            syncMOC.zm_fileAssetCache.storePreviewImage(data: imageData, for: message)
+            syncMOC.zm_fileAssetCache.storeEncryptedPreviewImage(data: imageData, for: message)
+            syncMOC.zm_fileAssetCache.storeMediumImage(data: imageData, for: message)
+            syncMOC.zm_fileAssetCache.storeEncryptedMediumImage(data: imageData, for: message)
 
             // delete
             let deleteMessage = GenericMessage(content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: messageID), nonce: UUID.create())
@@ -265,11 +265,11 @@ extension ConversationTests {
 
             // then
 
-            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: ZMImageFormat.original, encrypted: false))
-            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: ZMImageFormat.preview, encrypted: false))
-            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: ZMImageFormat.medium, encrypted: false))
-            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: ZMImageFormat.preview, encrypted: true))
-            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: ZMImageFormat.medium, encrypted: true))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.originalImageData(for: message))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.previewImageData(for: message))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.mediumImageData(for: message))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.encryptedPreviewImageData(for: message))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.encryptedMediumImageData(for: message))
         }
     }
 
@@ -285,11 +285,7 @@ extension ConversationTests {
 
             let documentsURL = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
             let fileURL = URL(fileURLWithPath: documentsURL).appendingPathComponent(fileName)
-            do {
-                try fileData.write(to: fileURL)
-            } catch {
-                XCTFail()
-            }
+            try fileData.write(to: fileURL)
 
             XCTAssertNotNil(selfUserID)
 
@@ -300,8 +296,8 @@ extension ConversationTests {
             let message = try! conversation.appendFile(with: fileMetadata, nonce: messageID)
 
             // store asset data
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, encrypted: false, data: fileData)
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, encrypted: true, data: fileData)
+            self.syncMOC.zm_fileAssetCache.storeOriginalFile(data: fileData, for: message)
+            self.syncMOC.zm_fileAssetCache.storeEncryptedFile(data: fileData, for: message)
 
             // delete
             let deleteMessage = GenericMessage(content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: messageID), nonce: UUID.create())
@@ -326,9 +322,8 @@ extension ConversationTests {
             let lookupMessage = try! conversation.appendText(content: "123")
 
             // then
-
-            XCTAssertNil(self.syncMOC.zm_fileAssetCache .assetData(lookupMessage, encrypted: false))
-            XCTAssertNil(self.syncMOC.zm_fileAssetCache .assetData(lookupMessage, encrypted: true))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.originalFileData(for: lookupMessage))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.encryptedFileData(for: lookupMessage))
         }
     }
 

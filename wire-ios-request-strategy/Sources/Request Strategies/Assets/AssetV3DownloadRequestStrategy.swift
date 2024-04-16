@@ -35,7 +35,7 @@ private let zmLog = ZMSLog(tag: "Asset V3")
 
         configuration = .allowsRequestsWhileOnline
 
-        let downloadPredicate = NSPredicate { (object, _) -> Bool in
+        let downloadPredicate = NSPredicate { object, _ -> Bool in
             guard let message = object as? ZMAssetClientMessage else { return false }
             guard message.version >= 3 else { return false }
 
@@ -132,41 +132,72 @@ private let zmLog = ZMSLog(tag: "Asset V3")
     }
 
     private func storeAndDecrypt(data: Data, for message: ZMAssetClientMessage) -> Bool {
-        guard let genericMessage = message.underlyingMessage,
-              let asset = genericMessage.assetData
-        else { return false }
+        guard
+            let genericMessage = message.underlyingMessage,
+            let asset = genericMessage.assetData
+        else {
+            return false
+        }
 
         let keys = (asset.uploaded.otrKey, asset.uploaded.sha256)
 
         if asset.original.hasRasterImage {
-            return storeAndDecryptImage(asset: asset, message: message, data: data, keys: keys)
+            return validateAndStoreImage(
+                asset: asset,
+                message: message,
+                data: data,
+                keys: keys
+            )
         } else {
-            return storeAndDecryptFile(asset: asset, message: message, data: data, keys: keys)
+            return validateAndStoreFile(
+                asset: asset,
+                message: message,
+                data: data,
+                keys: keys
+            )
         }
     }
 
-    private func storeAndDecryptImage(asset: WireProtos.Asset, message: ZMAssetClientMessage, data: Data, keys: DecryptionKeys) -> Bool {
+    private func validateAndStoreImage(
+        asset: WireProtos.Asset,
+        message: ZMAssetClientMessage,
+        data: Data,
+        keys: DecryptionKeys
+    ) -> Bool {
         precondition(asset.original.hasRasterImage, "Should only be called for assets with image")
 
-        let cache = managedObjectContext.zm_fileAssetCache!
-        cache.storeAssetData(message, format: .medium, encrypted: true, data: data)
-        let success = cache.decryptImageIfItMatchesDigest(message, format: .medium, encryptionKey: keys.otrKey, sha256Digest: keys.sha256)
-        if !success {
-            zmLog.error("Failed to decrypt v3 asset (image) message: \(asset), nonce:\(message.nonce!)")
+        guard data.zmSHA256Digest() == keys.sha256 else {
+            zmLog.warn("v3 asset (image) message: \(asset), nonce:\(message.nonce!) digest is not valid, discarding...")
+            return false
         }
-        return success
+
+        managedObjectContext.zm_fileAssetCache.storeEncryptedMediumImage(
+            data: data,
+            for: message
+        )
+
+        return true
     }
 
-    private func storeAndDecryptFile(asset: WireProtos.Asset, message: ZMAssetClientMessage, data: Data, keys: DecryptionKeys) -> Bool {
+    private func validateAndStoreFile(
+        asset: WireProtos.Asset,
+        message: ZMAssetClientMessage,
+        data: Data,
+        keys: DecryptionKeys
+    ) -> Bool {
         precondition(!asset.original.hasRasterImage, "Should not be called for assets with image")
 
-        let cache = managedObjectContext.zm_fileAssetCache!
-        cache.storeAssetData(message, encrypted: true, data: data)
-        let success = cache.decryptFileIfItMatchesDigest(message, encryptionKey: keys.otrKey, sha256Digest: keys.sha256)
-        if !success {
-            zmLog.error("Failed to decrypt v3 asset (file) message: \(asset), nonce:\(message.nonce!)")
+        guard data.zmSHA256Digest() == keys.sha256 else {
+            zmLog.warn("v3 asset (file) message: \(asset), nonce:\(message.nonce!) digest is not valid, discarding...")
+            return false
         }
-        return success
+
+        managedObjectContext.zm_fileAssetCache.storeEncryptedFile(
+            data: data,
+            for: message
+        )
+
+        return true
     }
 
     // MARK: - ZMContextChangeTrackerSource
