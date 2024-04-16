@@ -54,7 +54,7 @@ final class LocationSendViewControllerTests: BaseSnapshotTestCase {
 
     func testThatItRendersSendControllerCorrectly_LongAddress() {
         sut.address = "Hackescher Markt, Rosenthaler Straße 41, 10178 Berlin"
-        verifyInAllPhoneWidths(matching: sut.prepareForSnapshot())
+        verifyInAllPhoneWidths(matching: sut.prepareForSnapshot(heightConstant: 86))
     }
 
 }
@@ -62,8 +62,8 @@ final class LocationSendViewControllerTests: BaseSnapshotTestCase {
 // MARK: - Helpers
 
 private extension UIViewController {
-    func prepareForSnapshot() -> UIView {
-        view.heightAnchor.constraint(equalToConstant: 56).isActive = true
+    func prepareForSnapshot(heightConstant: CGFloat = 56) -> UIView {
+        view.heightAnchor.constraint(equalToConstant: heightConstant).isActive = true
         return view
     }
 }
