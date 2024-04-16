@@ -55,7 +55,8 @@ extension UpdateEventPayload: Decodable {
             let event = try container.decodeConversationMessageTimerUpdateEvent()
             self = .conversationMessageTimerUpdate(event)
         case "conversation.mls-message-add":
-            self = .conversationMLSMessageAdd
+            let event = try container.decodeConversationMLSMessageAddEvent()
+            self = .conversationMLSMessageAdd(event)
         case "conversation.mls-welcome":
             let event = try container.decodeConversationMLSWelcomeEvent()
             self = .conversationMLSWelcome(event)
@@ -132,6 +133,7 @@ private enum UpdateEventPayloadCodingKeys: String, CodingKey {
     case senderID = "from"
     case conversationQualifiedID = "qualified_conversation"
     case senderQualifiedID = "qualified_from"
+    case subconversation = "subconv"
     case timestamp = "time"
     case payload = "data"
 
@@ -162,6 +164,20 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
             senderID: senderID,
             timestamp: timestamp,
             newTimer: payload.message_timer
+        )
+    }
+
+    func decodeConversationMLSMessageAddEvent() throws -> ConversationMLSMessageAddEvent {
+        let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
+        let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
+        let subconversation = try decodeIfPresent(String.self, forKey: .subconversation)
+        let payload = try decode(String.self, forKey: .payload)
+
+        return ConversationMLSMessageAddEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            subconversation: subconversation,
+            message: payload
         )
     }
 

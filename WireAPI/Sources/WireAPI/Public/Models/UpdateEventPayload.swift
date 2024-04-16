@@ -33,7 +33,7 @@ public enum UpdateEventPayload {
     case conversationMemberUpdate
     case conversationMessageAdd
     case conversationMessageTimerUpdate(ConversationMessageTimerUpdateEvent)
-    case conversationMLSMessageAdd
+    case conversationMLSMessageAdd(ConversationMLSMessageAddEvent)
     case conversationMLSWelcome(ConversationMLSWelcomeEvent)
     case conversationOTRAssetAdd
     case conversationOTRMessageAdd
