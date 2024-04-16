@@ -65,7 +65,7 @@ final class LocationSendViewController: UIViewController {
         setupSendLocationButton()
         setupAddressLabel()
         setupContainerView()
-        setupConstraints()
+        createConstraints()
         view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 
@@ -99,7 +99,7 @@ final class LocationSendViewController: UIViewController {
 
     private func createConstraints() {
         [containerView, addressLabel, sendButton].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
-        
+
         NSLayoutConstraint.activate([
             // containerView
             containerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
