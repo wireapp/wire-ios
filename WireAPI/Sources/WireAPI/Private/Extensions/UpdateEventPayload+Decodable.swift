@@ -52,7 +52,8 @@ extension UpdateEventPayload: Decodable {
         case "conversation.message-add":
             self = .conversationMessageAdd
         case "conversation.message-timer-update":
-            self = .conversationMessageTimerUpdate
+            let event = try container.decodeConversationMessageTimerUpdateEvent()
+            self = .conversationMessageTimerUpdate(event)
         case "conversation.mls-message-add":
             self = .conversationMLSMessageAdd
         case "conversation.mls-welcome":
@@ -118,7 +119,6 @@ extension UpdateEventPayload: Decodable {
         default:
             self = .unknown(eventType: eventType)
         }
-
     }
 
 }
@@ -135,7 +135,6 @@ private enum UpdateEventPayloadCodingKeys: String, CodingKey {
 
 }
 
-
 private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
 
     func decodeConversationDeleteEvent() throws -> ConversationDeleteEvent {
@@ -147,6 +146,20 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
             conversationID: conversationID,
             senderID: senderID,
             timestamp: timestamp
+        )
+    }
+
+    func decodeConversationMessageTimerUpdateEvent() throws -> ConversationMessageTimerUpdateEvent {
+        let conversationID = try decode(ConversationID.self, forKey: .conversationQualifiedID)
+        let senderID = try decode(UserID.self, forKey: .senderQualifiedID)
+        let timestamp = try decode(Date.self, forKey: .timestamp)
+        let payload = try decode(ConversationMessageTimerUpdateEventData.self, forKey: .payload)
+
+        return ConversationMessageTimerUpdateEvent(
+            conversationID: conversationID,
+            senderID: senderID,
+            timestamp: timestamp,
+            newTimer: payload.message_timer
         )
     }
 
@@ -189,6 +202,12 @@ private extension KeyedDecodingContainer<UpdateEventPayloadCodingKeys> {
             legacyAccessRole: payload.access_role
         )
     }
+
+}
+
+private struct ConversationMessageTimerUpdateEventData: Decodable {
+
+    let message_timer: Int64?
 
 }
 
