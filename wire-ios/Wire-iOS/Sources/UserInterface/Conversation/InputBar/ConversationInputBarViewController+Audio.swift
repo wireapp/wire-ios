@@ -138,7 +138,7 @@ extension ConversationInputBarViewController {
     }
 
     fileprivate func requestMicrophoneAccess() {
-        UIApplication.wr_requestOrWarnAboutMicrophoneAccess { (granted) in
+        UIApplication.wr_requestOrWarnAboutMicrophoneAccess { granted in
             guard granted else { return }
         }
     }

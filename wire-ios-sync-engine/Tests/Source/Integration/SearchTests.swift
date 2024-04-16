@@ -50,7 +50,7 @@ final class SearchTests: IntegrationTest {
         let userName = "JohnnyMnemonic"
         var user: MockUser?
 
-        mockTransportSession.performRemoteChanges { (changes) in
+        mockTransportSession.performRemoteChanges { changes in
             user = changes.insertUser(withName: userName)
             user?.email = "johnny@example.com"
             user?.phone = ""
@@ -71,7 +71,7 @@ final class SearchTests: IntegrationTest {
         XCTAssertTrue(newUser.isPendingApprovalByOtherUser)
 
         // remote user accepts connection
-        mockTransportSession.performRemoteChanges { (changes) in
+        mockTransportSession.performRemoteChanges { changes in
             changes.remotelyAcceptConnection(to: user!)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -87,7 +87,7 @@ final class SearchTests: IntegrationTest {
         var user: MockUser?
         let remoteIdentifier = UUID.create()
 
-        mockTransportSession.performRemoteChanges { (changes) in
+        mockTransportSession.performRemoteChanges { changes in
             user = changes.insertUser(withName: userName)
             user?.email = "johnny@example.com"
             user?.phone = ""
@@ -109,7 +109,7 @@ final class SearchTests: IntegrationTest {
         let userName = "JohnnyMnemonic"
         var user: MockUser?
 
-        mockTransportSession.performRemoteChanges { (changes) in
+        mockTransportSession.performRemoteChanges { changes in
             user = changes.insertUser(withName: userName)
             user?.email = "johnny@example.com"
             user?.phone = ""
@@ -143,7 +143,7 @@ final class SearchTests: IntegrationTest {
         let userName = "JohnnyMnemonic"
         var user: MockUser?
 
-        mockTransportSession.performRemoteChanges { (changes) in
+        mockTransportSession.performRemoteChanges { changes in
             user = changes.insertUser(withName: userName)
             user?.email = "johnny@example.com"
             user?.phone = ""
@@ -182,7 +182,7 @@ final class SearchTests: IntegrationTest {
         var profileImageData: Data?
         var userName: String?
 
-        mockTransportSession.performRemoteChanges { (_) in
+        mockTransportSession.performRemoteChanges { _ in
             profileImageData = MockAsset.init(in: self.mockTransportSession.managedObjectContext, forID: self.user1.previewProfileAssetIdentifier!)?.data
             userName = self.user1.name
         }
@@ -204,7 +204,7 @@ final class SearchTests: IntegrationTest {
         var profileImageData: Data?
         var userName: String?
 
-        mockTransportSession.performRemoteChanges { (_) in
+        mockTransportSession.performRemoteChanges { _ in
             profileImageData = MockAsset.init(in: self.mockTransportSession.managedObjectContext, forID: self.user4.previewProfileAssetIdentifier!)?.data
             userName = self.user4.name
         }
@@ -225,7 +225,7 @@ final class SearchTests: IntegrationTest {
         // given
         var userName: String?
 
-        mockTransportSession.performRemoteChanges { (_) in
+        mockTransportSession.performRemoteChanges { _ in
             userName = self.user5.name
         }
 
@@ -244,7 +244,7 @@ final class SearchTests: IntegrationTest {
         // given
         var userName: String?
 
-        mockTransportSession.performRemoteChanges { (_) in
+        mockTransportSession.performRemoteChanges { _ in
             userName = self.user4.name
         }
 
@@ -252,7 +252,7 @@ final class SearchTests: IntegrationTest {
 
         // delay mock transport session response
         let semaphore = DispatchSemaphore(value: 0)
-        mockTransportSession.responseGeneratorBlock = { (request) in
+        mockTransportSession.responseGeneratorBlock = { request in
             if request.path.hasPrefix("/asset") {
                 semaphore.wait()
             }
@@ -283,7 +283,7 @@ final class SearchTests: IntegrationTest {
         var profileImageData: Data?
         var userName: String?
 
-        mockTransportSession.performRemoteChanges { (_) in
+        mockTransportSession.performRemoteChanges { _ in
             profileImageData = MockAsset.init(in: self.mockTransportSession.managedObjectContext, forID: self.user4.completeProfileAssetIdentifier!)?.data
             userName = self.user4.name
         }
@@ -324,7 +324,7 @@ final class SearchTests: IntegrationTest {
         // given
         var userName: String?
 
-        mockTransportSession.performRemoteChanges { (_) in
+        mockTransportSession.performRemoteChanges { _ in
             userName = self.user4.name
         }
 
@@ -333,7 +333,7 @@ final class SearchTests: IntegrationTest {
         // delay mock transport session response
         let semaphore = DispatchSemaphore(value: 0)
         var hasRun = false
-        mockTransportSession.responseGeneratorBlock = { (request) in
+        mockTransportSession.responseGeneratorBlock = { request in
             if request.path.hasPrefix("/asset") && !hasRun {
                 hasRun = true
                 semaphore.wait()
@@ -375,7 +375,7 @@ final class SearchTests: IntegrationTest {
         var profileImageData: Data?
         var userName: String?
 
-        mockTransportSession.performRemoteChanges { (_) in
+        mockTransportSession.performRemoteChanges { _ in
             profileImageData = MockAsset.init(in: self.mockTransportSession.managedObjectContext, forID: self.user1.previewProfileAssetIdentifier!)?.data
             userName = self.user1.name
         }
@@ -404,7 +404,7 @@ final class SearchTests: IntegrationTest {
         var profileImageData: Data?
         var userName: String?
 
-        mockTransportSession.performRemoteChanges { (_) in
+        mockTransportSession.performRemoteChanges { _ in
             profileImageData = MockAsset.init(in: self.mockTransportSession.managedObjectContext, forID: self.user4.previewProfileAssetIdentifier!)?.data
             userName = self.user4.name
         }
@@ -442,7 +442,7 @@ final class SearchTests: IntegrationTest {
         var completeProfileImageData: Data?
         var userName: String?
 
-        mockTransportSession.performRemoteChanges { (changes) in
+        mockTransportSession.performRemoteChanges { changes in
             changes.addV3ProfilePicture(to: self.user4)
 
             if legacyPayloadPresent {
@@ -480,7 +480,7 @@ final class SearchTests: IntegrationTest {
         var completeProfileImageData: Data?
         var userName: String?
 
-        mockTransportSession.performRemoteChanges { (changes) in
+        mockTransportSession.performRemoteChanges { changes in
             changes.addV3ProfilePicture(to: self.user4)
             self.user4.removeLegacyPictures()
 

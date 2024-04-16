@@ -333,7 +333,7 @@ final class CallViewController: UIViewController {
                                imageCache: UIImage.defaultUserImageCache,
                                sizeLimit: UserImageView.Size.normal.rawValue,
                                isDesaturated: false,
-                               completion: { [weak self] (image, _) in
+                               completion: { [weak self] image, _ in
             guard let image = image else { return }
             self?.establishingCallStatusView.setProfileImage(image: image)
         })

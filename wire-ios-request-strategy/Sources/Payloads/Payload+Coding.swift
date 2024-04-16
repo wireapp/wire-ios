@@ -49,7 +49,7 @@ extension JSONEncoder {
 
     static var defaultEncoder: JSONEncoder {
         let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .custom({ (date, encoder) in
+        encoder.dateEncodingStrategy = .custom({ date, encoder in
             var container = encoder.singleValueContainer()
             try container.encode(date.transportString())
         })
@@ -73,7 +73,7 @@ extension Decodable {
     init?(_ payloadData: Data, decoder: JSONDecoder = .defaultDecoder) {
         do {
             self = try decoder.decode(Self.self, from: payloadData)
-        } catch let error {
+        } catch {
             Logging.network.warn("Failed to decode \(Self.self) from payload: \(error)")
             return nil
         }
@@ -120,7 +120,7 @@ extension Encodable {
 
         do {
             return try encoder.encode(self)
-        } catch let error {
+        } catch {
             Logging.network.warn("Failed to encode payload: \(error)")
             return nil
         }

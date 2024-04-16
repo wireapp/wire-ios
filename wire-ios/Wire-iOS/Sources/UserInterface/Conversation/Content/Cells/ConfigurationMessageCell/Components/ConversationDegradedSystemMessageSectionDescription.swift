@@ -48,7 +48,7 @@ final class ConversationDegradedSystemMessageSectionDescription: ConversationMes
         )
 
         configuration = View.Configuration(
-            icon: Asset.Images.certificateExpired.image,
+            icon: .init(resource: .certificateExpired),
             attributedText: title,
             showLine: true
         )

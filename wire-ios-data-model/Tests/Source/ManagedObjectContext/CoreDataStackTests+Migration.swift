@@ -54,7 +54,7 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         _ = createStorageStackAndWaitForCompletion(userID: uuid)
 
         // when
-        let result = performMigration(accountIdentifier: uuid) { (context) in
+        let result = performMigration(accountIdentifier: uuid) { context in
             context.setPersistentStoreMetadata(metadataValue, key: metadataKey)
         }
 
@@ -76,7 +76,7 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         // when
         var result: Result<Void, Error>?
         performIgnoringZMLogError {
-            result = self.performMigration(accountIdentifier: uuid) { (context) in
+            result = self.performMigration(accountIdentifier: uuid) { context in
                 context.setPersistentStoreMetadata(metadataValue, key: metadataKey)
                 try context.save()
                 throw TestError.somethingWentWrong
@@ -98,7 +98,7 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         // when
         var result: Result<Void, Error>?
         performIgnoringZMLogError {
-            result = self.performMigration(accountIdentifier: uuid) { (_) in }
+            result = self.performMigration(accountIdentifier: uuid) { _ in }
         }
 
         // then
@@ -111,7 +111,7 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         _ = createStorageStackAndWaitForCompletion(userID: uuid)
 
         // when
-        let result = performMigration(accountIdentifier: uuid) { (_) in }
+        let result = performMigration(accountIdentifier: uuid) { _ in }
 
         // then
         guard case .success = result else { return XCTFail() }
@@ -127,7 +127,7 @@ class CoreDataStackTests_Migration: DatabaseBaseTest {
         // when
         var result: Result<Void, Error>?
         performIgnoringZMLogError {
-            result = self.performMigration(accountIdentifier: uuid) { (_) in
+            result = self.performMigration(accountIdentifier: uuid) { _ in
                 throw TestError.somethingWentWrong
             }
         }

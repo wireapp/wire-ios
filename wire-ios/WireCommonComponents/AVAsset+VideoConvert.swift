@@ -156,7 +156,7 @@ extension AVAssetExportSession {
         if FileManager.default.fileExists(atPath: exportURL.path) {
             do {
                 try FileManager.default.removeItem(at: exportURL)
-            } catch let error {
+            } catch {
                 zmLog.error("Cannot delete old leftover at \(exportURL): \(error)")
             }
         }

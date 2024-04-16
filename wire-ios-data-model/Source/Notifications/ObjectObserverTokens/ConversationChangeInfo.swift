@@ -238,7 +238,7 @@ extension ConversationChangeInfo {
     public static func add(observer: ZMConversationObserver, for conversation: ZMConversation) -> NSObjectProtocol {
         return ManagedObjectObserverToken(name: .ConversationChange,
                                           managedObjectContext: conversation.managedObjectContext!,
-                                          object: conversation) { [weak observer] (note) in
+                                          object: conversation) { [weak observer] note in
             guard let `observer` = observer,
                 let changeInfo = note.changeInfo as? ConversationChangeInfo
                 else { return }

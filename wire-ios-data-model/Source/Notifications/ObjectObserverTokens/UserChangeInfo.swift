@@ -198,7 +198,7 @@ extension UserChangeInfo {
     /// hold on to the token and use it to unregister.
     ///
     private static func add(searchUserObserver observer: UserObserving, for user: ZMSearchUser?, in managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .SearchUserChange, managedObjectContext: managedObjectContext, object: user) { [weak observer] (note) in
+        return ManagedObjectObserverToken(name: .SearchUserChange, managedObjectContext: managedObjectContext, object: user) { [weak observer] note in
             guard
                 let `observer` = observer,
                 let changeInfo = note.changeInfo as? UserChangeInfo
@@ -222,7 +222,7 @@ extension UserChangeInfo {
     /// the token and use it to unregister.
     ///
     private static func add(userObserver observer: UserObserving, for user: ZMUser?, in managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .UserChange, managedObjectContext: managedObjectContext, object: user) { [weak observer] (note) in
+        return ManagedObjectObserverToken(name: .UserChange, managedObjectContext: managedObjectContext, object: user) { [weak observer] note in
             guard
                 let `observer` = observer,
                 let changeInfo = note.changeInfo as? UserChangeInfo

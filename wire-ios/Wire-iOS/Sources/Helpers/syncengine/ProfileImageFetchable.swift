@@ -85,7 +85,7 @@ extension ProfileImageFetchable where Self: UserType {
             self.requestCompleteProfileImage()
         }
 
-        imageData(for: size, queue: cache.processingQueue) { (imageData) in
+        imageData(for: size, queue: cache.processingQueue) { imageData in
             guard let imageData = imageData else {
                 return DispatchQueue.main.async {
                     completion(nil, false)

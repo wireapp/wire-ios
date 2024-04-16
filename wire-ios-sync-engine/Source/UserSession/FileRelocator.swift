@@ -53,7 +53,7 @@ extension ZMUserSession {
                 zmLog.debug("Moving non-assigned Cache folder from \(oldLocation) to \(newLocation)")
                 do {
                     try fm.moveItem(at: oldLocation, to: newLocation)
-                } catch let error {
+                } catch {
                     zmLog.error("Failed to move non-assigned Cache folder from \(oldLocation) to \(newLocation) - \(error)")
                     do {
                         try fm.removeItem(at: oldLocation)
@@ -69,7 +69,7 @@ extension ZMUserSession {
 
     /// Groups files by checking if the fileName starts with the cachesFolderPrefix
     static func group(fileNames: [String]) -> (assigned: [String], unassigned: [String]) {
-        let result: ([String], [String]) = fileNames.reduce(([], [])) { (tempResult, fileName) in
+        let result: ([String], [String]) = fileNames.reduce(([], [])) { tempResult, fileName in
             if fileName.hasPrefix(FileManager.cachesFolderPrefix) {
                 return (tempResult.0 + [fileName], tempResult.1)
             }

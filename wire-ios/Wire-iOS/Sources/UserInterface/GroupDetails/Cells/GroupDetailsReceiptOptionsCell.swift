@@ -30,7 +30,7 @@ final class GroupDetailsReceiptOptionsCell: IconToggleCell {
 
         title = L10n.Localizable.GroupDetails.ReceiptOptionsCell.title
 
-        icon = Asset.Images.readReceipts.image.withRenderingMode(.alwaysTemplate)
+        icon = .init(resource: .readReceipts).withRenderingMode(.alwaysTemplate)
         iconColor = SemanticColors.Icon.foregroundDefault
     }
 

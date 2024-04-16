@@ -155,7 +155,7 @@ extension MockUserClient {
 
         var generatedPrekeys: [[String: Any]]?
         var generatedLastPrekey: String?
-        newClient.encryptionContext.perform { (session) in
+        newClient.encryptionContext.perform { session in
             generatedPrekeys = try? session.generatePrekeys(NSRange(location: 0, length: 5))
             generatedLastPrekey = try? session.generateLastPrekey()
         }
@@ -227,7 +227,7 @@ extension MockUserClient {
     public func establishSession(client: MockUserClient) -> Bool {
         guard let identifier = client.sessionIdentifier else { return false }
         var hasSession = false
-        self.encryptionContext.perform { (session) in
+        self.encryptionContext.perform { session in
             if !session.hasSession(for: identifier) {
                 try? session.createClientSession(identifier, base64PreKeyString: client.lastPrekey.value)
                 hasSession = session.hasSession(for: identifier)
@@ -243,7 +243,7 @@ extension MockUserClient {
     public static func encrypted(data: Data, from: MockUserClient, to: MockUserClient) -> Data {
         var encryptedData: Data?
         guard from.establishSession(client: to) else { fatalError() }
-        from.encryptionContext.perform { (session) in
+        from.encryptionContext.perform { session in
             encryptedData = try? session.encrypt(data, for: to.sessionIdentifier!)
         }
         return encryptedData!
@@ -252,7 +252,7 @@ extension MockUserClient {
     /// Decrypt a message (possibly establishing a session, if there is no session) from a client to a client
     public static func decryptMessage(data: Data, from: MockUserClient, to: MockUserClient) -> Data {
         var decryptedData: Data?
-        to.encryptionContext.perform { (session) in
+        to.encryptionContext.perform { session in
             if !session.hasSession(for: from.sessionIdentifier!) {
                 decryptedData = try? session.createClientSessionAndReturnPlaintext(for: from.sessionIdentifier!, prekeyMessage: data)
             } else {
@@ -266,7 +266,7 @@ extension MockUserClient {
     public func hasSession(with client: MockUserClient) -> Bool {
         guard let identifier = client.sessionIdentifier else { return false }
         var hasSession = false
-        self.encryptionContext.perform { (session) in
+        self.encryptionContext.perform { session in
             hasSession = session.hasSession(for: identifier)
         }
         return hasSession

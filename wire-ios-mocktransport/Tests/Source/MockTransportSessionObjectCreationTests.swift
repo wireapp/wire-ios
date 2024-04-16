@@ -24,12 +24,12 @@ class MockTransportSessionObjectCreationTests: MockTransportSessionTests {
     func testThatItDoesNotReturnNonExistingUserWithIdentifier() {
 
         // GIVEN
-        self.sut.performRemoteChanges { (session) in
+        self.sut.performRemoteChanges { session in
             session.insertUser(withName: "Foo")
         }
 
         // WHEN
-        self.sut.performRemoteChanges { (session) in
+        self.sut.performRemoteChanges { session in
             let user = session.user(withRemoteIdentifier: "nonvalididentifier")
 
             // THEN
@@ -41,13 +41,13 @@ class MockTransportSessionObjectCreationTests: MockTransportSessionTests {
 
         // GIVEN
         var identifier: String!
-        self.sut.performRemoteChanges { (session) in
+        self.sut.performRemoteChanges { session in
             let user = session.insertUser(withName: "Foo")
             identifier = user.identifier
         }
 
         // WHEN
-        self.sut.performRemoteChanges { (session) in
+        self.sut.performRemoteChanges { session in
             let user = session.user(withRemoteIdentifier: identifier)
 
             // THEN
@@ -60,13 +60,13 @@ class MockTransportSessionObjectCreationTests: MockTransportSessionTests {
 
         // GIVEN
         var user: MockUser!
-        self.sut.performRemoteChanges { (session) in
+        self.sut.performRemoteChanges { session in
             user = session.insertUser(withName: "Foo")
             session.registerClient(for: user, label: "iPhone 89", type: "permanent", deviceClass: "phone")
         }
 
         // WHEN
-        self.sut.performRemoteChanges { (session) in
+        self.sut.performRemoteChanges { session in
             let client = session.client(for: user, remoteIdentifier: "invalid")
 
             // THEN
@@ -79,14 +79,14 @@ class MockTransportSessionObjectCreationTests: MockTransportSessionTests {
         // GIVEN
         var user: MockUser!
         var identifier: String!
-        self.sut.performRemoteChanges { (session) in
+        self.sut.performRemoteChanges { session in
             user = session.insertUser(withName: "Foo")
             let client = session.registerClient(for: user, label: "iPhone 89", type: "permanent", deviceClass: "phone")
             identifier = client.identifier
         }
 
         // WHEN
-        self.sut.performRemoteChanges { (session) in
+        self.sut.performRemoteChanges { session in
             let client = session.client(for: user, remoteIdentifier: identifier)
 
             // THEN

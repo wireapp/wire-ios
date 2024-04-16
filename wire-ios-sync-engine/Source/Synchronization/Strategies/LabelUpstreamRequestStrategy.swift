@@ -75,12 +75,12 @@ public class LabelUpstreamRequestStrategy: AbstractRequestStrategy, ZMContextCha
         do {
             let data = try jsonEncoder.encode(labelPayload)
             transportPayload = try JSONSerialization.jsonObject(with: data, options: [])
-        } catch let error {
+        } catch {
             fatal("Couldn't encode label update: \(error)")
         }
 
         let request = ZMTransportRequest(path: "/properties/labels", method: .put, payload: transportPayload as? ZMTransportData, apiVersion: apiVersion.rawValue)
-        request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] (response) in
+        request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] response in
             self?.didReceive(response, updatedKeys: updatedKeys)
         }))
 

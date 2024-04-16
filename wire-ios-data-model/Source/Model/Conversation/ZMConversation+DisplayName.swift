@@ -57,7 +57,7 @@ public extension ZMConversation {
             return userDefined
         }
 
-        let activeNames: [String] = localParticipants.compactMap { (user) -> String? in
+        let activeNames: [String] = localParticipants.compactMap { user -> String? in
             guard user != selfUser else { return nil }
             return user.name
         }
