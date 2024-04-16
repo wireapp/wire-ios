@@ -101,7 +101,7 @@ final class ConversationViewController: UIViewController {
             break
         }
 
-        return viewController?.wrapInNavigationController(setBackgroundColor: true)
+        return viewController?.wrapInNavigationController()
     }
 
     required init(conversation: ZMConversation,
@@ -207,7 +207,7 @@ final class ConversationViewController: UIViewController {
 
             switch action {
             case .cancel:
-                self?.conversation.connectedUser?.cancelConnectionRequest(completion: { (error) in
+                self?.conversation.connectedUser?.cancelConnectionRequest(completion: { error in
                     if let error = error as? LocalizedError {
                         self?.presentLocalizedErrorAlert(error)
                     }
@@ -661,7 +661,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         collectionController?.shouldTrackOnNextOpen = true
 
-        let navigationController = KeyboardAvoidingViewController(viewController: collectionController!).wrapInNavigationController(setBackgroundColor: true)
+        let navigationController = KeyboardAvoidingViewController(viewController: collectionController!).wrapInNavigationController()
 
         ZClientViewController.shared?.present(navigationController, animated: true)
     }

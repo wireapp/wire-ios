@@ -93,7 +93,7 @@ extension XCTestCase {
                                 testName: String = #function,
                                 line: UInt = #line) {
 
-        let allDevices = XCTestCase.phoneConfigNames().merging(XCTestCase.padConfigNames) { (current, _) in current }
+        let allDevices = XCTestCase.phoneConfigNames().merging(XCTestCase.padConfigNames) { current, _ in current }
 
         for(config, name) in allDevices {
             if let deviceMockable = value as? DeviceMockable {

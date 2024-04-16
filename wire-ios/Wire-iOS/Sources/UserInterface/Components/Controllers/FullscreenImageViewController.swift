@@ -131,7 +131,7 @@ final class FullscreenImageViewController: UIViewController {
         }
 
         if let coordinator = coordinator {
-            coordinator.animate(alongsideTransition: { (_) in
+            coordinator.animate(alongsideTransition: { _ in
                 animationBlock()
             })
         } else {

@@ -51,7 +51,7 @@ extension ZMUserSession {
     /// Register a handle for monitoring when one of the manage object contexts fails
     /// to save and is rolled back. The call is invoked on the context queue, so it might not be on the main thread
     public func registerForSaveFailure(handler: @escaping SaveFailureCallback) {
-        self.managedObjectContext.errorOnSaveCallback = { (context, error) in
+        self.managedObjectContext.errorOnSaveCallback = { context, error in
             let type = context.type
 
             guard
@@ -67,7 +67,7 @@ extension ZMUserSession {
         }
 
         self.syncManagedObjectContext.performGroupedBlock {
-            self.syncManagedObjectContext.errorOnSaveCallback = { (context, error) in
+            self.syncManagedObjectContext.errorOnSaveCallback = { context, error in
                 let type = context.type
 
                 guard

@@ -585,7 +585,7 @@ extension IntegrationTest {
 
         closePushChannelAndWaitUntilClosed()
         changesBeforeInterruption.apply(mockTransportSession.performRemoteChanges)
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.clearNotifications()
 
             if let changes = changesAfterInterruption {

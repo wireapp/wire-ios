@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ class PaginatedSync<PayloadType: Paginatable>: NSObject, ZMRequestGenerator {
             self.request = postRequest(startReference: start, apiVersion: apiVersion)
         }
 
-        request?.add(ZMCompletionHandler(on: context, block: { (response) in
+        request?.add(ZMCompletionHandler(on: context, block: { response in
             self.request = nil
 
             guard let result = PayloadType(response, decoder: .defaultDecoder) else {

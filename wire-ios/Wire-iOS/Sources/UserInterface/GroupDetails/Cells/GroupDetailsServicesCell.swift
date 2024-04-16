@@ -36,7 +36,7 @@ final class GroupDetailsServicesCell: GroupDetailsDisclosureOptionsCell {
         title = L10n.Localizable.GroupDetails.ServicesOptionsCell.title
         accessibilityHint = L10n.Accessibility.ConversationDetails.OptionButton.hint
 
-        icon = Asset.Images.services.image.withRenderingMode(.alwaysTemplate)
+        icon = .init(resource: .services).withRenderingMode(.alwaysTemplate)
         iconColor = SemanticColors.Icon.foregroundDefault
     }
 

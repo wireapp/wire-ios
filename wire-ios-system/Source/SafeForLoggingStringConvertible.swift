@@ -43,7 +43,7 @@ extension Array: SafeForLoggingStringConvertible where Array.Element: SafeForLog
 
 extension Dictionary: SafeForLoggingStringConvertible where Key: SafeForLoggingStringConvertible, Value: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        let result = enumerated().map { (_, element) in
+        let result = enumerated().map { _, element in
             return (element.key.safeForLoggingDescription, element.value.safeForLoggingDescription)
         }
 

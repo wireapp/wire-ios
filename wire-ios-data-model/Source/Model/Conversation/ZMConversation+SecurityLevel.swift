@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -509,7 +509,7 @@ extension ZMConversation {
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
         guard let selfClient = selfUser.selfClient() else { return }
 
-        NSOrderedSet(array: lastMessages()).enumerateObjects { (msg, idx, stop) in
+        NSOrderedSet(array: lastMessages()).enumerateObjects { msg, idx, stop in
             guard idx <= 2 else {
                 stop.initialize(to: true)
                 return

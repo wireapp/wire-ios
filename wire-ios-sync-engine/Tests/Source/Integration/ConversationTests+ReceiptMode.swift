@@ -34,7 +34,7 @@ class ConversationTests_ReceiptMode: IntegrationTest {
         XCTAssertFalse(sut.hasReadReceiptsEnabled)
 
         // when
-        sut.setEnableReadReceipts(true, in: userSession!) { (result) in
+        sut.setEnableReadReceipts(true, in: userSession!) { result in
             switch result {
             case .failure:
                 XCTFail()
@@ -59,7 +59,7 @@ class ConversationTests_ReceiptMode: IntegrationTest {
         }
 
         // when
-        sut.setEnableReadReceipts(true, in: userSession!) { (result) in
+        sut.setEnableReadReceipts(true, in: userSession!) { result in
             switch result {
             case .failure:
                 XCTFail()
@@ -80,7 +80,7 @@ class ConversationTests_ReceiptMode: IntegrationTest {
         XCTAssertFalse(sut.hasReadReceiptsEnabled)
 
         // when
-        mockTransportSession.performRemoteChanges { (_) in
+        mockTransportSession.performRemoteChanges { _ in
             self.groupConversation.changeReceiptMode(by: self.user1, receiptMode: 1)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
@@ -97,7 +97,7 @@ class ConversationTests_ReceiptMode: IntegrationTest {
         let expectation = self.customExpectation(description: "Invalid Operation")
 
         // when
-        sut.setEnableReadReceipts(true, in: userSession!) { (result) in
+        sut.setEnableReadReceipts(true, in: userSession!) { result in
             switch result {
             case .failure(ReadReceiptModeError.invalidOperation):
                 expectation.fulfill()

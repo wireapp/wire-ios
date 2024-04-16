@@ -143,7 +143,7 @@ public extension ServiceUser {
 
         let request = serviceUserData.requestToFetchProvider(apiVersion: apiVersion)
 
-        request.add(ZMCompletionHandler(on: userSession.managedObjectContext, block: { (response) in
+        request.add(ZMCompletionHandler(on: userSession.managedObjectContext, block: { response in
 
             guard response.httpStatus == 200,
                   let responseDictionary = response.payload?.asDictionary(),
@@ -170,7 +170,7 @@ public extension ServiceUser {
 
         let request = serviceUserData.requestToFetchDetails(apiVersion: apiVersion)
 
-        request.add(ZMCompletionHandler(on: userSession.managedObjectContext, block: { (response) in
+        request.add(ZMCompletionHandler(on: userSession.managedObjectContext, block: { response in
 
             guard response.httpStatus == 200,
                   let responseDictionary = response.payload?.asDictionary(),
@@ -312,7 +312,7 @@ public extension ZMConversation {
 
         let request = serviceUserData.requestToAddService(to: self, apiVersion: apiVersion)
 
-        request.add(ZMCompletionHandler(on: contextProvider.viewContext, block: { (response) in
+        request.add(ZMCompletionHandler(on: contextProvider.viewContext, block: { response in
 
             guard response.httpStatus == 201,
                   let responseDictionary = response.payload?.asDictionary(),

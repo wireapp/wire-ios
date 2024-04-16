@@ -524,7 +524,7 @@ public final class ZMUserSession: NSObject {
     private func configureTransportSession() {
         transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier
         transportSession.setNetworkStateDelegate(self)
-        transportSession.setAccessTokenRenewalFailureHandler { [weak self] (response) in
+        transportSession.setAccessTokenRenewalFailureHandler { [weak self] response in
             self?.transportSessionAccessTokenDidFail(response: response)
         }
         transportSession.setAccessTokenRenewalSuccessHandler { [weak self]  _, _ in
@@ -642,7 +642,7 @@ public final class ZMUserSession: NSObject {
     }
 
     private func registerForCalculateBadgeCountNotification() {
-        tokens.append(NotificationInContext.addObserver(name: .calculateBadgeCount, context: managedObjectContext.notificationContext) { [weak self] (_) in
+        tokens.append(NotificationInContext.addObserver(name: .calculateBadgeCount, context: managedObjectContext.notificationContext) { [weak self] _ in
             self?.calculateBadgeCount()
         })
     }

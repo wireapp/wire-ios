@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,7 +50,7 @@ extension JSONEncoder {
 
     static var defaultEncoder: JSONEncoder {
         let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .custom({ (date, encoder) in
+        encoder.dateEncodingStrategy = .custom({ date, encoder in
             var container = encoder.singleValueContainer()
             try container.encode(date.transportString())
         })

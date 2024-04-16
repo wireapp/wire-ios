@@ -41,8 +41,8 @@ class EventProcessingPerformanceTests: IntegrationTest {
         XCTAssertTrue(login())
 
         simulateApplicationDidEnterBackground()
-        mockTransportSession.performRemoteChanges { (_) in
-            self.conversations.forEach { (conversation) in
+        mockTransportSession.performRemoteChanges { _ in
+            self.conversations.forEach { conversation in
                 conversation.insertRandomTextMessages(count: 100, from: self.users)
             }
         }
@@ -60,8 +60,8 @@ class EventProcessingPerformanceTests: IntegrationTest {
         XCTAssertTrue(login())
 
         simulateApplicationDidEnterBackground()
-        mockTransportSession.performRemoteChanges { (_) in
-            self.conversations.forEach { (conversation) in
+        mockTransportSession.performRemoteChanges { _ in
+            self.conversations.forEach { conversation in
                 conversation.insertRandomTextMessages(count: 100, from: self.users)
             }
         }
@@ -79,8 +79,8 @@ class EventProcessingPerformanceTests: IntegrationTest {
         XCTAssertTrue(login())
 
         simulateApplicationDidEnterBackground()
-        mockTransportSession.performRemoteChanges { (_) in
-            self.conversations.forEach { (conversation) in
+        mockTransportSession.performRemoteChanges { _ in
+            self.conversations.forEach { conversation in
                 conversation.insertRandomKnocks(count: 100, from: self.users)
             }
         }
@@ -95,7 +95,7 @@ class EventProcessingPerformanceTests: IntegrationTest {
     // MARK: Helpers
 
     func createUsersAndConversations(userCount: Int, conversationCount: Int) {
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             self.users = (1...userCount).map({
                 session.insertUser(withName: "User \($0)")
             })
@@ -115,14 +115,14 @@ class EventProcessingPerformanceTests: IntegrationTest {
 extension MockConversation {
 
     func insertRandomKnocks(count: Int, from users: [MockUser]) {
-        (1...count).forEach { (_) in
+        (1...count).forEach { _ in
             let knock = try! GenericMessage(content: Knock.with { $0.hotKnock = false }).serializedData()
             insertClientMessage(from: users.randomElement()!, data: knock)
         }
     }
 
     func insertRandomTextMessages(count: Int, from users: [MockUser]) {
-        (1...count).forEach { (counter) in
+        (1...count).forEach { counter in
             let text = try! GenericMessage(content: Text(content: "Random message \(counter)")).serializedData()
             insertClientMessage(from: users.randomElement()!, data: text)
         }

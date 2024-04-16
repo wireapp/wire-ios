@@ -1,20 +1,20 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 
@@ -872,7 +872,7 @@ private struct FileCache: Cache {
         var data: Data?
 
         var error: NSError?
-        coordinator.coordinate(readingItemAt: url, options: .withoutChanges, error: &error) { (url) in
+        coordinator.coordinate(readingItemAt: url, options: .withoutChanges, error: &error) { url in
             do {
                 data = try Data(contentsOf: url, options: .mappedIfSafe)
             } catch let error as NSError {
@@ -897,7 +897,7 @@ private struct FileCache: Cache {
         let coordinator = NSFileCoordinator()
 
         var error: NSError?
-        coordinator.coordinate(writingItemAt: url, options: NSFileCoordinator.WritingOptions.forReplacing, error: &error) { (url) in
+        coordinator.coordinate(writingItemAt: url, options: NSFileCoordinator.WritingOptions.forReplacing, error: &error) { url in
             FileManager.default.createFile(atPath: url.path, contents: data, attributes: [.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication,
                                                                                           .creationDate: creationDate])
         }
@@ -915,7 +915,7 @@ private struct FileCache: Cache {
         let coordinator = NSFileCoordinator()
 
         var error: NSError?
-        coordinator.coordinate(writingItemAt: toUrl, options: .forReplacing, error: &error) { (url) in
+        coordinator.coordinate(writingItemAt: toUrl, options: .forReplacing, error: &error) { url in
             do {
                 try FileManager.default.copyItem(at: fromUrl, to: url)
                 try FileManager.default.setAttributes([.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication,
@@ -936,7 +936,7 @@ private struct FileCache: Cache {
         let coordinator = NSFileCoordinator()
 
         var error: NSError?
-        coordinator.coordinate(writingItemAt: url, options: .forDeleting, error: &error) { (url) in
+        coordinator.coordinate(writingItemAt: url, options: .forDeleting, error: &error) { url in
             do {
                 try FileManager.default.removeItem(at: url)
             } catch let error as NSError {
@@ -997,7 +997,7 @@ private struct FileCache: Cache {
         let fileManager = FileManager.default
         let files = try fileManager.contentsOfDirectory(at: cacheFolderURL, includingPropertiesForKeys: [.creationDateKey], options: [.skipsSubdirectoryDescendants])
 
-        return try files.filter { (file) -> Bool in
+        return try files.filter { file -> Bool in
             let attributes = try fileManager.attributesOfItem(atPath: file.path)
 
             guard let creationDate = attributes[.creationDate] as? Date else { return true }

@@ -212,7 +212,7 @@ extension ZMLogTests {
         let message = "PANIC!"
 
         let expectation = self.expectation(description: "Log received")
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -236,7 +236,7 @@ extension ZMLogTests {
         let level = ZMLogLevel_t.info
         let message = "PANIC!"
 
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -260,7 +260,7 @@ extension ZMLogTests {
         let message = "PANIC!"
 
         let expectation = self.expectation(description: "Log received")
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -284,7 +284,7 @@ extension ZMLogTests {
         let level = ZMLogLevel_t.debug
         let message = "PANIC!"
 
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -309,7 +309,7 @@ extension ZMLogTests {
         let message = "PANIC!"
 
         let expectation = self.expectation(description: "Log received")
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -333,7 +333,7 @@ extension ZMLogTests {
         let tag = "Network"
         let message = "PANIC!"
 
-        let token = ZMSLog.addEntryHook { (_, _, _, _) in
+        let token = ZMSLog.addEntryHook { _, _, _, _ in
             XCTFail()
         }
         ZMSLog.removeLogHook(token: token)
@@ -349,7 +349,7 @@ extension ZMLogTests {
         let tag = "Network"
         let message = "PANIC!"
 
-        _ = ZMSLog.addEntryHook { (_, _, _, _) in
+        _ = ZMSLog.addEntryHook { _, _, _, _ in
             XCTFail()
         }
         ZMSLog.removeAllLogHooks()
@@ -369,13 +369,13 @@ extension ZMLogTests {
         let expectation1 = self.expectation(description: "Log received")
         let expectation2 = self.expectation(description: "Log received")
 
-        let token1 = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token1 = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
             expectation1.fulfill()
         }
-        let token2 = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token2 = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -689,7 +689,7 @@ extension ZMLogTests {
         }
 
         var lines: [String] = []
-        logContent.enumerateLines { (str, _) in
+        logContent.enumerateLines { str, _ in
             lines.append(str)
         }
 
