@@ -36,7 +36,6 @@ struct ZMUserSessionBuilder {
     private var coreCryptoProvider: (any CoreCryptoProviderProtocol)?
     private var coreDataStack: CoreDataStack?
     private var cryptoboxMigrationManager: (any CryptoboxMigrationManagerInterface)?
-    private var debugCommands: [String: DebugCommand]?
     private var e2eiActivationDateRepository: (any E2EIActivationDateRepositoryProtocol)?
     private var earService: (any EARServiceInterface)?
     private var flowManager: (any FlowManagerType)?
@@ -69,7 +68,6 @@ struct ZMUserSessionBuilder {
             let coreCryptoProvider,
             let coreDataStack,
             let cryptoboxMigrationManager,
-            let debugCommands,
             let e2eiActivationDateRepository,
             let earService,
             let flowManager,
@@ -110,7 +108,6 @@ struct ZMUserSessionBuilder {
             sharedUserDefaults: sharedUserDefaults,
             useCaseFactory: useCaseFactory,
             observeMLSGroupVerificationStatusUseCase: observeMLSGroupVerificationStatusUseCase,
-            debugCommands: debugCommands,
             appLock: appLock,
             coreCryptoProvider: coreCryptoProvider,
             lastEventIDRepository: lastEventIDRepository,
@@ -251,7 +248,6 @@ struct ZMUserSessionBuilder {
         withCoreCryptoProvider(coreCryptoProvider)
         withCoreDataStack(coreDataStack)
         withCryptoboxMigrationManager(cryptoboxMigrationManager)
-        withDebugCommands(ZMUserSession.initDebugCommands())
         withE2EIActivationDateRepository(e2eiActivationDateRepository)
         withEARService(earService)
         withFlowManager(flowManager)
@@ -307,10 +303,6 @@ struct ZMUserSessionBuilder {
 
     mutating func withE2EIActivationDateRepository(_ e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol) {
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
-    }
-
-    mutating func withDebugCommands(_ debugCommands: [String: DebugCommand]) {
-        self.debugCommands = debugCommands
     }
 
     mutating func withEARService(_ earService: any EARServiceInterface) {

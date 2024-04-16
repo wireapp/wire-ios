@@ -418,7 +418,6 @@ public final class ZMUserSession: NSObject {
         sharedUserDefaults: UserDefaults,
         useCaseFactory: any UseCaseFactoryProtocol,
         observeMLSGroupVerificationStatusUseCase: any ObserveMLSGroupVerificationStatusUseCaseProtocol,
-        debugCommands: [String: DebugCommand],
         appLock: any AppLockType,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         lastEventIDRepository: any LastEventIDRepositoryInterface,
@@ -440,7 +439,7 @@ public final class ZMUserSession: NSObject {
         self.storedDidSaveNotifications = ContextDidSaveNotificationPersistence(accountContainer: coreDataStack.accountContainer)
         self.userExpirationObserver = UserExpirationObserver(managedObjectContext: coreDataStack.viewContext)
         self.topConversationsDirectory = TopConversationsDirectory(managedObjectContext: coreDataStack.viewContext)
-        self.debugCommands = debugCommands
+        self.debugCommands = ZMUserSession.initDebugCommands()
         self.legacyHotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
         self.appLockController = appLock
         self.coreCryptoProvider = coreCryptoProvider
