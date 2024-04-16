@@ -18,12 +18,24 @@
 
 import Foundation
 
-/// A object representing an error returned from the server.
+// TODO: document
+public enum UpdateEventsAPIError: Error {
 
-public struct FailureResponse: Decodable, Error {
+    case invalidPath
+    case invalidClient
+    case notFound
 
-    var code: Int
-    var label: String
-    var message: String
+}
+
+// TODO: document
+public protocol UpdateEventsAPI {
+
+    func getLastUpdateEvent(selfClientID: String) async throws -> UpdateEvent
+
+//    func getUpdateEvents(
+//        selfClientID: String,
+//        since eventID: UUID,
+//        batchSize: UInt
+//    ) async throws -> AsyncStream<[UpdateEvent]>
 
 }

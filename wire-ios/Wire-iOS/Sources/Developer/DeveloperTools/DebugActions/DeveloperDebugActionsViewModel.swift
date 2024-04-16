@@ -116,7 +116,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         }
     }
 
-    private func qualifiedIDOfFirstGroupConversation(of userClient: UserClient, in context: NSManagedObjectContext) async -> QualifiedID? {
+    private func qualifiedIDOfFirstGroupConversation(of userClient: UserClient, in context: NSManagedObjectContext) async -> WireDataModel.QualifiedID? {
         await context.perform {
             userClient.user?.conversations
                 .filter { $0.conversationType == .group }
@@ -134,12 +134,17 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     private func makeRequest() {
         guard let userSession = ZMUserSession.shared() else { return }
-        let api = userSession.makeBackendInfoAPI()
+        let api = userSession.makeUpdateEventsAPI()
         let logger = WireLogger(tag: "api")
+        let selfUser = ZMUser.selfUser(inUserSession: userSession)
+        
+        guard let selfClientID = selfUser.selfClient()?.remoteIdentifier else {
+            return
+        }
 
         Task {
             do {
-                let backendInfo = try await api.getBackendInfo()
+                let backendInfo = try await api.getLastUpdateEvent(selfClientID: selfClientID)
                 logger.debug("success getting backend info: \(backendInfo)")
             } catch {
                 logger.error("failed to get backend info: \(error)")

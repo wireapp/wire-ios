@@ -47,4 +47,8 @@ public struct APIProvider {
         }
     }
 
+    public func updateEventsAPI(for version: APIVersion) -> UpdateEventsAPI {
+        return UpdateEventsAPIV0(httpClient: httpClient)
+    }
+
 }

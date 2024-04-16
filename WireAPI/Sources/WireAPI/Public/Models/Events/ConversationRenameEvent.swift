@@ -18,12 +18,24 @@
 
 import Foundation
 
-/// A object representing an error returned from the server.
+/// An event where the conversation's name was changed.
 
-public struct FailureResponse: Decodable, Error {
+public struct ConversationRenameEvent {
 
-    var code: Int
-    var label: String
-    var message: String
+    /// The id of the conversation.
+
+    public let conversationID: ConversationID
+
+    /// The id of the user who renamed the conversation.
+
+    public let senderID: UserID
+
+    /// When the conversation was renamed.
+
+    public let timestamp: Date
+
+    /// The new name of the conversation.
+
+    public let newName: String
 
 }

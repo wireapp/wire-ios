@@ -18,12 +18,16 @@
 
 import Foundation
 
-/// A object representing an error returned from the server.
+/// An object that uniquely idetifies a user across domains.
 
-public struct FailureResponse: Decodable, Error {
+public struct UserID: Decodable {
 
-    var code: Int
-    var label: String
-    var message: String
+    /// A unique identifier.
+
+    public let id: UUID
+
+    /// The domain of the user.
+
+    public let domain: String
 
 }

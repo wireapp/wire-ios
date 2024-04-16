@@ -18,12 +18,20 @@
 
 import Foundation
 
-/// A object representing an error returned from the server.
+/// An event where a conversation was deleted.
 
-public struct FailureResponse: Decodable, Error {
+public struct ConversationDeleteEvent {
 
-    var code: Int
-    var label: String
-    var message: String
+    /// The id of the conversation.
+
+    public let conversationID: ConversationID
+
+    /// The id of the user who deleted the conversation.
+
+    public let senderID: UserID
+
+    /// When the conversation was deleted.
+
+    public let timestamp: Date
 
 }

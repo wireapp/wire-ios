@@ -34,6 +34,16 @@ extension ZMUserSession {
         return apiProvider.backendInfoAPI(for: .v0)
     }
 
+    public func makeUpdateEventsAPI() -> UpdateEventsAPI {
+        let httpClient = HTTPClientImpl(
+            transportSession: transportSession,
+            queue: syncContext
+        )
+
+        let apiProvider = APIProvider(httpClient: httpClient)
+        return apiProvider.updateEventsAPI(for: .v0)
+    }
+
 }
 
 private class HTTPClientImpl: HTTPClient {

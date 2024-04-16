@@ -18,12 +18,23 @@
 
 import Foundation
 
-/// A object representing an error returned from the server.
+// TODO: document
+public struct UpdateEvent {
 
-public struct FailureResponse: Decodable, Error {
+    /// The id of the event.
 
-    var code: Int
-    var label: String
-    var message: String
+    public let id: UUID
+
+    /// The event payloads.
+
+    public let payloads: [UpdateEventPayload]
+
+    /// Whether this event is transient.
+    ///
+    /// If `true`, then the event is not stored on the backend and is
+    /// only sent through the push channel as it occurs.
+
+    public let isTransient: Bool
+
 
 }

@@ -18,12 +18,16 @@
 
 import Foundation
 
-/// A object representing an error returned from the server.
+/// An object that uniquely idetifies a conversation across domains.
 
-public struct FailureResponse: Decodable, Error {
+public struct ConversationID: Decodable {
 
-    var code: Int
-    var label: String
-    var message: String
+    /// A unique identifier.
+
+    public let id: UUID
+    
+    /// The domain of the conversation.
+
+    public let domain: String
 
 }
