@@ -117,27 +117,18 @@ extension ZMConversation {
             return completion(.failure(WirelessLinkError.unknown))
         }
 
-        let request = WirelessRequestFactory.createLinkRequest(password: password, for: self, apiVersion: apiVersion)
-        request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
-            if response.httpStatus == 201,
-               let payload = response.payload,
-               let data = payload.asDictionary()?[ZMConversation.TransportKey.data] as? [String: Any],
-               let uri = data[ZMConversation.TransportKey.uri] as? String {
-                // The event that's in the payload doesn't need to be processed because we can fetch it from elsewhere
-                completion(.success(uri))
+        let parameters = CreateConversationGuestLinkParameters(password: password, conversationID: self.remoteIdentifier)
 
-            } else if response.httpStatus == 200,
-                      let payload = response.payload?.asDictionary(),
-                      let uri = payload[ZMConversation.TransportKey.uri] as? String {
-                completion(.success(uri))
-            } else {
-                let error = WirelessLinkError(response: response) ?? .unknown
-                zmLog.error("Error creating wireless link: \(error)")
-                completion(.failure(error))
+        var action = CreateConversationGuestLinkAction(parameters: parameters)
+
+        action.perform(in: self.managedObjectContext!.notificationContext) { result in
+                switch result {
+                case .success(let link):
+                    completion(.success(link))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
             }
-        })
-
-        userSession.transportSession.enqueueOneTime(request)
     }
 
     /// Checks if a guest link can be generated or not

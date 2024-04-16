@@ -24,7 +24,7 @@ class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConversation
     // MARK: - Request generation
 
     override func request(
-        for action: ActionHandler<CreateConversationGuestLinkAction>.Action,
+        for action: Action,
         apiVersion: APIVersion
     ) -> ZMTransportRequest? {
 

@@ -47,6 +47,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
     let addParticipantActionHandler: AddParticipantActionHandler
     let removeParticipantActionHandler: RemoveParticipantActionHandler
     let updateAccessRolesActionHandler: UpdateAccessRolesActionHandler
+    let createGuestLinkActionHandler: CreateConversationGuestLinkActionHandler
 
     let updateRoleActionHandler: UpdateRoleActionHandler
 
@@ -132,6 +133,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         self.addParticipantActionHandler = AddParticipantActionHandler(context: managedObjectContext, eventProcessor: conversationEventProcessor)
         self.removeParticipantActionHandler = RemoveParticipantActionHandler(context: managedObjectContext)
         self.updateAccessRolesActionHandler = UpdateAccessRolesActionHandler(context: managedObjectContext)
+        self.createGuestLinkActionHandler = CreateConversationGuestLinkActionHandler(context: managedObjectContext)
 
         self.updateRoleActionHandler = UpdateRoleActionHandler(context: managedObjectContext)
 
@@ -145,7 +147,8 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
                 context: managedObjectContext,
                 removeLocalConversationUseCase: removeLocalConversation
             ),
-            UpdateConversationProtocolActionHandler(context: managedObjectContext)
+            UpdateConversationProtocolActionHandler(context: managedObjectContext),
+            createGuestLinkActionHandler
         ])
 
         super.init(
