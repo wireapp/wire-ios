@@ -316,6 +316,7 @@
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
 		5922E92E2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */; };
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
+		594F0D6F2BCEA35A00AE19AF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594F0D6E2BCEA35A00AE19AF /* SceneDelegate.swift */; };
 		597A3BBA2B641F280020E337 /* UserStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB92B641F280020E337 /* UserStatus.swift */; };
 		5995C7752BC7E0F400F97BA8 /* DeviceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */; };
 		59A0A6972BC55DCF00FBFCF5 /* DeviceInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0A6962BC55DCF00FBFCF5 /* DeviceInfoViewController.swift */; };
@@ -2374,6 +2375,7 @@
 		55DD5C331FA236F60082170C /* CallQualityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityViewController.swift; sourceTree = "<group>"; };
 		5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+initWithUserType.swift"; sourceTree = "<group>"; };
+		594F0D6E2BCEA35A00AE19AF /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		597A3BB92B641F280020E337 /* UserStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatus.swift; sourceTree = "<group>"; };
 		5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoView.swift; sourceTree = "<group>"; };
 		59A0A6962BC55DCF00FBFCF5 /* DeviceInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoViewController.swift; sourceTree = "<group>"; };
@@ -6391,6 +6393,7 @@
 				87DCF4741D34E95B00BB420F /* Permissions */,
 				A9EB722423C3A47B00DA8240 /* AppDelegate.swift */,
 				163495881F015389004E80DB /* AppDelegate+Network.swift */,
+				594F0D6E2BCEA35A00AE19AF /* SceneDelegate.swift */,
 				F1141C961F5EB2DC005340B3 /* WireApplication.swift */,
 				8741CFAE1A937EDF00A56A63 /* LaunchScreen.xib */,
 				543DF69E252F5A4B001F6EA6 /* Main.storyboard */,
@@ -10111,6 +10114,7 @@
 				D5D89782201A25E000FAF69C /* Analytics+Services.swift in Sources */,
 				065FEA102B85E8D2005AE86A /* SuccessfulCertificateEnrollmentViewController.swift in Sources */,
 				5E35F7802183131400D3F4FE /* ConversationLinkAttachmentCell.swift in Sources */,
+				594F0D6F2BCEA35A00AE19AF /* SceneDelegate.swift in Sources */,
 				1687C0FC2151435F003099DD /* ZClientViewController+ShowContentDelegate.swift in Sources */,
 				A9A6506424D1C2C800B6A68D /* PasscodeError.swift in Sources */,
 				F1B5EAC72029AB9A0081D402 /* SimpleTextField.swift in Sources */,

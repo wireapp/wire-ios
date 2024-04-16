@@ -72,7 +72,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     private(set) var launchType: ApplicationLaunchType = .unknown
 
     // MARK: - Public Set Property
-    var window: UIWindow?
+    var window: UIWindow? // TODO: remove
 
     // Singletons
     var unauthenticatedSession: UnauthenticatedSession? {
