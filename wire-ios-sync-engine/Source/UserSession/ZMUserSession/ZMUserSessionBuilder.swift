@@ -27,10 +27,10 @@ struct ZMUserSessionBuilder {
 
     // Properties required for initialization
 
-    private var analytics: AnalyticsType?
+    private var analytics: (any AnalyticsType)?
     private var appVersion: String?
     private var appLock: (any AppLockType)?
-    private var application: ZMApplication?
+    private var application: (any ZMApplication)?
     private var applicationStatusDirectory: ApplicationStatusDirectory?
     private var configuration: ZMUserSession.Configuration?
     private var contextStorage: (any LAContextStorable)?
@@ -40,18 +40,18 @@ struct ZMUserSessionBuilder {
     private var debugCommands: [String: DebugCommand]?
     private var e2eiActivationDateRepository: (any E2EIActivationDateRepositoryProtocol)?
     private var earService: (any EARServiceInterface)?
-    private var flowManager: FlowManagerType?
+    private var flowManager: (any FlowManagerType)?
     private var lastE2EIUpdateDateRepository: (any LastE2EIdentityUpdateDateRepositoryInterface)?
     private var lastEventIDRepository: (any LastEventIDRepositoryInterface)?
-    private var mediaManager: MediaManagerType?
+    private var mediaManager: (any MediaManagerType)?
     private var mlsConversationVerificationStatusUpdater: (any MLSConversationVerificationStatusUpdating)?
-    private var mlsService: MLSServiceInterface?
-    private var observeMLSGroupVerificationStatusUseCase: ObserveMLSGroupVerificationStatusUseCaseProtocol?
-    private var proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating?
+    private var mlsService: (any MLSServiceInterface)?
+    private var observeMLSGroupVerificationStatusUseCase: (any ObserveMLSGroupVerificationStatusUseCaseProtocol)?
+    private var proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?
     private var sharedUserDefaults: UserDefaults?
-    private var transportSession: TransportSessionType?
+    private var transportSession: (any TransportSessionType)?
     private var updateMLSGroupVerificationStatusUseCase: (any UpdateMLSGroupVerificationStatusUseCaseProtocol)?
-    private var useCaseFactory: UseCaseFactoryProtocol?
+    private var useCaseFactory: (any UseCaseFactoryProtocol)?
     private var userId: UUID?
 
     // Properties for setup after init
@@ -68,6 +68,7 @@ struct ZMUserSessionBuilder {
     // MARK: - Build
 
     func build() -> ZMUserSession {
+        // `analytics` is optional
         assert(appVersion != nil, "expected 'appVersion' to be set!)")
         assert(appLock != nil, "expected 'appLock' to be set!)")
         assert(application != nil, "expected 'application' to be set!)")
@@ -94,7 +95,10 @@ struct ZMUserSessionBuilder {
         assert(useCaseFactory != nil, "expected 'useCaseFactory' to be set!)")
         assert(userId != nil, "expected 'userId' to be set!)")
 
-        prepare(coreDataStack: coreDataStack!)
+        prepare(
+            coreDataStack: coreDataStack!,
+            analytics: analytics
+        )
 
         let userSession = ZMUserSession(
             userId: userId!,
@@ -133,7 +137,7 @@ struct ZMUserSessionBuilder {
         return userSession
     }
 
-    private func prepare(coreDataStack: CoreDataStack) {
+    private func prepare(coreDataStack: CoreDataStack, analytics: (any AnalyticsType)?) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
             coreDataStack.syncContext.analytics = analytics
             coreDataStack.syncContext.zm_userInterface = coreDataStack.viewContext
@@ -169,29 +173,27 @@ struct ZMUserSessionBuilder {
 
     // MARK: - Setup Dependencies
 
-    // TODO: write protocols as any
-
     mutating func withAllDependencies(
-        analytics: AnalyticsType?,
+        analytics: (any AnalyticsType)?,
         appVersion: String,
-        application: ZMApplication,
-        cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
+        application: any ZMApplication,
+        cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         coreDataStack: CoreDataStack,
         configuration: ZMUserSession.Configuration,
-        contextStorage: LAContextStorable,
+        contextStorage: any LAContextStorable,
         earService: (any EARServiceInterface)?,
         eventProcessor: (any UpdateEventProcessor)?,
-        flowManager: FlowManagerType,
-        mediaManager: MediaManagerType,
-        mlsService: MLSServiceInterface?,
-        observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol?,
+        flowManager: any FlowManagerType,
+        mediaManager: any MediaManagerType,
+        mlsService: (any MLSServiceInterface)?,
+        observeMLSGroupVerificationStatus: (any ObserveMLSGroupVerificationStatusUseCaseProtocol)?,
         operationLoop: ZMOperationLoop?,
-        proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating?,
+        proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?,
         sharedUserDefaults: UserDefaults,
-        strategyDirectory: StrategyDirectoryProtocol?,
+        strategyDirectory: (any StrategyDirectoryProtocol)?,
         syncStrategy: ZMSyncStrategy?,
-        transportSession: TransportSessionType,
-        useCaseFactory: UseCaseFactoryProtocol?,
+        transportSession: any TransportSessionType,
+        useCaseFactory: (any UseCaseFactoryProtocol)?,
         userId: UUID
     ) {
         // first reused dependencies
@@ -324,7 +326,7 @@ struct ZMUserSessionBuilder {
         self.appLock = appLock
     }
 
-    mutating func withApplication(_ application: ZMApplication) {
+    mutating func withApplication(_ application: any ZMApplication) {
         self.application = application
     }
 
@@ -368,7 +370,7 @@ struct ZMUserSessionBuilder {
         self.eventProcessor = eventProcessor
     }
 
-    mutating func withFlowManager(_ flowManager: FlowManagerType) {
+    mutating func withFlowManager(_ flowManager: any FlowManagerType) {
         self.flowManager = flowManager
     }
 
@@ -380,7 +382,7 @@ struct ZMUserSessionBuilder {
         self.lastEventIDRepository = lastEventIDRepository
     }
 
-    mutating func withMediaManager(_ mediaManager: MediaManagerType) {
+    mutating func withMediaManager(_ mediaManager: any MediaManagerType) {
         self.mediaManager = mediaManager
     }
 
@@ -388,11 +390,11 @@ struct ZMUserSessionBuilder {
         self.mlsConversationVerificationStatusUpdater = mlsConversationVerificationStatusUpdater
     }
 
-    mutating func withMLSService(_ mlsService: MLSServiceInterface) {
+    mutating func withMLSService(_ mlsService: any MLSServiceInterface) {
         self.mlsService = mlsService
     }
 
-    mutating func withObserveMLSGroupVerificationStatusUseCase(_ observeMLSGroupVerificationStatusUseCase: ObserveMLSGroupVerificationStatusUseCaseProtocol) {
+    mutating func withObserveMLSGroupVerificationStatusUseCase(_ observeMLSGroupVerificationStatusUseCase: any ObserveMLSGroupVerificationStatusUseCaseProtocol) {
         self.observeMLSGroupVerificationStatusUseCase = observeMLSGroupVerificationStatusUseCase
     }
 
@@ -400,7 +402,7 @@ struct ZMUserSessionBuilder {
         self.operationLoop = operationLoop
     }
 
-    mutating func withProteusToMLSMigrationCoordinator(_ proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating) {
+    mutating func withProteusToMLSMigrationCoordinator(_ proteusToMLSMigrationCoordinator: any ProteusToMLSMigrationCoordinating) {
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
     }
 
@@ -416,7 +418,7 @@ struct ZMUserSessionBuilder {
         self.syncStrategy = syncStrategy
     }
 
-    mutating func withTransportSession(_ transportSession: TransportSessionType) {
+    mutating func withTransportSession(_ transportSession: any TransportSessionType) {
         self.transportSession = transportSession
     }
 
@@ -424,7 +426,7 @@ struct ZMUserSessionBuilder {
         self.updateMLSGroupVerificationStatusUseCase = updateMLSGroupVerificationStatusUseCase
     }
 
-    mutating func withUseCaseFactory(_ useCaseFactory: UseCaseFactoryProtocol) {
+    mutating func withUseCaseFactory(_ useCaseFactory: any UseCaseFactoryProtocol) {
         self.useCaseFactory = useCaseFactory
     }
 
