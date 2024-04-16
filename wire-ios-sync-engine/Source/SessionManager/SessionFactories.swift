@@ -85,6 +85,7 @@ open class AuthenticatedSessionFactory {
             configuration: configuration,
             contextStorage: LAContextStorage(),
             earService: nil,
+            eventProcessor: nil,
             flowManager: flowManager,
             mediaManager: mediaManager,
             mlsService: nil,

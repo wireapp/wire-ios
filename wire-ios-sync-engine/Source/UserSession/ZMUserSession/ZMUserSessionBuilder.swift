@@ -19,8 +19,13 @@
 import Foundation
 import WireDataModel
 import WireRequestStrategy
+import WireUtilities
 
 struct ZMUserSessionBuilder {
+
+    // MARK: - Properties
+
+    // Properties required for initialization
 
     private var analytics: AnalyticsType?
     private var appVersion: String?
@@ -28,13 +33,13 @@ struct ZMUserSessionBuilder {
     private var application: ZMApplication?
     private var applicationStatusDirectory: ApplicationStatusDirectory?
     private var configuration: ZMUserSession.Configuration?
-    private var contextStorage: LAContextStorable?
+    private var contextStorage: (any LAContextStorable)?
     private var coreCryptoProvider: (any CoreCryptoProviderProtocol)?
     private var coreDataStack: CoreDataStack?
-    private var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface?
+    private var cryptoboxMigrationManager: (any CryptoboxMigrationManagerInterface)?
     private var debugCommands: [String: DebugCommand]?
     private var e2eiActivationDateRepository: (any E2EIActivationDateRepositoryProtocol)?
-    private var earService: EARServiceInterface?
+    private var earService: (any EARServiceInterface)?
     private var flowManager: FlowManagerType?
     private var lastE2EIUpdateDateRepository: (any LastE2EIdentityUpdateDateRepositoryInterface)?
     private var lastEventIDRepository: (any LastEventIDRepositoryInterface)?
@@ -42,15 +47,19 @@ struct ZMUserSessionBuilder {
     private var mlsConversationVerificationStatusUpdater: (any MLSConversationVerificationStatusUpdating)?
     private var mlsService: MLSServiceInterface?
     private var observeMLSGroupVerificationStatusUseCase: ObserveMLSGroupVerificationStatusUseCaseProtocol?
-    private var operationLoop: ZMOperationLoop?
     private var proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating?
     private var sharedUserDefaults: UserDefaults?
-    private var strategyDirectory: StrategyDirectoryProtocol?
-    private var syncStrategy: ZMSyncStrategy?
     private var transportSession: TransportSessionType?
     private var updateMLSGroupVerificationStatusUseCase: (any UpdateMLSGroupVerificationStatusUseCaseProtocol)?
     private var useCaseFactory: UseCaseFactoryProtocol?
     private var userId: UUID?
+
+    // Properties for setup after init
+
+    private var eventProcessor: (any UpdateEventProcessor)?
+    private var operationLoop: ZMOperationLoop?
+    private var strategyDirectory: (any StrategyDirectoryProtocol)?
+    private var syncStrategy: ZMSyncStrategy?
 
     // MARK: - Initialize
 
@@ -78,23 +87,14 @@ struct ZMUserSessionBuilder {
         assert(mlsConversationVerificationStatusUpdater != nil, "expected 'mlsConversationVerificationStatusUpdater' to be set!)")
         assert(mlsService != nil, "expected 'mlsService' to be set!)")
         assert(observeMLSGroupVerificationStatusUseCase != nil, "expected 'observeMLSGroupVerificationStatusUseCase' to be set!)")
-        assert(operationLoop != nil, "expected 'operationLoop' to be set!)")
         assert(proteusToMLSMigrationCoordinator != nil, "expected 'proteusToMLSMigrationCoordinator' to be set!)")
         assert(sharedUserDefaults != nil, "expected 'sharedUserDefaults' to be set!)")
-        assert(strategyDirectory != nil, "expected 'strategyDirectory' to be set!)")
-        assert(syncStrategy != nil, "expected 'syncStrategy' to be set!)")
         assert(transportSession != nil, "expected 'transportSession' to be set!)")
         assert(updateMLSGroupVerificationStatusUseCase != nil, "expected 'updateMLSGroupVerificationStatusUseCase' to be set!)")
         assert(useCaseFactory != nil, "expected 'useCaseFactory' to be set!)")
         assert(userId != nil, "expected 'userId' to be set!)")
 
-        // TODO: should core data preperation happen somewhere else?
-        let coreDataStack = coreDataStack!
-        coreDataStack.syncContext.performGroupedBlockAndWait {
-            coreDataStack.syncContext.analytics = analytics
-            coreDataStack.syncContext.zm_userInterface = coreDataStack.viewContext
-        }
-        coreDataStack.viewContext.zm_sync = coreDataStack.syncContext
+        prepare(coreDataStack: coreDataStack!)
 
         let userSession = ZMUserSession(
             userId: userId!,
@@ -104,7 +104,7 @@ struct ZMUserSessionBuilder {
             analytics: analytics,
             application: application!,
             appVersion: appVersion!,
-            coreDataStack: coreDataStack,
+            coreDataStack: coreDataStack!,
             earService: earService!,
             mlsService: mlsService!,
             cryptoboxMigrationManager: cryptoboxMigrationManager!,
@@ -124,25 +124,52 @@ struct ZMUserSessionBuilder {
             contextStorage: contextStorage!
         )
 
-//        let cacheLocation = FileManager.default.cachesURLForAccount(with: coreDataStack.account.userIdentifier, in: coreDataStack.applicationContainer)
-//        ZMUserSession.moveCachesIfNeededForAccount(with: coreDataStack.account.userIdentifier, in: coreDataStack.applicationContainer)
-//
-//        let assetCache = FileAssetCache(location: cacheLocation)
-//
-//        userSession.setup(
-//            eventProcessor: T##(any UpdateEventProcessor)?,
-//            strategyDirectory: T##(any StrategyDirectoryProtocol)?,
-//            syncStrategy: T##ZMSyncStrategy?,
-//            operationLoop: T##ZMOperationLoop?,
-//            fileAssetCache: T##FileAssetCache,
-//            userImageLocalCache: T##UserImageLocalCache,
-//            configuration: T##ZMUserSession.Configuration
-//        )
+        setUpUserSession(
+            userSession,
+            configuration: configuration!,
+            coreDataStack: coreDataStack!
+        )
 
         return userSession
     }
 
+    private func prepare(coreDataStack: CoreDataStack) {
+        coreDataStack.syncContext.performGroupedBlockAndWait {
+            coreDataStack.syncContext.analytics = analytics
+            coreDataStack.syncContext.zm_userInterface = coreDataStack.viewContext
+        }
+        coreDataStack.viewContext.zm_sync = coreDataStack.syncContext
+    }
+
+    private func setUpUserSession(
+        _ userSession: ZMUserSession,
+        configuration: ZMUserSession.Configuration,
+        coreDataStack: CoreDataStack
+    ) {
+        let cacheLocation = FileManager.default.cachesURLForAccount(
+            with: coreDataStack.account.userIdentifier,
+            in: coreDataStack.applicationContainer
+        )
+
+        ZMUserSession.moveCachesIfNeededForAccount(
+            with: coreDataStack.account.userIdentifier,
+            in: coreDataStack.applicationContainer
+        )
+
+        userSession.setup(
+            eventProcessor: eventProcessor,
+            strategyDirectory: strategyDirectory,
+            syncStrategy: syncStrategy,
+            operationLoop: operationLoop,
+            fileAssetCache: FileAssetCache(location: cacheLocation),
+            userImageLocalCache: UserImageLocalCache(location: cacheLocation),
+            configuration: configuration
+        )
+    }
+
     // MARK: - Setup Dependencies
+
+    // TODO: write protocols as any
 
     mutating func withAllDependencies(
         analytics: AnalyticsType?,
@@ -152,7 +179,8 @@ struct ZMUserSessionBuilder {
         coreDataStack: CoreDataStack,
         configuration: ZMUserSession.Configuration,
         contextStorage: LAContextStorable,
-        earService: EARServiceInterface?,
+        earService: (any EARServiceInterface)?,
+        eventProcessor: (any UpdateEventProcessor)?,
         flowManager: FlowManagerType,
         mediaManager: MediaManagerType,
         mlsService: MLSServiceInterface?,
@@ -166,7 +194,6 @@ struct ZMUserSessionBuilder {
         useCaseFactory: UseCaseFactoryProtocol?,
         userId: UUID
     ) {
-
         // first reused dependencies
 
         let coreCryptoProvider = CoreCryptoProvider(
@@ -279,10 +306,10 @@ struct ZMUserSessionBuilder {
         withUseCaseFactory(useCaseFactory)
         withUserID(userId)
 
-        // builder = eventFactory
-        // builder = withOperationLoop(operationLoop)
-        // builder = withStrategyDirectory(strategyDirectory)
-        // builder = withSyncStrategy(syncStrategy: syncStrategy)
+        withEventProcessor(eventProcessor)
+        withOperationLoop(operationLoop)
+        withStrategyDirectory(strategyDirectory)
+        withSyncStrategy(syncStrategy: syncStrategy)
     }
 
     mutating func withAnalytics(_ analytics: (any AnalyticsType)?) {
@@ -309,7 +336,7 @@ struct ZMUserSessionBuilder {
         self.configuration = configuration
     }
 
-    mutating func withContextStorage(_ contextStorage: LAContextStorable) {
+    mutating func withContextStorage(_ contextStorage: any LAContextStorable) {
         self.contextStorage = contextStorage
     }
 
@@ -321,7 +348,7 @@ struct ZMUserSessionBuilder {
         self.coreDataStack = coreDataStack
     }
 
-    mutating func withCryptoboxMigrationManager(_ cryptoboxMigrationManager: CryptoboxMigrationManagerInterface) {
+    mutating func withCryptoboxMigrationManager(_ cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface) {
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
     }
 
@@ -333,8 +360,12 @@ struct ZMUserSessionBuilder {
         self.debugCommands = debugCommands
     }
 
-    mutating func withEARService(_ earService: EARServiceInterface) {
+    mutating func withEARService(_ earService: any EARServiceInterface) {
         self.earService = earService
+    }
+
+    mutating func withEventProcessor(_ eventProcessor: (any UpdateEventProcessor)?) {
+        self.eventProcessor = eventProcessor
     }
 
     mutating func withFlowManager(_ flowManager: FlowManagerType) {
@@ -365,7 +396,7 @@ struct ZMUserSessionBuilder {
         self.observeMLSGroupVerificationStatusUseCase = observeMLSGroupVerificationStatusUseCase
     }
 
-    mutating func withOperationLoop(_ operationLoop: ZMOperationLoop) {
+    mutating func withOperationLoop(_ operationLoop: ZMOperationLoop?) {
         self.operationLoop = operationLoop
     }
 
@@ -377,11 +408,11 @@ struct ZMUserSessionBuilder {
         self.sharedUserDefaults = sharedUserDefaults
     }
 
-    mutating func withStrategyDirectory(_ strategyDirectory: StrategyDirectoryProtocol) {
+    mutating func withStrategyDirectory(_ strategyDirectory: (any StrategyDirectoryProtocol)?) {
         self.strategyDirectory = strategyDirectory
     }
 
-    mutating func withSyncStrategy(syncStrategy: ZMSyncStrategy) {
+    mutating func withSyncStrategy(syncStrategy: ZMSyncStrategy?) {
         self.syncStrategy = syncStrategy
     }
 
