@@ -148,7 +148,7 @@ extension AppCenterOperation: DistributeDelegate {
 
         guard
             let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-            let window = appDelegate.window,
+            let window = UIApplication.shared.wr_keyWindow,
             let rootViewController = appDelegate.appRootRouter?.rootViewController
         else {
             return false

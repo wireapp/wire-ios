@@ -142,7 +142,7 @@ extension SettingsCellDescriptorFactory {
     private var presentVersionAction: (SettingsCellDescriptorType) -> Void {
         return { _ in
             let versionInfoViewController = VersionInfoViewController()
-            var superViewController = UIApplication.shared.firstKeyWindow?.rootViewController
+            var superViewController = UIApplication.shared.wr_keyWindow?.rootViewController
 
             if let presentedViewController = superViewController?.presentedViewController {
                 superViewController = presentedViewController

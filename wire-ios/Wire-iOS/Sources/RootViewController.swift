@@ -19,6 +19,7 @@
 import UIKit
 
 final class RootViewController: UIViewController {
+
     // MARK: - SpinnerCapable
     var dismissSpinner: SpinnerCompletion?
 

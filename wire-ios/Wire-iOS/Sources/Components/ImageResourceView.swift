@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import FLAnimatedImage
+import Foundation
 import WireDataModel
 
 final class ImageResourceView: FLAnimatedImageView {
@@ -26,8 +26,7 @@ final class ImageResourceView: FLAnimatedImageView {
     weak var delegate: ContextMenuDelegate?
     private lazy var messagePresenter: MessagePresenter = {
         let messagePresenter = MessagePresenter(mediaPlaybackManager: nil)
-        messagePresenter.modalTargetController = AppDelegate.shared.window?.rootViewController
-
+        messagePresenter.modalTargetController = UIApplication.shared.wr_keyWindow?.rootViewController
         return messagePresenter
     }()
 

@@ -20,8 +20,13 @@ import UIKit
 
 extension UIApplication {
 
-  var firstKeyWindow: UIWindow? {
-      return windows.first(where: \.isKeyWindow)
-  }
+    var wr_keyWindow: UIWindow? {
 
+        guard !supportsMultipleScenes else {
+            fatalError("support for multiple scenes has not been implemented")
+        }
+
+        let singleScene = connectedScenes.first as? UIWindowScene
+        return singleScene?.keyWindow
+    }
 }
