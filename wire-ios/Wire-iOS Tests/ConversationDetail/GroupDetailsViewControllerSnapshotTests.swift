@@ -210,7 +210,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         )
 
         // THEN
-        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+        verify(matching: sut.wrapInNavigationController())
     }
 
     func testForMlsConversation_withNotVerifiedStatus() throws {
@@ -229,7 +229,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         )
 
         // THEN
-        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+        verify(matching: sut.wrapInNavigationController())
     }
 
     func testForProteusConversation_withVerifiedStatus() throws {
@@ -248,7 +248,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         )
 
         // THEN
-        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+        verify(matching: sut.wrapInNavigationController())
     }
 
 }

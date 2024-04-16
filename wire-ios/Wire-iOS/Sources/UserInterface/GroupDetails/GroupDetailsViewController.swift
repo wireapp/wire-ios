@@ -103,6 +103,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     }
 
     private func setupNavigatiomItem() {
+        navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
         navigationItem.titleView = TwoLineTitleView(
             first: L10n.Localizable.Participants.title.capitalized.attributedString,
             second: verificationStatus)
@@ -308,7 +309,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 conversation: conversation,
                 userSession: userSession
             )
-            let navigationController = addParticipantsViewController.wrapInNavigationController(setBackgroundColor: true)
+            let navigationController = addParticipantsViewController.wrapInNavigationController()
             navigationController.modalPresentationStyle = .currentContext
 
             present(navigationController, animated: true)

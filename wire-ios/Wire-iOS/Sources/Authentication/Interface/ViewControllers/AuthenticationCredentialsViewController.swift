@@ -594,7 +594,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         countryCodePicker.delegate = self
         countryCodePicker.modalPresentationStyle = .formSheet
 
-        let navigationController = countryCodePicker.wrapInNavigationController(navigationBarClass: DefaultNavigationBar.self, setBackgroundColor: true)
+        let navigationController = countryCodePicker.wrapInNavigationController(navigationBarClass: DefaultNavigationBar.self)
         present(navigationController, animated: true)
     }
 

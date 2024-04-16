@@ -183,7 +183,7 @@ final class ConfirmAssetViewController: UIViewController {
         canvasViewController.title = previewTitle
         canvasViewController.select(editMode: editMode, animated: false)
 
-        let navigationController = canvasViewController.wrapInNavigationController(setBackgroundColor: true)
+        let navigationController = canvasViewController.wrapInNavigationController()
 
         present(navigationController, animated: true)
     }
