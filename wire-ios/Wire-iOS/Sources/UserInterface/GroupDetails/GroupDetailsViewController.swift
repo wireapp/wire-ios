@@ -380,9 +380,9 @@ private extension GroupDetailsViewController {
     var verificationStatusIcon: UIImage {
         switch conversation.messageProtocol {
         case .proteus, .mixed:
-            return Asset.Images.verifiedShield.image
+            return .init(resource: .verifiedShield)
         case .mls:
-            return Asset.Images.certificateValid.image
+            return .init(resource: .certificateValid)
         }
     }
 

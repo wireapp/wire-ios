@@ -28,7 +28,7 @@ final class GroupDetailsTimeoutOptionsCell: GroupDetailsDisclosureOptionsCell {
         title = L10n.Localizable.GroupDetails.TimeoutOptionsCell.title
         accessibilityHint = L10n.Accessibility.ConversationDetails.OptionButton.hint
 
-        icon = Asset.Images.selfDeletingMessages.image.withRenderingMode(.alwaysTemplate)
+        icon = .init(resource: .selfDeletingMessages).withRenderingMode(.alwaysTemplate)
         iconColor = SemanticColors.Icon.foregroundDefault
     }
 

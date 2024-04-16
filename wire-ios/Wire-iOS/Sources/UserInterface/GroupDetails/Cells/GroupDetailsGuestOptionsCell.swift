@@ -35,7 +35,7 @@ final class GroupDetailsGuestOptionsCell: GroupDetailsDisclosureOptionsCell {
         title = L10n.Localizable.GroupDetails.GuestOptionsCell.title
         accessibilityHint = L10n.Accessibility.ConversationDetails.OptionButton.hint
 
-        icon = Asset.Images.guest.image.withRenderingMode(.alwaysTemplate)
+        icon = .init(resource: .guest).withRenderingMode(.alwaysTemplate)
         iconColor = SemanticColors.Icon.foregroundDefault
     }
 

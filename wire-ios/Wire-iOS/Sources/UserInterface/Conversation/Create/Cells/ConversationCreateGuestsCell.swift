@@ -31,7 +31,7 @@ final class ConversationCreateGuestsCell: IconToggleCell {
     }
 
     private func setupIconForCell() {
-        icon = Asset.Images.guest.image.withRenderingMode(.alwaysTemplate)
+        icon = .init(resource: .guest).withRenderingMode(.alwaysTemplate)
         iconColor = SemanticColors.Icon.foregroundDefault
     }
 }

@@ -61,7 +61,7 @@ final class UserClientCell: SeparatorCollectionViewCell {
         }
     }
 
-    private let verifiedImage = Asset.Images.verifiedShield.image.resizableImage(withCapInsets: .zero)
+    private let verifiedImage = UIImage(resource: .verifiedShield).resizableImage(withCapInsets: .zero)
     private var mlsInfoHeighConstraint: NSLayoutConstraint { mlsThumbprintLabel.heightAnchor.constraint(equalToConstant: 0)
     }
 
@@ -88,7 +88,7 @@ final class UserClientCell: SeparatorCollectionViewCell {
         addBorder(for: .bottom)
         accessoryIconView.translatesAutoresizingMaskIntoConstraints = false
         accessoryIconView.contentMode = .center
-        accessoryIconView.image = Asset.Images.rightChevron.image.withRenderingMode(.alwaysTemplate)
+        accessoryIconView.image = .init(resource: .rightChevron).withRenderingMode(.alwaysTemplate)
         accessoryIconView.tintColor = IconColors.foregroundDefault
     }
 

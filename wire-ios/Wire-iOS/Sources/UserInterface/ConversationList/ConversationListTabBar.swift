@@ -38,26 +38,26 @@ enum TabBarItemType: Int, CaseIterable {
     var icon: UIImage {
         switch self {
         case .startUI:
-            return Asset.Images.contactsOutline.image
+            return .init(resource: .contactsOutline)
         case .list:
-            return Asset.Images.conversationsOutline.image
+            return .init(resource: .conversationsOutline)
         case .folder:
-            return Asset.Images.foldersOutline.image
+            return .init(resource: .foldersOutline)
         case .archive:
-            return Asset.Images.archiveOutline.image
+            return .init(resource: .archiveOutline)
         }
     }
 
     var selectedIcon: UIImage {
         switch self {
         case .startUI:
-            return Asset.Images.contactsFilled.image
+            return .init(resource: .contactsFilled)
         case .list:
-            return Asset.Images.conversationsFilled.image
+            return .init(resource: .conversationsFilled)
         case .folder:
-            return Asset.Images.foldersFilled.image
+            return .init(resource: .foldersFilled)
         case .archive:
-            return Asset.Images.archiveFilled.image
+            return .init(resource: .archiveFilled)
         }
     }
 

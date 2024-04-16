@@ -45,7 +45,7 @@ final class ConversationVerifiedSystemMessageSectionDescription: ConversationMes
         let title = NSAttributedString.markdown(from: L10n.Localizable.Content.System.Mls.conversationIsVerified(URL.wr_e2eiLearnMore), style: .systemMessage)
 
         configuration = View.Configuration(
-            icon: Asset.Images.certificateValid.image,
+            icon: .init(resource: .certificateValid),
             attributedText: title,
             showLine: true
         )
