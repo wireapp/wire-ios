@@ -85,22 +85,25 @@ open class AuthenticatedSessionFactory {
             configuration: configuration,
             contextStorage: LAContextStorage(),
             earService: nil,
-            eventProcessor: nil,
             flowManager: flowManager,
             mediaManager: mediaManager,
             mlsService: nil,
             observeMLSGroupVerificationStatus: nil,
-            operationLoop: nil,
             proteusToMLSMigrationCoordinator: nil,
             sharedUserDefaults: sharedUserDefaults,
-            strategyDirectory: nil,
-            syncStrategy: nil,
             transportSession: transportSession,
             useCaseFactory: nil,
             userId: account.userIdentifier
         )
 
         let userSession = userSessionBuilder.build()
+        userSession.setup(
+            eventProcessor: nil,
+            strategyDirectory: nil,
+            syncStrategy: nil,
+            operationLoop: nil,
+            configuration: configuration
+        )
         userSession.startRequestLoopTracker()
 
         return userSession

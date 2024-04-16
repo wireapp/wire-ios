@@ -54,13 +54,6 @@ struct ZMUserSessionBuilder {
     private var useCaseFactory: (any UseCaseFactoryProtocol)?
     private var userId: UUID?
 
-    // Properties for setup after init
-
-    private var eventProcessor: (any UpdateEventProcessor)?
-    private var operationLoop: ZMOperationLoop?
-    private var strategyDirectory: (any StrategyDirectoryProtocol)?
-    private var syncStrategy: ZMSyncStrategy?
-
     // MARK: - Initialize
 
     init() { }
@@ -131,12 +124,6 @@ struct ZMUserSessionBuilder {
             contextStorage: contextStorage
         )
 
-        setUpUserSession(
-            userSession,
-            configuration: configuration,
-            coreDataStack: coreDataStack
-        )
-
         return userSession
     }
 
@@ -151,20 +138,6 @@ struct ZMUserSessionBuilder {
         coreDataStack.viewContext.zm_sync = coreDataStack.syncContext
     }
 
-    private func setUpUserSession(
-        _ userSession: ZMUserSession,
-        configuration: ZMUserSession.Configuration,
-        coreDataStack: CoreDataStack
-    ) {
-        userSession.setup(
-            eventProcessor: eventProcessor,
-            strategyDirectory: strategyDirectory,
-            syncStrategy: syncStrategy,
-            operationLoop: operationLoop,
-            configuration: configuration
-        )
-    }
-
     // MARK: - Setup Dependencies
 
     mutating func withAllDependencies(
@@ -176,16 +149,12 @@ struct ZMUserSessionBuilder {
         configuration: ZMUserSession.Configuration,
         contextStorage: any LAContextStorable,
         earService: (any EARServiceInterface)?,
-        eventProcessor: (any UpdateEventProcessor)?,
         flowManager: any FlowManagerType,
         mediaManager: any MediaManagerType,
         mlsService: (any MLSServiceInterface)?,
         observeMLSGroupVerificationStatus: (any ObserveMLSGroupVerificationStatusUseCaseProtocol)?,
-        operationLoop: ZMOperationLoop?,
         proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?,
         sharedUserDefaults: UserDefaults,
-        strategyDirectory: (any StrategyDirectoryProtocol)?,
-        syncStrategy: ZMSyncStrategy?,
         transportSession: any TransportSessionType,
         useCaseFactory: (any UseCaseFactoryProtocol)?,
         userId: UUID
@@ -273,7 +242,7 @@ struct ZMUserSessionBuilder {
             oneOnOneResolver: OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
         )
 
-        // setup required dependencies
+        // setup builder
 
         withAnalytics(analytics)
         withAppVersion(appVersion)
@@ -301,13 +270,6 @@ struct ZMUserSessionBuilder {
         withUpdateMLSGroupVerificationStatusUseCase(updateMLSGroupVerificationStatus)
         withUseCaseFactory(useCaseFactory)
         withUserID(userId)
-
-        // setup optional dependencies
-
-        withEventProcessor(eventProcessor)
-        withOperationLoop(operationLoop)
-        withStrategyDirectory(strategyDirectory)
-        withSyncStrategy(syncStrategy: syncStrategy)
     }
 
     mutating func withAnalytics(_ analytics: (any AnalyticsType)?) {
@@ -362,10 +324,6 @@ struct ZMUserSessionBuilder {
         self.earService = earService
     }
 
-    mutating func withEventProcessor(_ eventProcessor: (any UpdateEventProcessor)?) {
-        self.eventProcessor = eventProcessor
-    }
-
     mutating func withFlowManager(_ flowManager: any FlowManagerType) {
         self.flowManager = flowManager
     }
@@ -394,24 +352,12 @@ struct ZMUserSessionBuilder {
         self.observeMLSGroupVerificationStatusUseCase = observeMLSGroupVerificationStatusUseCase
     }
 
-    mutating func withOperationLoop(_ operationLoop: ZMOperationLoop?) {
-        self.operationLoop = operationLoop
-    }
-
     mutating func withProteusToMLSMigrationCoordinator(_ proteusToMLSMigrationCoordinator: any ProteusToMLSMigrationCoordinating) {
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
     }
 
     mutating func withSharedUserDefaults(_ sharedUserDefaults: UserDefaults) {
         self.sharedUserDefaults = sharedUserDefaults
-    }
-
-    mutating func withStrategyDirectory(_ strategyDirectory: (any StrategyDirectoryProtocol)?) {
-        self.strategyDirectory = strategyDirectory
-    }
-
-    mutating func withSyncStrategy(syncStrategy: ZMSyncStrategy?) {
-        self.syncStrategy = syncStrategy
     }
 
     mutating func withTransportSession(_ transportSession: any TransportSessionType) {
