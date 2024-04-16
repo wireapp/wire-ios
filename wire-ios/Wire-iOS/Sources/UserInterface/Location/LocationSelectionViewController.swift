@@ -44,17 +44,17 @@ final class LocationSelectionViewController: UIViewController {
     let locationButtonContainer = UIView()
     var sendControllerHeightConstraint: NSLayoutConstraint?
 
-    fileprivate var mapView = MKMapView()
-    fileprivate let toolBar = ModalTopBar()
-    fileprivate let locationManager = CLLocationManager()
-    fileprivate let geocoder = CLGeocoder()
-    fileprivate let sendViewController = LocationSendViewController()
-    fileprivate let pointAnnotation = MKPointAnnotation()
+    private var mapView = MKMapView()
+    private let toolBar = ModalTopBar()
+    private let locationManager = CLLocationManager()
+    private let geocoder = CLGeocoder()
+    private let sendViewController = LocationSendViewController()
+    private let pointAnnotation = MKPointAnnotation()
     private lazy var annotationView: MKPinAnnotationView = MKPinAnnotationView(annotation: pointAnnotation, reuseIdentifier: String(describing: type(of: self)))
-    fileprivate var userShowedInitially = false
-    fileprivate var mapDidRender = false
+    private var userShowedInitially = false
+    private var mapDidRender = false
 
-    fileprivate var userLocationAuthorized: Bool {
+    private var userLocationAuthorized: Bool {
         let status = locationManager.authorizationStatus
         return status == .authorizedAlways || status == .authorizedWhenInUse
     }
@@ -86,7 +86,7 @@ final class LocationSelectionViewController: UIViewController {
         mapView.storeLocation()
     }
 
-    fileprivate func configureViews() {
+    private func configureViews() {
         addChild(sendViewController)
         sendViewController.didMove(toParent: self)
         [mapView, sendViewController.view, toolBar, locationButton].forEach(view.addSubview)
@@ -100,7 +100,7 @@ final class LocationSelectionViewController: UIViewController {
         mapView.addSubview(annotationView)
     }
 
-    fileprivate func createConstraints() {
+    private func createConstraints() {
         guard let sendController = sendViewController.view else { return }
 
         [mapView, sendController, annotationView, toolBar, locationButton].forEach {
@@ -133,18 +133,18 @@ final class LocationSelectionViewController: UIViewController {
         ])
     }
 
-    @objc fileprivate func locationButtonTapped(_ sender: IconButton) {
+    @objc private func locationButtonTapped(_ sender: IconButton) {
         zoomToUserLocation(true)
     }
 
-    fileprivate func updateUserLocation() {
+    private func updateUserLocation() {
         mapView.showsUserLocation = userLocationAuthorized
         if userLocationAuthorized {
             locationManager.startUpdatingLocation()
         }
     }
 
-    fileprivate func zoomToUserLocation(_ animated: Bool) {
+    private func zoomToUserLocation(_ animated: Bool) {
         guard userLocationAuthorized else { return presentUnauthorizedAlert() }
         let region = MKCoordinateRegion(center: mapView.userLocation.coordinate, latitudinalMeters: 50, longitudinalMeters: 50)
         mapView.setRegion(region, animated: animated)
@@ -179,7 +179,7 @@ final class LocationSelectionViewController: UIViewController {
         present(alertController, animated: true, completion: nil)
     }
 
-    fileprivate func formatAndUpdateAddress() {
+    private func formatAndUpdateAddress() {
         guard mapDidRender else { return }
         geocoder.reverseGeocodeLocation(mapView.centerCoordinate.location) { [weak self] placemarks, error in
             guard error == nil, let placemark = placemarks?.first else { return }
