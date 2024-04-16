@@ -202,7 +202,7 @@ struct ZMUserSessionBuilder {
         useCaseFactory: (any UseCaseFactoryProtocol)?,
         userId: UUID
     ) {
-        // first reused dependencies
+        // reused dependencies
 
         let coreCryptoProvider = CoreCryptoProvider(
             selfUserID: userId,
@@ -222,7 +222,7 @@ struct ZMUserSessionBuilder {
             featureRepository: FeatureRepository(context: coreDataStack.syncContext)
         )
 
-        // second other dependencies
+        // other dependencies
 
         let appLock = AppLockController(
             userId: userId,
@@ -285,7 +285,7 @@ struct ZMUserSessionBuilder {
             oneOnOneResolver: OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
         )
 
-        // third set all dependencies
+        // setup required dependencies
 
         withAnalytics(analytics)
         withAppVersion(appVersion)
@@ -313,6 +313,8 @@ struct ZMUserSessionBuilder {
         withUpdateMLSGroupVerificationStatusUseCase(updateMLSGroupVerificationStatus)
         withUseCaseFactory(useCaseFactory)
         withUserID(userId)
+
+        // setup optional dependencies
 
         withEventProcessor(eventProcessor)
         withOperationLoop(operationLoop)
