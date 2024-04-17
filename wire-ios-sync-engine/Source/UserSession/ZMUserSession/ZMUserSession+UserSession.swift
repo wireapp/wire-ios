@@ -289,6 +289,14 @@ extension ZMUserSession: UserSession {
         )
     }
 
+    public var oneOnOneConversationCreationStatus: OneOnOneConversationCreationStatusUseCaseProtocol {
+        OneOnOneConversationCreationStatusUseCase(
+            context: syncContext,
+            oneOnOneProtocolSelector: OneOnOneProtocolSelector(),
+            coreCryptoProvider: coreCryptoProvider
+        )
+    }
+
     public func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
         let featureRepository = FeatureRepository(context: syncContext)
         return GetMLSFeatureUseCase(featureRepository: featureRepository)
