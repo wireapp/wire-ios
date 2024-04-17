@@ -23,10 +23,42 @@ import WireSyncEngine
 
 extension ConversationListViewController.ViewModel: StartUIDelegate {
     func startUI(_ startUI: StartUIViewController, didSelect user: UserType) {
-        oneToOneConversationWithUser(user) { result in
-            guard case .success(let conversation) = result else { return }
+        guard let userID = user.qualifiedID else { return }
 
-            ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
+        let conversation = user.oneToOneConversation
+
+        Task {
+            do {
+                let status = try await userSession.oneOnOneConversationCreationStatus.invoke(userID: userID)
+
+                switch status {
+                case .exists(protocol: .proteus, established: _),
+                        .exists(protocol: .mls, established: true):
+
+                    guard let conversation else { return }
+                    await openConversation(conversation)
+
+                case .exists(protocol: .mls, established: false), 
+                        .doesNotExist(protocol: .mls):
+
+                    await openUserProfile(user)
+
+                case .doesNotExist(protocol: .proteus):
+
+                    await MainActor.run { [weak self] in
+                        self?.createTeamOneOnOne(user) { result in
+                            guard case .success(let conversation) = result else { return }
+                            self?.openConversation(conversation)
+                        }
+                    }
+
+                default:
+                    break
+                }
+
+            } catch {
+
+            }
         }
     }
 
@@ -36,23 +68,25 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         }
     }
 
-    /// Create a new conversation or open existing 1-to-1 conversation
-    ///
-    /// - Parameters:
-    ///   - user: the user which we want to have a 1-to-1 conversation with
-    ///   - onConversationCreated: a ConversationCreatedBlock which has the conversation created
-    private func oneToOneConversationWithUser(
-        _ user: UserType,
-        callback onConversationCreated: @escaping ConversationCreatedBlock
-    ) {
-        if let conversation = user.oneToOneConversation {
-            onConversationCreated(.success(conversation))
-        } else {
-            createTeamOneOnOne(
-                user,
-                callback: onConversationCreated
-            )
-        }
+    @MainActor
+    func openConversation(_ conversation: ZMConversation) {
+        ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
+    }
+
+    @MainActor
+    func openUserProfile(_ user: UserType) {
+        let profileViewController = ProfileViewController(
+            user: user,
+            viewer: selfUser,
+            context: .profileViewer,
+            userSession: userSession
+        )
+        profileViewController.delegate = self
+
+        let navigationController = profileViewController.wrapInNavigationController(setBackgroundColor: true)
+        navigationController.modalPresentationStyle = .formSheet
+
+        ZClientViewController.shared?.present(navigationController, animated: true)
     }
 
     private func createTeamOneOnOne(
@@ -73,6 +107,21 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
                     onConversationCreated(.failure(error))
                 }
             }
+        }
+    }
+
+}
+
+extension ConversationListViewController.ViewModel: ProfileViewControllerDelegate {
+
+    func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
+
+        controller?.dismiss(animated: true) {
+            ZClientViewController.shared?.select(
+                conversation: conversation,
+                focusOnView: true,
+                animated: true
+            )
         }
     }
 
