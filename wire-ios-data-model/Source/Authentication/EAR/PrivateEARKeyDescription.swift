@@ -24,21 +24,34 @@ import LocalAuthentication
 /// Private EAR keys are used to decrypt material that was encrypted
 /// with the corresponding public EAR key.
 
-public class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
+public final class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
+
+    private enum Constant {
+        static let labelPrivatePrimary = "private"
+        static let labelPrivateSecondary = "secondary-private"
+    }
+
+    private let context: AuthenticationContextProtocol?
 
     // MARK: - Life cycle
 
     init(
         accountID: UUID,
         label: String,
-        context: LAContextProtocol? = nil
+        context: AuthenticationContextProtocol?
     ) {
+        self.context = context
+
         super.init(
             accountID: accountID,
             label: label
         )
+    }
 
-        getQuery = [
+    // MARK: - Keychain item
+
+    var getQuery: [CFString: Any] {
+        var query: [CFString: Any] = [
             kSecClass: kSecClassKey,
             kSecAttrKeyClass: kSecAttrKeyClassPrivate,
             kSecAttrLabel: tag,
@@ -46,42 +59,38 @@ public class PrivateEARKeyDescription: BaseEARKeyDescription, KeychainItemProtoc
         ]
 
         #if !targetEnvironment(simulator)
-        if let context = context {
-            getQuery[kSecUseAuthenticationContext] = context
-            getQuery[kSecUseAuthenticationUI] = kSecUseAuthenticationUISkip
+        if let laContext = context?.laContext {
+            query[kSecUseAuthenticationContext] = laContext
+            query[kSecUseAuthenticationUI] = kSecUseAuthenticationUISkip
         }
         #endif
+
+        return query
     }
-
-    // MARK: - Keychain item
-
-    private(set) var getQuery = [CFString: Any]()
 
     func setQuery<T>(value: T) -> [CFString: Any] {
         // Private keys are stored in the Secure Enclave.
         return [:]
     }
 
-}
-
-extension PrivateEARKeyDescription {
+    // MARK: - Static Access
 
     static func primaryKeyDescription(
         accountID: UUID,
-        context: LAContext? = nil
+        context: AuthenticationContextProtocol?
     ) -> PrivateEARKeyDescription {
-        return PrivateEARKeyDescription(
+        PrivateEARKeyDescription(
             accountID: accountID,
-            label: "private",
+            label: Constant.labelPrivatePrimary,
             context: context
         )
     }
 
     static func secondaryKeyDescription(accountID: UUID) -> PrivateEARKeyDescription {
-        return PrivateEARKeyDescription(
+        PrivateEARKeyDescription(
             accountID: accountID,
-            label: "secondary-private"
+            label: Constant.labelPrivateSecondary,
+            context: nil
         )
     }
-
 }
