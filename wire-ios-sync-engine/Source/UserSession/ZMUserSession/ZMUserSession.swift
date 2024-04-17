@@ -484,8 +484,8 @@ public final class ZMUserSession: NSObject {
             self.proteusProvider = ProteusProvider(proteusService: self.proteusService,
                                                    keyStore: self.syncManagedObjectContext.zm_cryptKeyStore)
 
-            self.updateEventProcessor = eventProcessor ?? self.createUpdateEventProcessor()
             self.strategyDirectory = strategyDirectory ?? self.createStrategyDirectory(useLegacyPushNotifications: configuration.useLegacyPushNotifications)
+            self.updateEventProcessor = eventProcessor ?? self.createUpdateEventProcessor()
             self.syncStrategy = syncStrategy ?? self.createSyncStrategy()
             self.operationLoop = operationLoop ?? self.createOperationLoop()
             self.urlActionProcessors = self.createURLActionProcessors()
