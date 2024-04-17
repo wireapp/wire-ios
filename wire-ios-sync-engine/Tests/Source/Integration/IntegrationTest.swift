@@ -58,6 +58,9 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
         configuration: ZMUserSession.Configuration,
         sharedUserDefaults: UserDefaults
     ) -> ZMUserSession? {
+        let mockContextStorage = MockLAContextStorable()
+        mockContextStorage.clear_MockMethod = { }
+
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             analytics: analytics,

@@ -18,7 +18,6 @@
 
 import avs
 import WireDataModel
-import WireDataModelSupport
 
 open class AuthenticatedSessionFactory {
 
@@ -27,8 +26,6 @@ open class AuthenticatedSessionFactory {
     let flowManager: FlowManagerType
     var analytics: AnalyticsType?
     let application: ZMApplication
-
-    let mockContextStorage: MockLAContextStorable
 
     var environment: BackendEnvironmentProvider
     var reachability: Reachability
@@ -57,9 +54,6 @@ open class AuthenticatedSessionFactory {
         self.proxyPassword = proxyPassword
         self.reachability = reachability
         self.minTLSVersion = minTLSVersion
-
-        self.mockContextStorage = MockLAContextStorable()
-        mockContextStorage.clear_MockMethod = { }
     }
 
     func session(
@@ -89,7 +83,7 @@ open class AuthenticatedSessionFactory {
             cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreDataStack: coreDataStack,
             configuration: configuration,
-            contextStorage: mockContextStorage,
+            contextStorage: LAContextStorage(),
             earService: nil,
             flowManager: flowManager,
             mediaManager: mediaManager,
