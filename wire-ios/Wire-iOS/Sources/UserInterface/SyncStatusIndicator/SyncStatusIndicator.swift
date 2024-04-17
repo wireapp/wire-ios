@@ -21,28 +21,33 @@ import SwiftUI
 /// An indicator for sync activity and connectivy.
 /// It presents itself in a separate window, at the top of the screen.
 /// It resizes the key window accordingly.
+@MainActor
 struct SyncStatusIndicator {
 
     public var syncStatus: SyncStatus? {
-        didSet { syncStatusViewController.rootView = .init(syncStatus: syncStatus) }
+        didSet { applySyncStatus() }
     }
 
     /// The window where the indicator is presented.
     private let syncStatusWindow: UIWindow
     /// The root view controller of the `syncStatusWindow`.
-    private let syncStatusViewController: UIHostingController<SyncStatusIndicatorViewRepresentable>
+    private let syncStatusViewController: SyncStatusIndicatorViewController
 
     private var windowScene: UIWindowScene? { syncStatusWindow.windowScene }
     private var keyWindow: UIWindow? { windowScene?.keyWindow }
 
     init(windowScene: UIWindowScene) {
         syncStatusWindow = .init(windowScene: windowScene)
-        syncStatusViewController = .init(rootView: .init(syncStatus: .none))
+        syncStatusViewController = .init()
 
         // present above the key window
         let keyWindowLevel = keyWindow?.windowLevel ?? .normal
         syncStatusWindow.windowLevel = .init(keyWindowLevel.rawValue + 1)
         syncStatusWindow.isUserInteractionEnabled = false
         syncStatusWindow.rootViewController = syncStatusViewController
+    }
+
+    private func applySyncStatus() {
+        syncStatusViewController.syncStatusIndicatorView.syncStatus = syncStatus
     }
 }

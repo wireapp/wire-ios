@@ -321,6 +321,7 @@
 		599AA5802BCED97700D0ADD3 /* SyncStatusIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599AA57D2BCED97700D0ADD3 /* SyncStatusIndicatorView.swift */; };
 		599AA5812BCED97700D0ADD3 /* SyncStatusIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599AA57E2BCED97700D0ADD3 /* SyncStatusIndicator.swift */; };
 		599AA5822BCED97700D0ADD3 /* SyncStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599AA57F2BCED97700D0ADD3 /* SyncStatus.swift */; };
+		599AA5872BCFB3FB00D0ADD3 /* SyncStatusIndicatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 599AA5862BCFB3FA00D0ADD3 /* SyncStatusIndicatorViewController.swift */; };
 		59A0A6972BC55DCF00FBFCF5 /* DeviceInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0A6962BC55DCF00FBFCF5 /* DeviceInfoViewController.swift */; };
 		59A1F1472B7BA226002CB679 /* UserStatus+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */; };
 		59A1F1492B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1482B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift */; };
@@ -2382,6 +2383,7 @@
 		599AA57D2BCED97700D0ADD3 /* SyncStatusIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncStatusIndicatorView.swift; sourceTree = "<group>"; };
 		599AA57E2BCED97700D0ADD3 /* SyncStatusIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncStatusIndicator.swift; sourceTree = "<group>"; };
 		599AA57F2BCED97700D0ADD3 /* SyncStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncStatus.swift; sourceTree = "<group>"; };
+		599AA5862BCFB3FA00D0ADD3 /* SyncStatusIndicatorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SyncStatusIndicatorViewController.swift; sourceTree = "<group>"; };
 		59A0A6962BC55DCF00FBFCF5 /* DeviceInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoViewController.swift; sourceTree = "<group>"; };
 		59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+Helpers.swift"; sourceTree = "<group>"; };
 		59A1F1482B7BB7A7002CB679 /* UserStatusViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatusViewControllerDelegate.swift; sourceTree = "<group>"; };
@@ -4687,6 +4689,7 @@
 				599AA57F2BCED97700D0ADD3 /* SyncStatus.swift */,
 				599AA57E2BCED97700D0ADD3 /* SyncStatusIndicator.swift */,
 				599AA57D2BCED97700D0ADD3 /* SyncStatusIndicatorView.swift */,
+				599AA5862BCFB3FA00D0ADD3 /* SyncStatusIndicatorViewController.swift */,
 			);
 			path = SyncStatusIndicator;
 			sourceTree = "<group>";
@@ -10040,6 +10043,7 @@
 				D3095764283CEB2000CEC620 /* SessionFileRestrictionsProtocol.swift in Sources */,
 				8710673C1C0DC5570035603B /* SettingsButtonCellDescriptor.swift in Sources */,
 				EF40005720568C4400E03347 /* NetworkStatusBarConstants.swift in Sources */,
+				599AA5872BCFB3FB00D0ADD3 /* SyncStatusIndicatorViewController.swift in Sources */,
 				87F18BC01E017B7F00C69D9B /* UIView+VisibleViews.swift in Sources */,
 				878A720C1E55D7D3008072B9 /* TextSearchResultFooter.swift in Sources */,
 				5E1314D12209A2CD000FAFC5 /* ClientRegistrationErrorEventHandler.swift in Sources */,

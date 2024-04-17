@@ -20,6 +20,10 @@ import SwiftUI
 
 final class SyncStatusIndicatorView: UIView {
 
+    // MARK: Constants
+
+    private let minHeight: CGFloat = 4
+
     var syncStatus: SyncStatus? {
         didSet { applySyncStatus() }
     }
@@ -45,11 +49,13 @@ final class SyncStatusIndicatorView: UIView {
             label.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 1),
             label.topAnchor.constraint(equalToSystemSpacingBelow: topAnchor, multiplier: 1),
             trailingAnchor.constraint(equalToSystemSpacingAfter: label.trailingAnchor, multiplier: 1),
-            bottomAnchor.constraint(equalToSystemSpacingBelow: label.bottomAnchor, multiplier: 1)
+            bottomAnchor.constraint(equalToSystemSpacingBelow: label.bottomAnchor, multiplier: 1),
+            label.heightAnchor.constraint(greaterThanOrEqualToConstant: minHeight)
         ])
 
-        label.text = "TODO"
+        label.text = syncStatus == .noConnectivity ? "TODO" : ""
         label.textAlignment = .center
+        label.backgroundColor = .green
     }
 
     private func applySyncStatus() {
@@ -57,7 +63,7 @@ final class SyncStatusIndicatorView: UIView {
     }
 }
 
-struct SyncStatusIndicatorViewRepresentable: UIViewRepresentable {
+private struct SyncStatusIndicatorViewRepresentable: UIViewRepresentable {
 
     @State private(set) var syncStatus: SyncStatus?
 
