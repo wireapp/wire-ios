@@ -22,7 +22,7 @@ import SwiftUI
 /// It presents itself in a separate window, at the top of the screen.
 /// It resizes the key window accordingly.
 @MainActor
-struct SyncStatusIndicator {
+public struct SyncStatusIndicator {
 
     public var syncStatus: SyncStatus? {
         didSet { applySyncStatus() }
@@ -36,7 +36,7 @@ struct SyncStatusIndicator {
     private var windowScene: UIWindowScene? { syncStatusWindow.windowScene }
     private var keyWindow: UIWindow? { windowScene?.keyWindow }
 
-    init(windowScene: UIWindowScene) {
+    public init(windowScene: UIWindowScene) {
         syncStatusWindow = .init(windowScene: windowScene)
         syncStatusViewController = .init()
 
