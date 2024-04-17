@@ -18,6 +18,7 @@
 
 import UIKit
 import WireUtilities
+import WireSyncEngine
 import WireTransport
 
 protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
@@ -83,10 +84,13 @@ final class ConversationGuestOptionsViewModel {
         return apiVersion >= .v4
     }
 
+    private var securedGuestLinkUseCase: SecuredGuestLinkUseCase
+
     private let configuration: ConversationGuestOptionsViewModelConfiguration
 
-    init(configuration: ConversationGuestOptionsViewModelConfiguration) {
+    init(configuration: ConversationGuestOptionsViewModelConfiguration, conversation: ZMConversation) {
         self.configuration = configuration
+        securedGuestLinkUseCase = SecuredGuestLinkUseCase(conversation: conversation)
         updateRows()
         configuration.allowGuestsChangedHandler = { [weak self] allowGuests in
             guard let `self` = self else { return }
@@ -233,16 +237,18 @@ final class ConversationGuestOptionsViewModel {
             self?.showLoadingCell = true
         }
 
-        configuration.createConversationLink(password: nil) { [weak self] result in
-            guard let `self` = self else { return }
+        securedGuestLinkUseCase.invoke(password: nil) { result in
             switch result {
-            case .success(let link): self.link = link
-            case .failure(let error): self.delegate?.viewModel(self, didReceiveError: error)
+            case .success(let link):
+                self.link = link
+            case .failure(let error):
+                self.delegate?.viewModel(self, didReceiveError: error)
             }
 
             item.cancel()
             self.showLoadingCell = false
         }
+
     }
 
     /// Starts the Guest Link Creation Flow

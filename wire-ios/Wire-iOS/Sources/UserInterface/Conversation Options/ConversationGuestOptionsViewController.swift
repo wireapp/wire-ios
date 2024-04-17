@@ -41,7 +41,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
             userSession: userSession
         )
         self.init(
-            viewModel: .init(configuration: configuration)
+            viewModel: .init(configuration: configuration, conversation: conversation)
         )
     }
 
