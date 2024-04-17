@@ -40,6 +40,7 @@ final class ConversationListTopBarViewController: UIViewController {
         view as? TopBar
     }
 
+    // Title Views
     private weak var userStatusViewController: UserStatusViewController?
     private weak var titleViewLabel: UILabel?
 
@@ -78,9 +79,21 @@ final class ConversationListTopBarViewController: UIViewController {
         view.backgroundColor = SemanticColors.View.backgroundConversationList
         view.addBorder(for: .bottom)
 
+        setupNavigationBarItemStackViews()
         updateTitleView()
         updateAccountView()
         updateLegalHoldIndictor()
+    }
+
+    // MARK: - Navigation Bar Items
+
+    private func setupNavigationBarItemStackViews() {
+
+        let leftNavigationBarItemsStackView = UIStackView()
+        topBar?.leftView = leftNavigationBarItemsStackView
+
+        let rightNavigationBarItemsStackView = UIStackView()
+        topBar?.rightView = rightNavigationBarItemsStackView
     }
 
     // MARK: - Title View
@@ -169,8 +182,11 @@ final class ConversationListTopBarViewController: UIViewController {
         return button
     }
 
-    func updateAccountView() {
-        topBar?.leftView = createAccountView()
+    private func updateAccountView() {
+        guard let stackView = topBar?.leftView as? UIStackView else { return }
+
+        stackView.arrangedSubviews.first?.removeFromSuperview()
+        stackView.insertArrangedSubview(createAccountView(), at: 0)
     }
 
     private func createAccountView() -> UIView {
@@ -201,13 +217,16 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     func updateLegalHoldIndictor() {
+        guard let currentStackView = topBar?.leftView as? UIStackView else { return }
+
+        currentStackView.arrangedSubviews[1...].forEach { $0.removeFromSuperview() }
         switch selfUser.legalHoldStatus {
         case .disabled:
-            topBar?.rightView = nil
+            break
         case .pending:
-            topBar?.rightView = createPendingLegalHoldRequestView()
+            currentStackView.addArrangedSubview(createPendingLegalHoldRequestView())
         case .enabled:
-            topBar?.rightView = createLegalHoldView()
+            currentStackView.addArrangedSubview(createLegalHoldView())
         }
     }
 
