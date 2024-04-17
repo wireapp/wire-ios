@@ -18,11 +18,10 @@
 
 // Test CI: modify this line to run ci tests, sometimes it's the easiest way.
 
-import avs
-import SwiftUI
-import SyncStatusIndicator
+import UIKit
 import WireCommonComponents
 import WireSyncEngine
+import avs
 import WireCoreCrypto
 
 enum ApplicationLaunchType {
@@ -155,57 +154,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         WireLogger.appDelegate.info("application:didFinishLaunchingWithOptions END \(String(describing: launchOptions))")
         WireLogger.appDelegate.info("Application was launched with arguments: \(ProcessInfo.processInfo.arguments)")
-
-        NotificationCenter.default.addObserver(forName: UIApplication.didReceiveMemoryWarningNotification, object: .none, queue: .main) { [weak self] _ in
-
-            guard let self else { return }
-
-//            guard
-//                let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-//                let keyWindow = windowScene.keyWindow
-//            else { return }
-//
-//            if progressWindow == nil {
-//                progressWindow = UIWindow(windowScene: windowScene)
-//                progressWindow?.windowLevel = .init(keyWindow.windowLevel.rawValue + 1)
-//                progressWindow?.frame = keyWindow.frame
-//                progressWindow?.frame.size.height = 35
-//                progressWindow?.rootViewController = UIHostingController(rootView: Rectangle().fill(.red))
-//                progressWindow?.isHidden = false
-//            }
-//
-//            keyWindow.frame.size.height -= 1
-//            keyWindow.frame.origin.y += 1
-//
-//
-//            return ()
-
-            defer { index += 1 }
-
-            if Int.random(in: 1...5) == 1 {
-                print("syncStatusIndicator = nil")
-                return syncStatusIndicator = nil
-            }
-
-            if syncStatusIndicator == nil {
-                print("syncStatusIndicator = .init(windowScene: window!.windowScene!)")
-                syncStatusIndicator = .init(windowScene: window!.windowScene!)
-            }
-            if index % 2 == 0 {
-                print("syncStatusIndicator?.syncStatus = .noConnectivity")
-                syncStatusIndicator?.syncStatus = .noConnectivity
-            } else {
-                print("syncStatusIndicator?.syncStatus = .none")
-                syncStatusIndicator?.syncStatus = .none
-            }
-        }
-
         return true
     }
-
-    var syncStatusIndicator: SyncStatusIndicator?
-    var index = 0
-    var progressWindow: UIWindow?
 
     func applicationWillEnterForeground(_ application: UIApplication) {
         WireLogger.appDelegate.info(

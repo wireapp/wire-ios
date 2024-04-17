@@ -314,7 +314,6 @@
 		551CD27822BA288B00EE9AE5 /* LegalHoldDisclosureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551CD27722BA288B00EE9AE5 /* LegalHoldDisclosureController.swift */; };
 		55A42A701FC872600056752F /* CallQualityController+Budget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A42A6F1FC872600056752F /* CallQualityController+Budget.swift */; };
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
-		591F32912BCFB4D200D2F999 /* SyncStatusIndicator in Frameworks */ = {isa = PBXBuildFile; productRef = 591F32902BCFB4D200D2F999 /* SyncStatusIndicator */; };
 		5922E92E2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */; };
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
 		597A3BBA2B641F280020E337 /* UserStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB92B641F280020E337 /* UserStatus.swift */; };
@@ -2373,7 +2372,6 @@
 		551CD27722BA288B00EE9AE5 /* LegalHoldDisclosureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalHoldDisclosureController.swift; sourceTree = "<group>"; };
 		55A42A6F1FC872600056752F /* CallQualityController+Budget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CallQualityController+Budget.swift"; sourceTree = "<group>"; };
 		55DD5C331FA236F60082170C /* CallQualityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityViewController.swift; sourceTree = "<group>"; };
-		591F328F2BCFB4A200D2F999 /* SyncStatusIndicator */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = SyncStatusIndicator; sourceTree = "<group>"; };
 		5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+initWithUserType.swift"; sourceTree = "<group>"; };
 		597A3BB92B641F280020E337 /* UserStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatus.swift; sourceTree = "<group>"; };
@@ -4066,7 +4064,6 @@
 				EEE25B3B29719C370008B894 /* WireLinkPreview.framework in Frameworks */,
 				0119F3D029969CEA006AE3A8 /* CrashReporter.xcframework in Frameworks */,
 				407831AD2AC4636F005C2978 /* DifferenceKit in Frameworks */,
-				591F32912BCFB4D200D2F999 /* SyncStatusIndicator in Frameworks */,
 				EEE25B4429719C950008B894 /* WireSystem.framework in Frameworks */,
 				EEE25B4D29719D0B0008B894 /* ZipArchive.xcframework in Frameworks */,
 				87E0D6D51CD3978900C54196 /* AVKit.framework in Frameworks */,
@@ -6561,7 +6558,6 @@
 		8FC8516F199245760008B66B /* UserInterface */ = {
 			isa = PBXGroup;
 			children = (
-				591F328F2BCFB4A200D2F999 /* SyncStatusIndicator */,
 				061F34142B1A4F190099CBAB /* E2EIdentity */,
 				EE01D07F25ADA3AD001DB205 /* App Lock */,
 				A9BB638024C1DD910072143A /* CustomAppLock */,
@@ -8651,7 +8647,6 @@
 				407831AC2AC4636F005C2978 /* DifferenceKit */,
 				061F34182B1E2ED50099CBAB /* AppAuth */,
 				061F341A2B1E2ED50099CBAB /* AppAuthCore */,
-				591F32902BCFB4D200D2F999 /* SyncStatusIndicator */,
 			);
 			productName = "ZClient iOS";
 			productReference = 8F42C538199244A700288E4D /* Wire.app */;
@@ -11314,7 +11309,6 @@
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
 				ONLY_ACTIVE_ARCH = YES;
-				SWIFT_STRICT_CONCURRENCY = targeted;
 				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
@@ -11323,7 +11317,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
-				SWIFT_STRICT_CONCURRENCY = targeted;
 				VALIDATE_WORKSPACE = NO;
 			};
 			name = Release;
@@ -11735,10 +11728,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 407831AB2AC4636F005C2978 /* XCRemoteSwiftPackageReference "DifferenceKit" */;
 			productName = DifferenceKit;
-		};
-		591F32902BCFB4D200D2F999 /* SyncStatusIndicator */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SyncStatusIndicator;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -42,7 +42,6 @@ final class ConversationListTopBarViewController: UIViewController {
 
     private weak var userStatusViewController: UserStatusViewController?
     private weak var titleViewLabel: UILabel?
-    private weak var rightTopBarStackView: UIStackView?
 
     /// init a ConversationListTopBarViewController
     ///
@@ -81,7 +80,6 @@ final class ConversationListTopBarViewController: UIViewController {
 
         updateTitleView()
         updateAccountView()
-        updateRightTopBarStackView()
         updateLegalHoldIndictor()
     }
 
@@ -120,13 +118,6 @@ final class ConversationListTopBarViewController: UIViewController {
             topBar?.middleView = titleLabel
             self.titleViewLabel = titleLabel
         }
-    }
-
-    private func updateRightTopBarStackView() {
-        let stackView = rightTopBarStackView ?? .init()
-        topBar?.rightView = stackView
-        rightTopBarStackView = stackView
-
     }
 
     private func createLegalHoldView() -> UIView {
@@ -210,9 +201,6 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     func updateLegalHoldIndictor() {
-        // TODO [WPB-7298]: Check how legal hold should be visible
-        return ()
-
         switch selfUser.legalHoldStatus {
         case .disabled:
             topBar?.rightView = nil
