@@ -22,10 +22,11 @@ import SwiftUI
 /// It presents itself in a separate window, at the top of the screen.
 /// It resizes the key window accordingly.
 @MainActor
-public struct SyncStatusIndicator {
+public final class SyncStatusIndicator {
 
     public var syncStatus: SyncStatus? {
-        didSet { applySyncStatus() }
+        get { syncStatusViewController.syncStatus }
+        set { syncStatusViewController.syncStatus = newValue }
     }
 
     /// The window where the indicator is presented.
@@ -33,21 +34,23 @@ public struct SyncStatusIndicator {
     /// The root view controller of the `syncStatusWindow`.
     private let syncStatusViewController: SyncStatusIndicatorViewController
 
-    private var windowScene: UIWindowScene? { syncStatusWindow.windowScene }
-    private var keyWindow: UIWindow? { windowScene?.keyWindow }
-
     public init(windowScene: UIWindowScene) {
-        syncStatusWindow = .init(windowScene: windowScene)
         syncStatusViewController = .init()
 
         // present above the key window
-        let keyWindowLevel = keyWindow?.windowLevel ?? .normal
-        syncStatusWindow.windowLevel = .init(keyWindowLevel.rawValue + 1)
+        let keyWindowLevel = windowScene.keyWindow?.windowLevel ?? .normal
+        syncStatusWindow = .init(windowScene: windowScene)
+        syncStatusWindow.windowLevel = .alert // .init(keyWindowLevel.rawValue + 1)
         syncStatusWindow.isUserInteractionEnabled = false
         syncStatusWindow.rootViewController = syncStatusViewController
+        syncStatusWindow.isHidden = false
+        syncStatusWindow.frame.origin.y = -syncStatusWindow.frame.height
     }
 
-    private func applySyncStatus() {
-        syncStatusViewController.syncStatusIndicatorView.syncStatus = syncStatus
+    deinit {
+        let syncStatusViewController = syncStatusViewController
+        Task {
+            await MainActor.run { syncStatusViewController.syncStatus = .none }
+        }
     }
 }

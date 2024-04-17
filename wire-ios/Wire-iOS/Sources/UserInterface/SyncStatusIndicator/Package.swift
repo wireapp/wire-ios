@@ -14,9 +14,17 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "SyncStatusIndicator"),
+            name: "SyncStatusIndicator",
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency"),
+                .enableUpcomingFeature("StrictConcurrency"),
+            ]),
         .testTarget(
             name: "SyncStatusIndicatorTests",
-            dependencies: ["SyncStatusIndicator"])
+            dependencies: ["SyncStatusIndicator"],
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency"),
+                .enableUpcomingFeature("StrictConcurrency"),
+            ])
     ]
 )
