@@ -30,7 +30,7 @@ struct SyncStatusIndicator {
     /// The window where the indicator is presented.
     private let syncStatusWindow: UIWindow
     /// The root view controller of the `syncStatusWindow`.
-    private let syncStatusViewController: UIHostingController<SyncStatusIndicatorView>
+    private let syncStatusViewController: UIHostingController<SyncStatusIndicatorViewRepresentable>
 
     private var windowScene: UIWindowScene? { syncStatusWindow.windowScene }
     private var keyWindow: UIWindow? { windowScene?.keyWindow }

@@ -18,20 +18,64 @@
 
 import SwiftUI
 
-struct SyncStatusIndicatorView: View {
+final class SyncStatusIndicatorView: UIView {
 
-    let syncStatus: SyncStatus?
+    var syncStatus: SyncStatus? {
+        didSet { applySyncStatus() }
+    }
 
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-            .background(.green)
+    private let label = UILabel()
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupSubviews()
+        applySyncStatus()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setupSubviews()
+        applySyncStatus()
+    }
+
+    private func setupSubviews() {
+        label.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(label)
+        NSLayoutConstraint.activate([
+            label.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 1),
+            label.topAnchor.constraint(equalToSystemSpacingBelow: topAnchor, multiplier: 1),
+            trailingAnchor.constraint(equalToSystemSpacingAfter: label.trailingAnchor, multiplier: 1),
+            bottomAnchor.constraint(equalToSystemSpacingBelow: label.bottomAnchor, multiplier: 1)
+        ])
+
+        label.text = "TODO"
+        label.textAlignment = .center
+    }
+
+    private func applySyncStatus() {
+        //
+    }
+}
+
+struct SyncStatusIndicatorViewRepresentable: UIViewRepresentable {
+
+    @State private(set) var syncStatus: SyncStatus?
+
+    func makeUIView(context: Context) -> SyncStatusIndicatorView {
+        let view = SyncStatusIndicatorView()
+        view.syncStatus = syncStatus
+        return view
+    }
+
+    func updateUIView(_ view: SyncStatusIndicatorView, context: Context) {
+        view.syncStatus = syncStatus
     }
 }
 
 #Preview("no status") {
-    SyncStatusIndicatorView(syncStatus: .none)
+    SyncStatusIndicatorViewRepresentable(syncStatus: .none)
 }
 
 #Preview("no connectivity") {
-    SyncStatusIndicatorView(syncStatus: .noConnectivity)
+    SyncStatusIndicatorViewRepresentable(syncStatus: .noConnectivity)
 }
