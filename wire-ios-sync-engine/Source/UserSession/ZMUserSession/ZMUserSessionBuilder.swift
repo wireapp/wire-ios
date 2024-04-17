@@ -87,11 +87,6 @@ struct ZMUserSessionBuilder {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
         }
 
-        prepareCoreDataStack(
-            coreDataStack,
-            analytics: analytics
-        )
-
         let userSession = ZMUserSession(
             userId: userId,
             transportSession: transportSession,
@@ -120,17 +115,6 @@ struct ZMUserSessionBuilder {
         )
 
         return userSession
-    }
-
-    private func prepareCoreDataStack(
-        _ coreDataStack: CoreDataStack,
-        analytics: (any AnalyticsType)?
-    ) {
-        coreDataStack.syncContext.performGroupedBlockAndWait {
-            coreDataStack.syncContext.analytics = analytics
-            coreDataStack.syncContext.zm_userInterface = coreDataStack.viewContext
-        }
-        coreDataStack.viewContext.zm_sync = coreDataStack.syncContext
     }
 
     // MARK: - Setup Dependencies
