@@ -42,6 +42,8 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
     func testThatItCallsPerformActionsAfterQuickSync() {
         // Given
         mockRecurringActionService.performActionsIfNeeded_MockMethod = {}
+
+        // TODO: fix test by correctly passing the service to the user session
         sut.recurringActionService = mockRecurringActionService
 
         // When
