@@ -31,7 +31,7 @@ protocol UserSessionSelfUserClientDelegate: AnyObject {
 
 extension SessionManager: UserSessionSelfUserClientDelegate {
     public func clientRegistrationDidSucceed(accountId: UUID) {
-        log.debug("Client registration was successful")
+        WireLogger.sessionManager.debug("Client registration was successful")
 
         if self.configuration.encryptionAtRestEnabledByDefault {
             do {
