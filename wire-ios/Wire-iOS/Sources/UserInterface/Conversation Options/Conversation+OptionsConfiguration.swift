@@ -86,13 +86,13 @@ extension ZMConversation {
         }
 
         func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-            conversation.setAllowGuests(allowGuests, in: userSession) {
+            conversation.setAllowGuests(allowGuests) {
                 completion($0)
             }
         }
 
         func setAllowServices(_ allowServices: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-            conversation.setAllowServices(allowServices, in: userSession) {
+            conversation.setAllowServices(allowServices) {
                 completion($0)
             }
         }
@@ -109,7 +109,7 @@ extension ZMConversation {
         }
 
         func createConversationLink(password: String?, completion: @escaping (Result<String, Error>) -> Void) {
-            conversation.updateAccessAndCreateWirelessLink(password: password, in: userSession, completion)
+            conversation.updateAccessAndCreateWirelessLink(password: password, completion)
         }
 
         func fetchConversationLink(completion: @escaping (Result<String?, Error>) -> Void) {

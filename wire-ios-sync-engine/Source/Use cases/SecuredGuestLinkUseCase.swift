@@ -28,17 +28,27 @@ public protocol SecuredGuestLinkUseCaseProtocol {
 public struct SecuredGuestLinkUseCase: SecuredGuestLinkUseCaseProtocol {
 
     private let conversation: ZMConversation
-    private let userSession: ZMUserSession
 
     public init(
-        conversation: ZMConversation,
-        userSession: ZMUserSession
+        conversation: ZMConversation
     ) {
         self.conversation = conversation
-        self.userSession = userSession
     }
 
     public func invoke(password: String, completion: @escaping (Result<String, Error>) -> Void) {
-        conversation.updateAccessAndCreateWirelessLink(password: password, in: userSession, completion)
+
+        if conversation.isLegacyAccessMode {
+            conversation.setAllowGuests(true) { result in
+                switch result {
+                case .failure(let error):
+                    completion(.failure(error))
+                case .success:
+                    conversation.createWirelessLink(password: password, completion)
+                }
+            }
+        } else {
+            conversation.createWirelessLink(password: password, completion)
+        }
     }
+
 }

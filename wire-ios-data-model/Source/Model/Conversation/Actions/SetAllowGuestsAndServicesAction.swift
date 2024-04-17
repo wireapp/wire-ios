@@ -17,6 +17,7 @@
 //
 
 public final class SetAllowGuestsAndServicesAction: EntityAction {
+
     public typealias Result = Void
     public typealias Failure = Error
 

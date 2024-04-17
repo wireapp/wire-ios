@@ -92,23 +92,23 @@ extension ZMConversation {
     }
 
     /// Updates the conversation access mode if necessary and creates the link to access the conversation.
-    public func updateAccessAndCreateWirelessLink(password: String?, in userSession: ZMUserSession, _ completion: @escaping (Result<String, Error>) -> Void) {
+    public func updateAccessAndCreateWirelessLink(password: String?, _ completion: @escaping (Result<String, Error>) -> Void) {
         // Legacy access mode: access and access_mode have to be updated in order to create the link.
         if isLegacyAccessMode {
-            setAllowGuests(true, in: userSession) { result in
+            setAllowGuests(true) { result in
                 switch result {
                 case .failure(let error):
                     completion(.failure(error))
                 case .success:
-                    self.createWirelessLink(password: password, in: userSession, completion)
+                    self.createWirelessLink(password: password, completion)
                 }
             }
         } else {
-            createWirelessLink(password: password, in: userSession, completion)
+            createWirelessLink(password: password, completion)
         }
     }
 
-    func createWirelessLink(password: String?, in userSession: ZMUserSession, _ completion: @escaping (Result<String, Error>) -> Void) {
+    func createWirelessLink(password: String?, _ completion: @escaping (Result<String, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -190,7 +190,7 @@ extension ZMConversation {
     }
 
     /// Changes the conversation access mode to allow guests.
-    public func setAllowGuests(_ allowGuests: Bool, in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
+    public func setAllowGuests(_ allowGuests: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -199,11 +199,16 @@ extension ZMConversation {
             return completion(.failure(WirelessLinkError.unknown))
         }
 
-        setAllowGuestsAndServices(allowGuests: allowGuests, allowServices: self.allowServices, in: userSession, apiVersion: apiVersion, completion)
+        setAllowGuestsAndServices(
+            allowGuests: allowGuests,
+            allowServices: allowServices,
+            apiVersion: apiVersion,
+            completion
+        )
     }
 
     /// Changes the conversation access mode to allow services.
-    public func setAllowServices(_ allowServices: Bool, in userSession: ZMUserSession, _ completion: @escaping (Result<Void, Error>) -> Void) {
+    public func setAllowServices(_ allowServices: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(SetAllowServicesError.invalidOperation))
         }
@@ -212,12 +217,17 @@ extension ZMConversation {
             return completion(.failure(SetAllowServicesError.unknown))
         }
 
-        setAllowGuestsAndServices(allowGuests: self.allowGuests, allowServices: allowServices, in: userSession, apiVersion: apiVersion, completion)
+        setAllowGuestsAndServices(
+            allowGuests: self.allowGuests,
+            allowServices: allowServices,
+            apiVersion: apiVersion,
+            completion
+        )
 
     }
 
     /// Changes the conversation access mode to allow services.
-    private func setAllowGuestsAndServices(allowGuests: Bool, allowServices: Bool, in userSession: ZMUserSession, apiVersion: APIVersion, _ completion: @escaping (Result<Void, Error>) -> Void) {
+    private func setAllowGuestsAndServices(allowGuests: Bool, allowServices: Bool, apiVersion: APIVersion, _ completion: @escaping (Result<Void, Error>) -> Void) {
 
         var action = SetAllowGuestsAndServicesAction(
             allowGuests: allowGuests,
