@@ -105,7 +105,9 @@ final class ConversationListViewController: UIViewController {
         topBarViewController = ConversationListTopBarViewController(
             account: viewModel.account,
             selfUser: viewModel.selfUser,
-            userSession: viewModel.userSession
+            userSession: viewModel.userSession,
+            filterConversationsActionHandler: { _ in },
+            newConversationActionHandler: { _ in }
         )
         topBarViewController.selfUserStatus = viewModel.selfUserStatus
 

@@ -34,6 +34,8 @@ final class ConversationListTopBarViewController: UIViewController {
 
     private let selfUser: SelfUserType
     private var userSession: UserSession
+    private let filterConversationsActionHandler: UIActionHandler
+    private let newConversationActionHandler: UIActionHandler
     private var observerToken: NSObjectProtocol?
 
     var topBar: TopBar? {
@@ -44,18 +46,17 @@ final class ConversationListTopBarViewController: UIViewController {
     private weak var userStatusViewController: UserStatusViewController?
     private weak var titleViewLabel: UILabel?
 
-    /// init a ConversationListTopBarViewController
-    ///
-    /// - Parameters:
-    ///   - account: the Account of the user
-    ///   - selfUser: the self user object. Allow to inject a mock self user for testing
     init(
         account: Account,
         selfUser: SelfUserType,
-        userSession: UserSession
+        userSession: UserSession,
+        filterConversationsActionHandler: @escaping UIActionHandler,
+        newConversationActionHandler: @escaping UIActionHandler
     ) {
         self.account = account
         self.selfUser = selfUser
+        self.filterConversationsActionHandler = filterConversationsActionHandler
+        self.newConversationActionHandler = newConversationActionHandler
         self.userSession = userSession
 
         super.init(nibName: nil, bundle: nil)
@@ -80,9 +81,10 @@ final class ConversationListTopBarViewController: UIViewController {
         view.addBorder(for: .bottom)
 
         setupNavigationBarItemStackViews()
-        updateTitleView()
         updateAccountView()
         updateLegalHoldIndictor()
+        updateTitleView()
+        setupRightNavigationBarButtons()
     }
 
     // MARK: - Navigation Bar Items
@@ -93,7 +95,20 @@ final class ConversationListTopBarViewController: UIViewController {
         topBar?.leftView = leftNavigationBarItemsStackView
 
         let rightNavigationBarItemsStackView = UIStackView()
+        rightNavigationBarItemsStackView.spacing = 24
         topBar?.rightView = rightNavigationBarItemsStackView
+    }
+
+    private func setupRightNavigationBarButtons() {
+        guard let stackView = topBar?.rightView as? UIStackView else { return }
+
+        let filerImage = UIImage(resource: .ConversationList.Header.filterConversations)
+        let filterConversationsAction = UIAction(image: filerImage, handler: filterConversationsActionHandler)
+        stackView.addArrangedSubview(UIButton(primaryAction: filterConversationsAction))
+
+        let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
+        let newConversationAction = UIAction(image: newConversationImage, handler: newConversationActionHandler)
+        stackView.addArrangedSubview(UIButton(primaryAction: newConversationAction))
     }
 
     // MARK: - Title View
