@@ -19,6 +19,7 @@
 import Foundation
 import WireCommonComponents
 import WireDataModel
+import WireSyncEngine
 
 /**
  * The actions that can be performed from the profile details or devices.
@@ -32,6 +33,7 @@ enum ProfileAction: Equatable {
     case deleteContents
     case block(isBlocked: Bool)
     case openOneToOne
+    case startOneToOne
     case removeFromGroup
     case connect
     case cancelConnectionRequest
@@ -53,6 +55,7 @@ enum ProfileAction: Equatable {
             ? L10n.Localizable.Profile.unblockButtonTitle
             : L10n.Localizable.Profile.blockButtonTitle
         case .openOneToOne: return L10n.Localizable.Profile.openConversationButtonTitle
+        case .startOneToOne: return L10n.Localizable.Profile.startConversationButtonTitle
         case .removeFromGroup: return L10n.Localizable.Profile.removeDialogButtonRemove
         case .connect: return L10n.Localizable.Profile.ConnectionRequestDialog.buttonConnect
         case .cancelConnectionRequest: return L10n.Localizable.Meta.Menu.cancelConnectionRequest
@@ -71,6 +74,7 @@ enum ProfileAction: Equatable {
         case .deleteContents: return nil
         case .block: return nil
         case .openOneToOne: return .conversation
+        case .startOneToOne: return .conversation
         case .removeFromGroup: return .minus
         case .connect: return .plus
         case .cancelConnectionRequest: return .undo
@@ -108,6 +112,9 @@ final class ProfileActionsFactory {
     /// The context of the Profile VC
     let context: ProfileViewControllerContext
 
+    /// The user session, providing use cases
+    let userSession: UserSession
+
     // MARK: - Initialization
 
     /**
@@ -118,11 +125,18 @@ final class ProfileActionsFactory {
      * perform the actions in.
      */
 
-    init(user: UserType, viewer: UserType, conversation: ZMConversation?, context: ProfileViewControllerContext) {
+    init(
+        user: UserType,
+        viewer: UserType,
+        conversation: ZMConversation?,
+        context: ProfileViewControllerContext,
+        userSession: UserSession
+    ) {
         self.user = user
         self.viewer = viewer
         self.conversation = conversation
         self.context = context
+        self.userSession = userSession
     }
 
     // MARK: - Calculating the Actions
@@ -130,7 +144,24 @@ final class ProfileActionsFactory {
     /// Calculates the list of actions to display to the user.
     ///
     /// - Returns: array of availble actions
-    func makeActionsList() -> [ProfileAction] {
+    func makeActionsList(completion: @escaping ([ProfileAction]) -> Void) {
+        guard let userID = user.qualifiedID else {
+            return completion([])
+        }
+
+        Task {
+            let useCase = userSession.oneOnOneConversationCreationStatus
+            let oneOnOneStatus = try await useCase.invoke(userID: userID)
+
+            await MainActor.run {
+                let actionsList = makeActionsList(oneOnOneStatus: oneOnOneStatus)
+                completion(actionsList)
+            }
+        }
+    }
+
+    private func makeActionsList(oneOnOneStatus: OneOnOneConversationCreationStatus) -> [ProfileAction] {
+
         // Do nothing if the user was deleted
         if user.isAccountDeleted {
             return []
@@ -153,7 +184,7 @@ final class ProfileActionsFactory {
             conversation = selfConversation
         } else if context == .profileViewer {
             conversation = nil
-        } else if !user.isConnected {
+        } else if !user.isConnected && !user.isTeamMember {
             if user.isPendingApprovalByOtherUser {
                 return [.cancelConnectionRequest]
             } else if !user.isPendingApprovalBySelfUser {
@@ -190,20 +221,23 @@ final class ProfileActionsFactory {
             }
 
         case (.profileViewer, .none),
-             (.search, .none),
-             (_, .group?):
+            (.search, .none),
+            (_, .group?):
             // Do nothing if the viewer is a wireless user because they can't have 1:1's
             if viewer.isWirelessUser {
                 break
             }
 
-            let isOnSameTeam = viewer.isOnSameTeam(otherUser: user)
-
             // Show connection request actions for unconnected users from different teams.
             if user.isPendingApprovalByOtherUser {
                 actions.append(.cancelConnectionRequest)
-            } else if (user.isConnected && !user.hasEmptyName) || isOnSameTeam {
-                actions.append(.openOneToOne)
+            } else if (user.isConnected && !user.hasEmptyName) || user.isTeamMember {
+                switch oneOnOneStatus {
+                case .doesNotExist(protocol: .mls), .exists(protocol: .mls, established: false):
+                    actions.append(.startOneToOne)
+                default:
+                    actions.append(.openOneToOne)
+                }
             } else if user.canBeConnected && !user.isPendingApprovalBySelfUser {
                 actions.append(.connect)
             }
@@ -215,7 +249,7 @@ final class ProfileActionsFactory {
 
             // If the user is not from the same team as the other user, allow blocking
 
-            if user.isConnected && !isOnSameTeam && !user.isWirelessUser && !user.hasEmptyName {
+            if user.isConnected && !user.isTeamMember && !user.isWirelessUser && !user.hasEmptyName {
                 actions.append(.block(isBlocked: false))
             }
 
