@@ -55,12 +55,9 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
     override func session(
         for account: Account,
         coreDataStack: CoreDataStack,
-        configuration: ZMUserSession.Configuration = .init(),
+        configuration: ZMUserSession.Configuration,
         sharedUserDefaults: UserDefaults
     ) -> ZMUserSession? {
-        let mockContextStorage = MockLAContextStorable()
-        mockContextStorage.clear_MockMethod = { }
-
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             analytics: analytics,

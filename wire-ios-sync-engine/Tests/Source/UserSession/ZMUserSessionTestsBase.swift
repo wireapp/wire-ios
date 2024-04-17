@@ -128,8 +128,6 @@ class ZMUserSessionTestsBase: MessagingTest {
     }
 
     func createSut(earService: EARServiceInterface) -> ZMUserSession {
-        let mockStrategyDirectory = MockStrategyDirectory()
-
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
 
@@ -165,7 +163,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         let userSession = builder.build()
         userSession.setup(
             eventProcessor: MockUpdateEventProcessor(),
-            strategyDirectory: mockStrategyDirectory,
+            strategyDirectory: MockStrategyDirectory(),
             syncStrategy: nil,
             operationLoop: nil,
             configuration: configuration
