@@ -530,6 +530,7 @@
 		E62F31C52B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62F31C42B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift */; };
 		E62F31C72B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62F31C62B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift */; };
 		E6425FE32BD0021B003EC8CF /* SessionManager+UserSessionSelfUserClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6425FE22BD0021B003EC8CF /* SessionManager+UserSessionSelfUserClientDelegate.swift */; };
+		E6425FE52BD005C0003EC8CF /* SessionManager+UserSessionLogoutDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6425FE42BD005C0003EC8CF /* SessionManager+UserSessionLogoutDelegate.swift */; };
 		E666EDDF2B74CEE600C03E2B /* SessionManagerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDDD2B74CEE000C03E2B /* SessionManagerBuilder.swift */; };
 		E666EDE22B74E78C00C03E2B /* SessionManagerTests+AccountDeletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDE02B74E75A00C03E2B /* SessionManagerTests+AccountDeletion.swift */; };
 		E666EDE42B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDE32B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift */; };
@@ -1300,6 +1301,7 @@
 		E62F31C42B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluateOneOnOneConversationsStrategy.swift; sourceTree = "<group>"; };
 		E62F31C62B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluateOneOnOneConversationsStrategyTests.swift; sourceTree = "<group>"; };
 		E6425FE22BD0021B003EC8CF /* SessionManager+UserSessionSelfUserClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+UserSessionSelfUserClientDelegate.swift"; sourceTree = "<group>"; };
+		E6425FE42BD005C0003EC8CF /* SessionManager+UserSessionLogoutDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+UserSessionLogoutDelegate.swift"; sourceTree = "<group>"; };
 		E666EDDD2B74CEE000C03E2B /* SessionManagerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerBuilder.swift; sourceTree = "<group>"; };
 		E666EDE02B74E75A00C03E2B /* SessionManagerTests+AccountDeletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+AccountDeletion.swift"; sourceTree = "<group>"; };
 		E666EDE32B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+AuthenticationFailure.swift"; sourceTree = "<group>"; };
@@ -2825,6 +2827,7 @@
 				54131BC525C7F71400CE2CA2 /* LoginDelegate.swift */,
 				BF2AD9FF1F41A3DF000980E8 /* SessionFactories.swift */,
 				F19F1D371EFBF61800275E27 /* SessionManager.swift */,
+				E6425FE42BD005C0003EC8CF /* SessionManager+UserSessionLogoutDelegate.swift */,
 				E6425FE22BD0021B003EC8CF /* SessionManager+UserSessionSelfUserClientDelegate.swift */,
 				EE9CDE8F27DA04A300C4DAC8 /* SessionManager+APIVersionResolver.swift */,
 				EEE186B5259CCA14008707CA /* SessionManager+AppLock.swift */,
@@ -3635,6 +3638,7 @@
 				F1C1F3EE1FCF0C85007273E3 /* ZMUserSessionErrorCode+Localized.swift in Sources */,
 				166264742166093800300F45 /* CallEventStatus.swift in Sources */,
 				63C5321F27FDB283009DFFF4 /* SyncStatus.swift in Sources */,
+				E6425FE52BD005C0003EC8CF /* SessionManager+UserSessionLogoutDelegate.swift in Sources */,
 				549815CD1A432BC700A7CE2E /* ZMBlacklistDownloader.m in Sources */,
 				549815CE1A432BC700A7CE2E /* ZMBlacklistVerificator.m in Sources */,
 				16D9E8BA22BCD39200FA463F /* LegalHoldRequestStrategy.swift in Sources */,

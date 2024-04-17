@@ -725,7 +725,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.deleteAccountData(for: account)
     }
 
-    fileprivate func logout(account: Account, error: Error? = nil) {
+    func logout(account: Account, error: Error? = nil) {
         WireLogger.session.debug("Logging out account \(account.userIdentifier)...")
         WireLogger.sessionManager.debug("Logging out account \(account.userIdentifier)...")
 
@@ -1305,51 +1305,6 @@ extension SessionManager: AccountDeletedObserver {
 
         if let account = accountManager.account(with: accountId) {
             delete(account: account, reason: .sessionExpired)
-        }
-    }
-}
-
-// MARK: - UserSessionLogoutDelegate
-
-extension SessionManager: UserSessionLogoutDelegate {
-    /// Invoked when the user successfully logged out
-    public func userDidLogout(accountId: UUID) {
-        WireLogger.sessionManager.debug("\(accountId): User logged out")
-
-        if let account = accountManager.account(with: accountId) {
-            delete(account: account, reason: .userInitiated)
-        }
-    }
-
-    public func authenticationInvalidated(_ error: NSError, accountId: UUID) {
-        guard
-            let userSessionErrorCode = ZMUserSessionErrorCode(rawValue: UInt(error.code)),
-            let account = accountManager.account(with: accountId)
-        else {
-            return
-        }
-
-        WireLogger.authentication.warn("authentication was invalidated for account \(accountId): \(userSessionErrorCode)")
-
-        switch userSessionErrorCode {
-        case .clientDeletedRemotely:
-            delete(account: account, reason: .sessionExpired)
-
-        case .accessTokenExpired:
-            if configuration.wipeOnCookieInvalid {
-                delete(account: account, reason: .sessionExpired)
-            } else {
-                logout(account: account, error: error)
-            }
-
-        default:
-            if unauthenticatedSession == nil {
-                createUnauthenticatedSession(accountId: accountId)
-            }
-
-            let account = accountManager.account(with: accountId)
-            guard account == accountManager.selectedAccount else { return }
-            delegate?.sessionManagerDidFailToLogin(error: error)
         }
     }
 }

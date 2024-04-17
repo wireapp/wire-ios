@@ -32,15 +32,6 @@ public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
 
 }
 
-@objc(UserSessionLogoutDelegate)
-public protocol UserSessionLogoutDelegate: NSObjectProtocol {
-    /// Invoked when the user successfully logged out
-    func userDidLogout(accountId: UUID)
-
-    /// Invoked when the authentication has proven invalid
-    func authenticationInvalidated(_ error: NSError, accountId: UUID)
-}
-
 typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
 & UserSessionSelfUserClientDelegate
 & UserSessionLogoutDelegate
@@ -265,7 +256,8 @@ public final class ZMUserSession: NSObject {
 
     weak var delegate: UserSessionDelegate?
 
-    // TODO remove this property and move functionality to separate protocols under UserSessionDelegate
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: remove this property and move functionality to separate protocols under UserSessionDelegate
     public weak var sessionManager: SessionManagerType?
 
     public weak var thirdPartyServicesDelegate: ThirdPartyServicesDelegate?
