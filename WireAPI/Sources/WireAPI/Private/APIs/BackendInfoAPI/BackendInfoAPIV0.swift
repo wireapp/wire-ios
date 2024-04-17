@@ -27,7 +27,7 @@ class BackendInfoAPIV0: BackendInfoAPI {
     }
 
     let path = "/api-version"
-    let decoder = ResponsePayloadDecoder()
+    let decoder = ResponsePayloadDecoder(decoder: .defaultDecoder)
 
     func getBackendInfo() async throws -> BackendInfo {
         let request = HTTPRequest(

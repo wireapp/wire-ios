@@ -33,7 +33,7 @@ struct ResponsePayloadDecoder {
 
     let decoder: JSONDecoder
 
-    init(decoder: JSONDecoder = .defaultDecoder) {
+    init(decoder: JSONDecoder) {
         self.decoder = decoder
     }
 

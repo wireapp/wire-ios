@@ -33,7 +33,7 @@ struct RequestBodyEncoder {
 
     /// Create a new encoder with a json encoder.
 
-    init(encoder: JSONEncoder = .defaultEncoder) {
+    init(encoder: JSONEncoder) {
         self.encoder = encoder
     }
 
