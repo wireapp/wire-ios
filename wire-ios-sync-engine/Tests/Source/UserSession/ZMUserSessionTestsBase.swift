@@ -17,10 +17,10 @@
 //
 
 import WireDataModelSupport
-import WireSyncEngineSupport
 import WireRequestStrategySupport
 import Combine
 @testable import WireSyncEngine
+@testable import WireSyncEngineSupport
 
 class ZMUserSessionTestsBase: MessagingTest {
 
@@ -40,6 +40,7 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mockResolveOneOnOneConversationUseCase: MockResolveOneOnOneConversationsUseCaseProtocol!
     var mockGetFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
     var mockProteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating!
+    var mockRecurringActionService: MockRecurringActionServiceInterface!
 
     var sut: ZMUserSession!
 
@@ -84,6 +85,8 @@ class ZMUserSessionTestsBase: MessagingTest {
         }
 
         mockProteusToMLSMigrationCoordinator = MockProteusToMLSMigrationCoordinating()
+        mockRecurringActionService = MockRecurringActionServiceInterface()
+        mockRecurringActionService.registerAction_MockMethod = { _ in }
 
         sut = createSut(earService: mockEARService)
         sut.sessionManager = mockSessionManager
@@ -108,6 +111,8 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.flowManagerMock = nil
         self.mockUseCaseFactory = nil
         self.mockResolveOneOnOneConversationUseCase = nil
+        self.mockRecurringActionService = nil
+        self.mockProteusToMLSMigrationCoordinator = nil
         let sut = self.sut
         self.sut = nil
         mockGetFeatureConfigsActionHandler = nil
@@ -143,6 +148,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             mlsService: mockMLSService,
             observeMLSGroupVerificationStatus: mockObserveMLSGroupVerificationStatusUseCase,
             proteusToMLSMigrationCoordinator: mockProteusToMLSMigrationCoordinator,
+            recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
             useCaseFactory: mockUseCaseFactory,

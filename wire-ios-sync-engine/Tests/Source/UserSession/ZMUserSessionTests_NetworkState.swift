@@ -55,6 +55,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             mlsService: mockMLSService,
             observeMLSGroupVerificationStatus: nil,
             proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
+            recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
             useCaseFactory: mockUseCaseFactory,
