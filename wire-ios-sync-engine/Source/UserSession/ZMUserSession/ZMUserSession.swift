@@ -1032,7 +1032,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     func checkE2EICertificateExpiryStatus() {
         guard e2eiFeature.isEnabled else { return }
 
-        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
+        NotificationCenter.default.post(name: E2EI.checkForE2EICertificateExpiryStatus, object: nil)
     }
 }
 
@@ -1064,9 +1064,4 @@ extension ZMUserSession: ContextProvider {
         return coreDataStack.eventContext
     }
 
-}
-
-public extension Notification.Name {
-    // This notification is used to check the E2EIdentity Certificate expiry status
-    static let checkForE2EICertificateExpiryStatus = NSNotification.Name("CheckForE2EICertificateExpiryStatus")
 }
