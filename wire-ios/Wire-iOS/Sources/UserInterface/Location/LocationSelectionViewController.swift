@@ -122,6 +122,9 @@ final class LocationSelectionViewController: UIViewController {
         locationButton.addAction(action, for: .touchUpInside)
 
         toolBar.configure(title: title ?? "", subtitle: nil, topAnchor: safeTopAnchor)
+        pointAnnotation.coordinate = mapManager.mapView.centerCoordinate
+
+        mapManager.mapView.addSubview(annotationView)
 
     }
     private func createConstraints() {

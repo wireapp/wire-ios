@@ -37,7 +37,6 @@ class MapManager: NSObject {
     private func configureMapView() {
         mapView.isRotateEnabled = false
         mapView.isPitchEnabled = false
-        // Configure additional map settings here
     }
 
     func zoomToUserLocation(animated: Bool) {
