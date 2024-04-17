@@ -704,7 +704,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    fileprivate func delete(account: Account, reason: ZMAccountDeletedReason) {
+    func delete(account: Account, reason: ZMAccountDeletedReason) {
         log.debug("Deleting account \(account.userIdentifier)...")
         if let secondAccount = accountManager.accounts.first(where: { $0.userIdentifier != account.userIdentifier }) {
             // Deleted an account but we can switch to another account
@@ -983,7 +983,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     @discardableResult
-    fileprivate func createUnauthenticatedSession(accountId: UUID? = nil) -> UnauthenticatedSession {
+    func createUnauthenticatedSession(accountId: UUID? = nil) -> UnauthenticatedSession {
         log.debug("Creating unauthenticated session")
         let unauthenticatedSession = unauthenticatedSessionFactory.session(delegate: self,
                                                                            authenticationStatusDelegate: self)
@@ -1297,42 +1297,7 @@ extension SessionManager: UnauthenticatedSessionDelegate {
     }
 }
 
-// MARK: - UserSessionSelfUserClientDelegate
-
-extension SessionManager: UserSessionSelfUserClientDelegate {
-    public func clientRegistrationDidSucceed(accountId: UUID) {
-        log.debug("Client registration was successful")
-
-        if self.configuration.encryptionAtRestEnabledByDefault {
-            do {
-                try activeUserSession?.setEncryptionAtRest(enabled: true, skipMigration: true)
-            } catch {
-                if let account = accountManager.account(with: accountId) {
-                    delete(account: account, reason: .biometricPasscodeNotAvailable)
-                }
-            }
-        }
-
-        loginDelegate?.clientRegistrationDidSucceed(accountId: accountId)
-    }
-
-    public func clientRegistrationDidFail(_ error: NSError, accountId: UUID) {
-        if unauthenticatedSession == nil || unauthenticatedSession?.accountId != accountId {
-            createUnauthenticatedSession(accountId: accountId)
-        }
-        loginDelegate?.clientRegistrationDidFail(error, accountId: accountId)
-
-        let account = accountManager.account(with: accountId)
-        guard account == accountManager.selectedAccount else { return }
-        delegate?.sessionManagerDidFailToLogin(error: error)
-    }
-
-    public func clientCompletedInitialSync(accountId: UUID) {
-        let account = accountManager.account(with: accountId)
-        guard account == accountManager.selectedAccount else { return }
-        delegate?.sessionManagerDidCompleteInitialSync(for: activeUserSession)
-    }
-}
+// MARK: AccountDeletedObserver
 
 extension SessionManager: AccountDeletedObserver {
     public func accountDeleted(accountId: UUID) {

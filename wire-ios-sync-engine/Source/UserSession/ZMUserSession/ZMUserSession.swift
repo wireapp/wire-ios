@@ -32,18 +32,6 @@ public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
 
 }
 
-@objc(UserSessionSelfUserClientDelegate)
-public protocol UserSessionSelfUserClientDelegate: NSObjectProtocol {
-    /// Invoked when a client is successfully registered
-    func clientRegistrationDidSucceed(accountId: UUID)
-
-    /// Invoked when there was an error registering the client
-    func clientRegistrationDidFail(_ error: NSError, accountId: UUID)
-
-    /// Invoked when the client has completed the initial sync
-    func clientCompletedInitialSync(accountId: UUID)
-}
-
 @objc(UserSessionLogoutDelegate)
 public protocol UserSessionLogoutDelegate: NSObjectProtocol {
     /// Invoked when the user successfully logged out
