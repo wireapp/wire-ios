@@ -68,7 +68,7 @@ public final class ZMUserSession: NSObject {
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
 
-    var recurringActionService: RecurringActionServiceInterface
+    var recurringActionService: any RecurringActionServiceInterface
 
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     private(set) var coreCryptoProvider: CoreCryptoProviderProtocol
@@ -391,7 +391,8 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory: ApplicationStatusDirectory,
         updateMLSGroupVerificationStatusUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol,
         mlsConversationVerificationStatusUpdater: any MLSConversationVerificationStatusUpdating,
-        contextStorage: LAContextStorable
+        contextStorage: LAContextStorable,
+        recurringActionService: any RecurringActionServiceInterface
     ) {
         self.application = application
         self.appVersion = appVersion
@@ -423,7 +424,7 @@ public final class ZMUserSession: NSObject {
         self.mlsConversationVerificationStatusUpdater = mlsConversationVerificationStatusUpdater
         self.observeMLSGroupVerificationStatus = observeMLSGroupVerificationStatusUseCase
         self.contextStorage = contextStorage
-        self.recurringActionService = RecurringActionService(storage: sharedUserDefaults, dateProvider: .system)
+        self.recurringActionService = recurringActionService
     }
 
     func setup(

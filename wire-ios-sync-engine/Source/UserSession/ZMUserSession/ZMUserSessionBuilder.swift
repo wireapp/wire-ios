@@ -46,6 +46,7 @@ struct ZMUserSessionBuilder {
     private var mlsService: (any MLSServiceInterface)?
     private var observeMLSGroupVerificationStatusUseCase: (any ObserveMLSGroupVerificationStatusUseCaseProtocol)?
     private var proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?
+    private var recurringActionService: (any RecurringActionServiceInterface)?
     private var sharedUserDefaults: UserDefaults?
     private var transportSession: (any TransportSessionType)?
     private var updateMLSGroupVerificationStatusUseCase: (any UpdateMLSGroupVerificationStatusUseCaseProtocol)?
@@ -78,6 +79,7 @@ struct ZMUserSessionBuilder {
             let mlsService,
             let observeMLSGroupVerificationStatusUseCase,
             let proteusToMLSMigrationCoordinator,
+            let recurringActionService,
             let sharedUserDefaults,
             let transportSession,
             let updateMLSGroupVerificationStatusUseCase,
@@ -111,7 +113,8 @@ struct ZMUserSessionBuilder {
             applicationStatusDirectory: applicationStatusDirectory,
             updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatusUseCase,
             mlsConversationVerificationStatusUpdater: mlsConversationVerificationStatusUpdater,
-            contextStorage: contextStorage
+            contextStorage: contextStorage,
+            recurringActionService: recurringActionService
         )
 
         return userSession
@@ -133,6 +136,7 @@ struct ZMUserSessionBuilder {
         mlsService: (any MLSServiceInterface)?,
         observeMLSGroupVerificationStatus: (any ObserveMLSGroupVerificationStatusUseCaseProtocol)?,
         proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?,
+        recurringActionService: (any RecurringActionServiceInterface)?,
         sharedUserDefaults: UserDefaults,
         transportSession: any TransportSessionType,
         useCaseFactory: (any UseCaseFactoryProtocol)?,
@@ -215,6 +219,7 @@ struct ZMUserSessionBuilder {
             context: coreDataStack.syncContext,
             userID: userId
         )
+        let recurringActionService = recurringActionService ?? RecurringActionService(storage: sharedUserDefaults, dateProvider: .system)
         let useCaseFactory = useCaseFactory ?? UseCaseFactory(
             context: coreDataStack.syncContext,
             supportedProtocolService: SupportedProtocolsService(context: coreDataStack.syncContext),
@@ -242,6 +247,7 @@ struct ZMUserSessionBuilder {
         self.mlsService = mlsService
         self.observeMLSGroupVerificationStatusUseCase = observeMLSGroupVerificationStatusUseCase
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
+        self.recurringActionService = recurringActionService
         self.sharedUserDefaults = sharedUserDefaults
         self.transportSession = transportSession
         self.updateMLSGroupVerificationStatusUseCase = updateMLSGroupVerificationStatus
