@@ -49,6 +49,7 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mockUseCaseFactory: MockUseCaseFactoryProtocol!
     var mockResolveOneOnOneConversationUseCase: MockResolveOneOnOneConversationsUseCaseProtocol!
     var mockGetFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
+    var mockProteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating!
 
     var sut: ZMUserSession!
 
@@ -92,6 +93,8 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockUseCaseFactory.createResolveOneOnOneUseCase_MockMethod = {
             return self.mockResolveOneOnOneConversationUseCase
         }
+
+        mockProteusToMLSMigrationCoordinator = MockProteusToMLSMigrationCoordinating()
 
         sut = createSut(earService: mockEARService)
         sut.thirdPartyServicesDelegate = self.thirdPartyServices
@@ -153,7 +156,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             mediaManager: mediaManager,
             mlsService: mockMLSService,
             observeMLSGroupVerificationStatus: mockObserveMLSGroupVerificationStatusUseCase,
-            proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
+            proteusToMLSMigrationCoordinator: mockProteusToMLSMigrationCoordinator,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
             useCaseFactory: mockUseCaseFactory,
