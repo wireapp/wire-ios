@@ -16,13 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 public final class SetAllowGuestsAndServicesAction: EntityAction {
-
     public typealias Result = Void
     public typealias Failure = Error
 
+    public let allowGuests: Bool
+    public let allowServices: Bool
+    public let conversationID: NSManagedObjectID
+
     public var resultHandler: ResultHandler?
 
+    public init(
+        allowGuests: Bool,
+        allowServices: Bool,
+        conversationID: NSManagedObjectID,
+        resultHandler: ResultHandler? = nil
+    ) {
+        self.allowGuests = allowGuests
+        self.allowServices = allowServices
+        self.conversationID = conversationID
+        self.resultHandler = resultHandler
+    }
 }
