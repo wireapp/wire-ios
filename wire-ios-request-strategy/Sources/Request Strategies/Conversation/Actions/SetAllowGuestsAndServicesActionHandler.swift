@@ -18,7 +18,14 @@
 
 import WireDataModel
 
+public enum SetAllowGuestsAndServicesError: Error {
+    case unknown
+    case invalidOperation
+}
+
 class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuestsAndServicesAction> {
+
+    private lazy var eventProcessor = ConversationEventProcessor(context: context)
 
     // MARK: - Request Generation
 
@@ -67,6 +74,35 @@ class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuestsAndSer
             payload["access_role_v2"] = accessRoles.map(\.rawValue)
         }
 
-        return ZMTransportRequest(path: path, method: .put, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            path: path,
+            method: .put,
+            payload: payload as ZMTransportData,
+            apiVersion: apiVersion.rawValue
+        )
     }
+
+    // MARK: - Request Handling
+
+    override func handleResponse(_ response: ZMTransportResponse, action: SetAllowGuestsAndServicesAction) {
+
+        var action = action
+
+        guard let payload = response.payload,
+              let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) else {
+            action.fail(with: SetAllowGuestsAndServicesError.unknown)
+            return
+        }
+
+        let success = {
+            action.succeed()
+        }
+
+        Task {
+            await eventProcessor.processConversationEvents([updateEvent])
+            await context.perform { _ = self.context.saveOrRollback() }
+            success()
+        }
+    }
+
 }

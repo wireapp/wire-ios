@@ -218,24 +218,21 @@ extension ZMConversation {
 
     /// Changes the conversation access mode to allow services.
     private func setAllowGuestsAndServices(allowGuests: Bool, allowServices: Bool, in userSession: ZMUserSession, apiVersion: APIVersion, _ completion: @escaping (Result<Void, Error>) -> Void) {
-        let request = WirelessRequestFactory.setAccessRoles(allowGuests: allowGuests, allowServices: allowServices, for: self, apiVersion: apiVersion)
 
-        request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
-            if let payload = response.payload,
-               let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
-                self.allowGuests = allowGuests
-                self.allowServices = allowServices
+        var action = SetAllowGuestsAndServicesAction(
+            allowGuests: allowGuests,
+            allowServices: allowServices,
+            conversationID: self.objectID
+        )
 
-                // Process `conversation.access-update` event
-                userSession.processUpdateEvents([event])
+        action.perform(in: self.managedObjectContext!.notificationContext) { result in
+            switch result {
+            case .success:
                 completion(.success(()))
-            } else {
-                zmLog.debug("Error setting access role:  \(response)")
-                completion(.failure(SetAllowServicesError.unknown))
+            case .failure(let error):
+                completion(.failure(error))
             }
-        })
-
-        userSession.transportSession.enqueueOneTime(request)
+        }
     }
 
     public var canManageAccess: Bool {
