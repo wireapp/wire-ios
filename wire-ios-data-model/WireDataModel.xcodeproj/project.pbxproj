@@ -521,6 +521,7 @@
 		E999AC402BC9467E00569E79 /* CreateConversationGuestLinkAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E999AC3F2BC9467E00569E79 /* CreateConversationGuestLinkAction.swift */; };
 		E9A96E7A2B88B64800914FDD /* PushSupportedProtocolsAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A96E792B88B64800914FDD /* PushSupportedProtocolsAction.swift */; };
 		E9C7DD9B27B533D000FB9AE8 /* AccessRoleMappingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9C7DD9A27B533D000FB9AE8 /* AccessRoleMappingTests.swift */; };
+		E9DCCC1B2BCFB15B00AB01DE /* SetAllowGuestsAndServicesAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9DCCC1A2BCFB15B00AB01DE /* SetAllowGuestsAndServicesAction.swift */; };
 		E9E2AA5C2B163557008CC2DF /* SyncUsersAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E2AA5B2B163557008CC2DF /* SyncUsersAction.swift */; };
 		EE002F222878345C0027D63A /* store2-104-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EE002F212878345C0027D63A /* store2-104-0.wiredatabase */; };
 		EE032B3129A62CA600E1DDF3 /* ProteusSessionID.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE032B2F29A62CA600E1DDF3 /* ProteusSessionID.swift */; };
@@ -1448,6 +1449,7 @@
 		E999AC3F2BC9467E00569E79 /* CreateConversationGuestLinkAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateConversationGuestLinkAction.swift; sourceTree = "<group>"; };
 		E9A96E792B88B64800914FDD /* PushSupportedProtocolsAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushSupportedProtocolsAction.swift; sourceTree = "<group>"; };
 		E9C7DD9A27B533D000FB9AE8 /* AccessRoleMappingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessRoleMappingTests.swift; sourceTree = "<group>"; };
+		E9DCCC1A2BCFB15B00AB01DE /* SetAllowGuestsAndServicesAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetAllowGuestsAndServicesAction.swift; sourceTree = "<group>"; };
 		E9E2AA5B2B163557008CC2DF /* SyncUsersAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncUsersAction.swift; sourceTree = "<group>"; };
 		EE002F212878345C0027D63A /* store2-104-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-104-0.wiredatabase"; sourceTree = "<group>"; };
 		EE032B2F29A62CA600E1DDF3 /* ProteusSessionID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProteusSessionID.swift; sourceTree = "<group>"; };
@@ -2316,6 +2318,7 @@
 				E9E2AA5B2B163557008CC2DF /* SyncUsersAction.swift */,
 				E9A96E792B88B64800914FDD /* PushSupportedProtocolsAction.swift */,
 				E999AC3F2BC9467E00569E79 /* CreateConversationGuestLinkAction.swift */,
+				E9DCCC1A2BCFB15B00AB01DE /* SetAllowGuestsAndServicesAction.swift */,
 			);
 			path = Actions;
 			sourceTree = "<group>";
@@ -4134,6 +4137,7 @@
 				F110503D2220439900F3EB62 /* ZMUser+RichProfile.swift in Sources */,
 				5EFE9C0F2126D3FA007932A6 /* NormalizationResult.swift in Sources */,
 				F9A706571CAEE01D00C2F5FE /* NSNotification+ManagedObjectContextSave.m in Sources */,
+				E9DCCC1B2BCFB15B00AB01DE /* SetAllowGuestsAndServicesAction.swift in Sources */,
 				EE22F80D29DD81FC0053E1C6 /* PrivateEARKeyDescription.swift in Sources */,
 				EE428C5229F1533000ECB715 /* EARKeyEncryptor.swift in Sources */,
 				BF491CE61F063EE50055EE44 /* AccountStore.swift in Sources */,
