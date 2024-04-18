@@ -22,16 +22,6 @@ import WireSystem
 import WireRequestStrategy
 import Combine
 
-@objc(ZMThirdPartyServicesDelegate)
-public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
-
-    /// This will get called at a convenient point in time when Hockey and Localytics should upload their data.
-    /// We try not to have Hockey and Localytics use the network while we're sync'ing.
-    @objc(userSessionIsReadyToUploadServicesData:)
-    func userSessionIsReadyToUploadServicesData(userSession: ZMUserSession)
-
-}
-
 typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
 & UserSessionSelfUserClientDelegate
 & UserSessionLogoutDelegate
@@ -50,7 +40,6 @@ public final class ZMUserSession: NSObject {
             notificationDispatcher.operationMode = newValue ? .economical : .normal
         }
     }
-    var hasNotifiedThirdPartyServices: Bool = false
 
     private(set) var coreDataStack: CoreDataStack!
     let application: ZMApplication
@@ -259,8 +248,6 @@ public final class ZMUserSession: NSObject {
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: remove this property and move functionality to separate protocols under UserSessionDelegate
     public weak var sessionManager: SessionManagerType?
-
-    public weak var thirdPartyServicesDelegate: ThirdPartyServicesDelegate?
 
     // MARK: - Tear down
 
@@ -917,10 +904,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
         Task {
             await self.cRLsChecker.checkExpiredCRLs()
         }
-
-        managedObjectContext.performGroupedBlock { [weak self] in
-            self?.notifyThirdPartyServices()
-        }
     }
 
     func processEvents() {
@@ -1006,13 +989,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
     public func didDeleteSelfUserClient(error: Error) {
         notifyAuthenticationInvalidated(error)
-    }
-
-    public func notifyThirdPartyServices() {
-        if !hasNotifiedThirdPartyServices {
-            hasNotifiedThirdPartyServices = true
-            thirdPartyServicesDelegate?.userSessionIsReadyToUploadServicesData(userSession: self)
-        }
     }
 
     func notifyAuthenticationInvalidated(_ error: Error) {
