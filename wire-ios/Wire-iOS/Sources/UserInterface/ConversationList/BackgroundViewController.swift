@@ -26,7 +26,12 @@ final class BackgroundViewController: UIViewController {
         set { imageView.backgroundColor = newValue }
     }
 
-    lazy private(set) var dispatchGroup: DispatchGroup = DispatchGroup()
+    var backgroundImage: UIImage {
+        get { imageView.image ?? .init() }
+        set { imageView.image = newValue }
+    }
+
+    lazy private(set) var dispatchGroup = DispatchGroup()
 
     private let imageView = UIImageView()
     private let cropView = UIView()
@@ -71,15 +76,14 @@ final class BackgroundViewController: UIViewController {
     override var childForStatusBarHidden: UIViewController? { children.first }
 
     private func configureViews() {
+
         let factor = BackgroundViewController.backgroundScaleFactor
         imageView.contentMode = .scaleAspectFill
         imageView.transform = CGAffineTransform(scaleX: factor, y: factor)
 
         cropView.clipsToBounds = true
-
-        [imageView, blurView, darkenOverlay].forEach(self.cropView.addSubview)
-
-        self.view.addSubview(self.cropView)
+        [imageView, blurView, darkenOverlay].forEach(cropView.addSubview)
+        view.addSubview(cropView)
     }
 
     private func createConstraints() {

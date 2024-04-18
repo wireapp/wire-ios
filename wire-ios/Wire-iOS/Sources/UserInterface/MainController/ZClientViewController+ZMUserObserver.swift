@@ -23,8 +23,20 @@ extension ZClientViewController: UserObserving {
 
     public func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.accentColorValueChanged {
+
             UIApplication.shared.firstKeyWindow?.tintColor = UIColor.accent()
+
+            let backgroundViewController = backgroundViewController
             backgroundViewController.accentColor = changeInfo.user.accentColor
+
+            guard let imageData = changeInfo.user.imageData(for: .complete) else {
+                return backgroundViewController.backgroundImage = .init()
+            }
+            Task {
+                backgroundViewController.backgroundImage = await Task.detached(priority: .background) {
+                    .init(from: imageData, withMaxSize: 40)?.desaturatedImage(with: CIContext.shared, saturation: 2)
+                }.value ?? .init()
+            }
         }
     }
 
@@ -34,5 +46,4 @@ extension ZClientViewController: UserObserving {
             for: userSession.selfUser
         )
     }
-
 }
