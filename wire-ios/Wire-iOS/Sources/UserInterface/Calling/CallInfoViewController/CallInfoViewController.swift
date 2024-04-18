@@ -70,6 +70,7 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     private let statusViewController: CallStatusViewController
     private let accessoryViewController: CallAccessoryViewController
     private let actionsView = CallActionsView()
+    let imageTransformer: ImageTransformer
 
     var configuration: CallInfoViewControllerInput {
         didSet {
@@ -80,9 +81,11 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     init(
         configuration: CallInfoViewControllerInput,
         selfUser: UserType,
-        userSession: UserSession
+        userSession: UserSession,
+        imageTransformer: ImageTransformer
     ) {
         self.configuration = configuration
+        self.imageTransformer = imageTransformer
 
         statusViewController = CallStatusViewController(configuration: configuration)
 
