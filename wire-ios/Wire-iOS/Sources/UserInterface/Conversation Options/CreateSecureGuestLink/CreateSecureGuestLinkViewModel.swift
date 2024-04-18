@@ -27,6 +27,8 @@ protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
     func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didGeneratePassword password: String)
     func viewModelDidValidatePasswordSuccessfully(_ viewModel: CreateSecureGuestLinkViewModel)
     func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String)
+    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didCreateLink link: String)
+    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didFailToCreateLinkWithError error: Error)
 }
 
 // MARK: - CreateSecureGuestLinkViewModel
@@ -71,13 +73,28 @@ final class CreateSecureGuestLinkViewModel {
     }
 
     func createSecuredGuestLinkIfValid(passwordField: ValidatedTextField, confirmPasswordField: ValidatedTextField) {
-        if validatePassword(for: passwordField, against: confirmPasswordField) {
-            UIPasteboard.general.string = passwordField.text
-            delegate?.viewModelDidValidatePasswordSuccessfully(self)
-        } else {
-            let reason = "Password validation failed."
-            delegate?.viewModel(self, didFailToValidatePasswordWithReason: reason)
+        guard validatePassword(for: passwordField, against: confirmPasswordField) else {
+            delegate?.viewModel(self, didFailToValidatePasswordWithReason: "Password validation failed.")
+            return
         }
+
+        let password = passwordField.text ?? ""
+        UIPasteboard.general.string = password
+
+        let securedGuestLinkUseCase = useCaseFactory.createSecuredGuestLinkUseCase()
+
+        securedGuestLinkUseCase.invoke(password: password) { [weak self] result in
+            guard let self = self else { return }
+
+            switch result {
+            case .success(let link):
+                self.delegate?.viewModel(self, didCreateLink: link)
+            case .failure(let error):
+                self.delegate?.viewModel(self, didFailToCreateLinkWithError: error)
+            }
+        }
+
+        delegate?.viewModelDidValidatePasswordSuccessfully(self)
     }
 }
 
