@@ -94,7 +94,7 @@ extension SessionManager: APIVersionResolverDelegate {
             self.accountManager.accounts.forEach { account in
 
                 // 1. Tear down the user sessions
-                DispatchQueue.main.sync {
+                DispatchQueue.main.async {
                     dispatchGroup.enter()
                     self.tearDownBackgroundSession(for: account.userIdentifier) {
                         // 2. Migrate users and conversations
