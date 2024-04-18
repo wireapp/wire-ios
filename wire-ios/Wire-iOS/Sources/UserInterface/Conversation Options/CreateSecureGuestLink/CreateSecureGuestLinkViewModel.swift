@@ -18,6 +18,7 @@
 
 import Foundation
 import UIKit
+import WireSyncEngine
 
 // MARK: - CreatePasswordSecuredLinkViewModelDelegate
 
@@ -35,11 +36,16 @@ final class CreateSecureGuestLinkViewModel {
     // MARK: - Properties
 
     weak var delegate: CreatePasswordSecuredLinkViewModelDelegate?
+    private let useCaseFactory: UseCaseFactoryProtocol
 
     // MARK: - Init
 
-    init(delegate: CreatePasswordSecuredLinkViewModelDelegate?) {
+    init(
+        delegate: CreatePasswordSecuredLinkViewModelDelegate?,
+        useCaseFactory: UseCaseFactoryProtocol
+    ) {
         self.delegate = delegate
+        self.useCaseFactory = useCaseFactory
     }
 
     // MARK: - Methods
@@ -65,36 +71,36 @@ final class CreateSecureGuestLinkViewModel {
     }
 
     func createSecuredGuestLinkIfValid(passwordField: ValidatedTextField, confirmPasswordField: ValidatedTextField) {
-            if validatePassword(for: passwordField, against: confirmPasswordField) {
-                UIPasteboard.general.string = passwordField.text
-                delegate?.viewModelDidValidatePasswordSuccessfully(self)
-            } else {
-                let reason = "Password validation failed."
-                delegate?.viewModel(self, didFailToValidatePasswordWithReason: reason)
-            }
+        if validatePassword(for: passwordField, against: confirmPasswordField) {
+            UIPasteboard.general.string = passwordField.text
+            delegate?.viewModelDidValidatePasswordSuccessfully(self)
+        } else {
+            let reason = "Password validation failed."
+            delegate?.viewModel(self, didFailToValidatePasswordWithReason: reason)
         }
     }
+}
 
-    func generateRandomPassword() -> String {
-        let minLength = 15
-        let maxLength = 20
-        let selectedLength = Int.random(in: minLength...maxLength)
+func generateRandomPassword() -> String {
+    let minLength = 15
+    let maxLength = 20
+    let selectedLength = Int.random(in: minLength...maxLength)
 
-        let lowercaseLetters = "abcdefghijklmnopqrstuvwxyz"
-        let uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        let numbers = "0123456789"
-        let specialCharacters = "!@#$%^&*()-_+=<>?/[]{|}"
-        let allCharacters = lowercaseLetters + uppercaseLetters + numbers + specialCharacters
+    let lowercaseLetters = "abcdefghijklmnopqrstuvwxyz"
+    let uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    let numbers = "0123456789"
+    let specialCharacters = "!@#$%^&*()-_+=<>?/[]{|}"
+    let allCharacters = lowercaseLetters + uppercaseLetters + numbers + specialCharacters
 
-        var characters = [Character]()
-        characters.append(lowercaseLetters.randomElement()!)
-        characters.append(uppercaseLetters.randomElement()!)
-        characters.append(numbers.randomElement()!)
-        characters.append(specialCharacters.randomElement()!)
+    var characters = [Character]()
+    characters.append(lowercaseLetters.randomElement()!)
+    characters.append(uppercaseLetters.randomElement()!)
+    characters.append(numbers.randomElement()!)
+    characters.append(specialCharacters.randomElement()!)
 
-        for _ in 0..<(selectedLength - characters.count) {
-            characters.append(allCharacters.randomElement()!)
-        }
-
-        return String(characters.shuffled())
+    for _ in 0..<(selectedLength - characters.count) {
+        characters.append(allCharacters.randomElement()!)
     }
+
+    return String(characters.shuffled())
+}
