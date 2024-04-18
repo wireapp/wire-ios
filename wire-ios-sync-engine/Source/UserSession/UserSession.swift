@@ -112,9 +112,7 @@ public protocol UserSession: AnyObject {
     ///
     /// This can only be used on the main thread.
 
-    var selfUser: UserType { get }
-
-    var selfLegalHoldSubject: UserType & SelfLegalHoldSubject { get }
+    var selfUser: SelfUserType { get }
 
     func perform(_ changes: @escaping () -> Void)
 
