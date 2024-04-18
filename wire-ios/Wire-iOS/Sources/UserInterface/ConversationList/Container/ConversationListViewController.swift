@@ -28,8 +28,6 @@ enum ConversationListState {
 
 final class ConversationListViewController: UIViewController {
 
-    weak var delegate: ConversationListTabBarControllerDelegate?
-
     let viewModel: ViewModel
 
     /// internal View Model
@@ -95,7 +93,6 @@ final class ConversationListViewController: UIViewController {
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
         self.init(viewModel: viewModel)
-        delegate = self
         onboardingHint.arrowPointToView = tabBar
     }
 
@@ -393,23 +390,30 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 extension ConversationListViewController: UITabBarDelegate {
 
     func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        guard let type = item.type else {
-            return
-        }
-        delegate?.didChangeTab(with: type)
-    }
+        guard let type = item.type else { return }
 
+        switch type {
+        case .archive:
+            setState(.archived, animated: true)
+        case .startUI:
+            presentPeoplePicker()
+        case .folder:
+            listContentController.listViewModel.folderEnabled = true
+        case .list:
+            listContentController.listViewModel.folderEnabled = false
+        }
+    }
 }
 
 private extension UITabBarItem {
 
     var type: TabBarItemType? {
-        return TabBarItemType.allCases.first(where: { $0.rawValue == self.tag })
+        .allCases.first { $0.rawValue == tag }
     }
-
 }
 
 private extension NSAttributedString {
+
     static var attributedTextForNoConversationLabel: NSAttributedString? {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.setParagraphStyle(NSParagraphStyle.default)
