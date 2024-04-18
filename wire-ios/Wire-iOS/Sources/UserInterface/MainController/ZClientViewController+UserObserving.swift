@@ -34,10 +34,12 @@ extension ZClientViewController: UserObserving {
                 return backgroundViewController.backgroundImage = .none
             }
 
-            Task { [backgroundViewController] in
-                backgroundViewController.backgroundImage = await Task.detached(priority: .background) {
-                    .init(from: imageData, withMaxSize: 40)?.desaturatedImage(with: .shared, saturation: 2)
-                }.value
+            Task.detached(priority: .background) { [backgroundViewController] in
+                if let image = UIImage(from: imageData, withMaxSize: 40) {
+                    let transformer = CoreImageBasedImageTransformer()
+                    let backgroundImage = transformer.adjustInputSaturation(value: 2, image: image)
+                    await MainActor.run { backgroundViewController.backgroundImage = backgroundImage }
+                }
             }
         }
     }

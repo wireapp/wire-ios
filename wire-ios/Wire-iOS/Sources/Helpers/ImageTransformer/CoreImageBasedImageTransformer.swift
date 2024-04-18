@@ -16,8 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreImage
+import UIKit
 
-extension CIContext {
-    static var shared: CIContext = CIContext(options: nil)
+struct CoreImageBasedImageTransformer: ImageTransformer {
+
+    var context = CIContext.shared
+
+    func adjustInputSaturation(value: CGFloat, image: UIImage) -> UIImage? {
+
+        let filter = CIFilter(name: "CIColorControls")
+        let inputImage = image.ciImage ?? image.cgImage.map({ .init(cgImage: $0) })
+        guard let filter, let inputImage else { return nil }
+
+        filter.setValue(inputImage, forKey: kCIInputImageKey)
+        filter.setValue(value, forKey: kCIInputSaturationKey)
+        guard let outputImage = filter.outputImage else { return nil }
+
+        return .init(ciImage: outputImage, scale: image.scale, orientation: image.imageOrientation)
+    }
 }

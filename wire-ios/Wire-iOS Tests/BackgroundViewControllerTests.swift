@@ -80,6 +80,7 @@ final class BackgroundViewControllerTests: BaseSnapshotTestCase {
 
     private func desaturatedImage(from imageData: Data) throws -> UIImage {
         let image = try XCTUnwrap(UIImage(from: imageData, withMaxSize: 40))
-        return try XCTUnwrap(image.desaturatedImage(with: .shared, saturation: 2))
+        let transformer = CoreImageBasedImageTransformer()
+        return try XCTUnwrap(transformer.adjustInputSaturation(value: 2, image: image))
     }
 }

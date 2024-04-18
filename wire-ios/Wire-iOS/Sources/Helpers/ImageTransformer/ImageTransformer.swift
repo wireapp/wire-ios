@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreImage
+import UIKit
 
-extension CIContext {
-    static var shared: CIContext = CIContext(options: nil)
+protocol ImageTransformer {
+
+    func adjustInputSaturation(value: CGFloat, image: UIImage) -> UIImage?
 }
