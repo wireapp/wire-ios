@@ -66,6 +66,10 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         factory.activityManager = activityManager
     }
 
+    /// This workaround is needed because all tests here are based on assumptions
+    /// that the `managedObjectContext` is changed.
+    /// To remove this workaround, delete this override  and the `mockEARService` should be used instead of
+    /// a real instance of `EARService`.
     override func createSut() -> ZMUserSession {
         let earService = EARService(
             accountID: coreDataStack.account.userIdentifier,
