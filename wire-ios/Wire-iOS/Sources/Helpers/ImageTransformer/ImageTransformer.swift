@@ -18,6 +18,7 @@
 
 import UIKit
 
+// sourcery: AutoMockable
 protocol ImageTransformer {
 
     func adjustInputSaturation(value: CGFloat, image: UIImage) -> UIImage?

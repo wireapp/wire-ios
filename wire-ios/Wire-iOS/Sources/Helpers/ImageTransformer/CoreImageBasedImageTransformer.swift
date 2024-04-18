@@ -35,3 +35,10 @@ struct CoreImageBasedImageTransformer: ImageTransformer {
         return .init(ciImage: outputImage, scale: image.scale, orientation: image.imageOrientation)
     }
 }
+
+extension ImageTransformer where Self == CoreImageBasedImageTransformer {
+
+    static func coreImageBased(context: CIContext) -> Self {
+        .init(context: context)
+    }
+}

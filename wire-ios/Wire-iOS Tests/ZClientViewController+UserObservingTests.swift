@@ -29,6 +29,7 @@ final class ZClientViewController_UserObservingTests: XCTestCase {
     private var selfUser: ZMUser!
     private var isSelfUserE2EICertifiedUseCaseMock: MockIsSelfUserE2EICertifiedUseCaseProtocol!
     private var userSessionMock: MockUserSession!
+    private var imageTransformerMock: MockImageTransformer!
     private var sut: ZClientViewController!
 
     override func setUp() async throws {
@@ -57,7 +58,14 @@ final class ZClientViewController_UserObservingTests: XCTestCase {
         userSessionMock.enqueue_MockMethod = { _ in }
         userSessionMock.addConferenceCallingUnavailableObserver_MockMethod = { _ in }
 
-        sut = .init(account: .mockAccount(imageData: mockImageData), userSession: userSessionMock)
+        imageTransformerMock = .init()
+        imageTransformerMock.adjustInputSaturationValueImage_MockMethod = { _, image in image }
+
+        sut = .init(
+            account: .mockAccount(imageData: mockImageData),
+            userSession: userSessionMock,
+            imageTransformer: imageTransformerMock
+        )
     }
 
     override func tearDown() {
@@ -66,6 +74,7 @@ final class ZClientViewController_UserObservingTests: XCTestCase {
         isSelfUserE2EICertifiedUseCaseMock = nil
         selfUser = nil
         coreDataStack = nil
+        imageTransformerMock = nil
 
         super.tearDown()
     }
@@ -84,5 +93,27 @@ final class ZClientViewController_UserObservingTests: XCTestCase {
 
         // Then
         XCTAssertEqual(sut.backgroundViewController.accentColor, .init(fromZMAccentColor: accentColor))
+    }
+
+    func testBackgroundViewControllerBackgroundImageChanged() throws {
+
+        // Given
+        sut.loadViewIfNeeded()
+
+        // When
+        let backgroundImage = try XCTUnwrap(image(inTestBundleNamed: "unsplash_burger.jpg"))
+        let mockUser = MockUserType()
+        mockUser.completeImageData = backgroundImage.pngData()
+        let changeInfo = UserChangeInfo(object: mockUser)
+        changeInfo.changedKeys = [#keyPath(UserType.completeImageData)]
+        sut.userDidChange(changeInfo)
+
+        // Then
+        let predicate = NSPredicate { [sut] _, _ in
+            print(sut?.backgroundViewController.backgroundImage, backgroundImage)
+            return sut?.backgroundViewController.backgroundImage == backgroundImage
+        }
+        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: nil)
+        wait(for: [expectation], timeout: 50)
     }
 }

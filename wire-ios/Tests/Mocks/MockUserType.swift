@@ -20,6 +20,7 @@ import Foundation
 import WireDataModel
 @testable import Wire
 
+// TODO: why do we have `MockUser` and `MockUserType`?
 class MockUserType: NSObject, UserType, Decodable {
 
     // MARK: - Decodable

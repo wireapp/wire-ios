@@ -54,13 +54,17 @@ final class ZClientViewController: UIViewController {
     private var incomingApnsObserver: Any?
     private var networkAvailabilityObserverToken: Any?
     private var pendingInitialStateRestore = false
+    /// Used to update the `BackgroundViewController`'s `backgroundImage` property.
+    let imageTransformer: ImageTransformer
 
     /// init method for testing allows injecting an Account object and self user
     required init(
         account: Account,
-        userSession: UserSession
+        userSession: UserSession,
+        imageTransformer: ImageTransformer
     ) {
         self.userSession = userSession
+        self.imageTransformer = imageTransformer
 
         backgroundViewController = .init(accentColor: userSession.selfUser.accentColor)
 
