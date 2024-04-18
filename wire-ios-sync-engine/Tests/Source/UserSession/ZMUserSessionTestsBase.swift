@@ -20,6 +20,7 @@ import WireDataModelSupport
 import WireSyncEngineSupport
 import WireRequestStrategySupport
 import Combine
+@testable import WireSyncEngine
 
 class ZMUserSessionTestsBase: MessagingTest {
 
@@ -38,6 +39,7 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mockUseCaseFactory: MockUseCaseFactoryProtocol!
     var mockResolveOneOnOneConversationUseCase: MockResolveOneOnOneConversationsUseCaseProtocol!
     var mockGetFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
+    var mockProteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating!
 
     var sut: ZMUserSession!
 
@@ -81,6 +83,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             return self.mockResolveOneOnOneConversationUseCase
         }
 
+        mockProteusToMLSMigrationCoordinator = MockProteusToMLSMigrationCoordinating()
+
         sut = createSut(earService: mockEARService)
         sut.sessionManager = mockSessionManager
 
@@ -113,36 +117,48 @@ class ZMUserSessionTestsBase: MessagingTest {
     }
 
     func createSut(earService: EARServiceInterface) -> ZMUserSession {
-        let mockStrategyDirectory = MockStrategyDirectory()
-        let mockUpdateEventProcessor = MockUpdateEventProcessor()
-
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
 
         let mockObserveMLSGroupVerificationStatusUseCase = MockObserveMLSGroupVerificationStatusUseCaseProtocol()
         mockObserveMLSGroupVerificationStatusUseCase.invoke_MockMethod = { }
 
-        return ZMUserSession(
-            userId: coreDataStack.account.userIdentifier,
-            transportSession: transportSession,
-            mediaManager: mediaManager,
-            flowManager: flowManagerMock,
+        let mockContextStorable = MockLAContextStorable()
+        mockContextStorable.clear_MockMethod = { }
+
+        let configuration = ZMUserSession.Configuration()
+
+        var builder = ZMUserSessionBuilder()
+        builder.withAllDependencies(
             analytics: nil,
-            eventProcessor: mockUpdateEventProcessor,
-            strategyDirectory: mockStrategyDirectory,
+            appVersion: "00000",
+            application: application,
+            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
+            coreDataStack: coreDataStack,
+            configuration: configuration,
+            contextStorage: mockContextStorable,
+            earService: earService,
+            flowManager: flowManagerMock,
+            mediaManager: mediaManager,
+            mlsService: mockMLSService,
+            observeMLSGroupVerificationStatus: mockObserveMLSGroupVerificationStatusUseCase,
+            proteusToMLSMigrationCoordinator: mockProteusToMLSMigrationCoordinator,
+            sharedUserDefaults: sharedUserDefaults,
+            transportSession: transportSession,
+            useCaseFactory: mockUseCaseFactory,
+            userId: coreDataStack.account.userIdentifier
+        )
+
+        let userSession = builder.build()
+        userSession.setup(
+            eventProcessor: MockUpdateEventProcessor(),
+            strategyDirectory: MockStrategyDirectory(),
             syncStrategy: nil,
             operationLoop: nil,
-            application: application,
-            appVersion: "00000",
-            coreDataStack: coreDataStack,
-            configuration: .init(),
-            earService: earService,
-            mlsService: mockMLSService,
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
-            sharedUserDefaults: sharedUserDefaults,
-            useCaseFactory: mockUseCaseFactory,
-            observeMLSGroupVerificationStatus: mockObserveMLSGroupVerificationStatusUseCase
+            configuration: configuration
         )
+
+        return userSession
     }
 
     func didChangeAuthenticationData() {

@@ -448,6 +448,8 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
 
+        mockProteusToMLSMigrationCoordinator.updateMigrationStatus_MockMethod = { }
+
         let handler = MockActionHandler<GetFeatureConfigsAction>(
             result: .success(()),
             context: syncMOC.notificationContext
@@ -472,6 +474,8 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
             XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
             XCTAssertFalse(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
+
+            XCTAssertEqual(mockProteusToMLSMigrationCoordinator.updateMigrationStatus_Invocations.count, 1)
         }
     }
 }

@@ -98,6 +98,8 @@ public extension NSURL {
 
 }
 
+// MARK: -
+
 @objcMembers
 public class CoreDataStack: NSObject, ContextProvider {
 
@@ -127,6 +129,8 @@ public class CoreDataStack: NSObject, ContextProvider {
     let dispatchGroup: ZMSDispatchGroup?
 
     private let migrator: CoreDataMessagingMigrator
+
+    // MARK: - Initialization
 
     public init(account: Account,
                 applicationContainer: URL,
@@ -352,6 +356,8 @@ public class CoreDataStack: NSObject, ContextProvider {
         return messagesContainer.storeExists && eventsContainer.storeExists
     }
 
+    // MARK: - Configure Contexts
+
     func configureViewContext(_ context: NSManagedObjectContext) {
         context.markAsUIContext()
         context.createDispatchGroups()
@@ -420,6 +426,16 @@ public class CoreDataStack: NSObject, ContextProvider {
         }
     }
 
+    public func linkContexts() {
+        syncContext.performGroupedBlockAndWait {
+            self.syncContext.zm_userInterface = self.viewContext
+        }
+
+        viewContext.zm_sync = syncContext
+    }
+
+    // MARK: - Static Helpers
+
     public static func accountDataFolder(accountIdentifier: UUID, applicationContainer: URL) -> URL {
         return applicationContainer
             .appendingPathComponent("AccountData")
@@ -454,6 +470,8 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 }
 
+// MARK: -
+
 class PersistentContainer: NSPersistentContainer {
 
     var storeURL: URL? {
@@ -487,8 +505,9 @@ class PersistentContainer: NSPersistentContainer {
 
         return metadata
     }
-
 }
+
+// MARK: -
 
 extension NSPersistentStoreCoordinator {
 
