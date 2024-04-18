@@ -1094,21 +1094,12 @@ public class MockUserSession: UserSession {
 
     // MARK: - selfUser
 
-    public var selfUser: UserType {
+    public var selfUser: SelfUserType {
         get { return underlyingSelfUser }
         set(value) { underlyingSelfUser = value }
     }
 
-    public var underlyingSelfUser: UserType!
-
-    // MARK: - selfLegalHoldSubject
-
-    public var selfLegalHoldSubject: SelfUserType {
-        get { return underlyingSelfLegalHoldSubject }
-        set(value) { underlyingSelfLegalHoldSubject = value }
-    }
-
-    public var underlyingSelfLegalHoldSubject: SelfUserType!
+    public var underlyingSelfUser: SelfUserType!
 
     // MARK: - isNotificationContentHidden
 

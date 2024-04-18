@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCommonComponents
+import WireDataModelSupport
 import WireSyncEngineSupport
 import XCTest
 
@@ -23,29 +25,64 @@ import XCTest
 
 final class ZClientViewController_UserObservingTests: XCTestCase {
 
+    private var coreDataStack: CoreDataStack!
+    private var selfUser: ZMUser!
+    private var isSelfUserE2EICertifiedUseCaseMock: MockIsSelfUserE2EICertifiedUseCaseProtocol!
     private var userSessionMock: MockUserSession!
     private var sut: ZClientViewController!
+
+    override func setUp() async throws {
+        try await super.setUp()
+
+        coreDataStack = try await CoreDataStackHelper().createStack()
+        await coreDataStack.viewContext.perform { [self] in
+            selfUser = ModelHelper().createSelfUser(in: coreDataStack.viewContext)
+        }
+    }
 
     override func setUp() {
         super.setUp()
 
+        FontScheme.configure(with: .large)
+
+        isSelfUserE2EICertifiedUseCaseMock = .init()
+        isSelfUserE2EICertifiedUseCaseMock.invoke_MockValue = false
+
         userSessionMock = .init()
-        userSessionMock.selfUser = MockUserType.createSelfUser(name: "Bob")
+        userSessionMock.selfUser = selfUser
+        userSessionMock.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCaseMock
+        userSessionMock.addUserObserverFor_MockValue = NSObject()
+        userSessionMock.conversationDirectory = coreDataStack.viewContext.conversationListDirectory()
+        userSessionMock.conversationList_MockValue = coreDataStack.viewContext.conversationListDirectory().unarchivedConversations
+        userSessionMock.enqueue_MockMethod = { _ in }
+        userSessionMock.addConferenceCallingUnavailableObserver_MockMethod = { _ in }
+
         sut = .init(account: .mockAccount(imageData: mockImageData), userSession: userSessionMock)
     }
 
     override func tearDown() {
         sut = nil
         userSessionMock = nil
+        isSelfUserE2EICertifiedUseCaseMock = nil
+        selfUser = nil
+        coreDataStack = nil
 
         super.tearDown()
     }
 
-    func test() {
+    func testBackgroundViewControllerAccentColorIsChanged() {
 
         // Given
         sut.loadViewIfNeeded()
 
         // When
+        let accentColor = ZMAccentColor.brightYellow
+        selfUser.accentColorValue = accentColor
+        let changeInfo = UserChangeInfo(object: selfUser)
+        changeInfo.changedKeys = [#keyPath(ZMUser.accentColorValue)]
+        sut.userDidChange(changeInfo)
+
+        // Then
+        XCTAssertEqual(sut.backgroundViewController.accentColor, .init(fromZMAccentColor: accentColor))
     }
 }
