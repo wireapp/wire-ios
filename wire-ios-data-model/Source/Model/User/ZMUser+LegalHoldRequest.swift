@@ -21,6 +21,8 @@ import WireCryptobox
 
 private let log = ZMSLog(tag: "UserClient")
 
+public typealias SelfUserType = UserType & SelfLegalHoldSubject
+
 /**
  * A protocol for objects that provide the legal hold status for the self user.
  */

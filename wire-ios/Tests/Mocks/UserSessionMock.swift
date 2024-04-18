@@ -69,8 +69,7 @@ final class UserSessionMock: UserSession {
 
     var networkState: ZMNetworkState = .offline
 
-    var selfUser: UserType
-    var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
+    var selfUser: SelfUserType
     var mockConversationList: ZMConversationList?
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
@@ -80,25 +79,15 @@ final class UserSessionMock: UserSession {
     }
 
     convenience init(mockUser: MockZMEditableUser) {
-        self.init(
-            selfUser: mockUser,
-            selfLegalHoldSubject: mockUser
-        )
+        self.init(selfUser: mockUser)
     }
 
     convenience init(mockUser: MockUserType = .createDefaultSelfUser()) {
-        self.init(
-            selfUser: mockUser,
-            selfLegalHoldSubject: mockUser
-        )
+        self.init(selfUser: mockUser)
     }
 
-    init(
-        selfUser: UserType,
-        selfLegalHoldSubject: SelfLegalHoldSubject & UserType
-    ) {
+    init(selfUser: SelfUserType) {
         self.selfUser = selfUser
-        self.selfLegalHoldSubject = selfLegalHoldSubject
     }
 
     var lock: SessionLock? = .screen

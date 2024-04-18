@@ -21,8 +21,6 @@ import WireDataModel
 import WireSyncEngine
 import WireCommonComponents
 
-typealias SelfUserType = UserType & SelfLegalHoldSubject
-
 final class ConversationListTopBarViewController: UIViewController {
 
     private let account: Account
