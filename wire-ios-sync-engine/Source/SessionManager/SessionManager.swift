@@ -767,7 +767,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         self.createUnauthenticatedSession(accountId: deleteAccount ? nil : account.userIdentifier)
 
-        guard let activeUserSession = activeUserSession else {
+        guard let activeUserSession else {
             delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: nil)
 
             if deleteAccount {
