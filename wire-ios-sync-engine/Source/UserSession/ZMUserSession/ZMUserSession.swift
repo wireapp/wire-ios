@@ -268,19 +268,7 @@ public final class ZMUserSession: NSObject {
         transportSession.tearDown()
         notificationDispatcher.tearDown()
         callCenter?.tearDown()
-
-        // Wait for all sync operations to finish
-        syncManagedObjectContext.performGroupedBlockAndWait { }
-
-        let uiMOC = coreDataStack.viewContext
-        coreDataStack = nil
-
-        let shouldWaitOnUIMoc = !(OperationQueue.current == OperationQueue.main && uiMOC.concurrencyType == .mainQueueConcurrencyType)
-        if shouldWaitOnUIMoc {
-            uiMOC.performAndWait {
-                // warning: this will hang if the uiMoc queue is same as self.requestQueue (typically uiMoc queue is the main queue)
-            }
-        }
+        coreDataStack.close()
 
         NotificationCenter.default.removeObserver(self)
 
@@ -931,7 +919,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 }
             }
 
-            await managedObjectContext.perform(schedule: .enqueued) { [weak self] in
+            await managedObjectContext.perform { [weak self] in
                 self?.isPerformingSync = isSyncing || processingInterrupted
                 self?.updateNetworkState()
             }
