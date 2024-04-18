@@ -19,6 +19,7 @@
 import Down
 import UIKit
 import WireCommonComponents
+import WireSyncEngine
 
 class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecuredLinkViewModelDelegate {
 
@@ -29,12 +30,24 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     typealias SecuredGuestLinkWithPasswordLocale = L10n.Localizable.SecuredGuestLinkWithPassword
     typealias SecureGuestLinkAccessibilityLocale = L10n.Accessibility.CreateSecureGuestLink
 
+    let userSession: UserSession
+
     weak var delegate: ValidatedTextFieldDelegate?
 
     private lazy var viewModel: CreateSecureGuestLinkViewModel = {
         // Inject the useCase here, have the userSession, get the factory and inject it
-        CreateSecureGuestLinkViewModel(delegate: self)
+        CreateSecureGuestLinkViewModel(delegate: self, useCaseFactory: userSession.useCaseFactory)
     }()
+
+    // MARK: - Initializer
+     init(userSession: UserSession) {
+         self.userSession = userSession
+         super.init(nibName: nil, bundle: nil)
+     }
+
+     required init?(coder: NSCoder) {
+         fatalError("init(coder:) has not been implemented")
+     }
 
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -347,13 +360,20 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             title: SecuredGuestLinkWithPasswordLocale.AlertController.title,
             message: SecuredGuestLinkWithPasswordLocale.AlertController.message
         )
-
         // TODO: - Proceed with any additional steps now that the password is validated and copied
     }
 
     func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String) {
         // TODO: - Handle the error, such as displaying an alert with the provided reason
     }
+
+    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didCreateLink link: String) {
+           print("Link created successfully: \(link)")
+       }
+
+    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didFailToCreateLinkWithError error: Error) {
+           print("Failed to create link: \(error.localizedDescription)")
+       }
 }
 // MARK: - ValidatedTextFieldDelegate
 

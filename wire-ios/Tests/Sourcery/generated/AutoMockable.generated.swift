@@ -298,6 +298,36 @@ class MockCreatePasswordSecuredLinkViewModelDelegate: CreatePasswordSecuredLinkV
         mock(viewModel, reason)
     }
 
+    // MARK: - viewModel
+
+    var viewModelDidCreateLink_Invocations: [(viewModel: CreateSecureGuestLinkViewModel, link: String)] = []
+    var viewModelDidCreateLink_MockMethod: ((CreateSecureGuestLinkViewModel, String) -> Void)?
+
+    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didCreateLink link: String) {
+        viewModelDidCreateLink_Invocations.append((viewModel: viewModel, link: link))
+
+        guard let mock = viewModelDidCreateLink_MockMethod else {
+            fatalError("no mock for `viewModelDidCreateLink`")
+        }
+
+        mock(viewModel, link)
+    }
+
+    // MARK: - viewModel
+
+    var viewModelDidFailToCreateLinkWithError_Invocations: [(viewModel: CreateSecureGuestLinkViewModel, error: Error)] = []
+    var viewModelDidFailToCreateLinkWithError_MockMethod: ((CreateSecureGuestLinkViewModel, Error) -> Void)?
+
+    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didFailToCreateLinkWithError error: Error) {
+        viewModelDidFailToCreateLinkWithError_Invocations.append((viewModel: viewModel, error: error))
+
+        guard let mock = viewModelDidFailToCreateLinkWithError_MockMethod else {
+            fatalError("no mock for `viewModelDidFailToCreateLinkWithError`")
+        }
+
+        mock(viewModel, error)
+    }
+
 }
 
 class MockDeviceDetailsViewActions: DeviceDetailsViewActions {

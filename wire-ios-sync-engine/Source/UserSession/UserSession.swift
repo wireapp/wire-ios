@@ -25,6 +25,8 @@ import LocalAuthentication
 
 public protocol UserSession: AnyObject {
 
+    var useCaseFactory: UseCaseFactoryProtocol { get }
+
     /// The current session lock, if any.
 
     var lock: SessionLock? { get }

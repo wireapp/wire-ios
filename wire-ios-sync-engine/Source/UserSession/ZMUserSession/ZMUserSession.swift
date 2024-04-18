@@ -272,7 +272,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    let useCaseFactory: UseCaseFactoryProtocol
+   public let useCaseFactory: UseCaseFactoryProtocol
 
     weak var delegate: UserSessionDelegate?
 

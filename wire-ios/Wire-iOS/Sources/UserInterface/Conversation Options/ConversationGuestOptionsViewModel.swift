@@ -46,6 +46,9 @@ protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
 }
 
 final class ConversationGuestOptionsViewModel {
+
+    private let userSession: UserSession
+
     struct State {
         var rows = [CellConfiguration]()
         var isLoading = false
@@ -87,9 +90,10 @@ final class ConversationGuestOptionsViewModel {
 
     private let configuration: ConversationGuestOptionsViewModelConfiguration
 
-    init(configuration: ConversationGuestOptionsViewModelConfiguration, conversation: ZMConversation) {
+    init(configuration: ConversationGuestOptionsViewModelConfiguration, conversation: ZMConversation, userSession: UserSession) {
         self.configuration = configuration
         securedGuestLinkUseCase = SecuredGuestLinkUseCase(conversation: conversation)
+        self.userSession = userSession
         updateRows()
         configuration.allowGuestsChangedHandler = { [weak self] allowGuests in
             guard let `self` = self else { return }
@@ -258,7 +262,7 @@ final class ConversationGuestOptionsViewModel {
                 guard let `self` = self else { return }
                 switch guestLinkType {
                 case .secure:
-                    delegate?.viewModel(self, presentCreateSecureGuestLink: CreateSecureGuestLinkViewController().wrapInNavigationController(setBackgroundColor: true), animated: true)
+                    delegate?.viewModel(self, presentCreateSecureGuestLink: CreateSecureGuestLinkViewController(userSession: userSession).wrapInNavigationController(setBackgroundColor: true), animated: true)
                 case .normal:
                     createLink()
                 }
