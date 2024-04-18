@@ -800,6 +800,24 @@ public class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
         }
     }
 
+    // MARK: - createSecuredGuestLinkUseCase
+
+    public var createSecuredGuestLinkUseCase_Invocations: [Void] = []
+    public var createSecuredGuestLinkUseCase_MockMethod: (() -> SecuredGuestLinkUseCaseProtocol)?
+    public var createSecuredGuestLinkUseCase_MockValue: SecuredGuestLinkUseCaseProtocol?
+
+    public func createSecuredGuestLinkUseCase() -> SecuredGuestLinkUseCaseProtocol {
+        createSecuredGuestLinkUseCase_Invocations.append(())
+
+        if let mock = createSecuredGuestLinkUseCase_MockMethod {
+            return mock()
+        } else if let mock = createSecuredGuestLinkUseCase_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `createSecuredGuestLinkUseCase`")
+        }
+    }
+
 }
 
 public class MockUserProfile: UserProfile {
