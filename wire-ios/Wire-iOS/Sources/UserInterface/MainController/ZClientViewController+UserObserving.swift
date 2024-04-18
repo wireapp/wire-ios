@@ -35,10 +35,9 @@ extension ZClientViewController: UserObserving {
             }
 
             Task { [backgroundViewController] in
-                let backgroundImage = await Task.detached(priority: .background) {
+                backgroundViewController.backgroundImage = await Task.detached(priority: .background) {
                     .init(from: imageData, withMaxSize: 40)?.desaturatedImage(with: .shared, saturation: 2)
                 }.value
-                backgroundViewController.backgroundImage = backgroundImage
             }
         }
     }

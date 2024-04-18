@@ -21,6 +21,8 @@ import WireSyncEngine
 
 final class BackgroundViewController: UIViewController {
 
+    private static let backgroundScaleFactor: CGFloat = 1.4
+
     var accentColor: UIColor {
         get { imageView.backgroundColor ?? .clear }
         set { imageView.backgroundColor = newValue }
@@ -31,31 +33,14 @@ final class BackgroundViewController: UIViewController {
         set { imageView.image = newValue }
     }
 
-    lazy private(set) var dispatchGroup = DispatchGroup()
-
     private let imageView = UIImageView()
     private let cropView = UIView()
     private let darkenOverlay = UIView()
     private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
-    private let user: UserType
-    private var userObserverToken: NSObjectProtocol?
 
-    init(
-        accentColor: UIColor,
-        user: UserType,
-        userSession: UserSession?
-    ) {
-        self.user = user
+    init(accentColor: UIColor) {
         super.init(nibName: .none, bundle: .none)
         self.accentColor = accentColor
-
-        setupObservers(userSession: userSession)
-    }
-
-    private func setupObservers(userSession: UserSession?) {
-        guard !ProcessInfo.processInfo.isRunningTests else { return }
-
-        userObserverToken = userSession?.addUserObserver(self, for: user)
     }
 
     @available(*, unavailable)
@@ -66,10 +51,8 @@ final class BackgroundViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.configureViews()
-        self.createConstraints()
-
-        self.updateForUser()
+        configureViews()
+        createConstraints()
     }
 
     override var childForStatusBarStyle: UIViewController? { children.first }
@@ -119,41 +102,5 @@ final class BackgroundViewController: UIViewController {
         ]
 
         NSLayoutConstraint.activate(constraints)
-    }
-
-    private func updateForUser() {
-        guard isViewLoaded else { return }
-
-        Task { await updateForUserImage() }
-    }
-
-    private func updateForUserImage() async {
-        guard let imageData = user.imageData(for: .complete) else { return }
-
-        imageView.image = await Task.detached(priority: .background) {
-            UIImage(from: imageData, withMaxSize: 40)?.desaturatedImage(with: CIContext.shared, saturation: 2)
-        }.value
-    }
-
-    /*private*/ func updateFor(imageMediumDataChanged: Bool, accentColorValueChanged: Bool) {
-
-        if imageMediumDataChanged {
-            Task { await updateForUserImage() }
-        }
-    }
-
-    private static let backgroundScaleFactor: CGFloat = 1.4
-
-    private static func blurredAppBackground(with imageData: Data) -> UIImage? {
-        .init(from: imageData, withMaxSize: 40)?.desaturatedImage(with: CIContext.shared, saturation: 2)
-    }
-}
-
-extension BackgroundViewController: UserObserving {
-
-    func userDidChange(_ changeInfo: UserChangeInfo) {
-        if changeInfo.imageMediumDataChanged {
-            Task { await updateForUserImage() }
-        }
     }
 }

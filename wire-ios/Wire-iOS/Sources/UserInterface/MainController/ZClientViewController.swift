@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import UIKit
 import WireSyncEngine
-import avs
 import WireCommonComponents
 
 final class ZClientViewController: UIViewController {
@@ -62,17 +62,15 @@ final class ZClientViewController: UIViewController {
     ) {
         self.userSession = userSession
 
-        backgroundViewController = BackgroundViewController(
-            accentColor: userSession.selfUser.accentColor,
-            user: userSession.selfUser,
-            userSession: userSession as? ZMUserSession
-        )
-        conversationListViewController = ConversationListViewController(
+        backgroundViewController = .init(accentColor: userSession.selfUser.accentColor)
+
+        conversationListViewController = .init(
             account: account,
             selfUser: userSession.selfLegalHoldSubject,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
+
         colorSchemeController = ColorSchemeController(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
