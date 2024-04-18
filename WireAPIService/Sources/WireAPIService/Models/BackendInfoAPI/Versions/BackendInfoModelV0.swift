@@ -18,18 +18,18 @@
 
 import Foundation
 
-extension APIService {
-    public func getBackendInfoAPI(for version: APIVersion) async throws -> BackendInfoModel {
-        let endpoint = Endpoints.BackendInfo()
-        let decoder = JSONDecoder() // TODO: use the custom decoder
+struct BackendInfoModelV0: Decodable {
 
-        let data = try await request(endpoint)
+    var domain: String
+    var federation: Bool
+    var supported: [UInt]
 
-        switch version {
-        case .v0, .v1:
-            return try decoder.decode(BackendInfoModelV0.self, from: data).toParent()
-        case .v2, .v3, .v4, .v5, .v6:
-            return try decoder.decode(BackendInfoModelV2.self, from: data).toParent()
-        }
+    func toParent() -> BackendInfoModel {
+        .init(
+            domain: domain,
+            isFederationEnabled: federation,
+            supportedVersions: Set(supported.compactMap(APIVersion.init)),
+            developmentVersions: []
+        )
     }
 }

@@ -20,7 +20,7 @@ import Foundation
 
 /// Metadata about the local backend.
 
-public struct BackendInfoModel: Decodable {
+public struct BackendInfoModel {
 
     /// The local domain.
 
