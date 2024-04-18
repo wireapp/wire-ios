@@ -89,7 +89,11 @@ final class ConversationGuestOptionsViewModel {
 
     private let configuration: ConversationGuestOptionsViewModelConfiguration
 
-    init(configuration: ConversationGuestOptionsViewModelConfiguration, conversation: ZMConversation, userSession: UserSession) {
+    init(
+        configuration: ConversationGuestOptionsViewModelConfiguration,
+        conversation: ZMConversation,
+        userSession: UserSession
+    ) {
         self.configuration = configuration
         self.conversation = conversation
         self.userSession = userSession
@@ -259,8 +263,7 @@ final class ConversationGuestOptionsViewModel {
         if isGuestLinkWithPasswordAvailable {
             delegate?.viewModel(self,
                                 sourceView: view,
-                                presentGuestLinkTypeSelection: {
-                [weak self] guestLinkType in
+                                presentGuestLinkTypeSelection: { [weak self] guestLinkType in
                 guard let `self` = self else { return }
                 switch guestLinkType {
                 case .secure:

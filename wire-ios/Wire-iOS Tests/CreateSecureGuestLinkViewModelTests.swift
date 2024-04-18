@@ -28,13 +28,15 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
     var mockDelegate: MockCreatePasswordSecuredLinkViewModelDelegate!
     var textField: ValidatedTextField!
     var confirmPasswordField: ValidatedTextField!
+    var userSession: UserSessionMock!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         FontScheme.configure(with: .large)
-        viewModel = CreateSecureGuestLinkViewModel(delegate: mockDelegate)
+        userSession = UserSessionMock()
+        viewModel = CreateSecureGuestLinkViewModel(delegate: mockDelegate, useCaseFactory: userSession.useCaseFactory)
         mockDelegate = MockCreatePasswordSecuredLinkViewModelDelegate()
         viewModel.delegate = mockDelegate
         textField = ValidatedTextField(style: .default)

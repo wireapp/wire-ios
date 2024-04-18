@@ -26,6 +26,9 @@ import WireRequestStrategySupport
 @testable import Wire
 
 final class UserSessionMock: UserSession {
+
+    var useCaseFactory: UseCaseFactoryProtocol
+
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
     func fetchSelfConversationMLSGroupID() async -> WireDataModel.MLSGroupID? {
@@ -78,26 +81,29 @@ final class UserSessionMock: UserSession {
         return mock
     }
 
-    convenience init(mockUser: MockZMEditableUser) {
+    convenience init(mockUser: MockZMEditableUser, mockUseCaseFactory: MockUseCaseFactoryProtocol = MockUseCaseFactoryProtocol()) {
         self.init(
             selfUser: mockUser,
-            selfLegalHoldSubject: mockUser
+            selfLegalHoldSubject: mockUser, useCaseFactory: mockUseCaseFactory
         )
     }
 
-    convenience init(mockUser: MockUserType = .createDefaultSelfUser()) {
+    convenience init(mockUser: MockUserType = .createDefaultSelfUser(), mockUseCaseFactory: MockUseCaseFactoryProtocol = MockUseCaseFactoryProtocol()) {
         self.init(
             selfUser: mockUser,
-            selfLegalHoldSubject: mockUser
+            selfLegalHoldSubject: mockUser,
+            useCaseFactory: mockUseCaseFactory
         )
     }
 
     init(
         selfUser: UserType,
-        selfLegalHoldSubject: SelfLegalHoldSubject & UserType
+        selfLegalHoldSubject: SelfLegalHoldSubject & UserType,
+        useCaseFactory: MockUseCaseFactoryProtocol
     ) {
         self.selfUser = selfUser
         self.selfLegalHoldSubject = selfLegalHoldSubject
+        self.useCaseFactory = useCaseFactory
     }
 
     var lock: SessionLock? = .screen

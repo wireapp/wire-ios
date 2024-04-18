@@ -96,28 +96,29 @@ final class CreateSecureGuestLinkViewModel {
 
         delegate?.viewModelDidValidatePasswordSuccessfully(self)
     }
-}
 
-func generateRandomPassword() -> String {
-    let minLength = 15
-    let maxLength = 20
-    let selectedLength = Int.random(in: minLength...maxLength)
+    func generateRandomPassword() -> String {
+        let minLength = 15
+        let maxLength = 20
+        let selectedLength = Int.random(in: minLength...maxLength)
 
-    let lowercaseLetters = "abcdefghijklmnopqrstuvwxyz"
-    let uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    let numbers = "0123456789"
-    let specialCharacters = "!@#$%^&*()-_+=<>?/[]{|}"
-    let allCharacters = lowercaseLetters + uppercaseLetters + numbers + specialCharacters
+        let lowercaseLetters = "abcdefghijklmnopqrstuvwxyz"
+        let uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        let numbers = "0123456789"
+        let specialCharacters = "!@#$%^&*()-_+=<>?/[]{|}"
+        let allCharacters = lowercaseLetters + uppercaseLetters + numbers + specialCharacters
 
-    var characters = [Character]()
-    characters.append(lowercaseLetters.randomElement()!)
-    characters.append(uppercaseLetters.randomElement()!)
-    characters.append(numbers.randomElement()!)
-    characters.append(specialCharacters.randomElement()!)
+        var characters = [Character]()
+        characters.append(lowercaseLetters.randomElement()!)
+        characters.append(uppercaseLetters.randomElement()!)
+        characters.append(numbers.randomElement()!)
+        characters.append(specialCharacters.randomElement()!)
 
-    for _ in 0..<(selectedLength - characters.count) {
-        characters.append(allCharacters.randomElement()!)
+        for _ in 0..<(selectedLength - characters.count) {
+            characters.append(allCharacters.randomElement()!)
+        }
+
+        return String(characters.shuffled())
     }
 
-    return String(characters.shuffled())
 }
