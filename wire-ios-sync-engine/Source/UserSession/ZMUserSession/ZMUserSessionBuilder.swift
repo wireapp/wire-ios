@@ -223,125 +223,29 @@ struct ZMUserSessionBuilder {
 
         // setup builder
 
-        withAnalytics(analytics)
-        withAppVersion(appVersion)
-        withAppLock(appLock)
-        withApplication(application)
-        withApplicationStatusDirectory(applicationStatusDirectory)
-        withContextStorage(contextStorage)
-        withCoreCryptoProvider(coreCryptoProvider)
-        withCoreDataStack(coreDataStack)
-        withCryptoboxMigrationManager(cryptoboxMigrationManager)
-        withE2EIActivationDateRepository(e2eiActivationDateRepository)
-        withEARService(earService)
-        withFlowManager(flowManager)
-        withLastE2EIUpdateDateRepository(lastE2EIdentityUpdateDateRepository)
-        withLastEventIDRepository(lastEventIDRepository)
-        withMediaManager(mediaManager)
-        withMLSConversationVerificationStatusUpdater(mlsConversationVerificationStatusUpdater)
-        withMLSService(mlsService)
-        withObserveMLSGroupVerificationStatusUseCase(observeMLSGroupVerificationStatusUseCase)
-        withProteusToMLSMigrationCoordinator(proteusToMLSMigrationCoordinator)
-        withSharedUserDefaults(sharedUserDefaults)
-        withTransportSession(transportSession)
-        withUpdateMLSGroupVerificationStatusUseCase(updateMLSGroupVerificationStatus)
-        withUseCaseFactory(useCaseFactory)
-        withUserID(userId)
-    }
-
-    mutating func withAnalytics(_ analytics: (any AnalyticsType)?) {
         self.analytics = analytics
-    }
-
-    mutating func withAppVersion(_ appVersion: String) {
         self.appVersion = appVersion
-    }
-
-    mutating func withAppLock(_ appLock: any AppLockType) {
         self.appLock = appLock
-    }
-
-    mutating func withApplication(_ application: any ZMApplication) {
         self.application = application
-    }
-
-    mutating func withApplicationStatusDirectory(_ applicationStatusDirectory: ApplicationStatusDirectory) {
         self.applicationStatusDirectory = applicationStatusDirectory
-    }
-
-    mutating func withContextStorage(_ contextStorage: any LAContextStorable) {
         self.contextStorage = contextStorage
-    }
-
-    mutating func withCoreCryptoProvider(_ coreCryptoProvider: any CoreCryptoProviderProtocol) {
         self.coreCryptoProvider = coreCryptoProvider
-    }
-
-    mutating func withCoreDataStack(_ coreDataStack: CoreDataStack) {
         self.coreDataStack = coreDataStack
-    }
-
-    mutating func withCryptoboxMigrationManager(_ cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface) {
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
-    }
-
-    mutating func withE2EIActivationDateRepository(_ e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol) {
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
-    }
-
-    mutating func withEARService(_ earService: any EARServiceInterface) {
         self.earService = earService
-    }
-
-    mutating func withFlowManager(_ flowManager: any FlowManagerType) {
         self.flowManager = flowManager
-    }
-
-    mutating func withLastE2EIUpdateDateRepository(_ lastE2EIUpdateDateRepository: any LastE2EIdentityUpdateDateRepositoryInterface) {
-        self.lastE2EIUpdateDateRepository = lastE2EIUpdateDateRepository
-    }
-
-    mutating func withLastEventIDRepository(_ lastEventIDRepository: any LastEventIDRepositoryInterface) {
+        self.lastE2EIUpdateDateRepository = lastE2EIdentityUpdateDateRepository
         self.lastEventIDRepository = lastEventIDRepository
-    }
-
-    mutating func withMediaManager(_ mediaManager: any MediaManagerType) {
         self.mediaManager = mediaManager
-    }
-
-    mutating func withMLSConversationVerificationStatusUpdater(_ mlsConversationVerificationStatusUpdater: any MLSConversationVerificationStatusUpdating) {
         self.mlsConversationVerificationStatusUpdater = mlsConversationVerificationStatusUpdater
-    }
-
-    mutating func withMLSService(_ mlsService: any MLSServiceInterface) {
         self.mlsService = mlsService
-    }
-
-    mutating func withObserveMLSGroupVerificationStatusUseCase(_ observeMLSGroupVerificationStatusUseCase: any ObserveMLSGroupVerificationStatusUseCaseProtocol) {
         self.observeMLSGroupVerificationStatusUseCase = observeMLSGroupVerificationStatusUseCase
-    }
-
-    mutating func withProteusToMLSMigrationCoordinator(_ proteusToMLSMigrationCoordinator: any ProteusToMLSMigrationCoordinating) {
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
-    }
-
-    mutating func withSharedUserDefaults(_ sharedUserDefaults: UserDefaults) {
         self.sharedUserDefaults = sharedUserDefaults
-    }
-
-    mutating func withTransportSession(_ transportSession: any TransportSessionType) {
         self.transportSession = transportSession
-    }
-
-    mutating func withUpdateMLSGroupVerificationStatusUseCase(_ updateMLSGroupVerificationStatusUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol) {
-        self.updateMLSGroupVerificationStatusUseCase = updateMLSGroupVerificationStatusUseCase
-    }
-
-    mutating func withUseCaseFactory(_ useCaseFactory: any UseCaseFactoryProtocol) {
+        self.updateMLSGroupVerificationStatusUseCase = updateMLSGroupVerificationStatus
         self.useCaseFactory = useCaseFactory
-    }
-
-    mutating func withUserID(_ userId: UUID) {
         self.userId = userId
     }
 }
