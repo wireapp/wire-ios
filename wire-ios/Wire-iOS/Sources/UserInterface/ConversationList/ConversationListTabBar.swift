@@ -20,10 +20,6 @@ import UIKit
 import WireSyncEngine
 import WireCommonComponents
 
-protocol ConversationListTabBarControllerDelegate: AnyObject {
-    func didChangeTab(with type: TabBarItemType)
-}
-
 enum TabBarItemType: Int, CaseIterable {
 
     typealias BottomBar = L10n.Localizable.ConversationList.BottomBar
@@ -113,7 +109,7 @@ enum TabBarItemType: Int, CaseIterable {
 
 }
 
-final class ConversationListTabBar: UITabBar {
+final class ConversationListTabBar: UITabBar { // ?
 
     private let startTab = UITabBarItem(type: .startUI)
     private let listTab = UITabBarItem(type: .list)
