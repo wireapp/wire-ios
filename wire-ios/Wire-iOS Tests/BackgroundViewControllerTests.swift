@@ -25,6 +25,7 @@ final class BackgroundViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+
         accentColor = .violet
         selfUser = MockUserType.createSelfUser(name: "")
         selfUser.accentColorValue = .violet

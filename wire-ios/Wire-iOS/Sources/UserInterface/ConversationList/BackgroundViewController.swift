@@ -23,12 +23,12 @@ final class BackgroundViewController: UIViewController {
 
     lazy var dispatchGroup: DispatchGroup = DispatchGroup()
 
-    fileprivate let imageView = UIImageView()
+    private let imageView = UIImageView()
     private let cropView = UIView()
     private let darkenOverlay = UIView()
-    private var blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
-    private var userObserverToken: NSObjectProtocol! = .none
+    private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
     private let user: UserType
+    private var userObserverToken: NSObjectProtocol?
 
     init(
         user: UserType,
@@ -44,18 +44,11 @@ final class BackgroundViewController: UIViewController {
         guard !ProcessInfo.processInfo.isRunningTests else { return }
 
         userObserverToken = userSession?.addUserObserver(self, for: user)
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(colorSchemeChanged),
-            name: .SettingsColorSchemeChanged,
-            object: nil
-        )
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     override func viewDidLoad() {
@@ -67,17 +60,8 @@ final class BackgroundViewController: UIViewController {
         self.updateForUser()
     }
 
-    private var child: UIViewController? {
-        return children.first
-    }
-
-    override var childForStatusBarStyle: UIViewController? {
-        return child
-    }
-
-    override var childForStatusBarHidden: UIViewController? {
-        return child
-    }
+    override var childForStatusBarStyle: UIViewController? { children.first }
+    override var childForStatusBarHidden: UIViewController? { children.first }
 
     private func configureViews() {
         let factor = BackgroundViewController.backgroundScaleFactor
@@ -127,9 +111,7 @@ final class BackgroundViewController: UIViewController {
     }
 
     private func updateForUser() {
-        guard self.isViewLoaded else {
-            return
-        }
+        guard isViewLoaded else { return }
 
         updateForUserImage()
         updateForAccentColor()
@@ -154,7 +136,7 @@ final class BackgroundViewController: UIViewController {
         setBackground(color: UIColor(fromZMAccentColor: user.accentColorValue))
     }
 
-    func updateFor(imageMediumDataChanged: Bool, accentColorValueChanged: Bool) {
+    /*private*/ func updateFor(imageMediumDataChanged: Bool, accentColorValueChanged: Bool) {
 
         if imageMediumDataChanged {
             updateForUserImage()
@@ -165,24 +147,23 @@ final class BackgroundViewController: UIViewController {
         }
     }
 
-    static let backgroundScaleFactor: CGFloat = 1.4
+    private static let backgroundScaleFactor: CGFloat = 1.4
 
-    static func blurredAppBackground(with imageData: Data) -> UIImage? {
-        return UIImage(from: imageData, withMaxSize: 40)?.desaturatedImage(with: CIContext.shared, saturation: 2)
+    private static func blurredAppBackground(with imageData: Data) -> UIImage? {
+        .init(from: imageData, withMaxSize: 40)?.desaturatedImage(with: CIContext.shared, saturation: 2)
     }
 
-    fileprivate func setBackground(color: UIColor) {
-        self.imageView.backgroundColor = color
-    }
-
-    @objc
-    private func colorSchemeChanged() {
+    private func setBackground(color: UIColor) {
+        imageView.backgroundColor = color
     }
 }
 
 extension BackgroundViewController: UserObserving {
+
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        updateFor(imageMediumDataChanged: changeInfo.imageMediumDataChanged,
-                       accentColorValueChanged: changeInfo.accentColorValueChanged)
+        updateFor(
+            imageMediumDataChanged: changeInfo.imageMediumDataChanged,
+            accentColorValueChanged: changeInfo.accentColorValueChanged
+        )
     }
 }
