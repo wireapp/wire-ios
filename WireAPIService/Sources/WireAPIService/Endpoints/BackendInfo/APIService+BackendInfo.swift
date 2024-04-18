@@ -19,7 +19,7 @@
 import Foundation
 
 extension APIService {
-    public func getBackendInfoAPI(for version: APIVersion) async throws -> BackendInfoModel {
+    public func getBackendInfo(for version: APIVersion) async throws -> BackendInfoModel {
         let endpoint = Endpoints.BackendInfo()
         let decoder = JSONDecoder() // TODO: use the custom decoder
 

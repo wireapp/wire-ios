@@ -19,5 +19,8 @@
 import Foundation
 
 public protocol APIServiceProtocol {
-    func getBackendInfoAPI(for version: APIVersion) async throws -> BackendInfoModel
+
+    // MARK: BackendInfo
+
+    func getBackendInfo(for version: APIVersion) async throws -> BackendInfoModel
 }
