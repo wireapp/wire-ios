@@ -63,6 +63,7 @@ final class ZClientViewController: UIViewController {
         self.userSession = userSession
 
         backgroundViewController = BackgroundViewController(
+            accentColor: userSession.selfUser.accentColor,
             user: userSession.selfUser,
             userSession: userSession as? ZMUserSession
         )

@@ -21,7 +21,12 @@ import WireSyncEngine
 
 final class BackgroundViewController: UIViewController {
 
-    lazy var dispatchGroup: DispatchGroup = DispatchGroup()
+    var accentColor: UIColor {
+        get { imageView.backgroundColor ?? .clear }
+        set { imageView.backgroundColor = newValue }
+    }
+
+    lazy private(set) var dispatchGroup: DispatchGroup = DispatchGroup()
 
     private let imageView = UIImageView()
     private let cropView = UIView()
@@ -31,11 +36,13 @@ final class BackgroundViewController: UIViewController {
     private var userObserverToken: NSObjectProtocol?
 
     init(
+        accentColor: UIColor,
         user: UserType,
         userSession: UserSession?
     ) {
         self.user = user
         super.init(nibName: .none, bundle: .none)
+        self.accentColor = accentColor
 
         setupObservers(userSession: userSession)
     }
@@ -113,37 +120,21 @@ final class BackgroundViewController: UIViewController {
     private func updateForUser() {
         guard isViewLoaded else { return }
 
-        updateForUserImage()
-        updateForAccentColor()
+        Task { await updateForUserImage() }
     }
 
-    private func updateForUserImage() {
-        dispatchGroup.enter()
-        user.imageData(for: .complete, queue: DispatchQueue.global(qos: .background)) { [weak self] imageData in
-            var image: UIImage?
-            if let imageData = imageData {
-                image = BackgroundViewController.blurredAppBackground(with: imageData)
-            }
+    private func updateForUserImage() async {
+        guard let imageData = user.imageData(for: .complete) else { return }
 
-            DispatchQueue.main.async {
-                self?.imageView.image = image
-                self?.dispatchGroup.leave()
-            }
-        }
-    }
-
-    private func updateForAccentColor() {
-        setBackground(color: UIColor(fromZMAccentColor: user.accentColorValue))
+        imageView.image = await Task.detached(priority: .background) {
+            UIImage(from: imageData, withMaxSize: 40)?.desaturatedImage(with: CIContext.shared, saturation: 2)
+        }.value
     }
 
     /*private*/ func updateFor(imageMediumDataChanged: Bool, accentColorValueChanged: Bool) {
 
         if imageMediumDataChanged {
-            updateForUserImage()
-        }
-
-        if accentColorValueChanged {
-            updateForAccentColor()
+            Task { await updateForUserImage() }
         }
     }
 
@@ -152,18 +143,13 @@ final class BackgroundViewController: UIViewController {
     private static func blurredAppBackground(with imageData: Data) -> UIImage? {
         .init(from: imageData, withMaxSize: 40)?.desaturatedImage(with: CIContext.shared, saturation: 2)
     }
-
-    private func setBackground(color: UIColor) {
-        imageView.backgroundColor = color
-    }
 }
 
 extension BackgroundViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        updateFor(
-            imageMediumDataChanged: changeInfo.imageMediumDataChanged,
-            accentColorValueChanged: changeInfo.accentColorValueChanged
-        )
+        if changeInfo.imageMediumDataChanged {
+            Task { await updateForUserImage() }
+        }
     }
 }

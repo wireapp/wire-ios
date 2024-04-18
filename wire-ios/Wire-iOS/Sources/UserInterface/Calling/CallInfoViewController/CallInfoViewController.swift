@@ -93,7 +93,11 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
             userSession: userSession
         )
 
-        backgroundViewController = BackgroundViewController(user: selfUser, userSession: userSession)
+        backgroundViewController = BackgroundViewController(
+            accentColor: selfUser.accentColor,
+            user: selfUser,
+            userSession: userSession
+        )
 
         super.init(nibName: nil, bundle: nil)
         accessoryViewController.delegate = self
