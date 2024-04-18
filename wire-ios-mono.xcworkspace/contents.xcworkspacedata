@@ -135,6 +135,9 @@
       location = "group:wire-ios-system/WireSystem.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:WireAPIService">
+   </FileRef>
+   <FileRef
       location = "group:WireAPI">
    </FileRef>
 </Workspace>
