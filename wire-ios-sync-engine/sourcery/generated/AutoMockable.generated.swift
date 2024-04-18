@@ -381,17 +381,17 @@ public class MockSecuredGuestLinkUseCaseProtocol: SecuredGuestLinkUseCaseProtoco
 
     // MARK: - invoke
 
-    public var invokePasswordCompletion_Invocations: [(password: String?, completion: (Result<String, Error>) -> Void)] = []
-    public var invokePasswordCompletion_MockMethod: ((String?, @escaping (Result<String, Error>) -> Void) -> Void)?
+    public var invokeConversationPasswordCompletion_Invocations: [(conversation: ZMConversation, password: String?, completion: (Result<String, Error>) -> Void)] = []
+    public var invokeConversationPasswordCompletion_MockMethod: ((ZMConversation, String?, @escaping (Result<String, Error>) -> Void) -> Void)?
 
-    public func invoke(password: String?, completion: @escaping (Result<String, Error>) -> Void) {
-        invokePasswordCompletion_Invocations.append((password: password, completion: completion))
+    public func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String, Error>) -> Void) {
+        invokeConversationPasswordCompletion_Invocations.append((conversation: conversation, password: password, completion: completion))
 
-        guard let mock = invokePasswordCompletion_MockMethod else {
-            fatalError("no mock for `invokePasswordCompletion`")
+        guard let mock = invokeConversationPasswordCompletion_MockMethod else {
+            fatalError("no mock for `invokeConversationPasswordCompletion`")
         }
 
-        mock(password, completion)
+        mock(conversation, password, completion)
     }
 
 }

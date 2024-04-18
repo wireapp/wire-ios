@@ -498,8 +498,7 @@ public final class ZMUserSession: NSObject {
         self.useCaseFactory = useCaseFactory ?? UseCaseFactory(
             context: coreDataStack.syncContext,
             supportedProtocolService: SupportedProtocolsService(context: coreDataStack.syncContext),
-            oneOnOneResolver: OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService)),
-            conversation: ZMConversation(context: coreDataStack.syncContext)
+            oneOnOneResolver: OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
         )
 
         let e2eIVerificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)

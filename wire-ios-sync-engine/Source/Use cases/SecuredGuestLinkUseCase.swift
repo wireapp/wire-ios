@@ -21,21 +21,13 @@ import Foundation
 // sourcery: AutoMockable
 public protocol SecuredGuestLinkUseCaseProtocol {
 
-    func invoke(password: String?, completion: @escaping (Result<String, Error>) -> Void)
+    func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String, Error>) -> Void)
 
 }
 
 public struct SecuredGuestLinkUseCase: SecuredGuestLinkUseCaseProtocol {
 
-    private let conversation: ZMConversation
-
-    public init(
-        conversation: ZMConversation
-    ) {
-        self.conversation = conversation
-    }
-
-    public func invoke(password: String?, completion: @escaping (Result<String, Error>) -> Void) {
+    public func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String, Error>) -> Void) {
 
         if conversation.isLegacyAccessMode {
             conversation.setAllowGuests(true) { result in

@@ -31,6 +31,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     typealias SecureGuestLinkAccessibilityLocale = L10n.Accessibility.CreateSecureGuestLink
 
     let userSession: UserSession
+    let conversation: ZMConversation
 
     weak var delegate: ValidatedTextFieldDelegate?
 
@@ -40,10 +41,11 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     }()
 
     // MARK: - Initializer
-     init(userSession: UserSession) {
-         self.userSession = userSession
-         super.init(nibName: nil, bundle: nil)
-     }
+    init(userSession: UserSession, conversation: ZMConversation) {
+        self.userSession = userSession
+        self.conversation = conversation
+        super.init(nibName: nil, bundle: nil)
+    }
 
      required init?(coder: NSCoder) {
          fatalError("init(coder:) has not been implemented")
@@ -311,6 +313,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     @objc
     func createSecuredLinkButtonTapped(_ sender: UIButton) {
         viewModel.createSecuredGuestLinkIfValid(
+            conversation: conversation,
             passwordField: securedGuestLinkPasswordTextfield,
             confirmPasswordField: securedGuestLinkPasswordValidatedTextField
         )

@@ -48,6 +48,7 @@ protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
 final class ConversationGuestOptionsViewModel {
 
     private let userSession: UserSession
+    private let conversation: ZMConversation
 
     struct State {
         var rows = [CellConfiguration]()
@@ -86,13 +87,11 @@ final class ConversationGuestOptionsViewModel {
         return apiVersion >= .v4
     }
 
-    private var securedGuestLinkUseCase: SecuredGuestLinkUseCase
-
     private let configuration: ConversationGuestOptionsViewModelConfiguration
 
     init(configuration: ConversationGuestOptionsViewModelConfiguration, conversation: ZMConversation, userSession: UserSession) {
         self.configuration = configuration
-        securedGuestLinkUseCase = SecuredGuestLinkUseCase(conversation: conversation)
+        self.conversation = conversation
         self.userSession = userSession
         updateRows()
         configuration.allowGuestsChangedHandler = { [weak self] allowGuests in
@@ -240,7 +239,7 @@ final class ConversationGuestOptionsViewModel {
             self?.showLoadingCell = true
         }
 
-        securedGuestLinkUseCase.invoke(password: nil) { result in
+        userSession.useCaseFactory.createSecuredGuestLinkUseCase().invoke(conversation: conversation, password: nil) { result in
             switch result {
             case .success(let link):
                 self.link = link
@@ -258,11 +257,20 @@ final class ConversationGuestOptionsViewModel {
     /// - Parameter view: the source view which triggers create action
     func startGuestLinkCreationFlow(from view: UIView? = nil) {
         if isGuestLinkWithPasswordAvailable {
-            delegate?.viewModel(self, sourceView: view, presentGuestLinkTypeSelection: { [weak self] guestLinkType in
+            delegate?.viewModel(self,
+                                sourceView: view,
+                                presentGuestLinkTypeSelection: {
+                [weak self] guestLinkType in
                 guard let `self` = self else { return }
                 switch guestLinkType {
                 case .secure:
-                    delegate?.viewModel(self, presentCreateSecureGuestLink: CreateSecureGuestLinkViewController(userSession: userSession).wrapInNavigationController(setBackgroundColor: true), animated: true)
+                    delegate?.viewModel(
+                        self,
+                        presentCreateSecureGuestLink: CreateSecureGuestLinkViewController(
+                            userSession: userSession,
+                            conversation: conversation).wrapInNavigationController(setBackgroundColor: true),
+                        animated: true
+                    )
                 case .normal:
                     createLink()
                 }

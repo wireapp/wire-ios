@@ -72,7 +72,7 @@ final class CreateSecureGuestLinkViewModel {
         return true
     }
 
-    func createSecuredGuestLinkIfValid(passwordField: ValidatedTextField, confirmPasswordField: ValidatedTextField) {
+    func createSecuredGuestLinkIfValid(conversation: ZMConversation, passwordField: ValidatedTextField, confirmPasswordField: ValidatedTextField) {
         guard validatePassword(for: passwordField, against: confirmPasswordField) else {
             delegate?.viewModel(self, didFailToValidatePasswordWithReason: "Password validation failed.")
             return
@@ -83,7 +83,7 @@ final class CreateSecureGuestLinkViewModel {
 
         let securedGuestLinkUseCase = useCaseFactory.createSecuredGuestLinkUseCase()
 
-        securedGuestLinkUseCase.invoke(password: password) { [weak self] result in
+        securedGuestLinkUseCase.invoke(conversation: conversation, password: password) { [weak self] result in
             guard let self = self else { return }
 
             switch result {
