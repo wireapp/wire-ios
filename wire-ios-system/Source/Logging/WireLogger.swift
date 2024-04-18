@@ -188,12 +188,12 @@ public extension WireLogger {
     static let push = WireLogger(tag: "push")
     static let proteus = WireLogger(tag: "proteus")
     static let session = WireLogger(tag: "session")
+    static let sessionManager = WireLogger(tag: "SessionManager")
     static let shareExtension = WireLogger(tag: "share-extension")
     static let sync = WireLogger(tag: "sync")
     static let system = WireLogger(tag: "system")
     static let updateEvent = WireLogger(tag: "update-event")
     static let userClient = WireLogger(tag: "user-client")
-
 }
 
 /// Class to proxy WireLogger methods to Objective-C

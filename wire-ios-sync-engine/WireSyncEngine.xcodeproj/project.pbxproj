@@ -529,6 +529,9 @@
 		D5D10DA4203AE43200145497 /* Conversation+AccessMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D10DA3203AE43200145497 /* Conversation+AccessMode.swift */; };
 		E62F31C52B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62F31C42B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift */; };
 		E62F31C72B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62F31C62B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift */; };
+		E6425FDF2BCD5B9D003EC8CF /* ZMUserSessionBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6425FDE2BCD5B9D003EC8CF /* ZMUserSessionBuilder.swift */; };
+		E6425FE32BD0021B003EC8CF /* SessionManager+UserSessionSelfUserClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6425FE22BD0021B003EC8CF /* SessionManager+UserSessionSelfUserClientDelegate.swift */; };
+		E6425FE52BD005C0003EC8CF /* SessionManager+UserSessionLogoutDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6425FE42BD005C0003EC8CF /* SessionManager+UserSessionLogoutDelegate.swift */; };
 		E666EDDF2B74CEE600C03E2B /* SessionManagerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDDD2B74CEE000C03E2B /* SessionManagerBuilder.swift */; };
 		E666EDE22B74E78C00C03E2B /* SessionManagerTests+AccountDeletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDE02B74E75A00C03E2B /* SessionManagerTests+AccountDeletion.swift */; };
 		E666EDE42B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDE32B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift */; };
@@ -1298,6 +1301,9 @@
 		D5D10DA3203AE43200145497 /* Conversation+AccessMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conversation+AccessMode.swift"; sourceTree = "<group>"; };
 		E62F31C42B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluateOneOnOneConversationsStrategy.swift; sourceTree = "<group>"; };
 		E62F31C62B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluateOneOnOneConversationsStrategyTests.swift; sourceTree = "<group>"; };
+		E6425FDE2BCD5B9D003EC8CF /* ZMUserSessionBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMUserSessionBuilder.swift; sourceTree = "<group>"; };
+		E6425FE22BD0021B003EC8CF /* SessionManager+UserSessionSelfUserClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+UserSessionSelfUserClientDelegate.swift"; sourceTree = "<group>"; };
+		E6425FE42BD005C0003EC8CF /* SessionManager+UserSessionLogoutDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+UserSessionLogoutDelegate.swift"; sourceTree = "<group>"; };
 		E666EDDD2B74CEE000C03E2B /* SessionManagerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerBuilder.swift; sourceTree = "<group>"; };
 		E666EDE02B74E75A00C03E2B /* SessionManagerTests+AccountDeletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+AccountDeletion.swift"; sourceTree = "<group>"; };
 		E666EDE32B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+AuthenticationFailure.swift"; sourceTree = "<group>"; };
@@ -2625,7 +2631,6 @@
 				874F142C1C16FD9700C15118 /* Device.swift */,
 				8796343F1F7BEA4700FC79BA /* DispatchQueue+SerialAsync.swift */,
 				EE2DE5EB29263C5100F42F4C /* Logger.swift */,
-				636826F52951F7F300D904C2 /* Logging.swift */,
 				7AA7112E286DB6F50098F670 /* OptionalString+NonEmptyValue.swift */,
 				5E8EE1F920FDC7D700DB1F9B /* Pasteboard.swift */,
 				1634958A1F0254CB004E80DB /* ServerConnection.swift */,
@@ -2709,6 +2714,7 @@
 		E6C983EF2B986B2900D55177 /* ZMUserSession */ = {
 			isa = PBXGroup;
 			children = (
+				E6425FDE2BCD5B9D003EC8CF /* ZMUserSessionBuilder.swift */,
 				EE419B57256FEA3D004618E2 /* ZMUserSession.Configuration.swift */,
 				166B2B5D23E86522003E8581 /* ZMUserSession.swift */,
 				63CD59562964346400385037 /* ZMUserSession+AccessToken.swift */,
@@ -2824,6 +2830,8 @@
 				54131BC525C7F71400CE2CA2 /* LoginDelegate.swift */,
 				BF2AD9FF1F41A3DF000980E8 /* SessionFactories.swift */,
 				F19F1D371EFBF61800275E27 /* SessionManager.swift */,
+				E6425FE42BD005C0003EC8CF /* SessionManager+UserSessionLogoutDelegate.swift */,
+				E6425FE22BD0021B003EC8CF /* SessionManager+UserSessionSelfUserClientDelegate.swift */,
 				EE9CDE8F27DA04A300C4DAC8 /* SessionManager+APIVersionResolver.swift */,
 				EEE186B5259CCA14008707CA /* SessionManager+AppLock.swift */,
 				16FF474B1F0D54B20044C491 /* SessionManager+Logs.swift */,
@@ -3633,6 +3641,7 @@
 				F1C1F3EE1FCF0C85007273E3 /* ZMUserSessionErrorCode+Localized.swift in Sources */,
 				166264742166093800300F45 /* CallEventStatus.swift in Sources */,
 				63C5321F27FDB283009DFFF4 /* SyncStatus.swift in Sources */,
+				E6425FE52BD005C0003EC8CF /* SessionManager+UserSessionLogoutDelegate.swift in Sources */,
 				549815CD1A432BC700A7CE2E /* ZMBlacklistDownloader.m in Sources */,
 				549815CE1A432BC700A7CE2E /* ZMBlacklistVerificator.m in Sources */,
 				16D9E8BA22BCD39200FA463F /* LegalHoldRequestStrategy.swift in Sources */,
@@ -3705,6 +3714,7 @@
 				5EC2C5912137F80E00C6CE35 /* CallState.swift in Sources */,
 				259AAB0D2B9F477F00B13A7C /* LastE2EIdentityUpdateDateProtocol.swift in Sources */,
 				5478A1411DEC4048006F7268 /* UserProfile.swift in Sources */,
+				E6425FDF2BCD5B9D003EC8CF /* ZMUserSessionBuilder.swift in Sources */,
 				EE419B58256FEA3D004618E2 /* ZMUserSession.Configuration.swift in Sources */,
 				5E8BB89E2147E9DF00EEA64B /* AVSWrapper+Handlers.swift in Sources */,
 				63B1FAD92763A510000766F8 /* AVSIdentifier.swift in Sources */,
@@ -3883,6 +3893,7 @@
 				06ADE9E82BBFE1FA008BA0B3 /* CRLsDistributionPointsObserver.swift in Sources */,
 				EE2DE5EA2926377C00F42F4C /* CallObserver.swift in Sources */,
 				161ACB2F23F5BACA00ABFF33 /* ConnectToBotURLActionProcessor.swift in Sources */,
+				E6425FE32BD0021B003EC8CF /* SessionManager+UserSessionSelfUserClientDelegate.swift in Sources */,
 				EFF9403E2240FE5D004F3115 /* URL+DeepLink.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
