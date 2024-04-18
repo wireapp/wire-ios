@@ -143,7 +143,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
         selfUser(options: SelfUserOptions(team: .teamA))
         let conversation = self.conversation(options: ConversationOptions(hasRemoteId: true, team: .teamA, isGroup: true))
         // when
-        let request = WireSyncEngine.WirelessRequestFactory.createLinkRequest(for: conversation, apiVersion: .v0)
+        let request = WireSyncEngine.WirelessRequestFactory.createLinkRequest(password: nil, for: conversation, apiVersion: .v0)
         // then
         XCTAssertEqual(request.method, .post)
         XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/code")
@@ -155,7 +155,7 @@ public class ZMConversationAccessModeTests: MessagingTest {
         selfUser(options: SelfUserOptions(team: .teamA))
         let conversation = self.conversation(options: ConversationOptions(hasRemoteId: true, team: .teamA, isGroup: true))
         // when
-        let request = WireSyncEngine.WirelessRequestFactory.createLinkRequest(for: conversation, apiVersion: .v4)
+        let request = WireSyncEngine.WirelessRequestFactory.createLinkRequest(password: nil, for: conversation, apiVersion: .v4)
         // then
         XCTAssertEqual(request.method, .post)
         XCTAssertEqual(request.path, "/v4/conversations/\(conversation.remoteIdentifier!.transportString())/code")

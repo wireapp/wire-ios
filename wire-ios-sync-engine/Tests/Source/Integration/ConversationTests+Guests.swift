@@ -39,7 +39,7 @@ class ConversationTests_Guests: IntegrationTest {
         mockTransportSession?.resetReceivedRequests()
 
         // when
-        conversation.setAllowGuests(true, in: self.userSession!) { result in
+        conversation.setAllowGuests(true) { result in
             switch result {
             case .success:
                 break
@@ -72,7 +72,7 @@ class ConversationTests_Guests: IntegrationTest {
         mockTransportSession?.resetReceivedRequests()
 
         // when
-        conversation.updateAccessAndCreateWirelessLink(in: self.userSession!) { result in
+        conversation.updateAccessAndCreateWirelessLink(password: nil) { result in
             switch result {
             case .success(let link):
                 XCTAssertEqual(link, self.groupConversationWithWholeTeam.link)
@@ -169,7 +169,7 @@ class ConversationTests_Guests: IntegrationTest {
         mockTransportSession?.resetReceivedRequests()
 
         // when
-        conversation.updateAccessAndCreateWirelessLink(in: self.userSession!) { result in
+        conversation.updateAccessAndCreateWirelessLink(password: nil) { result in
             switch result {
             case .success(let link):
                 XCTAssertEqual(link, self.groupConversationWithWholeTeam.link)
