@@ -65,7 +65,7 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
 
     weak var delegate: CallInfoViewControllerDelegate?
 
-    private let backgroundViewController: BackgroundViewController
+    let backgroundViewController: BackgroundViewController
     private let stackView = UIStackView(axis: .vertical)
     private let statusViewController: CallStatusViewController
     private let accessoryViewController: CallAccessoryViewController

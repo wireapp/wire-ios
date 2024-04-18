@@ -26,8 +26,8 @@ final class BackgroundViewController: UIViewController {
         set { imageView.backgroundColor = newValue }
     }
 
-    var backgroundImage: UIImage {
-        get { imageView.image ?? .init() }
+    var backgroundImage: UIImage? {
+        get { imageView.image }
         set { imageView.image = newValue }
     }
 

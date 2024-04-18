@@ -22,20 +22,23 @@ import WireSyncEngine
 extension ZClientViewController: UserObserving {
 
     public func userDidChange(_ changeInfo: UserChangeInfo) {
+
         if changeInfo.accentColorValueChanged {
-
             UIApplication.shared.firstKeyWindow?.tintColor = UIColor.accent()
-
-            let backgroundViewController = backgroundViewController
             backgroundViewController.accentColor = changeInfo.user.accentColor
+        }
+
+        if changeInfo.imageMediumDataChanged {
 
             guard let imageData = changeInfo.user.imageData(for: .complete) else {
-                return backgroundViewController.backgroundImage = .init()
+                return backgroundViewController.backgroundImage = .none
             }
-            Task {
-                backgroundViewController.backgroundImage = await Task.detached(priority: .background) {
-                    .init(from: imageData, withMaxSize: 40)?.desaturatedImage(with: CIContext.shared, saturation: 2)
-                }.value ?? .init()
+
+            Task { [backgroundViewController] in
+                let backgroundImage = await Task.detached(priority: .background) {
+                    .init(from: imageData, withMaxSize: 40)?.desaturatedImage(with: .shared, saturation: 2)
+                }.value
+                backgroundViewController.backgroundImage = backgroundImage
             }
         }
     }
