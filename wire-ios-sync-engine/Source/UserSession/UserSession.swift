@@ -20,9 +20,11 @@ import Foundation
 import WireDataModel
 import LocalAuthentication
 
+public typealias SelfUserType = UserType & SelfLegalHoldSubject
+
+// sourcery: AutoMockable
 /// An abstraction of the user session for use in the presentation
 /// layer.
-
 public protocol UserSession: AnyObject {
 
     /// The current session lock, if any.
@@ -114,7 +116,7 @@ public protocol UserSession: AnyObject {
 
     var selfUser: UserType { get }
 
-    var selfLegalHoldSubject: UserType & SelfLegalHoldSubject { get }
+    var selfLegalHoldSubject: SelfUserType { get }
 
     func perform(_ changes: @escaping () -> Void)
 
@@ -136,7 +138,7 @@ public protocol UserSession: AnyObject {
 
     func addUserObserver(
         _ observer: UserObserving,
-        for: UserType
+        for user: UserType
     ) -> NSObjectProtocol?
 
     func addUserObserver(

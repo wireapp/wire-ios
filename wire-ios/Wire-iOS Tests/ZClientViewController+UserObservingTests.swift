@@ -16,8 +16,36 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-@objc(ZMUserObserving)
-public protocol UserObserving {
-    func userDidChange(_ changeInfo: UserChangeInfo)
+import WireSyncEngineSupport
+import XCTest
+
+@testable import Wire
+
+final class ZClientViewController_UserObservingTests: XCTestCase {
+
+    private var userSessionMock: MockUserSession!
+    private var sut: ZClientViewController!
+
+    override func setUp() {
+        super.setUp()
+
+        userSessionMock = .init()
+        userSessionMock.selfUser = MockUserType.createSelfUser(name: "Bob")
+        sut = .init(account: .mockAccount(imageData: mockImageData), userSession: userSessionMock)
+    }
+
+    override func tearDown() {
+        sut = nil
+        userSessionMock = nil
+
+        super.tearDown()
+    }
+
+    func test() {
+
+        // Given
+        sut.loadViewIfNeeded()
+
+        // When
+    }
 }

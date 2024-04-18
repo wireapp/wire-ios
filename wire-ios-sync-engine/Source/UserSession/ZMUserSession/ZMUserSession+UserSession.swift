@@ -114,7 +114,7 @@ extension ZMUserSession: UserSession {
         return ZMUser.selfUser(inUserSession: self)
     }
 
-    public var selfLegalHoldSubject: UserType & SelfLegalHoldSubject {
+    public var selfLegalHoldSubject: SelfUserType {
         return ZMUser.selfUser(inUserSession: self)
     }
 

@@ -20,8 +20,9 @@ import XCTest
 @testable import Wire
 
 final class ZClientViewControllerTests: XCTestCase {
-    var sut: ZClientViewController!
-    var userSession: UserSessionMock!
+
+    private var sut: ZClientViewController!
+    private var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()

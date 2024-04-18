@@ -320,6 +320,7 @@
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
 		596841CA2BD14D200009C6B8 /* ImageTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596841C92BD14D200009C6B8 /* ImageTransformer.swift */; };
 		596841CC2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596841CB2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift */; };
+		596841CF2BD15A0F0009C6B8 /* ZClientViewController+UserObservingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596841CD2BD159850009C6B8 /* ZClientViewController+UserObservingTests.swift */; };
 		596A80DE2BD13E3000A4C38C /* CallInfoViewController+UserObserving.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596A80DD2BD13E3000A4C38C /* CallInfoViewController+UserObserving.swift */; };
 		597A3BBA2B641F280020E337 /* UserStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB92B641F280020E337 /* UserStatus.swift */; };
 		5995C7752BC7E0F400F97BA8 /* DeviceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */; };
@@ -2384,6 +2385,7 @@
 		5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+initWithUserType.swift"; sourceTree = "<group>"; };
 		596841C92BD14D200009C6B8 /* ImageTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTransformer.swift; sourceTree = "<group>"; };
 		596841CB2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreImageBasedImageTransformer.swift; sourceTree = "<group>"; };
+		596841CD2BD159850009C6B8 /* ZClientViewController+UserObservingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZClientViewController+UserObservingTests.swift"; sourceTree = "<group>"; };
 		596A80DD2BD13E3000A4C38C /* CallInfoViewController+UserObserving.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CallInfoViewController+UserObserving.swift"; sourceTree = "<group>"; };
 		597A3BB92B641F280020E337 /* UserStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatus.swift; sourceTree = "<group>"; };
 		5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoView.swift; sourceTree = "<group>"; };
@@ -7269,6 +7271,7 @@
 				D34AFFF02A0B84EE00895C7A /* WarningLabelViewTests.swift */,
 				D50892FC2056C2AA004D3AE2 /* WirelessExpirationTimeFormatterTests.swift */,
 				EF3243522317F0060043F147 /* ZClientViewControllerTests.swift */,
+				596841CD2BD159850009C6B8 /* ZClientViewController+UserObservingTests.swift */,
 				EF61B33E1FC8461200D8E631 /* AccessoryTextField */,
 				A99E3E8D2519F23700E4FD3E /* Analytics */,
 				5E65A798212FF7A6008BFCC0 /* Authentication */,
@@ -10712,6 +10715,7 @@
 				D35EEDBE28C2004000949F02 /* NetworkSession.swift in Sources */,
 				1651F9BC1D352C5700A9FAE8 /* ArticleViewTests.swift in Sources */,
 				EE52379123F557B900D4FE79 /* MockServiceUserType+Creation.swift in Sources */,
+				596841CF2BD15A0F0009C6B8 /* ZClientViewController+UserObservingTests.swift in Sources */,
 				5E628025221EEA3B0039A8AB /* ProfileActionsFactoryTests.swift in Sources */,
 				D35EEDBB28C2004000949F02 /* NetworkPrimitives.swift in Sources */,
 				E961C0752A332E7400A36DE6 /* ConversationReactionMessageTests.swift in Sources */,
