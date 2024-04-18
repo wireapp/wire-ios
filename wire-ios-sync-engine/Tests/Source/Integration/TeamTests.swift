@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ class TeamTests: IntegrationTest {
 
     func remotelyInsertTeam(members: [MockUser], isBound: Bool = true) -> MockTeam {
         var mockTeam: MockTeam!
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             mockTeam = session.insertTeam(withName: "Super-Team", isBound: isBound, users: Set(members))
             mockTeam.creator = members.first
         }
@@ -72,7 +72,7 @@ class TeamTests: IntegrationTest {
         XCTAssert(localSelfUser.hasTeam)
 
         // when
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.removeMember(with: self.user1, from: mockTeam)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -91,7 +91,7 @@ class TeamTests: IntegrationTest {
         XCTAssert(ZMUser.selfUser(in: userSession!.managedObjectContext).hasTeam)
 
         // when
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.removeMember(with: self.selfUser, from: mockTeam)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -109,7 +109,7 @@ class TeamTests: IntegrationTest {
         let teamObserver = TestTeamObserver(team: nil, userSession: userSession!)
 
         // when
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.removeMember(with: self.user1, from: mockTeam)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

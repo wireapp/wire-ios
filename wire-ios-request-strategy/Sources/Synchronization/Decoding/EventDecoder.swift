@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -94,8 +94,8 @@ extension EventDecoder {
         }
 
         guard proteusProvider.canPerform else {
-                WireLogger.proteus.warn("ignore decrypting events because it is not safe")
-             return []
+            WireLogger.proteus.warn("ignore decrypting events because it is not safe")
+            return []
         }
 
         let decryptedEvents: [ZMUpdateEvent] = await proteusProvider.performAsync(
@@ -283,10 +283,13 @@ extension EventDecoder {
             if firstCall {
                 await consumeBlock([])
             }
+            WireLogger.updateEvent.debug("EventDecoder: process events finished")
             return
         }
 
+        WireLogger.updateEvent.debug("EventDecoder: process batch of \(events.storedEvents.count) events")
         await processBatch(events.updateEvents, storedEvents: events.storedEvents, block: consumeBlock)
+
         await process(with: privateKeys, consumeBlock, firstCall: false, callEventsOnly: callEventsOnly)
     }
 
@@ -294,6 +297,7 @@ extension EventDecoder {
     /// of `StoredEvents` and `ZMUpdateEvent`'s in a `EventsWithStoredEvents` tuple.
 
     private func fetchNextEventsBatch(with privateKeys: EARPrivateKeys?, callEventsOnly: Bool) async -> EventsWithStoredEvents {
+
         var (storedEvents, updateEvents) = ([StoredUpdateEvent](), [ZMUpdateEvent]())
 
         await eventMOC.perform {

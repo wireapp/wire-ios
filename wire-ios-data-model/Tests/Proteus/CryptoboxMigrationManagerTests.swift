@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -115,11 +115,7 @@ class CryptoboxMigrationManagerTests: ZMBaseManagedObjectTest {
         }
 
         // When
-        do {
-            try await sut.performMigration(accountDirectory: accountDirectory, coreCrypto: mockSafeCoreCrypto)
-        } catch {
-            XCTFail("failed to perform migration: \(error.localizedDescription)")
-        }
+        try await sut.performMigration(accountDirectory: accountDirectory, coreCrypto: mockSafeCoreCrypto)
 
         // Then
         XCTAssertEqual(mockFileManager.removeItemAt_Invocations, [cryptoboxDirectory])

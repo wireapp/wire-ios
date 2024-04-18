@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ extension UnauthenticatedSession {
         let path = "/custom-backend/by-domain/\(domain.addingPercentEncoding(withAllowedCharacters: .urlHostAllowed)!)"
         let request = ZMTransportRequest(path: path, method: .get, payload: nil, apiVersion: apiVersion.rawValue)
 
-        request.add(ZMCompletionHandler(on: operationLoop.operationQueue!, block: { (response) in
+        request.add(ZMCompletionHandler(on: operationLoop.operationQueue!, block: { response in
 
             switch response.result {
             case .success:

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ class ActionHandler<T: EntityAction>: NSObject, EntityActionHandler, ZMRequestGe
         let action = pendingActions.removeFirst()
         let request = self.request(for: action, apiVersion: apiVersion)
 
-        request?.add(ZMCompletionHandler(on: context, block: { [weak self] (response) in
+        request?.add(ZMCompletionHandler(on: context, block: { [weak self] response in
             if response.httpStatus.isOne(of: TooManyRequestsStatusCode, EnhanceYourCalmStatusCode) {
                 // We're being rate limited, put the action back so we can try again
                 // next time the operation loop polls.

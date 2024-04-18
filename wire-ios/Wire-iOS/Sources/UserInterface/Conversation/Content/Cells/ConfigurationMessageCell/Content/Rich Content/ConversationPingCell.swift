@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ final class ConversationPingCell: ConversationIconBasedCell, ConversationMessage
 
                             UIView.animate(easing: .easeOutQuart, duration: 0.55, animations: {
                                 self.imageView.alpha = 1.0
-                            }, completion: { (_) in
+                            }, completion: { _ in
                                 self.stopAnimation()
                             })
                         })

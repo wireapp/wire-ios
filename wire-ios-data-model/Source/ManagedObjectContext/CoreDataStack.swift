@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -196,7 +196,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         do {
             try closeStores(in: messagesContainer)
             try closeStores(in: eventsContainer)
-        } catch let error {
+        } catch {
             WireLogger.localStorage.error("Error while closing persistent store: \(error)", attributes: .safePublic)
         }
     }
@@ -264,7 +264,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         var loadingStoreError: Error?
 
         dispatchGroup.enter()
-        loadMessagesStore { (error) in
+        loadMessagesStore { error in
             if let error = error {
                 WireLogger.localStorage.error("failed to load message store: \(error)", attributes: .safePublic)
             }
@@ -273,7 +273,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         }
 
         dispatchGroup.enter()
-        loadEventStore { (error) in
+        loadEventStore { error in
             if let error = error {
                 WireLogger.localStorage.error("failed to load event store: \(error)")
             }
@@ -289,12 +289,12 @@ public class CoreDataStack: NSObject, ContextProvider {
     func loadMessagesStore(completionHandler: @escaping (Error?) -> Void) {
         do {
             try createStoreDirectory(for: messagesContainer)
-        } catch let error {
+        } catch {
             completionHandler(error)
             return
         }
 
-        messagesContainer.loadPersistentStores { (_, error) in
+        messagesContainer.loadPersistentStores { _, error in
 
             guard error == nil else {
                 completionHandler(error)
@@ -313,12 +313,12 @@ public class CoreDataStack: NSObject, ContextProvider {
     func loadEventStore(completionHandler: @escaping (Error?) -> Void) {
         do {
             try createStoreDirectory(for: eventsContainer)
-        } catch let error {
+        } catch {
             completionHandler(error)
             return
         }
 
-        eventsContainer.loadPersistentStores { (_, error) in
+        eventsContainer.loadPersistentStores { _, error in
 
             guard error == nil else {
                 completionHandler(error)

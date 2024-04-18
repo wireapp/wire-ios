@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -550,7 +550,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 working: nil,
                 application: application,
                 minTLSVersion: minTLSVersion,
-                blacklistCallback: { [weak self] (blacklisted) in
+                blacklistCallback: { [weak self] blacklisted in
                     guard let `self` = self, !self.isAppVersionBlacklisted else { return }
 
                     if blacklisted {
@@ -948,7 +948,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         do {
             try FileManager.default.removeItem(at: CoreDataStack.accountDataFolder(accountIdentifier: accountID, applicationContainer: sharedContainerURL))
-        } catch let error {
+        } catch {
             log.error("Impossible to delete the acccount \(account): \(error)")
             WireLogger.session.error("Impossible to delete the acccount \(account): \(error)")
         }

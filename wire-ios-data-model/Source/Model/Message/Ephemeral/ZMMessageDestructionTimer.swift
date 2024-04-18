@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ enum MessageDestructionType: String {
 
     override init(managedObjectContext: NSManagedObjectContext!) {
         super.init(managedObjectContext: managedObjectContext)
-        timerCompletionBlock = { [weak self] (message, userInfo) in
+        timerCompletionBlock = { [weak self] message, userInfo in
             guard let strongSelf = self, let message = message, !message.isZombieObject else {
                 return log.debug("not forwarding timer, nil message or zombie")
             }

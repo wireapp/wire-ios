@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -254,7 +254,7 @@ final class ConversationGuestOptionsViewModel {
                 switch result {
                 case .success:
                     self.updateRows()
-                    if nil == self.link && allowGuests {
+                    if self.link == nil && allowGuests {
                         self.fetchLink()
                     }
                 case .failure(let error): self.delegate?.viewModel(self, didReceiveError: error)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -99,7 +99,7 @@ final class ZClientViewController: UIViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
-        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] (note) in
+        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] note in
             guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
             switch change {
@@ -347,7 +347,7 @@ final class ZClientViewController: UIViewController {
         currentConversation = nil
 
         let inbox = ConnectRequestsViewController(userSession: userSession)
-        pushContentViewController(inbox.wrapInNavigationController(setBackgroundColor: true), focusOnView: focus, animated: animated)
+        pushContentViewController(inbox.wrapInNavigationController(), focusOnView: focus, animated: animated)
     }
 
     /// Open the user clients detail screen
@@ -359,7 +359,7 @@ final class ZClientViewController: UIViewController {
             userSession: userSession,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
-        let navController = controller.wrapInNavigationController(setBackgroundColor: true)
+        let navController = controller.wrapInNavigationController()
         navController.modalPresentationStyle = .formSheet
 
         present(navController, animated: true)
@@ -384,7 +384,7 @@ final class ZClientViewController: UIViewController {
                 // we have to restore the proper pre-presentation state here.
                 let conversationView = self.conversationListViewController.view
                 if let transform = conversationView?.layer.transform {
-                    if !CATransform3DIsIdentity(transform) || 1 != conversationView?.alpha {
+                    if !CATransform3DIsIdentity(transform) || conversationView?.alpha != 1 {
                         conversationView?.layer.transform = CATransform3DIdentity
                         conversationView?.alpha = 1
                     }
@@ -632,7 +632,7 @@ final class ZClientViewController: UIViewController {
 
         let isRegularContainer = traitCollection.horizontalSizeClass == .regular
 
-        if isRegularContainer && nil == topOverlayViewController {
+        if isRegularContainer && topOverlayViewController == nil {
             contentTopCompactConstraint.isActive = false
             contentTopRegularConstraint.isActive = true
         } else {
@@ -669,7 +669,7 @@ final class ZClientViewController: UIViewController {
             viewController = profileViewController
         }
 
-        let navWrapperController: UINavigationController? = viewController?.wrapInNavigationController(setBackgroundColor: true)
+        let navWrapperController: UINavigationController? = viewController?.wrapInNavigationController()
         navWrapperController?.modalPresentationStyle = .formSheet
         if let aController = navWrapperController {
             present(aController, animated: true)

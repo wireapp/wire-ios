@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ extension SearchResult {
             return nil
         }
 
-        let filteredDocuments = documents.filter { (document) -> Bool in
+        let filteredDocuments = documents.filter { document -> Bool in
             let name = document["name"] as? String
             let handle = document["handle"] as? String
             return !query.isHandleQuery || name?.hasPrefix("@") ?? true || handle?.contains(query.string.lowercased()) ?? false
@@ -95,7 +95,7 @@ extension SearchResult {
     }
 
     mutating func extendWithMembershipPayload(payload: MembershipListPayload) {
-        payload.members.forEach { (membershipPayload) in
+        payload.members.forEach { membershipPayload in
             let searchUser = teamMembers.first(where: { $0.remoteIdentifier == membershipPayload.userID })
             let permissions = membershipPayload.permissions.flatMap({ Permissions(rawValue: $0.selfPermissions) })
             searchUser?.updateWithTeamMembership(permissions: permissions, createdBy: membershipPayload.createdBy)

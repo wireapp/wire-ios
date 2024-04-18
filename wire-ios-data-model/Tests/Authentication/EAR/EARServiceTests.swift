@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import XCTest
 import LocalAuthentication
 
@@ -65,7 +64,8 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
             keyEncryptor: keyEncryptor,
             databaseContexts: [uiMOC, syncMOC],
             canPerformKeyMigration: canPerformMigration,
-            earStorage: earStorage
+            earStorage: earStorage,
+            authenticationContext: MockAuthenticationContextProtocol()
         )
 
         sut.delegate = self
@@ -128,7 +128,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
                 return secondaryKeys.publicKey
 
             default:
-                throw EarKeyRepositoryFailure.keyNotFound
+                throw EARKeyRepositoryFailure.keyNotFound
             }
         }
 
@@ -141,7 +141,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
                 return secondaryKeys.privateKey
 
             default:
-                throw EarKeyRepositoryFailure.keyNotFound
+                throw EARKeyRepositoryFailure.keyNotFound
             }
         }
 
@@ -179,7 +179,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     func test_ItDoesMigrateKeys_IfEARIsEnabledAndSecondaryKeysDontExist() throws {
         // Given
         uiMOC.encryptMessagesAtRest = true
-        keyRepository.fetchPublicKeyDescription_MockError = EarKeyRepositoryFailure.keyNotFound
+        keyRepository.fetchPublicKeyDescription_MockError = EARKeyRepositoryFailure.keyNotFound
         keyRepository.storePublicKeyDescriptionKey_MockMethod = { _, _ in }
 
         // When
@@ -607,7 +607,6 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         let keys = try generatePrimaryKeyPair()
         let encryptedDatabaseKey = Data.randomEncryptionKey()
         let decryptedDatabaseKey = Data.randomEncryptionKey()
-        let context = LAContext()
 
         // Mock
         keyRepository.fetchPrivateKeyDescription_MockValue = keys.privateKey
@@ -615,7 +614,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
         keyEncryptor.decryptDatabaseKeyPrivateKey_MockValue = decryptedDatabaseKey
 
         // When
-        XCTAssertNoThrow(try sut.unlockDatabase(context: context))
+        XCTAssertNoThrow(try sut.unlockDatabase())
 
         // Then
         XCTAssertEqual(uiMOC.databaseKey?._storage, decryptedDatabaseKey)
@@ -672,7 +671,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
         // When then
         XCTAssertThrowsError(try sut.fetchPublicKeys()) { error in
-            guard case EarKeyRepositoryFailure.keyNotFound = error else {
+            guard case EARKeyRepositoryFailure.keyNotFound = error else {
                 return XCTFail("unexpected error")
             }
         }
@@ -688,7 +687,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
                 return secondary
 
             default:
-                throw EarKeyRepositoryFailure.keyNotFound
+                throw EARKeyRepositoryFailure.keyNotFound
             }
         }
     }
@@ -778,7 +777,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
 
         // When then
         XCTAssertThrowsError(try sut.fetchPrivateKeys(includingPrimary: true)) { error in
-            guard case EarKeyRepositoryFailure.keyNotFound = error else {
+            guard case EARKeyRepositoryFailure.keyNotFound = error else {
                 return XCTFail("unexpected error")
             }
         }
@@ -794,7 +793,7 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
                 return secondary
 
             default:
-                throw EarKeyRepositoryFailure.keyNotFound
+                throw EARKeyRepositoryFailure.keyNotFound
             }
         }
     }
@@ -861,9 +860,12 @@ final class EARServiceTests: ZMBaseManagedObjectTest, EARServiceDelegate {
     // @SF.Storage @TSFI.UserInterface @S0.1 @S0.2
     func test_OldEncryptionKeysAreReplaced_AfterActivatingEncryptionAtRest() throws {
         // Given
-        let sut = EARService(accountID: userIdentifier,
-                         databaseContexts: [uiMOC],
-                         sharedUserDefaults: .temporary())
+        let sut = EARService(
+            accountID: userIdentifier,
+            databaseContexts: [uiMOC],
+            sharedUserDefaults: .temporary(),
+            authenticationContext: MockAuthenticationContextProtocol()
+        )
 
         let oldDatabaseKey = try sut.generateKeys()
 

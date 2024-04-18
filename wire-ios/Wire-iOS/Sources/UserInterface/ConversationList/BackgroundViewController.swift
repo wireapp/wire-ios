@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -137,7 +137,7 @@ final class BackgroundViewController: UIViewController {
 
     private func updateForUserImage() {
         dispatchGroup.enter()
-        user.imageData(for: .complete, queue: DispatchQueue.global(qos: .background)) { [weak self] (imageData) in
+        user.imageData(for: .complete, queue: DispatchQueue.global(qos: .background)) { [weak self] imageData in
             var image: UIImage?
             if let imageData = imageData {
                 image = BackgroundViewController.blurredAppBackground(with: imageData)

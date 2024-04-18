@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -266,9 +266,9 @@ extension MessageCategory: CustomDebugStringConvertible {
 
     public var debugDescription: String {
         let categories = MessageCategory.descriptions
-            .filter { (category, _) -> Bool in
+            .filter { category, _ -> Bool in
                 return contains(category)
-            }.map { (_, description) -> String in
+            }.map { _, description -> String in
                 return description
             }
         let description = categories.isEmpty ? "None" : categories.joined(separator: ", ")

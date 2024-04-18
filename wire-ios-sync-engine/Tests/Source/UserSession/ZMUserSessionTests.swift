@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -283,107 +283,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
         // THEN
         XCTAssertTrue(waitForOfflineStatus())
-    }
-
-    func testThatItNotifiesThirdPartyServicesWhenSyncIsDone() {
-        // GIVEN
-        XCTAssertEqual(thirdPartyServices.uploadCount, 0)
-
-        let handler = MockActionHandler<GetFeatureConfigsAction>(
-            result: .success(()),
-            context: syncMOC.notificationContext
-        )
-
-        // WHEN
-        syncMOC.performAndWait {
-            sut.didFinishQuickSync()
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        withExtendedLifetime(handler) {
-            XCTAssertEqual(thirdPartyServices.uploadCount, 1)
-        }
-    }
-
-    func testThatItOnlyNotifiesThirdPartyServicesOnce() {
-        // GIVEN
-        XCTAssertEqual(thirdPartyServices.uploadCount, 0)
-
-        mockGetFeatureConfigsActionHandler = MockActionHandler<GetFeatureConfigsAction>(
-            results: [.success(()), .success(())],
-            context: syncMOC.notificationContext
-        )
-
-        // WHEN
-        syncMOC.performAndWait {
-            sut.didFinishQuickSync()
-            sut.didStartQuickSync()
-            sut.didFinishQuickSync()
-        }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        XCTAssertEqual(thirdPartyServices.uploadCount, 1)
-    }
-
-    func testThatItNotifiesThirdPartyServicesWhenEnteringBackground() {
-        // GIVEN
-        XCTAssertEqual(self.thirdPartyServices.uploadCount, 0)
-
-        // WHEN
-        self.sut.applicationDidEnterBackground(nil)
-
-        // THEN
-        XCTAssertEqual(thirdPartyServices.uploadCount, 1)
-    }
-
-    func testThatItNotifiesThirdPartyServicesAgainAfterEnteringForeground_1() {
-        // GIVEN
-        XCTAssertEqual(thirdPartyServices.uploadCount, 0)
-
-        // WHEN
-        sut.applicationDidEnterBackground(nil)
-        sut.applicationWillEnterForeground(nil)
-        sut.applicationDidEnterBackground(nil)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        XCTAssertEqual(thirdPartyServices.uploadCount, 2)
-    }
-
-    func testThatItNotifiesThirdPartyServicesAgainAfterEnteringForeground_2() {
-        // GIVEN
-        XCTAssertEqual(thirdPartyServices.uploadCount, 0)
-
-        mockGetFeatureConfigsActionHandler = MockActionHandler<GetFeatureConfigsAction>(
-            results: [.success(()), .success(())],
-            context: syncMOC.notificationContext
-        )
-
-        // whe
-        syncMOC.performAndWait {
-            sut.didFinishQuickSync()
-        }
-        sut.applicationDidEnterBackground(nil)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        XCTAssertEqual(thirdPartyServices.uploadCount, 1)
-
-        sut.applicationWillEnterForeground(nil)
-
-        syncMOC.performAndWait {
-            sut.didStartQuickSync()
-            sut.didFinishQuickSync()
-        }
-        sut.applicationDidEnterBackground(nil)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        XCTAssertEqual(thirdPartyServices.uploadCount, 2)
     }
 
     func testThatWeDoNotSetUserSessionToSyncDoneWhenSyncIsDoneIfWeWereNotSynchronizing() {

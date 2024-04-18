@@ -22,16 +22,6 @@ import WireSystem
 import WireRequestStrategy
 import Combine
 
-@objc(ZMThirdPartyServicesDelegate)
-public protocol ThirdPartyServicesDelegate: NSObjectProtocol {
-
-    /// This will get called at a convenient point in time when Hockey and Localytics should upload their data.
-    /// We try not to have Hockey and Localytics use the network while we're sync'ing.
-    @objc(userSessionIsReadyToUploadServicesData:)
-    func userSessionIsReadyToUploadServicesData(userSession: ZMUserSession)
-
-}
-
 @objc(UserSessionSelfUserClientDelegate)
 public protocol UserSessionSelfUserClientDelegate: NSObjectProtocol {
     /// Invoked when a client is successfully registered
@@ -71,7 +61,6 @@ public final class ZMUserSession: NSObject {
             notificationDispatcher.operationMode = newValue ? .economical : .normal
         }
     }
-    var hasNotifiedThirdPartyServices: Bool = false
 
     private(set) var coreDataStack: CoreDataStack!
     let application: ZMApplication
@@ -123,7 +112,8 @@ public final class ZMUserSession: NSObject {
 
     let earService: EARServiceInterface
 
-    public var appLockController: AppLockType
+    public internal(set) var appLockController: AppLockType
+    private let contextStorage = LAContextStorage()
 
     public var fileSharingFeature: Feature.FileSharing {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
@@ -278,8 +268,6 @@ public final class ZMUserSession: NSObject {
 
     // TODO remove this property and move functionality to separate protocols under UserSessionDelegate
     public weak var sessionManager: SessionManagerType?
-
-    public weak var thirdPartyServicesDelegate: ThirdPartyServicesDelegate?
 
     // MARK: - Tear down
 
@@ -441,7 +429,12 @@ public final class ZMUserSession: NSObject {
         self.topConversationsDirectory = TopConversationsDirectory(managedObjectContext: coreDataStack.viewContext)
         self.debugCommands = ZMUserSession.initDebugCommands()
         self.legacyHotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
-        self.appLockController = AppLockController(userId: userId, selfUser: .selfUser(in: coreDataStack.viewContext), legacyConfig: configuration.appLockConfig)
+        self.appLockController = AppLockController(
+            userId: userId,
+            selfUser: .selfUser(in: coreDataStack.viewContext),
+            legacyConfig: configuration.appLockConfig,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
+        )
         self.coreCryptoProvider = CoreCryptoProvider(
             selfUserID: userId,
             sharedContainerURL: coreDataStack.applicationContainer,
@@ -475,7 +468,8 @@ public final class ZMUserSession: NSObject {
                 coreDataStack.searchContext
             ],
             canPerformKeyMigration: true,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
         )
 
         let mlsService = mlsService ?? MLSService(
@@ -584,7 +578,7 @@ public final class ZMUserSession: NSObject {
     private func configureTransportSession() {
         transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier
         transportSession.setNetworkStateDelegate(self)
-        transportSession.setAccessTokenRenewalFailureHandler { [weak self] (response) in
+        transportSession.setAccessTokenRenewalFailureHandler { [weak self] response in
             self?.transportSessionAccessTokenDidFail(response: response)
         }
         transportSession.setAccessTokenRenewalSuccessHandler { [weak self]  _, _ in
@@ -690,7 +684,7 @@ public final class ZMUserSession: NSObject {
     }
 
     private func registerForCalculateBadgeCountNotification() {
-        tokens.append(NotificationInContext.addObserver(name: .calculateBadgeCount, context: managedObjectContext.notificationContext) { [weak self] (_) in
+        tokens.append(NotificationInContext.addObserver(name: .calculateBadgeCount, context: managedObjectContext.notificationContext) { [weak self] _ in
             self?.calculateBadgeCount()
         })
     }
@@ -930,10 +924,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
         Task {
             await self.cRLsChecker.checkExpiredCRLs()
         }
-
-        managedObjectContext.performGroupedBlock { [weak self] in
-            self?.notifyThirdPartyServices()
-        }
     }
 
     func processEvents() {
@@ -1013,13 +1003,6 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
     public func didDeleteSelfUserClient(error: Error) {
         notifyAuthenticationInvalidated(error)
-    }
-
-    public func notifyThirdPartyServices() {
-        if !hasNotifiedThirdPartyServices {
-            hasNotifiedThirdPartyServices = true
-            thirdPartyServicesDelegate?.userSessionIsReadyToUploadServicesData(userSession: self)
-        }
     }
 
     func notifyAuthenticationInvalidated(_ error: Error) {

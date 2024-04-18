@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -272,7 +272,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
             // when
             do {
                 _ = try sut.updateClientPreKeysRequest(client, prekeys: prekeys, apiVersion: .v0)
-            } catch let error {
+            } catch {
                 XCTAssertNotNil(error, "Should not return request if client does not have remoteIdentifier")
             }
         }

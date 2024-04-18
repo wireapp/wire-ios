@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -199,7 +200,7 @@ final class ConversationListViewController: UIViewController {
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        self.tabBar.subviews.forEach { (barButton) in
+        self.tabBar.subviews.forEach { barButton in
             if let label = barButton.subviews[1] as? UILabel {
                 label.sizeToFit()
             }

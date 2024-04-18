@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,15 +53,15 @@ extension E2EIdentityCertificateStatus {
     var uiImage: UIImage? {
         switch self {
         case .notActivated:
-            return Asset.Images.certificateExpired.image
+            return .init(resource: .certificateExpired)
         case .revoked:
-            return Asset.Images.certificateRevoked.image
+            return .init(resource: .certificateRevoked)
         case .expired:
-            return Asset.Images.certificateExpired.image
+            return .init(resource: .certificateExpired)
         case .invalid:
-            return Asset.Images.certificateRevoked.image
+            return .init(resource: .certificateRevoked)
         case .valid:
-            return Asset.Images.certificateValid.image
+            return .init(resource: .certificateValid)
         }
     }
 }

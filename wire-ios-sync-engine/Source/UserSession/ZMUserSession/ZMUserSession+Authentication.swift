@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ extension ZMUserSession {
 
         let request = ZMTransportRequest(path: "/clients/\(selfClientIdentifier)", method: .delete, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
 
-        request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] (response) in
+        request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] response in
             guard let strongSelf = self else { return }
 
             if response.httpStatus == 200 {
