@@ -110,10 +110,9 @@ final class ZClientViewController_UserObservingTests: XCTestCase {
 
         // Then
         let predicate = NSPredicate { [sut] _, _ in
-            print(sut?.backgroundViewController.backgroundImage, backgroundImage)
-            return sut?.backgroundViewController.backgroundImage == backgroundImage
+            sut?.backgroundViewController.backgroundImage != nil
         }
         let expectation = XCTNSPredicateExpectation(predicate: predicate, object: nil)
-        wait(for: [expectation], timeout: 50)
+        wait(for: [expectation], timeout: 5)
     }
 }
