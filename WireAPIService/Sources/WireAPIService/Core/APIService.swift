@@ -18,10 +18,6 @@
 
 import Foundation
 
-public protocol APIServiceProtocol {
-    func getBackendInfoAPI(for version: APIVersion) async throws -> BackendInfoModel
-}
-
 public struct APIService: APIServiceProtocol {
 
     private let host = "wire.com"
