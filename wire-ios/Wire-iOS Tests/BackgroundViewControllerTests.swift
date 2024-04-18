@@ -17,115 +17,69 @@
 //
 
 import XCTest
+
 @testable import Wire
 
-final class BackgroundViewControllerTests: XCTestCase {
+final class BackgroundViewControllerTests: BaseSnapshotTestCase {
 
-    var selfUser: MockUserType!
+    private var sut: BackgroundViewController!
 
     override func setUp() {
         super.setUp()
-
-        accentColor = .violet
-        selfUser = MockUserType.createSelfUser(name: "")
-        selfUser.accentColorValue = .violet
+        sut = .init(accentColor: .init(fromZMAccentColor: .violet))
     }
 
     override func tearDown() {
-        selfUser = nil
-
+        sut = nil
         super.tearDown()
     }
 
-    func testThatItShowsUserWithoutImage() {
-        // GIVEN
-        let sut = BackgroundViewController(accentColor: selfUser.accentColor, user: selfUser, userSession: .none)
-        XCTAssertTrue(waitForGroupsToBeEmpty([sut.dispatchGroup]))
-
-        // WHEN & THEN
+    func testThatItShowsUserWithoutImage() throws {
         verify(matching: sut)
     }
 
-    func testThatItShowsUserWithImage() {
-        // GIVEN
-        selfUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData()
-        let sut = BackgroundViewController(accentColor: selfUser.accentColor, user: selfUser, userSession: .none)
-        // make sure view is loaded
-        _ = sut.view
+    func testThatItShowsUserWithImage() throws {
+
         // WHEN
-        // swiftlint:disable todo_requires_jira_link
-        // TODO: hacks to make below line passes
-        // swiftlint:enable todo_requires_jira_link
-        selfUser.accentColorValue = selfUser.accentColorValue
+        let imageData = try XCTUnwrap(image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData())
+        sut.backgroundImage = try desaturatedImage(from: imageData)
 
-        XCTAssertTrue(waitForGroupsToBeEmpty([sut.dispatchGroup], timeout: 10))
-
-        // WHEN & THEN
+        // THEN
         verify(matching: sut)
     }
 
     func testThatItUpdatesForUserAccentColorUpdate_fromAccentColor() {
-        // GIVEN
-        let sut = BackgroundViewController(accentColor: selfUser.accentColor, user: selfUser, userSession: .none)
-        _ = sut.view
+
         // WHEN
-        selfUser.accentColorValue = .brightOrange
-        sut.updateFor(imageMediumDataChanged: false, accentColorValueChanged: true)
+        sut.accentColor = .init(fromZMAccentColor: .brightOrange)
 
         // THEN
         verify(matching: sut)
     }
 
-    func testThatItUpdatesForUserAccentColorUpdate_fromUserImageRemoved() {
-        // GIVEN
-        selfUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData()
-        let sut = BackgroundViewController(accentColor: selfUser.accentColor, user: selfUser, userSession: .none)
-        _ = sut.view
-        // WHEN
-        selfUser.completeImageData = nil
-        selfUser.accentColorValue = .brightOrange
-        sut.updateFor(imageMediumDataChanged: true, accentColorValueChanged: true)
-        // THEN
-        verify(matching: sut)
-    }
+    func testThatItUpdatesForUserAccentColorUpdate_fromUserImage() throws {
 
-    func testThatItUpdatesForUserAccentColorUpdate_fromUserImage() {
-        // GIVEN
-        selfUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData()
-        let sut = BackgroundViewController(accentColor: selfUser.accentColor, user: selfUser, userSession: .none)
-        _ = sut.view
         // WHEN
-        selfUser.accentColorValue = .brightOrange
-        sut.updateFor(imageMediumDataChanged: true, accentColorValueChanged: true)
-        XCTAssertTrue(waitForGroupsToBeEmpty([sut.dispatchGroup]))
+        let imageData = try XCTUnwrap(image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData())
+        sut.backgroundImage = try desaturatedImage(from: imageData)
+        sut.accentColor = .init(fromZMAccentColor: .brightOrange)
 
         // THEN
         verify(matching: sut)
     }
 
-    func testThatItUpdatesForUserImageUpdate_fromAccentColor() {
-        // GIVEN
-        selfUser.completeImageData = nil
-        let sut = BackgroundViewController(accentColor: selfUser.accentColor, user: selfUser, userSession: .none)
-        _ = sut.view
+    func testThatItUpdatesForUserImageUpdate_fromUserImage() throws {
+
         // WHEN
-        selfUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData()
-        sut.updateFor(imageMediumDataChanged: true, accentColorValueChanged: false)
-        XCTAssertTrue(waitForGroupsToBeEmpty([sut.dispatchGroup]))
+        let imageData = try XCTUnwrap(image(inTestBundleNamed: "unsplash_burger.jpg").pngData())
+        sut.backgroundImage = try desaturatedImage(from: imageData)
+
         // THEN
         verify(matching: sut)
     }
 
-    func testThatItUpdatesForUserImageUpdate_fromUserImage() {
-        // GIVEN
-        selfUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData()
-        let sut = BackgroundViewController(accentColor: selfUser.accentColor, user: selfUser, userSession: .none)
-        _ = sut.view
-        // WHEN
-        selfUser.completeImageData = image(inTestBundleNamed: "unsplash_burger.jpg").pngData()
-        sut.updateFor(imageMediumDataChanged: true, accentColorValueChanged: false)
-        XCTAssertTrue(waitForGroupsToBeEmpty([sut.dispatchGroup]))
-        // THEN
-        verify(matching: sut)
+    private func desaturatedImage(from imageData: Data) throws -> UIImage {
+        let image = try XCTUnwrap(UIImage(from: imageData, withMaxSize: 40))
+        return try XCTUnwrap(image.desaturatedImage(with: .shared, saturation: 2))
     }
 }
