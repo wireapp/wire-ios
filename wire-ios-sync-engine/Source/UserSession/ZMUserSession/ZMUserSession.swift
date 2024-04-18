@@ -22,27 +22,6 @@ import WireSystem
 import WireRequestStrategy
 import Combine
 
-@objc(UserSessionSelfUserClientDelegate)
-public protocol UserSessionSelfUserClientDelegate: NSObjectProtocol {
-    /// Invoked when a client is successfully registered
-    func clientRegistrationDidSucceed(accountId: UUID)
-
-    /// Invoked when there was an error registering the client
-    func clientRegistrationDidFail(_ error: NSError, accountId: UUID)
-
-    /// Invoked when the client has completed the initial sync
-    func clientCompletedInitialSync(accountId: UUID)
-}
-
-@objc(UserSessionLogoutDelegate)
-public protocol UserSessionLogoutDelegate: NSObjectProtocol {
-    /// Invoked when the user successfully logged out
-    func userDidLogout(accountId: UUID)
-
-    /// Invoked when the authentication has proven invalid
-    func authenticationInvalidated(_ error: NSError, accountId: UUID)
-}
-
 typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
 & UserSessionSelfUserClientDelegate
 & UserSessionLogoutDelegate
@@ -266,7 +245,8 @@ public final class ZMUserSession: NSObject {
 
     weak var delegate: UserSessionDelegate?
 
-    // TODO remove this property and move functionality to separate protocols under UserSessionDelegate
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: remove this property and move functionality to separate protocols under UserSessionDelegate
     public weak var sessionManager: SessionManagerType?
 
     // MARK: - Tear down
@@ -931,7 +911,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
         UserClient.triggerSelfClientCapabilityUpdate(syncContext)
 
         managedObjectContext.performGroupedBlock { [weak self] in
-            guard let accountId = self?.managedObjectContext.selfUserId else {
+            guard
+                let context = self?.managedObjectContext,
+                let accountId = ZMUser.selfUser(in: context).remoteIdentifier
+            else {
                 return
             }
 
@@ -941,7 +924,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
     public func didFailToRegisterSelfUserClient(error: Error) {
         managedObjectContext.performGroupedBlock {  [weak self] in
-            guard let accountId = self?.managedObjectContext.selfUserId else {
+            guard
+                let context = self?.managedObjectContext,
+                let accountId = ZMUser.selfUser(in: context).remoteIdentifier
+            else {
                 return
             }
 
@@ -956,7 +942,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
     func notifyAuthenticationInvalidated(_ error: Error) {
         WireLogger.authentication.debug("notifying authentication invalidated")
         managedObjectContext.performGroupedBlock {  [weak self] in
-            guard let accountId = self?.managedObjectContext.selfUserId else {
+            guard
+                let context = self?.managedObjectContext,
+                let accountId = ZMUser.selfUser(in: context).remoteIdentifier
+            else {
                 return
             }
 
@@ -967,19 +956,13 @@ extension ZMUserSession: ZMSyncStateDelegate {
     func checkE2EICertificateExpiryStatus() {
         guard e2eiFeature.isEnabled else { return }
 
-        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
+        NotificationCenter.default.post(name: E2EI.checkForE2EICertificateExpiryStatus, object: nil)
     }
 }
 
 extension ZMUserSession: URLActionProcessor {
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
         urlActionProcessors?.forEach({ $0.process(urlAction: urlAction, delegate: delegate) })
-    }
-}
-
-private extension NSManagedObjectContext {
-    var selfUserId: UUID? {
-        ZMUser.selfUser(in: self).remoteIdentifier
     }
 }
 
@@ -1005,9 +988,4 @@ extension ZMUserSession: ContextProvider {
         return coreDataStack.eventContext
     }
 
-}
-
-public extension Notification.Name {
-    // This notification is used to check the E2EIdentity Certificate expiry status
-    static let checkForE2EICertificateExpiryStatus = NSNotification.Name("CheckForE2EICertificateExpiryStatus")
 }
