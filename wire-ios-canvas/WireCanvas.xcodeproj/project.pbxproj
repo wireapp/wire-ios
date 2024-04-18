@@ -25,6 +25,7 @@
 		EE67F716296F0BB5001D7C88 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE67F715296F0BB5001D7C88 /* Assets.xcassets */; };
 		EE67F719296F0BB5001D7C88 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EE67F717296F0BB5001D7C88 /* LaunchScreen.storyboard */; };
 		EE67F724296F0C1B001D7C88 /* FBSnapshotTestCase.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F723296F0C1B001D7C88 /* FBSnapshotTestCase.xcframework */; };
+		EE9AEC9C2BD15A0C00F7853F /* WireCanvas.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC9B2BD15A0C00F7853F /* WireCanvas.docc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +92,7 @@
 		EE67F718296F0BB5001D7C88 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EE67F71A296F0BB5001D7C88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EE67F723296F0C1B001D7C88 /* FBSnapshotTestCase.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FBSnapshotTestCase.xcframework; path = ../Carthage/Build/FBSnapshotTestCase.xcframework; sourceTree = "<group>"; };
+		EE9AEC9B2BD15A0C00F7853F /* WireCanvas.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireCanvas.docc; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +125,7 @@
 		165EA0B91DB67C3B008ECC60 = {
 			isa = PBXGroup;
 			children = (
+				EE9AEC9B2BD15A0C00F7853F /* WireCanvas.docc */,
 				16CB8A341DBA73B900B5BC47 /* Resources */,
 				165EA0C51DB67C3B008ECC60 /* Sources */,
 				165EA0D01DB67C3B008ECC60 /* Tests */,
@@ -254,9 +257,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 165EA0D71DB67C3B008ECC60 /* Build configuration list for PBXNativeTarget "WireCanvas" */;
 			buildPhases = (
+				165EA0C01DB67C3B008ECC60 /* Headers */,
 				165EA0BE1DB67C3B008ECC60 /* Sources */,
 				165EA0BF1DB67C3B008ECC60 /* Frameworks */,
-				165EA0C01DB67C3B008ECC60 /* Headers */,
 				66B66B63275A324C0020CF55 /* Run Swiftlint */,
 				165EA0C11DB67C3B008ECC60 /* Resources */,
 			);
@@ -412,6 +415,7 @@
 			files = (
 				165EA0DE1DB67C6C008ECC60 /* Canvas.swift in Sources */,
 				16CB8A331DBA5BB800B5BC47 /* Image.swift in Sources */,
+				EE9AEC9C2BD15A0C00F7853F /* WireCanvas.docc in Sources */,
 				1660DC661DBF8516009E360D /* UIImage+Trimmed.swift in Sources */,
 				16CB8A311DBA5B7300B5BC47 /* Stroke.swift in Sources */,
 			);
