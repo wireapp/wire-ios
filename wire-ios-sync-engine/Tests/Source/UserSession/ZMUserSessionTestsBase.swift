@@ -22,15 +22,6 @@ import WireRequestStrategySupport
 import Combine
 @testable import WireSyncEngine
 
-final class ThirdPartyServices: NSObject, ThirdPartyServicesDelegate {
-
-    var uploadCount = 0
-
-    func userSessionIsReadyToUploadServicesData(userSession: WireSyncEngine.ZMUserSession) {
-        uploadCount += 1
-    }
-}
-
 class ZMUserSessionTestsBase: MessagingTest {
 
     var mockSessionManager: MockSessionManager!
@@ -44,7 +35,6 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mediaManager: MediaManagerType!
     var flowManagerMock: FlowManagerMock!
     var dataChangeNotificationsCount: UInt = 0
-    var thirdPartyServices: ThirdPartyServices!
     var mockSyncStateDelegate: MockSyncStateDelegate!
     var mockUseCaseFactory: MockUseCaseFactoryProtocol!
     var mockResolveOneOnOneConversationUseCase: MockResolveOneOnOneConversationsUseCaseProtocol!
@@ -60,7 +50,6 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         mockGetFeatureConfigsActionHandler = .init(result: .success(()), context: syncMOC.notificationContext)
 
-        thirdPartyServices = ThirdPartyServices()
         dataChangeNotificationsCount = 0
         baseURL = URL(string: "http://bar.example.com")
         cookieStorage = ZMPersistentCookieStorage(
@@ -97,7 +86,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockProteusToMLSMigrationCoordinator = MockProteusToMLSMigrationCoordinating()
 
         sut = createSut(earService: mockEARService)
-        sut.thirdPartyServicesDelegate = self.thirdPartyServices
         sut.sessionManager = mockSessionManager
 
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
@@ -113,8 +101,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.baseURL = nil
         self.cookieStorage = nil
         self.validCookie = nil
-        self.thirdPartyServices = nil
-        self.sut.thirdPartyServicesDelegate = nil
         self.mockSessionManager = nil
         self.mockMLSService = nil
         self.transportSession = nil
