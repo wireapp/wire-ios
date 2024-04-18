@@ -21,7 +21,7 @@ import WireSyncEngine
 
 final class BackgroundViewController: UIViewController {
 
-    private static let backgroundScaleFactor: CGFloat = 1.4
+    private let backgroundScaleFactor: CGFloat = 1.4
 
     var accentColor: UIColor {
         get { imageView.backgroundColor ?? .clear }
@@ -60,9 +60,8 @@ final class BackgroundViewController: UIViewController {
 
     private func configureViews() {
 
-        let factor = BackgroundViewController.backgroundScaleFactor
         imageView.contentMode = .scaleAspectFill
-        imageView.transform = CGAffineTransform(scaleX: factor, y: factor)
+        imageView.transform = CGAffineTransform(scaleX: backgroundScaleFactor, y: backgroundScaleFactor)
 
         cropView.clipsToBounds = true
         [imageView, blurView, darkenOverlay].forEach(cropView.addSubview)
