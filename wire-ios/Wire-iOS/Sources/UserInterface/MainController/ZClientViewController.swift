@@ -213,7 +213,7 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
-        conversationListViewController.delegate?.didChangeTab(with: .startUI)
+        conversationListViewController.presentPeoplePicker()
     }
 
     private func createBackgroundViewController() {
