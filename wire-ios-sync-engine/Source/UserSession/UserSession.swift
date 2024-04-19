@@ -22,7 +22,6 @@ import LocalAuthentication
 
 public typealias SelfUserType = UserType & SelfLegalHoldSubject
 
-// sourcery: AutoMockable
 /// An abstraction of the user session for use in the presentation
 /// layer.
 public protocol UserSession: AnyObject {
