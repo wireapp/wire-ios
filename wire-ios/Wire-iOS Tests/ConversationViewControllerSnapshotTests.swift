@@ -53,11 +53,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         serviceUser = coreDataFixture.createServiceUser()
 
         let mockAccount = Account(userName: "mock user", userIdentifier: UUID())
-        let zClientViewController = ZClientViewController(
-            account: mockAccount,
-            userSession: userSession,
-            imageTransformer: imageTransformerMock
-        )
+        let zClientViewController = ZClientViewController(account: mockAccount, userSession: userSession)
 
         sut = ConversationViewController(
             conversation: mockConversation,
