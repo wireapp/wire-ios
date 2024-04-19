@@ -20,9 +20,10 @@ import Foundation
 import WireDataModel
 import LocalAuthentication
 
+public typealias SelfUserType = UserType & SelfLegalHoldSubject
+
 /// An abstraction of the user session for use in the presentation
 /// layer.
-
 public protocol UserSession: AnyObject {
 
     /// The current session lock, if any.
@@ -134,7 +135,7 @@ public protocol UserSession: AnyObject {
 
     func addUserObserver(
         _ observer: UserObserving,
-        for: UserType
+        for user: UserType
     ) -> NSObjectProtocol?
 
     func addUserObserver(

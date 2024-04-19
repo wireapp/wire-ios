@@ -17,27 +17,9 @@
 //
 
 import UIKit
-import WireDataModel
-import WireCommonComponents
 
-extension UserType {
+// sourcery: AutoMockable
+protocol ImageTransformer {
 
-    /// Returns the current accent color of the user.
-    var accentColor: UIColor {
-        .init(fromZMAccentColor: accentColorValue)
-    }
-}
-
-extension UnregisteredUser {
-
-    /// The accent color value of the unregistered user.
-    var accentColor: AccentColor? {
-        get {
-            return accentColorValue.flatMap(AccentColor.init)
-        }
-        set {
-            accentColorValue = newValue?.zmAccentColor
-        }
-    }
-
+    func adjustInputSaturation(value: CGFloat, image: UIImage) -> UIImage?
 }
