@@ -117,18 +117,16 @@ extension ZMConversation {
             return completion(.failure(WirelessLinkError.unknown))
         }
 
-        let parameters = CreateConversationGuestLinkParameters(password: password, conversationID: self.remoteIdentifier)
-
-        var action = CreateConversationGuestLinkAction(parameters: parameters)
+        var action = CreateConversationGuestLinkAction(password: password, conversationID: self.remoteIdentifier)
 
         action.perform(in: self.managedObjectContext!.notificationContext) { result in
-                switch result {
-                case .success(let link):
-                    completion(.success(link))
-                case .failure(let error):
-                    completion(.failure(error))
-                }
+            switch result {
+            case .success(let link):
+                completion(.success(link))
+            case .failure(let error):
+                completion(.failure(error))
             }
+        }
     }
 
     /// Checks if a guest link can be generated or not

@@ -37,30 +37,23 @@ public enum CreateConversationGuestLinkError: Error, Equatable {
     }
 }
 
-public struct CreateConversationGuestLinkParameters {
-    public let password: String?
-    public let conversationID: UUID
-
-    public init(password: String?, conversationID: UUID) {
-        self.password = password
-        self.conversationID = conversationID
-    }
-}
-
 public struct CreateConversationGuestLinkAction: EntityAction {
 
     public typealias Result = String
     public typealias Failure = CreateConversationGuestLinkError
 
+    public let password: String?
+    public let conversationID: UUID
+
     public var resultHandler: ResultHandler?
 
-    public var parameters: CreateConversationGuestLinkParameters
-
     public init(
-        parameters: CreateConversationGuestLinkParameters,
+        password: String?,
+        conversationID: UUID,
         resultHandler: ResultHandler? = nil
     ) {
-        self.parameters = parameters
+        self.password = password
+        self.conversationID = conversationID
         self.resultHandler = resultHandler
     }
 }
