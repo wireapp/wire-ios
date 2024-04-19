@@ -18,19 +18,10 @@
 
 import Foundation
 
-extension ConversationListViewController: ConversationListTabBarControllerDelegate {
-
-    func didChangeTab(with type: TabBarItemType) {
-        switch type {
-        case .archive:
-            setState(.archived, animated: true)
-        case .startUI:
-            presentPeoplePicker()
-        case .folder:
-            listContentController.listViewModel.folderEnabled = true
-        case .list:
-            listContentController.listViewModel.folderEnabled = false
+extension CoreDataStack {
+    public func linkAnalytics(_ analytics: (any AnalyticsType)?) {
+        syncContext.performGroupedBlockAndWait {
+            self.syncContext.analytics = analytics
         }
     }
-
 }

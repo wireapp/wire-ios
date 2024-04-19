@@ -17,6 +17,7 @@
 //
 
 import XCTest
+import WireDataModelSupport
 @testable import WireSyncEngine
 
 final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
@@ -35,22 +36,37 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         }
 
         // when
-        let testSession = ZMUserSession(
-            userId: userId,
-            transportSession: transportSession,
-            mediaManager: mediaManager,
-            flowManager: flowManagerMock,
+        let mockContextStore = MockLAContextStorable()
+        mockContextStore.clear_MockMethod = { }
+        let configuration = ZMUserSession.Configuration()
+
+        var builder = ZMUserSessionBuilder()
+        builder.withAllDependencies(
             analytics: nil,
+            appVersion: "00000",
+            application: application,
+            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
+            coreDataStack: coreDataStack,
+            configuration: configuration,
+            contextStorage: mockContextStore,
+            earService: mockEARService,
+            flowManager: flowManagerMock,
+            mediaManager: mediaManager,
+            mlsService: mockMLSService,
+            observeMLSGroupVerificationStatus: nil,
+            proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
+            sharedUserDefaults: sharedUserDefaults,
+            transportSession: transportSession,
+            useCaseFactory: mockUseCaseFactory,
+            userId: userId
+        )
+        let testSession = builder.build()
+        testSession.setup(
             eventProcessor: nil,
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
-            application: application,
-            appVersion: "00000",
-            coreDataStack: coreDataStack,
-            configuration: .init(),
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
-            sharedUserDefaults: sharedUserDefaults
+            configuration: configuration
         )
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 

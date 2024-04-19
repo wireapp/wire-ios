@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import UIKit
 import WireSyncEngine
-import avs
 import WireCommonComponents
 
 final class ZClientViewController: UIViewController {
@@ -39,7 +39,7 @@ final class ZClientViewController: UIViewController {
     var proximityMonitorManager: ProximityMonitorManager?
     var legalHoldDisclosureController: LegalHoldDisclosureController?
 
-    var userObserverToken: Any?
+    var userObserverToken: NSObjectProtocol?
     var conferenceCallingUnavailableObserverToken: Any?
 
     private let topOverlayContainer: UIView = UIView()
@@ -58,21 +58,24 @@ final class ZClientViewController: UIViewController {
     /// init method for testing allows injecting an Account object and self user
     required init(
         account: Account,
-        userSession: UserSession
+        userSession: UserSession,
+        imageTransformer: ImageTransformer
     ) {
         self.userSession = userSession
 
-        backgroundViewController = BackgroundViewController(
+        backgroundViewController = .init(
             user: userSession.selfUser,
-            userSession: userSession as? ZMUserSession
+            userSession: userSession as? ZMUserSession,
+            imageTransformer: imageTransformer
         )
-        conversationListViewController = ConversationListViewController(
+        conversationListViewController = .init(
             account: account,
-            selfUser: userSession.selfLegalHoldSubject,
+            selfUser: userSession.selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
-        colorSchemeController = ColorSchemeController(userSession: userSession)
+
+        colorSchemeController = .init(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -213,7 +216,7 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
-        conversationListViewController.delegate?.didChangeTab(with: .startUI)
+        conversationListViewController.presentPeoplePicker()
     }
 
     private func createBackgroundViewController() {
@@ -599,7 +602,7 @@ final class ZClientViewController: UIViewController {
 
     private func createLegalHoldDisclosureController() {
         legalHoldDisclosureController = LegalHoldDisclosureController(
-            selfUser: userSession.selfLegalHoldSubject,
+            selfUser: userSession.selfUser,
             userSession: userSession,
             presenter: { viewController, animated, completion in
                 viewController.presentTopmost(animated: animated, completion: completion)
