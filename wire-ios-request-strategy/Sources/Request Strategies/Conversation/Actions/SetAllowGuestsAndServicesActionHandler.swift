@@ -39,6 +39,7 @@ class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuestsAndSer
         guard
             let conversation = ZMConversation.existingObject(for: action.conversationID, in: context),
             let identifier = conversation.remoteIdentifier?.transportString() else {
+            action.fail(with: .failedToRetrieveConversation)
             return nil
         }
         var accessRoles = conversation.accessRoles

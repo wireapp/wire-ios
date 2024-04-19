@@ -23,6 +23,7 @@ public struct SetAllowGuestsAndServicesAction: EntityAction {
     public enum Failure: Error, Equatable {
         case domainUnavailable
         case failToDecodeResponsePayload
+        case failedToRetrieveConversation
     }
 
     public let allowGuests: Bool
