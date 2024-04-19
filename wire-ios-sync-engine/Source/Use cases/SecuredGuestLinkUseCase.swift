@@ -19,13 +19,13 @@
 import Foundation
 
 // sourcery: AutoMockable
-public protocol SecuredGuestLinkUseCaseProtocol {
+public protocol CreateConversationGuestLinkUseCaseProtocol {
 
     func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String, Error>) -> Void)
 
 }
 
-public struct SecuredGuestLinkUseCase: SecuredGuestLinkUseCaseProtocol {
+public struct SecuredGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol {
 
     public func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String, Error>) -> Void) {
 

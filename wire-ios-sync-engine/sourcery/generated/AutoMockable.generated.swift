@@ -93,6 +93,30 @@ public class MockCertificateRevocationListsChecking: CertificateRevocationListsC
 
 }
 
+public class MockCreateConversationGuestLinkUseCaseProtocol: CreateConversationGuestLinkUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeConversationPasswordCompletion_Invocations: [(conversation: ZMConversation, password: String?, completion: (Result<String, Error>) -> Void)] = []
+    public var invokeConversationPasswordCompletion_MockMethod: ((ZMConversation, String?, @escaping (Result<String, Error>) -> Void) -> Void)?
+
+    public func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String, Error>) -> Void) {
+        invokeConversationPasswordCompletion_Invocations.append((conversation: conversation, password: password, completion: completion))
+
+        guard let mock = invokeConversationPasswordCompletion_MockMethod else {
+            fatalError("no mock for `invokeConversationPasswordCompletion`")
+        }
+
+        mock(conversation, password, completion)
+    }
+
+}
+
 public class MockE2EIdentityCertificateUpdateStatusUseCaseProtocol: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -368,30 +392,6 @@ public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneCon
         }
 
         try await mock()
-    }
-
-}
-
-public class MockSecuredGuestLinkUseCaseProtocol: SecuredGuestLinkUseCaseProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - invoke
-
-    public var invokeConversationPasswordCompletion_Invocations: [(conversation: ZMConversation, password: String?, completion: (Result<String, Error>) -> Void)] = []
-    public var invokeConversationPasswordCompletion_MockMethod: ((ZMConversation, String?, @escaping (Result<String, Error>) -> Void) -> Void)?
-
-    public func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String, Error>) -> Void) {
-        invokeConversationPasswordCompletion_Invocations.append((conversation: conversation, password: password, completion: completion))
-
-        guard let mock = invokeConversationPasswordCompletion_MockMethod else {
-            fatalError("no mock for `invokeConversationPasswordCompletion`")
-        }
-
-        mock(conversation, password, completion)
     }
 
 }
@@ -803,10 +803,10 @@ public class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
     // MARK: - createSecuredGuestLinkUseCase
 
     public var createSecuredGuestLinkUseCase_Invocations: [Void] = []
-    public var createSecuredGuestLinkUseCase_MockMethod: (() -> SecuredGuestLinkUseCaseProtocol)?
-    public var createSecuredGuestLinkUseCase_MockValue: SecuredGuestLinkUseCaseProtocol?
+    public var createSecuredGuestLinkUseCase_MockMethod: (() -> CreateConversationGuestLinkUseCaseProtocol)?
+    public var createSecuredGuestLinkUseCase_MockValue: CreateConversationGuestLinkUseCaseProtocol?
 
-    public func createSecuredGuestLinkUseCase() -> SecuredGuestLinkUseCaseProtocol {
+    public func createSecuredGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
         createSecuredGuestLinkUseCase_Invocations.append(())
 
         if let mock = createSecuredGuestLinkUseCase_MockMethod {
