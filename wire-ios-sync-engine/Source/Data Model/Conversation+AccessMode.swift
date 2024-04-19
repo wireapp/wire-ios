@@ -91,23 +91,7 @@ extension ZMConversation {
         return self.accessMode == [.invite]
     }
 
-    /// Updates the conversation access mode if necessary and creates the link to access the conversation.
-    public func updateAccessAndCreateWirelessLink(password: String?, _ completion: @escaping (Result<String, Error>) -> Void) {
-        // Legacy access mode: access and access_mode have to be updated in order to create the link.
-        if isLegacyAccessMode {
-            setAllowGuests(true) { result in
-                switch result {
-                case .failure(let error):
-                    completion(.failure(error))
-                case .success:
-                    self.createWirelessLink(password: password, completion)
-                }
-            }
-        } else {
-            createWirelessLink(password: password, completion)
-        }
-    }
-
+    /// Creates the link to access the conversation.
     func createWirelessLink(password: String?, _ completion: @escaping (Result<String, Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
