@@ -87,9 +87,6 @@
       location = "group:wire-ios/Wire-iOS.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Packages/UserInterface">
-   </FileRef>
-   <FileRef
       location = "group:wire-ios-canvas/WireCanvas.xcodeproj">
    </FileRef>
    <FileRef
