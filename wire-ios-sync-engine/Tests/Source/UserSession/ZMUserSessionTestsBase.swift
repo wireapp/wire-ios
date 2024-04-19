@@ -39,7 +39,6 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mockUseCaseFactory: MockUseCaseFactoryProtocol!
     var mockResolveOneOnOneConversationUseCase: MockResolveOneOnOneConversationsUseCaseProtocol!
     var mockGetFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
-    var mockProteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating!
     var mockRecurringActionService: MockRecurringActionServiceInterface!
 
     var sut: ZMUserSession!
@@ -84,7 +83,6 @@ class ZMUserSessionTestsBase: MessagingTest {
             return self.mockResolveOneOnOneConversationUseCase
         }
 
-        mockProteusToMLSMigrationCoordinator = MockProteusToMLSMigrationCoordinating()
         mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
 
@@ -112,7 +110,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.mockUseCaseFactory = nil
         self.mockResolveOneOnOneConversationUseCase = nil
         self.mockRecurringActionService = nil
-        self.mockProteusToMLSMigrationCoordinator = nil
         let sut = self.sut
         self.sut = nil
         mockGetFeatureConfigsActionHandler = nil
@@ -147,7 +144,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             mediaManager: mediaManager,
             mlsService: mockMLSService,
             observeMLSGroupVerificationStatus: mockObserveMLSGroupVerificationStatusUseCase,
-            proteusToMLSMigrationCoordinator: mockProteusToMLSMigrationCoordinator,
+            proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,

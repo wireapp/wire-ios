@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModelSupport
 import WireSyncEngine
+@testable import WireSyncEngineSupport
 
 final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
@@ -448,6 +449,8 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
 
+        mockRecurringActionService.performActionsIfNeeded_MockMethod = { }
+
         let handler = MockActionHandler<GetFeatureConfigsAction>(
             result: .success(()),
             context: syncMOC.notificationContext
@@ -473,7 +476,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
             XCTAssertFalse(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
 
-            XCTAssertEqual(mockProteusToMLSMigrationCoordinator.updateMigrationStatus_Invocations.count, 1)
+            XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
         }
     }
 }
