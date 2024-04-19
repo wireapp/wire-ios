@@ -1062,13 +1062,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     internal func tearDownBackgroundSession(for accountId: UUID, completion: (() -> Void)? = nil) {
         guard let userSession = self.backgroundUserSessions[accountId] else {
-            WireLogger.session.error("No session to tear down for \(accountId), known sessions: \(self.backgroundUserSessions)")
-<<<<<<< HEAD
             WireLogger.sessionManager.error("No session to tear down for \(accountId), known sessions: \(self.backgroundUserSessions)")
-=======
-            log.error("No session to tear down for \(accountId), known sessions: \(self.backgroundUserSessions)")
             completion?()
->>>>>>> 6dec08acf9 (fix: deadlock on logout WPB-7154 (#1299))
             return
         }
         tearDownObservers(account: accountId)
