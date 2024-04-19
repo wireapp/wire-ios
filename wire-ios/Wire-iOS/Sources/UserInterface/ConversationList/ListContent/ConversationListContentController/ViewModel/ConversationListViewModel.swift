@@ -180,7 +180,7 @@ final class ConversationListViewModel: NSObject {
 
     weak var restorationDelegate: ConversationListViewModelRestorationDelegate? {
         didSet {
-            restorationDelegate?.listViewModel(self, didRestoreFolderEnabled: folderEnabled)
+            restorationDelegate?.listViewModelDidRestore(self)
         }
     }
     weak var delegate: ConversationListViewModelDelegate? {
@@ -189,6 +189,7 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
+    // TODO [WPB-7307]: remove?
     var folderEnabled: Bool {
         get {
             return state.folderEnabled
@@ -650,6 +651,7 @@ final class ConversationListViewModel: NSObject {
 
     private struct State: Codable, Equatable {
         var collapsed: Set<SectionIdentifier>
+        // TODO [WPB-7307]: remove?
         var folderEnabled: Bool
 
         init() {

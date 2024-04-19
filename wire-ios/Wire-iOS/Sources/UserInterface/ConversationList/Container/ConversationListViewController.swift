@@ -168,7 +168,7 @@ final class ConversationListViewController: UIViewController {
         }
 
         state = .conversationList
-        tabBar.selectedTab = listContentController.listViewModel.folderEnabled ? .folder : .list
+        tabBar.selectedTab = .list
 
         closePushPermissionDialogIfNotNeeded()
 
@@ -399,8 +399,6 @@ extension ConversationListViewController: UITabBarDelegate {
             setState(.archived, animated: true)
         case .startUI:
             presentPeoplePicker()
-        case .folder:
-            listContentController.listViewModel.folderEnabled = true
         case .list:
             listContentController.listViewModel.folderEnabled = false
         }

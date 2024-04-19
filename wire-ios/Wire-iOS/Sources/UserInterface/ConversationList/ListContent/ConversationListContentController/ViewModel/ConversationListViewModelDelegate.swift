@@ -45,6 +45,7 @@ protocol ConversationListViewModelDelegate: AnyObject {
     )
 }
 
+// sourcery: AutoMockable
 protocol ConversationListViewModelRestorationDelegate: AnyObject {
-    func listViewModel(_ model: ConversationListViewModel?, didRestoreFolderEnabled enabled: Bool)
+    func listViewModelDidRestore(_ model: ConversationListViewModel)
 }
