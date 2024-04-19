@@ -25,7 +25,7 @@ import WireTesting
 final class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
 
     private var mockFeatureRepository: MockFeatureRepositoryInterface!
-    private var selfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
+    private var mockSelfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
 
     private var context: NSManagedObjectContext { syncMOC }
 
@@ -34,11 +34,11 @@ final class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
 
         mockFeatureRepository = MockFeatureRepositoryInterface()
         mockFeatureRepository.fetchE2EI_MockValue = .init(status: .enabled)
-        selfClientCertificateProvider = MockSelfClientCertificateProviderProtocol()
+        mockSelfClientCertificateProvider = MockSelfClientCertificateProviderProtocol()
     }
 
     override func tearDown() {
-        selfClientCertificateProvider = nil
+        mockSelfClientCertificateProvider = nil
         mockFeatureRepository = nil
 
         super.tearDown()
@@ -46,9 +46,11 @@ final class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
 
     func testItAddsRecurringAction() async {
         // Given
-        selfClientCertificateProvider.underlyingHasCertificate = false
+        mockSelfClientCertificateProvider.underlyingHasCertificate = false
         mockRecurringActionService.registerAction_MockMethod = { _ in }
 
+        // We use a fresh mock here instead of the given one from the super class
+        // to be able to count invocations exactly without side effects.
         let mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
 
