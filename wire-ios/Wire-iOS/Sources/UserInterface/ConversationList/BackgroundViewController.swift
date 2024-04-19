@@ -29,12 +29,15 @@ final class BackgroundViewController: UIViewController {
     private var blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
     private var userObserverToken: NSObjectProtocol! = .none
     private let user: UserType
+    private let imageTransformer: ImageTransformer
 
     init(
         user: UserType,
-        userSession: UserSession?
+        userSession: UserSession?,
+        imageTransformer: ImageTransformer
     ) {
         self.user = user
+        self.imageTransformer = imageTransformer
         super.init(nibName: .none, bundle: .none)
 
         setupObservers(userSession: userSession)
@@ -139,8 +142,8 @@ final class BackgroundViewController: UIViewController {
         dispatchGroup.enter()
         user.imageData(for: .complete, queue: DispatchQueue.global(qos: .background)) { [weak self] imageData in
             var image: UIImage?
-            if let imageData = imageData {
-                image = BackgroundViewController.blurredAppBackground(with: imageData)
+            if let imageData, let imageFromData = UIImage(from: imageData, withMaxSize: 40), let imageTransformer = self?.imageTransformer {
+                image = imageTransformer.adjustInputSaturation(value: 2, image: imageFromData)
             }
 
             DispatchQueue.main.async {
@@ -166,10 +169,6 @@ final class BackgroundViewController: UIViewController {
     }
 
     static let backgroundScaleFactor: CGFloat = 1.4
-
-    static func blurredAppBackground(with imageData: Data) -> UIImage? {
-        return UIImage(from: imageData, withMaxSize: 40)?.desaturatedImage(with: CIContext.shared, saturation: 2)
-    }
 
     fileprivate func setBackground(color: UIColor) {
         self.imageView.backgroundColor = color

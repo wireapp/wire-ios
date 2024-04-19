@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireSyncEngine
 import WireCommonComponents
@@ -81,7 +80,8 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     init(
         configuration: CallInfoViewControllerInput,
         selfUser: UserType,
-        userSession: UserSession
+        userSession: UserSession,
+        imageTransformer: ImageTransformer
     ) {
         self.configuration = configuration
 
@@ -93,7 +93,11 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
             userSession: userSession
         )
 
-        backgroundViewController = BackgroundViewController(user: selfUser, userSession: userSession)
+        backgroundViewController = .init(
+            user: selfUser,
+            userSession: userSession,
+            imageTransformer: imageTransformer
+        )
 
         super.init(nibName: nil, bundle: nil)
         accessoryViewController.delegate = self
