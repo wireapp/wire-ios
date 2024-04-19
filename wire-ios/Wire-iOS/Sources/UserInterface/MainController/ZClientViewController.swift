@@ -68,7 +68,7 @@ final class ZClientViewController: UIViewController {
         )
         conversationListViewController = ConversationListViewController(
             account: account,
-            selfUser: userSession.selfLegalHoldSubject,
+            selfUser: userSession.selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
@@ -213,7 +213,7 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
-        conversationListViewController.delegate?.didChangeTab(with: .startUI)
+        conversationListViewController.presentPeoplePicker()
     }
 
     private func createBackgroundViewController() {
@@ -599,7 +599,7 @@ final class ZClientViewController: UIViewController {
 
     private func createLegalHoldDisclosureController() {
         legalHoldDisclosureController = LegalHoldDisclosureController(
-            selfUser: userSession.selfLegalHoldSubject,
+            selfUser: userSession.selfUser,
             userSession: userSession,
             presenter: { viewController, animated, completion in
                 viewController.presentTopmost(animated: animated, completion: completion)
