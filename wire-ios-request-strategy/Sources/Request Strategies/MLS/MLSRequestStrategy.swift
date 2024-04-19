@@ -53,7 +53,12 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
             applicationStatus: applicationStatus
         )
 
-        configuration = [.allowsRequestsDuringSlowSync, .allowsRequestsWhileOnline]
+        configuration = [
+            .allowsRequestsDuringSlowSync,
+            .allowsRequestsWhileOnline,
+            .allowsRequestsDuringQuickSync,
+            .allowsRequestsWhileWaitingForWebsocket
+        ]
     }
 
     // MARK: - Requests
