@@ -41,11 +41,12 @@ final class BackgroundViewControllerTests: BaseSnapshotTestCase {
         verify(matching: sut)
     }
 
-    func testThatItShowsUserWithImage() throws {
+    @MainActor
+    func testThatItShowsUserWithImage() async throws {
 
         // WHEN
         let imageData = try XCTUnwrap(image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData())
-        try sut.setBackgroundImage(desaturatedImage(from: imageData))
+        try await sut.setBackgroundImage(XCTUnwrap(UIImage(from: imageData, withMaxSize: 40)))
 
         // THEN
         verify(matching: sut)
@@ -60,30 +61,26 @@ final class BackgroundViewControllerTests: BaseSnapshotTestCase {
         verify(matching: sut)
     }
 
-    func testThatItUpdatesForUserAccentColorUpdate_fromUserImage() throws {
+    @MainActor
+    func testThatItUpdatesForUserAccentColorUpdate_fromUserImage() async throws {
 
         // WHEN
         let imageData = try XCTUnwrap(image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData())
-        try sut.setBackgroundImage(desaturatedImage(from: imageData))
+        try await sut.setBackgroundImage(XCTUnwrap(UIImage(from: imageData, withMaxSize: 40)))
         sut.accentColor = .init(fromZMAccentColor: .brightOrange)
 
         // THEN
         verify(matching: sut)
     }
 
-    func testThatItUpdatesForUserImageUpdate_fromUserImage() throws {
+    @MainActor
+    func testThatItUpdatesForUserImageUpdate_fromUserImage() async throws {
 
         // WHEN
         let imageData = try XCTUnwrap(image(inTestBundleNamed: "unsplash_burger.jpg").pngData())
-        try sut.setBackgroundImage(desaturatedImage(from: imageData))
+        try await sut.setBackgroundImage(XCTUnwrap(UIImage(from: imageData, withMaxSize: 40)))
 
         // THEN
         verify(matching: sut)
-    }
-
-    private func desaturatedImage(from imageData: Data) throws -> UIImage {
-        let image = try XCTUnwrap(UIImage(from: imageData, withMaxSize: 40))
-        let transformer = CoreImageBasedImageTransformer()
-        return try XCTUnwrap(transformer.adjustInputSaturation(value: 2, image: image))
     }
 }

@@ -30,9 +30,9 @@ extension ZClientViewController: UserObserving {
 
         if changeInfo.imageMediumDataChanged {
             if let imageData = changeInfo.user.imageData(for: .complete), let image = UIImage(from: imageData, withMaxSize: 40) {
-                backgroundViewController.setBackgroundImage(image)
+                Task { await backgroundViewController.setBackgroundImage(image) }
             } else {
-                backgroundViewController.setBackgroundImage(nil)
+                Task { await backgroundViewController.setBackgroundImage(nil) }
             }
         }
     }

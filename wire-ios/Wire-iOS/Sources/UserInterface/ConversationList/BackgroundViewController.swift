@@ -113,18 +113,11 @@ final class BackgroundViewController: UIViewController {
 
     // MARK: - Methods
 
-    func setBackgroundImage(_ image: UIImage?) {
-        guard let image else {
-            return imageView.image = nil
-        }
+    func setBackgroundImage(_ image: UIImage?) async {
+        guard let image else { return imageView.image = nil }
 
-        Task.detached(priority: .background) { [imageTransformer] in
-
-            let backgroundImage = imageTransformer.adjustInputSaturation(value: 2, image: image)
-
-            await MainActor.run { [weak self] in
-                self?.imageView.image = backgroundImage
-            }
-        }
+        imageView.image = await Task.detached(priority: .background) { [imageTransformer] in
+            imageTransformer.adjustInputSaturation(value: 2, image: image)
+        }.value
     }
 }
