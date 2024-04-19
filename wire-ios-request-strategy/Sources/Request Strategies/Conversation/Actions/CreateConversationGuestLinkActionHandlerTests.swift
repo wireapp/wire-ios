@@ -40,7 +40,7 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
 
             conversationID = UUID()
 
-            self.action = CreateConversationGuestLinkAction(parameters: .init(password: nil, conversationID: conversationID))
+            self.action = CreateConversationGuestLinkAction(password: nil, conversationID: conversationID)
             self.handler = CreateConversationGuestLinkActionHandler(context: syncContext)
 
         }
