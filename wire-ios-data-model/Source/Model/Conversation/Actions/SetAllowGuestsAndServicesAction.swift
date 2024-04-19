@@ -19,7 +19,11 @@
 public struct SetAllowGuestsAndServicesAction: EntityAction {
 
     public typealias Result = Void
-    public typealias Failure = Error
+
+    public enum Failure: Error, Equatable {
+        case domainUnavailable
+        case failToDecodeResponsePayload
+    }
 
     public let allowGuests: Bool
     public let allowServices: Bool

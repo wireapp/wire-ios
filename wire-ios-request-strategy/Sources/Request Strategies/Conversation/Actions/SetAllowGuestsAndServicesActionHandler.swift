@@ -66,8 +66,10 @@ class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuestsAndSer
         switch apiVersion {
         case .v3, .v4, .v5, .v6:
             guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else {
-                fatal("no domain associated with conversation, can't make the request")
+                action.fail(with: .domainUnavailable)
+                return nil
             }
+
             path = "/conversations/\(domain)/\(identifier)/access"
         case .v2, .v1, .v0:
             path = "/conversations/\(identifier)/access"
@@ -90,7 +92,7 @@ class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuestsAndSer
 
         guard let payload = response.payload,
               let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) else {
-            action.fail(with: SetAllowGuestsAndServicesError.unknown)
+            action.fail(with: .failToDecodeResponsePayload)
             return
         }
 
