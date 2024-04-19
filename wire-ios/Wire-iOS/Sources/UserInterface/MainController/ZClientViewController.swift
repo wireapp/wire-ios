@@ -75,7 +75,7 @@ final class ZClientViewController: UIViewController {
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
 
-        colorSchemeController = ColorSchemeController(userSession: userSession)
+        colorSchemeController = .init(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
 
