@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public final class SetAllowGuestsAndServicesAction: EntityAction {
+public struct SetAllowGuestsAndServicesAction: EntityAction {
 
     public typealias Result = Void
     public typealias Failure = Error

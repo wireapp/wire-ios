@@ -47,7 +47,7 @@ public struct CreateConversationGuestLinkParameters {
     }
 }
 
-public final class CreateConversationGuestLinkAction: EntityAction {
+public struct CreateConversationGuestLinkAction: EntityAction {
 
     public typealias Result = String
     public typealias Failure = CreateConversationGuestLinkError
