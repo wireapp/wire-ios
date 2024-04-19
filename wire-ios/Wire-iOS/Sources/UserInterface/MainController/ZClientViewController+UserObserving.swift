@@ -29,24 +29,15 @@ extension ZClientViewController: UserObserving {
         }
 
         if changeInfo.imageMediumDataChanged {
-
-            guard let imageData = changeInfo.user.imageData(for: .complete) else {
-                return backgroundViewController.backgroundImage = .none
-            }
-
-            Task.detached(priority: .background) { [self] in
-                if let image = UIImage(from: imageData, withMaxSize: 40) {
-                    let backgroundImage = imageTransformer.adjustInputSaturation(value: 2, image: image)
-                    await MainActor.run { backgroundViewController.backgroundImage = backgroundImage }
-                }
+            if let imageData = changeInfo.user.imageData(for: .complete), let image = UIImage(from: imageData, withMaxSize: 40) {
+                backgroundViewController.setBackgroundImage(image)
+            } else {
+                backgroundViewController.setBackgroundImage(nil)
             }
         }
     }
 
     @objc func setupUserChangeInfoObserver() {
-        userObserverToken = userSession.addUserObserver(
-            self,
-            for: userSession.selfUser
-        )
+        userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
     }
 }

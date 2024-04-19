@@ -95,7 +95,7 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
             userSession: userSession
         )
 
-        backgroundViewController = .init(accentColor: selfUser.accentColor)
+        backgroundViewController = .init(accentColor: selfUser.accentColor, imageTransformer: .coreImageBased(context: .shared))
 
         super.init(nibName: nil, bundle: nil)
         accessoryViewController.delegate = self

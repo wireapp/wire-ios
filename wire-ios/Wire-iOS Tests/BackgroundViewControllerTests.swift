@@ -26,7 +26,10 @@ final class BackgroundViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        sut = .init(accentColor: .init(fromZMAccentColor: .violet))
+        sut = .init(
+            accentColor: .init(fromZMAccentColor: .violet),
+            imageTransformer: .coreImageBased(context: .shared)
+        )
     }
 
     override func tearDown() {
@@ -42,7 +45,7 @@ final class BackgroundViewControllerTests: BaseSnapshotTestCase {
 
         // WHEN
         let imageData = try XCTUnwrap(image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData())
-        sut.backgroundImage = try desaturatedImage(from: imageData)
+        try sut.setBackgroundImage(desaturatedImage(from: imageData))
 
         // THEN
         verify(matching: sut)
@@ -61,7 +64,7 @@ final class BackgroundViewControllerTests: BaseSnapshotTestCase {
 
         // WHEN
         let imageData = try XCTUnwrap(image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData())
-        sut.backgroundImage = try desaturatedImage(from: imageData)
+        try sut.setBackgroundImage(desaturatedImage(from: imageData))
         sut.accentColor = .init(fromZMAccentColor: .brightOrange)
 
         // THEN
@@ -72,7 +75,7 @@ final class BackgroundViewControllerTests: BaseSnapshotTestCase {
 
         // WHEN
         let imageData = try XCTUnwrap(image(inTestBundleNamed: "unsplash_burger.jpg").pngData())
-        sut.backgroundImage = try desaturatedImage(from: imageData)
+        try sut.setBackgroundImage(desaturatedImage(from: imageData))
 
         // THEN
         verify(matching: sut)

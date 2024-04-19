@@ -109,10 +109,14 @@ final class ZClientViewController_UserObservingTests: XCTestCase {
         sut.userDidChange(changeInfo)
 
         // Then
-        let predicate = NSPredicate { [sut] _, _ in
-            sut?.backgroundViewController.backgroundImage != nil
+        let predicate = NSPredicate { [imageTransformerMock] _, _ in
+            imageTransformerMock?.adjustInputSaturationValueImage_Invocations.isEmpty == false
         }
         let expectation = XCTNSPredicateExpectation(predicate: predicate, object: nil)
         wait(for: [expectation], timeout: 5)
+
+        XCTAssertEqual(imageTransformerMock.adjustInputSaturationValueImage_Invocations.count, 1)
+        XCTAssertEqual(imageTransformerMock.adjustInputSaturationValueImage_Invocations.first?.value, 2)
+        XCTAssertEqual(imageTransformerMock.adjustInputSaturationValueImage_Invocations.first?.image, backgroundImage)
     }
 }

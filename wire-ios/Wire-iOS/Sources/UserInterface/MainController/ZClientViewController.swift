@@ -66,7 +66,10 @@ final class ZClientViewController: UIViewController {
         self.userSession = userSession
         self.imageTransformer = imageTransformer
 
-        backgroundViewController = .init(accentColor: userSession.selfUser.accentColor)
+        backgroundViewController = .init(
+            accentColor: userSession.selfUser.accentColor,
+            imageTransformer: .coreImageBased(context: .shared)
+        )
 
         conversationListViewController = .init(
             account: account,

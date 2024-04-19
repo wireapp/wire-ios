@@ -21,24 +21,32 @@ import WireSyncEngine
 
 final class BackgroundViewController: UIViewController {
 
+    // MARK: - Constants
+
     private let backgroundScaleFactor: CGFloat = 1.4
+
+    // MARK: - Properties
 
     var accentColor: UIColor {
         get { imageView.backgroundColor ?? .clear }
         set { imageView.backgroundColor = newValue }
     }
 
-    var backgroundImage: UIImage? {
-        get { imageView.image }
-        set { imageView.image = newValue }
-    }
+    // MARK: - Private Properties
 
     private let imageView = UIImageView()
     private let cropView = UIView()
     private let darkenOverlay = UIView()
     private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
+    private let imageTransformer: ImageTransformer
 
-    init(accentColor: UIColor) {
+    // MARK: - Life Cycle
+
+    init(
+        accentColor: UIColor,
+        imageTransformer: ImageTransformer
+    ) {
+        self.imageTransformer = imageTransformer
         super.init(nibName: .none, bundle: .none)
         self.accentColor = accentColor
     }
@@ -54,9 +62,6 @@ final class BackgroundViewController: UIViewController {
         configureViews()
         createConstraints()
     }
-
-    override var childForStatusBarStyle: UIViewController? { children.first }
-    override var childForStatusBarHidden: UIViewController? { children.first }
 
     private func configureViews() {
 
@@ -101,5 +106,25 @@ final class BackgroundViewController: UIViewController {
         ]
 
         NSLayoutConstraint.activate(constraints)
+    }
+
+    override var childForStatusBarStyle: UIViewController? { children.first }
+    override var childForStatusBarHidden: UIViewController? { children.first }
+
+    // MARK: - Methods
+
+    func setBackgroundImage(_ image: UIImage?) {
+        guard let image else {
+            return imageView.image = nil
+        }
+
+        Task.detached(priority: .background) { [imageTransformer] in
+
+            let backgroundImage = imageTransformer.adjustInputSaturation(value: 2, image: image)
+
+            await MainActor.run { [weak self] in
+                self?.imageView.image = backgroundImage
+            }
+        }
     }
 }
