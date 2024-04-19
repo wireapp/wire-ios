@@ -22,7 +22,6 @@ import XCTest
 
 final class BackgroundViewControllerTests: XCTestCase {
 
-    private var imageTransformerMock: MockImageTransformer!
     private var selfUser: MockUserType!
 
     override func setUp() {
@@ -31,20 +30,17 @@ final class BackgroundViewControllerTests: XCTestCase {
         accentColor = .violet
         selfUser = MockUserType.createSelfUser(name: "")
         selfUser.accentColorValue = .violet
-        imageTransformerMock = .init()
-        imageTransformerMock.adjustInputSaturationValueImage_MockMethod = { _, image in image }
     }
 
     override func tearDown() {
         selfUser = nil
-        imageTransformerMock = nil
 
         super.tearDown()
     }
 
     func testThatItShowsUserWithoutImage() {
         // GIVEN
-        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: imageTransformerMock)
+        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: .coreImageBased(context: .shared))
         XCTAssertTrue(waitForGroupsToBeEmpty([sut.dispatchGroup]))
 
         // WHEN & THEN
@@ -54,7 +50,7 @@ final class BackgroundViewControllerTests: XCTestCase {
     func testThatItShowsUserWithImage() {
         // GIVEN
         selfUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData()
-        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: imageTransformerMock)
+        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: .coreImageBased(context: .shared))
         // make sure view is loaded
         _ = sut.view
         // WHEN
@@ -71,7 +67,7 @@ final class BackgroundViewControllerTests: XCTestCase {
 
     func testThatItUpdatesForUserAccentColorUpdate_fromAccentColor() {
         // GIVEN
-        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: imageTransformerMock)
+        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: .coreImageBased(context: .shared))
         _ = sut.view
         // WHEN
         selfUser.accentColorValue = .brightOrange
@@ -84,7 +80,7 @@ final class BackgroundViewControllerTests: XCTestCase {
     func testThatItUpdatesForUserAccentColorUpdate_fromUserImageRemoved() {
         // GIVEN
         selfUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData()
-        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: imageTransformerMock)
+        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: .coreImageBased(context: .shared))
         _ = sut.view
         // WHEN
         selfUser.completeImageData = nil
@@ -97,7 +93,7 @@ final class BackgroundViewControllerTests: XCTestCase {
     func testThatItUpdatesForUserAccentColorUpdate_fromUserImage() {
         // GIVEN
         selfUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData()
-        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: imageTransformerMock)
+        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: .coreImageBased(context: .shared))
         _ = sut.view
         // WHEN
         selfUser.accentColorValue = .brightOrange
@@ -111,7 +107,7 @@ final class BackgroundViewControllerTests: XCTestCase {
     func testThatItUpdatesForUserImageUpdate_fromAccentColor() {
         // GIVEN
         selfUser.completeImageData = nil
-        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: imageTransformerMock)
+        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: .coreImageBased(context: .shared))
         _ = sut.view
         // WHEN
         selfUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData()
@@ -124,7 +120,7 @@ final class BackgroundViewControllerTests: XCTestCase {
     func testThatItUpdatesForUserImageUpdate_fromUserImage() {
         // GIVEN
         selfUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData()
-        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: imageTransformerMock)
+        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: .coreImageBased(context: .shared))
         _ = sut.view
         // WHEN
         selfUser.completeImageData = image(inTestBundleNamed: "unsplash_burger.jpg").pngData()
