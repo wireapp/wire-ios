@@ -22,34 +22,18 @@ import WireCommonComponents
 
 protocol RemoveClientsViewControllerDelegate: AnyObject {
     func finishedDeleting(_ clientListViewController: RemoveClientsViewController)
+    func failedToDeleteClients(_ error: Error)
 }
 
 final class RemoveClientsViewController: UIViewController,
                                 UITableViewDelegate,
                                 UITableViewDataSource,
-                                ClientUpdateObserver,
                                 ClientColorVariantProtocol,
                                 SpinnerCapable {
 
     // MARK: - Properties
 
     var dismissSpinner: SpinnerCompletion?
-    private var removalObserver: ClientRemovalObserver?
-    weak var delegate: RemoveClientsViewControllerDelegate?
-
-    private var clients: [UserClient] = [] {
-        didSet {
-            self.sortedClients = self.clients.sorted(by: {
-                guard let leftDate = $0.activationDate, let rightDate = $1.activationDate else { return false }
-                return leftDate.compare(rightDate) == .orderedDescending
-            })
-            self.clientsTableView.reloadData()
-        }
-    }
-    private var sortedClients: [UserClient] = []
-    private var credentials: ZMEmailCredentials?
-    private var clientsObserverToken: NSObjectProtocol?
-
     private let clientsTableView = UITableView(frame: CGRect.zero, style: .grouped)
     private var leftBarButtonItem: UIBarButtonItem? {
         if self.isIPadRegular() {
@@ -70,18 +54,19 @@ final class RemoveClientsViewController: UIViewController,
         return nil
     }
 
+    weak var delegate: RemoveClientsViewControllerDelegate?
+    private var viewModel: RemoveClientsViewController.ViewModel
+
     // MARK: - Life cycle
 
     required init(
         clientsList: [UserClient],
         credentials: ZMEmailCredentials? = .none
     ) {
-        self.credentials = credentials
-
+        viewModel = RemoveClientsViewController.ViewModel(
+            clientsList: clientsList,
+            credentials: credentials)
         super.init(nibName: nil, bundle: nil)
-
-        self.initalizeProperties(clientsList)
-        self.clientsObserverToken = ZMUserSession.shared()?.addClientUpdateObserver(self)
     }
 
     @available(*, unavailable)
@@ -107,20 +92,7 @@ final class RemoveClientsViewController: UIViewController,
         self.navigationItem.leftBarButtonItem = leftBarButtonItem
     }
 
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        dismissLoadingView()
-
-        removalObserver = nil
-    }
-
-    private func dismissLoadingView() {
-        isLoadingViewVisible = false
-    }
-
-    private func initalizeProperties(_ clientsList: [UserClient]) {
-        self.clients = clientsList.filter { !$0.isSelfClient() }
-    }
+    // MARK: - Helpers
 
     private func createTableView() {
         clientsTableView.translatesAutoresizingMaskIntoConstraints = false
@@ -152,35 +124,16 @@ final class RemoveClientsViewController: UIViewController,
         self.navigationController?.presentingViewController?.dismiss(animated: true, completion: nil)
     }
 
-    func deleteUserClient(_ userClient: UserClient,
-                          credentials: ZMEmailCredentials?) {
-        removalObserver = ClientRemovalObserver(userClientToDelete: userClient,
-                                                delegate: self,
-                                                credentials: credentials)
-        removalObserver?.startRemoval()
-
-         delegate?.finishedDeleting(self)
-    }
-
-    // MARK: - ClientRegistrationObserver
-
-    func finishedFetching(_ userClients: [UserClient]) {
-        dismissLoadingView()
-    }
-
-    func failedToFetchClients(_ error: Error) {
-        dismissLoadingView()
-
-        presentAlertWithOKButton(message: L10n.Localizable.Error.User.unkownError)
-    }
-
-    func finishedDeleting(_ remainingClients: [UserClient]) {
-        clients = remainingClients
-
-    }
-
-    func failedToDeleteClients(_ error: Error) {
-        // no-op
+    func removeUserClient(_ userClient: UserClient) async {
+        isLoadingViewVisible = true
+        do {
+            try await viewModel.removeUserClient(userClient)
+            isLoadingViewVisible = false
+            delegate?.finishedDeleting(self)
+        } catch {
+            isLoadingViewVisible = false
+            delegate?.failedToDeleteClients(error)
+        }
     }
 
     // MARK: - UITableViewDataSource & UITableViewDelegate
@@ -190,7 +143,7 @@ final class RemoveClientsViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.sortedClients.count
+        return viewModel.sortedClients.count
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -216,7 +169,7 @@ final class RemoveClientsViewController: UIViewController,
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: RemoveClientTableViewCell.zm_reuseIdentifier, for: indexPath) as? RemoveClientTableViewCell {
             cell.selectionStyle = .none
-            cell.viewModel = .init(userClient: sortedClients[indexPath.row], shouldSetType: false)
+            cell.viewModel = .init(userClient: viewModel.sortedClients[indexPath.row], shouldSetType: false)
 
             return cell
         } else {
@@ -225,12 +178,14 @@ final class RemoveClientsViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        let userClient = self.sortedClients[indexPath.row]
-        self.deleteUserClient(userClient, credentials: credentials)
+        let userClient = viewModel.sortedClients[indexPath.row]
+        Task {
+            await self.removeUserClient(userClient)
+        }
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        return sortedClients[indexPath.row].type == .legalHold ? .none : .delete
+        return viewModel.sortedClients[indexPath.row].type == .legalHold ? .none : .delete
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -240,22 +195,8 @@ final class RemoveClientsViewController: UIViewController,
     }
 }
 
-// MARK: - ClientRemovalObserverDelegate
-
-extension RemoveClientsViewController: ClientRemovalObserverDelegate {
-    func setIsLoadingViewVisible(_ clientRemovalObserver: ClientRemovalObserver, isVisible: Bool) {
-        guard removalObserver == clientRemovalObserver else {
-            return
-        }
-
-        isLoadingViewVisible = isVisible
-    }
-
-    func present(_ clientRemovalObserver: ClientRemovalObserver, viewControllerToPresent: UIViewController) {
-        guard removalObserver == clientRemovalObserver else {
-            return
-        }
-
-        present(viewControllerToPresent, animated: true)
+extension RemoveUserClientError: LocalizedError {
+    public var errorDescription: String? {
+        return L10n.Localizable.General.failure
     }
 }

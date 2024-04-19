@@ -137,4 +137,10 @@ extension RemoveClientStepViewController: RemoveClientsViewControllerDelegate {
         authenticationCoordinator?.executeActions([.unwindState(withInterface: true), .showLoadingView])
     }
 
+    func failedToDeleteClients(_ error: Error) {
+        let alert = AuthenticationCoordinatorErrorAlert(error: error as NSError,
+                                                        completionActions: [.unwindState(withInterface: false)])
+        authenticationCoordinator?.executeActions([.hideLoadingView, .presentErrorAlert(alert)])
+    }
+
 }
