@@ -503,6 +503,7 @@
 		E608F4B22B5EACE000FF98A1 /* OneOnOneResolvedState.swift in Sources */ = {isa = PBXBuildFile; fileRef = E608F4B12B5EACE000FF98A1 /* OneOnOneResolvedState.swift */; };
 		E61B3F382BA85923005FF9F8 /* OneOnOneConversationMigrationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61B3F372BA85923005FF9F8 /* OneOnOneConversationMigrationAction.swift */; };
 		E61B3F3A2BA9C9FC005FF9F8 /* MigrateMLSOneOnOneConversationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61B3F392BA9C9FC005FF9F8 /* MigrateMLSOneOnOneConversationError.swift */; };
+		E6425FE12BCFAD16003EC8CF /* CoreDataStack+Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6425FE02BCFAD16003EC8CF /* CoreDataStack+Analytics.swift */; };
 		E6707E902BBD683F00469D57 /* PINCache in Frameworks */ = {isa = PBXBuildFile; productRef = E6707E8F2BBD683F00469D57 /* PINCache */; };
 		E68D9FF12B0F595100EFE04F /* store2-108-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E68D9FF02B0F594600EFE04F /* store2-108-0.wiredatabase */; };
 		E68D9FF32B0F5B4600EFE04F /* store2-105-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E68D9FF22B0F5B4600EFE04F /* store2-105-0.wiredatabase */; };
@@ -1410,6 +1411,7 @@
 		E61B3F372BA85923005FF9F8 /* OneOnOneConversationMigrationAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneOnOneConversationMigrationAction.swift; sourceTree = "<group>"; };
 		E61B3F392BA9C9FC005FF9F8 /* MigrateMLSOneOnOneConversationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrateMLSOneOnOneConversationError.swift; sourceTree = "<group>"; };
 		E62B972A2B680AB20099D5DC /* CoreDataStackHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStackHelper.swift; sourceTree = "<group>"; };
+		E6425FE02BCFAD16003EC8CF /* CoreDataStack+Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreDataStack+Analytics.swift"; sourceTree = "<group>"; };
 		E68D9FF02B0F594600EFE04F /* store2-108-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-108-0.wiredatabase"; sourceTree = "<group>"; };
 		E68D9FF22B0F5B4600EFE04F /* store2-105-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-105-0.wiredatabase"; sourceTree = "<group>"; };
 		E6A2398F2B7F6F50004E48C2 /* MockActorOneOnOneMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockActorOneOnOneMigrator.swift; sourceTree = "<group>"; };
@@ -2714,6 +2716,7 @@
 			children = (
 				E6A5BBA22B0E329800ACC236 /* Migration */,
 				166A2A0C25FB991800B4A4F8 /* CoreDataStack.swift */,
+				E6425FE02BCFAD16003EC8CF /* CoreDataStack+Analytics.swift */,
 				167BCC95260DC3F100E9D7E3 /* CoreDataStack+ClearStorage.swift */,
 				F179B5D92062B77300C13DFD /* CoreDataStack+Backup.swift */,
 				166DCDB72555886E004F4F59 /* CoreDataStack+Migration.swift */,
@@ -4346,6 +4349,7 @@
 				EE9AD9162696F01700DD5F51 /* FeatureRepository.swift in Sources */,
 				63B1337329A798C800009D84 /* ProteusProvider.swift in Sources */,
 				0630E4B6257F888600C75BFB /* NSManagedObjectContext+AppLock.swift in Sources */,
+				E6425FE12BCFAD16003EC8CF /* CoreDataStack+Analytics.swift in Sources */,
 				63495E1B23FED9A9002A7C59 /* ZMUser+Protobuf.swift in Sources */,
 				EEF4010723A9213B007B1A97 /* UserType+Team.swift in Sources */,
 				EE4CCA95256C558400848212 /* Feature.AppLock.swift in Sources */,

@@ -16,28 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireDataModel
-import WireCommonComponents
+import Foundation
 
-extension UserType {
-
-    /// Returns the current accent color of the user.
-    var accentColor: UIColor {
-        .init(fromZMAccentColor: accentColorValue)
-    }
-}
-
-extension UnregisteredUser {
-
-    /// The accent color value of the unregistered user.
-    var accentColor: AccentColor? {
-        get {
-            return accentColorValue.flatMap(AccentColor.init)
-        }
-        set {
-            accentColorValue = newValue?.zmAccentColor
-        }
-    }
-
+public enum E2EI {
+    // This notification is used to check the E2EIdentity Certificate expiry status
+    public static let checkForE2EICertificateExpiryStatus = Notification.Name("CheckForE2EICertificateExpiryStatus")
 }

@@ -39,7 +39,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private var enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol
     private var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol
     private var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol
-    private let e2eiActivationDateRepository: E2EIActivationDateRepository
+    private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     private let e2eiFeature: Feature.E2EI
     private var lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
     private var e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?
@@ -64,12 +64,13 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         enrollCertificateUseCase: EnrollE2EICertificateUseCaseProtocol,
         snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol,
         stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol,
-        e2eiActivationDateRepository: E2EIActivationDateRepository,
+        e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol,
         e2eiFeature: Feature.E2EI,
         lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?,
         e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
-        targetVC: UIViewController) {
+        targetVC: UIViewController
+    ) {
             self.enrollCertificateUseCase = enrollCertificateUseCase
             self.snoozeCertificateEnrollmentUseCase = snoozeCertificateEnrollmentUseCase
             self.stopCertificateEnrollmentSnoozerUseCase = stopCertificateEnrollmentSnoozerUseCase
@@ -81,7 +82,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
             self.targetVC = targetVC
 
             self.observer = NotificationCenter.default.addObserver(
-                forName: .checkForE2EICertificateExpiryStatus,
+                forName: E2EI.checkForE2EICertificateExpiryStatus,
                 object: nil,
                 queue: .main
             ) { _ in

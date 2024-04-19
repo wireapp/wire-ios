@@ -17,27 +17,18 @@
 //
 
 import UIKit
-import WireDataModel
-import WireCommonComponents
+import WireSyncEngine
 
-extension UserType {
+extension ZClientViewController: UserObserving {
 
-    /// Returns the current accent color of the user.
-    var accentColor: UIColor {
-        .init(fromZMAccentColor: accentColorValue)
-    }
-}
+    public func userDidChange(_ changeInfo: UserChangeInfo) {
 
-extension UnregisteredUser {
-
-    /// The accent color value of the unregistered user.
-    var accentColor: AccentColor? {
-        get {
-            return accentColorValue.flatMap(AccentColor.init)
-        }
-        set {
-            accentColorValue = newValue?.zmAccentColor
+        if changeInfo.accentColorValueChanged {
+            UIApplication.shared.firstKeyWindow?.tintColor = UIColor.accent()
         }
     }
 
+    @objc func setupUserChangeInfoObserver() {
+        userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
+    }
 }
