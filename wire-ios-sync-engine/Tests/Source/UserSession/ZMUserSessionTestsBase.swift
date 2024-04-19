@@ -85,6 +85,7 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
+        mockRecurringActionService.performActionsIfNeeded_MockMethod = { }
 
         sut = createSut(earService: mockEARService)
         sut.sessionManager = mockSessionManager

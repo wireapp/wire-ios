@@ -449,8 +449,6 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
 
-        mockRecurringActionService.performActionsIfNeeded_MockMethod = { }
-
         let handler = MockActionHandler<GetFeatureConfigsAction>(
             result: .success(()),
             context: syncMOC.notificationContext
