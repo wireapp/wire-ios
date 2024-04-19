@@ -65,12 +65,10 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
 
     weak var delegate: CallInfoViewControllerDelegate?
 
-    let backgroundViewController: BackgroundViewController
     private let stackView = UIStackView(axis: .vertical)
     private let statusViewController: CallStatusViewController
     private let accessoryViewController: CallAccessoryViewController
     private let actionsView = CallActionsView()
-    let imageTransformer: ImageTransformer
 
     var configuration: CallInfoViewControllerInput {
         didSet {
@@ -81,11 +79,9 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     init(
         configuration: CallInfoViewControllerInput,
         selfUser: UserType,
-        userSession: UserSession,
-        imageTransformer: ImageTransformer
+        userSession: UserSession
     ) {
         self.configuration = configuration
-        self.imageTransformer = imageTransformer
 
         statusViewController = CallStatusViewController(configuration: configuration)
 
@@ -94,8 +90,6 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
             selfUser: selfUser,
             userSession: userSession
         )
-
-        backgroundViewController = .init(accentColor: selfUser.accentColor, imageTransformer: .coreImageBased(context: .shared))
 
         super.init(nibName: nil, bundle: nil)
         accessoryViewController.delegate = self
@@ -127,8 +121,6 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     }
 
     private func setupViews() {
-        addToSelf(backgroundViewController)
-
         stackView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(stackView)
         stackView.alignment = .center
@@ -152,8 +144,6 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
             actionsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             accessoryViewController.view.widthAnchor.constraint(equalTo: view.widthAnchor)
         ])
-
-        backgroundViewController.view.fitIn(view: view)
     }
 
     private func updateNavigationItem() {
@@ -180,7 +170,6 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
         actionsView.update(with: configuration)
         statusViewController.configuration = configuration
         accessoryViewController.configuration = configuration
-        backgroundViewController.view.isHidden = configuration.videoPlaceholderState == .hidden
         updateAccessoryView()
 
         if configuration.networkQuality.isNormal {

@@ -48,28 +48,18 @@ final class ZClientViewController: UIViewController {
     private var contentTopCompactConstraint: NSLayoutConstraint!
     // init value = false which set to true, set to false after data usage permission dialog is displayed
     var dataUsagePermissionDialogDisplayed = false
-    let backgroundViewController: BackgroundViewController
 
     private let colorSchemeController: ColorSchemeController
     private var incomingApnsObserver: Any?
     private var networkAvailabilityObserverToken: Any?
     private var pendingInitialStateRestore = false
-    /// Used to update the `BackgroundViewController`'s `backgroundImage` property.
-    let imageTransformer: ImageTransformer
 
     /// init method for testing allows injecting an Account object and self user
     required init(
         account: Account,
-        userSession: UserSession,
-        imageTransformer: ImageTransformer
+        userSession: UserSession
     ) {
         self.userSession = userSession
-        self.imageTransformer = imageTransformer
-
-        backgroundViewController = .init(
-            accentColor: userSession.selfUser.accentColor,
-            imageTransformer: .coreImageBased(context: .shared)
-        )
 
         conversationListViewController = .init(
             account: account,
@@ -223,12 +213,7 @@ final class ZClientViewController: UIViewController {
     }
 
     private func createBackgroundViewController() {
-        backgroundViewController.addToSelf(conversationListViewController)
-
-        conversationListViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        conversationListViewController.view.frame = backgroundViewController.view.bounds
-
-        wireSplitViewController.leftViewController = backgroundViewController
+        wireSplitViewController.leftViewController = conversationListViewController
     }
 
     // MARK: Status bar

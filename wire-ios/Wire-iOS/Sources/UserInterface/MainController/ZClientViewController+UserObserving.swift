@@ -25,15 +25,6 @@ extension ZClientViewController: UserObserving {
 
         if changeInfo.accentColorValueChanged {
             UIApplication.shared.firstKeyWindow?.tintColor = UIColor.accent()
-            backgroundViewController.accentColor = changeInfo.user.accentColor
-        }
-
-        if changeInfo.imageMediumDataChanged {
-            if let imageData = changeInfo.user.imageData(for: .complete), let image = UIImage(from: imageData, withMaxSize: 40) {
-                Task { await backgroundViewController.setBackgroundImage(image) }
-            } else {
-                Task { await backgroundViewController.setBackgroundImage(nil) }
-            }
         }
     }
 
