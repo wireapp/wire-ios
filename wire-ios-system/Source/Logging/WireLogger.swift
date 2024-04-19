@@ -164,11 +164,8 @@ extension String: LogConvertible {
 
 public extension WireLogger {
 
-<<<<<<< HEAD
     static let apiMigration = WireLogger(tag: "api-migration")
-=======
     static let appState = WireLogger(tag: "AppState")
->>>>>>> 6dec08acf9 (fix: deadlock on logout WPB-7154 (#1299))
     static let appDelegate = WireLogger(tag: "AppDelegate")
     static let appLock = WireLogger(tag: "AppLock")
     static let assets = WireLogger(tag: "assets")
