@@ -264,23 +264,6 @@ internal struct WirelessRequestFactory {
         }
         return .init(getFromPath: "/conversations/\(identifier)/features/conversationGuestLinks", apiVersion: apiVersion.rawValue)
     }
-    // Optional password in this method as a reference and then pass it all the way up to the cell
-    static func createLinkRequest(password: String?, for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
-        guard let identifier = conversation.remoteIdentifier?.transportString() else {
-            fatal("conversation is not yet inserted on the backend")
-        }
-
-        switch apiVersion {
-        case .v0, .v1, .v2, .v3:
-            return .init(path: "/conversations/\(identifier)/code", method: .post, payload: nil, apiVersion: apiVersion.rawValue)
-        case .v4, .v5, .v6:
-            var payload: [String: Any] = [:]
-            if let password {
-                payload["password"] = password
-            }
-            return .init(path: "/conversations/\(identifier)/code", method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
-        }
-    }
 
     static func deleteLinkRequest(for conversation: ZMConversation, apiVersion: APIVersion) -> ZMTransportRequest {
         guard let identifier = conversation.remoteIdentifier?.transportString() else {
