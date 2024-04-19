@@ -63,6 +63,7 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 
         let mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
+        mockRecurringActionService.performActionsIfNeeded_MockMethod = { }
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
