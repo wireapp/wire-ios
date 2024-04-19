@@ -97,11 +97,10 @@ extension ZMConversation {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
 
-        guard let apiVersion = BackendInfo.apiVersion else {
-            return completion(.failure(WirelessLinkError.unknown))
-        }
-
-        var action = CreateConversationGuestLinkAction(password: password, conversationID: self.remoteIdentifier)
+        var action = CreateConversationGuestLinkAction(
+            password: password,
+            conversationID: self.remoteIdentifier
+        )
 
         action.perform(in: self.managedObjectContext!.notificationContext) { result in
             switch result {
