@@ -62,7 +62,8 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
         contentController = CallInfoViewController(
             configuration: configuration,
             selfUser: selfUser,
-            userSession: userSession
+            userSession: userSession,
+            imageTransformer: .coreImageBased(context: .shared)
         )
 
         contentNavigationController = contentController.wrapInNavigationController()

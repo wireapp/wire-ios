@@ -17,17 +17,25 @@
 //
 
 import XCTest
+
 @testable import Wire
 
 final class ZClientViewControllerTests: XCTestCase {
-    var sut: ZClientViewController!
-    var userSession: UserSessionMock!
+
+    private var imageTransformer: MockImageTransformer!
+    private var sut: ZClientViewController!
+    private var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
 
+        imageTransformer = .init()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
-        sut = ZClientViewController(account: Account.mockAccount(imageData: mockImageData), userSession: userSession)
+        sut = ZClientViewController(
+            account: Account.mockAccount(imageData: mockImageData),
+            userSession: userSession,
+            imageTransformer: imageTransformer
+        )
     }
 
     override func tearDown() {

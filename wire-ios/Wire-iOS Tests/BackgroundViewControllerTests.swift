@@ -17,14 +17,16 @@
 //
 
 import XCTest
+
 @testable import Wire
 
 final class BackgroundViewControllerTests: XCTestCase {
 
-    var selfUser: MockUserType!
+    private var selfUser: MockUserType!
 
     override func setUp() {
         super.setUp()
+
         accentColor = .violet
         selfUser = MockUserType.createSelfUser(name: "")
         selfUser.accentColorValue = .violet
@@ -38,7 +40,7 @@ final class BackgroundViewControllerTests: XCTestCase {
 
     func testThatItShowsUserWithoutImage() {
         // GIVEN
-        let sut = BackgroundViewController(user: selfUser, userSession: .none)
+        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: .coreImageBased(context: .shared))
         XCTAssertTrue(waitForGroupsToBeEmpty([sut.dispatchGroup]))
 
         // WHEN & THEN
@@ -48,7 +50,7 @@ final class BackgroundViewControllerTests: XCTestCase {
     func testThatItShowsUserWithImage() {
         // GIVEN
         selfUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData()
-        let sut = BackgroundViewController(user: selfUser, userSession: .none)
+        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: .coreImageBased(context: .shared))
         // make sure view is loaded
         _ = sut.view
         // WHEN
@@ -65,7 +67,7 @@ final class BackgroundViewControllerTests: XCTestCase {
 
     func testThatItUpdatesForUserAccentColorUpdate_fromAccentColor() {
         // GIVEN
-        let sut = BackgroundViewController(user: selfUser, userSession: .none)
+        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: .coreImageBased(context: .shared))
         _ = sut.view
         // WHEN
         selfUser.accentColorValue = .brightOrange
@@ -78,7 +80,7 @@ final class BackgroundViewControllerTests: XCTestCase {
     func testThatItUpdatesForUserAccentColorUpdate_fromUserImageRemoved() {
         // GIVEN
         selfUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData()
-        let sut = BackgroundViewController(user: selfUser, userSession: .none)
+        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: .coreImageBased(context: .shared))
         _ = sut.view
         // WHEN
         selfUser.completeImageData = nil
@@ -91,7 +93,7 @@ final class BackgroundViewControllerTests: XCTestCase {
     func testThatItUpdatesForUserAccentColorUpdate_fromUserImage() {
         // GIVEN
         selfUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData()
-        let sut = BackgroundViewController(user: selfUser, userSession: .none)
+        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: .coreImageBased(context: .shared))
         _ = sut.view
         // WHEN
         selfUser.accentColorValue = .brightOrange
@@ -105,7 +107,7 @@ final class BackgroundViewControllerTests: XCTestCase {
     func testThatItUpdatesForUserImageUpdate_fromAccentColor() {
         // GIVEN
         selfUser.completeImageData = nil
-        let sut = BackgroundViewController(user: selfUser, userSession: .none)
+        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: .coreImageBased(context: .shared))
         _ = sut.view
         // WHEN
         selfUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData()
@@ -118,7 +120,7 @@ final class BackgroundViewControllerTests: XCTestCase {
     func testThatItUpdatesForUserImageUpdate_fromUserImage() {
         // GIVEN
         selfUser.completeImageData = image(inTestBundleNamed: "unsplash_matterhorn.jpg").pngData()
-        let sut = BackgroundViewController(user: selfUser, userSession: .none)
+        let sut = BackgroundViewController(user: selfUser, userSession: .none, imageTransformer: .coreImageBased(context: .shared))
         _ = sut.view
         // WHEN
         selfUser.completeImageData = image(inTestBundleNamed: "unsplash_burger.jpg").pngData()

@@ -220,8 +220,12 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     }
 
-    func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (Data?) -> Void) {
+    func imageData(for size: ProfileImageSize) -> Data? {
+        nil
+    }
 
+    func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (Data?) -> Void) {
+        completion(nil)
     }
 
     func refreshData() {

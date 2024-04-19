@@ -223,16 +223,6 @@ static id<UserType> mockSelfUser = nil;
     
 }
 
-- (void)imageDataFor:(enum ProfileImageSize)size queue:(dispatch_queue_t _Nonnull)queue completion:(void (^ _Nonnull)(NSData * _Nullable))completion {
-    switch (size) {
-        case ProfileImageSizePreview:
-            completion(previewImageData);
-            break;
-        case ProfileImageSizeComplete:
-            completion(completeImageData);
-    }
-}
-
 - (BOOL)isGuestIn:(ZMConversation * _Nonnull)conversation {
     return self.isGuestInConversation;
 }

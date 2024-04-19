@@ -224,12 +224,12 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 - (NSData *)imageMediumData
 {
-    return [self imageDataforSize:ProfileImageSizeComplete];
+    return [self imageDataFor:ProfileImageSizeComplete];
 }
 
 - (NSData *)imageSmallProfileData
 {
-    return [self imageDataforSize:ProfileImageSizePreview];
+    return [self imageDataFor:ProfileImageSizePreview];
 }
 
 - (NSString *)smallProfileImageCacheKey

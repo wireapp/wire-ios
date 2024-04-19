@@ -5281,6 +5281,30 @@ public class MockUpdateMLSGroupVerificationStatusUseCaseProtocol: UpdateMLSGroup
 
 }
 
+public class MockUserObserving: UserObserving {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - userDidChange
+
+    public var userDidChange_Invocations: [UserChangeInfo] = []
+    public var userDidChange_MockMethod: ((UserChangeInfo) -> Void)?
+
+    public func userDidChange(_ changeInfo: UserChangeInfo) {
+        userDidChange_Invocations.append(changeInfo)
+
+        guard let mock = userDidChange_MockMethod else {
+            fatalError("no mock for `userDidChange`")
+        }
+
+        mock(changeInfo)
+    }
+
+}
+
 public class MockUserRepositoryInterface: UserRepositoryInterface {
 
     // MARK: - Life cycle
