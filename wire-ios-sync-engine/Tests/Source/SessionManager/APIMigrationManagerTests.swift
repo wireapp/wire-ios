@@ -20,8 +20,8 @@ import Foundation
 import XCTest
 import WireTransport
 import WireDataModelSupport
-import WireSyncEngineSupport
 @testable import WireSyncEngine
+@testable import WireSyncEngineSupport
 
 class APIMigrationMock: APIMigration {
     var version: APIVersion
@@ -37,7 +37,7 @@ class APIMigrationMock: APIMigration {
     }
 }
 
-class APIMigrationManagerTests: MessagingTest {
+final class APIMigrationManagerTests: MessagingTest {
 
     // MARK: - Verifying if migration is needed
 
@@ -253,6 +253,9 @@ class APIMigrationManagerTests: MessagingTest {
         mockContextStorable.clear_MockMethod = { }
         let configuration = ZMUserSession.Configuration()
 
+        let mockRecurringActionService = MockRecurringActionServiceInterface()
+        mockRecurringActionService.registerAction_MockMethod = { _ in }
+
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             analytics: nil,
@@ -268,6 +271,7 @@ class APIMigrationManagerTests: MessagingTest {
             mlsService: nil,
             observeMLSGroupVerificationStatus: nil,
             proteusToMLSMigrationCoordinator: nil,
+            recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: mockTransportSession,
             useCaseFactory: nil,
