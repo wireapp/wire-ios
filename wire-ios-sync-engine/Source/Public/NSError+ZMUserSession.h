@@ -32,14 +32,8 @@ typedef NS_ENUM(NSUInteger, ZMUserSessionErrorCode) {
     ZMUserSessionNetworkError,
     /// The email used in the registration is already in use
     ZMUserSessionEmailIsAlreadyRegistered,
-    /// The phone number used in the registration is already in use
-    ZMUserSessionPhoneNumberIsAlreadyRegistered,
-    /// The phone number used in the registration is not a valid phone number
-    ZMUserSessionInvalidPhoneNumber,
     /// The email used in the registration is not a valid email
     ZMUserSessionInvalidEmail,
-    /// The phone number verification code inserted is not valid
-    ZMUserSessionInvalidPhoneNumberVerificationCode,
     /// The email verification code inserted is not valid
     ZMUserSessionInvalidEmailVerificationCode,
     /// The registration failed, but we don't know why

@@ -87,7 +87,6 @@
         NSError *error = {
             [NSError pendingLoginErrorWithResponse:response] ?:
             [NSError unauthorizedErrorWithResponse:response] ?:
-            [NSError invalidPhoneNumberErrorWithReponse:response] ?:
             [NSError userSessionErrorWithErrorCode:ZMUserSessionUnknownError userInfo:nil]
         };
 

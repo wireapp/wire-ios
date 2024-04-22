@@ -83,14 +83,6 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
     return nil;
 }
 
-+ (instancetype)phoneNumberIsAlreadyRegisteredErrorWithResponse:(ZMTransportResponse *)response
-{
-    if (response.HTTPStatus == 409) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionPhoneNumberIsAlreadyRegistered userInfo:nil];
-    }
-    return nil;
-}
-
 + (instancetype)blacklistedEmailWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 403 && [[response payloadLabel] isEqualToString:@"blacklisted-email"]) {
