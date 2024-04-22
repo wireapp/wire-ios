@@ -401,6 +401,8 @@ extension ConversationListViewController: UITabBarDelegate {
             presentPeoplePicker()
         case .list:
             listContentController.listViewModel.folderEnabled = false
+        case .settings:
+            fatalError("TODO")
         }
     }
 }

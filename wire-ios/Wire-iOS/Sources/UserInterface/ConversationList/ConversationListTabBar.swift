@@ -25,11 +25,9 @@ enum TabBarItemType: Int, CaseIterable {
     typealias BottomBar = L10n.Localizable.ConversationList.BottomBar
     typealias TabBar = L10n.Accessibility.TabBar
 
-    case startUI, list, archive
+    case startUI, list, archive, settings
 
-    var order: Int {
-        return rawValue
-    }
+    var order: Int { rawValue }
 
     var icon: UIImage {
         switch self {
@@ -39,6 +37,8 @@ enum TabBarItemType: Int, CaseIterable {
             return .init(resource: .conversationsOutline)
         case .archive:
             return .init(resource: .archiveOutline)
+        case .settings:
+            return .init(resource: .ConversationList.TabBar.settings)
         }
     }
 
@@ -50,6 +50,8 @@ enum TabBarItemType: Int, CaseIterable {
             return .init(resource: .conversationsFilled)
         case .archive:
             return .init(resource: .archiveFilled)
+        case .settings:
+            return .init(resource: .ConversationList.TabBar.settingsFilled)
         }
     }
 
@@ -61,6 +63,8 @@ enum TabBarItemType: Int, CaseIterable {
             BottomBar.Conversations.title
         case .archive:
             BottomBar.Archived.title
+        case .settings:
+            BottomBar.Settings.title
         }
     }
 
@@ -72,6 +76,8 @@ enum TabBarItemType: Int, CaseIterable {
             return "bottomBarRecentListButton"
         case .archive:
             return "bottomBarArchivedButton"
+        case .settings:
+            return "bottomBarSettingsButton"
         }
     }
 
@@ -83,6 +89,8 @@ enum TabBarItemType: Int, CaseIterable {
             return TabBar.Conversations.description
         case .archive:
             return TabBar.Archived.description
+        case .settings:
+            return TabBar.Settings.description
         }
     }
 
@@ -94,22 +102,25 @@ enum TabBarItemType: Int, CaseIterable {
             TabBar.Archived.hint
         case .list:
             nil
+        case .settings:
+            TabBar.Settings.hint
         }
     }
 
 }
 
-final class ConversationListTabBar: UITabBar { // ?
+final class ConversationListTabBar: UITabBar {
 
     private let startTab = UITabBarItem(type: .startUI)
     private let listTab = UITabBarItem(type: .list)
     private let archivedTab = UITabBarItem(type: .archive)
+    private let settingsTab = UITabBarItem(type: .settings)
 
     var showArchived: Bool = false {
         didSet {
-            var tabs: [UITabBarItem] = [startTab, listTab]
+            var tabs: [UITabBarItem] = [startTab, listTab, settingsTab]
             if showArchived {
-                tabs.append(archivedTab)
+                tabs.insert(archivedTab, at: 2)
             }
             setItems(tabs, animated: true)
         }
@@ -123,6 +134,8 @@ final class ConversationListTabBar: UITabBar { // ?
                     return
                 case .list:
                     selectedItem = listTab
+                case .settings:
+                    fatalError("TODO")
                 }
             }
         }

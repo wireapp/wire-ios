@@ -976,6 +976,12 @@ internal enum L10n {
         /// Log in via phone number
         internal static let description = L10n.tr("Accessibility", "tabBar.phone.description", fallback: "Log in via phone number")
       }
+      internal enum Settings {
+        /// Settings
+        internal static let description = L10n.tr("Accessibility", "tabBar.settings.description", fallback: "Settings")
+        /// Double tap to open settings
+        internal static let hint = L10n.tr("Accessibility", "tabBar.settings.hint", fallback: "Double tap to open settings")
+      }
     }
   }
   internal enum InfoPlist {
@@ -2654,9 +2660,9 @@ internal enum L10n {
           /// Conversations
           internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.conversations.title", fallback: "Conversations")
         }
-        internal enum Folders {
-          /// Folders
-          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.folders.title", fallback: "Folders")
+        internal enum Settings {
+          /// Settings
+          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.settings.title", fallback: "Settings")
         }
       }
       internal enum DataUsagePermissionAlert {
