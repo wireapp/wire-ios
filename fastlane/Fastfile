@@ -553,7 +553,7 @@ class Build
             @git_branch = ENV['GITHUB_REF_NAME']
         end
 
-        @enable_datadog = ENV['ENABLE_DATADOG'] != nil
+        @enable_datadog = ENV['ENABLE_DATADOG'] == true || ENV['ENABLE_DATADOG'] == 1
         @build_number = build_number
 
         for_simulator = options[:for_simulator]
