@@ -1250,7 +1250,6 @@
 		E6579E462AFF9FFB004E7FD8 /* MockUserType+CodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52379223F5588000D4FE79 /* MockUserType+CodingKeys.swift */; };
 		E6579E472AFF9FFD004E7FD8 /* MockUserType+Creation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378223F5566F00D4FE79 /* MockUserType+Creation.swift */; };
 		E6579E482AFFA001004E7FD8 /* MockUserType+SelfLegalHoldSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378523F556DC00D4FE79 /* MockUserType+SelfLegalHoldSubject.swift */; };
-		E6579E492AFFA003004E7FD8 /* MockUserType+ValidatorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378A23F5574D00D4FE79 /* MockUserType+ValidatorType.swift */; };
 		E6579E4A2AFFA007004E7FD8 /* MockUserType+ZMEditableUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEED9B023F6EA4F008C94CA /* MockUserType+ZMEditableUser.swift */; };
 		E6579E4B2AFFA00A004E7FD8 /* MockServiceUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378E23F557A600D4FE79 /* MockServiceUserType.swift */; };
 		E6579E4C2AFFA024004E7FD8 /* MockServiceUserType+Creation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52379023F557B900D4FE79 /* MockServiceUserType+Creation.swift */; };
@@ -1442,7 +1441,6 @@
 		EE469EB62A9E3AE800620EA4 /* emojis.json in Resources */ = {isa = PBXBuildFile; fileRef = EE469EB52A9E3AE700620EA4 /* emojis.json */; };
 		EE52378423F5567300D4FE79 /* MockUserType+Creation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378223F5566F00D4FE79 /* MockUserType+Creation.swift */; };
 		EE52378723F556DE00D4FE79 /* MockUserType+SelfLegalHoldSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378523F556DC00D4FE79 /* MockUserType+SelfLegalHoldSubject.swift */; };
-		EE52378B23F5574D00D4FE79 /* MockUserType+ValidatorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378A23F5574D00D4FE79 /* MockUserType+ValidatorType.swift */; };
 		EE52378F23F557A600D4FE79 /* MockServiceUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378E23F557A600D4FE79 /* MockServiceUserType.swift */; };
 		EE52379123F557B900D4FE79 /* MockServiceUserType+Creation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52379023F557B900D4FE79 /* MockServiceUserType+Creation.swift */; };
 		EE52379323F5588000D4FE79 /* MockUserType+CodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52379223F5588000D4FE79 /* MockUserType+CodingKeys.swift */; };
@@ -3541,7 +3539,6 @@
 		EE469EB52A9E3AE700620EA4 /* emojis.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = emojis.json; sourceTree = "<group>"; };
 		EE52378223F5566F00D4FE79 /* MockUserType+Creation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockUserType+Creation.swift"; sourceTree = "<group>"; };
 		EE52378523F556DC00D4FE79 /* MockUserType+SelfLegalHoldSubject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockUserType+SelfLegalHoldSubject.swift"; sourceTree = "<group>"; };
-		EE52378A23F5574D00D4FE79 /* MockUserType+ValidatorType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockUserType+ValidatorType.swift"; sourceTree = "<group>"; };
 		EE52378E23F557A600D4FE79 /* MockServiceUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServiceUserType.swift; sourceTree = "<group>"; };
 		EE52379023F557B900D4FE79 /* MockServiceUserType+Creation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockServiceUserType+Creation.swift"; sourceTree = "<group>"; };
 		EE52379223F5588000D4FE79 /* MockUserType+CodingKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockUserType+CodingKeys.swift"; sourceTree = "<group>"; };
@@ -6071,7 +6068,6 @@
 				EE52379223F5588000D4FE79 /* MockUserType+CodingKeys.swift */,
 				EE52378223F5566F00D4FE79 /* MockUserType+Creation.swift */,
 				EE52378523F556DC00D4FE79 /* MockUserType+SelfLegalHoldSubject.swift */,
-				EE52378A23F5574D00D4FE79 /* MockUserType+ValidatorType.swift */,
 				EEEED9B023F6EA4F008C94CA /* MockUserType+ZMEditableUser.swift */,
 				1658C19520A1E2FA00148F6D /* MockVoiceChannel.swift */,
 				5E97C30220F4CFDA00C806B4 /* MockZiphyClient.swift */,
@@ -10376,7 +10372,6 @@
 			files = (
 				16DF3B682289B92000D09365 /* LegalHoldDetailsViewControllerSnapshotTests.swift in Sources */,
 				EFAFCA8D213433D7002B31A6 /* ConversationListViewControllerTests.swift in Sources */,
-				EE52378B23F5574D00D4FE79 /* MockUserType+ValidatorType.swift in Sources */,
 				F1CB5D29215A3108001CCF5D /* MentionsHandlerTests.swift in Sources */,
 				EECA835426F211210087ECB0 /* UIAlertControllerFeatureConfigSnapshotTests.swift in Sources */,
 				A9AC63E123FC4A2D00016ABC /* AVURLAsset+conversionTests.swift in Sources */,
@@ -10789,7 +10784,6 @@
 				E6579E482AFFA001004E7FD8 /* MockUserType+SelfLegalHoldSubject.swift in Sources */,
 				E6579E572AFFA024004E7FD8 /* MockPanGestureRecognizer.swift in Sources */,
 				E6579E632AFFA024004E7FD8 /* SwiftMockLoader.swift in Sources */,
-				E6579E492AFFA003004E7FD8 /* MockUserType+ValidatorType.swift in Sources */,
 				E6579E7C2AFFA979004E7FD8 /* UserRightTests.swift in Sources */,
 				E6C25FE62B0274F600406A1C /* CountryTests.swift in Sources */,
 				E6C25FEC2B027A9500406A1C /* NetworkInfoTests.swift in Sources */,

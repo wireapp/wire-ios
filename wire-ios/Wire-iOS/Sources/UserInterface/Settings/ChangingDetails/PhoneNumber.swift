@@ -77,7 +77,7 @@ struct PhoneNumber: Equatable {
         var validatedNumber: String? = fullNumber
 
         do {
-            _ = try ZMUser.validate(phoneNumber: &validatedNumber)
+            _ = try UserPropertyValidator().validate(phoneNumber: &validatedNumber)
         } catch {
             return ValidationResult(error: error)
         }

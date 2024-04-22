@@ -36,14 +36,7 @@ protocol AVSMediaManagerInterface {
 extension AVSMediaManager: AVSMediaManagerInterface {
 }
 
-protocol ValidatorType {
-    static func validate(name: inout String?) throws -> Bool
-}
-
-extension ZMUser: ValidatorType {
-}
-
-typealias SettingsSelfUser = ValidatorType & ZMEditableUser & UserType
+typealias SettingsSelfUser = ZMEditableUser & UserType
 
 enum SettingsPropertyError: Error {
     case WrongValue(String)
@@ -124,7 +117,7 @@ final class SettingsPropertyFactory {
                     guard let selfUser = self.selfUser else { requireInternal(false, "Attempt to modify a user property without a self user"); break }
 
                     var inOutString: String? = stringValue as String
-                    _ = try type(of: selfUser).validate(name: &inOutString)
+                    _ = try UserPropertyValidator().validate(name: &inOutString)
                     self.userSession?.enqueue {
                         selfUser.name = stringValue
                     }

@@ -98,7 +98,7 @@ public extension ZMUser {
         var result: Bool = false
 
         do {
-            result = try ZMUser.validate(name: &name)
+            result = try UserPropertyValidator().validate(name: &name)
         } catch {
             outError = error
         }
@@ -112,7 +112,7 @@ public extension ZMUser {
         var result: Bool = false
 
         do {
-            result = try ZMUser.validate(emailAddress: &emailAddress)
+            result = try UserPropertyValidator().validate(emailAddress: &emailAddress)
         } catch {
             outError = error
         }
@@ -126,7 +126,7 @@ public extension ZMUser {
         var result: Bool = false
 
         do {
-            result = try ZMUser.validate(password: &password)
+            result = try UserPropertyValidator().validate(password: &password)
         } catch {
             outError = error
         }
@@ -140,7 +140,7 @@ public extension ZMUser {
         var result: Bool = false
 
         do {
-            result = try ZMUser.validate(phoneVerificationCode: &verificationCode)
+            result = try UserPropertyValidator().validate(phoneVerificationCode: &verificationCode)
         } catch {
             outError = error
         }
@@ -154,12 +154,11 @@ public extension ZMUser {
         var result: Bool = false
 
         do {
-            result = try ZMUser.validate(phoneNumber: &phoneNumber)
+            result = try UserPropertyValidator().validate(phoneNumber: &phoneNumber)
         } catch {
             outError = error
         }
 
         return ZMPropertyNormalizationResult<NSString>(result: result, normalizedValue: phoneNumber as NSString? ?? "", validationError: outError)
     }
-
 }

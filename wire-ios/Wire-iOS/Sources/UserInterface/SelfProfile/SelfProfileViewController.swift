@@ -26,9 +26,6 @@ import WireCommonComponents
 
 final class SelfProfileViewController: UIViewController {
 
-    /// The user that is viewing their settings.
-    let selfUser: SettingsSelfUser
-
     var userRightInterfaceType: UserRightInterface.Type
     var settingsCellDescriptorFactory: SettingsCellDescriptorFactory?
     var rootGroup: (SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType)?
@@ -66,7 +63,6 @@ final class SelfProfileViewController: UIViewController {
         userSession: UserSession
     ) {
 
-        self.selfUser = selfUser
         self.userSession = userSession
 
         // Create the settings hierarchy
