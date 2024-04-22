@@ -112,13 +112,11 @@ final class ConversationListViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        viewModel.viewController = self
-
         definesPresentationContext = true
 
         /// setup UI
         view.addSubview(contentContainer)
-        self.view.backgroundColor = SemanticColors.View.backgroundConversationList
+        view.backgroundColor = SemanticColors.View.backgroundConversationList
 
         setupTopBar()
         setupListContentController()
@@ -128,6 +126,8 @@ final class ConversationListViewController: UIViewController {
         setupNetworkStatusBar()
 
         createViewConstraints()
+
+        viewModel.viewController = self
     }
 
     @available(*, unavailable)
@@ -137,7 +137,6 @@ final class ConversationListViewController: UIViewController {
 
     override func loadView() {
         view = PassthroughTouchesView(frame: UIScreen.main.bounds)
-        view.backgroundColor = .clear
     }
 
     override func viewDidLoad() {
