@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireProtos
 import SwiftProtobuf
+import WireProtos
 
 private let redactedValue = "<redacted>"
 

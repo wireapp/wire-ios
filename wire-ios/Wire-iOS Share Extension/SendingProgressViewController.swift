@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SystemConfiguration
+import UIKit
 import WireCommonComponents
 import WireShareEngine
-import SystemConfiguration
 import WireSystem
-import UIKit
 
 final class SendingProgressViewController: UIViewController {
 

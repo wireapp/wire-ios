@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import MapKit
 import CoreLocation
+import MapKit
 import UIKit
+import WireDataModel
 
 protocol LocationSelectionViewControllerDelegate: AnyObject {
     func locationSelectionViewController(_ viewController: LocationSelectionViewController, didSelectLocationWithData locationData: LocationData)

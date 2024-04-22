@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireCommonComponents
 import avs
 @testable import Wire
+import WireCommonComponents
+import XCTest
 
 final class MockZMEditableUser: MockUser, ZMEditableUser, ValidatorType {
     var needsRichProfileUpdate: Bool = false

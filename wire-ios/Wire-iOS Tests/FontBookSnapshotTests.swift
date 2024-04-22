@@ -17,9 +17,9 @@
 //
 
 import SnapshotTesting
+@testable import Wire
 import WireCommonComponents
 import XCTest
-@testable import Wire
 
 final class FontBookSnapshotTests: XCTestCase {
 

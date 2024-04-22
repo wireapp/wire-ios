@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
+import WireCommonComponents
 import WireSystem
 import WireTransport
-import WireCommonComponents
 
 /**
  * The view controller to use to ask the user to enter their credentials.

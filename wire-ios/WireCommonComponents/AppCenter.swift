@@ -17,9 +17,9 @@
 //
 
 import AppCenter
+import AppCenterAnalytics
 import AppCenterCrashes
 import AppCenterDistribute
-import AppCenterAnalytics
 
 public extension AppCenter {
     static func setTrackingEnabled(_ enabled: Bool) {

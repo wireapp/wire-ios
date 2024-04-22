@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUtilities
 import WireDataModel
+import WireUtilities
 
 struct MembershipListPayload: Decodable {
     let hasMore: Bool

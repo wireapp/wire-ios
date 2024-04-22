@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireSystem
+import XCTest
 
 class ReferenceAllocationTests: XCTestCase {
     func testThatExistingObjectIsMarkedAsValid() {

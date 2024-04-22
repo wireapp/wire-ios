@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import FLAnimatedImage
 import Foundation
 import MobileCoreServices
-import FLAnimatedImage
 import UniformTypeIdentifiers
 
 extension UIPasteboard {

@@ -17,9 +17,9 @@
 //
 
 import SwiftUI
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-import WireCommonComponents
 
 final class SecurityLevelView: UIView {
 

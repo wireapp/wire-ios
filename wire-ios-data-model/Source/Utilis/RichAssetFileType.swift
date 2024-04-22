@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AVFoundation
 import Foundation
 import MobileCoreServices
-import AVFoundation
 
 /**
  * The list of asset types that the app can show preview of, or play inline.

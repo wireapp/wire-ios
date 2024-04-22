@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSyncEngine
 import WireDataModel
+import WireSyncEngine
 
 public var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
 
