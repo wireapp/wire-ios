@@ -225,24 +225,6 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    // TODO: move funcs down in file
-
-    // temporary function to simplify call to EventProcessor
-    // might be replaced by something more elegant
-    public func processUpdateEvents(_ events: [ZMUpdateEvent]) {
-        WaitingGroupTask(context: self.syncContext) {
-            try? await self.updateEventProcessor?.processEvents(events)
-        }
-    }
-
-    // temporary function to simplify call to ConversationEventProcessor
-    // might be replaced by something more elegant
-    public func processConversationEvents(_ events: [ZMUpdateEvent]) {
-        WaitingGroupTask(context: self.syncContext) {
-            await self.conversationEventProcessor.processConversationEvents(events)
-        }
-    }
-
     public var isNotificationContentHidden: Bool {
         get {
             guard let value = managedObjectContext.persistentStoreMetadata(forKey: LocalNotificationDispatcher.ZMShouldHideNotificationContentKey) as? NSNumber else {
@@ -646,13 +628,31 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    // MARK: - Network
+    // MARK: Progress Events
+
+    // temporary function to simplify call to EventProcessor
+    // might be replaced by something more elegant
+    public func processUpdateEvents(_ events: [ZMUpdateEvent]) {
+        WaitingGroupTask(context: self.syncContext) {
+            try? await self.updateEventProcessor?.processEvents(events)
+        }
+    }
+
+    // temporary function to simplify call to ConversationEventProcessor
+    // might be replaced by something more elegant
+    public func processConversationEvents(_ events: [ZMUpdateEvent]) {
+        WaitingGroupTask(context: self.syncContext) {
+            await self.conversationEventProcessor.processConversationEvents(events)
+        }
+    }
+
+    // MARK: Network
 
     public func requestResyncResources() {
         applicationStatusDirectory.requestResyncResources()
     }
 
-    // MARK: - Access Token
+    // MARK: Access Token
 
     private func renewAccessTokenIfNeeded(for userClient: UserClient) {
         guard
@@ -664,7 +664,7 @@ public final class ZMUserSession: NSObject {
         renewAccessToken(with: clientID)
     }
 
-    // MARK: - Perform changes
+    // MARK: Perform changes
 
     public func saveOrRollbackChanges() {
         managedObjectContext.saveOrRollback()
@@ -709,7 +709,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    // MARK: - Account
+    // MARK: Account
 
     public func initiateUserDeletion() {
         syncManagedObjectContext.performGroupedBlock {
@@ -718,7 +718,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    // MARK: - Caches
+    // MARK: Caches
 
     func purgeTemporaryAssets() throws {
         try assetCache?.purgeTemporaryAssets()
