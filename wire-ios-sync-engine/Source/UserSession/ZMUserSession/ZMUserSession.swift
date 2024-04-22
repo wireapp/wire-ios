@@ -30,6 +30,8 @@ typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
 @objcMembers
 public final class ZMUserSession: NSObject {
 
+    // MARK: Properties
+
     private let appVersion: String
     private var tokens: [Any] = []
     private var tornDown: Bool = false
@@ -91,6 +93,12 @@ public final class ZMUserSession: NSObject {
 
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
+
+    // MARK: Dependency Injection
+
+    private let dependencies: InjectedDependencies
+
+    // MARK: Computed Properties
 
     public var fileSharingFeature: Feature.FileSharing {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
@@ -210,6 +218,8 @@ public final class ZMUserSession: NSObject {
         }
     }
 
+    // TODO: move funcs down in file
+
     // temporary function to simplify call to EventProcessor
     // might be replaced by something more elegant
     public func processUpdateEvents(_ events: [ZMUpdateEvent]) {
@@ -240,6 +250,8 @@ public final class ZMUserSession: NSObject {
     }
 
     let useCaseFactory: UseCaseFactoryProtocol
+
+    // MARK: Delegates
 
     weak var delegate: UserSessionDelegate?
 
