@@ -76,7 +76,7 @@ final class ConversationListViewController: UIViewController {
         selfUser: SelfUserType,
         userSession: UserSession,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
-        selfProfileBuilder: some ViewControllerBuilder
+        selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -84,13 +84,13 @@ final class ConversationListViewController: UIViewController {
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
-        self.init(viewModel: viewModel, selfProfileBuilder: selfProfileBuilder)
+        self.init(viewModel: viewModel, selfProfileViewControllerBuilder: selfProfileViewControllerBuilder)
         onboardingHint.arrowPointToView = tabBar
     }
 
     required init(
         viewModel: ViewModel,
-        selfProfileBuilder: some ViewControllerBuilder
+        selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         self.viewModel = viewModel
 
@@ -98,7 +98,7 @@ final class ConversationListViewController: UIViewController {
             account: viewModel.account,
             selfUser: viewModel.selfUser,
             userSession: viewModel.userSession,
-            selfProfileBuilder: selfProfileBuilder
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
         topBarViewController.selfUserStatus = viewModel.selfUserStatus
 

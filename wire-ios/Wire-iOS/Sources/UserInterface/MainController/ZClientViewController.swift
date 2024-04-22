@@ -61,7 +61,7 @@ final class ZClientViewController: UIViewController {
     ) {
         self.userSession = userSession
 
-        let selfProfileBuilder = SelfProfileViewControllerBuilder(
+        let selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
             selfUser: userSession.selfUserClient!.user!, // TODO [WPB-7307]: fix force cast
             userRightInterfaceType: UserRight.self,
             userSession: userSession
@@ -71,7 +71,7 @@ final class ZClientViewController: UIViewController {
             selfUser: userSession.selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
-            selfProfileBuilder: selfProfileBuilder
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
 
         colorSchemeController = .init(userSession: userSession)

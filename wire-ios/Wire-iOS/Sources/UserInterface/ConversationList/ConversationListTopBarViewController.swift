@@ -32,7 +32,7 @@ final class ConversationListTopBarViewController: UIViewController {
 
     private let selfUser: SelfUserType
     private var userSession: UserSession
-    private let selfProfileBuilder: any ViewControllerBuilder
+    private let selfProfileViewControllerBuilder: any ViewControllerBuilder
     private var observerToken: NSObjectProtocol?
 
     var topBar: TopBar? {
@@ -47,17 +47,17 @@ final class ConversationListTopBarViewController: UIViewController {
     /// - Parameters:
     ///   - account: the Account of the user
     ///   - selfUser: the self user object. Allow to inject a mock self user for testing
-    ///   - selfProfileBuilder: a builder for the self profile view controller
+    ///   - selfProfileViewControllerBuilder: a builder for the self profile view controller
     init(
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        selfProfileBuilder: some ViewControllerBuilder
+        selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         self.account = account
         self.selfUser = selfUser
         self.userSession = userSession
-        self.selfProfileBuilder = selfProfileBuilder
+        self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
 
         super.init(nibName: nil, bundle: nil)
 
@@ -252,7 +252,7 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     func createSettingsViewController(selfUser: ZMUser) -> UIViewController {
-        selfProfileBuilder
+        selfProfileViewControllerBuilder
             .build()
             .wrapInNavigationController(navigationControllerClass: NavigationController.self)
     }
