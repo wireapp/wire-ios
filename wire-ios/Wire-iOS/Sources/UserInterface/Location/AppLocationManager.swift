@@ -35,14 +35,18 @@ class AppLocationManager: NSObject {
     private let locationManager = CLLocationManager()
     weak var delegate: AppLocationManagerDelegate?
 
+    var authorizationStatus: CLAuthorizationStatus {
+        return locationManager.authorizationStatus
+    }
+
+    // MARK: - Init
+
     override private init() {
         super.init()
         locationManager.delegate = self
     }
 
-    var authorizationStatus: CLAuthorizationStatus {
-        return locationManager.authorizationStatus
-    }
+    // MARK: - Methods
 
     func requestLocationAuthorization() {
         locationManager.requestWhenInUseAuthorization()
@@ -56,6 +60,8 @@ class AppLocationManager: NSObject {
         locationManager.stopUpdatingLocation()
     }
 }
+
+// MARK: - CLLocationManagerDelegate
 
 extension AppLocationManager: CLLocationManagerDelegate {
 
