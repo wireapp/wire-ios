@@ -17,10 +17,10 @@
 //
 
 import WireDataModelSupport
-import WireSyncEngineSupport
 import WireRequestStrategySupport
 import Combine
 @testable import WireSyncEngine
+@testable import WireSyncEngineSupport
 
 class ZMUserSessionTestsBase: MessagingTest {
 
@@ -39,7 +39,7 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mockUseCaseFactory: MockUseCaseFactoryProtocol!
     var mockResolveOneOnOneConversationUseCase: MockResolveOneOnOneConversationsUseCaseProtocol!
     var mockGetFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
-    var mockProteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating!
+    var mockRecurringActionService: MockRecurringActionServiceInterface!
 
     var sut: ZMUserSession!
 
@@ -83,9 +83,11 @@ class ZMUserSessionTestsBase: MessagingTest {
             return self.mockResolveOneOnOneConversationUseCase
         }
 
-        mockProteusToMLSMigrationCoordinator = MockProteusToMLSMigrationCoordinating()
+        mockRecurringActionService = MockRecurringActionServiceInterface()
+        mockRecurringActionService.registerAction_MockMethod = { _ in }
+        mockRecurringActionService.performActionsIfNeeded_MockMethod = { }
 
-        sut = createSut(earService: mockEARService)
+        sut = createSut()
         sut.sessionManager = mockSessionManager
 
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
@@ -108,12 +110,19 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.flowManagerMock = nil
         self.mockUseCaseFactory = nil
         self.mockResolveOneOnOneConversationUseCase = nil
+        self.mockRecurringActionService = nil
+        self.mockEARService.delegate = nil
+        self.mockEARService = nil
         let sut = self.sut
         self.sut = nil
         mockGetFeatureConfigsActionHandler = nil
         sut?.tearDown()
 
         super.tearDown()
+    }
+
+    func createSut() -> ZMUserSession {
+        createSut(earService: mockEARService)
     }
 
     func createSut(earService: EARServiceInterface) -> ZMUserSession {
@@ -142,7 +151,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             mediaManager: mediaManager,
             mlsService: mockMLSService,
             observeMLSGroupVerificationStatus: mockObserveMLSGroupVerificationStatusUseCase,
-            proteusToMLSMigrationCoordinator: mockProteusToMLSMigrationCoordinator,
+            proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
+            recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
             useCaseFactory: mockUseCaseFactory,
@@ -174,7 +184,7 @@ class ZMUserSessionTestsBase: MessagingTest {
     }
 
     private func clearCache() {
-        let cachesURL = FileManager.default.cachesURLForAccount(with: userIdentifier, in: sut.sharedContainerURL)
+        let cachesURL = FileManager.default.cachesURLForAccount(with: userIdentifier, in: coreDataStack.applicationContainer)
         let items = try? FileManager.default.contentsOfDirectory(at: cachesURL, includingPropertiesForKeys: nil)
 
         if let items {
