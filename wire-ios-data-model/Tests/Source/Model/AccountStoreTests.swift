@@ -343,7 +343,7 @@ final class AccountStoreTests: ZMConversationTestsBase {
         let account = store.load(accountID)
 
         // then
-        let expectedCredentials = LoginCredentials(emailAddress: "alexis@example.com", phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
+        let expectedCredentials = LoginCredentials(emailAddress: "alexis@example.com", hasPassword: true, usesCompanyLogin: false)
         let expectedAccount = Account(userName: "Alexis", userIdentifier: accountID, teamName: "Wire", imageData: Data(), teamImageData: nil, unreadConversationCount: 0, loginCredentials: expectedCredentials)
         XCTAssertEqual(account, expectedAccount)
     }
