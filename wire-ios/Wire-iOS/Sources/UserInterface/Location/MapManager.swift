@@ -18,21 +18,32 @@
 
 import MapKit
 
+// MARK: - MapManagerDelegate
+
 protocol MapManagerDelegate: AnyObject {
     func mapManager(_ manager: MapManager, didUpdateUserLocation userLocation: MKUserLocation)
     func mapManager(_ manager: MapManager, regionDidChangeAnimated animated: Bool)
     func mapManagerDidFinishRenderingMap(_ manager: MapManager, fullyRendered: Bool)
 }
 
+// MARK: - MapManager
+
 class MapManager: NSObject {
+
+    // MARK: - Properties
+
     let mapView = MKMapView()
     weak var delegate: MapManagerDelegate?
+
+    // MARK: - Init
 
     override init() {
         super.init()
         mapView.delegate = self
         configureMapView()
     }
+
+    // MARK: - Methods
 
     private func configureMapView() {
         mapView.isRotateEnabled = false
@@ -53,7 +64,10 @@ class MapManager: NSObject {
     }
 }
 
+// MARK: - MKMapViewDelegate
+
 extension MapManager: MKMapViewDelegate {
+
     func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
         delegate?.mapManager(self, didUpdateUserLocation: userLocation)
     }
