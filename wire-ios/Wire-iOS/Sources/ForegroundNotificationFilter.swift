@@ -24,7 +24,7 @@ final class ForegroundNotificationFilter {
     var sessionManager: SessionManager?
 
     // MARK: - Initialization
-    public init(sessionManager: SessionManager? = nil) {
+    init(sessionManager: SessionManager? = nil) {
         self.sessionManager = sessionManager
     }
 }
