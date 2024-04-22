@@ -76,6 +76,7 @@ extension UserProfileUpdateStatusTests {
 }
 
 // MARK: - Changing email
+
 extension UserProfileUpdateStatusTests {
 
     func testThatItReturnsErrorWhenPreparingForEmailChangeAndUserUserHasNoEmail() throws {
@@ -119,6 +120,7 @@ extension UserProfileUpdateStatusTests {
 }
 
 // MARK: - Set email and password
+
 extension UserProfileUpdateStatusTests {
 
     func testThatItIsNotUpdatingEmail() {
@@ -415,185 +417,8 @@ extension UserProfileUpdateStatusTests {
     }
 }
 
-// MARK: - Phone number code request
-extension UserProfileUpdateStatusTests {
-
-    func testThatItIsNotRequestingPhoneVerificationAtStart() {
-        XCTAssertFalse(self.sut.currentlyRequestingPhoneVerificationCode)
-    }
-
-    func testThatItPreparesForRequestingPhoneVerificationCodeForRegistration() {
-
-        // GIVEN
-        let phoneNumber = "+1555234342"
-
-        // WHEN
-        self.sut.requestPhoneVerificationCode(phoneNumber: phoneNumber)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-
-        // THEN
-        XCTAssertTrue(self.sut.currentlyRequestingPhoneVerificationCode)
-        XCTAssertEqual(self.sut.phoneNumberForWhichCodeIsRequested, phoneNumber)
-        XCTAssertEqual(self.newRequestCallbackCount, 1)
-
-    }
-
-    func testThatItCompletesRequestingPhoneVerificationCode() {
-
-        // GIVEN
-        let phoneNumber = "+1555234342"
-
-        // WHEN
-        self.sut.requestPhoneVerificationCode(phoneNumber: phoneNumber)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.sut.didRequestPhoneVerificationCodeSuccessfully()
-
-        // THEN
-        XCTAssertFalse(self.sut.currentlyRequestingPhoneVerificationCode)
-        XCTAssertNil(self.sut.phoneNumberForWhichCodeIsRequested)
-
-    }
-
-    func testThatItFailsRequestingPhoneVerificationCode() {
-
-        // GIVEN
-        let error = NSError(domain: "WireSyncEngine", code: 100, userInfo: nil)
-        let phoneNumber = "+1555234342"
-
-        // WHEN
-        self.sut.requestPhoneVerificationCode(phoneNumber: phoneNumber)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.sut.didFailPhoneVerificationCodeRequest(error: error)
-
-        // THEN
-        XCTAssertFalse(self.sut.currentlyRequestingPhoneVerificationCode)
-        XCTAssertNil(self.sut.phoneNumberForWhichCodeIsRequested)
-
-    }
-
-    func testThatItNotifiesAfterCompletingRequestingPhoneVerificationCode() {
-
-        // GIVEN
-        let phoneNumber = "+1555234342"
-
-        // WHEN
-        self.sut.requestPhoneVerificationCode(phoneNumber: phoneNumber)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.sut.didRequestPhoneVerificationCodeSuccessfully()
-
-        // THEN
-        XCTAssertEqual(self.observer.invokedCallbacks.count, 1)
-        guard let first = self.observer.invokedCallbacks.first else { return }
-        switch first {
-        case .phoneNumberVerificationCodeRequestDidSucceed:
-            break
-        default:
-            XCTFail()
-        }
-    }
-
-    func testThatItNotifiesAfterFailureInRequestingPhoneVerificationCode() {
-
-        // GIVEN
-        let error = NSError(domain: "WireSyncEngine", code: 100, userInfo: nil)
-        let phoneNumber = "+1555234342"
-
-        // WHEN
-        self.sut.requestPhoneVerificationCode(phoneNumber: phoneNumber)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.sut.didFailPhoneVerificationCodeRequest(error: error)
-
-        // THEN
-        XCTAssertEqual(self.observer.invokedCallbacks.count, 1)
-        guard let first = self.observer.invokedCallbacks.first else { return }
-        switch first {
-        case .phoneNumberVerificationCodeRequestDidFail(let _error):
-            XCTAssertEqual(error, _error as NSError)
-        default:
-            XCTFail()
-        }
-    }
-}
-
-// MARK: - Phone number verification
-extension UserProfileUpdateStatusTests {
-
-    func testThatItIsNotUpdatingPhoneNumberAtStart() {
-        XCTAssertFalse(self.sut.currentlySettingPhone)
-    }
-
-    func testThatItPreparesForPhoneChangeWithCredentials() {
-
-        // GIVEN
-        let credentials = ZMPhoneCredentials(phoneNumber: "+1555234342", verificationCode: "234555")
-
-        // WHEN
-        self.sut.requestPhoneNumberChange(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-
-        // THEN
-        XCTAssertTrue(self.sut.currentlySettingPhone)
-        XCTAssertEqual(self.sut.phoneNumberToSet, credentials)
-        XCTAssertEqual(self.newRequestCallbackCount, 1)
-
-    }
-
-    func testThatItCompletesUpdatingPhoneNumber() {
-
-        // GIVEN
-        let credentials = ZMPhoneCredentials(phoneNumber: "+1555234342", verificationCode: "234555")
-
-        // WHEN
-        self.sut.requestPhoneNumberChange(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.sut.didChangePhoneSuccesfully()
-
-        // THEN
-        XCTAssertFalse(self.sut.currentlySettingPhone)
-        XCTAssertNil(self.sut.phoneNumberToSet)
-    }
-
-    func testThatItFailsUpdatingPhoneNumber() {
-
-        // GIVEN
-        let error = NSError(domain: "WireSyncEngine", code: 100, userInfo: nil)
-        let credentials = ZMPhoneCredentials(phoneNumber: "+1555234342", verificationCode: "234555")
-
-        // WHEN
-        self.sut.requestPhoneNumberChange(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.sut.didFailChangingPhone(error: error)
-
-        // THEN
-        XCTAssertFalse(self.sut.currentlySettingPhone)
-        XCTAssertNil(self.sut.phoneNumberToSet)
-
-    }
-
-    func testThatItNotifiesAfterFailureInUpdatingPhoneNumber() {
-
-        // GIVEN
-        let credentials = ZMPhoneCredentials(phoneNumber: "+1555234342", verificationCode: "234555")
-        let error = NSError(domain: "WireSyncEngine", code: 100, userInfo: nil)
-
-        // WHEN
-        self.sut.requestPhoneNumberChange(credentials: credentials)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        self.sut.didFailChangingPhone(error: error)
-
-        // THEN
-        XCTAssertEqual(self.observer.invokedCallbacks.count, 1)
-        guard let first = self.observer.invokedCallbacks.first else { return }
-        switch first {
-        case .phoneNumberChangeDidFail(let _error):
-            XCTAssertEqual(error, _error as NSError)
-        default:
-            XCTFail()
-        }
-    }
-}
-
 // MARK: - Check handle availability
+
 extension UserProfileUpdateStatusTests {
 
     func testThatItIsNotCheckingAvailabilityAtCreation() {
@@ -770,6 +595,7 @@ extension UserProfileUpdateStatusTests {
 }
 
 // MARK: - Set handle
+
 extension UserProfileUpdateStatusTests {
 
     func testThatItIsNotSettingHandleyAtCreation() {
@@ -941,6 +767,7 @@ extension UserProfileUpdateStatusTests {
 }
 
 // MARK: - Find handle suggestions
+
 extension UserProfileUpdateStatusTests {
 
     func testThatItIsNotGeneratingHandleSuggestionsAtCreation() {

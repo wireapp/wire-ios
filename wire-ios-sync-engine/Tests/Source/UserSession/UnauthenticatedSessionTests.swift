@@ -174,17 +174,6 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
                        NSError(code: .networkError, userInfo: nil).localizedDescription)
     }
 
-    func testThatDuringLoginWithPhoneNumberItThrowsErrorWhenOffline() {
-        // given
-        reachability.mayBeReachable = false
-        // when
-        sut.login(with: ZMPhoneCredentials(phoneNumber: "+49111111111111", verificationCode: "1234"))
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        // then
-        XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents.count, 1)
-        XCTAssertEqual(mockAuthenticationStatusDelegate.authenticationDidFailEvents[0].localizedDescription, NSError(code: .networkError, userInfo: nil).localizedDescription)
-    }
-
     func testThatItAsksDelegateIfAccountAlreadyExists() throws {
         // given
         let userId = UUID.create()
