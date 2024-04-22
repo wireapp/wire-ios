@@ -17,7 +17,6 @@
 //
 
 import FLAnimatedImage
-import Foundation
 import UIKit
 import WireDataModel
 

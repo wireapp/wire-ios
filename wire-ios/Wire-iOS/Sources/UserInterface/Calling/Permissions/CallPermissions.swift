@@ -17,7 +17,6 @@
 //
 
 import AVFoundation
-import Foundation
 import UIKit
 
 final class CallPermissions: CallPermissionsConfiguration {

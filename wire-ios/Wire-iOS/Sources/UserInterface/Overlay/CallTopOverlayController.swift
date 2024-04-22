@@ -17,7 +17,6 @@
 //
 
 import avs
-import Foundation
 import UIKit
 import WireCommonComponents
 import WireDataModel

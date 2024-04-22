@@ -17,7 +17,6 @@
 //
 
 import AuthenticationServices
-import Foundation
 import SafariServices
 import UIKit
 import WireSyncEngine

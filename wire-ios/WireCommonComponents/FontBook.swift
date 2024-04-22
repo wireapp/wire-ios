@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import UIKit
 
 extension UIFont {
 

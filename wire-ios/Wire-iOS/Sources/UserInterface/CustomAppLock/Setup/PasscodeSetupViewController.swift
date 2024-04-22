@@ -17,7 +17,6 @@
 //
 
 import Down
-import Foundation
 import UIKit
 import WireCommonComponents
 

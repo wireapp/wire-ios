@@ -18,7 +18,6 @@
 
 import AVKit
 import FLAnimatedImage
-import Foundation
 import UIKit
 import WireCommonComponents
 

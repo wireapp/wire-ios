@@ -18,7 +18,6 @@
 
 import avs
 import DifferenceKit
-import Foundation
 import UIKit
 import WireCommonComponents
 import WireDataModel

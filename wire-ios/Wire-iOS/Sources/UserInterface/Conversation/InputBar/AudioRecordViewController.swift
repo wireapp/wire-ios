@@ -17,7 +17,6 @@
 //
 
 import avs
-import Foundation
 import MobileCoreServices
 import UIKit
 import WireCommonComponents

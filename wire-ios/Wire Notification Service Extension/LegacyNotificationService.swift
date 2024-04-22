@@ -17,7 +17,6 @@
 //
 
 import CallKit
-import Foundation
 import UIKit
 import UserNotifications
 import WireCommonComponents

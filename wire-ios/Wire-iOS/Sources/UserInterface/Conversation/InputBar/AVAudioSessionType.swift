@@ -17,7 +17,6 @@
 //
 
 import AVFoundation
-import Foundation
 import UIKit
 
 /// A protocol for allow tests to mock recordPermission

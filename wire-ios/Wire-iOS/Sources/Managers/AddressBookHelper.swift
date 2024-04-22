@@ -17,7 +17,6 @@
 //
 
 import Contacts
-import Foundation
 import UIKit
 import WireSyncEngine
 

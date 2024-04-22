@@ -17,7 +17,6 @@
 //
 
 import Down
-import Foundation
 import MobileCoreServices
 import UIKit
 import UniformTypeIdentifiers
