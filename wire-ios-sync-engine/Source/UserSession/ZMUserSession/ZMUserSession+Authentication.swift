@@ -66,9 +66,10 @@ extension ZMUserSession {
     /// Logout the current user
     ///
     /// - parameter deleteCookie: If set to true the cookies associated with the session will be deleted
+    /// - parameter completion: called after the user session has been closed
 
-    @objc(closeAndDeleteCookie:)
-    func close(deleteCookie: Bool) {
+    @objc(closeAndDeleteCookie:completion:)
+    func close(deleteCookie: Bool, completion: @escaping () -> Void) {
         UserDefaults.standard.synchronize()
         UserDefaults.shared()?.synchronize()
 
@@ -81,16 +82,10 @@ extension ZMUserSession {
             deleteUserKeychainItems()
         }
 
-        let uiMOC = managedObjectContext
-        let syncMOC = syncManagedObjectContext
-
-        uiMOC.performGroupedBlockAndWait {}
-        syncMOC.performGroupedBlockAndWait {}
-
-        tearDown()
-
-        uiMOC.performGroupedBlockAndWait {}
-        syncMOC.performGroupedBlockAndWait {}
+        syncManagedObjectContext.dispatchGroup.notify(on: .main) {
+            self.tearDown()
+            completion()
+        }
     }
 
     public func logout(credentials: ZMEmailCredentials, _ completion: @escaping (Result<Void, Error>) -> Void) {
