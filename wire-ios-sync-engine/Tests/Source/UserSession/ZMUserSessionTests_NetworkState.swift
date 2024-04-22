@@ -24,16 +24,16 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
     func testThatItSetsItselfAsADelegateOfTheTransportSessionAndForwardsUserClientID() {
         // given
-        let selfClient = syncMOC.performAndWait {
-            self.createSelfClient()
-        }
-
         let userId = NSUUID.create()!
 
         mockPushChannel = MockPushChannel()
         cookieStorage = ZMPersistentCookieStorage(forServerName: "usersessiontest.example.com", userIdentifier: userId, useCache: true)
         let transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
+        let coreDataStack = createCoreDataStack()
+        let selfClient = coreDataStack.syncContext.performAndWait {
+            self.setupSelfClient(inMoc: coreDataStack.syncContext)
+        }
 
         // when
         let mockContextStore = MockLAContextStorable()
@@ -55,6 +55,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             mlsService: mockMLSService,
             observeMLSGroupVerificationStatus: nil,
             proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
+            recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
             useCaseFactory: mockUseCaseFactory,
@@ -73,7 +74,7 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
         // then
         XCTAssertTrue(self.transportSession.didCallSetNetworkStateDelegate)
         XCTAssertEqual(mockPushChannel.keepOpen, true)
-        syncMOC.performAndWait {
+        coreDataStack.syncContext.performAndWait {
             XCTAssertEqual(mockPushChannel.clientID, selfClient.remoteIdentifier)
         }
         testSession.tearDown()

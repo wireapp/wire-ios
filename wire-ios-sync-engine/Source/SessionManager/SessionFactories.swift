@@ -90,6 +90,7 @@ open class AuthenticatedSessionFactory {
             mlsService: nil,
             observeMLSGroupVerificationStatus: nil,
             proteusToMLSMigrationCoordinator: nil,
+            recurringActionService: nil,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
             useCaseFactory: nil,

@@ -67,10 +67,8 @@ public final class ZMUserSession: NSObject {
     // When we move to the monorepo, uncomment hotFixApplicator
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
-    var recurringActionService = RecurringActionService(
-        storage: .standard,
-        dateProvider: .system
-    ) as RecurringActionServiceInterface
+
+    var recurringActionService: any RecurringActionServiceInterface
 
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     private(set) var coreCryptoProvider: CoreCryptoProviderProtocol
@@ -268,21 +266,8 @@ public final class ZMUserSession: NSObject {
         transportSession.tearDown()
         notificationDispatcher.tearDown()
         callCenter?.tearDown()
-
+        coreDataStack.close()
         contextStorage.clear()
-
-        // Wait for all sync operations to finish
-        syncManagedObjectContext.performGroupedBlockAndWait { }
-
-        let uiMOC = coreDataStack.viewContext
-        coreDataStack = nil
-
-        let shouldWaitOnUIMoc = !(OperationQueue.current == OperationQueue.main && uiMOC.concurrencyType == .mainQueueConcurrencyType)
-        if shouldWaitOnUIMoc {
-            uiMOC.performAndWait {
-                // warning: this will hang if the uiMoc queue is same as self.requestQueue (typically uiMoc queue is the main queue)
-            }
-        }
 
         NotificationCenter.default.removeObserver(self)
 
@@ -393,7 +378,8 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory: ApplicationStatusDirectory,
         updateMLSGroupVerificationStatusUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol,
         mlsConversationVerificationStatusUpdater: any MLSConversationVerificationStatusUpdating,
-        contextStorage: LAContextStorable
+        contextStorage: LAContextStorable,
+        recurringActionService: any RecurringActionServiceInterface
     ) {
         self.application = application
         self.appVersion = appVersion
@@ -425,6 +411,7 @@ public final class ZMUserSession: NSObject {
         self.mlsConversationVerificationStatusUpdater = mlsConversationVerificationStatusUpdater
         self.observeMLSGroupVerificationStatus = observeMLSGroupVerificationStatusUseCase
         self.contextStorage = contextStorage
+        self.recurringActionService = recurringActionService
     }
 
     func setup(
@@ -879,7 +866,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 }
             }
 
-            await managedObjectContext.perform(schedule: .enqueued) { [weak self] in
+            await managedObjectContext.perform { [weak self] in
                 self?.isPerformingSync = isSyncing || processingInterrupted
                 self?.updateNetworkState()
             }

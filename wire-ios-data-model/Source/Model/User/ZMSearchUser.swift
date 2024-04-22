@@ -670,6 +670,14 @@ public class ZMSearchUser: NSObject, UserType {
         return user.isGuest(in: conversation)
     }
 
+    public func imageData(for size: ProfileImageSize) -> Data? {
+        if let user = self.user {
+            return user.imageData(for: size)
+        } else {
+            return size == .complete ? completeImageData : previewImageData
+        }
+    }
+
     public func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (Data?) -> Void) {
         if let user = self.user {
             user.imageData(for: size, queue: queue, completion: completion)
