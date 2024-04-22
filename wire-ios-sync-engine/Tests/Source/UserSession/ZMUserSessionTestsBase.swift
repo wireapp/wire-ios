@@ -34,12 +34,12 @@ class ZMUserSessionTestsBase: MessagingTest {
 
     var mockSessionManager: MockSessionManager!
     var mockPushChannel: MockPushChannel!
+    var mockEARService: MockEARServiceInterface!
     var mockMLSService: MockMLSServiceInterface!
     var transportSession: RecordingMockTransportSession!
     var cookieStorage: ZMPersistentCookieStorage!
     var validCookie: Data!
     var baseURL: URL!
-    var sut: ZMUserSession!
     var mediaManager: MediaManagerType!
     var flowManagerMock: FlowManagerMock!
     var dataChangeNotificationsCount: UInt = 0
@@ -49,6 +49,8 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mockResolveOneOnOneConversationUseCase: MockResolveOneOnOneConversationsUseCaseProtocol!
     var mockGetFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
 
+    var sut: ZMUserSession!
+
     override func setUp() {
         super.setUp()
 
@@ -56,23 +58,47 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         mockGetFeatureConfigsActionHandler = .init(result: .success(()), context: syncMOC.notificationContext)
 
-        self.thirdPartyServices = ThirdPartyServices()
-        self.dataChangeNotificationsCount = 0
-        self.baseURL = URL(string: "http://bar.example.com")
-        self.cookieStorage = ZMPersistentCookieStorage(forServerName: "usersessiontest.example.com", userIdentifier: .create(), useCache: true)
-        self.mockPushChannel = MockPushChannel()
-        self.transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
-        self.mockSessionManager = MockSessionManager()
-        self.mediaManager = MockMediaManager()
-        self.flowManagerMock = FlowManagerMock()
-        createSut()
+        thirdPartyServices = ThirdPartyServices()
+        dataChangeNotificationsCount = 0
+        baseURL = URL(string: "http://bar.example.com")
+        cookieStorage = ZMPersistentCookieStorage(
+            forServerName: "usersessiontest.example.com",
+            userIdentifier: .create(),
+            useCache: true
+        )
+        mockPushChannel = MockPushChannel()
+        transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage, pushChannel: mockPushChannel)
+        mockSessionManager = MockSessionManager()
+        mediaManager = MockMediaManager()
+        flowManagerMock = FlowManagerMock()
 
-        self.sut.thirdPartyServicesDelegate = self.thirdPartyServices
-        self.sut.sessionManager = mockSessionManager
+        mockEARService = MockEARServiceInterface()
+        mockEARService.setInitialEARFlagValue_MockMethod = { _ in }
+
+        mockMLSService = MockMLSServiceInterface()
+        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = { }
+        mockMLSService.onNewCRLsDistributionPoints_MockValue = PassthroughSubject<CRLsDistributionPoints, Never>()
+            .eraseToAnyPublisher()
+        mockMLSService.epochChanges_MockValue = .init { continuation in
+            continuation.yield(MLSGroupID.random())
+            continuation.finish()
+        }
+
+        mockUseCaseFactory = MockUseCaseFactoryProtocol()
+        mockResolveOneOnOneConversationUseCase = MockResolveOneOnOneConversationsUseCaseProtocol()
+        mockResolveOneOnOneConversationUseCase.invoke_MockMethod = { }
+
+        mockUseCaseFactory.createResolveOneOnOneUseCase_MockMethod = {
+            return self.mockResolveOneOnOneConversationUseCase
+        }
+
+        sut = createSut()
+        sut.thirdPartyServicesDelegate = self.thirdPartyServices
+        sut.sessionManager = mockSessionManager
 
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
-        self.validCookie = "valid-cookue".data(using: .utf8)
+        validCookie = "valid-cookue".data(using: .utf8)
     }
 
     override func tearDown() {
@@ -92,6 +118,8 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.flowManagerMock = nil
         self.mockUseCaseFactory = nil
         self.mockResolveOneOnOneConversationUseCase = nil
+        self.mockEARService.delegate = nil
+        self.mockEARService = nil
         let sut = self.sut
         self.sut = nil
         mockGetFeatureConfigsActionHandler = nil
@@ -100,33 +128,21 @@ class ZMUserSessionTestsBase: MessagingTest {
         super.tearDown()
     }
 
-    func createSut() {
+    func createSut() -> ZMUserSession {
+        createSut(earService: mockEARService)
+    }
+
+    func createSut(earService: EARServiceInterface) -> ZMUserSession {
         let mockStrategyDirectory = MockStrategyDirectory()
         let mockUpdateEventProcessor = MockUpdateEventProcessor()
+
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
-        mockMLSService = MockMLSServiceInterface()
-        mockUseCaseFactory = MockUseCaseFactoryProtocol()
-        mockResolveOneOnOneConversationUseCase = MockResolveOneOnOneConversationsUseCaseProtocol()
-
-        mockUseCaseFactory.createResolveOneOnOneUseCase_MockMethod = {
-            return self.mockResolveOneOnOneConversationUseCase
-        }
-
-        mockResolveOneOnOneConversationUseCase.invoke_MockMethod = { }
-
-        mockMLSService.commitPendingProposalsIfNeeded_MockMethod = {}
-
-        let newCRLsDistributionPointsFromDecryptionSerivce = PassthroughSubject<CRLsDistributionPoints, Never>()
-        mockMLSService.onNewCRLsDistributionPoints_MockValue = newCRLsDistributionPointsFromDecryptionSerivce.eraseToAnyPublisher()
-
-        let mlsGroupID = MLSGroupID.random()
-        mockMLSService.epochChanges_MockValue = .init { continuation in
-            continuation.yield(mlsGroupID)
-            continuation.finish()
-        }
-
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
-        sut = ZMUserSession(
+
+        let mockObserveMLSGroupVerificationStatusUseCase = MockObserveMLSGroupVerificationStatusUseCaseProtocol()
+        mockObserveMLSGroupVerificationStatusUseCase.invoke_MockMethod = { }
+
+        return ZMUserSession(
             userId: coreDataStack.account.userIdentifier,
             transportSession: transportSession,
             mediaManager: mediaManager,
@@ -140,10 +156,12 @@ class ZMUserSessionTestsBase: MessagingTest {
             appVersion: "00000",
             coreDataStack: coreDataStack,
             configuration: .init(),
+            earService: earService,
             mlsService: mockMLSService,
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             sharedUserDefaults: sharedUserDefaults,
-            useCaseFactory: mockUseCaseFactory
+            useCaseFactory: mockUseCaseFactory,
+            observeMLSGroupVerificationStatus: mockObserveMLSGroupVerificationStatusUseCase
         )
     }
 
@@ -160,7 +178,7 @@ class ZMUserSessionTestsBase: MessagingTest {
     }
 
     private func clearCache() {
-        let cachesURL = FileManager.default.cachesURLForAccount(with: userIdentifier, in: sut.sharedContainerURL)
+        let cachesURL = FileManager.default.cachesURLForAccount(with: userIdentifier, in: coreDataStack.applicationContainer)
         let items = try? FileManager.default.contentsOfDirectory(at: cachesURL, includingPropertiesForKeys: nil)
 
         if let items {

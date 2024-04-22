@@ -50,7 +50,10 @@ extension SessionManager: VoIPPushManagerDelegate {
         }
 
         withSession(for: account, perform: { userSession in
-            WireLogger.notifications.info("Forwarding push payload to user session with account \(account.userIdentifier)")
+            WireLogger.notifications.info(
+                "Forwarding push payload to user session with account \(account.userIdentifier)",
+                attributes: .safePublic
+            )
 
             userSession.receivedPushNotification(with: payload, completion: { [weak self] in
                 WireLogger.notifications.info("Processing push payload completed")

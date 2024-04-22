@@ -119,7 +119,7 @@ final class AppStateCalculator {
 
         self.appState = appState
         self.pendingAppState = nil
-        ZMSLog(tag: "AppState").debug("transitioning to app state: \(appState)")
+        WireLogger.appState.debug("transitioning to app state: \(appState)")
         delegate?.appStateCalculator(self, didCalculate: appState, completion: {
             completion?()
         })

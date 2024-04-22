@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireDataModelSupport
 @testable import WireSyncEngine
 
 final class MockUserSessionDelegate: NSObject, UserSessionDelegate {
@@ -63,6 +64,26 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         activityManager = MockBackgroundActivityManager()
         factory = BackgroundActivityFactory.shared
         factory.activityManager = activityManager
+    }
+
+    /// This workaround is needed because all tests here are based on assumptions
+    /// that the `managedObjectContext` is changed.
+    /// To remove this workaround, delete this override  and the `mockEARService` should be used instead of
+    /// a real instance of `EARService`.
+    override func createSut() -> ZMUserSession {
+        let earService = EARService(
+            accountID: coreDataStack.account.userIdentifier,
+            databaseContexts: [
+                coreDataStack.viewContext,
+                coreDataStack.syncContext,
+                coreDataStack.searchContext
+            ],
+            canPerformKeyMigration: true,
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: MockAuthenticationContextProtocol()
+        )
+
+        return createSut(earService: earService)
     }
 
     override func tearDown() {
@@ -171,8 +192,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        let context = LAContext()
-        try sut.unlockDatabase(with: context)
+        try sut.unlockDatabase()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
@@ -211,7 +231,6 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-
         XCTAssertTrue(sut.isDatabaseLocked)
     }
 
@@ -304,9 +323,7 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         XCTAssertNotNil(token)
 
         // when
-        let context = LAContext()
-
-        try sut.unlockDatabase(with: context)
+        try sut.unlockDatabase()
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 

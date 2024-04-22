@@ -123,7 +123,8 @@ public final class ZMUserSession: NSObject {
 
     let earService: EARServiceInterface
 
-    public var appLockController: AppLockType
+    public internal(set) var appLockController: AppLockType
+    private let contextStorage = LAContextStorage()
 
     public var fileSharingFeature: Feature.FileSharing {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
@@ -300,19 +301,7 @@ public final class ZMUserSession: NSObject {
         transportSession.tearDown()
         notificationDispatcher.tearDown()
         callCenter?.tearDown()
-
-        // Wait for all sync operations to finish
-        syncManagedObjectContext.performGroupedBlockAndWait { }
-
-        let uiMOC = coreDataStack.viewContext
-        coreDataStack = nil
-
-        let shouldWaitOnUIMoc = !(OperationQueue.current == OperationQueue.main && uiMOC.concurrencyType == .mainQueueConcurrencyType)
-        if shouldWaitOnUIMoc {
-            uiMOC.performAndWait {
-                // warning: this will hang if the uiMoc queue is same as self.requestQueue (typically uiMoc queue is the main queue)
-            }
-        }
+        coreDataStack.close()
 
         NotificationCenter.default.removeObserver(self)
 
@@ -441,7 +430,12 @@ public final class ZMUserSession: NSObject {
         self.topConversationsDirectory = TopConversationsDirectory(managedObjectContext: coreDataStack.viewContext)
         self.debugCommands = ZMUserSession.initDebugCommands()
         self.legacyHotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
-        self.appLockController = AppLockController(userId: userId, selfUser: .selfUser(in: coreDataStack.viewContext), legacyConfig: configuration.appLockConfig)
+        self.appLockController = AppLockController(
+            userId: userId,
+            selfUser: .selfUser(in: coreDataStack.viewContext),
+            legacyConfig: configuration.appLockConfig,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
+        )
         self.coreCryptoProvider = CoreCryptoProvider(
             selfUserID: userId,
             sharedContainerURL: coreDataStack.applicationContainer,
@@ -475,7 +469,8 @@ public final class ZMUserSession: NSObject {
                 coreDataStack.searchContext
             ],
             canPerformKeyMigration: true,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
         )
 
         let mlsService = mlsService ?? MLSService(
@@ -961,7 +956,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 }
             }
 
-            await managedObjectContext.perform(schedule: .enqueued) { [weak self] in
+            await managedObjectContext.perform { [weak self] in
                 self?.isPerformingSync = isSyncing || processingInterrupted
                 self?.updateNetworkState()
             }
