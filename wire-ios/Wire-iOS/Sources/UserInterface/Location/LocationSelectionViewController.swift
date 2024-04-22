@@ -299,8 +299,8 @@ extension LocationSelectionViewController: AppLocationManagerDelegate {
     func didFailWithError(_ error: Error) {
 
         let alertController = UIAlertController(
-            title: "Location Error",
-            message: "Failed to obtain location: \(error.localizedDescription)",
+            title: L10n.Localizable.Location.Error.Alert.title,
+            message: L10n.Localizable.Location.Error.Alert.description(error.localizedDescription),
             preferredStyle: .alert
         )
 
