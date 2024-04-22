@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireSyncEngine
-import WireDataModel
 import UIKit
+import WireDataModel
+import WireSyncEngine
 
 extension MessagePresenter {
 

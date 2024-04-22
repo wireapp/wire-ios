@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import AppAuth
+import Foundation
+import WireRequestStrategy
 import WireSystem
 import WireUtilities
-import WireRequestStrategy
 
 public protocol OAuthUseCaseInterface {
 

@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-import WireCommonComponents
 
 // Describes the icon to be shown for the conversation in the list.
 enum ConversationStatusIcon: Equatable {

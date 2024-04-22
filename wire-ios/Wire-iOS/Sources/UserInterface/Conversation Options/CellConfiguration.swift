@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireCommonComponents
 import UIKit
+import WireCommonComponents
 
 protocol CellConfigurationConfigurable: Reusable {
     func configure(with configuration: CellConfiguration)

@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import SwiftUI
 import UIKit
 import WireSyncEngine
-import SwiftUI
 
 final class UserClientListViewController: UIViewController,
                                           UICollectionViewDelegateFlowLayout,

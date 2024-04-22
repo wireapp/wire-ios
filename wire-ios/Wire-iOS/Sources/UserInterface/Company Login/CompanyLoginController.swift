@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireCommonComponents
 import UIKit
-import WireTransport
+import WireCommonComponents
 import WireSyncEngine
+import WireTransport
 
 protocol CompanyLoginControllerDelegate: AnyObject {
 

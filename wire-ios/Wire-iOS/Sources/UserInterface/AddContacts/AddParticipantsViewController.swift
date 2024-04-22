@@ -18,8 +18,8 @@
 
 import Foundation
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 import WireSyncEngine
 
 extension ConversationLike where Self: SwiftConversationLike {

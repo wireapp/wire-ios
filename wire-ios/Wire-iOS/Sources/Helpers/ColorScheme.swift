@@ -18,8 +18,8 @@
 
 import Foundation
 import UIKit
-import WireUtilities
 import WireCommonComponents
+import WireUtilities
 
 @objc
 enum ColorSchemeVariant: UInt {

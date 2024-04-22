@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import AppCenterCrashes
+@testable import Wire
 import WireCommonComponents
 import WireDataModel
+import XCTest
 
 final class AnalyticsTests: XCTestCase {
 

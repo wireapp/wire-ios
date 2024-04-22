@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTransport
 import UIKit
+import WireTransport
 
 public protocol NotificationSettingsRegistrable {
     /// To determine if notification settings should be registered

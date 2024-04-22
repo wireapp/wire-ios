@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Down
 import Foundation
 import UIKit
-import Down
 import WireCommonComponents
 
 final class GuestsBarController: UIViewController {

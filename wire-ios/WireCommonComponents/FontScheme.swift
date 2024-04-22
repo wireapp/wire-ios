@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import UIKit
 import SwiftUI
+import UIKit
 
 public enum FontTextStyle: String {
     case largeTitle

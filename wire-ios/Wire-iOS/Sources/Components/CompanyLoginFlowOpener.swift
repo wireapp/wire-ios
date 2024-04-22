@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AuthenticationServices
 import Foundation
 import SafariServices
-import AuthenticationServices
 import UIKit
 import WireSyncEngine
 

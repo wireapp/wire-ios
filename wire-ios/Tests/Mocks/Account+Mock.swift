@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireDataModel
 @testable import Wire
+import WireDataModel
+import XCTest
 
 extension Account {
     static func mockAccount(imageData: Data) -> Account {

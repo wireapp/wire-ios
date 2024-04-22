@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireCommonComponents
 import UIKit
+import WireCommonComponents
 
 final class ConversationCreateGuestsCell: IconToggleCell {
 

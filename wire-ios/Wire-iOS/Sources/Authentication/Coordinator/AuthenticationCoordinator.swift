@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSyncEngine
 import UIKit
+import WireSyncEngine
 
 /**
  * Provides and asks for context when registering users.

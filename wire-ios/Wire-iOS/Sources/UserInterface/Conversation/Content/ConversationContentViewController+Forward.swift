@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireSyncEngine
-import WireCommonComponents
 import UIKit
+import WireCommonComponents
+import WireSyncEngine
 
 extension ZMConversation: ShareDestination {
 

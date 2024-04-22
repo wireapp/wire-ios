@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireDataModel
 import LocalAuthentication
+import WireDataModel
 
 public typealias SelfUserType = UserType & SelfLegalHoldSubject
 

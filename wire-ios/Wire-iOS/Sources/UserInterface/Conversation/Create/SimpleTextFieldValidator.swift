@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireUtilities
 import UIKit
+import WireUtilities
 
 protocol SimpleTextFieldValidatorDelegate: AnyObject {
     func textFieldValueChanged(_ value: String?)

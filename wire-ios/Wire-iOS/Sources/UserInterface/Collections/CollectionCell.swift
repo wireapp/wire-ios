@@ -18,8 +18,8 @@
 
 import Foundation
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 protocol CollectionCellDelegate: AnyObject {
     func collectionCell(_ cell: CollectionCell, performAction: MessageAction)

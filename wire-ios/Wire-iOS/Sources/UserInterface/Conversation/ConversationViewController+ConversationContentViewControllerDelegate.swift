@@ -18,9 +18,9 @@
 
 import Foundation
 import UIKit
-import WireSystem
 import WireDataModel
 import WireSyncEngine
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "ConversationViewController+ConversationContentViewControllerDelegate")
 

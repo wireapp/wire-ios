@@ -18,8 +18,8 @@
 
 import Foundation
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 
 final class VideoMessageView: UIView, TransferView {
     var fileMessage: ZMConversationMessage?

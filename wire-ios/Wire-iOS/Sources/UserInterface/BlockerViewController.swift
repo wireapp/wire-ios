@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import MessageUI
 import UIKit
 import WireSyncEngine
-import MessageUI
 
 enum BlockerViewControllerContext {
     case blacklist

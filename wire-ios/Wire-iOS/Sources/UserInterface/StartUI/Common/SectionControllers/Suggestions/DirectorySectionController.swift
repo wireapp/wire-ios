@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireDataModel
 import UIKit
+import WireDataModel
 import WireSyncEngine
 
 final class DirectorySectionController: SearchSectionController {

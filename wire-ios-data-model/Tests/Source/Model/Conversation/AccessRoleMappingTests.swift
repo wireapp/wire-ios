@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 class AccessRoleMappingTests: XCTestCase {
 

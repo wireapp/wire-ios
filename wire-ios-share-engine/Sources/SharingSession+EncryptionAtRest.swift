@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireDataModel
 import LocalAuthentication
+import WireDataModel
 
 public protocol SharingSessionEncryptionAtRestInterface {
     var encryptMessagesAtRest: Bool { get }

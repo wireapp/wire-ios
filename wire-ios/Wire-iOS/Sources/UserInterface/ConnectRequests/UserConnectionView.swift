@@ -18,8 +18,8 @@
 
 import Foundation
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 final class UserConnectionView: UIView, Copyable {
 

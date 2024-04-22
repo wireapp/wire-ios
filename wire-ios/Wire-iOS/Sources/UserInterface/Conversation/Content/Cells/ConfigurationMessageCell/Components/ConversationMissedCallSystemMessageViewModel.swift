@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireCommonComponents
 import UIKit
+import WireCommonComponents
 import WireDataModel
 
 struct ConversationMissedCallSystemMessageViewModel {

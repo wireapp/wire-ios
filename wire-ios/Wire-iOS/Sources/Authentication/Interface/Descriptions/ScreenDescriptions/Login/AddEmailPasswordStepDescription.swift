@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireUtilities
 import UIKit
+import WireUtilities
 
 final class AddEmailPasswordStepDescription: DefaultValidatingStepDescription {
 

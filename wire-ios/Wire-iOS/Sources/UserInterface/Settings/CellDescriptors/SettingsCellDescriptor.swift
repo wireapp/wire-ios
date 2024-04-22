@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireCommonComponents
 import UIKit
+import WireCommonComponents
 
 // * Top-level structure overview:
 // * Settings group (screen) @c SettingsGroupCellDescriptorType contains

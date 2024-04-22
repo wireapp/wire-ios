@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UIKit
 import AVKit
 import FLAnimatedImage
+import Foundation
+import UIKit
 import WireCommonComponents
 
 final class ConfirmAssetViewController: UIViewController {

@@ -31,8 +31,8 @@ import UIKit
 import AppKit
 #endif
 
-import WireCoreCrypto
 import Combine
+import WireCoreCrypto
 
 @testable import WireRequestStrategy
 

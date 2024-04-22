@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireDataModel
 import UIKit
+import WireDataModel
 
 protocol ConversationMessageCellMenuPresenter: AnyObject {
     func showMenu()

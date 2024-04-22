@@ -17,10 +17,10 @@
 //
 
 import Foundation
+import MobileCoreServices
 import UIKit
 import WireCommonComponents
 import WireShareEngine
-import MobileCoreServices
 
 /// Content that is shared on a share extension post attempt
 final class PostContent {

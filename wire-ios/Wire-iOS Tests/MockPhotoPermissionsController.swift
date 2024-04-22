@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import Foundation
-import XCTest
+import UIKit
 @testable import Wire
+import XCTest
 
 final class MockPhotoPermissionsController: PhotoPermissionsController {
 

@@ -17,13 +17,13 @@
 //
 
 import Foundation
+import SwiftUI
+import UIKit
+import WireCommonComponents
 import WireDataModel
 import WireRequestStrategy
 import WireSyncEngine
 import WireTransport
-import UIKit
-import SwiftUI
-import WireCommonComponents
 
 final class DeveloperToolsViewModel: ObservableObject {
 

@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import UIKit
 import WireDataModel
 import WireSystem
-import UIKit
 
 private let zmLog = ZMSLog(tag: "UI")
 
