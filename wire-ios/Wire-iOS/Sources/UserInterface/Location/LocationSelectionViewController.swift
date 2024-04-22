@@ -304,7 +304,7 @@ extension LocationSelectionViewController: AppLocationManagerDelegate {
             preferredStyle: .alert
         )
 
-        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        let okAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .default, handler: nil)
         alertController.addAction(okAction)
 
         present(alertController, animated: true, completion: nil)
