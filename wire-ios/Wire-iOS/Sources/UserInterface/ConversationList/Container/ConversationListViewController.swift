@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 
@@ -56,7 +57,6 @@ final class ConversationListViewController: UIViewController {
     let contentContainer: UIView = {
         let view = UIView()
         view.backgroundColor = SemanticColors.View.backgroundConversationListTableViewCell
-
         return view
     }()
 
@@ -84,7 +84,8 @@ final class ConversationListViewController: UIViewController {
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
+        selfProfileBuilder: ViewControllerBuilder<UIViewController>
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -92,17 +93,21 @@ final class ConversationListViewController: UIViewController {
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
-        self.init(viewModel: viewModel)
+        self.init(viewModel: viewModel, selfProfileFactory: selfProfileBuilder)
         onboardingHint.arrowPointToView = tabBar
     }
 
-    required init(viewModel: ViewModel) {
+    required init(
+        viewModel: ViewModel,
+        selfProfileFactory: ViewControllerBuilder<UIViewController>
+    ) {
         self.viewModel = viewModel
 
         topBarViewController = ConversationListTopBarViewController(
             account: viewModel.account,
             selfUser: viewModel.selfUser,
-            userSession: viewModel.userSession
+            userSession: viewModel.userSession,
+            selfProfileViewControllerBuilder: selfProfileFactory
         )
         topBarViewController.selfUserStatus = viewModel.selfUserStatus
 

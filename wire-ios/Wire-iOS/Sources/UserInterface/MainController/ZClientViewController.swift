@@ -61,11 +61,20 @@ final class ZClientViewController: UIViewController {
     ) {
         self.userSession = userSession
 
+        let selfUser = userSession.selfUserClient!.user! // TODO [WPB-7307]: fix force cast
+        let selfProfileBuilder = ViewControllerBuilder {
+            SelfProfileViewController(
+                selfUser: selfUser,
+                userRightInterfaceType: UserRight.self,
+                userSession: userSession
+            ) as UIViewController
+        }
         conversationListViewController = .init(
             account: account,
             selfUser: userSession.selfUser,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            selfProfileBuilder: selfProfileBuilder
         )
 
         colorSchemeController = .init(userSession: userSession)
