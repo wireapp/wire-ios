@@ -33,8 +33,7 @@ final class ZClientViewControllerTests: XCTestCase {
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
         sut = ZClientViewController(
             account: Account.mockAccount(imageData: mockImageData),
-            userSession: userSession,
-            imageTransformer: imageTransformer
+            userSession: userSession
         )
     }
 
