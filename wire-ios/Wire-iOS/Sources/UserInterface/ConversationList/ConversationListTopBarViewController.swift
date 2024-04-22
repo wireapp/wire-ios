@@ -32,7 +32,7 @@ final class ConversationListTopBarViewController: UIViewController {
 
     private let selfUser: SelfUserType
     private var userSession: UserSession
-    private let selfProfileViewControllerBuilder: ViewControllerBuilder<UIViewController>
+    private let selfProfileBuilder: ViewControllerBuilder<UIViewController>
     private var observerToken: NSObjectProtocol?
 
     var topBar: TopBar? {
@@ -47,16 +47,17 @@ final class ConversationListTopBarViewController: UIViewController {
     /// - Parameters:
     ///   - account: the Account of the user
     ///   - selfUser: the self user object. Allow to inject a mock self user for testing
+    ///   - selfProfileBuilder: a builder for the self profile view controller
     init(
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        selfProfileViewControllerBuilder: ViewControllerBuilder<UIViewController>
+        selfProfileBuilder: ViewControllerBuilder<UIViewController>
     ) {
         self.account = account
         self.selfUser = selfUser
         self.userSession = userSession
-        self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
+        self.selfProfileBuilder = selfProfileBuilder
 
         super.init(nibName: nil, bundle: nil)
 
@@ -251,12 +252,12 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     func createSettingsViewController(selfUser: ZMUser) -> UIViewController {
-        selfProfileViewControllerBuilder
+        selfProfileBuilder
             .build()
             .wrapInNavigationController(navigationControllerClass: NavigationController.self)
     }
 
-    func scrollViewDidScroll(scrollView: UIScrollView!) {
+    func scrollViewDidScroll(scrollView: UIScrollView) {
         topBar?.leftSeparatorLineView.scrollViewDidScroll(scrollView: scrollView)
         topBar?.rightSeparatorLineView.scrollViewDidScroll(scrollView: scrollView)
     }

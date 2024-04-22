@@ -50,7 +50,6 @@ final class ConversationListViewController: UIViewController {
         label.attributedText = NSAttributedString.attributedTextForNoConversationLabel
         label.numberOfLines = 0
         label.backgroundColor = .clear
-
         return label
     }()
 
@@ -65,20 +64,12 @@ final class ConversationListViewController: UIViewController {
     let tabBar: ConversationListTabBar = {
         let conversationListTabBar = ConversationListTabBar()
         conversationListTabBar.showArchived = true
-
         return conversationListTabBar
     }()
 
     let topBarViewController: ConversationListTopBarViewController
-    let networkStatusViewController: NetworkStatusViewController = {
-        let viewController = NetworkStatusViewController()
-        return viewController
-    }()
-
-    let onboardingHint: ConversationListOnboardingHint = {
-        let conversationListOnboardingHint = ConversationListOnboardingHint()
-        return conversationListOnboardingHint
-    }()
+    let networkStatusViewController = NetworkStatusViewController()
+    let onboardingHint = ConversationListOnboardingHint()
 
     convenience init(
         account: Account,
@@ -93,13 +84,13 @@ final class ConversationListViewController: UIViewController {
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
-        self.init(viewModel: viewModel, selfProfileFactory: selfProfileBuilder)
+        self.init(viewModel: viewModel, selfProfileBuilder: selfProfileBuilder)
         onboardingHint.arrowPointToView = tabBar
     }
 
     required init(
         viewModel: ViewModel,
-        selfProfileFactory: ViewControllerBuilder<UIViewController>
+        selfProfileBuilder: ViewControllerBuilder<UIViewController>
     ) {
         self.viewModel = viewModel
 
@@ -107,13 +98,13 @@ final class ConversationListViewController: UIViewController {
             account: viewModel.account,
             selfUser: viewModel.selfUser,
             userSession: viewModel.userSession,
-            selfProfileViewControllerBuilder: selfProfileFactory
+            selfProfileBuilder: selfProfileBuilder
         )
         topBarViewController.selfUserStatus = viewModel.selfUserStatus
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(userSession: viewModel.userSession)
-        listContentController.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomInset, right: 0)
+        listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
 
         super.init(nibName: nil, bundle: nil)
 
