@@ -1,20 +1,20 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 @testable import WireDataModel
@@ -176,7 +176,7 @@ extension ZMAssetClientMessageTests {
     func testThatItHasNoDownloadedFileWhenTheFileIsNotOnDisk() {
         // given
         let sut = appendFileMessage(to: conversation)!
-        self.uiMOC.zm_fileAssetCache.deleteAssetData(sut, encrypted: false)
+        self.uiMOC.zm_fileAssetCache.deleteOriginalFileData(for: sut)
 
         // then
         XCTAssertFalse(sut.hasDownloadedFile)
@@ -187,7 +187,7 @@ extension ZMAssetClientMessageTests {
         let sut = appendFileMessage(to: conversation)!
 
         self.uiMOC.zm_fileAssetCache.storeMediumImage(data: .secureRandomData(length: 100), for: sut)
-        defer { self.uiMOC.zm_fileAssetCache.deleteAssetData(sut, format: .medium, encrypted: false) }
+        defer { self.uiMOC.zm_fileAssetCache.deleteMediumImageData(for: sut) }
 
         // then
         XCTAssertTrue(sut.hasDownloadedPreview)
@@ -198,7 +198,7 @@ extension ZMAssetClientMessageTests {
         let sut = appendFileMessage(to: conversation)!
 
         self.uiMOC.zm_fileAssetCache.storeOriginalImage(data: .secureRandomData(length: 100), for: sut)
-        defer { self.uiMOC.zm_fileAssetCache.deleteAssetData(sut, format: .medium, encrypted: false) }
+        defer { self.uiMOC.zm_fileAssetCache.deleteMediumImageData(for: sut) }
 
         // then
         XCTAssertTrue(sut.hasDownloadedPreview)
@@ -900,7 +900,7 @@ extension ZMAssetClientMessageTests {
         let expectation = self.customExpectation(description: "Image arrived")
 
         // when
-        message.imageMessageData?.fetchImageData(with: DispatchQueue.global(qos: .background), completionHandler: { (imageData) in
+        message.imageMessageData?.fetchImageData(with: DispatchQueue.global(qos: .background), completionHandler: { imageData in
             XCTAssertNotNil(imageData)
             expectation.fulfill()
         })
@@ -948,7 +948,7 @@ extension ZMAssetClientMessageTests {
         let message = try self.createV2AssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: true)
 
         // when
-        self.uiMOC.zm_fileAssetCache.deleteAssetData(message, format: .medium, encrypted: false)
+        self.uiMOC.zm_fileAssetCache.deleteMediumImageData(for: message)
 
         // then
         XCTAssertFalse(message.hasDownloadedFile)
@@ -1233,7 +1233,7 @@ extension ZMAssetClientMessageTests {
 
         sut.update(with: updateEventForOriginal(nonce: nonce, name: "document.pdf"), initialUpdate: true)
         sut.update(with: updateEventForUploaded(nonce: nonce, assetId: assetId), initialUpdate: false)
-        uiMOC.zm_fileAssetCache.storeAssetData(sut, encrypted: false, data: assetData)
+        uiMOC.zm_fileAssetCache.storeOriginalFile(data: assetData, for: sut)
 
         // then
         XCTAssertTrue(sut.hasDownloadedFile)
@@ -1322,7 +1322,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.version, 3)
 
         let expectation = self.customExpectation(description: "preview data was retreived")
-        sut.fileMessageData?.fetchImagePreviewData(queue: .global(qos: .background), completionHandler: { (previewDataResult) in
+        sut.fileMessageData?.fetchImagePreviewData(queue: .global(qos: .background), completionHandler: { previewDataResult in
             XCTAssertEqual(previewDataResult, previewData)
             expectation.fulfill()
         })

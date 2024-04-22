@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,13 +46,14 @@ final class AppRootRouter: NSObject {
 
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []
-    private let teamMetadataRefresher = TeamMetadataRefresher()
+    private let teamMetadataRefresher = TeamMetadataRefresher(selfUserProvider: SelfUser.provider)
 
     // MARK: - Private Set Property
 
     private(set) var sessionManager: SessionManager
 
-    // TO DO: This should be private
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: This should be private
     private(set) var rootViewController: RootViewController
 
     private var lastLaunchOptions: LaunchOptions?
@@ -466,7 +467,6 @@ extension AppRootRouter {
     }
 }
 
-// TO DO: THIS PART MUST BE CLENED UP
 extension AppRootRouter {
     private func applicationWillTransition(to appState: AppState) {
         appStateTransitionGroup.enter()

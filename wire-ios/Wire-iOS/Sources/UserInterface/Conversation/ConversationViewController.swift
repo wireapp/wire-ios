@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ final class ConversationViewController: UIViewController {
             break
         }
 
-        return viewController?.wrapInNavigationController(setBackgroundColor: true)
+        return viewController?.wrapInNavigationController()
     }
 
     required init(conversation: ZMConversation,
@@ -141,6 +141,7 @@ final class ConversationViewController: UIViewController {
         hideAndDestroyParticipantsPopover()
         contentViewController.delegate = nil
     }
+    private var observationToken: SelfUnregisteringNotificationCenterToken?
 
     private func update(conversation: ZMConversation) {
         setupNavigatiomItem()
@@ -158,6 +159,8 @@ final class ConversationViewController: UIViewController {
             self,
             for: userSession.conversationList()
         )
+
+        observationToken = E2EIPrivacyWarningChecker.addPresenter(self)
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
@@ -204,7 +207,7 @@ final class ConversationViewController: UIViewController {
 
             switch action {
             case .cancel:
-                self?.conversation.connectedUser?.cancelConnectionRequest(completion: { (error) in
+                self?.conversation.connectedUser?.cancelConnectionRequest(completion: { error in
                     if let error = error as? LocalizedError {
                         self?.presentLocalizedErrorAlert(error)
                     }
@@ -528,6 +531,10 @@ extension ConversationViewController: ZMConversationObserver {
             note.legalHoldStatusChanged {
             setupNavigatiomItem()
         }
+
+        if note.mlsVerificationStatusChanged {
+            setupNavigatiomItem()
+        }
     }
 
     func dismissProfileClientViewController(_ sender: UIBarButtonItem?) {
@@ -654,7 +661,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
 
         collectionController?.shouldTrackOnNextOpen = true
 
-        let navigationController = KeyboardAvoidingViewController(viewController: collectionController!).wrapInNavigationController(setBackgroundColor: true)
+        let navigationController = KeyboardAvoidingViewController(viewController: collectionController!).wrapInNavigationController()
 
         ZClientViewController.shared?.present(navigationController, animated: true)
     }

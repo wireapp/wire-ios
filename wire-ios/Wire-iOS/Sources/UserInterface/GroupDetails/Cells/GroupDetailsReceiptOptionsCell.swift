@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ final class GroupDetailsReceiptOptionsCell: IconToggleCell {
 
         title = L10n.Localizable.GroupDetails.ReceiptOptionsCell.title
 
-        icon = Asset.Images.readReceipts.image.withRenderingMode(.alwaysTemplate)
+        icon = .init(resource: .readReceipts).withRenderingMode(.alwaysTemplate)
         iconColor = SemanticColors.Icon.foregroundDefault
     }
 

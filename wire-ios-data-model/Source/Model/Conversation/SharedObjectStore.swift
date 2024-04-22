@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
         self.directory = accountContainer.appendingPathComponent(directoryName)
         self.url = directory.appendingPathComponent(fileName)
         super.init()
-        FileManager.default.createAndProtectDirectory(at: directory)
+        try! FileManager.default.createAndProtectDirectory(at: directory)
     }
 
     @discardableResult public func store(_ object: T) -> Bool {

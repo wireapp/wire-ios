@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -131,7 +131,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
                 commitDelay: 0,
                 senderClientId: nil,
                 hasEpochChanged: false,
-                identity: nil,
+                identity: .withBasicCredentials(),
                 bufferedMessages: nil,
                 crlNewDistributionPoints: nil
             )
@@ -195,7 +195,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
                 commitDelay: 0,
                 senderClientId: nil,
                 hasEpochChanged: false,
-                identity: nil,
+                identity: .withBasicCredentials(),
                 bufferedMessages: nil,
                 crlNewDistributionPoints: nil
             )
@@ -612,7 +612,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             commitDelay: 0,
             senderClientId: nil,
             hasEpochChanged: false,
-            identity: nil,
+            identity: .withBasicCredentials(),
             bufferedMessages: nil,
             crlNewDistributionPoints: nil
         )

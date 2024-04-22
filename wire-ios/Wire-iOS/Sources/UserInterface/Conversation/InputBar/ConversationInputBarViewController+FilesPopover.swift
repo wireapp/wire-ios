@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -125,6 +125,14 @@ extension ConversationInputBarViewController {
 
     @objc
     func docUploadPressed(_ sender: IconButton) {
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+            self.showDocUploadActionSheet(from: sender)
+        }
+
+        checker.performAction()
+    }
+
+    private func showDocUploadActionSheet(from sender: IconButton) {
         mode = ConversationInputBarViewControllerMode.textInput
         inputBar.textView.resignFirstResponder()
 
@@ -135,7 +143,10 @@ extension ConversationInputBarViewController {
 
     @objc
     func videoButtonPressed(_ sender: IconButton) {
-        recordVideo()
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+            self.recordVideo()
+        }
+        checker.performAction()
     }
 
     private func recordVideo() {

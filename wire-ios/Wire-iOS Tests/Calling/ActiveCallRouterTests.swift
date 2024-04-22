@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         var executed = false
 
         // when
-        sut.executeOrSchedulePostCallAction {
+        sut.executeOrSchedulePostCallAction { _ in
             executed = true
         }
 
@@ -61,14 +61,14 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         var executed = false
 
         // when
-        sut.executeOrSchedulePostCallAction {
+        sut.executeOrSchedulePostCallAction { _ in
             executed = true
         }
 
         // then
         XCTAssertNotNil(sut.scheduledPostCallAction)
         XCTAssertFalse(executed)
-        sut.scheduledPostCallAction?()
+        sut.scheduledPostCallAction?({ })
         XCTAssertTrue(executed)
     }
 

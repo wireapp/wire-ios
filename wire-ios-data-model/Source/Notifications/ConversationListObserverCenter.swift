@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,22 +28,16 @@ extension Notification.Name {
 
 extension NSManagedObjectContext {
 
-    static let ConversationListObserverCenterKey = "ConversationListObserverCenterKey"
+    static let conversationListObserverCenterKey = "ConversationListObserverCenterKey"
 
+    /// Note: uses `self.userInfo` and must be accessed from NSManagedObjectContext queue!
     @objc public var conversationListObserverCenter: ConversationListObserverCenter {
-        // swiftlint:disable todo_requires_jira_link
-        // FIXME: Uncomment and fix crash when running tests
-        // when the assert is check, all userInfo of context have been torn down so we can't check this property
-        // nevertheless tearDown seems to be expected to happen on mainThread
-        // swiftlint:enable todo_requires_jira_link
-//        assert(zm_isUserInterfaceContext, "ConversationListObserver does not exist in syncMOC")
-
-        if let observer = self.userInfo[NSManagedObjectContext.ConversationListObserverCenterKey] as? ConversationListObserverCenter {
+        if let observer = userInfo[NSManagedObjectContext.conversationListObserverCenterKey] as? ConversationListObserverCenter {
             return observer
         }
 
         let newObserver = ConversationListObserverCenter(managedObjectContext: self)
-        self.userInfo[NSManagedObjectContext.ConversationListObserverCenterKey] = newObserver
+        userInfo[NSManagedObjectContext.conversationListObserverCenterKey] = newObserver
         return newObserver
     }
 }
@@ -193,7 +187,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     /// Applys a function on a token and cleares tokens with deallocated lists
     private func forwardToSnapshots(block: ((ConversationListSnapshot) -> Void)) {
         var snapshotsToRemove = [String]()
-        listSnapshots.forEach { (identifier, snapshot) in
+        listSnapshots.forEach { identifier, snapshot in
             guard snapshot.conversationList != nil else {
                 snapshotsToRemove.append(identifier)
                 return

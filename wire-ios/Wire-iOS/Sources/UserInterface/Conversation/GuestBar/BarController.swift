@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ final class BarController: UIViewController {
 
         bars.append(bar)
 
-        bars.sort { (left, right) -> Bool in
+        bars.sort { left, right -> Bool in
             let leftWeight = (left as? Bar)?.weight ?? 0
             let rightWeight = (right as? Bar)?.weight ?? 0
 

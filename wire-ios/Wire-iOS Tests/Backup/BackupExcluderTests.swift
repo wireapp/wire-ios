@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ final class BackupExcluderTests: XCTestCase {
 
         write(text: "test", to: filename)
 
-        filesToExclude.forEach { (directory, path) in
+        filesToExclude.forEach { directory, path in
             let url = URL.directory(for: directory).appendingPathComponent(path)
 
             XCTAssertFalse(url.isExcludedFromBackup)
@@ -73,7 +73,7 @@ final class BackupExcluderTests: XCTestCase {
         try! MockBackupExcluder.exclude(filesToExclude: filesToExclude)
 
         // THEN
-        filesToExclude.forEach { (directory, path) in
+        filesToExclude.forEach { directory, path in
             let url = URL.directory(for: directory).appendingPathComponent(path)
 
             XCTAssert(url.isExcludedFromBackup)

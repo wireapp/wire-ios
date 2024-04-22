@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ final class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
 
             // Given
             guard let (message, _, _, _) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, encrypted: false, data: Data())
+            self.syncMOC.zm_fileAssetCache.storeOriginalFile(data: Data(), for: message)
             assetMessage = message
 
             // When
@@ -579,7 +579,7 @@ extension AssetV3DownloadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         self.syncMOC.performGroupedBlockAndWait {
-            self.sut.contextChangeTrackers.forEach { (tracker) in
+            self.sut.contextChangeTrackers.forEach { tracker in
                 tracker.objectsDidChange([message])
             }
 

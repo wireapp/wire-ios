@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ final class AnalyticsCallingTracker: NSObject {
             return
         }
 
-        NotificationCenter.default.addObserver(forName: NSNotification.Name.UserToggledVideoInCall, object: nil, queue: nil) { [weak self] (note) in
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.UserToggledVideoInCall, object: nil, queue: nil) { [weak self] note in
             if let conversationId = note.userInfo?[AnalyticsCallingTracker.conversationIdKey] as? UUID,
                var callInfo = self?.callInfos[conversationId] {
                 callInfo.toggledVideo = true
@@ -191,7 +191,7 @@ private extension CallClosedReason {
             return "internal_error"
         case .securityDegraded:
             return "security_degraded"
-        case .anweredElsewhere:
+        case .answeredElsewhere:
             return "answered_elsewhere"
         case .timeout, .timeoutECONN:
             return "timeout"

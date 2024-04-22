@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -339,7 +339,7 @@ final class ProfileDetailsContentController: NSObject,
             return
         }
 
-        conversation?.updateRole(of: user, to: role) { (result) in
+        conversation?.updateRole(of: user, to: role) { result in
             if case .failure = result {
                 self.isAdminState.toggle()
                 self.updateUI()

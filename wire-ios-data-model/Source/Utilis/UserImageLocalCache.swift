@@ -1,20 +1,20 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 import PINCache
@@ -61,10 +61,10 @@ extension NSManagedObjectContext {
     fileprivate let log = ZMSLog(tag: "UserImageCache")
 
     /// Cache for large user profile image
-    fileprivate let largeUserImageCache: PINCache
+    fileprivate let largeUserImageCache: any PINCaching
 
     /// Cache for small user profile image
-    fileprivate let smallUserImageCache: PINCache
+    fileprivate let smallUserImageCache: any PINCaching
 
     /// Create UserImageLocalCache
     /// - parameter location: where cache is persisted on disk. Defaults to caches directory if nil.
@@ -73,24 +73,33 @@ extension NSManagedObjectContext {
         let largeUserImageCacheName = "largeUserImages"
         let smallUserImageCacheName = "smallUserImages"
 
+        let largeUserImageCache: PINDiskCache
+        let smallUserImageCache: PINDiskCache
+
         if let rootPath = location?.path {
-            largeUserImageCache = PINCache(name: largeUserImageCacheName, rootPath: rootPath)
-            smallUserImageCache = PINCache(name: smallUserImageCacheName, rootPath: rootPath)
+            largeUserImageCache = PINDiskCache(name: largeUserImageCacheName, rootPath: rootPath)
+            smallUserImageCache = PINDiskCache(name: smallUserImageCacheName, rootPath: rootPath)
         } else {
-            largeUserImageCache = PINCache(name: largeUserImageCacheName)
-            smallUserImageCache = PINCache(name: smallUserImageCacheName)
+            largeUserImageCache = PINDiskCache(name: largeUserImageCacheName)
+            smallUserImageCache = PINDiskCache(name: smallUserImageCacheName)
         }
 
-        largeUserImageCache.configureLimits(50 * MEGABYTE)
-        smallUserImageCache.configureLimits(25 * MEGABYTE)
+        largeUserImageCache.byteLimit = 50 * MEGABYTE
+        largeUserImageCache.ageLimit = 60 * 60 // 1 hour
+        smallUserImageCache.byteLimit = 25 * MEGABYTE
+        smallUserImageCache.ageLimit = 60 * 60 // 1 hour
 
         largeUserImageCache.makeURLSecure()
         smallUserImageCache.makeURLSecure()
+
+        self.largeUserImageCache = largeUserImageCache
+        self.smallUserImageCache = smallUserImageCache
+
         super.init()
     }
 
     /// Stores image in cache and returns true if the data was stored
-    private func setImage(inCache cache: PINCache, cacheKey: String?, data: Data) -> Bool {
+    private func setImage(inCache cache: any PINCaching, cacheKey: String?, data: Data) -> Bool {
         if let resolvedCacheKey = cacheKey {
             cache.setObject(data as NSCoding, forKey: resolvedCacheKey)
             return true

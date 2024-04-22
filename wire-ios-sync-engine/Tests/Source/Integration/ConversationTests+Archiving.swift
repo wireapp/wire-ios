@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ class ConversationTests_Archiving: ConversationTestsBase {
         }
 
         // when
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             block(session)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -58,7 +58,7 @@ class ConversationTests_Archiving: ConversationTestsBase {
         let shouldUnarchive = true
 
         // when
-        checkThatItUnarchives(shouldUnarchive: shouldUnarchive, isSilenced: false, mockConversation: self.groupConversation) { (_) in
+        checkThatItUnarchives(shouldUnarchive: shouldUnarchive, isSilenced: false, mockConversation: self.groupConversation) { _ in
             let message = GenericMessage(content: Text(content: "Some text", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
             let fromUser = self.groupConversation.activeUsers.lastObject as! MockUser
             self.groupConversation.encryptAndInsertData(from: fromUser.clients.anyObject() as! MockUserClient,
@@ -72,7 +72,7 @@ class ConversationTests_Archiving: ConversationTestsBase {
         let shouldUnarchive = false
 
         // when
-        checkThatItUnarchives(shouldUnarchive: shouldUnarchive, isSilenced: true, mockConversation: self.groupConversation) { (_) in
+        checkThatItUnarchives(shouldUnarchive: shouldUnarchive, isSilenced: true, mockConversation: self.groupConversation) { _ in
             let message = GenericMessage(content: Text(content: "Some text", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
             let fromUser = self.groupConversation.activeUsers.lastObject as! MockUser
             self.groupConversation.encryptAndInsertData(from: fromUser.clients.anyObject() as! MockUserClient,
@@ -88,7 +88,7 @@ class ConversationTests_Archiving: ConversationTestsBase {
         let message = GenericMessage(content: WireProtos.Asset(imageSize: CGSize(width: 10, height: 10), mimeType: "image/jpeg", size: 123), nonce: UUID.create())
 
         // when
-        checkThatItUnarchives(shouldUnarchive: shouldUnarchive, isSilenced: false, mockConversation: self.groupConversation) { (_) in
+        checkThatItUnarchives(shouldUnarchive: shouldUnarchive, isSilenced: false, mockConversation: self.groupConversation) { _ in
             let fromUser = self.groupConversation.activeUsers.lastObject as! MockUser
             self.groupConversation.encryptAndInsertData(from: fromUser.clients.anyObject() as! MockUserClient,
                                                         to: self.selfUser.clients.anyObject() as! MockUserClient,
@@ -103,7 +103,7 @@ class ConversationTests_Archiving: ConversationTestsBase {
         let message = GenericMessage(content: WireProtos.Asset(imageSize: CGSize(width: 10, height: 10), mimeType: "image/jpeg", size: 123), nonce: UUID.create())
 
         // when
-        checkThatItUnarchives(shouldUnarchive: shouldUnarchive, isSilenced: true, mockConversation: self.groupConversation) { (_) in
+        checkThatItUnarchives(shouldUnarchive: shouldUnarchive, isSilenced: true, mockConversation: self.groupConversation) { _ in
             let fromUser = self.groupConversation.activeUsers.lastObject as! MockUser
             self.groupConversation.encryptAndInsertData(from: fromUser.clients.anyObject() as! MockUserClient,
                                                         to: self.selfUser.clients.anyObject() as! MockUserClient,
@@ -116,7 +116,7 @@ class ConversationTests_Archiving: ConversationTestsBase {
         let shouldUnarchive = true
 
         // when
-        checkThatItUnarchives(shouldUnarchive: shouldUnarchive, isSilenced: false, mockConversation: self.groupConversation) { (_) in
+        checkThatItUnarchives(shouldUnarchive: shouldUnarchive, isSilenced: false, mockConversation: self.groupConversation) { _ in
             let message = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: UUID.create())
             let fromUser = self.groupConversation.activeUsers.lastObject as! MockUser
             self.groupConversation.encryptAndInsertData(from: fromUser.clients.anyObject() as! MockUserClient,
@@ -130,7 +130,7 @@ class ConversationTests_Archiving: ConversationTestsBase {
         let shouldUnarchive = false
 
         // when
-        checkThatItUnarchives(shouldUnarchive: shouldUnarchive, isSilenced: true, mockConversation: self.groupConversation) { (_) in
+        checkThatItUnarchives(shouldUnarchive: shouldUnarchive, isSilenced: true, mockConversation: self.groupConversation) { _ in
             let message = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: UUID.create())
             let fromUser = self.groupConversation.activeUsers.lastObject as! MockUser
             self.groupConversation.encryptAndInsertData(from: fromUser.clients.anyObject() as! MockUserClient,

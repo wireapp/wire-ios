@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
            let request = request(for: assetKeys, size: .preview, user: previewAssetRequest.key, apiVersion: apiVersion) {
             requestedPreviewAssetsInProgress.insert(previewAssetRequest.key)
 
-            request.add(ZMCompletionHandler(on: syncContext, block: { [weak self] (response) in
+            request.add(ZMCompletionHandler(on: syncContext, block: { [weak self] response in
                 self?.processAsset(response: response, for: previewAssetRequest.key, size: .preview)
             }))
 
@@ -120,7 +120,7 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
            let request = request(for: assetKeys, size: .complete, user: completeAssetRequest.key, apiVersion: apiVersion) {
             requestedCompleteAssetsInProgress.insert(completeAssetRequest.key)
 
-            request.add(ZMCompletionHandler(on: syncContext, block: { [weak self] (response) in
+            request.add(ZMCompletionHandler(on: syncContext, block: { [weak self] response in
                 self?.processAsset(response: response, for: completeAssetRequest.key, size: .complete)
             }))
 
@@ -194,7 +194,7 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
 
         requestedMissingFullProfilesInProgress.formUnion(missingFullProfiles)
 
-        return SearchUserImageStrategy.requestForFetchingFullProfile(for: missingFullProfiles, apiVersion: apiVersion, completionHandler: ZMCompletionHandler(on: managedObjectContext, block: { (response) in
+        return SearchUserImageStrategy.requestForFetchingFullProfile(for: missingFullProfiles, apiVersion: apiVersion, completionHandler: ZMCompletionHandler(on: managedObjectContext, block: { response in
 
             self.requestedMissingFullProfilesInProgress.subtract(missingFullProfiles)
 

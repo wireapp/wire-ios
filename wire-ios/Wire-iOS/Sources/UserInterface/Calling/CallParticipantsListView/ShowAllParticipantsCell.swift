@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -109,10 +109,10 @@ final class ShowAllParticipantsCell: UICollectionViewCell, SectionListCellType {
     private func configureColors() {
         let iconTintColor = SemanticColors.Icon.foregroundDefault
 
-        participantIconView.image = Asset.Images.contactsFilled.image.withRenderingMode(.alwaysTemplate)
+        participantIconView.image = .init(resource: .contactsFilled).withRenderingMode(.alwaysTemplate)
         participantIconView.tintColor = iconTintColor
 
-        accessoryIconView.image = Asset.Images.rightChevron.image.withRenderingMode(.alwaysTemplate)
+        accessoryIconView.image = .init(resource: .rightChevron).withRenderingMode(.alwaysTemplate)
         accessoryIconView.tintColor = iconTintColor
 
         titleLabel.textColor = SemanticColors.Label.textDefault

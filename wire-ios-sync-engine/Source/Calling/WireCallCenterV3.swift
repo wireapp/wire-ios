@@ -877,7 +877,7 @@ extension WireCallCenterV3 {
     /// Sends the config request when requested by AVS through `wcall_config_req_h`.
     func requestCallConfig() {
         zmLog.debug("\(self): requestCallConfig(), transport = \(String(describing: transport))")
-        transport?.requestCallConfig(completionHandler: { [weak self] (config, httpStatusCode) in
+        transport?.requestCallConfig(completionHandler: { [weak self] config, httpStatusCode in
             guard let `self` = self else { return }
             zmLog.debug("\(self): self.avsWrapper.update with \(String(describing: config))")
             self.avsWrapper.update(callConfig: config, httpStatusCode: httpStatusCode)
@@ -1017,8 +1017,13 @@ extension WireCallCenterV3 {
 
         var callState = callState
 
-        if case .terminating(reason: .stillOngoing) = callState, canJoinCall(conversationId: conversationId) {
-            callState = .incoming(video: false, shouldRing: false, degraded: isDegraded(conversationId: conversationId))
+        if case .terminating(reason: .stillOngoing) = callState {
+
+            if isDegraded(conversationId: conversationId) {
+                callState = .terminating(reason: .securityDegraded)
+            } else if canJoinCall(conversationId: conversationId) {
+                callState = .incoming(video: false, shouldRing: false, degraded: false)
+            }
         }
 
         if case .incoming = callState, isGroup(conversationId: conversationId), activeCalls.isEmpty {

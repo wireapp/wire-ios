@@ -49,14 +49,23 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
         let identitiesAndStatus = await validateUserHandleAndName(for: identities)
 
         return identitiesAndStatus.map { identity, status in
-
-            E2eIdentityCertificate(clientId: identity.clientId,
-                                   certificateDetails: identity.certificate,
-                                   mlsThumbprint: identity.thumbprint,
-                                   notValidBefore: Date(timeIntervalSince1970: Double(identity.notBefore)),
-                                   expiryDate: Date(timeIntervalSince1970: Double(identity.notAfter)),
-                                   certificateStatus: status,
-                                   serialNumber: identity.serialNumber)
+            if let x509Identity = identity.x509Identity {
+                E2eIdentityCertificate(clientId: identity.clientId,
+                                       certificateDetails: x509Identity.certificate,
+                                       mlsThumbprint: identity.thumbprint,
+                                       notValidBefore: Date(timeIntervalSince1970: Double(x509Identity.notBefore)),
+                                       expiryDate: Date(timeIntervalSince1970: Double(x509Identity.notAfter)),
+                                       certificateStatus: status,
+                                       serialNumber: x509Identity.serialNumber)
+            } else {
+                E2eIdentityCertificate(clientId: identity.clientId,
+                                       certificateDetails: "",
+                                       mlsThumbprint: identity.thumbprint,
+                                       notValidBefore: .now,
+                                       expiryDate: .now,
+                                       certificateStatus: .notActivated,
+                                       serialNumber: "")
+            }
         }
     }
 
@@ -64,14 +73,19 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
     // values so we perform additional validation.
 
     private func validateUserHandleAndName(for identities: [WireIdentity]) async -> [(WireIdentity, E2EIdentityCertificateStatus)] {
-        return await identities.asyncMap { identity in
+
+        var validatedIdentities = [(WireIdentity, E2EIdentityCertificateStatus)]()
+        for identity in identities {
+
             // The identity is valid according to CoreCrypto.
             guard identity.status == .valid else {
-                return (identity, identity.status.e2eIdentityStatus)
+                validatedIdentities.append((identity, identity.status.e2eIdentityStatus))
+                continue
             }
 
             guard let mlsClientID = MLSClientID(rawValue: identity.clientId) else {
-                return (identity, .invalid)
+                validatedIdentities.append((identity, .invalid))
+                continue
             }
 
             let (name, handle, domain) = await syncContext.perform {
@@ -80,14 +94,16 @@ final public class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
             }
 
             guard let name, let handle, let domain else {
-                return (identity, .invalid)
+                validatedIdentities.append((identity, .invalid))
+                continue
             }
 
-            let hasValidDisplayName = identity.displayName == name
-            let hasValidHandle = identity.handle.contains("\(handle)@\(domain)")
+            let hasValidDisplayName = identity.x509Identity?.displayName == name
+            let hasValidHandle = identity.x509Identity?.handle.contains("\(handle)@\(domain)") ?? false
             let isValid = hasValidDisplayName && hasValidHandle
-            return (identity, isValid ? .valid : .invalid)
+            validatedIdentities.append((identity, isValid ? .valid : .invalid))
         }
+        return validatedIdentities
     }
 
     @MainActor

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -128,7 +128,10 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Whether this user is a guest in a conversation
     func isGuest(in conversation: ConversationLike) -> Bool
 
-    /// Fetch a profile image with the given size on the given queue
+    /// Fetch a profile image with the given size
+    func imageData(for size: ProfileImageSize) -> Data?
+
+    /// Fetch a profile image with the given size and call the completion closure on the provided queue.
     func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (_ imageData: Data?) -> Void)
 
     /// Request a refresh of the user data from the backend.

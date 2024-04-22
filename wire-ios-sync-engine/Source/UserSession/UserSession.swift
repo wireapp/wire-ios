@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,10 @@ import Foundation
 import WireDataModel
 import LocalAuthentication
 
+public typealias SelfUserType = UserType & SelfLegalHoldSubject
+
 /// An abstraction of the user session for use in the presentation
 /// layer.
-
 public protocol UserSession: AnyObject {
 
     /// The current session lock, if any.
@@ -74,9 +75,9 @@ public protocol UserSession: AnyObject {
 
     var needsToNotifyUserOfAppLockConfiguration: Bool { get set }
 
-    /// Unlock the database using the given authentication context.
+    /// Unlocks the database.
 
-    func unlockDatabase(with context: LAContext) throws
+    func unlockDatabase() throws
 
     /// Open the app lock.
 
@@ -87,16 +88,12 @@ public protocol UserSession: AnyObject {
     /// - Parameters:
     ///     - passcodePreference: Used to determine which type of passcode is used.
     ///     - description: The message to dispaly in the authentication UI.
-    ///     - context: The context in which authentication happens.
     ///     - callback: Invoked with the authentication result.
 
     func evaluateAppLockAuthentication(
         passcodePreference: AppLockPasscodePreference,
         description: String,
-        callback: @escaping (
-            AppLockAuthenticationResult,
-            LAContextProtocol
-        ) -> Void
+        callback: @escaping (AppLockAuthenticationResult) -> Void
     )
 
     /// Authenticate with a custom passcode.
@@ -116,9 +113,7 @@ public protocol UserSession: AnyObject {
     ///
     /// This can only be used on the main thread.
 
-    var selfUser: UserType { get }
-
-    var selfLegalHoldSubject: UserType & SelfLegalHoldSubject { get }
+    var selfUser: SelfUserType { get }
 
     func perform(_ changes: @escaping () -> Void)
 
@@ -140,7 +135,7 @@ public protocol UserSession: AnyObject {
 
     func addUserObserver(
         _ observer: UserObserving,
-        for: UserType
+        for user: UserType
     ) -> NSObjectProtocol?
 
     func addUserObserver(

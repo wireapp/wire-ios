@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,8 +20,6 @@ import Foundation
 import LocalAuthentication
 
 public final class AppLockController: AppLockType {
-
-    static let log = ZMSLog(tag: "AppLockController")
 
     // MARK: - Properties
 
@@ -89,6 +87,7 @@ public final class AppLockController: AppLockType {
 
     private let selfUser: ZMUser
     private let featureRepository: FeatureRepository
+    private let authenticationContext: any AuthenticationContextProtocol
 
     private(set) var state = State.locked
 
@@ -119,7 +118,8 @@ public final class AppLockController: AppLockType {
     public init(
         userId: UUID,
         selfUser: ZMUser,
-        legacyConfig: LegacyConfig?
+        legacyConfig: LegacyConfig?,
+        authenticationContext: any AuthenticationContextProtocol
     ) {
         precondition(selfUser.isSelfUser, "AppLockController initialized with non-self user")
 
@@ -127,6 +127,7 @@ public final class AppLockController: AppLockType {
         self.keychainItem = PasscodeKeychainItem(userId: userId)
         self.selfUser = selfUser
         self.legacyConfig = legacyConfig
+        self.authenticationContext = authenticationContext
 
         featureRepository = FeatureRepository(context: selfUser.managedObjectContext!)
     }
@@ -153,31 +154,37 @@ public final class AppLockController: AppLockType {
 
     // MARK: - Authentication
 
-    public func evaluateAuthentication(passcodePreference: AppLockPasscodePreference,
-                                       description: String,
-                                       context: LAContextProtocol = LAContext(),
-                                       callback: @escaping (AppLockAuthenticationResult, LAContextProtocol) -> Void) {
+    public func evaluateAuthentication(
+        passcodePreference: AppLockPasscodePreference,
+        description: String,
+        callback: @escaping (AppLockAuthenticationResult) -> Void
+    ) {
+        WireLogger.appLock.info("evaluating authentication for app lock")
+
         let policy = passcodePreference.policy
+        let context = authenticationContext
         var error: NSError?
         let canEvaluatePolicy = context.canEvaluatePolicy(policy, error: &error)
 
         // Changing biometrics in device settings is protected by the device passcode, but if
-        // the device passcode isn't considered secure enough, then ask for the custon passcode
+        // the device passcode isn't considered secure enough, then ask for the custom passcode
         // to accept the new biometrics state.
         if biometricsState.biometricsChanged(in: context) && !passcodePreference.allowsDevicePasscode {
-            callback(.needCustomPasscode, context)
+            WireLogger.appLock.info("need custom passcode because biometrics changed")
+            callback(.needCustomPasscode)
             return
         }
 
         // No device authentication possible, but can fall back to the custom passcode.
         if !canEvaluatePolicy && passcodePreference.allowsCustomPasscode {
-            callback(.needCustomPasscode, context)
+            WireLogger.appLock.info("need custom passcode because device auth is not possible")
+            callback(.needCustomPasscode)
             return
         }
 
         guard canEvaluatePolicy else {
-            callback(.unavailable, context)
-            Self.log.error("Local authentication error: \(String(describing: error?.localizedDescription))")
+            callback(.unavailable)
+            WireLogger.appLock.warn("Local authentication error: \(String(describing: error?.localizedDescription))")
             return
         }
 
@@ -192,7 +199,8 @@ public final class AppLockController: AppLockType {
                 self.state = .unlocked
             }
 
-            callback(result, context)
+            WireLogger.appLock.info("app lock auth concluded with (result: \(result), policy: \(policy))")
+            callback(result)
         }
     }
 
@@ -233,6 +241,7 @@ public final class AppLockController: AppLockType {
 
 // MARK: - TEST ONLY!
 
+@_spi(AppLockControllerState)
 extension AppLockController {
 
     func _setState(_ state: State) {

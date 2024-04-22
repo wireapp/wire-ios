@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -69,9 +70,12 @@ extension ConversationListViewController {
         let conversationListType: ConversationListHelperType.Type
         let userSession: UserSession
         private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+        private let notificationCenter: NotificationCenter
 
         var selectedConversation: ZMConversation?
 
+        private var didBecomeActiveNotificationToken: Any?
+        private var e2eiCertificateChangedToken: Any?
         private var initialSyncObserverToken: Any?
         private var userObservationToken: NSObjectProtocol?
         /// observer tokens which are assigned when viewDidLoad
@@ -94,15 +98,20 @@ extension ConversationListViewController {
             self.userSession = userSession
             self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
             selfUserStatus = .init(user: selfUser, isE2EICertified: false)
+            self.notificationCenter = notificationCenter
             super.init()
 
             updateE2EICertifiedStatus()
-            notificationCenter.addObserver(
-                self,
-                selector: #selector(handleApplicationDidBecomeActiveNotification(_:)),
-                name: UIApplication.didBecomeActiveNotification,
-                object: nil
-            )
+        }
+
+        deinit {
+            if let didBecomeActiveNotificationToken {
+                notificationCenter.removeObserver(didBecomeActiveNotificationToken)
+            }
+
+            if let e2eiCertificateChangedToken {
+                notificationCenter.removeObserver(e2eiCertificateChangedToken)
+            }
         }
     }
 }
@@ -117,6 +126,18 @@ extension ConversationListViewController.ViewModel {
         }
 
         updateObserverTokensForActiveTeam()
+
+        didBecomeActiveNotificationToken = notificationCenter.addObserver(forName: UIApplication.didBecomeActiveNotification,
+                                                                          object: nil,
+                                                                          queue: .main) { [weak self] _ in
+            self?.updateE2EICertifiedStatus()
+        }
+
+        e2eiCertificateChangedToken = notificationCenter.addObserver(forName: .e2eiCertificateChanged,
+                                                                     object: nil,
+                                                                     queue: .main) { [weak self] _ in
+            self?.updateE2EICertifiedStatus()
+        }
     }
 
     func savePendingLastRead() {
@@ -237,16 +258,6 @@ extension ConversationListViewController.ViewModel: ZMInitialSyncCompletionObser
 
     func initialSyncCompleted() {
         requestMarketingConsentIfNeeded()
-    }
-}
-
-// MARK: - Observing UIApplication Life Cycle
-
-extension ConversationListViewController.ViewModel {
-
-    @objc
-    private func handleApplicationDidBecomeActiveNotification(_ notification: Notification) {
-        updateE2EICertifiedStatus()
     }
 }
 

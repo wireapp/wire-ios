@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ protocol DecryptedMessageBundle {
     var commitDelay: UInt64? { get }
     var senderClientId: WireCoreCrypto.ClientId? { get }
     var hasEpochChanged: Bool { get }
-    var identity: WireCoreCrypto.WireIdentity? { get }
+    var identity: WireCoreCrypto.WireIdentity { get }
 
 }
 

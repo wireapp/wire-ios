@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ extension ZMLocalNotification {
             switch callState {
             case .incoming(let video, shouldRing: true, degraded: _):
                 self.callState = .incomingCall(video: video)
-            case .terminating(reason: .anweredElsewhere), .terminating(reason: .normal), .terminating(reason: .rejectedElsewhere):
+            case .terminating(reason: .answeredElsewhere), .terminating(reason: .normal), .terminating(reason: .rejectedElsewhere):
                 return nil
             case .terminating(reason: .timeout):
                 self.callState = .missedCall(cancelled: false)

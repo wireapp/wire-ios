@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -198,6 +198,8 @@ public final class SharingSession {
 
     public let appLockController: AppLockType
 
+    private let contextStorage: LAContextStorable
+
     let earService: EARServiceInterface
 
     public var fileSharingFeature: Feature.FileSharing {
@@ -287,6 +289,7 @@ public final class SharingSession {
         appLockConfig: AppLockController.LegacyConfig?,
         cryptoboxMigrationManager: CryptoboxMigrationManagerInterface,
         earService: EARServiceInterface,
+        contextStorage: LAContextStorable,
         proteusService: ProteusServiceInterface,
         mlsDecryptionService: MLSDecryptionServiceInterface,
         sharedUserDefaults: UserDefaults
@@ -301,9 +304,15 @@ public final class SharingSession {
         self.strategyFactory = strategyFactory
 
         self.earService = earService
+        self.contextStorage = contextStorage
 
         let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
-        self.appLockController = AppLockController(userId: accountIdentifier, selfUser: selfUser, legacyConfig: appLockConfig)
+        self.appLockController = AppLockController(
+            userId: accountIdentifier,
+            selfUser: selfUser,
+            legacyConfig: appLockConfig,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
+        )
 
         guard applicationStatusDirectory.authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
 
@@ -376,13 +385,15 @@ public final class SharingSession {
             coreCryptoProvider: coreCryptoProvider,
             commitSender: commitSender
         )
+        let contextStorage = LAContextStorage()
         let earService = EARService(
             accountID: accountIdentifier,
             databaseContexts: [
                 coreDataStack.viewContext,
                 coreDataStack.syncContext
             ],
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
         )
         let proteusService = ProteusService(coreCryptoProvider: coreCryptoProvider)
         let mlsDecryptionService = MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor)
@@ -400,6 +411,7 @@ public final class SharingSession {
             appLockConfig: appLockConfig,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             earService: earService,
+            contextStorage: contextStorage,
             proteusService: proteusService,
             mlsDecryptionService: mlsDecryptionService,
             sharedUserDefaults: sharedUserDefaults

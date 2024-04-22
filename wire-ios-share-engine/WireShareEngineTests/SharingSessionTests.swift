@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -75,14 +75,12 @@ final class SharingSessionTests: BaseSharingSessionTests {
 
             // When
             _ = try createSharingSession()
+            XCTFail("unexpected success")
         } catch SharingSession.InitializationError.pendingCryptoboxMigration {
             // Then
-            return
         } catch {
             XCTFail("unexpected error: \(error.localizedDescription)")
         }
-
-        XCTFail("unexpected success")
     }
 
 }

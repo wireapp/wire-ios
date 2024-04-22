@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,13 +54,17 @@ import CoreData
         didSet {
             guard operationMode != oldValue else { return }
 
+            let observerCenter = managedObjectContext.performAndWait {
+                managedObjectContext.conversationListObserverCenter
+            }
+
             if operationMode == .economical {
-                conversationListObserverCenter.stopObserving()
+                observerCenter.stopObserving()
             }
 
             if oldValue == .economical {
                 fireAllNotifications()
-                conversationListObserverCenter.startObserving()
+                observerCenter.startObserving()
             }
 
             changeDetector = changeDetectorBuilder(operationMode)
@@ -78,14 +82,14 @@ import CoreData
     private var changeInfoConsumers = [UnownedNSObject]()
 
     private var allChangeInfoConsumers: [ChangeInfoConsumer] {
+        let observerCenter = managedObjectContext.performAndWait {
+            managedObjectContext.conversationListObserverCenter
+        }
+
         var consumers = changeInfoConsumers.compactMap { $0.unbox as? ChangeInfoConsumer }
         consumers.append(searchUserObserverCenter)
-        consumers.append(conversationListObserverCenter)
+        consumers.append(observerCenter)
         return consumers
-    }
-
-    private var conversationListObserverCenter: ConversationListObserverCenter {
-        return managedObjectContext.conversationListObserverCenter
     }
 
     private var searchUserObserverCenter: SearchUserObserverCenter {
@@ -170,7 +174,11 @@ import CoreData
         NotificationCenter.default.removeObserver(self)
         notificationCenterTokens.forEach(NotificationCenter.default.removeObserver)
         notificationCenterTokens = []
-        conversationListObserverCenter.tearDown()
+
+        managedObjectContext.performAndWait {
+            managedObjectContext.conversationListObserverCenter.tearDown()
+        }
+
         isTornDown = true
     }
 
@@ -286,7 +294,12 @@ import CoreData
     private func forwardChangesToConversationListObserver(modifiedObjects: ModifiedObjects) {
         let insertedLabels = modifiedObjects.inserted.compactMap { $0 as? Label }
         let deletedLabels = modifiedObjects.deleted.compactMap { $0 as? Label }
-        conversationListObserverCenter.folderChanges(inserted: insertedLabels, deleted: deletedLabels)
+
+        let conversationListObserverCenter = managedObjectContext.performAndWait {
+            managedObjectContext.conversationListObserverCenter
+        }
+
+        managedObjectContext.conversationListObserverCenter.folderChanges(inserted: insertedLabels, deleted: deletedLabels)
 
         let insertedConversations = modifiedObjects.inserted.compactMap { $0 as? ZMConversation }
         let deletedConversations = modifiedObjects.deleted.compactMap { $0 as? ZMConversation }

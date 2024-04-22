@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -144,7 +144,7 @@ class NewUnreadMessageObserverTests: NotificationDispatcherTestBase {
         XCTAssertEqual(self.testObserver!.unreadMessageNotes.count, 0)
     }
 
-    func testThatItNotifiesObserversWhenANewOTRKnockMessageIsInserted() {
+    func testThatItNotifiesObserversWhenANewOTRKnockMessageIsInserted() throws {
 
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
@@ -155,11 +155,7 @@ class NewUnreadMessageObserverTests: NotificationDispatcherTestBase {
         let genMsg = GenericMessage(content: Knock.with { $0.hotKnock = false })
 
         let msg1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        do {
-            try msg1.setUnderlyingMessage(genMsg)
-        } catch {
-            XCTFail()
-        }
+        try msg1.setUnderlyingMessage(genMsg)
         msg1.visibleInConversation = conversation
         msg1.serverTimestamp = Date()
         self.uiMOC.saveOrRollback()

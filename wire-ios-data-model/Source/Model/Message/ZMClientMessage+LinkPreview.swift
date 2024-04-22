@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -78,13 +78,51 @@ extension ZMClientMessage {
         NotificationInContext(name: ZMClientMessage.linkPreviewImageDownloadNotification, context: moc.notificationContext, object: self.objectID).post()
     }
 
-    public func fetchLinkPreviewImageData(with queue: DispatchQueue, completionHandler: @escaping (_ imageData: Data?) -> Void) {
-        guard let cache = managedObjectContext?.zm_fileAssetCache else { return }
-        let originalKey = FileAssetCache.cacheKeyForAsset(self, format: .original)
-        let mediumKey = FileAssetCache.cacheKeyForAsset(self, format: .medium)
+    public func fetchLinkPreviewImageData(
+        with queue: DispatchQueue,
+        completionHandler: @escaping (_ imageData: Data?) -> Void
+    ) {
+        let cache = managedObjectContext?.zm_fileAssetCache
+
+        let mediumKey = FileAssetCache.cacheKeyForAsset(
+            self,
+            format: .medium,
+            encrypted: true
+        )
+
+        let fallbackKey = FileAssetCache.cacheKeyForAsset(
+            self,
+            format: .medium,
+            encrypted: false
+        )
+
+        let asset = underlyingMessage?.linkPreviews.first?.image.uploaded
+
+        let encryptionKey = asset?.otrKey
+        let digest = asset?.sha256
 
         queue.async {
-            completionHandler([mediumKey, originalKey].lazy.compactMap({ $0 }).compactMap({ cache.assetData($0) }).first)
+            guard let cache else {
+                completionHandler(nil)
+                return
+            }
+
+            if
+                let mediumKey,
+                let encryptionKey,
+                let digest,
+                let data = cache.decryptData(
+                    key: mediumKey,
+                    encryptionKey: encryptionKey,
+                    sha256Digest: digest
+                )
+            {
+                completionHandler(data)
+            } else if let fallbackKey {
+                completionHandler(cache.assetData(fallbackKey))
+            } else {
+                completionHandler(nil)
+            }
         }
     }
 
@@ -133,7 +171,7 @@ extension ZMClientMessage: ZMImageOwner {
     @objc public func processingDidFinish() {
         self.linkPreviewState = .processed
         guard let moc = self.managedObjectContext else { return }
-        moc.zm_fileAssetCache.deleteAssetData(self, format: .original, encrypted: false)
+        moc.zm_fileAssetCache.deleteOriginalImageData(for: self)
         moc.enqueueDelayedSave()
     }
 

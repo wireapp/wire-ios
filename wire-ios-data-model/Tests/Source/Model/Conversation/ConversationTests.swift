@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -285,11 +285,7 @@ extension ConversationTests {
 
             let documentsURL = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
             let fileURL = URL(fileURLWithPath: documentsURL).appendingPathComponent(fileName)
-            do {
-                try fileData.write(to: fileURL)
-            } catch {
-                XCTFail()
-            }
+            try fileData.write(to: fileURL)
 
             XCTAssertNotNil(selfUserID)
 
@@ -300,8 +296,8 @@ extension ConversationTests {
             let message = try! conversation.appendFile(with: fileMetadata, nonce: messageID)
 
             // store asset data
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, encrypted: false, data: fileData)
-            self.syncMOC.zm_fileAssetCache.storeAssetData(message, encrypted: true, data: fileData)
+            self.syncMOC.zm_fileAssetCache.storeOriginalFile(data: fileData, for: message)
+            self.syncMOC.zm_fileAssetCache.storeEncryptedFile(data: fileData, for: message)
 
             // delete
             let deleteMessage = GenericMessage(content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: messageID), nonce: UUID.create())
@@ -326,9 +322,8 @@ extension ConversationTests {
             let lookupMessage = try! conversation.appendText(content: "123")
 
             // then
-
-            XCTAssertNil(self.syncMOC.zm_fileAssetCache .assetData(lookupMessage, encrypted: false))
-            XCTAssertNil(self.syncMOC.zm_fileAssetCache .assetData(lookupMessage, encrypted: true))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.originalFileData(for: lookupMessage))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.encryptedFileData(for: lookupMessage))
         }
     }
 

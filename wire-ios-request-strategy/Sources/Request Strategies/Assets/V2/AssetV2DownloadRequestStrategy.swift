@@ -1,20 +1,20 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import WireImages
 import WireTransport
@@ -29,7 +29,7 @@ import WireTransport
 
         configuration = [.allowsRequestsWhileOnline]
 
-        let downloadPredicate = NSPredicate { (object, _) -> Bool in
+        let downloadPredicate = NSPredicate { object, _ -> Bool in
             guard let message = object as? ZMAssetClientMessage else { return false }
             guard message.version < 3 else { return false }
 
@@ -91,7 +91,6 @@ import WireTransport
     }
 
     fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
-        var downloadSuccess = false
 
         assetClientMessage.isDownloading = false
 
@@ -121,10 +120,9 @@ import WireTransport
         // swiftlint:disable todo_requires_jira_link
         // TODO: create request that streams directly to the cache file, otherwise the memory would overflow on big files
         // swiftlint:enable todo_requires_jira_link
-        fileCache.storeAssetData(
-            assetClientMessage,
-            encrypted: true,
-            data: data
+        fileCache.storeEncryptedFile(
+            data: data,
+            for: assetClientMessage
         )
 
         guard let viewcontext = managedObjectContext.zm_userInterface else {

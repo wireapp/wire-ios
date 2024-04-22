@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -162,7 +162,8 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         callController_callCenterDidChange(callState: callState, conversation: conversation)
 
         // THEN
-        XCTAssertFalse(router.presentSecurityDegradedAlertIsCalled)
+        XCTAssertFalse(router.presentIncomingSecurityDegradedAlertIsCalled)
+        XCTAssertFalse(router.presentEndingSecurityDegradedAlertIsCalled)
     }
 }
 
@@ -179,6 +180,11 @@ extension CallControllerTests {
 
 // MARK: - ActiveCallRouterMock
 final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
+
+    var dismissSecurityDegradedAlertIfNeededIsCalled: Bool = false
+    func dismissSecurityDegradedAlertIfNeeded() {
+        dismissSecurityDegradedAlertIfNeededIsCalled = true
+    }
 
     var presentActiveCallIsCalled: Bool = false
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
@@ -206,9 +212,22 @@ final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
         hideCallTopOverlayIsCalled = true
     }
 
-    var presentSecurityDegradedAlertIsCalled: Bool = false
-    func presentSecurityDegradedAlert(for reason: Wire.CallDegradationReason) {
-        presentSecurityDegradedAlertIsCalled = true
+    var expectedEndedAlertChoice: AlertChoice?
+    var presentEndingSecurityDegradedAlertIsCalled = false
+    func presentEndingSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void) {
+        presentEndingSecurityDegradedAlertIsCalled = true
+        if let expectedEndedAlertChoice {
+            completion(expectedEndedAlertChoice)
+        }
+    }
+
+    var expectedIncomingAlertChoice: AlertChoice?
+    var presentIncomingSecurityDegradedAlertIsCalled = false
+    func presentIncomingSecurityDegradedAlert(for reason: CallDegradationReason, completion: @escaping (AlertChoice) -> Void) {
+        presentIncomingSecurityDegradedAlertIsCalled = true
+        if let expectedIncomingAlertChoice {
+            completion(expectedIncomingAlertChoice)
+        }
     }
 
     var presentUnsupportedVersionAlertIsCalled: Bool = false

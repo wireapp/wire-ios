@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -266,10 +266,12 @@ extension VoiceChannel {
         guard let degradationReason else { return .none }
 
         switch state {
-        case .incoming(video: _, shouldRing: _, degraded: true):
+        case .incoming(video: _, shouldRing: _, degraded: true), .answered(degraded: true):
             return .incoming(reason: degradationReason)
-        case .answered(degraded: true), .outgoing(degraded: true):
+        case .outgoing(degraded: true):
             return .outgoing(reason: degradationReason)
+        case .terminating(reason: .securityDegraded):
+            return .terminating(reason: degradationReason)
         default:
             return .none
         }
@@ -283,7 +285,7 @@ extension VoiceChannel {
         return HashBox(value: firstDegradedUser)
     }
 
-    private var degradationReason: CallDegradationReason? {
+    var degradationReason: CallDegradationReason? {
         guard let conversation else { return nil }
 
         switch conversation.messageProtocol {

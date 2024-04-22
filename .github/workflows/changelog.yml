@@ -1,0 +1,86 @@
+on:
+  workflow_call:
+    inputs:
+      is_cloud_build:
+        required: true
+        type: boolean
+        default: true
+    outputs:
+      changelog-url:
+        description: "The url of the changelog can be downloaded from"
+        value: ${{ jobs.changelog.outputs.changelog-url }}
+      changelog-name:
+        description: "The name of the changelog file"
+        value: ${{ jobs.changelog.outputs.changelog-name }}
+    
+
+env: # https://docs.fastlane.tools/getting-started/ios/setup/
+  LC_ALL: en_US.UTF-8
+  LANG: en_US.UTF-8     
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    outputs:
+      changelog-url: ${{ steps.expose-url.outputs.changelog }}
+      changelog-name: ${{ steps.expose-url.outputs.changelog-name }}
+    steps:
+      - name: 'Checkout Git repository with history for all branches and tags'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: 'Tag regex'
+        id: regex
+        run: |
+          if ${{ inputs.is_cloud_build }}; then
+            echo "regex='appstore/[0-9]+\.[0-9]+\.[0-9]*'" >> $GITHUB_ENV
+          else 
+            echo "regex='bk_build/[0-9]+\.[0-9]+\.[0-9]*'" >> $GITHUB_ENV
+          fi
+      - name: 'Calculate diff between HEAD and latest tag'
+        run: echo "HEAD_TAG_DIFF=$(git diff HEAD $(git tag | grep -E '${{ env.regex }}' | tail -n 1) | wc -l | xargs)" >> "$GITHUB_ENV"
+      
+      - name: 'Set current Git tag to HEAD'
+        if: "${{ env.HEAD_TAG_DIFF != '0' }}"
+        run: echo "CURRENT_TAG=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+      - name: 'Set previous Git tag to latest tag if comparing to head'
+        if: "${{ env.HEAD_TAG_DIFF != '0' }}"
+        run: echo "PREVIOUS_TAG=$(git tag | grep -E '${{ env.regex }}' | tail -n 1)" >> "$GITHUB_ENV"
+
+      - name: 'Set current Git tag to latest tagged commit'
+        if: "${{ env.HEAD_TAG_DIFF == '0' }}"
+        run: echo "CURRENT_TAG=$(git tag | grep -E '${{ env.regex }}' | tail -n 1)" >> "$GITHUB_ENV"
+      - name: 'Set previous Git tag previous tag because head is latest tag'
+        if: "${{ env.HEAD_TAG_DIFF == '0' }}"
+        run: echo "PREVIOUS_TAG=$(git tag | grep -E '${{ env.regex }}' | tail -n 2 | head -n 1)" >> "$GITHUB_ENV"
+
+      - name: 'Print environment variables'
+        run: |
+          echo -e "PREVIOUS_TAG = $PREVIOUS_TAG"
+          echo -e "CURRENT_TAG = $CURRENT_TAG"
+          echo -e "Node.js version = $(node --version)"
+
+      - name: 'Generate changelog'
+        run: |
+          echo "{}" > ./package.json
+          npx generate-changelog@1.8.0 -t "$PREVIOUS_TAG...$CURRENT_TAG"
+
+      - name: 'Set date variable'
+        id: date          
+        run: echo "date=$(date +%s%N)" >> $GITHUB_OUTPUT
+  
+      - name: 'Upload changelog'
+        id: upload-file
+        uses: actions/upload-artifact@v4
+        with:
+          name: CHANGELOG-${{ github.run_number }}-${{ steps.date.outputs.date }}.md
+          path: ./CHANGELOG.md
+          if-no-files-found: error
+          overwrite: true
+
+      - name: Expose url of changelog
+        id: expose-url
+        run: |
+          echo "changelog=${{ steps.upload-file.outputs.artifact-url }}" >> $GITHUB_OUTPUT
+          echo "changelog-name=CHANGELOG-${{ github.run_number }}-${{ steps.date.outputs.date }}.md" >> $GITHUB_OUTPUT
+

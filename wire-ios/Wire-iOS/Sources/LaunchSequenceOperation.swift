@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -191,11 +191,11 @@ extension AppCenterOperation: CrashesDelegate {
     }
 
     internal func crashes(_ crashes: Crashes, didSucceedSending errorReport: ErrorReport) {
-        zmLog.error("AppCenter: finished sending the crash report")
+        WireLogger.system.error("AppCenter: finished sending the crash report", attributes: .safePublic)
     }
 
     internal func crashes(_ crashes: Crashes, didFailSending errorReport: ErrorReport, withError error: Error?) {
-        zmLog.error("AppCenter: failed sending the crash report with error: \(String(describing: error?.localizedDescription))")
+        WireLogger.system.error("AppCenter: failed sending the crash report with error: \(String(describing: error?.localizedDescription))", attributes: .safePublic)
     }
 }
 #endif

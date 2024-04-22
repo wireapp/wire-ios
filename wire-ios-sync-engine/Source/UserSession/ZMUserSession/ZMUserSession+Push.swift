@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -124,13 +124,13 @@ extension ZMUserSession {
 extension ZMUserSession {
 
     public func receivedPushNotification(with payload: [AnyHashable: Any], completion: @escaping () -> Void) {
-        Logging.network.debug("Received push notification with payload: \(payload)")
+        WireLogger.notifications.debug("Received push notification with payload: \(payload)")
 
         syncManagedObjectContext.performGroupedBlock {
             let notAuthenticated = !self.isAuthenticated
 
             if notAuthenticated {
-                Logging.push.safePublic("Not displaying notification because app is not authenticated")
+                WireLogger.notifications.info("Not displaying notification because app is not authenticated", attributes: .safePublic)
                 completion()
                 return
             }
@@ -211,6 +211,8 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
                                     userInfo: NotificationUserInfo,
                                     userText: String? = nil,
                                     completionHandler: @escaping () -> Void) {
+        WireLogger.notifications.info("handling notification response with action id (\(actionIdentifier))")
+
         switch actionIdentifier {
         case CallNotificationAction.ignore.rawValue:
             ignoreCall(with: userInfo, completionHandler: completionHandler)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,6 +36,8 @@ public protocol ConversationLike: AnyObject {
     var allowServices: Bool { get }
 
     var isUnderLegalHold: Bool { get }
+
+    var isMLSConversationDegraded: Bool { get }
 
     func verifyLegalHoldSubjects()
 
@@ -85,5 +87,9 @@ extension ZMConversation: ConversationLike {
 
 	public var sortedServiceUsers: [UserType] {
 		return localParticipants.filter { $0.isServiceUser }.sorted(by: ZMConversation.userNameSorter)
+    }
+
+    public var isMLSConversationDegraded: Bool {
+        mlsVerificationStatus == .degraded
     }
 }

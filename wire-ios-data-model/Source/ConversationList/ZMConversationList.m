@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
 
 #import "NSManagedObjectContext+zmessaging.h"
 #import "ZMConversation+Internal.h"
@@ -91,9 +90,19 @@
         self.sortDescriptors = [ZMConversation defaultSortDescriptors];
         [self calculateKeysAffectingPredicateAndSort];
         [self createBackingList:conversations];
-        [moc.conversationListObserverCenter startObservingList:self];
+
+        [moc performBlockAndWait:^{
+            [moc.conversationListObserverCenter startObservingList:self];
+        }];
     }
     return self;
+}
+
+- (void)dealloc
+{
+    [self.moc performBlockAndWait:^{
+        [self.moc.conversationListObserverCenter removeConversationList:self];
+    }];
 }
 
 - (NSManagedObjectContext *)managedObjectContext
@@ -105,7 +114,10 @@
 {
     self.filteringPredicate = predicate;
     [self createBackingList:conversations];
-    [self.moc.conversationListObserverCenter startObservingList:self];
+
+    [self.moc performBlockAndWait:^{
+        [self.moc.conversationListObserverCenter startObservingList:self];
+    }];
 }
 
 - (void)calculateKeysAffectingPredicateAndSort;
@@ -124,11 +136,6 @@
 {
     NSArray *filtered = [conversations filteredArrayUsingPredicate:self.filteringPredicate];
     self.backingList = [[filtered sortedArrayUsingDescriptors:[ZMConversation defaultSortDescriptors]] mutableCopy];
-}
-
-- (void)dealloc
-{
-    [self.managedObjectContext.conversationListObserverCenter removeConversationList:self];
 }
 
 - (void)sortInsertConversation:(ZMConversation *)conversation

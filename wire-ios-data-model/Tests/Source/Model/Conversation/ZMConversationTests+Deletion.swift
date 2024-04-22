@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ class ZMConversationTests_Deletion: ZMConversationTestsBase {
         let fileMetadata = createFileMetadata()
         let message = try! sut.appendFile(with: fileMetadata)
         let cacheKey = FileAssetCache.cacheKeyForAsset(message)!
-        self.uiMOC.zm_fileAssetCache.storeAssetData(message, encrypted: false, data: Data.secureRandomData(ofLength: 100))
+        self.uiMOC.zm_fileAssetCache.storeOriginalFile(data: .secureRandomData(ofLength: 100), for: message)
         XCTAssertNotNil(uiMOC.zm_fileAssetCache.assetData(cacheKey))
 
         // WHEN

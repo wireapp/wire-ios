@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ class OptionalComparisonTests: XCTestCase {
         ]
 
         // then
-        operands.forEach { (lhs, rhs, expected) in
+        operands.forEach { lhs, rhs, expected in
             XCTAssertEqual(lhs > rhs, expected, "Comparison failed, expected \(String(describing: lhs)) to be greater than \(String(describing: rhs))")
             XCTAssertEqual(lhs < rhs, !expected, "Comparison failed, expected \(String(describing: lhs)) to be less than \(String(describing: rhs))")
         }

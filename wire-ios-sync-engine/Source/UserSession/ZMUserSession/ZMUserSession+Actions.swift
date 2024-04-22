@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -114,7 +114,7 @@ import Foundation
             return
         }
 
-        applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] (result) in
+        applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] result in
             guard let `self` = self else { return }
 
             self.messageReplyObserver = nil
@@ -194,7 +194,7 @@ import Foundation
             return
         }
 
-        applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] (result) in
+        applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] result in
             guard let `self` = self else { return }
 
             self.likeMesssageObserver = nil

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ private let UserClientIdentifierMinimumLength = 16
 extension Sequence where Element: UserClientType {
 
     func sortedByRelevance() -> [UserClientType] {
-        return sorted { (lhs, rhs) -> Bool in
+        return sorted { lhs, rhs -> Bool in
 
             if lhs.deviceClass == .legalHold {
                 return true

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -203,7 +203,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
         self.syncMOC.performGroupedBlockAndWait {
             selfClient = self.createSelfClient(onMOC: self.syncMOC)
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ (sessionsDirectory) in
+            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             })
 
@@ -276,7 +276,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
 
         self.syncMOC.performGroupedBlockAndWait {
             selfClient = self.createSelfClient(onMOC: self.syncMOC)
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ (sessionsDirectory) in
+            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             })
 

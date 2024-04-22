@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ final class DeletionDialogPresenter: NSObject {
                      sourceView: UIView?,
                      userSession: UserSession,
                      completion: ResultHandler? = nil) -> UIAlertController {
-        let alert = UIAlertController.forMessageDeletion(with: message.deletionConfiguration) { (action, alert) in
+        let alert = UIAlertController.forMessageDeletion(with: message.deletionConfiguration) { action, alert in
 
             // Tracking needs to be called before performing the action, since the content of the message is cleared
             if case .delete(let type) = action {

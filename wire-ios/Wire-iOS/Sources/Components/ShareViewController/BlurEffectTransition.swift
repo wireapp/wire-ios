@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,28 +57,28 @@ final class BlurEffectTransition: NSObject, UIViewControllerAnimatedTransitionin
 
         if reverse {
             UIView.animate(withDuration: 0.35, animations: {
-                self.crossfadingViews.forEach({ (view) in
+                self.crossfadingViews.forEach({ view in
                     view.alpha = 0
                 })
 
                 self.visualEffectView.effect = nil
-            }, completion: { (didComplete) in
+            }, completion: { didComplete in
                 self.visualEffectView.effect = visualEffect
                 transitionContext.completeTransition(didComplete)
             })
         } else {
             self.visualEffectView.effect = nil
-            self.crossfadingViews.forEach({ (view) in
+            self.crossfadingViews.forEach({ view in
                 view.alpha = 0
             })
 
             UIView.animate(withDuration: 0.35, animations: {
-                self.crossfadingViews.forEach({ (view) in
+                self.crossfadingViews.forEach({ view in
                     view.alpha = 1
                 })
 
                 self.visualEffectView.effect = visualEffect
-            }, completion: { (didComplete) in
+            }, completion: { didComplete in
                 transitionContext.completeTransition(didComplete)
             })
         }

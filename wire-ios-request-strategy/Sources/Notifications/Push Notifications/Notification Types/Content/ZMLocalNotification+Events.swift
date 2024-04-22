@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ public extension ZMLocalNotification {
 
         switch event.type {
         case .conversationOtrMessageAdd, .conversationMLSMessageAdd:
+            guard conversation?.isForcedReadOnly != true else { break }
             guard let message = GenericMessage(from: event) else { break }
             builderType = message.hasReaction ? ReactionEventNotificationBuilder.self : NewMessageNotificationBuilder.self
 

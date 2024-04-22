@@ -1,20 +1,20 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 import MobileCoreServices
@@ -26,7 +26,7 @@ private let zmLog = ZMSLog(tag: "UI")
 public final class FileMetaDataGenerator {
 
     public static func metadataForFileAtURL(_ url: URL, UTI uti: String, name: String, completion: @escaping (ZMFileMetadata) -> Void) {
-        SharedPreviewGenerator.generator.generatePreview(url, UTI: uti) { (preview) in
+        SharedPreviewGenerator.generator.generatePreview(url, UTI: uti) { preview in
             let thumbnail = preview != nil ? preview!.jpegData(compressionQuality: 0.9) : nil
 
             if AVURLAsset.wr_isAudioVisualUTI(uti) {
@@ -67,7 +67,7 @@ extension AVAsset {
         let reader: AVAssetReader
         do {
             reader = try AVAssetReader(asset: self)
-        } catch let error {
+        } catch {
             zmLog.error("Cannot read asset metadata for \(self): \(error)")
             return .none
         }

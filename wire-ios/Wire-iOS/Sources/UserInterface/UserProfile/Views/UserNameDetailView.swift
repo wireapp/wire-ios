@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -68,14 +68,14 @@ final class UserNameDetailViewModel: NSObject {
     }
 
     var secondSubtitle: NSAttributedString? {
-        guard nil != handleText else { return nil }
+        guard handleText != nil else { return nil }
         return correlationText
     }
 
     var firstAccessibilityIdentifier: String? {
-        if nil != handleText {
+        if handleText != nil {
             return "username"
-        } else if nil != correlationText {
+        } else if correlationText != nil {
             return "correlation"
         }
 
@@ -83,7 +83,7 @@ final class UserNameDetailViewModel: NSObject {
     }
 
     var secondAccessibilityIdentifier: String? {
-        guard nil != handleText && nil != correlationText else { return nil }
+        guard handleText != nil && correlationText != nil else { return nil }
         return "correlation"
     }
 

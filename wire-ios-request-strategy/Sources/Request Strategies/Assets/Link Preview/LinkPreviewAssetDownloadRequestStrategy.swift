@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ import Foundation
                 let genericMessage = message.underlyingMessage,
                 genericMessage.textData != nil,
                 let preview = genericMessage.linkPreviews.first,
-                !managedObjectContext.zm_fileAssetCache.hasMediumImageData(for: message)
+                !managedObjectContext.zm_fileAssetCache.hasImageData(for: message)
             else {
                 return false
             }

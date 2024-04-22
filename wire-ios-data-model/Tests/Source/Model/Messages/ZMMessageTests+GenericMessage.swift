@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ extension ZMMessageTests_GenericMessage {
 
         // then
         XCTAssertEqual(dataSet.count, 1)
-        dataSet.compactMap { $0 as? ZMGenericMessageData }.forEach { (messageData) in
+        dataSet.compactMap { $0 as? ZMGenericMessageData }.forEach { messageData in
             XCTAssertNil(messageData.managedObjectContext)
         }
         XCTAssertNil(message.managedObjectContext)
@@ -147,7 +147,7 @@ extension ZMMessageTests_GenericMessage {
 
         // then
         XCTAssertEqual(dataSet.count, 1)
-        dataSet.compactMap { $0 as? ZMGenericMessageData }.forEach { (messageData) in
+        dataSet.compactMap { $0 as? ZMGenericMessageData }.forEach { messageData in
             XCTAssertNil(messageData.managedObjectContext)
         }
         XCTAssertNil(message.managedObjectContext)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -114,7 +114,7 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
             navigationController?.setViewControllers([profileViewController], animated: true)
             resultHandled = true
         } else if isCompleted {
-            presentInvalidUserProfileLinkAlert(okActionHandler: { [weak self] (_) in
+            presentInvalidUserProfileLinkAlert(okActionHandler: { [weak self] _ in
                 self?.dismiss(animated: true)
             })
         }

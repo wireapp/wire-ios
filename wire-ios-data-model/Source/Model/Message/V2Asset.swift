@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -205,8 +205,7 @@ extension V2Asset: AssetProxyType {
                 return false
             }
 
-            return cache.hasDataOnDisk(assetClientMessage, encrypted: true)
-            || cache.hasDataOnDisk(assetClientMessage, encrypted: false)
+            return cache.hasFileData(for: assetClientMessage)
         }
     }
 
@@ -215,7 +214,7 @@ extension V2Asset: AssetProxyType {
             return nil
         }
 
-        if cache.hasDataOnDisk(assetClientMessage, encrypted: true) {
+        if cache.hasEncryptedFileData(for: assetClientMessage) {
             guard let asset = assetClientMessage.underlyingMessage?.assetData?.uploaded else {
                 return nil
             }
@@ -225,7 +224,7 @@ extension V2Asset: AssetProxyType {
                 encryptionKey: asset.otrKey,
                 sha256Digest: asset.sha256
             )
-        } else if cache.hasDataOnDisk(assetClientMessage, encrypted: false) {
+        } else if cache.hasOriginalFileData(for: assetClientMessage) {
             return cache.accessAssetURL(assetClientMessage)
         } else {
             return nil

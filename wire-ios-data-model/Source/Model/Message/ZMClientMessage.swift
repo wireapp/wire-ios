@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -201,16 +201,12 @@ public class ZMClientMessage: ZMOTRMessage {
         guard
             let textMessageData = self.textMessageData,
             textMessageData.linkPreview != nil,
-            let managedObjectContext = self.managedObjectContext else {
-                return false
+            let cache = managedObjectContext?.zm_fileAssetCache
+        else {
+            return false
         }
-        // processed or downloaded
-        let hasMedium = managedObjectContext.zm_fileAssetCache.hasDataOnDisk(self, format: ZMImageFormat.medium, encrypted: false)
 
-        // original
-        let hasOriginal = managedObjectContext.zm_fileAssetCache.hasDataOnDisk(self, format: ZMImageFormat.original, encrypted: false)
-
-        return hasMedium || hasOriginal
+        return cache.hasImageData(for: self)
     }
 }
 

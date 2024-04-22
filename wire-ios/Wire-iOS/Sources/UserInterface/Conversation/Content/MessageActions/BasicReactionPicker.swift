@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -106,7 +106,7 @@ private extension BasicReactionPicker {
 
         let button = UIButton()
         buttons.append(button)
-        let image = Asset.Images.addEmojis.image
+        let image = UIImage(resource: .addEmojis)
         button.setImage(image, for: .normal)
         button.addTarget(self, action: #selector(didTapMoreEmojis), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false

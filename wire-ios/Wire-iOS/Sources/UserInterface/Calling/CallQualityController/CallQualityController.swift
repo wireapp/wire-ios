@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -95,7 +95,11 @@ class CallQualityController: NSObject {
         switch reason {
         case .normal, .stillOngoing:
             handleCallSuccess(callStartDate: callStartDate, callEndDate: eventDate)
-        case .anweredElsewhere: break
+        case .answeredElsewhere:
+            break
+        case .securityDegraded:
+            // handled in CallController, ignore
+            break
         default:
             handleCallFailure()
         }

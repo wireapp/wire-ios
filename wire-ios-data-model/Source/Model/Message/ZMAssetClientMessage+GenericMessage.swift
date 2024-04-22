@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -128,7 +128,7 @@ extension ZMAssetClientMessage {
                     else { return nil }
                 return genericMessage
             case .placeholder:
-                return self.underlyingMessageMergedFromDataSet(filter: { (message) -> Bool in
+                return self.underlyingMessageMergedFromDataSet(filter: { message -> Bool in
                     guard let assetData = message.assetData else { return false }
                     guard case .notUploaded? = assetData.status else {
                         return assetData.hasOriginal
@@ -136,7 +136,7 @@ extension ZMAssetClientMessage {
                     return true
                 })
             case .thumbnail:
-                return self.underlyingMessageMergedFromDataSet(filter: { (message) -> Bool in
+                return self.underlyingMessageMergedFromDataSet(filter: { message -> Bool in
                     guard let assetData = message.assetData else { return false }
                     if let status = assetData.status {
                         guard case .notUploaded = status else { return false }

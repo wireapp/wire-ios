@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ extension UserType {
                                                imageCache: ImageCache<UIImage>,
                                                cacheKey: String,
                                                completion: @escaping ProfileImageCompletion) {
-        imageData(for: imageSize, queue: imageCache.processingQueue) { (imageData) in
+        imageData(for: imageSize, queue: imageCache.processingQueue) { imageData in
             guard let imageData = imageData else {
                 return DispatchQueue.main.async {
                     completion(nil, false)
@@ -127,8 +127,9 @@ extension UserType {
                 image = UIImage(data: imageData)?.decoded
             }
 
-            if isDesaturated {
-                image = image?.desaturatedImage(with: CIContext.shared)
+            if isDesaturated, image != nil {
+                let transformer = CoreImageBasedImageTransformer()
+                image = transformer.adjustInputSaturation(value: 0, image: image!)
             }
 
             if let image = image {

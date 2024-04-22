@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -244,7 +244,7 @@ extension LocalNotificationType {
         }
 
         let conversationName = conversation?.userDefinedName ?? ""
-        let senderName = sender?.name ?? ""
+        let senderName = sender?.name ?? "conversation.status.someone"
         var senderKey = self.senderKey(sender, conversation)
         var conversationTypeKey: String? = (conversation?.conversationType != .oneOnOne) ? GroupKey : OneOnOneKey
         let conversationKey = self.conversationKey(conversation)

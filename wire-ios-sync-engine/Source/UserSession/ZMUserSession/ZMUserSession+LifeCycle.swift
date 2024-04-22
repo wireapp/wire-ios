@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,18 +38,19 @@ extension ZMUserSession {
 
     @objc
     public func applicationDidEnterBackground(_ note: Notification?) {
-        notifyThirdPartyServices()
         stopEphemeralTimers()
         lockDatabase()
         recalculateUnreadMessages()
-        purgeTemporaryAssets()
 
+        do {
+            try purgeTemporaryAssets()
+        } catch {
+            WireLogger.assets.error("failed to purge temporary assets: \(error)")
+        }
     }
 
     @objc
     public func applicationWillEnterForeground(_ note: Notification?) {
-
-        hasNotifiedThirdPartyServices = false
 
         mergeChangesFromStoredSaveNotificationsIfNeeded()
         startEphemeralTimers()

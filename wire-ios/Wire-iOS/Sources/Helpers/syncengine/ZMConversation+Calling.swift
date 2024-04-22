@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ extension ZMConversation {
             return
         }
 
-        warnAboutSlowConnection { (abortCall) in
+        warnAboutSlowConnection { abortCall in
             guard !abortCall else { return }
             self.joinVoiceChannel(video: true)
         }
@@ -91,18 +91,26 @@ extension ZMConversation {
 
         typealias ErrorCallSlowCallLocale = L10n.Localizable.Error.Call
 
-        if NetworkConditionHelper.shared.qualityType() == .type2G {
+        guard let sessionManager = SessionManager.shared else {
+            assertionFailure("requires session manager to init NetworkConditionHelper!")
+            handler(false)
+            return
+        }
+
+        let networkInfo = NetworkInfo(serverConnection: sessionManager.environment.reachability)
+
+        if networkInfo.qualityType() == .type2G {
             let badConnectionController = UIAlertController(
                 title: ErrorCallSlowCallLocale.SlowConnection.title,
                 message: ErrorCallSlowCallLocale.slowConnection,
                 preferredStyle: .alert
             )
 
-            badConnectionController.addAction(UIAlertAction(title: ErrorCallSlowCallLocale.SlowConnection.callAnyway, style: .default, handler: { (_) in
+            badConnectionController.addAction(UIAlertAction(title: ErrorCallSlowCallLocale.SlowConnection.callAnyway, style: .default, handler: { _ in
                 handler(false)
             }))
 
-            badConnectionController.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel, handler: { (_) in
+            badConnectionController.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel, handler: { _ in
                 handler(true)
             }))
 

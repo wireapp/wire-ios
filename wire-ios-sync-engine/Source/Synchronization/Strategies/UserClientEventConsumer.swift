@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,38 +25,50 @@ import Foundation
 @objcMembers
 public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
 
-    let managedObjectContext: NSManagedObjectContext
-    let clientRegistrationStatus: ZMClientRegistrationStatus
-    let clientUpdateStatus: ClientUpdateStatus
+    private let managedObjectContext: NSManagedObjectContext
+    private let clientRegistrationStatus: ZMClientRegistrationStatus
+    private let clientUpdateStatus: ClientUpdateStatus
+    private let resolveOneOnOneConversations: ResolveOneOnOneConversationsUseCaseProtocol
 
-    public init (managedObjectContext: NSManagedObjectContext,
-                 clientRegistrationStatus: ZMClientRegistrationStatus,
-                 clientUpdateStatus: ClientUpdateStatus) {
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        clientRegistrationStatus: ZMClientRegistrationStatus,
+        clientUpdateStatus: ClientUpdateStatus,
+        resolveOneOnOneConversations: ResolveOneOnOneConversationsUseCaseProtocol
+    ) {
         self.managedObjectContext = managedObjectContext
         self.clientRegistrationStatus = clientRegistrationStatus
         self.clientUpdateStatus = clientUpdateStatus
-
+        self.resolveOneOnOneConversations = resolveOneOnOneConversations
         super.init()
     }
 
-    public func processEvents(_ events: [WireTransport.ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) async {
+    public func processEvents(
+        _ events: [ZMUpdateEvent],
+        liveEvents: Bool,
+        prefetchResult: ZMFetchRequestBatchResult?
+    ) async {
         for event in events {
-            await processUpdateEvent(event)
+            do {
+                try await processUpdateEvent(event)
+            } catch {
+                WireLogger.updateEvent.error("failed to process user client event: \(event.safeForLoggingDescription): \(error)", attributes: .safePublic)
+            }
         }
     }
 
-    fileprivate func processUpdateEvent(_ event: ZMUpdateEvent) async {
+    private func processUpdateEvent(_ event: ZMUpdateEvent) async throws {
         switch event.type {
         case .userClientAdd, .userClientRemove:
-            await processClientListUpdateEvent(event)
+            try await processClientListUpdateEvent(event)
         default:
             break
         }
     }
 
-    fileprivate func processClientListUpdateEvent(_ event: ZMUpdateEvent) async {
+    private func processClientListUpdateEvent(_ event: ZMUpdateEvent) async throws {
         guard let clientInfo = event.payload["client"] as? [String: AnyObject] else {
-            Logging.eventProcessing.error("Client info has unexpected payload")
+            WireLogger.updateEvent.error("Client info has unexpected payload")
             return
         }
 
@@ -70,24 +82,30 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
                     selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(clientSet)
                 }
             }
+
         case .userClientRemove:
-            let selfUser = await managedObjectContext.perform { ZMUser.selfUser(in: self.managedObjectContext) }
-            let selfClientId = await managedObjectContext.perform { selfUser.selfClient()?.remoteIdentifier }
+            guard let clientID = clientInfo["id"] as? String else {
+                return
+            }
 
-            guard let clientId = clientInfo["id"] as? String else { return }
+            let (clientToDelete, isSelfClient) = await managedObjectContext.perform {
+                let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
+                let client = selfUser.clients.first { $0.remoteIdentifier == clientID }
+                return (client, client?.isSelfClient())
+            }
 
-            if selfClientId != clientId {
-                let deletedClient = await managedObjectContext.perform {
-                    selfUser.clients.first { $0.remoteIdentifier == clientId }
-                }
-                await deletedClient?.deleteClientAndEndSession()
-            } else {
+            if isSelfClient == true {
                 await managedObjectContext.perform {
                     self.clientRegistrationStatus.didDetectCurrentClientDeletion()
                     self.clientUpdateStatus.didDetectCurrentClientDeletion()
                 }
+            } else {
+                await clientToDelete?.deleteClientAndEndSession()
+                try await resolveOneOnOneConversations.invoke()
             }
-        default: break
+
+        default:
+            break
         }
     }
 

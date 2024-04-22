@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,24 +19,29 @@
 import XCTest
 @testable import Wire
 
-class TeamMetadataRefresherTests: XCTestCase {
+final class TeamMetadataRefresherTests: XCTestCase {
 
     private var mockSelfUser: MockUserType!
 
+    private var mockSelfUserProvider: MockSelfUserProvider!
+
     override func setUp() {
         super.setUp()
-        SelfUser.provider = self
+
         mockSelfUser = .createSelfUser(name: "Alice", inTeam: UUID())
+        mockSelfUserProvider = MockSelfUserProvider(providedSelfUser: mockSelfUser)
     }
 
     override func tearDown() {
-        SelfUser.provider = nil
+        mockSelfUserProvider = nil
         mockSelfUser = nil
+
+        super.tearDown()
     }
 
     func test_it_does_not_crash_if_no_self_user() throws {
         // Given
-        let sut = TeamMetadataRefresher()
+        let sut = TeamMetadataRefresher(selfUserProvider: mockSelfUserProvider)
         SelfUser.provider = nil
 
         // When
@@ -47,7 +52,7 @@ class TeamMetadataRefresherTests: XCTestCase {
 
     func test_it_refreshes_for_a_team_member() {
         // Given
-        let sut = TeamMetadataRefresher()
+        let sut = TeamMetadataRefresher(selfUserProvider: mockSelfUserProvider)
 
         // Then
         XCTAssertEqual(mockSelfUser.refreshTeamDataCount, 0)
@@ -61,7 +66,7 @@ class TeamMetadataRefresherTests: XCTestCase {
 
     func test_it_does_not_refresh_for_non_team_member() {
         // Given
-        let sut = TeamMetadataRefresher()
+        let sut = TeamMetadataRefresher(selfUserProvider: mockSelfUserProvider)
         mockSelfUser.teamIdentifier = nil
 
         // Then
@@ -76,7 +81,7 @@ class TeamMetadataRefresherTests: XCTestCase {
 
     func test_it_refreshes_if_timeout_expired() {
         // Given
-        let sut = TeamMetadataRefresher(refreshInterval: 0.5)
+        let sut = TeamMetadataRefresher(refreshInterval: 0.5, selfUserProvider: mockSelfUserProvider)
 
         // Then
         XCTAssertEqual(mockSelfUser.refreshTeamDataCount, 0)
@@ -103,7 +108,7 @@ class TeamMetadataRefresherTests: XCTestCase {
 
     func test_it_does_not_refresh_if_timeout_not_expired() {
         // Given
-        let sut = TeamMetadataRefresher(refreshInterval: .oneMinute)
+        let sut = TeamMetadataRefresher(refreshInterval: .oneMinute, selfUserProvider: mockSelfUserProvider)
 
         // Then
         XCTAssertEqual(mockSelfUser.refreshTeamDataCount, 0)
@@ -123,12 +128,8 @@ class TeamMetadataRefresherTests: XCTestCase {
 
 }
 
-// MARK: - Self User Provider
+// MARK: - Mock Self User Provider
 
-extension TeamMetadataRefresherTests: SelfUserProvider {
-
-    var providedSelfUser: UserType & ZMEditableUser {
-        return mockSelfUser
-    }
-
+private struct MockSelfUserProvider: SelfUserProvider {
+    let providedSelfUser: UserType & ZMEditableUser
 }

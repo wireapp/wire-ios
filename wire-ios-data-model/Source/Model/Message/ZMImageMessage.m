@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import CoreGraphics;
 @import MobileCoreServices;
@@ -137,7 +136,7 @@
 
 - (BOOL)isDownloaded
 {
-    return [self.managedObjectContext.zm_fileAssetCache hasDataOnDisk:self format:ZMImageFormatMedium encrypted:NO] || [self.managedObjectContext.zm_fileAssetCache hasDataOnDisk:self format:ZMImageFormatOriginal encrypted:NO];
+    return [self.managedObjectContext.zm_fileAssetCache hasImageDataForMessage:self];
 }
 
 - (void)removeMessageClearingSender:(BOOL)clearingSender
@@ -199,7 +198,7 @@
 - (void)setImageData:(NSData *)imageData forFormat:(ZMImageFormat)format properties:(ZMIImageProperties * __unused)properties;
 {
     if (imageData == nil) {
-        [self.managedObjectContext.zm_fileAssetCache deleteAssetData:self format:format encrypted:NO];
+        return;
     }
     else {
         FileAssetCache *cache = self.managedObjectContext.zm_fileAssetCache;
@@ -223,11 +222,6 @@
                 break;
         }
     }
-}
-
-- (void)deleteImageDataForFormat:(ZMImageFormat)format;
-{
-    [self.managedObjectContext.zm_fileAssetCache deleteAssetData:self format:format encrypted:NO];
 }
 
 - (NSData *)imageDataForFormat:(ZMImageFormat)format
@@ -256,17 +250,31 @@
 
 - (void)setOriginalImageData:(NSData *)originalImageData
 {
-    [self setImageData:originalImageData forFormat:ZMImageFormatOriginal properties:nil];
+    if (originalImageData) {
+        [self setImageData:originalImageData forFormat:ZMImageFormatOriginal properties:nil];
+    } else {
+        [self.managedObjectContext.zm_fileAssetCache deleteOriginalImageDataFor:self];
+    }
+
 }
 
 - (void)setMediumData:(NSData *)mediumData
 {
-    [self setImageData:mediumData forFormat:ZMImageFormatMedium properties:nil];
+    if (mediumData) {
+        [self setImageData:mediumData forFormat:ZMImageFormatMedium properties:nil];
+    } else {
+        [self.managedObjectContext.zm_fileAssetCache deleteMediumImageDataFor:self];
+    }
+
 }
 
 - (void)setPreviewData:(NSData *)previewData
 {
-    [self setImageData:previewData forFormat:ZMImageFormatPreview properties:nil];
+    if (previewData) {
+        [self setImageData:previewData forFormat:ZMImageFormatPreview properties:nil];
+    } else {
+        [self.managedObjectContext.zm_fileAssetCache deletePreviewImageDataFor:self];
+    }
 }
 
 - (NSOrderedSet *)requiredImageFormats;
@@ -276,8 +284,8 @@
 
 - (void)processingDidFinish;
 {
-    [self deleteImageDataForFormat:ZMImageFormatOriginal];
-    
+    [self.managedObjectContext.zm_fileAssetCache deleteOriginalImageDataFor:self];
+
     self.originalDataProcessed = YES;
     [self.managedObjectContext enqueueDelayedSave];
 }

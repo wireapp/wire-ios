@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -583,8 +583,8 @@ extension ZMClientMessageTests_Deletion {
             XCTAssertNil(cache.encryptedMediumImageData(for: message))
             XCTAssertNil(cache.encryptedPreviewImageData(for: message))
 
-            XCTAssertNil(cache.assetData(message, encrypted: true))
-            XCTAssertNil(cache.assetData(message, encrypted: false))
+            XCTAssertNil(cache.encryptedFileData(for: message))
+            XCTAssertNil(cache.originalFileData(for: message))
 
         } else if let clientMessage = message as? ZMClientMessage {
             XCTAssertNil(clientMessage.underlyingMessage, line: line)

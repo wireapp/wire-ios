@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -378,18 +378,18 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
             case .configureDevicePermissions:
                 guard
-                    let session = ZMUserSession.shared(),
+                    let session: UserSession = ZMUserSession.shared(),
                     session.encryptMessagesAtRest
                 else {
                     eventResponderChain.handleEvent(ofType: .deviceConfigurationComplete)
                     return
                 }
 
-                session.appLockController.evaluateAuthentication(
+                session.evaluateAppLockAuthentication(
                     passcodePreference: .deviceOnly,
                     description: L10n.Localizable.Self.Settings.PrivacySecurity.LockApp.description
-                ) { [weak self] _, _  in
-                    DispatchQueue.main.performAsync {
+                ) { [weak self] _  in
+                    DispatchQueue.main.async {
                         self?.eventResponderChain.handleEvent(ofType: .deviceConfigurationComplete)
                     }
                 }

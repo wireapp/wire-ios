@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -55,7 +55,11 @@ final class MessageSendingStatusPayloadProcessor {
             await deletedClient.deleteClientAndEndSession()
         }
 
-        let newMissingClients = await missingClients.flatMap(\.value).asyncFilter { await $0.hasSessionWithSelfClient == false }
+        var newMissingClients = [UserClient]()
+        for missingClient in missingClients.flatMap(\.value) {
+            guard await !missingClient.hasSessionWithSelfClient else { continue }
+            newMissingClients.append(missingClient)
+        }
 
         await context.perform {
             if !redundantUsers.isEmpty {

@@ -1,20 +1,20 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 import WireDataModel
@@ -39,6 +39,13 @@ extension ConversationInputBarViewController {
             return
         }
 
+        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+            self.recordAudio()
+        }
+        checker.performAction()
+    }
+
+    private func recordAudio() {
         if displayAudioMessageAlertIfNeeded() {
             return
         }
@@ -131,7 +138,7 @@ extension ConversationInputBarViewController {
     }
 
     fileprivate func requestMicrophoneAccess() {
-        UIApplication.wr_requestOrWarnAboutMicrophoneAccess { (granted) in
+        UIApplication.wr_requestOrWarnAboutMicrophoneAccess { granted in
             guard granted else { return }
         }
     }
@@ -207,9 +214,12 @@ extension ConversationInputBarViewController: AudioRecordViewControllerDelegate 
 
     func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType) {
 
-        uploadFile(at: recordingURL as URL)
+        let checker = E2EIPrivacyWarningChecker(conversation: self.conversation) { [weak self] in
+            self?.uploadFile(at: recordingURL as URL)
 
-        self.hideAudioRecordViewController()
+            self?.hideAudioRecordViewController()
+        }
+        checker.performAction()
     }
 
 }
@@ -230,7 +240,7 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
         default: break
         }
 
-        if 0 == callCountWhileCameraKeyboardWasVisible, wasRecordingBeforeCall {
+        if callCountWhileCameraKeyboardWasVisible == 0, wasRecordingBeforeCall {
             displayRecordKeyboard() // -> show the audio record keyboard again
         }
     }

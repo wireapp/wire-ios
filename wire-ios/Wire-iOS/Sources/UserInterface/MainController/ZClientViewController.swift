@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import UIKit
 import WireSyncEngine
-import avs
 import WireCommonComponents
 
 final class ZClientViewController: UIViewController {
@@ -39,7 +39,7 @@ final class ZClientViewController: UIViewController {
     var proximityMonitorManager: ProximityMonitorManager?
     var legalHoldDisclosureController: LegalHoldDisclosureController?
 
-    var userObserverToken: Any?
+    var userObserverToken: NSObjectProtocol?
     var conferenceCallingUnavailableObserverToken: Any?
 
     private let topOverlayContainer: UIView = UIView()
@@ -48,7 +48,6 @@ final class ZClientViewController: UIViewController {
     private var contentTopCompactConstraint: NSLayoutConstraint!
     // init value = false which set to true, set to false after data usage permission dialog is displayed
     var dataUsagePermissionDialogDisplayed = false
-    let backgroundViewController: BackgroundViewController
 
     private let colorSchemeController: ColorSchemeController
     private var incomingApnsObserver: Any?
@@ -62,17 +61,14 @@ final class ZClientViewController: UIViewController {
     ) {
         self.userSession = userSession
 
-        backgroundViewController = BackgroundViewController(
-            user: userSession.selfUser,
-            userSession: userSession as? ZMUserSession
-        )
-        conversationListViewController = ConversationListViewController(
+        conversationListViewController = .init(
             account: account,
-            selfUser: userSession.selfLegalHoldSubject,
+            selfUser: userSession.selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
-        colorSchemeController = ColorSchemeController(userSession: userSession)
+
+        colorSchemeController = .init(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -99,7 +95,7 @@ final class ZClientViewController: UIViewController {
 
         NotificationCenter.default.addObserver(self, selector: #selector(contentSizeCategoryDidChange(_:)), name: UIContentSizeCategory.didChangeNotification, object: nil)
 
-        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] (note) in
+        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] note in
             guard let change = note.object as? FeatureRepository.FeatureChange else { return }
 
             switch change {
@@ -172,8 +168,7 @@ final class ZClientViewController: UIViewController {
         updateSplitViewTopConstraint()
 
         wireSplitViewController.view.backgroundColor = .clear
-
-        createBackgroundViewController()
+        wireSplitViewController.leftViewController = conversationListViewController
 
         if pendingInitialStateRestore {
             restoreStartupState()
@@ -213,16 +208,7 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
-        conversationListViewController.delegate?.didChangeTab(with: .startUI)
-    }
-
-    private func createBackgroundViewController() {
-        backgroundViewController.addToSelf(conversationListViewController)
-
-        conversationListViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        conversationListViewController.view.frame = backgroundViewController.view.bounds
-
-        wireSplitViewController.leftViewController = backgroundViewController
+        conversationListViewController.presentPeoplePicker()
     }
 
     // MARK: Status bar
@@ -347,7 +333,7 @@ final class ZClientViewController: UIViewController {
         currentConversation = nil
 
         let inbox = ConnectRequestsViewController(userSession: userSession)
-        pushContentViewController(inbox.wrapInNavigationController(setBackgroundColor: true), focusOnView: focus, animated: animated)
+        pushContentViewController(inbox.wrapInNavigationController(), focusOnView: focus, animated: animated)
     }
 
     /// Open the user clients detail screen
@@ -359,7 +345,7 @@ final class ZClientViewController: UIViewController {
             userSession: userSession,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
-        let navController = controller.wrapInNavigationController(setBackgroundColor: true)
+        let navController = controller.wrapInNavigationController()
         navController.modalPresentationStyle = .formSheet
 
         present(navController, animated: true)
@@ -384,7 +370,7 @@ final class ZClientViewController: UIViewController {
                 // we have to restore the proper pre-presentation state here.
                 let conversationView = self.conversationListViewController.view
                 if let transform = conversationView?.layer.transform {
-                    if !CATransform3DIsIdentity(transform) || 1 != conversationView?.alpha {
+                    if !CATransform3DIsIdentity(transform) || conversationView?.alpha != 1 {
                         conversationView?.layer.transform = CATransform3DIdentity
                         conversationView?.alpha = 1
                     }
@@ -599,7 +585,7 @@ final class ZClientViewController: UIViewController {
 
     private func createLegalHoldDisclosureController() {
         legalHoldDisclosureController = LegalHoldDisclosureController(
-            selfUser: userSession.selfLegalHoldSubject,
+            selfUser: userSession.selfUser,
             userSession: userSession,
             presenter: { viewController, animated, completion in
                 viewController.presentTopmost(animated: animated, completion: completion)
@@ -632,7 +618,7 @@ final class ZClientViewController: UIViewController {
 
         let isRegularContainer = traitCollection.horizontalSizeClass == .regular
 
-        if isRegularContainer && nil == topOverlayViewController {
+        if isRegularContainer && topOverlayViewController == nil {
             contentTopCompactConstraint.isActive = false
             contentTopRegularConstraint.isActive = true
         } else {
@@ -669,7 +655,7 @@ final class ZClientViewController: UIViewController {
             viewController = profileViewController
         }
 
-        let navWrapperController: UINavigationController? = viewController?.wrapInNavigationController(setBackgroundColor: true)
+        let navWrapperController: UINavigationController? = viewController?.wrapInNavigationController()
         navWrapperController?.modalPresentationStyle = .formSheet
         if let aController = navWrapperController {
             present(aController, animated: true)

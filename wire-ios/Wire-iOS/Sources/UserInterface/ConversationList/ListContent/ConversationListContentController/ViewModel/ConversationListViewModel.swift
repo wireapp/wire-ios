@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -676,7 +677,7 @@ final class ConversationListViewModel: NSObject {
               let persistentDirectory = ConversationListViewModel.persistentDirectory,
               let directoryURL = URL.directoryURL(persistentDirectory) else { return }
 
-        FileManager.default.createAndProtectDirectory(at: directoryURL)
+        try! FileManager.default.createAndProtectDirectory(at: directoryURL)
 
         do {
             try jsonString.write(to: directoryURL.appendingPathComponent(ConversationListViewModel.persistentFilename), atomically: true, encoding: .utf8)

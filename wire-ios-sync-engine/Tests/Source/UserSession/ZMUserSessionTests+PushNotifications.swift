@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -229,11 +229,7 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         try await uiMOC.perform {
             var genericMessage = try XCTUnwrap(originalMessage.underlyingMessage)
             genericMessage.setExpectsReadConfirmation(true)
-            do {
-                try originalMessage.setUnderlyingMessage(genericMessage)
-            } catch {
-                XCTFail("Error in adding data: \(error)")
-            }
+            try originalMessage.setUnderlyingMessage(genericMessage)
         }
 
         // when
@@ -260,11 +256,7 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = true
         var genericMessage = originalMessage.underlyingMessage!
         genericMessage.setExpectsReadConfirmation(true)
-        do {
-            try originalMessage.setUnderlyingMessage(genericMessage)
-        } catch {
-            XCTFail("Error in adding data: \(error)")
-        }
+        try originalMessage.setUnderlyingMessage(genericMessage)
 
         // when
         handle(conversationAction: .like, category: .conversation, userInfo: userInfo)

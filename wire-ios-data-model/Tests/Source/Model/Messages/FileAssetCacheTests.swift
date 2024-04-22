@@ -1,20 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import XCTest
 import WireDataModelSupport
@@ -85,21 +85,21 @@ class FileAssetCacheTests: XCTestCase {
         let data1_enc = "data1_enc".data(using: String.Encoding.utf8)!
         let data2_enc = "data2_enc".data(using: String.Encoding.utf8)!
 
-        sut.storeAssetData(message1, encrypted: true, data: data1_enc)
-        sut.storeAssetData(message2, encrypted: true, data: data2_enc)
-        sut.storeAssetData(message1, encrypted: false, data: data1_plain)
-        sut.storeAssetData(message2, encrypted: false, data: data2_plain)
+        sut.storeEncryptedFile(data: data1_enc, for: message1)
+        sut.storeEncryptedFile(data: data2_enc, for: message2)
+        sut.storeOriginalFile(data: data1_plain, for: message1)
+        sut.storeOriginalFile(data: data2_plain, for: message2)
 
         // then
-        XCTAssertEqual(sut.assetData(message1, encrypted: false), data1_plain)
-        XCTAssertEqual(sut.assetData(message2, encrypted: false), data2_plain)
-        XCTAssertEqual(sut.assetData(message1, encrypted: true), data1_enc)
-        XCTAssertEqual(sut.assetData(message2, encrypted: true), data2_enc)
+        XCTAssertEqual(sut.originalFileData(for: message1), data1_plain)
+        XCTAssertEqual(sut.originalFileData(for: message2), data2_plain)
+        XCTAssertEqual(sut.encryptedFileData(for: message1), data1_enc)
+        XCTAssertEqual(sut.encryptedFileData(for: message2), data2_enc)
 
-        XCTAssertTrue(sut.hasDataOnDisk(message1, encrypted: false))
-        XCTAssertTrue(sut.hasDataOnDisk(message2, encrypted: false))
-        XCTAssertTrue(sut.hasDataOnDisk(message1, encrypted: true))
-        XCTAssertTrue(sut.hasDataOnDisk(message2, encrypted: true))
+        XCTAssertTrue(sut.hasOriginalFileData(for: message1))
+        XCTAssertTrue(sut.hasOriginalFileData(for: message2))
+        XCTAssertTrue(sut.hasEncryptedFileData(for: message1))
+        XCTAssertTrue(sut.hasEncryptedFileData(for: message2))
     }
 
     func testThatCreationDateIsLinkedToMessageServerTimestamp() throws {
@@ -108,7 +108,7 @@ class FileAssetCacheTests: XCTestCase {
         message.serverTimestamp = Date(timeIntervalSinceReferenceDate: 1000)
 
         // when
-        sut.storeAssetData(message, encrypted: false, data: "data1_plain".data(using: String.Encoding.utf8)!)
+        sut.storeOriginalFile(data: "data1_plain".data(using: String.Encoding.utf8)!, for: message)
 
         // then
         let url = try XCTUnwrap(sut.accessAssetURL(message))
@@ -121,10 +121,10 @@ class FileAssetCacheTests: XCTestCase {
 
         // given
         let message = createMessageForCaching()
-        sut.storeAssetData(message, encrypted: false, data: testData())
+        sut.storeOriginalFile(data: testData(), for: message)
 
         // when
-        let data = sut.hasDataOnDisk(message, encrypted: false)
+        let data = sut.hasOriginalFileData(for: message)
 
         // then
         XCTAssertTrue(data)
@@ -134,10 +134,10 @@ class FileAssetCacheTests: XCTestCase {
 
         // given
         let message = createMessageForCaching()
-        sut.storeAssetData(message, encrypted: false, data: testData())
+        sut.storeOriginalFile(data: testData(), for: message)
 
         // when
-        let data = sut.hasDataOnDisk(message, encrypted: true)
+        let data = sut.hasEncryptedFileData(for: message)
 
         // then
         XCTAssertFalse(data)
@@ -148,10 +148,10 @@ class FileAssetCacheTests: XCTestCase {
         // given
         let message1 = createMessageForCaching()
         let message2 = createMessageForCaching()
-        sut.storeAssetData(message1, encrypted: false, data: testData())
+        sut.storeOriginalFile(data: testData(), for: message1)
 
         // when
-        let data = sut.assetData(message2, encrypted: false)
+        let data = sut.originalFileData(for: message2)
 
         // then
         XCTAssertNil(data)
@@ -162,10 +162,10 @@ class FileAssetCacheTests: XCTestCase {
         // given
         let message1 = createMessageForCaching()
         let message2 = createMessageForCaching()
-        sut.storeAssetData(message1, encrypted: false, data: testData())
+        sut.storeOriginalFile(data: testData(), for: message1)
 
         // when
-        let data = sut.hasDataOnDisk(message2, encrypted: false)
+        let data = sut.hasOriginalFileData(for: message2)
 
         // then
         XCTAssertFalse(data)
@@ -175,11 +175,11 @@ class FileAssetCacheTests: XCTestCase {
         // given
         let message = createMessageForCaching()
         let data = testData()
-        sut.storeAssetData(message, encrypted: false, data: data)
+        sut.storeOriginalFile(data: data, for: message)
 
         // when
         let newSUT = FileAssetCache(location: location)
-        let extractedData = newSUT.assetData(message, encrypted: false)
+        let extractedData = newSUT.originalFileData(for: message)
 
         // then
         XCTAssertEqual(extractedData, data)
@@ -190,11 +190,11 @@ class FileAssetCacheTests: XCTestCase {
         // given
         let message = createMessageForCaching()
         let data = testData()
-        sut.storeAssetData(message, encrypted: false, data: data)
+        sut.storeOriginalFile(data: data, for: message)
 
         // when
-        sut.deleteAssetData(message, encrypted: false)
-        let extractedData = sut.assetData(message, encrypted: false)
+        sut.deleteOriginalFileData(for: message)
+        let extractedData = sut.originalImageData(for: message)
 
         // then
         XCTAssertNil(extractedData)
@@ -206,14 +206,14 @@ class FileAssetCacheTests: XCTestCase {
         let message1 = createMessageForCaching()
         let message2 = createMessageForCaching()
         let data = testData()
-        sut.storeAssetData(message1, encrypted: true, data: data)
-        sut.storeAssetData(message1, encrypted: false, data: data)
+        sut.storeEncryptedFile(data: data, for: message1)
+        sut.storeOriginalFile(data: data, for: message1)
 
         // when
-        sut.deleteAssetData(message1, encrypted: false) // this one exists
-        sut.deleteAssetData(message2, encrypted: false) // this one doesn't exist
-        let expectedNilData = sut.assetData(message1, encrypted: false)
-        let expectedNotNilData = sut.assetData(message1, encrypted: true)
+        sut.deleteOriginalFileData(for: message1) // this one exists
+        sut.deleteOriginalFileData(for: message2) // this one doesn't exist
+        let expectedNilData = sut.originalFileData(for: message1)
+        let expectedNotNilData = sut.encryptedFileData(for: message1)
 
         // then
         XCTAssertNil(expectedNilData)
@@ -223,25 +223,25 @@ class FileAssetCacheTests: XCTestCase {
     func testThatItDeletesAssets_WhenAssetIsOlderThanGivenDate() {
         let message = createMessageForCaching()
         let data = testData()
-        sut.storeAssetData(message, encrypted: false, data: data)
+        sut.storeOriginalFile(data: data, for: message)
 
         // when
         sut.deleteAssetsOlderThan(Date())
 
         // then
-        XCTAssertNil(sut.assetData(message, encrypted: false))
+        XCTAssertNil(sut.originalFileData(for: message))
     }
 
     func testThatItKeepsAssets_WhenAssetIsNewerThanGivenDate() {
         let message = createMessageForCaching()
         let data = testData()
-        sut.storeAssetData(message, encrypted: false, data: data)
+        sut.storeOriginalFile(data: data, for: message)
 
         // when
         sut.deleteAssetsOlderThan(Date.distantPast)
 
         // then
-        XCTAssertNotNil(sut.assetData(message, encrypted: false))
+        XCTAssertNotNil(sut.originalFileData(for: message))
     }
 
     func testThatItDoesNotDecryptAFileThatDoesNotExistSHA256() {
@@ -321,7 +321,7 @@ class FileAssetCacheTests: XCTestCase {
 
         // then
         AssertOptionalNil(result)
-        XCTAssertNil(sut.assetData(message, encrypted: true))
+        XCTAssertNil(sut.encryptedFileData(for: message))
     }
 
     func testThatItCreatesTheEncryptedFileAndDeletesThePlainTextWithSHA256() {
@@ -330,14 +330,14 @@ class FileAssetCacheTests: XCTestCase {
         let message = createMessageForCaching()
         let plainData = Data.secureRandomData(ofLength: 500)
 
-        sut.storeAssetData(message, encrypted: false, data: plainData)
+        sut.storeOriginalFile(data: plainData, for: message)
 
         // when
         _ = sut.encryptFileAndComputeSHA256Digest(message)
 
         // then
-        XCTAssertNotNil(sut.assetData(message, encrypted: true))
-        XCTAssertNil(sut.assetData(message, encrypted: false))
+        XCTAssertNotNil(sut.encryptedFileData(for: message))
+        XCTAssertNil(sut.originalFileData(for: message))
     }
 
     func testThatItReturnsCorrectEncryptionResultWithSHA256() {
@@ -345,13 +345,13 @@ class FileAssetCacheTests: XCTestCase {
         let message = createMessageForCaching()
         let plainData = Data.secureRandomData(ofLength: 500)
 
-        sut.storeAssetData(message, encrypted: false, data: plainData)
+        sut.storeOriginalFile(data: plainData, for: message)
 
         // when
         let result = sut.encryptFileAndComputeSHA256Digest(message)
 
         // then
-        let encryptedData = sut.assetData(message, encrypted: true)
+        let encryptedData = sut.encryptedFileData(for: message)
         AssertOptionalNotNil(result, "Result") { result in
             AssertOptionalNotNil(encryptedData, "Encrypted data") { encryptedData in
                 let decodedData = encryptedData.zmDecryptPrefixedPlainTextIV(key: result.otrKey)
@@ -374,7 +374,7 @@ class FileAssetCacheTests: XCTestCase {
 
         // then
         AssertOptionalNil(result)
-        XCTAssertNil(sut.assetData(message, encrypted: true))
+        XCTAssertNil(sut.encryptedFileData(for: message))
     }
 
     func testThatItCreatesTheEncryptedImageAndDeletesThePlainTextWithSHA256() {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ enum CallDegradationState: Equatable {
     case none
     case incoming(reason: CallDegradationReason)
     case outgoing(reason: CallDegradationReason)
+    case terminating(reason: CallDegradationReason)
 }
 
 protocol CallDegradationControllerDelegate: AnyObject {
@@ -59,15 +60,19 @@ final class CallDegradationController: UIViewController {
         case .outgoing(reason: let degradationReason):
             switch degradationReason {
             case .invalidCertificate:
-                visibleAlertController = UIAlertController.degradedMLSConference(confirmationBlock: { [weak self] (continueDegradedCall) in
+                visibleAlertController = UIAlertController.makeOutgoingDegradedMLSCall { [weak self] continueDegradedCall in
                     continueDegradedCall ? self?.delegate?.continueDegradedCall() : self?.delegate?.cancelDegradedCall()
-                })
+                }
             case .degradedUser(user: let degradeduser):
-                visibleAlertController = UIAlertController.degradedCall(degradedUser: degradeduser?.value, confirmationBlock: { [weak self] (continueDegradedCall) in
-                    continueDegradedCall ? self?.delegate?.continueDegradedCall() : self?.delegate?.cancelDegradedCall()
-                })
+                visibleAlertController = UIAlertController.makeDegradedProteusCall(degradedUser: degradeduser?.value) { [weak self] continueDegradedCall in
+                    if continueDegradedCall {
+                        self?.delegate?.continueDegradedCall()
+                    } else {
+                        self?.delegate?.cancelDegradedCall()
+                    }
+                }
             }
-        case .none, .incoming:
+        case .none, .incoming, .terminating:
             return
         }
         presentAlertIfNeeded()
