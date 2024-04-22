@@ -16,5 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extern int16_t const ZMAccentColorMin;
-extern int16_t const ZMAccentColorMax;
+#import <Foundation/Foundation.h>
+#import <WireUtilities/WireUtilities-Swift.h>
+#import "ZMAccentColor.h"
+
+int16_t const ZMAccentColorMin = ZMAccentColorStrongBlue;
+int16_t const ZMAccentColorMax = ZMAccentColorViolet;

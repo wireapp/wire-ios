@@ -16,5 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extern int16_t const ZMAccentColorMin;
-extern int16_t const ZMAccentColorMax;
+@objc(ZMAccentColor)
+public enum AccentColor: Int16, CaseIterable, Hashable {
+    case undefined
+    case strongBlue
+    case strongLimeGreen
+    case brightYellow
+    case vividRed
+    case brightOrange
+    case softPink
+    case violet
+}
+
+extension AccentColor {
+    @nonobjc
+    static var minRawValue = ZMAccentColorMin
+    @nonobjc
+    static var maxRawValue = ZMAccentColorMax
+}

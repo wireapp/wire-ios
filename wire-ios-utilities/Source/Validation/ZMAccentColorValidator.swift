@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
 @objc public final class ZMAccentColorValidator: NSObject, ZMPropertyValidator {
 
@@ -32,15 +32,14 @@ import UIKit
         let value = ioValue as? Int16
 
         if value == nil ||
-            value < ZMAccentColor.min.rawValue ||
-            ZMAccentColor.max.rawValue < value {
-            let color = ZMAccentColor(rawValue:
-                ZMAccentColor.min.rawValue +
-                    Int16(arc4random_uniform(UInt32(ZMAccentColor.max.rawValue - ZMAccentColor.min.rawValue)))) // swiftlint:disable:this legacy_random
+            value < AccentColor.minRawValue ||
+            AccentColor.maxRawValue < value {
+            let color = AccentColor(rawValue:
+                AccentColor.minRawValue +
+                    Int16(arc4random_uniform(UInt32(AccentColor.maxRawValue - AccentColor.minRawValue)))) // swiftlint:disable:this legacy_random
             ioValue = NSNumber(value: color?.rawValue ?? 0)
         }
 
         return true
     }
-
 }

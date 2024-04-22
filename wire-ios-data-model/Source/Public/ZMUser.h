@@ -17,6 +17,7 @@
 //
 
 #import "ZMManagedObject.h"
+#import <WireUtilities/WireUtilities-Swift.h>
 #import <WireUtilities/ZMAccentColor.h>
 
 @class ZMConversation;
