@@ -148,18 +148,4 @@ public extension ZMUser {
         return ZMPropertyNormalizationResult<NSString>(result: result, normalizedValue: verificationCode as NSString? ?? "", validationError: outError)
     }
 
-    @objc static func normalizePhoneNumber(_ phoneNumber: String) -> ZMPropertyNormalizationResult<NSString> {
-        var phoneNumber: String? = phoneNumber
-        var outError: Error?
-        var result: Bool = false
-
-        do {
-            result = try ZMUser.validate(phoneNumber: &phoneNumber)
-        } catch {
-            outError = error
-        }
-
-        return ZMPropertyNormalizationResult<NSString>(result: result, normalizedValue: phoneNumber as NSString? ?? "", validationError: outError)
-    }
-
 }
