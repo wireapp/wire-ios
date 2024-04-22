@@ -119,7 +119,7 @@ final class AppStateCalculator {
 
         self.appState = appState
         self.pendingAppState = nil
-        ZMSLog(tag: "AppState").debug("transitioning to app state: \(appState)")
+        WireLogger.appState.debug("transitioning to app state: \(appState)")
         delegate?.appStateCalculator(self, didCalculate: appState, completion: {
             completion?()
         })
@@ -261,7 +261,7 @@ extension AppStateCalculator: AuthenticationCoordinatorDelegate {
 
 extension AppStateCalculator {
     // NOTA BENE: THIS MUST BE USED JUST FOR TESTING PURPOSE
-    public func testHelper_setAppState(_ appState: AppState) {
+    func testHelper_setAppState(_ appState: AppState) {
         self.appState = appState
         transition(to: appState)
     }

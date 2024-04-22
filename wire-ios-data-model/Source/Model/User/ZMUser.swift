@@ -326,9 +326,9 @@ extension ZMUser {
         managedObjectContext?.zm_userImageCache?.userImage(self, size: size, queue: queue, completion: completion)
     }
 
-    @objc(imageDataforSize:)
+    @objc
     public func imageData(for size: ProfileImageSize) -> Data? {
-        return managedObjectContext?.zm_userImageCache?.userImage(self, size: size)
+        managedObjectContext?.zm_userImageCache?.userImage(self, size: size)
     }
 
     public static var previewImageDownloadFilter: NSPredicate {

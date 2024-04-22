@@ -274,6 +274,32 @@ class MockDeviceDetailsViewActions: DeviceDetailsViewActions {
 
 }
 
+class MockImageTransformer: ImageTransformer {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - adjustInputSaturation
+
+    var adjustInputSaturationValueImage_Invocations: [(value: CGFloat, image: UIImage)] = []
+    var adjustInputSaturationValueImage_MockMethod: ((CGFloat, UIImage) -> UIImage?)?
+    var adjustInputSaturationValueImage_MockValue: UIImage??
+
+    func adjustInputSaturation(value: CGFloat, image: UIImage) -> UIImage? {
+        adjustInputSaturationValueImage_Invocations.append((value: value, image: image))
+
+        if let mock = adjustInputSaturationValueImage_MockMethod {
+            return mock(value, image)
+        } else if let mock = adjustInputSaturationValueImage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `adjustInputSaturationValueImage`")
+        }
+    }
+
+}
+
 // swiftlint:enable variable_name
 // swiftlint:enable line_length
 // swiftlint:enable vertical_whitespace

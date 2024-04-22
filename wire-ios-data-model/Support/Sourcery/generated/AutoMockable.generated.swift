@@ -5109,6 +5109,35 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
 }
 
+public class MockProteusToMLSMigrationCoordinating: ProteusToMLSMigrationCoordinating {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - updateMigrationStatus
+
+    public var updateMigrationStatus_Invocations: [Void] = []
+    public var updateMigrationStatus_MockError: Error?
+    public var updateMigrationStatus_MockMethod: (() async throws -> Void)?
+
+    public func updateMigrationStatus() async throws {
+        updateMigrationStatus_Invocations.append(())
+
+        if let error = updateMigrationStatus_MockError {
+            throw error
+        }
+
+        guard let mock = updateMigrationStatus_MockMethod else {
+            fatalError("no mock for `updateMigrationStatus`")
+        }
+
+        try await mock()
+    }
+
+}
+
 class MockProteusToMLSMigrationStorageInterface: ProteusToMLSMigrationStorageInterface {
 
     // MARK: - Life cycle
@@ -5253,6 +5282,30 @@ public class MockUpdateMLSGroupVerificationStatusUseCaseProtocol: UpdateMLSGroup
         }
 
         try await mock(conversation, groupID)
+    }
+
+}
+
+public class MockUserObserving: UserObserving {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - userDidChange
+
+    public var userDidChange_Invocations: [UserChangeInfo] = []
+    public var userDidChange_MockMethod: ((UserChangeInfo) -> Void)?
+
+    public func userDidChange(_ changeInfo: UserChangeInfo) {
+        userDidChange_Invocations.append(changeInfo)
+
+        guard let mock = userDidChange_MockMethod else {
+            fatalError("no mock for `userDidChange`")
+        }
+
+        mock(changeInfo)
     }
 
 }

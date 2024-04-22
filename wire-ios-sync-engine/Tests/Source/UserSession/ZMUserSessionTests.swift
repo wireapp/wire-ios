@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModelSupport
 import WireSyncEngine
+@testable import WireSyncEngineSupport
 
 final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
@@ -472,6 +473,8 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
             XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
             XCTAssertFalse(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
+
+            XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
         }
     }
 }

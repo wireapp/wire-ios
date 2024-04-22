@@ -24,7 +24,7 @@ final class NetworkConditionIndicatorView: UIView, RoundedViewProtocol {
 
     private let label = UILabel()
 
-    public override class var layerClass: AnyClass {
+    override class var layerClass: AnyClass {
         return ContinuousMaskLayer.self
     }
 

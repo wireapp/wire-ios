@@ -17,9 +17,10 @@
 //
 
 import WireDataModelSupport
-import WireSyncEngineSupport
 import WireRequestStrategySupport
 import Combine
+@testable import WireSyncEngine
+@testable import WireSyncEngineSupport
 
 class ZMUserSessionTestsBase: MessagingTest {
 
@@ -38,6 +39,7 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mockUseCaseFactory: MockUseCaseFactoryProtocol!
     var mockResolveOneOnOneConversationUseCase: MockResolveOneOnOneConversationsUseCaseProtocol!
     var mockGetFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
+    var mockRecurringActionService: MockRecurringActionServiceInterface!
 
     var sut: ZMUserSession!
 
@@ -81,7 +83,11 @@ class ZMUserSessionTestsBase: MessagingTest {
             return self.mockResolveOneOnOneConversationUseCase
         }
 
-        sut = createSut(earService: mockEARService)
+        mockRecurringActionService = MockRecurringActionServiceInterface()
+        mockRecurringActionService.registerAction_MockMethod = { _ in }
+        mockRecurringActionService.performActionsIfNeeded_MockMethod = { }
+
+        sut = createSut()
         sut.sessionManager = mockSessionManager
 
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
@@ -104,6 +110,9 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.flowManagerMock = nil
         self.mockUseCaseFactory = nil
         self.mockResolveOneOnOneConversationUseCase = nil
+        self.mockRecurringActionService = nil
+        self.mockEARService.delegate = nil
+        self.mockEARService = nil
         let sut = self.sut
         self.sut = nil
         mockGetFeatureConfigsActionHandler = nil
@@ -112,37 +121,54 @@ class ZMUserSessionTestsBase: MessagingTest {
         super.tearDown()
     }
 
-    func createSut(earService: EARServiceInterface) -> ZMUserSession {
-        let mockStrategyDirectory = MockStrategyDirectory()
-        let mockUpdateEventProcessor = MockUpdateEventProcessor()
+    func createSut() -> ZMUserSession {
+        createSut(earService: mockEARService)
+    }
 
+    func createSut(earService: EARServiceInterface) -> ZMUserSession {
         let mockCryptoboxMigrationManager = MockCryptoboxMigrationManagerInterface()
         mockCryptoboxMigrationManager.isMigrationNeededAccountDirectory_MockValue = false
 
         let mockObserveMLSGroupVerificationStatusUseCase = MockObserveMLSGroupVerificationStatusUseCaseProtocol()
         mockObserveMLSGroupVerificationStatusUseCase.invoke_MockMethod = { }
 
-        return ZMUserSession(
-            userId: coreDataStack.account.userIdentifier,
-            transportSession: transportSession,
-            mediaManager: mediaManager,
-            flowManager: flowManagerMock,
+        let mockContextStorable = MockLAContextStorable()
+        mockContextStorable.clear_MockMethod = { }
+
+        let configuration = ZMUserSession.Configuration()
+
+        var builder = ZMUserSessionBuilder()
+        builder.withAllDependencies(
             analytics: nil,
-            eventProcessor: mockUpdateEventProcessor,
-            strategyDirectory: mockStrategyDirectory,
+            appVersion: "00000",
+            application: application,
+            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
+            coreDataStack: coreDataStack,
+            configuration: configuration,
+            contextStorage: mockContextStorable,
+            earService: earService,
+            flowManager: flowManagerMock,
+            mediaManager: mediaManager,
+            mlsService: mockMLSService,
+            observeMLSGroupVerificationStatus: mockObserveMLSGroupVerificationStatusUseCase,
+            proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
+            recurringActionService: mockRecurringActionService,
+            sharedUserDefaults: sharedUserDefaults,
+            transportSession: transportSession,
+            useCaseFactory: mockUseCaseFactory,
+            userId: coreDataStack.account.userIdentifier
+        )
+
+        let userSession = builder.build()
+        userSession.setup(
+            eventProcessor: MockUpdateEventProcessor(),
+            strategyDirectory: MockStrategyDirectory(),
             syncStrategy: nil,
             operationLoop: nil,
-            application: application,
-            appVersion: "00000",
-            coreDataStack: coreDataStack,
-            configuration: .init(),
-            earService: earService,
-            mlsService: mockMLSService,
-            cryptoboxMigrationManager: mockCryptoboxMigrationManager,
-            sharedUserDefaults: sharedUserDefaults,
-            useCaseFactory: mockUseCaseFactory,
-            observeMLSGroupVerificationStatus: mockObserveMLSGroupVerificationStatusUseCase
+            configuration: configuration
         )
+
+        return userSession
     }
 
     func didChangeAuthenticationData() {
@@ -158,7 +184,7 @@ class ZMUserSessionTestsBase: MessagingTest {
     }
 
     private func clearCache() {
-        let cachesURL = FileManager.default.cachesURLForAccount(with: userIdentifier, in: sut.sharedContainerURL)
+        let cachesURL = FileManager.default.cachesURLForAccount(with: userIdentifier, in: coreDataStack.applicationContainer)
         let items = try? FileManager.default.contentsOfDirectory(at: cachesURL, includingPropertiesForKeys: nil)
 
         if let items {

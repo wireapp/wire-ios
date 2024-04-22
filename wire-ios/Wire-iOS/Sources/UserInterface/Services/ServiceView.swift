@@ -24,7 +24,7 @@ final class ServiceDetailView: UIView {
     private let serviceView: ServiceView
     private let descriptionTextView = UITextView()
 
-    public var service: Service {
+    var service: Service {
         didSet {
             updateForService()
             serviceView.service = self.service
@@ -78,7 +78,7 @@ final class ServiceView: UIView {
     private let nameLabel = UILabel()
     private let providerLabel = UILabel()
 
-    public var service: Service {
+    var service: Service {
         didSet {
             updateForService()
         }

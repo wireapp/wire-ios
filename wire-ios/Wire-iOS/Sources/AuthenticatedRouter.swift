@@ -19,7 +19,7 @@
 import UIKit
 import WireSyncEngine
 
-public enum NavigationDestination {
+enum NavigationDestination {
     case conversation(ZMConversation, ZMConversationMessage?)
     case userProfile(UserType)
     case connectionRequest(UUID)
@@ -40,9 +40,9 @@ final class AuthenticatedRouter: NSObject {
     private let rootViewController: RootViewController
     private let activeCallRouter: ActiveCallRouter
     private weak var _viewController: ZClientViewController?
-    private let featureRepositoryProvider: FeatureRepositoryProvider
+    private let featureRepositoryProvider: any FeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
-    private let e2eiActivationDateRepository: E2EIActivationDateRepository
+    private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     private var featureChangeObserverToken: Any?
     private var revokedCertificateObserverToken: Any?
 
@@ -61,9 +61,9 @@ final class AuthenticatedRouter: NSObject {
         account: Account,
         userSession: UserSession,
         needToShowDataUsagePermissionDialog: Bool,
-        featureRepositoryProvider: FeatureRepositoryProvider,
+        featureRepositoryProvider: any FeatureRepositoryProvider,
         featureChangeActionsHandler: E2EINotificationActionsHandler,
-        e2eiActivationDateRepository: E2EIActivationDateRepository
+        e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     ) {
         self.rootViewController = rootViewController
         activeCallRouter = ActiveCallRouter(rootviewController: rootViewController, userSession: userSession)
@@ -184,10 +184,7 @@ struct AuthenticatedWireFrame {
     }
 
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
-        let viewController = ZClientViewController(
-            account: account,
-            userSession: userSession
-        )
+        let viewController = ZClientViewController(account: account, userSession: userSession)
         viewController.isComingFromRegistration = isComingFromRegistration
         viewController.needToShowDataUsagePermissionDialog = needToShowDataUsagePermissionDialog
         viewController.router = router
