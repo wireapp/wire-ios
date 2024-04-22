@@ -1,7 +1,9 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    CFPropertyList (3.0.6)
+    CFPropertyList (3.0.7)
+      base64
+      nkf
       rexml
     addressable (2.8.6)
       public_suffix (>= 2.0.2, < 6.0)
