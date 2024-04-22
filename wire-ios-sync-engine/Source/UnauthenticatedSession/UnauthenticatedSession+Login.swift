@@ -58,7 +58,7 @@ extension UnauthenticatedSession {
     @discardableResult public func requestPhoneVerificationCodeForLogin(phoneNumber: String) -> Bool {
         do {
             var phoneNumber: String? = phoneNumber
-            _ = try UserPropertyValidator().validate(phoneNumber: &phoneNumber)
+            _ = try userPropertyValidator.validate(phoneNumber: &phoneNumber)
         } catch {
             return false
         }
@@ -77,7 +77,7 @@ extension UnauthenticatedSession {
     @discardableResult public func requestEmailVerificationCodeForLogin(email: String) -> Bool {
         do {
             var email: String? = email
-            _ = try UserPropertyValidator().validate(emailAddress: &email)
+            _ = try userPropertyValidator.validate(emailAddress: &email)
         } catch {
             return false
         }

@@ -90,6 +90,9 @@ extension NormalizationResult where Value == String {
 
 }
 
+// TODO: remove
+let userPropertyValidator = UserPropertyValidator()
+
 public extension ZMUser {
 
     @objc static func normalizeName(_ name: String) -> ZMPropertyNormalizationResult<NSString> {
@@ -98,7 +101,7 @@ public extension ZMUser {
         var result: Bool = false
 
         do {
-            result = try UserPropertyValidator().validate(name: &name)
+            result = try userPropertyValidator.validate(name: &name)
         } catch {
             outError = error
         }
@@ -112,7 +115,7 @@ public extension ZMUser {
         var result: Bool = false
 
         do {
-            result = try UserPropertyValidator().validate(emailAddress: &emailAddress)
+            result = try userPropertyValidator.validate(emailAddress: &emailAddress)
         } catch {
             outError = error
         }
@@ -126,7 +129,7 @@ public extension ZMUser {
         var result: Bool = false
 
         do {
-            result = try UserPropertyValidator().validate(password: &password)
+            result = try userPropertyValidator.validate(password: &password)
         } catch {
             outError = error
         }
@@ -140,7 +143,7 @@ public extension ZMUser {
         var result: Bool = false
 
         do {
-            result = try UserPropertyValidator().validate(phoneVerificationCode: &verificationCode)
+            result = try userPropertyValidator.validate(phoneVerificationCode: &verificationCode)
         } catch {
             outError = error
         }
@@ -154,7 +157,7 @@ public extension ZMUser {
         var result: Bool = false
 
         do {
-            result = try UserPropertyValidator().validate(phoneNumber: &phoneNumber)
+            result = try userPropertyValidator.validate(phoneNumber: &phoneNumber)
         } catch {
             outError = error
         }
