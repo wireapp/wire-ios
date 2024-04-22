@@ -16,9 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCommonComponents
 import UIKit
 
-public protocol ViewControllerBuilder {
-    associatedtype ViewController where ViewController: UIViewController
-    func build() -> ViewController
+@testable import Wire
+
+struct MockViewControllerBuilder: ViewControllerBuilder {
+    func build() -> UIViewController { .init() }
+}
+
+extension ViewControllerBuilder where Self == MockViewControllerBuilder {
+    static var mock: Self { .init() }
 }

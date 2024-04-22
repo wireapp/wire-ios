@@ -61,14 +61,11 @@ final class ZClientViewController: UIViewController {
     ) {
         self.userSession = userSession
 
-        let selfUser = userSession.selfUserClient!.user! // TODO [WPB-7307]: fix force cast
-        let selfProfileBuilder = ViewControllerBuilder {
-            SelfProfileViewController(
-                selfUser: selfUser,
-                userRightInterfaceType: UserRight.self,
-                userSession: userSession
-            ) as UIViewController
-        }
+        let selfProfileBuilder = SelfProfileViewControllerBuilder(
+            selfUser: userSession.selfUserClient!.user!, // TODO [WPB-7307]: fix force cast
+            userRightInterfaceType: UserRight.self,
+            userSession: userSession
+        )
         conversationListViewController = .init(
             account: account,
             selfUser: userSession.selfUser,

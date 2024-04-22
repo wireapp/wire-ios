@@ -32,7 +32,7 @@ final class ConversationListTopBarViewController: UIViewController {
 
     private let selfUser: SelfUserType
     private var userSession: UserSession
-    private let selfProfileBuilder: ViewControllerBuilder<UIViewController>
+    private let selfProfileBuilder: any ViewControllerBuilder
     private var observerToken: NSObjectProtocol?
 
     var topBar: TopBar? {
@@ -52,7 +52,7 @@ final class ConversationListTopBarViewController: UIViewController {
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        selfProfileBuilder: ViewControllerBuilder<UIViewController>
+        selfProfileBuilder: some ViewControllerBuilder
     ) {
         self.account = account
         self.selfUser = selfUser

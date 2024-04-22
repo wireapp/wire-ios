@@ -76,7 +76,7 @@ final class ConversationListViewController: UIViewController {
         selfUser: SelfUserType,
         userSession: UserSession,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
-        selfProfileBuilder: ViewControllerBuilder<UIViewController>
+        selfProfileBuilder: some ViewControllerBuilder
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -90,7 +90,7 @@ final class ConversationListViewController: UIViewController {
 
     required init(
         viewModel: ViewModel,
-        selfProfileBuilder: ViewControllerBuilder<UIViewController>
+        selfProfileBuilder: some ViewControllerBuilder
     ) {
         self.viewModel = viewModel
 

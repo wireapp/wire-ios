@@ -16,9 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCommonComponents
+import WireSyncEngine
 import UIKit
 
-public protocol ViewControllerBuilder {
-    associatedtype ViewController where ViewController: UIViewController
-    func build() -> ViewController
+struct SelfProfileViewControllerBuilder: ViewControllerBuilder {
+
+    var selfUser: SettingsSelfUser
+    var userRightInterfaceType: UserRightInterface.Type
+    var userSession: UserSession
+
+    func build() -> SelfProfileViewController {
+        .init(
+            selfUser: selfUser,
+            userRightInterfaceType: userRightInterfaceType,
+            userSession: userSession
+        )
+    }
 }
