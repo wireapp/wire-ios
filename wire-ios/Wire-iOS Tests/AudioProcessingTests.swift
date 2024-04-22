@@ -17,8 +17,9 @@
 //
 
 import XCTest
-import WireCommonComponents
+
 @testable import Wire
+@testable import WireCommonComponents
 
 class AudioProcessingTests: XCTestCase {
 

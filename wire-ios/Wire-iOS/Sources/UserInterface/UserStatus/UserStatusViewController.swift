@@ -29,7 +29,7 @@ final class UserStatusViewController: UIViewController {
     private let options: UserStatusView.Options
     private let settings: Settings
 
-    public var userStatus = UserStatus() {
+    var userStatus = UserStatus() {
         didSet { (viewIfLoaded as? UserStatusView)?.userStatus = userStatus }
     }
 

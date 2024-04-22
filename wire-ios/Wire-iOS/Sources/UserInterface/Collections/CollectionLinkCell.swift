@@ -109,7 +109,7 @@ final class CollectionLinkCell: CollectionCell {
         UIPasteboard.general.url = link.openableURL as URL?
     }
 
-    public override func prepareForReuse() {
+    override func prepareForReuse() {
         super.prepareForReuse()
         message = .none
     }

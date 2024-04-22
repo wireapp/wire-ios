@@ -22,7 +22,7 @@ import avs
 import WireCommonComponents
 
 // MARK: - AppRootRouter
-public final class AppRootRouter: NSObject {
+final class AppRootRouter: NSObject {
 
     // MARK: - Public Property
 
@@ -98,18 +98,20 @@ public final class AppRootRouter: NSObject {
 
     // MARK: - Public implementation
 
-    public func start(launchOptions: LaunchOptions) {
+    func start(launchOptions: LaunchOptions) {
         self.lastLaunchOptions = launchOptions
         showInitial(launchOptions: launchOptions)
         sessionManager.resolveAPIVersion()
     }
 
-    public func openDeepLinkURL(_ deepLinkURL: URL) -> Bool {
+    func openDeepLinkURL(_ deepLinkURL: URL) -> Bool {
         return urlActionRouter.open(url: deepLinkURL)
     }
 
-    public func performQuickAction(for shortcutItem: UIApplicationShortcutItem,
-                                   completionHandler: ((Bool) -> Void)?) {
+    func performQuickAction(
+        for shortcutItem: UIApplicationShortcutItem,
+        completionHandler: ((Bool) -> Void)?
+    ) {
         quickActionsManager.performAction(for: shortcutItem, completionHandler: completionHandler)
     }
 
@@ -623,7 +625,7 @@ extension AppRootRouter: ContentSizeCategoryObserving {
         rootViewController.redrawAllFonts()
     }
 
-    public static func configureAppearance() {
+    static func configureAppearance() {
         let navigationBarTitleBaselineOffset: CGFloat = 2.5
 
         let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 11, weight: .semibold), .baselineOffset: navigationBarTitleBaselineOffset]
