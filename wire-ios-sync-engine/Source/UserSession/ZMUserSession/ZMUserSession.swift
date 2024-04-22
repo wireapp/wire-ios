@@ -251,6 +251,11 @@ public final class ZMUserSession: NSObject {
 
     let useCaseFactory: UseCaseFactoryProtocol
 
+    public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
+
+    let lastEventIDRepository: LastEventIDRepositoryInterface
+    let conversationEventProcessor: ConversationEventProcessor
+
     // MARK: Delegates
 
     weak var delegate: UserSessionDelegate?
@@ -361,10 +366,8 @@ public final class ZMUserSession: NSObject {
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
-    public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
 
-    let lastEventIDRepository: LastEventIDRepositoryInterface
-    let conversationEventProcessor: ConversationEventProcessor
+    // MARK: - Initialize
 
     init(
         userId: UUID,
