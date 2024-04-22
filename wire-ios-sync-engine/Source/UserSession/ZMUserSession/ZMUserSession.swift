@@ -784,7 +784,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         if selfClient?.hasRegisteredMLSClient == true {
             Task {
-                await mlsService.repairOutOfSyncConversations()
+                do {
+                    try await mlsService.repairOutOfSyncConversations()
+                } catch {
+                    WireLogger.mls.error("Repairing out of sync conversations failed: \(error)")
+                }
             }
         }
     }

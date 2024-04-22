@@ -84,7 +84,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func subconversationMembers(for subconversationGroupID: MLSGroupID) async throws -> [MLSClientID]
 
-    func repairOutOfSyncConversations() async
+    func repairOutOfSyncConversations() async throws
 
     func fetchAndRepairGroup(with groupID: MLSGroupID) async
 
@@ -865,10 +865,10 @@ public final class MLSService: MLSServiceInterface {
 
     /// Fetches and re-joins MLS conversations that are out of sync
     /// (where the conversation object's epoch differs from the corresponding MLS group epoch)
-    public func repairOutOfSyncConversations() async {
+    public func repairOutOfSyncConversations() async throws {
         guard let context = self.context else { return }
 
-        let outOfSyncConversationInfos = await outOfSyncConversations(in: context)
+        let outOfSyncConversationInfos = try await outOfSyncConversations(in: context)
 
         logger.info("found \(outOfSyncConversationInfos.count) conversations out of sync")
 
@@ -1023,32 +1023,27 @@ public final class MLSService: MLSServiceInterface {
 
     typealias OutOfSyncConversationInfo = (mlsGroupId: MLSGroupID, conversation: ZMConversation)
 
-    // TODO: [[jacob]] let the func throw instead of returning an empty array // swiftlint:disable:this todo_requires_jira_link
-    private func outOfSyncConversations(in context: NSManagedObjectContext) async -> [OutOfSyncConversationInfo] {
+    private func outOfSyncConversations(in context: NSManagedObjectContext) async throws -> [OutOfSyncConversationInfo] {
 
-        do {
-            let conversations = try await coreCrypto.perform { coreCrypto in
+        let conversations = try await coreCrypto.perform { coreCrypto in
 
-                let allMLSConversations = await context.perform { ZMConversation.fetchMLSConversations(in: context) }
+            let allMLSConversations = await context.perform { ZMConversation.fetchMLSConversations(in: context) }
 
-                var outOfSyncConversations = [ZMConversation]()
-                for conversation in allMLSConversations {
-                    guard await isConversationOutOfSync(conversation, coreCrypto: coreCrypto, context: context) else { continue }
-                    outOfSyncConversations.append(conversation)
-                }
-                return outOfSyncConversations
+            var outOfSyncConversations = [ZMConversation]()
+            for conversation in allMLSConversations {
+                guard await isConversationOutOfSync(conversation, coreCrypto: coreCrypto, context: context) else { continue }
+                outOfSyncConversations.append(conversation)
             }
-            return await context.perform {
-                conversations.compactMap {
-                    if let groupId = $0.mlsGroupID {
-                        return (groupId, $0)
-                    } else {
-                        return nil
-                    }
+            return outOfSyncConversations
+        }
+        return await context.perform {
+            conversations.compactMap {
+                if let groupId = $0.mlsGroupID {
+                    return (groupId, $0)
+                } else {
+                    return nil
                 }
             }
-        } catch {
-            return []
         }
     }
 
