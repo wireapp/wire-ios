@@ -413,7 +413,7 @@ GZIP is licensed as follow:
 
 
 
-14) Localytics under BSD license
+13) Localytics under BSD license
 --------------------------------
 Copyright (c) 2015, Char Software, Inc. d/b/a Localytics
 All rights reserved.
@@ -439,7 +439,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 
-15) MTAnimation under MIT license
+14) MTAnimation under MIT license
 ---------------------------------
 Copyright (c) 2010 Mysterious Trousers, LLC (http://www.mysterioustrousers.com)
 
@@ -463,7 +463,7 @@ THE SOFTWARE.
 
 
 
-16) NSObject-ObjectMap under UA license
+15) NSObject-ObjectMap under UA license
 ---------------------------------------
 Copyright (c) 2012 The Board of Trustees of The University of Alabama
 All rights reserved.
@@ -496,7 +496,7 @@ OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 
-17) OCMock under Apache 2.0 license
+16) OCMock under Apache 2.0 license
 -----------------------------------
 Copyright (c) 2004-2016 Erik Dörnenburg
 
@@ -513,7 +513,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
-18) Ono under MIT license
+17) Ono under MIT license
 -------------------------
 Copyright (c) 2014 Mattt Thompson (http://mattt.me/)
 
@@ -537,7 +537,7 @@ THE SOFTWARE.
 
 
 
-19) PINCache under Apache 2.0 license
+18) PINCache under Apache 2.0 license
 -------------------------------------
 Copyright (c) 2013 Tumblr, Inc.
 
@@ -555,7 +555,7 @@ limitations under the License.
 
 
 
-20) Protobuf-objc under Apache 2.0 license
+19) Protobuf-objc under Apache 2.0 license
 ------------------------------------------
 Copyright (c) 2008 Google Inc.
 
@@ -573,7 +573,7 @@ limitations under the License.
 
 
 
-21) PureLayout under MIT license
+20) PureLayout under MIT license
 --------------------------------
 Copyright (c) 2014-2015 Tyler Fox
 
@@ -594,7 +594,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SO
 
 
 
-22) RBBAnimation under MIT license
+21) RBBAnimation under MIT license
 ----------------------------------
 Copyright (c) 2013 Robert Böhnke.
 
@@ -617,7 +617,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
 
-23) SCSiriWaveformView under MIT license
+22) SCSiriWaveformView under MIT license
 ----------------------------------------
 Copyright (c) 2013 Stefan Ceriu
 
@@ -639,7 +639,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-24) SmoothLineView under MIT license
+23) SmoothLineView under MIT license
 ------------------------------------
 Copyright (c) 2013 Levi Nunnink
 
@@ -661,7 +661,7 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-26) TTTAttributedLabel under MIT license
+24) TTTAttributedLabel under MIT license
 ----------------------------------------
 Copyright (c) 2011 Mattt Thompson (http://mattt.me/)
 
@@ -684,7 +684,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
-27) VIMObjectMapper under MIT license
+25) VIMObjectMapper under MIT license
 ----------------------------------------
 Copyright (c) 2015-2016 Vimeo (https://vimeo.com)
 
@@ -705,7 +705,7 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 DEALINGS IN THE SOFTWARE.
 
 
-28) VIMNetworking under MIT license
+26) VIMNetworking under MIT license
 -----------------------------------
 Copyright (c) 2014-2016 Vimeo (https://vimeo.com)
 
@@ -726,7 +726,7 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 DEALINGS IN THE SOFTWARE.
 
 
-29) ZipArchive under MIT license
+27) ZipArchive under MIT license
 --------------------------------
 Copyright (c) 2010-2015, Sam Soffes, http://soff.es
 
@@ -750,7 +750,7 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-30) GTMSessionFetcher under Apache 2.0 license
+28) GTMSessionFetcher under Apache 2.0 license
 ----------------------------------------------
 Copyright (c) Google Inc.
 
@@ -766,7 +766,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-31) Down under MIT
+29) Down under MIT
 -----------------------
 
 The MIT License (MIT)
