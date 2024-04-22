@@ -22,7 +22,7 @@ import WireDataModel
 import WireDataModelSupport
 import WireTransport.Testing
 import avs
-import WireSyncEngineSupport
+@testable import WireSyncEngineSupport
 @testable import WireSyncEngine
 
 final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
@@ -61,6 +61,10 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
         let mockContextStorage = MockLAContextStorable()
         mockContextStorage.clear_MockMethod = { }
 
+        let mockRecurringActionService = MockRecurringActionServiceInterface()
+        mockRecurringActionService.registerAction_MockMethod = { _ in }
+        mockRecurringActionService.performActionsIfNeeded_MockMethod = { }
+
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
             analytics: analytics,
@@ -76,6 +80,7 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             mlsService: nil,
             observeMLSGroupVerificationStatus: nil,
             proteusToMLSMigrationCoordinator: nil,
+            recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
             useCaseFactory: nil,
