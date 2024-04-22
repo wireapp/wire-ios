@@ -94,6 +94,13 @@ public final class ZMUserSession: NSObject {
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
 
+    let useCaseFactory: UseCaseFactoryProtocol
+
+    public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
+
+    let lastEventIDRepository: LastEventIDRepositoryInterface
+    let conversationEventProcessor: ConversationEventProcessor
+
     // MARK: Dependency Injection
 
     private let dependencies: InjectedDependencies
@@ -249,21 +256,6 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    let useCaseFactory: UseCaseFactoryProtocol
-
-    public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
-
-    let lastEventIDRepository: LastEventIDRepositoryInterface
-    let conversationEventProcessor: ConversationEventProcessor
-
-    // MARK: Delegates
-
-    weak var delegate: UserSessionDelegate?
-
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: remove this property and move functionality to separate protocols under UserSessionDelegate
-    public weak var sessionManager: SessionManagerType?
-
     /// - Note: this is safe if coredataStack and proteus are ready
     public var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
         GetUserClientFingerprintUseCase(
@@ -339,6 +331,14 @@ public final class ZMUserSession: NSObject {
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
+
+    // MARK: Delegates
+
+    weak var delegate: UserSessionDelegate?
+
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: remove this property and move functionality to separate protocols under UserSessionDelegate
+    public weak var sessionManager: SessionManagerType?
 
     // MARK: - Initialize
 
