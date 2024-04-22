@@ -553,6 +553,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
         selfClient.remoteIdentifier = nil
         selfClient.resetLocallyModifiedKeys(selfClient.keysThatHaveLocalModifications)
+        selfClient.clearMLSPublicKeys()
         managedObjectContext.setPersistentStoreMetadata(nil as String?, key: ZMPersistedClientIdKey)
         managedObjectContext.saveOrRollback()
     }

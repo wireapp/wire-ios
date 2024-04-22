@@ -173,6 +173,8 @@ extension IntegrationTest {
 
     @objc
     func _tearDown() {
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
         PrekeyGenerator._test_overrideNumberOfKeys = nil
         destroyTimers()
         sharedSearchDirectory?.tearDown()
@@ -203,7 +205,6 @@ extension IntegrationTest {
         groupConversationWithServiceUser = nil
         application = nil
         notificationCenter = nil
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         deleteSharedContainerContent()
         sharedContainerDirectory = nil

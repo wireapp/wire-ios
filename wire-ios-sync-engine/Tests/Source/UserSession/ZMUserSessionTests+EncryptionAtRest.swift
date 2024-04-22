@@ -64,19 +64,13 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
         activityManager = MockBackgroundActivityManager()
         factory = BackgroundActivityFactory.shared
         factory.activityManager = activityManager
-
-        setUpEARServiceWorkaround()
     }
 
     /// This workaround is needed because all tests here are based on assumptions
     /// that the `managedObjectContext` is changed.
-    /// To remove the workaround simply the `mockEARService` should be used instead of
+    /// To remove this workaround, delete this override  and the `mockEARService` should be used instead of
     /// a real instance of `EARService`.
-    private func setUpEARServiceWorkaround() {
-        mockEARService = nil
-        sut.tearDown()
-        sut = nil
-
+    override func createSut() -> ZMUserSession {
         let earService = EARService(
             accountID: coreDataStack.account.userIdentifier,
             databaseContexts: [
@@ -88,7 +82,8 @@ final class ZMUserSessionTests_EncryptionAtRest: ZMUserSessionTestsBase {
             sharedUserDefaults: sharedUserDefaults,
             authenticationContext: MockAuthenticationContextProtocol()
         )
-        sut = createSut(earService: earService)
+
+        return createSut(earService: earService)
     }
 
     override func tearDown() {

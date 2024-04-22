@@ -85,7 +85,7 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         mockProteusToMLSMigrationCoordinator = MockProteusToMLSMigrationCoordinating()
 
-        sut = createSut(earService: mockEARService)
+        sut = createSut()
         sut.sessionManager = mockSessionManager
 
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
@@ -108,12 +108,18 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.flowManagerMock = nil
         self.mockUseCaseFactory = nil
         self.mockResolveOneOnOneConversationUseCase = nil
+        self.mockEARService.delegate = nil
+        self.mockEARService = nil
         let sut = self.sut
         self.sut = nil
         mockGetFeatureConfigsActionHandler = nil
         sut?.tearDown()
 
         super.tearDown()
+    }
+
+    func createSut() -> ZMUserSession {
+        createSut(earService: mockEARService)
     }
 
     func createSut(earService: EARServiceInterface) -> ZMUserSession {
@@ -174,7 +180,7 @@ class ZMUserSessionTestsBase: MessagingTest {
     }
 
     private func clearCache() {
-        let cachesURL = FileManager.default.cachesURLForAccount(with: userIdentifier, in: sut.sharedContainerURL)
+        let cachesURL = FileManager.default.cachesURLForAccount(with: userIdentifier, in: coreDataStack.applicationContainer)
         let items = try? FileManager.default.contentsOfDirectory(at: cachesURL, includingPropertiesForKeys: nil)
 
         if let items {

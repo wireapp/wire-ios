@@ -60,6 +60,7 @@ final class SessionManagerAccountDeletionTests: IntegrationTest {
         performIgnoringZMLogError {
             self.sessionManager!.delete(account: account)
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertFalse(FileManager.default.fileExists(atPath: accountFolder.path))
@@ -106,6 +107,7 @@ class SessionManagerTests_PasswordVerificationFailure_With_DeleteAccountAfterThr
 
         // when
         sessionManager?.passwordVerificationDidFail(with: threshold!)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }
@@ -164,6 +166,7 @@ class SessionManagerTests_AuthenticationFailure_With_DeleteAccountOnAuthentictio
 
         // when
         sessionManager?.authenticationInvalidated(NSError(code: .accessTokenExpired, userInfo: nil), accountId: account.userIdentifier)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }

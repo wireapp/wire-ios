@@ -86,6 +86,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
         // AND WHEN
         self.sessionManager!.tearDownAllBackgroundSessions()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertNil(self.sessionManager!.backgroundUserSessions[account.userIdentifier])
