@@ -29,7 +29,7 @@ final class SelfProfileViewController: UIViewController {
     /// The user that is viewing their settings.
     let selfUser: SettingsSelfUser
 
-    var userRightInterfaceType: UserRightInterface.Type = UserRight.self
+    var userRightInterfaceType: UserRightInterface.Type
     var settingsCellDescriptorFactory: SettingsCellDescriptorFactory?
     var rootGroup: (SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType)?
 
@@ -61,7 +61,7 @@ final class SelfProfileViewController: UIViewController {
      */
 
     init(selfUser: SettingsSelfUser,
-         userRightInterfaceType: UserRightInterface.Type = UserRight.self,
+         userRightInterfaceType: UserRightInterface.Type,
          userSession: UserSession) {
 
         self.selfUser = selfUser
@@ -76,8 +76,7 @@ final class SelfProfileViewController: UIViewController {
             userRightInterfaceType: userRightInterfaceType
         )
 
-        let rootGroup = settingsCellDescriptorFactory.rootGroup(isTeamMember: selfUser.isTeamMember, userSession: userSession)
-
+        let rootGroup = settingsCellDescriptorFactory.rootGroup()
         settingsController = rootGroup.generateViewController()! as! SettingsTableViewController
 
         var options: ProfileHeaderViewController.Options

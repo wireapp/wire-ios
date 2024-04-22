@@ -37,6 +37,7 @@ extension ConversationListViewController {
             } else {
                 completion?()
             }
+
         case .peoplePicker:
             let startUIViewController = createPeoplePickerController()
             let navigationWrapper = startUIViewController.wrapInNavigationController(navigationControllerClass: NavigationController.self)
@@ -45,8 +46,12 @@ extension ConversationListViewController {
                 startUIViewController.showKeyboardIfNeeded()
                 completion?()
             }
+
         case .archived:
             show(createArchivedListViewController(), animated: animated, completion: completion)
+
+        case .settings:
+            show(createSettingsViewController(), animated: animated, completion: completion)
         }
     }
 
@@ -54,5 +59,4 @@ extension ConversationListViewController {
         setState(.conversationList, animated: false)
         listContentController.selectInboxAndFocus(onView: focus)
     }
-
 }

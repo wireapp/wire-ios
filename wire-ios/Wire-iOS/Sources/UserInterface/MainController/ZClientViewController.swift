@@ -57,15 +57,29 @@ final class ZClientViewController: UIViewController {
     /// init method for testing allows injecting an Account object and self user
     required init(
         account: Account,
-        userSession: UserSession
+        userSession: UserSession,
+        selfUser: SettingsSelfUser
     ) {
         self.userSession = userSession
+
+        let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
+        let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
+            settingsPropertyFactory: settingsPropertyFactory,
+            userRightInterfaceType: UserRight.self
+        )
+        let settingsTabItemBuilder = {
+            settingsCellDescriptorFactory.settingsGroup(
+                isTeamMember: userSession.selfUser.isTeamMember,
+                userSession: userSession
+            ).generateViewController()!
+        }
 
         conversationListViewController = .init(
             account: account,
             selfUser: userSession.selfUser,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            settingsViewControllerBuilder: settingsTabItemBuilder
         )
 
         colorSchemeController = .init(userSession: userSession)

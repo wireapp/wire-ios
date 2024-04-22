@@ -284,7 +284,11 @@ final class ConversationListTopBarViewController: UIViewController {
     func createSettingsViewController(selfUser: ZMUser) -> UIViewController {
         // instead of having the dependency for `SelfProfileViewController` we could inject a factory
         // returning the `UIViewController` subclass and only have the presentation logic at this place
-        let selfProfileViewController = SelfProfileViewController(selfUser: selfUser, userSession: userSession)
+        let selfProfileViewController = SelfProfileViewController(
+            selfUser: selfUser,
+            userRightInterfaceType: UserRight.self,
+            userSession: userSession
+        )
         return selfProfileViewController.wrapInNavigationController(navigationControllerClass: NavigationController.self)
     }
 

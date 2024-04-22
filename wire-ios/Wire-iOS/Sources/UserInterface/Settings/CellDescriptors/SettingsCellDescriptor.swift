@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireCommonComponents
 import UIKit
 
@@ -96,10 +95,11 @@ protocol SettingsInternalGroupCellDescriptorType: SettingsGroupCellDescriptorTyp
 }
 
 extension SettingsInternalGroupCellDescriptorType {
+
     func allCellDescriptors() -> [SettingsCellDescriptorType] {
-        return items.flatMap({ (section: SettingsSectionDescriptorType) -> [SettingsCellDescriptorType] in
-            return section.allCellDescriptors()
-        })
+        items.flatMap { section in
+            section.allCellDescriptors()
+        }
     }
 }
 

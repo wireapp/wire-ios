@@ -24,6 +24,7 @@ enum ConversationListState {
     case conversationList
     case peoplePicker
     case archived
+    case settings
 }
 
 final class ConversationListViewController: UIViewController {
@@ -36,6 +37,7 @@ final class ConversationListViewController: UIViewController {
     /// private
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
+    private let settingsViewControllerBuilder: () -> UIViewController
 
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
@@ -84,7 +86,8 @@ final class ConversationListViewController: UIViewController {
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
+        settingsViewControllerBuilder: @escaping () -> UIViewController
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -92,15 +95,16 @@ final class ConversationListViewController: UIViewController {
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
-        self.init(viewModel: viewModel)
+        self.init(viewModel: viewModel, settingsViewControllerBuilder: settingsViewControllerBuilder)
         onboardingHint.arrowPointToView = tabBar
     }
 
-    required init(viewModel: ViewModel) {
+    required init(
+        viewModel: ViewModel,
+        settingsViewControllerBuilder: @escaping () -> UIViewController
+    ) {
         self.viewModel = viewModel
-        defer {
-            viewModel.viewController = self
-        }
+        self.settingsViewControllerBuilder = settingsViewControllerBuilder
 
         topBarViewController = ConversationListTopBarViewController(
             account: viewModel.account,
@@ -131,6 +135,8 @@ final class ConversationListViewController: UIViewController {
         setupNetworkStatusBar()
 
         createViewConstraints()
+
+        viewModel.viewController = self
     }
 
     @available(*, unavailable)
@@ -365,6 +371,10 @@ final class ConversationListViewController: UIViewController {
         setState(.peoplePicker, animated: true)
     }
 
+    func presentSettings() {
+        setState(.settings, animated: true)
+    }
+
     func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool {
         return listContentController.select(conversation,
                                      scrollTo: message,
@@ -375,6 +385,12 @@ final class ConversationListViewController: UIViewController {
 
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
         UIAlertController.showNewsletterSubscriptionDialogIfNeeded(presentViewController: self, completionHandler: completionHandler)
+    }
+
+    func createSettingsViewController() -> UIViewController {
+        //
+        // SettingsTableViewController()
+        fatalError("TODO")
     }
 }
 
@@ -402,7 +418,7 @@ extension ConversationListViewController: UITabBarDelegate {
         case .list:
             listContentController.listViewModel.folderEnabled = false
         case .settings:
-            fatalError("TODO")
+            presentSettings()
         }
     }
 }
