@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ extension XCTestCase {
     // TODO: [AGIS] - Check if that's still the case when we drop iOS 13 and 14
     // swiftlint:enable todo_requires_jira_link
     /// return the smallest iPhone screen size that Wire app supports
-    public var defaultIPhoneSize: CGSize {
+    var defaultIPhoneSize: CGSize {
         return XCTestCase.DeviceSizeIPhone5
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -161,7 +161,7 @@ extension TextFieldValidator.ValidationError: LocalizedError {
 // MARK: - Email validator
 
 extension String {
-    public var isEmail: Bool {
+    var isEmail: Bool {
         guard !self.hasPrefix("mailto:") else { return false }
 
         guard let dataDetector = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue) else { return false }

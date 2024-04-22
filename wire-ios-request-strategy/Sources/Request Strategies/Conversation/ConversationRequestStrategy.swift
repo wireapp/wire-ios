@@ -154,7 +154,9 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
         )
 
         self.configuration = [.allowsRequestsWhileOnline,
-                              .allowsRequestsDuringSlowSync]
+                              .allowsRequestsDuringSlowSync,
+                              .allowsRequestsDuringQuickSync,
+                              .allowsRequestsWhileWaitingForWebsocket]
 
         self.updateSync.transcoder = self
         self.conversationByIDListSync.delegate = self
@@ -198,7 +200,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
 
         switch apiVersion {
         case .v0:
-            conversationIDsSync.fetch { [weak self] (result) in
+            conversationIDsSync.fetch { [weak self] result in
                 switch result {
                 case .success(let conversationIDList):
                     self?.conversationByIDListSync.sync(identifiers: conversationIDList.conversations)
@@ -208,7 +210,7 @@ public class ConversationRequestStrategy: AbstractRequestStrategy, ZMRequestGene
             }
 
         case .v1, .v2, .v3, .v4, .v5, .v6:
-            conversationQualifiedIDsSync.fetch { [weak self] (result) in
+            conversationQualifiedIDsSync.fetch { [weak self] result in
                 switch result {
                 case .success(let qualifiedConversationIDList):
 

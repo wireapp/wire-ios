@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,18 +18,24 @@
 
 import Foundation
 
-public extension Bundle {
+extension Bundle {
     // MARK: - AppCenter
-    static var appCenterAppId: String? {
+    public static var appCenterAppId: String? {
         guard let scheme = Bundle.appMainBundle.infoDictionary?["CFBundleURLTypes"] as? [[String: Any]],
             let item = scheme.first,
             let key = item["CFBundleURLSchemes"] as? [String],
             let appCenterID = key.first else { return nil }
         return appCenterID.replacingOccurrences(of: "appcenter-", with: "")
     }
+<<<<<<< HEAD
 
+=======
+    public static var useAppCenter: Bool {
+        return appMainBundle.infoForKey("UseAppCenter") == "1"
+    }
+>>>>>>> develop
     // MARK: - Countly
-    static var countlyAppKey: String? {
+    public static var countlyAppKey: String? {
         return appMainBundle.infoForKey("CountlyAppKey")
     }
 }

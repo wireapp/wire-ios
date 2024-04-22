@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 import SnapshotTesting
 import XCTest
-import WireCommonComponents
+@testable import WireCommonComponents
 @testable import Wire
 
 // In this class the snapshot tests they don't look the same as in the real app.

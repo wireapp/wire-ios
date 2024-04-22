@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ extension ZClientViewController {
 
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction.link(title: learnMore, url: URL.wr_wireEnterpriseLearnMore, presenter: self))
-        alert.addAction(UIAlertAction.ok(style: .default, handler: { [weak self] (_) in
+        alert.addAction(UIAlertAction.ok(style: .default, handler: { [weak self] _ in
             self?.confirmChanges()
         }))
 

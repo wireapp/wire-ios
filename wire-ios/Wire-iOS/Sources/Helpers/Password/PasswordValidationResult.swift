@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@ import Foundation
  * The result of password validation.
  */
 
-public enum PasswordValidationResult: Equatable {
+enum PasswordValidationResult: Equatable {
 
     /// The password is valid.
     case valid
@@ -29,7 +30,7 @@ public enum PasswordValidationResult: Equatable {
     /// The password is invalid due to the violations.
     case invalid(violations: [Violation])
 
-    public enum Violation: Equatable {
+    enum Violation: Equatable {
 
         /// The password is too short.
         case tooShort

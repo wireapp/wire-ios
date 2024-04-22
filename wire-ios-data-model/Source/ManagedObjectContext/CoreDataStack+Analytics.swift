@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,18 +17,11 @@
 //
 
 import Foundation
-import LocalAuthentication
 
-struct MockLAContext: LAContextProtocol {
-
-    var evaluatedPolicyDomainState: Data?
-    var canEvaluate = true
-
-    func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
-        return canEvaluate
-    }
-
-    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void) {
-        reply(true, nil)
+extension CoreDataStack {
+    public func linkAnalytics(_ analytics: (any AnalyticsType)?) {
+        syncContext.performGroupedBlockAndWait {
+            self.syncContext.analytics = analytics
+        }
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
     }
 
     func testForOneRequest() {
-        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+        verify(matching: sut.wrapInNavigationController())
     }
 
     func testForTwoRequests() {
@@ -73,6 +73,6 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut.connectionRequests = [secondConnectionRequest, mockConnectionRequest]
         sut.reload(animated: false)
 
-        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+        verify(matching: sut.wrapInNavigationController())
     }
 }

@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -98,7 +99,7 @@ public class ConnectionRequestStrategy: AbstractRequestStrategy, ZMRequestGenera
 
         switch apiVersion {
         case .v0:
-            localConnectionListSync.fetch { [weak self] (result) in
+            localConnectionListSync.fetch { [weak self] result in
                 switch result {
                 case .success(let connectionList):
                     self?.createConnectionsAndFinishSyncPhase(connectionList.connections,

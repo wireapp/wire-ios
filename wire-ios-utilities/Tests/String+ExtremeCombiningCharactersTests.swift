@@ -249,7 +249,7 @@ class String_ExtremeCombiningCharactersTests: XCTestCase {
         // WHEN
         do {
             try ExtremeCombiningCharactersValidator.validateValue(&string)
-        } catch let error {
+        } catch {
             thrownError = error
         }
 

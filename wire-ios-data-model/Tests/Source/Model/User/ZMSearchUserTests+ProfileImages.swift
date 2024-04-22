@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -144,7 +144,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
 
         // then
         let imageDataArrived = customExpectation(description: "completion handler called")
-        searchUser.imageData(for: .preview, queue: .global()) { (imageDataResult) in
+        searchUser.imageData(for: .preview, queue: .global()) { imageDataResult in
             XCTAssertEqual(imageData, imageDataResult)
             imageDataArrived.fulfill()
         }
@@ -161,7 +161,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
 
         // then
         let imageDataArrived = customExpectation(description: "completion handler called")
-        searchUser.imageData(for: .complete, queue: .global()) { (imageDataResult) in
+        searchUser.imageData(for: .complete, queue: .global()) { imageDataResult in
             XCTAssertEqual(imageData, imageDataResult)
             imageDataArrived.fulfill()
         }

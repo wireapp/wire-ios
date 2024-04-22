@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 code: code,
                 transportSession: transportSession,
                 contextProvider: contextProvider
-            ) { [weak self] (response) in
+            ) { [weak self] response in
 
                 guard let strongSelf = self,
                       let delegate = delegate else {
@@ -72,7 +72,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                                 transportSession: strongSelf.transportSession,
                                 eventProcessor: strongSelf.eventProcessor,
                                 contextProvider: strongSelf.contextProvider
-                            ) { [weak self] (response) in
+                            ) { [weak self] response in
 
                                 guard let strongSelf = self else { return }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,10 +20,6 @@ import UIKit
 import WireSyncEngine
 import WireCommonComponents
 
-protocol ConversationListTabBarControllerDelegate: AnyObject {
-    func didChangeTab(with type: TabBarItemType)
-}
-
 enum TabBarItemType: Int, CaseIterable {
 
     typealias BottomBar = L10n.Localizable.ConversationList.BottomBar
@@ -38,26 +34,26 @@ enum TabBarItemType: Int, CaseIterable {
     var icon: UIImage {
         switch self {
         case .startUI:
-            return Asset.Images.contactsOutline.image
+            return .init(resource: .contactsOutline)
         case .list:
-            return Asset.Images.conversationsOutline.image
+            return .init(resource: .conversationsOutline)
         case .folder:
-            return Asset.Images.foldersOutline.image
+            return .init(resource: .foldersOutline)
         case .archive:
-            return Asset.Images.archiveOutline.image
+            return .init(resource: .archiveOutline)
         }
     }
 
     var selectedIcon: UIImage {
         switch self {
         case .startUI:
-            return Asset.Images.contactsFilled.image
+            return .init(resource: .contactsFilled)
         case .list:
-            return Asset.Images.conversationsFilled.image
+            return .init(resource: .conversationsFilled)
         case .folder:
-            return Asset.Images.foldersFilled.image
+            return .init(resource: .foldersFilled)
         case .archive:
-            return Asset.Images.archiveFilled.image
+            return .init(resource: .archiveFilled)
         }
     }
 

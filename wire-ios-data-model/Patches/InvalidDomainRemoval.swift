@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,13 +34,13 @@ enum InvalidDomainRemoval {
 
         let duplicatedConversations: [Data: [ZMConversation]] = moc.findDuplicated(by: ZMManagedObject.remoteIdentifierDataKey())
 
-        duplicatedUsers.forEach { (_, users) in
+        duplicatedUsers.forEach { _, users in
             for user in users where user.domain != selfDomain {
                 moc.delete(user)
             }
         }
 
-        duplicatedConversations.forEach { (_, conversations) in
+        duplicatedConversations.forEach { _, conversations in
             for conversation in conversations where conversation.domain != selfDomain {
                 moc.delete(conversation)
             }

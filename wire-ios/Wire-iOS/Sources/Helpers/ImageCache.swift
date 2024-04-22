@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,14 +22,14 @@ import UIKit
 // swiftlint:disable todo_requires_jira_link
 // TODO: remove public after MockUser is convert to Swift
 // swiftlint:enable todo_requires_jira_link
-public final class ImageCache<T: AnyObject> {
+final class ImageCache<T: AnyObject> {
     var cache: NSCache<NSString, T> = NSCache()
     var processingQueue = DispatchQueue(label: "ImageCacheQueue", qos: .background, attributes: [.concurrent])
     var dispatchGroup: DispatchGroup = DispatchGroup()
 }
 
 extension UIImage {
-    public static var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
+    static var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
 }
 
 final class MediaAssetCache {

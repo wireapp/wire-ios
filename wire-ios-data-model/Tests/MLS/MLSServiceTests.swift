@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -479,7 +479,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in [] }
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in [] }
 
-        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod = { (_, _, _, _) in
+        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod = { _, _, _, _ in
             users.map {
                 KeyPackage(
                     client: .randomAlphanumerical(length: 4),
@@ -491,7 +491,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             }
         }
         var mockAddMembersCalled = false
-        mockMLSActionExecutor.mockAddMembers = { (_, _) in
+        mockMLSActionExecutor.mockAddMembers = { _, _ in
             mockAddMembersCalled = true
             return [ZMUpdateEvent(), ZMUpdateEvent()]
         }

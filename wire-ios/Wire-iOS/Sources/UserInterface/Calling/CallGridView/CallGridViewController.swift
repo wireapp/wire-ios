@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -191,7 +191,7 @@ final class CallGridViewController: SpinnerCapableViewController {
 
     // MARK: - Public Interface
 
-    public func handleDoubleTap(gesture: UIGestureRecognizer) {
+    func handleDoubleTap(gesture: UIGestureRecognizer) {
         let location = gesture.location(in: gridView)
         toggleMaximized(view: streamView(at: location))
     }
@@ -355,7 +355,7 @@ final class CallGridViewController: SpinnerCapableViewController {
         }
 
         // We have a stream but don't have a preview view yet.
-        if nil == thumbnailViewController.contentView, let previewView = selfCallParticipantView {
+        if thumbnailViewController.contentView == nil, let previewView = selfCallParticipantView {
             Log.calling.debug("Adding self video to floating preview")
             thumbnailViewController.setThumbnailContentView(previewView, contentSize: .previewSize(for: traitCollection))
         }

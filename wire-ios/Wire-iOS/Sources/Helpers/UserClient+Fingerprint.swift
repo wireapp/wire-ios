@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ private let UserClientIdentifierMinimumLength = 16
 extension Sequence where Element: UserClientType {
 
     func sortedByRelevance() -> [UserClientType] {
-        return sorted { (lhs, rhs) -> Bool in
+        return sorted { lhs, rhs -> Bool in
 
             if lhs.deviceClass == .legalHold {
                 return true
@@ -48,7 +48,7 @@ extension Sequence where Element: UserClientType {
 
 extension UserClientType {
 
-    public func attributedRemoteIdentifier(_ attributes: [NSAttributedString.Key: AnyObject], boldAttributes: [NSAttributedString.Key: AnyObject], uppercase: Bool = false) -> NSAttributedString {
+    func attributedRemoteIdentifier(_ attributes: [NSAttributedString.Key: AnyObject], boldAttributes: [NSAttributedString.Key: AnyObject], uppercase: Bool = false) -> NSAttributedString {
         let identifierPrefixString = L10n.Localizable.Registration.Devices.id + " "
         let identifierString = NSMutableAttributedString(string: identifierPrefixString, attributes: attributes)
         let identifier = uppercase ? displayIdentifier.localizedUppercase : displayIdentifier
@@ -62,7 +62,7 @@ extension UserClientType {
     /// This should be used when showing the identifier in the UI
     /// We manually add a padding if there was a leading zero
 
-    public var displayIdentifier: String {
+    var displayIdentifier: String {
         guard let remoteIdentifier = self.remoteIdentifier else {
             return ""
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ private let zmLog = ZMSLog(tag: "Asset V3")
 
         configuration = .allowsRequestsWhileOnline
 
-        let downloadPredicate = NSPredicate { (object, _) -> Bool in
+        let downloadPredicate = NSPredicate { object, _ -> Bool in
             guard let message = object as? ZMAssetClientMessage else { return false }
             guard message.version >= 3 else { return false }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+
 @testable import Wire
 
 class MockUserType: NSObject, UserType, Decodable {
@@ -279,6 +280,15 @@ class MockUserType: NSObject, UserType, Decodable {
 
     func requestCompleteProfileImage() {
         // No op
+    }
+
+    func imageData(for size: ProfileImageSize) -> Data? {
+        switch size {
+        case .preview:
+            previewImageData
+        case .complete:
+            completeImageData
+        }
     }
 
     func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (Data?) -> Void) {

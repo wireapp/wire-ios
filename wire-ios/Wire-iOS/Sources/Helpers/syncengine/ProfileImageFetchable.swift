@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ extension ProfileImageFetchable where Self: UserType {
             self.requestCompleteProfileImage()
         }
 
-        imageData(for: size, queue: cache.processingQueue) { (imageData) in
+        imageData(for: size, queue: cache.processingQueue) { imageData in
             guard let imageData = imageData else {
                 return DispatchQueue.main.async {
                     completion(nil, false)

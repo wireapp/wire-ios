@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,7 +50,10 @@ extension SessionManager: VoIPPushManagerDelegate {
         }
 
         withSession(for: account, perform: { userSession in
-            WireLogger.notifications.info("Forwarding push payload to user session with account \(account.userIdentifier)")
+            WireLogger.notifications.info(
+                "Forwarding push payload to user session with account \(account.userIdentifier)",
+                attributes: .safePublic
+            )
 
             userSession.receivedPushNotification(with: payload, completion: { [weak self] in
                 WireLogger.notifications.info("Processing push payload completed")

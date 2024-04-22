@@ -25,24 +25,9 @@ import XCTest
 
 final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
 
-    var mockRecurringActionService: MockRecurringActionServiceInterface!
-
-    override func setUp() {
-        super.setUp()
-
-        mockRecurringActionService = .init()
-    }
-
-    override func tearDown() {
-        mockRecurringActionService = nil
-
-        super.tearDown()
-    }
-
     func testThatItCallsPerformActionsAfterQuickSync() {
         // Given
         mockRecurringActionService.performActionsIfNeeded_MockMethod = {}
-        sut.recurringActionService = mockRecurringActionService
 
         // When
         XCTAssertTrue(mockRecurringActionService.performActionsIfNeeded_Invocations.isEmpty)

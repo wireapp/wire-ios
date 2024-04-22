@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -103,6 +103,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
     }
 
     private func setupNavigatiomItem() {
+        navigationController?.navigationBar.backgroundColor = SemanticColors.View.backgroundDefault
         navigationItem.titleView = TwoLineTitleView(
             first: L10n.Localizable.Participants.title.capitalized.attributedString,
             second: verificationStatus)
@@ -308,7 +309,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
                 conversation: conversation,
                 userSession: userSession
             )
-            let navigationController = addParticipantsViewController.wrapInNavigationController(setBackgroundColor: true)
+            let navigationController = addParticipantsViewController.wrapInNavigationController()
             navigationController.modalPresentationStyle = .currentContext
 
             present(navigationController, animated: true)
@@ -380,9 +381,9 @@ private extension GroupDetailsViewController {
     var verificationStatusIcon: UIImage {
         switch conversation.messageProtocol {
         case .proteus, .mixed:
-            return Asset.Images.verifiedShield.image
+            return .init(resource: .verifiedShield)
         case .mls:
-            return Asset.Images.certificateValid.image
+            return .init(resource: .certificateValid)
         }
     }
 

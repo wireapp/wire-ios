@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ final class UserStatusViewController: UIViewController {
     private let options: UserStatusView.Options
     private let settings: Settings
 
-    public var userStatus = UserStatus() {
+    var userStatus = UserStatus() {
         didSet { (viewIfLoaded as? UserStatusView)?.userStatus = userStatus }
     }
 

@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -284,7 +285,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
             // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
             // swiftlint:enable todo_requires_jira_link
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
+            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 fingerprint = sessionsDirectory.localFingerprint
             }
             previousLastPrekey = try? self.syncMOC.zm_cryptKeyStore.lastPreKey()
@@ -309,7 +310,7 @@ final class UserClientEventConsumerTests: RequestStrategyTestBase {
         syncMOC.performGroupedBlockAndWait {
             // then
             var newFingerprint: Data?
-            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { (sessionsDirectory) in
+            self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 newFingerprint = sessionsDirectory.localFingerprint
             }
             let newLastPrekey = try? self.syncMOC.zm_cryptKeyStore.lastPreKey()

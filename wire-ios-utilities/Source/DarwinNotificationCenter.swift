@@ -37,7 +37,7 @@ public final class DarwinNotificationCenter {
         // we only want to internally observe each notification once
         guard handlers[notification] == nil else { return }
 
-        notification.observe { (_, _, name, _, _) in
+        notification.observe { _, _, name, _, _ in
             guard let name = name else { return }
             DarwinNotificationCenter.shared.forward(notification: name.rawValue as String)
         }

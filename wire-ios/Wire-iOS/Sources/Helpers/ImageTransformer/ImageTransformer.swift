@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,17 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import LocalAuthentication
+import UIKit
 
-/// An abstraction around `LAContext`.
+// sourcery: AutoMockable
+protocol ImageTransformer {
 
-public protocol LAContextProtocol {
-
-    var evaluatedPolicyDomainState: Data? { get }
-
-    func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool
-    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void)
+    func adjustInputSaturation(value: CGFloat, image: UIImage) -> UIImage?
 }
-
-extension LAContext: LAContextProtocol {}

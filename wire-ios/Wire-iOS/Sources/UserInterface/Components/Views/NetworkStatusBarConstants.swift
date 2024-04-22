@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@ import UIKit
 
 extension CGFloat {
     enum NetworkStatusBar {
-        static public let horizontalMargin: CGFloat = 16
-        static public let topMargin: CGFloat = 8
-        static public let bottomMargin: CGFloat = 8
+        static let horizontalMargin: CGFloat = 16
+        static let topMargin: CGFloat = 8
+        static let bottomMargin: CGFloat = 8
     }
 
     enum OfflineBar {

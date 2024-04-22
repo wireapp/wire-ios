@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -170,9 +170,11 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         }
     }
 
-    public func mailComposeController(_ controller: MFMailComposeViewController,
-                                      didFinishWith result: MFMailComposeResult,
-                                      error: Error?) {
+    func mailComposeController(
+        _ controller: MFMailComposeViewController,
+        didFinishWith result: MFMailComposeResult,
+        error: Error?
+    ) {
         self.mailViewController = nil
         controller.dismiss(animated: true)
         type(of: self).senderInstance = nil

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -241,7 +241,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
         XCTAssertTrue(waitForGroupsToBeEmpty([sut.dispatchGroup]))
 
         // Then
-        XCTAssertEqual(session.unlockDatabase.count, 1)
+        XCTAssertEqual(session.unlockDatabase_MockInvocations.count, 1)
         XCTAssertEqual(session.openApp.count, 1)
     }
 
@@ -258,7 +258,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
         XCTAssertTrue(waitForGroupsToBeEmpty([sut.dispatchGroup]))
 
         // Then
-        XCTAssertEqual(session.unlockDatabase.count, 0)
+        XCTAssertEqual(session.unlockDatabase_MockInvocations.count, 0)
         XCTAssertEqual(session.openApp.count, 0)
         XCTAssertEqual(presenter.results, [.authenticationDenied(.faceID)])
     }
@@ -273,7 +273,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
         XCTAssertTrue(waitForGroupsToBeEmpty([sut.dispatchGroup]))
 
         // Then
-        XCTAssertEqual(session.unlockDatabase.count, 0)
+        XCTAssertEqual(session.unlockDatabase_MockInvocations.count, 0)
         XCTAssertEqual(session.openApp.count, 0)
         XCTAssertEqual(presenter.results, [.customPasscodeNeeded])
     }
@@ -290,7 +290,7 @@ final class AppLockModuleInteractorTests: XCTestCase {
         XCTAssertTrue(waitForGroupsToBeEmpty([sut.dispatchGroup]))
 
         // Then
-        XCTAssertEqual(session.unlockDatabase.count, 0)
+        XCTAssertEqual(session.unlockDatabase_MockInvocations.count, 0)
         XCTAssertEqual(session.openApp.count, 0)
         XCTAssertEqual(presenter.results, [.authenticationUnavailable])
     }

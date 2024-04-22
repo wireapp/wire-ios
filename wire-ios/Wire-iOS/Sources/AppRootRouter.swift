@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import avs
 import WireCommonComponents
 
 // MARK: - AppRootRouter
-public final class AppRootRouter: NSObject {
+final class AppRootRouter: NSObject {
 
     // MARK: - Public Property
 
@@ -46,13 +46,14 @@ public final class AppRootRouter: NSObject {
 
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []
-    private let teamMetadataRefresher = TeamMetadataRefresher()
+    private let teamMetadataRefresher = TeamMetadataRefresher(selfUserProvider: SelfUser.provider)
 
     // MARK: - Private Set Property
 
     private(set) var sessionManager: SessionManager
 
-    // TO DO: This should be private
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: This should be private
     private(set) var rootViewController: RootViewController
 
     private var lastLaunchOptions: LaunchOptions?
@@ -97,18 +98,20 @@ public final class AppRootRouter: NSObject {
 
     // MARK: - Public implementation
 
-    public func start(launchOptions: LaunchOptions) {
+    func start(launchOptions: LaunchOptions) {
         self.lastLaunchOptions = launchOptions
         showInitial(launchOptions: launchOptions)
         sessionManager.resolveAPIVersion()
     }
 
-    public func openDeepLinkURL(_ deepLinkURL: URL) -> Bool {
+    func openDeepLinkURL(_ deepLinkURL: URL) -> Bool {
         return urlActionRouter.open(url: deepLinkURL)
     }
 
-    public func performQuickAction(for shortcutItem: UIApplicationShortcutItem,
-                                   completionHandler: ((Bool) -> Void)?) {
+    func performQuickAction(
+        for shortcutItem: UIApplicationShortcutItem,
+        completionHandler: ((Bool) -> Void)?
+    ) {
         quickActionsManager.performAction(for: shortcutItem, completionHandler: completionHandler)
     }
 
@@ -622,7 +625,7 @@ extension AppRootRouter: ContentSizeCategoryObserving {
         rootViewController.redrawAllFonts()
     }
 
-    public static func configureAppearance() {
+    static func configureAppearance() {
         let navigationBarTitleBaselineOffset: CGFloat = 2.5
 
         let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 11, weight: .semibold), .baselineOffset: navigationBarTitleBaselineOffset]

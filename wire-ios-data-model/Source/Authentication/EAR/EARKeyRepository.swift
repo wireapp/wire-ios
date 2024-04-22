@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,10 @@
 
 import Foundation
 import LocalAuthentication
+import Security
 
 // sourcery: AutoMockable
-public protocol EARKeyRepositoryInterface {
+protocol EARKeyRepositoryInterface {
 
     func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws
     func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey
@@ -34,28 +35,23 @@ public protocol EARKeyRepositoryInterface {
 
 }
 
-public enum EarKeyRepositoryFailure: Error {
-
-    case keyNotFound
-
-}
-
-public class EARKeyRepository: EARKeyRepositoryInterface {
+/// Caches keys for reuse and avoid prompting the user to authenticate for each key access.
+final class EARKeyRepository: EARKeyRepositoryInterface {
 
     private var keyCache = [String: SecKey]()
 
     // MARK: - Life cycle
 
-    public init() {}
+    init() {}
 
     // MARK: - Public keys
 
-    public func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws {
+    func storePublicKey(description: PublicEARKeyDescription, key: SecKey) throws {
         try KeychainManager.storeItem(description, value: key)
     }
 
-    public func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey {
-        if let key = keyCache [description.id] {
+    func fetchPublicKey(description: PublicEARKeyDescription) throws -> SecKey {
+        if let key = keyCache[description.id] {
             return key
         }
 
@@ -64,20 +60,20 @@ public class EARKeyRepository: EARKeyRepositoryInterface {
             keyCache[description.id] = key
             return key
         } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
-            throw EarKeyRepositoryFailure.keyNotFound
+            throw EARKeyRepositoryFailure.keyNotFound
         } catch {
             throw error
         }
     }
 
-    public func deletePublicKey(description: PublicEARKeyDescription) throws {
+    func deletePublicKey(description: PublicEARKeyDescription) throws {
         try KeychainManager.deleteItem(description)
         keyCache[description.id] = nil
     }
 
     // MARK: - Private keys
 
-    public func fetchPrivateKey(description: PrivateEARKeyDescription) throws -> SecKey {
+    func fetchPrivateKey(description: PrivateEARKeyDescription) throws -> SecKey {
         if let key = keyCache[description.id] {
             WireLogger.ear.info("found private key in key cache")
             return key
@@ -91,41 +87,41 @@ public class EARKeyRepository: EARKeyRepositoryInterface {
             return key
         } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
             WireLogger.ear.warn("private key not found in keychain", attributes: .safePublic)
-            throw EarKeyRepositoryFailure.keyNotFound
+            throw EARKeyRepositoryFailure.keyNotFound
         } catch {
             WireLogger.ear.warn("failed to fetch private key: \(error)", attributes: .safePublic)
             throw error
         }
     }
 
-    public func deletePrivateKey(description: PrivateEARKeyDescription) throws {
+    func deletePrivateKey(description: PrivateEARKeyDescription) throws {
         try KeychainManager.deleteItem(description)
         keyCache[description.id] = nil
     }
 
-    // MARK: - Datatbase keys
+    // MARK: - Database keys
 
-    public func storeDatabaseKey(description: DatabaseEARKeyDescription, key: Data) throws {
+    func storeDatabaseKey(description: DatabaseEARKeyDescription, key: Data) throws {
         try KeychainManager.storeItem(description, value: key)
     }
 
-    public func fetchDatabaseKey(description: DatabaseEARKeyDescription) throws -> Data {
+    func fetchDatabaseKey(description: DatabaseEARKeyDescription) throws -> Data {
         do {
             return try KeychainManager.fetchItem(description)
         } catch KeychainManager.Error.failedToFetchItemFromKeychain(errSecItemNotFound) {
-            throw EarKeyRepositoryFailure.keyNotFound
+            throw EARKeyRepositoryFailure.keyNotFound
         } catch {
             throw error
         }
     }
 
-    public func deleteDatabaseKey(description: DatabaseEARKeyDescription) throws {
+    func deleteDatabaseKey(description: DatabaseEARKeyDescription) throws {
         return try KeychainManager.deleteItem(description)
     }
 
     // MARK: - Cache
 
-    public func clearCache() {
+    func clearCache() {
         WireLogger.ear.info("clear key cache", attributes: .safePublic)
         keyCache.removeAll()
     }
