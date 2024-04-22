@@ -68,6 +68,7 @@
 		54D06C5C1BC81AFF005F0FBB /* android_image.encrypted in Resources */ = {isa = PBXBuildFile; fileRef = 54D06C581BC81976005F0FBB /* android_image.encrypted */; };
 		54D06C5D1BC81B03005F0FBB /* android_image.decrypted in Resources */ = {isa = PBXBuildFile; fileRef = 54D06C5A1BC81983005F0FBB /* android_image.decrypted */; };
 		54FA8E821BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */; };
+		5966D8382BD6BB4D00305BBC /* AccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8372BD6BB4D00305BBC /* AccentColor.swift */; };
 		5E0A1FF92105DBBA00949B3E /* Map+KeyPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0A1FF82105DBBA00949B3E /* Map+KeyPath.swift */; };
 		5E0A1FFC2105DE2700949B3E /* MapKeyPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */; };
 		5E4BC1BC2189E6A400A8682E /* AnyProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1BB2189E6A400A8682E /* AnyProperty.swift */; };
@@ -164,7 +165,6 @@
 		F9C9A7941CAEA7200039E10C /* ZMEncodedNSUUIDWithTimestamp.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C9A7931CAEA7200039E10C /* ZMEncodedNSUUIDWithTimestamp.m */; };
 		F9C9A7961CAEA72A0039E10C /* ZMEncodedNSUUIDWithTimestamp.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A7951CAEA72A0039E10C /* ZMEncodedNSUUIDWithTimestamp.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A7991CAEA8400039E10C /* ZMEncodedNSUUIDWithTimestampTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C9A7971CAEA83B0039E10C /* ZMEncodedNSUUIDWithTimestampTests.m */; };
-		F9C9A7B31CAEADFF0039E10C /* ZMAccentColor.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A7B21CAEADFF0039E10C /* ZMAccentColor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9D381AE1B70B93800E6E4EB /* ZMTimerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9D381A11B70B91000E6E4EB /* ZMTimerTests.m */; };
 		F9D381B01B70B94300E6E4EB /* ZMFunctionalTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9D381A01B70B91000E6E4EB /* ZMFunctionalTests.m */; };
 		F9D381B61B70B95A00E6E4EB /* WireUtilities-Tests.pch in Headers */ = {isa = PBXBuildFile; fileRef = F9D381A21B70B91000E6E4EB /* WireUtilities-Tests.pch */; };
@@ -282,6 +282,7 @@
 		54D06C581BC81976005F0FBB /* android_image.encrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = android_image.encrypted; sourceTree = "<group>"; };
 		54D06C5A1BC81983005F0FBB /* android_image.decrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = android_image.decrypted; sourceTree = "<group>"; };
 		54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSData+ZMSCryptoTests.swift"; path = "Source/NSData+ZMSCryptoTests.swift"; sourceTree = "<group>"; };
+		5966D8372BD6BB4D00305BBC /* AccentColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColor.swift; sourceTree = "<group>"; };
 		5E0A1FF82105DBBA00949B3E /* Map+KeyPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Map+KeyPath.swift"; sourceTree = "<group>"; };
 		5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapKeyPathTests.swift; sourceTree = "<group>"; };
 		5E4BC1BB2189E6A400A8682E /* AnyProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyProperty.swift; sourceTree = "<group>"; };
@@ -384,7 +385,6 @@
 		F9C9A7931CAEA7200039E10C /* ZMEncodedNSUUIDWithTimestamp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMEncodedNSUUIDWithTimestamp.m; sourceTree = "<group>"; };
 		F9C9A7951CAEA72A0039E10C /* ZMEncodedNSUUIDWithTimestamp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMEncodedNSUUIDWithTimestamp.h; sourceTree = "<group>"; };
 		F9C9A7971CAEA83B0039E10C /* ZMEncodedNSUUIDWithTimestampTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZMEncodedNSUUIDWithTimestampTests.m; path = Source/ZMEncodedNSUUIDWithTimestampTests.m; sourceTree = "<group>"; };
-		F9C9A7B21CAEADFF0039E10C /* ZMAccentColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMAccentColor.h; sourceTree = "<group>"; };
 		F9D381A01B70B91000E6E4EB /* ZMFunctionalTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZMFunctionalTests.m; path = Source/ZMFunctionalTests.m; sourceTree = "<group>"; };
 		F9D381A11B70B91000E6E4EB /* ZMTimerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZMTimerTests.m; path = Source/ZMTimerTests.m; sourceTree = "<group>"; };
 		F9D381A21B70B91000E6E4EB /* WireUtilities-Tests.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "WireUtilities-Tests.pch"; path = "Source/WireUtilities-Tests.pch"; sourceTree = "<group>"; };
@@ -596,7 +596,7 @@
 				F15BDB1D20889772002F36E8 /* TearDownCapable.swift */,
 				BF3C1B0C20DA7270001CE126 /* Equatable+OneOf.swift */,
 				546B1783241930830091F4B3 /* ZMObjectValidationError.h */,
-				F9C9A7B21CAEADFF0039E10C /* ZMAccentColor.h */,
+				5966D8372BD6BB4D00305BBC /* AccentColor.swift */,
 				F9C9A7951CAEA72A0039E10C /* ZMEncodedNSUUIDWithTimestamp.h */,
 				F9C9A7881CAE9F900039E10C /* NSString+Normalization.h */,
 				54CA31281B74F36B00B820C0 /* WireUtilities.h */,
@@ -771,7 +771,6 @@
 				54CA31371B74F36B00B820C0 /* NSUserDefaults+SharedUserDefaults.h in Headers */,
 				871939C321D4D92900738968 /* ZMMobileProvisionParser.h in Headers */,
 				54CA31531B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.h in Headers */,
-				F9C9A7B31CAEADFF0039E10C /* ZMAccentColor.h in Headers */,
 				54CA312F1B74F36B00B820C0 /* NSOperationQueue+Helpers.h in Headers */,
 				5EE020C6214A9FC5001669F0 /* ZMAtomicInteger.h in Headers */,
 				54CA312B1B74F36B00B820C0 /* NSData+ZMAdditions.h in Headers */,
@@ -1000,6 +999,7 @@
 				2577CB652B18D596007D3443 /* String+Clipping.swift in Sources */,
 				7C8BFFE322FD5D9600B3C8A5 /* ZMAccentColorValidator.swift in Sources */,
 				A9C6EDE426B32E9D007F61C5 /* UTIHelper.swift in Sources */,
+				5966D8382BD6BB4D00305BBC /* AccentColor.swift in Sources */,
 				097E36C31B7B62150039CC4C /* NSLocale+Internal.m in Sources */,
 				F19E55A822B3AAF3005C792D /* Data+ReadableHash.swift in Sources */,
 				BF3A7A601D8AA9B30034FF40 /* OptionalComparison.swift in Sources */,

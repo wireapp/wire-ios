@@ -127,7 +127,7 @@ public class ZMSearchUser: NSObject, UserType {
     fileprivate var internalIsTeamMember: Bool = false
     fileprivate var internalTeamCreatedBy: UUID?
     fileprivate var internalTeamPermissions: Permissions?
-    fileprivate var internalAccentColorValue: ZMAccentColor
+    fileprivate var internalAccentColorValue: AccentColor
     fileprivate var internalPendingApprovalByOtherUser: Bool = false
     fileprivate var internalConnectionRequestMessage: String?
     fileprivate var internalPreviewImageData: Data?
@@ -317,7 +317,7 @@ public class ZMSearchUser: NSObject, UserType {
         return user?.isUnderLegalHold == true
     }
 
-    public var accentColorValue: ZMAccentColor {
+    public var accentColorValue: AccentColor {
         if let user = user {
             return user.accentColorValue
         } else {
@@ -462,7 +462,7 @@ public class ZMSearchUser: NSObject, UserType {
     public init(contextProvider: ContextProvider,
                 name: String,
                 handle: String?,
-                accentColor: ZMAccentColor,
+                accentColor: AccentColor,
                 remoteIdentifier: UUID?,
                 domain: String? = nil,
                 teamIdentifier: UUID? = nil,

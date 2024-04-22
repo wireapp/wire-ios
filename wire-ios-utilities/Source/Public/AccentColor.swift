@@ -16,16 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-typedef NS_ENUM(int16_t, ZMAccentColor) {
-    ZMAccentColorUndefined = 0,
-    ZMAccentColorStrongBlue,
-    ZMAccentColorStrongLimeGreen,
-    ZMAccentColorBrightYellow,
-    ZMAccentColorVividRed,
-    ZMAccentColorBrightOrange,
-    ZMAccentColorSoftPink,
-    ZMAccentColorViolet,
-    
-    ZMAccentColorMin = ZMAccentColorStrongBlue,
-    ZMAccentColorMax = ZMAccentColorViolet,
-};
+@objc(ZMAccentColor)
+public enum AccentColor: Int16, CaseIterable, Hashable {
+
+    case undefined
+    case strongBlue
+    case strongLimeGreen
+    case brightYellow
+    case vividRed
+    case brightOrange
+    case softPink
+    case violet
+
+    static var min: Self { .strongBlue }
+    static var max: Self { .violet }
+}
+
+// still used in some Objective C code
+public let ZMAccentColorMax = AccentColor.max

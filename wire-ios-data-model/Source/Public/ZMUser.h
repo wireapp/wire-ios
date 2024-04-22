@@ -17,7 +17,7 @@
 //
 
 #import "ZMManagedObject.h"
-#import <WireUtilities/ZMAccentColor.h>
+@import WireUtilities;
 
 @class ZMConversation;
 @class UserClient;

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireUtilities
 
 /// The representation of a user that is going through the registration process.
 ///
@@ -26,12 +27,12 @@ import Foundation
 ///
 /// You then use it to register the user with the backend.
 
-public class UnregisteredUser {
+public struct UnregisteredUser: Equatable {
 
-    public var credentials: UnverifiedCredentials?
+    public var email = ""
     public var verificationCode: String?
     public var name: String?
-    public var accentColorValue: ZMAccentColor?
+    public var accentColorValue: AccentColor?
     public var acceptedTermsOfService: Bool?
     public var marketingConsent: Bool?
     public var password: String?
@@ -44,7 +45,7 @@ public class UnregisteredUser {
     public var isComplete: Bool {
         let passwordStepFinished = needsPassword ? password != nil : true
 
-        return credentials != nil
+        return !email.isEmpty
             && verificationCode != nil
             && name != nil
             && accentColorValue != nil
@@ -57,23 +58,6 @@ public class UnregisteredUser {
     public var needsPassword: Bool {
         return password == nil
     }
-
-}
-
-// MARK: - Equatable
-
-extension UnregisteredUser: Equatable {
-
-    public static func == (lhs: UnregisteredUser, rhs: UnregisteredUser) -> Bool {
-        return lhs.credentials == rhs.credentials
-            && lhs.verificationCode == rhs.verificationCode
-            && lhs.name == rhs.name
-            && lhs.accentColorValue == rhs.accentColorValue
-            && lhs.acceptedTermsOfService == rhs.acceptedTermsOfService
-            && lhs.marketingConsent == rhs.marketingConsent
-            && lhs.password == rhs.password
-    }
-
 }
 
 // MARK: - Normalization
@@ -105,5 +89,4 @@ extension UnregisteredUser {
     private static func normalizedString(_ value: String, using normalizer: (String) -> ZMPropertyNormalizationResult<NSString>) -> NormalizationResult<String> {
         return NormalizationResult(normalizer(value))
     }
-
 }
