@@ -1,33 +1,34 @@
 opt_in_rules:
   - closure_spacing
-  - literal_expression_end_indentation
-  - operator_usage_whitespace
-  - multiline_parameters
-  - unneeded_parentheses_in_closure_argument
-  - reduce_into
-  - yoda_condition
   - file_header
+  - literal_expression_end_indentation
+  - multiline_parameters
+  - operator_usage_whitespace
+  - reduce_into
+  - sorted_imports
+  - unneeded_parentheses_in_closure_argument
+  - yoda_condition
 
 disabled_rules:
-  - function_body_length
-  - type_body_length
+  - cyclomatic_complexity
+  - discarded_notification_center_observer
   - file_length
-  - generic_type_name
   - force_cast
   - force_try
-  - identifier_name
-  - type_name
-  - todo
-  - large_tuple
-  - unused_setter_value
-  - cyclomatic_complexity
-  - inclusive_language
-  - nesting
+  - function_body_length
   - function_parameter_count
-  - notification_center_detachment
-  - discarded_notification_center_observer
-  - xctfail_message
+  - generic_type_name
+  - identifier_name
+  - inclusive_language
+  - large_tuple
+  - nesting
   - no_fallthrough_only
+  - notification_center_detachment
+  - todo
+  - type_body_length
+  - type_name
+  - unused_setter_value
+  - xctfail_message
 
 file_header:
   required_pattern: |
@@ -58,10 +59,10 @@ custom_rules:
     severity: warning
 
 excluded:
-  - sourcery
-  - fastlane
   - Carthage
   - DerivedData
+  - fastlane
+  - sourcery
   - vendor
   - wire-ios/Templates
   - "scripts/Package.swift"
