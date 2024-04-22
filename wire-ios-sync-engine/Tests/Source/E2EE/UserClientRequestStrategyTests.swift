@@ -372,7 +372,7 @@ extension UserClientRequestStrategyTests {
                 ZMEmailCredentialKey: emailAddress,
                 ZMUserHasPasswordKey: true,
                 ZMUserUsesCompanyLoginCredentialKey: false,
-                ZMUserLoginCredentialsKey: LoginCredentials(emailAddress: emailAddress, phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
+                ZMUserLoginCredentialsKey: LoginCredentials(emailAddress: emailAddress, hasPassword: true, usesCompanyLogin: false)
             ])
 
             XCTAssertTrue(self.mockClientRegistrationStatusDelegate.didCallFailRegisterSelfUserClient)

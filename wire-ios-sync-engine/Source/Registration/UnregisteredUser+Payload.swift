@@ -34,10 +34,6 @@ extension UnregisteredUser {
         var payload: [String: Any] = [:]
 
         switch credentials! {
-        case .phone(let number):
-            payload["phone"] = number
-            payload["phone_code"] = verificationCode!
-
         case .email(let address):
             payload["email"] = address
             payload["email_code"] = verificationCode!

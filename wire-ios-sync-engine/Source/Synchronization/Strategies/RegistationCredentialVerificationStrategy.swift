@@ -67,10 +67,6 @@ extension RegistationCredentialVerificationStrategy: ZMSingleRequestTranscoder {
                     NSError.blacklistedEmail(with: response) ??
                     NSError.emailAddressInUse(with: response) ??
                     NSError.invalidEmail(with: response)
-
-                case .phone:
-                    decodedError = NSError.phoneNumberIsAlreadyRegisteredError(with: response) ??
-                    NSError.invalidPhoneNumber(withReponse: response)
                 }
 
                 error = decodedError ?? NSError(code: .unknownError, userInfo: [:])
