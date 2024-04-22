@@ -18,9 +18,7 @@
 
 import Foundation
 
-/**
- * Credentials that needs to be verified; either a phone number or an e-mail address.
- */
+/// Credentials that needs to be verified; either a phone number or an e-mail address.
 
 public enum UnverifiedCredentials: Equatable {
 

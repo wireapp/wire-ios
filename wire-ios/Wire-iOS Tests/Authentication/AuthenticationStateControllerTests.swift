@@ -158,28 +158,4 @@ class AuthenticationStateControllerTests: XCTestCase {
         XCTAssertEqual(stateController.stack, [.landingScreen, .provideCredentials(.email, nil)])
     }
 
-    func testThatItUnwindsFromNonUIToUIState() {
-        // GIVEN
-        let phoneNumber = "+4912345678900"
-
-        stateController.transition(to: .landingScreen, mode: .reset)
-        stateController.transition(to: .provideCredentials(.phone, nil)) // user logs in with phone number
-        stateController.transition(to: .requestPhoneVerificationCode(phoneNumber: phoneNumber, isResend: false))
-        stateController.transition(to: .enterPhoneVerificationCode(phoneNumber: phoneNumber))
-
-        XCTAssertEqual(stateController.stack, [
-            .landingScreen,
-            .provideCredentials(.phone, nil),
-            .requestPhoneVerificationCode(phoneNumber: phoneNumber, isResend: false), // non-ui
-            .enterPhoneVerificationCode(phoneNumber: phoneNumber)
-        ])
-
-        // WHEN
-        stateController.unwindState() // user taps back button on enter code screen
-
-        // THEN
-        XCTAssertEqual(stateController.currentStep, .provideCredentials(.phone, nil)) // we should rewind to n-2, because n-1 is non-ui
-        XCTAssertEqual(stateController.stack, [.landingScreen, .provideCredentials(.phone, nil)])
-    }
-
 }

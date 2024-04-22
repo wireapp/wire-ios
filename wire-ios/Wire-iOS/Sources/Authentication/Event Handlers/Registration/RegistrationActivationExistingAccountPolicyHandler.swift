@@ -88,7 +88,6 @@ private extension AuthenticationCoordinatorAlertAction {
 
     static func login(email: String) -> Self {
         let credentials = LoginCredentials(emailAddress: email,
-                                           phoneNumber: nil,
                                            hasPassword: true,
                                            usesCompanyLogin: false)
 
