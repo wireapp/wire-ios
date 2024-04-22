@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public struct UserPropertyValidator: UserPropertyValidating {
 
-public extension ZMUser {
+    public init() {}
 
     // Name
 
-    static func validate(name: inout String?) throws -> Bool {
+    public func validate(name: inout String?) throws -> Bool {
 
         var mutableName: Any? = name
 
@@ -38,7 +38,7 @@ public extension ZMUser {
 
     // Accent color
 
-    static func validate(accentColor: inout Int?) throws -> Bool {
+    public func validate(accentColor: inout Int?) throws -> Bool {
         var mutableAccentColor: Any? = accentColor
         let result = try ZMAccentColorValidator.validateValue(&mutableAccentColor)
         accentColor = mutableAccentColor as? Int
@@ -47,7 +47,7 @@ public extension ZMUser {
 
     // E-mail address
 
-    static func validate(emailAddress: inout String?) throws -> Bool {
+    public func validate(emailAddress: inout String?) throws -> Bool {
         var mutableEmailAddress: Any? = emailAddress
         let result = try ZMEmailAddressValidator.validateValue(&mutableEmailAddress)
         emailAddress = mutableEmailAddress as? String
@@ -57,7 +57,7 @@ public extension ZMUser {
 
     // Password
 
-    static func validate(password: inout String?) throws -> Bool {
+    public func validate(password: inout String?) throws -> Bool {
         var mutablePassword: Any? = password
         let result = try StringLengthValidator.validateStringValue(&mutablePassword,
                                                                  minimumStringLength: 8,
@@ -69,7 +69,7 @@ public extension ZMUser {
 
     // Phone number
 
-    static func validate(phoneNumber: inout String?) throws -> Bool {
+    public func validate(phoneNumber: inout String?) throws -> Bool {
         guard var mutableNumber: Any? = phoneNumber,
             phoneNumber?.count ?? 0 >= 1 else {
                 return false
@@ -82,7 +82,7 @@ public extension ZMUser {
 
     // Verification code
 
-    static func validate(phoneVerificationCode: inout String?) throws -> Bool {
+    public func validate(phoneVerificationCode: inout String?) throws -> Bool {
         var mutableCode: Any? = phoneVerificationCode
         let result = try StringLengthValidator.validateStringValue(&mutableCode, minimumStringLength: 6, maximumStringLength: 6, maximumByteLength: UInt32.max)
         phoneVerificationCode = mutableCode as? String

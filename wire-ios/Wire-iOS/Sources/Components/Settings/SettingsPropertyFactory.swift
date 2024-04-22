@@ -36,14 +36,7 @@ protocol AVSMediaManagerInterface {
 extension AVSMediaManager: AVSMediaManagerInterface {
 }
 
-protocol ValidatorType {
-    static func validate(name: inout String?) throws -> Bool
-}
-
-extension ZMUser: ValidatorType {
-}
-
-typealias SettingsSelfUser = ValidatorType & ZMEditableUser & UserType
+typealias SettingsSelfUser = ZMEditableUser & UserType
 
 enum SettingsPropertyError: Error {
     case WrongValue(String)
@@ -63,6 +56,7 @@ final class SettingsPropertyFactory {
     weak var userSession: UserSession?
     var selfUser: SettingsSelfUser?
     var marketingConsent: SettingsPropertyValue = .none
+    let userPropertyValidator: UserPropertyValidating
     weak var delegate: SettingsPropertyFactoryDelegate?
 
     static let userDefaultsPropertiesToKeys: [SettingsPropertyName: SettingKey] = [
@@ -81,15 +75,28 @@ final class SettingsPropertyFactory {
     ]
 
     convenience init(userSession: UserSession?, selfUser: SettingsSelfUser?) {
-        self.init(userDefaults: UserDefaults.standard, tracking: TrackingManager.shared, mediaManager: AVSMediaManager.sharedInstance(), userSession: userSession, selfUser: selfUser)
+        self.init(
+            userDefaults: UserDefaults.standard,
+            tracking: TrackingManager.shared,
+            mediaManager: AVSMediaManager.sharedInstance(),
+            userSession: userSession,
+            selfUser: selfUser
+        )
     }
 
-    init(userDefaults: UserDefaults, tracking: TrackingInterface?, mediaManager: AVSMediaManagerInterface?, userSession: UserSession?, selfUser: SettingsSelfUser?) {
+    init(
+        userDefaults: UserDefaults,
+        tracking: TrackingInterface?,
+        mediaManager: AVSMediaManagerInterface?,
+        userSession: UserSession?,
+        selfUser: SettingsSelfUser?
+    ) {
         self.userDefaults = userDefaults
         self.tracking = tracking
         self.mediaManager = mediaManager
         self.userSession = userSession
         self.selfUser = selfUser
+        userPropertyValidator = UserPropertyValidator()
 
         userSession?.fetchMarketingConsent { [weak self] result in
             switch result {
@@ -103,7 +110,7 @@ final class SettingsPropertyFactory {
 
     private func getOnlyProperty(propertyName: SettingsPropertyName, value: String?) -> SettingsBlockProperty {
         let getAction: GetAction = { _ in
-            return SettingsPropertyValue.string(value: value ?? "")
+            SettingsPropertyValue.string(value: value ?? "")
         }
         let setAction: SetAction = { _, _ in }
         return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
@@ -124,7 +131,7 @@ final class SettingsPropertyFactory {
                     guard let selfUser = self.selfUser else { requireInternal(false, "Attempt to modify a user property without a self user"); break }
 
                     var inOutString: String? = stringValue as String
-                    _ = try type(of: selfUser).validate(name: &inOutString)
+                    _ = try userPropertyValidator.validate(name: &inOutString)
                     self.userSession?.enqueue {
                         selfUser.name = stringValue
                     }

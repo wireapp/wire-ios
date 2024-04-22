@@ -16,13 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import Wire
-
-extension MockUserType: ValidatorType {
-
-    static func validate(name: inout String?) throws -> Bool {
-        return false
-    }
-
+public protocol UserPropertyValidating {
+    func validate(name: inout String?) throws -> Bool
+    func validate(accentColor: inout Int?) throws -> Bool
+    func validate(emailAddress: inout String?) throws -> Bool
+    func validate(password: inout String?) throws -> Bool
+    func validate(phoneNumber: inout String?) throws -> Bool
+    func validate(phoneVerificationCode: inout String?) throws -> Bool
 }
