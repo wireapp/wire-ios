@@ -37,11 +37,6 @@ public final class ZMUserSession: NSObject {
     private var tornDown: Bool = false
 
     private(set) var isNetworkOnline = true
-    var isPerformingSync = true {
-        willSet {
-            notificationDispatcher.operationMode = newValue ? .economical : .normal
-        }
-    }
 
     private(set) var coreDataStack: CoreDataStack!
     let application: ZMApplication
@@ -83,10 +78,6 @@ public final class ZMUserSession: NSObject {
     let observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol
     public let updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol
 
-    public var syncStatus: SyncStatusProtocol {
-        return applicationStatusDirectory.syncStatus
-    }
-
     public lazy var featureRepository = FeatureRepository(context: syncContext)
 
     let earService: EARServiceInterface
@@ -101,7 +92,21 @@ public final class ZMUserSession: NSObject {
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
 
+    public var hasCompletedInitialSync: Bool = false
+
+    public var topConversationsDirectory: TopConversationsDirectory
+
     // MARK: Computed Properties
+
+    var isPerformingSync = true {
+        willSet {
+            notificationDispatcher.operationMode = newValue ? .economical : .normal
+        }
+    }
+
+    public var syncStatus: SyncStatusProtocol {
+        return applicationStatusDirectory.syncStatus
+    }
 
     public var fileSharingFeature: Feature.FileSharing {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
@@ -176,10 +181,6 @@ public final class ZMUserSession: NSObject {
             cRLsChecker: self.cRLsChecker
         )
     }()
-
-    public var hasCompletedInitialSync: Bool = false
-
-    public var topConversationsDirectory: TopConversationsDirectory
 
     public var managedObjectContext: NSManagedObjectContext { // TODO jacob we don't want this to be public
         return coreDataStack.viewContext
