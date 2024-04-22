@@ -129,6 +129,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     let dispatchGroup: ZMSDispatchGroup?
 
     private let migrator: CoreDataMessagingMigrator
+    private var hasBeenClosed = false
 
     // MARK: - Initialization
 
@@ -189,6 +190,16 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 
     deinit {
+        close()
+    }
+
+    public func close() {
+        guard !hasBeenClosed  else {
+            return
+        }
+
+        defer { hasBeenClosed = true }
+
         viewContext.tearDown()
         syncContext.tearDown()
         searchContext.tearDown()
@@ -197,6 +208,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 
     func closeStores() {
+        WireLogger.localStorage.info("Closing core data stores")
         do {
             try closeStores(in: messagesContainer)
             try closeStores(in: eventsContainer)
