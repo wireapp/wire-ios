@@ -65,11 +65,6 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
         runSnapshotTest(for: .createCredentials(UnregisteredUser()))
     }
 
-    func testActivationScreen_Phone() {
-        let phoneNumber = UnverifiedCredentials.phone("+0123456789")
-        runSnapshotTest(for: .enterActivationCode(phoneNumber, user: UnregisteredUser()))
-    }
-
     func testActivationScreen_Email() {
         let email = UnverifiedCredentials.email("test@example.com")
         runSnapshotTest(for: .enterActivationCode(email, user: UnregisteredUser()))
@@ -88,10 +83,6 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
     }
 
     // MARK: - Login
-
-    func testLoginScreen_Phone() throws {
-        runSnapshotTest(for: .provideCredentials(.phone, nil))
-    }
 
     func testLoginScreen_Email() {
         runSnapshotTest(for: .provideCredentials(.email, nil))
@@ -128,10 +119,6 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
     func testLoginScreen_Email_PhoneDisabled() {
         featureProvider.allowOnlyEmailLogin = true
         runSnapshotTest(for: .provideCredentials(.email, nil))
-    }
-
-    func testLoginScreen_PhoneNumberVerification() {
-        runSnapshotTest(for: .enterPhoneVerificationCode(phoneNumber: "+0123456789"))
     }
 
     func testBackupScreen_NewDevice() {
