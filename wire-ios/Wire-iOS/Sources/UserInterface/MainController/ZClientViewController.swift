@@ -168,8 +168,7 @@ final class ZClientViewController: UIViewController {
         updateSplitViewTopConstraint()
 
         wireSplitViewController.view.backgroundColor = .clear
-
-        createBackgroundViewController()
+        wireSplitViewController.leftViewController = conversationListViewController
 
         if pendingInitialStateRestore {
             restoreStartupState()
@@ -210,10 +209,6 @@ final class ZClientViewController: UIViewController {
     @objc
     private func openStartUI(_ sender: Any?) {
         conversationListViewController.presentPeoplePicker()
-    }
-
-    private func createBackgroundViewController() {
-        wireSplitViewController.leftViewController = conversationListViewController
     }
 
     // MARK: Status bar
