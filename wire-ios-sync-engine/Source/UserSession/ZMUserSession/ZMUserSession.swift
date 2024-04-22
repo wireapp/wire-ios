@@ -101,10 +101,6 @@ public final class ZMUserSession: NSObject {
     let lastEventIDRepository: LastEventIDRepositoryInterface
     let conversationEventProcessor: ConversationEventProcessor
 
-    // MARK: Dependency Injection
-
-    private let dependencies: InjectedDependencies
-
     // MARK: Computed Properties
 
     public var fileSharingFeature: Feature.FileSharing {
