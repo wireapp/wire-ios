@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Contacts
-import libPhoneNumberiOS
 
 /// Wraps the system address book to return `ZMAddressBookContact` when iterating, filtering out those
 /// without a valid email or phone

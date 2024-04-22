@@ -20,16 +20,6 @@ import Foundation
 import WireSyncEngine
 
 /**
- * The type of credentials to ask when the user is creating or
- * providing credentials.
- */
-
-enum AuthenticationCredentialsType {
-    /// Register by email.
-    case email
-}
-
-/**
  * The context that caused the user to not have a complete history.
  */
 
