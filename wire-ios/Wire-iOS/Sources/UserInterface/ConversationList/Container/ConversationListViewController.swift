@@ -98,9 +98,6 @@ final class ConversationListViewController: UIViewController {
 
     required init(viewModel: ViewModel) {
         self.viewModel = viewModel
-        defer {
-            viewModel.viewController = self
-        }
 
         topBarViewController = ConversationListTopBarViewController(
             account: viewModel.account,
@@ -129,6 +126,8 @@ final class ConversationListViewController: UIViewController {
         setupNetworkStatusBar()
 
         createViewConstraints()
+
+        viewModel.viewController = self
     }
 
     @available(*, unavailable)
