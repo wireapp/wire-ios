@@ -59,12 +59,7 @@ public class UnregisteredUser {
 
     /// Whether the user needs a password.
     public var needsPassword: Bool {
-        switch credentials {
-        case .phone?:
-            return false
-        default:
-            return password == nil
-        }
+        return password == nil
     }
 
 }
@@ -102,11 +97,6 @@ extension UnregisteredUser {
     /// Returns whether the specified password can be used to register the user.
     public static func normalizedPassword(_ password: String) -> NormalizationResult<String> {
         return normalizedString(password, using: ZMUser.normalizePassword)
-    }
-
-    /// Returns whether the specified phone number can be used to register the user.
-    public static func normalizedPhoneNumber(_ phoneNumber: String) -> NormalizationResult<String> {
-        return normalizedString(phoneNumber, using: ZMUser.normalizePhoneNumber)
     }
 
     /// Returns whether the specified verification code can be used to register the user.

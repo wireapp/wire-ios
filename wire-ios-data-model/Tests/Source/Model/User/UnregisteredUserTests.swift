@@ -43,63 +43,6 @@ class UnregisteredUserTests: XCTestCase {
         XCTAssertFalse(UnregisteredUser.normalizedEmailAddress(invalidEmail).isValid)
     }
 
-    func testThatItValidatesThePhoneNumber() {
-        // GIVEN
-        let validPhone = "+4912345678"
-        let invalidPhone = "+49" + String(repeating: "0", count: 100)
-
-        // WHEN
-        XCTAssertTrue(UnregisteredUser.normalizedPhoneNumber(validPhone).isValid)
-        XCTAssertFalse(UnregisteredUser.normalizedPhoneNumber(invalidPhone).isValid)
-    }
-
-    func testThatItDoesNotValidateAPhoneNumberWithLettersWithTheRightError() {
-        // GIVEN
-        let phoneWithLetters = "+49abcdefg"
-        let shortPhoneWithLetters = "ab"
-
-        // WHEN
-        let normalizedPhoneWithLetters = UnregisteredUser.normalizedPhoneNumber(phoneWithLetters)
-        let normalizedShortPhoneWithLetters = UnregisteredUser.normalizedPhoneNumber(shortPhoneWithLetters)
-
-        // THEN
-        assertNormalizationErrorCode(normalizedPhoneWithLetters, .phoneNumberContainsInvalidCharacters)
-        assertNormalizationErrorCode(normalizedShortPhoneWithLetters, .phoneNumberContainsInvalidCharacters)
-    }
-
-    func testThatItDoesNotValidateAShortPhoneNumberWithTheRightError() {
-        // GIVEN
-        let shortPhone = "+49"
-
-        // WHEN
-        let normalizedPhone = UnregisteredUser.normalizedPhoneNumber(shortPhone)
-
-        // THEN
-        assertNormalizationErrorCode(normalizedPhone, .tooShort)
-    }
-
-    func testThatItDoesNotValidateALongPhoneNumberWithTheRightError() {
-        // GIVEN
-        let longPhone = "+4900000002132131241241234234"
-
-        // WHEN
-        let normalizedPhone = UnregisteredUser.normalizedPhoneNumber(longPhone)
-
-        // THEN
-        assertNormalizationErrorCode(normalizedPhone, .tooLong)
-    }
-
-    func testThatItNormalizesThePhoneNumber() {
-        // GIVEN
-        let phoneNumber = "+49(123)45.6-78"
-
-        // WHEN
-        let normalizedPhoneNumber = UnregisteredUser.normalizedPhoneNumber(phoneNumber)
-
-        // THEN
-        assertNormalizationValue(normalizedPhoneNumber, "+4912345678")
-    }
-
     func testThatItNormalizesTheEmailAddress() {
         // GIVEN
         let email = " john.doe@gmail.com "
@@ -109,23 +52,6 @@ class UnregisteredUserTests: XCTestCase {
 
         // THEN
         assertNormalizationValue(normalizedEmail, "john.doe@gmail.com")
-    }
-
-    func testThatItReturnsCompletedWhenUserIsComplete_Phone() {
-        // GIVEN
-        let user = UnregisteredUser()
-
-        // WHEN
-        user.name = "Mario"
-        user.credentials = .phone("+49123456789")
-        user.verificationCode = "123456"
-        user.accentColorValue = .softPink
-        user.acceptedTermsOfService = true
-        user.marketingConsent = false
-
-        // THEN
-        XCTAssertTrue(user.isComplete)
-        XCTAssertFalse(user.needsPassword)
     }
 
     func testThatItReturnsCompletedWhenUserIsComplete_Email() {

@@ -25,14 +25,10 @@ public enum UnverifiedCredentials: Equatable {
     /// The e-mail that needs to be verified.
     case email(String)
 
-    /// The phone number that needs to be verified.
-    case phone(String)
-
     /// The label identifying the type of credential, that can be used in backend requests.
     public var type: String {
         switch self {
         case .email: return "email"
-        case .phone: return "phone"
         }
     }
 
@@ -40,7 +36,6 @@ public enum UnverifiedCredentials: Equatable {
     public var rawValue: String {
         switch self {
         case .email(let email): return email
-        case .phone(let phone): return phone
         }
     }
 }
