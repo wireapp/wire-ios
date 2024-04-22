@@ -16,21 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireUtilities
 
-public extension Bundle {
+extension Bundle {
 
-    var appInfo: Bundle.Info {
+    public var appInfo: Bundle.Info {
         return Info(version: shortVersionString ?? "-", build: Bundle.main.infoDictionary?[kCFBundleVersionKey as String] as? String ?? "-")
     }
 
-    var shortVersionString: String? {
+    public var shortVersionString: String? {
         return Bundle.main.infoForKey("CFBundleShortVersionString")
     }
 
-    static var appMainBundle: Bundle {
+    public static var appMainBundle: Bundle {
         let mainBundle: Bundle
         if UIApplication.runningInExtension {
             let extensionBundleURL = Bundle.main.bundleURL
@@ -43,7 +42,7 @@ public extension Bundle {
         return mainBundle
     }
 
-    struct Info: SafeForLoggingStringConvertible {
+    public struct Info: SafeForLoggingStringConvertible {
         var version: String
         var build: String
 

@@ -30,9 +30,11 @@ extension UINavigationController {
         return nil
     }
 
-    public func pushViewController(_ viewController: UIViewController,
-                                   animated: Bool,
-                                   completion: (() -> Void)?) {
+    func pushViewController(
+        _ viewController: UIViewController,
+        animated: Bool,
+        completion: (() -> Void)?
+    ) {
         pushViewController(viewController, animated: animated)
 
         if animated, let coordinator = transitionCoordinator {
@@ -59,8 +61,10 @@ extension UINavigationController {
     }
 
     @discardableResult
-    public func popToRootViewController(animated: Bool,
-                                        completion: (() -> Void)?) -> [UIViewController]? {
+    func popToRootViewController(
+        animated: Bool,
+        completion: (() -> Void)?
+    ) -> [UIViewController]? {
         let controllers = popToRootViewController(animated: true)
         if animated, let coordinator = transitionCoordinator {
             coordinator.animate(alongsideTransition: nil) { _ in

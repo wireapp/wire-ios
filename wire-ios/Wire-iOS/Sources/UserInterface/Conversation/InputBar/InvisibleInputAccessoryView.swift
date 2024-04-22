@@ -36,7 +36,7 @@ final class InvisibleInputAccessoryView: UIView {
         }
     }
 
-    override public var intrinsicContentSize: CGSize {
+    override var intrinsicContentSize: CGSize {
         return overriddenIntrinsicContentSize
     }
 
