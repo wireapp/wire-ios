@@ -78,6 +78,8 @@ extension MockUserType {
         user.initials = PersonName.person(withName: name, schemeTagger: nil).initials
         user.teamIdentifier = teamID
         user.teamRole = teamID != nil ? .member : .none
+        user.remoteIdentifier = .create()
+        user.domain = "domain.com"
         return user
     }
 

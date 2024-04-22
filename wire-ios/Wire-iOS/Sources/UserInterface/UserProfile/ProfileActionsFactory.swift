@@ -184,7 +184,7 @@ final class ProfileActionsFactory {
             conversation = selfConversation
         } else if context == .profileViewer {
             conversation = nil
-        } else if !user.isConnected && !user.isTeamMember {
+        } else if !user.isConnected {
             if user.isPendingApprovalByOtherUser {
                 return [.cancelConnectionRequest]
             } else if !user.isPendingApprovalBySelfUser {
@@ -228,10 +228,12 @@ final class ProfileActionsFactory {
                 break
             }
 
+            let isOnSameTeam = viewer.isOnSameTeam(otherUser: user)
+
             // Show connection request actions for unconnected users from different teams.
             if user.isPendingApprovalByOtherUser {
                 actions.append(.cancelConnectionRequest)
-            } else if (user.isConnected && !user.hasEmptyName) || user.isTeamMember {
+            } else if (user.isConnected && !user.hasEmptyName) || isOnSameTeam {
                 switch oneOnOneStatus {
                 case .doesNotExist(protocol: .mls), .exists(protocol: .mls, established: false):
                     actions.append(.startOneToOne)
@@ -249,7 +251,7 @@ final class ProfileActionsFactory {
 
             // If the user is not from the same team as the other user, allow blocking
 
-            if user.isConnected && !user.isTeamMember && !user.isWirelessUser && !user.hasEmptyName {
+            if user.isConnected && !isOnSameTeam && !user.isWirelessUser && !user.hasEmptyName {
                 actions.append(.block(isBlocked: false))
             }
 

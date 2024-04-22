@@ -19,13 +19,14 @@
 import Foundation
 import WireDataModel
 
+// sourcery: AutoMockable
 public protocol OneOnOneConversationCreationStatusUseCaseProtocol {
 
     func invoke(userID: QualifiedID) async throws -> OneOnOneConversationCreationStatus
 
 }
 
-public enum OneOnOneConversationCreationStatus {
+public enum OneOnOneConversationCreationStatus: Equatable {
 
     case exists(protocol: MessageProtocol, established: Bool?)
     case doesNotExist(protocol: MessageProtocol?)
@@ -42,7 +43,7 @@ public struct OneOnOneConversationCreationStatusUseCase: OneOnOneConversationCre
 
     // MARK: - Types
 
-    public enum Error: Swift.Error {
+    public enum Error: Swift.Error, Equatable {
         case userNotFound
         case missingGroupID
     }

@@ -18,17 +18,26 @@
 
 import XCTest
 @testable import Wire
+@testable import WireSyncEngineSupport
 
 final class ProfileActionsFactoryTests: XCTestCase {
 
     var selfUserTeam: UUID!
     var selfUser: MockUserType!
     var defaultExtendedMetadata: [[String: String]]!
+    var mockUserSession: UserSessionMock!
+    var mockOneOnOneConversationCreationStatusUseCase: MockOneOnOneConversationCreationStatusUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
         selfUserTeam = UUID()
         selfUser = MockUserType.createSelfUser(name: "George Johnson", inTeam: selfUserTeam)
+
+        mockOneOnOneConversationCreationStatusUseCase = MockOneOnOneConversationCreationStatusUseCaseProtocol()
+        mockOneOnOneConversationCreationStatusUseCase.invokeUserID_MockValue = .exists(protocol: .proteus, established: nil)
+
+        mockUserSession = UserSessionMock()
+        mockUserSession.mockOneOnOneConversationCreationStatus = mockOneOnOneConversationCreationStatusUseCase
     }
 
     override func tearDown() {
@@ -45,7 +54,6 @@ final class ProfileActionsFactoryTests: XCTestCase {
     func test_OneToOne_TeamToTeam() {
         // GIVEN
         let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: selfUserTeam)
-
         let conversation = MockConversation.oneOnOneConversation()
         conversation.activeParticipants = [selfUser, otherUser]
 
@@ -310,6 +318,37 @@ final class ProfileActionsFactoryTests: XCTestCase {
         ])
     }
 
+    func test_Group_TeamToTeam_MLS_GroupNotEstablished() {
+        let otherUser = MockUserType.createConnectedUser(name: "John Doe", inTeam: selfUserTeam)
+        let conversation = MockConversation.groupConversation()
+
+        mockOneOnOneConversationCreationStatusUseCase.invokeUserID_MockValue = .exists(
+            protocol: .mls,
+            established: false
+        )
+
+        verifyActions(
+            user: otherUser,
+            viewer: selfUser,
+            conversation: conversation,
+            expectedActions: [.startOneToOne, .removeFromGroup]
+        )
+    }
+
+    func test_Group_TeamToTeam_MLS_ConversationDoesntExist() {
+        let otherUser = MockUserType.createConnectedUser(name: "John Doe", inTeam: selfUserTeam)
+        let conversation = MockConversation.groupConversation()
+
+        mockOneOnOneConversationCreationStatusUseCase.invokeUserID_MockValue = .doesNotExist(protocol: .mls)
+
+        verifyActions(
+            user: otherUser,
+            viewer: selfUser,
+            conversation: conversation,
+            expectedActions: [.startOneToOne, .removeFromGroup]
+        )
+    }
+
     func test_Group_TeamToPartner() {
         // GIVEN
         let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: selfUserTeam)
@@ -327,7 +366,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
     func test_Group_TeamToGuest_Connected() {
         // GIVEN
-        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: nil)
+        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson")
         otherUser.isGuestInConversation = true
 
         let conversation = MockConversation.groupConversation()
@@ -343,7 +382,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
     func test_Group_TeamToGuestFromOtherTeam_Connected() {
         // GIVEN
-        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: UUID())
+        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson")
         otherUser.isGuestInConversation = true
 
         let conversation = MockConversation.groupConversation()
@@ -359,7 +398,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
     func test_Group_GuestFromOtherTeam_ConnectedWithoutName() {
         // GIVEN
-        let otherUser = MockUserType.createConnectedUser(name: "", inTeam: UUID())
+        let otherUser = MockUserType.createConnectedUser(name: "")
         otherUser.isGuestInConversation = true
 
         let conversation = MockConversation.groupConversation()
@@ -373,7 +412,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
     func test_Group_TeamToGuest_NotConnected() {
         // GIVEN
-        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: UUID())
+        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson")
         otherUser.isGuestInConversation = true
         otherUser.isConnected = false
         otherUser.canBeConnected = true
@@ -390,7 +429,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
     func test_Group_TeamToGuest_PendingRequestFromSelf() {
         // GIVEN
-        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: UUID())
+        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson")
         otherUser.isGuestInConversation = true
         otherUser.isConnected = false
         otherUser.isPendingApprovalByOtherUser = true
@@ -407,7 +446,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
     func test_Group_TeamToGuest_Wireless() {
         // GIVEN
-        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: UUID())
+        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson")
         otherUser.isGuestInConversation = true
         otherUser.isWirelessUser = true
         otherUser.isConnected = false
@@ -423,7 +462,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
     func test_Group_TeamToGuest_UserDeleted() {
         // GIVEN
-        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: UUID())
+        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson")
         otherUser.isAccountDeleted = true
 
         let conversation = MockConversation.groupConversation()
@@ -470,7 +509,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         // GIVEN
         selfUser.teamRole = .partner
         selfUser.canRemoveUserFromConversation = false
-        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: nil)
+        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson")
         otherUser.isGuestInConversation = true
 
         let conversation = MockConversation.groupConversation()
@@ -487,7 +526,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         // GIVEN
         selfUser.teamRole = .partner
         selfUser.canRemoveUserFromConversation = false
-        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: UUID())
+        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson")
         otherUser.isGuestInConversation = true
 
         let conversation = MockConversation.groupConversation()
@@ -504,7 +543,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         // GIVEN
         selfUser.teamRole = .partner
         selfUser.canRemoveUserFromConversation = false
-        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: UUID())
+        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson")
         otherUser.isGuestInConversation = true
         otherUser.isConnected = false
         otherUser.canBeConnected = true
@@ -522,7 +561,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         // GIVEN
         selfUser.teamRole = .partner
         selfUser.canRemoveUserFromConversation = false
-        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: UUID())
+        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson")
         otherUser.isGuestInConversation = true
         otherUser.isConnected = false
         otherUser.isPendingApprovalByOtherUser = true
@@ -540,7 +579,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         // GIVEN
         selfUser.teamRole = .partner
         selfUser.canRemoveUserFromConversation = false
-        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: UUID())
+        let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson")
         otherUser.isGuestInConversation = true
         otherUser.isWirelessUser = true
         otherUser.isConnected = false
@@ -728,15 +767,31 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
     // MARK: - Helpers
 
-    func verifyActions(user: UserType,
-                       viewer: UserType,
-                       conversation: MockConversation,
-                       expectedActions: [ProfileAction],
-                       context: ProfileViewControllerContext = .oneToOneConversation,
-                       file: StaticString = #file,
-                       line: UInt = #line) {
-        let factory = ProfileActionsFactory(user: user, viewer: viewer, conversation: conversation.convertToRegularConversation(), context: context)
-        let actions = factory.makeActionsList()
+    func verifyActions(
+        user: UserType,
+        viewer: UserType,
+        conversation: MockConversation,
+        expectedActions: [ProfileAction],
+        context: ProfileViewControllerContext = .oneToOneConversation,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        let factory = ProfileActionsFactory(
+            user: user,
+            viewer: viewer,
+            conversation: conversation.convertToRegularConversation(),
+            context: context,
+            userSession: mockUserSession
+        )
+
+        let expectation = XCTestExpectation(description: "received actions list")
+        var actions = [ProfileAction]()
+        factory.makeActionsList {
+            actions = $0
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 0.5)
         XCTAssertEqual(actions, expectedActions, file: file, line: line)
     }
 

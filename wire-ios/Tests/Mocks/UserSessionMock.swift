@@ -305,4 +305,16 @@ final class UserSessionMock: UserSession {
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
 
     func fetchAllClients() {}
+
+    func createTeamOneOnOne(
+        with user: UserType,
+        completion: @escaping (Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+    ) {
+    }
+
+    var mockOneOnOneConversationCreationStatus: MockOneOnOneConversationCreationStatusUseCaseProtocol?
+    var oneOnOneConversationCreationStatus: OneOnOneConversationCreationStatusUseCaseProtocol {
+        mockOneOnOneConversationCreationStatus ?? MockOneOnOneConversationCreationStatusUseCaseProtocol()
+    }
+
 }

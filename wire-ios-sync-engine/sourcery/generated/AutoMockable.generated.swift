@@ -275,6 +275,38 @@ public class MockIsE2EICertificateEnrollmentRequiredProtocol: IsE2EICertificateE
 
 }
 
+public class MockOneOnOneConversationCreationStatusUseCaseProtocol: OneOnOneConversationCreationStatusUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeUserID_Invocations: [QualifiedID] = []
+    public var invokeUserID_MockError: Error?
+    public var invokeUserID_MockMethod: ((QualifiedID) async throws -> OneOnOneConversationCreationStatus)?
+    public var invokeUserID_MockValue: OneOnOneConversationCreationStatus?
+
+    public func invoke(userID: QualifiedID) async throws -> OneOnOneConversationCreationStatus {
+        invokeUserID_Invocations.append(userID)
+
+        if let error = invokeUserID_MockError {
+            throw error
+        }
+
+        if let mock = invokeUserID_MockMethod {
+            return try await mock(userID)
+        } else if let mock = invokeUserID_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeUserID`")
+        }
+    }
+
+}
+
 class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
 
     // MARK: - Life cycle

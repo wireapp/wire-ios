@@ -35,16 +35,23 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
                 case .exists(protocol: .proteus, established: _),
                         .exists(protocol: .mls, established: true):
 
+                    // If the conversation exists, and is established (in case of mls),
+                    // then we open the conversation
                     guard let conversation else { return }
                     await openConversation(conversation)
 
                 case .exists(protocol: .mls, established: false), 
                         .doesNotExist(protocol: .mls):
 
+                    // If the conversation should be using mls and is not established,
+                    // or does not exits, then we open the user profile to let the user
+                    // create the conversation
                     await openUserProfile(user)
 
                 case .doesNotExist(protocol: .proteus):
 
+                    // If the conversation should be using proteus,
+                    // then we create the conversation and open it. (legacy behaviour)
                     await MainActor.run { [weak self] in
                         self?.createTeamOneOnOne(user) { result in
                             guard case .success(let conversation) = result else { return }
@@ -93,12 +100,8 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         _ user: UserType,
         callback onConversationCreated: @escaping ConversationCreatedBlock
     ) {
-        guard let userSession = ZMUserSession.shared() else {
-            return
-        }
-
         viewController?.setState(.conversationList, animated: true) {
-            userSession.createTeamOneOnOne(with: user) {
+            self.userSession.createTeamOneOnOne(with: user) {
                 switch $0 {
                 case .success(let conversation):
                     onConversationCreated(.success(conversation))
@@ -107,21 +110,6 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
                     onConversationCreated(.failure(error))
                 }
             }
-        }
-    }
-
-}
-
-extension ConversationListViewController.ViewModel: ProfileViewControllerDelegate {
-
-    func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
-
-        controller?.dismiss(animated: true) {
-            ZClientViewController.shared?.select(
-                conversation: conversation,
-                focusOnView: true,
-                animated: true
-            )
         }
     }
 
