@@ -21,6 +21,6 @@
 extension MockUser: SelfUserProviderUI {
 
     public static var selfUser: EditableUser {
-        fatalError("not supported")
+        return (mockSelf() as Any as! ZMUser)
     }
 }
