@@ -84,12 +84,10 @@ final class AuthenticationInterfaceBuilder {
             } else {
                 let prefill: AuthenticationPrefilledCredentials?
 
-                if let credentials = credentials {
-                    // If we found the credentials of the expired session, pre-fill them
-                    let prefillType: AuthenticationCredentialsType = credentials.phoneNumber != nil && credentials.emailAddress == nil ? .phone : .email
+                if let credentials = credentials, credentials.emailAddress != nil {
+                    let prefillType: AuthenticationCredentialsType = .email
                     prefill = AuthenticationPrefilledCredentials(primaryCredentialsType: prefillType, credentials: credentials, isExpired: isSignedOut)
                 } else {
-                    // Otherwise, default to the email pre-fill screen.
                     prefill = nil
                 }
 
@@ -252,7 +250,6 @@ final class AuthenticationInterfaceBuilder {
 
     private func makeCredentialsViewController(for flowType: AuthenticationCredentialsViewController.FlowType) -> AuthenticationCredentialsViewController {
         let viewController = AuthenticationCredentialsViewController(flowType: flowType, backendEnvironmentProvider: backendEnvironmentProvider)
-        viewController.configure(with: featureProvider)
         return viewController
     }
 

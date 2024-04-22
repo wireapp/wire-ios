@@ -35,8 +35,6 @@ final class AuthenticationCredentialsCreationInputHandler: AuthenticationEventHa
         // Only handle known values.
         if let email = context as? String {
             return [.startRegistrationFlow(.email(email))]
-        } else if let phoneNumber = context as? PhoneNumber {
-            return [.startRegistrationFlow(.phone(phoneNumber.fullNumber))]
         } else {
             return nil
         }

@@ -27,10 +27,7 @@ import WireCommonComponents
  */
 
 final class AuthenticationCredentialsViewController: AuthenticationStepController,
-                                                     CountryCodeTableViewControllerDelegate,
                                                      EmailPasswordTextFieldDelegate,
-                                                     PhoneNumberInputViewDelegate,
-                                                     TabBarDelegate,
                                                      TextFieldValidationDelegate,
                                                      UITextFieldDelegate {
 
@@ -130,7 +127,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     let emailPasswordInputField = EmailPasswordTextField()
     let emailInputField = ValidatedTextField(kind: .email, style: .default)
-    let phoneInputView = PhoneNumberInputView()
     let loginButton = ZMButton(
         style: .accentColorTextButtonStyle,
         cornerRadius: 16,
@@ -145,22 +141,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
                                        activeFieldChange: { [weak self] textField in
             self?.loginActiveField = textField
         })
-    }()
-
-    let tabBar: TabBar = {
-        let emailTab = UITabBarItem(title: Registration.registerByEmail.capitalized,
-                                    image: nil,
-                                    selectedImage: nil)
-        emailTab.accessibilityIdentifier = "UseEmail"
-        emailTab.accessibilityLabel = TabBarStrings.Email.description
-
-        let passwordTab = UITabBarItem(title: Registration.registerByPhone.capitalized,
-                                       image: nil,
-                                       selectedImage: nil)
-        passwordTab.accessibilityIdentifier = "UsePhone"
-        passwordTab.accessibilityLabel = TabBarStrings.Phone.description
-
-        return TabBar(items: [emailTab, passwordTab])
     }()
 
     lazy var forgotPasswordButton = {
@@ -198,13 +178,8 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        tabBar.delegate = self
         updateCredentialsType()
         updatePrefilledCredentials()
-
-        if case .login = flowType {
-            updateViewsForProxy()
-        }
 
         (view as? UIScrollView)?.keyboardDismissMode = .onDrag
     }
@@ -212,10 +187,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         loginActiveField = contextualFirstResponder
-    }
-
-    override var contentCenterYAnchor: NSLayoutYAxisAnchor {
-        return tabBar.bottomAnchor
     }
 
     private func setupProxyView() {
@@ -228,10 +199,8 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
         addCustomBackendViewIfNeeded(to: innerTopStackView, space: 66)
 
-        innerTopStackView.addArrangedSubview(tabBar)
         innerTopStackView.addArrangedSubview(emailInputField)
         innerTopStackView.addArrangedSubview(emailPasswordInputField)
-        innerTopStackView.addArrangedSubview(phoneInputView)
         innerTopStackView.addArrangedSubview(forgotPasswordButton)
         innerTopStackView.setCustomSpacing(40, after: forgotPasswordButton)
 
@@ -265,10 +234,8 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
             contentStack.addArrangedSubview(emptyView)
             contentStack.setCustomSpacing(56, after: emptyView)
         }
-        contentStack.addArrangedSubview(tabBar)
         contentStack.addArrangedSubview(emailInputField)
         contentStack.addArrangedSubview(emailPasswordInputField)
-        contentStack.addArrangedSubview(phoneInputView)
         contentStack.addArrangedSubview(forgotPasswordButton)
         contentStack.addArrangedSubview(loginButton)
 
@@ -293,11 +260,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         loginButton.setTitle(L10n.Localizable.Landing.Login.Button.title.capitalized, for: .normal)
         loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
         updateLoginButtonState()
-
-        // Phone Number View
-        phoneInputView.delegate = self
-        phoneInputView.tintColor = .black
-        phoneInputView.allowEditingPrefilledValue = !isReauthenticating
 
         // Email Password Input View
         emailPasswordInputField.allowEditingPrefilledValue = !isReauthenticating
@@ -383,25 +345,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         return wr_supportedInterfaceOrientations
     }
 
-    func updateViewsForProxy() {
-        if case .custom = backendEnvironment.environmentType.value {
-            tabBar.isHidden = true
-        }
-    }
-
-    func configure(with featureProvider: AuthenticationFeatureProvider) {
-        if isRegistering {
-            // Only email registration is allowed.
-            tabBar.isHidden = true
-        } else if case .reauthentication? = flowType {
-            tabBar.isHidden = prefilledCredentials != nil
-        } else if case .custom = backendEnvironment.environmentType.value {
-            tabBar.isHidden = true
-        } else {
-            tabBar.isHidden = featureProvider.allowOnlyEmailLogin
-        }
-    }
-
     @objc
     func customBackendInfoViewTapped(sender: UITapGestureRecognizer) {
         let intent = AuthenticationShowCustomBackendInfoHandler.Intent.showCustomBackendInfo
@@ -412,14 +355,12 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         switch flowType {
         case .login?:
             switch credentialsType {
-            case .phone: return phoneInputView
             case .email: return emailPasswordInputField
             }
         case .registration?:
             return emailInputField
         case .reauthentication?:
             switch credentialsType {
-            case .phone: return phoneInputView
             case .email: return emailPasswordInputField
             }
         default:
@@ -435,21 +376,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         contextualFirstResponder?.resignFirstResponder()
     }
 
-    // MARK: - Tab Bar
-
-    func tabBar(_ tabBar: TabBar, didSelectItemAt index: Int) {
-        switch index {
-        case 0:
-            credentialsType = .email
-        case 1:
-            credentialsType = .phone
-        default:
-            fatal("Unknown tab index: \(index)")
-        }
-
-        showKeyboard()
-    }
-
     private func updateCredentialsType() {
         clearError()
 
@@ -459,18 +385,8 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
             emailInputField.isHidden = !isRegistering
             loginButton.isHidden = isRegistering
             forgotPasswordButton.isHidden = isRegistering
-            phoneInputView.isHidden = true
-            tabBar.setSelectedIndex(0, animated: false)
-            setSecondaryViewHidden(false)
 
-        case .phone:
-            phoneInputView.isHidden = false
-            loginButton.isHidden = true
-            forgotPasswordButton.isHidden = true
-            emailPasswordInputField.isHidden = true
-            emailInputField.isHidden = true
-            tabBar.setSelectedIndex(1, animated: false)
-            setSecondaryViewHidden(true)
+            setSecondaryViewHidden(false)
         }
     }
 
@@ -482,15 +398,10 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         switch prefilledCredentials.primaryCredentialsType {
         case .email:
             emailPasswordInputField.prefill(email: prefilledCredentials.credentials.emailAddress)
-        case .phone:
-            if let phoneNumber = prefilledCredentials.credentials.phoneNumber.flatMap(PhoneNumber.init(fullNumber:)) {
-                phoneInputView.setPhoneNumber(phoneNumber)
-            }
         }
     }
 
     override func clearInputFields() {
-        phoneInputView.text = nil
         emailInputField.text = nil
         emailPasswordInputField.emailField.text = nil
         emailPasswordInputField.passwordField.text = nil
@@ -587,29 +498,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         loginActiveField = editing ? textField : nil
     }
 
-    // MARK: - Phone Number Input
-
-    func phoneNumberInputViewDidRequestCountryPicker(_ phoneNumberInput: PhoneNumberInputView) {
-        let countryCodePicker = CountryCodeTableViewController()
-        countryCodePicker.delegate = self
-        countryCodePicker.modalPresentationStyle = .formSheet
-
-        let navigationController = countryCodePicker.wrapInNavigationController(navigationBarClass: DefaultNavigationBar.self)
-        present(navigationController, animated: true)
-    }
-
-    func phoneNumberInputView(_ inputView: PhoneNumberInputView, didPickPhoneNumber phoneNumber: PhoneNumber) {
-        valueSubmitted(phoneNumber)
-    }
-
-    func phoneNumberInputView(_ inputView: PhoneNumberInputView, didValidatePhoneNumber phoneNumber: PhoneNumber, withResult validationError: TextFieldValidator.ValidationError?) {
-        phoneInputView.loginButton.isEnabled = validationError == nil
-    }
-
-    func countryCodeTableViewController(_ viewController: UIViewController, didSelect country: Country) {
-        phoneInputView.selectCountry(country)
-        viewController.dismiss(animated: true)
-    }
 }
 
 extension AuthenticationCredentialsViewController: ValidatedTextFieldDelegate {
