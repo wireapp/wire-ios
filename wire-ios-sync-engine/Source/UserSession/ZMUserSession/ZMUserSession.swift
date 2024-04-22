@@ -264,33 +264,6 @@ public final class ZMUserSession: NSObject {
     // TODO: remove this property and move functionality to separate protocols under UserSessionDelegate
     public weak var sessionManager: SessionManagerType?
 
-    // MARK: - Tear down
-
-    deinit {
-        require(tornDown, "tearDown must be called before the ZMUserSession is deallocated")
-    }
-
-    public func tearDown() {
-        guard !tornDown else { return }
-
-        tokens.removeAll()
-        application.unregisterObserverForStateChange(self)
-        callStateObserver = nil
-        syncStrategy?.tearDown()
-        syncStrategy = nil
-        operationLoop?.tearDown()
-        operationLoop = nil
-        transportSession.tearDown()
-        notificationDispatcher.tearDown()
-        callCenter?.tearDown()
-        coreDataStack.close()
-        contextStorage.clear()
-
-        NotificationCenter.default.removeObserver(self)
-
-        tornDown = true
-    }
-
     /// - Note: this is safe if coredataStack and proteus are ready
     public var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol {
         GetUserClientFingerprintUseCase(
@@ -492,6 +465,35 @@ public final class ZMUserSession: NSObject {
         restoreDebugCommandsState()
         configureRecurringActions()
     }
+
+    // MARK: - Deinitalize
+
+    deinit {
+        require(tornDown, "tearDown must be called before the ZMUserSession is deallocated")
+    }
+
+    public func tearDown() {
+        guard !tornDown else { return }
+
+        tokens.removeAll()
+        application.unregisterObserverForStateChange(self)
+        callStateObserver = nil
+        syncStrategy?.tearDown()
+        syncStrategy = nil
+        operationLoop?.tearDown()
+        operationLoop = nil
+        transportSession.tearDown()
+        notificationDispatcher.tearDown()
+        callCenter?.tearDown()
+        coreDataStack.close()
+        contextStorage.clear()
+
+        NotificationCenter.default.removeObserver(self)
+
+        tornDown = true
+    }
+
+    // MARK: - Methods
 
     private func configureTransportSession() {
         transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier
@@ -724,6 +726,8 @@ public final class ZMUserSession: NSObject {
 
 }
 
+// MARK: - ZMNetworkStateDelegate
+
 extension ZMUserSession: ZMNetworkStateDelegate {
 
     public func didReceiveData() {
@@ -758,6 +762,9 @@ extension ZMUserSession: ZMNetworkStateDelegate {
         networkState = state
     }
 }
+
+// MARK: - UpdateEventProcessor
+
 // swiftlint:disable todo_requires_jira_link
 // TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
 // swiftlint:enable todo_requires_jira_link
@@ -774,6 +781,8 @@ extension ZMUserSession: UpdateEventProcessor {
         try await updateEventProcessor?.processBufferedEvents()
     }
 }
+
+// MARK: - ZMSyncStateDelegate
 
 extension ZMUserSession: ZMSyncStateDelegate {
 
@@ -962,11 +971,15 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 }
 
+// MARK: - URLActionProcessor
+
 extension ZMUserSession: URLActionProcessor {
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
         urlActionProcessors?.forEach({ $0.process(urlAction: urlAction, delegate: delegate) })
     }
 }
+
+// MARK: - ContextProvider
 
 extension ZMUserSession: ContextProvider {
 
