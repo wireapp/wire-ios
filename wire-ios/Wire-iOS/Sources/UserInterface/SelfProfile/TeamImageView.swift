@@ -97,7 +97,7 @@ final class TeamImageView: UIImageView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override public func layoutSubviews() {
+    override func layoutSubviews() {
         super.layoutSubviews()
 
         if !bounds.equalTo(lastLayoutBounds) {

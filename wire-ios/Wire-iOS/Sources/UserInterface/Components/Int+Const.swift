@@ -20,7 +20,7 @@ import Foundation
 
 extension Int {
     enum ConversationParticipants {
-        static public let maxNumberWithoutTruncation: Int = 7
-        static public let maxNumberOfDisplayed: Int = 5
+        static let maxNumberWithoutTruncation: Int = 7
+        static let maxNumberOfDisplayed: Int = 5
     }
 }

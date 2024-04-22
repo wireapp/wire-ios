@@ -26,7 +26,7 @@ protocol AssetLibraryDelegate: AnyObject {
 class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
     weak var delegate: AssetLibraryDelegate?
     fileprivate var fetchingAssets = false
-    public let synchronous: Bool
+    let synchronous: Bool
     let photoLibrary: PhotoLibraryProtocol
 
     var count: UInt {
@@ -36,7 +36,7 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
         return UInt(fetch.count)
     }
 
-    public enum AssetError: Error {
+    enum AssetError: Error {
         case outOfRange, notLoadedError
     }
 
@@ -72,7 +72,7 @@ class AssetLibrary: NSObject, PHPhotoLibraryChangeObserver {
         }
     }
 
-    public func photoLibraryDidChange(_ changeInstance: PHChange) {
+    func photoLibraryDidChange(_ changeInstance: PHChange) {
 
         guard let fetch = self.fetch else {
             return

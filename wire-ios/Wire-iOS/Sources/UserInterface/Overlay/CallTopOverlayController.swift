@@ -32,7 +32,7 @@ protocol CallTopOverlayControllerDelegate: AnyObject {
 // MARK: - CallState
 
 extension CallState {
-    public func description(callee: String, conversation: String, isGroup: Bool) -> String {
+    func description(callee: String, conversation: String, isGroup: Bool) -> String {
         switch self {
         case .incoming:
             let toAppend = (isGroup ? conversation + "・" : "")

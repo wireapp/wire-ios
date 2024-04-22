@@ -51,11 +51,11 @@ protocol HighlightableView {
 }
 
 extension CollectionCell: SelectableView {
-    public var selectionView: UIView! {
+    var selectionView: UIView! {
         return self
     }
 
-    public var selectionRect: CGRect {
+    var selectionRect: CGRect {
         return frame
     }
 }

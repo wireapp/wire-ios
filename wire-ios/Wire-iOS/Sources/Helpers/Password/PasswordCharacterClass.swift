@@ -22,7 +22,7 @@ import Foundation
  * The characters that can be used in a password safety rule.
  */
 
-public enum PasswordCharacterClass: Hashable, Decodable {
+enum PasswordCharacterClass: Hashable, Decodable {
 
     /// All unicode characters.
     case unicode
@@ -89,7 +89,7 @@ public enum PasswordCharacterClass: Hashable, Decodable {
 
     // MARK: - Codable
 
-    public init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let rawValue = try container.decode(String.self)
 
@@ -100,7 +100,7 @@ public enum PasswordCharacterClass: Hashable, Decodable {
         self = decodedSet
     }
 
-    public func encode(to encoder: Encoder) throws {
+    func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(rawValue)
     }

@@ -22,7 +22,7 @@ import WebKit
 import WireUtilities
 
 // MARK: - Error states
-public enum DigitalSignatureVerificationError: Error {
+enum DigitalSignatureVerificationError: Error {
     case postCodeRetry
     case authenticationFailed
     case otherError

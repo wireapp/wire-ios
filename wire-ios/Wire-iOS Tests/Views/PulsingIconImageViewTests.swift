@@ -18,7 +18,7 @@
 
 import Foundation
 import XCTest
-import WireCommonComponents
+@testable import WireCommonComponents
 @testable import Wire
 
 private class MockPulsingIconImageView: PulsingIconImageView {

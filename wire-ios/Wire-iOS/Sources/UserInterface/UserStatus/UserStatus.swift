@@ -20,21 +20,21 @@ import WireDataModel
 
 /// The status of the user, consisting of its name,
 /// handle, availability and verification status.
-public struct UserStatus {
+struct UserStatus {
 
-    public var name = ""
+    var name = ""
 
-    public var availability = Availability.none
+    var availability = Availability.none
 
     // TODO [WPB-6770]: (tech dept) consider adding `UserLegalHoldStatus`
 
     /// `true` if the user has a valid certificate (MLS), `false` otherwise.
-    public var isE2EICertified = false
+    var isE2EICertified = false
 
     /// `true` if the user has been verified (Proteus), `false` otherwise.
-    public var isProteusVerified = false
+    var isProteusVerified = false
 
-    public init(
+    init(
         name: String,
         availability: Availability,
         isE2EICertified: Bool,
@@ -46,5 +46,5 @@ public struct UserStatus {
         self.isProteusVerified = isProteusVerified
     }
 
-    public init() {}
+    init() {}
 }

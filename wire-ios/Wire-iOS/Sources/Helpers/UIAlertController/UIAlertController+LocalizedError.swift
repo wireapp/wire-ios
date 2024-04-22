@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 extension UIAlertController {
@@ -34,8 +33,10 @@ extension UIAlertController {
 extension UIAlertController {
 
     @objc
-    public static func showErrorAlert(title: String,
-                                      message: String) {
+    static func showErrorAlert(
+        title: String,
+        message: String
+    ) {
         let alertController = UIAlertController(title: title,
                                                 message: message,
                                                 alertAction: .ok(style: .cancel))

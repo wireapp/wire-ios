@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 import SnapshotTesting
-import WireCommonComponents
+@testable import WireCommonComponents
 
 final class MessageActionTests: XCTestCase {
 

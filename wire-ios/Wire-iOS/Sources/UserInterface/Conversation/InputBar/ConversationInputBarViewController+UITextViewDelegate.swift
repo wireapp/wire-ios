@@ -63,7 +63,7 @@ extension ConversationInputBarViewController: UITextViewDelegate {
         }
     }
 
-    public func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
         // send only if send key pressed
         if textView.returnKeyType == .send && (text == "\n") {
             if UIDevice.current.type == .iPad,
@@ -101,23 +101,23 @@ extension ConversationInputBarViewController: UITextViewDelegate {
         return true
     }
 
-    public func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
+    func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
         guard mode != .audioRecord else { return true }
         triggerMentionsIfNeeded(from: textView)
         return delegate?.conversationInputBarViewControllerShouldBeginEditing(self) ?? true
     }
 
-    public func textViewDidBeginEditing(_ textView: UITextView) {
+    func textViewDidBeginEditing(_ textView: UITextView) {
         updateAccessoryViews()
         updateNewButtonTitleLabel()
         hideLeftView()
     }
 
-    public func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
+    func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
         return delegate?.conversationInputBarViewControllerShouldEndEditing(self) ?? true
     }
 
-    public func textViewDidEndEditing(_ textView: UITextView) {
+    func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.count > 0 {
             conversation.setIsTyping(false)
         }

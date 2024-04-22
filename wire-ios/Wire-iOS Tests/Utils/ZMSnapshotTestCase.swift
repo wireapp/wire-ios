@@ -18,7 +18,7 @@
 
 @testable import Wire
 import FBSnapshotTestCase
-import WireCommonComponents
+@testable import WireCommonComponents
 import UIKit
 
 extension UITableViewCell: UITableViewDelegate, UITableViewDataSource {

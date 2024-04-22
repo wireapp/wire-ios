@@ -60,7 +60,7 @@ public final class ExtensionSettings: NSObject {
         defaults.register(defaults: ExtensionSettingsKey.defaultValueDictionary)
     }
 
-    public func reset() {
+    func reset() {
         ExtensionSettingsKey.allCases.forEach {
             defaults.removeObject(forKey: $0.rawValue)
         }
@@ -70,29 +70,17 @@ public final class ExtensionSettings: NSObject {
     }
 
     public var disableAnalyticsSharing: Bool {
-        get {
-            return defaults.bool(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue)
-        }
-        set {
-            defaults.set(newValue, forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue)
-        }
+        get { defaults.bool(forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }
+        set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableAnalyticsSharing.rawValue) }
     }
 
     public var disableCrashSharing: Bool {
-        get {
-            return defaults.bool(forKey: ExtensionSettingsKey.disableCrashSharing.rawValue)
-        }
-        set {
-            defaults.set(newValue, forKey: ExtensionSettingsKey.disableCrashSharing.rawValue)
-        }
+        get { defaults.bool(forKey: ExtensionSettingsKey.disableCrashSharing.rawValue) }
+        set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableCrashSharing.rawValue) }
     }
 
     public var disableLinkPreviews: Bool {
-        get {
-            return defaults.bool(forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue)
-        }
-        set {
-            defaults.set(newValue, forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue)
-        }
+        get { defaults.bool(forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue) }
+        set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue) }
     }
 }

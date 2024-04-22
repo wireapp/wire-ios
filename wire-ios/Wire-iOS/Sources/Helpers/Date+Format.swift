@@ -20,7 +20,7 @@ import Foundation
 
 // Creating and configuring date formatters is insanely expensive.
 // This is why there’s a bunch of statically configured ones here that are reused.
-public final class WRDateFormatter {
+final class WRDateFormatter {
     static let NSTimeIntervalOneMinute = 60.0
     static let NSTimeIntervalOneHour = 3600.0
     static let DayMonthYearUnits = Set<Calendar.Component>([.day, .month, .year])
@@ -61,7 +61,7 @@ public final class WRDateFormatter {
         return timeFormatter
     }()
 
-    public static var thisYearFormatter: DateFormatter = {
+    static var thisYearFormatter: DateFormatter = {
         let locale = Locale.current
         let formatString = DateFormatter.dateFormat(fromTemplate: "EEEEdMMMM", options: 0, locale: locale)
 
@@ -71,7 +71,7 @@ public final class WRDateFormatter {
         return dateFormatter
     }()
 
-    public static var otherYearFormatter: DateFormatter = {
+    static var otherYearFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateStyle = .full
 
@@ -80,7 +80,7 @@ public final class WRDateFormatter {
 }
 
 extension Date {
-    public var olderThanOneWeekdateFormatter: DateFormatter {
+    var olderThanOneWeekdateFormatter: DateFormatter {
         let today = Date()
 
         let isThisYear = Calendar.current.isDate(self, equalTo: today, toGranularity: .year)
@@ -92,7 +92,7 @@ extension Date {
         }
     }
 
-    public var formattedDate: String {
+    var formattedDate: String {
         let gregorian = Calendar(identifier: .gregorian)
         // Today's date
         let today = Date()

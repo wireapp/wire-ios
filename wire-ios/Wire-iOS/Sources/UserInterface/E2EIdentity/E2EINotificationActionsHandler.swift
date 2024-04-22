@@ -20,7 +20,7 @@ import Foundation
 import WireSyncEngine
 import WireSystem
 
-public protocol E2EINotificationActions {
+protocol E2EINotificationActions {
 
     func getCertificate() async
     func updateCertificate() async
@@ -97,7 +97,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         NotificationCenter.default.removeObserver(observer)
     }
 
-    public func getCertificate() async {
+    func getCertificate() async {
         let oauthUseCase = OAuthUseCase(targetViewController: targetVC)
         do {
             let certificateDetails = try await enrollCertificateUseCase.invoke(authenticate: oauthUseCase.invoke)
@@ -110,7 +110,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     }
 
     @MainActor
-    public func updateCertificate() async {
+    func updateCertificate() async {
         do {
             guard let result = try await e2eIdentityCertificateUpdateStatus?.invoke() else { return }
 
@@ -133,7 +133,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         }
     }
 
-    public func snoozeReminder() async {
+    func snoozeReminder() async {
         let selfClientCertificate = try? await selfClientCertificateProvider.getCertificate()
         guard let endOfPeriod = selfClientCertificate?.expiryDate ?? gracePeriodEndDate,
               !endOfPeriod.isInThePast,

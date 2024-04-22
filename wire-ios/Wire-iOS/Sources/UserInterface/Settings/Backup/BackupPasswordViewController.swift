@@ -66,7 +66,7 @@ final class BackupPasswordViewController: UIViewController {
         passwordView.becomeFirstResponder()
     }
 
-    override public var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
     }
 

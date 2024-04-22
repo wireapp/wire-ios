@@ -312,7 +312,7 @@ final class CallingMatcher: ConversationStatusMatcher {
         return CallingMatcher.icon(for: conversation.voiceChannel?.state, conversation: conversation)
     }
 
-    public static func icon(for state: CallState?, conversation: ConversationStatusProvider?) -> ConversationStatusIcon? {
+    static func icon(for state: CallState?, conversation: ConversationStatusProvider?) -> ConversationStatusIcon? {
 
         guard let state = state else {
             return nil

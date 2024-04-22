@@ -21,7 +21,7 @@ import UIKit
 import Down
 
 extension NSAttributedString.Key {
-    public static let markdownID = NSAttributedString.Key(rawValue: "MarkdownIDAttributeName")
+    static let markdownID = NSAttributedString.Key(rawValue: "MarkdownIDAttributeName")
 }
 
 class MarkdownTextStorage: NSTextStorage {

@@ -26,7 +26,7 @@ final class ConversationListTopBarViewController: UIViewController {
     private let account: Account
 
     /// Name, availability and verification info about the self user.
-    public var selfUserStatus = UserStatus() {
+    var selfUserStatus = UserStatus() {
         didSet { updateTitleView() }
     }
 

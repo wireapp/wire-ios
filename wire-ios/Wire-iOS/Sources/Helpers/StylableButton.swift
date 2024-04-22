@@ -23,7 +23,7 @@ class StylableButton: UIButton, Stylable {
 
     var buttonStyle: ButtonStyle?
 
-    public func applyStyle(_ style: ButtonStyle) {
+    func applyStyle(_ style: ButtonStyle) {
         self.buttonStyle = style
 
         setTitleColor(style.normalStateColors.title, for: .normal)

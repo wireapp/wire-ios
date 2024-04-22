@@ -25,15 +25,11 @@ public protocol BackupExcluder: AnyObject {
     static func exclude(filesToExclude: [FileInDirectory]) throws
 }
 
-public extension BackupExcluder {
-    static func exclude(filesToExclude: [FileInDirectory]) throws {
-        do {
-            try filesToExclude.forEach { directory, path in
-                let url = URL.directory(for: directory).appendingPathComponent(path)
-                try url.excludeFromBackupIfExists()
-            }
-        } catch {
-            throw error
+extension BackupExcluder {
+    public static func exclude(filesToExclude: [FileInDirectory]) throws {
+        try filesToExclude.forEach { directory, path in
+            let url = URL.directory(for: directory).appendingPathComponent(path)
+            try url.excludeFromBackupIfExists()
         }
     }
 

@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 import AppCenterCrashes
-import WireCommonComponents
+@testable import WireCommonComponents
 import WireDataModel
 
 final class AnalyticsTests: XCTestCase {

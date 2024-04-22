@@ -25,7 +25,7 @@ extension StyleKitIcon {
      * or use a raw CGFloat value, without needing to add another case.
      */
 
-    public enum Size: ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral {
+    public enum Size: ExpressibleByIntegerLiteral, RawRepresentable {
 
         /// 8pt
         case nano
@@ -42,12 +42,16 @@ extension StyleKitIcon {
 
         // MARK: - Literal Conversion
 
-        public init(floatLiteral value: Double) {
-            self = .custom(CGFloat(value))
+        public init(floatLiteral value: CGFloat) {
+            self = .custom(value)
         }
 
         public init(integerLiteral value: Int) {
             self = .custom(CGFloat(value))
+        }
+
+        public init?(rawValue: CGFloat) {
+            self.init(floatLiteral: rawValue)
         }
 
         // MARK: - CGFloat Conversion
@@ -67,9 +71,9 @@ extension StyleKitIcon {
     }
 }
 
-public extension StyleKitIcon.Size {
+extension StyleKitIcon.Size {
 
-    var cgSize: CGSize {
+    public var cgSize: CGSize {
         .init(width: rawValue, height: rawValue)
     }
 }

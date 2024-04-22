@@ -51,7 +51,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     weak var textFieldDelegate: SimpleTextFieldDelegate?
 
-    public var value: Value? {
+    var value: Value? {
         return text.value
     }
 

@@ -26,9 +26,9 @@ protocol Bar {
 final class BarController: UIViewController {
     private let stackView = UIStackView()
 
-    public private(set) var bars: [UIViewController] = []
+    private(set) var bars: [UIViewController] = []
 
-    public var topBar: UIViewController? {
+    var topBar: UIViewController? {
         return bars.last
     }
 

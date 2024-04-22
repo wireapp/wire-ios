@@ -245,7 +245,7 @@ extension CallController: WireCallCenterCallErrorObserver {
 
 extension CallController {
     // NOTA BENE: THIS MUST BE USED JUST FOR TESTING PURPOSE
-    public func testHelper_setMinimizedCall(_ conversation: ZMConversation?) {
+    func testHelper_setMinimizedCall(_ conversation: ZMConversation?) {
         minimizedCall = conversation
     }
 }

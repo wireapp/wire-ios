@@ -53,7 +53,7 @@ final class ContinuousMaskLayer: CALayer {
         }
     }
 
-    public var shape: MaskShape = .rectangle {
+    var shape: MaskShape = .rectangle {
         didSet {
             refreshMask()
         }
@@ -67,7 +67,7 @@ final class ContinuousMaskLayer: CALayer {
 
     // MARK: - Initialization
 
-    public override init(layer: Any) {
+    override init(layer: Any) {
         super.init(layer: layer)
 
         if let otherMaskLayer = layer as? ContinuousMaskLayer {
@@ -78,7 +78,7 @@ final class ContinuousMaskLayer: CALayer {
         }
     }
 
-    public override init() {
+    override init() {
         super.init()
         self.mask = CAShapeLayer()
     }
@@ -90,7 +90,7 @@ final class ContinuousMaskLayer: CALayer {
 
     // MARK: - Layout
 
-    public override func layoutSublayers() {
+    override func layoutSublayers() {
         super.layoutSublayers()
         refreshMask()
     }

@@ -27,7 +27,7 @@ final class SketchToolbar: UIView {
     let centerButtonContainer = UIView()
     let separatorLine = UIView()
 
-    public init(buttons: [UIButton]) {
+    init(buttons: [UIButton]) {
 
         guard buttons.count >= 2 else {  fatalError("SketchToolbar needs to be initialized with at least two buttons") }
 

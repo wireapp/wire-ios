@@ -30,7 +30,7 @@ final class SaveFileManager: NSObject, SaveFileActions {
     private let logger: LoggerProtocol = WireLogger.e2ei
     private let systemSaveFilePresenter: SystemSaveFilePresenting
 
-    public init(systemFileSavePresenter: SystemSaveFilePresenting) {
+    init(systemFileSavePresenter: SystemSaveFilePresenting) {
         self.systemSaveFilePresenter = systemFileSavePresenter
     }
 

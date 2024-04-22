@@ -17,7 +17,7 @@
 //
 
 import XCTest
-import WireCommonComponents
+@testable import WireCommonComponents
 @testable import Wire
 
 final class AvailabilityLabelTests: BaseSnapshotTestCase {

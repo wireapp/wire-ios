@@ -115,7 +115,7 @@ final class ConversationVideoMessageCell: RoundedView, ConversationMessageCell {
         ])
     }
 
-    override public var tintColor: UIColor! {
+    override var tintColor: UIColor! {
         didSet {
             self.transferView.tintColor = self.tintColor
         }

@@ -18,7 +18,7 @@
 
 import UIKit
 
-public struct ButtonStyle {
+struct ButtonStyle {
 
     typealias ButtonColors = SemanticColors.Button
 

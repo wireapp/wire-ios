@@ -21,9 +21,9 @@ import UIKit
 
 extension CGFloat {
     enum NetworkStatusBar {
-        static public let horizontalMargin: CGFloat = 16
-        static public let topMargin: CGFloat = 8
-        static public let bottomMargin: CGFloat = 8
+        static let horizontalMargin: CGFloat = 16
+        static let topMargin: CGFloat = 8
+        static let bottomMargin: CGFloat = 8
     }
 
     enum OfflineBar {
