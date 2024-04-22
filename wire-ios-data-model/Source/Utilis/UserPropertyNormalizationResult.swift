@@ -16,31 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireUtilities
+/// The result of a property normalization operation.
+public struct UserPropertyNormalizationResult<Value> {
 
-/**
- * The result of normalizing a value.
- */
+    /// Whether the value is valid.
+    public var isValid: Bool
 
-public enum NormalizationResult<Value> {
+    /// The value that was normalized during the operation.
+    public var normalizedValue: Value
 
-    /// The value is valid, but was potentially changed during normalization. You should use the
-    /// value provided as a side-effect here for any further usage.
-    case valid(Value)
+    /// The error that reprsents the reason why the property is not valid.
+    public var validationError: Error
 
-    /// The value is invalid, because of the given reason.
-    case invalid(ZMManagedObjectValidationErrorCode)
-
-    /// The value was not marked valid, but no reason was provided.
-    case unknownError
-
-    /// Returns whether the value is valid.
-    public var isValid: Bool {
-        if case .valid = self {
-            return true
-        }
-
-        return false
+    public init(isValid: Bool, normalizedValue: Value, validationError: Error) {
+        self.isValid = isValid
+        self.normalizedValue = normalizedValue
+        self.validationError = validationError
     }
 }

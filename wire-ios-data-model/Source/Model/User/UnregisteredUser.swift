@@ -82,42 +82,4 @@ extension UnregisteredUser: Equatable {
             && lhs.marketingConsent == rhs.marketingConsent
             && lhs.password == rhs.password
     }
-
-}
-
-// MARK: - Normalization
-
-extension UnregisteredUser {
-
-    /// Returns whether the specified name can be used to register the user.
-    public static func normalizedName(_ name: String) -> NormalizationResult<String> {
-        return normalizedString(name, using: ZMUser.normalizeName)
-    }
-
-    /// Returns whether the specified e-mail address can be used to register the user.
-    public static func normalizedEmailAddress(_ email: String) -> NormalizationResult<String> {
-        return normalizedString(email, using: ZMUser.normalizeEmailAddress)
-    }
-
-    /// Returns whether the specified password can be used to register the user.
-    public static func normalizedPassword(_ password: String) -> NormalizationResult<String> {
-        return normalizedString(password, using: ZMUser.normalizePassword)
-    }
-
-    /// Returns whether the specified phone number can be used to register the user.
-    public static func normalizedPhoneNumber(_ phoneNumber: String) -> NormalizationResult<String> {
-        return normalizedString(phoneNumber, using: ZMUser.normalizePhoneNumber)
-    }
-
-    /// Returns whether the specified verification code can be used to register the user.
-    public static func normalizedVerificationCode(_ verificationCode: String) -> NormalizationResult<String> {
-        return normalizedString(verificationCode, using: ZMUser.normalizeVerificationCode)
-    }
-
-    // MARK: Helper
-
-    private static func normalizedString(_ value: String, using normalizer: (String) -> ZMPropertyNormalizationResult<NSString>) -> NormalizationResult<String> {
-        return NormalizationResult(normalizer(value))
-    }
-
 }
