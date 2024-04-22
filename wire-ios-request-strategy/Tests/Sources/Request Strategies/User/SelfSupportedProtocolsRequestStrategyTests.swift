@@ -24,7 +24,7 @@ import WireRequestStrategySupport
 final class SelfSupportedProtocolsRequestStrategyTests: XCTestCase {
 
     // the api version is just required to build and not influence the tests
-    private let defaultAPIVersion: APIVersion = .v4
+    private let defaultAPIVersion: APIVersion = .v5
 
     private var coreDataStackHelper: CoreDataStackHelper!
     private var mockCoreDataStack: CoreDataStack!

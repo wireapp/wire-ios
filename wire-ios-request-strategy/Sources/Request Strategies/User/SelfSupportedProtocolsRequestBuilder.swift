@@ -28,7 +28,7 @@ struct SelfSupportedProtocolsRequestBuilder {
     var supportedProtocols: Set<MessageProtocol>
 
     private var isAPIVersionSupported: Bool {
-        apiVersion >= .v4
+        apiVersion >= .v5
     }
 
     // MARK: Funcs
