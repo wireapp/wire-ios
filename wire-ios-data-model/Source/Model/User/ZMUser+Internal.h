@@ -56,8 +56,6 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 
 + (nonnull NSSet <ZMUser *> *)usersWithRemoteIDs:(nonnull NSSet <NSUUID *>*)UUIDs inContext:(nonnull NSManagedObjectContext *)moc;
 
-+ (int16_t)accentColorFromPayloadValue:(nullable NSNumber *)payloadValue;
-
 /// @method Updates the user with a name or handle received through a search
 /// Should be called when creating a @c ZMSearchUser to ensure it's underlying user is updated.
 - (void)updateWithSearchResultName:(nullable NSString *)name handle:(nullable NSString *)handle;

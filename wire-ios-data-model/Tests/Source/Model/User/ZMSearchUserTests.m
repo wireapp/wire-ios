@@ -52,7 +52,7 @@
     ZMSearchUser *user1 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                    name:@"A"
                                                                  handle:@"a"
-                                                       accentColorValue:ZMAccentColor.green.rawValue
+                                                            accentColor:ZMAccentColor.green
                                                        remoteIdentifier:remoteIDA
                                                                  domain:nil
                                                          teamIdentifier:nil
@@ -63,7 +63,7 @@
     ZMSearchUser *user2 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                    name:@"B"
                                                                  handle:@"b"
-                                                       accentColorValue:ZMAccentColor.purple.rawValue
+                                                            accentColor:ZMAccentColor.purple
                                                        remoteIdentifier:remoteIDA
                                                                  domain:nil
                                                          teamIdentifier:nil
@@ -77,7 +77,7 @@
     ZMSearchUser *user3 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                    name:@"A"
                                                                  handle:@"b"
-                                                       accentColorValue:ZMAccentColor.green.rawValue
+                                                            accentColor:ZMAccentColor.green
                                                        remoteIdentifier:remoteIDB
                                                                  domain:nil
                                                          teamIdentifier:nil
@@ -116,7 +116,7 @@
     ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                         name:name
                                                                       handle:handle
-                                                            accentColorValue:ZMAccentColor.green.rawValue
+                                                                 accentColor:ZMAccentColor.green
                                                             remoteIdentifier:remoteID
                                                                       domain:nil
                                                               teamIdentifier:nil
@@ -155,7 +155,7 @@
     ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                         name:@"Wrong name"
                                                                       handle:@"not_my_handle"
-                                                            accentColorValue:ZMAccentColor.green.rawValue
+                                                                 accentColor:ZMAccentColor.green
                                                             remoteIdentifier:[NSUUID createUUID]
                                                                       domain:nil
                                                               teamIdentifier:nil
@@ -184,7 +184,7 @@
     ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                         name:@"Hans"
                                                                       handle:@"hans"
-                                                            accentColorValue:ZMAccentColor.green.rawValue
+                                                                 accentColor:ZMAccentColor.green
                                                             remoteIdentifier:NSUUID.createUUID
                                                                       domain:nil
                                                               teamIdentifier:nil
@@ -203,7 +203,7 @@
     ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                         name:@"Hans"
                                                                       handle:@"hans"
-                                                            accentColorValue:ZMAccentColor.green.rawValue
+                                                                 accentColor:ZMAccentColor.green
                                                             remoteIdentifier:nil
                                                                       domain:nil
                                                               teamIdentifier:nil

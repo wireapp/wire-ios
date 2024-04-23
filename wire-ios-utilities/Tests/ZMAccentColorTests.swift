@@ -22,9 +22,15 @@ import XCTest
 
 final class ZMAccentColorTests: XCTestCase {
 
-    func testEquatable() {
-        let blue0: ZMAccentColor = .amber
-        let blue1: ZMAccentColor? = .from(rawValue: AccentColor.amber.rawValue)
-        XCTAssertEqual(blue0, blue1)
+    func testTwoInstancesAreEqual() {
+        let amber0: ZMAccentColor = .amber
+        let amber1: ZMAccentColor? = .from(rawValue: AccentColor.amber.rawValue)
+        XCTAssertEqual(amber0, amber1)
+    }
+
+    func testTwoInstancesAreNotEqual() {
+        let blue: ZMAccentColor = .blue
+        let amber: ZMAccentColor = .amber
+        XCTAssertNotEqual(blue, amber)
     }
 }

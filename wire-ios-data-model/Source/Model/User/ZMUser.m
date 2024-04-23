@@ -425,15 +425,6 @@ static NSString *const PrimaryKey = @"primaryKey";
     [self setTransientUUID:teamIdentifier forKey:@"teamIdentifier"];
 }
 
-+ (int16_t)accentColorFromPayloadValue:(NSNumber *)payloadValue
-{
-    int16_t colorValue = (int16_t) payloadValue.intValue;
-    if (colorValue < ZMAccentColor.min.rawValue || colorValue > ZMAccentColor.max.rawValue) {
-        colorValue = 1 + (int16_t) arc4random_uniform((uint32_t) ZMAccentColor.max.rawValue - 1);
-    }
-    return colorValue;
-}
-
 // NB: This method is called with **partial** user info and @c authoritative set to false, when the update payload
 // is received from the notification stream.
 - (void)updateWithTransportData:(NSDictionary *)transportData authoritative:(BOOL)authoritative
@@ -527,9 +518,9 @@ static NSString *const PrimaryKey = @"primaryKey";
     
     NSNumber *accentId = [transportData optionalNumberForKey:@"accent_id"];
     if (accentId != nil || authoritative) {
-        self.accentColorValue = [ZMUser accentColorFromPayloadValue:accentId];
+        self.accentColorValue = (ZMAccentColorRawValue) accentId.integerValue;
     }
-    
+
     NSDate *expiryDate = [transportData optionalDateForKey:@"expires_at"];
     if (nil != expiryDate) {
         self.expiresAt = expiryDate;

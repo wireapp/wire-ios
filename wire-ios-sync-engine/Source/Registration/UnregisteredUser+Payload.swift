@@ -43,7 +43,7 @@ extension UnregisteredUser {
             payload["email_code"] = verificationCode!
         }
 
-        payload["accent_id"] = accentColor?.rawValue ?? 0
+        payload["accent_id"] = accentColor?.rawValue ?? AccentColor.default.rawValue
         payload["name"] = name!
         payload["locale"] = NSLocale.formattedLocaleIdentifier()
         payload["label"] = CookieLabel.current.value
@@ -51,5 +51,4 @@ extension UnregisteredUser {
 
         return payload as ZMTransportData
     }
-
 }

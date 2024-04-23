@@ -53,7 +53,12 @@ extension ZMUser: UserType {
 
     public var accentColor: AccentColor? {
         get { .init(rawValue: accentColorValue) }
-        set { accentColorValue = newValue?.rawValue ?? 0 }
+        set { accentColorValue = newValue?.rawValue ?? AccentColor.default.rawValue }
+    }
+
+    public var zmAccentColor: ZMAccentColor? {
+        get { .from(rawValue: accentColorValue) }
+        set { accentColorValue = newValue?.rawValue ?? AccentColor.default.rawValue }
     }
 
     public var previewImageData: Data? {
