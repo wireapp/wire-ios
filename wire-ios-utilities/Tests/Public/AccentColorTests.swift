@@ -22,6 +22,7 @@ import XCTest
 
 final class AccentColorTests: XCTestCase {
 
+    /// Ensures that the raw values haven't changed when migrating `ZMAccentColor` into Swift.
     func testRawValues() {
 
         XCTAssertEqual(AccentColor.undefined.rawValue, 0)
@@ -37,3 +38,4 @@ final class AccentColorTests: XCTestCase {
         XCTAssertEqual(ZMAccentColorMax, AccentColor.violet.rawValue)
     }
 }
+
