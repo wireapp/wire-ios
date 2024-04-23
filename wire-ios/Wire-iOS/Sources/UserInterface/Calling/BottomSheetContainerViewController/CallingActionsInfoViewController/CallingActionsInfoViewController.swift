@@ -112,6 +112,7 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
 
     private func createConstraints() {
         actionsViewHeightConstraint = actionsView.heightAnchor.constraint(equalToConstant: 128.0)
+
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
             stackView.topAnchor.constraint(equalTo: view.safeTopAnchor),
@@ -177,7 +178,8 @@ extension CallingActionsInfoViewController: CallInfoConfigurationObserver {
         isIncomingCall = configuration.state.isIncoming
         actionsView.isIncomingCall = isIncomingCall
         actionsView.update(with: configuration)
-        updateActionViewHeight()
         securityLevelView.configure(with: configuration.classification)
+
+        updateActionViewHeight()
     }
 }
