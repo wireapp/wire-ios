@@ -32,6 +32,7 @@ typedef NS_ENUM(int64_t, ZMInvitationStatus) {
 
 
 NS_ASSUME_NONNULL_BEGIN
+
 @interface ZMAddressBookContact : NSObject
 
 @property (nonatomic, readonly) NSString *name;
@@ -44,10 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString *localIdentifier;
 
 @property (nonatomic, copy) NSArray<NSString *> *emailAddresses;
-@property (nonatomic, copy) NSArray<NSString *> *rawPhoneNumbers;
-@property (nonatomic, copy) NSArray<NSString *> *phoneNumbers;
 
-/// a list of contact field to send invitation to (currently its both phone numbers and emails)
+/// a list of contact field to send invitation to (currently its only emails)
 @property (nonatomic, readonly) NSArray *contactDetails;
 
 @end

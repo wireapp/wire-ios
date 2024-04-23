@@ -23,7 +23,6 @@ private let zmLog = ZMSLog(tag: "ContactAddressBook")
 
 /// iOS Contacts-based address book
 final class ContactAddressBook: AddressBook {
-
     let store = CNContactStore()
 }
 
@@ -122,14 +121,8 @@ extension ZMAddressBookContact {
         // email
         self.emailAddresses = contact.emailAddresses.compactMap { emailNormalizer($0.value as String) }
 
-        // phone
-        self.rawPhoneNumbers = contact.phoneNumbers.map { $0.value.stringValue }
-
-        // normalize phone
-        self.phoneNumbers = self.rawPhoneNumbers.compactMap { phoneNumberNormalizer($0) }
-
         // ignore contacts with no email nor phones
-        guard self.emailAddresses.count > 0 || self.phoneNumbers.count > 0 else {
+        guard self.emailAddresses.count > 0 else {
             return nil
         }
     }

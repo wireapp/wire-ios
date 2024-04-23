@@ -18,9 +18,10 @@
 
 import Foundation
 import XCTest
+
 @testable import WireSyncEngine
 
-class AddressBookSearchTests: MessagingTest {
+final class AddressBookSearchTests: MessagingTest {
 
     var sut: WireSyncEngine.AddressBookSearch!
     var addressBook: MockAddressBook!
@@ -45,8 +46,8 @@ extension AddressBookSearchTests {
 
         // given
         addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olivia", emailAddresses: ["oli@example.com"], phoneNumbers: []),
-            MockAddressBookContact(firstName: "Ada", emailAddresses: [], phoneNumbers: ["+155505012"])
+            MockAddressBookContact(firstName: "Olivia", emailAddresses: ["oli@example.com"]),
+            MockAddressBookContact(firstName: "Ada", emailAddresses: [])
         ]
 
         // when
@@ -63,8 +64,8 @@ extension AddressBookSearchTests {
         // given
         let identifier = "233124"
         addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olivia 1", emailAddresses: ["oli@example.com"], phoneNumbers: [], identifier: identifier),
-            MockAddressBookContact(firstName: "Olivia 2", emailAddresses: [], phoneNumbers: ["+155505012"])
+            MockAddressBookContact(firstName: "Olivia 1", emailAddresses: ["oli@example.com"], identifier: identifier),
+            MockAddressBookContact(firstName: "Olivia 2", emailAddresses: [])
         ]
 
         // when
@@ -80,8 +81,8 @@ extension AddressBookSearchTests {
 
         // given
         addressBook.contacts = [
-            MockAddressBookContact(firstName: "Olivia", emailAddresses: ["oli@example.com"], phoneNumbers: []),
-            MockAddressBookContact(firstName: "Ada", emailAddresses: [], phoneNumbers: ["+155505012"])
+            MockAddressBookContact(firstName: "Olivia", emailAddresses: ["oli@example.com"]),
+            MockAddressBookContact(firstName: "Ada", emailAddresses: [])
         ]
 
         // when

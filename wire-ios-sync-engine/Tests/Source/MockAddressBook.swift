@@ -31,7 +31,7 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
     var contacts = [MockAddressBookContact]()
 
     /// Reported number of contacts (it might be higher than `fakeContacts`
-    /// because some contacts are filtered for not having valid email/phone)
+    /// because some contacts are filtered for not having valid email)
     var numberOfAdditionalContacts: UInt = 0
 
     var numberOfContacts: UInt {
@@ -44,9 +44,10 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
         for contact in self.contacts where !block(contact) {
                 return
         }
-        let infiniteContact = MockAddressBookContact(firstName: "johnny infinite",
-                                                     emailAddresses: ["johnny.infinite@example.com"],
-                                                     phoneNumbers: [])
+        let infiniteContact = MockAddressBookContact(
+            firstName: "johnny infinite",
+            emailAddresses: ["johnny.infinite@example.com"]
+        )
         while createInfiniteContacts {
             if !block(infiniteContact) {
                 return
@@ -70,7 +71,7 @@ class MockAddressBook: WireSyncEngine.AddressBook, WireSyncEngine.AddressBookAcc
 
     /// Create a fake contact
     func createContact(card: UInt) -> MockAddressBookContact {
-        return MockAddressBookContact(firstName: "tester \(card)", emailAddresses: ["tester_\(card)@example.com"], phoneNumbers: ["+155512300\(card % 10)"], identifier: "\(card)")
+        return MockAddressBookContact(firstName: "tester \(card)", emailAddresses: ["tester_\(card)@example.com"], identifier: "\(card)")
     }
 
     /// Generate an infinite number of contacts
@@ -85,15 +86,13 @@ struct MockAddressBookContact: WireSyncEngine.ContactRecord {
     var lastName = ""
     var middleName = ""
     var rawEmails: [String]
-    var rawPhoneNumbers: [String]
     var nickname = ""
     var organization = ""
     var localIdentifier = ""
 
-    init(firstName: String, emailAddresses: [String], phoneNumbers: [String], identifier: String? = nil) {
+    init(firstName: String, emailAddresses: [String], identifier: String? = nil) {
         self.firstName = firstName
         self.rawEmails = emailAddresses
-        self.rawPhoneNumbers = phoneNumbers
         self.localIdentifier = identifier ?? {
             MockAddressBookContact.incrementalLocalIdentifier.increment()
             return "\(MockAddressBookContact.incrementalLocalIdentifier.rawValue)"
@@ -101,6 +100,6 @@ struct MockAddressBookContact: WireSyncEngine.ContactRecord {
     }
 
     var expectedHashes: [String] {
-        return self.rawEmails.map { $0.base64EncodedSHADigest } + self.rawPhoneNumbers.map { $0.base64EncodedSHADigest }
+        rawEmails.map { $0.base64EncodedSHADigest }
     }
 }
