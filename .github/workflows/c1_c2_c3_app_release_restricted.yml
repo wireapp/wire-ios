@@ -1,25 +1,50 @@
 name: C1 C2 C3 Restricted
 
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+    inputs:
+      column:
+        description: 'Column (C1, C2, C3, all)'
+        type: choice
+        options:
+          - C1
+          - C2
+          - C3
+          - all
+        required: true
+        default: 'all'
+      datadog_enabled:
+        description: 'Enable DataDog'
+        type: boolean
+        default: false
 
 permissions: 
   checks: write
-
+  
 jobs:
   column_1_restricted:
+    if: ${{ inputs.column == 'C1' || inputs.column == 'all' }}
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_1_restricted
+      is_cloud_build: false
+      datadog_enabled: ${{ inputs.datadog_enabled }}
     secrets: inherit
 
   column_2_restricted:
+    if: ${{ inputs.column == 'C2' || inputs.column == 'all' }}
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_2_restricted
+      is_cloud_build: false
+      datadog_enabled: ${{ inputs.datadog_enabled }}
     secrets: inherit
-
+  
   column_3_restricted:
+    if: ${{ inputs.column == 'C3' || inputs.column == 'all' }}
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_3_restricted
+      is_cloud_build: false
+      datadog_enabled: ${{ inputs.datadog_enabled }}
     secrets: inherit

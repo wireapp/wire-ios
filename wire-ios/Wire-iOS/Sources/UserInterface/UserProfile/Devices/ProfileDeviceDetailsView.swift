@@ -20,19 +20,11 @@ import SwiftUI
 import WireCommonComponents
 
 struct ProfileDeviceDetailsView: View {
-    @Environment(\.dismiss)
-    private var dismiss
+
+    @Environment(\.dismiss) private var dismiss
 
     @ObservedObject var viewModel: DeviceInfoViewModel
     @State private var isCertificateViewPresented: Bool = false
-    @State private var isDebugViewPresented: Bool = false
-
-    private let onDisappear: (() -> Void)?
-
-    init(viewModel: DeviceInfoViewModel, onDisappear: (() -> Void)?) {
-        self.viewModel = viewModel
-        self.onDisappear = onDisappear
-    }
 
     private var e2eIdentityCertificateView: some View {
         VStack(alignment: .leading) {
@@ -103,74 +95,37 @@ struct ProfileDeviceDetailsView: View {
     }
 
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(alignment: .leading) {
-                    if viewModel.isE2eIdentityEnabled {
-                        if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
-                            mlsView
-                        }
-                        e2eIdentityCertificateView
+        ScrollView {
+            VStack(alignment: .leading) {
+                if viewModel.isE2eIdentityEnabled {
+                    if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
+                        mlsView
                     }
-                    proteusView
-                    showDeviceFingerPrintView.onTapGesture {
-                        viewModel.onShowMyDeviceTapped()
-                    }
+                    e2eIdentityCertificateView
                 }
-            }
-            .background(SemanticColors.View.backgroundDefault.swiftUIColor)
-            .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
-            .listStyle(.plain)
-            .overlay(
-                content: {
-                    VStack {
-                        if viewModel.isActionInProgress {
-                            Spacer()
-                            SwiftUI.ProgressView()
-                            Spacer()
-                        }
-                    }
-                }
-            )
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    SwiftUI.Button(
-                        action: {
-                            dismiss()
-                        },
-                        label: {
-                            Image(.backArrow)
-                                .renderingMode(.template)
-                                .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
-                        }
-                    )
-                }
-                ToolbarItem(placement: .principal) {
-                    DeviceView(viewModel: viewModel).titleView
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    SwiftUI.Button(
-                        action: {
-                            isDebugViewPresented.toggle()
-                        },
-                        label: {
-                            if viewModel.showDebugMenu {
-                                Text("Debug")
-                            }
-                        }
-                    )
+                proteusView
+                showDeviceFingerPrintView.onTapGesture {
+                    viewModel.onShowMyDeviceTapped()
                 }
             }
         }
-        .navigationViewStyle(.stack)
         .background(SemanticColors.View.backgroundDefault.swiftUIColor)
-        .navigationBarBackButtonHidden(true)
+        .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
+        .listStyle(.plain)
+        .overlay(
+            content: {
+                VStack {
+                    if viewModel.isActionInProgress {
+                        Spacer()
+                        ProgressView()
+                        Spacer()
+                    }
+                }
+            }
+        )
+        .background(SemanticColors.View.backgroundDefault.swiftUIColor)
         .onAppear {
             viewModel.onAppear()
-        }
-        .onDisappear {
-            onDisappear?()
         }
         .onReceive(viewModel.$shouldDismiss) { shouldDismiss in
             if shouldDismiss {
@@ -188,22 +143,22 @@ struct ProfileDeviceDetailsView: View {
                 )
             }
         }
-        .alert("Debug options", isPresented: $isDebugViewPresented, actions: {
-            SwiftUI.Button("Delete Device", action: {
+        .alert("Debug options", isPresented: $viewModel.isDebugMenuPresented, actions: {
+            Button("Delete Device", action: {
                   viewModel.onDeleteDeviceTapped()
               })
-            SwiftUI.Button("Duplicate Session", action: {
+            Button("Duplicate Session", action: {
                   viewModel.onDuplicateClientTapped()
               })
-            SwiftUI.Button("Corrupt Session", action: {
+            Button("Corrupt Session", action: {
                 viewModel.onCorruptSessionTapped()
             })
-            SwiftUI.Button("Cancel", role: .cancel, action: {
-                isDebugViewPresented.toggle()
+            Button("Cancel", role: .cancel, action: {
+                viewModel.isDebugMenuPresented.toggle()
             })
-            }, message: {
-              Text("Tap to perform an action")
-            })
+        }, message: {
+            Text("Tap to perform an action")
+        })
     }
 
     @ViewBuilder
@@ -234,3 +189,7 @@ struct ProfileDeviceDetailsView: View {
         }
     }
 }
+
+// MARK: - DeviceInfoView conformance
+
+extension ProfileDeviceDetailsView: DeviceInfoView {}

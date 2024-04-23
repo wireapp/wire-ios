@@ -291,11 +291,11 @@ private extension AppDelegate {
             fatalError("sessionManager is not created")
         }
 
-        let navigator = Navigator(NoBackTitleNavigationController())
-        appRootRouter = AppRootRouter(viewController: viewController,
-                                      navigator: navigator,
-                                      sessionManager: sessionManager,
-                                      appStateCalculator: appStateCalculator)
+        appRootRouter = AppRootRouter(
+            viewController: viewController,
+            sessionManager: sessionManager,
+            appStateCalculator: appStateCalculator
+        )
     }
 
     private func createSessionManager(launchOptions: LaunchOptions) -> SessionManager? {

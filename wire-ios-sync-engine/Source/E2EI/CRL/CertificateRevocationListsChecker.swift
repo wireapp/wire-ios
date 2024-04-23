@@ -18,14 +18,6 @@
 
 import Foundation
 
-// `CertificateRevocationListAPIProtocol` needs to be defined at the DataModel level for visibility but needs to be
-// implemented on the RequestStrategy level because of dependencies on HttpClientE2EI
-
-// sourcery: AutoMockable
-public protocol CertificateRevocationListAPIProtocol {
-    func getRevocationList(from distributionPoint: URL) async throws -> Data
-}
-
 // sourcery: AutoMockable
 public protocol CertificateRevocationListsChecking {
     func checkNewCRLs(from distributionPoints: CRLsDistributionPoints) async
@@ -39,6 +31,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     private let crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol
     private let crlAPI: CertificateRevocationListAPIProtocol
     private let mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating
+    private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
     private let context: NSManagedObjectContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var coreCrypto: SafeCoreCryptoProtocol {
@@ -55,6 +48,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         userID: UUID,
         crlAPI: CertificateRevocationListAPIProtocol,
         mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating,
+        selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext
     ) {
@@ -62,6 +56,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
             crlAPI: crlAPI,
             crlExpirationDatesRepository: CRLExpirationDatesRepository(userID: userID),
             mlsConversationsVerificationUpdater: mlsConversationsVerificationUpdater,
+            selfClientCertificateProvider: selfClientCertificateProvider,
             coreCryptoProvider: coreCryptoProvider,
             context: context
         )
@@ -71,12 +66,14 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
         crlAPI: CertificateRevocationListAPIProtocol,
         crlExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol,
         mlsConversationsVerificationUpdater: MLSConversationVerificationStatusUpdating,
+        selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         context: NSManagedObjectContext
     ) {
         self.crlAPI = crlAPI
         self.crlExpirationDatesRepository = crlExpirationDatesRepository
         self.mlsConversationsVerificationUpdater = mlsConversationsVerificationUpdater
+        self.selfClientCertificateProvider = selfClientCertificateProvider
         self.coreCryptoProvider = coreCryptoProvider
         self.context = context
     }
@@ -112,6 +109,7 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
     private func checkCertificateRevocationLists(from distributionPoints: Set<URL>) async {
 
+        var shouldNotifyAboutRevokedCertificate = false
         for distributionPoint in distributionPoints {
             do {
                 // fetch the CRL from the distribution point
@@ -132,10 +130,17 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
                 if registration.dirty {
                     // update verification state for conversations
                     await mlsConversationsVerificationUpdater.updateAllStatuses()
+
+                    shouldNotifyAboutRevokedCertificate = true
+
                 }
             } catch {
                 logger.warn("failed to check certificate revocation list: (error: \(error), distributionPoint: \(distributionPoint))")
             }
+        }
+
+        if shouldNotifyAboutRevokedCertificate {
+            await notifyAboutRevokedCertificateIfNeeded()
         }
     }
 
@@ -154,4 +159,24 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
             to: date
         )
     }
+
+    private func notifyAboutRevokedCertificateIfNeeded() async {
+        do {
+            guard let certificate = try await selfClientCertificateProvider.getCertificate(),
+                  certificate.status == .revoked else {
+                return
+            }
+
+            NotificationCenter.default.post(name: .presentRevokedCertificateWarningAlert, object: nil)
+            NotificationCenter.default.post(name: .e2eiCertificateChanged, object: self)
+        } catch {
+            logger.warn("failed to fetch certificate for self client: \(error)")
+        }
+
+    }
+
+}
+
+public extension Notification.Name {
+    static let presentRevokedCertificateWarningAlert = Notification.Name("presentRevokedCertificateWarningAlert")
 }

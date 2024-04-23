@@ -19,6 +19,11 @@
 import Foundation
 import WireDataModel
 
+// sourcery: AutoMockable
+public protocol CertificateRevocationListAPIProtocol {
+    func getRevocationList(from distributionPoint: URL) async throws -> Data
+}
+
 public class CertificateRevocationListAPI: CertificateRevocationListAPIProtocol {
     private let httpClient: HttpClientCustom
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,16 +17,13 @@
 //
 
 import Foundation
-import LocalAuthentication
 
-/// An abstraction around `LAContext`.
+final class IsPendingInitialFetchMigrationAction: CoreDataMigrationAction {
 
-public protocol LAContextProtocol {
+    override func execute(in context: NSManagedObjectContext) throws {
+        let batchUpdate = NSBatchUpdateRequest(entityName: ZMConversation.entityName())
+        batchUpdate.propertiesToUpdate = ["isPendingInitialFetch": false as NSNumber]
+        try context.execute(batchUpdate)
+    }
 
-    var evaluatedPolicyDomainState: Data? { get }
-
-    func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool
-    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void)
 }
-
-extension LAContext: LAContextProtocol {}

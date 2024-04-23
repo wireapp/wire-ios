@@ -100,7 +100,7 @@ final class BlockerViewController: LaunchImageViewController {
 
         let getCertificateAlert = UIAlertController(
             title: E2EI.title,
-            message: E2EI.subtitle(URL.wr_e2eiLearnMore),
+            message: E2EI.subtitle,
             preferredStyle: .alert
         )
 

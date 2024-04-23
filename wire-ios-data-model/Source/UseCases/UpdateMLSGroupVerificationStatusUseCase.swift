@@ -63,6 +63,7 @@ public class UpdateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerification
         let context = conversation.managedObjectContext ?? context
         await context.perform {
             self.updateStatusAndNotifyUserIfNeeded(newStatusFromCC: coreCryptoStatus, conversation: conversation)
+            context.saveOrRollback()
         }
     }
 
