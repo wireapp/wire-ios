@@ -97,7 +97,7 @@ jobs:
       C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
       C3_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C3_APP_CENTER_APP_NAME_PRODUCTION }}
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
-      
+
     steps:
       - name: Add Masks
         run: |
