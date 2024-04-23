@@ -122,7 +122,7 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
             stackView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
             stackView.topAnchor.constraint(equalTo: view.safeTopAnchor),
             stackView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
+            stackView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor, constant: -20),
 
             actionsView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
             actionsView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
