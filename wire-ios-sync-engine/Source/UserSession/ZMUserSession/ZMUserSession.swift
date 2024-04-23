@@ -30,16 +30,13 @@ typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
 @objcMembers
 public final class ZMUserSession: NSObject {
 
+    // MARK: Properties
+
     private let appVersion: String
     private var tokens: [Any] = []
     private var tornDown: Bool = false
 
     private(set) var isNetworkOnline = true
-    var isPerformingSync = true {
-        willSet {
-            notificationDispatcher.operationMode = newValue ? .economical : .normal
-        }
-    }
 
     private(set) var coreDataStack: CoreDataStack!
     let application: ZMApplication
@@ -81,16 +78,35 @@ public final class ZMUserSession: NSObject {
     let observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol
     public let updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol
 
-    public var syncStatus: SyncStatusProtocol {
-        return applicationStatusDirectory.syncStatus
-    }
-
     public lazy var featureRepository = FeatureRepository(context: syncContext)
 
     let earService: EARServiceInterface
 
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
+
+    let useCaseFactory: UseCaseFactoryProtocol
+
+    public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
+
+    let lastEventIDRepository: LastEventIDRepositoryInterface
+    let conversationEventProcessor: ConversationEventProcessor
+
+    public var hasCompletedInitialSync: Bool = false
+
+    public var topConversationsDirectory: TopConversationsDirectory
+
+    // MARK: Computed Properties
+
+    var isPerformingSync = true {
+        willSet {
+            notificationDispatcher.operationMode = newValue ? .economical : .normal
+        }
+    }
+
+    public var syncStatus: SyncStatusProtocol {
+        return applicationStatusDirectory.syncStatus
+    }
 
     public var fileSharingFeature: Feature.FileSharing {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
@@ -166,10 +182,6 @@ public final class ZMUserSession: NSObject {
         )
     }()
 
-    public var hasCompletedInitialSync: Bool = false
-
-    public var topConversationsDirectory: TopConversationsDirectory
-
     public var managedObjectContext: NSManagedObjectContext { // TODO jacob we don't want this to be public
         return coreDataStack.viewContext
     }
@@ -210,22 +222,6 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    // temporary function to simplify call to EventProcessor
-    // might be replaced by something more elegant
-    public func processUpdateEvents(_ events: [ZMUpdateEvent]) {
-        WaitingGroupTask(context: self.syncContext) {
-            try? await self.updateEventProcessor?.processEvents(events)
-        }
-    }
-
-    // temporary function to simplify call to ConversationEventProcessor
-    // might be replaced by something more elegant
-    public func processConversationEvents(_ events: [ZMUpdateEvent]) {
-        WaitingGroupTask(context: self.syncContext) {
-            await self.conversationEventProcessor.processConversationEvents(events)
-        }
-    }
-
     public var isNotificationContentHidden: Bool {
         get {
             guard let value = managedObjectContext.persistentStoreMetadata(forKey: LocalNotificationDispatcher.ZMShouldHideNotificationContentKey) as? NSNumber else {
@@ -237,41 +233,6 @@ public final class ZMUserSession: NSObject {
         set {
             managedObjectContext.setPersistentStoreMetadata(NSNumber(value: newValue), key: LocalNotificationDispatcher.ZMShouldHideNotificationContentKey)
         }
-    }
-
-    let useCaseFactory: UseCaseFactoryProtocol
-
-    weak var delegate: UserSessionDelegate?
-
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: remove this property and move functionality to separate protocols under UserSessionDelegate
-    public weak var sessionManager: SessionManagerType?
-
-    // MARK: - Tear down
-
-    deinit {
-        require(tornDown, "tearDown must be called before the ZMUserSession is deallocated")
-    }
-
-    public func tearDown() {
-        guard !tornDown else { return }
-
-        tokens.removeAll()
-        application.unregisterObserverForStateChange(self)
-        callStateObserver = nil
-        syncStrategy?.tearDown()
-        syncStrategy = nil
-        operationLoop?.tearDown()
-        operationLoop = nil
-        transportSession.tearDown()
-        notificationDispatcher.tearDown()
-        callCenter?.tearDown()
-        coreDataStack.close()
-        contextStorage.clear()
-
-        NotificationCenter.default.removeObserver(self)
-
-        tornDown = true
     }
 
     /// - Note: this is safe if coredataStack and proteus are ready
@@ -349,10 +310,16 @@ public final class ZMUserSession: NSObject {
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
-    public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
 
-    let lastEventIDRepository: LastEventIDRepositoryInterface
-    let conversationEventProcessor: ConversationEventProcessor
+    // MARK: Delegates
+
+    weak var delegate: UserSessionDelegate?
+
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: remove this property and move functionality to separate protocols under UserSessionDelegate
+    public weak var sessionManager: SessionManagerType?
+
+    // MARK: - Initialize
 
     init(
         userId: UUID,
@@ -477,6 +444,35 @@ public final class ZMUserSession: NSObject {
         restoreDebugCommandsState()
         configureRecurringActions()
     }
+
+    // MARK: - Deinitalize
+
+    deinit {
+        require(tornDown, "tearDown must be called before the ZMUserSession is deallocated")
+    }
+
+    public func tearDown() {
+        guard !tornDown else { return }
+
+        tokens.removeAll()
+        application.unregisterObserverForStateChange(self)
+        callStateObserver = nil
+        syncStrategy?.tearDown()
+        syncStrategy = nil
+        operationLoop?.tearDown()
+        operationLoop = nil
+        transportSession.tearDown()
+        notificationDispatcher.tearDown()
+        callCenter?.tearDown()
+        coreDataStack.close()
+        contextStorage.clear()
+
+        NotificationCenter.default.removeObserver(self)
+
+        tornDown = true
+    }
+
+    // MARK: - Methods
 
     private func configureTransportSession() {
         transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier
@@ -629,13 +625,31 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    // MARK: - Network
+    // MARK: Progress Events
+
+    // temporary function to simplify call to EventProcessor
+    // might be replaced by something more elegant
+    public func processUpdateEvents(_ events: [ZMUpdateEvent]) {
+        WaitingGroupTask(context: self.syncContext) {
+            try? await self.updateEventProcessor?.processEvents(events)
+        }
+    }
+
+    // temporary function to simplify call to ConversationEventProcessor
+    // might be replaced by something more elegant
+    public func processConversationEvents(_ events: [ZMUpdateEvent]) {
+        WaitingGroupTask(context: self.syncContext) {
+            await self.conversationEventProcessor.processConversationEvents(events)
+        }
+    }
+
+    // MARK: Network
 
     public func requestResyncResources() {
         applicationStatusDirectory.requestResyncResources()
     }
 
-    // MARK: - Access Token
+    // MARK: Access Token
 
     private func renewAccessTokenIfNeeded(for userClient: UserClient) {
         guard
@@ -647,7 +661,7 @@ public final class ZMUserSession: NSObject {
         renewAccessToken(with: clientID)
     }
 
-    // MARK: - Perform changes
+    // MARK: Perform changes
 
     public func saveOrRollbackChanges() {
         managedObjectContext.saveOrRollback()
@@ -692,7 +706,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    // MARK: - Account
+    // MARK: Account
 
     public func initiateUserDeletion() {
         syncManagedObjectContext.performGroupedBlock {
@@ -701,13 +715,15 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    // MARK: - Caches
+    // MARK: Caches
 
     func purgeTemporaryAssets() throws {
         try assetCache?.purgeTemporaryAssets()
     }
 
 }
+
+// MARK: - ZMNetworkStateDelegate
 
 extension ZMUserSession: ZMNetworkStateDelegate {
 
@@ -743,6 +759,9 @@ extension ZMUserSession: ZMNetworkStateDelegate {
         networkState = state
     }
 }
+
+// MARK: - UpdateEventProcessor
+
 // swiftlint:disable todo_requires_jira_link
 // TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
 // swiftlint:enable todo_requires_jira_link
@@ -759,6 +778,8 @@ extension ZMUserSession: UpdateEventProcessor {
         try await updateEventProcessor?.processBufferedEvents()
     }
 }
+
+// MARK: - ZMSyncStateDelegate
 
 extension ZMUserSession: ZMSyncStateDelegate {
 
@@ -947,11 +968,15 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 }
 
+// MARK: - URLActionProcessor
+
 extension ZMUserSession: URLActionProcessor {
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
         urlActionProcessors?.forEach({ $0.process(urlAction: urlAction, delegate: delegate) })
     }
 }
+
+// MARK: - ContextProvider
 
 extension ZMUserSession: ContextProvider {
 
