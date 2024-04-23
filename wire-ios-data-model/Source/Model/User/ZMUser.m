@@ -429,7 +429,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 {
     ZMAccentColor color = (ZMAccentColor) payloadValue.intValue;
     if ((color <= ZMAccentColorUndefined) || (ZMAccentColorMax < color)) {
-        color = (ZMAccentColor) (arc4random_uniform(ZMAccentColorMax - 1) + 1);
+        color = (ZMAccentColor) (int16_t) (arc4random_uniform((uint32_t) ZMAccentColorMax - 1) + 1);
     }
     return color;
 }
@@ -904,11 +904,6 @@ static NSString *const PrimaryKey = @"primaryKey";
     return [self validateName:&value error:nil];
 }
 
-+ (BOOL)validateAccentColorValue:(NSNumber **)ioAccent error:(NSError **)outError
-{
-    return [ZMAccentColorValidator validateValue:ioAccent error:outError];
-}
-
 + (BOOL)validateEmailAddress:(NSString **)ioEmailAddress error:(NSError **)outError
 {
     return [ZMEmailAddressValidator validateValue:ioEmailAddress error:outError];
@@ -984,11 +979,6 @@ static NSString *const PrimaryKey = @"primaryKey";
 - (BOOL)validateName:(NSString **)ioName error:(NSError **)outError
 {
     return [ZMUser validateName:ioName error:outError];
-}
-
-- (BOOL)validateAccentColorValue:(NSNumber **)ioAccent error:(NSError **)outError
-{
-    return [ZMUser validateAccentColorValue:ioAccent error:outError];
 }
 
 @end

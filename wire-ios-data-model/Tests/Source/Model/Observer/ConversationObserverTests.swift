@@ -211,12 +211,11 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { _, _ in
-                                                        otherUser.accentColorValue = ZMAccentColor.softPink
-            },
-                                                     expectedChangedField: nil,
-                                                     expectedChangedKeys: []
+        checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { _, _ in otherUser.accentColorValue = .softPink },
+            expectedChangedField: nil,
+            expectedChangedKeys: []
         )
     }
 

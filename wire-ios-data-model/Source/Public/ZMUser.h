@@ -17,6 +17,7 @@
 //
 
 #import "ZMManagedObject.h"
+#import <WireUtilities/WireUtilities-Swift.h>
 #import <WireUtilities/ZMAccentColor.h>
 
 @class ZMConversation;
@@ -113,7 +114,6 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 @interface ZMUser (KeyValueValidation)
 
 + (BOOL)validateName:(NSString * __nullable * __nullable)ioName error:(NSError * __nullable * __nullable)outError;
-+ (BOOL)validateAccentColorValue:(NSNumber * __nullable * __nullable)ioAccent error:(NSError * __nullable * __nullable)outError;
 + (BOOL)validateEmailAddress:(NSString * __nullable * __nullable)ioEmailAddress error:(NSError * __nullable * __nullable)outError;
 + (BOOL)validatePhoneNumber:(NSString *__nullable * __nullable)ioPhoneNumber error:(NSError * __nullable * __nullable)outError;
 + (BOOL)validatePassword:(NSString * __nullable * __nullable)ioPassword error:(NSError * __nullable * __nullable)outError;
