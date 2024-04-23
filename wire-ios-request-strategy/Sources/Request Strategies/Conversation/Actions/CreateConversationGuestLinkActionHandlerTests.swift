@@ -42,7 +42,6 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
 
             self.action = CreateConversationGuestLinkAction(password: nil, conversationID: conversationID)
             self.handler = CreateConversationGuestLinkActionHandler(context: syncContext)
-
         }
     }
 
@@ -52,8 +51,6 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
         try await super.tearDown()
     }
 
-    // create tests for the rest of the API versions
-
     func testCreateConversationGuestLinkRequestGeneration_APIV4() throws {
         let conversationID = try XCTUnwrap(conversationID)
         try test_itGeneratesARequest(
@@ -61,6 +58,26 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
             expectedPath: "/v4/conversations/\(conversationID.transportString())/code",
             expectedMethod: .post,
             apiVersion: .v4
+        )
+    }
+
+    func testCreateConversationGuestLinkRequestGeneration_APIV5() throws {
+        let conversationID = try XCTUnwrap(conversationID)
+        try test_itGeneratesARequest(
+            for: action,
+            expectedPath: "/v5/conversations/\(conversationID.transportString())/code",
+            expectedMethod: .post,
+            apiVersion: .v5
+        )
+    }
+
+    func testCreateConversationGuestLinkRequestGeneration_APIV6() throws {
+        let conversationID = try XCTUnwrap(conversationID)
+        try test_itGeneratesARequest(
+            for: action,
+            expectedPath: "/v6/conversations/\(conversationID.transportString())/code",
+            expectedMethod: .post,
+            apiVersion: .v6
         )
     }
 
