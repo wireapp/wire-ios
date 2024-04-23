@@ -139,13 +139,13 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     }
 
     func updateActionViewHeight() {
-        guard UIDevice.current.twoDimensionOrientation.isLandscape else {
+        if UIDevice.current.twoDimensionOrientation.isLandscape {
+            actionsViewHeightConstraint.constant = 128.0
+            actionsView.verticalStackView.alignment = .center
+        } else {
             actionsViewHeightConstraint.constant = (isIncomingCall ? 250 : 128) + view.safeAreaInsets.bottom
             actionsView.verticalStackView.alignment = .fill
-            return
         }
-        actionsViewHeightConstraint.constant = 128.0
-        actionsView.verticalStackView.alignment = .center
     }
 
     private func updateRows() {
