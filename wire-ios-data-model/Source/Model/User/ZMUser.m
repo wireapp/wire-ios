@@ -429,7 +429,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 {
     ZMAccentColor color = (ZMAccentColor) payloadValue.intValue;
     if ((color <= ZMAccentColorUndefined) || (ZMAccentColorMax < color)) {
-        color = (ZMAccentColor) (arc4random_uniform(ZMAccentColorMax - 1) + 1);
+        color = (ZMAccentColor) (int16_t) (arc4random_uniform((uint32_t) ZMAccentColorMax - 1) + 1);
     }
     return color;
 }
