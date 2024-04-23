@@ -29,6 +29,10 @@ public enum SetAllowServicesError: Error {
     case invalidOperation
 }
 
+public enum ContextError: Error {
+    case contextUnavailable
+}
+
 fileprivate extension ZMConversation {
     struct TransportKey {
         static let data = "data"
@@ -97,12 +101,16 @@ extension ZMConversation {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
 
+        guard let context = self.managedObjectContext else {
+            return completion(.failure(ContextError.contextUnavailable))
+        }
+
         var action = CreateConversationGuestLinkAction(
             password: password,
             conversationID: self.remoteIdentifier
         )
 
-        action.perform(in: self.managedObjectContext!.notificationContext) { result in
+        action.perform(in: context.notificationContext) { result in
             switch result {
             case .success(let link):
                 completion(.success(link))
@@ -208,7 +216,15 @@ extension ZMConversation {
     }
 
     /// Changes the conversation access mode to allow services.
-    private func setAllowGuestsAndServices(allowGuests: Bool, allowServices: Bool, apiVersion: APIVersion, _ completion: @escaping (Result<Void, Error>) -> Void) {
+    private func setAllowGuestsAndServices(
+        allowGuests: Bool,
+        allowServices: Bool,
+        apiVersion: APIVersion,
+        _ completion: @escaping (Result<Void, Error>) -> Void
+    ) {
+        guard let context = self.managedObjectContext else {
+            return completion(.failure(ContextError.contextUnavailable))
+        }
 
         var action = SetAllowGuestsAndServicesAction(
             allowGuests: allowGuests,
@@ -216,7 +232,7 @@ extension ZMConversation {
             conversationID: self.objectID
         )
 
-        action.perform(in: self.managedObjectContext!.notificationContext) { result in
+        action.perform(in: context.notificationContext) { result in
             switch result {
             case .success:
                 completion(.success(()))
