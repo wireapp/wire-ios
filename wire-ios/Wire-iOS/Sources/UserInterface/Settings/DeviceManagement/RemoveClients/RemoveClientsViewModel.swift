@@ -53,7 +53,7 @@ extension RemoveClientsViewController {
     }
 }
 
-extension ZMEmailCredentials {
+private extension ZMEmailCredentials {
     var emailCredentials: EmailCredentials {
         return EmailCredentials(email: email, password: password)
     }
