@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireSyncEngine
 import WireCommonComponents
 
 protocol ColorPickerControllerDelegate: AnyObject {
-    func colorPicker(_ colorPicker: ColorPickerController, didSelectColor color: AccentColor)
+    func colorPicker(_ colorPicker: ColorPickerController, didSelectColor color: WireAccentColor)
     func colorPickerWantsToDismiss(_ colotPicker: ColorPickerController)
 }
 
@@ -31,11 +30,11 @@ class ColorPickerController: UIViewController {
 
     static fileprivate let rowHeight: CGFloat = 56
 
-    fileprivate let colors: [AccentColor]
-    fileprivate var selectedColor: AccentColor?
+    fileprivate let colors: [WireAccentColor]
+    fileprivate var selectedColor: WireAccentColor?
     fileprivate weak var delegate: ColorPickerControllerDelegate?
 
-    init(colors: [AccentColor]) {
+    init(colors: [WireAccentColor]) {
         self.colors = colors
         super.init(nibName: nil, bundle: nil)
 
@@ -94,7 +93,7 @@ class ColorPickerController: UIViewController {
             fatalError("init(coder:) has not been implemented")
         }
 
-        var color: AccentColor? {
+        var color: WireAccentColor? {
             didSet {
                 if let color = color {
                     colorView.backgroundColor = UIColor(for: color)
@@ -184,7 +183,7 @@ extension ColorPickerController: UITableViewDelegate, UITableViewDataSource {
 }
 
 final class AccentColorPickerController: ColorPickerController {
-    fileprivate let allAccentColors: [AccentColor]
+    fileprivate let allAccentColors: [WireAccentColor]
 
     init() {
         allAccentColors = AccentColor.allSelectable()
@@ -215,7 +214,8 @@ final class AccentColorPickerController: ColorPickerController {
 }
 
 extension AccentColorPickerController: ColorPickerControllerDelegate {
-    func colorPicker(_ colorPicker: ColorPickerController, didSelectColor color: AccentColor) {
+
+    func colorPicker(_ colorPicker: ColorPickerController, didSelectColor color: WireAccentColor) {
         guard let colorIndex = colors.firstIndex(of: color) else {
             return
         }

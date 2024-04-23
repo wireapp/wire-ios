@@ -57,7 +57,7 @@ final class CoreDataFixture {
     }
 
     /// If this is set the accent color will be overriden for the tests
-    var accentColor: ZMAccentColor {
+    var accentColor: WireDataModel.AccentColor {
         get {
             return UIColor.accentOverrideColor!
         }
@@ -326,7 +326,7 @@ extension CoreDataFixture {
 }
 
 private extension UIColor {
-    class var accentOverrideColor: ZMAccentColor? {
+    class var accentOverrideColor: WireDataModel.AccentColor? {
         return ZMUser.selfUser()?.accentColorValue
     }
 }

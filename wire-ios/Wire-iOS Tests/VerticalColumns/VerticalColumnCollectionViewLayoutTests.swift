@@ -53,5 +53,4 @@ final class VerticalColumnCollectionViewLayoutTests: XCTestCase {
 
         verifyInAllDeviceSizes(matching: sut)
     }
-
 }

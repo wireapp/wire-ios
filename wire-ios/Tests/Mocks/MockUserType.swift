@@ -36,7 +36,7 @@ class MockUserType: NSObject, UserType, Decodable {
         domain = try? container.decode(String.self, forKey: .domain)
         isConnected = (try? container.decode(Bool.self, forKey: .isConnected)) ?? false
         if let rawAccentColorValue = try? container.decode(Int16.self, forKey: .accentColorValue),
-           let accentColorValue = ZMAccentColor(rawValue: rawAccentColorValue) {
+           let accentColorValue = WireDataModel.AccentColor(rawValue: rawAccentColorValue) {
             self.accentColorValue = accentColorValue
         }
     }
@@ -85,7 +85,7 @@ class MockUserType: NSObject, UserType, Decodable {
 
     var phoneNumber: String? = "+123456789"
 
-    var accentColorValue: ZMAccentColor = .strongBlue
+    var accentColorValue: WireDataModel.AccentColor = .strongBlue
 
     var availability: Availability = .none
 
