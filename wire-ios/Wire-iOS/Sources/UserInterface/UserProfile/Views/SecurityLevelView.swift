@@ -90,14 +90,23 @@ final class SecurityLevelView: UIView {
     private func setupViews() {
         securityLevelLabel.textAlignment = .center
         iconImageView.contentMode = .scaleAspectFit
-        [topBorder, securityLevelLabel, iconImageView, bottomBorder].forEach { addSubview($0) }
+
+        [
+            topBorder,
+            securityLevelLabel,
+            iconImageView,
+            bottomBorder
+        ].forEach { addSubview($0) }
 
         topBorder.addConstraintsForBorder(for: .top, borderWidth: 1.0, to: self)
         bottomBorder.addConstraintsForBorder(for: .bottom, borderWidth: 1.0, to: self)
     }
 
     private func createConstraints() {
-        [securityLevelLabel, iconImageView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        [
+            securityLevelLabel,
+            iconImageView
+        ].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
 
         NSLayoutConstraint.activate([
             securityLevelLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
