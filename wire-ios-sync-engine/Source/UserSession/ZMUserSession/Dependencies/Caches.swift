@@ -22,19 +22,23 @@ import WireDataModel
 final class Caches {
     var fileAssets: FileAssetCache?
     var userImages: UserImageLocalCache?
+    var searchUsers: NSCache<NSUUID, ZMSearchUser>?
 
     convenience init() {
         self.init(
             fileAssets: nil,
-            userImages: nil
+            userImages: nil,
+            searchUsers: nil
         )
     }
 
     init(
         fileAssets: FileAssetCache?,
-        userImages: UserImageLocalCache?
+        userImages: UserImageLocalCache?,
+        searchUsers: NSCache<NSUUID, ZMSearchUser>?
     ) {
         self.fileAssets = fileAssets
         self.userImages = userImages
+        self.searchUsers = searchUsers
     }
 }

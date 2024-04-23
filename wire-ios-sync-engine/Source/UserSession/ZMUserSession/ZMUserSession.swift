@@ -312,7 +312,7 @@ public final class ZMUserSession: NSObject {
 
     // MARK: Dependency Injection
 
-    private let dependencies: InjectedDependencies
+    let dependencies: InjectedDependencies
 
     // MARK: Delegates
 
@@ -506,6 +506,7 @@ public final class ZMUserSession: NSObject {
 
         dependencies.caches.fileAssets = fileAssetCache
         dependencies.caches.userImages = userImageCache
+        dependencies.caches.searchUsers = NSCache()
 
         managedObjectContext.zm_userImageCache = userImageCache
         managedObjectContext.zm_fileAssetCache = fileAssetCache
