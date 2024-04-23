@@ -98,6 +98,10 @@ extension UserClient {
     public struct MLSPublicKeys: Codable, Equatable {
 
         public internal(set) var ed25519: String?
+        public internal(set) var ed448: String?
+        public internal(set) var p256: String?
+        public internal(set) var p384: String?
+        public internal(set) var p521: String?
 
         public init(ed25519: String? = nil) {
             self.ed25519 = ed25519
