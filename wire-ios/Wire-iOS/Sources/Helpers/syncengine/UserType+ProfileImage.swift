@@ -20,7 +20,7 @@ import Foundation
 import WireSyncEngine
 import WireDataModel
 
-public var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
+var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
 
 typealias ProfileImageCompletion = (_ image: UIImage?, _ cacheHit: Bool) -> Void
 
@@ -127,8 +127,9 @@ extension UserType {
                 image = UIImage(data: imageData)?.decoded
             }
 
-            if isDesaturated {
-                image = image?.desaturatedImage(with: CIContext.shared)
+            if isDesaturated, image != nil {
+                let transformer = CoreImageBasedImageTransformer()
+                image = transformer.adjustInputSaturation(value: 0, image: image!)
             }
 
             if let image = image {

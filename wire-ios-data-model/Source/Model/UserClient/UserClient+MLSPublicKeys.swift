@@ -80,6 +80,17 @@ extension UserClient {
         // all errors are ignored
         try? JSONEncoder().encode(mlsPublicKeys)
     }
+
+    /// Clear previously registered MLS public keys.
+    ///
+    /// Only do this when when the self client has been deleted/reset.
+
+    public func clearMLSPublicKeys() {
+        willChangeValue(forKey: Self.mlsPublicKeysKey)
+        primitiveMlsPublicKeys = nil
+        didChangeValue(forKey: Self.mlsPublicKeysKey)
+    }
+
 }
 
 extension UserClient {

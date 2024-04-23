@@ -59,7 +59,7 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
     ) {
         self.configuration = configuration
 
-        contentController = CallInfoViewController(
+        contentController = .init(
             configuration: configuration,
             selfUser: selfUser,
             userSession: userSession

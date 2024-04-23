@@ -68,7 +68,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
             interval: interval
         ) {
             if isUpdateMode {
-                NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
+                NotificationCenter.default.post(name: E2EI.checkForE2EICertificateExpiryStatus, object: nil)
             } else {
                 let notificationObject = FeatureRepository.FeatureChange.e2eIEnabled
                 NotificationCenter.default.post(name: .featureDidChangeNotification,

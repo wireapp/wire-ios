@@ -17,21 +17,11 @@
 //
 
 import Foundation
-import WireSyncEngine
 
-extension ZClientViewController: UserObserving {
-
-    public func userDidChange(_ changeInfo: UserChangeInfo) {
-        if changeInfo.accentColorValueChanged {
-            UIApplication.shared.firstKeyWindow?.tintColor = UIColor.accent()
+extension CoreDataStack {
+    public func linkAnalytics(_ analytics: (any AnalyticsType)?) {
+        syncContext.performGroupedBlockAndWait {
+            self.syncContext.analytics = analytics
         }
     }
-
-    @objc func setupUserChangeInfoObserver() {
-        userObserverToken = userSession.addUserObserver(
-            self,
-            for: userSession.selfUser
-        )
-    }
-
 }

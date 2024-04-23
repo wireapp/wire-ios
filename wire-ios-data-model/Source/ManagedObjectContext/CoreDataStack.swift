@@ -98,6 +98,8 @@ public extension NSURL {
 
 }
 
+// MARK: -
+
 @objcMembers
 public class CoreDataStack: NSObject, ContextProvider {
 
@@ -127,6 +129,9 @@ public class CoreDataStack: NSObject, ContextProvider {
     let dispatchGroup: ZMSDispatchGroup?
 
     private let migrator: CoreDataMessagingMigrator
+    private var hasBeenClosed = false
+
+    // MARK: - Initialization
 
     public init(account: Account,
                 applicationContainer: URL,
@@ -185,6 +190,16 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 
     deinit {
+        close()
+    }
+
+    public func close() {
+        guard !hasBeenClosed  else {
+            return
+        }
+
+        defer { hasBeenClosed = true }
+
         viewContext.tearDown()
         syncContext.tearDown()
         searchContext.tearDown()
@@ -193,6 +208,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 
     func closeStores() {
+        WireLogger.localStorage.info("Closing core data stores")
         do {
             try closeStores(in: messagesContainer)
             try closeStores(in: eventsContainer)
@@ -352,6 +368,8 @@ public class CoreDataStack: NSObject, ContextProvider {
         return messagesContainer.storeExists && eventsContainer.storeExists
     }
 
+    // MARK: - Configure Contexts
+
     func configureViewContext(_ context: NSManagedObjectContext) {
         context.markAsUIContext()
         context.createDispatchGroups()
@@ -420,6 +438,16 @@ public class CoreDataStack: NSObject, ContextProvider {
         }
     }
 
+    public func linkContexts() {
+        syncContext.performGroupedBlockAndWait {
+            self.syncContext.zm_userInterface = self.viewContext
+        }
+
+        viewContext.zm_sync = syncContext
+    }
+
+    // MARK: - Static Helpers
+
     public static func accountDataFolder(accountIdentifier: UUID, applicationContainer: URL) -> URL {
         return applicationContainer
             .appendingPathComponent("AccountData")
@@ -454,6 +482,8 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 }
 
+// MARK: -
+
 class PersistentContainer: NSPersistentContainer {
 
     var storeURL: URL? {
@@ -487,8 +517,9 @@ class PersistentContainer: NSPersistentContainer {
 
         return metadata
     }
-
 }
+
+// MARK: -
 
 extension NSPersistentStoreCoordinator {
 

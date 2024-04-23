@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+
 @testable import Wire
 
 class MockUserType: NSObject, UserType, Decodable {
@@ -279,6 +280,15 @@ class MockUserType: NSObject, UserType, Decodable {
 
     func requestCompleteProfileImage() {
         // No op
+    }
+
+    func imageData(for size: ProfileImageSize) -> Data? {
+        switch size {
+        case .preview:
+            previewImageData
+        case .complete:
+            completeImageData
+        }
     }
 
     func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (Data?) -> Void) {

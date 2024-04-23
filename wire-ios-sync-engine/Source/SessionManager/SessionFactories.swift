@@ -75,20 +75,36 @@ open class AuthenticatedSessionFactory {
             minTLSVersion: minTLSVersion
         )
 
-        let userSession = ZMUserSession(
-            userId: account.userIdentifier,
-            transportSession: transportSession,
-            mediaManager: mediaManager,
-            flowManager: flowManager,
+        var userSessionBuilder = ZMUserSessionBuilder()
+        userSessionBuilder.withAllDependencies(
             analytics: analytics,
-            application: application,
             appVersion: appVersion,
+            application: application,
+            cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreDataStack: coreDataStack,
             configuration: configuration,
-            cryptoboxMigrationManager: CryptoboxMigrationManager(),
-            sharedUserDefaults: sharedUserDefaults
+            contextStorage: LAContextStorage(),
+            earService: nil,
+            flowManager: flowManager,
+            mediaManager: mediaManager,
+            mlsService: nil,
+            observeMLSGroupVerificationStatus: nil,
+            proteusToMLSMigrationCoordinator: nil,
+            recurringActionService: nil,
+            sharedUserDefaults: sharedUserDefaults,
+            transportSession: transportSession,
+            useCaseFactory: nil,
+            userId: account.userIdentifier
         )
 
+        let userSession = userSessionBuilder.build()
+        userSession.setup(
+            eventProcessor: nil,
+            strategyDirectory: nil,
+            syncStrategy: nil,
+            operationLoop: nil,
+            configuration: configuration
+        )
         userSession.startRequestLoopTracker()
 
         return userSession

@@ -16,21 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
+import WireSyncEngine
 
-extension ConversationListViewController: ConversationListTabBarControllerDelegate {
+extension ZClientViewController: UserObserving {
 
-    func didChangeTab(with type: TabBarItemType) {
-        switch type {
-        case .archive:
-            setState(.archived, animated: true)
-        case .startUI:
-            presentPeoplePicker()
-        case .folder:
-            listContentController.listViewModel.folderEnabled = true
-        case .list:
-            listContentController.listViewModel.folderEnabled = false
+    func userDidChange(_ changeInfo: UserChangeInfo) {
+        if changeInfo.accentColorValueChanged {
+            UIApplication.shared.firstKeyWindow?.tintColor = UIColor.accent()
         }
     }
 
+    @objc func setupUserChangeInfoObserver() {
+        userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
+    }
 }

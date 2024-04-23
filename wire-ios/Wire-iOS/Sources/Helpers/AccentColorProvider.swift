@@ -24,9 +24,8 @@ extension UserType {
 
     /// Returns the current accent color of the user.
     var accentColor: UIColor {
-        return UIColor(fromZMAccentColor: accentColorValue)
+        .init(fromZMAccentColor: accentColorValue)
     }
-
 }
 
 extension UnregisteredUser {

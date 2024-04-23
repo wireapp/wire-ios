@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import UIKit
 import WireSyncEngine
-import avs
 import WireCommonComponents
 
 final class ZClientViewController: UIViewController {
@@ -39,7 +39,7 @@ final class ZClientViewController: UIViewController {
     var proximityMonitorManager: ProximityMonitorManager?
     var legalHoldDisclosureController: LegalHoldDisclosureController?
 
-    var userObserverToken: Any?
+    var userObserverToken: NSObjectProtocol?
     var conferenceCallingUnavailableObserverToken: Any?
 
     private let topOverlayContainer: UIView = UIView()
@@ -48,7 +48,6 @@ final class ZClientViewController: UIViewController {
     private var contentTopCompactConstraint: NSLayoutConstraint!
     // init value = false which set to true, set to false after data usage permission dialog is displayed
     var dataUsagePermissionDialogDisplayed = false
-    let backgroundViewController: BackgroundViewController
 
     private let colorSchemeController: ColorSchemeController
     private var incomingApnsObserver: Any?
@@ -62,17 +61,14 @@ final class ZClientViewController: UIViewController {
     ) {
         self.userSession = userSession
 
-        backgroundViewController = BackgroundViewController(
-            user: userSession.selfUser,
-            userSession: userSession as? ZMUserSession
-        )
-        conversationListViewController = ConversationListViewController(
+        conversationListViewController = .init(
             account: account,
-            selfUser: userSession.selfLegalHoldSubject,
+            selfUser: userSession.selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
-        colorSchemeController = ColorSchemeController(userSession: userSession)
+
+        colorSchemeController = .init(userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
 
@@ -172,8 +168,7 @@ final class ZClientViewController: UIViewController {
         updateSplitViewTopConstraint()
 
         wireSplitViewController.view.backgroundColor = .clear
-
-        createBackgroundViewController()
+        wireSplitViewController.leftViewController = conversationListViewController
 
         if pendingInitialStateRestore {
             restoreStartupState()
@@ -213,16 +208,7 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
-        conversationListViewController.delegate?.didChangeTab(with: .startUI)
-    }
-
-    private func createBackgroundViewController() {
-        backgroundViewController.addToSelf(conversationListViewController)
-
-        conversationListViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        conversationListViewController.view.frame = backgroundViewController.view.bounds
-
-        wireSplitViewController.leftViewController = backgroundViewController
+        conversationListViewController.presentPeoplePicker()
     }
 
     // MARK: Status bar
@@ -599,7 +585,7 @@ final class ZClientViewController: UIViewController {
 
     private func createLegalHoldDisclosureController() {
         legalHoldDisclosureController = LegalHoldDisclosureController(
-            selfUser: userSession.selfLegalHoldSubject,
+            selfUser: userSession.selfUser,
             userSession: userSession,
             presenter: { viewController, animated, completion in
                 viewController.presentTopmost(animated: animated, completion: completion)
