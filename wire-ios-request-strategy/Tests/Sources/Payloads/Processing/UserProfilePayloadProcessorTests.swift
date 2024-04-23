@@ -506,7 +506,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
             )
 
             // then
-            XCTAssertEqual(self.otherUser.accentColorValue, accentColor)
+            XCTAssertEqual(self.otherUser.accentColor, accentColor)
         }
     }
 

@@ -180,7 +180,7 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var oneToOneConversation: ZMConversation?
 
-    var accentColorValue: ZMAccentColor = ZMAccentColor.brightOrange
+    var accentColorValue: Int16 = ZMAccentColor.amber.rawValue
 
     var imageMediumData: Data! = Data()
 

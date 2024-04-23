@@ -57,7 +57,7 @@ extension MockUserType {
         user.isSelfUser = false
         user.isConnected = true
         user.emailAddress = teamID != nil ? "test@email.com" : nil
-        user.accentColorValue = .brightOrange
+        user.accentColorValue = .amber
         return user
     }
 
@@ -87,7 +87,7 @@ extension MockUserType {
         let user = MockUserType.createUser(name: "Bruno")
         user.handle = "bruno"
         user.initials = "B"
-        user.accentColorValue = .brightOrange
+        user.accentColorValue = .amber
         user.isConnected = true
 
         return user

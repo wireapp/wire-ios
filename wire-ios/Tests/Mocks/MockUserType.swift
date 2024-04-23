@@ -21,7 +21,7 @@ import WireDataModel
 
 @testable import Wire
 
-class MockUserType: NSObject, UserType, Decodable {
+final class MockUserType: NSObject, UserType, Decodable {
 
     // MARK: - Decodable
 
@@ -36,8 +36,8 @@ class MockUserType: NSObject, UserType, Decodable {
         domain = try? container.decode(String.self, forKey: .domain)
         isConnected = (try? container.decode(Bool.self, forKey: .isConnected)) ?? false
         if let rawAccentColorValue = try? container.decode(Int16.self, forKey: .accentColorValue),
-           let accentColorValue = WireDataModel.AccentColor(rawValue: rawAccentColorValue) {
-            self.accentColorValue = accentColorValue
+           let accentColor = AccentColor(rawValue: rawAccentColorValue) {
+            self.accentColorValue = accentColor.rawValue
         }
     }
 
@@ -85,7 +85,7 @@ class MockUserType: NSObject, UserType, Decodable {
 
     var phoneNumber: String? = "+123456789"
 
-    var accentColorValue: WireDataModel.AccentColor = .strongBlue
+    var accentColorValue: Int16 = AccentColor.blue.rawValue
 
     var availability: Availability = .none
 

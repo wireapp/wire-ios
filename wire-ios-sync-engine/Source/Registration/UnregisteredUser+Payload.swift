@@ -43,7 +43,7 @@ extension UnregisteredUser {
             payload["email_code"] = verificationCode!
         }
 
-        payload["accent_id"] = accentColorValue!.rawValue
+        payload["accent_id"] = accentColor?.rawValue ?? 0
         payload["name"] = name!
         payload["locale"] = NSLocale.formattedLocaleIdentifier()
         payload["label"] = CookieLabel.current.value

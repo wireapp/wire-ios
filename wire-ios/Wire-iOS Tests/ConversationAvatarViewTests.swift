@@ -139,7 +139,7 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
         conversation.stableRandomParticipants = MockUserType.usernames.map { MockUserType.createConnectedUser(name: $0) }
 
         (conversation.stableRandomParticipants[0] as! MockUserType).accentColorValue = .vividRed
-        (conversation.stableRandomParticipants[1] as! MockUserType).accentColorValue = .brightOrange
+        (conversation.stableRandomParticipants[1] as! MockUserType).accentColorValue = .amber
         (conversation.stableRandomParticipants[2] as! MockUserType).accentColorValue = .brightYellow
         (conversation.stableRandomParticipants[3] as! MockUserType).accentColorValue = .strongBlue
 
