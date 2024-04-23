@@ -142,29 +142,6 @@ final class SecurityLevelView: UIView {
             assertionFailure("should not reach this point")
         }
     }
-
-    private func configureLegacyCallingUI(with classification: SecurityClassification?) {
-        switch classification {
-
-        case .classified:
-            securityLevelLabel.textColor = LabelColors.textDefault
-            backgroundColor = ViewColors.backgroundSecurityLevel
-            iconImageView.setTemplateIcon(.checkmark, size: .tiny)
-            iconImageView.tintColor = IconColors.backgroundCheckMarkSelected
-            topBorder.backgroundColor = ViewColors.backgroundSeparatorCell
-
-        case .notClassified:
-            securityLevelLabel.textColor = LabelColors.textDefault
-            backgroundColor = ViewColors.backgroundSecurityLevel
-            iconImageView.setTemplateIcon(.exclamationMarkCircle, size: .tiny)
-            iconImageView.tintColor = IconColors.foregroundCheckMarkSelected
-            topBorder.backgroundColor = ViewColors.backgroundSeparatorCell
-
-        case .none:
-            isHidden = true
-            assertionFailure("should not reach this point")
-        }
-    }
 }
 
 // MARK: - SecurityClassification Extension
