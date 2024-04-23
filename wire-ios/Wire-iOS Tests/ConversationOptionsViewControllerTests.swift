@@ -69,7 +69,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
     var mockConversation: MockConversation!
     var mockUserSession: UserSessionMock!
     var mockUseCaseFactory: MockUseCaseFactoryProtocol!
-    var mockCreateSecuredGuestLinkUseCase: MockSecuredGuestLinkUseCaseProtocol!
+    var mockCreateSecuredGuestLinkUseCase: MockCreateConversationGuestLinkUseCaseProtocol!
 
     // MARK: - setUp method
 
@@ -79,7 +79,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         mockConversation = MockConversation()
         mockUseCaseFactory = MockUseCaseFactoryProtocol()
         mockUserSession = UserSessionMock(mockUseCaseFactory: mockUseCaseFactory)
-        mockCreateSecuredGuestLinkUseCase = MockSecuredGuestLinkUseCaseProtocol()
+        mockCreateSecuredGuestLinkUseCase = MockCreateConversationGuestLinkUseCaseProtocol()
     }
 
     // MARK: - tearDown method
