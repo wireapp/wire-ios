@@ -398,7 +398,7 @@ platform :ios do
             ipa: "#{build.artifact_path(with_filename: true)}.ipa",
             skip_waiting_for_build_processing: false,
             distribute_external: true,
-            groups: ["Default External Testers"],
+            groups: ["Default External Testers", "Externals - Non Wire Employees"],
             submit_beta_review: true,
             changelog: changelog(build)
         )
