@@ -59,14 +59,6 @@ NSString * const ZMAccountDeletedReasonKey = @"account-deleted-reason";
     return nil;
 }
 
-+ (instancetype)unauthorizedErrorWithResponse:(ZMTransportResponse *)response
-{
-    if (response.HTTPStatus == 403 && [[response payloadLabel] isEqualToString:@"unauthorized"]) {
-        return [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidPhoneNumber userInfo:nil];
-    }
-    return nil;
-}
-
 + (instancetype)unauthorizedEmailErrorWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 403 && [[response payloadLabel] isEqualToString:@"unauthorized"]) {

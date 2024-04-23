@@ -27,7 +27,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)userSessionErrorWithErrorCode:(ZMUserSessionErrorCode)code userInfo:(nullable NSDictionary *)userInfo;
 
 + (__nullable instancetype)pendingLoginErrorWithResponse:(ZMTransportResponse *)response;
-+ (__nullable instancetype)unauthorizedErrorWithResponse:(ZMTransportResponse *)response;
 + (__nullable instancetype)unauthorizedEmailErrorWithResponse:(ZMTransportResponse *)response;
 
 + (__nullable instancetype)invalidEmailVerificationCodeErrorWithResponse:(ZMTransportResponse *)response;

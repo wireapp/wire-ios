@@ -86,7 +86,6 @@
     else {
         NSError *error = {
             [NSError pendingLoginErrorWithResponse:response] ?:
-            [NSError unauthorizedErrorWithResponse:response] ?:
             [NSError userSessionErrorWithErrorCode:ZMUserSessionUnknownError userInfo:nil]
         };
 
