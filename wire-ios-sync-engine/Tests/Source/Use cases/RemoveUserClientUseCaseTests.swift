@@ -103,7 +103,7 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
         userClientAPI.deleteUserClientClientIdCredentials_MockMethod = { _, _ in }
         mockApiProvider.userClientAPIApiVersion_MockValue = userClientAPI
 
-        // Then
+        // When / Then
         await assertItThrows(error: RemoveUserClientError.clientDoesNotExistLocally) {
             try await sut.invoke(userClient, credentials: EmailCredentials(email: "", password: ""))
         }
