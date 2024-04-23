@@ -1,9 +1,9 @@
 # ``WireTransport-ios``
 
-TODO: one line summary
+Send and receive data to and from the Wire backend.
 
 ## Overview
 
-TODO: short paragraph
+WireTransport represents the transport layer of the Wire app.
 
 ## Topics

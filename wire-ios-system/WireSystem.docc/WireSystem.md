@@ -1,9 +1,9 @@
 # ``WireSystem``
 
-TODO: one line summary
+Provide core shared code.
 
 ## Overview
 
-TODO: short paragraph
+WireSystem provides some core shared code.
 
 ## Topics

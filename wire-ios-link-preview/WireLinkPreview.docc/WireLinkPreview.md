@@ -1,9 +1,9 @@
 # ``WireLinkPreview``
 
-TODO: one line summary
+Create previews for links using the Open Graph Protocol.
 
 ## Overview
 
-TODO: short paragraph
+WireLinkPreview provides functionality for constructing rich previews for links to internet resources.
 
 ## Topics

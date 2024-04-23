@@ -1,9 +1,9 @@
 # ``WireCanvas``
 
-TODO: one line summary
+Create and mark up images.
 
 ## Overview
 
-TODO: short paragraph
+WireCanvas provides functionality to create new images or modify existing images by drawing colorful sketches and collaging emoji stickers.  
 
 ## Topics

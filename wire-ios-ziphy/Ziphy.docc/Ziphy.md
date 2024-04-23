@@ -1,9 +1,9 @@
 # ``Ziphy``
 
-TODO: one line summary
+Search and select animated GIFs on Giphy.
 
 ## Overview
 
-TODO: short paragraph
+Ziphy provides a user interface to search and select animaged GIFs on the Giphy platform.
 
 ## Topics

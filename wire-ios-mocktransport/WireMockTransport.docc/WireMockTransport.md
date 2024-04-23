@@ -1,10 +1,10 @@
 # ``WireMockTransport``
 
-<!--@START_MENU_TOKEN@-->Summary<!--@END_MENU_TOKEN@-->
+Mock the Wire backend for integration testing. 
 
 ## Overview
 
-<!--@START_MENU_TOKEN@-->Text<!--@END_MENU_TOKEN@-->
+WireMockTransport represents a testing backend for use in integration tests.
 
 ## Topics
 

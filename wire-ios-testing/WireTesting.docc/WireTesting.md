@@ -1,10 +1,10 @@
 # ``WireTesting``
 
-TODO: one line summary
+Make testing easier.
 
 ## Overview
 
-TODO: short paragraph
+WireTesting provides functionility to facilitate testing.
 
 ## Topics
 

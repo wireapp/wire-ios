@@ -1,9 +1,9 @@
 # ``WireNotificationEngine``
 
-TODO: one line summary
+Power the Wire Notification Service Extension to show user notifications from the background.
 
 ## Overview
 
-TODO: short paragraph
+WireNotificationEngine provides all the funcitonality necessary to show user notifications from the background.
 
 ## Topics

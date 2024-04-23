@@ -1,9 +1,9 @@
 # ``WireUtilities``
 
-TODO: one line summary
+Provide various utility helpers.
 
 ## Overview
 
-TODO: short paragraph
+WireUtilities contains several helper functions and objects.
 
 ## Topics

@@ -1,13 +1,9 @@
 # ``WireRequestStrategy``
 
-<!--@START_MENU_TOKEN@-->Summary<!--@END_MENU_TOKEN@-->
+Generate network request and process responses.
 
 ## Overview
 
-<!--@START_MENU_TOKEN@-->Text<!--@END_MENU_TOKEN@-->
+WireRequestStrategy represents the API layer of the Wire app. It contains many objects that generate network requests and processes the responses.
 
 ## Topics
-
-### <!--@START_MENU_TOKEN@-->Group<!--@END_MENU_TOKEN@-->
-
-- <!--@START_MENU_TOKEN@-->``Symbol``<!--@END_MENU_TOKEN@-->
