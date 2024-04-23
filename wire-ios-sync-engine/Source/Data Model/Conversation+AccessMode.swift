@@ -95,31 +95,6 @@ extension ZMConversation {
         return self.accessMode == [.invite]
     }
 
-    /// Creates the link to access the conversation.
-    func createWirelessLink(password: String?, _ completion: @escaping (Result<String, Error>) -> Void) {
-        guard canManageAccess else {
-            return completion(.failure(WirelessLinkError.invalidOperation))
-        }
-
-        guard let context = self.managedObjectContext else {
-            return completion(.failure(ContextError.contextUnavailable))
-        }
-
-        var action = CreateConversationGuestLinkAction(
-            password: password,
-            conversationID: self.remoteIdentifier
-        )
-
-        action.perform(in: context.notificationContext) { result in
-            switch result {
-            case .success(let link):
-                completion(.success(link ?? ""))
-            case .failure(let error):
-                completion(.failure(error))
-            }
-        }
-    }
-
     /// Checks if a guest link can be generated or not
     public func canGenerateGuestLink(in userSession: ZMUserSession, _ completion: @escaping (Result<Bool, Error>) -> Void) {
         guard let apiVersion = BackendInfo.apiVersion else {
