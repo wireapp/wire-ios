@@ -21,11 +21,11 @@ import UIKit
 
 final class AdditionalMenuItem: NSObject {
 
-    public let item: UIMenuItem
+    let item: UIMenuItem
 
     let isAvailableInEphemeralConversations: Bool
 
-    public init(item: UIMenuItem, allowedInEphemeralConversations: Bool) {
+    init(item: UIMenuItem, allowedInEphemeralConversations: Bool) {
         self.item = item
         self.isAvailableInEphemeralConversations = allowedInEphemeralConversations
         super.init()

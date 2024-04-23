@@ -16,12 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 extension ZClientViewController: SplitViewControllerDelegate {
-    public func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
+    func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
         return splitViewController.rightViewController != nil &&
-            splitViewController.leftViewController == backgroundViewController &&
+            splitViewController.leftViewController == conversationListViewController &&
             conversationListViewController.state == .conversationList &&
             (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false)
     }

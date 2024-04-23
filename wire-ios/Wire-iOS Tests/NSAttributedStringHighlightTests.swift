@@ -17,8 +17,9 @@
 //
 
 import Foundation
-import XCTest
 import WireCommonComponents
+import XCTest
+
 @testable import Wire
 
 // cutAndPrefixedWithEllipsis

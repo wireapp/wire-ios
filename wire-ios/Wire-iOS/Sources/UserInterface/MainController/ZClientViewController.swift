@@ -48,7 +48,6 @@ final class ZClientViewController: UIViewController {
     private var contentTopCompactConstraint: NSLayoutConstraint!
     // init value = false which set to true, set to false after data usage permission dialog is displayed
     var dataUsagePermissionDialogDisplayed = false
-    let backgroundViewController: BackgroundViewController
 
     private let colorSchemeController: ColorSchemeController
     private var incomingApnsObserver: Any?
@@ -58,16 +57,10 @@ final class ZClientViewController: UIViewController {
     /// init method for testing allows injecting an Account object and self user
     required init(
         account: Account,
-        userSession: UserSession,
-        imageTransformer: ImageTransformer
+        userSession: UserSession
     ) {
         self.userSession = userSession
 
-        backgroundViewController = .init(
-            user: userSession.selfUser,
-            userSession: userSession as? ZMUserSession,
-            imageTransformer: imageTransformer
-        )
         conversationListViewController = .init(
             account: account,
             selfUser: userSession.selfUser,
@@ -175,8 +168,7 @@ final class ZClientViewController: UIViewController {
         updateSplitViewTopConstraint()
 
         wireSplitViewController.view.backgroundColor = .clear
-
-        createBackgroundViewController()
+        wireSplitViewController.leftViewController = conversationListViewController
 
         if pendingInitialStateRestore {
             restoreStartupState()
@@ -217,15 +209,6 @@ final class ZClientViewController: UIViewController {
     @objc
     private func openStartUI(_ sender: Any?) {
         conversationListViewController.presentPeoplePicker()
-    }
-
-    private func createBackgroundViewController() {
-        backgroundViewController.addToSelf(conversationListViewController)
-
-        conversationListViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        conversationListViewController.view.frame = backgroundViewController.view.bounds
-
-        wireSplitViewController.leftViewController = backgroundViewController
     }
 
     // MARK: Status bar
