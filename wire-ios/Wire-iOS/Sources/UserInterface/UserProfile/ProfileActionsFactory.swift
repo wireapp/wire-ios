@@ -235,7 +235,7 @@ final class ProfileActionsFactory {
                 actions.append(.cancelConnectionRequest)
             } else if (user.isConnected && !user.hasEmptyName) || isOnSameTeam {
                 switch oneOnOneStatus {
-                case .doesNotExist(protocol: .mls), .exists(protocol: .mls, established: false):
+                case .doesNotExist(protocol: _), .exists(protocol: .mls, established: false):
                     actions.append(.startOneToOne)
                 default:
                     actions.append(.openOneToOne)

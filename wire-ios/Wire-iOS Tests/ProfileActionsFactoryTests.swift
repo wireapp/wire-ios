@@ -349,6 +349,20 @@ final class ProfileActionsFactoryTests: XCTestCase {
         )
     }
 
+    func test_Group_TeamToTeam_Proteus_GroupDoesntExists() {
+        let otherUser = MockUserType.createConnectedUser(name: "John Doe", inTeam: selfUserTeam)
+        let conversation = MockConversation.groupConversation()
+
+        mockOneOnOneConversationCreationStatusUseCase.invokeUserID_MockValue = .doesNotExist(protocol: .proteus)
+
+        verifyActions(
+            user: otherUser,
+            viewer: selfUser,
+            conversation: conversation,
+            expectedActions: [.startOneToOne, .removeFromGroup]
+        )
+    }
+
     func test_Group_TeamToPartner() {
         // GIVEN
         let otherUser = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: selfUserTeam)

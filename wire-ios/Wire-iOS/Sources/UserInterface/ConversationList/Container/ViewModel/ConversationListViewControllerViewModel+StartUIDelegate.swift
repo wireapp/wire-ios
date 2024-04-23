@@ -40,24 +40,13 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
                     guard let conversation else { return }
                     await openConversation(conversation)
 
-                case .exists(protocol: .mls, established: false), 
-                        .doesNotExist(protocol: .mls):
+                case .exists(protocol: .mls, established: false),
+                        .doesNotExist(protocol: _):
 
                     // If the conversation should be using mls and is not established,
                     // or does not exits, then we open the user profile to let the user
                     // create the conversation
                     await openUserProfile(user)
-
-                case .doesNotExist(protocol: .proteus):
-
-                    // If the conversation should be using proteus,
-                    // then we create the conversation and open it. (legacy behaviour)
-                    await MainActor.run { [weak self] in
-                        self?.createTeamOneOnOne(user) { result in
-                            guard case .success(let conversation) = result else { return }
-                            self?.openConversation(conversation)
-                        }
-                    }
 
                 default:
                     break
@@ -94,23 +83,6 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         navigationController.modalPresentationStyle = .formSheet
 
         ZClientViewController.shared?.present(navigationController, animated: true)
-    }
-
-    private func createTeamOneOnOne(
-        _ user: UserType,
-        callback onConversationCreated: @escaping ConversationCreatedBlock
-    ) {
-        viewController?.setState(.conversationList, animated: true) {
-            self.userSession.createTeamOneOnOne(with: user) {
-                switch $0 {
-                case .success(let conversation):
-                    onConversationCreated(.success(conversation))
-
-                case .failure(let error):
-                    onConversationCreated(.failure(error))
-                }
-            }
-        }
     }
 
 }
