@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SnapshotTesting
 import WireDataModel
+import XCTest
+
+@testable import Wire
 
 final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
@@ -31,7 +32,7 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
         super.setUp()
 
         let mockUser = MockUserType.createSelfUser(name: "Bruno")
-        mockUser.accentColorValue = .amber
+        mockUser.accentColorValue = AccentColor.amber.rawValue
         mockUser.handle = "bruno"
 
         mockConnectionRequest = SwiftMockConversation()
@@ -39,7 +40,7 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
         userSession = UserSessionMock(mockUser: mockUser)
 
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
         sut = ConnectRequestsViewController(userSession: userSession)
 
         sut.loadViewIfNeeded()
@@ -64,7 +65,7 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
     func testForTwoRequests() {
         let otherUser = MockUserType.createConnectedUser(name: "Bill")
-        otherUser.accentColorValue = .brightYellow
+        otherUser.accentColorValue = AccentColor.amber.rawValue
         otherUser.handle = "bill"
 
         let secondConnectionRequest = SwiftMockConversation()

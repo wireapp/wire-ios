@@ -59,7 +59,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCas
             with: Date(timeIntervalSinceReferenceDate: 0),
             includeDayOfWeek: true,
             showUnreadDot: true,
-            accentColor: userSession.selfUser.accentColor
+            accentColor: (userSession.selfUser.accentColor ?? .default).uiColor
         )
 
         // THEN
@@ -72,7 +72,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCas
             with: Date(timeIntervalSinceReferenceDate: 0),
             includeDayOfWeek: false,
             showUnreadDot: false,
-            accentColor: userSession.selfUser.accentColor
+            accentColor: (userSession.selfUser.accentColor ?? .default).uiColor
         )
 
         // THEN

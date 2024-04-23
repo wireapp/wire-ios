@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 extension MockUserType {
 
@@ -24,7 +25,7 @@ extension MockUserType {
     /// - Returns: a mock user
     class func createDefaultSelfUser() -> MockUserType {
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
-        mockSelfUser.accentColorValue = .vividRed
+        mockSelfUser.accentColorValue = AccentColor.red.rawValue
 
         return mockSelfUser
     }
@@ -40,7 +41,7 @@ extension MockUserType {
     class func createSelfUser(name: String, inTeam teamID: UUID? = nil) -> MockUserType {
         let user = createUser(name: name, inTeam: teamID)
         user.isSelfUser = true
-        user.accentColorValue = .vividRed
+        user.accentColorValue = AccentColor.red.rawValue
         return user
     }
 
@@ -57,7 +58,7 @@ extension MockUserType {
         user.isSelfUser = false
         user.isConnected = true
         user.emailAddress = teamID != nil ? "test@email.com" : nil
-        user.accentColorValue = .amber
+        user.accentColorValue = AccentColor.amber.rawValue
         return user
     }
 
@@ -87,7 +88,7 @@ extension MockUserType {
         let user = MockUserType.createUser(name: "Bruno")
         user.handle = "bruno"
         user.initials = "B"
-        user.accentColorValue = .amber
+        user.accentColorValue = AccentColor.amber.rawValue
         user.isConnected = true
 
         return user

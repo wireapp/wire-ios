@@ -16,28 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCommonComponents
-import class WireDataModel.UnregisteredUser
-import protocol WireDataModel.UserType
+import WireDataModel
 
-extension UserType {
+extension AccentColor {
 
-    /// Returns the current accent color of the user.
-    var accentColor: UIColor {
-        .init(fromZMAccentColor: accentColorValue)
-    }
-}
-
-extension UnregisteredUser {
-
-    /// The accent color value of the unregistered user.
-    var accentColor: AccentColor? {
-        get {
-            return accentColorValue.flatMap(AccentColor.init)
-        }
-        set {
-            accentColorValue = newValue?.zmAccentColor
+    var uiColor: UIColor {
+        switch self {
+        case .blue:
+            UIColor(light: .blue500Light, dark: .blue500Dark)
+        case .green:
+            UIColor(light: .green500Light, dark: .green500Dark)
+        case .red:
+            UIColor(light: .red500Light, dark: .red500Dark)
+        case .amber:
+            UIColor(light: .amber500Light, dark: .amber500Dark)
+        case .turquoise:
+            UIColor(light: .turquoise500Light, dark: .turquoise500Dark)
+        case .purple:
+            UIColor(light: .purple500Light, dark: .purple500Dark)
         }
     }
 }

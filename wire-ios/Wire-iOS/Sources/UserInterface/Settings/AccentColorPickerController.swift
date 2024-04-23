@@ -17,11 +17,12 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireDataModel
+import WireSyncEngine
 
 protocol ColorPickerControllerDelegate: AnyObject {
-    func colorPicker(_ colorPicker: ColorPickerController, didSelectColor color: WireAccentColor)
+    func colorPicker(_ colorPicker: ColorPickerController, didSelectColor color: AccentColor)
     func colorPickerWantsToDismiss(_ colotPicker: ColorPickerController)
 }
 
@@ -30,11 +31,11 @@ class ColorPickerController: UIViewController {
 
     static fileprivate let rowHeight: CGFloat = 56
 
-    fileprivate let colors: [WireAccentColor]
-    fileprivate var selectedColor: WireAccentColor?
+    fileprivate let colors: [AccentColor]
+    fileprivate var selectedColor: AccentColor?
     fileprivate weak var delegate: ColorPickerControllerDelegate?
 
-    init(colors: [WireAccentColor]) {
+    init(colors: [AccentColor]) {
         self.colors = colors
         super.init(nibName: nil, bundle: nil)
 
@@ -93,10 +94,10 @@ class ColorPickerController: UIViewController {
             fatalError("init(coder:) has not been implemented")
         }
 
-        var color: WireAccentColor? {
+        var color: AccentColor? {
             didSet {
                 if let color = color {
-                    colorView.backgroundColor = UIColor(for: color)
+                    colorView.backgroundColor = color.uiColor
                 }
             }
         }
@@ -183,16 +184,16 @@ extension ColorPickerController: UITableViewDelegate, UITableViewDataSource {
 }
 
 final class AccentColorPickerController: ColorPickerController {
-    fileprivate let allAccentColors: [WireAccentColor]
+    fileprivate let allAccentColors: [AccentColor]
 
     init() {
-        allAccentColors = AccentColor.allSelectable()
+        allAccentColors = AccentColor.allCases
 
         super.init(colors: allAccentColors)
 
         setupControllerTitle()
 
-        if let selfUser = ZMUser.selfUser(), let accentColor = AccentColor(ZMAccentColor: selfUser.accentColorValue), let currentColorIndex = allAccentColors.firstIndex(of: accentColor) {
+        if let selfUser = ZMUser.selfUser(), let accentColor = selfUser.accentColor, let currentColorIndex = allAccentColors.firstIndex(of: accentColor) {
             selectedColor = colors[currentColorIndex]
         }
         delegate = self
@@ -215,13 +216,13 @@ final class AccentColorPickerController: ColorPickerController {
 
 extension AccentColorPickerController: ColorPickerControllerDelegate {
 
-    func colorPicker(_ colorPicker: ColorPickerController, didSelectColor color: WireAccentColor) {
+    func colorPicker(_ colorPicker: ColorPickerController, didSelectColor color: AccentColor) {
         guard let colorIndex = colors.firstIndex(of: color) else {
             return
         }
 
         ZMUserSession.shared()?.perform {
-            ZMUser.selfUser()?.accentColorValue = self.allAccentColors[colorIndex].zmAccentColor
+            ZMUser.selfUser()?.accentColorValue = self.allAccentColors[colorIndex].rawValue
         }
     }
 

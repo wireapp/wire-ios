@@ -232,7 +232,7 @@ public protocol UserType: NSObjectProtocol, UserConnections {
 }
 
 extension UserType {
-    var accentColor: AccentColor? {
+    public var accentColor: AccentColor? {
         .init(rawValue: accentColorValue)
     }
 }

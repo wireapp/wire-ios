@@ -295,7 +295,7 @@ extension SettingsCellDescriptorFactory {
                     assertionFailure("ZMUser.selfUser() is nil")
                     return .none
                 }
-                return .color(selfUser.accentColor)
+                return .color((selfUser.accentColor ?? .default).uiColor)
             },
             presentationStyle: .navigation,
             presentationAction: AccentColorPickerController.init)

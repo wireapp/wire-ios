@@ -25,7 +25,7 @@ final class CountryCodeTableViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
         sut = CountryCodeTableViewController()
     }
 

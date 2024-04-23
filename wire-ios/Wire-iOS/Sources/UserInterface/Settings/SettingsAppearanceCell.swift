@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireDataModel
 
 final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigurable {
 
@@ -149,7 +149,8 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
 }
 
 private extension AccentColor {
+
     static var current: AccentColor {
-        return AccentColor(ZMAccentColor: UIColor.indexedAccentColor()) ?? .blue
+        UIColor.indexedAccentColor() ?? .blue
     }
 }

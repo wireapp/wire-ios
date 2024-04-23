@@ -56,7 +56,7 @@ final class MockMessageFactory {
             message.senderUser = sender
         } else {
             let user = MockUserType.createSelfUser(name: "Tarja Turunen")
-            user.accentColorValue = .strongBlue
+            user.accentColorValue = AccentColor.blue.rawValue
             message.senderUser = user
         }
 
@@ -282,5 +282,4 @@ final class MockMessageFactory {
 
         return fileMessage
     }
-
 }

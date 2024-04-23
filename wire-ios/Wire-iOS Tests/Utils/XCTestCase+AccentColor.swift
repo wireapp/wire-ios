@@ -22,30 +22,21 @@ import XCTest
 @testable import Wire
 
 private extension UIColor {
-    class var accentOverrideColor: WireDataModel.AccentColor? {
-        return ZMUser.selfUser()?.accentColorValue
+    class var accentOverrideColor: AccentColor? {
+        ZMUser.selfUser().map { .init(rawValue: $0.accentColorValue) ?? .default }
     }
 }
 
 extension XCTestCase {
-    /// If this is set the accent color will be overriden for the tests
-    static var accentColor: WireDataModel.AccentColor {
-        get {
-            return UIColor.accentOverrideColor!
-        }
 
-        set {
-            UIColor.setAccentOverride(newValue)
-        }
+    /// If this is set the accent color will be overriden for the tests
+    static var accentColor: AccentColor {
+        get { UIColor.accentOverrideColor! }
+        set { UIColor.setAccentOverride(newValue) }
     }
 
-    var accentColor: WireDataModel.AccentColor {
-        get {
-            return XCTestCase.accentColor
-        }
-
-        set {
-            XCTestCase.accentColor = newValue
-        }
+    var accentColor: AccentColor {
+        get { XCTestCase.accentColor }
+        set { XCTestCase.accentColor = newValue }
     }
 }
