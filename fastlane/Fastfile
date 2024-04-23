@@ -316,6 +316,17 @@ platform :ios do
                 sh "cd debug && zip -r ../#{build.artifact_path(with_filename: true)}.ipa Payload/"
             end
         else
+            # DataDog values needs to go through WireCommonComponents
+            enable_datadog_args = [
+            "DATADOG_IMPORT=1",
+            "DATADOG_APP_ID=#{ENV['DATADOG_APP_ID']}",
+            "DATADOG_CLIENT_TOKEN=#{ENV['DATADOG_CLIENT_TOKEN']}",
+            "OTHER_PREPROCESSOR_FLAGS='DATADOG_IMPORT'"
+            ]
+
+            xcargs = ["BUILD_NUMBER=#{build.build_number}"]
+            xcargs += enable_datadog_args if build.enable_datadog
+
             build_app(
                 scheme: "Wire-iOS",
                 configuration: build.configuration,
@@ -328,7 +339,7 @@ platform :ios do
                 output_name: build.filename,
                 include_bitcode: false,
                 include_symbols: true,
-                xcargs: "BUILD_NUMBER=#{build.build_number}"
+                xcargs: xcargs.join(' ')
             )
         end
     end
@@ -522,6 +533,7 @@ class Build
     attr_reader :build_number
     attr_reader :for_simulator
     attr_reader :configuration
+    attr_reader :enable_datadog
 
     def initialize(options:)
         build_number = options[:build_number]
@@ -541,6 +553,7 @@ class Build
             @git_branch = ENV['GITHUB_REF_NAME']
         end
 
+        @enable_datadog = ENV['ENABLE_DATADOG'] == "true" || ENV['ENABLE_DATADOG'] == "1"
         @build_number = build_number
 
         for_simulator = options[:for_simulator]
