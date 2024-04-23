@@ -154,6 +154,7 @@ public final class MLSService: MLSServiceInterface {
         context: NSManagedObjectContext,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         conversationEventProcessor: ConversationEventProcessorProtocol,
+        featureRepository: FeatureRepositoryInterface,
         userDefaults: UserDefaults,
         syncStatus: SyncStatusProtocol,
         userID: UUID
@@ -166,7 +167,8 @@ public final class MLSService: MLSServiceInterface {
             userDefaults: userDefaults,
             actionsProvider: MLSActionsProvider(),
             syncStatus: syncStatus,
-            userID: userID
+            userID: userID,
+            featureRepository: featureRepository
         )
     }
 
@@ -183,6 +185,7 @@ public final class MLSService: MLSServiceInterface {
         delegate: MLSServiceDelegate? = nil,
         syncStatus: SyncStatusProtocol,
         userID: UUID,
+        featureRepository: FeatureRepositoryInterface,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
     ) {
         let commitSender = CommitSender(
@@ -192,7 +195,7 @@ public final class MLSService: MLSServiceInterface {
 
         self.context = context
         self.coreCryptoProvider = coreCryptoProvider
-        self.featureRepository = FeatureRepository(context: context)
+        self.featureRepository = featureRepository
         self.mlsActionExecutor = mlsActionExecutor ?? MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
             commitSender: commitSender,
