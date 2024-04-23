@@ -38,4 +38,3 @@ final class AccentColorTests: XCTestCase {
         XCTAssertEqual(ZMAccentColorMax, AccentColor.violet.rawValue)
     }
 }
-
