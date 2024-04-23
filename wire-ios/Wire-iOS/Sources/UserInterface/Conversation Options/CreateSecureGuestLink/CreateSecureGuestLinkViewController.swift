@@ -362,11 +362,11 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             title: SecuredGuestLinkWithPasswordLocale.AlertController.title,
             message: SecuredGuestLinkWithPasswordLocale.AlertController.message
         )
-        // TODO: - Proceed with any additional steps now that the password is validated and copied
+
     }
 
     func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String) {
-        // TODO: - Handle the error, such as displaying an alert with the provided reason
+
     }
 
     func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didCreateLink link: String) {
