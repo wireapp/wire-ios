@@ -59,8 +59,10 @@ final class SecurityLevelView: UIView {
 
     func configure(with classification: SecurityClassification?) {
         securityLevelLabel.font = FontSpec.smallSemiboldFont.font!
+
         guard let classification, let levelText = classification.levelText else {
-            return isHidden = true
+            isHidden = true
+            return
         }
 
         configureCallingUI(with: classification)
@@ -68,7 +70,10 @@ final class SecurityLevelView: UIView {
         bottomBorder.backgroundColor = topBorder.backgroundColor
 
         let securityLevelText = SecurityLocalization.securityLevel.uppercased()
-        securityLevelLabel.text = [securityLevelText, levelText].joined(separator: " ")
+        securityLevelLabel.text = [
+            securityLevelText,
+            levelText
+        ].joined(separator: " ")
 
         accessibilityIdentifier = "ClassificationBanner" + classification.accessibilitySuffix
     }
@@ -78,8 +83,10 @@ final class SecurityLevelView: UIView {
         conversationDomain: String?,
         provider: SecurityClassificationProviding? = ZMUserSession.shared()
     ) {
-
-        guard let classification = provider?.classification(users: otherUsers, conversationDomain: conversationDomain) else {
+        guard let classification = provider?.classification(
+            users: otherUsers,
+            conversationDomain: conversationDomain
+        ) else {
             isHidden = true
             return
         }
@@ -120,7 +127,7 @@ final class SecurityLevelView: UIView {
         ])
     }
 
-    private func configureCallingUI(with classification: SecurityClassification?) {
+    private func configureCallingUI(with classification: SecurityClassification) {
         switch classification {
 
         case .classified:
@@ -136,10 +143,6 @@ final class SecurityLevelView: UIView {
             iconImageView.image = .init(resource: .attention)
             iconImageView.tintColor = IconColors.foregroundCheckMarkSelected
             topBorder.backgroundColor = .clear
-
-        case .none:
-            isHidden = true
-            assertionFailure("should not reach this point")
         }
     }
 }
