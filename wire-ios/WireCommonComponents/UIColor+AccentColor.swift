@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 
 public enum AccentColor: Int16, CaseIterable {
@@ -36,12 +35,12 @@ public enum AccentColor: Int16, CaseIterable {
         return AccentColor.allSelectable().randomElement()!
     }
 
-    public init?(ZMAccentColor zmAccentColor: ZMAccentColor) {
+    public init?(ZMAccentColor zmAccentColor: AccentColor) {
         self.init(rawValue: zmAccentColor.rawValue)
     }
 
-    public var zmAccentColor: ZMAccentColor {
-        return ZMAccentColor(rawValue: rawValue)!
+    public var zmAccentColor: AccentColor {
+        return AccentColor(rawValue: rawValue)!
     }
 
     public static func allSelectable() -> [AccentColor] {
@@ -52,5 +51,4 @@ public enum AccentColor: Int16, CaseIterable {
                 .turquoise,
                 .purple]
     }
-
 }

@@ -27,7 +27,7 @@ public struct UserPropertyNormalizer: UserPropertyNormalization {
     public func normalizeName(_ name: String) -> UserPropertyNormalizationResult<String> {
         var name: String? = name
         var outError: Error?
-        var result: Bool = false
+        var result = false
 
         do {
             result = try userPropertyValidator.validate(name: &name)
@@ -35,7 +35,7 @@ public struct UserPropertyNormalizer: UserPropertyNormalization {
             outError = error
         }
 
-        return UserPropertyNormalizationResult<String>(result: result, normalizedValue: name as String? ?? "", validationError: outError)
+        return UserPropertyNormalizationResult<String>(isValid: result, normalizedValue: name as String? ?? "", validationError: outError)
     }
 
     public func normalizeEmailAddress(_ emailAddress: String) -> UserPropertyNormalizationResult<String> {
@@ -49,7 +49,7 @@ public struct UserPropertyNormalizer: UserPropertyNormalization {
             outError = error
         }
 
-        return UserPropertyNormalizationResult<String>(result: result, normalizedValue: emailAddress as String? ?? "", validationError: outError)
+        return UserPropertyNormalizationResult<String>(isValid: result, normalizedValue: emailAddress as String? ?? "", validationError: outError)
     }
 
     public func normalizePassword(_ password: String) -> UserPropertyNormalizationResult<String> {
@@ -63,7 +63,7 @@ public struct UserPropertyNormalizer: UserPropertyNormalization {
             outError = error
         }
 
-        return UserPropertyNormalizationResult<String>(result: result, normalizedValue: password as String? ?? "", validationError: outError)
+        return UserPropertyNormalizationResult<String>(isValid: result, normalizedValue: password as String? ?? "", validationError: outError)
     }
 
     public func normalizeVerificationCode(_ verificationCode: String) -> UserPropertyNormalizationResult<String> {
@@ -77,7 +77,7 @@ public struct UserPropertyNormalizer: UserPropertyNormalization {
             outError = error
         }
 
-        return UserPropertyNormalizationResult<String>(result: result, normalizedValue: verificationCode as String? ?? "", validationError: outError)
+        return UserPropertyNormalizationResult<String>(isValid: result, normalizedValue: verificationCode as String? ?? "", validationError: outError)
     }
 
     public func normalizePhoneNumber(_ phoneNumber: String) -> UserPropertyNormalizationResult<String> {
@@ -91,6 +91,6 @@ public struct UserPropertyNormalizer: UserPropertyNormalization {
             outError = error
         }
 
-        return UserPropertyNormalizationResult<String>(result: result, normalizedValue: phoneNumber as String? ?? "", validationError: outError)
+        return UserPropertyNormalizationResult<String>(isValid: result, normalizedValue: phoneNumber as String? ?? "", validationError: outError)
     }
 }

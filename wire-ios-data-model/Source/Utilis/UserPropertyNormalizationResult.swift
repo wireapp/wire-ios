@@ -26,9 +26,9 @@ public struct UserPropertyNormalizationResult<Value> {
     public var normalizedValue: Value
 
     /// The error that reprsents the reason why the property is not valid.
-    public var validationError: Error
+    public var validationError: Error?
 
-    public init(isValid: Bool, normalizedValue: Value, validationError: Error) {
+    public init(isValid: Bool, normalizedValue: Value, validationError: Error?) {
         self.isValid = isValid
         self.normalizedValue = normalizedValue
         self.validationError = validationError

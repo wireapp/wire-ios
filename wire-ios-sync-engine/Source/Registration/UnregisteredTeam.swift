@@ -16,12 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import enum WireUtilities.AccentColor
 
-/**
- * An object containing the details required to create a team.
- */
-
+/// An object containing the details required to create a team.
 public struct UnregisteredTeam: Equatable {
 
     public let teamName: String
@@ -29,11 +26,11 @@ public struct UnregisteredTeam: Equatable {
     public let emailCode: String
     public let fullName: String
     public let password: String
-    public let accentColor: ZMAccentColor
+    public let accentColor: WireUtilities.AccentColor
     public let locale: String
     public let label: UUID?
 
-    public init(teamName: String, email: String, emailCode: String, fullName: String, password: String, accentColor: ZMAccentColor) {
+    public init(teamName: String, email: String, emailCode: String, fullName: String, password: String, accentColor: WireUtilities.AccentColor) {
         self.teamName = teamName
         self.email = email
         self.emailCode = emailCode
