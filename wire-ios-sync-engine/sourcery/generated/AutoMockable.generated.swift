@@ -727,6 +727,30 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
 
 }
 
+public class MockSetAllowGuestAndServicesUseCaseProtocol: SetAllowGuestAndServicesUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeConversationAllowGuestsAllowServicesCompletion_Invocations: [(conversation: ZMConversation, allowGuests: Bool, allowServices: Bool, completion: (Result<Void, Error>) -> Void)] = []
+    public var invokeConversationAllowGuestsAllowServicesCompletion_MockMethod: ((ZMConversation, Bool, Bool, @escaping (Result<Void, Error>) -> Void) -> Void)?
+
+    public func invoke(conversation: ZMConversation, allowGuests: Bool, allowServices: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+        invokeConversationAllowGuestsAllowServicesCompletion_Invocations.append((conversation: conversation, allowGuests: allowGuests, allowServices: allowServices, completion: completion))
+
+        guard let mock = invokeConversationAllowGuestsAllowServicesCompletion_MockMethod else {
+            fatalError("no mock for `invokeConversationAllowGuestsAllowServicesCompletion`")
+        }
+
+        mock(conversation, allowGuests, allowServices, completion)
+    }
+
+}
+
 public class MockSnoozeCertificateEnrollmentUseCaseProtocol: SnoozeCertificateEnrollmentUseCaseProtocol {
 
     // MARK: - Life cycle
