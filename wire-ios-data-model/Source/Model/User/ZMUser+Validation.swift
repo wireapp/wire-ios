@@ -36,6 +36,15 @@ public extension ZMUser {
         return name == nil || validate
     }
 
+    // Accent color
+
+    static func validate(accentColor: inout Int?) throws -> Bool {
+        var mutableAccentColor: Any? = accentColor
+        let result = try ZMAccentColorValidator.validateValue(&mutableAccentColor)
+        accentColor = mutableAccentColor as? Int
+        return result
+    }
+
     // E-mail address
 
     static func validate(emailAddress: inout String?) throws -> Bool {
@@ -43,6 +52,7 @@ public extension ZMUser {
         let result = try ZMEmailAddressValidator.validateValue(&mutableEmailAddress)
         emailAddress = mutableEmailAddress as? String
         return result
+
     }
 
     // Password
