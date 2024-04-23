@@ -529,6 +529,8 @@
 		D55272EA2062732100F542BE /* AssetDeletionStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55272E92062732100F542BE /* AssetDeletionStatusTests.swift */; };
 		D55272EC2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D55272EB2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift */; };
 		D5D10DA4203AE43200145497 /* Conversation+AccessMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D10DA3203AE43200145497 /* Conversation+AccessMode.swift */; };
+		E623B6382BD688D400F91B37 /* Caches.swift in Sources */ = {isa = PBXBuildFile; fileRef = E623B6372BD688D400F91B37 /* Caches.swift */; };
+		E623B63A2BD68DAE00F91B37 /* InjectedDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = E623B6392BD68DAE00F91B37 /* InjectedDependencies.swift */; };
 		E62F31C52B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62F31C42B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift */; };
 		E62F31C72B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62F31C62B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift */; };
 		E6425FDF2BCD5B9D003EC8CF /* ZMUserSessionBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6425FDE2BCD5B9D003EC8CF /* ZMUserSessionBuilder.swift */; };
@@ -1319,6 +1321,8 @@
 		D55272EB2062733F00F542BE /* AssetDeletionRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDeletionRequestStrategyTests.swift; sourceTree = "<group>"; };
 		D59F3A11206929AF0023474F /* SessionManagerTests+Backup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+Backup.swift"; sourceTree = "<group>"; };
 		D5D10DA3203AE43200145497 /* Conversation+AccessMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conversation+AccessMode.swift"; sourceTree = "<group>"; };
+		E623B6372BD688D400F91B37 /* Caches.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Caches.swift; sourceTree = "<group>"; };
+		E623B6392BD68DAE00F91B37 /* InjectedDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InjectedDependencies.swift; sourceTree = "<group>"; };
 		E62F31C42B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluateOneOnOneConversationsStrategy.swift; sourceTree = "<group>"; };
 		E62F31C62B711DDF0095777A /* EvaluateOneOnOneConversationsStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvaluateOneOnOneConversationsStrategyTests.swift; sourceTree = "<group>"; };
 		E6425FDE2BCD5B9D003EC8CF /* ZMUserSessionBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMUserSessionBuilder.swift; sourceTree = "<group>"; };
@@ -2714,6 +2718,15 @@
 			path = "Asset Deletion";
 			sourceTree = "<group>";
 		};
+		E623B6362BD688A100F91B37 /* Dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				E623B6372BD688D400F91B37 /* Caches.swift */,
+				E623B6392BD68DAE00F91B37 /* InjectedDependencies.swift */,
+			);
+			path = Dependencies;
+			sourceTree = "<group>";
+		};
 		E6A55E2B2B762ED80020818D /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
@@ -2735,6 +2748,7 @@
 		E6C983EF2B986B2900D55177 /* ZMUserSession */ = {
 			isa = PBXGroup;
 			children = (
+				E623B6362BD688A100F91B37 /* Dependencies */,
 				E6425FDE2BCD5B9D003EC8CF /* ZMUserSessionBuilder.swift */,
 				EE419B57256FEA3D004618E2 /* ZMUserSession.Configuration.swift */,
 				166B2B5D23E86522003E8581 /* ZMUserSession.swift */,
@@ -3752,6 +3766,7 @@
 				F148F6671FB9AA7600BD6909 /* UnregisteredTeam.swift in Sources */,
 				1672A64523473EA100380537 /* LabelDownstreamRequestStrategy.swift in Sources */,
 				09BCDB8F1BCE7F000020DCC7 /* ZMAPSMessageDecoder.m in Sources */,
+				E623B6382BD688D400F91B37 /* Caches.swift in Sources */,
 				546392721D79D5210094EC66 /* Application.swift in Sources */,
 				EFC8281C1FB343B600E27E21 /* RegistationCredentialVerificationStrategy.swift in Sources */,
 				874A16902052BE5E001C6760 /* ZMUserSession+OpenConversation.swift in Sources */,
@@ -3817,6 +3832,7 @@
 				161ACB2423F432CC00ABFF33 /* SessionManager+URLActions.swift in Sources */,
 				BF3C1B1720DBE254001CE126 /* Conversation+MessageDestructionTimeout.swift in Sources */,
 				1659114F1DEF1F6E007FA847 /* LocalNotificationDispatcher+Calling.swift in Sources */,
+				E623B63A2BD68DAE00F91B37 /* InjectedDependencies.swift in Sources */,
 				16DABFAE1DCF98D3001973E3 /* CallingRequestStrategy.swift in Sources */,
 				54DE9BEB1DE74FFB00EFFB9C /* RandomHandleGenerator.swift in Sources */,
 				F1C51FE91FB4A9C7009C2269 /* RegistrationStrategy.swift in Sources */,

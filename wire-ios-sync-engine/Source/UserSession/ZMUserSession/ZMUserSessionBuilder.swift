@@ -25,8 +25,6 @@ struct ZMUserSessionBuilder {
 
     // MARK: - Properties
 
-    // Properties required for initialization
-
     private var analytics: (any AnalyticsType)?
     private var appVersion: String?
     private var appLock: (any AppLockType)?
@@ -36,6 +34,7 @@ struct ZMUserSessionBuilder {
     private var coreCryptoProvider: (any CoreCryptoProviderProtocol)?
     private var coreDataStack: CoreDataStack?
     private var cryptoboxMigrationManager: (any CryptoboxMigrationManagerInterface)?
+    private var dependencies: InjectedDependencies?
     private var e2eiActivationDateRepository: (any E2EIActivationDateRepositoryProtocol)?
     private var earService: (any EARServiceInterface)?
     private var flowManager: (any FlowManagerType)?
@@ -70,6 +69,7 @@ struct ZMUserSessionBuilder {
             let coreDataStack,
             let cryptoboxMigrationManager,
             let e2eiActivationDateRepository,
+            let dependencies,
             let earService,
             let flowManager,
             let lastE2EIUpdateDateRepository,
@@ -114,7 +114,8 @@ struct ZMUserSessionBuilder {
             updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatusUseCase,
             mlsConversationVerificationStatusUpdater: mlsConversationVerificationStatusUpdater,
             contextStorage: contextStorage,
-            recurringActionService: recurringActionService
+            recurringActionService: recurringActionService,
+            dependencies: dependencies
         )
 
         return userSession
@@ -179,6 +180,7 @@ struct ZMUserSessionBuilder {
             coreCryptoProvider: coreCryptoProvider,
             analytics: analytics
         )
+        let dependencies = InjectedDependencies(caches: Caches())
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
@@ -237,6 +239,7 @@ struct ZMUserSessionBuilder {
         self.coreCryptoProvider = coreCryptoProvider
         self.coreDataStack = coreDataStack
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
+        self.dependencies = dependencies
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
         self.earService = earService
         self.flowManager = flowManager

@@ -53,7 +53,6 @@ public final class ZMUserSession: NSObject {
     private(set) var notificationDispatcher: NotificationDispatcher
     private(set) var localNotificationDispatcher: LocalNotificationDispatcher?
     let applicationStatusDirectory: ApplicationStatusDirectory
-    private var assetCache: FileAssetCache?
     private(set) var callStateObserver: CallStateObserver?
     var messageReplyObserver: ManagedObjectContextChangeObserver?
     var likeMesssageObserver: ManagedObjectContextChangeObserver?
@@ -311,6 +310,10 @@ public final class ZMUserSession: NSObject {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
 
+    // MARK: Dependency Injection
+
+    private let dependencies: InjectedDependencies
+
     // MARK: Delegates
 
     weak var delegate: UserSessionDelegate?
@@ -346,7 +349,8 @@ public final class ZMUserSession: NSObject {
         updateMLSGroupVerificationStatusUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol,
         mlsConversationVerificationStatusUpdater: any MLSConversationVerificationStatusUpdating,
         contextStorage: LAContextStorable,
-        recurringActionService: any RecurringActionServiceInterface
+        recurringActionService: any RecurringActionServiceInterface,
+        dependencies: InjectedDependencies
     ) {
         self.application = application
         self.appVersion = appVersion
@@ -379,6 +383,7 @@ public final class ZMUserSession: NSObject {
         self.observeMLSGroupVerificationStatus = observeMLSGroupVerificationStatusUseCase
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
+        self.dependencies = dependencies
     }
 
     func setup(
@@ -499,7 +504,8 @@ public final class ZMUserSession: NSObject {
         let fileAssetCache = FileAssetCache(location: cacheLocation)
         let userImageCache = UserImageLocalCache(location: cacheLocation)
 
-        self.assetCache = fileAssetCache
+        dependencies.caches.fileAssets = fileAssetCache
+        dependencies.caches.userImages = userImageCache
 
         managedObjectContext.zm_userImageCache = userImageCache
         managedObjectContext.zm_fileAssetCache = fileAssetCache
@@ -718,7 +724,7 @@ public final class ZMUserSession: NSObject {
     // MARK: Caches
 
     func purgeTemporaryAssets() throws {
-        try assetCache?.purgeTemporaryAssets()
+        try dependencies.caches.fileAssets?.purgeTemporaryAssets()
     }
 
 }
