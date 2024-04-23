@@ -198,7 +198,7 @@ public class EARService: EARServiceInterface {
     }
 
     // MARK: - Enable / disable
-    
+
     /// Enable encrypiton at rest.
     ///
     /// Invoking this method will generate new encryption keys and prompt the user for
@@ -259,7 +259,7 @@ public class EARService: EARServiceInterface {
             throw EARServiceFailure.cannotPerformMigration
         }
     }
-    
+
     /// Disable encryption at rest.
     ///
     /// Invoking this method will decrypt data in the database (unless `skipMigration` is `true`)
@@ -460,7 +460,7 @@ public class EARService: EARServiceInterface {
     }
 
     // MARK: - Private keys
-    
+
     /// Fetch the private keys.
     ///
     /// Access to the private keys is restricted. The secondary key is available in the
