@@ -38,9 +38,8 @@ public class UserClientRequestFactory {
         apiVersion: APIVersion) -> ZMTransportRequest {
             let payload: [AnyHashable: Any]
 
-            if let credentials = credentials,
-               let email = credentials.email,
-               let password = credentials.password {
+            if let email = credentials?.email,
+               let password = credentials?.password {
                 payload = [
                     "email": email,
                     "password": password
