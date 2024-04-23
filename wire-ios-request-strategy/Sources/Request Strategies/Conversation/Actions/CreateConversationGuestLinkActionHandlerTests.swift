@@ -84,20 +84,28 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
     func testCreateConversationGuestLinkSuccess() throws {
         // GIVEN
         let statusCode = 200
-
+        let expectedUri = "https://fakeurlfortest.com"
         let payload: [AnyHashable: Any] = [
             "code": "SOME-UNIQUE-CODE",
             "has_password": false,
             "key": "sampleKey123",
-            "uri": "https://fakeurlfortest.com"
+            "uri": expectedUri
         ]
 
-        // WHEN && THEN
-        test_itHandlesSuccess(
+        // WHEN
+        let result = test_itHandlesSuccess(
             status: statusCode,
             payload: payload as ZMTransportData,
             apiVersion: .v4
         )
+
+        // THEN
+        XCTAssertNotNil(result, "Result should not be nil")
+        if let resultData = result {
+            XCTAssertEqual(resultData, expectedUri, "The URI should match the expected URI")
+        } else {
+            XCTFail("Result does not contain URI or is of unexpected type")
+        }
     }
 
     func testCreateConversationGuestLinkFailure() throws {
