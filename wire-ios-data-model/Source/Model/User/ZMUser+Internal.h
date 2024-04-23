@@ -80,7 +80,7 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @property (nullable, nonatomic, copy) NSString *phoneNumber;
 @property (nullable, nonatomic, copy) NSString *name;
 @property (nullable, nonatomic, copy) NSString *handle;
-@property (nonatomic) int16_t accentColorValue;
+@property (nonatomic) ZMAccentColorRawValue accentColorValue;
 
 - (void)setHandle:(NSString * __nullable)handle;
 @property (nonatomic) BOOL needsPropertiesUpdate;

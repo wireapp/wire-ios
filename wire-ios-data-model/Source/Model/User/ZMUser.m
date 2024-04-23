@@ -148,7 +148,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 @property (nonatomic) NSString *normalizedName;
 @property (nonatomic, copy) NSString *name;
-@property (nonatomic) int16_t accentColorValue;
+@property (nonatomic) ZMAccentColorRawValue accentColorValue;
 @property (nonatomic, copy) NSString *emailAddress;
 @property (nonatomic, copy) NSString *phoneNumber;
 @property (nonatomic, copy) NSString *normalizedEmailAddress;
