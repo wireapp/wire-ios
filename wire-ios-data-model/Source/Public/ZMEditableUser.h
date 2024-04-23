@@ -17,8 +17,8 @@
 //
 
 @import WireSystem;
+@import WireUtilities;
 
-#import <WireUtilities/ZMAccentColor.h>
 #import "ZMUser.h"
 
 @class ZMEmailCredentials;
@@ -27,7 +27,7 @@
 @protocol ZMEditableUser <NSObject>
 
 @property (nonatomic, copy, nullable) NSString *name;
-@property (nonatomic) ZMAccentColor accentColorValue;
+@property (nonatomic) int16_t accentColorValue;
 @property (nonatomic, copy, readonly, nullable) NSString *emailAddress;
 @property (nonatomic, copy, readonly, nullable) NSString *phoneNumber;
 @property (nonatomic) BOOL readReceiptsEnabled;

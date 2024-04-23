@@ -205,7 +205,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = ZMConversationType.group
         let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
-        otherUser.accentColorValue = .brightOrange
+        otherUser.accentColor = .amber
         conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
         self.uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -213,7 +213,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         // when
         checkThatItNotifiesTheObserverOfAChange(
             conversation,
-            modifier: { _, _ in otherUser.accentColorValue = .softPink },
+            modifier: { _, _ in otherUser.accentColor = .turquoise },
             expectedChangedField: nil,
             expectedChangedKeys: []
         )

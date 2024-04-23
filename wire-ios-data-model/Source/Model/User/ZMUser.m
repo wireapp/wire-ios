@@ -148,7 +148,7 @@ static NSString *const PrimaryKey = @"primaryKey";
 
 @property (nonatomic) NSString *normalizedName;
 @property (nonatomic, copy) NSString *name;
-@property (nonatomic) ZMAccentColor accentColorValue;
+@property (nonatomic) int16_t accentColorValue;
 @property (nonatomic, copy) NSString *emailAddress;
 @property (nonatomic, copy) NSString *phoneNumber;
 @property (nonatomic, copy) NSString *normalizedEmailAddress;
@@ -425,13 +425,13 @@ static NSString *const PrimaryKey = @"primaryKey";
     [self setTransientUUID:teamIdentifier forKey:@"teamIdentifier"];
 }
 
-+ (ZMAccentColor)accentColorFromPayloadValue:(NSNumber *)payloadValue
++ (int16_t)accentColorFromPayloadValue:(NSNumber *)payloadValue
 {
-    ZMAccentColor color = (ZMAccentColor) payloadValue.intValue;
-    if ((color <= ZMAccentColorUndefined) || (ZMAccentColorMax < color)) {
-        color = (ZMAccentColor) (int16_t) (arc4random_uniform((uint32_t) ZMAccentColorMax - 1) + 1);
+    int16_t colorValue = (int16_t) payloadValue.intValue;
+    if (colorValue < ZMAccentColor.min.rawValue || colorValue > ZMAccentColor.max.rawValue) {
+        colorValue = 1 + (int16_t) arc4random_uniform((uint32_t) ZMAccentColor.max.rawValue - 1);
     }
-    return color;
+    return colorValue;
 }
 
 // NB: This method is called with **partial** user info and @c authoritative set to false, when the update payload

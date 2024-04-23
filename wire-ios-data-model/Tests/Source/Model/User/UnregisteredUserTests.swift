@@ -119,7 +119,7 @@ class UnregisteredUserTests: XCTestCase {
         user.name = "Mario"
         user.credentials = .phone("+49123456789")
         user.verificationCode = "123456"
-        user.accentColorValue = .softPink
+        user.accentColor = .turquoise
         user.acceptedTermsOfService = true
         user.marketingConsent = false
 
@@ -136,7 +136,7 @@ class UnregisteredUserTests: XCTestCase {
         user.name = "Mario"
         user.credentials = .email("alexis@example.com")
         user.verificationCode = "123456"
-        user.accentColorValue = .softPink
+        user.accentColor = .turquoise
         user.acceptedTermsOfService = true
         user.marketingConsent = false
 

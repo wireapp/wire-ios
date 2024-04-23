@@ -32,6 +32,13 @@ public final class ZMAccentColor: NSObject, RawRepresentable {
         self.init(rawValue: accentColor.rawValue)
     }
 
+    public static var blue: ZMAccentColor! { .init(accentColor: .blue) }
+    public static var green: ZMAccentColor! { .init(accentColor: .green) }
+    public static var red: ZMAccentColor! { .init(accentColor: .red) }
+    public static var amber: ZMAccentColor! { .init(accentColor: .amber) }
+    public static var turquoise: ZMAccentColor! { .init(accentColor: .turquoise) }
+    public static var purple: ZMAccentColor! { .init(accentColor: .purple) }
+
     public static var min: ZMAccentColor! { .init(accentColor: .blue) }
     public static var max: ZMAccentColor! { .init(accentColor: .purple) }
 }

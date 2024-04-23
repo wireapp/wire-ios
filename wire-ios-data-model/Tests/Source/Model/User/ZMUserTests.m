@@ -97,7 +97,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 
 - (void)testThatWeCanSetAttributesOnUser
 {
-    [self checkUserAttributeForKey:@"accentColorValue" value:@(ZMAccentColorVividRed)];
+    [self checkUserAttributeForKey:@"accentColorValue" value:@(ZMAccentColor.red.rawValue)];
     [self checkUserAttributeForKey:@"emailAddress" value:@"foo@example.com"];
     [self checkUserAttributeForKey:@"name" value:@"Foo Bar"];
     [self checkUserAttributeForKey:@"handle" value:@"foo_bar"];
@@ -105,9 +105,9 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     [self checkUserAttributeForKey:@"phoneNumber" value:@"+123456789"];
     [self checkUserAttributeForKey:@"remoteIdentifier" value:[NSUUID createUUID]];
     [self checkUserAttributeForKey:@"richProfile" value:@[
-                                                                [[UserRichProfileField alloc] initWithType:@"Title" value:@"Software Engineer"],
-                                                                [[UserRichProfileField alloc] initWithType:@"Department" value:@"iOS Team"]
-                                                               ]];
+        [[UserRichProfileField alloc] initWithType:@"Title" value:@"Software Engineer"],
+        [[UserRichProfileField alloc] initWithType:@"Department" value:@"iOS Team"]
+    ]];
 }
 
 - (NSMutableDictionary *)samplePayloadForUserID:(NSUUID *)userID
@@ -498,7 +498,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqualObjects(user.handle, payload[@"handle"]);
     XCTAssertEqual([self managedByString:user], payload[@"managed_by"]);
     XCTAssertNil(user.expiresAt);
-    XCTAssertEqual(user.accentColorValue, ZMAccentColorBrightYellow);
+    XCTAssertEqual(user.accentColorValue, ZMAccentColor.amber.rawValue);
 }
 
 - (void)testThatItUpdatesAccountDeletionStatusOnAnExistingUser
@@ -588,14 +588,14 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     user.remoteIdentifier = remoteID;
     
     NSMutableDictionary *payload = [self samplePayloadForUserID:remoteID];
-    payload[@"accent_id"] = @(ZMAccentColorMax + 1);
-    
+    payload[@"accent_id"] = @(ZMAccentColor.max.rawValue + 1);
+
     // when
     [user updateWithTransportData:payload authoritative:NO];
     
     // then
-    XCTAssertGreaterThan(user.accentColorValue, ZMAccentColorUndefined);
-    XCTAssertLessThanOrEqual(user.accentColorValue, ZMAccentColorMax);
+    XCTAssertGreaterThan(user.accentColorValue, 0);
+    XCTAssertLessThanOrEqual(user.accentColorValue, ZMAccentColor.max.rawValue);
 }
 
 - (void)testThatItLimitsAccentColorsToValidRangeForUdpateData_Undefined;
@@ -606,14 +606,14 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     user.remoteIdentifier = remoteID;
     
     NSMutableDictionary *payload = [self samplePayloadForUserID:remoteID];
-    payload[@"accent_id"] = @(ZMAccentColorUndefined);
-    
+    payload[@"accent_id"] = @(0);
+
     // when
     [user updateWithTransportData:payload authoritative:NO];
     
     // then
-    XCTAssertGreaterThan(user.accentColorValue, ZMAccentColorUndefined);
-    XCTAssertLessThanOrEqual(user.accentColorValue, ZMAccentColorMax);
+    XCTAssertGreaterThan(user.accentColorValue, 0);
+    XCTAssertLessThanOrEqual(user.accentColorValue, ZMAccentColor.max.rawValue);
 }
 
 - (void)testThatItDoesPersistCompleteImageDataToCache
@@ -1222,8 +1222,8 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     // given
     ZMUser<ZMEditableUser> *user = [ZMUser selfUserInContext:self.uiMOC];
     user.name = @"Test";
-    user.accentColorValue = ZMAccentColorBrightOrange;
-    
+    user.accentColorValue = ZMAccentColor.amber.rawValue;
+
     // when
     XCTAssertTrue([self.uiMOC saveOrRollback]);
     
@@ -1613,16 +1613,16 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
         ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-        user.accentColorValue = ZMAccentColorBrightYellow;
+        user.accentColorValue = ZMAccentColor.amber.rawValue;
         [self.syncMOC saveOrRollback];
-        XCTAssertEqual(user.accentColorValue, ZMAccentColorBrightYellow);
-        
+        XCTAssertEqual(user.accentColorValue, ZMAccentColor.amber.rawValue);
+
         // when
-        user.accentColorValue = ZMAccentColorUndefined;
+        user.accentColorValue = 0;
         [self.syncMOC saveOrRollback];
         
         // then
-        XCTAssertEqual(user.accentColorValue, ZMAccentColorUndefined);
+        XCTAssertEqual(user.accentColorValue, 0);
     }];
 }
 

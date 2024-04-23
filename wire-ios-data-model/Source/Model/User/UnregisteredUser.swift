@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /**
  * The representation of a user that is going through the registration process.
  *
@@ -33,7 +31,7 @@ public class UnregisteredUser {
     public var credentials: UnverifiedCredentials?
     public var verificationCode: String?
     public var name: String?
-    public var accentColorValue: AccentColor?
+    public var accentColor: AccentColor?
     public var acceptedTermsOfService: Bool?
     public var marketingConsent: Bool?
     public var password: String?
@@ -51,7 +49,7 @@ public class UnregisteredUser {
         return credentials != nil
             && verificationCode != nil
             && name != nil
-            && accentColorValue != nil
+            && accentColor != nil
             && acceptedTermsOfService != nil
             && marketingConsent != nil
             && passwordStepFinished
@@ -77,12 +75,11 @@ extension UnregisteredUser: Equatable {
         return lhs.credentials == rhs.credentials
             && lhs.verificationCode == rhs.verificationCode
             && lhs.name == rhs.name
-            && lhs.accentColorValue == rhs.accentColorValue
+            && lhs.accentColor == rhs.accentColor
             && lhs.acceptedTermsOfService == rhs.acceptedTermsOfService
             && lhs.marketingConsent == rhs.marketingConsent
             && lhs.password == rhs.password
     }
-
 }
 
 // MARK: - Normalization
@@ -119,5 +116,4 @@ extension UnregisteredUser {
     private static func normalizedString(_ value: String, using normalizer: (String) -> ZMPropertyNormalizationResult<NSString>) -> NormalizationResult<String> {
         return NormalizationResult(normalizer(value))
     }
-
 }

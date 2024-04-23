@@ -48,31 +48,28 @@
     // given
     NSUUID *remoteIDA = [NSUUID createUUID];
     NSUUID *remoteIDB = [NSUUID createUUID];
-    
-    
-    
+
     ZMSearchUser *user1 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                    name:@"A"
                                                                  handle:@"a"
-                                                            accentColor:ZMAccentColorStrongLimeGreen
+                                                       accentColorValue:ZMAccentColor.green.rawValue
                                                        remoteIdentifier:remoteIDA
                                                                  domain:nil
                                                          teamIdentifier:nil
                                                                    user:nil
                                                                 contact:nil];
-    
-    
+
     // (1)
     ZMSearchUser *user2 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                    name:@"B"
                                                                  handle:@"b"
-                                                            accentColor:ZMAccentColorSoftPink
+                                                       accentColorValue:ZMAccentColor.purple.rawValue
                                                        remoteIdentifier:remoteIDA
                                                                  domain:nil
                                                          teamIdentifier:nil
                                                                    user:nil
                                                                 contact:nil];
-    
+
     XCTAssertEqualObjects(user1, user2);
     XCTAssertEqual(user1.hash, user2.hash);
     
@@ -80,7 +77,7 @@
     ZMSearchUser *user3 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                    name:@"A"
                                                                  handle:@"b"
-                                                            accentColor:ZMAccentColorStrongLimeGreen
+                                                       accentColorValue:ZMAccentColor.green.rawValue
                                                        remoteIdentifier:remoteIDB
                                                                  domain:nil
                                                          teamIdentifier:nil
@@ -119,7 +116,7 @@
     ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                         name:name
                                                                       handle:handle
-                                                                 accentColor:ZMAccentColorStrongLimeGreen
+                                                            accentColorValue:ZMAccentColor.green.rawValue
                                                             remoteIdentifier:remoteID
                                                                       domain:nil
                                                               teamIdentifier:nil
@@ -129,7 +126,7 @@
     
     // then
     XCTAssertEqualObjects(searchUser.name, @"John Doe");
-    XCTAssertEqual(searchUser.accentColorValue, ZMAccentColorStrongLimeGreen);
+    XCTAssertEqual(searchUser.accentColorValue, ZMAccentColor.green.rawValue);
     XCTAssertEqual(searchUser.isConnected, NO);
     XCTAssertNil(searchUser.completeImageData);
     XCTAssertNil(searchUser.previewImageData);
@@ -144,7 +141,7 @@
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     user.name = @"Actual name";
     user.handle = @"my_handle";
-    user.accentColorValue = ZMAccentColorVividRed;
+    user.accentColorValue = ZMAccentColor.red.rawValue;
     user.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     user.connection.status = ZMConnectionStatusAccepted;
     user.remoteIdentifier = [NSUUID createUUID];
@@ -158,7 +155,7 @@
     ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                         name:@"Wrong name"
                                                                       handle:@"not_my_handle"
-                                                                 accentColor:ZMAccentColorStrongLimeGreen
+                                                            accentColorValue:ZMAccentColor.green.rawValue
                                                             remoteIdentifier:[NSUUID createUUID]
                                                                       domain:nil
                                                               teamIdentifier:nil
@@ -187,7 +184,7 @@
     ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                         name:@"Hans"
                                                                       handle:@"hans"
-                                                                 accentColor:ZMAccentColorStrongLimeGreen
+                                                            accentColorValue:ZMAccentColor.green.rawValue
                                                             remoteIdentifier:NSUUID.createUUID
                                                                       domain:nil
                                                               teamIdentifier:nil
@@ -206,7 +203,7 @@
     ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                         name:@"Hans"
                                                                       handle:@"hans"
-                                                                 accentColor:ZMAccentColorStrongLimeGreen
+                                                            accentColorValue:ZMAccentColor.green.rawValue
                                                             remoteIdentifier:nil
                                                                       domain:nil
                                                               teamIdentifier:nil

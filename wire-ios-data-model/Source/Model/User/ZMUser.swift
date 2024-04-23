@@ -51,6 +51,11 @@ extension ZMUser: UserType {
         return featureRepository.fetchDigitalSignature().status == .enabled
     }
 
+    public var accentColor: AccentColor? {
+        get { .init(rawValue: accentColorValue) }
+        set { accentColorValue = newValue?.rawValue ?? 0 }
+    }
+
     public var previewImageData: Data? {
         return imageSmallProfileData
     }

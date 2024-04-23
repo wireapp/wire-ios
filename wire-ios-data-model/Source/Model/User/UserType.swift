@@ -93,7 +93,7 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Whether the user is under legal hold.
     var isUnderLegalHold: Bool { get }
 
-    var accentColorValue: AccentColor { get }
+    var accentColorValue: AccentColor.RawValue { get }
 
     /// Whether the user is a wireless user.
     var isWirelessUser: Bool { get }
@@ -229,6 +229,12 @@ public protocol UserType: NSObjectProtocol, UserConnections {
 
     /// Whether the user is allowed to create MLS groups.
     var canCreateMLSGroups: Bool { get }
+}
+
+extension UserType {
+    var accentColor: AccentColor? {
+        .init(rawValue: accentColorValue)
+    }
 }
 
 /// Methods and properties related to managing 1:1 user connections.

@@ -17,8 +17,7 @@
 //
 
 #import "ZMManagedObject.h"
-#import <WireUtilities/WireUtilities-Swift.h>
-#import <WireUtilities/ZMAccentColor.h>
+@import WireUtilities;
 
 @class ZMConversation;
 @class UserClient;
@@ -70,7 +69,7 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 @property (nonatomic, readonly, nullable) NSString *mediumProfileImageCacheKey;
 
 @property (nonatomic, readonly) BOOL isConnected;
-@property (nonatomic, readonly) ZMAccentColor accentColorValue;
+@property (nonatomic, readonly) int16_t accentColorValue;
 
 @property (nonatomic, readonly, nullable) NSData *imageMediumData;
 @property (nonatomic, readonly, nullable) NSData *imageSmallProfileData;
