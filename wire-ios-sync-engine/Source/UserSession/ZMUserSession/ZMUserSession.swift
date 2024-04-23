@@ -940,6 +940,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
+            self?.checkE2EICertificateExpiryStatus()
         }
     }
 

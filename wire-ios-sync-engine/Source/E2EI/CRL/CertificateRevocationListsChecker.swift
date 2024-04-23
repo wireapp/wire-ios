@@ -166,7 +166,9 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
                   certificate.status == .revoked else {
                 return
             }
+
             NotificationCenter.default.post(name: .presentRevokedCertificateWarningAlert, object: nil)
+            NotificationCenter.default.post(name: .e2eiCertificateChanged, object: self)
         } catch {
             logger.warn("failed to fetch certificate for self client: \(error)")
         }
