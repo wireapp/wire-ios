@@ -36,5 +36,6 @@ FOUNDATION_EXPORT const unsigned char WireUtilitiesVersionString[];
 #import <WireUtilities/ZMMobileProvisionParser.h>
 #import <WireUtilities/NSString+Normalization.h>
 #import <WireUtilities/ZMEncodedNSUUIDWithTimestamp.h>
+#import <WireUtilities/ZMAccentColor.h>
 #import <WireUtilities/ZMAtomicInteger.h>
 #import <WireUtilities/ZMObjectValidationError.h>

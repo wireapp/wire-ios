@@ -69,7 +69,7 @@ typedef NS_ENUM(int16_t, ZMBlockState) {
 @property (nonatomic, readonly, nullable) NSString *mediumProfileImageCacheKey;
 
 @property (nonatomic, readonly) BOOL isConnected;
-@property (nonatomic, readonly) int16_t accentColorValue;
+@property (nonatomic, readonly) ZMAccentColorRawValue accentColorValue;
 
 @property (nonatomic, readonly, nullable) NSData *imageMediumData;
 @property (nonatomic, readonly, nullable) NSData *imageSmallProfileData;

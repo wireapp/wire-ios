@@ -47,13 +47,13 @@ public final class ZMAccentColor: NSObject {
     // MARK: -
 
     public let accentColor: AccentColor
-    public var rawValue: AccentColor.RawValue { accentColor.rawValue }
+    public var rawValue: ZMAccentColorRawValue { accentColor.rawValue }
 
     private init(accentColor: AccentColor) {
         self.accentColor = accentColor
     }
 
-    public static func from(rawValue: AccentColor.RawValue) -> ZMAccentColor? {
+    public static func from(rawValue: ZMAccentColorRawValue) -> ZMAccentColor? {
         guard let accentColor = AccentColor(rawValue: rawValue) else { return nil }
         return ZMAccentColor.mapping[accentColor]!
     }
