@@ -19,5 +19,5 @@
 #import <WireUtilities/WireUtilities-Swift.h>
 #import "ZMAccentColor.h"
 
-int16_t const ZMAccentColorMin = ZMAccentColorStrongBlue;
-int16_t const ZMAccentColorMax = ZMAccentColorViolet;
+int16_t const ZMAccentColorMin = ZMAccentColorBlue;
+int16_t const ZMAccentColorMax = ZMAccentColorPurple;

@@ -25,16 +25,14 @@ final class AccentColorTests: XCTestCase {
     /// Ensures that the raw values haven't changed when migrating `ZMAccentColor` into Swift.
     func testRawValues() {
 
-        XCTAssertEqual(AccentColor.undefined.rawValue, 0)
-        XCTAssertEqual(AccentColor.strongBlue.rawValue, 1)
-        XCTAssertEqual(AccentColor.strongLimeGreen.rawValue, 2)
-        XCTAssertEqual(AccentColor.brightYellow.rawValue, 3)
-        XCTAssertEqual(AccentColor.vividRed.rawValue, 4)
-        XCTAssertEqual(AccentColor.brightOrange.rawValue, 5)
-        XCTAssertEqual(AccentColor.softPink.rawValue, 6)
-        XCTAssertEqual(AccentColor.violet.rawValue, 7)
+        XCTAssertEqual(AccentColor.blue.rawValue, 1)
+        XCTAssertEqual(AccentColor.green.rawValue, 2)
+        XCTAssertEqual(AccentColor.red.rawValue, 4)
+        XCTAssertEqual(AccentColor.amber.rawValue, 5)
+        XCTAssertEqual(AccentColor.turquoise.rawValue, 6)
+        XCTAssertEqual(AccentColor.purple.rawValue, 7)
 
-        XCTAssertEqual(ZMAccentColorMin, AccentColor.strongBlue.rawValue)
-        XCTAssertEqual(ZMAccentColorMax, AccentColor.violet.rawValue)
+        XCTAssertEqual(ZMAccentColorMin, AccentColor.blue.rawValue)
+        XCTAssertEqual(ZMAccentColorMax, AccentColor.purple.rawValue)
     }
 }

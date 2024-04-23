@@ -18,12 +18,30 @@
 
 @objc(ZMAccentColor)
 public enum AccentColor: Int16, CaseIterable, Hashable {
-    case undefined
-    case strongBlue
-    case strongLimeGreen
-    case brightYellow
-    case vividRed
-    case brightOrange
-    case softPink
-    case violet
+    case blue = 1
+    case green
+    // yellow used to be defined here
+    case red = 4
+    case amber
+    case turquoise
+    case purple
+}
+
+// MARK: - Default and random value
+
+extension AccentColor {
+    public static var `default`: Self { .blue }
+    public static var random: Self! { allCases.randomElement() }
+}
+
+// MARK: - Alternative Names
+
+extension AccentColor {
+    static var strongBlue: Self { .blue }
+    static var strongLimeGreen: Self { .green }
+    // brightYellow used to be defined here
+    static var vividRed: Self { .red }
+    static var brightOrange: Self { .amber }
+    static var softPink: Self { .turquoise }
+    static var violet: Self { .purple }
 }
