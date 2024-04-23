@@ -35,11 +35,35 @@ public struct SecuredGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtoco
                 case .failure(let error):
                     completion(.failure(error))
                 case .success:
-                    conversation.createWirelessLink(password: password, completion)
+                    createWirelessLink(conversation: conversation, password: password, completion)
                 }
             }
         } else {
-            conversation.createWirelessLink(password: password, completion)
+            createWirelessLink(conversation: conversation, password: password, completion)
+        }
+    }
+
+    func createWirelessLink(conversation: ZMConversation, password: String?, _ completion: @escaping (Result<String, Error>) -> Void) {
+        guard conversation.canManageAccess else {
+            return completion(.failure(WirelessLinkError.invalidOperation))
+        }
+
+        guard let context = conversation.managedObjectContext else {
+            return completion(.failure(ContextError.contextUnavailable))
+        }
+
+        var action = CreateConversationGuestLinkAction(
+            password: password,
+            conversationID: conversation.remoteIdentifier
+        )
+
+        action.perform(in: context.notificationContext) { result in
+            switch result {
+            case .success(let link):
+                completion(.success(link ?? ""))
+            case .failure(let error):
+                completion(.failure(error))
+            }
         }
     }
 
