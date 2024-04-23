@@ -459,15 +459,16 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     @objc
-    public init(contextProvider: ContextProvider,
-                name: String,
-                handle: String?,
-                accentColor: AccentColor,
-                remoteIdentifier: UUID?,
-                domain: String? = nil,
-                teamIdentifier: UUID? = nil,
-                user existingUser: ZMUser? = nil,
-                contact: ZMAddressBookContact? = nil
+    public init(
+        contextProvider: ContextProvider,
+        name: String,
+        handle: String?,
+        accentColor: AccentColor,
+        remoteIdentifier: UUID?,
+        domain: String? = nil,
+        teamIdentifier: UUID? = nil,
+        user existingUser: ZMUser? = nil,
+        contact: ZMAddressBookContact? = nil
     ) {
 
         let personName = PersonName.person(withName: name, schemeTagger: nil)
