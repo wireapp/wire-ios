@@ -126,7 +126,12 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Clients that ignore this client trust (currently can contain only self client)
     @NSManaged public var ignoredByClients: Set<UserClient>
 
-    public var e2eIdentityCertificate: E2eIdentityCertificate?
+    public var e2eIdentityCertificate: E2eIdentityCertificate? {
+        didSet {
+            NotificationCenter.default.post(name: .e2eiCertificateChanged, object: self)
+        }
+    }
+
     public var mlsThumbPrint: String?
 
     public var isLegalHoldDevice: Bool {
@@ -949,4 +954,9 @@ extension UserClient {
         )
     }
 
+}
+
+public extension Notification.Name {
+    // This notification is used to notify of end-to-end identity certificate changes
+    static let e2eiCertificateChanged = NSNotification.Name("E2EICertificateStatusChanged")
 }

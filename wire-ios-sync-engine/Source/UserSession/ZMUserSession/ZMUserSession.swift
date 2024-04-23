@@ -860,6 +860,14 @@ extension ZMUserSession: ZMSyncStateDelegate {
         Task {
             await self.cRLsChecker.checkExpiredCRLs()
         }
+<<<<<<< HEAD
+=======
+
+        managedObjectContext.performGroupedBlock { [weak self] in
+            self?.notifyThirdPartyServices()
+            self?.checkE2EICertificateExpiryStatus()
+        }
+>>>>>>> 02c73b6777 (fix: Update mls verification state on conversation list view screen title WPB-7204 (#1298))
     }
 
     func processEvents() {
