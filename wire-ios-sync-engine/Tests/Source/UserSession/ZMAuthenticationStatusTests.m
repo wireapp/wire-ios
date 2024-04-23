@@ -80,11 +80,8 @@
 {
     XCTAssertEqual(self.sut.currentPhase, ZMAuthenticationPhaseUnauthenticated);
     
-    XCTAssertNil(self.sut.registrationPhoneNumberThatNeedsAValidationCode);
-    XCTAssertNil(self.sut.loginPhoneNumberThatNeedsAValidationCode);
     XCTAssertNil(self.sut.loginEmailThatNeedsAValidationCode);
     XCTAssertNil(self.sut.loginCredentials);
-    XCTAssertNil(self.sut.registrationPhoneValidationCredentials);
 }
 
 
@@ -123,42 +120,10 @@
     XCTAssertEqual(self.sut.loginCredentials, credentials);
 }
 
-- (void)testThatItCanLoginWithPhoneAfterSettingCredentials
-{
-    // given
-    NSString *phone = @"+4912345678900";
-    NSString *code = @"123456";
-    
-    ZMCredentials *credentials = [ZMPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:code];
-    
-    // when
-    [self performPretendingUiMocIsSyncMoc:^{
-        [self.sut prepareForLoginWithCredentials:credentials];
-    }];
-    // then
-    XCTAssertEqual(self.sut.currentPhase, ZMAuthenticationPhaseLoginWithPhone);
-    XCTAssertEqual(self.sut.loginCredentials, credentials);
-
-}
-
 @end
 
 
 @implementation ZMAuthenticationStatusTests (CompletionMethods)
-
-- (void)testThatItResetsWhenCompletingTheRequestForPhoneLoginCode
-{
-    // when
-    [self.sut prepareForRequestingPhoneVerificationCodeForLogin:@"+4912345678"];
-    [self.sut didCompleteRequestForLoginCodeSuccessfully];
-    WaitForAllGroupsToBeEmpty(0.5);
-
-    // then
-    XCTAssertEqual(self.delegate.authenticationDidSucceedEvents, 1);
-    XCTAssertEqual(self.delegate.authenticationDidFailEvents.count, 0);
-    XCTAssertEqual(self.sut.currentPhase, ZMAuthenticationPhaseUnauthenticated);
-    XCTAssertNil(self.sut.loginPhoneNumberThatNeedsAValidationCode);
-}
 
 - (void)testThatItResetsWhenCompletingTheRequestForEmailVerificationLoginCode
 {
@@ -172,23 +137,6 @@
     XCTAssertEqual(self.delegate.authenticationDidFailEvents.count, 0);
     XCTAssertEqual(self.sut.currentPhase, ZMAuthenticationPhaseUnauthenticated);
     XCTAssertNil(self.sut.loginEmailThatNeedsAValidationCode);
-}
-
-- (void)testThatItResetsWhenFailingTheRequestForPhoneLoginCode
-{
-    // given
-    NSError *error = [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidPhoneNumber userInfo:nil];
-
-    // when
-    [self.sut prepareForRequestingPhoneVerificationCodeForLogin:@"+4912345678"];
-    [self.sut didFailRequestForLoginCode:error];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(self.delegate.authenticationDidFailEvents.count, 1);
-    XCTAssertEqual(self.delegate.authenticationDidFailEvents[0].code, ZMUserSessionInvalidPhoneNumber);
-    XCTAssertEqual(self.sut.currentPhase, ZMAuthenticationPhaseUnauthenticated);
-    XCTAssertNil(self.sut.loginPhoneNumberThatNeedsAValidationCode);
 }
 
 - (void)testThatItResetsWhenEmailIsInvalidAndFailingTheRequestForEmailVerificationLoginCode
@@ -228,26 +176,6 @@
     XCTAssertNil(self.sut.loginCredentials);
 }
 
-- (void)testThatItResetsWhenFailingPhoneLogin
-{
-    // given
-    NSString *phone = @"+49123456789000";
-    NSString *code = @"324543";
-    
-    // when
-    [self performPretendingUiMocIsSyncMoc:^{
-        [self.sut prepareForLoginWithCredentials:[ZMPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:code]];
-    }];
-    [self.sut didFailLoginWithPhone:YES];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(self.delegate.authenticationDidFailEvents.count, 1);
-    XCTAssertEqual(self.delegate.authenticationDidFailEvents[0].code, ZMUserSessionInvalidCredentials);
-    XCTAssertEqual(self.sut.currentPhase, ZMAuthenticationPhaseUnauthenticated);
-    XCTAssertNil(self.sut.loginCredentials);
-}
-
 - (void)testThatItResetsWhenTimingOutLoginWithTheSameCredentials
 {
     // given
@@ -267,25 +195,6 @@
     XCTAssertEqual(self.delegate.authenticationDidFailEvents[0].code, ZMUserSessionNetworkError);
     XCTAssertEqual(self.sut.currentPhase, ZMAuthenticationPhaseUnauthenticated);
     XCTAssertNil(self.sut.loginCredentials);
-}
-
-- (void)testThatItDoesNotResetsWhenTimingOutLoginWithDifferentCredentials
-{
-    // given
-    NSString *email = @"gfdgfgdfg@fds.sgf";
-    NSString *password = @"#$4tewt343$";
-    ZMCredentials *credentials1 = [ZMEmailCredentials credentialsWithEmail:email password:password];
-    ZMCredentials *credentials2 = [ZMPhoneCredentials credentialsWithPhoneNumber:@"+4912345678900" verificationCode:@"123456"];
-    
-    // when
-    [self performPretendingUiMocIsSyncMoc:^{
-        [self.sut prepareForLoginWithCredentials:credentials1];
-    }];
-    [self.sut didTimeoutLoginForCredentials:credentials2];
-    
-    // then
-    XCTAssertEqual(self.sut.currentPhase, ZMAuthenticationPhaseLoginWithEmail);
-    XCTAssertEqualObjects(self.sut.loginCredentials, credentials1);
 }
 
 - (void)testThatItWaitsForBackupImportAfterLoggingInWithEmail

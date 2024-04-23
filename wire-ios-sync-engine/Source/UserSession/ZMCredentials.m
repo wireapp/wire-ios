@@ -24,27 +24,9 @@
 
 @property (nonatomic, copy, nullable) NSString *email;
 @property (nonatomic, copy, nullable) NSString *password;
-@property (nonatomic, copy, nullable) NSString *phoneNumber;
-@property (nonatomic, copy, nullable) NSString *phoneNumberVerificationCode;
 @property (nonatomic, copy, nullable) NSString *emailVerificationCode;
 
 @end
-
-
-
-@implementation ZMPhoneCredentials
-
-+ (nonnull ZMPhoneCredentials *)credentialsWithPhoneNumber:(nonnull NSString *)phoneNumber verificationCode:(nonnull NSString *)verificationCode
-{
-    ZMPhoneCredentials *credentials = [[ZMPhoneCredentials alloc] init];
-    credentials.phoneNumber = [ZMPhoneNumberValidator validatePhoneNumber: phoneNumber];
-    credentials.phoneNumberVerificationCode = verificationCode;
-    return credentials;
-}
-
-@end
-
-
 
 @implementation ZMEmailCredentials
 
@@ -79,20 +61,14 @@
     }
     BOOL emailsEqual = ZM_EQUAL_STRINGS(self.email, object.email);
     BOOL passwordsEqual = ZM_EQUAL_STRINGS(self.password, object.password);
-    BOOL phoneNumbersEqual = ZM_EQUAL_STRINGS(self.phoneNumber, object.phoneNumber);
-    BOOL phoneNumberCodesEqual = ZM_EQUAL_STRINGS(self.phoneNumberVerificationCode, object.phoneNumberVerificationCode);
     BOOL twoFactorVerificationCodesEqual = ZM_EQUAL_STRINGS(self.emailVerificationCode, object.emailVerificationCode);
-    return emailsEqual && passwordsEqual && phoneNumbersEqual && phoneNumberCodesEqual && twoFactorVerificationCodesEqual;
+    return emailsEqual && passwordsEqual && twoFactorVerificationCodesEqual;
 }
 
 #undef ZM_EQUAL_STRINGS
 
 - (BOOL)credentialWithEmail {
     return self.email != nil;
-}
-
-- (BOOL)credentialWithPhone {
-    return self.phoneNumber != nil;
 }
 
 @end

@@ -55,23 +55,17 @@ FOUNDATION_EXPORT NSTimeInterval DebugLoginFailureTimerOverride;
 
 typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
     ZMAuthenticationPhaseUnauthenticated = 0,
-    ZMAuthenticationPhaseLoginWithPhone,
     ZMAuthenticationPhaseLoginWithEmail,
     ZMAuthenticationPhaseWaitingToImportBackup,
-    ZMAuthenticationPhaseRequestPhoneVerificationCodeForLogin,
     ZMAuthenticationPhaseRequestEmailVerificationCodeForLogin,
-    ZMAuthenticationPhaseVerifyPhone,
     ZMAuthenticationPhaseAuthenticated
 };
 
 @interface ZMAuthenticationStatus : NSObject
 
-@property (nonatomic, readonly, copy) NSString *registrationPhoneNumberThatNeedsAValidationCode;
-@property (nonatomic, readonly, copy) NSString *loginPhoneNumberThatNeedsAValidationCode;
 @property (nonatomic, readonly, copy) NSString *loginEmailThatNeedsAValidationCode;
 
 @property (nonatomic, readonly) ZMCredentials *loginCredentials;
-@property (nonatomic, readonly) ZMPhoneCredentials *registrationPhoneValidationCredentials;
 
 @property (nonatomic, readonly) BOOL isWaitingForBackupImport;
 @property (nonatomic, readonly) BOOL completedRegistration;
@@ -91,7 +85,6 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 
 - (void)prepareForLoginWithCredentials:(ZMCredentials *)credentials;
 - (void)continueAfterBackupImportStep;
-- (void)prepareForRequestingPhoneVerificationCodeForLogin:(NSString *)phone;
 - (void)prepareForRequestingEmailVerificationCodeForLogin:(NSString *)email;
 
 - (void)didCompleteRequestForLoginCodeSuccessfully;
@@ -100,12 +93,9 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 
 - (void)notifyCompanyLoginCodeDidBecomeAvailable:(NSUUID *)uuid;
 
-- (void)didCompletePhoneVerificationSuccessfully;
-
 - (void)startLogin;
 - (void)loginSucceededWithResponse:(ZMTransportResponse *)response;
 - (void)loginSucceededWithUserInfo:(UserInfo *)userInfo;
-- (void)didFailLoginWithPhone:(BOOL)invalidCredentials;
 - (void)didFailLoginWithEmailBecausePendingValidation;
 - (void)didFailLoginWithEmail:(BOOL)invalidCredentials;
 - (void)didFailLoginBecauseAccountSuspended;
