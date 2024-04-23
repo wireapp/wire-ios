@@ -69,7 +69,7 @@
 		54D06C5D1BC81B03005F0FBB /* android_image.decrypted in Resources */ = {isa = PBXBuildFile; fileRef = 54D06C5A1BC81983005F0FBB /* android_image.decrypted */; };
 		54FA8E821BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */; };
 		5966D83A2BD6BF4300305BBC /* ZMAccentColor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8392BD6BF4300305BBC /* ZMAccentColor.m */; };
-		5966D83C2BD6BFCF00305BBC /* ZMAccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D83B2BD6BFCF00305BBC /* ZMAccentColor.swift */; };
+		5966D83C2BD6BFCF00305BBC /* AccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D83B2BD6BFCF00305BBC /* AccentColor.swift */; };
 		5966D83E2BD6C20700305BBC /* AccentColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D83D2BD6C20700305BBC /* AccentColorTests.swift */; };
 		5E0A1FF92105DBBA00949B3E /* Map+KeyPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0A1FF82105DBBA00949B3E /* Map+KeyPath.swift */; };
 		5E0A1FFC2105DE2700949B3E /* MapKeyPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */; };
@@ -284,7 +284,7 @@
 		54D06C5A1BC81983005F0FBB /* android_image.decrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = android_image.decrypted; sourceTree = "<group>"; };
 		54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSData+ZMSCryptoTests.swift"; path = "Source/NSData+ZMSCryptoTests.swift"; sourceTree = "<group>"; };
 		5966D8392BD6BF4300305BBC /* ZMAccentColor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMAccentColor.m; sourceTree = "<group>"; };
-		5966D83B2BD6BFCF00305BBC /* ZMAccentColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccentColor.swift; sourceTree = "<group>"; };
+		5966D83B2BD6BFCF00305BBC /* AccentColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColor.swift; sourceTree = "<group>"; };
 		5966D83D2BD6C20700305BBC /* AccentColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColorTests.swift; sourceTree = "<group>"; };
 		5E0A1FF82105DBBA00949B3E /* Map+KeyPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Map+KeyPath.swift"; sourceTree = "<group>"; };
 		5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapKeyPathTests.swift; sourceTree = "<group>"; };
@@ -592,6 +592,7 @@
 		54CA31141B74F2C400B820C0 /* Public */ = {
 			isa = PBXGroup;
 			children = (
+				5966D83B2BD6BFCF00305BBC /* AccentColor.swift */,
 				E67995E92B6D403A0024BD81 /* NSSet+IsEmpty.swift */,
 				A9CDCDBE237D98BF008A9BC6 /* UIColor */,
 				EF18C7D11F9E37CA0085A832 /* String+Filename.swift */,
@@ -600,7 +601,6 @@
 				546B1783241930830091F4B3 /* ZMObjectValidationError.h */,
 				F9C9A7B21CAEADFF0039E10C /* ZMAccentColor.h */,
 				5966D8392BD6BF4300305BBC /* ZMAccentColor.m */,
-				5966D83B2BD6BFCF00305BBC /* ZMAccentColor.swift */,
 				F9C9A7951CAEA72A0039E10C /* ZMEncodedNSUUIDWithTimestamp.h */,
 				F9C9A7881CAE9F900039E10C /* NSString+Normalization.h */,
 				54CA31281B74F36B00B820C0 /* WireUtilities.h */,
@@ -1024,7 +1024,7 @@
 				06CDC6FA2A2F2B4B00EB518D /* TimeInterval+Units.swift in Sources */,
 				09F027CB1B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m in Sources */,
 				543B04A11BC6B693008C2912 /* NSData+ZMSCrypto.m in Sources */,
-				5966D83C2BD6BFCF00305BBC /* ZMAccentColor.swift in Sources */,
+				5966D83C2BD6BFCF00305BBC /* AccentColor.swift in Sources */,
 				EEAB73862A31F50F00EAB4E5 /* String+Base64.swift in Sources */,
 				5EE020C7214A9FC5001669F0 /* ZMAtomicInteger.m in Sources */,
 				6323786A2508D34D00AD4346 /* Array+Shift.swift in Sources */,

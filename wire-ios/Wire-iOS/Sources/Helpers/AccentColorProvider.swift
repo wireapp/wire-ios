@@ -17,8 +17,9 @@
 //
 
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import class WireDataModel.UnregisteredUser
+import protocol WireDataModel.UserType
 
 extension UserType {
 
@@ -39,5 +40,4 @@ extension UnregisteredUser {
             accentColorValue = newValue?.zmAccentColor
         }
     }
-
 }

@@ -21,6 +21,7 @@ public enum AccentColor: Int16, CaseIterable, Hashable {
     case undefined
     case strongBlue
     case strongLimeGreen
+    // TODO @available(*, deprecated)
     case brightYellow
     case vividRed
     case brightOrange

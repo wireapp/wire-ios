@@ -281,7 +281,7 @@ extension UIColor {
         return Color(uiColor: self)
     }
 
-    convenience init(for accentColor: AccentColor) {
+    convenience init(for accentColor: WireAccentColor) {
         switch accentColor {
         case .blue:
             self.init(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
@@ -300,8 +300,8 @@ extension UIColor {
         }
     }
 
-    convenience init(fromZMAccentColor accentColor: ZMAccentColor) {
-        let safeAccentColor = AccentColor(ZMAccentColor: accentColor) ?? .blue
+    convenience init(fromZMAccentColor accentColor: WireDataModel.AccentColor) {
+        let safeAccentColor = WireAccentColor(ZMAccentColor: accentColor) ?? .blue
         self.init(for: safeAccentColor)
     }
 }

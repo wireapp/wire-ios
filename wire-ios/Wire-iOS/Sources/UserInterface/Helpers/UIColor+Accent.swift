@@ -16,17 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
+import WireDataModel
 import WireSyncEngine
 
 private var ZM_UNUSED = "UI"
-private var overridenAccentColor: ZMAccentColor = .undefined
+private var overridenAccentColor: WireDataModel.AccentColor = .undefined
 
 extension UIColor {
 
-    class func indexedAccentColor() -> ZMAccentColor {
+    class func indexedAccentColor() -> WireDataModel.AccentColor {
         // priority 1: overriden color
         if overridenAccentColor != .undefined {
             return overridenAccentColor
@@ -44,10 +44,10 @@ extension UIColor {
         return activeUserSession.providedSelfUser.accentColorValue
     }
 
-    /// Set override accent color. Can set to ZMAccentColorUndefined to remove override.
+    /// Set override accent color. Can set to `WireDataModel.AccentColor.undefined` to remove override.
     ///
     /// - Parameter overrideColor: the override color
-    class func setAccentOverride(_ overrideColor: ZMAccentColor) {
+    class func setAccentOverride(_ overrideColor: WireDataModel.AccentColor) {
         if overridenAccentColor == overrideColor {
             return
         }
