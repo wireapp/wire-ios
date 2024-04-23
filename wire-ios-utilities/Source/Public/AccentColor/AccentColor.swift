@@ -16,5 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extern int16_t const ZMAccentColorMin;
-extern int16_t const ZMAccentColorMax;
+public enum AccentColor: Int16, CaseIterable, Hashable {
+    case blue = 1
+    case green
+    // yellow used to be defined here
+    case red = 4
+    case amber
+    case turquoise
+    case purple
+}
+
+// MARK: - Default and random value
+
+extension AccentColor {
+    public static var `default`: Self { .blue }
+    public static var random: Self! { allCases.randomElement() }
+}

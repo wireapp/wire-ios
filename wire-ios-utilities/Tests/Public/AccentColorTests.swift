@@ -32,7 +32,7 @@ final class AccentColorTests: XCTestCase {
         XCTAssertEqual(AccentColor.turquoise.rawValue, 6)
         XCTAssertEqual(AccentColor.purple.rawValue, 7)
 
-        XCTAssertEqual(ZMAccentColorMin, AccentColor.blue.rawValue)
-        XCTAssertEqual(ZMAccentColorMax, AccentColor.purple.rawValue)
+        XCTAssertEqual(ZMAccentColor.min, .init(accentColor: .blue))
+        XCTAssertEqual(ZMAccentColor.max, .init(accentColor: .purple))
     }
 }

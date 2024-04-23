@@ -16,8 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <WireUtilities/WireUtilities-Swift.h>
-#import "ZMAccentColor.h"
+import Foundation
 
-int16_t const ZMAccentColorMin = ZMAccentColorBlue;
-int16_t const ZMAccentColorMax = ZMAccentColorPurple;
+@objc(ZMAccentColor) @objcMembers
+public final class ZMAccentColor: NSObject, RawRepresentable {
+
+    public let rawValue: Int16
+
+    public init?(rawValue: Int16) {
+        guard let accentColor = AccentColor(rawValue: rawValue) else { return nil }
+        self.rawValue = accentColor.rawValue
+    }
+
+    public convenience init?(accentColor: AccentColor) {
+        self.init(rawValue: accentColor.rawValue)
+    }
+
+    public static var min: ZMAccentColor! { .init(accentColor: .blue) }
+    public static var max: ZMAccentColor! { .init(accentColor: .purple) }
+}
