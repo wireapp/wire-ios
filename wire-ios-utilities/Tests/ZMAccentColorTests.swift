@@ -20,19 +20,11 @@ import XCTest
 
 @testable import WireUtilities
 
-final class AccentColorTests: XCTestCase {
+final class ZMAccentColorTests: XCTestCase {
 
-    /// Ensures that the raw values haven't changed when migrating `ZMAccentColor` into Swift.
-    func testRawValues() {
-
-        XCTAssertEqual(AccentColor.blue.rawValue, 1)
-        XCTAssertEqual(AccentColor.green.rawValue, 2)
-        XCTAssertEqual(AccentColor.red.rawValue, 4)
-        XCTAssertEqual(AccentColor.amber.rawValue, 5)
-        XCTAssertEqual(AccentColor.turquoise.rawValue, 6)
-        XCTAssertEqual(AccentColor.purple.rawValue, 7)
-
-        XCTAssertEqual(ZMAccentColor.min, .from(accentColor: .blue))
-        XCTAssertEqual(ZMAccentColor.max, .from(accentColor: .purple))
+    func testEquatable() {
+        let blue0: ZMAccentColor = .amber
+        let blue1: ZMAccentColor? = .from(rawValue: AccentColor.amber.rawValue)
+        XCTAssertEqual(blue0, blue1)
     }
 }

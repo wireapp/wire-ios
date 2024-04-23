@@ -19,26 +19,46 @@
 import Foundation
 
 @objc(ZMAccentColor) @objcMembers
-public final class ZMAccentColor: NSObject, RawRepresentable {
+public final class ZMAccentColor: NSObject {
 
-    public let rawValue: Int16
+    // MARK: Objective C bridging
 
-    public init?(rawValue: Int16) {
+    public static var blue: ZMAccentColor { .from(accentColor: .blue) }
+    public static var green: ZMAccentColor { .from(accentColor: .green) }
+    public static var red: ZMAccentColor { .from(accentColor: .red) }
+    public static var amber: ZMAccentColor { .from(accentColor: .amber) }
+    public static var turquoise: ZMAccentColor { .from(accentColor: .turquoise) }
+    public static var purple: ZMAccentColor { .from(accentColor: .purple) }
+
+    // MARK: Helpers
+
+    public static var min: ZMAccentColor { .blue }
+    public static var max: ZMAccentColor { .purple }
+
+    /// Singleton instances
+    private static let mapping = {
+        var mapping = [AccentColor: ZMAccentColor]()
+        for accentColor in AccentColor.allCases {
+            mapping[accentColor] = .init(accentColor: accentColor)
+        }
+        return mapping
+    }()
+
+    // MARK: -
+
+    public let accentColor: AccentColor
+    public var rawValue: AccentColor.RawValue { accentColor.rawValue }
+
+    private init(accentColor: AccentColor) {
+        self.accentColor = accentColor
+    }
+
+    public static func from(rawValue: AccentColor.RawValue) -> ZMAccentColor? {
         guard let accentColor = AccentColor(rawValue: rawValue) else { return nil }
-        self.rawValue = accentColor.rawValue
+        return ZMAccentColor.mapping[accentColor]!
     }
 
-    public convenience init?(accentColor: AccentColor) {
-        self.init(rawValue: accentColor.rawValue)
+    public static func from(accentColor: AccentColor) -> ZMAccentColor {
+        mapping[accentColor]!
     }
-
-    public static var blue: ZMAccentColor! { .init(accentColor: .blue) }
-    public static var green: ZMAccentColor! { .init(accentColor: .green) }
-    public static var red: ZMAccentColor! { .init(accentColor: .red) }
-    public static var amber: ZMAccentColor! { .init(accentColor: .amber) }
-    public static var turquoise: ZMAccentColor! { .init(accentColor: .turquoise) }
-    public static var purple: ZMAccentColor! { .init(accentColor: .purple) }
-
-    public static var min: ZMAccentColor! { .init(accentColor: .blue) }
-    public static var max: ZMAccentColor! { .init(accentColor: .purple) }
 }

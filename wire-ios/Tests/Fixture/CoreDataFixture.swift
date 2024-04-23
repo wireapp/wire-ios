@@ -56,17 +56,6 @@ final class CoreDataFixture {
         return false
     }
 
-    /// If this is set the accent color will be overriden for the tests
-    var accentColor: WireDataModel.AccentColor {
-        get {
-            return UIColor.accentOverrideColor!
-        }
-
-        set {
-            UIColor.setAccentOverride(newValue)
-        }
-    }
-
     var documentsDirectory: URL?
 
     init() {
@@ -78,7 +67,6 @@ final class CoreDataFixture {
         }
         AppRootRouter.configureAppearance()
         UIView.setAnimationsEnabled(false)
-        accentColor = .red
         snapshotBackgroundColor = UIColor.clear
 
         do {
