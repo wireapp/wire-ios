@@ -22,6 +22,8 @@ import LocalAuthentication
 
 extension ZMUserSession: UserSession {
 
+    // MARK: Properties
+
     public var lock: SessionLock? {
         if isDatabaseLocked {
             return .database
@@ -77,6 +79,12 @@ extension ZMUserSession: UserSession {
             appLockController.needsToNotifyUser = newValue
         }
     }
+
+    public var searchUserCache: NSCache<NSUUID, WireDataModel.ZMSearchUser>? {
+        dependencies.caches.searchUsers
+    }
+
+    // MARK: Methods
 
     public func openAppLock() throws {
         try appLockController.open()

@@ -75,6 +75,9 @@ public protocol UserSession: AnyObject {
 
     var needsToNotifyUserOfAppLockConfiguration: Bool { get set }
 
+    /// Cache for search users.
+    var searchUserCache: NSCache<NSUUID, ZMSearchUser>? { get }
+
     /// Unlocks the database.
 
     func unlockDatabase() throws
