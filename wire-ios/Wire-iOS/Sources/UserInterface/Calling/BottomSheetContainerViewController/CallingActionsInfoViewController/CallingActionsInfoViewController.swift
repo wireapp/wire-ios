@@ -65,6 +65,11 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
         createConstraints()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        updateActionViewHeight()
+    }
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         updateRows()
@@ -111,13 +116,13 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     }
 
     private func createConstraints() {
-        actionsViewHeightConstraint = actionsView.heightAnchor.constraint(equalToConstant: 128.0)
+        actionsViewHeightConstraint = actionsView.heightAnchor.constraint(equalToConstant: calculateHeightConstant())
 
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
             stackView.topAnchor.constraint(equalTo: view.safeTopAnchor),
             stackView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
-            stackView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor, constant: -20),
+            stackView.bottomAnchor.constraint(equalTo: view.safeBottomAnchor),
 
             actionsView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
             actionsView.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
@@ -140,12 +145,23 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     }
 
     func updateActionViewHeight() {
+        actionsViewHeightConstraint.constant = calculateHeightConstant()
+        actionsView.verticalStackView.alignment = determineStackViewAlignment()
+    }
+
+    private func calculateHeightConstant() -> CGFloat {
         if UIDevice.current.twoDimensionOrientation.isLandscape {
-            actionsViewHeightConstraint.constant = 128.0
-            actionsView.verticalStackView.alignment = .center
+            return 128 + view.safeAreaInsets.bottom
         } else {
-            actionsViewHeightConstraint.constant = (isIncomingCall ? 250 : 128) + view.safeAreaInsets.bottom
-            actionsView.verticalStackView.alignment = .fill
+            return (isIncomingCall ? 250 : 128) + view.safeAreaInsets.bottom
+        }
+    }
+
+    private func determineStackViewAlignment() -> UIStackView.Alignment {
+        if UIDevice.current.twoDimensionOrientation.isLandscape {
+            return .center
+        } else {
+            return .fill
         }
     }
 
