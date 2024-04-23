@@ -33,7 +33,7 @@ public class UnregisteredUser {
     public var credentials: UnverifiedCredentials?
     public var verificationCode: String?
     public var name: String?
-    public var accentColorValue: AccentColor?
+    public var accentColorValue: ZMAccentColor?
     public var acceptedTermsOfService: Bool?
     public var marketingConsent: Bool?
     public var password: String?

@@ -137,16 +137,15 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
 
     func testThatItNotifiesTheObserverOfAnAccentColorChange() {
         // given
-        let user = ZMUser.insertNewObject(in: uiMOC)
-        user.accentColorValue = .strongBlue
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        user.accentColorValue = ZMAccentColor.strongBlue
         uiMOC.saveOrRollback()
 
         // when
-        checkThatItNotifiesTheObserverOfAChange(
-            user,
-            modifier: { $0.accentColorValue = .softPink },
-            expectedChangedField: .accentColor
-        )
+        self.checkThatItNotifiesTheObserverOfAChange(user,
+                                                     modifier: { $0.accentColorValue = ZMAccentColor.softPink },
+                                                     expectedChangedField: .accentColor)
+
     }
 
     func testThatItNotifiesTheObserverOfAMediumProfileImageChange() {
