@@ -27,19 +27,14 @@ import Foundation
         try validateValue(&pointee)
     }
 
-    @discardableResult public static func validateValue(_ ioValue: inout Any?) throws -> Bool {
+    @discardableResult public static func validateValue(_ inoutValue: inout Any?) throws -> Bool {
 
-        let value = ioValue as? Int16
+        guard let value = inoutValue as? AccentColor.RawValue else { return true }
 
-        if value == nil ||
-            value < AccentColor.minRawValue ||
-            AccentColor.maxRawValue < value {
-            let color = AccentColor(rawValue:
-                AccentColor.minRawValue +
-                    Int16(arc4random_uniform(UInt32(AccentColor.maxRawValue - AccentColor.minRawValue)))) // swiftlint:disable:this legacy_random
-            ioValue = NSNumber(value: color?.rawValue ?? 0)
+        let offset = Int16(arc4random_uniform(UInt32(ZMAccentColorMax - ZMAccentColorMin)))
+        if value < ZMAccentColorMin || ZMAccentColorMax < value, let color = AccentColor(rawValue: ZMAccentColorMin + offset) {
+            inoutValue = NSNumber(value: color.rawValue)
         }
-
         return true
     }
 }

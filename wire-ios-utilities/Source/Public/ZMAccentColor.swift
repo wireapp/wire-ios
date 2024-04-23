@@ -27,10 +27,3 @@ public enum AccentColor: Int16, CaseIterable, Hashable {
     case softPink
     case violet
 }
-
-extension AccentColor {
-    @nonobjc
-    static var minRawValue = ZMAccentColorMin
-    @nonobjc
-    static var maxRawValue = ZMAccentColorMax
-}
