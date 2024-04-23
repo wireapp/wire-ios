@@ -324,8 +324,9 @@ public class ZMSearchUser: NSObject, UserType {
         }
     }
 
+    @objc(accentColor)
     public var zmAccentColor: ZMAccentColor? {
-        get { .from(rawValue: accentColorValue) }
+        .from(rawValue: accentColorValue)
     }
 
     public var isWirelessUser: Bool {

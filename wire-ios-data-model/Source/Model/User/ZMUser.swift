@@ -56,6 +56,7 @@ extension ZMUser: UserType {
         set { accentColorValue = newValue?.rawValue ?? AccentColor.default.rawValue }
     }
 
+    @objc(accentColor)
     public var zmAccentColor: ZMAccentColor? {
         get { .from(rawValue: accentColorValue) }
         set { accentColorValue = newValue?.rawValue ?? AccentColor.default.rawValue }
