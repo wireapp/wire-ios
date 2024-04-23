@@ -27,10 +27,20 @@ public protocol CreateConversationGuestLinkUseCaseProtocol {
 
 public struct SecuredGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol {
 
-    public func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String, Error>) -> Void) {
+    let useCaseFactory: UseCaseFactoryProtocol
+
+    public func invoke(
+        conversation: ZMConversation,
+        password: String?,
+        completion: @escaping (Result<String, Error>) -> Void
+    ) {
 
         if conversation.isLegacyAccessMode {
-            conversation.setAllowGuests(true) { result in
+            useCaseFactory.createSetGuestsAndServicesUseCase().invoke(
+                conversation: conversation,
+                allowGuests: true,
+                allowServices: conversation.allowServices
+            ) { result in
                 switch result {
                 case .failure(let error):
                     completion(.failure(error))
@@ -43,7 +53,11 @@ public struct SecuredGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtoco
         }
     }
 
-    func createWirelessLink(conversation: ZMConversation, password: String?, _ completion: @escaping (Result<String, Error>) -> Void) {
+    func createWirelessLink(
+        conversation: ZMConversation,
+        password: String?,
+        _ completion: @escaping (Result<String, Error>) -> Void
+    ) {
         guard conversation.canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }

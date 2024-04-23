@@ -23,6 +23,7 @@ public protocol UseCaseFactoryProtocol {
 
     func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol
     func createSecuredGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol
+    func createSetGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol
 
 }
 
@@ -32,16 +33,20 @@ struct UseCaseFactory: UseCaseFactoryProtocol {
     var supportedProtocolService: SupportedProtocolsServiceInterface
     var oneOnOneResolver: OneOnOneResolverInterface
 
-    public func createSecuredGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
-        SecuredGuestLinkUseCase()
-    }
-
     public func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
         ResolveOneOnOneConversationsUseCase(
             context: context,
             supportedProtocolService: supportedProtocolService,
             resolver: oneOnOneResolver
         )
+    }
+
+    public func createSecuredGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+        SecuredGuestLinkUseCase(useCaseFactory: self)
+    }
+
+    public func createSetGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
+        SetAllowGuestAndServicesUseCase()
     }
 
 }

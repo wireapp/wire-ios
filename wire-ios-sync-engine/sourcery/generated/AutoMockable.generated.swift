@@ -842,6 +842,24 @@ public class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
         }
     }
 
+    // MARK: - createSetGuestsAndServicesUseCase
+
+    public var createSetGuestsAndServicesUseCase_Invocations: [Void] = []
+    public var createSetGuestsAndServicesUseCase_MockMethod: (() -> SetAllowGuestAndServicesUseCaseProtocol)?
+    public var createSetGuestsAndServicesUseCase_MockValue: SetAllowGuestAndServicesUseCaseProtocol?
+
+    public func createSetGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
+        createSetGuestsAndServicesUseCase_Invocations.append(())
+
+        if let mock = createSetGuestsAndServicesUseCase_MockMethod {
+            return mock()
+        } else if let mock = createSetGuestsAndServicesUseCase_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `createSetGuestsAndServicesUseCase`")
+        }
+    }
+
 }
 
 public class MockUserProfile: UserProfile {

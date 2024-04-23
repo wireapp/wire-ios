@@ -86,15 +86,37 @@ extension ZMConversation {
         }
 
         func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-            conversation.setAllowGuests(allowGuests) {
-                completion($0)
+
+            userSession.useCaseFactory.createSetGuestsAndServicesUseCase().invoke(
+                conversation: conversation,
+                allowGuests: allowGuests,
+                allowServices: conversation.allowServices
+            ) { result in
+                switch result {
+                case .success:
+                    completion(.success(()))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
             }
+
         }
 
         func setAllowServices(_ allowServices: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
-            conversation.setAllowServices(allowServices) {
-                completion($0)
+
+            userSession.useCaseFactory.createSetGuestsAndServicesUseCase().invoke(
+                conversation: conversation,
+                allowGuests: conversation.allowGuests,
+                allowServices: allowServices
+            ) { result in
+                switch result {
+                case .success:
+                    completion(.success(()))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
             }
+
         }
 
         func conversationDidChange(_ changeInfo: ConversationChangeInfo) {

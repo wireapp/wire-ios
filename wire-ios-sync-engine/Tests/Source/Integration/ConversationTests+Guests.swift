@@ -28,38 +28,6 @@ class ConversationTests_Guests: IntegrationTest {
         createTeamAndConversations()
     }
 
-    func testThatItSendsRequestToChangeAccessMode() {
-        // given
-        XCTAssert(login())
-
-        let conversation = self.conversation(for: self.groupConversationWithWholeTeam)!
-
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
-        XCTAssertFalse(conversation.accessMode!.contains(.allowGuests))
-        mockTransportSession?.resetReceivedRequests()
-
-        let expectation = XCTestExpectation(description: "wait for access mode change")
-
-        // when
-        conversation.setAllowGuests(true) { result in
-            switch result {
-            case .success:
-                break
-            case .failure:
-                XCTFail("Setting allow guests failed")
-            }
-            expectation.fulfill()
-        }
-
-        wait(for: [expectation], timeout: 5.0)
-
-        // then
-        XCTAssertTrue(conversation.accessMode!.contains(.allowGuests))
-        XCTAssertEqual(mockTransportSession.receivedRequests().count, 1)
-        guard let request = mockTransportSession.receivedRequests().first else { return }
-        XCTAssertEqual(request.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/access")
-    }
-
     func testThatItSendsRequestToFetchTheGuestLinkStatus() {
         // given
         mockTransportSession.performRemoteChanges { _ in
