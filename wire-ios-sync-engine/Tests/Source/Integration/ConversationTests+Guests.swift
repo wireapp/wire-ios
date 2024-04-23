@@ -38,16 +38,20 @@ class ConversationTests_Guests: IntegrationTest {
         XCTAssertFalse(conversation.accessMode!.contains(.allowGuests))
         mockTransportSession?.resetReceivedRequests()
 
+        let expectation = XCTestExpectation(description: "wait for access mode change")
+
         // when
         conversation.setAllowGuests(true) { result in
             switch result {
             case .success:
                 break
             case .failure:
-                XCTFail()
+                XCTFail("Setting allow guests failed")
             }
+            expectation.fulfill()
         }
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
+
+        wait(for: [expectation], timeout: 5.0)
 
         // then
         XCTAssertTrue(conversation.accessMode!.contains(.allowGuests))

@@ -113,7 +113,7 @@ extension ZMConversation {
         action.perform(in: context.notificationContext) { result in
             switch result {
             case .success(let link):
-                completion(.success(link))
+                completion(.success(link ?? ""))
             case .failure(let error):
                 completion(.failure(error))
             }

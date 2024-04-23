@@ -23,23 +23,14 @@ public enum CreateConversationGuestLinkError: Error, Equatable {
     case invalidOperation
     case guestLinksDisabled
     case noConversation
+    case failedToDecodePayload
     case unknown
 
-    public init?(response: ZMTransportResponse) {
-        switch (response.httpStatus, response.payloadLabel()) {
-        case (403, "invalid-op"?): self = .invalidOperation
-        case (404, "no-conversation-code"?): self = .noCode
-        case (404, "no-conversation"?): self = .noConversation
-        case (409, "guest-links-disabled"?): self = .guestLinksDisabled
-        case (400..<499, _): self = .unknown
-        default: return nil
-        }
-    }
 }
 
 public struct CreateConversationGuestLinkAction: EntityAction {
 
-    public typealias Result = String
+    public typealias Result = String?
     public typealias Failure = CreateConversationGuestLinkError
 
     public let password: String?

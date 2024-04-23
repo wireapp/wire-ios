@@ -55,37 +55,66 @@ class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConversation
 
     // MARK: - Request handling
 
+    struct ConversationCodeInfo: Decodable {
+
+        let code: String
+        let has_password: Bool
+        let key: String
+        let uri: String?
+
+    }
+
     override func handleResponse(_ response: ZMTransportResponse, action: CreateConversationGuestLinkAction) {
 
         var action = action
 
-        switch response.httpStatus {
-        case 201:
+        switch (response.httpStatus, response.payloadLabel()) {
+        case (201, _):
+            // This is an update event and therefore this is why we leave it as is
             guard let payload = response.payload?.asDictionary(),
                   let data = payload["data"] as? [String: Any],
                   let uri = data["uri"] as? String else {
 
-                let errorInfo = CreateConversationGuestLinkError(response: response)
-                action.fail(with: errorInfo ?? .unknown)
+                action.fail(with: .failedToDecodePayload)
                 return
             }
 
             action.succeed(with: uri)
 
-        case 200:
+        case (200, _):
+            guard
+                let data = response.rawData,
+                let payload = try? JSONDecoder.defaultDecoder.decode(ConversationCodeInfo.self, from: data)
+            else {
+                action.fail(with: .failedToDecodePayload)
+                return
+            }
+
+            action.succeed(with: payload.uri)
+
             guard let payload = response.payload?.asDictionary(),
                   let uri = payload["uri"] as? String else {
 
-                let errorInfo = CreateConversationGuestLinkError(response: response)
-                action.fail(with: errorInfo ?? .unknown)
+                action.fail(with: .failedToDecodePayload)
                 return
             }
 
             action.succeed(with: uri)
 
+        case (403, "invalid-op"?):
+            action.fail(with: .invalidOperation)
+
+        case (404, "no-conversation-code"?):
+            action.fail(with: .noCode)
+
+        case (404, "no-conversation"?):
+            action.fail(with: .noConversation)
+
+        case (409, "guest-links-disabled"?):
+            action.fail(with: .guestLinksDisabled)
+
         default:
-            let errorInfo = CreateConversationGuestLinkError(response: response)
-            action.fail(with: errorInfo ?? .unknown)
+            action.fail(with: .unknown)
         }
     }
 
