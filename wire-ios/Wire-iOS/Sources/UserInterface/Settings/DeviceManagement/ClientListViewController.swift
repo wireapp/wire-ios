@@ -532,7 +532,7 @@ final class ClientListViewController: UIViewController,
         let mlsClients: [UserClient: MLSClientID] = Dictionary(
             uniqueKeysWithValues:
                 userClients
-                .filter { $0.mlsPublicKeys.ed25519 != nil }
+                .filter { $0.mlsPublicKeys.allKeys.isNonEmpty }
                 .compactMap {
                     if let mlsClientId = MLSClientID(userClient: $0) {
                         ($0, mlsClientId)
