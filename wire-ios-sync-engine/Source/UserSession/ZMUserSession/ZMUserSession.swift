@@ -995,6 +995,15 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
             self?.delegate?.clientRegistrationDidSucceed(accountId: accountId)
         }
+
+        if userClient.hasRegisteredMLSClient {
+            // Before the client was registered as an MLS client,
+            // They wouldn't have been able to migrate any conversations from Proteus to MLS.
+            // So we perform a slow sync to sync the conversations. This will ensure that
+            // the message protocol of each conversation is up-to-date.
+            // The client will then join any MLS groups they haven't joined yet.
+            syncStatus.forceSlowSync()
+        }
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {
