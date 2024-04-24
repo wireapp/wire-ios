@@ -94,6 +94,9 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     var isUnderLegalHold: Bool { get }
 
     var accentColorValue: ZMAccentColorRawValue { get }
+
+    // Type `AccentColor?` cannot be represented in Objective-C.
+    // While @objc support is required, use `ZMAccentColor?`.
     var zmAccentColor: ZMAccentColor? { get }
 
     /// Whether the user is a wireless user.
@@ -230,15 +233,6 @@ public protocol UserType: NSObjectProtocol, UserConnections {
 
     /// Whether the user is allowed to create MLS groups.
     var canCreateMLSGroups: Bool { get }
-}
-
-extension UserType {
-
-    // Property `accentColor` cannot be a member of an @objc protocol because
-    // its type `AccentColor?` cannot be represented in Objective-C
-    public var accentColor: AccentColor? {
-        .init(rawValue: accentColorValue)
-    }
 }
 
 /// Methods and properties related to managing 1:1 user connections.

@@ -18,7 +18,6 @@
 
 import UIKit
 import WireCommonComponents
-import WireDataModel
 import WireSyncEngine
 
 private var ZM_UNUSED = "UI"
@@ -26,33 +25,33 @@ private var overridenAccentColor: AccentColor?
 
 extension UIColor {
 
-    class func indexedAccentColor() -> AccentColor? {
+    class func indexedAccentColor() -> ZMAccentColor? {
         // priority 1: overriden color
         if overridenAccentColor != nil {
-            return overridenAccentColor
+            return overridenAccentColor.map { .from(accentColor: $0) }
         }
 
         guard
             let activeUserSession = SessionManager.shared?.activeUserSession,
-            activeUserSession.providedSelfUser.accentColor != nil
+            AccentColor.allCases.map(\.rawValue).contains(activeUserSession.providedSelfUser.accentColorValue)
         else {
             // priority 3: default color
-            return .blue
+            return .default
         }
 
         // priority 2: color from self user
-        return activeUserSession.providedSelfUser.accentColor
+        return .from(rawValue: activeUserSession.providedSelfUser.accentColorValue)
     }
 
     /// Set override accent color. Can set to `nil` to remove override.
     ///
     /// - Parameter overrideColor: the override color
-    class func setAccentOverride(_ overrideColor: AccentColor?) {
-        if overridenAccentColor == overrideColor {
+    class func setAccentOverride(_ overrideColor: ZMAccentColor?) {
+        if overridenAccentColor == overrideColor?.accentColor {
             return
         }
 
-        overridenAccentColor = overrideColor
+        overridenAccentColor = overrideColor?.accentColor
     }
 
     static var accentDarken: UIColor {
@@ -68,12 +67,11 @@ extension UIColor {
     }
 
     class func accent() -> UIColor {
-        (indexedAccentColor() ?? .default).uiColor
+        (indexedAccentColor() ?? .default).accentColor.uiColor
     }
 
     class func lowAccentColor() -> UIColor {
-        let safeAccentColor = indexedAccentColor() ?? .blue
-        switch safeAccentColor {
+        switch (indexedAccentColor() ?? .default).accentColor {
         case .blue:
             return SemanticColors.View.backgroundBlue
         case .red:
@@ -90,8 +88,7 @@ extension UIColor {
     }
 
     class func lowAccentColorForUsernameMention() -> UIColor {
-        let safeAccentColor = indexedAccentColor() ?? .blue
-        switch safeAccentColor {
+        switch (indexedAccentColor() ?? .default).accentColor {
         case .blue:
             return SemanticColors.View.backgroundBlueUsernameMention
         case .red:

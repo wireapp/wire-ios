@@ -41,7 +41,7 @@ final class AccentColorChangeHandler: UserObserving {
 
     func userDidChange(_ change: UserChangeInfo) {
         if change.accentColorValueChanged {
-            handlerBlock?(change.user.accentColor?.uiColor, observer)
+            handlerBlock?(change.user.accentColor, observer)
         }
     }
 }

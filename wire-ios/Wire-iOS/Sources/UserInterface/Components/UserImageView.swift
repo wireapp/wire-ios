@@ -120,8 +120,8 @@ class UserImageView: AvatarImageView, UserObserving {
         case .image:
             user.isServiceUser ? .white : .clear
         case .text:
-            if user.isConnected || user.isSelfUser || user.isTeamMember || user.isWirelessUser, let color = user.accentColor?.uiColor {
-                color
+            if user.isConnected || user.isSelfUser || user.isTeamMember || user.isWirelessUser {
+                user.accentColor
             } else {
                 .init(white: 0.8, alpha: 1)
             }
@@ -218,7 +218,7 @@ class UserImageView: AvatarImageView, UserObserving {
 
     /// Updates the color of the badge indicator.
     private func updateIndicatorColor() {
-        badgeIndicator.backgroundColor = user?.accentColor?.uiColor
+        badgeIndicator.backgroundColor = user?.accentColor
     }
 
     /// Updates the interface to reflect if the user is a service user or not.

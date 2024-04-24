@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 import UIKit
 
@@ -27,7 +26,7 @@ final class TextSearchResultFooter: UIView {
                 return
             }
 
-            nameLabel.textColor = sender.accentColor?.uiColor
+            nameLabel.textColor = sender.accentColor
             nameLabel.text = sender.name
             nameLabel.accessibilityValue = nameLabel.text
 

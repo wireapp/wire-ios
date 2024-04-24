@@ -351,6 +351,7 @@
 		5E1314D12209A2CD000FAFC5 /* ClientRegistrationErrorEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1314D02209A2CD000FAFC5 /* ClientRegistrationErrorEventHandler.swift */; };
 		5E144FFF213EA0EC00B65E14 /* PreviewImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E144FFD213E973B00B65E14 /* PreviewImageView.swift */; };
 		5E15D31B219DB9060038439D /* ConversationFileMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E15D31A219DB9060038439D /* ConversationFileMessageCell.swift */; };
+		5E1D74C32266221800AD1F32 /* AccentColorProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1D74C22266221800AD1F32 /* AccentColorProvider.swift */; };
 		5E21344421CCED3B00273D0D /* PhoneNumberInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21344321CCED3B00273D0D /* PhoneNumberInputView.swift */; };
 		5E21344621CCEF1700273D0D /* EmptyViewDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21344521CCEF1700273D0D /* EmptyViewDescription.swift */; };
 		5E21344B21E351D400273D0D /* LogInStepDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E21344A21E351D400273D0D /* LogInStepDescription.swift */; };
@@ -2401,6 +2402,7 @@
 		5E1314D02209A2CD000FAFC5 /* ClientRegistrationErrorEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientRegistrationErrorEventHandler.swift; sourceTree = "<group>"; };
 		5E144FFD213E973B00B65E14 /* PreviewImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewImageView.swift; sourceTree = "<group>"; };
 		5E15D31A219DB9060038439D /* ConversationFileMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationFileMessageCell.swift; sourceTree = "<group>"; };
+		5E1D74C22266221800AD1F32 /* AccentColorProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColorProvider.swift; sourceTree = "<group>"; };
 		5E21344321CCED3B00273D0D /* PhoneNumberInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberInputView.swift; sourceTree = "<group>"; };
 		5E21344521CCEF1700273D0D /* EmptyViewDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyViewDescription.swift; sourceTree = "<group>"; };
 		5E21344A21E351D400273D0D /* LogInStepDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogInStepDescription.swift; sourceTree = "<group>"; };
@@ -6481,6 +6483,7 @@
 				5E8FFC0D21EE0B180052DF03 /* LayoutDirection.swift */,
 				A9BBD8CD26A5D47C00C768B1 /* UIEdgeInsets+directionAware.swift */,
 				A9275F5E24221AD6007CB2BC /* TextTransform.swift */,
+				5E1D74C22266221800AD1F32 /* AccentColorProvider.swift */,
 				F174AAAE218A0B1A00AFCC4D /* ColorScheme.swift */,
 				EF2B255E2209C542006712CA /* UIUserInterfaceSizeClass+Constraint.swift */,
 				5E0F75BD2268A0B6006C991E /* ColorScheme+Helper.swift */,
@@ -9327,6 +9330,7 @@
 				5E4BC1CC218CA94D00A8682E /* ZMConversationMessage+Date.swift in Sources */,
 				D3DE46052923BB13000F1055 /* BottomSheetContainerViewController.swift in Sources */,
 				EF4265892333BA7600DDAD0A /* ConversationListViewModel.swift in Sources */,
+				5E1D74C32266221800AD1F32 /* AccentColorProvider.swift in Sources */,
 				068500BD26B9580700721F80 /* FileMessageRestrictionView.swift in Sources */,
 				061EF88D27971EC000584C53 /* SettingsProfileLinkCellDescriptor.swift in Sources */,
 				16D74BF82B6100AA00160298 /* EnrollE2EIdentityStepDescription.swift in Sources */,
