@@ -312,9 +312,9 @@ final class UserSessionMock: UserSession {
     ) {
     }
 
-    var mockOneOnOneConversationCreationStatus: MockOneOnOneConversationCreationStatusUseCaseProtocol?
-    var oneOnOneConversationCreationStatus: OneOnOneConversationCreationStatusUseCaseProtocol {
-        mockOneOnOneConversationCreationStatus ?? MockOneOnOneConversationCreationStatusUseCaseProtocol()
+    var mockCheckOneOnOneConversationIsReady: MockCheckOneOnOneConversationIsReadyUseCaseProtocol?
+    var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
+        mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
     }
 
 }

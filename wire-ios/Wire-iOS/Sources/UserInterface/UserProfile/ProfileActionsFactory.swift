@@ -150,17 +150,16 @@ final class ProfileActionsFactory {
         }
 
         Task {
-            let useCase = userSession.oneOnOneConversationCreationStatus
-            let oneOnOneStatus = try await useCase.invoke(userID: userID)
+            let isOneOnOneReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
 
             await MainActor.run {
-                let actionsList = makeActionsList(oneOnOneStatus: oneOnOneStatus)
+                let actionsList = makeActionsList(isOneOnOneReady: isOneOnOneReady)
                 completion(actionsList)
             }
         }
     }
 
-    private func makeActionsList(oneOnOneStatus: OneOnOneConversationCreationStatus) -> [ProfileAction] {
+    private func makeActionsList(isOneOnOneReady: Bool) -> [ProfileAction] {
 
         // Do nothing if the user was deleted
         if user.isAccountDeleted {
@@ -234,11 +233,10 @@ final class ProfileActionsFactory {
             if user.isPendingApprovalByOtherUser {
                 actions.append(.cancelConnectionRequest)
             } else if (user.isConnected && !user.hasEmptyName) || isOnSameTeam {
-                switch oneOnOneStatus {
-                case .doesNotExist(protocol: _), .exists(protocol: .mls, established: false):
-                    actions.append(.startOneToOne)
-                default:
+                if isOneOnOneReady {
                     actions.append(.openOneToOne)
+                } else {
+                    actions.append(.startOneToOne)
                 }
             } else if user.canBeConnected && !user.isPendingApprovalBySelfUser {
                 actions.append(.connect)

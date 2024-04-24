@@ -289,10 +289,9 @@ extension ZMUserSession: UserSession {
         )
     }
 
-    public var oneOnOneConversationCreationStatus: OneOnOneConversationCreationStatusUseCaseProtocol {
-        OneOnOneConversationCreationStatusUseCase(
+    public var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
+        CheckOneOnOneConversationIsReadyUseCase(
             context: syncContext,
-            oneOnOneProtocolSelector: OneOnOneProtocolSelector(),
             coreCryptoProvider: coreCryptoProvider
         )
     }

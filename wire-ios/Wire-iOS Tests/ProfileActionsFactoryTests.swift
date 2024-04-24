@@ -27,18 +27,18 @@ final class ProfileActionsFactoryTests: XCTestCase {
     var selfUser: MockUserType!
     var defaultExtendedMetadata: [[String: String]]!
     var mockUserSession: UserSessionMock!
-    var mockOneOnOneConversationCreationStatusUseCase: MockOneOnOneConversationCreationStatusUseCaseProtocol!
+    var mockCheckOneOnOneIsReadyUseCase: MockCheckOneOnOneConversationIsReadyUseCaseProtocol!
 
     override func setUp() {
         super.setUp()
         selfUserTeam = UUID()
         selfUser = MockUserType.createSelfUser(name: "George Johnson", inTeam: selfUserTeam)
 
-        mockOneOnOneConversationCreationStatusUseCase = MockOneOnOneConversationCreationStatusUseCaseProtocol()
-        mockOneOnOneConversationCreationStatusUseCase.invokeUserID_MockValue = .exists(protocol: .proteus, established: nil)
+        mockCheckOneOnOneIsReadyUseCase = MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
+        mockCheckOneOnOneIsReadyUseCase.invokeUserID_MockValue = true
 
         mockUserSession = UserSessionMock()
-        mockUserSession.mockOneOnOneConversationCreationStatus = mockOneOnOneConversationCreationStatusUseCase
+        mockUserSession.mockCheckOneOnOneConversationIsReady = mockCheckOneOnOneIsReadyUseCase
     }
 
     override func tearDown() {
@@ -375,7 +375,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         ])
     }
 
-    func test_Group_TeamToTeam_MLS_GroupNotEstablished() {
+    func test_Group_TeamToTeam_OneOnOneConversationIsNotReady() {
         let otherUser = MockUserType.createConnectedUser(
             name: "John Doe",
             domain: domain,
@@ -383,46 +383,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         )
         let conversation = MockConversation.groupConversation()
 
-        mockOneOnOneConversationCreationStatusUseCase.invokeUserID_MockValue = .exists(
-            protocol: .mls,
-            established: false
-        )
-
-        verifyActions(
-            user: otherUser,
-            viewer: selfUser,
-            conversation: conversation,
-            expectedActions: [.startOneToOne, .removeFromGroup]
-        )
-    }
-
-    func test_Group_TeamToTeam_MLS_ConversationDoesntExist() {
-        let otherUser = MockUserType.createConnectedUser(
-            name: "John Doe",
-            domain: domain,
-            inTeam: selfUserTeam
-        )
-        let conversation = MockConversation.groupConversation()
-
-        mockOneOnOneConversationCreationStatusUseCase.invokeUserID_MockValue = .doesNotExist(protocol: .mls)
-
-        verifyActions(
-            user: otherUser,
-            viewer: selfUser,
-            conversation: conversation,
-            expectedActions: [.startOneToOne, .removeFromGroup]
-        )
-    }
-
-    func test_Group_TeamToTeam_Proteus_GroupDoesntExists() {
-        let otherUser = MockUserType.createConnectedUser(
-            name: "John Doe", 
-            domain: domain,
-            inTeam: selfUserTeam
-        )
-        let conversation = MockConversation.groupConversation()
-
-        mockOneOnOneConversationCreationStatusUseCase.invokeUserID_MockValue = .doesNotExist(protocol: .proteus)
+        mockCheckOneOnOneIsReadyUseCase.invokeUserID_MockValue = false
 
         verifyActions(
             user: otherUser,

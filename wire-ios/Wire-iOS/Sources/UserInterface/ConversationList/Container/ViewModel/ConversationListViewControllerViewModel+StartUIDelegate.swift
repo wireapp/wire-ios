@@ -29,31 +29,25 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
 
         Task {
             do {
-                let status = try await userSession.oneOnOneConversationCreationStatus.invoke(userID: userID)
+                let isReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
 
-                switch status {
-                case .exists(protocol: .proteus, established: _),
-                        .exists(protocol: .mls, established: true):
+                if isReady {
 
                     // If the conversation exists, and is established (in case of mls),
                     // then we open the conversation
                     guard let conversation else { return }
                     await openConversation(conversation)
 
-                case .exists(protocol: .mls, established: false),
-                        .doesNotExist(protocol: _):
+                } else {
 
                     // If the conversation should be using mls and is not established,
                     // or does not exits, then we open the user profile to let the user
                     // create the conversation
                     await openUserProfile(user)
 
-                default:
-                    break
                 }
-
             } catch {
-
+                WireLogger.conversation.warn("failed to check if one on one conversation is ready: \(error)")
             }
         }
     }

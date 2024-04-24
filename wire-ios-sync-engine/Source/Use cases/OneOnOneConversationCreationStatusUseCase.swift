@@ -20,25 +20,22 @@ import Foundation
 import WireDataModel
 
 // sourcery: AutoMockable
-public protocol OneOnOneConversationCreationStatusUseCaseProtocol {
+public protocol CheckOneOnOneConversationIsReadyUseCaseProtocol {
 
-    func invoke(userID: QualifiedID) async throws -> OneOnOneConversationCreationStatus
-
-}
-
-public enum OneOnOneConversationCreationStatus: Equatable {
-
-    case exists(protocol: MessageProtocol, established: Bool?)
-    case doesNotExist(protocol: MessageProtocol?)
+    /// Checks if there is a one-on-one conversation ready to be used for a given user.
+    /// Will return `false` if there is no conversation or if there's an `mls` conversation that isn't established
+    ///
+    /// - Parameter userID: The qualified ID of the user to check the one on one conversation for
+    /// - Returns: wether or not the one on one conversation is ready
+    func invoke(userID: QualifiedID) async throws -> Bool
 
 }
 
-public struct OneOnOneConversationCreationStatusUseCase: OneOnOneConversationCreationStatusUseCaseProtocol {
+struct CheckOneOnOneConversationIsReadyUseCase: CheckOneOnOneConversationIsReadyUseCaseProtocol {
 
     // MARK: - Properties
 
     private let context: NSManagedObjectContext
-    private let oneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface
     private let coreCryptoProvider: CoreCryptoProviderProtocol
 
     // MARK: - Types
@@ -52,17 +49,15 @@ public struct OneOnOneConversationCreationStatusUseCase: OneOnOneConversationCre
 
     public init(
         context: NSManagedObjectContext,
-        oneOnOneProtocolSelector: OneOnOneProtocolSelectorInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol
     ) {
         self.context = context
-        self.oneOnOneProtocolSelector = oneOnOneProtocolSelector
         self.coreCryptoProvider = coreCryptoProvider
     }
 
     // MARK: - Public interface
 
-    public func invoke(userID: QualifiedID) async throws -> OneOnOneConversationCreationStatus {
+    public func invoke(userID: QualifiedID) async throws -> Bool {
         let conversation = try await context.perform {
             guard let user = ZMUser.fetch(with: userID, in: context) else {
                 throw Error.userNotFound
@@ -75,21 +70,20 @@ public struct OneOnOneConversationCreationStatusUseCase: OneOnOneConversationCre
 
             switch messageProtocol {
             case .proteus:
-                return .exists(protocol: .proteus, established: nil)
-            case .mls, .mixed:
+                return true
+            case .mls:
                 guard let groupID = await context.perform({ conversation.mlsGroupID }) else {
                     throw Error.missingGroupID
                 }
 
-                let isEstablished = try await isMLSConversationEstablished(groupID: groupID)
-                return .exists(protocol: messageProtocol, established: isEstablished)
+                return try await isMLSConversationEstablished(groupID: groupID)
+            case .mixed:
+                // Message protocol for one to one conversations should never be mixed
+                assertionFailure("Message protocol for one to one conversations should never be mixed")
+                return false
             }
         } else {
-            let messageProtocol = try await oneOnOneProtocolSelector.getProtocolForUser(
-                with: userID,
-                in: context
-            )
-            return .doesNotExist(protocol: messageProtocol)
+            return false
         }
     }
 

@@ -23,9 +23,8 @@ import WireTesting
 
 class OneOnOneConversationCreationStatusUseCaseTests: XCTestCase {
 
-    private var sut: OneOnOneConversationCreationStatusUseCase!
+    private var sut: CheckOneOnOneConversationIsReadyUseCase!
     private var coreDataStack: CoreDataStack!
-    private var mockProtocolSelector: MockOneOnOneProtocolSelectorInterface!
     private var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     private var mockCoreCrypto: MockCoreCryptoProtocol!
     private var syncMOC: NSManagedObjectContext!
@@ -38,14 +37,12 @@ class OneOnOneConversationCreationStatusUseCaseTests: XCTestCase {
         coreDataStack = try await coreDataStackHelper.createStack()
         syncMOC = coreDataStack.syncContext
 
-        mockProtocolSelector = MockOneOnOneProtocolSelectorInterface()
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = MockSafeCoreCrypto(coreCrypto: mockCoreCrypto)
 
-        sut = OneOnOneConversationCreationStatusUseCase(
+        sut = CheckOneOnOneConversationIsReadyUseCase(
             context: syncMOC,
-            oneOnOneProtocolSelector: mockProtocolSelector,
             coreCryptoProvider: mockCoreCryptoProvider
         )
 
@@ -55,7 +52,6 @@ class OneOnOneConversationCreationStatusUseCaseTests: XCTestCase {
     override func tearDown() {
         sut = nil
         coreDataStack = nil
-        mockProtocolSelector = nil
         mockCoreCryptoProvider = nil
         mockCoreCrypto = nil
         syncMOC = nil
@@ -77,66 +73,52 @@ class OneOnOneConversationCreationStatusUseCaseTests: XCTestCase {
         userID = QualifiedID(uuid: uuid, domain: domain)
     }
 
-    func test_ItReturnsCorrectStatus_WhenConversationExists_Proteus() async throws {
+    func test_ItReturnsTrue_WhenConversationExists_Proteus() async throws {
         // Given
         await setupOneOnOne(messageProtocol: .proteus)
 
         // When
-        let status = try await sut.invoke(userID: userID)
+        let isReady = try await sut.invoke(userID: userID)
 
         // Then
-        XCTAssertEqual(status, .exists(protocol: .proteus, established: nil))
+        XCTAssertTrue(isReady)
     }
 
-    func test_ItReturnsCorrectStatus_WhenConversationExists_MLS_Established() async throws {
+    func test_ItReturnsTrue_WhenConversationExists_MLS_Established() async throws {
         // Given
         await setupOneOnOne(messageProtocol: .mls, groupID: .random())
         mockCoreCrypto.conversationExistsConversationId_MockValue = true
 
         // When
-        let status = try await sut.invoke(userID: userID)
+        let isReady = try await sut.invoke(userID: userID)
 
         // Then
-        XCTAssertEqual(status, .exists(protocol: .mls, established: true))
+        XCTAssertTrue(isReady)
     }
 
-    func test_ItReturnsCorrectStatus_WhenConversationExists_MLS_NotEstablished() async throws {
+    func test_ItReturnsFalse_WhenConversationExists_MLS_NotEstablished() async throws {
         // Given
         await setupOneOnOne(messageProtocol: .mls, groupID: .random())
         mockCoreCrypto.conversationExistsConversationId_MockValue = false
 
         // When
-        let status = try await sut.invoke(userID: userID)
+        let isReady = try await sut.invoke(userID: userID)
 
         // Then
-        XCTAssertEqual(status, .exists(protocol: .mls, established: false))
+        XCTAssertFalse(isReady)
     }
 
-    func test_itReturnsCorrectStatus_WhenConversationDoesntExist_Proteus() async throws {
-        // Given
-        mockProtocolSelector.getProtocolForUserWithIn_MockValue = .proteus
-
+    func test_itReturnsFalse_WhenConversationDoesntExist() async throws {
         // When
-        let status = try await sut.invoke(userID: userID)
+        let isReady = try await sut.invoke(userID: userID)
 
         // Then
-        XCTAssertEqual(status, .doesNotExist(protocol: .proteus))
-    }
-
-    func test_itReturnsCorrectStatus_WhenConversationDoesntExist_MLS() async throws {
-        // Given
-        mockProtocolSelector.getProtocolForUserWithIn_MockValue = .mls
-
-        // When
-        let status = try await sut.invoke(userID: userID)
-
-        // Then
-        XCTAssertEqual(status, .doesNotExist(protocol: .mls))
+        XCTAssertFalse(isReady)
     }
 
     func test_itThrowsUserNotFoundError() async {
         // When / Then
-        await assertItThrows(error: OneOnOneConversationCreationStatusUseCase.Error.userNotFound) {
+        await assertItThrows(error: CheckOneOnOneConversationIsReadyUseCase.Error.userNotFound) {
             _ = try await self.sut.invoke(userID: .random())
         }
     }
@@ -146,7 +128,7 @@ class OneOnOneConversationCreationStatusUseCaseTests: XCTestCase {
         await setupOneOnOne(messageProtocol: .mls, groupID: nil)
 
         // When / Then
-        await assertItThrows(error: OneOnOneConversationCreationStatusUseCase.Error.missingGroupID) {
+        await assertItThrows(error: CheckOneOnOneConversationIsReadyUseCase.Error.missingGroupID) {
             _ = try await self.sut.invoke(userID: userID)
         }
     }
