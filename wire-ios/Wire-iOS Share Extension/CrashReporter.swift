@@ -42,11 +42,10 @@ final class CrashReporter {
     }
 
     private static var appCenterEnabled: Bool {
-        let configUseAppCenter = Bundle.useAppCenter // The preprocessor macro USE_APP_CENTER (from the .xcconfig files)
         let automationUseAppCenter = AutomationHelper.sharedHelper.useAppCenter // Command line argument used by automation
         let settingsDisableCrashAndAnalyticsSharing = ExtensionSettings.shared.disableCrashSharing // User consent
 
-        return (automationUseAppCenter || (!automationUseAppCenter && configUseAppCenter))
+        return automationUseAppCenter
             && !settingsDisableCrashAndAnalyticsSharing
     }
 }
