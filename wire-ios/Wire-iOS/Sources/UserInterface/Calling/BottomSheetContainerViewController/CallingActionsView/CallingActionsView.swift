@@ -31,7 +31,7 @@ protocol BottomSheetScrollingDelegate: AnyObject {
 
 // A view showing multiple buttons depending on the given `CallActionsView.Input`.
 // Button touches result in `CallActionsView.Action` cases to be sent to the objects delegate.
-class CallingActionsView: UIView {
+final class CallingActionsView: UIView {
 
     weak var delegate: CallingActionsViewDelegate?
     weak var bottomSheetScrollingDelegate: BottomSheetScrollingDelegate? {
@@ -44,7 +44,7 @@ class CallingActionsView: UIView {
 
     let verticalStackView = UIStackView(axis: .vertical)
     private let topStackView = UIStackView(axis: .horizontal)
-    private let botttomStackView = UIStackView(axis: .horizontal)
+    private let bottomStackView = UIStackView(axis: .horizontal)
     private var input: CallActionsViewInputType?
     private var videoButtonDisabledTapRecognizer: UITapGestureRecognizer?
 
@@ -110,7 +110,12 @@ class CallingActionsView: UIView {
         handleView.layer.cornerRadius = 3.0
         handleView.backgroundColor = SemanticColors.View.backgroundCallDragBarIndicator
         handleContainerView.addSubview(handleView)
-        [handleContainerView, topStackView].forEach(verticalStackView.addArrangedSubview)
+
+        [
+            handleContainerView,
+            topStackView
+        ].forEach(verticalStackView.addArrangedSubview)
+
         [
             flipCameraButton,
             cameraButton,
@@ -120,6 +125,7 @@ class CallingActionsView: UIView {
             largeHangUpButton,
             largePickUpButton
         ].forEach { $0.addTarget(self, action: #selector(performButtonAction), for: .touchUpInside) }
+
         setupContentViewer()
     }
 
@@ -153,12 +159,19 @@ class CallingActionsView: UIView {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         establishedCallButtons.forEach { $0.updateState() }
-        [largePickUpButton, largeHangUpButton].forEach { $0.updateState() }
+
+        [
+            largePickUpButton,
+            largeHangUpButton
+        ].forEach { $0.updateState() }
 
     }
 
     private func addIncomingCallControllButtons() {
-        [largeHangUpButton, largePickUpButton].forEach {
+        [
+            largeHangUpButton,
+            largePickUpButton
+        ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.updateButtonWidth(width: 72.0)
             $0.subtitleTransformLabel.font = FontSpec(.small, .bold).font!
@@ -172,6 +185,7 @@ class CallingActionsView: UIView {
             largeHangUpButton.bottomAnchor.constraint(equalTo: safeBottomAnchor, constant: -42),
             largePickUpButton.bottomAnchor.constraint(equalTo: safeBottomAnchor, constant: -42)
         ]
+
         largeButtonsLandscapeConstraints = [
             largeHangUpButton.centerYAnchor.constraint(equalTo: microphoneButton.centerYAnchor).withPriority(.required),
             largePickUpButton.centerYAnchor.constraint(equalTo: largeHangUpButton.centerYAnchor).withPriority(.required),
@@ -185,7 +199,10 @@ class CallingActionsView: UIView {
     }
 
     private func removeIncomingCallControllButtons() {
-        [largeHangUpButton, largePickUpButton].forEach {
+        [
+            largeHangUpButton,
+            largePickUpButton
+        ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.removeFromSuperview()
         }
