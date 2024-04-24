@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ public extension ChaCha20Poly1305 {
                 var salt: [UInt8] = [UInt8](repeating: 0, count: Field.salt.rawValue)
                 var hash: [UInt8] = [UInt8](repeating: 0, count: Field.uuidHash.rawValue)
 
-                try Field.partition(buffer: buffer) { (partition, field) in
+                try Field.partition(buffer: buffer) { partition, field in
                     switch field {
                     case .platform:
                         guard Array(partition) == [UInt8](Header.platform) else {

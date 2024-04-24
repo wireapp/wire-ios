@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTe
         let convo = createTeamGroupConversation()
         let conversationDirectory = coreDataFixture.uiMOC.conversationListDirectory()
         sut = FolderCreationController(conversation: convo, directory: conversationDirectory)
-        accentColor = .violet
+        accentColor = .purple
     }
 
     override func tearDown() {

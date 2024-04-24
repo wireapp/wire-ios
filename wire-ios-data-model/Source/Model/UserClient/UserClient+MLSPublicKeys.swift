@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -80,6 +80,17 @@ extension UserClient {
         // all errors are ignored
         try? JSONEncoder().encode(mlsPublicKeys)
     }
+
+    /// Clear previously registered MLS public keys.
+    ///
+    /// Only do this when when the self client has been deleted/reset.
+
+    public func clearMLSPublicKeys() {
+        willChangeValue(forKey: Self.mlsPublicKeysKey)
+        primitiveMlsPublicKeys = nil
+        didChangeValue(forKey: Self.mlsPublicKeysKey)
+    }
+
 }
 
 extension UserClient {

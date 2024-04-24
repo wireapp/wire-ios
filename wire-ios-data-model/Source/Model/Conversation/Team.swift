@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ extension Team {
         return members.filter({ member in
             guard let user = member.user else { return false }
             return !user.isSelfUser && searchPredicate.evaluate(with: user)
-        }).sorted(by: { (first, second) -> Bool in
+        }).sorted(by: { first, second -> Bool in
             return first.user?.normalizedName < second.user?.normalizedName
         })
     }
@@ -161,7 +161,7 @@ extension Team {
 
     public static var imageDownloadFilter: NSPredicate {
         let assetIdExists = NSPredicate(format: "(%K != nil)", Team.pictureAssetIdKey)
-        let notCached = NSPredicate { (team, _) -> Bool in
+        let notCached = NSPredicate { team, _ -> Bool in
             guard let team = team as? Team else { return false }
             return team.imageData == nil
         }

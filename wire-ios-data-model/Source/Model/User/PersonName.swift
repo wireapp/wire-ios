@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -136,7 +136,7 @@
 
         // This is a bit more complicated because we don't want chinese names to be split up by their individual characters
         let options: NSLinguisticTagger.Options = [.omitPunctuation, .omitWhitespace, .omitOther]
-        fullName.enumerateLinguisticTags(in: fullRange, scheme: convertFromNSLinguisticTagScheme(NSLinguisticTagScheme.tokenType), options: options, orthography: nil) { (tag, substringRange, _, _) in
+        fullName.enumerateLinguisticTags(in: fullRange, scheme: convertFromNSLinguisticTagScheme(NSLinguisticTagScheme.tokenType), options: options, orthography: nil) { tag, substringRange, _, _ in
             guard tag == convertFromNSLinguisticTag(NSLinguisticTag.word) else { return }
             let substring = fullName[substringRange]
             if let aComponent = component {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ public struct SearchUserAssetKeys {
                 }
             }
 
-            if nil != previewKey || nil != completeKey {
+            if previewKey != nil || completeKey != nil {
                 preview = previewKey
                 complete = completeKey
                 return
@@ -668,6 +668,14 @@ public class ZMSearchUser: NSObject, UserType {
         guard let user = user else { return false }
 
         return user.isGuest(in: conversation)
+    }
+
+    public func imageData(for size: ProfileImageSize) -> Data? {
+        if let user = self.user {
+            return user.imageData(for: size)
+        } else {
+            return size == .complete ? completeImageData : previewImageData
+        }
     }
 
     public func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (Data?) -> Void) {

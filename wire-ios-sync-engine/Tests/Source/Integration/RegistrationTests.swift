@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,13 +36,13 @@ class RegistrationTests: IntegrationTest {
         sessionManager?.unauthenticatedSession?.registrationStatus.delegate = delegate
         email = "ba@a-team.de"
 
-        teamToRegister = UnregisteredTeam(teamName: "A-Team", email: email, emailCode: "911", fullName: "Bosco B. A. Baracus", password: "BadAttitude", accentColor: .vividRed)
+        teamToRegister = UnregisteredTeam(teamName: "A-Team", email: email, emailCode: "911", fullName: "Bosco B. A. Baracus", password: "BadAttitude", accentColor: .red)
 
         user = UnregisteredUser()
         user.name = "Bosco B. A. Baracus"
         user.verificationCode = "911"
         user.credentials = .email(address: email, password: "BadAttitude")
-        user.accentColorValue = .vividRed
+        user.accentColorValue = .red
         user.acceptedTermsOfService = true
         user.marketingConsent = true
     }
@@ -93,7 +93,7 @@ class RegistrationTests: IntegrationTest {
         XCTAssertEqual(delegate.activationCodeSendingFailedCalled, 0)
 
         // When
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             let user = session.insertUser(withName: "john")
             user.email = email
         }
@@ -119,7 +119,7 @@ class RegistrationTests: IntegrationTest {
         XCTAssertEqual(delegate.activationCodeSendingFailedCalled, 0)
 
         // When
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             let user = session.insertUser(withName: "john")
             user.phone = phone
         }
@@ -181,7 +181,7 @@ class RegistrationTests: IntegrationTest {
     func testThatIsActivationCodeIsVerifiedToSpecifiedEmail() {
         // Given
         let email = "john@smith.com"
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             session.whiteListEmail(email)
         }
         let code = self.mockTransportSession.emailActivationCode
@@ -245,7 +245,7 @@ class RegistrationTests: IntegrationTest {
 
     func testThatItSignalsAnErrorIfTeamCreationFails() {
         // Given
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             let user = session.insertUser(withName: "john")
             user.email = self.teamToRegister.email
         }
@@ -290,7 +290,7 @@ class RegistrationTests: IntegrationTest {
 
     func testThatItSignalsAnErrorIfUserCreationFails() {
         // Given
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             let user = session.insertUser(withName: "john")
             user.email = self.email
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ import WireRequestStrategySupport
 @testable import Wire
 
 final class UserSessionMock: UserSession {
+
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
     func fetchSelfConversationMLSGroupID() async -> WireDataModel.MLSGroupID? {
@@ -39,7 +40,7 @@ final class UserSessionMock: UserSession {
     var isE2eIdentityEnabled = false
     var certificate = E2eIdentityCertificate.mockNotActivated
     typealias Preference = AppLockPasscodePreference
-    typealias Callback = (AppLockModule.AuthenticationResult, LAContext) -> Void
+    typealias Callback = (AppLockModule.AuthenticationResult) -> Void
 
     lazy var mockGetUserClientFingerprintUseCaseProtocol: MockGetUserClientFingerprintUseCaseProtocol = {
         let mock = MockGetUserClientFingerprintUseCaseProtocol()
@@ -56,7 +57,7 @@ final class UserSessionMock: UserSession {
 
     var setEncryptionAtRest: [(enabled: Bool, skipMigration: Bool)] = []
 
-    var unlockDatabase: [LAContext] = []
+    var unlockDatabase_MockInvocations: [Void] = []
 
     var openApp: [Void] = []
 
@@ -68,8 +69,7 @@ final class UserSessionMock: UserSession {
 
     var networkState: ZMNetworkState = .offline
 
-    var selfUser: UserType
-    var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
+    var selfUser: SelfUserType
     var mockConversationList: ZMConversationList?
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
@@ -79,25 +79,15 @@ final class UserSessionMock: UserSession {
     }
 
     convenience init(mockUser: MockZMEditableUser) {
-        self.init(
-            selfUser: mockUser,
-            selfLegalHoldSubject: mockUser
-        )
+        self.init(selfUser: mockUser)
     }
 
     convenience init(mockUser: MockUserType = .createDefaultSelfUser()) {
-        self.init(
-            selfUser: mockUser,
-            selfLegalHoldSubject: mockUser
-        )
+        self.init(selfUser: mockUser)
     }
 
-    init(
-        selfUser: UserType,
-        selfLegalHoldSubject: SelfLegalHoldSubject & UserType
-    ) {
+    init(selfUser: SelfUserType) {
         self.selfUser = selfUser
-        self.selfLegalHoldSubject = selfLegalHoldSubject
     }
 
     var lock: SessionLock? = .screen
@@ -119,13 +109,10 @@ final class UserSessionMock: UserSession {
     func evaluateAppLockAuthentication(
         passcodePreference: AppLockPasscodePreference,
         description: String,
-        callback: @escaping (
-            AppLockAuthenticationResult,
-            LAContextProtocol
-        ) -> Void
+        callback: @escaping (AppLockAuthenticationResult) -> Void
     ) {
         evaluateAuthentication.append((passcodePreference, description, callback))
-        callback(_authenticationResult, _evaluationContext)
+        callback(_authenticationResult)
     }
 
     func evaluateAuthentication(customPasscode: String) -> AppLockAuthenticationResult {
@@ -133,8 +120,8 @@ final class UserSessionMock: UserSession {
         return _passcode == customPasscode ? .granted : .denied
     }
 
-    func unlockDatabase(with context: LAContext) throws {
-        unlockDatabase.append(context)
+    func unlockDatabase() throws {
+        unlockDatabase_MockInvocations.append(())
     }
 
     var maxAudioMessageLength: TimeInterval = 1500 // 25 minutes (25 * 60.0)

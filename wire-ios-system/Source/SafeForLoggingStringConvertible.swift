@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,8 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
-import Foundation
 
 /// Object can implement this protocol to allow creating the privacy-enabled object description.
 /// Things to consider when implementing is to exclude any kind of personal information from the object description:
@@ -43,7 +41,7 @@ extension Array: SafeForLoggingStringConvertible where Array.Element: SafeForLog
 
 extension Dictionary: SafeForLoggingStringConvertible where Key: SafeForLoggingStringConvertible, Value: SafeForLoggingStringConvertible {
     public var safeForLoggingDescription: String {
-        let result = enumerated().map { (_, element) in
+        let result = enumerated().map { _, element in
             return (element.key.safeForLoggingDescription, element.value.safeForLoggingDescription)
         }
 

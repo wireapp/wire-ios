@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
     func testThatItReturnsPreviewsProfileImageIfItWasPreviouslyUpdated() {
         // given
         let imageData = verySmallJPEGData()
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .amber, remoteIdentifier: UUID())
 
         // when
         searchUser.updateImageData(for: .preview, imageData: imageData)
@@ -35,7 +35,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
     func testThatItReturnsCompleteProfileImageIfItWasPreviouslyUpdated() {
         // given
         let imageData = verySmallJPEGData()
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .amber, remoteIdentifier: UUID())
 
         // when
         searchUser.updateImageData(for: .complete, imageData: imageData)
@@ -78,7 +78,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
 
     func testThatItReturnsPreviewImageProfileCacheKey() {
         // given
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID.create())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .amber, remoteIdentifier: UUID.create())
 
         // then
         XCTAssertNotNil(searchUser.smallProfileImageCacheKey)
@@ -86,7 +86,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
 
     func testThatItReturnsCompleteImageProfileCacheKey() {
         // given
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID.create())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .amber, remoteIdentifier: UUID.create())
 
         // then
         XCTAssertNotNil(searchUser.mediumProfileImageCacheKey)
@@ -94,7 +94,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
 
     func testThatItPreviewAndCompleteImageProfileCacheKeyIsDifferent() {
         // given
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID.create())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .amber, remoteIdentifier: UUID.create())
 
         // then
         XCTAssertNotEqual(searchUser.smallProfileImageCacheKey, searchUser.mediumProfileImageCacheKey)
@@ -137,14 +137,14 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
     func testThatItCanFetchPreviewProfileImageOnAQueue() {
         // given
         let imageData = verySmallJPEGData()
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .amber, remoteIdentifier: UUID())
 
         // when
         searchUser.updateImageData(for: .preview, imageData: imageData)
 
         // then
         let imageDataArrived = customExpectation(description: "completion handler called")
-        searchUser.imageData(for: .preview, queue: .global()) { (imageDataResult) in
+        searchUser.imageData(for: .preview, queue: .global()) { imageDataResult in
             XCTAssertEqual(imageData, imageDataResult)
             imageDataArrived.fulfill()
         }
@@ -154,14 +154,14 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
     func testThatItCanFetchCompleteProfileImageOnAQueue() {
         // given
         let imageData = verySmallJPEGData()
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .amber, remoteIdentifier: UUID())
 
         // when
         searchUser.updateImageData(for: .complete, imageData: imageData)
 
         // then
         let imageDataArrived = customExpectation(description: "completion handler called")
-        searchUser.imageData(for: .complete, queue: .global()) { (imageDataResult) in
+        searchUser.imageData(for: .complete, queue: .global()) { imageDataResult in
             XCTAssertEqual(imageData, imageDataResult)
             imageDataArrived.fulfill()
         }

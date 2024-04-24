@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
         let serviceUser = ZMSearchUser(contextProvider: contextProvider,
                                        name: "",
                                        handle: nil,
-                                       accentColor: .strongBlue,
+                                       accentColor: .blue,
                                        remoteIdentifier: serviceUserData.service,
                                        teamIdentifier: nil,
                                        user: nil,
@@ -59,5 +59,4 @@ class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
             }
         }
     }
-
 }

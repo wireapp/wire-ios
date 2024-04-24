@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ extension TypingUsersTimeout {
             if user.objectID.isTemporaryID || conversation.objectID.isTemporaryID {
                 do {
                     try user.managedObjectContext?.obtainPermanentIDs(for: [user, conversation])
-                } catch let error {
+                } catch {
                     log.error("Failed to obtain permanent object ids: \(error.localizedDescription)")
                 }
             }

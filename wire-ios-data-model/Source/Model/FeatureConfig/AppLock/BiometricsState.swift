@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,10 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 protocol BiometricsStateProtocol {
 
-   func biometricsChanged(in context: LAContextProtocol) -> Bool
+   func biometricsChanged(in context: AuthenticationContextProtocol) -> Bool
    func persistState()
 
 }
@@ -44,7 +45,7 @@ final class BiometricsState: BiometricsStateProtocol {
     /// Returns `true` if the biometrics database has changed, e.g if finger prints are
     /// added or removed.
 
-    func biometricsChanged(in context: LAContextProtocol) -> Bool {
+    func biometricsChanged(in context: AuthenticationContextProtocol) -> Bool {
         currentPolicyDomainState = context.evaluatedPolicyDomainState
         guard let lastState = lastPolicyDomainState else { return false }
         return currentPolicyDomainState != lastState

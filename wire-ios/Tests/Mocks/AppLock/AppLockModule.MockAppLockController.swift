@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,13 +57,13 @@ extension AppLockModule {
             methodCalls.open.append(())
         }
 
-        func evaluateAuthentication(passcodePreference: AppLockPasscodePreference,
-                                    description: String,
-                                    context: LAContextProtocol,
-                                    callback: @escaping (AuthenticationResult, LAContextProtocol) -> Void) {
-
+        func evaluateAuthentication(
+            passcodePreference: AppLockPasscodePreference,
+            description: String,
+            callback: @escaping (AppLockAuthenticationResult) -> Void
+        ) {
             methodCalls.evaluateAuthentication.append((passcodePreference, description, callback))
-            callback(_authenticationResult, _evaluationContext)
+            callback(_authenticationResult)
         }
 
         func evaluateAuthentication(customPasscode: String) -> AuthenticationResult {
@@ -90,7 +90,7 @@ extension AppLockModule.MockAppLockController {
     struct MethodCalls {
 
         typealias Preference = AppLockPasscodePreference
-        typealias Callback = (AppLockModule.AuthenticationResult, LAContext) -> Void
+        typealias Callback = (AppLockModule.AuthenticationResult) -> Void
 
         var beginTimer: [Void] = []
         var open: [Void] = []

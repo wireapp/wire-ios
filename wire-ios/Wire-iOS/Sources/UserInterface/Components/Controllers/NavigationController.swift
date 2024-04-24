@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import UIKit
 import WireUtilities
 
-class NavigationController: UINavigationController, SpinnerCapable {
+final class NavigationController: UINavigationController, SpinnerCapable {
     var dismissSpinner: SpinnerCompletion?
 
     private lazy var pushTransition = NavigationTransition(operation: .push)
@@ -55,10 +55,10 @@ class NavigationController: UINavigationController, SpinnerCapable {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
         self.view.backgroundColor = SemanticColors.View.backgroundDefault
         self.useDefaultPopGesture = false
         self.navigationBar.tintColor = SemanticColors.Label.textDefault
-
         self.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes()
 
         self.dismissGestureRecognizer = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(NavigationController.onEdgeSwipe(gestureRecognizer:)))
@@ -131,11 +131,11 @@ extension NavigationController: UINavigationControllerDelegate {
 
 extension NavigationController: UIViewControllerTransitioningDelegate {
 
-    public func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return SwizzleTransition(direction: .vertical)
     }
 
-    public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return SwizzleTransition(direction: .vertical)
     }
 }

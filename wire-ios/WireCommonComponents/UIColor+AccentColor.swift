@@ -23,7 +23,7 @@ public enum AccentColor: Int16, CaseIterable {
 
     case blue = 1
     case green
-    case yellow // Deprecated
+    case deprecatedYellow // Deprecated
     case red
     case amber
     case turquoise

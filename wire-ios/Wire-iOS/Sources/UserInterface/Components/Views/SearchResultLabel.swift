@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,9 +20,9 @@ import Foundation
 import UIKit
 import WireSystem
 
-public final class SearchResultLabel: UILabel, Copyable {
+final class SearchResultLabel: UILabel, Copyable {
 
-    public convenience init(instance: SearchResultLabel) {
+    convenience init(instance: SearchResultLabel) {
         self.init()
         self.font = instance.font
         self.textColor = instance.textColor
@@ -30,30 +30,30 @@ public final class SearchResultLabel: UILabel, Copyable {
         self.queries = instance.queries
     }
 
-    public var resultText: String? = .none
-    public var queries: [String] = []
+    var resultText: String? = .none
+    var queries: [String] = []
 
     private let redactedFont = UIFont(name: "RedactedScript-Regular", size: 16)!
 
-    public var isObfuscated: Bool = false {
+    var isObfuscated: Bool = false {
         didSet {
             self.updateText()
         }
     }
 
-    public override var font: UIFont! {
+    override var font: UIFont! {
         didSet {
             self.updateText()
         }
     }
 
-    public override var textColor: UIColor! {
+    override var textColor: UIColor! {
         didSet {
             self.updateText()
         }
     }
 
-    public var estimatedMatchesCount: Int = 0
+    var estimatedMatchesCount: Int = 0
 
     fileprivate var previousLayoutBounds: CGRect = .zero
 
@@ -68,7 +68,7 @@ public final class SearchResultLabel: UILabel, Copyable {
         fatal("init?(coder:) is not implemented")
     }
 
-    public override func layoutSubviews() {
+    override func layoutSubviews() {
         super.layoutSubviews()
         guard !self.bounds.equalTo(self.previousLayoutBounds) else {
             return
@@ -79,7 +79,7 @@ public final class SearchResultLabel: UILabel, Copyable {
         self.updateText()
     }
 
-    public func configure(with text: String, queries: [String]) {
+    func configure(with text: String, queries: [String]) {
         guard let font = self.font,
               let color = self.textColor else {
                 self.attributedText = .none

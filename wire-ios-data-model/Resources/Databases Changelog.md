@@ -4,6 +4,10 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.116.0
+
+* added `isPendingInitialFetch` attribute on the Conversation entity
+
 ### 2.115.0
 
 * removed one-to-one relationship `Connection.conversation` <-> `Conversation.connection`

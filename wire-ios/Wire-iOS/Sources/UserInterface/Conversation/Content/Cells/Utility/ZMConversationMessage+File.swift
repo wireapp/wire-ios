@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,12 +21,12 @@ import WireDataModel
 
 extension ZMConversationMessage {
 
-    public func isFileDownloaded() -> Bool {
+    func isFileDownloaded() -> Bool {
         guard let fileMessageData else { return false }
         return fileMessageData.hasLocalFileData
     }
 
-    public func videoCanBeSavedToCameraRoll() -> Bool {
+    func videoCanBeSavedToCameraRoll() -> Bool {
         guard
             let fileMessageData,
             fileMessageData.isVideo,

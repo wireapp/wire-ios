@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
         downstreamRequestSyncs[.preview] = whitelistUserImageSync(for: .preview)
         downstreamRequestSyncs[.complete] = whitelistUserImageSync(for: .complete)
-        downstreamRequestSyncs.forEach { (_, sync) in
+        downstreamRequestSyncs.forEach { _, sync in
             sync.whiteListObject(ZMUser.selfUser(in: managedObjectContext))
         }
 

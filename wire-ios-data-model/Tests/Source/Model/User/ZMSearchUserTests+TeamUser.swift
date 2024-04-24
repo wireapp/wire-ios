@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
         let searchUser = ZMSearchUser(contextProvider: self.coreDataStack,
                                       name: "Foo",
                                       handle: "foo",
-                                      accentColor: .brightOrange,
+                                      accentColor: .amber,
                                       remoteIdentifier: UUID(),
                                       teamIdentifier: team.remoteIdentifier)
 
@@ -43,7 +43,7 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
         let searchUser = ZMSearchUser(contextProvider: self.coreDataStack,
                                       name: "Foo",
                                       handle: "foo",
-                                      accentColor: .brightOrange,
+                                      accentColor: .amber,
                                       remoteIdentifier: UUID(),
                                       teamIdentifier: UUID())
 
@@ -59,7 +59,7 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
         let searchUser = ZMSearchUser(contextProvider: self.coreDataStack,
                                       name: "Foo",
                                       handle: "foo",
-                                      accentColor: .brightOrange,
+                                      accentColor: .amber,
                                       remoteIdentifier: UUID(),
                                       teamIdentifier: UUID())
         uiMOC.saveOrRollback()
@@ -76,7 +76,7 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
         let searchUser = ZMSearchUser(contextProvider: self.coreDataStack,
                                       name: "Foo",
                                       handle: "foo",
-                                      accentColor: .brightOrange,
+                                      accentColor: .amber,
                                       remoteIdentifier: UUID(),
                                       teamIdentifier: team.remoteIdentifier)
 

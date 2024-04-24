@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ extension ZMMessageTests_Confirmation {
         XCTAssertFalse(message.expectsReadConfirmation)
     }
 
-    func testThatMessageNeedsReadConfirmation_InAOneToOne_WhenSelfUserHasReadReceiptsEnabled() {
+    func testThatMessageNeedsReadConfirmation_InAOneToOne_WhenSelfUserHasReadReceiptsEnabled() throws {
         // given
         let user = createUser(in: uiMOC)
         let conversation = createConversation(in: uiMOC)
@@ -94,11 +94,7 @@ extension ZMMessageTests_Confirmation {
         var genericMessage = message.underlyingMessage!
         genericMessage.setExpectsReadConfirmation(true)
 
-        do {
-            try message.setUnderlyingMessage(genericMessage)
-        } catch {
-            XCTFail()
-        }
+        try message.setUnderlyingMessage(genericMessage)
 
         // when
         ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = true
@@ -107,7 +103,7 @@ extension ZMMessageTests_Confirmation {
         XCTAssertTrue(message.needsReadConfirmation)
     }
 
-    func testThatMessageDoesntNeedsReadConfirmation_InAOneToOne_WhenSelfUserHasReadReceiptsDisabled() {
+    func testThatMessageDoesntNeedsReadConfirmation_InAOneToOne_WhenSelfUserHasReadReceiptsDisabled() throws {
         // given
         let user = createUser(in: uiMOC)
         let conversation = createConversation(in: uiMOC)
@@ -118,11 +114,7 @@ extension ZMMessageTests_Confirmation {
         var genericMessage = message.underlyingMessage!
         genericMessage.setExpectsReadConfirmation(true)
 
-        do {
-            try message.setUnderlyingMessage(genericMessage)
-        } catch {
-            XCTFail()
-        }
+        try message.setUnderlyingMessage(genericMessage)
 
         // when
         ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = false

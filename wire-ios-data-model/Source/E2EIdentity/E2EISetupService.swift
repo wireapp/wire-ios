@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,6 +20,8 @@ import Foundation
 import WireCoreCrypto
 
 public protocol E2EISetupServiceInterface {
+
+    func isTrustAnchorRegistered()  async throws -> Bool
 
     func registerTrustAnchor(_ trustAnchor: String) async throws
 
@@ -64,6 +66,12 @@ public final class E2EISetupService: E2EISetupServiceInterface {
     }
 
     // MARK: - Public interface
+
+    public func isTrustAnchorRegistered() async throws -> Bool {
+        try await coreCryptoProvider.coreCrypto().perform { coreCrypto in
+            await coreCrypto.e2eiIsPkiEnvSetup()
+        }
+    }
 
     public func registerTrustAnchor(_ trustAnchor: String) async throws {
         try await coreCryptoProvider.coreCrypto().perform { coreCrypto in

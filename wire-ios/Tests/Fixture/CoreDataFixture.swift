@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ final class CoreDataFixture {
         }
         AppRootRouter.configureAppearance()
         UIView.setAnimationsEnabled(false)
-        accentColor = .vividRed
+        accentColor = .red
         snapshotBackgroundColor = UIColor.clear
 
         do {
@@ -148,7 +148,7 @@ final class CoreDataFixture {
         selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID()
         selfUser.name = "selfUser"
-        selfUser.accentColorValue = .vividRed
+        selfUser.accentColorValue = .red
         selfUser.emailAddress = "test@email.com"
         selfUser.phoneNumber = "+123456789"
 
@@ -160,7 +160,7 @@ final class CoreDataFixture {
         otherUser.remoteIdentifier = UUID()
         otherUser.name = "Bruno"
         otherUser.handle = "bruno"
-        otherUser.accentColorValue = .brightOrange
+        otherUser.accentColorValue = .amber
 
         otherUserConversation = ZMConversation.createOtherUserConversation(moc: uiMOC, otherUser: otherUser)
 
@@ -223,7 +223,7 @@ extension CoreDataFixture {
         serviceUser.remoteIdentifier = UUID()
         serviceUser.name = "ServiceUser"
         serviceUser.handle = serviceUser.name!.lowercased()
-        serviceUser.accentColorValue = .brightOrange
+        serviceUser.accentColorValue = .amber
         serviceUser.serviceIdentifier = UUID.create().transportString()
         serviceUser.providerIdentifier = UUID.create().transportString()
         uiMOC.saveOrRollback()

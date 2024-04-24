@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,16 +19,24 @@
 import Foundation
 import WireTesting
 import WireDataModel
+import WireDataModelSupport
 import WireTransport.Testing
 import avs
-
+@testable import WireSyncEngineSupport
 @testable import WireSyncEngine
 
 final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 
     let transportSession: TransportSessionType
 
-    init(application: ZMApplication, mediaManager: MediaManagerType, flowManager: FlowManagerType, transportSession: TransportSessionType, environment: BackendEnvironmentProvider, reachability: ReachabilityProvider & TearDownCapable) {
+    init(
+        application: ZMApplication,
+        mediaManager: MediaManagerType,
+        flowManager: FlowManagerType,
+        transportSession: TransportSessionType,
+        environment: BackendEnvironmentProvider,
+        reachability: ReachabilityProvider & TearDownCapable
+    ) {
         self.transportSession = transportSession
         super.init(
             appVersion: "0.0.0",
@@ -47,22 +55,48 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
     override func session(
         for account: Account,
         coreDataStack: CoreDataStack,
-        configuration: ZMUserSession.Configuration = .init(),
+        configuration: ZMUserSession.Configuration,
         sharedUserDefaults: UserDefaults
     ) -> ZMUserSession? {
-        return ZMUserSession(
-            userId: account.userIdentifier,
-            transportSession: transportSession,
-            mediaManager: mediaManager,
-            flowManager: flowManager,
+        let mockContextStorage = MockLAContextStorable()
+        mockContextStorage.clear_MockMethod = { }
+
+        let mockRecurringActionService = MockRecurringActionServiceInterface()
+        mockRecurringActionService.registerAction_MockMethod = { _ in }
+        mockRecurringActionService.performActionsIfNeeded_MockMethod = { }
+
+        var builder = ZMUserSessionBuilder()
+        builder.withAllDependencies(
             analytics: analytics,
-            application: application,
             appVersion: appVersion,
+            application: application,
+            cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreDataStack: coreDataStack,
             configuration: configuration,
-            cryptoboxMigrationManager: CryptoboxMigrationManager(),
-            sharedUserDefaults: sharedUserDefaults
+            contextStorage: mockContextStorage,
+            earService: nil,
+            flowManager: flowManager,
+            mediaManager: mediaManager,
+            mlsService: nil,
+            observeMLSGroupVerificationStatus: nil,
+            proteusToMLSMigrationCoordinator: nil,
+            recurringActionService: mockRecurringActionService,
+            sharedUserDefaults: sharedUserDefaults,
+            transportSession: transportSession,
+            useCaseFactory: nil,
+            userId: account.userIdentifier
         )
+
+        let userSession = builder.build()
+        userSession.setup(
+            eventProcessor: nil,
+            strategyDirectory: nil,
+            syncStrategy: nil,
+            operationLoop: nil,
+            configuration: configuration
+        )
+
+        return userSession
     }
 
 }
@@ -144,6 +178,8 @@ extension IntegrationTest {
 
     @objc
     func _tearDown() {
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
         PrekeyGenerator._test_overrideNumberOfKeys = nil
         destroyTimers()
         sharedSearchDirectory?.tearDown()
@@ -174,7 +210,6 @@ extension IntegrationTest {
         groupConversationWithServiceUser = nil
         application = nil
         notificationCenter = nil
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         deleteSharedContainerContent()
         sharedContainerDirectory = nil
@@ -584,7 +619,7 @@ extension IntegrationTest {
 
         closePushChannelAndWaitUntilClosed()
         changesBeforeInterruption.apply(mockTransportSession.performRemoteChanges)
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.clearNotifications()
 
             if let changes = changesAfterInterruption {

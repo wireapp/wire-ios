@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ final class ConversationListCellTests: BaseSnapshotTestCase {
         otherUser = MockUserType.createDefaultOtherUser()
         otherUserConversation = MockConversation.createOneOnOneConversation(otherUser: otherUser)
 
-        accentColor = .strongBlue
+        accentColor = .blue
         // The cell must higher than 64, otherwise it breaks the constraints.
         sut = ConversationListCell(frame: CGRect(x: 0, y: 0, width: 375, height: ConversationListItemView.minHeight))
 

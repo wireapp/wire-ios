@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -153,7 +153,7 @@ final class MessageToolboxDataSource {
                 left.serverTimestamp < right.serverTimestamp
             }.compactMap(timestampString)
 
-            let finalText = childrenTimestamps.reduce(timestamp) { (text, current) in
+            let finalText = childrenTimestamps.reduce(timestamp) { text, current in
                 return "\(text)\n\(current)"
             }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -326,18 +326,18 @@ extension ZMUser {
         managedObjectContext?.zm_userImageCache?.userImage(self, size: size, queue: queue, completion: completion)
     }
 
-    @objc(imageDataforSize:)
+    @objc
     public func imageData(for size: ProfileImageSize) -> Data? {
-        return managedObjectContext?.zm_userImageCache?.userImage(self, size: size)
+        managedObjectContext?.zm_userImageCache?.userImage(self, size: size)
     }
 
     public static var previewImageDownloadFilter: NSPredicate {
         let assetIdExists = NSPredicate(format: "(%K != nil)", ZMUser.previewProfileAssetIdentifierKey)
-        let assetIdIsValid = NSPredicate { (user, _) -> Bool in
+        let assetIdIsValid = NSPredicate { user, _ -> Bool in
             guard let user = user as? ZMUser else { return false }
             return user.previewProfileAssetIdentifier?.isValidAssetID ?? false
         }
-        let notCached = NSPredicate { (user, _) -> Bool in
+        let notCached = NSPredicate { user, _ -> Bool in
             guard let user = user as? ZMUser else { return false }
             return user.imageSmallProfileData == nil
         }
@@ -346,11 +346,11 @@ extension ZMUser {
 
     public static var completeImageDownloadFilter: NSPredicate {
         let assetIdExists = NSPredicate(format: "(%K != nil)", ZMUser.completeProfileAssetIdentifierKey)
-        let assetIdIsValid = NSPredicate { (user, _) -> Bool in
+        let assetIdIsValid = NSPredicate { user, _ -> Bool in
             guard let user = user as? ZMUser else { return false }
             return user.completeProfileAssetIdentifier?.isValidAssetID ?? false
         }
-        let notCached = NSPredicate { (user, _) -> Bool in
+        let notCached = NSPredicate { user, _ -> Bool in
             guard let user = user as? ZMUser else { return false }
             return user.imageMediumData == nil
         }

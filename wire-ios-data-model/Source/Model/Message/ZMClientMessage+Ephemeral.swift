@@ -1,6 +1,6 @@
-//                 
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ extension ZMClientMessage {
     var ephemeral: Ephemeral? {
         return dataSet.lazy
             .compactMap { ($0 as? ZMGenericMessageData)?.underlyingMessage }
-            .first(where: { (message) -> Bool in
+            .first(where: { message -> Bool in
                 guard case .ephemeral? = message.content else {
                     return false
                 }

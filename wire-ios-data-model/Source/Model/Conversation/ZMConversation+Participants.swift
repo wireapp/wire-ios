@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ extension ZMConversation {
 
     @objc
     public var isSelfAnActiveMember: Bool {
-        return self.participantRoles.contains(where: { (role) -> Bool in
+        return self.participantRoles.contains(where: { role -> Bool in
             role.user?.isSelfUser == true
         })
     }
@@ -152,7 +152,7 @@ extension ZMConversation {
         // Is this a new conversation, or an existing one that is being updated?
         let doesExistsOnBackend = self.remoteIdentifier != nil
 
-        let addedRoles = usersAndRoles.compactMap { (user, role) -> ParticipantRole? in
+        let addedRoles = usersAndRoles.compactMap { user, role -> ParticipantRole? in
             guard !user.isAccountDeleted else { return nil }
 
             // make sure the role is the right team/conversation role

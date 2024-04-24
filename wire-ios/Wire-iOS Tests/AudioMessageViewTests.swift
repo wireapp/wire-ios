@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,27 +21,27 @@ import XCTest
 
 extension MockMessage: AudioTrack {
 
-    public var title: String? {
+    var title: String? {
         return .none
     }
 
-    public var author: String? {
+    var author: String? {
         return .none
     }
 
-    public var duration: TimeInterval {
+    var duration: TimeInterval {
         return 9999
     }
 
-    public var streamURL: URL? {
+    var streamURL: URL? {
         return .none
     }
 
-    public var previewStreamURL: URL? {
+    var previewStreamURL: URL? {
         return .none
     }
 
-    public var failedToLoad: Bool {
+    var failedToLoad: Bool {
         get {
             return false
         }

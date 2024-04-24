@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -479,14 +479,10 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertEqual(messageMatch, message)
     }
 
-    func testThatItCanSearchForALargeMessage() {
-        do {
-            let longText = try String(contentsOf: fileURL(forResource: "ExternalMessageTextFixture", extension: "txt"), encoding: .utf8)
-            let text = longText + "search query"
-            verifyThatItFindsMessage(withText: text, whenSearchingFor: "search query")
-        } catch {
-            XCTFail("Unexpected error thrown: \(error)")
-        }
+    func testThatItCanSearchForALargeMessage() throws {
+        let longText = try String(contentsOf: fileURL(forResource: "ExternalMessageTextFixture", extension: "txt"), encoding: .utf8)
+        let text = longText + "search query"
+        verifyThatItFindsMessage(withText: text, whenSearchingFor: "search query")
     }
 
     func testThatItCanSearchForALikedMessage() {
@@ -596,7 +592,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
 
         // Given
         let conversation = conversation ?? ZMConversation.insertNewObject(in: uiMOC)
-        if nil == conversation.remoteIdentifier {
+        if conversation.remoteIdentifier == nil {
             conversation.remoteIdentifier = .create()
         }
         let message = try! conversation.appendText(content: text) as! ZMMessage

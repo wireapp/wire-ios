@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ extension MockUserType {
     /// - Returns: a mock user
     class func createDefaultSelfUser() -> MockUserType {
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
-        mockSelfUser.accentColorValue = .vividRed
+        mockSelfUser.accentColorValue = .red
 
         return mockSelfUser
     }
@@ -40,7 +40,7 @@ extension MockUserType {
     class func createSelfUser(name: String, inTeam teamID: UUID? = nil) -> MockUserType {
         let user = createUser(name: name, inTeam: teamID)
         user.isSelfUser = true
-        user.accentColorValue = .vividRed
+        user.accentColorValue = .red
         return user
     }
 
@@ -57,7 +57,7 @@ extension MockUserType {
         user.isSelfUser = false
         user.isConnected = true
         user.emailAddress = teamID != nil ? "test@email.com" : nil
-        user.accentColorValue = .brightOrange
+        user.accentColorValue = .amber
         return user
     }
 
@@ -87,7 +87,7 @@ extension MockUserType {
         let user = MockUserType.createUser(name: "Bruno")
         user.handle = "bruno"
         user.initials = "B"
-        user.accentColorValue = .brightOrange
+        user.accentColorValue = .amber
         user.isConnected = true
 
         return user

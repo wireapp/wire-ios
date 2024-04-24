@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
 
 @import Foundation;
 @import WireImages;
@@ -74,6 +73,7 @@ NSString *const ZMConversationDomainKey = @"domain";
 NSString *const ZMConversationIsPendingMetadataRefreshKey = @"isPendingMetadataRefresh";
 NSString *const ZMConversationIsDeletedRemotelyKey = @"isDeletedRemotely";
 NSString *const ZMConversationIsForcedReadOnlyKey = @"isForcedReadOnly";
+NSString *const ZMConversationIsPendingInitialFetch = @"isPendingInitialFetch";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -357,7 +357,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversation.epochKey,
             ZMConversation.epochTimestampKey,
             ZMConversationIsDeletedRemotelyKey,
-            PrimaryKey
+            PrimaryKey,
+            ZMConversationIsPendingInitialFetch
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];

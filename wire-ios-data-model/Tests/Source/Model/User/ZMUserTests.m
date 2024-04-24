@@ -1,20 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 @import WireUtilities;
 
@@ -97,7 +97,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 
 - (void)testThatWeCanSetAttributesOnUser
 {
-    [self checkUserAttributeForKey:@"accentColorValue" value:@(ZMAccentColorVividRed)];
+    [self checkUserAttributeForKey:@"accentColorValue" value:@(ZMAccentColorRed)];
     [self checkUserAttributeForKey:@"emailAddress" value:@"foo@example.com"];
     [self checkUserAttributeForKey:@"name" value:@"Foo Bar"];
     [self checkUserAttributeForKey:@"handle" value:@"foo_bar"];
@@ -498,7 +498,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqualObjects(user.handle, payload[@"handle"]);
     XCTAssertEqual([self managedByString:user], payload[@"managed_by"]);
     XCTAssertNil(user.expiresAt);
-    XCTAssertEqual(user.accentColorValue, ZMAccentColorBrightYellow);
+    XCTAssertEqual(user.accentColorValue, ZMAccentColorDeprecatedYellow);
 }
 
 - (void)testThatItUpdatesAccountDeletionStatusOnAnExistingUser
@@ -1222,7 +1222,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     // given
     ZMUser<ZMEditableUser> *user = [ZMUser selfUserInContext:self.uiMOC];
     user.name = @"Test";
-    user.accentColorValue = ZMAccentColorBrightOrange;
+    user.accentColorValue = ZMAccentColorAmber;
     
     // when
     XCTAssertTrue([self.uiMOC saveOrRollback]);
@@ -1615,9 +1615,9 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 {
     // given
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user.accentColorValue = ZMAccentColorBrightYellow;
+    user.accentColorValue = ZMAccentColorDeprecatedYellow;
     [self.uiMOC saveOrRollback];
-    XCTAssertEqual(user.accentColorValue, ZMAccentColorBrightYellow);
+    XCTAssertEqual(user.accentColorValue, ZMAccentColorDeprecatedYellow);
     
     // when
     user.accentColorValue = ZMAccentColorUndefined;
@@ -1641,9 +1641,9 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
         ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-        user.accentColorValue = ZMAccentColorBrightYellow;
+        user.accentColorValue = ZMAccentColorDeprecatedYellow;
         [self.syncMOC saveOrRollback];
-        XCTAssertEqual(user.accentColorValue, ZMAccentColorBrightYellow);
+        XCTAssertEqual(user.accentColorValue, ZMAccentColorDeprecatedYellow);
         
         // when
         user.accentColorValue = ZMAccentColorUndefined;

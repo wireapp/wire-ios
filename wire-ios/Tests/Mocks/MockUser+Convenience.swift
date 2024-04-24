@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ extension MockUser {
         user.isTeamMember = teamID != nil
         user.teamIdentifier = teamID
         user.teamRole = teamID != nil ? .member : .none
-        user.accentColorValue = .vividRed
+        user.accentColorValue = .red
         user.remoteIdentifier = UUID()
         return user
     }
@@ -66,7 +66,7 @@ extension MockUser {
         user.isTeamMember = teamID != nil
         user.teamIdentifier = teamID
         user.teamRole = teamID != nil ? .member : .none
-        user.accentColorValue = .brightOrange
+        user.accentColorValue = .amber
         user.emailAddress = teamID != nil ? "test@email.com" : nil
         user.remoteIdentifier = UUID()
         return user
