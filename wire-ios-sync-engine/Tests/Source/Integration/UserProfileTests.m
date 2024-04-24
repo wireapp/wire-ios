@@ -32,7 +32,7 @@
 {
 
     NSString *name = @"My New Name";
-    ZMAccentColor accentColor = ZMAccentColorSoftPink;
+    ZMAccentColor accentColor = ZMAccentColorTurquoise;
     {
         // Create a UI context
         XCTAssertTrue([self login]);
@@ -76,7 +76,7 @@
 
 - (void)testThatItNotifiesObserverWhenWeChangeAccentColorForSelfUser
 {
-    ZMAccentColor accentColor = ZMAccentColorSoftPink;
+    ZMAccentColor accentColor = ZMAccentColorTurquoise;
     
     XCTAssertTrue([self login]);
 
