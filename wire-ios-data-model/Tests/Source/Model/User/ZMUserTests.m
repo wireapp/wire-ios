@@ -595,7 +595,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     
     // then
     XCTAssertGreaterThan(user.accentColorValue, 0);
-    XCTAssertLessThanOrEqual(user.zmAccentColor, ZMAccentColor.max);
+    XCTAssertLessThanOrEqual(user.zmAccentColor.rawValue, ZMAccentColor.max.rawValue);
 }
 
 - (void)testThatItLimitsAccentColorsToValidRangeForUpdateData_Undefined;
@@ -613,7 +613,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     
     // then
     XCTAssertGreaterThan(user.accentColorValue, 0);
-    XCTAssertLessThanOrEqual(user.zmAccentColor, ZMAccentColor.max);
+    XCTAssertLessThanOrEqual(user.zmAccentColor.rawValue, ZMAccentColor.max.rawValue);
 }
 
 - (void)testThatItDoesPersistCompleteImageDataToCache
