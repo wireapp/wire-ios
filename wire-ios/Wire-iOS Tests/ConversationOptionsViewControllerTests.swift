@@ -417,7 +417,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         mock.viewModelDidReceiveError_MockMethod = { _, _ in }
         viewModel.delegate = mock
 
-        mockUseCaseFactory.createSecuredGuestLinkUseCase_MockMethod = {
+        mockUseCaseFactory.createConversationGuestLinkUseCase_MockMethod = {
             return self.mockCreateSecuredGuestLinkUseCase
         }
 
@@ -443,7 +443,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         let mock = MockConversationGuestOptionsViewModelDelegate()
         mock.viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
 
-        mockUseCaseFactory.createSecuredGuestLinkUseCase_MockMethod = {
+        mockUseCaseFactory.createConversationGuestLinkUseCase_MockMethod = {
             return self.mockCreateSecuredGuestLinkUseCase
         }
 
