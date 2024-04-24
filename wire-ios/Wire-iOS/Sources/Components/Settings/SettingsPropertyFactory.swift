@@ -20,9 +20,9 @@ import AppCenter
 import AppCenterAnalytics
 import AppCenterDistribute
 import avs
-import WireDataModel
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
+import WireUtilities
 
 protocol TrackingInterface {
     var disableCrashSharing: Bool { get set }
@@ -159,7 +159,7 @@ final class SettingsPropertyFactory {
                 switch value {
                 case .number(let number):
                     self.userSession?.enqueue {
-                        self.selfUser?.zmAccentColor = .from(rawValue: number.int16Value)
+                        self.selfUser?.accentColorValue = number.int16Value
                     }
                 default:
                     throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")

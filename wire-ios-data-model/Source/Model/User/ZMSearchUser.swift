@@ -127,7 +127,7 @@ public class ZMSearchUser: NSObject, UserType {
     fileprivate var internalIsTeamMember: Bool = false
     fileprivate var internalTeamCreatedBy: UUID?
     fileprivate var internalTeamPermissions: Permissions?
-    fileprivate var internalAccentColor: ZMAccentColor?
+    fileprivate var internalAccentColorValue: ZMAccentColorRawValue
     fileprivate var internalPendingApprovalByOtherUser: Bool = false
     fileprivate var internalConnectionRequestMessage: String?
     fileprivate var internalPreviewImageData: Data?
@@ -316,12 +316,16 @@ public class ZMSearchUser: NSObject, UserType {
         return user?.isUnderLegalHold == true
     }
 
-    public var zmAccentColor: ZMAccentColor? {
+    public var accentColorValue: ZMAccentColorRawValue {
         if let user = user {
-            user.zmAccentColor
+            user.accentColorValue
         } else {
-            internalAccentColor
+            internalAccentColorValue
         }
+    }
+
+    public var zmAccentColor: ZMAccentColor? {
+        .from(rawValue: accentColorValue)
     }
 
     public var isWirelessUser: Bool {
@@ -475,7 +479,7 @@ public class ZMSearchUser: NSObject, UserType {
         self.internalName = name
         self.internalHandle = handle
         self.internalInitials = personName.initials
-        self.internalAccentColor = accentColor
+        self.internalAccentColorValue = accentColor?.rawValue ?? 0
         self.user = existingUser
         self.internalDomain = domain
         self.remoteIdentifier = existingUser?.remoteIdentifier ?? remoteIdentifier

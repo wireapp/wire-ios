@@ -68,7 +68,7 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
         // GIVEN
         let otherUserConversation = MockStableRandomParticipantsConversation()
         let otherUser = MockUserType.createDefaultOtherUser()
-        otherUser.accentColor = .green
+        otherUser.zmAccentColor = .green
         otherUserConversation.conversationType = .oneOnOne
         otherUserConversation.stableRandomParticipants = [otherUser]
 
@@ -82,7 +82,7 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
     func testThatItRendersPendingConnection() {
         // GIVEN
         let otherUser = MockUserType.createDefaultOtherUser()
-        otherUser.accentColor = .green
+        otherUser.zmAccentColor = .green
         otherUser.isConnected = false
         otherUser.isPendingApprovalBySelfUser = true
         let otherUserConversation = MockStableRandomParticipantsConversation()
@@ -105,7 +105,7 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
         otherUser.isConnected = true
         XCTAssert(otherUser.isServiceUser)
 
-        otherUser.accentColor = .green
+        otherUser.zmAccentColor = .green
         let otherUserConversation = MockStableRandomParticipantsConversation()
         otherUserConversation.conversationType = .oneOnOne
         otherUserConversation.stableRandomParticipants = [otherUser]
@@ -122,7 +122,7 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
         let conversation = MockStableRandomParticipantsConversation()
         let otherUser = MockUserType.createDefaultOtherUser()
         let thirdUser = MockUserType.createConnectedUser(name: "Anna")
-        thirdUser.accentColor = .red
+        thirdUser.zmAccentColor = .red
         conversation.stableRandomParticipants = [thirdUser, otherUser]
 
         // WHEN
@@ -138,10 +138,10 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
         let conversation = MockStableRandomParticipantsConversation()
         conversation.stableRandomParticipants = MockUserType.usernames.map { MockUserType.createConnectedUser(name: $0) }
 
-        (conversation.stableRandomParticipants[0] as! MockUserType).accentColor = .red
-        (conversation.stableRandomParticipants[1] as! MockUserType).accentColor = .amber
-        (conversation.stableRandomParticipants[2] as! MockUserType).accentColor = .amber
-        (conversation.stableRandomParticipants[3] as! MockUserType).accentColor = .blue
+        (conversation.stableRandomParticipants[0] as! MockUserType).zmAccentColor = .red
+        (conversation.stableRandomParticipants[1] as! MockUserType).zmAccentColor = .amber
+        (conversation.stableRandomParticipants[2] as! MockUserType).zmAccentColor = .amber
+        (conversation.stableRandomParticipants[3] as! MockUserType).zmAccentColor = .blue
 
         // WHEN
         sut.configure(context: .conversation(conversation: conversation))

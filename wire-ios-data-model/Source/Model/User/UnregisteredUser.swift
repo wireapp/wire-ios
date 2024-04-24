@@ -31,10 +31,20 @@ public class UnregisteredUser {
     public var credentials: UnverifiedCredentials?
     public var verificationCode: String?
     public var name: String?
-    public var accentColor: AccentColor?
+    public var accentColorValue: ZMAccentColorRawValue?
     public var acceptedTermsOfService: Bool?
     public var marketingConsent: Bool?
     public var password: String?
+
+    public var accentColor: AccentColor? {
+        get {
+            guard let accentColorValue else { return nil }
+            return .init(rawValue: accentColorValue)
+        }
+        set {
+            accentColorValue = newValue?.rawValue
+        }
+    }
 
     /**
      * Creates an empty unregistered user.
