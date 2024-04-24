@@ -27,13 +27,11 @@ extension Bundle {
             let appCenterID = key.first else { return nil }
         return appCenterID.replacingOccurrences(of: "appcenter-", with: "")
     }
-<<<<<<< HEAD
 
-=======
     public static var useAppCenter: Bool {
         return appMainBundle.infoForKey("UseAppCenter") == "1"
     }
->>>>>>> develop
+
     // MARK: - Countly
     public static var countlyAppKey: String? {
         return appMainBundle.infoForKey("CountlyAppKey")
