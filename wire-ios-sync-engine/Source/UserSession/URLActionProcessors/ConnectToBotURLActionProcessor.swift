@@ -40,7 +40,7 @@ class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
         let serviceUser = ZMSearchUser(contextProvider: contextProvider,
                                        name: "",
                                        handle: nil,
-                                       accentColor: .strongBlue,
+                                       accentColor: .blue,
                                        remoteIdentifier: serviceUserData.service,
                                        teamIdentifier: nil,
                                        user: nil,
@@ -59,5 +59,4 @@ class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
             }
         }
     }
-
 }
