@@ -69,7 +69,7 @@ To illustrate how all these pieces work together, consider a user who wishes to 
 
 #### When enabling / disabling encryption at rest
 
-When encryption at rest is turned on a migration is needed to bring the existing database into the correct state. Once the encryption keys have been generated, we then proceed to encrypt all messages in the database with the database key. Similarly, when encryption at rest is turned off, we must decrypt all messages with the database key before the encryption keys are destroyed, otherwise the messages no longer be accessible.
+When encryption at rest is turned on a migration is needed to bring the existing database into the correct state. Once the encryption keys have been generated, we then proceed to encrypt all messages in the database with the database key. Similarly, when encryption at rest is turned off, we must decrypt all messages with the database key before the encryption keys are destroyed, otherwise the messages will no longer be accessible.
 
 #### When exporting / restoring a database
 
