@@ -41,17 +41,17 @@
         ZMUser<ZMEditableUser> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
         
         // sanity check
-        XCTAssertNotEqual(selfUser.accentColorValue, accentColor.rawValue);
+        XCTAssertNotEqual(selfUser.accentColor, accentColor);
 
         selfUser.name = name;
-        selfUser.accentColorValue = accentColor.rawValue;
+        selfUser.accentColor = accentColor;
 
         [self.userSession saveOrRollbackChanges];
         // Wait for merge ui->sync to be done
         WaitForAllGroupsToBeEmpty(0.5);
         
         
-        XCTAssertEqual(selfUser.accentColorValue, accentColor.rawValue);
+        XCTAssertEqual(selfUser.accentColor, accentColor);
     }
     
     // Tears down context(s) &
@@ -69,7 +69,7 @@
         // Get the self user
         ZMUser<ZMEditableUser> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
         XCTAssertEqualObjects(selfUser.name, name);
-        XCTAssertEqual(selfUser.accentColorValue, accentColor.rawValue);
+        XCTAssertEqual(selfUser.accentColor, accentColor);
     }
 }
 
@@ -80,12 +80,12 @@
     XCTAssertTrue([self login]);
 
     ZMUser<ZMEditableUser> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-    XCTAssertNotEqual(selfUser.accentColorValue, accentColor.rawValue);
+    XCTAssertNotEqual(selfUser.accentColor, accentColor);
 
     ZMUserObserver *observer = [[ZMUserObserver alloc] initWithUser:selfUser];
     
     // when
-    selfUser.accentColorValue = accentColor.rawValue;
+    selfUser.accentColor = accentColor;
     [self.userSession saveOrRollbackChanges];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -97,7 +97,7 @@
     XCTAssertNotNil(note);
     XCTAssertTrue(note.accentColorValueChanged);
     
-    XCTAssertEqual(selfUser.accentColorValue, accentColor.rawValue);
+    XCTAssertEqual(selfUser.accentColor, accentColor);
 }
 
 @end

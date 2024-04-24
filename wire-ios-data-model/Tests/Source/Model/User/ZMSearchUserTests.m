@@ -126,7 +126,7 @@
     
     // then
     XCTAssertEqualObjects(searchUser.name, @"John Doe");
-    XCTAssertEqual(searchUser.accentColorValue, ZMAccentColor.green.rawValue);
+    XCTAssertEqual(searchUser.accentColor, ZMAccentColor.green);
     XCTAssertEqual(searchUser.isConnected, NO);
     XCTAssertNil(searchUser.completeImageData);
     XCTAssertNil(searchUser.previewImageData);
@@ -141,7 +141,7 @@
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     user.name = @"Actual name";
     user.handle = @"my_handle";
-    user.accentColorValue = ZMAccentColor.red.rawValue;
+    user.accentColor = ZMAccentColor.red;
     user.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     user.connection.status = ZMConnectionStatusAccepted;
     user.remoteIdentifier = [NSUUID createUUID];
@@ -166,7 +166,7 @@
     XCTAssertEqualObjects(searchUser.name, user.name);
     XCTAssertEqualObjects(searchUser.handle, user.handle);
     XCTAssertEqualObjects(searchUser.name, user.name);
-    XCTAssertEqual(searchUser.accentColorValue, user.accentColorValue);
+    XCTAssertEqual(searchUser.accentColor, user.accentColor);
     XCTAssertEqual(searchUser.isConnected, user.isConnected);
     XCTAssertEqualObjects(searchUser.completeImageData, user.completeImageData);
     XCTAssertEqualObjects(searchUser.previewImageData, user.previewImageData);

@@ -505,7 +505,7 @@ public class ZMSearchUser: NSObject, UserType {
             contextProvider: contextProvider,
             name: user.name ?? "",
             handle: user.handle,
-            accentColor: .from(rawValue: user.accentColorValue),
+            accentColor: user.zmAccentColor,
             remoteIdentifier: user.remoteIdentifier,
             domain: user.domain,
             teamIdentifier: user.teamIdentifier,

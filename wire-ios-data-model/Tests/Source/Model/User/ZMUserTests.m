@@ -595,7 +595,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     
     // then
     XCTAssertGreaterThan(user.accentColorValue, 0);
-    XCTAssertLessThanOrEqual(user.accentColorValue, ZMAccentColor.max.rawValue);
+    XCTAssertLessThanOrEqual(user.accentColor, ZMAccentColor.max);
 }
 
 - (void)testThatItLimitsAccentColorsToValidRangeForUdpateData_Undefined;
@@ -613,7 +613,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     
     // then
     XCTAssertGreaterThan(user.accentColorValue, 0);
-    XCTAssertLessThanOrEqual(user.accentColorValue, ZMAccentColor.max.rawValue);
+    XCTAssertLessThanOrEqual(user.accentColor, ZMAccentColor.max);
 }
 
 - (void)testThatItDoesPersistCompleteImageDataToCache
@@ -1222,7 +1222,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     // given
     ZMUser<ZMEditableUser> *user = [ZMUser selfUserInContext:self.uiMOC];
     user.name = @"Test";
-    user.accentColorValue = ZMAccentColor.amber.rawValue;
+    user.accentColor = ZMAccentColor.amber;
 
     // when
     XCTAssertTrue([self.uiMOC saveOrRollback]);
@@ -1613,9 +1613,9 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
         ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-        user.accentColorValue = ZMAccentColor.amber.rawValue;
+        user.accentColor = ZMAccentColor.amber;
         [self.syncMOC saveOrRollback];
-        XCTAssertEqual(user.accentColorValue, ZMAccentColor.amber.rawValue);
+        XCTAssertEqual(user.accentColor, ZMAccentColor.amber);
 
         // when
         user.accentColorValue = 0;

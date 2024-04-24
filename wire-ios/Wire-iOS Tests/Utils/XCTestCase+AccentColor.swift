@@ -23,7 +23,7 @@ import XCTest
 
 private extension UIColor {
     class var accentOverrideColor: AccentColor? {
-        ZMUser.selfUser().map { .init(rawValue: $0.accentColorValue) ?? .default }
+        ZMUser.selfUser()?.accentColor
     }
 }
 
