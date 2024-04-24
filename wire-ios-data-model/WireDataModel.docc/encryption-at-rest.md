@@ -6,7 +6,7 @@ Protect sensitive persisted data while the app in inactive.
 
 Encryption at Rest (EAR) is a feature to protect sensitive data stored on the device while the app is "at rest", that is, when the app is not actively running. Most, if not all of the sensitive data is stored in Core Data. Since Core Data does not provide encryption at rest functionality, we must implement this functionality ourselves.
 
-By definition, data that is encrypted at rest is persisted in encrypted form and, when it is decrypted, exists is only in memory. To achieve this, the data needs to be encrypted when it is stored in the database and decrypted when it is retrieved from the database.
+By definition, data that is encrypted at rest is persisted in encrypted form and, when it is decrypted, exists only in memory. To achieve this, the data needs to be encrypted when it is stored in the database and decrypted when it is retrieved from the database.
 
 ![Persisted data is encrypted, in-memory data is decrypted](encryption-at-rest)
 
