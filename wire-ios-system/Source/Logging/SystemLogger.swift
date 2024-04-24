@@ -87,7 +87,8 @@ struct SystemLogger: LoggerProtocol {
     }
 
     func addTag(_ key: String, value: String?) {
-
+        // do nothing
+        log("🤖 add \(key) = \(value) - NO EFFECT HERE", attributes: nil, osLogType: .info)
     }
 
     private func log(_ message: LogConvertible, attributes: LogAttributes?, osLogType: OSLogType) {

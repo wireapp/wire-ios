@@ -19,10 +19,6 @@
 import Foundation
 
 public class AggregatedLogger: LoggerProtocol {
-    public func addTag(_ key: String, value: String?) {
-
-    }
-
     private var loggers: [LoggerProtocol] = []
 
     init(loggers: [LoggerProtocol]) {
@@ -72,6 +68,12 @@ public class AggregatedLogger: LoggerProtocol {
     public func persist(fileDestination: FileLoggerDestination) async {
         for logger in loggers {
             await logger.persist(fileDestination: fileDestination)
+        }
+    }
+
+    public func addTag(_ key: String, value: String?) {
+        loggers.forEach {
+            $0.addTag(key, value: value)
         }
     }
 }
