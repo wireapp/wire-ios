@@ -122,7 +122,7 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
         let conversation = MockStableRandomParticipantsConversation()
         let otherUser = MockUserType.createDefaultOtherUser()
         let thirdUser = MockUserType.createConnectedUser(name: "Anna")
-        thirdUser.accentColorValue = .vividRed
+        thirdUser.accentColorValue = .red
         conversation.stableRandomParticipants = [thirdUser, otherUser]
 
         // WHEN
@@ -138,7 +138,7 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
         let conversation = MockStableRandomParticipantsConversation()
         conversation.stableRandomParticipants = MockUserType.usernames.map { MockUserType.createConnectedUser(name: $0) }
 
-        (conversation.stableRandomParticipants[0] as! MockUserType).accentColorValue = .vividRed
+        (conversation.stableRandomParticipants[0] as! MockUserType).accentColorValue = .red
         (conversation.stableRandomParticipants[1] as! MockUserType).accentColorValue = .brightOrange
         (conversation.stableRandomParticipants[2] as! MockUserType).accentColorValue = .deprecatedYellow
         (conversation.stableRandomParticipants[3] as! MockUserType).accentColorValue = .blue

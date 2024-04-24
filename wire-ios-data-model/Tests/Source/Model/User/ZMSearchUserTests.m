@@ -144,7 +144,7 @@
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     user.name = @"Actual name";
     user.handle = @"my_handle";
-    user.accentColorValue = ZMAccentColorVividRed;
+    user.accentColorValue = ZMAccentColorRed;
     user.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     user.connection.status = ZMConnectionStatusAccepted;
     user.remoteIdentifier = [NSUUID createUUID];

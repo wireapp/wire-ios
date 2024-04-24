@@ -97,7 +97,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 
 - (void)testThatWeCanSetAttributesOnUser
 {
-    [self checkUserAttributeForKey:@"accentColorValue" value:@(ZMAccentColorVividRed)];
+    [self checkUserAttributeForKey:@"accentColorValue" value:@(ZMAccentColorRed)];
     [self checkUserAttributeForKey:@"emailAddress" value:@"foo@example.com"];
     [self checkUserAttributeForKey:@"name" value:@"Foo Bar"];
     [self checkUserAttributeForKey:@"handle" value:@"foo_bar"];

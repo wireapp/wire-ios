@@ -44,7 +44,7 @@ extension MockUser {
         user.isTeamMember = teamID != nil
         user.teamIdentifier = teamID
         user.teamRole = teamID != nil ? .member : .none
-        user.accentColorValue = .vividRed
+        user.accentColorValue = .red
         user.remoteIdentifier = UUID()
         return user
     }

@@ -39,7 +39,7 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
         userSession = UserSessionMock(mockUser: mockUser)
 
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
         sut = ConnectRequestsViewController(userSession: userSession)
 
         sut.loadViewIfNeeded()

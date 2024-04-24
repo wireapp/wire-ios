@@ -28,7 +28,7 @@ final class ConversationAudioMessageCellTests: ConversationMessageSnapshotTestCa
     override func setUp() {
         super.setUp()
 
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
 
         mockSelfUser = MockUserType.createDefaultSelfUser()
         message = MockMessageFactory.audioMessage(sender: mockSelfUser)!

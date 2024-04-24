@@ -77,7 +77,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         selfUser = ZMUser.insertNewObject(in: uiMOC)
         selfUser.remoteIdentifier = UUID()
         selfUser.name = "selfUser"
-        selfUser.accentColorValue = .vividRed
+        selfUser.accentColorValue = .red
         selfUser.emailAddress = "test@email.com"
         selfUser.phoneNumber = "+123456789"
 

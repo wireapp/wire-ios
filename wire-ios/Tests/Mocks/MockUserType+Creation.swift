@@ -24,7 +24,7 @@ extension MockUserType {
     /// - Returns: a mock user
     class func createDefaultSelfUser() -> MockUserType {
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
-        mockSelfUser.accentColorValue = .vividRed
+        mockSelfUser.accentColorValue = .red
 
         return mockSelfUser
     }
@@ -40,7 +40,7 @@ extension MockUserType {
     class func createSelfUser(name: String, inTeam teamID: UUID? = nil) -> MockUserType {
         let user = createUser(name: name, inTeam: teamID)
         user.isSelfUser = true
-        user.accentColorValue = .vividRed
+        user.accentColorValue = .red
         return user
     }
 

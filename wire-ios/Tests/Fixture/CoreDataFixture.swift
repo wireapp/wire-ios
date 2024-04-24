@@ -78,7 +78,7 @@ final class CoreDataFixture {
         }
         AppRootRouter.configureAppearance()
         UIView.setAnimationsEnabled(false)
-        accentColor = .vividRed
+        accentColor = .red
         snapshotBackgroundColor = UIColor.clear
 
         do {
@@ -148,7 +148,7 @@ final class CoreDataFixture {
         selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID()
         selfUser.name = "selfUser"
-        selfUser.accentColorValue = .vividRed
+        selfUser.accentColorValue = .red
         selfUser.emailAddress = "test@email.com"
         selfUser.phoneNumber = "+123456789"
 
