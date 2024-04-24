@@ -6053,6 +6053,28 @@ internal enum L10n {
           }
         }
       }
+      internal enum SwitchBackendConfirmation {
+        /// Accounts URL:
+        internal static let accountsUrl = L10n.tr("Localizable", "url_action.switch_backend_confirmation.accounts_url", fallback: "Accounts URL:")
+        /// Backend name:
+        internal static let backendName = L10n.tr("Localizable", "url_action.switch_backend_confirmation.backend_name", fallback: "Backend name:")
+        /// Backend URL:
+        internal static let backendUrl = L10n.tr("Localizable", "url_action.switch_backend_confirmation.backend_url", fallback: "Backend URL:")
+        /// Backend websocket URL:
+        internal static let backendWsurl = L10n.tr("Localizable", "url_action.switch_backend_confirmation.backend_wsurl", fallback: "Backend websocket URL:")
+        /// Blacklist URL:
+        internal static let blacklistUrl = L10n.tr("Localizable", "url_action.switch_backend_confirmation.blacklist_url", fallback: "Blacklist URL:")
+        /// If you proceed, you will be redirected to the following on-premises backend to log in:
+        internal static let message = L10n.tr("Localizable", "url_action.switch_backend_confirmation.message", fallback: "If you proceed, you will be redirected to the following on-premises backend to log in:")
+        /// Proceed
+        internal static let proceed = L10n.tr("Localizable", "url_action.switch_backend_confirmation.proceed", fallback: "Proceed")
+        /// Teams URL:
+        internal static let teamsUrl = L10n.tr("Localizable", "url_action.switch_backend_confirmation.teams_url", fallback: "Teams URL:")
+        /// Redirect to an on-premises backend?
+        internal static let title = L10n.tr("Localizable", "url_action.switch_backend_confirmation.title", fallback: "Redirect to an on-premises backend?")
+        /// Website URL:
+        internal static let websiteUrl = L10n.tr("Localizable", "url_action.switch_backend_confirmation.website_url", fallback: "Website URL:")
+      }
     }
     internal enum UserCell {
       internal enum Title {
