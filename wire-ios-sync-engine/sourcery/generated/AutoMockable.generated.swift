@@ -102,10 +102,10 @@ public class MockCreateConversationGuestLinkUseCaseProtocol: CreateConversationG
 
     // MARK: - invoke
 
-    public var invokeConversationPasswordCompletion_Invocations: [(conversation: ZMConversation, password: String?, completion: (Result<String, Error>) -> Void)] = []
-    public var invokeConversationPasswordCompletion_MockMethod: ((ZMConversation, String?, @escaping (Result<String, Error>) -> Void) -> Void)?
+    public var invokeConversationPasswordCompletion_Invocations: [(conversation: ZMConversation, password: String?, completion: (Result<String?, Error>) -> Void)] = []
+    public var invokeConversationPasswordCompletion_MockMethod: ((ZMConversation, String?, @escaping (Result<String?, Error>) -> Void) -> Void)?
 
-    public func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String, Error>) -> Void) {
+    public func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String?, Error>) -> Void) {
         invokeConversationPasswordCompletion_Invocations.append((conversation: conversation, password: password, completion: completion))
 
         guard let mock = invokeConversationPasswordCompletion_MockMethod else {

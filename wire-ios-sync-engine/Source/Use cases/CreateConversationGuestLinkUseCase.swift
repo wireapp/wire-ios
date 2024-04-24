@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol CreateConversationGuestLinkUseCaseProtocol {
 
-    func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String, Error>) -> Void)
+    func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String?, Error>) -> Void)
 
 }
 
@@ -32,7 +32,7 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
     public func invoke(
         conversation: ZMConversation,
         password: String?,
-        completion: @escaping (Result<String, Error>) -> Void
+        completion: @escaping (Result<String?, Error>) -> Void
     ) {
 
         if conversation.isLegacyAccessMode {
@@ -56,7 +56,7 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
     func createWirelessLink(
         conversation: ZMConversation,
         password: String?,
-        _ completion: @escaping (Result<String, Error>) -> Void
+        _ completion: @escaping (Result<String?, Error>) -> Void
     ) {
         guard conversation.canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
@@ -74,7 +74,7 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
         action.perform(in: context.notificationContext) { result in
             switch result {
             case .success(let link):
-                completion(.success(link ?? ""))
+                completion(.success(link))
             case .failure(let error):
                 completion(.failure(error))
             }
