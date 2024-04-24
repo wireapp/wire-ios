@@ -48,7 +48,7 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
 
         // given
         let remoteID = UUID.create()
-        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
+        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "Hans", handle: "hans", accentColor: .amber, remoteIdentifier: remoteID)
 
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
         self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
@@ -69,7 +69,7 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         let user = ZMUser.insertNewObject(in: self.uiMOC)
         user.remoteIdentifier = UUID.create()
         self.uiMOC.saveOrRollback()
-        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: nil, accentColor: .brightYellow, remoteIdentifier: nil, user: user)
+        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: nil, accentColor: .deprecatedYellow, remoteIdentifier: nil, user: user)
 
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
         self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
@@ -90,7 +90,7 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
 
         // given
         let remoteID = UUID.create()
-        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
+        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "Hans", handle: "hans", accentColor: .amber, remoteIdentifier: remoteID)
 
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
         self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
@@ -107,7 +107,7 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
 
         // given
         let remoteID = UUID.create()
-        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
+        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "Hans", handle: "hans", accentColor: .amber, remoteIdentifier: remoteID)
         let actionHandler = MockActionHandler<ConnectToUserAction>(result: .success(()),
                                                                    context: uiMOC.notificationContext)
 

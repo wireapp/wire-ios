@@ -62,7 +62,7 @@ class UnregisteredUserTests: XCTestCase {
         user.name = "Mario"
         user.credentials = .email("alexis@example.com")
         user.verificationCode = "123456"
-        user.accentColorValue = .softPink
+        user.accentColorValue = .turquoise
         user.acceptedTermsOfService = true
         user.marketingConsent = false
 
