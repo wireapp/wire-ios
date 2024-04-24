@@ -24,16 +24,16 @@ import WireSyncEngine
 
 // sourcery: AutoMockable
 protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
-    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didGeneratePassword password: String)
-    func viewModelDidValidatePasswordSuccessfully(_ viewModel: CreateSecureGuestLinkViewModel)
-    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String)
-    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didCreateLink link: String)
-    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didFailToCreateLinkWithError error: Error)
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didGeneratePassword password: String)
+    func viewModelDidValidatePasswordSuccessfully(_ viewModel: CreateSecureConversationGuestLinkViewModel)
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String)
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didCreateLink link: String)
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToCreateLinkWithError error: Error)
 }
 
 // MARK: - CreateSecureGuestLinkViewModel
 
-final class CreateSecureGuestLinkViewModel {
+final class CreateSecureConversationGuestLinkViewModel {
 
     // MARK: - Properties
 

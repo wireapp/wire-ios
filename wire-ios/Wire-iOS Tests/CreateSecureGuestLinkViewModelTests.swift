@@ -24,7 +24,7 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
 
     // MARK: - Properties
 
-    var viewModel: CreateSecureGuestLinkViewModel!
+    var viewModel: CreateSecureConversationGuestLinkViewModel!
     var mockDelegate: MockCreatePasswordSecuredLinkViewModelDelegate!
     var textField: ValidatedTextField!
     var confirmPasswordField: ValidatedTextField!
@@ -36,7 +36,7 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
         super.setUp()
         FontScheme.configure(with: .large)
         userSession = UserSessionMock()
-        viewModel = CreateSecureGuestLinkViewModel(delegate: mockDelegate, useCaseFactory: userSession.useCaseFactory)
+        viewModel = CreateSecureConversationGuestLinkViewModel(delegate: mockDelegate, useCaseFactory: userSession.useCaseFactory)
         mockDelegate = MockCreatePasswordSecuredLinkViewModelDelegate()
         viewModel.delegate = mockDelegate
         textField = ValidatedTextField(style: .default)
