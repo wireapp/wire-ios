@@ -61,7 +61,11 @@ final class ConversationGuestOptionsViewModel {
         }
     }
 
-    private var link: String?
+    var link: String? {
+        didSet {
+            updateRows()
+        }
+    }
 
     var copyInProgress = false {
         didSet {
