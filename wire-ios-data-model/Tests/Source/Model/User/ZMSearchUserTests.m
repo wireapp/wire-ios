@@ -126,7 +126,7 @@
     
     // then
     XCTAssertEqualObjects(searchUser.name, @"John Doe");
-    XCTAssertEqual(searchUser.accentColor, ZMAccentColor.green);
+    XCTAssertEqual(searchUser.zmAccentColor, ZMAccentColor.green);
     XCTAssertEqual(searchUser.isConnected, NO);
     XCTAssertNil(searchUser.completeImageData);
     XCTAssertNil(searchUser.previewImageData);
@@ -141,7 +141,7 @@
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     user.name = @"Actual name";
     user.handle = @"my_handle";
-    user.accentColor = ZMAccentColor.red;
+    user.zmAccentColor = ZMAccentColor.red;
     user.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     user.connection.status = ZMConnectionStatusAccepted;
     user.remoteIdentifier = [NSUUID createUUID];
@@ -166,17 +166,16 @@
     XCTAssertEqualObjects(searchUser.name, user.name);
     XCTAssertEqualObjects(searchUser.handle, user.handle);
     XCTAssertEqualObjects(searchUser.name, user.name);
-    XCTAssertEqual(searchUser.accentColor, user.accentColor);
+    XCTAssertEqual(searchUser.zmAccentColor, user.zmAccentColor);
     XCTAssertEqual(searchUser.isConnected, user.isConnected);
     XCTAssertEqualObjects(searchUser.completeImageData, user.completeImageData);
     XCTAssertEqualObjects(searchUser.previewImageData, user.previewImageData);
     XCTAssertEqual(searchUser.user, user);
 }
 
-@end
 
+// MARK: - Connections
 
-@implementation ZMSearchUserTests (Connections)
 
 - (void)testThatItCanBeConnectedIfItIsNotAlreadyConnected
 {

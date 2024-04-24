@@ -498,7 +498,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqualObjects(user.handle, payload[@"handle"]);
     XCTAssertEqual([self managedByString:user], payload[@"managed_by"]);
     XCTAssertNil(user.expiresAt);
-    XCTAssertEqual(user.accentColorValue, ZMAccentColor.amber.rawValue);
+    XCTAssertEqual(user.zmAccentColor, ZMAccentColor.amber);
 }
 
 - (void)testThatItUpdatesAccountDeletionStatusOnAnExistingUser
@@ -595,7 +595,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     
     // then
     XCTAssertGreaterThan(user.accentColorValue, 0);
-    XCTAssertLessThanOrEqual(user.accentColor, ZMAccentColor.max);
+    XCTAssertLessThanOrEqual(user.zmAccentColor, ZMAccentColor.max);
 }
 
 - (void)testThatItLimitsAccentColorsToValidRangeForUdpateData_Undefined;
@@ -613,7 +613,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     
     // then
     XCTAssertGreaterThan(user.accentColorValue, 0);
-    XCTAssertLessThanOrEqual(user.accentColor, ZMAccentColor.max);
+    XCTAssertLessThanOrEqual(user.zmAccentColor, ZMAccentColor.max);
 }
 
 - (void)testThatItDoesPersistCompleteImageDataToCache
@@ -1222,7 +1222,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     // given
     ZMUser<ZMEditableUser> *user = [ZMUser selfUserInContext:self.uiMOC];
     user.name = @"Test";
-    user.accentColor = ZMAccentColor.amber;
+    user.zmAccentColor = ZMAccentColor.amber;
 
     // when
     XCTAssertTrue([self.uiMOC saveOrRollback]);
@@ -1613,9 +1613,9 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
         ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-        user.accentColor = ZMAccentColor.amber;
+        user.zmAccentColor = ZMAccentColor.amber;
         [self.syncMOC saveOrRollback];
-        XCTAssertEqual(user.accentColor, ZMAccentColor.amber);
+        XCTAssertEqual(user.zmAccentColor, ZMAccentColor.amber);
 
         // when
         user.accentColorValue = 0;
