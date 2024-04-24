@@ -161,6 +161,15 @@ func mapResponse<T: Decodable>(_ response: ZMTransportResponse) throws -> T {
     }
 }
 
+func mapFailureResponse(_ response: ZMTransportResponse) throws {
+    guard
+        let responseFailure = Payload.ResponseFailure(response, decoder: .defaultDecoder)
+    else {
+        throw NetworkError.errorDecodingResponse(response)
+    }
+    throw NetworkError.invalidRequestError(responseFailure, response)
+}
+
 class MessageAPIV1: MessageAPIV0 {
 
     private let protobufContentType = "application/x-protobuf"

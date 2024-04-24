@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngineSupport
+@testable import WireSyncEngine
 @testable import WireDataModelSupport
 @testable import WireRequestStrategySupport
 import XCTest
@@ -24,24 +24,23 @@ import XCTest
 final class RemoveUserClientUseCaseTests: XCTestCase {
 
     private var sut: RemoveUserClientUseCase!
-    private let coreDataStackHelper = CoreDataStackHelper()
     private var stack: CoreDataStack!
-    var mockApiProvider: MockAPIProviderInterface!
-    let messageApi = MockMessageAPI()
+    private let coreDataStackHelper = CoreDataStackHelper()
+    private let mockApiProvider = MockAPIProviderInterface()
+    private let userClientAPI = MockUserClientAPI()
 
     override func setUp() async throws {
         try await super.setUp()
 
-        mockApiProvider = MockAPIProviderInterface()
         stack = try await coreDataStackHelper.createStack()
+        mockApiProvider.userClientAPIApiVersion_MockValue = userClientAPI
         sut = RemoveUserClientUseCase(
-            apiProvider: mockApiProvider,
+            userClientAPI: mockApiProvider.userClientAPIApiVersion_MockValue!,
             syncContext: stack.syncContext)
 
     }
 
     override func tearDown() async throws {
-        mockApiProvider = nil
         stack = nil
         sut = nil
 
@@ -50,99 +49,54 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
 
     func testThatItRemovesUserClient() async throws {
         // Given
-        var userClient: UserClient!
-        let clientID1 = MLSClientID.random()
-        let selfUserHandle = "foo"
-        let selfUserName = "Ms Foo"
-        let domain = "local.com"
-        try await stack.syncContext.perform {
-            let modelHelper = ModelHelper()
-
-            let selfUser = modelHelper.createSelfUser(in: self.stack.syncContext)
-            selfUser.handle = selfUserHandle
-            selfUser.name = selfUserName
-            selfUser.domain = domain
-
-            userClient = modelHelper.createClient(id: clientID1.clientID, for: selfUser)
-
-            try self.stack.syncContext.save()
-        }
-
-        // When
         let expectation = XCTestExpectation(description: "should call deleteUserClient")
-        let userClientAPI = MockUserClientAPI()
         userClientAPI.deleteUserClientClientIdCredentials_MockMethod = {_, _ in
             // Then
             expectation.fulfill()
         }
         mockApiProvider.userClientAPIApiVersion_MockValue = userClientAPI
 
-        try await sut.invoke(userClient, credentials: EmailCredentials(email: "", password: ""))
+        // When
+        try await sut.invoke(clientId: "", credentials: EmailCredentials(email: "", password: ""))
     }
 
     func testThatItDoesNotRemoveUserClient_WhenClientDoesNotExistLocally() async throws {
         // Given
-        var userClient: UserClient!
-        let clientID1 = MLSClientID.random()
-        let selfUserHandle = "foo"
-        let selfUserName = "Ms Foo"
-        let domain = "local.com"
-        await stack.viewContext.perform {
-            let modelHelper = ModelHelper()
-
-            let selfUser = modelHelper.createSelfUser(in: self.stack.viewContext)
-            selfUser.handle = selfUserHandle
-            selfUser.name = selfUserName
-            selfUser.domain = domain
-
-            userClient = modelHelper.createClient(id: clientID1.clientID, for: selfUser)
-        }
-
-        let userClientAPI = MockUserClientAPI()
         userClientAPI.deleteUserClientClientIdCredentials_MockMethod = { _, _ in }
-        mockApiProvider.userClientAPIApiVersion_MockValue = userClientAPI
 
         // When / Then
         await assertItThrows(error: RemoveUserClientError.clientDoesNotExistLocally) {
-            try await sut.invoke(userClient, credentials: EmailCredentials(email: "", password: ""))
+            try await sut.invoke(clientId: "", credentials: EmailCredentials(email: "", password: ""))
         }
     }
 
     func testThatItDoesNotRemoveUserClient_WhenClientDoesNotExistRemotely() async throws {
         // Given
-        var userClient: UserClient!
-        let clientID1 = MLSClientID.random()
-        let selfUserHandle = "foo"
-        let selfUserName = "Ms Foo"
-        let domain = "local.com"
-        try await stack.syncContext.perform {
-            let modelHelper = ModelHelper()
-
-            let selfUser = modelHelper.createSelfUser(in: self.stack.syncContext)
-            selfUser.handle = selfUserHandle
-            selfUser.name = selfUserName
-            selfUser.domain = domain
-
-            userClient = modelHelper.createClient(id: clientID1.clientID, for: selfUser)
-
-            try self.stack.syncContext.save()
-        }
-
-        let userClientAPI = MockUserClientAPI()
+        let clientId = "222"
+        try await createSelfClient(clientId: clientId)
         userClientAPI.deleteUserClientClientIdCredentials_MockMethod = { _, _ in }
         userClientAPI.deleteUserClientClientIdCredentials_MockError = RemoveUserClientError.clientToDeleteNotFound
-        mockApiProvider.userClientAPIApiVersion_MockValue = userClientAPI
 
         // When / Then
         await assertItThrows(error: RemoveUserClientError.clientToDeleteNotFound) {
-            try await sut.invoke(userClient, credentials: EmailCredentials(email: "", password: ""))
+            try await sut.invoke(clientId: clientId, credentials: EmailCredentials(email: "", password: ""))
         }
     }
 
     func testThatItDoesNotRemoveUserClient_WhenInvalidCredentials() async throws {
         // Given
-        var userClient: UserClient!
-        let clientID1 = MLSClientID.random()
+        let clientId = "222"
+        try await createSelfClient(clientId: clientId)
+        userClientAPI.deleteUserClientClientIdCredentials_MockMethod = { _, _ in }
+        userClientAPI.deleteUserClientClientIdCredentials_MockError = RemoveUserClientError.invalidCredentials
+
+        // When / Then
+        await assertItThrows(error: RemoveUserClientError.invalidCredentials) {
+            try await sut.invoke(clientId: clientId, credentials: EmailCredentials(email: "", password: ""))
+        }
+    }
+
+    private func createSelfClient(clientId: String) async throws {
         let selfUserHandle = "foo"
         let selfUserName = "Ms Foo"
         let domain = "local.com"
@@ -154,19 +108,9 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
             selfUser.name = selfUserName
             selfUser.domain = domain
 
-            userClient = modelHelper.createClient(id: clientID1.clientID, for: selfUser)
+            _ = modelHelper.createClient(id: clientId, for: selfUser)
 
             try self.stack.syncContext.save()
-        }
-
-        let userClientAPI = MockUserClientAPI()
-        userClientAPI.deleteUserClientClientIdCredentials_MockMethod = { _, _ in }
-        userClientAPI.deleteUserClientClientIdCredentials_MockError = RemoveUserClientError.invalidCredentials
-        mockApiProvider.userClientAPIApiVersion_MockValue = userClientAPI
-
-        // When / Then
-        await assertItThrows(error: RemoveUserClientError.invalidCredentials) {
-            try await sut.invoke(userClient, credentials: EmailCredentials(email: "", password: ""))
         }
     }
 

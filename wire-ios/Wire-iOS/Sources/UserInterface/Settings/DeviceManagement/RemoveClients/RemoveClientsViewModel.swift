@@ -50,7 +50,10 @@ extension RemoveClientsViewController {
         }
 
         func removeUserClient(_ userClient: UserClient) async throws {
-            try await removeUserClientUseCase?.invoke(userClient, credentials: credentials?.emailCredentials)
+            guard let clientId = userClient.remoteIdentifier else {
+                throw RemoveUserClientError.clientDoesNotExistLocally
+            }
+            try await removeUserClientUseCase?.invoke(clientId: clientId, credentials: credentials?.emailCredentials)
         }
     }
 }

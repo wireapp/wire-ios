@@ -45,12 +45,8 @@ class UserClientAPIV0: UserClientAPI {
             apiVersion: apiVersion)
 
         let response = await httpClient.send(request)
-
-        switch response.result {
-        case .success:
-            break
-        default:
-            let _: Payload.UserClient = try mapResponse(response)
+        if response.result != .success {
+            try mapFailureResponse(response)
         }
     }
 }

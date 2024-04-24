@@ -21,11 +21,11 @@ import Foundation
 // sourcery: AutoMockable
 public protocol RemoveUserClientUseCaseProtocol {
 
-    func invoke(_ userClient: UserClient, credentials: EmailCredentials?) async throws
+    func invoke(clientId: String, credentials: EmailCredentials?) async throws
 
 }
 
-public class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
+class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
 
     // MARK: - Properties
 
@@ -34,29 +34,26 @@ public class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
 
     // MARK: - Life cycle
 
-    public init(
+    init(
         userClientAPI: UserClientAPI,
         syncContext: NSManagedObjectContext) {
-        self.userClientAPI = userClientAPI
-        self.syncContext = syncContext
-    }
+            self.userClientAPI = userClientAPI
+            self.syncContext = syncContext
+        }
 
     // MARK: - Public interface
 
-    public func invoke(_ userClient: UserClient, credentials: EmailCredentials?) async throws {
-        let objectId = userClient.objectID
-        guard let (existingClient, clientId) = await self.syncContext.perform({
-            let client = try? self.syncContext.existingObject(with: objectId) as? UserClient
-            return (client, client?.remoteIdentifier) as? (UserClient, String)
-        }) else {
-            WireLogger.userClient.warn("client does not exist locally on the device")
-
+    func invoke(clientId: String, credentials: EmailCredentials?) async throws {
+        let userClient = await syncContext.perform {
+            return UserClient.fetchExistingUserClient(with: clientId, in: self.syncContext)
+        }
+        guard let userClient else {
             throw RemoveUserClientError.clientDoesNotExistLocally
         }
 
         do {
             try await userClientAPI.deleteUserClient(clientId: clientId, credentials: credentials)
-            await didDeleteClient(existingClient)
+            await didDeleteClient(userClient)
 
         } catch let networkError as NetworkError {
             try await handleFailure(networkError, userClient: userClient)
