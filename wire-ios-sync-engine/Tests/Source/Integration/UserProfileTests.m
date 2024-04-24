@@ -18,7 +18,7 @@
 
 #import "Tests-Swift.h"
 #import "UserProfileTests.h"
-@import WireDataModel;
+@import WireUtilities;
 
 @implementation UserProfileTests
 
@@ -41,17 +41,17 @@
         ZMUser<ZMEditableUser> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
         
         // sanity check
-        XCTAssertNotEqual(selfUser.accentColor, accentColor);
+        XCTAssertNotEqual(selfUser.zmAccentColor, accentColor);
 
         selfUser.name = name;
-        selfUser.accentColor = accentColor;
+        selfUser.zmAccentColor = accentColor;
 
         [self.userSession saveOrRollbackChanges];
         // Wait for merge ui->sync to be done
         WaitForAllGroupsToBeEmpty(0.5);
         
         
-        XCTAssertEqual(selfUser.accentColor, accentColor);
+        XCTAssertEqual(selfUser.zmAccentColor, accentColor);
     }
     
     // Tears down context(s) &
@@ -69,7 +69,7 @@
         // Get the self user
         ZMUser<ZMEditableUser> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
         XCTAssertEqualObjects(selfUser.name, name);
-        XCTAssertEqual(selfUser.accentColor, accentColor);
+        XCTAssertEqual(selfUser.zmAccentColor, accentColor);
     }
 }
 
@@ -80,12 +80,12 @@
     XCTAssertTrue([self login]);
 
     ZMUser<ZMEditableUser> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-    XCTAssertNotEqual(selfUser.accentColor, accentColor);
+    XCTAssertNotEqual(selfUser.zmAccentColor, accentColor);
 
     ZMUserObserver *observer = [[ZMUserObserver alloc] initWithUser:selfUser];
     
     // when
-    selfUser.accentColor = accentColor;
+    selfUser.zmAccentColor = accentColor;
     [self.userSession saveOrRollbackChanges];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -97,7 +97,7 @@
     XCTAssertNotNil(note);
     XCTAssertTrue(note.accentColorValueChanged);
     
-    XCTAssertEqual(selfUser.accentColor, accentColor);
+    XCTAssertEqual(selfUser.zmAccentColor, accentColor);
 }
 
 @end

@@ -380,7 +380,7 @@
     
     [self checkThatItGeneratesUpstreamUpdateRequestWithPayload:uploadPayload changedKeys:[NSSet setWithObjects:@"name", @"accentColorValue", nil] userChangeBlock:^(ZMUser *user) {
         user.name = name;
-        user.accentColor = accentColor;
+        user.zmAccentColor = accentColor;
     }];
 }
 
@@ -406,7 +406,7 @@
     };
     
     [self checkThatItGeneratesUpstreamUpdateRequestWithPayload:uploadPayload changedKeys:[NSSet setWithObjects:@"accentColorValue", nil] userChangeBlock:^(ZMUser *user) {
-        user.accentColor = accentColor;
+        user.zmAccentColor = accentColor;
     }];
 }
 
@@ -474,7 +474,7 @@
         // given
         ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
         user.name = @"Joe Random User";
-        user.accentColor = ZMAccentColor.amber;
+        user.zmAccentColor = ZMAccentColor.amber;
         user.remoteIdentifier = [NSUUID createUUID];
         
         // when

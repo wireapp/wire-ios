@@ -18,6 +18,7 @@
 
 import Foundation
 
+/// A type which only exists because optional `AccentColor?` cannot be represented in Objective C.
 @objc(ZMAccentColor) @objcMembers
 public final class ZMAccentColor: NSObject {
 
