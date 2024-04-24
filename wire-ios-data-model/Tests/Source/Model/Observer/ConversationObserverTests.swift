@@ -213,7 +213,7 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
                                                      modifier: { _, _ in
-                                                        otherUser.accentColorValue = ZMAccentColor.softPink
+                                                        otherUser.accentColorValue = ZMAccentColor.turquoise
             },
                                                      expectedChangedField: nil,
                                                      expectedChangedKeys: []

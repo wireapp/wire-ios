@@ -143,7 +143,7 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.accentColorValue = ZMAccentColor.softPink },
+                                                     modifier: { $0.accentColorValue = ZMAccentColor.turquoise },
                                                      expectedChangedField: .accentColor)
 
     }

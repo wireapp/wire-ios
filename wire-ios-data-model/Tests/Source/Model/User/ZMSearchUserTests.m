@@ -66,7 +66,7 @@
     ZMSearchUser *user2 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                    name:@"B"
                                                                  handle:@"b"
-                                                            accentColor:ZMAccentColorSoftPink
+                                                            accentColor:ZMAccentColorTurquoise
                                                        remoteIdentifier:remoteIDA
                                                                  domain:nil
                                                          teamIdentifier:nil
