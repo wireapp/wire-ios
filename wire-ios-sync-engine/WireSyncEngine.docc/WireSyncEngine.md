@@ -8,7 +8,7 @@ The WireSyncEngine framework provides the logical functionality necessary to run
 iOS app. In contains all the logic and dependencies necessary to log in, create and manage
 conversations, send and receive encrypted messages, among many other things.
 
-It's main responsibility is to set up the depenendency graph and combine components from
+Its main responsibility is to set up the dependency graph and combine components from
 other frameworks to construct the functionality of the app. For instance, it depends on
 `WireRequestStrategy` for generating and processing API requests and responses, `WireTransport`
 for communication with the backend, and `WireDataModel` for local persistence.
