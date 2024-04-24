@@ -19,6 +19,10 @@
 import Foundation
 
 public class AggregatedLogger: LoggerProtocol {
+    public func addTag(_ key: String, value: String?) {
+
+    }
+
     private var loggers: [LoggerProtocol] = []
 
     init(loggers: [LoggerProtocol]) {

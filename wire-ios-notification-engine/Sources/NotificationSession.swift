@@ -337,6 +337,10 @@ public final class NotificationSession {
                 return
             }
 
+            if let clientId = ZMUser(context: self.coreDataStack.syncContext).selfClient()?.safeRemoteIdentifier.safeForLoggingDescription {
+                WireLogger.authentication.addTag("selfUserClientId", value: clientId)
+            }
+
             self.fetchEvents(fromPushChannelPayload: payload)
         }
     }

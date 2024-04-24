@@ -19,6 +19,9 @@
 import Foundation
 
 public struct WireLogger: LoggerProtocol {
+    public func addTag(_ key: String, value: String?) {
+        Self.provider?.addTag(key, value: value)
+    }
 
   public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger()])
 
@@ -141,6 +144,8 @@ public protocol LoggerProtocol {
   func critical(_ message: LogConvertible, attributes: LogAttributes?)
 
   func persist(fileDestination: FileLoggerDestination) async
+
+  func addTag(_ key: String, value: String?)
 }
 
 extension LoggerProtocol {
