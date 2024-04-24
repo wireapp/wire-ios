@@ -18,6 +18,7 @@
 
 import WireSyncEngine
 import WireCommonComponents
+import SwiftUI
 
 extension Notification.Name {
     static let companyLoginDidFinish = Notification.Name("Wire.CompanyLoginDidFinish")
@@ -147,12 +148,15 @@ extension URLActionRouter: PresentationDelegate {
         switch action {
         case .connectBot:
             presentConfirmationAlert(title: UrlAction.title, message: UrlAction.ConnectToBot.message, decisionHandler: decisionHandler)
-        case .accessBackend(configurationURL: let configurationURL):
-            guard SecurityFlags.customBackend.isEnabled else { return }
-            presentCustomBackendAlert(with: configurationURL)
+        case .accessBackend:
+            decisionHandler(SecurityFlags.customBackend.isEnabled)
         default:
             decisionHandler(true)
         }
+    }
+
+    func didSwitchBackend(environment: BackendEnvironment) {
+        BackendEnvironment.shared = environment
     }
 
     func shouldPerformActionWithMessage(_ message: String, action: URLAction, decisionHandler: @escaping (_ shouldPerformAction: Bool) -> Void) {
@@ -180,6 +184,23 @@ extension URLActionRouter: PresentationDelegate {
 
     func showConversationList() {
         navigate(to: .conversationList)
+    }
+
+    func requestUserConfirmationToSwitchBackend(
+        _ environment: BackendEnvironment,
+        decisionHandler: @escaping (Bool) -> Void
+    ) {
+        DispatchQueue.main.async { [weak self] in
+            let viewModel = SwitchBackendConfirmationViewModel(
+                environment: environment,
+                decisionHandler: decisionHandler
+            )
+
+            let view = SwitchBackendConfirmationView(viewModel: viewModel)
+            let hostingController = UIHostingController(rootView: view)
+            // TODO: Check if we can present...
+            self?.rootViewController.present(hostingController, animated: true)
+        }
     }
 
     // MARK: - Private Implementation
@@ -219,6 +240,8 @@ extension URLActionRouter: PresentationDelegate {
         presentAlert(alert)
     }
 
+    // TODO: [John] move this to unauthenticated session action handler
+    // TODO: map errors
     private func switchBackend(with configurationURL: URL) {
         sessionManager?.switchBackend(configuration: configurationURL) { [weak self] result in
             self?.rootViewController.isLoadingViewVisible = false

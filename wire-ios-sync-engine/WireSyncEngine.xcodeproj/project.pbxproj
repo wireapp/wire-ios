@@ -564,6 +564,7 @@
 		EE1DEBBE23D5E12F0087EE1F /* TypingUsersTimeout+Key.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1DEBBC23D5E0390087EE1F /* TypingUsersTimeout+Key.swift */; };
 		EE1DEBC423D5F1970087EE1F /* Conversation+TypingUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1DEBC223D5F1920087EE1F /* Conversation+TypingUsers.swift */; };
 		EE1DEBC723D5F1F30087EE1F /* NSManagedObjectContext+TypingUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1DEBC523D5F1D00087EE1F /* NSManagedObjectContext+TypingUsers.swift */; };
+		EE2BCA0F2BD848FB000C2ED3 /* SwitchBackendURLActionProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2BCA0E2BD848FB000C2ED3 /* SwitchBackendURLActionProcessor.swift */; };
 		EE2DE5E229250C1A00F42F4C /* CallHandle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2DE5E129250C1A00F42F4C /* CallHandle.swift */; };
 		EE2DE5E429250CC400F42F4C /* CallKitCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2DE5E329250CC400F42F4C /* CallKitCall.swift */; };
 		EE2DE5E8292519EC00F42F4C /* CallKitCallRegister.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2DE5E7292519EC00F42F4C /* CallKitCallRegister.swift */; };
@@ -611,6 +612,7 @@
 		EEEA75FC1F8A6142006D1070 /* ZMLocalNotification+Calling.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEA75F71F8A6141006D1070 /* ZMLocalNotification+Calling.swift */; };
 		EEEED9A823F6BC00008C94CA /* SelfUserProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEED9A723F6BC00008C94CA /* SelfUserProvider.swift */; };
 		EEEED9AA23F6BD75008C94CA /* ZMUserSession+SelfUserProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEED9A923F6BD75008C94CA /* ZMUserSession+SelfUserProvider.swift */; };
+		EEF985EB2BD9309F00BBF935 /* UnauthenticatedSession+SwitchBackendURLActionProcessorDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF985EA2BD9309F00BBF935 /* UnauthenticatedSession+SwitchBackendURLActionProcessorDelegate.swift */; };
 		EF2CB12722D5E58B00350B0A /* TeamImageAssetUpdateStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2CB12622D5E58B00350B0A /* TeamImageAssetUpdateStrategy.swift */; };
 		EF2CB12A22D5E5BF00350B0A /* TeamImageAssetUpdateStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2CB12822D5E5BB00350B0A /* TeamImageAssetUpdateStrategyTests.swift */; };
 		EFC8281C1FB343B600E27E21 /* RegistationCredentialVerificationStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFC8281B1FB343B600E27E21 /* RegistationCredentialVerificationStrategy.swift */; };
@@ -1336,6 +1338,7 @@
 		EE1DEBBC23D5E0390087EE1F /* TypingUsersTimeout+Key.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TypingUsersTimeout+Key.swift"; sourceTree = "<group>"; };
 		EE1DEBC223D5F1920087EE1F /* Conversation+TypingUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Conversation+TypingUsers.swift"; sourceTree = "<group>"; };
 		EE1DEBC523D5F1D00087EE1F /* NSManagedObjectContext+TypingUsers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+TypingUsers.swift"; sourceTree = "<group>"; };
+		EE2BCA0E2BD848FB000C2ED3 /* SwitchBackendURLActionProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchBackendURLActionProcessor.swift; sourceTree = "<group>"; };
 		EE2DE5E129250C1A00F42F4C /* CallHandle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallHandle.swift; sourceTree = "<group>"; };
 		EE2DE5E329250CC400F42F4C /* CallKitCall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallKitCall.swift; sourceTree = "<group>"; };
 		EE2DE5E7292519EC00F42F4C /* CallKitCallRegister.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallKitCallRegister.swift; sourceTree = "<group>"; };
@@ -1381,6 +1384,7 @@
 		EEEA75F71F8A6141006D1070 /* ZMLocalNotification+Calling.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMLocalNotification+Calling.swift"; sourceTree = "<group>"; };
 		EEEED9A723F6BC00008C94CA /* SelfUserProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfUserProvider.swift; sourceTree = "<group>"; };
 		EEEED9A923F6BD75008C94CA /* ZMUserSession+SelfUserProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+SelfUserProvider.swift"; sourceTree = "<group>"; };
+		EEF985EA2BD9309F00BBF935 /* UnauthenticatedSession+SwitchBackendURLActionProcessorDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UnauthenticatedSession+SwitchBackendURLActionProcessorDelegate.swift"; sourceTree = "<group>"; };
 		EF2CB12622D5E58B00350B0A /* TeamImageAssetUpdateStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamImageAssetUpdateStrategy.swift; sourceTree = "<group>"; };
 		EF2CB12822D5E5BB00350B0A /* TeamImageAssetUpdateStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamImageAssetUpdateStrategyTests.swift; sourceTree = "<group>"; };
 		EF797FE71FB5E8DB00F7FF21 /* RegistrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationTests.swift; sourceTree = "<group>"; };
@@ -1686,6 +1690,7 @@
 			children = (
 				161ACB3123F5BBA100ABFF33 /* CompanyLoginURLActionProcessor.swift */,
 				06239125274DB73A0065A72D /* StartLoginURLActionProcessor.swift */,
+				EE2BCA0E2BD848FB000C2ED3 /* SwitchBackendURLActionProcessor.swift */,
 			);
 			path = URLActionProcessors;
 			sourceTree = "<group>";
@@ -2810,6 +2815,7 @@
 				1671F74F2B6A7DF500C2D8A3 /* ZMAuthenticationStatus.swift */,
 				54FF64281F73D00C00787EF2 /* NSManagedObjectContext+AuthenticationStatus.swift */,
 				F19F1D131EFBC18E00275E27 /* UnauthenticatedSession.swift */,
+				EEF985EA2BD9309F00BBF935 /* UnauthenticatedSession+SwitchBackendURLActionProcessorDelegate.swift */,
 				167F383A23E0416E006B6AA9 /* UnauthenticatedSession+SSO.swift */,
 				1662B0F623D9B29C00B8C7C5 /* UnauthenticatedSession+DomainLookup.swift */,
 				F1A94BD11F010287003083D9 /* UnauthenticatedSession+Login.swift */,
@@ -3872,6 +3878,7 @@
 				16F6BB381EDEA659009EA803 /* SearchResult+AddressBook.swift in Sources */,
 				5458AF841F7021B800E45977 /* PreLoginAuthenticationNotification.swift in Sources */,
 				F9ABE84F1EFD568B00D83214 /* TeamDownloadRequestStrategy.swift in Sources */,
+				EE2BCA0F2BD848FB000C2ED3 /* SwitchBackendURLActionProcessor.swift in Sources */,
 				EE38DDEE280437E500D4983D /* BlacklistReason.swift in Sources */,
 				EE2DE5E229250C1A00F42F4C /* CallHandle.swift in Sources */,
 				871667FA1BB2AE9C009C6EEA /* APSSignalingKeysStore.swift in Sources */,
@@ -3885,6 +3892,7 @@
 				54257C081DF1C94200107FE7 /* TopConversationsDirectory.swift in Sources */,
 				166B2B5E23E86522003E8581 /* ZMUserSession.swift in Sources */,
 				F9ABE8511EFD568B00D83214 /* TeamRequestFactory.swift in Sources */,
+				EEF985EB2BD9309F00BBF935 /* UnauthenticatedSession+SwitchBackendURLActionProcessorDelegate.swift in Sources */,
 				F16558D1225F3F2A00EA2F2A /* SessionManager+SwitchBackend.swift in Sources */,
 				06ADE9E82BBFE1FA008BA0B3 /* CRLsDistributionPointsObserver.swift in Sources */,
 				EE2DE5EA2926377C00F42F4C /* CallObserver.swift in Sources */,

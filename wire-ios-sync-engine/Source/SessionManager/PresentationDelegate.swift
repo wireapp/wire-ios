@@ -59,6 +59,15 @@ public protocol PresentationDelegate: AnyObject {
 
     func shouldPerformActionWithMessage(_ message: String, action: URLAction, decisionHandler: @escaping (_ shouldPerformAction: Bool) -> Void)
 
+    // TODO: [John] document
+    func requestUserConfirmationToSwitchBackend(
+        _ environment: BackendEnvironment,
+        decisionHandler: @escaping (_ didConfirm: Bool) -> Void
+    )
+
     /// Called when an URLAction was successfully performed.
     func completedURLAction(_ action: URLAction)
+
+    // TODO: [John] remove this hack
+    func didSwitchBackend(environment: BackendEnvironment)
 }

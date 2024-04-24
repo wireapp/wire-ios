@@ -33,6 +33,16 @@ extension SessionManager {
         return nil
     }
 
+    public func switchBackend(to environment: BackendEnvironment) throws {
+        guard accountManager.accounts.isEmpty else {
+            throw SwitchBackendError.loggedInAccounts
+        }
+
+        self.environment = environment
+        unauthenticatedSession = nil
+    }
+
+    // TODO: [John] delete
     public func switchBackend(configuration url: URL, completed: @escaping CompletedSwitch) {
         if let error = canSwitchBackend() {
             completed(.failure(error))
