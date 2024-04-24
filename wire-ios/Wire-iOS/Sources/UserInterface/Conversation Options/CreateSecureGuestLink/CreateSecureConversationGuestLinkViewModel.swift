@@ -35,6 +35,10 @@ protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
 
 final class CreateSecureConversationGuestLinkViewModel {
 
+    enum LinkCreationError: Error {
+        case underfinedLink
+    }
+
     // MARK: - Properties
 
     weak var delegate: CreatePasswordSecuredLinkViewModelDelegate?
@@ -87,7 +91,8 @@ final class CreateSecureConversationGuestLinkViewModel {
             switch result {
             case .success(let link?):
                 self.delegate?.viewModel(self, didCreateLink: link)
-            case .success(nil): break
+            case .success(nil):
+                self.delegate?.viewModel(self, didFailToCreateLinkWithError: LinkCreationError.underfinedLink)
             case .failure(let error):
                 self.delegate?.viewModel(self, didFailToCreateLinkWithError: error)
             }
