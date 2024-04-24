@@ -32,6 +32,7 @@ public final class ZMAccentColor: NSObject {
 
     // MARK: Helpers
 
+    public static var `default`: ZMAccentColor { .from(accentColor: .default) }
     public static var min: ZMAccentColor { .blue }
     public static var max: ZMAccentColor { .purple }
 

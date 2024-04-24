@@ -127,7 +127,7 @@ public class ZMSearchUser: NSObject, UserType {
     fileprivate var internalIsTeamMember: Bool = false
     fileprivate var internalTeamCreatedBy: UUID?
     fileprivate var internalTeamPermissions: Permissions?
-    fileprivate var internalAccentColorValue: ZMAccentColorRawValue
+    fileprivate var internalAccentColor: ZMAccentColor?
     fileprivate var internalPendingApprovalByOtherUser: Bool = false
     fileprivate var internalConnectionRequestMessage: String?
     fileprivate var internalPreviewImageData: Data?
@@ -316,17 +316,12 @@ public class ZMSearchUser: NSObject, UserType {
         return user?.isUnderLegalHold == true
     }
 
-    public var accentColorValue: ZMAccentColorRawValue {
-        if let user = user {
-            user.accentColor?.rawValue ?? AccentColor.default.rawValue
-        } else {
-            internalAccentColorValue
-        }
-    }
-
-    @objc(accentColor)
     public var zmAccentColor: ZMAccentColor? {
-        .from(rawValue: accentColorValue)
+        if let user = user {
+            accentColor.map { .from(accentColor: $0) }
+        } else {
+            internalAccentColor
+        }
     }
 
     public var isWirelessUser: Bool {
@@ -480,7 +475,7 @@ public class ZMSearchUser: NSObject, UserType {
         self.internalName = name
         self.internalHandle = handle
         self.internalInitials = personName.initials
-        self.internalAccentColorValue = accentColor?.rawValue ?? AccentColor.default.rawValue
+        self.internalAccentColor = accentColor
         self.user = existingUser
         self.internalDomain = domain
         self.remoteIdentifier = existingUser?.remoteIdentifier ?? remoteIdentifier
@@ -541,13 +536,13 @@ public class ZMSearchUser: NSObject, UserType {
         let handle = payload["handle"] as? String
         let qualifiedID = payload["qualified_id"] as? [String: Any]
         let domain = qualifiedID?["domain"] as? String
-        let accentColorRawValue = (payload["accent_id"] as? NSNumber)?.int16Value ?? AccentColor.default.rawValue
+        let accentColorRawValue = (payload["accent_id"] as? NSNumber)?.int16Value ?? 0
 
         self.init(
             contextProvider: contextProvider,
             name: name,
             handle: handle,
-            accentColor: .from(rawValue: accentColorRawValue),
+            accentColor: .from(rawValue: accentColorRawValue) ?? .default,
             remoteIdentifier: remoteIdentifier,
             domain: domain,
             teamIdentifier: teamIdentifier,
