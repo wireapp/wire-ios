@@ -117,7 +117,11 @@ extension UserClient {
         }
 
         public var isEmpty: Bool {
-            return ed25519 != nil || ed448 != nil || p256 != nil || p384 != nil || p521 != nil
+            return allKeys.isEmpty
+        }
+
+        public var allKeys: [String] {
+            [ed25519, ed448, p256, p384, p521].compactMap({ $0 })
         }
 
     }
