@@ -466,7 +466,7 @@ public final class MLSService: MLSServiceInterface {
                     [try await $0.getExternalSender(conversationId: parentGroupID.data)]
                 }
             } else if let backendPublicKeys = await fetchBackendPublicKeys() {
-                externalSenders = backendPublicKeys.ed25519Keys
+                externalSenders = backendPublicKeys.externalSenderKeys
             } else {
                 throw MLSGroupCreationError.failedToGetExternalSenders
             }
