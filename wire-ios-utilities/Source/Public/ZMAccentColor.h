@@ -18,7 +18,7 @@
 
 typedef NS_ENUM(int16_t, ZMAccentColor) {
     ZMAccentColorUndefined = 0,
-    ZMAccentColorStrongBlue,
+    ZMAccentColorBlue,
     ZMAccentColorStrongLimeGreen,
     ZMAccentColorBrightYellow,
     ZMAccentColorVividRed,
@@ -26,6 +26,6 @@ typedef NS_ENUM(int16_t, ZMAccentColor) {
     ZMAccentColorSoftPink,
     ZMAccentColorViolet,
     
-    ZMAccentColorMin = ZMAccentColorStrongBlue,
+    ZMAccentColorMin = ZMAccentColorBlue,
     ZMAccentColorMax = ZMAccentColorViolet,
 };

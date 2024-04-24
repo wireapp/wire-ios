@@ -37,7 +37,7 @@ extension UIColor {
             activeUserSession.providedSelfUser.accentColorValue != .undefined
         else {
             // priority 3: default color
-            return .strongBlue
+            return .blue
         }
 
         // priority 2: color from self user

@@ -138,7 +138,7 @@ final class UserChangeInfoObservationTests: NotificationDispatcherTestBase {
     func testThatItNotifiesTheObserverOfAnAccentColorChange() {
         // given
         let user = ZMUser.insertNewObject(in: self.uiMOC)
-        user.accentColorValue = ZMAccentColor.strongBlue
+        user.accentColorValue = ZMAccentColor.blue
         uiMOC.saveOrRollback()
 
         // when

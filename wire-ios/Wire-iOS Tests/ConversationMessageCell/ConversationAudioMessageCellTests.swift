@@ -74,7 +74,7 @@ final class ConversationAudioMessageCellTests: ConversationMessageSnapshotTestCa
         message.backingFileMessageData.fileURL = nil
         message.backingFileMessageData.normalizedLoudness = [0.25, 0.5, 1]
 
-        UIColor.setAccentOverride(.strongBlue)
+        UIColor.setAccentOverride(.blue)
         verify(message: message)
     }
 
