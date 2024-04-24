@@ -606,7 +606,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     user.remoteIdentifier = remoteID;
     
     NSMutableDictionary *payload = [self samplePayloadForUserID:remoteID];
-    payload[@"accent_id"] = @(0);
+    payload[@"accent_id"] = nil;
 
     // when
     [user updateWithTransportData:payload authoritative:NO];

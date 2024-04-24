@@ -85,7 +85,7 @@ class MockUserType: NSObject, UserType, Decodable {
 
     var phoneNumber: String? = "+123456789"
 
-    var accentColorValue: Int16 = AccentColor.blue.rawValue
+    var accentColorValue = AccentColor.blue.rawValue
 
     var availability: Availability = .none
 
