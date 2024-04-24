@@ -22,7 +22,7 @@ import Foundation
 public protocol UseCaseFactoryProtocol {
 
     func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol
-    func createSecuredGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol
+    func createConversationGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol
     func createSetGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol
 
 }
@@ -41,7 +41,7 @@ struct UseCaseFactory: UseCaseFactoryProtocol {
         )
     }
 
-    public func createSecuredGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+    public func createConversationGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
         CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: createSetGuestsAndServicesUseCase())
     }
 

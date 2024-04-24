@@ -243,9 +243,9 @@ final class ConversationGuestOptionsViewModel {
             self?.showLoadingCell = true
         }
 
-        let securedGuestLinkUseCase = userSession.useCaseFactory.createSecuredGuestLinkUseCase()
+        let conversationGuestLinkUseCase = userSession.useCaseFactory.createConversationGuestLinkUseCase()
 
-        securedGuestLinkUseCase.invoke(conversation: conversation, password: nil) { result in
+        conversationGuestLinkUseCase.invoke(conversation: conversation, password: nil) { result in
             switch result {
             case .success(let link):
                 self.link = link

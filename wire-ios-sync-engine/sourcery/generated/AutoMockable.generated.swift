@@ -824,21 +824,21 @@ public class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
         }
     }
 
-    // MARK: - createSecuredGuestLinkUseCase
+    // MARK: - createConversationGuestLinkUseCase
 
-    public var createSecuredGuestLinkUseCase_Invocations: [Void] = []
-    public var createSecuredGuestLinkUseCase_MockMethod: (() -> CreateConversationGuestLinkUseCaseProtocol)?
-    public var createSecuredGuestLinkUseCase_MockValue: CreateConversationGuestLinkUseCaseProtocol?
+    public var createConversationGuestLinkUseCase_Invocations: [Void] = []
+    public var createConversationGuestLinkUseCase_MockMethod: (() -> CreateConversationGuestLinkUseCaseProtocol)?
+    public var createConversationGuestLinkUseCase_MockValue: CreateConversationGuestLinkUseCaseProtocol?
 
-    public func createSecuredGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
-        createSecuredGuestLinkUseCase_Invocations.append(())
+    public func createConversationGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+        createConversationGuestLinkUseCase_Invocations.append(())
 
-        if let mock = createSecuredGuestLinkUseCase_MockMethod {
+        if let mock = createConversationGuestLinkUseCase_MockMethod {
             return mock()
-        } else if let mock = createSecuredGuestLinkUseCase_MockValue {
+        } else if let mock = createConversationGuestLinkUseCase_MockValue {
             return mock
         } else {
-            fatalError("no mock for `createSecuredGuestLinkUseCase`")
+            fatalError("no mock for `createConversationGuestLinkUseCase`")
         }
     }
 

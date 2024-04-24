@@ -36,7 +36,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     weak var delegate: ValidatedTextFieldDelegate?
 
     private lazy var viewModel: CreateSecureGuestLinkViewModel = {
-        CreateSecureGuestLinkViewModel(delegate: self, useCaseFactory: userSession.useCaseFactory)
+        CreateSecureGuestLinkViewModel(delegate: self, conversationGuestLinkUseCase: userSession.useCaseFactory.createConversationGuestLinkUseCase())
     }()
 
     // MARK: - Initializer
