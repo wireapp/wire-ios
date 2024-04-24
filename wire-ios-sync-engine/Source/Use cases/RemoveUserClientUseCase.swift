@@ -29,26 +29,21 @@ public class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
 
     // MARK: - Properties
 
-    private let apiProvider: APIProviderInterface
+    private let userClientAPI: UserClientAPI
     private let syncContext: NSManagedObjectContext
 
     // MARK: - Life cycle
 
     public init(
-        apiProvider: APIProviderInterface,
+        userClientAPI: UserClientAPI,
         syncContext: NSManagedObjectContext) {
-        self.apiProvider = apiProvider
+        self.userClientAPI = userClientAPI
         self.syncContext = syncContext
     }
 
     // MARK: - Public interface
 
     public func invoke(_ userClient: UserClient, credentials: EmailCredentials?) async throws {
-        guard let apiVersion = BackendInfo.apiVersion else {
-            WireLogger.backend.warn("apiVersion not resolved")
-            throw RemoveUserClientError.unresolvedApiVersion
-        }
-
         let objectId = userClient.objectID
         guard let (existingClient, clientId) = await self.syncContext.perform({
             let client = try? self.syncContext.existingObject(with: objectId) as? UserClient
@@ -60,9 +55,7 @@ public class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
         }
 
         do {
-            try await apiProvider
-                .userClientAPI(apiVersion: apiVersion)
-                .deleteUserClient(clientId: clientId, credentials: credentials)
+            try await userClientAPI.deleteUserClient(clientId: clientId, credentials: credentials)
             await didDeleteClient(existingClient)
 
         } catch let networkError as NetworkError {
@@ -116,7 +109,6 @@ public class RemoveUserClientUseCase: RemoveUserClientUseCaseProtocol {
 
 public enum RemoveUserClientError: Error {
 
-    case unresolvedApiVersion
     case clientToDeleteNotFound
     case clientDoesNotExistLocally
     case invalidCredentials

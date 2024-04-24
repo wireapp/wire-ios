@@ -143,7 +143,7 @@ final class RemoveClientsViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.sortedClients.count
+        return viewModel.clients.count
     }
 
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -169,7 +169,7 @@ final class RemoveClientsViewController: UIViewController,
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if let cell = tableView.dequeueReusableCell(withIdentifier: RemoveClientTableViewCell.zm_reuseIdentifier, for: indexPath) as? RemoveClientTableViewCell {
             cell.selectionStyle = .none
-            cell.viewModel = .init(userClient: viewModel.sortedClients[indexPath.row], shouldSetType: false)
+            cell.viewModel = .init(userClient: viewModel.clients[indexPath.row], shouldSetType: false)
 
             return cell
         } else {
@@ -178,14 +178,14 @@ final class RemoveClientsViewController: UIViewController,
     }
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        let userClient = viewModel.sortedClients[indexPath.row]
+        let userClient = viewModel.clients[indexPath.row]
         Task {
             await self.removeUserClient(userClient)
         }
     }
 
     func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        return viewModel.sortedClients[indexPath.row].type == .legalHold ? .none : .delete
+        return viewModel.clients[indexPath.row].type == .legalHold ? .none : .delete
     }
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

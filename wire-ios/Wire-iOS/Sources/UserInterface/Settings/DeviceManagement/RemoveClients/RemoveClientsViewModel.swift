@@ -21,18 +21,10 @@ import WireCommonComponents
 
 extension RemoveClientsViewController {
     final class ViewModel: NSObject {
-        private var clients: [UserClient] = [] {
-            didSet {
-                self.sortedClients = self.clients.sorted(by: {
-                    guard let leftDate = $0.activationDate, let rightDate = $1.activationDate else { return false }
-                    return leftDate.compare(rightDate) == .orderedDescending
-                })
-            }
-        }
         private var removeUserClientUseCase: RemoveUserClientUseCaseProtocol?
 
-        var sortedClients: [UserClient] = []
         var credentials: ZMEmailCredentials?
+        var clients: [UserClient] = []
 
         init(clientsList: [UserClient],
              credentials: ZMEmailCredentials?) {
@@ -44,7 +36,17 @@ extension RemoveClientsViewController {
         }
 
         private func initalizeProperties(_ clientsList: [UserClient]) {
-            self.clients = clientsList.filter { !$0.isSelfClient() }
+            self.clients = clientsList
+                .filter { !$0.isSelfClient() }
+                .sorted(by: {
+                    guard
+                        let leftDate = $0.activationDate,
+                        let rightDate = $1.activationDate
+                    else {
+                        return false
+                    }
+                    return leftDate.compare(rightDate) == .orderedDescending
+                })
         }
 
         func removeUserClient(_ userClient: UserClient) async throws {
@@ -54,7 +56,12 @@ extension RemoveClientsViewController {
 }
 
 private extension ZMEmailCredentials {
-    var emailCredentials: EmailCredentials {
+    var emailCredentials: EmailCredentials? {
+        guard let email = self.email,
+              let password = self.password
+        else {
+            return nil
+        }
         return EmailCredentials(email: email, password: password)
     }
 }

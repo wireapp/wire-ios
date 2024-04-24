@@ -19,13 +19,13 @@
 import Foundation
 
 public struct EmailCredentials {
-    public init(email: String?, password: String?) {
+    public init(email: String, password: String) {
         self.email = email
         self.password = password
     }
 
-    let email: String?
-    let password: String?
+    let email: String
+    let password: String
 }
 
 public class UserClientRequestFactory {
