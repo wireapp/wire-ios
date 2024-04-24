@@ -109,7 +109,7 @@ public class EARService: EARServiceInterface {
     ///   - accountID: The id of the self user.
     ///   - databaseContexts: A list of database contexts that require access to the database key.
     ///   - canPerformKeyMigration: Whether key migration can be performed. Key migration should not be performed when the service is running in app extensions.
-    ///   - sharedUserDefaults: The shared user defaults in which keep track of whether EAR is enabled.
+    ///   - sharedUserDefaults: The shared user defaults in which to keep track of whether EAR is enabled.
     ///   - authenticationContext: The authentication context used to access encryption keys.
 
     public convenience init(
@@ -167,7 +167,7 @@ public class EARService: EARServiceInterface {
         earStorage.earEnabled()
     }
 
-    /// Store the encrption a rest flag value.
+    /// Store the encryption a rest flag value.
     ///
     /// This flag used to be stored in the database store metadata but was moved to
     /// the shared user defaults. This method was introduced to copy the value from
@@ -199,7 +199,7 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Enable / disable
 
-    /// Enable encrypiton at rest.
+    /// Enable encryption at rest.
     ///
     /// Invoking this method will generate new encryption keys and prompt the user for
     /// biometric authentication. Sensitive data in the database will be encrypted with
