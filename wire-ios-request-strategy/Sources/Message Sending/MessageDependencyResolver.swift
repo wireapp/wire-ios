@@ -52,7 +52,7 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
             }
 
             if isSecurityLevelDegraded {
-                throw MessageDependencyResolverError.securityLevelDegraded
+                return false
             }
 
             let hasDependencies = await self.context.perform {
