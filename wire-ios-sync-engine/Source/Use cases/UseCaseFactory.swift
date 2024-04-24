@@ -42,7 +42,7 @@ struct UseCaseFactory: UseCaseFactoryProtocol {
     }
 
     public func createSecuredGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
-        CreateSecuredGuestLinkUseCase(setGuestsAndServicesUseCase: createSetGuestsAndServicesUseCase())
+        CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: createSetGuestsAndServicesUseCase())
     }
 
     public func createSetGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {

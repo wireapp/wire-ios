@@ -25,7 +25,7 @@ public protocol CreateConversationGuestLinkUseCaseProtocol {
 
 }
 
-struct CreateSecuredGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol {
+struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol {
 
     let setGuestsAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol
 

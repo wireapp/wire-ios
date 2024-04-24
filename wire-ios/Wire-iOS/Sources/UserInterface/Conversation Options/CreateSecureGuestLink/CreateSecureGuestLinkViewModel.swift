@@ -38,16 +38,16 @@ final class CreateSecureGuestLinkViewModel {
     // MARK: - Properties
 
     weak var delegate: CreatePasswordSecuredLinkViewModelDelegate?
-    private let useCaseFactory: UseCaseFactoryProtocol
+    private let createSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
 
     // MARK: - Init
 
     init(
         delegate: CreatePasswordSecuredLinkViewModelDelegate?,
-        useCaseFactory: UseCaseFactoryProtocol
+        createSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
     ) {
         self.delegate = delegate
-        self.useCaseFactory = useCaseFactory
+        self.createSecureGuestLinkUseCase = createSecureGuestLinkUseCase
     }
 
     // MARK: - Methods
@@ -81,9 +81,7 @@ final class CreateSecureGuestLinkViewModel {
         let password = passwordField.text ?? ""
         UIPasteboard.general.string = password
 
-        let securedGuestLinkUseCase = useCaseFactory.createSecuredGuestLinkUseCase()
-
-        securedGuestLinkUseCase.invoke(conversation: conversation, password: password) { [weak self] result in
+        createSecureGuestLinkUseCase.invoke(conversation: conversation, password: password) { [weak self] result in
             guard let self = self else { return }
 
             switch result {
