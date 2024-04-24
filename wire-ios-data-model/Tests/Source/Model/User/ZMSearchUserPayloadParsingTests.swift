@@ -42,7 +42,7 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(user.handle, "@user")
         XCTAssertEqual(user.domain, domain)
         XCTAssertEqual(user.remoteIdentifier, uuid)
-        XCTAssertEqual(user.accentColorValue, 5)
+        XCTAssertEqual(user.accentColor?.rawValue, 5)
         XCTAssertFalse(user.isServiceUser)
         XCTAssertTrue(user.canBeConnected)
     }
