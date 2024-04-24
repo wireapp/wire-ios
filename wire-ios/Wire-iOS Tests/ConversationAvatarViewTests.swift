@@ -68,7 +68,7 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
         // GIVEN
         let otherUserConversation = MockStableRandomParticipantsConversation()
         let otherUser = MockUserType.createDefaultOtherUser()
-        otherUser.accentColorValue = .strongLimeGreen
+        otherUser.accentColorValue = .green
         otherUserConversation.conversationType = .oneOnOne
         otherUserConversation.stableRandomParticipants = [otherUser]
 
@@ -82,7 +82,7 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
     func testThatItRendersPendingConnection() {
         // GIVEN
         let otherUser = MockUserType.createDefaultOtherUser()
-        otherUser.accentColorValue = .strongLimeGreen
+        otherUser.accentColorValue = .green
         otherUser.isConnected = false
         otherUser.isPendingApprovalBySelfUser = true
         let otherUserConversation = MockStableRandomParticipantsConversation()
@@ -105,7 +105,7 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
         otherUser.isConnected = true
         XCTAssert(otherUser.isServiceUser)
 
-        otherUser.accentColorValue = .strongLimeGreen
+        otherUser.accentColorValue = .green
         let otherUserConversation = MockStableRandomParticipantsConversation()
         otherUserConversation.conversationType = .oneOnOne
         otherUserConversation.stableRandomParticipants = [otherUser]

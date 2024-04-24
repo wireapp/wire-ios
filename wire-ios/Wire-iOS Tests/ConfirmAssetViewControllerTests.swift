@@ -32,7 +32,7 @@ final class ConfirmAssetViewControllerTests: BaseSnapshotTestCase {
     func testThatItRendersTheAssetViewControllerWithLandscapeImage() {
         sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_matterhorn.jpg"))))
 
-        accentColor = .strongLimeGreen
+        accentColor = .green
         sut.previewTitle = "Matterhorn"
 
         verifyAllIPhoneSizes(matching: sut)
