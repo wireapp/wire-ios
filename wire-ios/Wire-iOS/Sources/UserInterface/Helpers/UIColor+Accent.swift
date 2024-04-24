@@ -80,7 +80,7 @@ extension UIColor {
             return SemanticColors.View.backgroundRed
         case .green:
             return SemanticColors.View.backgroundGreen
-        case .yellow:
+        case .deprecatedYellow:
             return SemanticColors.View.backgroundAmber
         case .amber:
             return SemanticColors.View.backgroundAmber
@@ -100,7 +100,7 @@ extension UIColor {
             return SemanticColors.View.backgroundRedUsernameMention
         case .green:
             return SemanticColors.View.backgroundGreenUsernameMention
-        case .yellow:
+        case .deprecatedYellow:
             return SemanticColors.View.backgroundAmberUsernameMention
         case .amber:
             return SemanticColors.View.backgroundAmberUsernameMention

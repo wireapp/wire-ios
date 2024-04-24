@@ -140,7 +140,7 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
 
         (conversation.stableRandomParticipants[0] as! MockUserType).accentColorValue = .vividRed
         (conversation.stableRandomParticipants[1] as! MockUserType).accentColorValue = .brightOrange
-        (conversation.stableRandomParticipants[2] as! MockUserType).accentColorValue = .brightYellow
+        (conversation.stableRandomParticipants[2] as! MockUserType).accentColorValue = .deprecatedYellow
         (conversation.stableRandomParticipants[3] as! MockUserType).accentColorValue = .blue
 
         // WHEN

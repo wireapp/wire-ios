@@ -29,7 +29,7 @@ final class ConversationListTabBarTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .brightYellow
+        accentColor = .deprecatedYellow
         UIView.performWithoutAnimation({
             self.sut = ConversationListTabBar()
             sut.backgroundColor = UIColor(white: 0.2, alpha: 1) // In order to make the separator more visible

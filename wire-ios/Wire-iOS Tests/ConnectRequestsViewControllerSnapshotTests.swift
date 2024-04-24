@@ -64,7 +64,7 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
     func testForTwoRequests() {
         let otherUser = MockUserType.createConnectedUser(name: "Bill")
-        otherUser.accentColorValue = .brightYellow
+        otherUser.accentColorValue = .deprecatedYellow
         otherUser.handle = "bill"
 
         let secondConnectionRequest = SwiftMockConversation()
