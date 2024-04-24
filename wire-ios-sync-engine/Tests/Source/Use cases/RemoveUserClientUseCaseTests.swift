@@ -98,7 +98,6 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
             userClient = modelHelper.createClient(id: clientID1.clientID, for: selfUser)
         }
 
-        // When
         let userClientAPI = MockUserClientAPI()
         userClientAPI.deleteUserClientClientIdCredentials_MockMethod = { _, _ in }
         mockApiProvider.userClientAPIApiVersion_MockValue = userClientAPI
@@ -129,13 +128,12 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
             try self.stack.syncContext.save()
         }
 
-        // When
         let userClientAPI = MockUserClientAPI()
         userClientAPI.deleteUserClientClientIdCredentials_MockMethod = { _, _ in }
         userClientAPI.deleteUserClientClientIdCredentials_MockError = RemoveUserClientError.clientToDeleteNotFound
         mockApiProvider.userClientAPIApiVersion_MockValue = userClientAPI
 
-        // Then
+        // When / Then
         await assertItThrows(error: RemoveUserClientError.clientToDeleteNotFound) {
             try await sut.invoke(userClient, credentials: EmailCredentials(email: "", password: ""))
         }
@@ -161,13 +159,12 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
             try self.stack.syncContext.save()
         }
 
-        // When
         let userClientAPI = MockUserClientAPI()
         userClientAPI.deleteUserClientClientIdCredentials_MockMethod = { _, _ in }
         userClientAPI.deleteUserClientClientIdCredentials_MockError = RemoveUserClientError.invalidCredentials
         mockApiProvider.userClientAPIApiVersion_MockValue = userClientAPI
 
-        // Then
+        // When / Then
         await assertItThrows(error: RemoveUserClientError.invalidCredentials) {
             try await sut.invoke(userClient, credentials: EmailCredentials(email: "", password: ""))
         }
