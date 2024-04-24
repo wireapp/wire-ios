@@ -58,7 +58,7 @@ extension UserClient {
 
     @objc
     public var hasRegisteredMLSClient: Bool {
-        return mlsPublicKeys.ed25519 != nil && needsToUploadMLSPublicKeys == false
+        return !mlsPublicKeys.isEmpty && needsToUploadMLSPublicKeys == false
     }
 
     // MARK: MLSPublicKeys
@@ -105,6 +105,10 @@ extension UserClient {
 
         public init(ed25519: String? = nil) {
             self.ed25519 = ed25519
+        }
+
+        public var isEmpty: Bool {
+            return ed25519 != nil || ed448 != nil || p256 != nil || p384 != nil || p521 != nil
         }
 
     }
