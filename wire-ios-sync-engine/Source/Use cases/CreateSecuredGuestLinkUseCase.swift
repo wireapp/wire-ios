@@ -25,9 +25,9 @@ public protocol CreateConversationGuestLinkUseCaseProtocol {
 
 }
 
-public struct SecuredGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol {
+struct CreateSecuredGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol {
 
-    let useCaseFactory: UseCaseFactoryProtocol
+    let setGuestsAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol
 
     public func invoke(
         conversation: ZMConversation,
@@ -36,7 +36,7 @@ public struct SecuredGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtoco
     ) {
 
         if conversation.isLegacyAccessMode {
-            useCaseFactory.createSetGuestsAndServicesUseCase().invoke(
+            setGuestsAndServicesUseCase.invoke(
                 conversation: conversation,
                 allowGuests: true,
                 allowServices: conversation.allowServices
