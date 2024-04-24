@@ -31,7 +31,7 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
         super.setUp()
 
         let mockUser = MockUserType.createSelfUser(name: "Bruno")
-        mockUser.accentColorValue = .brightOrange
+        mockUser.accentColorValue = .amber
         mockUser.handle = "bruno"
 
         mockConnectionRequest = SwiftMockConversation()

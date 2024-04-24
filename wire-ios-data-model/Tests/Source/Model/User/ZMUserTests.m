@@ -1222,7 +1222,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     // given
     ZMUser<ZMEditableUser> *user = [ZMUser selfUserInContext:self.uiMOC];
     user.name = @"Test";
-    user.accentColorValue = ZMAccentColorBrightOrange;
+    user.accentColorValue = ZMAccentColorAmber;
     
     // when
     XCTAssertTrue([self.uiMOC saveOrRollback]);
