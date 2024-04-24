@@ -16,5 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extern int16_t const ZMAccentColorMin;
-extern int16_t const ZMAccentColorMax;
+typedef NS_ENUM(int16_t, ZMAccentColor) {
+    ZMAccentColorUndefined = 0,
+    ZMAccentColorBlue,
+    ZMAccentColorGreen,
+    ZMAccentColorDeprecatedYellow,
+    ZMAccentColorRed,
+    ZMAccentColorAmber,
+    ZMAccentColorTurquoise,
+    ZMAccentColorPurple,
+    
+    ZMAccentColorMin = ZMAccentColorBlue,
+    ZMAccentColorMax = ZMAccentColorPurple,
+};

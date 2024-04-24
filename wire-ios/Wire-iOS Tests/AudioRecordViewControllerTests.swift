@@ -41,7 +41,7 @@ final class AudioRecordViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
         userSession = UserSessionMock()
         sut = AudioRecordViewController(userSession: userSession)
         delegate = MockAudioRecordViewControllerDelegate()

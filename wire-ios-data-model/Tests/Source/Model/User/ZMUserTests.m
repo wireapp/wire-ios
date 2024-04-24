@@ -97,7 +97,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 
 - (void)testThatWeCanSetAttributesOnUser
 {
-    [self checkUserAttributeForKey:@"accentColorValue" value:@(ZMAccentColorVividRed)];
+    [self checkUserAttributeForKey:@"accentColorValue" value:@(ZMAccentColorRed)];
     [self checkUserAttributeForKey:@"emailAddress" value:@"foo@example.com"];
     [self checkUserAttributeForKey:@"name" value:@"Foo Bar"];
     [self checkUserAttributeForKey:@"handle" value:@"foo_bar"];
@@ -498,7 +498,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqualObjects(user.handle, payload[@"handle"]);
     XCTAssertEqual([self managedByString:user], payload[@"managed_by"]);
     XCTAssertNil(user.expiresAt);
-    XCTAssertEqual(user.accentColorValue, ZMAccentColorBrightYellow);
+    XCTAssertEqual(user.accentColorValue, ZMAccentColorDeprecatedYellow);
 }
 
 - (void)testThatItUpdatesAccountDeletionStatusOnAnExistingUser
@@ -1222,7 +1222,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     // given
     ZMUser<ZMEditableUser> *user = [ZMUser selfUserInContext:self.uiMOC];
     user.name = @"Test";
-    user.accentColorValue = ZMAccentColorBrightOrange;
+    user.accentColorValue = ZMAccentColorAmber;
     
     // when
     XCTAssertTrue([self.uiMOC saveOrRollback]);
@@ -1318,9 +1318,10 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     return user.managedByWire ? ManagedByWire : ManagedByScim;
 }
 
+@end
 
-// MARK: - Connections
 
+@implementation ZMUserTests (Connections)
 
 - (void)testThatIsConnectedIsTrueWhenThereIsAnAcceptedConnection
 {
@@ -1377,6 +1378,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertTrue(user.canBeConnected);
 }
 
+//
 - (void)testBlockStateReasonValue_WhenAConnectionStatusIsMissingLegalholdConsent
 {
     // given
@@ -1492,9 +1494,10 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqual(oneToOne, connectedUser.oneToOneConversation);
 }
 
+@end
 
-// MARK: - Validation
 
+@implementation ZMUserTests (Validation)
 
 - (void)testThatItRejectsANameThatIsOnly1CharacterLong
 {
@@ -1608,14 +1611,39 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqualObjects(user.name, @"test̻̟̙");
 }
 
+- (void)testThatItLimitsTheAccentColorToAValidRange;
+{
+    // given
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.accentColorValue = ZMAccentColorDeprecatedYellow;
+    [self.uiMOC saveOrRollback];
+    XCTAssertEqual(user.accentColorValue, ZMAccentColorDeprecatedYellow);
+    
+    // when
+    user.accentColorValue = ZMAccentColorUndefined;
+    [self.uiMOC saveOrRollback];
+    
+    // then
+    XCTAssertGreaterThanOrEqual(user.accentColorValue, ZMAccentColorMin);
+    XCTAssertLessThanOrEqual(user.accentColorValue, ZMAccentColorMax);
+    
+    // when
+    user.accentColorValue = (ZMAccentColor) (ZMAccentColorMax + 1);
+    [self.uiMOC saveOrRollback];
+    
+    // then
+    XCTAssertGreaterThanOrEqual(user.accentColorValue, ZMAccentColorMin);
+    XCTAssertLessThanOrEqual(user.accentColorValue, ZMAccentColorMax);
+}
+
 - (void)testThatItDoesNotLimitTheAccentColorOnTheSyncContext;
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
         ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-        user.accentColorValue = ZMAccentColorBrightYellow;
+        user.accentColorValue = ZMAccentColorDeprecatedYellow;
         [self.syncMOC saveOrRollback];
-        XCTAssertEqual(user.accentColorValue, ZMAccentColorBrightYellow);
+        XCTAssertEqual(user.accentColorValue, ZMAccentColorDeprecatedYellow);
         
         // when
         user.accentColorValue = ZMAccentColorUndefined;
@@ -2001,8 +2029,11 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
 }
 
 
-// MARK: - KeyValueObserving
+@end
 
+
+
+@implementation ZMUserTests (KeyValueObserving)
 
 - (void)testThatItRecalculatesIsBlockedWhenConnectionChanges
 {
@@ -2111,9 +2142,10 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
 }
 
+@end
+    
 
-// MARK: - DisplayName
-
+@implementation ZMUserTests (DisplayName)
 
 - (void)testThatItReturnsCorrectUserNameForService
 {
@@ -2149,9 +2181,10 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     XCTAssertEqualObjects(user.name, originalName);
 }
 
+@end
 
-// MARK: - Trust
 
+@implementation ZMUserTests (Trust)
 
 - (void)testThatItReturns_Trusted_NO_WhenThereAreNoClients
 {
