@@ -203,7 +203,6 @@ public final class ProteusService: ProteusServiceInterface {
                         ciphertext: data
                     )
                 } catch {
-                    logger.error("failed to decrypt data: \(error.localizedDescription)")
                     throw DecryptionError.failedToDecryptData($0.lastProteusError)
                 }
             }
@@ -220,7 +219,6 @@ public final class ProteusService: ProteusServiceInterface {
                         envelope: data
                     )
                 } catch {
-                    logger.error("failed to establish session from message: \(String(describing: error))")
                     throw DecryptionError.failedToEstablishSessionFromMessage($0.lastProteusError)
                 }
             }
