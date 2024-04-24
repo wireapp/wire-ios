@@ -1411,6 +1411,8 @@
 		EE118C012031D1C300BC68D6 /* MarkdownTextViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE118BFF2031D17000BC68D6 /* MarkdownTextViewTests.swift */; };
 		EE1AFBFE2124330B003D1AE1 /* UNUserNotificationCenter+Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1AFBFD2124330B003D1AE1 /* UNUserNotificationCenter+Permission.swift */; };
 		EE2538852166151C00932606 /* ConversationActionController+Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2538842166151C00932606 /* ConversationActionController+Notifications.swift */; };
+		EE2BCA0B2BD7C95B000C2ED3 /* SwitchBackendConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2BCA0A2BD7C95B000C2ED3 /* SwitchBackendConfirmationView.swift */; };
+		EE2BCA0D2BD7C987000C2ED3 /* SwitchBackendConfirmationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2BCA0C2BD7C987000C2ED3 /* SwitchBackendConfirmationViewModel.swift */; };
 		EE2C42EC25B70F2200B07EFF /* AppLockModule.MockAuthenticationTypeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2C42EB25B70F2200B07EFF /* AppLockModule.MockAuthenticationTypeDetector.swift */; };
 		EE2DF75E2875E2C30028ECA2 /* PreferredAPIVersionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2DF75D2875E2C30028ECA2 /* PreferredAPIVersionView.swift */; };
 		EE2DF7602875E2E20028ECA2 /* PreferredAPIVersionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2DF75F2875E2E20028ECA2 /* PreferredAPIVersionViewModel.swift */; };
@@ -3511,6 +3513,8 @@
 		EE118BFF2031D17000BC68D6 /* MarkdownTextViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextViewTests.swift; sourceTree = "<group>"; };
 		EE1AFBFD2124330B003D1AE1 /* UNUserNotificationCenter+Permission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UNUserNotificationCenter+Permission.swift"; sourceTree = "<group>"; };
 		EE2538842166151C00932606 /* ConversationActionController+Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationActionController+Notifications.swift"; sourceTree = "<group>"; };
+		EE2BCA0A2BD7C95B000C2ED3 /* SwitchBackendConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SwitchBackendConfirmationView.swift; path = UserInterface/SwitchBackendConfirmationView.swift; sourceTree = "<group>"; };
+		EE2BCA0C2BD7C987000C2ED3 /* SwitchBackendConfirmationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchBackendConfirmationViewModel.swift; sourceTree = "<group>"; };
 		EE2C42EB25B70F2200B07EFF /* AppLockModule.MockAuthenticationTypeDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.MockAuthenticationTypeDetector.swift; sourceTree = "<group>"; };
 		EE2DF75D2875E2C30028ECA2 /* PreferredAPIVersionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferredAPIVersionView.swift; sourceTree = "<group>"; };
 		EE2DF75F2875E2E20028ECA2 /* PreferredAPIVersionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferredAPIVersionViewModel.swift; sourceTree = "<group>"; };
@@ -6398,6 +6402,8 @@
 				54B27985258113FD0043ED25 /* AuthenticatedRouter.swift */,
 				543DF6B125309E52001F6EA6 /* RootViewController.swift */,
 				546EEA8C2536DDF500195097 /* URLActionRouter.swift */,
+				EE2BCA0A2BD7C95B000C2ED3 /* SwitchBackendConfirmationView.swift */,
+				EE2BCA0C2BD7C987000C2ED3 /* SwitchBackendConfirmationViewModel.swift */,
 				546EEA8E2536DFAB00195097 /* SwitchingAccountRouter.swift */,
 				543DF684252DD7F0001F6EA6 /* NotificationObserver.swift */,
 				5405444E253842C200FAE77A /* LaunchSequenceOperation.swift */,
@@ -9435,6 +9441,7 @@
 				16626500217DAC4F00300F45 /* ConversationMessageCell.swift in Sources */,
 				163E8C7921E363FE0030BD8D /* ConversationGuestsAllowedCell.swift in Sources */,
 				549D55AC1DBE03990035EB66 /* Settings+Logging.swift in Sources */,
+				EE2BCA0D2BD7C987000C2ED3 /* SwitchBackendConfirmationViewModel.swift in Sources */,
 				EEC7E82A2178B55100E32835 /* ConversationNotificationOptionsViewController.swift in Sources */,
 				7CCA7CC4221AF55300A7CA2A /* ProfileFooterView.swift in Sources */,
 				F15650DD21DD10DD00210504 /* ThreeDotsLoadingView.swift in Sources */,
@@ -10275,6 +10282,7 @@
 				EE593F9C2B73C3F0008D1109 /* DeepLinksView.swift in Sources */,
 				E90B7DB628117DED001831FB /* DynamicFontLabel.swift in Sources */,
 				EECA90AA287449EC0024B301 /* DeveloperFlagsView.swift in Sources */,
+				EE2BCA0B2BD7C95B000C2ED3 /* SwitchBackendConfirmationView.swift in Sources */,
 				637C825C267CED69009457CA /* Stream+Video.swift in Sources */,
 				EE43324B1F1A785800096D90 /* PopUpIconButtonView.swift in Sources */,
 				2577CB7B2B1DC787007D3443 /* DeviceMLSView.swift in Sources */,
