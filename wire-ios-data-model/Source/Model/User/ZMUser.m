@@ -519,6 +519,9 @@ static NSString *const PrimaryKey = @"primaryKey";
     NSNumber *accentId = [transportData optionalNumberForKey:@"accent_id"];
     if (accentId != nil || authoritative) {
         self.accentColorValue = (ZMAccentColorRawValue) accentId.integerValue;
+        if (!self.zmAccentColor) {
+            self.zmAccentColor = [ZMAccentColor default];
+        }
     }
 
     NSDate *expiryDate = [transportData optionalDateForKey:@"expires_at"];

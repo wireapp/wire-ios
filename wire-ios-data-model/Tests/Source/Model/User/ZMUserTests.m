@@ -118,7 +118,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
               @"handle" : @"el_manu",
               @"email" : @"mannie@example.com",
               @"phone" : @"000-000-45789",
-              @"accent_id" : @3,
+              @"accent_id" : @5,
               @"picture" : @[],
               @"managed_by" : ManagedByWire
               } mutableCopy];
@@ -598,7 +598,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertLessThanOrEqual(user.zmAccentColor, ZMAccentColor.max);
 }
 
-- (void)testThatItLimitsAccentColorsToValidRangeForUdpateData_Undefined;
+- (void)testThatItLimitsAccentColorsToValidRangeForUpdateData_Undefined;
 {
     // given
     NSUUID *remoteID = [NSUUID createUUID];
@@ -606,7 +606,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     user.remoteIdentifier = remoteID;
     
     NSMutableDictionary *payload = [self samplePayloadForUserID:remoteID];
-    payload[@"accent_id"] = nil;
+    payload[@"accent_id"] = @0;
 
     // when
     [user updateWithTransportData:payload authoritative:NO];

@@ -68,7 +68,7 @@
                                       @"documents": @[
                                               @{
                                                   @"blocked": @NO,
-                                                  @"accent_id": @3,
+                                                  @"accent_id": @5,
                                                   @"connected": @NO,
                                                   @"id": user1.identifier,
                                                   @"level": @1,
