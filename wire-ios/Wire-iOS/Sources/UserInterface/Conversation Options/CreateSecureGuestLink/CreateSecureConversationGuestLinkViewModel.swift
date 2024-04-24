@@ -85,8 +85,9 @@ final class CreateSecureConversationGuestLinkViewModel {
             guard let self = self else { return }
 
             switch result {
-            case .success(let link):
-                self.delegate?.viewModel(self, didCreateLink: link ?? "")
+            case .success(let link?):
+                self.delegate?.viewModel(self, didCreateLink: link)
+            case .success(nil): break
             case .failure(let error):
                 self.delegate?.viewModel(self, didFailToCreateLinkWithError: error)
             }
