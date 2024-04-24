@@ -182,7 +182,7 @@ final class UserCellTests: BaseSnapshotTestCase {
     func testSelfUser() throws {
         // GIVEN && WHEN
         mockUser = MockUserType.createUser(name: "Tarja Turunen")
-        mockUser.accentColorValue = AccentColor.red.rawValue
+        mockUser.accentColor = .red
         mockUser.isConnected = true
         mockUser.handle = "tarja_turunen"
         mockUser.availability = .busy
@@ -195,7 +195,7 @@ final class UserCellTests: BaseSnapshotTestCase {
     func testNonTeamUserWithoutHandle() {
         // GIVEN && WHEN
         mockUser = MockUserType.createUser(name: "Tarja Turunen")
-        mockUser.accentColorValue = AccentColor.red.rawValue
+        mockUser.accentColor = .red
         mockUser.isConnected = true
         mockUser.handle = nil
 

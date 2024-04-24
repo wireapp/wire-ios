@@ -34,7 +34,7 @@ extension MockServiceUserType {
         serviceUser.displayName = name
         serviceUser.initials = PersonName.person(withName: name, schemeTagger: nil).initials
         serviceUser.handle = serviceUser.name?.lowercased()
-        serviceUser.accentColorValue = AccentColor.amber.rawValue
+        serviceUser.accentColor = .amber
         serviceUser.providerIdentifier = UUID.create().transportString()
         serviceUser.serviceIdentifier = UUID.create().transportString()
         return serviceUser

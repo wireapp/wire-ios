@@ -25,8 +25,7 @@ extension MockUserType {
     /// - Returns: a mock user
     class func createDefaultSelfUser() -> MockUserType {
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
-        mockSelfUser.accentColorValue = AccentColor.red.rawValue
-
+        mockSelfUser.accentColor = .red
         return mockSelfUser
     }
 
@@ -41,7 +40,7 @@ extension MockUserType {
     class func createSelfUser(name: String, inTeam teamID: UUID? = nil) -> MockUserType {
         let user = createUser(name: name, inTeam: teamID)
         user.isSelfUser = true
-        user.accentColorValue = AccentColor.red.rawValue
+        user.accentColor = .red
         return user
     }
 
@@ -58,7 +57,7 @@ extension MockUserType {
         user.isSelfUser = false
         user.isConnected = true
         user.emailAddress = teamID != nil ? "test@email.com" : nil
-        user.accentColorValue = AccentColor.amber.rawValue
+        user.accentColor = .amber
         return user
     }
 
@@ -70,8 +69,10 @@ extension MockUserType {
     ///
     /// - Returns: A standard mock user object with default values.
 
-    class func createUser(name: String,
-                          inTeam teamID: UUID? = nil) -> MockUserType {
+    class func createUser(
+        name: String,
+        inTeam teamID: UUID? = nil
+    ) -> MockUserType {
         let user = MockUserType()
         user.name = name
         user.handle = name.lowercased()
@@ -88,9 +89,8 @@ extension MockUserType {
         let user = MockUserType.createUser(name: "Bruno")
         user.handle = "bruno"
         user.initials = "B"
-        user.accentColorValue = AccentColor.amber.rawValue
+        user.accentColor = .amber
         user.isConnected = true
-
         return user
     }
 }

@@ -119,13 +119,13 @@ static id<UserType> mockSelfUser = nil;
     return @"";
 }
 
-#pragma mark - ZMBareUser
+#pragma mark - ZMUser
 
 @synthesize name;
 @synthesize emailAddress;
 @synthesize isSelfUser;
 @synthesize isConnected;
-@synthesize accentColorValue;
+@synthesize zmAccentColor;
 @synthesize previewImageData;
 @synthesize completeImageData;
 @synthesize connectionRequestMessage;
@@ -145,7 +145,7 @@ static id<UserType> mockSelfUser = nil;
 @synthesize refreshMembershipCount;
 @synthesize refreshTeamDataCount;
 
-#pragma mark - ZMBareUserConnection
+#pragma mark - ZMUserConnection
 
 @synthesize isServiceUser;
 
