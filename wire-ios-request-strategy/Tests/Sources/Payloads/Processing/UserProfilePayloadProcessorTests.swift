@@ -495,7 +495,7 @@ final class UserProfilePayloadProcessorTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // given
             let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
-            let accentColor = AccentColor(rawValue: 3)
+            let accentColor = AccentColor(rawValue: 5)
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, accentColor: Int(accentColor!.rawValue))
 
             // when
