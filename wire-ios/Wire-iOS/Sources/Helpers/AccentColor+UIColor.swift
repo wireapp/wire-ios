@@ -20,21 +20,20 @@ import WireDataModel
 
 extension AccentColor {
 
-    var name: String {
-        typealias AccentColor = L10n.Localizable.Self.Settings.AccountPictureGroup.AccentColor
+    var uiColor: UIColor {
         switch self {
         case .blue:
-            return AccentColor.blue
+            UIColor(light: .blue500Light, dark: .blue500Dark)
         case .green:
-            return AccentColor.green
+            UIColor(light: .green500Light, dark: .green500Dark)
         case .red:
-            return AccentColor.red
+            UIColor(light: .red500Light, dark: .red500Dark)
         case .amber:
-            return AccentColor.amber
+            UIColor(light: .amber500Light, dark: .amber500Dark)
         case .turquoise:
-            return AccentColor.turquoise
+            UIColor(light: .turquoise500Light, dark: .turquoise500Dark)
         case .purple:
-            return AccentColor.purple
+            UIColor(light: .purple500Light, dark: .purple500Dark)
         }
     }
 }

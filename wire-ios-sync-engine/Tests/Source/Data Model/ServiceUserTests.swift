@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireUtilities
 import XCTest
 
 @testable import WireSyncEngine
@@ -180,7 +181,7 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var oneToOneConversation: ZMConversation?
 
-    var accentColorValue: ZMAccentColor = ZMAccentColor.amber
+    var zmAccentColor: ZMAccentColor?
 
     var imageMediumData: Data! = Data()
 
@@ -262,7 +263,6 @@ final class DummyServiceUser: NSObject, ServiceUser {
         self.providerIdentifier = providerIdentifier
         super.init()
     }
-
 }
 
 final class ServiceUserTests: IntegrationTest {

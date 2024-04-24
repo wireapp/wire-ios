@@ -18,6 +18,7 @@
 
 import SnapshotTesting
 import XCTest
+
 @testable import Wire
 
 final class ShareContactsViewControllerSnapshotTests: BaseSnapshotTestCase {

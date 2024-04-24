@@ -156,7 +156,7 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
             .foregroundColor: SemanticColors.Label.textDefault
         ])
 
-        let pingColor: UIColor = message.isObfuscated ? .accentDimmedFlat : sender.accentColor
+        let pingColor: UIColor = message.isObfuscated ? .accentDimmedFlat : (sender.accentColor ?? .default).uiColor
         self.configuration = View.Configuration(pingColor: pingColor, pingText: text, message: message)
         accessibilityLabel = text.string
         actionController = nil

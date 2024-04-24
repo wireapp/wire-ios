@@ -16,16 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-typedef NS_ENUM(int16_t, ZMAccentColor) {
-    ZMAccentColorUndefined = 0,
-    ZMAccentColorBlue,
-    ZMAccentColorGreen,
-    ZMAccentColorDeprecatedYellow,
-    ZMAccentColorRed,
-    ZMAccentColorAmber,
-    ZMAccentColorTurquoise,
-    ZMAccentColorPurple,
-    
-    ZMAccentColorMin = ZMAccentColorBlue,
-    ZMAccentColorMax = ZMAccentColorPurple,
-};
+import XCTest
+
+@testable import WireUtilities
+
+final class ZMAccentColorTests: XCTestCase {
+
+    func testTwoInstancesAreEqual() {
+        let amber0: ZMAccentColor = .amber
+        let amber1: ZMAccentColor? = .from(rawValue: AccentColor.amber.rawValue)
+        XCTAssertEqual(amber0, amber1)
+    }
+
+    func testTwoInstancesAreNotEqual() {
+        let blue: ZMAccentColor = .blue
+        let amber: ZMAccentColor = .amber
+        XCTAssertNotEqual(blue, amber)
+    }
+}

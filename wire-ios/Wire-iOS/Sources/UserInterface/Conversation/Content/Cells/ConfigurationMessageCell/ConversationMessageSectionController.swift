@@ -244,7 +244,7 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
         let isSenderVisible = self.shouldShowSenderDetails(in: context)
 
         if isBurstTimestampVisible(in: context) {
-            add(description: BurstTimestampSenderMessageCellDescription(message: message, context: context, accentColor: userSession.selfUser.accentColor))
+            add(description: BurstTimestampSenderMessageCellDescription(message: message, context: context, accentColor: (userSession.selfUser.accentColor ?? .default).uiColor))
         }
 
         if isSenderVisible, let sender = message.senderUser, let timestamp = message.formattedReceivedDate() {

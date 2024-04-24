@@ -23,6 +23,7 @@ import XCTest
 @testable import WireCommonComponents
 
 final class MockZMEditableUser: MockUser, ZMEditableUser {
+
     var needsRichProfileUpdate: Bool = false
 
     var enableReadReceipts: Bool = false
@@ -35,7 +36,6 @@ final class MockZMEditableUser: MockUser, ZMEditableUser {
     static func validate(name: inout String?) throws -> Bool {
         return false
     }
-
 }
 
 final class ZMMockAVSMediaManager: AVSMediaManagerInterface {

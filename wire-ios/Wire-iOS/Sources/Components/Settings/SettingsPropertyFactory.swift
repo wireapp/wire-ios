@@ -20,6 +20,7 @@ import AppCenter
 import AppCenterAnalytics
 import AppCenterDistribute
 import avs
+import WireDataModel
 import WireSyncEngine
 import WireCommonComponents
 
@@ -158,15 +159,15 @@ final class SettingsPropertyFactory {
 
         case .accentColor:
             let getAction: GetAction = { [unowned self] _ in
-                return SettingsPropertyValue(self.selfUser?.accentColorValue.rawValue ?? ZMAccentColor.undefined.rawValue)
+                return SettingsPropertyValue(self.selfUser?.accentColor?.rawValue ?? 0)
             }
 
             let setAction: SetAction = { [unowned self] _, value in
                 switch value {
                 case .number(let number):
-                    self.userSession?.enqueue({
-                        self.selfUser?.accentColorValue = ZMAccentColor(rawValue: number.int16Value)!
-                    })
+                    self.userSession?.enqueue {
+                        self.selfUser?.zmAccentColor = .from(rawValue: number.int16Value)
+                    }
                 default:
                     throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
                 }

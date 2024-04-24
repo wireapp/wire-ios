@@ -16,34 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModel
 import XCTest
+
 @testable import Wire
 
 private extension UIColor {
-    class var accentOverrideColor: ZMAccentColor? {
-        return ZMUser.selfUser()?.accentColorValue
+    class var accentOverrideColor: AccentColor? {
+        ZMUser.selfUser()?.accentColor
     }
 }
 
 extension XCTestCase {
-    /// If this is set the accent color will be overriden for the tests
-    static var accentColor: ZMAccentColor {
-        get {
-            return UIColor.accentOverrideColor!
-        }
 
-        set {
-            UIColor.setAccentOverride(newValue)
-        }
+    /// If this is set the accent color will be overriden for the tests
+    static var accentColor: AccentColor {
+        get { UIColor.accentOverrideColor! }
+        set { UIColor.setAccentOverride(newValue) }
     }
 
-    var accentColor: ZMAccentColor {
-        get {
-            return XCTestCase.accentColor
-        }
-
-        set {
-            XCTestCase.accentColor = newValue
-        }
+    var accentColor: AccentColor {
+        get { XCTestCase.accentColor }
+        set { XCTestCase.accentColor = newValue }
     }
 }

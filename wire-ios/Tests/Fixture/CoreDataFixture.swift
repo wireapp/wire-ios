@@ -56,17 +56,6 @@ final class CoreDataFixture {
         return false
     }
 
-    /// If this is set the accent color will be overriden for the tests
-    var accentColor: ZMAccentColor {
-        get {
-            return UIColor.accentOverrideColor!
-        }
-
-        set {
-            UIColor.setAccentOverride(newValue)
-        }
-    }
-
     var documentsDirectory: URL?
 
     init() {
@@ -78,7 +67,6 @@ final class CoreDataFixture {
         }
         AppRootRouter.configureAppearance()
         UIView.setAnimationsEnabled(false)
-        accentColor = .red
         snapshotBackgroundColor = UIColor.clear
 
         do {
@@ -148,7 +136,7 @@ final class CoreDataFixture {
         selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = UUID()
         selfUser.name = "selfUser"
-        selfUser.accentColorValue = .red
+        selfUser.accentColor = .red
         selfUser.emailAddress = "test@email.com"
         selfUser.phoneNumber = "+123456789"
 
@@ -160,7 +148,7 @@ final class CoreDataFixture {
         otherUser.remoteIdentifier = UUID()
         otherUser.name = "Bruno"
         otherUser.handle = "bruno"
-        otherUser.accentColorValue = .amber
+        otherUser.accentColor = .amber
 
         otherUserConversation = ZMConversation.createOtherUserConversation(moc: uiMOC, otherUser: otherUser)
 
@@ -212,7 +200,6 @@ final class CoreDataFixture {
         conversation.lastReadServerTimeStamp = Date.distantPast
         conversation.setPrimitiveValue(1, forKey: ZMConversationInternalEstimatedUnreadCountKey)
     }
-
 }
 
 // MARK: - mock service user
@@ -223,7 +210,7 @@ extension CoreDataFixture {
         serviceUser.remoteIdentifier = UUID()
         serviceUser.name = "ServiceUser"
         serviceUser.handle = serviceUser.name!.lowercased()
-        serviceUser.accentColorValue = .amber
+        serviceUser.accentColor = .amber
         serviceUser.serviceIdentifier = UUID.create().transportString()
         serviceUser.providerIdentifier = UUID.create().transportString()
         uiMOC.saveOrRollback()
@@ -326,7 +313,7 @@ extension CoreDataFixture {
 }
 
 private extension UIColor {
-    class var accentOverrideColor: ZMAccentColor? {
-        return ZMUser.selfUser()?.accentColorValue
+    class var accentOverrideColor: AccentColor? {
+        ZMUser.selfUser()?.accentColor
     }
 }

@@ -26,11 +26,11 @@ public struct UnregisteredTeam: Equatable {
     public let emailCode: String
     public let fullName: String
     public let password: String
-    public let accentColor: WireUtilities.AccentColor
+    public let accentColor: AccentColor
     public let locale: String
     public let label: UUID?
 
-    public init(teamName: String, email: String, emailCode: String, fullName: String, password: String, accentColor: WireUtilities.AccentColor) {
+    public init(teamName: String, email: String, emailCode: String, fullName: String, password: String, accentColor: AccentColor) {
         self.teamName = teamName
         self.email = email
         self.emailCode = emailCode
