@@ -318,7 +318,7 @@ public class ZMSearchUser: NSObject, UserType {
 
     public var zmAccentColor: ZMAccentColor? {
         if let user = user {
-            accentColor.map { .from(accentColor: $0) }
+            user.zmAccentColor
         } else {
             internalAccentColor
         }
