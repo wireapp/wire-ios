@@ -60,8 +60,15 @@ final class CallingActionsView: UIView {
     private let largeHangUpButton = EndCallButton.bigEndCallButton()
 
     private var establishedCallButtons: [IconLabelButton] {
-        return [microphoneButton, cameraButton, speakerButton, flipCameraButton, endCallButton]
+        [
+            microphoneButton,
+            cameraButton,
+            speakerButton,
+            flipCameraButton,
+            endCallButton
+        ]
     }
+
     private var largeButtonsPortraitConstraints: [NSLayoutConstraint] = []
     private var largeButtonsLandscapeConstraints: [NSLayoutConstraint] = []
 
@@ -72,7 +79,12 @@ final class CallingActionsView: UIView {
             handleContainerView.isHidden = isIncomingCall
             handleView.accessibilityElementsHidden = isIncomingCall
             if isIncomingCall {
-                [microphoneButton, cameraButton, speakerButton].forEach(topStackView.addArrangedSubview)
+                [
+                    microphoneButton,
+                    cameraButton,
+                    speakerButton
+                ].forEach(topStackView.addArrangedSubview)
+
                 addIncomingCallControllButtons()
                 verticalStackView.layoutMargins = UIEdgeInsets(top: 16, left: 4, bottom: 0, right: 4)
             } else {
