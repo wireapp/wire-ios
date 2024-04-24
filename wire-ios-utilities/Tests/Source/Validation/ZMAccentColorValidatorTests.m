@@ -40,11 +40,11 @@
 - (void)testThatItLimitsTheAccentColorToAValidRange;
 {
     // given
-    id value = [NSNumber numberWithInt:ZMAccentColorBrightYellow];
+    id value = [NSNumber numberWithInt:ZMAccentColorDeprecatedYellow];
     //when
     [ZMAccentColorValidator validateValue:&value error:NULL];
     //then
-    XCTAssertEqual([value intValue], ZMAccentColorBrightYellow);
+    XCTAssertEqual([value intValue], ZMAccentColorDeprecatedYellow);
     
     //given
     value = [NSNumber numberWithInt:ZMAccentColorUndefined];

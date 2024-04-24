@@ -25,7 +25,7 @@ final class SearchResultLabelTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .violet
+        accentColor = .purple
     }
 
     override func tearDown() {

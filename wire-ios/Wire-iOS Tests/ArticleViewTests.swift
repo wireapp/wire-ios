@@ -104,7 +104,7 @@ final class ArticleViewTests: BaseSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
-        accentColor = .strongBlue
+        accentColor = .blue
     }
 
     // MARK: - tearDown

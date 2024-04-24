@@ -27,7 +27,7 @@ extension AccentColor {
             return AccentColor.blue
         case .green:
             return AccentColor.green
-        case .yellow:
+        case .deprecatedYellow:
             return AccentColor.yellow
         case .red:
             return AccentColor.red

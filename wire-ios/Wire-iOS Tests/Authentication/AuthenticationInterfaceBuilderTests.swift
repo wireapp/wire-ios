@@ -28,7 +28,7 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
     override func setUp() {
         super.setUp()
         coreDataFixture = CoreDataFixture()
-        accentColor = .strongBlue
+        accentColor = .blue
 
         featureProvider = MockAuthenticationFeatureProvider()
         builder = AuthenticationInterfaceBuilder(featureProvider: featureProvider, backendEnvironmentProvider: {

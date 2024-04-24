@@ -24,7 +24,7 @@ final class ChangeHandleViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
         let mockSelfUser = MockUserType.createSelfUser(name: "selfUser")
         mockSelfUser.handle = nil
         mockSelfUser.domain = "wire.com"

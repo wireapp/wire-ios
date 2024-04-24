@@ -74,7 +74,7 @@ final class NetworkStatusViewSnapShotTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .violet
+        accentColor = .purple
         mockContainer = MockContainer()
         sut = NetworkStatusView()
         sut.overrideUserInterfaceStyle = .light

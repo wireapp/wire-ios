@@ -29,7 +29,7 @@ final class ConversationListAccessoryViewTests: BaseSnapshotTestCase {
         super.setUp()
         userSession = UserSessionMock()
         self.sut = ConversationListAccessoryView(mediaPlaybackManager: MediaPlaybackManager(name: "test", userSession: userSession))
-        accentColor = .violet
+        accentColor = .purple
     }
 
     override func tearDown() {

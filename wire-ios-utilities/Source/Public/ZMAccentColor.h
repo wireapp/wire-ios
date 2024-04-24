@@ -18,14 +18,14 @@
 
 typedef NS_ENUM(int16_t, ZMAccentColor) {
     ZMAccentColorUndefined = 0,
-    ZMAccentColorStrongBlue,
-    ZMAccentColorStrongLimeGreen,
-    ZMAccentColorBrightYellow,
-    ZMAccentColorVividRed,
-    ZMAccentColorBrightOrange,
-    ZMAccentColorSoftPink,
-    ZMAccentColorViolet,
+    ZMAccentColorBlue,
+    ZMAccentColorGreen,
+    ZMAccentColorDeprecatedYellow,
+    ZMAccentColorRed,
+    ZMAccentColorAmber,
+    ZMAccentColorTurquoise,
+    ZMAccentColorPurple,
     
-    ZMAccentColorMin = ZMAccentColorStrongBlue,
-    ZMAccentColorMax = ZMAccentColorViolet,
+    ZMAccentColorMin = ZMAccentColorBlue,
+    ZMAccentColorMax = ZMAccentColorPurple,
 };

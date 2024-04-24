@@ -41,7 +41,7 @@ class UserTypeTests_Materialize: ModelObjectsTests {
         let teamSearchUser = ZMSearchUser(contextProvider: self.coreDataStack,
                                           name: "Team",
                                           handle: "team",
-                                          accentColor: .brightOrange,
+                                          accentColor: .amber,
                                           remoteIdentifier: UUID(),
                                           teamIdentifier: team.remoteIdentifier)
         uiMOC.saveOrRollback()
@@ -59,7 +59,7 @@ class UserTypeTests_Materialize: ModelObjectsTests {
         let incompleteSearchUser = ZMSearchUser(contextProvider: self.coreDataStack,
                                                 name: "Incomplete",
                                                 handle: "incomplete",
-                                                accentColor: .brightOrange,
+                                                accentColor: .amber,
                                                 remoteIdentifier: nil)
         var searchUsers = userIDs.map({ createSearchUser(name: "John Doe", remoteIdentifier: $0) }) as [UserType]
         searchUsers.append(incompleteSearchUser)
@@ -94,7 +94,7 @@ class UserTypeTests_Materialize: ModelObjectsTests {
         return ZMSearchUser(contextProvider: self.coreDataStack,
                             name: name.capitalized,
                             handle: name.lowercased(),
-                            accentColor: .brightOrange,
+                            accentColor: .amber,
                             remoteIdentifier: remoteIdentifier)
     }
 

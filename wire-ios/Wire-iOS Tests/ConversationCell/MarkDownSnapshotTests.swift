@@ -27,7 +27,7 @@ final class MarkDownSnapshotTests: ConversationMessageSnapshotTestCase {
         super.setUp()
 
         mockOtherUser = MockUserType.createUser(name: "Bruno")
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
 
         mockSelfUser = MockUserType.createDefaultSelfUser()
     }

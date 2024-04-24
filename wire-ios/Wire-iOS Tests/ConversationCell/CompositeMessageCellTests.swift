@@ -31,7 +31,7 @@ final class CompositeMessageCellTests: ConversationMessageSnapshotTestCase {
         mockSelfUser = MockUserType.createDefaultSelfUser()
 
         // make sure the button's color is alarm red, not accent color
-        UIColor.setAccentOverride(.strongBlue)
+        UIColor.setAccentOverride(.blue)
     }
 
     override func tearDown() {

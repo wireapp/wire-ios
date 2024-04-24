@@ -38,7 +38,7 @@ final class TextMessageMentionsTests: ConversationMessageSnapshotTestCase {
         super.setUp()
         otherUser = MockUserType.createUser(name: "Bruno")
         selfUser = MockUserType.createDefaultSelfUser()
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
     }
 
     // MARK: - tearDown

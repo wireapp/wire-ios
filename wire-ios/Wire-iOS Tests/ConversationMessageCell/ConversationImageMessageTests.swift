@@ -29,7 +29,7 @@ final class ConversationImageMessageTests: ConversationMessageSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
     }
 
     // MARK: - tearDown

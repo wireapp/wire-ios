@@ -30,7 +30,7 @@ final class ContactsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        XCTestCase.accentColor = .strongBlue
+        XCTestCase.accentColor = .blue
         sut = ContactsViewController()
         sut.searchHeaderViewController.overrideUserInterfaceStyle = .dark
         sut.overrideUserInterfaceStyle = .dark

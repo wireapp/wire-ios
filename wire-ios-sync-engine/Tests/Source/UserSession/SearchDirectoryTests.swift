@@ -35,7 +35,7 @@ final class SearchDirectoryTests: DatabaseTest {
             refreshUsersMissingMetadataAction: .dummy,
             refreshConversationsMissingMetadataAction: .dummy
         )
-        _ = ZMSearchUser(contextProvider: coreDataStack!, name: "John Doe", handle: "john", accentColor: .brightOrange, remoteIdentifier: uuid)
+        _ = ZMSearchUser(contextProvider: coreDataStack!, name: "John Doe", handle: "john", accentColor: .amber, remoteIdentifier: uuid)
         XCTAssertNotNil(uiMOC.zm_searchUserCache?.object(forKey: uuid as NSUUID))
 
         // when

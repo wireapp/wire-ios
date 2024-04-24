@@ -30,7 +30,7 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
         message = createMessage()
     }
 

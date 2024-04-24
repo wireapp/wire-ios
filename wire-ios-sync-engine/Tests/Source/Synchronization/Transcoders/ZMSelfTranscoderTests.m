@@ -372,7 +372,7 @@
 - (void)testThatItGeneratesARequestForUpdatingChangedSelfUser
 {
     NSString *name = @"My new name testThatItGeneratesARequestForUpdatingChangedSelfUser";
-    ZMAccentColor accentColor = ZMAccentColorBrightYellow;
+    ZMAccentColor accentColor = ZMAccentColorDeprecatedYellow;
     NSDictionary* uploadPayload = @{
                                     @"name" : name,
                                     @"accent_id" : @(accentColor)
@@ -400,7 +400,7 @@
 
 - (void)testThatItGeneratesARequestForUpdatingJustTheAccentColorInChangedSelfUser
 {
-    ZMAccentColor accentColor = ZMAccentColorBrightYellow;
+    ZMAccentColor accentColor = ZMAccentColorDeprecatedYellow;
     NSDictionary* uploadPayload = @{
                                     @"accent_id" : @(accentColor)
                                     };
@@ -474,7 +474,7 @@
         // given
         ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
         user.name = @"Joe Random User";
-        user.accentColorValue = ZMAccentColorBrightYellow;
+        user.accentColorValue = ZMAccentColorDeprecatedYellow;
         user.remoteIdentifier = [NSUUID createUUID];
         
         // when

@@ -29,7 +29,7 @@ final class LocationMessageCellTests: ConversationMessageSnapshotTestCase {
         super.setUp()
 
         mockSelfUser = MockUserType.createDefaultSelfUser()
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
     }
 
     override func tearDown() {

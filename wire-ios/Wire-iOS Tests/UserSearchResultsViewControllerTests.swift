@@ -60,7 +60,7 @@ final class UserSearchResultsViewControllerTests: BaseSnapshotTestCase {
 
         for name in MockUserType.usernames {
             let user = MockUserType.createUser(name: name)
-            user.accentColorValue = .brightOrange
+            user.accentColorValue = .amber
             XCTAssertFalse(user.isTeamMember, "user should not be a team member to generate snapshots with guest icon", file: file, line: line)
             allUsers.append(user)
         }

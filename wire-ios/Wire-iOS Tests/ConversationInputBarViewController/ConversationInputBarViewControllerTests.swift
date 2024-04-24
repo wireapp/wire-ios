@@ -37,7 +37,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
         mockConversation = MockInputBarConversationType()
         mockClassificationProvider = MockClassificationProvider()
         userSession = UserSessionMock()

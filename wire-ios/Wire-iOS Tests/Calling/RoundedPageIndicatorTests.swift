@@ -28,7 +28,7 @@ class RoundedPageIndicatorTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
         sut = RoundedPageIndicator()
         sut.frame = frame
     }

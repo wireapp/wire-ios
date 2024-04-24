@@ -25,7 +25,7 @@ final class ContactsCellSnapshotTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        XCTestCase.accentColor = .strongBlue
+        XCTestCase.accentColor = .blue
         sut = ContactsCell()
     }
 

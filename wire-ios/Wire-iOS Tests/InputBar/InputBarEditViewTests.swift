@@ -24,7 +24,7 @@ final class InputBarEditViewTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
         sut = InputBarEditView()
 
         sut.backgroundColor = UIColor.lowAccentColor()

@@ -287,7 +287,7 @@ extension UIColor {
             self.init(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
         case .green:
             self.init(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
-        case .yellow: // Deprecated
+        case .deprecatedYellow: // Deprecated
             self.init(red: 0.996, green: 0.749, blue: 0.007, alpha: 1)
         case .red:
             self.init(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)

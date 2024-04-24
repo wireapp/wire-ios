@@ -30,7 +30,7 @@ final class SettingsTechnicalReportViewControllerSnapshotTests: BaseSnapshotTest
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
     }
 
     // MARK: - tearDown
