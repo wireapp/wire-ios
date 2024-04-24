@@ -65,11 +65,6 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
         createConstraints()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        updateActionViewHeight()
-    }
-
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         updateRows()
@@ -116,7 +111,7 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
     }
 
     private func createConstraints() {
-        actionsViewHeightConstraint = actionsView.heightAnchor.constraint(equalToConstant: calculateHeightConstant())
+        actionsViewHeightConstraint = actionsView.heightAnchor.constraint(equalToConstant: 128.0)
 
         NSLayoutConstraint.activate([
             stackView.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
@@ -152,7 +147,7 @@ final class CallingActionsInfoViewController: UIViewController, UICollectionView
 
     private func calculateHeightConstant() -> CGFloat {
         if UIDevice.current.twoDimensionOrientation.isLandscape {
-            return 128 + view.safeAreaInsets.bottom
+            return 128
         } else {
             return (isIncomingCall ? 250 : 128) + view.safeAreaInsets.bottom
         }
