@@ -134,13 +134,12 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
 
     func testThatItRendersManyUsers() {
         // GIVEN
-
         let conversation = MockStableRandomParticipantsConversation()
         conversation.stableRandomParticipants = MockUserType.usernames.map { MockUserType.createConnectedUser(name: $0) }
 
         (conversation.stableRandomParticipants[0] as! MockUserType).zmAccentColor = .red
         (conversation.stableRandomParticipants[1] as! MockUserType).zmAccentColor = .amber
-        (conversation.stableRandomParticipants[2] as! MockUserType).zmAccentColor = .amber
+        (conversation.stableRandomParticipants[2] as! MockUserType).zmAccentColor = .purple
         (conversation.stableRandomParticipants[3] as! MockUserType).zmAccentColor = .blue
 
         // WHEN

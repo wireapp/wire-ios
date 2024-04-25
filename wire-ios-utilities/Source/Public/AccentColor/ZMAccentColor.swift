@@ -63,4 +63,8 @@ public final class ZMAccentColor: NSObject {
     public static func from(accentColor: AccentColor) -> ZMAccentColor {
         mapping[accentColor]!
     }
+
+    public override var debugDescription: String {
+        .init(reflecting: accentColor)
+    }
 }
