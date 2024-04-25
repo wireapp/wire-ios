@@ -31,7 +31,7 @@ final class IncomingConnectionViewTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
     }
 
     // MARK: - Snapshot Tests

@@ -18,7 +18,6 @@
 
 public protocol UserPropertyValidating {
     func validate(name: inout String?) throws -> Bool
-    func validate(accentColor: inout Int?) throws -> Bool
     func validate(emailAddress: inout String?) throws -> Bool
     func validate(password: inout String?) throws -> Bool
     func validate(phoneNumber: inout String?) throws -> Bool

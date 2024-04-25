@@ -18,6 +18,7 @@
 
 import SnapshotTesting
 import XCTest
+
 @testable import Wire
 
 final class ShareContactsViewControllerSnapshotTests: BaseSnapshotTestCase {
@@ -26,7 +27,7 @@ final class ShareContactsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        XCTestCase.accentColor = .vividRed
+        XCTestCase.accentColor = .red
         sut = ShareContactsViewController()
     }
 

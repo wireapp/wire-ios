@@ -36,15 +36,6 @@ public struct UserPropertyValidator: UserPropertyValidating {
         return name == nil || validate
     }
 
-    // Accent color
-
-    public func validate(accentColor: inout Int?) throws -> Bool {
-        var mutableAccentColor: Any? = accentColor
-        let result = try ZMAccentColorValidator.validateValue(&mutableAccentColor)
-        accentColor = mutableAccentColor as? Int
-        return result
-    }
-
     // E-mail address
 
     public func validate(emailAddress: inout String?) throws -> Bool {
@@ -52,7 +43,6 @@ public struct UserPropertyValidator: UserPropertyValidating {
         let result = try ZMEmailAddressValidator.validateValue(&mutableEmailAddress)
         emailAddress = mutableEmailAddress as? String
         return result
-
     }
 
     // Password

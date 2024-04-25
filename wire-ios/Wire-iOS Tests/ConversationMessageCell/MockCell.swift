@@ -54,7 +54,7 @@ final class MockCellDescription<T>: ConversationMessageCellDescription {
     var accessibilityLabel: String?
 
     init() {
-        let backgroundColor = UIColor(for: .red)
+        let backgroundColor = AccentColor.red.uiColor
         configuration = View.Configuration(backgroundColor: backgroundColor)
     }
 }

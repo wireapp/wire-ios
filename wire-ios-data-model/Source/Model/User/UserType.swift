@@ -93,7 +93,11 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     /// Whether the user is under legal hold.
     var isUnderLegalHold: Bool { get }
 
-    var accentColorValue: ZMAccentColor { get }
+    var accentColorValue: ZMAccentColorRawValue { get }
+
+    // Type `AccentColor?` cannot be represented in Objective-C.
+    // While @objc support is required, use `ZMAccentColor?`.
+    var zmAccentColor: ZMAccentColor? { get }
 
     /// Whether the user is a wireless user.
     var isWirelessUser: Bool { get }
