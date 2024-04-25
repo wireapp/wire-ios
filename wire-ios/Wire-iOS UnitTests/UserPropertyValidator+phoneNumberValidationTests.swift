@@ -16,15 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSyncEngine
 import XCTest
+
 @testable import Wire
 
-final class PhoneNumberTests: XCTestCase {
+final class UserPropertyValidator_PhoneNumberValidationTests: XCTestCase {
+
+    var sut: UserPropertyValidator!
+
+    override func setUp() {
+        sut = .init()
+    }
+
+    override func tearDown() {
+        sut = nil
+    }
 
     func testThatPhoneNumberStructWithLeadingZeroCanBeCompared() {
+
         // GIVEN
-        let phoneNumber1 = PhoneNumber(fullNumber: "+49017612345678")
-        let phoneNumber2 = PhoneNumber(fullNumber: "+4917612345678")
+        let phoneNumber1 = PhoneNumber(fullNumber: "+49017612345678", userPropertyValidator: sut)
+        let phoneNumber2 = PhoneNumber(fullNumber: "+4917612345678", userPropertyValidator: sut)
 
         // WHEN & THEN
         XCTAssertEqual(phoneNumber1, phoneNumber2)
@@ -32,18 +45,20 @@ final class PhoneNumberTests: XCTestCase {
     }
 
     func testThatDifferentNumbersAreNotEqual() {
+
         // GIVEN
-        let phoneNumber1 = PhoneNumber(fullNumber: "+4917212345678")
-        let phoneNumber2 = PhoneNumber(fullNumber: "+4917612345678")
+        let phoneNumber1 = PhoneNumber(fullNumber: "+4917212345678", userPropertyValidator: sut)
+        let phoneNumber2 = PhoneNumber(fullNumber: "+4917612345678", userPropertyValidator: sut)
 
         // WHEN & THEN
         XCTAssertNotEqual(phoneNumber1, phoneNumber2)
     }
 
     func testThatUSnumberAreCamparable() {
+
         // GIVEN
-        let phoneNumber1 = PhoneNumber(countryCode: 1, numberWithoutCode: "5417543010")
-        let phoneNumber2 = PhoneNumber(fullNumber: "+1-541-754-3010")
+        let phoneNumber1 = PhoneNumber(countryCode: 1, numberWithoutCode: "5417543010", userPropertyValidator: sut)
+        let phoneNumber2 = PhoneNumber(fullNumber: "+1-541-754-3010", userPropertyValidator: sut)
 
         // WHEN & THEN
         XCTAssertEqual(phoneNumber1, phoneNumber2)

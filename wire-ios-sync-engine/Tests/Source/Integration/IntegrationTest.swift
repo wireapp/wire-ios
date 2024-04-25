@@ -114,10 +114,13 @@ final class MockUnauthenticatedSessionFactory: UnauthenticatedSessionFactory {
 
     override func session(delegate: UnauthenticatedSessionDelegate,
                           authenticationStatusDelegate: ZMAuthenticationStatusDelegate) -> UnauthenticatedSession {
-        return UnauthenticatedSession(transportSession: transportSession,
-                                      reachability: reachability,
-                                      delegate: delegate,
-                                      authenticationStatusDelegate: authenticationStatusDelegate)
+        .init(
+            transportSession: transportSession,
+            reachability: reachability,
+            delegate: delegate,
+            authenticationStatusDelegate: authenticationStatusDelegate,
+            userPropertyValidator: UserPropertyValidator()
+        )
     }
 }
 

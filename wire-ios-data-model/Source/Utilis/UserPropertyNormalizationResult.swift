@@ -16,15 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+/// The result of a property normalization operation.
+public struct UserPropertyNormalizationResult<Value> {
 
-@objc public enum ZMManagedObjectValidationErrorCode: Int {
-    case tooLong
-    case tooShort
-    case emailAddressIsInvalid
-    case phoneNumberContainsInvalidCharacters
-}
+    /// Whether the value is valid.
+    public var isValid: Bool
 
-public protocol ZMPropertyValidator {
-    static func validateValue(_ ioValue: AutoreleasingUnsafeMutablePointer<AnyObject?>!) throws
+    /// The value that was normalized during the operation.
+    public var normalizedValue: Value
+
+    /// The error that reprsents the reason why the property is not valid.
+    public var validationError: Error?
+
+    public init(isValid: Bool, normalizedValue: Value, validationError: Error?) {
+        self.isValid = isValid
+        self.normalizedValue = normalizedValue
+        self.validationError = validationError
+    }
 }
