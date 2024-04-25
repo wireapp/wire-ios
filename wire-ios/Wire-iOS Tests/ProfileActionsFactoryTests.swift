@@ -56,7 +56,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         // GIVEN
         let otherUser = MockUserType.createConnectedUser(
             name: "Catherine Jackson",
-            domain: domain ,
+            domain: domain,
             inTeam: selfUserTeam
         )
         let conversation = MockConversation.oneOnOneConversation()
@@ -117,7 +117,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
     func test_OneToOne_TeamToGuestFromOtherTeam() {
         // GIVEN
         let otherUser = MockUserType.createConnectedUser(
-            name: "Catherine Jackson", 
+            name: "Catherine Jackson",
             domain: domain,
             inTeam: UUID()
         )
