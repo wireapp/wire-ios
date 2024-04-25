@@ -131,21 +131,18 @@ final class UserPropertyNormalizerTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func assertNormalizationValue<T>(_ normalizationResult: NormalizationResult<T>, _ expectedValue: T) where T: Equatable {
-        guard case let .valid(value) = normalizationResult else {
-            XCTFail()
-            return
-        }
-
-        XCTAssertEqual(value, expectedValue)
+    private func assertNormalizationValue<T>(_ normalizationResult: UserPropertyNormalizationResult<T>, _ expectedValue: T) where T: Equatable {
+        XCTAssertTrue(normalizationResult.isValid)
+        XCTAssertEqual(normalizationResult.normalizedValue, expectedValue)
     }
 
-    private func assertNormalizationErrorCode<T>(_ normalizationResult: NormalizationResult<T>, _ expectedCode: ZMManagedObjectValidationErrorCode) {
-        guard case let .invalid(errorCode) = normalizationResult else {
-            XCTFail()
-            return
+    private func assertNormalizationErrorCode<T>(_ normalizationResult: UserPropertyNormalizationResult<T>, _ expectedCode: ZMManagedObjectValidationErrorCode) {
+        guard normalizationResult.validationError != nil else {
+            return XCTFail("unexpected success")
         }
-
-        XCTAssertEqual(errorCode, expectedCode)
+        guard let error = normalizationResult.validationError as? NSError else {
+            return XCTFail("unexpected error type")
+        }
+        XCTAssertEqual(error.code, expectedCode.rawValue)
     }
 }
