@@ -80,7 +80,9 @@ extension ZMUserSession: UserSession {
         }
     }
 
-    public var searchUserCache: NSCache<NSUUID, WireDataModel.ZMSearchUser>? {
+    // MARK: Dependency Injection
+
+    public var searchUsersCache: SearchUsersCache? {
         dependencies.caches.searchUsers
     }
 

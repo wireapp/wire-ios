@@ -19,16 +19,18 @@
 import Foundation
 import WireDataModel
 
+public typealias SearchUsersCache = NSCache<NSUUID, ZMSearchUser>
+
 extension UserSessionDependencies {
     final class Caches {
         var fileAssets: FileAssetCache?
         var userImages: UserImageLocalCache?
-        var searchUsers: NSCache<NSUUID, ZMSearchUser>?
+        var searchUsers: SearchUsersCache?
 
         init(
             fileAssets: FileAssetCache? = nil,
             userImages: UserImageLocalCache? = nil,
-            searchUsers: NSCache<NSUUID, ZMSearchUser>? = nil
+            searchUsers: SearchUsersCache? = nil
         ) {
             self.fileAssets = fileAssets
             self.userImages = userImages
