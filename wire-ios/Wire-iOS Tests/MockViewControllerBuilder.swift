@@ -16,11 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireCommonComponents
+import UIKit
 
-/// A type that is able to provide an editble user.
+@testable import Wire
 
-public protocol SelfUserProvider {
+struct MockViewControllerBuilder: ViewControllerBuilder {
+    func build() -> UIViewController { .init() }
+}
 
-    var providedSelfUser: UserType & EditableUserType { get }
+extension ViewControllerBuilder where Self == MockViewControllerBuilder {
+    static var mock: Self { .init() }
 }

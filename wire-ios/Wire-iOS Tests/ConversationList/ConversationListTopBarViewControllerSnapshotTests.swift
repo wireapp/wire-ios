@@ -50,7 +50,8 @@ final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestC
         sut = ConversationListTopBarViewController(
             account: mockAccount,
             selfUser: mockSelfUser,
-            userSession: userSession
+            userSession: userSession,
+            selfProfileViewControllerBuilder: .mock
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 48)
         sut.view.backgroundColor = .black

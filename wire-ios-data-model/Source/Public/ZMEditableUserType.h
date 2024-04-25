@@ -16,11 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+@import Foundation;
 
-/// A type that is able to provide an editble user.
+NS_SWIFT_NAME(EditableUserType)
+@protocol ZMEditableUserType <NSObject>
 
-public protocol SelfUserProvider {
+@property (nonatomic, copy, nullable) NSString *name;
+@property (nonatomic) ZMAccentColorRawValue accentColorValue;
+@property (nonatomic, copy, readonly, nullable) NSString *emailAddress;
+@property (nonatomic, copy, readonly, nullable) NSString *phoneNumber;
+@property (nonatomic) BOOL readReceiptsEnabled;
+@property (nonatomic) BOOL needsRichProfileUpdate;
 
-    var providedSelfUser: UserType & EditableUserType { get }
-}
+@end

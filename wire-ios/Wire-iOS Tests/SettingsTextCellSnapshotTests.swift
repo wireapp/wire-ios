@@ -32,7 +32,10 @@ final class SettingsTextCellSnapshotTests: CoreDataSnapshotTestCase {
         let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart")
         let settingsPropertyFactory = SettingsPropertyFactory(userSession: SessionManager.shared?.activeUserSession, selfUser: selfUser)
 
-        settingsCellDescriptorFactory = SettingsCellDescriptorFactory(settingsPropertyFactory: settingsPropertyFactory)
+        settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
+            settingsPropertyFactory: settingsPropertyFactory,
+            userRightInterfaceType: UserRight.self
+        )
     }
 
     override func tearDown() {

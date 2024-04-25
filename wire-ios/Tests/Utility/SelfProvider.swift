@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 
 struct SelfProvider: SelfUserProvider {
-    let providedSelfUser: UserType & ZMEditableUser
+    let providedSelfUser: UserType & EditableUserType
 }
