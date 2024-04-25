@@ -435,9 +435,9 @@ extension ZMConversation {
 
     /// Accepts the privacy changes (legal hold and/or degradation) and resend the pending messages.
     @objc(acknowledgePrivacyWarningWithResendIntent:) public func acknowledgePrivacyWarning(withResendIntent shouldResendMessages: Bool) {
-        acknowledgePrivacyChanges()
 
         if shouldResendMessages {
+            acknowledgePrivacyChanges()
             resendPendingMessagesAfterPrivacyChanges()
         } else {
             discardPendingMessagesAfterPrivacyChanges()
