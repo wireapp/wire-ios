@@ -30,26 +30,5 @@ public enum AccentColor: Int16, CaseIterable, Hashable {
 
 extension AccentColor {
     public static var `default`: Self { .blue }
-
-    /// Returns a random accent color.
-    public static var random: AccentColor {
-        return AccentColor.allSelectable().randomElement()!
-    }
-
-    public init?(ZMAccentColor zmAccentColor: AccentColor) {
-        self.init(rawValue: zmAccentColor.rawValue)
-    }
-
-    public var zmAccentColor: AccentColor {
-        return AccentColor(rawValue: rawValue)!
-    }
-
-    public static func allSelectable() -> [AccentColor] {
-        return [.blue,
-                .green,
-                .red,
-                .amber,
-                .turquoise,
-                .purple]
-    }
+    public static var random: Self! { allCases.randomElement() }
 }
