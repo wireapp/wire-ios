@@ -16,17 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 extension ZMTBaseTest {
-    @objc
-    public static func checkForMemoryLeaksAfterTestClassCompletes() {
-        let leakedObjects = "Leaked: \(MemoryReferenceDebugger.aliveObjectsDescription)"
-        XCTAssert(MemoryReferenceDebugger.aliveObjects.isEmpty, leakedObjects)
-        if !MemoryReferenceDebugger.aliveObjects.isEmpty {
-            print(leakedObjects)
-        }
-    }
 
     public func wait(timeout: TimeInterval = 0.5,
                      file: StaticString = #filePath,
