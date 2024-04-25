@@ -119,6 +119,8 @@ public class ZMSearchUser: NSObject, UserType {
     public private(set) var hasDownloadedFullUserProfile: Bool = false
 
     fileprivate weak var contextProvider: ContextProvider?
+    private let searchUsersCache: SearchUsersCache?
+
     fileprivate var internalDomain: String?
     fileprivate var internalName: String
     fileprivate var internalInitials: String?
@@ -470,20 +472,27 @@ public class ZMSearchUser: NSObject, UserType {
             searchUser.user = localUser
             return searchUser
         } else {
-            return ZMSearchUser(from: payload, contextProvider: contextProvider, user: localUser)
+            return ZMSearchUser(
+                from: payload,
+                contextProvider: contextProvider,
+                user: localUser,
+                searchUsersCache: searchUsersCache
+            )
         }
     }
 
     @objc
-    public init(contextProvider: ContextProvider,
-                name: String,
-                handle: String?,
-                accentColor: ZMAccentColor,
-                remoteIdentifier: UUID?,
-                domain: String? = nil,
-                teamIdentifier: UUID? = nil,
-                user existingUser: ZMUser? = nil,
-                contact: ZMAddressBookContact? = nil
+    public init(
+        contextProvider: ContextProvider,
+        name: String,
+        handle: String?,
+        accentColor: ZMAccentColor,
+        remoteIdentifier: UUID?,
+        domain: String? = nil,
+        teamIdentifier: UUID? = nil,
+        user existingUser: ZMUser? = nil,
+        contact: ZMAddressBookContact? = nil,
+        searchUsersCache: SearchUsersCache?
     ) {
 
         let personName = PersonName.person(withName: name, schemeTagger: nil)
@@ -498,6 +507,7 @@ public class ZMSearchUser: NSObject, UserType {
         self.teamIdentifier = existingUser?.teamIdentifier ?? teamIdentifier
         self.contact = contact
         self.contextProvider = contextProvider
+        self.searchUsersCache = searchUsersCache
 
         let selfUser = ZMUser.selfUser(inUserSession: contextProvider)
         self.internalIsTeamMember = teamIdentifier != nil && selfUser.teamIdentifier == teamIdentifier
@@ -506,37 +516,55 @@ public class ZMSearchUser: NSObject, UserType {
         super.init()
 
         if let remoteIdentifier = self.remoteIdentifier {
-            contextProvider.viewContext.zm_searchUserCache?.setObject(self, forKey: remoteIdentifier as NSUUID)
+            searchUsersCache?.setObject(self, forKey: remoteIdentifier as NSUUID)
         }
     }
 
     @objc
-    public convenience init(contextProvider: ContextProvider, user: ZMUser) {
-        self.init(contextProvider: contextProvider,
-                  name: user.name ?? "",
-                  handle: user.handle,
-                  accentColor: user.accentColorValue,
-                  remoteIdentifier: user.remoteIdentifier,
-                  domain: user.domain,
-                  teamIdentifier: user.teamIdentifier,
-                  user: user)
+    public convenience init(
+        contextProvider: ContextProvider,
+        user: ZMUser,
+        searchUsersCache: SearchUsersCache?
+    ) {
+        self.init(
+            contextProvider: contextProvider,
+            name: user.name ?? "",
+            handle: user.handle,
+            accentColor: user.accentColorValue,
+            remoteIdentifier: user.remoteIdentifier,
+            domain: user.domain,
+            teamIdentifier: user.teamIdentifier,
+            user: user,
+            searchUsersCache: searchUsersCache
+        )
     }
 
     @objc
-    public convenience init(contextProvider: ContextProvider, contact: ZMAddressBookContact, user: ZMUser? = nil) {
-        self.init(contextProvider: contextProvider,
-                  name: contact.name,
-                  handle: user?.handle,
-                  accentColor: .undefined,
-                  remoteIdentifier: user?.remoteIdentifier,
-                  domain: user?.domain,
-                  teamIdentifier: user?.teamIdentifier,
-                  user: user,
-                  contact: contact)
+    public convenience init(
+        contextProvider: ContextProvider,
+        contact: ZMAddressBookContact,
+        user: ZMUser? = nil,
+        searchUsersCache: SearchUsersCache?
+    ) {
+        self.init(
+            contextProvider: contextProvider,
+            name: contact.name,
+            handle: user?.handle,
+            accentColor: .undefined,
+            remoteIdentifier: user?.remoteIdentifier,
+            domain: user?.domain,
+            teamIdentifier: user?.teamIdentifier,
+            user: user,
+            contact: contact,
+            searchUsersCache: searchUsersCache
+        )
     }
 
-    convenience init?(from payload: [String: Any], contextProvider: ContextProvider, user: ZMUser? = nil) {
-
+    convenience init?(
+        from payload: [String: Any],
+        contextProvider: ContextProvider, user: ZMUser? = nil,
+        searchUsersCache: SearchUsersCache?
+    ) {
         guard
             let uuidString = payload["id"] as? String,
             let remoteIdentifier = UUID(uuidString: uuidString),
@@ -550,14 +578,16 @@ public class ZMSearchUser: NSObject, UserType {
         let domain = qualifiedID?["domain"] as? String
         let accentColor = ZMUser.accentColor(fromPayloadValue: payload["accent_id"] as? NSNumber)
 
-        self.init(contextProvider: contextProvider,
-                  name: name,
-                  handle: handle,
-                  accentColor: accentColor,
-                  remoteIdentifier: remoteIdentifier,
-                  domain: domain,
-                  teamIdentifier: teamIdentifier,
-                  user: user
+        self.init(
+            contextProvider: contextProvider,
+            name: name,
+            handle: handle,
+            accentColor: accentColor,
+            remoteIdentifier: remoteIdentifier,
+            domain: domain,
+            teamIdentifier: teamIdentifier,
+            user: user,
+            searchUsersCache: searchUsersCache
         )
 
         self.providerIdentifier = payload["provider"] as? String

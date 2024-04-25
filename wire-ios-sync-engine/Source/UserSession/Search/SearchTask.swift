@@ -171,8 +171,20 @@ extension SearchTask {
                 let copiedConnectedUsers = connectedUsers.compactMap { contextProvider.viewContext.object(with: $0.objectID) as? ZMUser }
 
                 let result = SearchResult(
-                    contacts: copiedConnectedUsers.map { ZMSearchUser(contextProvider: contextProvider, user: $0) },
-                    teamMembers: copiedTeamMembers.compactMap(\.user).map { ZMSearchUser(contextProvider: contextProvider, user: $0) },
+                    contacts: copiedConnectedUsers.map {
+                        ZMSearchUser(
+                            contextProvider: contextProvider,
+                            user: $0,
+                            searchUsersCache: searchUsersCache
+                        )
+                    },
+                    teamMembers: copiedTeamMembers.compactMap(\.user).map {
+                        ZMSearchUser(
+                            contextProvider: contextProvider,
+                            user: $0,
+                            searchUsersCache: searchUsersCache
+                        )
+                    },
                     addressBook: [],
                     directory: [],
                     conversations: [],
@@ -209,11 +221,27 @@ extension SearchTask {
 
                 let copiedConnectedUsers = connectedUsers.compactMap { contextProvider.viewContext.object(with: $0.objectID) as? ZMUser }
                 let searchConnectedUsers = copiedConnectedUsers
-                    .map { ZMSearchUser(contextProvider: contextProvider, user: $0) }
+                    .map {
+                        ZMSearchUser(
+                            contextProvider: contextProvider,
+                            user: $0,
+                            searchUsersCache: searchUsersCache
+                        )
+                    }
                     .filter { !$0.hasEmptyName }
 
-                let copiedteamMembers = teamMembers.compactMap { contextProvider.viewContext.object(with: $0.objectID) as? Member }
-                               let searchTeamMembers = copiedteamMembers.compactMap(\.user).map { ZMSearchUser(contextProvider: contextProvider, user: $0) }
+                let copiedteamMembers = teamMembers.compactMap {
+                    contextProvider.viewContext.object(with: $0.objectID) as? Member
+                }
+                let searchTeamMembers = copiedteamMembers
+                    .compactMap(\.user)
+                    .map {
+                        ZMSearchUser(
+                            contextProvider: contextProvider,
+                            user: $0,
+                            searchUsersCache: searchUsersCache
+                        )
+                    }
 
                 let result = SearchResult(
                     contacts: searchConnectedUsers,
