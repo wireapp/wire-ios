@@ -48,7 +48,7 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         user.name = "Bernd"
         user.remoteIdentifier = UUID()
         user.setImage(data: verySmallJPEGData(), size: .preview)
-        let searchUser = makeSearchUser(name: "", handle: "", accentColor: .undefined, remoteIdentifier: UUID(), user: user)
+        let searchUser = makeSearchUser(name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
 
         // when
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
@@ -67,7 +67,7 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         user.name = "Bernd"
         user.remoteIdentifier = UUID()
 
-        let searchUser = makeSearchUser(name: "", handle: "", accentColor: .undefined, remoteIdentifier: UUID(), user: user)
+        let searchUser = makeSearchUser(name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
 
         // expect
@@ -99,7 +99,7 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         user.name = "Bernd"
         user.remoteIdentifier = UUID()
 
-        let searchUser = makeSearchUser(name: "", handle: "", accentColor: .undefined, remoteIdentifier: UUID(), user: user)
+        let searchUser = makeSearchUser(name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
 
         // expect
@@ -134,7 +134,7 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         connection.to = user
         connection.status = .pending
 
-        let searchUser = makeSearchUser(name: "", handle: "", accentColor: .undefined, remoteIdentifier: UUID(), user: user)
+        let searchUser = makeSearchUser(name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
 
         // expect
@@ -193,7 +193,7 @@ final class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
     private func makeSearchUser(
         name: String,
         handle: String,
-        accentColor: ZMAccentColor,
+        accentColor: ZMAccentColor?,
         remoteIdentifier: UUID?,
         user: ZMUser? = nil
     ) -> ZMSearchUser {

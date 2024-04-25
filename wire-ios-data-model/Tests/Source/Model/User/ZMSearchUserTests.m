@@ -57,7 +57,8 @@
                                                                  domain:nil
                                                          teamIdentifier:nil
                                                                    user:nil
-                                                                contact:nil];
+                                                                contact:nil
+                                                       searchUsersCache:nil];
 
     // (1)
     ZMSearchUser *user2 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
@@ -68,7 +69,8 @@
                                                                  domain:nil
                                                          teamIdentifier:nil
                                                                    user:nil
-                                                                contact:nil];
+                                                                contact:nil
+                                                       searchUsersCache:nil];
 
     XCTAssertEqualObjects(user1, user2);
     XCTAssertEqual(user1.hash, user2.hash);

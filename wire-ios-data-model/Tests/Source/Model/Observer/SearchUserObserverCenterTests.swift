@@ -165,7 +165,7 @@ final class SearchUserObserverCenterTests: ModelObjectsTests {
     private func makeSearchUser(
         name: String,
         handle: String,
-        accentColor: ZMAccentColor,
+        accentColor: ZMAccentColor?,
         remoteIdentifier: UUID?,
         user: ZMUser? = nil
     ) -> ZMSearchUser {
