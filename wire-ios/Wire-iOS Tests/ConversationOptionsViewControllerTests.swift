@@ -75,7 +75,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        // BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         mockConversation = MockConversation()
         mockUseCaseFactory = MockUseCaseFactoryProtocol()
         mockUserSession = UserSessionMock(mockUseCaseFactory: mockUseCaseFactory)

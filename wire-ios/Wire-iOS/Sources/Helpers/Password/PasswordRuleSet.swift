@@ -84,7 +84,7 @@ public struct PasswordRuleSet: Decodable, Equatable {
         case requiredCharacters = "new_password_required_characters"
     }
 
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let minimumLength = try container.decode(UInt.self, forKey: .minimumLength)
         let maximumLength = try container.decode(UInt.self, forKey: .maximumLength)
