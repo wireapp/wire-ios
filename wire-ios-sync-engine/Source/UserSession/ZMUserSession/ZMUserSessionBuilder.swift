@@ -34,7 +34,7 @@ struct ZMUserSessionBuilder {
     private var coreCryptoProvider: (any CoreCryptoProviderProtocol)?
     private var coreDataStack: CoreDataStack?
     private var cryptoboxMigrationManager: (any CryptoboxMigrationManagerInterface)?
-    private var dependencies: InjectedDependencies?
+    private var dependencies: UserSessionDependencies?
     private var e2eiActivationDateRepository: (any E2EIActivationDateRepositoryProtocol)?
     private var earService: (any EARServiceInterface)?
     private var flowManager: (any FlowManagerType)?
@@ -180,7 +180,7 @@ struct ZMUserSessionBuilder {
             coreCryptoProvider: coreCryptoProvider,
             analytics: analytics
         )
-        let dependencies = InjectedDependencies(caches: Caches())
+        let dependencies = UserSessionDependencies(caches: .init())
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults

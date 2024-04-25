@@ -312,7 +312,7 @@ public final class ZMUserSession: NSObject {
 
     // MARK: Dependency Injection
 
-    let dependencies: InjectedDependencies
+    let dependencies: UserSessionDependencies
 
     // MARK: Delegates
 
@@ -350,7 +350,7 @@ public final class ZMUserSession: NSObject {
         mlsConversationVerificationStatusUpdater: any MLSConversationVerificationStatusUpdating,
         contextStorage: LAContextStorable,
         recurringActionService: any RecurringActionServiceInterface,
-        dependencies: InjectedDependencies
+        dependencies: UserSessionDependencies
     ) {
         self.application = application
         self.appVersion = appVersion

@@ -19,26 +19,20 @@
 import Foundation
 import WireDataModel
 
-final class Caches {
-    var fileAssets: FileAssetCache?
-    var userImages: UserImageLocalCache?
-    var searchUsers: NSCache<NSUUID, ZMSearchUser>?
+extension UserSessionDependencies {
+    final class Caches {
+        var fileAssets: FileAssetCache?
+        var userImages: UserImageLocalCache?
+        var searchUsers: NSCache<NSUUID, ZMSearchUser>?
 
-    convenience init() {
-        self.init(
-            fileAssets: nil,
-            userImages: nil,
-            searchUsers: nil
-        )
-    }
-
-    init(
-        fileAssets: FileAssetCache?,
-        userImages: UserImageLocalCache?,
-        searchUsers: NSCache<NSUUID, ZMSearchUser>?
-    ) {
-        self.fileAssets = fileAssets
-        self.userImages = userImages
-        self.searchUsers = searchUsers
+        init(
+            fileAssets: FileAssetCache? = nil,
+            userImages: UserImageLocalCache? = nil,
+            searchUsers: NSCache<NSUUID, ZMSearchUser>? = nil
+        ) {
+            self.fileAssets = fileAssets
+            self.userImages = userImages
+            self.searchUsers = searchUsers
+        }
     }
 }

@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class InjectedDependencies {
+final class UserSessionDependencies {
     var caches: Caches
 
     init(caches: Caches) {
