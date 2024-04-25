@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireSyncEngine
-@testable import Wire
 import SnapshotTesting
+import WireSyncEngine
 import WireSyncEngineSupport
+import XCTest
+@testable import Wire
 
 // MARK: - MockOptionsViewModelConfiguration
 
@@ -75,7 +75,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        // BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
         mockConversation = MockConversation()
         mockUseCaseFactory = MockUseCaseFactoryProtocol()
         mockUserSession = UserSessionMock(mockUseCaseFactory: mockUseCaseFactory)
