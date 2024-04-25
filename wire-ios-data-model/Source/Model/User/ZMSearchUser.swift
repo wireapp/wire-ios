@@ -91,22 +91,6 @@ extension ZMSearchUser: SearchServiceUser {
 
 // MARK: NSManagedObjectContext
 
-let NSManagedObjectContextSearchUserCacheKey = "zm_searchUserCache"
-extension NSManagedObjectContext {
-    @objc
-    public var zm_searchUserCache: NSCache<NSUUID, ZMSearchUser>? {
-        get {
-            guard zm_isUserInterfaceContext else { return nil }
-            return self.userInfo[NSManagedObjectContextSearchUserCacheKey] as? NSCache
-        }
-
-        set {
-            guard zm_isUserInterfaceContext else { return }
-            self.userInfo[NSManagedObjectContextSearchUserCacheKey] = newValue
-        }
-    }
-}
-
 @objc
 public class ZMSearchUser: NSObject, UserType {
     public var providerIdentifier: String?

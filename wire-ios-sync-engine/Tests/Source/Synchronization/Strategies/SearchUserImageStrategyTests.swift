@@ -40,9 +40,6 @@ final class SearchUserImageStrategyTests: MessagingTest {
             managedObjectContext: uiMOC,
             searchUsersCache: mockCache
         )
-
-        // TODO: remove zm_searchUserCache
-        uiMOC.zm_searchUserCache = mockCache
     }
 
     override func tearDown() {
@@ -51,16 +48,20 @@ final class SearchUserImageStrategyTests: MessagingTest {
 
         sut = nil
 
-        // TODO: remove zm_searchUserCache
-        uiMOC.zm_searchUserCache = nil
-
         BackendInfo.domain = nil
 
         super.tearDown()
     }
 
     func createSearchUser() -> ZMSearchUser {
-        return ZMSearchUser(contextProvider: coreDataStack, name: "Foo", handle: "foo", accentColor: .amber, remoteIdentifier: UUID())
+        return ZMSearchUser(
+            contextProvider: coreDataStack,
+            name: "Foo",
+            handle: "foo",
+            accentColor: .amber,
+            remoteIdentifier: UUID(),
+            searchUsersCache: mockCache
+        )
     }
 
     func userIDs(from searchUsers: Set<ZMSearchUser>) -> Set<UUID> {

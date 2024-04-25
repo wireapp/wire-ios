@@ -31,9 +31,6 @@ final class SearchDirectoryTests: DatabaseTest {
 
         mockCache = SearchUsersCache()
         mockTransport = MockTransportSession(dispatchGroup: dispatchGroup)
-
-        // TODO: zm_searchUserCache should ne not required
-        uiMOC.zm_searchUserCache = mockCache
     }
 
     override func tearDown() {
@@ -78,7 +75,8 @@ final class SearchDirectoryTests: DatabaseTest {
             name: "John Doe",
             handle: "john",
             accentColor: .amber,
-            remoteIdentifier: remoteIdentifier
+            remoteIdentifier: remoteIdentifier,
+            searchUsersCache: mockCache
         )
     }
 }

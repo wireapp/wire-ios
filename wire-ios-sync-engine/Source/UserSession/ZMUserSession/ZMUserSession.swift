@@ -510,7 +510,6 @@ public final class ZMUserSession: NSObject {
 
         managedObjectContext.zm_userImageCache = userImageCache
         managedObjectContext.zm_fileAssetCache = fileAssetCache
-        managedObjectContext.zm_searchUserCache = NSCache()
 
         syncManagedObjectContext.performGroupedBlockAndWait {
             self.syncManagedObjectContext.zm_userImageCache = userImageCache
