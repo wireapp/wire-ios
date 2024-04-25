@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 /**
  * An object containing the details required to create a team.
@@ -29,11 +30,11 @@ public struct UnregisteredTeam: Equatable {
     public let emailCode: String
     public let fullName: String
     public let password: String
-    public let accentColor: ZMAccentColor
+    public let accentColor: WireDataModel.AccentColor
     public let locale: String
     public let label: UUID?
 
-    public init(teamName: String, email: String, emailCode: String, fullName: String, password: String, accentColor: ZMAccentColor) {
+    public init(teamName: String, email: String, emailCode: String, fullName: String, password: String, accentColor: WireDataModel.AccentColor) {
         self.teamName = teamName
         self.email = email
         self.emailCode = emailCode

@@ -16,6 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
 
-extension MockUserType: ZMEditableUser { }
+@testable import WireUtilities
+
+final class AccentColorTests: XCTestCase {
+
+    /// Ensures that the raw values haven't changed when migrating `ZMAccentColor` into Swift.
+    func testRawValues() {
+
+        XCTAssertEqual(AccentColor.blue.rawValue, 1)
+        XCTAssertEqual(AccentColor.green.rawValue, 2)
+        XCTAssertEqual(AccentColor.red.rawValue, 4)
+        XCTAssertEqual(AccentColor.amber.rawValue, 5)
+        XCTAssertEqual(AccentColor.turquoise.rawValue, 6)
+        XCTAssertEqual(AccentColor.purple.rawValue, 7)
+
+        XCTAssertEqual(ZMAccentColor.min, .from(accentColor: .blue))
+        XCTAssertEqual(ZMAccentColor.max, .from(accentColor: .purple))
+    }
+}

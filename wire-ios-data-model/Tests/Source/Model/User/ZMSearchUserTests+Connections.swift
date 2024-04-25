@@ -25,7 +25,7 @@ final class ZMSearchUserTests_Connections: ModelObjectsTests {
         let searchUser = ZMSearchUser(contextProvider: coreDataStack,
                                       name: "John Doe",
                                       handle: "johndoe",
-                                      accentColor: .softPink,
+                                      accentColor: .turquoise,
                                       remoteIdentifier: UUID())
 
         // expect

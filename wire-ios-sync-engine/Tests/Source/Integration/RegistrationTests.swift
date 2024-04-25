@@ -36,13 +36,13 @@ class RegistrationTests: IntegrationTest {
         sessionManager?.unauthenticatedSession?.registrationStatus.delegate = delegate
         email = "ba@a-team.de"
 
-        teamToRegister = UnregisteredTeam(teamName: "A-Team", email: email, emailCode: "911", fullName: "Bosco B. A. Baracus", password: "BadAttitude", accentColor: .vividRed)
+        teamToRegister = UnregisteredTeam(teamName: "A-Team", email: email, emailCode: "911", fullName: "Bosco B. A. Baracus", password: "BadAttitude", accentColor: .red)
 
         user = UnregisteredUser()
         user.name = "Bosco B. A. Baracus"
         user.verificationCode = "911"
         user.credentials = .email(address: email, password: "BadAttitude")
-        user.accentColorValue = .vividRed
+        user.accentColor = .red
         user.acceptedTermsOfService = true
         user.marketingConsent = true
     }

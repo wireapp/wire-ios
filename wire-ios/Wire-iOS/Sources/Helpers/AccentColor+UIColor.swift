@@ -16,24 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension ZMTBaseTest {
+import WireDataModel
 
-    public func wait(timeout: TimeInterval = 0.5,
-                     file: StaticString = #filePath,
-                     line: UInt = #line,
-                     forAsyncBlock block: @escaping () async throws -> Void) {
-        let expectation = self.customExpectation(description: "isDone")
+extension AccentColor {
 
-        Task {
-            do {
-                try await block()
-            } catch {
-                XCTFail("test failed: \(String(describing: error))", file: file, line: line)
-            }
-
-            expectation.fulfill()
+    var uiColor: UIColor {
+        switch self {
+        case .blue:
+            UIColor(light: .blue500Light, dark: .blue500Dark)
+        case .green:
+            UIColor(light: .green500Light, dark: .green500Dark)
+        case .red:
+            UIColor(light: .red500Light, dark: .red500Dark)
+        case .amber:
+            UIColor(light: .amber500Light, dark: .amber500Dark)
+        case .turquoise:
+            UIColor(light: .turquoise500Light, dark: .turquoise500Dark)
+        case .purple:
+            UIColor(light: .purple500Light, dark: .purple500Dark)
         }
-
-        XCTAssert(waitForCustomExpectations(withTimeout: timeout), file: file, line: line)
     }
 }
