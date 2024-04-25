@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "ZMImagePreprocessingTracker.h"
+#import <WireRequestStrategy/ZMImagePreprocessingTracker.h>
 
 @class ZMAssetsPreprocessor;
 

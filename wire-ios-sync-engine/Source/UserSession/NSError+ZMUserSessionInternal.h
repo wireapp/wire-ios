@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "NSError+ZMUserSession.h"
+#import <WireSyncEngine/NSError+ZMUserSession.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

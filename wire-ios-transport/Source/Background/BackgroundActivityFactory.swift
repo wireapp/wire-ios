@@ -95,12 +95,12 @@ import WireUtilities
     /**
      * Starts a background activity if possible.
      * - parameter name: The name of the task, for debugging purposes.
-     * - parameter handler: The code to execute to clean up the state as the app is about to be suspended. This value can be set later.
+     * - parameter expirationHandler: The code to execute to clean up the state as the app is about to be suspended. This value can be set later.
      * - warning: If this method returns `nil`, you should **not** perform the work you are planning to do.
      */
 
     @objc(startBackgroundActivityWithName:expirationHandler:)
-    public func startBackgroundActivity(withName name: String, expirationHandler: @escaping (() -> Void)) -> BackgroundActivity? {
+    public func startBackgroundActivity(name: String, expirationHandler: @escaping (() -> Void)) -> BackgroundActivity? {
         return startActivityIfPossible(name, expirationHandler)
     }
 
