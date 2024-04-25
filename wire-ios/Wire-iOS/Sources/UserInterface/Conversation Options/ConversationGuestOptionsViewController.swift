@@ -20,7 +20,7 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
-fileprivate extension NSNotification.Name {
+extension NSNotification.Name {
     static let didCreateSecureGuestLink = NSNotification.Name("didCreateSecureGuestLink")
 }
 
