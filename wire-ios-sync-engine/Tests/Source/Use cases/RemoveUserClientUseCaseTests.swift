@@ -49,6 +49,8 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
 
     func testThatItRemovesUserClient() async throws {
         // Given
+        let clientId = "222"
+        try await createSelfClient(clientId: clientId)
         let expectation = XCTestExpectation(description: "should call deleteUserClient")
         userClientAPI.deleteUserClientClientIdCredentials_MockMethod = {_, _ in
             // Then
@@ -57,7 +59,7 @@ final class RemoveUserClientUseCaseTests: XCTestCase {
         mockApiProvider.userClientAPIApiVersion_MockValue = userClientAPI
 
         // When
-        try await sut.invoke(clientId: "", credentials: EmailCredentials(email: "", password: ""))
+        try await sut.invoke(clientId: clientId, credentials: EmailCredentials(email: "", password: ""))
     }
 
     func testThatItDoesNotRemoveUserClient_WhenClientDoesNotExistLocally() async throws {
