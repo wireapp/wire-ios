@@ -80,15 +80,24 @@ final class UserSessionMock: UserSession {
         return mock
     }
 
-    convenience init(mockUser: MockZMEditableUser, mockUseCaseFactory: MockUseCaseFactoryProtocol = MockUseCaseFactoryProtocol()) {
-        self.init(selfUser: mockUser, useCaseFactory: mockUseCaseFactory)
+    convenience init(
+        mockUser: MockZMEditableUser,
+        mockUseCaseFactory: MockUseCaseFactoryProtocol = MockUseCaseFactoryProtocol()
+    ) {
+        self.init(selfUser: mockUser, mockUseCaseFactory: mockUseCaseFactory)
     }
 
-    convenience init(mockUser: MockUserType = .createDefaultSelfUser(), mockUseCaseFactory: MockUseCaseFactoryProtocol = MockUseCaseFactoryProtocol()) {
-        self.init(selfUser: mockUser, useCaseFactory: mockUseCaseFactory)
+    convenience init(
+        mockUser: MockUserType = .createDefaultSelfUser(),
+        mockUseCaseFactory: MockUseCaseFactoryProtocol = MockUseCaseFactoryProtocol()
+    ) {
+        self.init(selfUser: mockUser, mockUseCaseFactory: mockUseCaseFactory)
     }
 
-    init(selfUser: SelfUserType, mockUseCaseFactory: MockUseCaseFactoryProtocol = MockUseCaseFactoryProtocol()) {
+    init(
+        selfUser: SelfUserType,
+        mockUseCaseFactory: MockUseCaseFactoryProtocol = MockUseCaseFactoryProtocol()
+    ) {
         self.selfUser = selfUser
         self.useCaseFactory = mockUseCaseFactory
     }
