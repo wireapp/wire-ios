@@ -18,10 +18,14 @@
 
 public struct UserPropertyNormalizer: UserPropertyNormalization {
 
-    public var userPropertyValidator = UserPropertyValidator()
+    public var userPropertyValidator: UserPropertyValidating
 
-    public init(userPropertyValidator: UserPropertyValidator = UserPropertyValidator()) {
+    public init(userPropertyValidator: UserPropertyValidating) {
         self.userPropertyValidator = userPropertyValidator
+    }
+
+    public init() {
+        self.init(userPropertyValidator: UserPropertyValidator())
     }
 
     public func normalizeName(_ name: String) -> UserPropertyNormalizationResult<String> {
