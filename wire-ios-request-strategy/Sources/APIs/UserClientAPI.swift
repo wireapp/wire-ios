@@ -46,7 +46,8 @@ class UserClientAPIV0: UserClientAPI {
 
         let response = await httpClient.send(request)
         if response.result != .success {
-            try mapFailureResponse(response)
+            let error = mapFailureResponse(response)
+            throw error
         }
     }
 }
