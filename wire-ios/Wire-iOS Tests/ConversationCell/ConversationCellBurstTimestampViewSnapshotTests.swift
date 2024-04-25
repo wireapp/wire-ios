@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
+import XCTest
+
 @testable import Wire
 
 final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCase {
@@ -59,7 +60,7 @@ final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCas
             with: Date(timeIntervalSinceReferenceDate: 0),
             includeDayOfWeek: true,
             showUnreadDot: true,
-            accentColor: (userSession.selfUser.accentColor ?? .default).uiColor
+            accentColor: userSession.selfUser.accentColor
         )
 
         // THEN
@@ -72,11 +73,10 @@ final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCas
             with: Date(timeIntervalSinceReferenceDate: 0),
             includeDayOfWeek: false,
             showUnreadDot: false,
-            accentColor: (userSession.selfUser.accentColor ?? .default).uiColor
+            accentColor: userSession.selfUser.accentColor
         )
 
         // THEN
         verify(matching: sut)
     }
-
 }

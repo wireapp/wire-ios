@@ -36,8 +36,8 @@ class MockUserType: NSObject, UserType, Decodable, ZMEditableUser {
         domain = try? container.decode(String.self, forKey: .domain)
         isConnected = (try? container.decode(Bool.self, forKey: .isConnected)) ?? false
         if let rawAccentColorValue = try? container.decode(Int16.self, forKey: .accentColorValue),
-           let accentColor = AccentColor(rawValue: rawAccentColorValue) {
-            self.accentColor = accentColor
+           let zmAccentColor = ZMAccentColor.from(rawValue: rawAccentColorValue) {
+            self.zmAccentColor = zmAccentColor
         }
     }
 
@@ -85,11 +85,11 @@ class MockUserType: NSObject, UserType, Decodable, ZMEditableUser {
 
     var phoneNumber: String? = "+123456789"
 
-    var accentColor: AccentColor? = .blue
+    var accentColorValue: ZMAccentColorRawValue = AccentColor.blue.rawValue
 
     var zmAccentColor: ZMAccentColor? {
-        get { accentColor.map { .from(accentColor: $0) } }
-        set { accentColor = newValue?.accentColor }
+        get { .from(rawValue: accentColorValue) }
+        set { accentColorValue = newValue?.rawValue ?? 0 }
     }
 
     var availability: Availability = .none

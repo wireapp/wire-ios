@@ -125,7 +125,7 @@ static id<UserType> mockSelfUser = nil;
 @synthesize emailAddress;
 @synthesize isSelfUser;
 @synthesize isConnected;
-@synthesize zmAccentColor;
+@synthesize accentColorValue;
 @synthesize previewImageData;
 @synthesize completeImageData;
 @synthesize connectionRequestMessage;

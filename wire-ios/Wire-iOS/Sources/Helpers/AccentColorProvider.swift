@@ -16,25 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+import UIKit
+import WireDataModel
+import WireCommonComponents
 
-private extension UIColor {
-    class var accentOverrideColor: ZMAccentColor? {
-        guard let accentColorValue = ZMUser.selfUser()?.accentColorValue else { return nil }
-        return .from(rawValue: accentColorValue)
+extension UserType {
+
+    /// Returns the current accent color of the user.
+    var accentColor: UIColor {
+        (zmAccentColor?.accentColor ?? .default).uiColor
     }
 }
 
-extension XCTestCase {
-    /// If this is set the accent color will be overriden for the tests
-    static var accentColor: ZMAccentColor {
-        get { UIColor.accentOverrideColor! }
-        set { UIColor.setAccentOverride(newValue) }
-    }
+extension UnregisteredUser {
 
-    var accentColor: ZMAccentColor {
-        get { XCTestCase.accentColor }
-        set { XCTestCase.accentColor = newValue }
+    /// The accent color value of the unregistered user.
+    var accentColor: AccentColor? {
+        get {
+            guard let accentColorValue else { return nil }
+            return .init(rawValue: accentColorValue)
+        }
+        set {
+            accentColorValue = newValue?.rawValue
+        }
     }
 }

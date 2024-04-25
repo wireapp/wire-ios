@@ -43,7 +43,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         otherUser.remoteIdentifier = .init()
         otherUser.isConnected = true
         otherUser.handle = "bruno"
-        otherUser.accentColor = .amber
+        otherUser.zmAccentColor = .amber
 
         userSession = UserSessionMock(mockUser: mockSelfUser)
     }
