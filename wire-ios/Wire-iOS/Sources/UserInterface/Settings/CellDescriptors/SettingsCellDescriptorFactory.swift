@@ -32,13 +32,13 @@ struct SettingsCellDescriptorFactory {
         var rootElements: [SettingsCellDescriptorType] = []
 
         if ZMUser.selfUser()?.canManageTeam == true {
-            rootElements.append(self.manageTeamCell())
+            rootElements.append(manageTeamCell())
         }
 
         #if MULTIPLE_ACCOUNTS_DISABLED
             // We skip "add account" cell
         #else
-            rootElements.append(self.addAccountOrTeamCell())
+            rootElements.append(addAccountOrTeamCell())
         #endif
         let topSection = SettingsSectionDescriptor(cellDescriptors: rootElements)
 

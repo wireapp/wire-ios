@@ -32,6 +32,7 @@ final class ConversationListTopBarViewController: UIViewController {
 
     private let selfUser: SelfUserType
     private var userSession: UserSession
+    private let selfProfileViewControllerBuilder: any ViewControllerBuilder
     private let filterConversationsActionHandler: UIActionHandler
     private let newConversationActionHandler: UIActionHandler
     private var observerToken: NSObjectProtocol?
@@ -48,6 +49,7 @@ final class ConversationListTopBarViewController: UIViewController {
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
+        selfProfileViewControllerBuilder: some ViewControllerBuilder,
         filterConversationsActionHandler: @escaping UIActionHandler,
         newConversationActionHandler: @escaping UIActionHandler
     ) {
@@ -56,6 +58,7 @@ final class ConversationListTopBarViewController: UIViewController {
         self.filterConversationsActionHandler = filterConversationsActionHandler
         self.newConversationActionHandler = newConversationActionHandler
         self.userSession = userSession
+        self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
 
         super.init(nibName: nil, bundle: nil)
 
@@ -282,17 +285,12 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     func createSettingsViewController(selfUser: ZMUser) -> UIViewController {
-        // instead of having the dependency for `SelfProfileViewController` we could inject a factory
-        // returning the `UIViewController` subclass and only have the presentation logic at this place
-        let selfProfileViewController = SelfProfileViewController(
-            selfUser: selfUser,
-            userRightInterfaceType: UserRight.self,
-            userSession: userSession
-        )
-        return selfProfileViewController.wrapInNavigationController(navigationControllerClass: NavigationController.self)
+        selfProfileViewControllerBuilder
+            .build()
+            .wrapInNavigationController(navigationControllerClass: NavigationController.self)
     }
 
-    func scrollViewDidScroll(scrollView: UIScrollView!) {
+    func scrollViewDidScroll(scrollView: UIScrollView) {
         topBar?.leftSeparatorLineView.scrollViewDidScroll(scrollView: scrollView)
         topBar?.rightSeparatorLineView.scrollViewDidScroll(scrollView: scrollView)
     }

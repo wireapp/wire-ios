@@ -1220,7 +1220,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 - (void)testThatModifiedDataFieldsCanBeModifiedForSelfUser
 {
     // given
-    ZMUser<ZMEditableUser> *user = [ZMUser selfUserInContext:self.uiMOC];
+    ZMUser<ZMEditableUserType> *user = [ZMUser selfUserInContext:self.uiMOC];
     user.name = @"Test";
     user.zmAccentColor = ZMAccentColor.amber;
 

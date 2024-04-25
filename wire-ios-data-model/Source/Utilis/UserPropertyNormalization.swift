@@ -16,27 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "ZMPropertyNormalizationResult.h"
-
-@interface ZMPropertyNormalizationResult ()
-
-@property (nonatomic, readwrite, getter=isValid) BOOL valid;
-@property (nonatomic, readwrite, nullable) id normalizedValue;
-@property (nonatomic, readwrite, nullable) NSError* validationError;
-
-@end
-
-@implementation ZMPropertyNormalizationResult
-
-- (instancetype)initWithResult:(BOOL)valid normalizedValue:(id)normalizedValue validationError:(NSError *)validationError
-{
-    self = [super init];
-    if (self) {
-        self.valid = valid;
-        self.normalizedValue = normalizedValue;
-        self.validationError = validationError;
-    }
-    return self;
+public protocol UserPropertyNormalization {
+    func normalizeName(_ name: String) -> UserPropertyNormalizationResult<String>
+    func normalizeEmailAddress(_ emailAddress: String) -> UserPropertyNormalizationResult<String>
+    func normalizePassword(_ password: String) -> UserPropertyNormalizationResult<String>
+    func normalizeVerificationCode(_ verificationCode: String) -> UserPropertyNormalizationResult<String>
+    func normalizePhoneNumber(_ phoneNumber: String) -> UserPropertyNormalizationResult<String>
 }
-
-@end

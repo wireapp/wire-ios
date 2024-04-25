@@ -74,10 +74,17 @@ final class ZClientViewController: UIViewController {
             ).generateViewController()!
         }
 
+        let selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
+            selfUser: userSession.selfUser,
+            userRightInterfaceType: UserRight.self,
+            userSession: userSession
+        )
         conversationListViewController = .init(
             account: account,
             selfUser: userSession.selfUser,
             userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
             settingsViewControllerBuilder: settingsTabItemBuilder
         )

@@ -116,7 +116,7 @@ extension ZMUser {
         }
 
         set {
-            guard isSelfUser else { return } // TODO move this setter to ZMEditableUser
+            guard isSelfUser else { return } // TODO move this setter to ZMEditableUserType
 
             updateAvailability(newValue)
         }

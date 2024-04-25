@@ -51,6 +51,7 @@ final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestC
             account: mockAccount,
             selfUser: mockSelfUser,
             userSession: userSession,
+            selfProfileViewControllerBuilder: .mock,
             filterConversationsActionHandler: { _ in },
             newConversationActionHandler: { _ in }
         )

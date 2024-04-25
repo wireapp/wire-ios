@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
+import WireSyncEngine
 import WireSystem
 import WireTransport
 import WireCommonComponents
@@ -483,7 +483,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         case .email:
             emailPasswordInputField.prefill(email: prefilledCredentials.credentials.emailAddress)
         case .phone:
-            if let phoneNumber = prefilledCredentials.credentials.phoneNumber.flatMap(PhoneNumber.init(fullNumber:)) {
+            if let phoneNumber = prefilledCredentials.credentials.phoneNumber.flatMap({ phoneNumber in PhoneNumber(fullNumber: phoneNumber, userPropertyValidator: UserPropertyValidator() ) }) {
                 phoneInputView.setPhoneNumber(phoneNumber)
             }
         }

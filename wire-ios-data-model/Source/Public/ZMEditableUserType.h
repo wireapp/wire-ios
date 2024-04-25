@@ -18,10 +18,8 @@
 
 @import Foundation;
 
-@class ZMEmailCredentials;
-@class ZMPhoneCredentials;
-
-@protocol ZMEditableUser <NSObject>
+NS_SWIFT_NAME(EditableUserType)
+@protocol ZMEditableUserType <NSObject>
 
 @property (nonatomic, copy, nullable) NSString *name;
 @property (nonatomic) ZMAccentColorRawValue accentColorValue;

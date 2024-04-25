@@ -16,15 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 
-@objc public enum ZMManagedObjectValidationErrorCode: Int {
-    case tooLong
-    case tooShort
-    case emailAddressIsInvalid
-    case phoneNumberContainsInvalidCharacters
-}
-
-public protocol ZMPropertyValidator {
-    static func validateValue(_ ioValue: AutoreleasingUnsafeMutablePointer<AnyObject?>!) throws
+public protocol ViewControllerBuilder {
+    associatedtype ViewController where ViewController: UIViewController
+    func build() -> ViewController
 }
