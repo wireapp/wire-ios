@@ -68,7 +68,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        BackendInfo.storage = .random()!
+        BackendInfo.storage = .temporary()
     }
 
     // MARK: - tearDown method
