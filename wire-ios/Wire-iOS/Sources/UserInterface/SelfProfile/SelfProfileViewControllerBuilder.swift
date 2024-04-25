@@ -16,18 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import Foundation;
+import UIKit
+import WireCommonComponents
+import WireSyncEngine
 
-@class ZMEmailCredentials;
-@class ZMPhoneCredentials;
+struct SelfProfileViewControllerBuilder: ViewControllerBuilder {
 
-@protocol ZMEditableUser <NSObject>
+    var selfUser: SettingsSelfUser
+    var userRightInterfaceType: UserRightInterface.Type
+    var userSession: UserSession
 
-@property (nonatomic, copy, nullable) NSString *name;
-@property (nonatomic) ZMAccentColorRawValue accentColorValue;
-@property (nonatomic, copy, readonly, nullable) NSString *emailAddress;
-@property (nonatomic, copy, readonly, nullable) NSString *phoneNumber;
-@property (nonatomic) BOOL readReceiptsEnabled;
-@property (nonatomic) BOOL needsRichProfileUpdate;
-
-@end
+    func build() -> SelfProfileViewController {
+        .init(
+            selfUser: selfUser,
+            userRightInterfaceType: userRightInterfaceType,
+            userSession: userSession
+        )
+    }
+}

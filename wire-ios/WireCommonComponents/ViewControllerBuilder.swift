@@ -16,11 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 
-/// A type that is able to provide an editble user.
-
-public protocol SelfUserProvider {
-
-    var providedSelfUser: UserType & EditableUserType { get }
+public protocol ViewControllerBuilder {
+    associatedtype ViewController where ViewController: UIViewController
+    func build() -> ViewController
 }
