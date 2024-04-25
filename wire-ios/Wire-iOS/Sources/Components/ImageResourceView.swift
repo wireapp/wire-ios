@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ final class ImageResourceView: FLAnimatedImageView {
             return
         }
 
-        imageResource.fetchImage(sizeLimit: imageSizeLimit, completion: { [weak self] (mediaAsset, cacheHit) in
+        imageResource.fetchImage(sizeLimit: imageSizeLimit, completion: { [weak self] mediaAsset, cacheHit in
             guard token == self?.reuseToken, let `self` = self else { return }
 
             let update = {

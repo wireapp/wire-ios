@@ -83,7 +83,7 @@ class CallingRequestStrategyTests: MessagingTest {
         let expectedCallConfig = "{\"config\":true}"
         let receivedCallConfigExpectation = customExpectation(description: "Received CallConfig")
 
-        sut.requestCallConfig { (callConfig, httpStatusCode) in
+        sut.requestCallConfig { callConfig, httpStatusCode in
             if callConfig == expectedCallConfig, httpStatusCode == 200 {
                 receivedCallConfigExpectation.fulfill()
             }
@@ -104,7 +104,7 @@ class CallingRequestStrategyTests: MessagingTest {
     func testThatItGeneratesOnlyOneCallConfigRequest() {
 
         // given
-        sut.requestCallConfig { (_, _) in }
+        sut.requestCallConfig { _, _ in }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
@@ -119,7 +119,7 @@ class CallingRequestStrategyTests: MessagingTest {
     func testThatItGeneratesCompressedCallConfigRequest() {
 
         // given
-        sut.requestCallConfig { (_, _) in }
+        sut.requestCallConfig { _, _ in }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
@@ -134,7 +134,7 @@ class CallingRequestStrategyTests: MessagingTest {
         let expectedCallConfig = "{\"config\":true}"
         let receivedCallConfigExpectation = customExpectation(description: "Received CallConfig")
 
-        sut.requestCallConfig { (callConfig, httpStatusCode) in
+        sut.requestCallConfig { callConfig, httpStatusCode in
             if callConfig == expectedCallConfig, httpStatusCode == 200 {
                 receivedCallConfigExpectation.fulfill()
             } else {
@@ -622,7 +622,7 @@ class CallingRequestStrategyTests: MessagingTest {
         // swiftlint:disable todo_requires_jira_link
         // TODO: [John] use flag here
         // swiftlint:enable todo_requires_jira_link
-        syncMOC.zm_cryptKeyStore.encryptionContext.perform { (session) in
+        syncMOC.zm_cryptKeyStore.encryptionContext.perform { session in
             try! session.createClientSession(
                 client.sessionIdentifier!,
                 base64PreKeyString: syncMOC.zm_cryptKeyStore.lastPreKey()

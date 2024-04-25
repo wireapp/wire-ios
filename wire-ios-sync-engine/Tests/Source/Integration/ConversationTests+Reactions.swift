@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         let toClient = self.selfUser.clients.anyObject() as! MockUserClient
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(from: fromClient,
                                                         to: toClient,
                                                         data: try! reactionMessage.serializedData())
@@ -88,7 +88,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         let toClient = self.selfUser.clients.anyObject() as! MockUserClient
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(from: fromClient,
                                                         to: toClient,
                                                         data: try! reactionMessage.serializedData())
@@ -124,7 +124,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         let toClient = self.selfUser.clients.anyObject() as! MockUserClient
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(from: fromClient,
                                                    to: toClient,
                                                    data: try! reactionMessage.serializedData())
@@ -165,7 +165,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertTrue(conversation!.isArchived)
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(from: fromClient,
                                                    to: toClient,
                                                    data: try! reactionMessage.serializedData())
@@ -205,7 +205,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertTrue(conversation!.isArchived)
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(from: fromClient,
                                                    to: toClient,
                                                    data: try! reactionMessage.serializedData())
@@ -246,7 +246,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         let toClient = self.selfUser.clients.anyObject() as! MockUserClient
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(from: fromClient,
                                                    to: toClient,
                                                    data: try! reactionMessage.serializedData())
@@ -272,7 +272,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         let nonce = UUID.create()
         var message = GenericMessage(content: Text(content: "JCVD is the best actor known", mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(from: fromClient,
                                                    to: toClient,
                                                    data: try! message.serializedData())
@@ -280,7 +280,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         message = GenericMessage(content: Text(content: "JCVD is the best actor known in the galaxy!", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(from: fromClient,
                                                    to: toClient,
                                                    data: try! message.serializedData())
@@ -326,7 +326,7 @@ class ConversationTests_Reactions: ConversationTestsBase {
         let toClient = self.selfUser.clients.anyObject() as! MockUserClient
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
                    mockConversation!.encryptAndInsertData(from: fromClient,
                                                           to: toClient,
                                                           data: try! reactionMessage.serializedData())

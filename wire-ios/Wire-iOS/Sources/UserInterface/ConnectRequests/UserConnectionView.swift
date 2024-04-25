@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -96,7 +96,7 @@ final class UserConnectionView: UIView, Copyable {
     }
 
     private func updateSecondLabel() {
-        guard nil != handleLabelText else { return }
+        guard handleLabelText != nil else { return }
         secondLabel.attributedText = correlationLabelText ?? NSAttributedString(string: "")
         secondLabel.accessibilityIdentifier = "correlation"
     }

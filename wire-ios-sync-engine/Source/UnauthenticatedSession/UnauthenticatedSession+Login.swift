@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
 extension ZMCredentials {
     var isInvalid: Bool {
@@ -58,7 +58,7 @@ extension UnauthenticatedSession {
     @discardableResult public func requestPhoneVerificationCodeForLogin(phoneNumber: String) -> Bool {
         do {
             var phoneNumber: String? = phoneNumber
-            _ = try ZMUser.validate(phoneNumber: &phoneNumber)
+            _ = try userPropertyValidator.validate(phoneNumber: &phoneNumber)
         } catch {
             return false
         }
@@ -77,7 +77,7 @@ extension UnauthenticatedSession {
     @discardableResult public func requestEmailVerificationCodeForLogin(email: String) -> Bool {
         do {
             var email: String? = email
-            _ = try ZMUser.validate(emailAddress: &email)
+            _ = try userPropertyValidator.validate(emailAddress: &email)
         } catch {
             return false
         }

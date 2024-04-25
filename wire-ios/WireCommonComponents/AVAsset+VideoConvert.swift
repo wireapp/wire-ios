@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -69,7 +69,8 @@ extension AVURLAsset {
 
     }
 
-    public static let defaultVideoQuality: String = AVAssetExportPresetHighestQuality
+    public static let defaultVideoQuality = AVAssetExportPresetHighestQuality
+
     /// Convert a Video file URL to a upload format
     ///
     /// - Parameters:
@@ -151,12 +152,15 @@ extension AVURLAsset {
 }
 
 extension AVAssetExportSession {
-    public func exportVideo(exportURL: URL,
-                            completion: @escaping (URL?, Error?) -> Void) {
+
+    func exportVideo(
+        exportURL: URL,
+        completion: @escaping (URL?, Error?) -> Void
+    ) {
         if FileManager.default.fileExists(atPath: exportURL.path) {
             do {
                 try FileManager.default.removeItem(at: exportURL)
-            } catch let error {
+            } catch {
                 zmLog.error("Cannot delete old leftover at \(exportURL): \(error)")
             }
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ final class ConversationAudioMessageCellTests: ConversationMessageSnapshotTestCa
     override func setUp() {
         super.setUp()
 
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
 
         mockSelfUser = MockUserType.createDefaultSelfUser()
         message = MockMessageFactory.audioMessage(sender: mockSelfUser)!
@@ -74,7 +74,7 @@ final class ConversationAudioMessageCellTests: ConversationMessageSnapshotTestCa
         message.backingFileMessageData.fileURL = nil
         message.backingFileMessageData.normalizedLoudness = [0.25, 0.5, 1]
 
-        UIColor.setAccentOverride(.strongBlue)
+        UIColor.setAccentOverride(.blue)
         verify(message: message)
     }
 

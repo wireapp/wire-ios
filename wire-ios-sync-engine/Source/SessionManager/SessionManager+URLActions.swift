@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ extension SessionManager {
     }
 
     func process(urlAction action: URLAction, on processor: URLActionProcessor) {
-        presentationDelegate?.shouldPerformAction(action, decisionHandler: { [weak self] (shouldPerformAction) in
+        presentationDelegate?.shouldPerformAction(action, decisionHandler: { [weak self] shouldPerformAction in
             guard shouldPerformAction, let strongSelf = self else { return }
             processor.process(urlAction: action, delegate: strongSelf.presentationDelegate)
         })

@@ -1,23 +1,24 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 #import "Tests-Swift.h"
 #import "UserProfileTests.h"
+@import WireUtilities;
 
 @implementation UserProfileTests
 
@@ -32,7 +33,7 @@
 {
 
     NSString *name = @"My New Name";
-    ZMAccentColor accentColor = ZMAccentColorSoftPink;
+    ZMAccentColor *accentColor = ZMAccentColor.purple;
     {
         // Create a UI context
         XCTAssertTrue([self login]);
@@ -40,17 +41,17 @@
         ZMUser<ZMEditableUser> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
         
         // sanity check
-        XCTAssertNotEqual(selfUser.accentColorValue, accentColor);
-        
+        XCTAssertNotEqual(selfUser.zmAccentColor, accentColor);
+
         selfUser.name = name;
-        selfUser.accentColorValue = accentColor;
-        
+        selfUser.zmAccentColor = accentColor;
+
         [self.userSession saveOrRollbackChanges];
         // Wait for merge ui->sync to be done
         WaitForAllGroupsToBeEmpty(0.5);
         
         
-        XCTAssertEqual(selfUser.accentColorValue, accentColor);
+        XCTAssertEqual(selfUser.zmAccentColor, accentColor);
     }
     
     // Tears down context(s) &
@@ -68,25 +69,23 @@
         // Get the self user
         ZMUser<ZMEditableUser> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
         XCTAssertEqualObjects(selfUser.name, name);
-        XCTAssertEqual(selfUser.accentColorValue, accentColor);
+        XCTAssertEqual(selfUser.zmAccentColor, accentColor);
     }
-
-    
 }
 
 - (void)testThatItNotifiesObserverWhenWeChangeAccentColorForSelfUser
 {
-    ZMAccentColor accentColor = ZMAccentColorSoftPink;
-    
+    ZMAccentColor *accentColor = ZMAccentColor.turquoise;
+
     XCTAssertTrue([self login]);
 
     ZMUser<ZMEditableUser> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-    XCTAssertNotEqual(selfUser.accentColorValue, accentColor);
-    
+    XCTAssertNotEqual(selfUser.zmAccentColor, accentColor);
+
     ZMUserObserver *observer = [[ZMUserObserver alloc] initWithUser:selfUser];
     
     // when
-    selfUser.accentColorValue = accentColor;
+    selfUser.zmAccentColor = accentColor;
     [self.userSession saveOrRollbackChanges];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -98,7 +97,7 @@
     XCTAssertNotNil(note);
     XCTAssertTrue(note.accentColorValueChanged);
     
-    XCTAssertEqual(selfUser.accentColorValue, accentColor);
+    XCTAssertEqual(selfUser.zmAccentColor, accentColor);
 }
 
 @end

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         .splitStringIntoLines(charactersPerLine: 16)
 
     var coreDataFixture: CoreDataFixture!
-    var sut: UIHostingController<DeviceDetailsView>!
+    var sut: DeviceInfoViewController<DeviceDetailsView>!
     var client: UserClient!
     var mockContextProvider: ContextProvider!
 
@@ -91,7 +91,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
             actionsHandler: deviceActionsHandler,
             conversationClientDetailsActions: deviceActionsHandler,
             debugMenuActionsHandler: deviceActionsHandler,
-            showDebugMenu: false
+            isDebugMenuAvailable: false
         )
         viewModel.proteusKeyFingerprint = proteusKeyFingerPrint
         viewModel.isSelfClient = isSelfClient
@@ -104,7 +104,7 @@ final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHel
         mode: UIUserInterfaceStyle = .light,
         viewModel: DeviceInfoViewModel
     ) -> UINavigationController {
-        sut = UIHostingController(rootView: DeviceDetailsView(viewModel: viewModel))
+        sut = .init(rootView: DeviceDetailsView(viewModel: viewModel))
         sut.overrideUserInterfaceStyle = mode
         return sut.wrapInNavigationController()
     }

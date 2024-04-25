@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ struct DeviceDetailsButtonsView: View {
             }
         } label: {
             Text(L10n.Localizable.Device.Details.Section.E2ei.getCertificate)
-            .foregroundStyle(SemanticColors.Label.textDefault.swiftUIColor)
+            .foregroundStyle(Color(uiColor: SemanticColors.Label.textDefault))
             .font(FontSpec.normalRegularFont.swiftUIFont.bold())
         }
     }
@@ -43,7 +43,7 @@ struct DeviceDetailsButtonsView: View {
         } label: {
             VStack(alignment: .leading) {
                 Text(L10n.Localizable.Device.Details.Section.E2ei.updateCertificate)
-                    .foregroundStyle(SemanticColors.Label.textDefault.swiftUIColor)
+                    .foregroundStyle(Color(uiColor: SemanticColors.Label.textDefault))
                     .font(FontSpec.normalRegularFont.swiftUIFont.bold())
             }
         }
@@ -57,12 +57,12 @@ struct DeviceDetailsButtonsView: View {
             label: {
                 HStack {
                     Text(L10n.Localizable.Device.Details.Section.E2ei.showCertificateDetails)
-                        .foregroundStyle(SemanticColors.Label.textDefault.swiftUIColor)
+                        .foregroundStyle(Color(uiColor: SemanticColors.Label.textDefault))
                         .font(FontSpec.normalRegularFont.swiftUIFont.bold())
                     Spacer()
                     Image(.chevronRight)
                         .renderingMode(.template)
-                        .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                        .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
                 }
             }
         )

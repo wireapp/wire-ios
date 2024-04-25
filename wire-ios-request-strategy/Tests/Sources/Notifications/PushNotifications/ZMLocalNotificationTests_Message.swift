@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import XCTest
 import WireTesting
 import WireDataModel
+import WireDataModelSupport
 @testable import WireRequestStrategy
-import XCTest
 
-class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
+final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 
     // MARK: - Text Messages
     // MARK: Helpers
@@ -811,7 +812,8 @@ extension ZMLocalNotificationTests_Message {
             let earService = EARService(
                 accountID: self.accountIdentifier,
                 databaseContexts: [self.syncMOC],
-                sharedUserDefaults: UserDefaults.temporary()
+                sharedUserDefaults: UserDefaults.temporary(),
+                authenticationContext: MockAuthenticationContextProtocol()
             )
             earService.setInitialEARFlagValue(true)
 
@@ -834,7 +836,8 @@ extension ZMLocalNotificationTests_Message {
             let earService = EARService(
                 accountID: self.accountIdentifier,
                 databaseContexts: [self.syncMOC],
-                sharedUserDefaults: UserDefaults.temporary()
+                sharedUserDefaults: UserDefaults.temporary(),
+                authenticationContext: MockAuthenticationContextProtocol()
             )
             earService.setInitialEARFlagValue(true)
 

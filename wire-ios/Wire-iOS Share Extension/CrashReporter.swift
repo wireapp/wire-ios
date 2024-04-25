@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,11 +42,10 @@ final class CrashReporter {
     }
 
     private static var appCenterEnabled: Bool {
-        let configUseAppCenter = Bundle.useAppCenter // The preprocessor macro USE_APP_CENTER (from the .xcconfig files)
         let automationUseAppCenter = AutomationHelper.sharedHelper.useAppCenter // Command line argument used by automation
         let settingsDisableCrashAndAnalyticsSharing = ExtensionSettings.shared.disableCrashSharing // User consent
 
-        return (automationUseAppCenter || (!automationUseAppCenter && configUseAppCenter))
+        return automationUseAppCenter
             && !settingsDisableCrashAndAnalyticsSharing
     }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SnapshotTesting
 import WireDataModel
+import XCTest
+
+@testable import Wire
 
 final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
@@ -31,7 +32,7 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
         super.setUp()
 
         let mockUser = MockUserType.createSelfUser(name: "Bruno")
-        mockUser.accentColorValue = .brightOrange
+        mockUser.zmAccentColor = .amber
         mockUser.handle = "bruno"
 
         mockConnectionRequest = SwiftMockConversation()
@@ -39,7 +40,7 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
         userSession = UserSessionMock(mockUser: mockUser)
 
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
         sut = ConnectRequestsViewController(userSession: userSession)
 
         sut.loadViewIfNeeded()
@@ -59,12 +60,12 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
     }
 
     func testForOneRequest() {
-        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+        verify(matching: sut.wrapInNavigationController())
     }
 
     func testForTwoRequests() {
         let otherUser = MockUserType.createConnectedUser(name: "Bill")
-        otherUser.accentColorValue = .brightYellow
+        otherUser.zmAccentColor = .amber
         otherUser.handle = "bill"
 
         let secondConnectionRequest = SwiftMockConversation()
@@ -73,6 +74,6 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
         sut.connectionRequests = [secondConnectionRequest, mockConnectionRequest]
         sut.reload(animated: false)
 
-        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+        verify(matching: sut.wrapInNavigationController())
     }
 }

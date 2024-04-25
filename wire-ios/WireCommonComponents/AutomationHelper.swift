@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ public final class AutomationEmailCredentials: NSObject {
 /// command line when running automation tests. 
 /// These values typically do not need to be stored in `Settings`.
 public final class AutomationHelper: NSObject {
-    static public let sharedHelper = AutomationHelper()
+    public static let sharedHelper = AutomationHelper()
     private var useAppCenterLaunchOption: Bool?
     /// Whether AppCenter should be used
     /// Launch option `--use-app-center` overrides user defaults setting.
@@ -69,28 +69,28 @@ public final class AutomationHelper: NSObject {
     /// Whether autocorrection is disabled
     public let disableAutocorrection: Bool
     /// Whether address book upload is enabled on simulator
-    public let uploadAddressbookOnSimulator: Bool
+    let uploadAddressbookOnSimulator: Bool
     /// Whether we should disable the call quality survey.
     public let disableCallQualitySurvey: Bool
     /// Whether we should disable dismissing the conversation input bar keyboard by dragging it downwards.
     public let disableInteractiveKeyboardDismissal: Bool
     /// Delay in address book remote search override
-    public let delayInAddressBookRemoteSearch: TimeInterval?
+    let delayInAddressBookRemoteSearch: TimeInterval?
     /// Debug data to install in the share container
-    public let debugDataToInstall: URL?
+    let debugDataToInstall: URL?
 
     /// The name of the arguments file in the /tmp directory
     private let fileArgumentsName = "wire_arguments.txt"
 
     /// Whether the backend environment type should be persisted as a setting.
-    public let shouldPersistBackendType: Bool
+    let shouldPersistBackendType: Bool
 
     /// Whether the calling overlay should disappear automatically.
     public let keepCallingOverlayVisible: Bool
 
-    public var preferredAPIVersion: APIVersion?
-    public var allowMLSGroupCreation: Bool?
-    public var enableMLSSupport: Bool?
+    public private(set) var preferredAPIVersion: APIVersion?
+    public private(set) var allowMLSGroupCreation: Bool?
+    public private(set) var enableMLSSupport: Bool?
 
     override init() {
         let url = URL(string: NSTemporaryDirectory())?.appendingPathComponent(fileArgumentsName)

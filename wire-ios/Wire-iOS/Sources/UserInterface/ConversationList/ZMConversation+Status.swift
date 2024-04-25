@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -312,7 +312,7 @@ final class CallingMatcher: ConversationStatusMatcher {
         return CallingMatcher.icon(for: conversation.voiceChannel?.state, conversation: conversation)
     }
 
-    public static func icon(for state: CallState?, conversation: ConversationStatusProvider?) -> ConversationStatusIcon? {
+    static func icon(for state: CallState?, conversation: ConversationStatusProvider?) -> ConversationStatusIcon? {
 
         guard let state = state else {
             return nil

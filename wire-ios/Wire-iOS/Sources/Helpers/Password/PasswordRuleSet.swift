@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,22 +25,22 @@ import Foundation
 public struct PasswordRuleSet: Decodable, Equatable {
 
     /// The minimum length of the password.
-    public let minimumLength: UInt
+    let minimumLength: UInt
 
     /// The maximum length of the password.
-    public let maximumLength: UInt
+    let maximumLength: UInt
 
     /// The allowed set of characters.
-    public let allowedCharacters: [PasswordCharacterClass]
+    let allowedCharacters: [PasswordCharacterClass]
 
     /// The character set that represents the union of all the characters in `allowedCharacters`.
-    public let allowedCharacterSet: CharacterSet
+    let allowedCharacterSet: CharacterSet
 
     /// The required classes of characters.
-    public let requiredCharacters: [PasswordCharacterClass]
+    let requiredCharacters: [PasswordCharacterClass]
 
     /// The required set of characters.
-    public let requiredCharacterSets: [PasswordCharacterClass: CharacterSet]
+    let requiredCharacterSets: [PasswordCharacterClass: CharacterSet]
 
     // MARK: - Initialization
 
@@ -53,7 +53,7 @@ public struct PasswordRuleSet: Decodable, Equatable {
      * not included in `allowedCharacters`, they will be added to that set.
      */
 
-    public init(minimumLength: UInt, maximumLength: UInt, allowedCharacters: [PasswordCharacterClass], requiredCharacters: [PasswordCharacterClass]) {
+    init(minimumLength: UInt, maximumLength: UInt, allowedCharacters: [PasswordCharacterClass], requiredCharacters: [PasswordCharacterClass]) {
         self.minimumLength = minimumLength
         self.maximumLength = maximumLength
 
@@ -84,7 +84,7 @@ public struct PasswordRuleSet: Decodable, Equatable {
         case requiredCharacters = "new_password_required_characters"
     }
 
-    public init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let minimumLength = try container.decode(UInt.self, forKey: .minimumLength)
         let maximumLength = try container.decode(UInt.self, forKey: .maximumLength)
@@ -96,7 +96,7 @@ public struct PasswordRuleSet: Decodable, Equatable {
     // MARK: - Encoding
 
     /// Encodes the rules in the format used by the Apple keychain.
-    public func encodeInKeychainFormat() -> String {
+    func encodeInKeychainFormat() -> String {
         let allowed = allowedCharacters.map({ "allowed: \($0.rawValue)" }).joined(separator: "; ")
         let required = requiredCharacters.map({ "required: \($0.rawValue)" }).joined(separator: "; ")
         return "minlength: \(minimumLength); maxlength: \(maximumLength); \(allowed); \(required);"
@@ -111,7 +111,7 @@ public struct PasswordRuleSet: Decodable, Equatable {
      * the description of the error.
      */
 
-    public func validatePassword(_ password: String) -> PasswordValidationResult {
+    func validatePassword(_ password: String) -> PasswordValidationResult {
         var violations: [PasswordValidationResult.Violation] = []
 
         let length = password.count

@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import Foundation;
 @import WireDataModel;
@@ -49,31 +48,28 @@
     // given
     NSUUID *remoteIDA = [NSUUID createUUID];
     NSUUID *remoteIDB = [NSUUID createUUID];
-    
-    
-    
+
     ZMSearchUser *user1 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                    name:@"A"
                                                                  handle:@"a"
-                                                            accentColor:ZMAccentColorStrongLimeGreen
+                                                            accentColor:ZMAccentColor.green
                                                        remoteIdentifier:remoteIDA
                                                                  domain:nil
                                                          teamIdentifier:nil
                                                                    user:nil
                                                                 contact:nil];
-    
-    
+
     // (1)
     ZMSearchUser *user2 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                    name:@"B"
                                                                  handle:@"b"
-                                                            accentColor:ZMAccentColorSoftPink
+                                                            accentColor:ZMAccentColor.purple
                                                        remoteIdentifier:remoteIDA
                                                                  domain:nil
                                                          teamIdentifier:nil
                                                                    user:nil
                                                                 contact:nil];
-    
+
     XCTAssertEqualObjects(user1, user2);
     XCTAssertEqual(user1.hash, user2.hash);
     
@@ -81,7 +77,7 @@
     ZMSearchUser *user3 = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                    name:@"A"
                                                                  handle:@"b"
-                                                            accentColor:ZMAccentColorStrongLimeGreen
+                                                            accentColor:ZMAccentColor.green
                                                        remoteIdentifier:remoteIDB
                                                                  domain:nil
                                                          teamIdentifier:nil
@@ -120,7 +116,7 @@
     ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                         name:name
                                                                       handle:handle
-                                                                 accentColor:ZMAccentColorStrongLimeGreen
+                                                                 accentColor:ZMAccentColor.green
                                                             remoteIdentifier:remoteID
                                                                       domain:nil
                                                               teamIdentifier:nil
@@ -130,7 +126,7 @@
     
     // then
     XCTAssertEqualObjects(searchUser.name, @"John Doe");
-    XCTAssertEqual(searchUser.accentColorValue, ZMAccentColorStrongLimeGreen);
+    XCTAssertEqual(searchUser.zmAccentColor, ZMAccentColor.green);
     XCTAssertEqual(searchUser.isConnected, NO);
     XCTAssertNil(searchUser.completeImageData);
     XCTAssertNil(searchUser.previewImageData);
@@ -145,7 +141,7 @@
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     user.name = @"Actual name";
     user.handle = @"my_handle";
-    user.accentColorValue = ZMAccentColorVividRed;
+    user.zmAccentColor = ZMAccentColor.red;
     user.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     user.connection.status = ZMConnectionStatusAccepted;
     user.remoteIdentifier = [NSUUID createUUID];
@@ -159,7 +155,7 @@
     ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                         name:@"Wrong name"
                                                                       handle:@"not_my_handle"
-                                                                 accentColor:ZMAccentColorStrongLimeGreen
+                                                                 accentColor:ZMAccentColor.green
                                                             remoteIdentifier:[NSUUID createUUID]
                                                                       domain:nil
                                                               teamIdentifier:nil
@@ -170,17 +166,16 @@
     XCTAssertEqualObjects(searchUser.name, user.name);
     XCTAssertEqualObjects(searchUser.handle, user.handle);
     XCTAssertEqualObjects(searchUser.name, user.name);
-    XCTAssertEqual(searchUser.accentColorValue, user.accentColorValue);
+    XCTAssertEqual(searchUser.zmAccentColor, user.zmAccentColor);
     XCTAssertEqual(searchUser.isConnected, user.isConnected);
     XCTAssertEqualObjects(searchUser.completeImageData, user.completeImageData);
     XCTAssertEqualObjects(searchUser.previewImageData, user.previewImageData);
     XCTAssertEqual(searchUser.user, user);
 }
 
-@end
 
+// MARK: - Connections
 
-@implementation ZMSearchUserTests (Connections)
 
 - (void)testThatItCanBeConnectedIfItIsNotAlreadyConnected
 {
@@ -188,7 +183,7 @@
     ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                         name:@"Hans"
                                                                       handle:@"hans"
-                                                                 accentColor:ZMAccentColorStrongLimeGreen
+                                                                 accentColor:ZMAccentColor.green
                                                             remoteIdentifier:NSUUID.createUUID
                                                                       domain:nil
                                                               teamIdentifier:nil
@@ -207,7 +202,7 @@
     ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithContextProvider:self.coreDataStack
                                                                         name:@"Hans"
                                                                       handle:@"hans"
-                                                                 accentColor:ZMAccentColorStrongLimeGreen
+                                                                 accentColor:ZMAccentColor.green
                                                             remoteIdentifier:nil
                                                                       domain:nil
                                                               teamIdentifier:nil

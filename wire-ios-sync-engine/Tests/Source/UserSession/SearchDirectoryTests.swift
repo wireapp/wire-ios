@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ final class SearchDirectoryTests: DatabaseTest {
             refreshUsersMissingMetadataAction: .dummy,
             refreshConversationsMissingMetadataAction: .dummy
         )
-        _ = ZMSearchUser(contextProvider: coreDataStack!, name: "John Doe", handle: "john", accentColor: .brightOrange, remoteIdentifier: uuid)
+        _ = ZMSearchUser(contextProvider: coreDataStack!, name: "John Doe", handle: "john", accentColor: .amber, remoteIdentifier: uuid)
         XCTAssertNotNil(uiMOC.zm_searchUserCache?.object(forKey: uuid as NSUUID))
 
         // when

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,14 +21,12 @@ import WireDataModel
 import WireSyncEngine
 import WireCommonComponents
 
-typealias SelfUserType = UserType & SelfLegalHoldSubject
-
 final class ConversationListTopBarViewController: UIViewController {
 
     private let account: Account
 
     /// Name, availability and verification info about the self user.
-    public var selfUserStatus = UserStatus() {
+    var selfUserStatus = UserStatus() {
         didSet { updateTitleView() }
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ final class WebLinkTextView: UITextView {
     }
 
     /// non-selectable textview
-    override public var selectedTextRange: UITextRange? {
+    override var selectedTextRange: UITextRange? {
         get { return nil }
         set { /* no-op */ }
     }
@@ -71,7 +71,7 @@ final class WebLinkTextView: UITextView {
 
 extension WebLinkTextView: UITextDragDelegate {
 
-    public func textDraggableView(_ textDraggableView: UIView & UITextDraggable, itemsForDrag dragRequest: UITextDragRequest) -> [UIDragItem] {
+    func textDraggableView(_ textDraggableView: UIView & UITextDraggable, itemsForDrag dragRequest: UITextDragRequest) -> [UIDragItem] {
         return []
     }
 

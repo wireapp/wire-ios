@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ final class OverflowSeparatorView: UIView {
         return CGSize(width: UIView.noIntrinsicMetric, height: .hairline)
     }
 
-    func scrollViewDidScroll(scrollView: UIScrollView!) {
+    func scrollViewDidScroll(scrollView: UIScrollView) {
         if inverse {
             let (height, contentHeight) = (scrollView.bounds.height, scrollView.contentSize.height)
             let offsetY = scrollView.contentOffset.y

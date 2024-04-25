@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ extension ConversationInputBarViewController {
 
         do {
             try FileManager.default.removeTmpIfNeededAndCopy(fileURL: videoURL, tmpURL: videoTempURL)
-        } catch let error {
+        } catch {
             zmLog.error("Cannot copy video from \(videoURL) to \(videoTempURL): \(error)")
             return
         }

@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import WireImages;
 @import WireTransport;
@@ -90,7 +89,7 @@
               @"id" : userID.transportString,
               @"email" : @"pp@example.com",
               @"phone" : @"555-986-45789",
-              @"accent_id" : @3,
+              @"accent_id" : @5,
               @"picture" : @[],
               } mutableCopy];
 }
@@ -373,15 +372,15 @@
 - (void)testThatItGeneratesARequestForUpdatingChangedSelfUser
 {
     NSString *name = @"My new name testThatItGeneratesARequestForUpdatingChangedSelfUser";
-    ZMAccentColor accentColor = ZMAccentColorBrightYellow;
+    ZMAccentColor *accentColor = ZMAccentColor.amber;
     NSDictionary* uploadPayload = @{
-                                    @"name" : name,
-                                    @"accent_id" : @(accentColor)
-                                    };
+        @"name" : name,
+        @"accent_id" : @(accentColor.rawValue)
+    };
     
     [self checkThatItGeneratesUpstreamUpdateRequestWithPayload:uploadPayload changedKeys:[NSSet setWithObjects:@"name", @"accentColorValue", nil] userChangeBlock:^(ZMUser *user) {
         user.name = name;
-        user.accentColorValue = accentColor;
+        user.zmAccentColor = accentColor;
     }];
 }
 
@@ -390,9 +389,9 @@
     NSString *name = @"My new name testThatItGeneratesARequestForUpdatingJustTheNameInChangedSelfUser";
 
     NSDictionary* uploadPayload = @{
-                                    @"name" : name
-                                    };
-    
+        @"name" : name
+    };
+
     [self checkThatItGeneratesUpstreamUpdateRequestWithPayload:uploadPayload changedKeys:[NSSet setWithObjects:@"name", nil] userChangeBlock:^(ZMUser *user) {
         user.name = name;
     }];
@@ -401,13 +400,13 @@
 
 - (void)testThatItGeneratesARequestForUpdatingJustTheAccentColorInChangedSelfUser
 {
-    ZMAccentColor accentColor = ZMAccentColorBrightYellow;
+    ZMAccentColor *accentColor = ZMAccentColor.amber;
     NSDictionary* uploadPayload = @{
-                                    @"accent_id" : @(accentColor)
-                                    };
+        @"accent_id" : @(accentColor.rawValue)
+    };
     
     [self checkThatItGeneratesUpstreamUpdateRequestWithPayload:uploadPayload changedKeys:[NSSet setWithObjects:@"accentColorValue", nil] userChangeBlock:^(ZMUser *user) {
-        user.accentColorValue = accentColor;
+        user.zmAccentColor = accentColor;
     }];
 }
 
@@ -475,7 +474,7 @@
         // given
         ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
         user.name = @"Joe Random User";
-        user.accentColorValue = ZMAccentColorBrightYellow;
+        user.zmAccentColor = ZMAccentColor.amber;
         user.remoteIdentifier = [NSUUID createUUID];
         
         // when

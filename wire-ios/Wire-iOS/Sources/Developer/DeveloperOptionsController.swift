@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ final class DeveloperOptionsController: UIViewController {
 
     /// Creates a cell to switch a specific log tag on or off
     func logSwitchCell(tag: String) -> UITableViewCell {
-        return createCellWithSwitch(labelText: tag, isOn: ZMSLog.getLevel(tag: tag) == .debug) { (isOn) in
+        return createCellWithSwitch(labelText: tag, isOn: ZMSLog.getLevel(tag: tag) == .debug) { isOn in
             Settings.shared.set(logTag: tag, enabled: isOn)
         }
     }

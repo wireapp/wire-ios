@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,22 +28,23 @@ extension SessionManager: UserSessionEncryptionAtRestDelegate {
         let dispatchGroup = self.dispatchGroup
 
         delegate?.sessionManagerWillMigrateAccount(userSessionCanBeTornDown: { [weak self] in
-            self?.tearDownBackgroundSession(for: account.userIdentifier)
-            self?.activeUserSession = nil
-            CoreDataStack.migrateLocalStorage(
-                accountIdentifier: account.userIdentifier,
-                applicationContainer: sharedContainerURL,
-                dispatchGroup: dispatchGroup,
-                migration: onReady,
-                completion: { result in
-                    switch result {
-                    case .success:
-                        self?.loadSession(for: account, completion: { _ in })
-                    case .failure(let error):
-                        WireLogger.ear.error("failed to migrate account: \(error)")
+            self?.tearDownBackgroundSession(for: account.userIdentifier) {
+                self?.activeUserSession = nil
+                CoreDataStack.migrateLocalStorage(
+                    accountIdentifier: account.userIdentifier,
+                    applicationContainer: sharedContainerURL,
+                    dispatchGroup: dispatchGroup,
+                    migration: onReady,
+                    completion: { result in
+                        switch result {
+                        case .success:
+                            self?.loadSession(for: account, completion: { _ in })
+                        case .failure(let error):
+                            WireLogger.ear.error("failed to migrate account: \(error)")
+                        }
                     }
-                }
-            )
+                )
+            }
         })
     }
 

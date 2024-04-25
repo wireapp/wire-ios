@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ class UserTests_AccountDeletion: IntegrationTest {
         XCTAssertTrue(login())
 
         // when
-        mockTransportSession.performRemoteChanges { (mockTransport) in
+        mockTransportSession.performRemoteChanges { mockTransport in
             mockTransport.deleteAccount(for: self.user1)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -47,7 +47,7 @@ class UserTests_AccountDeletion: IntegrationTest {
         XCTAssertTrue(login())
 
         // when
-        mockTransportSession.performRemoteChanges { (foo) in
+        mockTransportSession.performRemoteChanges { foo in
             foo.deleteAccount(for: self.user1)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

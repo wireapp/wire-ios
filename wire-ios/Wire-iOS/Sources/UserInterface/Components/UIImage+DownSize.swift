@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ extension CGFloat {
     enum Image {
         /// Maximum image size that would show in a UIImageView.
         /// Tested on iPhone 5s and found that the image size limitation is ~5000px
-        static public let maxSupportedLength: CGFloat = 5000
+        static let maxSupportedLength: CGFloat = 5000
     }
 }
 

@@ -257,7 +257,7 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
         }
 
         // Mock storing the expiration date
-        mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_MockMethod = { (_, _) in }
+        mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_MockMethod = { _, _ in }
 
         // Mock updating the conversation verification status
         mockConversationVerificationStatusUpdater.updateAllStatuses_MockMethod = {}

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ extension ConversationInputBarViewController {
     }
 
     func updateWritingState(animated: Bool) {
-        guard nil == editingMessage else { return }
+        guard editingMessage == nil else { return }
         inputBar.setInputBarState(.writing(ephemeral: ephemeralState), animated: animated)
         updateRightAccessoryView()
         updateMarkdownButton()
