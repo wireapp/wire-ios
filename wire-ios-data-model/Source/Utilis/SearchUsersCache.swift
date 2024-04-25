@@ -17,22 +17,5 @@
 //
 
 import Foundation
-import WireDataModel
 
-extension UserSessionDependencies {
-    final class Caches {
-        var fileAssets: FileAssetCache?
-        var userImages: UserImageLocalCache?
-        var searchUsers: SearchUsersCache?
-
-        init(
-            fileAssets: FileAssetCache? = nil,
-            userImages: UserImageLocalCache? = nil,
-            searchUsers: SearchUsersCache? = nil
-        ) {
-            self.fileAssets = fileAssets
-            self.userImages = userImages
-            self.searchUsers = searchUsers
-        }
-    }
-}
+public typealias SearchUsersCache = NSCache<NSUUID, ZMSearchUser>
