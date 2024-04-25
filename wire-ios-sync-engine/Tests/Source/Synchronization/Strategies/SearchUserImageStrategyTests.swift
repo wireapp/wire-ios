@@ -19,8 +19,6 @@
 @testable import WireSyncEngine
 import WireDataModel
 
-class FakeSearchDirectory: NSObject {}
-
 final class SearchUserImageStrategyTests: MessagingTest {
 
     private let userRequestURL = "/users?ids="
