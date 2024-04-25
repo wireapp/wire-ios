@@ -19,28 +19,45 @@
 @testable import WireSyncEngine
 import WireDataModel
 
-let UserRequestURL = "/users?ids="
-
 class FakeSearchDirectory: NSObject {}
 
-class SearchUserImageStrategyTests: MessagingTest {
+final class SearchUserImageStrategyTests: MessagingTest {
 
-    var sut: SearchUserImageStrategy!
-    var mockApplicationStatus: MockApplicationStatus!
+    private let userRequestURL = "/users?ids="
+
+    private var sut: SearchUserImageStrategy!
+
+    private var mockApplicationStatus: MockApplicationStatus!
+    private var mockCache: SearchUsersCache!
 
     override func setUp() {
         super.setUp()
-        uiMOC.zm_searchUserCache = NSCache()
+
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
-        sut = SearchUserImageStrategy(applicationStatus: mockApplicationStatus, managedObjectContext: uiMOC)
+        mockCache = SearchUsersCache()
+
+        sut = SearchUserImageStrategy(
+            applicationStatus: mockApplicationStatus,
+            managedObjectContext: uiMOC,
+            searchUsersCache: mockCache
+        )
+
+        // TODO: remove zm_searchUserCache
+        uiMOC.zm_searchUserCache = mockCache
     }
 
     override func tearDown() {
-        sut = nil
-        uiMOC.zm_searchUserCache = nil
         mockApplicationStatus = nil
+        mockCache = nil
+
+        sut = nil
+
+        // TODO: remove zm_searchUserCache
+        uiMOC.zm_searchUserCache = nil
+
         BackendInfo.domain = nil
+
         super.tearDown()
     }
 
@@ -75,10 +92,10 @@ class SearchUserImageStrategyTests: MessagingTest {
     }
 
     func userIDs(in getRequest: ZMTransportRequest) -> Set<UUID> {
-        if !getRequest.path.hasPrefix(UserRequestURL) {
+        if !getRequest.path.hasPrefix(userRequestURL) {
             return Set()
         }
-        let userIDs = String(getRequest.path[UserRequestURL.endIndex...])
+        let userIDs = String(getRequest.path[userRequestURL.endIndex...])
         let tokens = userIDs.components(separatedBy: ",").compactMap { UUID(uuidString: $0) }
         return Set(tokens)
     }
@@ -91,9 +108,8 @@ class SearchUserImageStrategyTests: MessagingTest {
         }
         return users
     }
-}
 
-extension SearchUserImageStrategyTests {
+    // MARK: - Tests
 
     func testThatItReturnsNoRequestIfThereIsNoRequestUserProfile() {
         // given
@@ -119,7 +135,7 @@ extension SearchUserImageStrategyTests {
         XCTAssertEqual(request.method, .get)
         XCTAssertTrue(request.needsAuthentication)
 
-        XCTAssertTrue(request.path.hasPrefix(UserRequestURL))
+        XCTAssertTrue(request.path.hasPrefix(userRequestURL))
         let expectedUserIDs = userIDs(from: searchSet)
         XCTAssertEqual(userIDs(in: request), expectedUserIDs)
     }
@@ -240,11 +256,7 @@ extension SearchUserImageStrategyTests {
         XCTAssertEqual(userIDs(in: request2).count, 0)
     }
 
-}
-
-// MARK: - ImageAssets
-
-extension SearchUserImageStrategyTests {
+    // MARK: - ImageAssets
 
     func testThatNextRequestCreatesARequestForAnAssetID(apiVersion: APIVersion) {
         // given

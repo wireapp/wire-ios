@@ -533,7 +533,8 @@ public final class ZMUserSession: NSObject {
             proteusProvider: self.proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            usecaseFactory: useCaseFactory
+            usecaseFactory: useCaseFactory,
+            searchUsersCache: dependencies.caches.searchUsers
         )
     }
 

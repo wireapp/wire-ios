@@ -34,15 +34,22 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
 
     fileprivate var observers: [any NSObjectProtocol] = []
 
+    private let searchUsersCache: SearchUsersCache?
+
     @available (*, unavailable)
     override init(withManagedObjectContext moc: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         fatalError()
     }
 
-    init(applicationStatus: ApplicationStatus, managedObjectContext: NSManagedObjectContext) {
+    init(
+        applicationStatus: ApplicationStatus,
+        managedObjectContext: NSManagedObjectContext,
+        searchUsersCache: SearchUsersCache?
+    ) {
 
         self.syncContext = managedObjectContext
         self.uiContext = managedObjectContext.zm_userInterface
+        self.searchUsersCache = searchUsersCache
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
@@ -175,7 +182,7 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
         }
 
         uiContext.performGroupedBlock {
-            guard let searchUser = self.uiContext.zm_searchUserCache?.object(forKey: user as NSUUID) else { return }
+            guard let searchUser = self.searchUsersCache?.object(forKey: user as NSUUID) else { return }
 
             if response.result == .success {
                 if let imageData = response.imageData ?? response.rawData {
@@ -190,36 +197,47 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
     func fetchUserProfilesRequest(apiVersion: APIVersion) -> ZMTransportRequest? {
         let missingFullProfiles = requestedMissingFullProfiles.subtracting(requestedMissingFullProfilesInProgress)
 
-        guard missingFullProfiles.count > 0 else { return nil }
+        if missingFullProfiles.isEmpty {
+            return nil
+        }
 
         requestedMissingFullProfilesInProgress.formUnion(missingFullProfiles)
 
-        return SearchUserImageStrategy.requestForFetchingFullProfile(for: missingFullProfiles, apiVersion: apiVersion, completionHandler: ZMCompletionHandler(on: managedObjectContext, block: { response in
+        return SearchUserImageStrategy.requestForFetchingFullProfile(
+            for: missingFullProfiles,
+            apiVersion: apiVersion,
+            completionHandler: ZMCompletionHandler(
+                on: managedObjectContext,
+                block: { response in
 
-            self.requestedMissingFullProfilesInProgress.subtract(missingFullProfiles)
+                    self.requestedMissingFullProfilesInProgress.subtract(missingFullProfiles)
 
-            // On temporary errors we keep requestedMissingFullProfiles so that we'll retry the request
-            if response.result == .success || response.result == .permanentError {
-                self.requestedMissingFullProfiles.subtract(missingFullProfiles)
-            }
+                    // On temporary errors we keep requestedMissingFullProfiles so that we'll retry the request
+                    if response.result == .success || response.result == .permanentError {
+                        self.requestedMissingFullProfiles.subtract(missingFullProfiles)
+                    }
 
-            guard response.result == .success else { return }
+                    guard response.result == .success else { return }
 
-            self.uiContext.performGroupedBlock {
-                guard let userProfilePayloads = response.payload as? [[String: Any]] else { return }
+                    self.uiContext.performGroupedBlock {
+                        guard let userProfilePayloads = response.payload as? [[String: Any]] else { return }
 
-                for userProfilePayload in userProfilePayloads {
-                    guard let userId = (userProfilePayload["id"] as? String).flatMap(UUID.init(transportString:)),
-                          let searchUser = self.uiContext.zm_searchUserCache?.object(forKey: userId as NSUUID) else { continue }
+                        for userProfilePayload in userProfilePayloads {
+                            guard
+                                let userId = (userProfilePayload["id"] as? String).flatMap(UUID.init(transportString:)),
+                                let searchUser = self.searchUsersCache?.object(forKey: userId as NSUUID)
+                            else { continue }
 
-                    searchUser.update(from: userProfilePayload)
+                            searchUser.update(from: userProfilePayload)
 
-                    if let assetKeys = searchUser.assetKeys {
-                        self.updateAssetKeys(assetKeys, for: userId)
+                            if let assetKeys = searchUser.assetKeys {
+                                self.updateAssetKeys(assetKeys, for: userId)
+                            }
+                        }
                     }
                 }
-            }
-        }))
+            )
+        )
     }
 
     func updateAssetKeys(_ assetKeys: SearchUserAssetKeys, for userId: UUID) {
@@ -236,10 +254,20 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
         }
     }
 
-    static func requestForFetchingFullProfile(for usersWithIDs: Set<UUID>, apiVersion: APIVersion, completionHandler: ZMCompletionHandler) -> ZMTransportRequest {
-        let usersList = usersWithIDs.map { $0.transportString() }.joined(separator: ",")
-        let request = ZMTransportRequest(getFromPath: userPath + usersList, apiVersion: apiVersion.rawValue)
+    static func requestForFetchingFullProfile(
+        for usersWithIDs: Set<UUID>,
+        apiVersion: APIVersion,
+        completionHandler: ZMCompletionHandler
+    ) -> ZMTransportRequest {
+        let usersList = usersWithIDs
+            .map { $0.transportString() }
+            .joined(separator: ",")
+        let request = ZMTransportRequest(
+            getFromPath: userPath + usersList,
+            apiVersion: apiVersion.rawValue
+        )
         request.add(completionHandler)
+
         return request
     }
 
