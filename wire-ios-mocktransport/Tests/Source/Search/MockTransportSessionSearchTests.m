@@ -39,7 +39,7 @@
         user1 = [session insertUserWithName:@"User1 AAAA"];
         user2 = [session insertUserWithName:@"User2 AABB"];
         
-        user1.accentID = 3;
+        user1.accentID = 5;
         user2.email = user2email;
         user2.phone = user2phone;
         user2.accentID = 2;
@@ -68,7 +68,7 @@
                                       @"documents": @[
                                               @{
                                                   @"blocked": @NO,
-                                                  @"accent_id": @3,
+                                                  @"accent_id": @5,
                                                   @"connected": @NO,
                                                   @"id": user1.identifier,
                                                   @"level": @1,

@@ -16,24 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-extension ZMTBaseTest {
+/// The result of a property normalization operation.
+public struct UserPropertyNormalizationResult<Value> {
 
-    public func wait(timeout: TimeInterval = 0.5,
-                     file: StaticString = #filePath,
-                     line: UInt = #line,
-                     forAsyncBlock block: @escaping () async throws -> Void) {
-        let expectation = self.customExpectation(description: "isDone")
+    /// Whether the value is valid.
+    public var isValid: Bool
 
-        Task {
-            do {
-                try await block()
-            } catch {
-                XCTFail("test failed: \(String(describing: error))", file: file, line: line)
-            }
+    /// The value that was normalized during the operation.
+    public var normalizedValue: Value
 
-            expectation.fulfill()
-        }
+    /// The error that reprsents the reason why the property is not valid.
+    public var validationError: Error?
 
-        XCTAssert(waitForCustomExpectations(withTimeout: timeout), file: file, line: line)
+    public init(isValid: Bool, normalizedValue: Value, validationError: Error?) {
+        self.isValid = isValid
+        self.normalizedValue = normalizedValue
+        self.validationError = validationError
     }
 }

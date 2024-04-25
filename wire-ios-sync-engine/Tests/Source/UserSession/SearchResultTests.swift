@@ -37,10 +37,10 @@ class SearchResultTests: DatabaseTest {
         let payload = ["documents": [
             ["id": connectedUser.remoteIdentifier!,
              "name": "Maria",
-             "accent_id": 4],
+             "accent_id": 5],
             ["id": UUID.create().uuidString,
              "name": "Fabio",
-             "accent_id": 4,
+             "accent_id": 5,
              "handle": handle]
         ]]
 
@@ -70,10 +70,10 @@ class SearchResultTests: DatabaseTest {
         let payload = ["documents": [
             ["id": user.remoteIdentifier!,
              "name": "Member A",
-             "accent_id": 4],
+             "accent_id": 5],
             ["id": UUID.create().uuidString,
              "name": "Fabio",
-             "accent_id": 4,
+             "accent_id": 5,
              "handle": handle]
         ]]
 
@@ -91,10 +91,10 @@ class SearchResultTests: DatabaseTest {
         let payload = ["documents": [
             ["id": UUID.create().uuidString,
              "name": name,
-             "accent_id": 4],
+             "accent_id": 5],
             ["id": UUID.create().uuidString,
              "name": "Fabio",
-             "accent_id": 4,
+             "accent_id": 5,
              "handle": "aa\(name.lowercased())"]
         ]]
 
@@ -113,10 +113,10 @@ class SearchResultTests: DatabaseTest {
         let payload = ["documents": [
             ["id": UUID.create().uuidString,
              "name": name,
-             "accent_id": 4],
+             "accent_id": 5],
             ["id": UUID.create().uuidString,
              "name": "Fabio",
-             "accent_id": 4,
+             "accent_id": 5,
              "handle": "aa\(name.lowercased())"]
         ]]
 
@@ -145,7 +145,7 @@ class SearchResultTests: DatabaseTest {
                 "id": remoteTeamMemberID.transportString(),
                 "team": team.remoteIdentifier!.transportString(),
                 "name": "Member A",
-                "accent_id": 4
+                "accent_id": 5
             ]]
         ]
 
@@ -177,7 +177,7 @@ class SearchResultTests: DatabaseTest {
                 "id": remoteTeamMemberID.transportString(),
                 "team": team.remoteIdentifier!.transportString(),
                 "name": "Member A",
-                "accent_id": 4
+                "accent_id": 5
             ]]
         ]
 
@@ -208,7 +208,7 @@ class SearchResultTests: DatabaseTest {
                 "id": remoteTeamMemberID.transportString(),
                 "team": team.remoteIdentifier!.transportString(),
                 "name": "Member A",
-                "accent_id": 4
+                "accent_id": 5
             ]]
         ]
 
@@ -249,7 +249,7 @@ class SearchResultTests: DatabaseTest {
                 "id": remoteTeamMemberID.transportString(),
                 "team": team.remoteIdentifier!.transportString(),
                 "name": "Member A",
-                "accent_id": 4
+                "accent_id": 5
             ]]
         ]
 
@@ -287,7 +287,7 @@ class SearchResultTests: DatabaseTest {
                 "id": remoteTeamMemberID.transportString(),
                 "team": team.remoteIdentifier!.transportString(),
                 "name": "Member A",
-                "accent_id": 4
+                "accent_id": 5
             ]]
         ]
 
@@ -326,7 +326,7 @@ class SearchResultTests: DatabaseTest {
                 "team": team.remoteIdentifier!.transportString(),
                 "handle": "aaa",
                 "name": "Member A",
-                "accent_id": 4
+                "accent_id": 5
             ]]
         ]
 

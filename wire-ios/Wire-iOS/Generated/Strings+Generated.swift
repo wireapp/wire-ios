@@ -5305,8 +5305,6 @@ internal enum L10n {
             internal static let red = L10n.tr("Localizable", "self.settings.account_picture_group.accent_color.red", fallback: "Red")
             /// Turquoise
             internal static let turquoise = L10n.tr("Localizable", "self.settings.account_picture_group.accent_color.turquoise", fallback: "Turquoise")
-            /// Yellow
-            internal static let yellow = L10n.tr("Localizable", "self.settings.account_picture_group.accent_color.yellow", fallback: "Yellow")
           }
           internal enum Alert {
             /// Choose from Library
