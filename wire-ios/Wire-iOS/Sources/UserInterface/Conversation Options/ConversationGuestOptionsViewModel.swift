@@ -225,12 +225,15 @@ final class ConversationGuestOptionsViewModel {
     ///
     /// - Parameter view: the source view which triggers shareLink action
     private func shareLink(view: UIView? = nil) {
-        guard let link = link else { return }
+        let linkToShare = securedLink ?? link
+        guard let link = linkToShare else { return }
         let message = L10n.Localizable.GuestRoom.Share.message(link)
         delegate?.viewModel(self, wantsToShareMessage: message, sourceView: view)
     }
 
     private func copyLink() {
+        let linkToCopy = securedLink ?? link
+        guard let link = linkToCopy else { return }
         UIPasteboard.general.string = link
         copyInProgress = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
