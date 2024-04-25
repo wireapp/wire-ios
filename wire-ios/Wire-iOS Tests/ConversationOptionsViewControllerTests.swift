@@ -151,6 +151,16 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         verify(matching: sut)
     }
 
+    func testThatItRendersAllowGuests_WithSecuredGuestLink() {
+        // GIVEN
+        let config = MockOptionsViewModelConfiguration(allowGuests: true)
+        config.linkResult = .success((uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9", secured: true))
+        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
+        // THEN
+        verify(matching: sut)
+    }
+
     func testThatItRendersAllowGuests_WithLink_DarkTheme() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)

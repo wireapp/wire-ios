@@ -3548,8 +3548,9 @@ internal enum L10n {
       internal enum SecureLink {
         internal enum Header {
           /// People who want to join the conversation via the guest link need to enter this password first. 
+          /// 
           /// Forgot password? Revoke the link and create a new one.
-          internal static let subtitle = L10n.tr("Localizable", "guest_room.secure_link.header.subtitle", fallback: "People who want to join the conversation via the guest link need to enter this password first. \nForgot password? Revoke the link and create a new one.")
+          internal static let subtitle = L10n.tr("Localizable", "guest_room.secure_link.header.subtitle", fallback: "People who want to join the conversation via the guest link need to enter this password first. \n\nForgot password? Revoke the link and create a new one.")
           /// Link is password secured
           internal static let title = L10n.tr("Localizable", "guest_room.secure_link.header.title", fallback: "Link is password secured")
         }
