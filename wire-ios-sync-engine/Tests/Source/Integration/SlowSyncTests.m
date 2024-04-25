@@ -212,11 +212,11 @@
                                (user.phoneNumber == values[@"phone"] || [user.phoneNumber isEqualToString:values[@"phone"]]);
     }
     FHAssertEqualObjects(failureRecorder, user.name, values[@"name"]);
-    FHAssertEqual(failureRecorder, user.accentColorValue, (ZMAccentColor) [values[@"accentID"] intValue]);
-    
+    FHAssertEqual(failureRecorder, user.accentColorValue, (ZMAccentColorRawValue) [values[@"accentID"] intValue]);
+
     return ((user.name == values[@"name"] || [user.name isEqualToString:values[@"name"]])
             && emailAndPhoneMatches
-            && (user.accentColorValue == (ZMAccentColor) [values[@"accentID"] intValue]));
+            && (user.accentColorValue == (ZMAccentColorRawValue) [values[@"accentID"] intValue]));
 }
 
 - (ZMConversation *)findConversationWithIdentifier:(NSString *)identifier inMoc:(NSManagedObjectContext *)moc

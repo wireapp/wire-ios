@@ -41,7 +41,7 @@ class RegistrationStatusTests: MessagingTest {
         user.credentials = UnverifiedCredentials.email(email)
         user.name = "M. Jordan"
         user.password = "qwerty"
-        user.accentColorValue = .amber
+        user.accentColor = .amber
         user.verificationCode = code
         user.acceptedTermsOfService = true
         user.marketingConsent = true
