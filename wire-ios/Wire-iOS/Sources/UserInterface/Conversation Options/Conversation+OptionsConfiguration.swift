@@ -130,7 +130,7 @@ extension ZMConversation {
             }
         }
 
-        func fetchConversationLink(completion: @escaping (Result<String?, Error>) -> Void) {
+        func fetchConversationLink(completion: @escaping (Result<(uri: String?, secured: Bool), Error>) -> Void) {
             conversation.fetchWirelessLink(in: userSession, completion)
         }
 

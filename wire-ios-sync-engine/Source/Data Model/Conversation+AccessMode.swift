@@ -65,7 +65,7 @@ extension ZMConversation {
     /// Fetches the link to access the conversation.
     /// @param completion called when the operation is ended. Called with .success and the link fetched. If the link
     ///        was not generated yet, it is called with .success(nil).
-    public func fetchWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<String?, Error>) -> Void) {
+    public func fetchWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<(uri: String?, secured: Bool), Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
         }
@@ -77,11 +77,17 @@ extension ZMConversation {
         let request = WirelessRequestFactory.fetchLinkRequest(for: self, apiVersion: apiVersion)
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus == 200,
-               let uri = response.payload?.asDictionary()?[ZMConversation.TransportKey.uri] as? String {
-                completion(.success(uri))
+               let payloadDict = response.payload?.asDictionary() {
+                let hasPassword = payloadDict["has_password"] as? Bool ?? false
+                if let uri = payloadDict[ZMConversation.TransportKey.uri] as? String {
+                    completion(.success((uri: uri, secured: hasPassword)))
+                } else {
+                    completion(.failure(WirelessLinkError.invalidResponse))
+                }
             } else if response.httpStatus == 404 {
-                completion(.success(nil))
+                completion(.success((uri: nil, secured: false)))
             } else {
+                // Handle other types of errors
                 let error = WirelessLinkError(response: response) ?? .unknown
                 zmLog.debug("Error fetching wireless link: \(error)")
                 completion(.failure(error))

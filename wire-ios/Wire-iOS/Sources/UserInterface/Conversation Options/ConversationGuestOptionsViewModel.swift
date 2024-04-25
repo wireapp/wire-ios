@@ -30,7 +30,7 @@ protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     var allowGuestsChangedHandler: ((Bool) -> Void)? { get set }
     var guestLinkFeatureStatusChangedHandler: ((GuestLinkFeatureStatus) -> Void)? { get set }
     func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void)
-    func fetchConversationLink(completion: @escaping (Result<String?, Error>) -> Void)
+    func fetchConversationLink(completion: @escaping (Result<(uri: String?, secured: Bool), Error>) -> Void)
     func deleteLink(completion: @escaping (Result<Void, Error>) -> Void)
 }
 
@@ -63,7 +63,11 @@ final class ConversationGuestOptionsViewModel {
 
     private var link: String?
 
-    var securedLink: String?
+    var securedLink: String? {
+        didSet {
+            updateRows()
+        }
+    }
 
     var copyInProgress = false {
         didSet {
@@ -240,12 +244,17 @@ final class ConversationGuestOptionsViewModel {
         }
 
         configuration.fetchConversationLink { [weak self] result in
-            guard let `self` = self else { return }
+            guard let self = self else { return }
             switch result {
-            case .success(let link):
-                self.link = link
-                self.securedLink = link
-            case .failure(let error): self.delegate?.viewModel(self, didReceiveError: error)
+            case .success(let linkData):
+                if linkData.secured {
+                    self.securedLink = linkData.uri
+                } else {
+                    self.link = linkData.uri
+                }
+
+            case .failure(let error):
+                self.delegate?.viewModel(self, didReceiveError: error)
             }
 
             item.cancel()
