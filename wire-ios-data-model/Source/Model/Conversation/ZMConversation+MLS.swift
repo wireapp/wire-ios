@@ -57,7 +57,7 @@ extension ZMConversation {
 
     @NSManaged private var primitiveMessageProtocol: NSNumber
 
-    public var ciphersuite: Feature.MLS.Config.MLSCipherSuite? {
+    public var ciphersuite: MLSCipherSuite? {
         get {
             willAccessValue(forKey: Self.ciphersuiteKey)
             let rawValue = primitiveCiphersuite?.int16Value
@@ -67,7 +67,7 @@ extension ZMConversation {
                 return nil
             }
 
-            return Feature.MLS.Config.MLSCipherSuite(rawValue: Int(rawValue))
+            return MLSCipherSuite(rawValue: Int(rawValue))
         }
 
         set {

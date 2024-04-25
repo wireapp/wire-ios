@@ -26,12 +26,12 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
     // MARK: - Properties
 
     private let messageProtocol: MessageProtocol
-    private let ciphersuite: Feature.MLS.Config.MLSCipherSuite?
+    private let ciphersuite: MLSCipherSuite?
     private let groupID: MLSGroupID?
 
     // MARK: - Life cycle
 
-    init(messageProtocol: MessageProtocol, groupID: MLSGroupID? = nil, ciphersuite: Feature.MLS.Config.MLSCipherSuite? = nil) {
+    init(messageProtocol: MessageProtocol, groupID: MLSGroupID? = nil, ciphersuite: MLSCipherSuite? = nil) {
         self.messageProtocol = messageProtocol
         self.groupID = groupID
         self.ciphersuite = ciphersuite

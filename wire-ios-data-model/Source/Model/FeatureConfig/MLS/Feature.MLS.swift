@@ -88,21 +88,8 @@ public extension Feature {
 
             }
 
-            public enum MLSSignatureAlgorithm: String, CustomStringConvertible {
-                case Ed25519
-                case Ed448
-                case P256
-                case P384
-                case P521
-
-                public var description: String {
-                    rawValue
-                }
-            }
-
             @objc
-            public enum MLSCipherSuite: Int, Codable, CustomStringConvertible {
-
+            public enum MLSCipherSuite: Int, Codable {
                 case MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519 = 1
                 case MLS_128_DHKEMP256_AES128GCM_SHA256_P256 = 2
                 case MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519 = 3
@@ -110,41 +97,6 @@ public extension Feature {
                 case MLS_256_DHKEMP521_AES256GCM_SHA512_P521 = 5
                 case MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448 = 6
                 case MLS_256_DHKEMP384_AES256GCM_SHA384_P384 = 7
-
-                public var description: String {
-                    switch self {
-
-                    case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519:
-                        return "MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519"
-                    case .MLS_128_DHKEMP256_AES128GCM_SHA256_P256:
-                        return "MLS_128_DHKEMP256_AES128GCM_SHA256_P256"
-                    case .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519:
-                        return "MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519"
-                    case .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448:
-                        return "MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448"
-                    case .MLS_256_DHKEMP521_AES256GCM_SHA512_P521:
-                        return "MLS_256_DHKEMP521_AES256GCM_SHA512_P521"
-                    case .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448:
-                        return "MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448"
-                    case .MLS_256_DHKEMP384_AES256GCM_SHA384_P384:
-                        return "MLS_256_DHKEMP384_AES256GCM_SHA384_P384"
-                    }
-                }
-
-                public var signature: MLSSignatureAlgorithm {
-                    return switch self {
-                    case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519, .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519:
-                            .Ed25519
-                    case .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448, .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448:
-                            .Ed448
-                    case .MLS_128_DHKEMP256_AES128GCM_SHA256_P256:
-                            .P256
-                    case .MLS_256_DHKEMP384_AES256GCM_SHA384_P384:
-                            .P384
-                    case .MLS_256_DHKEMP521_AES256GCM_SHA512_P521:
-                            .P521
-                    }
-                }
             }
 
         }

@@ -722,7 +722,7 @@ struct ConversationEventPayloadProcessor {
         }
 
         if let ciphersuite = payload.cipherSuite {
-            conversation.ciphersuite = Feature.MLS.Config.MLSCipherSuite(rawValue: Int(ciphersuite))
+            conversation.ciphersuite = MLSCipherSuite(rawValue: Int(ciphersuite))
         }
     }
 

@@ -42,7 +42,7 @@ final class DeviceInfoViewModel: ObservableObject {
     let proteusID: String
     let gracePeriod: TimeInterval
     let isFromConversation: Bool
-    let mlsCiphersuite: Feature.MLS.Config.MLSCipherSuite?
+    let mlsCiphersuite: MLSCipherSuite?
 
     let title: String
     var isSelfClient: Bool
@@ -98,7 +98,7 @@ final class DeviceInfoViewModel: ObservableObject {
         userClient: UserClientType,
         isSelfClient: Bool,
         gracePeriod: TimeInterval,
-        mlsCiphersuite: Feature.MLS.Config.MLSCipherSuite?,
+        mlsCiphersuite: MLSCipherSuite?,
         isFromConversation: Bool,
         actionsHandler: DeviceDetailsViewActions,
         conversationClientDetailsActions: ConversationUserClientDetailsActions,

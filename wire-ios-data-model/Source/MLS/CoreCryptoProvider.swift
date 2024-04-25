@@ -42,15 +42,6 @@ public protocol CoreCryptoProviderProtocol {
 
 }
 
-struct DefaultCiphersuiteProvider {
-
-    let context: NSManagedObjectContext
-
-    lazy var ciphersuite: Feature.MLS.Config.MLSCipherSuite = {
-        return FeatureRepository(context: context).fetchMLS().config.defaultCipherSuite
-    }()
-}
-
 public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let selfUserID: UUID
     private let sharedContainerURL: URL
