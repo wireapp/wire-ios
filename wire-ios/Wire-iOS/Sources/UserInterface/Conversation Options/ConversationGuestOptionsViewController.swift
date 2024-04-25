@@ -81,7 +81,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
     @objc
     private func handleGuestLinkNotification(_ notification: Notification) {
         if let link = notification.userInfo?["link"] as? String {
-            viewModel.link = link
+            viewModel.securedLink = link
         }
     }
 

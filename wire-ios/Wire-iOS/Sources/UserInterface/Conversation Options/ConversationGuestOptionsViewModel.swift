@@ -61,7 +61,13 @@ final class ConversationGuestOptionsViewModel {
         }
     }
 
-    var link: String? {
+    private var link: String? {
+        didSet {
+            updateRows()
+        }
+    }
+
+    var securedLink: String? {
         didSet {
             updateRows()
         }
@@ -140,7 +146,12 @@ final class ConversationGuestOptionsViewModel {
 
         switch configuration.guestLinkFeatureStatus {
         case .enabled:
-            rows.append(.linkHeader)
+            if link != nil {
+                rows.append(.linkHeader)
+            } else if securedLink != nil {
+                rows.append(.secureLinkHeader)
+            }
+
             if !configuration.isConversationFromSelfTeam {
                 rows.append(.info(infoText(isSelfTeam: configuration.isConversationFromSelfTeam, isDisabled: true)))
             } else if showLoadingCell {
@@ -149,6 +160,11 @@ final class ConversationGuestOptionsViewModel {
                 // Check if we have a link already
                 if let link = link {
                     rows.append(.text(link))
+                    rows.append(copyInProgress ? .copiedLink : .copyLink { [weak self] _ in self?.copyLink() })
+                    rows.append(.shareLink { [weak self] view in self?.shareLink(view: view) })
+                    rows.append(.revokeLink { [weak self] _ in self?.revokeLink() })
+                } else if let securedLink = securedLink {
+                    rows.append(.text(securedLink))
                     rows.append(copyInProgress ? .copiedLink : .copyLink { [weak self] _ in self?.copyLink() })
                     rows.append(.shareLink { [weak self] view in self?.shareLink(view: view) })
                     rows.append(.revokeLink { [weak self] _ in self?.revokeLink() })
