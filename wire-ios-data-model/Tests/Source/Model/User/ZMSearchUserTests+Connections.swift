@@ -17,16 +17,20 @@
 //
 
 import XCTest
+import WireDataModel
 
 final class ZMSearchUserTests_Connections: ModelObjectsTests {
 
     func testThatConnectSendsAConnectToUserNotification() {
         // given
-        let searchUser = ZMSearchUser(contextProvider: coreDataStack,
-                                      name: "John Doe",
-                                      handle: "johndoe",
-                                      accentColor: .turquoise,
-                                      remoteIdentifier: UUID())
+        let searchUser = ZMSearchUser(
+            contextProvider: coreDataStack,
+            name: "John Doe",
+            handle: "johndoe",
+            accentColor: .turquoise,
+            remoteIdentifier: UUID(),
+            searchUsersCache: nil
+        )
 
         // expect
         customExpectation(forNotification: ConnectToUserAction.notificationName, object: nil)

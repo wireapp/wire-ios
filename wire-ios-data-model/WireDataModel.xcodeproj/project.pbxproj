@@ -518,6 +518,7 @@
 		E6BFE8382B3320C7000F0FBE /* DatabaseMigrationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BFE8372B3320C7000F0FBE /* DatabaseMigrationHelper.swift */; };
 		E6BFE83A2B332DDB000F0FBE /* DatabaseMigrationTests+ParticipantRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BFE8392B332DDB000F0FBE /* DatabaseMigrationTests+ParticipantRole.swift */; };
 		E6C4B3802B6B87B1008BF384 /* CoreDataStackTestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C4B37F2B6B87B1008BF384 /* CoreDataStackTestError.swift */; };
+		E6D9BAFD2BDA57BB00F59F81 /* SearchUserSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6D9BAFC2BDA57BB00F59F81 /* SearchUserSnapshotTests.swift */; };
 		E6E504342BC542C5004948E7 /* BaseEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E504222BC542C5004948E7 /* BaseEARKeyDescription.swift */; };
 		E6E504352BC542C5004948E7 /* DatabaseEARKeyDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E504232BC542C5004948E7 /* DatabaseEARKeyDescription.swift */; };
 		E6E504362BC542C5004948E7 /* EARKeyEncryptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E504242BC542C5004948E7 /* EARKeyEncryptor.swift */; };
@@ -1427,6 +1428,7 @@
 		E6BFE8372B3320C7000F0FBE /* DatabaseMigrationHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseMigrationHelper.swift; sourceTree = "<group>"; };
 		E6BFE8392B332DDB000F0FBE /* DatabaseMigrationTests+ParticipantRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DatabaseMigrationTests+ParticipantRole.swift"; sourceTree = "<group>"; };
 		E6C4B37F2B6B87B1008BF384 /* CoreDataStackTestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStackTestError.swift; sourceTree = "<group>"; };
+		E6D9BAFC2BDA57BB00F59F81 /* SearchUserSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUserSnapshotTests.swift; sourceTree = "<group>"; };
 		E6E504222BC542C5004948E7 /* BaseEARKeyDescription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseEARKeyDescription.swift; sourceTree = "<group>"; };
 		E6E504232BC542C5004948E7 /* DatabaseEARKeyDescription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseEARKeyDescription.swift; sourceTree = "<group>"; };
 		E6E504242BC542C5004948E7 /* EARKeyEncryptor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EARKeyEncryptor.swift; sourceTree = "<group>"; };
@@ -3389,6 +3391,7 @@
 				F93C4C7E1E24F832007E9CEE /* NotificationDispatcherTests.swift */,
 				EE3EFEA0253090E0009499E5 /* PotentialChangeDetectorTests.swift */,
 				F920AE391E3B8445001BC14F /* SearchUserObserverCenterTests.swift */,
+				E6D9BAFC2BDA57BB00F59F81 /* SearchUserSnapshotTests.swift */,
 			);
 			path = Observer;
 			sourceTree = "<group>";
@@ -4630,6 +4633,7 @@
 				F9A7083C1CAEEB7500C2F5FE /* MockModelObjectContextFactory.m in Sources */,
 				F9331C5C1CB3BF9F00139ECC /* UserClientKeyStoreTests.swift in Sources */,
 				87C1C261207F812F0083BF6B /* InvalidGenericMessageDataRemovalTests.swift in Sources */,
+				E6D9BAFD2BDA57BB00F59F81 /* SearchUserSnapshotTests.swift in Sources */,
 				01B7A5752B0FB6DA00FE5132 /* CoreDataMessagingMigrationVersionTests.swift in Sources */,
 				166D189E230E9E66001288CD /* ZMMessage+DataRetentionTests.swift in Sources */,
 				F9A708361CAEEB7500C2F5FE /* NSManagedObjectContext+TestHelpers.m in Sources */,
