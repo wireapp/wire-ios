@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -66,8 +66,8 @@ final class SubconversationGroupIDRepositoryTests: XCTestCase {
             parentGroupID: [.conference: subgroupID]
         ]
 
-        await repositoryData.asyncForEach { parent in
-            await parent.value.asyncForEach { subgroup in
+        for parent in repositoryData {
+            for subgroup in parent.value {
                 await sut.storeSubconversationGroupID(subgroup.value, forType: .conference, parentGroupID: parent.key)
             }
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ extension Notification.Name {
 
         super.init()
 
-        self.resyncResourcesToken = NotificationInContext.addObserver(name: .resyncResources, context: managedObjectContext.notificationContext) { [weak self] (_) in
+        self.resyncResourcesToken = NotificationInContext.addObserver(name: .resyncResources, context: managedObjectContext.notificationContext) { [weak self] _ in
             self?.resyncResources()
         }
 
@@ -181,12 +181,11 @@ extension SyncStatus {
                 currentSyncPhase = .fetchingMissedEvents
                 needsToRestartQuickSync = false
                 zmLog.debug("restarting quick sync since push channel was closed")
-                return
+            } else {
+                zmLog.debug("sync complete")
+                notifyQuickSyncDidFinish()
+                isForceQuickSync = false
             }
-
-            zmLog.debug("sync complete")
-            notifyQuickSyncDidFinish()
-            isForceQuickSync = false
         }
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }

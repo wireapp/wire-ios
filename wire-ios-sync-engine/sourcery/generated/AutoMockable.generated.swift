@@ -102,10 +102,10 @@ public class MockCreateConversationGuestLinkUseCaseProtocol: CreateConversationG
 
     // MARK: - invoke
 
-    public var invokeConversationPasswordCompletion_Invocations: [(conversation: ZMConversation, password: String?, completion: (Result<String, Error>) -> Void)] = []
-    public var invokeConversationPasswordCompletion_MockMethod: ((ZMConversation, String?, @escaping (Result<String, Error>) -> Void) -> Void)?
+    public var invokeConversationPasswordCompletion_Invocations: [(conversation: ZMConversation, password: String?, completion: (Result<String?, Error>) -> Void)] = []
+    public var invokeConversationPasswordCompletion_MockMethod: ((ZMConversation, String?, @escaping (Result<String?, Error>) -> Void) -> Void)?
 
-    public func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String, Error>) -> Void) {
+    public func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String?, Error>) -> Void) {
         invokeConversationPasswordCompletion_Invocations.append((conversation: conversation, password: password, completion: completion))
 
         guard let mock = invokeConversationPasswordCompletion_MockMethod else {
@@ -296,6 +296,19 @@ public class MockIsE2EICertificateEnrollmentRequiredProtocol: IsE2EICertificateE
             fatalError("no mock for `invoke`")
         }
     }
+
+}
+
+public class MockPasteboard: Pasteboard {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - text
+
+    public var text: String?
+
 
 }
 
@@ -824,21 +837,21 @@ public class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
         }
     }
 
-    // MARK: - createSecuredGuestLinkUseCase
+    // MARK: - createConversationGuestLinkUseCase
 
-    public var createSecuredGuestLinkUseCase_Invocations: [Void] = []
-    public var createSecuredGuestLinkUseCase_MockMethod: (() -> CreateConversationGuestLinkUseCaseProtocol)?
-    public var createSecuredGuestLinkUseCase_MockValue: CreateConversationGuestLinkUseCaseProtocol?
+    public var createConversationGuestLinkUseCase_Invocations: [Void] = []
+    public var createConversationGuestLinkUseCase_MockMethod: (() -> CreateConversationGuestLinkUseCaseProtocol)?
+    public var createConversationGuestLinkUseCase_MockValue: CreateConversationGuestLinkUseCaseProtocol?
 
-    public func createSecuredGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
-        createSecuredGuestLinkUseCase_Invocations.append(())
+    public func createConversationGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+        createConversationGuestLinkUseCase_Invocations.append(())
 
-        if let mock = createSecuredGuestLinkUseCase_MockMethod {
+        if let mock = createConversationGuestLinkUseCase_MockMethod {
             return mock()
-        } else if let mock = createSecuredGuestLinkUseCase_MockValue {
+        } else if let mock = createConversationGuestLinkUseCase_MockValue {
             return mock
         } else {
-            fatalError("no mock for `createSecuredGuestLinkUseCase`")
+            fatalError("no mock for `createConversationGuestLinkUseCase`")
         }
     }
 

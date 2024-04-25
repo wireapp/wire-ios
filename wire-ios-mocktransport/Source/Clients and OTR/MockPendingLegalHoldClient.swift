@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ extension MockUser {
         var generatedPrekeys: [[String: Any]]?
         var generatedLastPrekey: String?
 
-        encryptionContext.perform { (session) in
+        encryptionContext.perform { session in
             generatedPrekeys = try? session.generatePrekeys(NSRange(location: 0, length: 5))
             generatedLastPrekey = try? session.generateLastPrekey()
         }

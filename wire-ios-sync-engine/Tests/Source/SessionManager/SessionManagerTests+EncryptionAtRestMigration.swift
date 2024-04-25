@@ -64,7 +64,7 @@ final class SessionManagerEncryptionAtRestMigrationTests: IntegrationTest {
         session = try XCTUnwrap(userSession)
         XCTAssertTrue(session.encryptMessagesAtRest)
 
-        try session.unlockDatabase(with: LAContext())
+        try session.unlockDatabase()
         let groupConversation = self.conversation(for: self.groupConversation)
         let clientMessage = groupConversation?.lastMessage as? ZMClientMessage
         XCTAssertEqual(clientMessage?.messageText, expectedText)

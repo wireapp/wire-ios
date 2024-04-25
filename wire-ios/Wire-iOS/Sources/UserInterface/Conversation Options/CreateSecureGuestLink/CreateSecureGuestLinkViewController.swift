@@ -35,8 +35,8 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
     weak var delegate: ValidatedTextFieldDelegate?
 
-    private lazy var viewModel: CreateSecureGuestLinkViewModel = {
-        CreateSecureGuestLinkViewModel(delegate: self, useCaseFactory: userSession.useCaseFactory)
+    private lazy var viewModel: CreateSecureConversationGuestLinkViewModel = {
+        CreateSecureConversationGuestLinkViewModel(delegate: self, conversationGuestLinkUseCase: userSession.useCaseFactory.createConversationGuestLinkUseCase())
     }()
 
     // MARK: - Initializer
@@ -81,7 +81,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
         button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.setTitle(SecuredGuestLinkWithPasswordLocale.GeneratePasswordButton.title, for: .normal)
-        button.setImage(Asset.Images.shield.image, for: .normal)
+        button.setImage(.init(resource: .shield), for: .normal)
         button.addTarget(self, action: #selector(generatePasswordButtonTapped), for: .touchUpInside)
         button.imageEdgeInsets.right = 10.0
         return button
@@ -348,14 +348,14 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     // MARK: - CreatePasswordSecuredLinkViewModelDelegate
 
     func viewModel(
-        _ viewModel: CreateSecureGuestLinkViewModel,
+        _ viewModel: CreateSecureConversationGuestLinkViewModel,
         didGeneratePassword password: String
     ) {
         securedGuestLinkPasswordTextfield.text = password
         securedGuestLinkPasswordValidatedTextField.text = password
     }
 
-    func viewModelDidValidatePasswordSuccessfully(_ viewModel: CreateSecureGuestLinkViewModel) {
+    func viewModelDidValidatePasswordSuccessfully(_ viewModel: CreateSecureConversationGuestLinkViewModel) {
 
         UIAlertController.presentPasswordCopiedAlert(
             on: self,
@@ -365,15 +365,15 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
     }
 
-    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String) {
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String) {
 
     }
 
-    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didCreateLink link: String) {
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didCreateLink link: String) {
         print("Link created successfully: \(link)")
     }
 
-    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didFailToCreateLinkWithError error: Error) {
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToCreateLinkWithError error: Error) {
         print("Failed to create link: \(error.localizedDescription)")
     }
 }

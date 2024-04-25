@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireDataModel
 
-final class AccountTests: ZMConversationTestsBase {
+final class AccountTests: XCTestCase {
 
     func testThatItCanSerializeAnAccountToDisk() throws {
         // given
@@ -32,8 +32,8 @@ final class AccountTests: ZMConversationTestsBase {
             userName: "Bruno",
             userIdentifier: .create(),
             teamName: "Wire",
-            imageData: verySmallJPEGData(),
-            teamImageData: verySmallJPEGData(),
+            imageData: Data(),
+            teamImageData: Data(),
             loginCredentials: credentials
         )
 
@@ -47,7 +47,7 @@ final class AccountTests: ZMConversationTestsBase {
         // given
         let url = URL(fileURLWithPath: NSTemporaryDirectory() + "/AccountTests")
         defer { try? FileManager.default.removeItem(at: url) }
-        let userName = "Bruno", team = "Wire", id = UUID.create(), image = verySmallJPEGData(), count = 14
+        let userName = "Bruno", team = "Wire", id = UUID.create(), image = Data(), count = 14
 
         // we create and store an account
         do {
@@ -78,7 +78,7 @@ final class AccountTests: ZMConversationTestsBase {
         // given
         let url = URL(fileURLWithPath: NSTemporaryDirectory() + "/AccountTests")
         defer { try? FileManager.default.removeItem(at: url) }
-        let userName = "Bruno", team = "Wire", id = UUID.create(), image = verySmallJPEGData(), count = 14
+        let userName = "Bruno", team = "Wire", id = UUID.create(), image = Data(), count = 14
         let credentials = LoginCredentials(emailAddress: "bruno@example.com", phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
 
         // we create and store an account
@@ -108,7 +108,7 @@ final class AccountTests: ZMConversationTestsBase {
 
     func testThatAccountsAreEqualWhenNotImportantPropertiesAreDifferent() {
         // given
-        let userName = "Bruno", team = "Wire", id = UUID.create(), image = verySmallJPEGData(), count = 14
+        let userName = "Bruno", team = "Wire", id = UUID.create(), image = Data(), count = 14
 
         let account = Account(userName: userName,
                               userIdentifier: id,
@@ -129,11 +129,12 @@ final class AccountTests: ZMConversationTestsBase {
 
     func testThatKeychainItemsAreDeleted() throws {
         // Given
-        let id = UUID.create()
+        let id = UUID()
         let sut = Account(userName: "Alice", userIdentifier: id)
         let item = AppLockController.PasscodeKeychainItem(userId: id)
+        let data = try XCTUnwrap("passscode".data(using: .utf8))
 
-        try Keychain.storeItem(item, value: "passscode".data(using: .utf8)!)
+        try Keychain.storeItem(item, value: data)
         XCTAssertNoThrow(try Keychain.fetchItem(item))
 
         // When

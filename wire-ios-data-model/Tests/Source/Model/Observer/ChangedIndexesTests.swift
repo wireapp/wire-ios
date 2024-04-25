@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
         // then
         // [A,B,C,D,E] -> [A,F,C,D,E] delete & insert
         var callCount = 0
-        sut.enumerateMovedIndexes { (from, to) in
+        sut.enumerateMovedIndexes { from, to in
             if callCount == 0 {
                 // D: [3->2]
                 XCTAssertEqual(from, 3)
@@ -61,7 +61,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
         var result = ["A", "B", "C", "D", "E"]
         sut.deletedIndexes.forEach { result.remove(at: $0) }
         sut.insertedIndexes.forEach { result.insert(endState.array[$0], at: $0) }
-        sut.enumerateMovedIndexes { (from, to) in
+        sut.enumerateMovedIndexes { from, to in
             let item = startState.array[from]
             result.remove(at: result.firstIndex(of: item)!)
             result.insert(item, at: to)
@@ -81,7 +81,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
         // then
         // [A,B,C,D,E] -> [A,C,D,F,E] delete & insert
         var callCount = 0
-        sut.enumerateMovedIndexes { (from, to) in
+        sut.enumerateMovedIndexes { from, to in
             if callCount == 0 {
                 // ACDFE
                 // E: [3->1] -> ADCFE
@@ -107,7 +107,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
         var result = ["A", "B", "C", "D", "E"]
         sut.deletedIndexes.forEach { result.remove(at: $0) }
         sut.insertedIndexes.forEach { result.insert(endState.array[$0], at: $0) }
-        sut.enumerateMovedIndexes { (from, to) in
+        sut.enumerateMovedIndexes { from, to in
             let item = startState.array[from]
             result.remove(at: result.firstIndex(of: item)!)
             result.insert(item, at: to)
@@ -131,7 +131,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
 
         // then
         var callCount = 0
-        sut.enumerateMovedIndexes { (from, to) in
+        sut.enumerateMovedIndexes { from, to in
             if callCount == 0 {
                 XCTAssertEqual(from, 2)
                 XCTAssertEqual(to, 0)
@@ -145,7 +145,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(callCount, 2)
 
         var result = ["A", "B", "C"]
-        sut.enumerateMovedIndexes { (from, to) in
+        sut.enumerateMovedIndexes { from, to in
             let item = startState.array[from]
             result.remove(at: result.firstIndex(of: item)!)
             result.insert(item, at: to)
@@ -181,7 +181,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
         // then
         // [A,B,C,D,E] -> [A,F,C,D,E] delete & insert
         var callCount = 0
-        sut.enumerateMovedIndexes { (from, to) in
+        sut.enumerateMovedIndexes { from, to in
             if callCount == 0 {
                 // D: [3->2]
                 XCTAssertEqual(from, 3)
@@ -194,7 +194,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
         var result = ["A", "B", "C", "D", "E"]
         sut.deletedIndexes.forEach { result.remove(at: $0) }
         sut.insertedIndexes.forEach { result.insert(endState.array[$0], at: $0) }
-        sut.enumerateMovedIndexes { (from, to) in
+        sut.enumerateMovedIndexes { from, to in
             let item = result.remove(at: from)
             result.insert(item, at: to)
         }
@@ -213,7 +213,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
         // then
         // [A,B,C,D,E] -> [A,C,D,F,E] delete & insert
         var callCount = 0
-        sut.enumerateMovedIndexes { (from, to) in
+        sut.enumerateMovedIndexes { from, to in
             if callCount == 0 {
                 // ACDFE
                 // E: [3->1] -> ADCFE
@@ -239,7 +239,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
         var result = ["A", "B", "C", "D", "E"]
         sut.deletedIndexes.forEach { result.remove(at: $0) }
         sut.insertedIndexes.forEach { result.insert(endState.array[$0], at: $0) }
-        sut.enumerateMovedIndexes { (from, to) in
+        sut.enumerateMovedIndexes { from, to in
             let item = result.remove(at: from)
             result.insert(item, at: to)
         }
@@ -262,7 +262,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
 
         // then
         var callCount = 0
-        sut.enumerateMovedIndexes { (from, to) in
+        sut.enumerateMovedIndexes { from, to in
             if callCount == 0 {
                 XCTAssertEqual(from, 2)
                 XCTAssertEqual(to, 0)
@@ -276,7 +276,7 @@ class ChangedIndexesTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(callCount, 2)
 
         var result = ["A", "B", "C"]
-        sut.enumerateMovedIndexes { (from, to) in
+        sut.enumerateMovedIndexes { from, to in
             let item = result.remove(at: from)
             result.insert(item, at: to)
         }

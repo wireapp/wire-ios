@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -168,7 +168,7 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public var originalSize: CGSize {
-        guard nil != assetClientMessage.fileMessageData, isImage else { return .zero }
+        guard assetClientMessage.fileMessageData != nil, isImage else { return .zero }
         guard let asset = assetClientMessage.underlyingMessage?.assetData else { return .zero }
         let size = CGSize(width: Int(asset.original.image.width), height: Int(asset.original.image.height))
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 import UIKit
 
-public struct LabelStyle {
+struct LabelStyle {
     var backgroundColor: UIColor
     var textColor: UIColor
 
@@ -45,7 +45,7 @@ public struct LabelStyle {
 
 extension UILabel: Stylable {
 
-    public func applyStyle(_ style: LabelStyle) {
+    func applyStyle(_ style: LabelStyle) {
         backgroundColor = style.backgroundColor
         textColor = style.textColor
     }

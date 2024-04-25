@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ class AuthenticationStepController: AuthenticationStepViewController {
         UIAccessibility.post(notification: .screenChanged, argument: headlineLabel)
     }
 
-    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         updateConstraints(forRegularLayout: traitCollection.horizontalSizeClass == .regular)
     }

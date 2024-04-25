@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -82,13 +82,13 @@ public protocol AppLockType {
     /// - Parameters:
     ///     - passcodePreference: Used to determine which type of passcode is used.
     ///     - description: The message to dispaly in the authentication UI.
-    ///     - context: The context in which authentication happens.
     ///     - callback: Invoked with the authentication result.
 
-    func evaluateAuthentication(passcodePreference: AppLockPasscodePreference,
-                                description: String,
-                                context: LAContextProtocol,
-                                callback: @escaping (AppLockAuthenticationResult, LAContextProtocol) -> Void)
+    func evaluateAuthentication(
+        passcodePreference: AppLockPasscodePreference,
+        description: String,
+        callback: @escaping (AppLockAuthenticationResult) -> Void
+    )
 
     /// Authenticate with a custom passcode.
     ///
@@ -97,17 +97,4 @@ public protocol AppLockType {
 
     func evaluateAuthentication(customPasscode: String) -> AppLockAuthenticationResult
 
-}
-
-public extension AppLockType {
-
-    func evaluateAuthentication(passcodePreference: AppLockPasscodePreference,
-                                description: String,
-                                callback: @escaping (AppLockAuthenticationResult, LAContextProtocol) -> Void) {
-
-        evaluateAuthentication(passcodePreference: passcodePreference,
-                               description: description,
-                               context: LAContext(),
-                               callback: callback)
-    }
 }

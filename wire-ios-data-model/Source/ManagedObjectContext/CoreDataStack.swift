@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -98,6 +98,8 @@ public extension NSURL {
 
 }
 
+// MARK: -
+
 @objcMembers
 public class CoreDataStack: NSObject, ContextProvider {
 
@@ -127,6 +129,9 @@ public class CoreDataStack: NSObject, ContextProvider {
     let dispatchGroup: ZMSDispatchGroup?
 
     private let migrator: CoreDataMessagingMigrator
+    private var hasBeenClosed = false
+
+    // MARK: - Initialization
 
     public init(account: Account,
                 applicationContainer: URL,
@@ -185,6 +190,16 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 
     deinit {
+        close()
+    }
+
+    public func close() {
+        guard !hasBeenClosed  else {
+            return
+        }
+
+        defer { hasBeenClosed = true }
+
         viewContext.tearDown()
         syncContext.tearDown()
         searchContext.tearDown()
@@ -193,10 +208,11 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 
     func closeStores() {
+        WireLogger.localStorage.info("Closing core data stores")
         do {
             try closeStores(in: messagesContainer)
             try closeStores(in: eventsContainer)
-        } catch let error {
+        } catch {
             WireLogger.localStorage.error("Error while closing persistent store: \(error)", attributes: .safePublic)
         }
     }
@@ -264,7 +280,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         var loadingStoreError: Error?
 
         dispatchGroup.enter()
-        loadMessagesStore { (error) in
+        loadMessagesStore { error in
             if let error = error {
                 WireLogger.localStorage.error("failed to load message store: \(error)", attributes: .safePublic)
             }
@@ -273,7 +289,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         }
 
         dispatchGroup.enter()
-        loadEventStore { (error) in
+        loadEventStore { error in
             if let error = error {
                 WireLogger.localStorage.error("failed to load event store: \(error)")
             }
@@ -289,12 +305,12 @@ public class CoreDataStack: NSObject, ContextProvider {
     func loadMessagesStore(completionHandler: @escaping (Error?) -> Void) {
         do {
             try createStoreDirectory(for: messagesContainer)
-        } catch let error {
+        } catch {
             completionHandler(error)
             return
         }
 
-        messagesContainer.loadPersistentStores { (_, error) in
+        messagesContainer.loadPersistentStores { _, error in
 
             guard error == nil else {
                 completionHandler(error)
@@ -313,12 +329,12 @@ public class CoreDataStack: NSObject, ContextProvider {
     func loadEventStore(completionHandler: @escaping (Error?) -> Void) {
         do {
             try createStoreDirectory(for: eventsContainer)
-        } catch let error {
+        } catch {
             completionHandler(error)
             return
         }
 
-        eventsContainer.loadPersistentStores { (_, error) in
+        eventsContainer.loadPersistentStores { _, error in
 
             guard error == nil else {
                 completionHandler(error)
@@ -326,10 +342,6 @@ public class CoreDataStack: NSObject, ContextProvider {
             }
 
             self.configureEventContext(self.eventContext)
-
-            #if DEBUG
-            MemoryReferenceDebugger.register(self.eventContext)
-            #endif
 
             completionHandler(nil)
         }
@@ -351,6 +363,8 @@ public class CoreDataStack: NSObject, ContextProvider {
     public var storesExists: Bool {
         return messagesContainer.storeExists && eventsContainer.storeExists
     }
+
+    // MARK: - Configure Contexts
 
     func configureViewContext(_ context: NSManagedObjectContext) {
         context.markAsUIContext()
@@ -420,6 +434,16 @@ public class CoreDataStack: NSObject, ContextProvider {
         }
     }
 
+    public func linkContexts() {
+        syncContext.performGroupedBlockAndWait {
+            self.syncContext.zm_userInterface = self.viewContext
+        }
+
+        viewContext.zm_sync = syncContext
+    }
+
+    // MARK: - Static Helpers
+
     public static func accountDataFolder(accountIdentifier: UUID, applicationContainer: URL) -> URL {
         return applicationContainer
             .appendingPathComponent("AccountData")
@@ -454,6 +478,8 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 }
 
+// MARK: -
+
 class PersistentContainer: NSPersistentContainer {
 
     var storeURL: URL? {
@@ -487,8 +513,9 @@ class PersistentContainer: NSPersistentContainer {
 
         return metadata
     }
-
 }
+
+// MARK: -
 
 extension NSPersistentStoreCoordinator {
 

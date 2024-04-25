@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -135,7 +135,7 @@ class ConversationTests_Participants: ConversationTestsBase {
         let observer = ConversationListChangeObserver.init(conversationList: conversationList)
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: "some message", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
             self.selfToUser1Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
                                                               to: self.selfUser.clients.anyObject() as! MockUserClient,

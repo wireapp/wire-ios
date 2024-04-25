@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,8 +27,6 @@ enum ConversationListState {
 }
 
 final class ConversationListViewController: UIViewController {
-
-    weak var delegate: ConversationListTabBarControllerDelegate?
 
     let viewModel: ViewModel
 
@@ -94,7 +93,6 @@ final class ConversationListViewController: UIViewController {
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
         self.init(viewModel: viewModel)
-        delegate = self
         onboardingHint.arrowPointToView = tabBar
     }
 
@@ -114,13 +112,11 @@ final class ConversationListViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        viewModel.viewController = self
-
         definesPresentationContext = true
 
         /// setup UI
         view.addSubview(contentContainer)
-        self.view.backgroundColor = SemanticColors.View.backgroundConversationList
+        view.backgroundColor = SemanticColors.View.backgroundConversationList
 
         setupTopBar()
         setupListContentController()
@@ -130,6 +126,8 @@ final class ConversationListViewController: UIViewController {
         setupNetworkStatusBar()
 
         createViewConstraints()
+
+        viewModel.viewController = self
     }
 
     @available(*, unavailable)
@@ -139,7 +137,6 @@ final class ConversationListViewController: UIViewController {
 
     override func loadView() {
         view = PassthroughTouchesView(frame: UIScreen.main.bounds)
-        view.backgroundColor = .clear
     }
 
     override func viewDidLoad() {
@@ -199,7 +196,7 @@ final class ConversationListViewController: UIViewController {
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        self.tabBar.subviews.forEach { (barButton) in
+        self.tabBar.subviews.forEach { barButton in
             if let label = barButton.subviews[1] as? UILabel {
                 label.sizeToFit()
             }
@@ -392,23 +389,30 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 extension ConversationListViewController: UITabBarDelegate {
 
     func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        guard let type = item.type else {
-            return
-        }
-        delegate?.didChangeTab(with: type)
-    }
+        guard let type = item.type else { return }
 
+        switch type {
+        case .archive:
+            setState(.archived, animated: true)
+        case .startUI:
+            presentPeoplePicker()
+        case .folder:
+            listContentController.listViewModel.folderEnabled = true
+        case .list:
+            listContentController.listViewModel.folderEnabled = false
+        }
+    }
 }
 
 private extension UITabBarItem {
 
     var type: TabBarItemType? {
-        return TabBarItemType.allCases.first(where: { $0.rawValue == self.tag })
+        .allCases.first { $0.rawValue == tag }
     }
-
 }
 
 private extension NSAttributedString {
+
     static var attributedTextForNoConversationLabel: NSAttributedString? {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.setParagraphStyle(NSParagraphStyle.default)

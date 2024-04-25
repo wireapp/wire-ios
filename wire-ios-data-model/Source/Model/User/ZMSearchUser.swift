@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ public struct SearchUserAssetKeys {
                 }
             }
 
-            if nil != previewKey || nil != completeKey {
+            if previewKey != nil || completeKey != nil {
                 preview = previewKey
                 complete = completeKey
                 return
@@ -127,7 +127,7 @@ public class ZMSearchUser: NSObject, UserType {
     fileprivate var internalIsTeamMember: Bool = false
     fileprivate var internalTeamCreatedBy: UUID?
     fileprivate var internalTeamPermissions: Permissions?
-    fileprivate var internalAccentColorValue: ZMAccentColor
+    fileprivate var internalAccentColorValue: ZMAccentColorRawValue
     fileprivate var internalPendingApprovalByOtherUser: Bool = false
     fileprivate var internalConnectionRequestMessage: String?
     fileprivate var internalPreviewImageData: Data?
@@ -162,7 +162,6 @@ public class ZMSearchUser: NSObject, UserType {
 
     public var name: String? {
         return user?.name ?? internalName
-
     }
 
     public var handle: String? {
@@ -317,12 +316,16 @@ public class ZMSearchUser: NSObject, UserType {
         return user?.isUnderLegalHold == true
     }
 
-    public var accentColorValue: ZMAccentColor {
+    public var accentColorValue: ZMAccentColorRawValue {
         if let user = user {
-            return user.accentColorValue
+            user.accentColorValue
         } else {
-            return internalAccentColorValue
+            internalAccentColorValue
         }
+    }
+
+    public var zmAccentColor: ZMAccentColor? {
+        .from(rawValue: accentColorValue)
     }
 
     public var isWirelessUser: Bool {
@@ -459,15 +462,16 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     @objc
-    public init(contextProvider: ContextProvider,
-                name: String,
-                handle: String?,
-                accentColor: ZMAccentColor,
-                remoteIdentifier: UUID?,
-                domain: String? = nil,
-                teamIdentifier: UUID? = nil,
-                user existingUser: ZMUser? = nil,
-                contact: ZMAddressBookContact? = nil
+    public init(
+        contextProvider: ContextProvider,
+        name: String,
+        handle: String?,
+        accentColor: ZMAccentColor?,
+        remoteIdentifier: UUID?,
+        domain: String? = nil,
+        teamIdentifier: UUID? = nil,
+        user existingUser: ZMUser? = nil,
+        contact: ZMAddressBookContact? = nil
     ) {
 
         let personName = PersonName.person(withName: name, schemeTagger: nil)
@@ -475,7 +479,7 @@ public class ZMSearchUser: NSObject, UserType {
         self.internalName = name
         self.internalHandle = handle
         self.internalInitials = personName.initials
-        self.internalAccentColorValue = accentColor
+        self.internalAccentColorValue = accentColor?.rawValue ?? 0
         self.user = existingUser
         self.internalDomain = domain
         self.remoteIdentifier = existingUser?.remoteIdentifier ?? remoteIdentifier
@@ -496,27 +500,31 @@ public class ZMSearchUser: NSObject, UserType {
 
     @objc
     public convenience init(contextProvider: ContextProvider, user: ZMUser) {
-        self.init(contextProvider: contextProvider,
-                  name: user.name ?? "",
-                  handle: user.handle,
-                  accentColor: user.accentColorValue,
-                  remoteIdentifier: user.remoteIdentifier,
-                  domain: user.domain,
-                  teamIdentifier: user.teamIdentifier,
-                  user: user)
+        self.init(
+            contextProvider: contextProvider,
+            name: user.name ?? "",
+            handle: user.handle,
+            accentColor: user.zmAccentColor,
+            remoteIdentifier: user.remoteIdentifier,
+            domain: user.domain,
+            teamIdentifier: user.teamIdentifier,
+            user: user
+        )
     }
 
     @objc
     public convenience init(contextProvider: ContextProvider, contact: ZMAddressBookContact, user: ZMUser? = nil) {
-        self.init(contextProvider: contextProvider,
-                  name: contact.name,
-                  handle: user?.handle,
-                  accentColor: .undefined,
-                  remoteIdentifier: user?.remoteIdentifier,
-                  domain: user?.domain,
-                  teamIdentifier: user?.teamIdentifier,
-                  user: user,
-                  contact: contact)
+        self.init(
+            contextProvider: contextProvider,
+            name: contact.name,
+            handle: user?.handle,
+            accentColor: nil,
+            remoteIdentifier: user?.remoteIdentifier,
+            domain: user?.domain,
+            teamIdentifier: user?.teamIdentifier,
+            user: user,
+            contact: contact
+        )
     }
 
     convenience init?(from payload: [String: Any], contextProvider: ContextProvider, user: ZMUser? = nil) {
@@ -528,20 +536,21 @@ public class ZMSearchUser: NSObject, UserType {
                 return nil
             }
 
-        let teamIdentifier = (payload["team"] as? String).flatMap({ UUID(uuidString: $0) })
+        let teamIdentifier = (payload["team"] as? String).flatMap { UUID(uuidString: $0) }
         let handle = payload["handle"] as? String
         let qualifiedID = payload["qualified_id"] as? [String: Any]
         let domain = qualifiedID?["domain"] as? String
-        let accentColor = ZMUser.accentColor(fromPayloadValue: payload["accent_id"] as? NSNumber)
+        let accentColorRawValue = (payload["accent_id"] as? NSNumber)?.int16Value ?? 0
 
-        self.init(contextProvider: contextProvider,
-                  name: name,
-                  handle: handle,
-                  accentColor: accentColor,
-                  remoteIdentifier: remoteIdentifier,
-                  domain: domain,
-                  teamIdentifier: teamIdentifier,
-                  user: user
+        self.init(
+            contextProvider: contextProvider,
+            name: name,
+            handle: handle,
+            accentColor: .from(rawValue: accentColorRawValue) ?? .default,
+            remoteIdentifier: remoteIdentifier,
+            domain: domain,
+            teamIdentifier: teamIdentifier,
+            user: user
         )
 
         self.providerIdentifier = payload["provider"] as? String
@@ -668,6 +677,14 @@ public class ZMSearchUser: NSObject, UserType {
         guard let user = user else { return false }
 
         return user.isGuest(in: conversation)
+    }
+
+    public func imageData(for size: ProfileImageSize) -> Data? {
+        if let user = self.user {
+            return user.imageData(for: size)
+        } else {
+            return size == .complete ? completeImageData : previewImageData
+        }
     }
 
     public func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (Data?) -> Void) {

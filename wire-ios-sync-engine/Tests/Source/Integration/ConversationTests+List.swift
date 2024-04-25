@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ class ConversationTests_List: ConversationTestsBase {
 
         let user1 = try XCTUnwrap(user1)
         let user2 = try XCTUnwrap(user2)
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             mockExtraConversation = session.insertGroupConversation(withSelfUser: self.selfUser, otherUsers: [user1, user2])
             mockExtraConversation?.changeName(by: self.selfUser, name: "Extra conversation")
         }
@@ -44,7 +44,7 @@ class ConversationTests_List: ConversationTestsBase {
         let observer = ConversationListChangeObserver.init(conversationList: conversations)
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: "Bla bla bla", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
             let fromUser = self.groupConversation.activeUsers.lastObject as! MockUser
             self.groupConversation.encryptAndInsertData(from: fromUser.clients.anyObject() as! MockUserClient,
@@ -99,7 +99,7 @@ class ConversationTests_List: ConversationTestsBase {
         observer?.clearNotifications()
         let previousIndex1 = conversationList.index(of: conversation1)
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: messageText1, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce1)
             self.selfToUser1Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
                                                               to: toClient,
@@ -118,7 +118,7 @@ class ConversationTests_List: ConversationTestsBase {
         let previousIndex2 = conversationList.index(of: conversation2)
 
         // send second message
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: messageText2, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce2)
             self.selfToUser2Conversation.encryptAndInsertData(from: self.user2.clients.anyObject() as! MockUserClient,
                                                                          to: toClient,
@@ -138,7 +138,7 @@ class ConversationTests_List: ConversationTestsBase {
 
         // send first message again
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: messageText3, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce3)
             self.selfToUser1Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
                                                                          to: toClient,
@@ -166,7 +166,7 @@ class ConversationTests_List: ConversationTestsBase {
         let oneToOneConversation = conversation(for: self.selfToUser1Conversation)
 
         // make sure oneToOneConversation is not on top
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let knock = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: UUID.create())
             self.selfToUser2Conversation.encryptAndInsertData(from: self.user2.clients.anyObject() as! MockUserClient,
                                                                          to: self.selfUser.clients.anyObject() as! MockUserClient,
@@ -180,7 +180,7 @@ class ConversationTests_List: ConversationTestsBase {
         let oneToOneIndex = conversationList.index(of: oneToOneConversation!)
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let knock = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: UUID.create())
             self.selfToUser1Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
                                                                          to: self.selfUser.clients.anyObject() as! MockUserClient,
@@ -195,7 +195,7 @@ class ConversationTests_List: ConversationTestsBase {
         XCTAssertNotNil(note)
 
         var moves: [Int: Int] = [:]
-        note.enumerateMovedIndexes { (from, to) in
+        note.enumerateMovedIndexes { from, to in
             moves[from] = to
         }
         let expectedArray = [oneToOneIndex: 0]
@@ -215,7 +215,7 @@ class ConversationTests_List: ConversationTestsBase {
 
         let conversationList = ZMConversationList.conversations(inUserSession: userSession!)
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let message = GenericMessage(content: Text(content: "some message", mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
             self.selfToUser1Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
                                                                          to: self.selfUser.clients.anyObject() as! MockUserClient,
@@ -228,7 +228,7 @@ class ConversationTests_List: ConversationTestsBase {
         let conversationListChangeObserver = ConversationListChangeObserver.init(conversationList: conversationList)
 
         // when
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             session.remotelyAcceptConnection(to: mockUser)
         }
 

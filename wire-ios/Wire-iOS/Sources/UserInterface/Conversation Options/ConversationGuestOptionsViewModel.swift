@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -270,9 +270,9 @@ final class ConversationGuestOptionsViewModel {
             self?.showLoadingCell = true
         }
 
-        let securedGuestLinkUseCase = userSession.useCaseFactory.createSecuredGuestLinkUseCase()
+        let conversationGuestLinkUseCase = userSession.useCaseFactory.createConversationGuestLinkUseCase()
 
-        securedGuestLinkUseCase.invoke(conversation: conversation, password: nil) { result in
+        conversationGuestLinkUseCase.invoke(conversation: conversation, password: nil) { result in
             switch result {
             case .success(let link):
                 self.link = link
@@ -300,7 +300,7 @@ final class ConversationGuestOptionsViewModel {
                         self,
                         presentCreateSecureGuestLink: CreateSecureGuestLinkViewController(
                             userSession: userSession,
-                            conversation: conversation).wrapInNavigationController(setBackgroundColor: true),
+                            conversation: conversation).wrapInNavigationController(),
                         animated: true
                     )
                 case .normal:

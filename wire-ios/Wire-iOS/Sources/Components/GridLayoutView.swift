@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import UIKit
 /// (up to its constrained width), adding new rows vertically
 /// if needed.
 
-public final class GridLayoutView: UIView {
+final class GridLayoutView: UIView {
 
     // MARK: - Properties
 
@@ -43,7 +43,7 @@ public final class GridLayoutView: UIView {
 
     // MARK: - Life cycle
 
-    public override init(frame: CGRect) {
+    override init(frame: CGRect) {
         super.init(frame: frame)
         setUpViews()
     }
@@ -58,21 +58,21 @@ public final class GridLayoutView: UIView {
     }
 
     // MARK: - Layout
-    public func prepareForReuse() {
+    func prepareForReuse() {
         stackView.removeArrangedSubviews()
         views.removeAll(keepingCapacity: true)
     }
 
-    public func configure(views: [UIView]) {
+    func configure(views: [UIView]) {
         prepareForReuse()
         self.views = views
         setNeedsLayout()
         layoutIfNeeded()
     }
 
-    public var widthForCalculations: CGFloat = 0
+    var widthForCalculations: CGFloat = 0
 
-    public override func layoutSubviews() {
+    override func layoutSubviews() {
         super.layoutSubviews()
 
         guard !views.isEmpty else { return }

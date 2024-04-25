@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ extension ZMUserSession {
     var ongoingCallConversation: ZMConversation? {
         guard let callCenter = self.callCenter else { return nil }
 
-        return callCenter.nonIdleCallConversations(in: self).first { (conversation) -> Bool in
+        return callCenter.nonIdleCallConversations(in: self).first { conversation -> Bool in
             guard let callState = conversation.voiceChannel?.state else { return false }
 
             switch callState {

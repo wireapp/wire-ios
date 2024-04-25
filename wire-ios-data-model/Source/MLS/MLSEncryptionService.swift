@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ public final class MLSEncryptionService: MLSEncryptionServiceInterface {
         do {
             WireLogger.mls.debug("encrypting message (\(message.count) bytes) for group (\(groupID))")
             return try await coreCrypto.perform { try await $0.encryptMessage(conversationId: groupID.data, message: message) }
-        } catch let error {
+        } catch {
             WireLogger.mls.error("failed to encrypt message for group (\(groupID)): \(String(describing: error))")
             throw MLSMessageEncryptionError.failedToEncryptMessage
         }

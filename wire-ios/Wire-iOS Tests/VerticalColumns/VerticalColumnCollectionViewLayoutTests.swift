@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 import SnapshotTesting
-import WireCommonComponents
+@testable import WireCommonComponents
 
 final class VerticalColumnCollectionViewLayoutTests: XCTestCase {
 
@@ -29,7 +29,7 @@ final class VerticalColumnCollectionViewLayoutTests: XCTestCase {
         // square, upscale
         ColorTile(color: .purple, size: CGSize(width: 10, height: 10)),
         // portrait, downscale
-        ColorTile(color: .yellow, size: CGSize(width: 1000, height: 1500)),
+        ColorTile(color: .amber, size: CGSize(width: 1000, height: 1500)),
         // landscape, upscale
         ColorTile(color: .turquoise, size: CGSize(width: 15, height: 10)),
         // landscape, downscale
@@ -40,7 +40,7 @@ final class VerticalColumnCollectionViewLayoutTests: XCTestCase {
         ColorTile(color: .red, size: CGSize(width: 1000, height: 1000)),
         ColorTile(color: .green, size: CGSize(width: 10, height: 15)),
         ColorTile(color: .purple, size: CGSize(width: 10, height: 10)),
-        ColorTile(color: .yellow, size: CGSize(width: 1000, height: 1500))
+        ColorTile(color: .amber, size: CGSize(width: 1000, height: 1500))
     ]
 
     override func tearDown() {
@@ -53,5 +53,4 @@ final class VerticalColumnCollectionViewLayoutTests: XCTestCase {
 
         verifyInAllDeviceSizes(matching: sut)
     }
-
 }

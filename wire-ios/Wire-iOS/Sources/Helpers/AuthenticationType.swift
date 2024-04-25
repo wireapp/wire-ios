@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import LocalAuthentication
+import WireSystem
 
 enum AuthenticationType: CaseIterable {
 
@@ -31,6 +32,7 @@ enum AuthenticationType: CaseIterable {
 struct AuthenticationTypeDetector: AuthenticationTypeProvider {
 
     var current: AuthenticationType {
+        WireLogger.ear.info("AuthenticationTypeDetector determines `current`!")
         let context = LAContext()
 
         guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: nil) else {
@@ -42,15 +44,12 @@ struct AuthenticationTypeDetector: AuthenticationTypeProvider {
         }
 
         switch context.biometryType {
-        case .none:
+        case .none, .opticID:
             return .passcode
         case .touchID:
             return .touchID
         case .faceID:
             return .faceID
-        case .opticID:
-            // opticID is only for visionPro, that we do not support
-            return .passcode
         @unknown default:
             return .passcode
         }

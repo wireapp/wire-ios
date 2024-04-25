@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -205,18 +205,17 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = ZMConversationType.group
         let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
-        otherUser.accentColorValue = .brightOrange
+        otherUser.accentColor = .amber
         conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
         self.uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { _, _ in
-                                                        otherUser.accentColorValue = ZMAccentColor.softPink
-            },
-                                                     expectedChangedField: nil,
-                                                     expectedChangedKeys: []
+        checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier: { _, _ in otherUser.accentColor = .turquoise },
+            expectedChangedField: nil,
+            expectedChangedKeys: []
         )
     }
 

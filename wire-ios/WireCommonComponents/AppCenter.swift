@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,15 +14,15 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import AppCenter
 import AppCenterCrashes
 import AppCenterDistribute
 import AppCenterAnalytics
 
-public extension AppCenter {
-    static func setTrackingEnabled(_ enabled: Bool) {
+extension AppCenter {
+    public static func setTrackingEnabled(_ enabled: Bool) {
         Analytics.enabled = enabled
         Distribute.enabled = enabled
 #if DISABLE_APPCENTER_CRASH_LOGGING
@@ -31,7 +31,7 @@ public extension AppCenter {
         Crashes.enabled = enabled
 #endif
     }
-    static func start() {
+    public static func start() {
         Distribute.updateTrack = .private
 
 #if DISABLE_APPCENTER_CRASH_LOGGING

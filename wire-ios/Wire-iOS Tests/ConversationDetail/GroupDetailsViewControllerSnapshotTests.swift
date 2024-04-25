@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         otherUser.remoteIdentifier = .init()
         otherUser.isConnected = true
         otherUser.handle = "bruno"
-        otherUser.accentColorValue = .brightOrange
+        otherUser.zmAccentColor = .amber
 
         userSession = UserSessionMock(mockUser: mockSelfUser)
     }
@@ -210,7 +210,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         )
 
         // THEN
-        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+        verify(matching: sut.wrapInNavigationController())
     }
 
     func testForMlsConversation_withNotVerifiedStatus() throws {
@@ -229,7 +229,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         )
 
         // THEN
-        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+        verify(matching: sut.wrapInNavigationController())
     }
 
     func testForProteusConversation_withVerifiedStatus() throws {
@@ -248,7 +248,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         )
 
         // THEN
-        verify(matching: sut.wrapInNavigationController(setBackgroundColor: true))
+        verify(matching: sut.wrapInNavigationController())
     }
 
 }

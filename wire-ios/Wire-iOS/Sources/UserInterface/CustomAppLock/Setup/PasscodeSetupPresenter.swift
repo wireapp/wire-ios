@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -92,7 +93,7 @@ extension PasscodeSetupPresenter: PasscodeSetupInteractorOutput {
 extension PasscodeSetupPresenter {
     private func passcodeError(from violations: [PasswordValidationResult.Violation]) -> Set<PasscodeError> {
         var passcodeErrors: Set<PasscodeError> = Set()
-        violations.forEach { (violation) in
+        violations.forEach { violation in
             switch violation {
             case .tooShort:
                 passcodeErrors.insert(.tooShort)

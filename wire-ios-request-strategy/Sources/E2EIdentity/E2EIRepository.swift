@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,6 +72,10 @@ public final class E2EIRepository: E2EIRepositoryInterface {
     // MARK: - Interface
 
     public func fetchTrustAnchor() async throws {
+        guard try await !e2eiSetupService.isTrustAnchorRegistered() else {
+            logger.info("Trust anchor is already registered, skipping.")
+            return
+        }
         let trustAnchor = try await acmeApi.getTrustAnchor()
         try await e2eiSetupService.registerTrustAnchor(trustAnchor)
     }

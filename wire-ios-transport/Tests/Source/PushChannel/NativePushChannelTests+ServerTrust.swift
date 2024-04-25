@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
         var choosenDisposition: URLSession.AuthChallengeDisposition = .useCredential
         sut.urlSession(URLSession.shared,
                        task: URLSession.shared.dataTask(with: URL(string: "test")!),
-                       didReceive: createMockAuthenticationChallenge()) { (disposition, _) in
+                       didReceive: createMockAuthenticationChallenge()) { disposition, _ in
             choosenDisposition = disposition
         }
 
@@ -94,7 +94,7 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
         var choosenDisposition: URLSession.AuthChallengeDisposition = .useCredential
         sut.urlSession(URLSession.shared,
                        task: URLSession.shared.dataTask(with: URL(string: "test")!),
-                       didReceive: challenge) { (disposition, _) in
+                       didReceive: challenge) { disposition, _ in
             choosenDisposition = disposition
         }
 
@@ -111,7 +111,7 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
         var choosenDisposition: URLSession.AuthChallengeDisposition = .useCredential
         sut.urlSession(session,
                        task: session.dataTask(with: URL(string: "test")!),
-                       didReceive: createMockAuthenticationChallenge()) { (disposition, _) in
+                       didReceive: createMockAuthenticationChallenge()) { disposition, _ in
             choosenDisposition = disposition
         }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,11 +31,11 @@ class RegistrationStrategyTests: MessagingTest {
         registrationStatus = TestRegistrationStatus()
         userInfoParser = MockUserInfoParser()
         sut = WireSyncEngine.RegistrationStrategy(groupQueue: self.syncMOC, status: registrationStatus, userInfoParser: userInfoParser)
-        team = UnregisteredTeam(teamName: "Dream Team", email: "some@email.com", emailCode: "23", fullName: "M. Jordan", password: "qwerty", accentColor: .brightOrange)
+        team = UnregisteredTeam(teamName: "Dream Team", email: "some@email.com", emailCode: "23", fullName: "M. Jordan", password: "qwerty", accentColor: .amber)
 
         user = UnregisteredUser()
         user.name = "M. Jordan"
-        user.accentColorValue = .brightOrange
+        user.accentColor = .amber
         user.verificationCode = "23"
         user.credentials = .phone("+4912345678900")
         user.acceptedTermsOfService = true
