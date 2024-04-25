@@ -328,10 +328,7 @@ final class SyncStatusTests: MessagingTest {
         XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
         XCTAssertFalse(sut.needsToRestartQuickSync)
 
-        // then
-        XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
-
-        // and when
+        // when
         let beforePushChannelEstablished = sut.pushChannelEstablishedDate?.addingTimeInterval(-.oneSecond)
         sut.completedFetchingNotificationStream(fetchBeganAt: beforePushChannelEstablished)
 
