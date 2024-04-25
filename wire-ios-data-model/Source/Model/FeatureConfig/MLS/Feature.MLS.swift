@@ -100,6 +100,7 @@ public extension Feature {
                 }
             }
 
+            @objc
             public enum MLSCipherSuite: Int, Codable, CustomStringConvertible {
 
                 case MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519 = 1
