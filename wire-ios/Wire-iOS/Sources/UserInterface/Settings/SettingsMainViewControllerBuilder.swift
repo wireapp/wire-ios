@@ -20,17 +20,23 @@ import UIKit
 import WireCommonComponents
 import WireSyncEngine
 
-struct SelfProfileViewControllerBuilder: ViewControllerBuilder {
+struct SettingsMainViewControllerBuilder: ViewControllerBuilder {
 
-    var selfUser: SettingsSelfUser
-    var userRightInterfaceType: UserRightInterface.Type
     var userSession: UserSession
+    var selfUser: SettingsSelfUser
 
     func build() -> UIViewController {
-        SelfProfileViewController(
-            selfUser: selfUser,
-            userRightInterfaceType: userRightInterfaceType,
-            userSession: userSession
+        let settingsPropertyFactory = SettingsPropertyFactory(
+            userSession: userSession,
+            selfUser: selfUser
         )
+        let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
+            settingsPropertyFactory: settingsPropertyFactory,
+            userRightInterfaceType: UserRight.self
+        )
+        return settingsCellDescriptorFactory.settingsGroup(
+            isTeamMember: userSession.selfUser.isTeamMember,
+            userSession: userSession
+        ).generateViewController()!
     }
 }

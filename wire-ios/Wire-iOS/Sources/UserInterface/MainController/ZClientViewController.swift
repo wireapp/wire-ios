@@ -50,43 +50,33 @@ final class ZClientViewController: UIViewController {
     var dataUsagePermissionDialogDisplayed = false
 
     private let colorSchemeController: ColorSchemeController
-    private var incomingApnsObserver: Any?
-    private var networkAvailabilityObserverToken: Any?
+    private var incomingApnsObserver: NSObjectProtocol?
+    private var networkAvailabilityObserverToken: NSObjectProtocol?
     private var pendingInitialStateRestore = false
 
     /// init method for testing allows injecting an Account object and self user
     required init(
         account: Account,
-        userSession: UserSession,
-        selfUser: SettingsSelfUser
+        userSession: UserSession
     ) {
         self.userSession = userSession
-
-        let settingsPropertyFactory = SettingsPropertyFactory(userSession: userSession, selfUser: selfUser)
-        let settingsCellDescriptorFactory = SettingsCellDescriptorFactory(
-            settingsPropertyFactory: settingsPropertyFactory,
-            userRightInterfaceType: UserRight.self
-        )
-        let settingsTabItemBuilder = {
-            settingsCellDescriptorFactory.settingsGroup(
-                isTeamMember: userSession.selfUser.isTeamMember,
-                userSession: userSession
-            ).generateViewController()!
-        }
 
         let selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
             selfUser: userSession.selfUser,
             userRightInterfaceType: UserRight.self,
             userSession: userSession
         )
+        let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
+            userSession: userSession,
+            selfUser: userSession.selfUser
+        )
         conversationListViewController = .init(
             account: account,
             selfUser: userSession.selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
-            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
-            settingsViewControllerBuilder: settingsTabItemBuilder
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+            settingsViewControllerBuilder: settingsViewControllerBuilder
         )
 
         colorSchemeController = .init(userSession: userSession)
@@ -722,8 +712,10 @@ final class ZClientViewController: UIViewController {
         (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
     }
 
-    func minimizeCallOverlay(animated: Bool,
-                             withCompletion completion: Completion?) {
-        router?.minimizeCallOverlay(animated: animated, withCompletion: completion)
+    func minimizeCallOverlay(
+        animated: Bool,
+        completion: @escaping Completion
+    ) {
+        router?.minimizeCallOverlay(animated: animated, completion: completion)
     }
 }

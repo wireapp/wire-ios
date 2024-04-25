@@ -38,7 +38,8 @@ final class ConversationListViewController: UIViewController {
     /// private
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
-    private let settingsViewControllerBuilder: () -> UIViewController
+    private let selfProfileViewControllerBuilder: ViewControllerBuilder
+    private let settingsViewControllerBuilder: ViewControllerBuilder
 
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
@@ -78,7 +79,8 @@ final class ConversationListViewController: UIViewController {
         selfUser: SelfUserType,
         userSession: UserSession,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
-        selfProfileViewControllerBuilder: some ViewControllerBuilder
+        selfProfileViewControllerBuilder: ViewControllerBuilder,
+        settingsViewControllerBuilder: ViewControllerBuilder
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -86,22 +88,28 @@ final class ConversationListViewController: UIViewController {
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
-        self.init(viewModel: viewModel, selfProfileViewControllerBuilder: selfProfileViewControllerBuilder)
+        self.init(
+            viewModel: viewModel,
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+            settingsViewControllerBuilder: settingsViewControllerBuilder
+        )
         onboardingHint.arrowPointToView = tabBar
     }
 
     required init(
         viewModel: ViewModel,
-        selfProfileViewControllerBuilder: some ViewControllerBuilder
+        selfProfileViewControllerBuilder: ViewControllerBuilder,
+        settingsViewControllerBuilder: ViewControllerBuilder
     ) {
         self.viewModel = viewModel
+        self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
         self.settingsViewControllerBuilder = settingsViewControllerBuilder
 
         topBarViewController = ConversationListTopBarViewController(
             account: viewModel.account,
             selfUser: viewModel.selfUser,
             userSession: viewModel.userSession,
-            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
             filterConversationsActionHandler: { _ in },
             newConversationActionHandler: { _ in }
         )

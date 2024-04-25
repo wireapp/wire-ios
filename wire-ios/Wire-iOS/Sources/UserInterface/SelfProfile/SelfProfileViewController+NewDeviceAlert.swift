@@ -66,7 +66,7 @@ extension SelfProfileViewController {
     func openControllerForCellWithIdentifier(_ identifier: String) -> UIViewController? {
         var resultViewController: UIViewController? = .none
         // Let's assume for the moment that menu is only 2 levels deep
-        rootGroup?.allCellDescriptors().forEach({ (topCellDescriptor: SettingsCellDescriptorType) in
+        rootGroup.allCellDescriptors().forEach({ (topCellDescriptor: SettingsCellDescriptorType) in
 
             if let cellIdentifier = topCellDescriptor.identifier,
                let cellGroupDescriptor = topCellDescriptor as? SettingsControllerGeneratorType,

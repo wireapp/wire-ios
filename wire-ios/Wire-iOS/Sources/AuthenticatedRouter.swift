@@ -28,7 +28,7 @@ enum NavigationDestination {
 
 protocol AuthenticatedRouterProtocol: AnyObject {
     func updateActiveCallPresentationState()
-    func minimizeCallOverlay(animated: Bool, withCompletion completion: Completion?)
+    func minimizeCallOverlay(animated: Bool, completion: @escaping Completion)
     func navigate(to destination: NavigationDestination)
 }
 
@@ -125,7 +125,7 @@ final class AuthenticatedRouter: NSObject {
             e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
         }
 
-        _viewController?.presentAlert(alert)
+        _viewController?.present(alert, animated: true)
     }
 
     private func notifyRevokedCertificate() {
@@ -135,22 +135,24 @@ final class AuthenticatedRouter: NSObject {
             session.logoutCurrentSession()
         }
 
-        _viewController?.presentAlert(alert)
+        _viewController?.present(alert, animated: true)
     }
 }
 
 // MARK: - AuthenticatedRouterProtocol
+
 extension AuthenticatedRouter: AuthenticatedRouterProtocol {
+
     func updateActiveCallPresentationState() {
         activeCallRouter.updateActiveCallPresentationState()
     }
 
-    func minimizeCallOverlay(animated: Bool,
-                             withCompletion completion: Completion?) {
+    func minimizeCallOverlay(animated: Bool, completion: @escaping () -> Void) {
         activeCallRouter.minimizeCall(animated: animated, completion: completion)
     }
 
     func navigate(to destination: NavigationDestination) {
+
         switch destination {
         case .conversation(let converation, let message):
             _viewController?.showConversation(converation, at: message)
@@ -166,6 +168,7 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
 
 // MARK: - AuthenticatedWireFrame
 struct AuthenticatedWireFrame {
+
     private var account: Account
     private var userSession: UserSession
     private var isComingFromRegistration: Bool
@@ -184,11 +187,7 @@ struct AuthenticatedWireFrame {
     }
 
     func build(router: AuthenticatedRouterProtocol) -> ZClientViewController {
-        let viewController = ZClientViewController(
-            account: account,
-            userSession: userSession,
-            selfUser: userSession.selfUser as! SettingsSelfUser // TODO [WPB-7307]: fix force cast
-        )
+        let viewController = ZClientViewController(account: account, userSession: userSession)
         viewController.isComingFromRegistration = isComingFromRegistration
         viewController.needToShowDataUsagePermissionDialog = needToShowDataUsagePermissionDialog
         viewController.router = router
@@ -196,18 +195,8 @@ struct AuthenticatedWireFrame {
     }
 }
 
-private extension UIViewController {
-
-    func presentAlert(_ alert: UIAlertController) {
-        present(alert, animated: true, completion: nil)
-    }
-
-}
-
 protocol FeatureRepositoryProvider {
-
     var featureRepository: FeatureRepository { get }
-
 }
 
 extension ZMUserSession: FeatureRepositoryProvider {}
