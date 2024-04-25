@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireCommonComponents
@@ -88,10 +87,12 @@ final class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidati
     )
     private let countryCodeInputView = IconButton()
     private let textField = ValidatedTextField(kind: .phoneNumber, leftInset: 8, style: .default)
+    private let userPropertyNormalizer: UserPropertyNormalization
 
     // MARK: - Initialization
 
     override init(frame: CGRect) {
+        userPropertyNormalizer = UserPropertyNormalizer(userPropertyValidator: UserPropertyValidator())
         super.init(frame: frame)
         configureSubviews()
         configureConstraints()
@@ -187,21 +188,23 @@ final class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidati
 
     private func configureValidation() {
 
-        textField.textFieldValidator.customValidator = { input in
-            let phoneNumber = self.country.e164PrefixString + input
-            let normalizedNumber = UnregisteredUser.normalizedPhoneNumber(phoneNumber)
+        textField.textFieldValidator.customValidator = { [weak self] input in
+            let phoneNumber = (self?.country.e164PrefixString ?? "") + input
 
-            switch normalizedNumber {
-            case .invalid(let errorCode):
-                switch errorCode {
-                case .tooLong: return .tooLong(kind: .phoneNumber)
-                case .tooShort: return .tooShort(kind: .phoneNumber)
-                default: return .invalidPhoneNumber
-                }
-            case .unknownError:
-                return .invalidPhoneNumber
-            case .valid:
+            guard let normalizationResult = self?.userPropertyNormalizer.normalizePhoneNumber(phoneNumber), !normalizationResult.isValid else {
                 return .none
+            }
+            guard let error = normalizationResult.validationError as? NSError else {
+                return .invalidPhoneNumber
+            }
+
+            switch error.code {
+            case ZMManagedObjectValidationErrorCode.tooLong.rawValue:
+                return .tooLong(kind: .phoneNumber)
+            case ZMManagedObjectValidationErrorCode.tooShort.rawValue:
+                return .tooShort(kind: .phoneNumber)
+            default:
+                return .invalidPhoneNumber
             }
         }
     }
