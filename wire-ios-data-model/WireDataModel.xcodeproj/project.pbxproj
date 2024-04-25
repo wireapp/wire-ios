@@ -3549,10 +3549,10 @@
 		F9C9A6A01CAD7C7F0039E10C /* Public */ = {
 			isa = PBXGroup;
 			children = (
+				BFCD502C21511D58008CD845 /* DraftMessage.swift */,
 				F9C9A7641CAE8DFC0039E10C /* ZMAddressBookContact.h */,
 				F9C9A6AF1CAD7D1F0039E10C /* ZMManagedObject.h */,
 				F9C9A6A31CAD7C7F0039E10C /* ZMConversation.h */,
-				BFCD502C21511D58008CD845 /* DraftMessage.swift */,
 				F9C9A6A41CAD7C7F0039E10C /* ZMConversationList.h */,
 				F9C9A6A51CAD7C7F0039E10C /* ZMEditableUser.h */,
 				F9C9A6A61CAD7C7F0039E10C /* ZMMessage.h */,

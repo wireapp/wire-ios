@@ -37,9 +37,7 @@ final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
     }
 
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
-        guard case .connectBot(let serviceUserData) = urlAction else {
-            return
-        }
+        guard case .connectBot(let serviceUserData) = urlAction else { return }
 
         let serviceUser = ZMSearchUser(
             contextProvider: contextProvider,

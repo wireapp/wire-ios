@@ -113,7 +113,7 @@ public class ZMSearchUser: NSObject, UserType {
     fileprivate var internalIsTeamMember: Bool = false
     fileprivate var internalTeamCreatedBy: UUID?
     fileprivate var internalTeamPermissions: Permissions?
-    fileprivate var internalAccentColorValue: ZMAccentColor
+    fileprivate var internalAccentColorValue: ZMAccentColorRawValue
     fileprivate var internalPendingApprovalByOtherUser: Bool = false
     fileprivate var internalConnectionRequestMessage: String?
     fileprivate var internalPreviewImageData: Data?
@@ -148,7 +148,6 @@ public class ZMSearchUser: NSObject, UserType {
 
     public var name: String? {
         return user?.name ?? internalName
-
     }
 
     public var handle: String? {
@@ -303,12 +302,16 @@ public class ZMSearchUser: NSObject, UserType {
         return user?.isUnderLegalHold == true
     }
 
-    public var accentColorValue: ZMAccentColor {
+    public var accentColorValue: ZMAccentColorRawValue {
         if let user = user {
-            return user.accentColorValue
+            user.accentColorValue
         } else {
-            return internalAccentColorValue
+            internalAccentColorValue
         }
+    }
+
+    public var zmAccentColor: ZMAccentColor? {
+        .from(rawValue: accentColorValue)
     }
 
     public var isWirelessUser: Bool {
@@ -470,7 +473,7 @@ public class ZMSearchUser: NSObject, UserType {
         contextProvider: ContextProvider,
         name: String,
         handle: String?,
-        accentColor: ZMAccentColor,
+        accentColor: ZMAccentColor?,
         remoteIdentifier: UUID?,
         domain: String? = nil,
         teamIdentifier: UUID? = nil,
@@ -484,7 +487,7 @@ public class ZMSearchUser: NSObject, UserType {
         self.internalName = name
         self.internalHandle = handle
         self.internalInitials = personName.initials
-        self.internalAccentColorValue = accentColor
+        self.internalAccentColorValue = accentColor?.rawValue ?? 0
         self.user = existingUser
         self.internalDomain = domain
         self.remoteIdentifier = existingUser?.remoteIdentifier ?? remoteIdentifier
@@ -514,7 +517,7 @@ public class ZMSearchUser: NSObject, UserType {
             contextProvider: contextProvider,
             name: user.name ?? "",
             handle: user.handle,
-            accentColor: user.accentColorValue,
+            accentColor: user.zmAccentColor,
             remoteIdentifier: user.remoteIdentifier,
             domain: user.domain,
             teamIdentifier: user.teamIdentifier,
@@ -534,7 +537,7 @@ public class ZMSearchUser: NSObject, UserType {
             contextProvider: contextProvider,
             name: contact.name,
             handle: user?.handle,
-            accentColor: .undefined,
+            accentColor: nil,
             remoteIdentifier: user?.remoteIdentifier,
             domain: user?.domain,
             teamIdentifier: user?.teamIdentifier,
@@ -556,17 +559,17 @@ public class ZMSearchUser: NSObject, UserType {
                 return nil
             }
 
-        let teamIdentifier = (payload["team"] as? String).flatMap({ UUID(uuidString: $0) })
+        let teamIdentifier = (payload["team"] as? String).flatMap { UUID(uuidString: $0) }
         let handle = payload["handle"] as? String
         let qualifiedID = payload["qualified_id"] as? [String: Any]
         let domain = qualifiedID?["domain"] as? String
-        let accentColor = ZMUser.accentColor(fromPayloadValue: payload["accent_id"] as? NSNumber)
+        let accentColorRawValue = (payload["accent_id"] as? NSNumber)?.int16Value ?? 0
 
         self.init(
             contextProvider: contextProvider,
             name: name,
             handle: handle,
-            accentColor: accentColor,
+            accentColor: .from(rawValue: accentColorRawValue) ?? .default,
             remoteIdentifier: remoteIdentifier,
             domain: domain,
             teamIdentifier: teamIdentifier,

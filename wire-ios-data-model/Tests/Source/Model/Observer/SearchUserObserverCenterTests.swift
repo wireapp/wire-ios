@@ -42,7 +42,7 @@ final class SearchUserObserverCenterTests: ModelObjectsTests {
         let searchUser = makeSearchUser(
             name: "",
             handle: "",
-            accentColor: .undefined,
+            accentColor: nil,
             remoteIdentifier: UUID(),
             user: user
         )
@@ -101,7 +101,7 @@ final class SearchUserObserverCenterTests: ModelObjectsTests {
         let searchUser = makeSearchUser(
             name: "",
             handle: "",
-            accentColor: .undefined,
+            accentColor: nil,
             remoteIdentifier: nil,
             user: user
         )
