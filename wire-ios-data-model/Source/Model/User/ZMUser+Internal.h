@@ -19,6 +19,7 @@
 @import WireImages;
 
 #import "ZMUser.h"
+#import "ZMEditableUserType.h"
 #import "ZMManagedObject+Internal.h"
 #import "ZMUser+OneOnOne.h"
 
@@ -61,6 +62,7 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 
 - (void)updatePotentialGapSystemMessagesIfNeeded;
 
+
 @end
 
 @interface ZMUser (SelfUser)
@@ -71,7 +73,6 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @end
 
 
-@protocol ZMEditableUserType;
 
 @interface ZMUser (Editable) <ZMEditableUserType>
 
@@ -89,12 +90,14 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @end
 
 
+
 @interface ZMUser (ImageData)
 
 + (nonnull NSPredicate *)predicateForSelfUser;
 + (nonnull NSPredicate *)predicateForUsersOtherThanSelf;
 
 @end
+
 
 
 @interface NSUUID (SelfUser)
@@ -104,6 +107,8 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @end
 
 
+
+
 @interface ZMSession : ZMManagedObject
 
 @property (nonnull, nonatomic, strong) ZMUser *selfUser;
@@ -111,8 +116,12 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @end
 
 
+
+
 @interface ZMUser (OTR)
 
 - (nullable UserClient *)selfClient;
 
 @end
+
+

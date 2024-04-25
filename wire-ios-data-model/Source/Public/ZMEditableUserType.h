@@ -16,14 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireUtilities
+@import Foundation;
 
-@objc(ZMEditableUserType)
-public protocol EditableUserType: NSObjectProtocol {
-    var name: String? { get set }
-    var accentColorValue: ZMAccentColorRawValue { get set }
-    var emailAddress: String? { get set }
-    var phoneNumber: String? { get set }
-    var readReceiptsEnabled: Bool { get set }
-    var needsRichProfileUpdate: Bool { get set }
-}
+NS_SWIFT_NAME(EditableUserType)
+@protocol ZMEditableUserType <NSObject>
+
+@property (nonatomic, copy, nullable) NSString *name;
+@property (nonatomic) ZMAccentColorRawValue accentColorValue;
+@property (nonatomic, copy, readonly, nullable) NSString *emailAddress;
+@property (nonatomic, copy, readonly, nullable) NSString *phoneNumber;
+@property (nonatomic) BOOL readReceiptsEnabled;
+@property (nonatomic) BOOL needsRichProfileUpdate;
+
+@end

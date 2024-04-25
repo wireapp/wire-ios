@@ -25,6 +25,7 @@
 #import "ZMManagedObject+Internal.h"
 #import "NSManagedObjectContext+zmessaging.h"
 #import "ZMConnection+Internal.h"
+#import "WireDataModelTests-Swift.h"
 
 
 static NSString * const InvitationToConnectBaseURL = @"https://www.wire.com/c/";

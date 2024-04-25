@@ -39,7 +39,7 @@
         XCTAssertTrue([self login]);
         // Change the name & save
         ZMUser<ZMEditableUserType> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-        
+
         // sanity check
         XCTAssertNotEqual(selfUser.zmAccentColor, accentColor);
 
