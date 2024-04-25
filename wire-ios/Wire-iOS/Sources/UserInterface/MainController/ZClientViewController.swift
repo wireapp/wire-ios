@@ -398,7 +398,7 @@ final class ZClientViewController: UIViewController {
         if userSession.ringingCallConversation != nil {
             dismissAction()
         } else {
-            minimizeCallOverlay(animated: true, withCompletion: dismissAction)
+            minimizeCallOverlay(animated: true, completion: dismissAction)
         }
     }
 

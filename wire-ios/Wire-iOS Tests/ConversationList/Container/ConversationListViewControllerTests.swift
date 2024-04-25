@@ -63,7 +63,8 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
 
         sut = ConversationListViewController(
             viewModel: viewModel,
-            selfProfileViewControllerBuilder: .mock
+            selfProfileViewControllerBuilder: .mock,
+            settingsViewControllerBuilder: .mock
         )
         viewModel.viewController = sut
         sut.onboardingHint.arrowPointToView = sut.tabBar

@@ -28,7 +28,7 @@ enum NavigationDestination {
 
 protocol AuthenticatedRouterProtocol: AnyObject {
     func updateActiveCallPresentationState()
-    func minimizeCallOverlay(animated: Bool, completion: @escaping Completion)
+    func minimizeCallOverlay(animated: Bool, completion: @escaping () -> Void)
     func navigate(to destination: NavigationDestination)
 }
 
