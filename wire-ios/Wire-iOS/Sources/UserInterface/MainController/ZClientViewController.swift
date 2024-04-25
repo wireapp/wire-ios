@@ -62,7 +62,7 @@ final class ZClientViewController: UIViewController {
         self.userSession = userSession
 
         let selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
-            selfUser: userSession.selfUserClient!.user!, // TODO [WPB-7307]: fix force cast
+            selfUser: userSession.selfUser,
             userRightInterfaceType: UserRight.self,
             userSession: userSession
         )
