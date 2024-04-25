@@ -273,7 +273,7 @@ final class ConversationGuestOptionsViewModel {
                         self,
                         presentCreateSecureGuestLink: CreateSecureGuestLinkViewController(
                             userSession: userSession,
-                            conversation: conversation).wrapInNavigationController(setBackgroundColor: true),
+                            conversation: conversation).wrapInNavigationController(),
                         animated: true
                     )
                 case .normal:
