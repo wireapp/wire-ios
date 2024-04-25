@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-private let userPath = "/users?ids="
+final class SearchUserImageStrategy: AbstractRequestStrategy {
 
-public class SearchUserImageStrategy: AbstractRequestStrategy {
+    private static let userPath = "/users?ids="
 
     fileprivate unowned var uiContext: NSManagedObjectContext
     fileprivate unowned var syncContext: NSManagedObjectContext
@@ -32,14 +32,14 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
     fileprivate var requestedPreviewAssetsInProgress: Set<UUID> = Set()
     fileprivate var requestedCompleteAssetsInProgress: Set<UUID> = Set()
 
-    fileprivate var observers: [Any] = []
+    fileprivate var observers: [any NSObjectProtocol] = []
 
     @available (*, unavailable)
-    public override init(withManagedObjectContext moc: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override init(withManagedObjectContext moc: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         fatalError()
     }
 
-    public init(applicationStatus: ApplicationStatus, managedObjectContext: NSManagedObjectContext) {
+    init(applicationStatus: ApplicationStatus, managedObjectContext: NSManagedObjectContext) {
 
         self.syncContext = managedObjectContext
         self.uiContext = managedObjectContext.zm_userInterface
@@ -63,7 +63,7 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
         )
     }
 
-    public func requestAsset(with note: NotificationInContext) {
+    func requestAsset(with note: NotificationInContext) {
         guard let searchUser = note.object as? ZMSearchUser, let userId = searchUser.remoteIdentifier else { return }
 
         if !searchUser.hasDownloadedFullUserProfile {
@@ -86,7 +86,7 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 
-    public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
+    override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
         let request = fetchUserProfilesRequest(apiVersion: apiVersion) ?? fetchAssetRequest(apiVersion: apiVersion)
         request?.setDebugInformationTranscoder(self)
         return request
@@ -236,7 +236,7 @@ public class SearchUserImageStrategy: AbstractRequestStrategy {
         }
     }
 
-    public static func requestForFetchingFullProfile(for usersWithIDs: Set<UUID>, apiVersion: APIVersion, completionHandler: ZMCompletionHandler) -> ZMTransportRequest {
+    static func requestForFetchingFullProfile(for usersWithIDs: Set<UUID>, apiVersion: APIVersion, completionHandler: ZMCompletionHandler) -> ZMTransportRequest {
         let usersList = usersWithIDs.map { $0.transportString() }.joined(separator: ",")
         let request = ZMTransportRequest(getFromPath: userPath + usersList, apiVersion: apiVersion.rawValue)
         request.add(completionHandler)
