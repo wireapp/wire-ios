@@ -16,25 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+import XCTest
 
-extension AccentColor {
+@testable import WireUtilities
 
-    var name: String {
-        typealias AccentColor = L10n.Localizable.Self.Settings.AccountPictureGroup.AccentColor
-        switch self {
-        case .blue:
-            return AccentColor.blue
-        case .green:
-            return AccentColor.green
-        case .red:
-            return AccentColor.red
-        case .amber:
-            return AccentColor.amber
-        case .turquoise:
-            return AccentColor.turquoise
-        case .purple:
-            return AccentColor.purple
-        }
+final class AccentColorTests: XCTestCase {
+
+    /// Ensures that the raw values haven't changed when migrating `ZMAccentColor` into Swift.
+    func testRawValues() {
+
+        XCTAssertEqual(AccentColor.blue.rawValue, 1)
+        XCTAssertEqual(AccentColor.green.rawValue, 2)
+        XCTAssertEqual(AccentColor.red.rawValue, 4)
+        XCTAssertEqual(AccentColor.amber.rawValue, 5)
+        XCTAssertEqual(AccentColor.turquoise.rawValue, 6)
+        XCTAssertEqual(AccentColor.purple.rawValue, 7)
+
+        XCTAssertEqual(ZMAccentColor.min, .from(accentColor: .blue))
+        XCTAssertEqual(ZMAccentColor.max, .from(accentColor: .purple))
     }
 }

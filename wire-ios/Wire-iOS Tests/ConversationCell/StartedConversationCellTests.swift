@@ -31,7 +31,7 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
         SelfUser.setupMockSelfUser(inTeam: UUID())
 
         mockSelfUser = SelfUser.provider?.providedSelfUser as? MockUserType
-        mockSelfUser.accentColorValue = .blue
+        mockSelfUser.zmAccentColor = .blue
 
         mockOtherUser = MockUserType.createDefaultOtherUser()
     }

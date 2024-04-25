@@ -68,7 +68,7 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
         // GIVEN
         let otherUserConversation = MockStableRandomParticipantsConversation()
         let otherUser = MockUserType.createDefaultOtherUser()
-        otherUser.accentColorValue = .green
+        otherUser.zmAccentColor = .green
         otherUserConversation.conversationType = .oneOnOne
         otherUserConversation.stableRandomParticipants = [otherUser]
 
@@ -82,7 +82,7 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
     func testThatItRendersPendingConnection() {
         // GIVEN
         let otherUser = MockUserType.createDefaultOtherUser()
-        otherUser.accentColorValue = .green
+        otherUser.zmAccentColor = .green
         otherUser.isConnected = false
         otherUser.isPendingApprovalBySelfUser = true
         let otherUserConversation = MockStableRandomParticipantsConversation()
@@ -105,7 +105,7 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
         otherUser.isConnected = true
         XCTAssert(otherUser.isServiceUser)
 
-        otherUser.accentColorValue = .green
+        otherUser.zmAccentColor = .green
         let otherUserConversation = MockStableRandomParticipantsConversation()
         otherUserConversation.conversationType = .oneOnOne
         otherUserConversation.stableRandomParticipants = [otherUser]
@@ -122,7 +122,7 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
         let conversation = MockStableRandomParticipantsConversation()
         let otherUser = MockUserType.createDefaultOtherUser()
         let thirdUser = MockUserType.createConnectedUser(name: "Anna")
-        thirdUser.accentColorValue = .red
+        thirdUser.zmAccentColor = .red
         conversation.stableRandomParticipants = [thirdUser, otherUser]
 
         // WHEN
@@ -134,14 +134,13 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
 
     func testThatItRendersManyUsers() {
         // GIVEN
-
         let conversation = MockStableRandomParticipantsConversation()
         conversation.stableRandomParticipants = MockUserType.usernames.map { MockUserType.createConnectedUser(name: $0) }
 
-        (conversation.stableRandomParticipants[0] as! MockUserType).accentColorValue = .red
-        (conversation.stableRandomParticipants[1] as! MockUserType).accentColorValue = .amber
-        (conversation.stableRandomParticipants[2] as! MockUserType).accentColorValue = .deprecatedYellow
-        (conversation.stableRandomParticipants[3] as! MockUserType).accentColorValue = .blue
+        (conversation.stableRandomParticipants[0] as! MockUserType).zmAccentColor = .red
+        (conversation.stableRandomParticipants[1] as! MockUserType).zmAccentColor = .amber
+        (conversation.stableRandomParticipants[2] as! MockUserType).zmAccentColor = .purple
+        (conversation.stableRandomParticipants[3] as! MockUserType).zmAccentColor = .blue
 
         // WHEN
         sut.configure(context: .conversation(conversation: conversation))
@@ -149,7 +148,6 @@ final class ConversationAvatarViewTests: BaseSnapshotTestCase {
         // THEN
         verify(matching: sut.prepareForSnapshots())
     }
-
 }
 
 fileprivate extension UIView {
