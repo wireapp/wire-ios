@@ -272,7 +272,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         // Protocol details
         sections.append(MessageProtocolSectionController(
             messageProtocol: conversation.messageProtocol,
-            groupID: conversation.mlsGroupID
+            groupID: conversation.mlsGroupID,
+            ciphersuite: userSession.mlsFeature.config.defaultCipherSuite // TODO: jacob get value from backend
         ))
 
         return sections

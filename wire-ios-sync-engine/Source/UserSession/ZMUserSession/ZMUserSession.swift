@@ -151,6 +151,11 @@ public final class ZMUserSession: NSObject {
         return featureRepository.fetchE2EI()
     }
 
+    public var mlsFeature: Feature.MLS {
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchMLS()
+    }
+
     public var gracePeriodEndDate: Date? {
         guard
             e2eiFeature.isEnabled,
