@@ -140,7 +140,7 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
         coreDataStack = nil
         documentsDirectory = nil
         snapshotBackgroundColor = nil
-        UIColor.setAccentOverride(.undefined)
+        UIColor.setAccentOverride(nil)
         UIView.setAnimationsEnabled(true)
         super.tearDown()
     }

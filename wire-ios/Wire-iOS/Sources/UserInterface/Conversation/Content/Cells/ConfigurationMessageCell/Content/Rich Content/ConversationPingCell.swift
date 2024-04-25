@@ -161,5 +161,4 @@ final class ConversationPingCellDescription: ConversationMessageCellDescription 
         accessibilityLabel = text.string
         actionController = nil
     }
-
 }

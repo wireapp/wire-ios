@@ -29,7 +29,7 @@ struct CopyValueView: View {
         VStack(alignment: .leading) {
             Text(title)
                 .font(FontSpec.smallSemiboldFont.swiftUIFont)
-                .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
+                .foregroundColor(Color(uiColor: SemanticColors.Label.textSectionHeader))
                 .padding(.bottom, ViewConstants.Padding.small)
 
             HStack {
@@ -42,7 +42,7 @@ struct CopyValueView: View {
                         Button(action: copy) {
                             Image(.copy)
                                 .renderingMode(.template)
-                                .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                                .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
                         }
 
                         Spacer()

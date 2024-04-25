@@ -99,7 +99,7 @@
         user.email = email;
         user.phone = phone;
         if(userDetails[@"accent_id"] != nil) {
-            user.accentID = (int16_t) [[userDetails numberForKey:@"accent_id"] integerValue];
+            user.accentID = (ZMAccentColorRawValue) [[userDetails numberForKey:@"accent_id"] integerValue];
         }
         
         BOOL shouldReturnEmail = YES;

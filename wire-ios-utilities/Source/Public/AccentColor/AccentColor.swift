@@ -16,41 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDataModel
-
-public enum AccentColor: Int16, CaseIterable {
-
+public enum AccentColor: Int16, CaseIterable, Hashable {
     case blue = 1
     case green
-    case deprecatedYellow // Deprecated
-    case red
+    // yellow used to be defined here
+    case red = 4
     case amber
     case turquoise
     case purple
+}
 
+// MARK: - Default and random value
+
+extension AccentColor {
     public static var `default`: Self { .blue }
-
-    /// Returns a random accent color.
-    public static var random: AccentColor {
-        return AccentColor.allSelectable().randomElement()!
-    }
-
-    public init?(ZMAccentColor zmAccentColor: ZMAccentColor) {
-        self.init(rawValue: zmAccentColor.rawValue)
-    }
-
-    public var zmAccentColor: ZMAccentColor {
-        return ZMAccentColor(rawValue: rawValue)!
-    }
-
-    public static func allSelectable() -> [AccentColor] {
-        return [.blue,
-                .green,
-                .red,
-                .amber,
-                .turquoise,
-                .purple]
-    }
-
+    public static var random: Self! { allCases.randomElement() }
 }

@@ -16,6 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
 
-extension MockUserType: ZMEditableUser { }
+@testable import WireUtilities
+
+final class ZMAccentColorTests: XCTestCase {
+
+    func testTwoInstancesAreEqual() {
+        let amber0: ZMAccentColor = .amber
+        let amber1: ZMAccentColor? = .from(rawValue: AccentColor.amber.rawValue)
+        XCTAssertEqual(amber0, amber1)
+    }
+
+    func testTwoInstancesAreNotEqual() {
+        let blue: ZMAccentColor = .blue
+        let amber: ZMAccentColor = .amber
+        XCTAssertNotEqual(blue, amber)
+    }
+}

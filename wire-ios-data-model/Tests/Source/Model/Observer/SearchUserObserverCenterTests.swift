@@ -48,7 +48,7 @@ class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         user.name = "Bernd"
         user.remoteIdentifier = UUID()
         user.setImage(data: verySmallJPEGData(), size: .preview)
-        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: "", accentColor: .undefined, remoteIdentifier: UUID(), user: user)
+        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
 
         // when
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
@@ -67,7 +67,7 @@ class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         user.name = "Bernd"
         user.remoteIdentifier = UUID()
 
-        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: "", accentColor: .undefined, remoteIdentifier: UUID(), user: user)
+        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
 
         // expect
@@ -99,7 +99,7 @@ class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         user.name = "Bernd"
         user.remoteIdentifier = UUID()
 
-        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: "", accentColor: .undefined, remoteIdentifier: UUID(), user: user)
+        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
 
         // expect
@@ -134,7 +134,7 @@ class SearchUserSnapshotTests: ZMBaseManagedObjectTest {
         connection.to = user
         connection.status = .pending
 
-        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: "", accentColor: .undefined, remoteIdentifier: UUID(), user: user)
+        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
 
         // expect
@@ -210,7 +210,7 @@ class SearchUserObserverCenterTests: ModelObjectsTests {
         user.name = "Bernd"
         user.remoteIdentifier = UUID()
 
-        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: "", accentColor: .undefined, remoteIdentifier: UUID(), user: user)
+        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: "", accentColor: nil, remoteIdentifier: UUID(), user: user)
         sut.addSearchUser(searchUser)
 
         // when
@@ -253,7 +253,7 @@ class SearchUserObserverCenterTests: ModelObjectsTests {
         user.name = "Bernd"
         user.remoteIdentifier = UUID()
 
-        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: "", accentColor: .undefined, remoteIdentifier: nil, user: user)
+        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: "", accentColor: nil, remoteIdentifier: nil, user: user)
         sut.addSearchUser(searchUser)
 
         // expect

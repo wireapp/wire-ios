@@ -42,7 +42,7 @@ class RegistrationTests: IntegrationTest {
         user.name = "Bosco B. A. Baracus"
         user.verificationCode = "911"
         user.credentials = .email(address: email, password: "BadAttitude")
-        user.accentColorValue = .red
+        user.accentColor = .red
         user.acceptedTermsOfService = true
         user.marketingConsent = true
     }

@@ -76,5 +76,4 @@ final class ConfirmAssetViewControllerTests: BaseSnapshotTestCase {
         // THEN
         XCTAssertFalse(sut.showEditingOptions)
     }
-
 }

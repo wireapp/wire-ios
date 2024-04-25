@@ -119,7 +119,7 @@ static id<UserType> mockSelfUser = nil;
     return @"";
 }
 
-#pragma mark - ZMBareUser
+#pragma mark - ZMUser
 
 @synthesize name;
 @synthesize emailAddress;
@@ -145,7 +145,7 @@ static id<UserType> mockSelfUser = nil;
 @synthesize refreshMembershipCount;
 @synthesize refreshTeamDataCount;
 
-#pragma mark - ZMBareUserConnection
+#pragma mark - ZMUserConnection
 
 @synthesize isServiceUser;
 

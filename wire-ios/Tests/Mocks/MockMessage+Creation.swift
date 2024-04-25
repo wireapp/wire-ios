@@ -17,8 +17,9 @@
 //
 
 import Foundation
-@testable import Wire
 import WireLinkPreview
+
+@testable import Wire
 
 extension MockMessage {
     func update(mockSystemMessageData: MockSystemMessageData,
@@ -56,7 +57,7 @@ final class MockMessageFactory {
             message.senderUser = sender
         } else {
             let user = MockUserType.createSelfUser(name: "Tarja Turunen")
-            user.accentColorValue = .blue
+            user.zmAccentColor = .blue
             message.senderUser = user
         }
 
@@ -282,5 +283,4 @@ final class MockMessageFactory {
 
         return fileMessage
     }
-
 }

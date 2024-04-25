@@ -29,7 +29,7 @@ final class IncomingRequestFooterTests: BaseSnapshotTestCase {
     }
 
     override func tearDown() {
-        UIColor.setAccentOverride(.undefined)
+        UIColor.setAccentOverride(nil)
         super.tearDown()
     }
 

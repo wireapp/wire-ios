@@ -51,7 +51,7 @@ struct E2EIdentityCertificateDetailsView: View {
                     },
                     label: {
                         Image(.close)
-                            .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                            .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
                     }
                 )
                 .accessibilityIdentifier("CloseButton")
@@ -77,7 +77,7 @@ struct E2EIdentityCertificateDetailsView: View {
             },
             label: {
                 Image(.download)
-                    .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                    .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
             }
         )
     }
@@ -102,7 +102,7 @@ struct E2EIdentityCertificateDetailsView: View {
             },
             label: {
                 Image(.more)
-                    .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                    .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
                     .padding(.trailing, ViewConstants.Padding.standard)
             }
         )
@@ -116,7 +116,7 @@ struct E2EIdentityCertificateDetailsView: View {
             },
             label: {
                 Text(L10n.Localizable.Device.Details.CertificateDetails.copyToClipboard)
-                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                    .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
             }
         )
     }
@@ -127,14 +127,14 @@ struct E2EIdentityCertificateDetailsView: View {
                 HStack {
                     downloadImageButton.padding()
                     downloadButton
-                        .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                        .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
                         .padding()
                     Spacer()
                     moreButton
-                        .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                        .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
                     .confirmationDialog("...", isPresented: $isMenuPresented) {
                         copyToClipboardButton
-                            .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                            .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
                     }
                 }
             }
@@ -146,7 +146,7 @@ struct E2EIdentityCertificateDetailsView: View {
             if isDownloadAndCopyEnabled {
                 Rectangle()
                     .frame(height: 1)
-                    .foregroundColor(SemanticColors.View.backgroundSeparatorCell.swiftUIColor)
+                    .foregroundColor(Color(uiColor: SemanticColors.View.backgroundSeparatorCell))
             }
         }
     }
@@ -154,17 +154,17 @@ struct E2EIdentityCertificateDetailsView: View {
     var body: some View {
 
         titleView
-            .background(SemanticColors.View.backgroundDefault.swiftUIColor)
+            .background(Color(uiColor: SemanticColors.View.backgroundDefault))
 
         certificateView
-            .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+            .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
 
         .safeAreaInset(edge: .bottom,
                        spacing: .zero) {
-            bottomBarView.background(SemanticColors.View.backgroundUserCell.swiftUIColor)
+            bottomBarView.background(Color(uiColor: SemanticColors.View.backgroundUserCell))
         }
         .ignoresSafeArea()
-        .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+        .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
     }
 }
 

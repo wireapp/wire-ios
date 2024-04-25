@@ -167,5 +167,4 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
         }
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
-
 }

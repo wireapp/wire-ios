@@ -414,7 +414,7 @@ extension AppRootRouter {
 
     private func configureAuthenticatedAppearance() {
         rootViewController.view.window?.tintColor = .accent()
-        UIColor.setAccentOverride(.undefined)
+        UIColor.setAccentOverride(nil)
     }
 
     private func setupAnalyticsSharing() {

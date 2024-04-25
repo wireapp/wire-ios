@@ -17,8 +17,9 @@
 //
 
 import UIKit
-@testable import WireCommonComponents
+
 @testable import Wire
+@testable import WireCommonComponents
 
 struct ColorTile {
     let color: AccentColor
@@ -62,7 +63,7 @@ final class ColorTilesViewController: VerticalColumnCollectionViewController, De
                                  cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let tile = tiles[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "tile", for: indexPath)
-        cell.contentView.backgroundColor = UIColor(for: tile.color)
+        cell.contentView.backgroundColor = tile.color.uiColor
         return cell
     }
 

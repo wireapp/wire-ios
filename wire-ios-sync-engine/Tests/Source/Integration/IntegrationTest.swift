@@ -361,7 +361,7 @@ extension IntegrationTest {
             user1.email = "user1@example.com"
             user1.phone = "6543"
             user1.domain = "local@domain.com"
-            user1.accentID = 3
+            user1.accentID = 5
             session.addProfilePicture(to: user1)
             session.addV3ProfilePicture(to: user1)
             self.user1 = user1
