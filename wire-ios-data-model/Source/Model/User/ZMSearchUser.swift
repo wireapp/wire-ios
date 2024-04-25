@@ -549,7 +549,8 @@ public class ZMSearchUser: NSObject, UserType {
 
     convenience init?(
         from payload: [String: Any],
-        contextProvider: ContextProvider, user: ZMUser? = nil,
+        contextProvider: ContextProvider,
+        user: ZMUser? = nil,
         searchUsersCache: SearchUsersCache?
     ) {
         guard
