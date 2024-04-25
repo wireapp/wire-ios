@@ -56,12 +56,15 @@ extension SearchResult {
             .filter { $0.connection == nil }
             .compactMap { ZMSearchUser(contextProvider: contextProvider, user: $0) }
 
-        return SearchResult(contacts: contacts,
-                            teamMembers: teamMembers,
-                            addressBook: contacts + additionalConnectedUsers + additionalNonConnectedUsers + searchUsersFromAddressBook,
-                            directory: directory,
-                            conversations: conversations,
-                            services: services)
+        return SearchResult(
+            contacts: contacts,
+            teamMembers: teamMembers,
+            addressBook: contacts + additionalConnectedUsers + additionalNonConnectedUsers + searchUsersFromAddressBook,
+            directory: directory,
+            conversations: conversations,
+            services: services,
+            searchUsersCache: searchUsersCache
+        )
     }
 
     /// Returns users that are linked to the given address book contacts

@@ -437,20 +437,36 @@ public class ZMSearchUser: NSObject, UserType {
         return remoteIdentifier?.hashValue ?? super.hash
     }
 
-    public static func searchUsers(from payloadArray: [[String: Any]], contextProvider: ContextProvider) -> [ZMSearchUser] {
-        return payloadArray.compactMap({ searchUser(from: $0, contextProvider: contextProvider) })
+    public static func searchUsers(
+        from payloadArray: [[String: Any]],
+        contextProvider: ContextProvider,
+        searchUsersCache: SearchUsersCache?
+    ) -> [ZMSearchUser] {
+        payloadArray.compactMap {
+            searchUser(
+                from: $0,
+                contextProvider: contextProvider,
+                searchUsersCache: searchUsersCache
+            )
+        }
     }
 
-    public static func searchUser(from payload: [String: Any], contextProvider: ContextProvider) -> ZMSearchUser? {
-        guard let uuidString = payload["id"] as? String,
-              let remoteIdentifier = UUID(uuidString: uuidString) else { return nil }
+    public static func searchUser(
+        from payload: [String: Any],
+        contextProvider: ContextProvider,
+        searchUsersCache: SearchUsersCache?
+    ) -> ZMSearchUser? {
+        guard
+            let uuidString = payload["id"] as? String,
+            let remoteIdentifier = UUID(uuidString: uuidString)
+        else { return nil }
 
         let domain = payload.optionalDictionary(forKey: "qualified_id")?.string(forKey: "domain")
         let localUser = ZMUser.fetch(with: remoteIdentifier,
                                      domain: domain,
                                      in: contextProvider.viewContext)
 
-        if let searchUser = contextProvider.viewContext.zm_searchUserCache?.object(forKey: remoteIdentifier as NSUUID) {
+        if let searchUser = searchUsersCache?.object(forKey: remoteIdentifier as NSUUID) {
             searchUser.user = localUser
             return searchUser
         } else {

@@ -67,7 +67,13 @@ import Foundation
     ///
     /// Returns a SearchTask which should be retained until the results arrive.
     public func perform(_ request: SearchRequest) -> SearchTask {
-        let task = SearchTask(task: .search(searchRequest: request), searchContext: searchContext, contextProvider: contextProvider, transportSession: transportSession)
+        let task = SearchTask(
+            task: .search(searchRequest: request),
+            searchContext: searchContext,
+            contextProvider: contextProvider,
+            transportSession: transportSession,
+            searchUsersCache: searchUsersCache
+        )
 
         task.addResultHandler { [weak self] result, _ in
             self?.observeSearchUsers(result)
@@ -81,7 +87,13 @@ import Foundation
     ///
     /// Returns a SearchTask which should be retained until the results arrive.
     public func lookup(userId: UUID) -> SearchTask {
-        let task = SearchTask(task: .lookup(userId: userId), searchContext: searchContext, contextProvider: contextProvider, transportSession: transportSession)
+        let task = SearchTask(
+            task: .lookup(userId: userId),
+            searchContext: searchContext,
+            contextProvider: contextProvider,
+            transportSession: transportSession,
+            searchUsersCache: searchUsersCache
+        )
 
         task.addResultHandler { [weak self] result, _ in
             self?.observeSearchUsers(result)
