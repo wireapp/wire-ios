@@ -140,7 +140,10 @@ final class ConversationGuestOptionsViewController: UIViewController,
         let alertController = UIAlertController.guestLinkTypeController { guestLinkType in
             switch guestLinkType {
             case .secure:
-                self.present(CreateSecureGuestLinkViewController().wrapInNavigationController(setBackgroundColor: true), animated: true)
+                self.present(
+                    CreateSecureGuestLinkViewController().wrapInNavigationController(),
+                    animated: true
+                )
             case .normal:
                 completion(.normal)
             }
