@@ -21,7 +21,7 @@ extension SwiftMockConversation {
     static func oneOnOneConversation(
         otherUser: UserType = MockUser.mockUsers().first!
     ) -> SwiftMockConversation {
-        let selfUser = (MockUser.mockSelf() as Any) as! ZMUser
+        _ = (MockUser.mockSelf() as Any) as! ZMUser
         let mockConversation = SwiftMockConversation()
         mockConversation.conversationType = .oneOnOne
         mockConversation.displayName = otherUser.name
