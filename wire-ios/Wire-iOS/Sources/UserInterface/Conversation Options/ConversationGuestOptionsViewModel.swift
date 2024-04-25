@@ -61,17 +61,9 @@ final class ConversationGuestOptionsViewModel {
         }
     }
 
-    private var link: String? {
-        didSet {
-            updateRows()
-        }
-    }
+    private var link: String?
 
-    var securedLink: String? {
-        didSet {
-            updateRows()
-        }
-    }
+    var securedLink: String?
 
     var copyInProgress = false {
         didSet {
@@ -213,6 +205,7 @@ final class ConversationGuestOptionsViewModel {
                 switch result {
                 case .success:
                     self.link = nil
+                    self.securedLink = nil
                     self.updateRows()
                 case .failure(let error):
                     self.delegate?.viewModel(self, didReceiveError: error)
@@ -249,7 +242,9 @@ final class ConversationGuestOptionsViewModel {
         configuration.fetchConversationLink { [weak self] result in
             guard let `self` = self else { return }
             switch result {
-            case .success(let link): self.link = link
+            case .success(let link):
+                self.link = link
+                self.securedLink = link
             case .failure(let error): self.delegate?.viewModel(self, didReceiveError: error)
             }
 
@@ -325,7 +320,7 @@ final class ConversationGuestOptionsViewModel {
                 switch result {
                 case .success:
                     self.updateRows()
-                    if nil == self.link && allowGuests {
+                    if nil == self.link || nil == self.securedLink && allowGuests {
                         self.fetchLink()
                     }
                 case .failure(let error): self.delegate?.viewModel(self, didReceiveError: error)
@@ -343,6 +338,7 @@ final class ConversationGuestOptionsViewModel {
                 guard let `self` = self else { return }
                 guard remove else { return self.updateRows() }
                 self.link = nil
+                self.securedLink = nil
                 _setAllowGuests()
             })
         } else {
