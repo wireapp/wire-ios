@@ -25,7 +25,6 @@
 #import "ZMManagedObject+Internal.h"
 #import "NSManagedObjectContext+zmessaging.h"
 #import "ZMConnection+Internal.h"
-#import "WireDataModelTests-Swift.h"
 
 
 static NSString * const InvitationToConnectBaseURL = @"https://www.wire.com/c/";
@@ -1220,7 +1219,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 - (void)testThatModifiedDataFieldsCanBeModifiedForSelfUser
 {
     // given
-    ZMUser<ZMEditableUser> *user = [ZMUser selfUserInContext:self.uiMOC];
+    ZMUser<ZMEditableUserType> *user = [ZMUser selfUserInContext:self.uiMOC];
     user.name = @"Test";
     user.zmAccentColor = ZMAccentColor.amber;
 

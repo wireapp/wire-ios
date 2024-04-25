@@ -38,7 +38,7 @@
         // Create a UI context
         XCTAssertTrue([self login]);
         // Change the name & save
-        ZMUser<ZMEditableUser> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
+        ZMUser<ZMEditableUserType> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
         
         // sanity check
         XCTAssertNotEqual(selfUser.zmAccentColor, accentColor);
@@ -67,7 +67,7 @@
     // Check that user is updated:
     {
         // Get the self user
-        ZMUser<ZMEditableUser> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
+        ZMUser<ZMEditableUserType> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
         XCTAssertEqualObjects(selfUser.name, name);
         XCTAssertEqual(selfUser.zmAccentColor, accentColor);
     }
@@ -79,7 +79,7 @@
 
     XCTAssertTrue([self login]);
 
-    ZMUser<ZMEditableUser> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
+    ZMUser<ZMEditableUserType> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
     XCTAssertNotEqual(selfUser.zmAccentColor, accentColor);
 
     ZMUserObserver *observer = [[ZMUserObserver alloc] initWithUser:selfUser];

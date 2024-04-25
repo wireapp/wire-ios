@@ -21,7 +21,7 @@ import WireDataModel
 
 @testable import Wire
 
-class MockUserType: NSObject, UserType, Decodable, ZMEditableUser {
+class MockUserType: NSObject, UserType, Decodable, EditableUserType {
 
     // MARK: - Decodable
 
