@@ -21,10 +21,9 @@ import WireCommonComponents
 
 extension RemoveClientsViewController {
     final class ViewModel: NSObject {
-        private var removeUserClientUseCase: RemoveUserClientUseCaseProtocol?
-
-        var credentials: ZMEmailCredentials?
-        var clients: [UserClient] = []
+        private let removeUserClientUseCase: RemoveUserClientUseCaseProtocol?
+        private let credentials: ZMEmailCredentials?
+        private(set) var clients: [UserClient] = []
 
         init(clientsList: [UserClient],
              credentials: ZMEmailCredentials?) {
@@ -63,8 +62,8 @@ extension RemoveClientsViewController {
 
 private extension ZMEmailCredentials {
     var emailCredentials: EmailCredentials? {
-        guard let email = self.email,
-              let password = self.password
+        guard let email,
+              let password
         else {
             return nil
         }
