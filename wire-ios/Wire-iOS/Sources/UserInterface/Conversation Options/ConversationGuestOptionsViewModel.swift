@@ -142,10 +142,10 @@ final class ConversationGuestOptionsViewModel {
 
         switch configuration.guestLinkFeatureStatus {
         case .enabled:
-            if link != nil {
-                rows.append(.linkHeader)
-            } else if securedLink != nil {
+            if securedLink != nil {
                 rows.append(.secureLinkHeader)
+            } else {
+                rows.append(.linkHeader)
             }
 
             if !configuration.isConversationFromSelfTeam {
