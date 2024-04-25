@@ -42,7 +42,7 @@ final class OverflowSeparatorView: UIView {
         return CGSize(width: UIView.noIntrinsicMetric, height: .hairline)
     }
 
-    func scrollViewDidScroll(scrollView: UIScrollView!) {
+    func scrollViewDidScroll(scrollView: UIScrollView) {
         if inverse {
             let (height, contentHeight) = (scrollView.bounds.height, scrollView.contentSize.height)
             let offsetY = scrollView.contentOffset.y

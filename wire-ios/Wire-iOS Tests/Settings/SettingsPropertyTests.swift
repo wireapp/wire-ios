@@ -22,7 +22,7 @@ import XCTest
 @testable import Wire
 @testable import WireCommonComponents
 
-final class MockZMEditableUser: MockUser, ZMEditableUser, ValidatorType {
+final class MockZMEditableUser: MockUser, ZMEditableUser {
 
     var needsRichProfileUpdate: Bool = false
 
