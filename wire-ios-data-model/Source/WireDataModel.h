@@ -61,5 +61,3 @@
 #import <WireDataModel/ZMImageAssetEncryptionKeys.h>
 #import <WireDataModel/ZMMessageTimer.h>
 #import <WireDataModel/NSPredicate+ZMSearch.h>
-
-#import <WireDataModel/ZMPropertyNormalizationResult.h>
