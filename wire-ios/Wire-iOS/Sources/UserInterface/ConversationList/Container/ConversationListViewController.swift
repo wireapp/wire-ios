@@ -60,13 +60,7 @@ final class ConversationListViewController: UIViewController {
     }()
 
     let listContentController: ConversationListContentController
-
-    let tabBar: ConversationListTabBar = {
-        let conversationListTabBar = ConversationListTabBar()
-        conversationListTabBar.showArchived = true
-        return conversationListTabBar
-    }()
-
+    let tabBar = ConversationListTabBar()
     let topBarViewController: ConversationListTopBarViewController
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
@@ -161,7 +155,6 @@ final class ConversationListViewController: UIViewController {
         }
 
         state = .conversationList
-        tabBar.selectedTab = listContentController.listViewModel.folderEnabled ? .folder : .list
 
         closePushPermissionDialogIfNotNeeded()
 
@@ -233,7 +226,6 @@ final class ConversationListViewController: UIViewController {
     private func setupTabBar() {
         tabBar.delegate = self
         contentContainer.addSubview(tabBar)
-        listContentController.listViewModel.restorationDelegate = tabBar
         tabBar.unselectedItemTintColor = SemanticColors.Label.textTabBar
     }
 
@@ -246,9 +238,7 @@ final class ConversationListViewController: UIViewController {
         guard
             let topBarView = topBarViewController.view,
             let conversationList = listContentController.view
-        else {
-            return
-        }
+        else { return }
 
         [
             contentContainer,
@@ -326,7 +316,7 @@ final class ConversationListViewController: UIViewController {
         })
     }
 
-    func scrollViewDidScroll(scrollView: UIScrollView!) {
+    func scrollViewDidScroll(scrollView: UIScrollView) {
         topBarViewController.scrollViewDidScroll(scrollView: scrollView)
     }
 
@@ -341,21 +331,6 @@ final class ConversationListViewController: UIViewController {
         let startUIViewController = StartUIViewController(userSession: viewModel.userSession)
         startUIViewController.delegate = viewModel
         return startUIViewController
-    }
-
-    func updateArchiveButtonVisibilityIfNeeded(showArchived: Bool) {
-        guard showArchived != tabBar.showArchived else {
-            return
-        }
-        tabBar.showArchived = showArchived
-    }
-
-    func hideArchivedConversations() {
-        setState(.conversationList, animated: true)
-    }
-
-    func presentPeoplePicker() {
-        setState(.peoplePicker, animated: true)
     }
 
     func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool {
@@ -385,13 +360,17 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 extension ConversationListViewController: UITabBarDelegate {
 
     func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        guard let type = item.type else { return }
+        guard let tabBar = tabBar as? ConversationListTabBar, let type = item.type else { return }
 
         switch type {
-        case .archive:
-            setState(.archived, animated: true)
         case .startUI:
-            presentPeoplePicker()
+            setState(.peoplePicker, animated: true) {
+                tabBar.selectedTab = .list
+            }
+        case .archive:
+            setState(.archived, animated: true) {
+                tabBar.selectedTab = .list
+            }
         case .folder:
             listContentController.listViewModel.folderEnabled = true
         case .list:
@@ -400,7 +379,7 @@ extension ConversationListViewController: UITabBarDelegate {
     }
 }
 
-private extension UITabBarItem {
+extension UITabBarItem {
 
     var type: TabBarItemType? {
         .allCases.first { $0.rawValue == tag }

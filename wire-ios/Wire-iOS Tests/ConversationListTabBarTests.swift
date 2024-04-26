@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class ConversationListTabBarTests: BaseSnapshotTestCase {
 
@@ -44,7 +45,6 @@ final class ConversationListTabBarTests: BaseSnapshotTestCase {
 
     override func tearDown() {
         sut = nil
-
         super.tearDown()
     }
 
@@ -54,26 +54,4 @@ final class ConversationListTabBarTests: BaseSnapshotTestCase {
         // THEN
         verifyInAllPhoneWidths(matching: sut)
     }
-
-    func testThatItHidesTheContactsTitleAndShowsArchivedButtonWhen_ShowArchived_IsSetToYes() throws {
-        // GIVEN && WHEN
-        sut.showArchived = true
-
-        // then
-        verifyInAllPhoneWidths(matching: sut)
-    }
-
-    func testThatItShowsTheContactsTitleAndHidesTheArchivedButtonWhen_ShowArchived_WasSetToYesAndIsSetToNo() throws {
-        // GIVEN
-        // To make the snapshot distinguishable from the inital state
-        accentColor = .blue
-        sut.showArchived = true
-
-        // WHEN
-        sut.showArchived = false
-
-        // THEN
-        verifyInAllPhoneWidths(matching: sut)
-    }
-
 }
