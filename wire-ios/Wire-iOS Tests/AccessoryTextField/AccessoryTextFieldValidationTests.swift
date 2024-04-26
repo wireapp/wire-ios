@@ -20,9 +20,11 @@ import XCTest
 import WireCommonComponents
 @testable import Wire
 
-final class AccessoryTextFieldValidateionTests: XCTestCase {
-    var sut: ValidatedTextField!
-    var mockViewController: MockViewController!
+// MARK: - AccessoryTextFieldValidationTests
+
+final class AccessoryTextFieldValidationTests: XCTestCase {
+
+    // MARK: - MockViewController
 
     final class MockViewController: UIViewController, TextFieldValidationDelegate {
 
@@ -42,6 +44,13 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
         }
     }
 
+    // MARK: - Properties
+
+    var sut: ValidatedTextField!
+    var mockViewController: MockViewController!
+
+    // MARK: - setUp
+
     override func setUp() {
         super.setUp()
         FontScheme.configure(with: .large)
@@ -50,12 +59,16 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
         sut.textFieldValidationDelegate = mockViewController
     }
 
+    // MARK: - tearDown
+
     override func tearDown() {
         mockViewController = nil
         sut = nil
 
         super.tearDown()
     }
+
+    // MARK: - Helper methods
 
     private func checkSucceed(
         textFieldType: ValidatedTextField.Kind,
@@ -147,7 +160,7 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
         )
     }
 
-    // MARK: - happy cases
+    // MARK: - Unit Tests - Happy cases
 
     func testThatConfirmButtonIsEnabledWhenThereIsText() {
         // GIVEN
@@ -196,7 +209,8 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
         checkSucceed(textFieldType: type, text: text)
     }
 
-    // MARK: - unhappy cases
+    // MARK: - Unhappy cases
+
     func testThatOneCharacterNameIsInvalid() {
         // GIVEN
         let type: ValidatedTextField.Kind = .name(isTeam: false)
