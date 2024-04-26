@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import Foundation
 @testable import WireDataModel
+import XCTest
 
 @available(iOS 15.0, *)
 final class DatabaseMigrationTests_TeamUniqueness: XCTestCase {

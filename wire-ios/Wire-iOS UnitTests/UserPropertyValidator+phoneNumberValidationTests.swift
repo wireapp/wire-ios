@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngine
-import XCTest
-
 @testable import Wire
+import XCTest
 
 final class UserPropertyValidator_PhoneNumberValidationTests: XCTestCase {
 

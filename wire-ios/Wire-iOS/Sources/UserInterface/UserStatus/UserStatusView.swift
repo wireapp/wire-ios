@@ -17,9 +17,9 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-import WireCommonComponents
 
 /// A title view subclass that displays the availability of the user.
 final class UserStatusView: TitleView {

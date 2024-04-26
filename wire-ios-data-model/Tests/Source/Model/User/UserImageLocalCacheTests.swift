@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireDataModelSupport
 @testable import WireDataModel
+import WireDataModelSupport
 
 final class UserImageLocalCacheTests: XCTestCase {
 

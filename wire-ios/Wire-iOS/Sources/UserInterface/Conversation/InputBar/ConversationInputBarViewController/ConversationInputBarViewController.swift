@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AVFoundation
+import avs
 import MobileCoreServices
 import Photos
 import UIKit
 import WireSyncEngine
-import avs
-import AVFoundation
 
 enum ConversationInputBarViewControllerMode {
     case textInput

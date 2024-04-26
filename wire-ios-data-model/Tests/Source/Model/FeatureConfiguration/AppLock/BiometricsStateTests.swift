@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import LocalAuthentication
-import WireDataModelSupport
 @testable import WireDataModel
+import WireDataModelSupport
+import XCTest
 
 final class BiometricsStateTests: XCTestCase {
 

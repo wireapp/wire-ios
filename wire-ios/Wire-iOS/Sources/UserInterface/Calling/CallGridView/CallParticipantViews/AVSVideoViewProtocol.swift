@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UIKit
 import avs
+import UIKit
 
 protocol AVSVideoViewProtocol: UIView {
     var shouldFill: Bool { get set }

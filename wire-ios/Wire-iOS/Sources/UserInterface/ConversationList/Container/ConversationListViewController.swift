@@ -339,10 +339,6 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         return startUIViewController
     }
 
-    func presentSettings() {
-        setState(.settings, animated: true)
-    }
-
     func selectOnListContentController(
         _ conversation: ZMConversation!,
         scrollTo message: ZMConversationMessage?,

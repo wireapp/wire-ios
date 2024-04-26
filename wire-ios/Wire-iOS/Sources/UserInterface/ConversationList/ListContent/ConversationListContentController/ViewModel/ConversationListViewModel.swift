@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import DifferenceKit
-import WireSystem
+import Foundation
 import WireDataModel
-import WireSyncEngine
 import WireRequestStrategy
+import WireSyncEngine
+import WireSystem
 
 final class ConversationListViewModel: NSObject {
 

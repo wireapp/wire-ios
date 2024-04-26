@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
-import WireUtilities
-import WireTesting
+import Foundation
 import WireCryptobox
-import WireMockTransport
 import WireDataModel
 import WireDataModelSupport
-import Foundation
+import WireMockTransport
+@testable import WireSyncEngine
+import WireTesting
+import WireUtilities
 
 final class UserClientRequestFactoryTests: MessagingTest {
 

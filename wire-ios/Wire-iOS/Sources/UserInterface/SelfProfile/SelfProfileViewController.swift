@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 /// The first page of the user settings.
 final class SelfProfileViewController: UIViewController {

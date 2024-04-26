@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SwiftUI
+@testable import Wire
 import WireRequestStrategySupport
+import XCTest
 
 final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
 
