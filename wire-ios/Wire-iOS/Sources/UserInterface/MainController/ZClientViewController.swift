@@ -32,7 +32,7 @@ final class ZClientViewController: UIViewController {
 
     var isComingFromRegistration = false
     var needToShowDataUsagePermissionDialog = false
-    let wireSplitViewController: SplitViewController = SplitViewController()
+    let wireSplitViewController = SplitViewController()
 
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
     let conversationListViewController: ConversationListViewController
