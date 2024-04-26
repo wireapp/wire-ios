@@ -116,21 +116,6 @@ final class ConversationListTabBar: UITabBar {
     private let folderTab = UITabBarItem(type: .folder)
     private let archivedTab = UITabBarItem(type: .archive)
 
-    var selectedTab: TabBarItemType? {
-        didSet {
-            if let selectedTab = selectedTab {
-                switch selectedTab {
-                case .archive, .startUI:
-                    return
-                case .list:
-                    selectedItem = listTab
-                case .folder:
-                    selectedItem = folderTab
-                }
-            }
-        }
-    }
-
     // MARK: - Init
     init() {
         super.init(frame: .zero)
@@ -156,21 +141,6 @@ final class ConversationListTabBar: UITabBar {
         showsLargeContentViewer = true
         scalesLargeContentImage = true
     }
-
-}
-
-// MARK: - ConversationListViewModelRestorationDelegate
-
-extension ConversationListTabBar: ConversationListViewModelRestorationDelegate {
-
-    func listViewModel(_ model: ConversationListViewModel?, didRestoreFolderEnabled enabled: Bool) {
-        if enabled {
-            selectedTab = .folder
-        } else {
-            selectedTab = .list
-        }
-    }
-
 }
 
 // MARK: - UILargeContentViewerInteractionDelegate

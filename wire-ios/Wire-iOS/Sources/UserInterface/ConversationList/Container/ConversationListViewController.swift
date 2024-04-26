@@ -155,7 +155,6 @@ final class ConversationListViewController: UIViewController {
         }
 
         state = .conversationList
-        tabBar.selectedTab = listContentController.listViewModel.folderEnabled ? .folder : .list
 
         closePushPermissionDialogIfNotNeeded()
 
@@ -227,7 +226,6 @@ final class ConversationListViewController: UIViewController {
     private func setupTabBar() {
         tabBar.delegate = self
         contentContainer.addSubview(tabBar)
-        listContentController.listViewModel.restorationDelegate = tabBar
         tabBar.unselectedItemTintColor = SemanticColors.Label.textTabBar
     }
 
@@ -240,9 +238,7 @@ final class ConversationListViewController: UIViewController {
         guard
             let topBarView = topBarViewController.view,
             let conversationList = listContentController.view
-        else {
-            return
-        }
+        else { return }
 
         [
             contentContainer,
