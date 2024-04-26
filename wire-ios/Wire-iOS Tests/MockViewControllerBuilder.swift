@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireCommonComponents
+import UIKit
 
-@objc public enum ZMManagedObjectValidationErrorCode: Int {
-    case tooLong
-    case tooShort
-    case emailAddressIsInvalid
-    case phoneNumberContainsInvalidCharacters
+@testable import Wire
+
+struct MockViewControllerBuilder: ViewControllerBuilder {
+    func build() -> UIViewController { .init() }
 }
 
-public protocol ZMPropertyValidator {
-    static func validateValue(_ ioValue: AutoreleasingUnsafeMutablePointer<AnyObject?>!) throws
+extension ViewControllerBuilder where Self == MockViewControllerBuilder {
+    static var mock: Self { .init() }
 }
