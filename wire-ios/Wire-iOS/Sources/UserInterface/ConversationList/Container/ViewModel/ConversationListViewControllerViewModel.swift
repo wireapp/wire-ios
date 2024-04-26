@@ -29,18 +29,25 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
 
     func scrollViewDidScroll(scrollView: UIScrollView!)
 
-    func setState(_ state: ConversationListState,
-                  animated: Bool,
-                  completion: Completion?)
+    func setState(
+        _ state: ConversationListState,
+        animated: Bool,
+        completion: Completion?
+    )
 
     func showNoContactLabel(animated: Bool)
     func hideNoContactLabel(animated: Bool)
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler)
-    func updateArchiveButtonVisibilityIfNeeded(showArchived: Bool)
     func showPermissionDeniedViewController()
 
     @discardableResult
-    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool
+    func selectOnListContentController(
+        _ conversation: ZMConversation!,
+        scrollTo message: ZMConversationMessage?,
+        focusOnView focus: Bool,
+        animated: Bool,
+        completion: (() -> Void)?
+    ) -> Bool
 }
 
 extension ConversationListViewController {
@@ -50,7 +57,6 @@ extension ConversationListViewController {
                 guard viewController != nil else { return }
 
                 updateNoConversationVisibility(animated: false)
-                updateArchiveButtonVisibility()
                 showPushPermissionDeniedDialogIfNeeded()
             }
         }

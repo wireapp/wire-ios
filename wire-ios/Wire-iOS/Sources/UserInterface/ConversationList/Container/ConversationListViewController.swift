@@ -63,13 +63,7 @@ final class ConversationListViewController: UIViewController, ConversationListCo
     }()
 
     let listContentController: ConversationListContentController
-
-    let tabBar: ConversationListTabBar = {
-        let conversationListTabBar = ConversationListTabBar()
-        conversationListTabBar.showArchived = true
-        return conversationListTabBar
-    }()
-
+    let tabBar = ConversationListTabBar()
     let topBarViewController: ConversationListTopBarViewController
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
@@ -170,7 +164,6 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         }
 
         state = .conversationList
-        tabBar.selectedTab = .list
 
         closePushPermissionDialogIfNotNeeded()
 
@@ -239,7 +232,6 @@ final class ConversationListViewController: UIViewController, ConversationListCo
     private func setupTabBar() {
         tabBar.delegate = self
         contentContainer.addSubview(tabBar)
-        listContentController.listViewModel.restorationDelegate = tabBar
         tabBar.unselectedItemTintColor = SemanticColors.Label.textTabBar
     }
 
@@ -345,17 +337,6 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         let startUIViewController = StartUIViewController(userSession: viewModel.userSession)
         startUIViewController.delegate = viewModel
         return startUIViewController
-    }
-
-    func updateArchiveButtonVisibilityIfNeeded(showArchived: Bool) {
-        guard showArchived != tabBar.showArchived else {
-            return
-        }
-        tabBar.showArchived = showArchived
-    }
-
-    func hideArchivedConversations() {
-        setState(.conversationList, animated: true)
     }
 
     func presentPeoplePicker() {

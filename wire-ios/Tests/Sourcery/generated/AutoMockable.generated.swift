@@ -93,29 +93,6 @@ class MockBackupSource: BackupSource {
 
 }
 
-class MockConversationListViewModelRestorationDelegate: ConversationListViewModelRestorationDelegate {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - listViewModelDidRestore
-
-    var listViewModelDidRestore_Invocations: [ConversationListViewModel] = []
-    var listViewModelDidRestore_MockMethod: ((ConversationListViewModel) -> Void)?
-
-    func listViewModelDidRestore(_ model: ConversationListViewModel) {
-        listViewModelDidRestore_Invocations.append(model)
-
-        guard let mock = listViewModelDidRestore_MockMethod else {
-            fatalError("no mock for `listViewModelDidRestore`")
-        }
-
-        mock(model)
-    }
-
-}
-
 class MockConversationUserClientDetailsActions: ConversationUserClientDetailsActions {
 
     // MARK: - Life cycle

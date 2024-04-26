@@ -44,8 +44,3 @@ protocol ConversationListViewModelDelegate: AnyObject {
     setData: (C?) -> Void
     )
 }
-
-// sourcery: AutoMockable
-protocol ConversationListViewModelRestorationDelegate: AnyObject {
-    func listViewModelDidRestore(_ model: ConversationListViewModel)
-}

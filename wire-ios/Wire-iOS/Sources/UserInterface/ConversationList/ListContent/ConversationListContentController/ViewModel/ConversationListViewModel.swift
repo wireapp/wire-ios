@@ -178,11 +178,6 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
-    weak var restorationDelegate: ConversationListViewModelRestorationDelegate? {
-        didSet {
-            restorationDelegate?.listViewModelDidRestore(self)
-        }
-    }
     weak var delegate: ConversationListViewModelDelegate? {
         didSet {
             delegateFolderEnableState(newState: state)

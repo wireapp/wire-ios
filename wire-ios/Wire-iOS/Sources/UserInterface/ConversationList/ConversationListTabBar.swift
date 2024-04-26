@@ -116,31 +116,6 @@ final class ConversationListTabBar: UITabBar {
     private let archivedTab = UITabBarItem(type: .archive)
     private let settingsTab = UITabBarItem(type: .settings)
 
-    var showArchived: Bool = false {
-        didSet {
-            var tabs: [UITabBarItem] = [startTab, listTab, settingsTab]
-            if showArchived {
-                tabs.insert(archivedTab, at: 2)
-            }
-            setItems(tabs, animated: true)
-        }
-    }
-
-    var selectedTab: TabBarItemType? {
-        didSet {
-            if let selectedTab = selectedTab {
-                switch selectedTab {
-                case .archive, .startUI:
-                    return
-                case .list:
-                    selectedItem = listTab
-                case .settings:
-                    fatalError("TODO")
-                }
-            }
-        }
-    }
-
     // MARK: - Init
     init() {
         super.init(frame: .zero)
@@ -166,16 +141,6 @@ final class ConversationListTabBar: UITabBar {
         showsLargeContentViewer = true
         scalesLargeContentImage = true
     }
-
-}
-
-// MARK: - ConversationListViewModelRestorationDelegate
-
-extension ConversationListTabBar: ConversationListViewModelRestorationDelegate {
-
-    func listViewModelDidRestore(_ model: ConversationListViewModel) {
-        selectedTab = .list
-    }
 }
 
 // MARK: - UILargeContentViewerInteractionDelegate
@@ -195,7 +160,6 @@ extension ConversationListTabBar: UILargeContentViewerInteractionDelegate {
         largeContentTitle = tabBarItem.title
         largeContentImage = tabBarItem.image
     }
-
 }
 
 extension UITabBarItem {
@@ -212,7 +176,6 @@ extension UITabBarItem {
         accessibilityLabel = type.accessibilityLabel
         accessibilityHint = type.accessibilityHint
     }
-
 }
 
 private extension UITabBar {
