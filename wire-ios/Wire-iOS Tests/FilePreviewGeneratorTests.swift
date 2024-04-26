@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
-import WireCommonComponents
+import MobileCoreServices
 import XCTest
 
-import MobileCoreServices
+@testable import Wire
+@testable import WireCommonComponents
 
 final class FilePreviewGeneratorTests: XCTestCase {
     func testThatItDoesNotBreakOn0x0PDF() {

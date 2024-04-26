@@ -17,12 +17,13 @@
 //
 
 import avs
-import WireCommonComponents
 import XCTest
 
 @testable import Wire
+@testable import WireCommonComponents
 
-final class MockZMEditableUser: MockUser, ZMEditableUser, ValidatorType {
+final class MockZMEditableUser: MockUser, EditableUserType {
+
     var needsRichProfileUpdate: Bool = false
 
     var enableReadReceipts: Bool = false

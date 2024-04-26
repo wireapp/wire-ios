@@ -71,7 +71,7 @@ excluded:
   - "wire-ios-protos/Protos/mls.pb.swift"
   - "wire-ios-protos/Protos/otr.pb.swift"
   - "wire-ios-protos/Scripts/generate_header.swift"
-  - "wire-ios-request-strategy/sourcery/generated/AutoMockable.generated.swift"
+  - "wire-ios-request-strategy/Support/Sourcery/generated/AutoMockable.generated.swift"
   - "wire-ios-sync-engine/sourcery/generated/AutoMockable.generated.swift"
   - "wire-ios-sync-engine/sourcery/generated/AutoMockable.manual.swift"
   - "wire-ios/Scripts/updateLicenses/Package.swift"

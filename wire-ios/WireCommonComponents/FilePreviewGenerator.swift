@@ -18,7 +18,6 @@
 
 import AVFoundation
 import CoreGraphics
-import Foundation
 import ImageIO
 import MobileCoreServices
 import UIKit
