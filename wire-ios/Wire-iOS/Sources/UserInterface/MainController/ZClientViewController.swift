@@ -223,7 +223,7 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
-        conversationListViewController.presentPeoplePicker()
+        conversationListViewController.setState(.peoplePicker, animated: true)
     }
 
     // MARK: Status bar
@@ -340,7 +340,7 @@ final class ZClientViewController: UIViewController {
         currentConversation = conversation
         conversationRootController?.conversationViewController?.isFocused = focus
 
-        conversationListViewController.hideArchivedConversations()
+        conversationListViewController.setState(.conversationList, animated: true)
         pushContentViewController(conversationRootController, focusOnView: focus, animated: animated, completion: completion)
     }
 

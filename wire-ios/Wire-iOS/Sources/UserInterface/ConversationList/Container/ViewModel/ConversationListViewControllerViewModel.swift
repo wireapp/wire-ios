@@ -32,16 +32,17 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
         didUpdate selfUserStatus: UserStatus
     )
 
-    func scrollViewDidScroll(scrollView: UIScrollView!)
+    func scrollViewDidScroll(scrollView: UIScrollView)
 
-    func setState(_ state: ConversationListState,
-                  animated: Bool,
-                  completion: Completion?)
+    func setState(
+        _ state: ConversationListState,
+        animated: Bool,
+        completion: Completion?
+    )
 
     func showNoContactLabel(animated: Bool)
     func hideNoContactLabel(animated: Bool)
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler)
-    func updateArchiveButtonVisibilityIfNeeded(showArchived: Bool)
     func showPermissionDeniedViewController()
 
     @discardableResult
@@ -55,7 +56,6 @@ extension ConversationListViewController {
                 guard viewController != nil else { return }
 
                 updateNoConversationVisibility(animated: false)
-                updateArchiveButtonVisibility()
                 showPushPermissionDeniedDialogIfNeeded()
             }
         }

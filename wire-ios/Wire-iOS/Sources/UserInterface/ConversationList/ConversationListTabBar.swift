@@ -27,10 +27,6 @@ enum TabBarItemType: Int, CaseIterable {
 
     case startUI, list, folder, archive
 
-    var order: Int {
-        return rawValue
-    }
-
     var icon: UIImage {
         switch self {
         case .startUI:
@@ -116,32 +112,13 @@ final class ConversationListTabBar: UITabBar {
     private let folderTab = UITabBarItem(type: .folder)
     private let archivedTab = UITabBarItem(type: .archive)
 
-    var showArchived: Bool = false {
-        didSet {
-            var tabs: [UITabBarItem] = [startTab, listTab, folderTab]
-            if showArchived {
-                tabs.append(archivedTab)
-            }
-            setItems(tabs, animated: true)
-        }
-    }
-
     var selectedTab: TabBarItemType? {
-        didSet {
-            if let selectedTab {
-                switch selectedTab {
-                case .archive, .startUI:
-                    return
-                case .list:
-                    selectedItem = listTab
-                case .folder:
-                    selectedItem = folderTab
-                }
-            }
-        }
+        get { selectedItem?.type }
+        set { selectedItem = items?.first { $0.type == newValue } }
     }
 
     // MARK: - Init
+
     init() {
         super.init(frame: .zero)
         setupViews()
@@ -156,7 +133,8 @@ final class ConversationListTabBar: UITabBar {
 
         barTintColor = SemanticColors.View.backgroundConversationList
         isTranslucent = false
-        items = [startTab, listTab, folderTab, archivedTab]
+        items = [startTab, listTab, archivedTab]
+        selectedItem = listTab
     }
 
     private func setupLargeContentViewer() {
@@ -166,21 +144,6 @@ final class ConversationListTabBar: UITabBar {
         showsLargeContentViewer = true
         scalesLargeContentImage = true
     }
-
-}
-
-// MARK: - ConversationListViewModelRestorationDelegate
-
-extension ConversationListTabBar: ConversationListViewModelRestorationDelegate {
-
-    func listViewModel(_ model: ConversationListViewModel?, didRestoreFolderEnabled enabled: Bool) {
-        if enabled {
-            selectedTab = .folder
-        } else {
-            selectedTab = .list
-        }
-    }
-
 }
 
 // MARK: - UILargeContentViewerInteractionDelegate
@@ -189,7 +152,6 @@ extension ConversationListTabBar: UILargeContentViewerInteractionDelegate {
 
     func largeContentViewerInteraction(_: UILargeContentViewerInteraction, itemAt: CGPoint) -> UILargeContentViewerItem? {
         setupLargeContentViewer(at: itemAt)
-
         return self
     }
 
@@ -210,7 +172,7 @@ extension UITabBarItem {
                   image: type.icon.resize(for: .medium).withRenderingMode(.alwaysTemplate),
                   selectedImage: type.selectedIcon.resize(for: .medium).withRenderingMode(.alwaysTemplate))
 
-        tag = type.order
+        tag = type.rawValue
 
         /// Setup accessibility properties
         accessibilityIdentifier = type.accessibilityIdentifier
