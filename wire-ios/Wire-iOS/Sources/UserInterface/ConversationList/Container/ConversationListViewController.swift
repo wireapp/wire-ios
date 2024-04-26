@@ -368,10 +368,6 @@ extension ConversationListViewController: UITabBarDelegate {
         guard let tabBar = tabBar as? ConversationListTabBar, let type = item.type else { return }
 
         switch type {
-        case .startUI:
-            setState(.peoplePicker, animated: true) {
-                tabBar.selectedTab = .list
-            }
         case .archive:
             setState(.archived, animated: true) {
                 tabBar.selectedTab = .list
@@ -379,8 +375,9 @@ extension ConversationListViewController: UITabBarDelegate {
         case .list:
             listContentController.listViewModel.folderEnabled = false
         case .settings:
-            // presentSettings()
-            assertionFailure("TODO [WPB-7306]: implement showing settings as tab")
+            setState(.settings, animated: true) {
+                tabBar.selectedTab = .list
+            }
         }
     }
 }

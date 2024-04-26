@@ -952,12 +952,6 @@ internal enum L10n {
         /// Double tap to open list of archived conversations
         internal static let hint = L10n.tr("Accessibility", "tabBar.archived.hint", fallback: "Double tap to open list of archived conversations")
       }
-      internal enum Contacts {
-        /// Contacts
-        internal static let description = L10n.tr("Accessibility", "tabBar.contacts.description", fallback: "Contacts")
-        /// Double tap to search for people and open contact list
-        internal static let hint = L10n.tr("Accessibility", "tabBar.contacts.hint", fallback: "Double tap to search for people and open contact list")
-      }
       internal enum Conversations {
         /// List of recent conversations
         internal static let description = L10n.tr("Accessibility", "tabBar.conversations.description", fallback: "List of recent conversations")
@@ -2651,10 +2645,6 @@ internal enum L10n {
         internal enum Archived {
           /// Archive
           internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.archived.title", fallback: "Archive")
-        }
-        internal enum Contacts {
-          /// Contacts
-          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.contacts.title", fallback: "Contacts")
         }
         internal enum Conversations {
           /// Conversations

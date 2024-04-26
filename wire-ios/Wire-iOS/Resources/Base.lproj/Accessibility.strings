@@ -261,8 +261,6 @@
 "calling.headerBar.description" = "Minimize calling view";
 "calling.status.connecting" = "Connecting";
 
-"tabBar.contacts.description" = "Contacts";
-"tabBar.contacts.hint" = "Double tap to search for people and open contact list";
 "tabBar.conversations.description" = "List of recent conversations";
 "tabBar.conversations.hint" = "Double tap to open list of recent conversations";
 "tabBar.archived.description" = "Archive";

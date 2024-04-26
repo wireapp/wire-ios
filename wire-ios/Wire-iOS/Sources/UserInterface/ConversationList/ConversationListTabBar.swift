@@ -25,12 +25,10 @@ enum TabBarItemType: Int, CaseIterable {
     typealias BottomBar = L10n.Localizable.ConversationList.BottomBar
     typealias TabBar = L10n.Accessibility.TabBar
 
-    case startUI, list, archive, settings
+    case list, archive, settings
 
     var icon: UIImage {
         switch self {
-        case .startUI:
-            return .init(resource: .contactsOutline)
         case .list:
             return .init(resource: .conversationsOutline)
         case .archive:
@@ -42,8 +40,6 @@ enum TabBarItemType: Int, CaseIterable {
 
     var selectedIcon: UIImage {
         switch self {
-        case .startUI:
-            return .init(resource: .contactsFilled)
         case .list:
             return .init(resource: .conversationsFilled)
         case .archive:
@@ -55,8 +51,6 @@ enum TabBarItemType: Int, CaseIterable {
 
     var title: String {
         switch self {
-        case .startUI:
-            BottomBar.Contacts.title
         case .list:
             BottomBar.Conversations.title
         case .archive:
@@ -68,8 +62,6 @@ enum TabBarItemType: Int, CaseIterable {
 
     var accessibilityIdentifier: String {
         switch self {
-        case .startUI:
-            return "bottomBarPlusButton"
         case .list:
             return "bottomBarRecentListButton"
         case .archive:
@@ -81,8 +73,6 @@ enum TabBarItemType: Int, CaseIterable {
 
     var accessibilityLabel: String {
         switch self {
-        case .startUI:
-            return TabBar.Contacts.description
         case .list:
             return TabBar.Conversations.description
         case .archive:
@@ -94,8 +84,6 @@ enum TabBarItemType: Int, CaseIterable {
 
     var accessibilityHint: String? {
         switch self {
-        case .startUI:
-            TabBar.Contacts.hint
         case .archive:
             TabBar.Archived.hint
         case .list:
@@ -109,7 +97,6 @@ enum TabBarItemType: Int, CaseIterable {
 
 final class ConversationListTabBar: UITabBar {
 
-    private let startTab = UITabBarItem(type: .startUI)
     private let listTab = UITabBarItem(type: .list)
     private let archivedTab = UITabBarItem(type: .archive)
     private let settingsTab = UITabBarItem(type: .settings)
@@ -135,7 +122,7 @@ final class ConversationListTabBar: UITabBar {
 
         barTintColor = SemanticColors.View.backgroundConversationList
         isTranslucent = false
-        items = [startTab, listTab, archivedTab, settingsTab]
+        items = [listTab, archivedTab, settingsTab]
         selectedItem = listTab
     }
 
@@ -185,19 +172,17 @@ extension UITabBarItem {
 private extension UITabBar {
 
     func tabBarItem(at location: CGPoint) -> UITabBarItem? {
-        guard let itemsCount = items?.count else {
-            return nil
-        }
+        guard let itemsCount = items?.count else { return nil }
 
         let itemWidth: CGFloat = (frame.width / CGFloat(itemsCount))
 
         switch location.x {
         case 0 ..< itemWidth:
-            return UITabBarItem(type: .startUI)
-        case itemWidth ..< (2 * itemWidth):
             return UITabBarItem(type: .list)
-        default:
+        case itemWidth ..< (2 * itemWidth):
             return UITabBarItem(type: .archive)
+        default:
+            return UITabBarItem(type: .settings)
         }
     }
 }

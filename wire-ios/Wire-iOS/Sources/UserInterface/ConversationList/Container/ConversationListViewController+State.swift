@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 extension ConversationListViewController {
-    func setState(_ state: ConversationListState,
-                  animated: Bool,
-                  completion: Completion? = nil) {
+
+    func setState(
+        _ state: ConversationListState,
+        animated: Bool,
+        completion: Completion? = nil
+    ) {
         if self.state == state {
             completion?()
             return
