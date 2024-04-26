@@ -27,7 +27,7 @@ typealias ResultHandler = (_ succeeded: Bool) -> Void
 
 protocol ConversationListContainerViewModelDelegate: AnyObject {
 
-    func scrollViewDidScroll(scrollView: UIScrollView!)
+    func scrollViewDidScroll(scrollView: UIScrollView)
 
     func setState(
         _ state: ConversationListState,

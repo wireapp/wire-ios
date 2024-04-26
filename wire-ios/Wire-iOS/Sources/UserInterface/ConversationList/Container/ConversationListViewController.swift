@@ -322,7 +322,7 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         }
     }
 
-    func scrollViewDidScroll(scrollView: UIScrollView!) {
+    func scrollViewDidScroll(scrollView: UIScrollView) {
         topBarViewController.scrollViewDidScroll(scrollView: scrollView)
     }
 

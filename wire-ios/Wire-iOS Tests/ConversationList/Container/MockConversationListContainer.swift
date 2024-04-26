@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import Wire
 
 final class MockConversationListContainer: UIViewController, ConversationListContainerViewModelDelegate {
@@ -46,7 +47,7 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     func updateBottomBarSeparatorVisibility(with controller: ConversationListContentController) {
     }
 
-    func scrollViewDidScroll(scrollView: UIScrollView!) {
+    func scrollViewDidScroll(scrollView: UIScrollView) {
         // no-op
     }
 
@@ -67,10 +68,6 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     }
 
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
-        // no-op
-    }
-
-    func updateArchiveButtonVisibilityIfNeeded(showArchived: Bool) {
         // no-op
     }
 
