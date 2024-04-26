@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -192,7 +192,7 @@ public final class E2EIEnrollment: E2EIEnrollmentInterface {
 
             var challenges: [AuthorizationChallengeType: NewAcmeAuthz] = [:]
             var nonce = prevNonce
-            try await authorizationsEndpoints.asyncForEach { endpoint in
+            for endpoint in authorizationsEndpoints {
                 let auth = try await createAuthorization(prevNonce: nonce, authzEndpoint: endpoint)
                 challenges[auth.challengeType] = auth.newAcmeAuthz
                 nonce = auth.nonce

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,12 +43,12 @@ final class DeviceInfoViewModel: ObservableObject {
     let gracePeriod: TimeInterval
     let isFromConversation: Bool
 
-    var title: String
+    let title: String
     var isSelfClient: Bool
     var userClient: UserClientType
 
     var isCopyEnabled: Bool {
-        return Settings.isClipboardEnabled
+        Settings.isClipboardEnabled
     }
 
     var isCertificateExpiringSoon: Bool? {
@@ -59,7 +59,7 @@ final class DeviceInfoViewModel: ObservableObject {
     }
 
     var isE2eIdentityEnabled: Bool {
-        return e2eIdentityCertificate != nil && mlsThumbprint != nil
+        e2eIdentityCertificate != nil && mlsThumbprint != nil
     }
 
     var mlsThumbprint: String? {
@@ -87,7 +87,8 @@ final class DeviceInfoViewModel: ObservableObject {
     var actionsHandler: DeviceDetailsViewActions
     var conversationClientDetailsActions: ConversationUserClientDetailsActions
     var debugMenuActionsHandler: ConversationUserClientDetailsDebugActions?
-    let showDebugMenu: Bool
+    let isDebugMenuAvailable: Bool
+    @Published var isDebugMenuPresented = false
 
     init(
         title: String,
@@ -100,7 +101,7 @@ final class DeviceInfoViewModel: ObservableObject {
         actionsHandler: DeviceDetailsViewActions,
         conversationClientDetailsActions: ConversationUserClientDetailsActions,
         debugMenuActionsHandler: ConversationUserClientDetailsDebugActions? = nil,
-        showDebugMenu: Bool
+        isDebugMenuAvailable: Bool
     ) {
         self.title = title
         self.addedDate = addedDate
@@ -112,7 +113,7 @@ final class DeviceInfoViewModel: ObservableObject {
         self.isFromConversation = isFromConversation
         self.conversationClientDetailsActions = conversationClientDetailsActions
         self.debugMenuActionsHandler = debugMenuActionsHandler
-        self.showDebugMenu = showDebugMenu
+        self.isDebugMenuAvailable = isDebugMenuAvailable
         self.actionsHandler.isProcessing = { [weak self] isProcessing in
             DispatchQueue.main.async {
                 self?.isActionInProgress = isProcessing

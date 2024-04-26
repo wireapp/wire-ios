@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ extension UITextView {
 
         attributedText.enumerateAttribute(.link,
                                           in: NSRange(location: 0, length: attributedText.length),
-                                          options: []) { (value, range, stop) in
+                                          options: []) { value, range, stop in
                                             if url.isEqual(value) {
                                                 stop.pointee = true
                                                 foundRange = range

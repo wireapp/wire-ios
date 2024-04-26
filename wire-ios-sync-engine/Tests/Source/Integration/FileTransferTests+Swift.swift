@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ class FileTransferTests_Swift: ConversationTestsBase {
         let original = GenericMessage(content: asset, nonce: nonce, expiresAfterTimeInterval: isEphemeral ? 20 : 0)
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             mockConversation!.encryptAndInsertData(from: senderClient,
                                                    to: selfClient,
                                                    data: try! original.serializedData())
@@ -66,7 +66,7 @@ class FileTransferTests_Swift: ConversationTestsBase {
 
         // perform update
 
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             let updateMessageData = MockUserClient.encrypted(data: try! updateMessage.serializedData(), from: senderClient, to: selfClient)
             insertBlock(updateMessageData, mockConversation!, senderClient, selfClient)
         }
@@ -105,13 +105,13 @@ extension FileTransferTests_Swift {
         let uploaded = GenericMessage(content: asset, nonce: nonce)
 
         // when
-        let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { (data, conversation, from, to) in
+        let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { data, conversation, from, to in
             conversation.insertOTRMessage(from: from, to: to, data: data)
         }, nonce: nonce)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // creating the asset remotely
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             session.insertAsset(with: assetID, assetToken: token, assetData: encryptedAsset, contentType: "text/plain")
         }
 
@@ -145,14 +145,14 @@ extension FileTransferTests_Swift {
         let uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha256), nonce: nonce)
 
         // when
-        let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { (data, conversation, from, to) in
+        let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { data, conversation, from, to in
             conversation.insertOTRAsset(from: from, to: to, metaData: data, imageData: assetData, assetId: assetID, isInline: false)
         }, nonce: nonce)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         let conversation = self.conversation(for: self.selfToUser1Conversation)
 
         // creating a wrong asset (different hash, will fail to decrypt) remotely
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             session.createAsset(with: Data.secureRandomData(length: 128),
                                 identifier: assetID.transportString(),
                                 contentType: "text/plain",
@@ -203,7 +203,7 @@ extension FileTransferTests_Swift {
         let uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha256), nonce: nonce, expiresAfterTimeInterval: 30)
 
         // when
-        let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { (data, conversation, from, to) in
+        let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { data, conversation, from, to in
             conversation.insertOTRAsset(from: from, to: to, metaData: data, imageData: assetData, assetId: assetID, isInline: false)
         }, nonce: nonce)
 
@@ -213,7 +213,7 @@ extension FileTransferTests_Swift {
         let conversation = self.conversation(for: self.selfToUser1Conversation)
 
         // creating a wrong asset (different hash, will fail to decrypt) remotely
-        self.mockTransportSession.performRemoteChanges { (session) in
+        self.mockTransportSession.performRemoteChanges { session in
             session.createAsset(with: Data.secureRandomData(length: 128),
                                 identifier: assetID.transportString(),
                                 contentType: "text/plain",
@@ -265,7 +265,7 @@ extension FileTransferTests_Swift {
         let original = GenericMessage(content: WireProtos.Asset(imageSize: .zero, mimeType: "text/plain", size: 256), nonce: nonce, expiresAfterTimeInterval: 30)
 
         // when
-        self.mockTransportSession.performRemoteChanges { (_) in
+        self.mockTransportSession.performRemoteChanges { _ in
             self.selfToUser1Conversation.encryptAndInsertData(from: self.user1.clients.anyObject() as! MockUserClient,
                                                               to: self.selfUser.clients.anyObject() as! MockUserClient,
                                                           data: try! original.serializedData())
@@ -298,7 +298,7 @@ extension FileTransferTests_Swift {
         let cancelled = GenericMessage(content: WireProtos.Asset(withNotUploaded: .cancelled), nonce: nonce, expiresAfterTimeInterval: 30)
 
         // when
-        let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: cancelled, insertBlock: { (data, conversation, from, to) in
+        let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: cancelled, insertBlock: { data, conversation, from, to in
             conversation.insertOTRMessage(from: from, to: to, data: data)
                }, nonce: nonce)
 
@@ -314,7 +314,7 @@ extension FileTransferTests_Swift {
         let failed = GenericMessage(content: WireProtos.Asset(withNotUploaded: .failed), nonce: nonce, expiresAfterTimeInterval: 30)
 
         // when
-        let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: failed, insertBlock: { (data, conversation, from, to) in
+        let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: failed, insertBlock: { data, conversation, from, to in
                    conversation.insertOTRMessage(from: from, to: to, data: data)
                       }, nonce: nonce)
         XCTAssertTrue(message!.isEphemeral)
@@ -478,7 +478,7 @@ extension FileTransferTests_Swift {
         uploaded.updateUploaded(assetId: assetID.transportString(), token: nil, domain: nil)
 
         // when
-        let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { (data, conversation, from, to) in
+        let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { data, conversation, from, to in
                    conversation.insertOTRMessage(from: from, to: to, data: data)
                       }, nonce: nonce)
 
@@ -511,7 +511,7 @@ extension FileTransferTests_Swift {
         uploaded.updateUploaded(assetId: assetID.transportString(), token: nil, domain: nil)
 
         // when
-        let message = remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { (data, conversation, from, to) in
+        let message = remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { data, conversation, from, to in
         conversation.insertOTRMessage(from: from, to: to, data: data)
            }, nonce: nonce)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -566,7 +566,7 @@ extension FileTransferTests_Swift {
         uploaded.updateUploaded(assetId: assetID.transportString(), token: nil, domain: nil)
 
         // when
-        let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { (data, conversation, from, to) in
+        let message = self.remotelyInsertAssetOriginalAndUpdate(updateMessage: uploaded, insertBlock: { data, conversation, from, to in
                conversation.insertOTRMessage(from: from, to: to, data: data)
                   }, nonce: nonce)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

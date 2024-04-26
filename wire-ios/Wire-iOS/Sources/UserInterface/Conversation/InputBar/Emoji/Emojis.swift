@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -234,18 +234,17 @@ enum EmojiSectionType: Int, CaseIterable {
         }
     }
 
-    var imageAsset: ImageAsset {
+    var imageAsset: ImageResource {
         switch self {
-        case .recent: return Asset.Images.recents
-        case .people: return Asset.Images.smileysPeople
-        case .nature: return Asset.Images.animalsNature
-        case .food: return Asset.Images.foodDrink
-        case .travel: return Asset.Images.travelPlaces
-        case .activities: return Asset.Images.activity
-        case .objects: return Asset.Images.objects
-        case .symbols: return Asset.Images.symbols
-        case .flags: return Asset.Images.flags
+        case .recent: return .recents
+        case .people: return .smileysPeople
+        case .nature: return .animalsNature
+        case .food: return .foodDrink
+        case .travel: return .travelPlaces
+        case .activities: return .activity
+        case .objects: return .objects
+        case .symbols: return .symbols
+        case .flags: return .flags
         }
     }
-
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ public extension SessionManager {
 
     @objc
     static func addLogger(_ logger: AVSLogger) -> Any {
-        return SelfUnregisteringNotificationCenterToken(NotificationCenter.default.addObserver(forName: AVSLogMessageNotification, object: nil, queue: nil) { [weak logger] (note) in
+        return SelfUnregisteringNotificationCenterToken(NotificationCenter.default.addObserver(forName: AVSLogMessageNotification, object: nil, queue: nil) { [weak logger] note in
             guard let message = note.userInfo?["message"] as? String else { return }
             logger?.log(message: message)
         })

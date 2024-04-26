@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -212,7 +212,7 @@ final class ListSkeletonView: UIView {
     }
 
     func disabledButtons(with iconTypes: [StyleKitIcon]) -> [IconButton] {
-        return iconTypes.map { (iconType) in
+        return iconTypes.map { iconType in
             let button = IconButton()
             button.setIcon(iconType, size: .tiny, for: .normal)
             button.setIconColor(SemanticColors.Icon.foregroundPlainCheckMark.withAlphaComponent(0.32), for: .disabled)

@@ -85,10 +85,7 @@ extension ZMUserSession: UserSession {
     public func evaluateAppLockAuthentication(
         passcodePreference: AppLockPasscodePreference,
         description: String,
-        callback: @escaping (
-            AppLockAuthenticationResult,
-            LAContextProtocol
-        ) -> Void
+        callback: @escaping (AppLockAuthenticationResult) -> Void
     ) {
         return appLockController.evaluateAuthentication(
             passcodePreference: passcodePreference,
@@ -101,8 +98,8 @@ extension ZMUserSession: UserSession {
         appLockController.evaluateAuthentication(customPasscode: customPasscode)
     }
 
-    public func unlockDatabase(with context: LAContext) throws {
-        try earService.unlockDatabase(context: context)
+    public func unlockDatabase() throws {
+        try earService.unlockDatabase()
 
         DatabaseEncryptionLockNotification(databaseIsEncrypted: false).post(in: managedObjectContext.notificationContext)
 
@@ -113,12 +110,8 @@ extension ZMUserSession: UserSession {
         try appLockController.deletePasscode()
     }
 
-    public var selfUser: UserType {
-        return ZMUser.selfUser(inUserSession: self)
-    }
-
-    public var selfLegalHoldSubject: UserType & SelfLegalHoldSubject {
-        return ZMUser.selfUser(inUserSession: self)
+    public var selfUser: SelfUserType {
+        ZMUser.selfUser(inUserSession: self)
     }
 
     public func addUserObserver(

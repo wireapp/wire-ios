@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ extension MockUserType: SelfLegalHoldSubject {
         return legalHoldDataSource.needsToAcknowledgeLegalHoldStatus
     }
 
-    public var fingerprint: String? {
+    var fingerprint: String? {
         guard let preKey = legalHoldDataSource.legalHoldRequest?.lastPrekey,
               let fingerprintData = EncryptionSessionsDirectory.fingerprint(fromPrekey: preKey.key) else {
                   return nil

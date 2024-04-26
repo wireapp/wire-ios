@@ -183,10 +183,10 @@ extension ZMUpdateEventType {
                 guard let stringValue = eventType.stringValue else { return nil }
                 return (eventType, stringValue)
             }
-            .filter { (_, stringValue) -> Bool in
+            .filter { _, stringValue -> Bool in
                 return stringValue == string
             }
-            .map { (eventType, _) -> ZMUpdateEventType in
+            .map { eventType, _ -> ZMUpdateEventType in
                 return eventType
             }
             .first
@@ -330,6 +330,7 @@ extension ZMUpdateEvent {
 }
 
 extension ZMUpdateEvent {
+
     override open func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? ZMUpdateEvent else {
             return false

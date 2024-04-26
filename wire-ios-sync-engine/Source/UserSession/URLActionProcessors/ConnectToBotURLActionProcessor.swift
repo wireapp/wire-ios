@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,18 +33,18 @@ class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
     }
 
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
-        guard case .connectBot(let serviceUserData) = urlAction else {
-            return
-        }
+        guard case .connectBot(let serviceUserData) = urlAction else { return }
 
-        let serviceUser = ZMSearchUser(contextProvider: contextProvider,
-                                       name: "",
-                                       handle: nil,
-                                       accentColor: .strongBlue,
-                                       remoteIdentifier: serviceUserData.service,
-                                       teamIdentifier: nil,
-                                       user: nil,
-                                       contact: nil)
+        let serviceUser = ZMSearchUser(
+            contextProvider: contextProvider,
+            name: "",
+            handle: nil,
+            accentColor: .blue,
+            remoteIdentifier: serviceUserData.service,
+            teamIdentifier: nil,
+            user: nil,
+            contact: nil
+        )
         serviceUser.providerIdentifier = serviceUserData.provider.transportString()
         serviceUser.createConversation(
             transportSession: transportSession,
@@ -59,5 +59,4 @@ class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
             }
         }
     }
-
 }

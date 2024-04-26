@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ extension SessionManager: CallKitManagerDelegate {
             return completionHandler(.failure(ConversationLookupError.accountDoesNotExist))
         }
 
-        withSession(for: account) { (userSession) in
+        withSession(for: account) { userSession in
             guard let conversation = ZMConversation.fetch(with: handle.conversationID, in: userSession.managedObjectContext) else {
                 return completionHandler(.failure(ConversationLookupError.conversationDoesNotExist))
             }

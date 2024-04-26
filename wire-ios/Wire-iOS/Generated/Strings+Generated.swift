@@ -863,6 +863,16 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "selfDeletingMessagesConversationSettings.closeButton.description", fallback: "Close settings for self-deleting messages")
       }
     }
+    internal enum SendLocation {
+      internal enum Address {
+        /// Selected address %@
+        internal static func description(_ p1: Any) -> String {
+          return L10n.tr("Accessibility", "sendLocation.address.description", String(describing: p1), fallback: "Selected address %@")
+        }
+        /// It shows the currently selected address for sending.
+        internal static let hint = L10n.tr("Accessibility", "sendLocation.address.hint", fallback: "It shows the currently selected address for sending.")
+      }
+    }
     internal enum ServiceConversationSettings {
       internal enum CloseButton {
         /// Close service settings
@@ -5212,8 +5222,6 @@ internal enum L10n {
             internal static let red = L10n.tr("Localizable", "self.settings.account_picture_group.accent_color.red", fallback: "Red")
             /// Turquoise
             internal static let turquoise = L10n.tr("Localizable", "self.settings.account_picture_group.accent_color.turquoise", fallback: "Turquoise")
-            /// Yellow
-            internal static let yellow = L10n.tr("Localizable", "self.settings.account_picture_group.accent_color.yellow", fallback: "Yellow")
           }
           internal enum Alert {
             /// Choose from Library

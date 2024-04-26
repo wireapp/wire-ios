@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ struct CopyValueView: View {
         VStack(alignment: .leading) {
             Text(title)
                 .font(FontSpec.smallSemiboldFont.swiftUIFont)
-                .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
+                .foregroundColor(Color(uiColor: SemanticColors.Label.textSectionHeader))
                 .padding(.bottom, ViewConstants.Padding.small)
 
             HStack {
@@ -42,7 +42,7 @@ struct CopyValueView: View {
                         Button(action: copy) {
                             Image(.copy)
                                 .renderingMode(.template)
-                                .foregroundColor(SemanticColors.Icon.foregroundDefaultBlack.swiftUIColor)
+                                .foregroundColor(Color(uiColor: SemanticColors.Icon.foregroundDefaultBlack))
                         }
 
                         Spacer()

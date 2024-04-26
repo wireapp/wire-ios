@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -52,24 +52,26 @@ struct PhoneNumber: Equatable {
     let countryCode: UInt
     var fullNumber: String
     let numberWithoutCode: String
+    var userPropertyValidator: UserPropertyValidating
 
     var country: Country {
         return Country.detect(fromCode: countryCode) ?? .defaultCountry
     }
 
-    init(countryCode: UInt, numberWithoutCode: String) {
+    init(countryCode: UInt, numberWithoutCode: String, userPropertyValidator: UserPropertyValidating) {
         self.countryCode = countryCode
         self.numberWithoutCode = numberWithoutCode
+        self.userPropertyValidator = userPropertyValidator
         fullNumber = String.phoneNumber(withE164: countryCode, number: numberWithoutCode)
     }
 
-    init?(fullNumber: String) {
+    init?(fullNumber: String, userPropertyValidator: UserPropertyValidating) {
         guard let country = Country.detect(forPhoneNumber: fullNumber) else { return nil }
         countryCode = country.e164
         let prefix = country.e164PrefixString
         numberWithoutCode = String(fullNumber[prefix.endIndex...])
         self.fullNumber = fullNumber
-
+        self.userPropertyValidator = userPropertyValidator
     }
 
     mutating func validate() -> ValidationResult {
@@ -77,8 +79,8 @@ struct PhoneNumber: Equatable {
         var validatedNumber: String? = fullNumber
 
         do {
-            _ = try ZMUser.validate(phoneNumber: &validatedNumber)
-        } catch let error {
+            _ = try userPropertyValidator.validate(phoneNumber: &validatedNumber)
+        } catch {
             return ValidationResult(error: error)
         }
 

@@ -1,49 +1,45 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 import SafariServices
 import WireSyncEngine
 import avs
 
-class SettingsCellDescriptorFactory {
-    static let settingsDevicesCellIdentifier: String = "devices"
-    let settingsPropertyFactory: SettingsPropertyFactory
-    let userRightInterfaceType: UserRightInterface.Type
+struct SettingsCellDescriptorFactory {
 
-    init(settingsPropertyFactory: SettingsPropertyFactory,
-         userRightInterfaceType: UserRightInterface.Type = UserRight.self) {
-        self.settingsPropertyFactory = settingsPropertyFactory
-        self.userRightInterfaceType = userRightInterfaceType
-    }
+    static let settingsDevicesCellIdentifier: String = "devices"
+
+    var settingsPropertyFactory: SettingsPropertyFactory
+    var userRightInterfaceType: UserRightInterface.Type
 
     func rootGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var rootElements: [SettingsCellDescriptorType] = []
 
         if ZMUser.selfUser()?.canManageTeam == true {
-            rootElements.append(self.manageTeamCell())
+            rootElements.append(manageTeamCell())
         }
 
         rootElements.append(settingsGroup(isTeamMember: isTeamMember, userSession: userSession))
         #if MULTIPLE_ACCOUNTS_DISABLED
             // We skip "add account" cell
         #else
-            rootElements.append(self.addAccountOrTeamCell())
+            rootElements.append(addAccountOrTeamCell())
         #endif
         let topSection = SettingsSectionDescriptor(cellDescriptors: rootElements)
 

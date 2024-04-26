@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ final class CallHapticsController {
 
     private func updateParticipantsVideoStateList(_ newParticipants: [CallParticipant]) {
         let newVideoStates = createVideoStateMap(using: newParticipants)
-        Log.haptics.debug("updating video state map: \(newVideoStates), old: \(videoStates)")
+        Log.haptics.debug("updating video state map")
 
         let mappedNewVideoStates = newVideoStates.mapKeys({ $0.hashValue })
         for (participant, wasSending) in videoStates {
@@ -98,7 +98,7 @@ final class CallHapticsController {
     }
 
     private func createVideoStateMap(using participants: [CallParticipant]) -> [CallParticipant: Bool] {
-        return Dictionary(participants.map { ($0, $0.state.isSendingVideo) }, uniquingKeysWith: { (first, _) in first })
+        return Dictionary(participants.map { ($0, $0.state.isSendingVideo) }, uniquingKeysWith: { first, _ in first })
     }
 }
 

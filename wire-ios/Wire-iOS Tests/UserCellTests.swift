@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -182,7 +182,7 @@ final class UserCellTests: BaseSnapshotTestCase {
     func testSelfUser() throws {
         // GIVEN && WHEN
         mockUser = MockUserType.createUser(name: "Tarja Turunen")
-        mockUser.accentColorValue = .vividRed
+        mockUser.zmAccentColor = .red
         mockUser.isConnected = true
         mockUser.handle = "tarja_turunen"
         mockUser.availability = .busy
@@ -195,7 +195,7 @@ final class UserCellTests: BaseSnapshotTestCase {
     func testNonTeamUserWithoutHandle() {
         // GIVEN && WHEN
         mockUser = MockUserType.createUser(name: "Tarja Turunen")
-        mockUser.accentColorValue = .vividRed
+        mockUser.zmAccentColor = .red
         mockUser.isConnected = true
         mockUser.handle = nil
 

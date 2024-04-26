@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -185,7 +185,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     }
 
     public func fetchImagePreviewData(queue: DispatchQueue, completionHandler: @escaping (Data?) -> Void) {
-        guard nil != fileMessageData, !isImage else { return completionHandler(nil) }
+        guard fileMessageData != nil, !isImage else { return completionHandler(nil) }
 
         asset?.fetchImageData(with: queue, completionHandler: completionHandler)
     }

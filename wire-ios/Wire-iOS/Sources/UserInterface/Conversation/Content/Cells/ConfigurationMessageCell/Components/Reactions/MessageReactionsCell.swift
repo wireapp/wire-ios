@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,13 +22,13 @@ import WireDataModel
 
 // MARK: - Reaction
 
-public struct MessageReactionMetadata: Equatable {
+struct MessageReactionMetadata: Equatable {
 
     let emoji: Emoji.ID
     let count: UInt
     let isSelfUserReacting: Bool
 
-    public static func == (lhs: MessageReactionMetadata, rhs: MessageReactionMetadata) -> Bool {
+    static func == (lhs: MessageReactionMetadata, rhs: MessageReactionMetadata) -> Bool {
         return lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting
     }
 

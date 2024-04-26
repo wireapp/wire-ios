@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -173,13 +173,8 @@ final class UserClientListViewController: UIViewController,
             client: client,
             contextProvider: contextProvider
         )
-        let detailsView = ProfileDeviceDetailsView(viewModel: viewModel) { [weak navigationController] in
-            navigationController?.setNavigationBarHidden(false, animated: false)
-        }
-        let hostingViewController = UIHostingController(rootView: detailsView)
-        hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-        navigationController.pushViewController(hostingViewController, animated: true)
-        navigationController.isNavigationBarHidden = true
+        let detailsViewController = DeviceInfoViewController(rootView: DeviceDetailsView(viewModel: viewModel))
+        navigationController.pushViewController(detailsViewController, animated: true)
     }
 
     private func makeDeviceInfoViewModel(
@@ -210,7 +205,7 @@ final class UserClientListViewController: UIViewController,
             actionsHandler: deviceActionsHandler,
             conversationClientDetailsActions: deviceActionsHandler,
             debugMenuActionsHandler: deviceActionsHandler,
-            showDebugMenu: Bundle.developerModeEnabled
+            isDebugMenuAvailable: Bundle.developerModeEnabled
         )
     }
 }

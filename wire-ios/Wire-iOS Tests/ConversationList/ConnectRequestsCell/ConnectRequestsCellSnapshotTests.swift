@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ final class ConnectRequestsCellSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .brightOrange
+        accentColor = .amber
         sut = ConnectRequestsCell(frame: CGRect(x: 0, y: 0, width: 375, height: 56))
         let titleString = L10n.Localizable.List.ConnectRequest.peopleWaiting(1)
         let title = NSAttributedString(string: titleString)

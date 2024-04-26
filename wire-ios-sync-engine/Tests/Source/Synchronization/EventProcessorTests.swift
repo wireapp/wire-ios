@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -128,7 +128,8 @@ class EventProcessorTests: MessagingTest {
         let earService = EARService(
             accountID: userIdentifier,
             databaseContexts: [uiMOC, syncMOC],
-            sharedUserDefaults: UserDefaults.temporary()
+            sharedUserDefaults: UserDefaults.temporary(),
+            authenticationContext: MockAuthenticationContextProtocol()
         )
         earService.setInitialEARFlagValue(true)
         try syncMOC.performAndWait {

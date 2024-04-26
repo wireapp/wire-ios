@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ final class ColorSchemeController: NSObject {
 }
 
 extension ColorSchemeController: UserObserving {
-    public func userDidChange(_ note: UserChangeInfo) {
+    func userDidChange(_ note: UserChangeInfo) {
         guard note.accentColorValueChanged else { return }
 
         let colorScheme = ColorScheme.default

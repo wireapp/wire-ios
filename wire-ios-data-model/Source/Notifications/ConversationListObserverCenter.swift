@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -187,7 +187,7 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
     /// Applys a function on a token and cleares tokens with deallocated lists
     private func forwardToSnapshots(block: ((ConversationListSnapshot) -> Void)) {
         var snapshotsToRemove = [String]()
-        listSnapshots.forEach { (identifier, snapshot) in
+        listSnapshots.forEach { identifier, snapshot in
             guard snapshot.conversationList != nil else {
                 snapshotsToRemove.append(identifier)
                 return

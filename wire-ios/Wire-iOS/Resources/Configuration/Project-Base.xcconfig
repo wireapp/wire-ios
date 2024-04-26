@@ -1,20 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 #include "../../../Configuration/Base.xcconfig"
 #include "Warnings.xcconfig"
@@ -47,7 +47,6 @@ GCC_PRECOMPILE_PREFIX_HEADER = YES
 
 SHARED_CUSTOM_VALUES = APP_CENTER_APP_ID_KEY=$(APP_CENTER_APP_ID) DATADOG_IMPORT=$(DATADOG_IMPORT) DATADOG_APP_ID=$(DATADOG_APP_ID) DATADOG_CLIENT_TOKEN=$(DATADOG_CLIENT_TOKEN)
 WIRE_SSO_URL_SCHEME = $(SSO_URL_SCHEME)
-USE_APP_CENTER_KEY = $(USE_APP_CENTER)
 
 CLANG_LINK_OBJC_RUNTIME = NO;
 GCC_ENABLE_CPP_RTTI = NO;

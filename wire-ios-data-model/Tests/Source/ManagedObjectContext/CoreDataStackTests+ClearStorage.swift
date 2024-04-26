@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -115,7 +115,7 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
     }
 
     func createStoreFilesInLegacyLocations() -> [URL] {
-        return previousStorageLocations.flatMap { (location) -> [URL] in
+        return previousStorageLocations.flatMap { location -> [URL] in
             let fileManager = FileManager.default
             try? fileManager.createDirectory(at: location,
                                             withIntermediateDirectories: true,
@@ -144,7 +144,7 @@ class CoreDataStackTests_ClearStorage: ZMTBaseTest {
     }
 
     func createSessionFilesInLegacyLocations() -> [URL] {
-        return previousStorageLocations.map { (location) -> URL in
+        return previousStorageLocations.map { location -> URL in
             let fileManager = FileManager.default
             let sessionDirectory = location.appendingPathComponent("otr")
             try! fileManager.createDirectory(at: sessionDirectory,

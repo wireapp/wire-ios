@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,6 +17,7 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
 
@@ -26,8 +28,6 @@ enum ConversationListState {
 }
 
 final class ConversationListViewController: UIViewController {
-
-    weak var delegate: ConversationListTabBarControllerDelegate?
 
     let viewModel: ViewModel
 
@@ -50,14 +50,12 @@ final class ConversationListViewController: UIViewController {
         label.attributedText = NSAttributedString.attributedTextForNoConversationLabel
         label.numberOfLines = 0
         label.backgroundColor = .clear
-
         return label
     }()
 
     let contentContainer: UIView = {
         let view = UIView()
         view.backgroundColor = SemanticColors.View.backgroundConversationListTableViewCell
-
         return view
     }()
 
@@ -66,26 +64,19 @@ final class ConversationListViewController: UIViewController {
     let tabBar: ConversationListTabBar = {
         let conversationListTabBar = ConversationListTabBar()
         conversationListTabBar.showArchived = true
-
         return conversationListTabBar
     }()
 
     let topBarViewController: ConversationListTopBarViewController
-    let networkStatusViewController: NetworkStatusViewController = {
-        let viewController = NetworkStatusViewController()
-        return viewController
-    }()
-
-    let onboardingHint: ConversationListOnboardingHint = {
-        let conversationListOnboardingHint = ConversationListOnboardingHint()
-        return conversationListOnboardingHint
-    }()
+    let networkStatusViewController = NetworkStatusViewController()
+    let onboardingHint = ConversationListOnboardingHint()
 
     convenience init(
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
+        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
+        selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -93,34 +84,35 @@ final class ConversationListViewController: UIViewController {
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
-        self.init(viewModel: viewModel)
-        delegate = self
+        self.init(viewModel: viewModel, selfProfileViewControllerBuilder: selfProfileViewControllerBuilder)
         onboardingHint.arrowPointToView = tabBar
     }
 
-    required init(viewModel: ViewModel) {
+    required init(
+        viewModel: ViewModel,
+        selfProfileViewControllerBuilder: some ViewControllerBuilder
+    ) {
         self.viewModel = viewModel
 
         topBarViewController = ConversationListTopBarViewController(
             account: viewModel.account,
             selfUser: viewModel.selfUser,
-            userSession: viewModel.userSession
+            userSession: viewModel.userSession,
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
         topBarViewController.selfUserStatus = viewModel.selfUserStatus
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(userSession: viewModel.userSession)
-        listContentController.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: bottomInset, right: 0)
+        listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
 
         super.init(nibName: nil, bundle: nil)
-
-        viewModel.viewController = self
 
         definesPresentationContext = true
 
         /// setup UI
         view.addSubview(contentContainer)
-        self.view.backgroundColor = SemanticColors.View.backgroundConversationList
+        view.backgroundColor = SemanticColors.View.backgroundConversationList
 
         setupTopBar()
         setupListContentController()
@@ -130,6 +122,8 @@ final class ConversationListViewController: UIViewController {
         setupNetworkStatusBar()
 
         createViewConstraints()
+
+        viewModel.viewController = self
     }
 
     @available(*, unavailable)
@@ -139,7 +133,6 @@ final class ConversationListViewController: UIViewController {
 
     override func loadView() {
         view = PassthroughTouchesView(frame: UIScreen.main.bounds)
-        view.backgroundColor = .clear
     }
 
     override func viewDidLoad() {
@@ -199,7 +192,7 @@ final class ConversationListViewController: UIViewController {
 
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        self.tabBar.subviews.forEach { (barButton) in
+        self.tabBar.subviews.forEach { barButton in
             if let label = barButton.subviews[1] as? UILabel {
                 label.sizeToFit()
             }
@@ -392,23 +385,30 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 extension ConversationListViewController: UITabBarDelegate {
 
     func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        guard let type = item.type else {
-            return
-        }
-        delegate?.didChangeTab(with: type)
-    }
+        guard let type = item.type else { return }
 
+        switch type {
+        case .archive:
+            setState(.archived, animated: true)
+        case .startUI:
+            presentPeoplePicker()
+        case .folder:
+            listContentController.listViewModel.folderEnabled = true
+        case .list:
+            listContentController.listViewModel.folderEnabled = false
+        }
+    }
 }
 
 private extension UITabBarItem {
 
     var type: TabBarItemType? {
-        return TabBarItemType.allCases.first(where: { $0.rawValue == self.tag })
+        .allCases.first { $0.rawValue == tag }
     }
-
 }
 
 private extension NSAttributedString {
+
     static var attributedTextForNoConversationLabel: NSAttributedString? {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.setParagraphStyle(NSParagraphStyle.default)

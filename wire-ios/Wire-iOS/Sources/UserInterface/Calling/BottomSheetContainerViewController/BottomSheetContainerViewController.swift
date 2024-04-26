@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,13 +21,13 @@ import UIKit
 class BottomSheetContainerViewController: UIViewController {
 
     // MARK: - Configuration
-    public struct BottomSheetConfiguration: Equatable {
+    struct BottomSheetConfiguration: Equatable {
         let height: CGFloat
         let initialOffset: CGFloat
     }
 
     // MARK: - State
-    public enum BottomSheetState {
+    enum BottomSheetState {
         case initial
         case full
     }
@@ -61,10 +61,12 @@ class BottomSheetContainerViewController: UIViewController {
     }()
 
     // MARK: - Initialization
-    public init(contentViewController: UIViewController,
-                bottomSheetViewController: UIViewController,
-                bottomSheetConfiguration: BottomSheetConfiguration) {
 
+    init(
+        contentViewController: UIViewController,
+        bottomSheetViewController: UIViewController,
+        bottomSheetConfiguration: BottomSheetConfiguration
+    ) {
         self.contentViewController = contentViewController
         self.bottomSheetViewController = bottomSheetViewController
         self.configuration = bottomSheetConfiguration
@@ -72,7 +74,7 @@ class BottomSheetContainerViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
-    required public init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
     override func viewDidLoad() {
@@ -129,10 +131,10 @@ class BottomSheetContainerViewController: UIViewController {
 
     }
 
-    public func didChangeState() {} // for overriding
+    func didChangeState() {} // for overriding
 
     // MARK: - Bottom Sheet Actions
-    public func showBottomSheet(animated: Bool = true) {
+    func showBottomSheet(animated: Bool = true) {
         self.topConstraint.constant = -configuration.height
 
         if animated {
@@ -149,7 +151,7 @@ class BottomSheetContainerViewController: UIViewController {
         }
     }
 
-    public func hideBottomSheet(animated: Bool = true) {
+    func hideBottomSheet(animated: Bool = true) {
         self.topConstraint.constant = -configuration.initialOffset
 
         if animated {
@@ -226,7 +228,7 @@ class BottomSheetContainerViewController: UIViewController {
 
 extension BottomSheetContainerViewController: UIGestureRecognizerDelegate {
 
-    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         if let otherGestureView = otherGestureRecognizer.view as? UIScrollView,
            otherGestureView.contentOffset.y > 0.0 {
             return false

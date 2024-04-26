@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -142,7 +142,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 
         // When
         syncMOC.performGroupedAndWait { _ in
-            Feature.updateOrCreate(havingName: .conferenceCalling, in: self.syncMOC) { (feature) in
+            Feature.updateOrCreate(havingName: .conferenceCalling, in: self.syncMOC) { feature in
                 feature.needsToNotifyUser = false
                 feature.status = .enabled
             }
@@ -169,7 +169,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 
         // When
         syncMOC.performGroupedAndWait { _ in
-            Feature.updateOrCreate(havingName: .conferenceCalling, in: self.syncMOC) { (feature) in
+            Feature.updateOrCreate(havingName: .conferenceCalling, in: self.syncMOC) { feature in
                 feature.status = .enabled
             }
         }
