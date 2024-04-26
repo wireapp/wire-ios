@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import Foundation
 @testable import Wire
-import CoreData
 
 final class MockContextProvider: ContextProvider {
     var account: WireDataModel.Account {

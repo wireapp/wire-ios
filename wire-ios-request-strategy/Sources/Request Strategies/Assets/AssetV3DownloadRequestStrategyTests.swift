@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import WireDataModel
 @testable import WireRequestStrategy
 import XCTest
-import WireDataModel
 
 private let testDataURL = Bundle(for: AssetV3DownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
 

@@ -20,8 +20,8 @@ import Foundation
 import WireCoreCrypto
 
 @testable import WireDataModelSupport
-@testable import WireRequestStrategySupport
 @testable import WireRequestStrategy
+@testable import WireRequestStrategySupport
 
 class E2EIEnrollmentTests: ZMTBaseTest {
 

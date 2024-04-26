@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 
 final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 

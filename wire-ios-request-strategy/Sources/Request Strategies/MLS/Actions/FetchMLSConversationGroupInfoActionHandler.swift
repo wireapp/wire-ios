@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTransport
 import WireDataModel
+import WireTransport
 
 final class FetchMLSConversationGroupInfoActionHandler: BaseFetchMLSGroupInfoActionHandler<FetchMLSConversationGroupInfoAction> {
 
