@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 import WireCommonComponents
+import XCTest
 
 class BaseTestCase: XCTestCase {
 
