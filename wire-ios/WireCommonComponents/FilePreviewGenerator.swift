@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import MobileCoreServices
-import ImageIO
 import AVFoundation
 import CoreGraphics
+import ImageIO
+import MobileCoreServices
 import UIKit
 
 extension URL {

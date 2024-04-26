@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 import SnapshotTesting
+import XCTest
 
 @testable import Wire
 

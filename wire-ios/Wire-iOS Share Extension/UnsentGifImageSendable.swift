@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireShareEngine
 import MobileCoreServices
 import UniformTypeIdentifiers
+import WireShareEngine
 
 /// `UnsentSendable` implementation to send GIF image messages
 final class UnsentGifImageSendable: UnsentSendableBase, UnsentSendable {

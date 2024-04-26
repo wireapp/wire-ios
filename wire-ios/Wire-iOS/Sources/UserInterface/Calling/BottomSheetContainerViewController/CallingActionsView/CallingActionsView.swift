@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 protocol CallingActionsViewDelegate: AnyObject {
     func callingActionsViewPerformAction(_ action: CallAction)

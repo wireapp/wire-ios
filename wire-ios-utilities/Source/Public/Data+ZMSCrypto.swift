@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import CryptoKit
 import CommonCrypto
+import CryptoKit
+import Foundation
 
 /// Advanced Encryption Standard errors
 public enum AESError: Error {

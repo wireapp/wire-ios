@@ -17,10 +17,10 @@
 //
 
 import UIKit
-import WireSyncEngine
+import WireCommonComponents
+import WireDataModel
 import WireSystem
 import WireTransport
-import WireCommonComponents
 
 /**
  * The view controller to use to ask the user to enter their credentials.

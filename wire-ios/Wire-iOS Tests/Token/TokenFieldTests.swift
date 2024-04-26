@@ -17,8 +17,8 @@
 //
 
 import SnapshotTesting
-import XCTest
 @testable import Wire
+import XCTest
 
 final class TokenFieldTests: BaseSnapshotTestCase {
     var sut: TokenField!

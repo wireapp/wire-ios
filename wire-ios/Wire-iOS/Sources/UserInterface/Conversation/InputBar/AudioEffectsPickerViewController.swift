@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCommonComponents
-import UIKit
 import avs
+import UIKit
+import WireCommonComponents
 import WireDataModel
 
 protocol AudioEffectsPickerDelegate: AnyObject {
