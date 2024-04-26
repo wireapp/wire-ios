@@ -18,8 +18,8 @@
 
 import Foundation
 
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 class NSManagedObjectContextTests_Federation: ZMBaseManagedObjectTest {
 

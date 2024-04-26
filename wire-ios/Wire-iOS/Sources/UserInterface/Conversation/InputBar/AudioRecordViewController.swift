@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import avs
 import MobileCoreServices
 import UIKit
-import WireSystem
-import avs
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
 

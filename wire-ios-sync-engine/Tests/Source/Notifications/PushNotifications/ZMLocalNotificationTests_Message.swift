@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTesting
 import WireDataModel
 @testable import WireSyncEngine
+import WireTesting
 
 class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 

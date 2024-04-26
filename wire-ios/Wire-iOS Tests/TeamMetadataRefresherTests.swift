@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class TeamMetadataRefresherTests: XCTestCase {
 
@@ -131,5 +131,5 @@ final class TeamMetadataRefresherTests: XCTestCase {
 // MARK: - Mock Self User Provider
 
 private struct MockSelfUserProvider: SelfUserProvider {
-    let providedSelfUser: UserType & ZMEditableUser
+    let providedSelfUser: UserType & EditableUserType
 }

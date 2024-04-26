@@ -16,13 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "ZMSTestDetection.h"
+import UIKit
+import WireCommonComponents
+import WireSyncEngine
 
-NSString * const zm_testing_environment_variable_name = @"ZM_TESTING";
+struct SelfProfileViewControllerBuilder: ViewControllerBuilder {
 
+    var selfUser: SettingsSelfUser
+    var userRightInterfaceType: UserRightInterface.Type
+    var userSession: UserSession
 
-BOOL zm_isTesting(void) {
-    
-    NSString *value = [NSProcessInfo processInfo].environment[zm_testing_environment_variable_name];
-    return value != nil && [value isEqualToString:@"1"];
+    func build() -> SelfProfileViewController {
+        .init(
+            selfUser: selfUser,
+            userRightInterfaceType: userRightInterfaceType,
+            userSession: userSession
+        )
+    }
 }

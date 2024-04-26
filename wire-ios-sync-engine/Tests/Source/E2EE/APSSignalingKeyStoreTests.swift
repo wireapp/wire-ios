@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireSyncEngine
 import WireTesting
 import WireTransport
+import XCTest
 
 final class APSSignalingKeyStoreTests: MessagingTest {
 

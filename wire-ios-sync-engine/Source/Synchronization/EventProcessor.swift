@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireUtilities
 import WireRequestStrategy
+import WireUtilities
 
 actor EventProcessor: UpdateEventProcessor {
 

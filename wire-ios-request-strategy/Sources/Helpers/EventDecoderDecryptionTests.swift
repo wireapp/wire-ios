@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import XCTest
+import WireCryptobox
 import WireDataModel
 import WireProtos
-import WireCryptobox
 @testable import WireRequestStrategy
+import XCTest
 
 class EventDecoderDecryptionTests: MessagingTestBase {
 

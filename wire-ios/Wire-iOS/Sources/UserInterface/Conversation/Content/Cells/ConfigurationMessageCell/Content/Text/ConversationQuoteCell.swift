@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import Down
-import WireDataModel
+import UIKit
 import WireCommonComponents
+import WireDataModel
 
 final class ConversationReplyContentView: UIView {
     typealias View = ConversationReplyCell

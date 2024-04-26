@@ -61,7 +61,10 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
         )
 
-        sut = ConversationListViewController(viewModel: viewModel)
+        sut = ConversationListViewController(
+            viewModel: viewModel,
+            selfProfileViewControllerBuilder: .mock
+        )
         viewModel.viewController = sut
         sut.onboardingHint.arrowPointToView = sut.tabBar
         sut.overrideUserInterfaceStyle = .dark

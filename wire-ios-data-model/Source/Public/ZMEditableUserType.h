@@ -16,10 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 
-FOUNDATION_EXPORT const NSString * const zm_testing_environment_variable_name;
+NS_SWIFT_NAME(EditableUserType)
+@protocol ZMEditableUserType <NSObject>
 
-/// Returns true when the code is being executed in a testing environment.
-/// In order for this to work, the "ZM_TESTING" enviroment variable must be set to 1 in the test target
-FOUNDATION_EXPORT BOOL zm_isTesting(void);
+@property (nonatomic, copy, nullable) NSString *name;
+@property (nonatomic) ZMAccentColorRawValue accentColorValue;
+@property (nonatomic, copy, readonly, nullable) NSString *emailAddress;
+@property (nonatomic, copy, readonly, nullable) NSString *phoneNumber;
+@property (nonatomic) BOOL readReceiptsEnabled;
+@property (nonatomic) BOOL needsRichProfileUpdate;
+
+@end

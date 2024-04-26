@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
     var message: ZMOTRMessage?

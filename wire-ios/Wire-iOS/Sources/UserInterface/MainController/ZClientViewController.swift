@@ -18,8 +18,8 @@
 
 import avs
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 final class ZClientViewController: UIViewController {
 
@@ -61,11 +61,17 @@ final class ZClientViewController: UIViewController {
     ) {
         self.userSession = userSession
 
+        let selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
+            selfUser: userSession.selfUser,
+            userRightInterfaceType: UserRight.self,
+            userSession: userSession
+        )
         conversationListViewController = .init(
             account: account,
             selfUser: userSession.selfUser,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
 
         colorSchemeController = .init(userSession: userSession)
