@@ -142,7 +142,7 @@ public enum ClientUpdateError: NSInteger {
         }
         if !didContainSelf {
             // the selfClient was removed by an other user
-            error = ClientUpdateError.errorForType(.selfClientIsInvalid)()
+            error = ClientUpdateError.errorForType(.selfClientIsInvalid)() //
             excludingSelfClient = []
         }
 

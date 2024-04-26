@@ -166,12 +166,17 @@ final class AppRootRouter: NSObject {
     ///     - completion: A block executed after the transition has completed.
 
     private func enqueueTransition(to appState: AppState, completion: @escaping () -> Void = {}) {
+
+        print("#><# 0 transition(to: \(appState))")
+
         // Perform the wait on a background queue so we don't cause a
         // deadlock on the main queue.
         appStateTransitionQueue.async { [weak self] in
             guard let `self` = self else { return }
 
             self.appStateTransitionGroup.wait()
+
+            print("#><# 1 transition(to: \(appState))")
 
             DispatchQueue.main.async {
                 self.transition(to: appState, completion: completion)
@@ -199,6 +204,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             completion()
             self?.applicationDidTransition(to: appState)
         }
+
+        print("#><# 2 transition(to: \(appState))")
 
         switch appState {
         case .retryStart:
