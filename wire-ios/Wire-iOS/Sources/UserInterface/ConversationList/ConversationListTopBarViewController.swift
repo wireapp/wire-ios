@@ -27,9 +27,8 @@ final class ConversationListTopBarViewController: UIViewController {
 
     private let selfUser: SelfUserType
     private var userSession: UserSession
-    private let selfProfileViewControllerBuilder: any ViewControllerBuilder
-    private let filterConversationsActionHandler: UIActionHandler
-    private let newConversationActionHandler: UIActionHandler
+    private let selfProfileViewControllerBuilder: ViewControllerBuilder
+    private let newConversationViewControllerBuilder: ViewControllerBuilder
     private var observerToken: NSObjectProtocol?
 
     var topBar: TopBar? {
@@ -42,16 +41,14 @@ final class ConversationListTopBarViewController: UIViewController {
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        selfProfileViewControllerBuilder: some ViewControllerBuilder,
-        filterConversationsActionHandler: @escaping UIActionHandler,
-        newConversationActionHandler: @escaping UIActionHandler
+        selfProfileViewControllerBuilder: ViewControllerBuilder,
+        newConversationViewControllerBuilder: ViewControllerBuilder
     ) {
         self.account = account
         self.selfUser = selfUser
-        self.filterConversationsActionHandler = filterConversationsActionHandler
-        self.newConversationActionHandler = newConversationActionHandler
         self.userSession = userSession
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
+        self.newConversationViewControllerBuilder = newConversationViewControllerBuilder
 
         super.init(nibName: nil, bundle: nil)
 
@@ -97,11 +94,16 @@ final class ConversationListTopBarViewController: UIViewController {
         guard let stackView = topBar?.rightView as? UIStackView else { return }
 
         let filerImage = UIImage(resource: .ConversationList.Header.filterConversations)
-        let filterConversationsAction = UIAction(image: filerImage, handler: filterConversationsActionHandler)
+        let filterConversationsAction = UIAction(image: filerImage) { _ in
+            assertionFailure("TODO [WPB-7298]: implement filtering")
+        }
         stackView.addArrangedSubview(UIButton(primaryAction: filterConversationsAction))
 
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
-        let newConversationAction = UIAction(image: newConversationImage, handler: newConversationActionHandler)
+        let newConversationAction = UIAction(image: newConversationImage) { [self] _ in
+            let viewController = newConversationViewControllerBuilder.build()
+            show(viewController, animated: true) {}
+        }
         stackView.addArrangedSubview(UIButton(primaryAction: newConversationAction))
     }
 

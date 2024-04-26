@@ -39,7 +39,8 @@ final class ConversationListViewController: UIViewController, ConversationListCo
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
     private let selfProfileViewControllerBuilder: ViewControllerBuilder
-    private let settingsViewControllerBuilder: ViewControllerBuilder
+    private let newConversationViewControllerBuilder: ViewControllerBuilder
+    let settingsViewControllerBuilder: ViewControllerBuilder
 
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
@@ -79,6 +80,7 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         selfUser: SelfUserType,
         userSession: UserSession,
         selfProfileViewControllerBuilder: ViewControllerBuilder,
+        newConversationViewControllerBuilder: ViewControllerBuilder,
         settingsViewControllerBuilder: ViewControllerBuilder
     ) {
         let viewModel = ConversationListViewController.ViewModel(
@@ -89,6 +91,7 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         self.init(
             viewModel: viewModel,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+            newConversationViewControllerBuilder: newConversationViewControllerBuilder,
             settingsViewControllerBuilder: settingsViewControllerBuilder
         )
         onboardingHint.arrowPointToView = tabBar
@@ -97,10 +100,12 @@ final class ConversationListViewController: UIViewController, ConversationListCo
     required init(
         viewModel: ViewModel,
         selfProfileViewControllerBuilder: ViewControllerBuilder,
+        newConversationViewControllerBuilder: ViewControllerBuilder,
         settingsViewControllerBuilder: ViewControllerBuilder
     ) {
         self.viewModel = viewModel
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
+        self.newConversationViewControllerBuilder = newConversationViewControllerBuilder
         self.settingsViewControllerBuilder = settingsViewControllerBuilder
 
         topBarViewController = ConversationListTopBarViewController(
@@ -108,12 +113,7 @@ final class ConversationListViewController: UIViewController, ConversationListCo
             selfUser: viewModel.selfUser,
             userSession: viewModel.userSession,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
-            filterConversationsActionHandler: { _ in
-                assertionFailure("TODO [WPB-7298]: implement filtering")
-            },
-            newConversationActionHandler: { _ in
-                fatalError("TODO")
-            }
+            newConversationViewControllerBuilder: newConversationViewControllerBuilder
         )
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
@@ -389,12 +389,6 @@ final class ConversationListViewController: UIViewController, ConversationListCo
 
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
         UIAlertController.showNewsletterSubscriptionDialogIfNeeded(presentViewController: self, completionHandler: completionHandler)
-    }
-
-    func createSettingsViewController() -> UIViewController {
-        //
-        // SettingsTableViewController()
-        fatalError("TODO")
     }
 }
 

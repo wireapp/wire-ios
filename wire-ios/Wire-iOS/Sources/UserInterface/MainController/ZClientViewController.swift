@@ -66,6 +66,10 @@ final class ZClientViewController: UIViewController {
             userRightInterfaceType: UserRight.self,
             userSession: userSession
         )
+        let newConversationViewControllerBuilder = SettingsMainViewControllerBuilder(
+            userSession: userSession,
+            selfUser: userSession.selfUser
+        )
         let settingsViewControllerBuilder = SettingsMainViewControllerBuilder(
             userSession: userSession,
             selfUser: userSession.selfUser
@@ -75,6 +79,7 @@ final class ZClientViewController: UIViewController {
             selfUser: userSession.selfUser,
             userSession: userSession,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+            newConversationViewControllerBuilder: newConversationViewControllerBuilder,
             settingsViewControllerBuilder: settingsViewControllerBuilder
         )
 

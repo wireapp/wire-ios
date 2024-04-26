@@ -51,7 +51,8 @@ extension ConversationListViewController {
             show(createArchivedListViewController(), animated: animated, completion: completion)
 
         case .settings:
-            show(createSettingsViewController(), animated: animated, completion: completion)
+            let settingsViewController = settingsViewControllerBuilder.build()
+            show(settingsViewController, animated: animated, completion: completion)
         }
     }
 

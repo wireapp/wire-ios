@@ -32,6 +32,7 @@ final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestC
 
     override func setUp() {
         super.setUp()
+
         mockAccount = Account.mockAccount(imageData: mockImageData)
         mockSelfUser = MockUserType.createSelfUser(name: "James Hetfield")
         userSession = UserSessionMock(mockUser: mockSelfUser)
@@ -52,8 +53,7 @@ final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestC
             selfUser: mockSelfUser,
             userSession: userSession,
             selfProfileViewControllerBuilder: .mock,
-            filterConversationsActionHandler: { _ in },
-            newConversationActionHandler: { _ in }
+            newConversationViewControllerBuilder: .mock
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 48)
         sut.view.backgroundColor = .black
