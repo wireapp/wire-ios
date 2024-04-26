@@ -16,24 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
-extension UIAlertController {
-
-    typealias UIAlertControllerLocale = L10n.Localizable.General
-
-    static func presentPasswordCopiedAlert(
-        on viewController: UIViewController,
-        title: String,
-        message: String
-    ) {
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-
-        alertController.addAction(UIAlertAction(title: UIAlertControllerLocale.ok, style: .default) { _ in
-            viewController.dismiss(animated: true, completion: nil)
-        })
-
-        viewController.present(alertController, animated: true, completion: nil)
-    }
+public protocol ViewControllerBuilder {
+    associatedtype ViewController where ViewController: UIViewController
+    func build() -> ViewController
 }

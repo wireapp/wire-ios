@@ -16,24 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UIKit
+@import Foundation;
 
-extension UIAlertController {
+NS_SWIFT_NAME(EditableUserType)
+@protocol ZMEditableUserType <NSObject>
 
-    typealias UIAlertControllerLocale = L10n.Localizable.General
+@property (nonatomic, copy, nullable) NSString *name;
+@property (nonatomic) ZMAccentColorRawValue accentColorValue;
+@property (nonatomic, copy, readonly, nullable) NSString *emailAddress;
+@property (nonatomic, copy, readonly, nullable) NSString *phoneNumber;
+@property (nonatomic) BOOL readReceiptsEnabled;
+@property (nonatomic) BOOL needsRichProfileUpdate;
 
-    static func presentPasswordCopiedAlert(
-        on viewController: UIViewController,
-        title: String,
-        message: String
-    ) {
-        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-
-        alertController.addAction(UIAlertAction(title: UIAlertControllerLocale.ok, style: .default) { _ in
-            viewController.dismiss(animated: true, completion: nil)
-        })
-
-        viewController.present(alertController, animated: true, completion: nil)
-    }
-}
+@end
