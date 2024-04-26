@@ -17,6 +17,8 @@
 //
 
 import SnapshotTesting
+import XCTest
+
 @testable import Wire
 import XCTest
 
@@ -78,5 +80,4 @@ final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCas
         // THEN
         verify(matching: sut)
     }
-
 }

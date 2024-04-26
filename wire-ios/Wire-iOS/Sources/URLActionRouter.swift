@@ -53,8 +53,10 @@ class URLActionRouter: URLActionRouterProtocol {
     private var pendingAlert: UIAlertController?
 
     // MARK: - Initialization
-    public init(viewController: RootViewController,
-                sessionManager: SessionManager? = nil) {
+    init(
+        viewController: RootViewController,
+        sessionManager: SessionManager? = nil
+    ) {
         self.rootViewController = viewController
         self.sessionManager = sessionManager
     }

@@ -18,7 +18,7 @@
 
 import UIKit
 
-public extension UIFont {
+extension UIFont {
 
     /// Returns a font object that is the same as the receiver but which has the specified weight
     func withWeight(_ weight: Weight) -> UIFont {

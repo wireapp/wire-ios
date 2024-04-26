@@ -61,9 +61,8 @@ extension String {
         // Just paste (if valid) for phone numbers not beginning with "+", or phones where country is not detected.
 
         let phoneNumberWithCountryCode = String.phoneNumber(withE164: presetCountry.e164, number: phoneNumber)
-
-        let result = UnregisteredUser.normalizedPhoneNumber(phoneNumberWithCountryCode)
-
+        let userPropertyNormalizer = UserPropertyNormalizer(userPropertyValidator: UserPropertyValidator())
+        let result = userPropertyNormalizer.normalizePhoneNumber(phoneNumberWithCountryCode)
         if result.isValid {
             return (country: presetCountry, phoneNumber: phoneNumber.withoutSpace)
         } else {

@@ -17,6 +17,8 @@
 //
 
 import avs
+import XCTest
+
 @testable import Wire
 import WireCommonComponents
 import XCTest
@@ -34,7 +36,6 @@ final class MockZMEditableUser: MockUser, ZMEditableUser, ValidatorType {
     static func validate(name: inout String?) throws -> Bool {
         return false
     }
-
 }
 
 final class ZMMockAVSMediaManager: AVSMediaManagerInterface {

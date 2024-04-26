@@ -20,11 +20,11 @@ import UIKit
 
 extension ConversationListViewController: UIViewControllerTransitioningDelegate {
 
-    public func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return SwizzleTransition(direction: .vertical)
     }
 
-    public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         return SwizzleTransition(direction: .vertical)
     }
 }

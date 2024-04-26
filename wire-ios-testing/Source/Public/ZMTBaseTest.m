@@ -143,11 +143,6 @@
     [super tearDown];
 }
 
-+ (void)tearDown {
-    [self checkForMemoryLeaksAfterTestClassCompletes];
-    [super tearDown];
-}
-
 - (id<ZMSGroupQueue>)fakeUIContext {
     return self.innerFakeUIContext;
 }

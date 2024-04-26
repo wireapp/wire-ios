@@ -47,7 +47,7 @@ extension Sequence where Element: UserClientType {
 
 extension UserClientType {
 
-    public func attributedRemoteIdentifier(_ attributes: [NSAttributedString.Key: AnyObject], boldAttributes: [NSAttributedString.Key: AnyObject], uppercase: Bool = false) -> NSAttributedString {
+    func attributedRemoteIdentifier(_ attributes: [NSAttributedString.Key: AnyObject], boldAttributes: [NSAttributedString.Key: AnyObject], uppercase: Bool = false) -> NSAttributedString {
         let identifierPrefixString = L10n.Localizable.Registration.Devices.id + " "
         let identifierString = NSMutableAttributedString(string: identifierPrefixString, attributes: attributes)
         let identifier = uppercase ? displayIdentifier.localizedUppercase : displayIdentifier
@@ -61,7 +61,7 @@ extension UserClientType {
     /// This should be used when showing the identifier in the UI
     /// We manually add a padding if there was a leading zero
 
-    public var displayIdentifier: String {
+    var displayIdentifier: String {
         guard let remoteIdentifier = self.remoteIdentifier else {
             return ""
         }

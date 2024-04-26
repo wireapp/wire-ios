@@ -190,7 +190,7 @@ final class CallGridViewController: SpinnerCapableViewController {
 
     // MARK: - Public Interface
 
-    public func handleDoubleTap(gesture: UIGestureRecognizer) {
+    func handleDoubleTap(gesture: UIGestureRecognizer) {
         let location = gesture.location(in: gridView)
         toggleMaximized(view: streamView(at: location))
     }
@@ -552,7 +552,7 @@ extension CallGridViewController {
 
 // MARK: - Extensions
 
-extension ZMEditableUser {
+extension EditableUserType {
     var selfStreamId: AVSClient {
 
         guard

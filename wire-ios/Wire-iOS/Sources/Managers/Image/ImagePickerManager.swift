@@ -113,7 +113,7 @@ class ImagePickerManager: NSObject {
 
  extension ImagePickerManager: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
-     public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
 
         guard let imageFromInfo = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage else {
             picker.dismiss(animated: true)

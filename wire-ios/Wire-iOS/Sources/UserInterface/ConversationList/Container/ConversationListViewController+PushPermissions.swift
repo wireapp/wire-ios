@@ -20,7 +20,7 @@ import UIKit
 import UserNotifications
 
 extension ConversationListViewController: PermissionDeniedViewControllerDelegate {
-    public func continueWithoutPermission(_ viewController: PermissionDeniedViewController) {
+    func continueWithoutPermission(_ viewController: PermissionDeniedViewController) {
         closePushPermissionDeniedDialog()
     }
 }

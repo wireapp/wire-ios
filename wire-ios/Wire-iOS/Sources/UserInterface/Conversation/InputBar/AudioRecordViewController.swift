@@ -59,8 +59,8 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     var recordingDotViewHidden: [NSLayoutConstraint] = []
     let separatorBackgroundColor = SemanticColors.View.backgroundSeparatorCell
     let backgroundViewColor = SemanticColors.View.backgroundDefault
-    public let recorder: AudioRecorderType
-    weak public var delegate: AudioRecordViewControllerDelegate?
+    let recorder: AudioRecorderType
+    weak var delegate: AudioRecordViewControllerDelegate?
 
     var recordingState: AudioRecordState = .recording {
         didSet { updateRecordingState(recordingState) }
@@ -68,7 +68,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
     typealias ConversationInputBarAudio = L10n.Localizable.Conversation.InputBar.AudioMessage
 
-    required public init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 

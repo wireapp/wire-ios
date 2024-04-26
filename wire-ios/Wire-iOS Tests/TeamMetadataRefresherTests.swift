@@ -131,5 +131,5 @@ final class TeamMetadataRefresherTests: XCTestCase {
 // MARK: - Mock Self User Provider
 
 private struct MockSelfUserProvider: SelfUserProvider {
-    let providedSelfUser: UserType & ZMEditableUser
+    let providedSelfUser: UserType & EditableUserType
 }

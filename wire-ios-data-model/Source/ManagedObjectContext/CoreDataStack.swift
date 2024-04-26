@@ -343,10 +343,6 @@ public class CoreDataStack: NSObject, ContextProvider {
 
             self.configureEventContext(self.eventContext)
 
-            #if DEBUG
-            MemoryReferenceDebugger.register(self.eventContext)
-            #endif
-
             completionHandler(nil)
         }
     }

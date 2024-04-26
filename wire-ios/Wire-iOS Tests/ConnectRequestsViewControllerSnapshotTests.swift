@@ -31,7 +31,7 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
         super.setUp()
 
         let mockUser = MockUserType.createSelfUser(name: "Bruno")
-        mockUser.accentColorValue = .brightOrange
+        mockUser.zmAccentColor = .amber
         mockUser.handle = "bruno"
 
         mockConnectionRequest = SwiftMockConversation()
@@ -39,7 +39,7 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
         userSession = UserSessionMock(mockUser: mockUser)
 
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
         sut = ConnectRequestsViewController(userSession: userSession)
 
         sut.loadViewIfNeeded()
@@ -64,7 +64,7 @@ final class ConnectRequestsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
     func testForTwoRequests() {
         let otherUser = MockUserType.createConnectedUser(name: "Bill")
-        otherUser.accentColorValue = .brightYellow
+        otherUser.zmAccentColor = .amber
         otherUser.handle = "bill"
 
         let secondConnectionRequest = SwiftMockConversation()

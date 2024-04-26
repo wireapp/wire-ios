@@ -21,8 +21,8 @@ import AppCenterAnalytics
 import AppCenterCrashes
 import AppCenterDistribute
 
-public extension AppCenter {
-    static func setTrackingEnabled(_ enabled: Bool) {
+extension AppCenter {
+    public static func setTrackingEnabled(_ enabled: Bool) {
         Analytics.enabled = enabled
         Distribute.enabled = enabled
 #if DISABLE_APPCENTER_CRASH_LOGGING
@@ -31,7 +31,7 @@ public extension AppCenter {
         Crashes.enabled = enabled
 #endif
     }
-    static func start() {
+    public static func start() {
         Distribute.updateTrack = .private
 
 #if DISABLE_APPCENTER_CRASH_LOGGING

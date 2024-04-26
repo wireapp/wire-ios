@@ -30,7 +30,7 @@ final class ConversationCreationControllerSnapshotTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .violet
+        accentColor = .purple
     }
 
     // MARK: - tearDown

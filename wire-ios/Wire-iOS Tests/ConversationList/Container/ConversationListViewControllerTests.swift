@@ -43,7 +43,7 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
 
         userSession = UserSessionMock()
 
@@ -61,7 +61,10 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
         )
 
-        sut = ConversationListViewController(viewModel: viewModel)
+        sut = ConversationListViewController(
+            viewModel: viewModel,
+            selfProfileViewControllerBuilder: .mock
+        )
         viewModel.viewController = sut
         sut.onboardingHint.arrowPointToView = sut.tabBar
         sut.overrideUserInterfaceStyle = .dark

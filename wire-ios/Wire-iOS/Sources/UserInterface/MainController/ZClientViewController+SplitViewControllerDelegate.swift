@@ -17,7 +17,7 @@
 //
 
 extension ZClientViewController: SplitViewControllerDelegate {
-    public func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
+    func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
         return splitViewController.rightViewController != nil &&
             splitViewController.leftViewController == conversationListViewController &&
             conversationListViewController.state == .conversationList &&

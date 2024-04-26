@@ -60,7 +60,7 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
     private static let fallbackURLScheme = "wire-sso"
 
     // Whether performing a company login is supported on the current build.
-    static public let isCompanyLoginEnabled = true
+    static let isCompanyLoginEnabled = true
 
     private var token: Any?
     private let detector: CompanyLoginRequestDetector
@@ -89,7 +89,7 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
     }
 
     /// Create a new `CompanyLoginController` instance using the specified requester.
-    public required init(detector: CompanyLoginRequestDetector, requester: CompanyLoginRequester) {
+    required init(detector: CompanyLoginRequestDetector, requester: CompanyLoginRequester) {
         self.detector = detector
         self.requester = requester
         self.flowHandler = CompanyLoginFlowHandler(callbackScheme: requester.callbackScheme)
@@ -317,7 +317,7 @@ extension CompanyLoginController {
 
 // MARK: - Flow
 extension CompanyLoginController: CompanyLoginFlowHandlerDelegate {
-    public func companyLoginRequester(_ requester: CompanyLoginRequester, didRequestIdentityValidationAtURL url: URL) {
+    func companyLoginRequester(_ requester: CompanyLoginRequester, didRequestIdentityValidationAtURL url: URL) {
         delegate?.controllerDidStartCompanyLoginFlow(self)
         flowHandler.open(authenticationURL: url)
     }

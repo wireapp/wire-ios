@@ -25,7 +25,7 @@ final class ArchivedNavigationBarTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .violet
+        accentColor = .purple
         sut = ArchivedNavigationBar(title: "Archive")
     }
 

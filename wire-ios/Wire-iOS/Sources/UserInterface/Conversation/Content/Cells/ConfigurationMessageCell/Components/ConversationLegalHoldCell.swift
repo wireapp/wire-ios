@@ -100,7 +100,7 @@ final class ConversationLegalHoldCellDescription: ConversationMessageCellDescrip
 
 extension ConversationLegalHoldSystemMessageCell {
 
-    public override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+    override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
 
         if url == ConversationLegalHoldSystemMessageCell.legalHoldURL,
             let conversation = conversation,

@@ -192,7 +192,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
         cell.ziph = ziph
         cell.representation = representation
-        cell.backgroundColor = UIColor(for: AccentColor.random)
+        cell.backgroundColor = AccentColor.random.uiColor
         cell.isAccessibilityElement = true
         cell.accessibilityTraits.insert(.image)
         cell.accessibilityLabel = ziph.title

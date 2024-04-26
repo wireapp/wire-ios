@@ -23,9 +23,9 @@ import WireDataModel
 
 private let zmLog = ZMSLog(tag: "UI")
 
-public final class FileMetaDataGenerator: NSObject {
+public final class FileMetaDataGenerator {
 
-    static public func metadataForFileAtURL(_ url: URL, UTI uti: String, name: String, completion: @escaping (ZMFileMetadata) -> Void) {
+    public static func metadataForFileAtURL(_ url: URL, UTI uti: String, name: String, completion: @escaping (ZMFileMetadata) -> Void) {
         SharedPreviewGenerator.generator.generatePreview(url, UTI: uti) { preview in
             let thumbnail = preview != nil ? preview!.jpegData(compressionQuality: 0.9) : nil
 

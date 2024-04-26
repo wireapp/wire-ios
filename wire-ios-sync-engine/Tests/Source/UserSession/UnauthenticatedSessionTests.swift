@@ -122,10 +122,13 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         mockDelegate = MockUnauthenticatedSessionDelegate()
         reachability = MockReachability()
         mockAuthenticationStatusDelegate = MockAuthenticationStatusDelegate()
-        sut = UnauthenticatedSession(transportSession: transportSession,
-                                     reachability: reachability,
-                                     delegate: mockDelegate,
-                                     authenticationStatusDelegate: mockAuthenticationStatusDelegate)
+        sut = .init(
+            transportSession: transportSession,
+            reachability: reachability,
+            delegate: mockDelegate,
+            authenticationStatusDelegate: mockAuthenticationStatusDelegate,
+            userPropertyValidator: UserPropertyValidator()
+        )
         sut.groupQueue.add(dispatchGroup)
     }
 

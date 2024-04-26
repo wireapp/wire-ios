@@ -223,7 +223,7 @@ final class ShareContactsViewController: UIViewController {
 
 // MARK: - ShareContactsViewController Extension
 extension ShareContactsViewController: PermissionDeniedViewControllerDelegate {
-    public func continueWithoutPermission(_ viewController: PermissionDeniedViewController) {
+    func continueWithoutPermission(_ viewController: PermissionDeniedViewController) {
         delegate?.shareDidSkip(self)
     }
 }

@@ -23,7 +23,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
     func testThatItReturnsPreviewsProfileImageIfItWasPreviouslyUpdated() {
         // given
         let imageData = verySmallJPEGData()
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .amber, remoteIdentifier: UUID())
 
         // when
         searchUser.updateImageData(for: .preview, imageData: imageData)
@@ -35,7 +35,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
     func testThatItReturnsCompleteProfileImageIfItWasPreviouslyUpdated() {
         // given
         let imageData = verySmallJPEGData()
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .amber, remoteIdentifier: UUID())
 
         // when
         searchUser.updateImageData(for: .complete, imageData: imageData)
@@ -78,7 +78,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
 
     func testThatItReturnsPreviewImageProfileCacheKey() {
         // given
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID.create())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .amber, remoteIdentifier: UUID.create())
 
         // then
         XCTAssertNotNil(searchUser.smallProfileImageCacheKey)
@@ -86,7 +86,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
 
     func testThatItReturnsCompleteImageProfileCacheKey() {
         // given
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID.create())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .amber, remoteIdentifier: UUID.create())
 
         // then
         XCTAssertNotNil(searchUser.mediumProfileImageCacheKey)
@@ -94,7 +94,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
 
     func testThatItPreviewAndCompleteImageProfileCacheKeyIsDifferent() {
         // given
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID.create())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .amber, remoteIdentifier: UUID.create())
 
         // then
         XCTAssertNotEqual(searchUser.smallProfileImageCacheKey, searchUser.mediumProfileImageCacheKey)
@@ -137,7 +137,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
     func testThatItCanFetchPreviewProfileImageOnAQueue() {
         // given
         let imageData = verySmallJPEGData()
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .amber, remoteIdentifier: UUID())
 
         // when
         searchUser.updateImageData(for: .preview, imageData: imageData)
@@ -154,7 +154,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
     func testThatItCanFetchCompleteProfileImageOnAQueue() {
         // given
         let imageData = verySmallJPEGData()
-        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .amber, remoteIdentifier: UUID())
 
         // when
         searchUser.updateImageData(for: .complete, imageData: imageData)
@@ -167,5 +167,4 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
         }
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
-
 }

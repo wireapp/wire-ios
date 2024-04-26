@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireSystem
 import WireTransport
+import WireCommonComponents
 
 /**
  * The view controller to use to ask the user to enter their credentials.
@@ -482,7 +483,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         case .email:
             emailPasswordInputField.prefill(email: prefilledCredentials.credentials.emailAddress)
         case .phone:
-            if let phoneNumber = prefilledCredentials.credentials.phoneNumber.flatMap(PhoneNumber.init(fullNumber:)) {
+            if let phoneNumber = prefilledCredentials.credentials.phoneNumber.flatMap({ phoneNumber in PhoneNumber(fullNumber: phoneNumber, userPropertyValidator: UserPropertyValidator() ) }) {
                 phoneInputView.setPhoneNumber(phoneNumber)
             }
         }

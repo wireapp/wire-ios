@@ -103,11 +103,11 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         fatalError("init(coder:) has not been implemented")
     }
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         UIAccessibility.post(notification: .layoutChanged, argument: self)
     }
 
-    public override func viewWillDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         recorder.stopRecording()
         if isAppLockActive { UIApplication.shared.firstKeyWindow?.endEditing(true) }
@@ -304,7 +304,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
     // MARK: - View Updates
 
-    public override func viewDidLayoutSubviews() {
+    override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         self.confirmButton.layer.cornerRadius = self.confirmButton.bounds.size.width / 2
         self.recordButton.layer.cornerRadius = self.recordButton.bounds.size.width / 2
@@ -495,7 +495,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 // MARK: - AudioEffectsPickerDelegate
 
 extension AudioRecordKeyboardViewController: AudioEffectsPickerDelegate {
-    public func audioEffectsPickerDidPickEffect(_ picker: AudioEffectsPickerViewController, effect: AVSAudioEffectType, resultFilePath: String) {
+    func audioEffectsPickerDidPickEffect(_ picker: AudioEffectsPickerViewController, effect: AVSAudioEffectType, resultFilePath: String) {
         self.currentEffectFilePath = resultFilePath
         self.currentEffect = effect
     }

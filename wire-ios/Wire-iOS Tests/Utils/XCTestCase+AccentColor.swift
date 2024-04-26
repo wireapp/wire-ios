@@ -21,29 +21,20 @@ import XCTest
 
 private extension UIColor {
     class var accentOverrideColor: ZMAccentColor? {
-        return ZMUser.selfUser()?.accentColorValue
+        guard let accentColorValue = ZMUser.selfUser()?.accentColorValue else { return nil }
+        return .from(rawValue: accentColorValue)
     }
 }
 
 extension XCTestCase {
     /// If this is set the accent color will be overriden for the tests
     static var accentColor: ZMAccentColor {
-        get {
-            return UIColor.accentOverrideColor!
-        }
-
-        set {
-            UIColor.setAccentOverride(newValue)
-        }
+        get { UIColor.accentOverrideColor! }
+        set { UIColor.setAccentOverride(newValue) }
     }
 
     var accentColor: ZMAccentColor {
-        get {
-            return XCTestCase.accentColor
-        }
-
-        set {
-            XCTestCase.accentColor = newValue
-        }
+        get { XCTestCase.accentColor }
+        set { XCTestCase.accentColor = newValue }
     }
 }

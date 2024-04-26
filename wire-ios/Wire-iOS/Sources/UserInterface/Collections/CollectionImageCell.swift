@@ -66,7 +66,7 @@ final class CollectionImageCell: CollectionCell {
         ])
     }
 
-    public override func prepareForReuse() {
+    override func prepareForReuse() {
         super.prepareForReuse()
         message = .none
         isHeightCalculated = false

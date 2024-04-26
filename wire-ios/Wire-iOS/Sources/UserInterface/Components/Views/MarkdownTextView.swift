@@ -159,7 +159,7 @@ final class MarkdownTextView: NextResponderTextView {
         UIPasteboard.general.setValue(copiedAttributedTextPlainText, forPasteboardType: UTType.plainText.identifier)
     }
 
-    public override var selectedTextRange: UITextRange? {
+    override var selectedTextRange: UITextRange? {
         didSet { activeMarkdown = self.markdownAtSelection() }
     }
 
