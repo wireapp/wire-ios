@@ -110,7 +110,7 @@ class ConversationTests_Guests: IntegrationTest {
         conversation.fetchWirelessLink(in: self.userSession!) { result in
             switch result {
             case .success(let link):
-                XCTAssertNil(link)
+                XCTAssertNil(link.uri)
             case .failure:
                 XCTFail()
             }
