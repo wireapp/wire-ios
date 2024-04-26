@@ -18,9 +18,9 @@
 
 import UIKit
 import UserNotifications
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-import WireCommonComponents
 
 typealias Completion = () -> Void
 typealias ResultHandler = (_ succeeded: Bool) -> Void

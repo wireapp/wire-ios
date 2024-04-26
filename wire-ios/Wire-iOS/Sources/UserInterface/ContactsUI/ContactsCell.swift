@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 typealias ContactsCellActionButtonHandler = (UserType, ContactsCell.Action) -> Void
 
