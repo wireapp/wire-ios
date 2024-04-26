@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireSyncEngine
 import SnapshotTesting
+import WireSyncEngine
 import WireSyncEngineSupport
+import XCTest
 
 @testable import Wire
 
