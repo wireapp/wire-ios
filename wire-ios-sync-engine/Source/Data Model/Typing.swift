@@ -18,7 +18,7 @@
 
 import Foundation
 
-class Typing {
+final class Typing {
 
     #if DEBUG
     public static var defaultTimeout: TimeInterval = 60
