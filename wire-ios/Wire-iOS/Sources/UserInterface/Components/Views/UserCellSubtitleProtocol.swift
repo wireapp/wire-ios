@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 
 protocol UserCellSubtitleProtocol: AnyObject {
     func subtitle(forRegularUser user: UserType?) -> NSAttributedString?

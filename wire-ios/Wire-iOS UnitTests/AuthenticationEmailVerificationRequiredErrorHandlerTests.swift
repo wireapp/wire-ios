@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireSyncEngine
 @testable import Wire
+import WireSyncEngine
+import XCTest
 
 class AuthenticationEmailVerificationRequiredErrorHandlerTests: XCTestCase {
 

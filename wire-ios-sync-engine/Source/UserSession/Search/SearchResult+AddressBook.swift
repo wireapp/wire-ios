@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Contacts
+import Foundation
 
 /// This is used for testing only
 var debug_searchResultAddressBookOverride: AddressBookAccessor?

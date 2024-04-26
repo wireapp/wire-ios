@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireSystem
 import WireCommonComponents
 import WireSyncEngine
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "Analytics")
 

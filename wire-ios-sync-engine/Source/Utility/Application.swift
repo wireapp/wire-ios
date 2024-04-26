@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireTransport
 import UIKit
+import WireTransport
 
 public protocol NotificationSettingsRegistrable {
     /// To determine if notification settings should be registered

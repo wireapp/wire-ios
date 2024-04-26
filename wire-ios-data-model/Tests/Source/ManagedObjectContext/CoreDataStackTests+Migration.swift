@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 class CoreDataStackTests_Migration: DatabaseBaseTest {
 

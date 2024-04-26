@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 final class ConversationViewController: UIViewController {
     unowned let zClientViewController: ZClientViewController

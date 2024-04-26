@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTransport
 import WireDataModel
+import WireTransport
 
 class BaseFetchMLSGroupInfoActionHandler<T: BaseFetchMLSGroupInfoAction>: ActionHandler<T> {
 

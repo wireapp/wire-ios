@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 /// Represents the orientation delta between the interface orientation (as a reference) and the device orientation

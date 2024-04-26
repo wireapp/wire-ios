@@ -17,10 +17,10 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDataModel
 import WireRequestStrategy
 import WireSyncEngine
-import WireCommonComponents
 
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 

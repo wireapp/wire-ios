@@ -17,8 +17,8 @@
 //
 
 import MobileCoreServices
-import WireSyncEngine
 import UniformTypeIdentifiers
+import WireSyncEngine
 
 extension ConversationInputBarViewController: UIDocumentPickerDelegate {
 
