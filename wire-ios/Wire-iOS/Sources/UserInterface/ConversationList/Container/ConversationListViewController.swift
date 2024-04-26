@@ -108,8 +108,12 @@ final class ConversationListViewController: UIViewController, ConversationListCo
             selfUser: viewModel.selfUser,
             userSession: viewModel.userSession,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
-            filterConversationsActionHandler: { _ in },
-            newConversationActionHandler: { _ in }
+            filterConversationsActionHandler: { _ in
+                assertionFailure("TODO [WPB-7298]: implement filtering")
+            },
+            newConversationActionHandler: { _ in
+                fatalError("TODO")
+            }
         )
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
@@ -185,7 +189,6 @@ final class ConversationListViewController: UIViewController, ConversationListCo
             ZClientViewController.shared?.showDataUsagePermissionDialogIfNeeded()
             ZClientViewController.shared?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
-
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -208,11 +211,11 @@ final class ConversationListViewController: UIViewController, ConversationListCo
     }
 
     override var shouldAutorotate: Bool {
-        return true
+        true
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
+        .portrait
     }
 
     // MARK: - setup UI
@@ -254,9 +257,7 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         guard
             let topBarView = topBarViewController.view,
             let conversationList = listContentController.view
-        else {
-            return
-        }
+        else { return }
 
         [
             contentContainer,
@@ -328,10 +329,10 @@ final class ConversationListViewController: UIViewController, ConversationListCo
     }
 
     func hideNoContactLabel(animated: Bool) {
-        UIView.animate(withDuration: animated ? 0.20 : 0.0, animations: {
+        UIView.animate(withDuration: animated ? 0.20 : 0.0) {
             self.noConversationLabel.alpha = 0.0
             self.onboardingHint.alpha = 0.0
-        })
+        }
     }
 
     func scrollViewDidScroll(scrollView: UIScrollView!) {
@@ -370,12 +371,20 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         setState(.settings, animated: true)
     }
 
-    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool {
-        return listContentController.select(conversation,
-                                     scrollTo: message,
-                                     focusOnView: focus,
-                                     animated: animated,
-                                     completion: completion)
+    func selectOnListContentController(
+        _ conversation: ZMConversation!,
+        scrollTo message: ZMConversationMessage?,
+        focusOnView focus: Bool,
+        animated: Bool,
+        completion: (() -> Void)?
+    ) -> Bool {
+        listContentController.select(
+            conversation,
+            scrollTo: message,
+            focusOnView: focus,
+            animated: animated,
+            completion: completion
+        )
     }
 
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
