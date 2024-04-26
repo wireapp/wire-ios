@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
+
 extension ConversationListViewController {
 
     func setState(
@@ -53,7 +55,15 @@ extension ConversationListViewController {
 
         case .settings:
             let settingsViewController = settingsViewControllerBuilder.build()
-            show(settingsViewController, animated: animated, completion: completion)
+            let navigationController = settingsViewController.wrapInNavigationController(navigationBarClass: DefaultNavigationBar.self)
+            add(navigationController, to: contentContainer)
+            navigationController.view.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                navigationController.view.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
+                navigationController.view.topAnchor.constraint(equalTo: contentContainer.topAnchor),
+                contentContainer.trailingAnchor.constraint(equalTo: navigationController.view.trailingAnchor),
+                tabBar.topAnchor.constraint(equalTo: navigationController.view.bottomAnchor)
+            ])
         }
     }
 
