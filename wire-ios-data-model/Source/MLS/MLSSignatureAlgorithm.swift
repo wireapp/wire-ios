@@ -19,11 +19,11 @@
 import Foundation
 
 public enum MLSSignatureAlgorithm: String, CustomStringConvertible {
-    case Ed25519
-    case Ed448
-    case P256
-    case P384
-    case P521
+    case ed25519
+    case ed448
+    case p256
+    case p384
+    case p521
 
     public var description: String {
         rawValue
