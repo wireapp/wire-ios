@@ -73,7 +73,7 @@ struct ProfileDeviceDetailsView: View {
 
     private var mlsView: some View {
         VStack(alignment: .leading) {
-            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Mls.signature("Foo").uppercased())
+            sectionTitleView(title: L10n.Localizable.Device.Details.Section.Mls.signature(viewModel.mlsCiphersuite?.signature ?? "").uppercased())
 
             DeviceMLSView(viewModel: viewModel)
                 .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
