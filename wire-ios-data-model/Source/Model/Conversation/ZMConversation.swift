@@ -35,6 +35,11 @@ extension ZMConversation {
     @NSManaged
     public var oneOnOneUser: ZMUser?
 
+    /// True until the metadata has been fetched for the first time
+
+    @NSManaged
+    public var isPendingInitialFetch: Bool
+
     // MARK: - CoreData unique constraint
 
     static let domainKey: String = "domain"

@@ -60,9 +60,7 @@ public class DatabaseEARKeyDescription: BaseEARKeyDescription, KeychainItemProto
         return query
     }
 
-}
-
-extension DatabaseEARKeyDescription {
+    // MARK: - Static Access
 
     static func keyDescription(accountID: UUID) -> DatabaseEARKeyDescription {
         return DatabaseEARKeyDescription(

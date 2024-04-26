@@ -21,6 +21,8 @@ import WireCoreCrypto
 
 public protocol E2EISetupServiceInterface {
 
+    func isTrustAnchorRegistered()  async throws -> Bool
+
     func registerTrustAnchor(_ trustAnchor: String) async throws
 
     func registerFederationCertificate(_ certificate: String) async throws
@@ -64,6 +66,12 @@ public final class E2EISetupService: E2EISetupServiceInterface {
     }
 
     // MARK: - Public interface
+
+    public func isTrustAnchorRegistered() async throws -> Bool {
+        try await coreCryptoProvider.coreCrypto().perform { coreCrypto in
+            await coreCrypto.e2eiIsPkiEnvSetup()
+        }
+    }
 
     public func registerTrustAnchor(_ trustAnchor: String) async throws {
         try await coreCryptoProvider.coreCrypto().perform { coreCrypto in

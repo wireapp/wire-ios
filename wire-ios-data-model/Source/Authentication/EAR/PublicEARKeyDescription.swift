@@ -23,7 +23,12 @@ import Foundation
 /// Public EAR keys are used to encrypt material that should be decrypted
 /// with the corresponding private EAR key.
 
-public class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
+public final class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemProtocol {
+
+    private enum Constant {
+        static let labelPublicPrimary = "public"
+        static let labelPublicSecondary = "secondary-public"
+    }
 
     // MARK: - Properties
 
@@ -61,21 +66,19 @@ public class PublicEARKeyDescription: BaseEARKeyDescription, KeychainItemProtoco
         return query
     }
 
-}
-
-extension PublicEARKeyDescription {
+    // MARK: - Static Access
 
     static func primaryKeyDescription(accountID: UUID) -> PublicEARKeyDescription {
         return PublicEARKeyDescription(
             accountID: accountID,
-            label: "public"
+            label: Constant.labelPublicPrimary
         )
     }
 
     static func secondaryKeyDescription(accountID: UUID) -> PublicEARKeyDescription {
         return PublicEARKeyDescription(
             accountID: accountID,
-            label: "secondary-public"
+            label: Constant.labelPublicSecondary
         )
     }
 
