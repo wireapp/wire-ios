@@ -28,7 +28,7 @@ enum ConversationListState {
     case settings
 }
 
-final class ConversationListViewController: UIViewController {
+final class ConversationListViewController: UIViewController, ConversationListContainerViewModelDelegate {
 
     let viewModel: ViewModel
 
@@ -78,15 +78,13 @@ final class ConversationListViewController: UIViewController {
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
         selfProfileViewControllerBuilder: ViewControllerBuilder,
         settingsViewControllerBuilder: ViewControllerBuilder
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
             selfUser: selfUser,
-            userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
+            userSession: userSession
         )
         self.init(
             viewModel: viewModel,
@@ -113,7 +111,6 @@ final class ConversationListViewController: UIViewController {
             filterConversationsActionHandler: { _ in },
             newConversationActionHandler: { _ in }
         )
-        topBarViewController.selfUserStatus = viewModel.selfUserStatus
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(userSession: viewModel.userSession)
@@ -181,8 +178,6 @@ final class ConversationListViewController: UIViewController {
         shouldAnimateNetworkStatusView = true
 
         ZClientViewController.shared?.notifyUserOfDisabledAppLockIfNeeded()
-
-        viewModel.updateE2EICertifiedStatus()
 
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
@@ -391,15 +386,6 @@ final class ConversationListViewController: UIViewController {
         //
         // SettingsTableViewController()
         fatalError("TODO")
-    }
-}
-
-// MARK: - ViewModel Delegate
-
-extension ConversationListViewController: ConversationListContainerViewModelDelegate {
-
-    func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
-        topBarViewController.selfUserStatus = selfUserStatus
     }
 }
 

@@ -37,7 +37,7 @@ extension SessionManager: VoIPPushManagerDelegate {
             let accountId = payload.accountId(),
             let account = self.accountManager.account(with: accountId),
             let activity = BackgroundActivityFactory.shared.startBackgroundActivity(
-                withName: "\(payload.stringIdentifier)",
+                name: "\(payload.stringIdentifier)",
                 expirationHandler: { [weak self] in
                   WireLogger.notifications.warn("Processing push payload expired: \(payload)")
                   self?.notificationsTracker?.registerProcessingExpired()

@@ -25,11 +25,6 @@ final class ConversationListTopBarViewController: UIViewController {
 
     private let account: Account
 
-    /// Name, availability and verification info about the self user.
-    var selfUserStatus = UserStatus() {
-        didSet { updateTitleView() }
-    }
-
     private let selfUser: SelfUserType
     private var userSession: UserSession
     private let selfProfileViewControllerBuilder: any ViewControllerBuilder
@@ -41,8 +36,6 @@ final class ConversationListTopBarViewController: UIViewController {
         view as? TopBar
     }
 
-    // Title Views
-    private weak var userStatusViewController: UserStatusViewController?
     private weak var titleViewLabel: UILabel?
 
     init(
@@ -81,10 +74,10 @@ final class ConversationListTopBarViewController: UIViewController {
         view.backgroundColor = SemanticColors.View.backgroundConversationList
         view.addBorder(for: .bottom)
 
+        setupTitleView()
         setupNavigationBarItemStackViews()
         updateAccountView()
         updateLegalHoldIndictor()
-        updateTitleView()
         setupRightNavigationBarButtons()
     }
 
@@ -114,39 +107,19 @@ final class ConversationListTopBarViewController: UIViewController {
 
     // MARK: - Title View
 
-    func updateTitleView() {
-        if selfUser.isTeamMember {
-            defer { userStatusViewController?.userStatus = selfUserStatus }
-            guard userStatusViewController == nil else { return }
-
-            let userStatusViewController = UserStatusViewController(options: .header, settings: .shared)
-            addChild(userStatusViewController)
-            topBar?.middleView = userStatusViewController.view
-            userStatusViewController.didMove(toParent: self)
-            userStatusViewController.delegate = self
-            self.userStatusViewController = userStatusViewController
-
-        } else {
-            defer {
-                titleViewLabel?.text = selfUserStatus.name
-                titleViewLabel?.accessibilityValue = selfUserStatus.name
-            }
-            guard titleViewLabel == nil else { return }
-            if let userStatusViewController {
-                removeChild(userStatusViewController)
-            }
-
-            let titleLabel = UILabel()
-            titleLabel.font = FontSpec(.normal, .semibold).font
-            titleLabel.textColor = SemanticColors.Label.textDefault
-            titleLabel.accessibilityTraits = .header
-            titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-            titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-            titleLabel.setContentHuggingPriority(.required, for: .horizontal)
-            titleLabel.setContentHuggingPriority(.required, for: .vertical)
-            topBar?.middleView = titleLabel
-            self.titleViewLabel = titleLabel
-        }
+    func setupTitleView() {
+        let titleLabel = UILabel()
+        titleLabel.font = FontSpec(.normal, .semibold).font
+        titleLabel.textColor = SemanticColors.Label.textDefault
+        titleLabel.accessibilityTraits = .header
+        titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        titleLabel.setContentHuggingPriority(.required, for: .horizontal)
+        titleLabel.setContentHuggingPriority(.required, for: .vertical)
+        titleLabel.text = L10n.Localizable.List.title
+        titleLabel.accessibilityValue = L10n.Localizable.List.title
+        topBar?.middleView = titleLabel
+        self.titleViewLabel = titleLabel
     }
 
     private func createLegalHoldView() -> UIView {
@@ -315,20 +288,6 @@ extension ConversationListTopBarViewController: UserObserving {
         }
         if changeInfo.legalHoldStatusChanged {
             updateLegalHoldIndictor()
-        }
-    }
-}
-
-// MARK: - UserStatusViewControllerDelegate
-
-extension ConversationListTopBarViewController: UserStatusViewControllerDelegate {
-
-    func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
-        guard viewController === userStatusViewController else { return }
-
-        // this should be done by some use case instead of accessing the `session` and the `UserType` directly here
-        userSession.perform { [weak self] in
-            self?.selfUser.availability = availability
         }
     }
 }

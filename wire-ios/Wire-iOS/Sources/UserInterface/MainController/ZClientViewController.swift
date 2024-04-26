@@ -74,7 +74,6 @@ final class ZClientViewController: UIViewController {
             account: account,
             selfUser: userSession.selfUser,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
             settingsViewControllerBuilder: settingsViewControllerBuilder
         )
