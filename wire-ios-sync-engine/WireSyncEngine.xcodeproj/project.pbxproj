@@ -3061,9 +3061,9 @@
 			productReference = 3E1860C3191A649D000FE027 /* UnitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		549815921A43232400A7CE2E /* WireSyncEngine-ios */ = {
+		549815921A43232400A7CE2E /* WireSyncEngine */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 549815A61A43232500A7CE2E /* Build configuration list for PBXNativeTarget "WireSyncEngine-ios" */;
+			buildConfigurationList = 549815A61A43232500A7CE2E /* Build configuration list for PBXNativeTarget "WireSyncEngine" */;
 			buildPhases = (
 				0145AE9C2B11580B0097E3B8 /* Run Sourcery */,
 				5498158E1A43232400A7CE2E /* Sources */,
@@ -3076,7 +3076,7 @@
 			);
 			dependencies = (
 			);
-			name = "WireSyncEngine-ios";
+			name = WireSyncEngine;
 			packageProductDependencies = (
 			);
 			productName = "WireSyncEngine-ios";
@@ -3161,7 +3161,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				549815921A43232400A7CE2E /* WireSyncEngine-ios */,
+				549815921A43232400A7CE2E /* WireSyncEngine */,
 				3E1860C2191A649D000FE027 /* UnitTests */,
 				3E186087191A56F6000FE027 /* WireSyncEngine Test Host */,
 				169BA1D125ECDBA300374343 /* IntegrationTests */,
@@ -3926,7 +3926,7 @@
 /* Begin PBXTargetDependency section */
 		0145AE8E2B1155690097E3B8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 549815921A43232400A7CE2E /* WireSyncEngine-ios */;
+			target = 549815921A43232400A7CE2E /* WireSyncEngine */;
 			targetProxy = 0145AE8D2B1155690097E3B8 /* PBXContainerItemProxy */;
 		};
 		0145AE932B1155760097E3B8 /* PBXTargetDependency */ = {
@@ -3936,7 +3936,7 @@
 		};
 		169BA1D925ECDBA300374343 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 549815921A43232400A7CE2E /* WireSyncEngine-ios */;
+			target = 549815921A43232400A7CE2E /* WireSyncEngine */;
 			targetProxy = 169BA1D825ECDBA300374343 /* PBXContainerItemProxy */;
 		};
 		169BA1DE25ECDBC800374343 /* PBXTargetDependency */ = {
@@ -3951,7 +3951,7 @@
 		};
 		54F4DC581A4438AC00FDB6EA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 549815921A43232400A7CE2E /* WireSyncEngine-ios */;
+			target = 549815921A43232400A7CE2E /* WireSyncEngine */;
 			targetProxy = 54F4DC571A4438AC00FDB6EA /* PBXContainerItemProxy */;
 		};
 		59DA04A62BD25486003F9195 /* PBXTargetDependency */ = {
@@ -4458,7 +4458,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		549815A61A43232500A7CE2E /* Build configuration list for PBXNativeTarget "WireSyncEngine-ios" */ = {
+		549815A61A43232500A7CE2E /* Build configuration list for PBXNativeTarget "WireSyncEngine" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				549815A71A43232500A7CE2E /* Debug */,

@@ -6,6 +6,20 @@
 	objectVersion = 54;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		594F41CD2BB30BFA00F6C171 /* Periphery */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 594F41D02BB30BFA00F6C171 /* Build configuration list for PBXAggregateTarget "Periphery" */;
+			buildPhases = (
+				594F41D12BB30C0000F6C171 /* Periphery */,
+			);
+			dependencies = (
+			);
+			name = Periphery;
+			productName = Periphery;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		010497D52940DEAC0046124D /* DatadogWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D02940D8990046124D /* DatadogWrapper.swift */; };
 		010497D92940F4F40046124D /* TextFieldWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 010497D62940F4F30046124D /* TextFieldWrapper.swift */; };
@@ -319,6 +333,8 @@
 		5922D6D72BB56FA100A60408 /* Bundle+SecurityFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */; };
 		5922E92E2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */; };
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
+		594F41D32BB311F800F6C171 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594F41D22BB311F800F6C171 /* WireDataModelSupport.framework */; };
+		594F41D72BB3127400F6C171 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 594F41D62BB3127400F6C171 /* WireRequestStrategySupport.framework */; };
 		5966D82A2BD6983900305BBC /* SelfProfileViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */; };
 		5966D82C2BD6995100305BBC /* MockViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82B2BD6995100305BBC /* MockViewControllerBuilder.swift */; };
 		5966D8442BD7F05E00305BBC /* AccentColor+UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174AAB0218B62D200AFCC4D /* AccentColor+UIColor.swift */; };
@@ -2375,6 +2391,8 @@
 		5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+SecurityFlags.swift"; sourceTree = "<group>"; };
 		5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+initWithUserType.swift"; sourceTree = "<group>"; };
+		594F41D22BB311F800F6C171 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		594F41D62BB3127400F6C171 /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfProfileViewControllerBuilder.swift; sourceTree = "<group>"; };
 		5966D82B2BD6995100305BBC /* MockViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockViewControllerBuilder.swift; sourceTree = "<group>"; };
 		596841C92BD14D200009C6B8 /* ImageTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTransformer.swift; sourceTree = "<group>"; };
@@ -4096,9 +4114,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				594F41D72BB3127400F6C171 /* WireRequestStrategySupport.framework in Frameworks */,
 				59AADE272BB429B200D9E658 /* WireRequestStrategySupport.framework in Frameworks */,
 				0145AE992B1156FC0097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
 				E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */,
+				594F41D32BB311F800F6C171 /* WireDataModelSupport.framework in Frameworks */,
 				59AADE232BB4299900D9E658 /* WireDataModelSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5437,6 +5457,8 @@
 		8286E48D7CC440448CBD8F48 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				594F41D62BB3127400F6C171 /* WireRequestStrategySupport.framework */,
+				594F41D22BB311F800F6C171 /* WireDataModelSupport.framework */,
 				59AADE262BB429B200D9E658 /* WireRequestStrategySupport.framework */,
 				59AADE222BB4299900D9E658 /* WireDataModelSupport.framework */,
 				253C674E2B8D0BED00965DE1 /* WireRequestStrategySupport.framework */,
@@ -8744,6 +8766,9 @@
 							};
 						};
 					};
+					594F41CD2BB30BFA00F6C171 = {
+						CreatedOnToolsVersion = 15.3;
+					};
 					8F42C537199244A700288E4D = {
 						CreatedOnToolsVersion = 6.0;
 						LastSwiftMigration = 1000;
@@ -8816,6 +8841,7 @@
 				F1FEA14921DCEB1700790A54 /* WireCommonComponents */,
 				065A5ADD279B07AC002D4D1E /* Wire Notification Service Extension */,
 				E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */,
+				594F41CD2BB30BFA00F6C171 /* Periphery */,
 			);
 		};
 /* End PBXProject section */
@@ -8969,6 +8995,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "$SRCROOT/Scripts/copyExtraAudioNotifications\n\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"YES\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
+		594F41D12BB30C0000F6C171 /* Periphery */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = Periphery;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "alias periphery=\"/Users/christoph/Library/Homebrew/bin/periphery\"\nperiphery scan \\\n    --workspace ../wire-ios-mono.xcworkspace \\\n    --schemes Wire-iOS WireNotificationEngine WireShareEngine WireSyncEngine WireRequestStrategy WireDataModel WireUtilities WireTesting WireSystem \\\n    --targets \"Wire Notification Service Extension\" \"Wire Share Extension\" Wire-iOS \"Wire-iOS UnitTests\" Wire-iOS-Tests WireCanvas WireCommonComponents WireCryptobox WireDataModel WireDataModelSupport WireImages-ios WireLinkPreview WireMockTransport WireNotificationEngine WireProtos WireRequestStrategy WireRequestStrategySupport WireShareEngine WireSyncEngine WireSyncEngineSupport WireSystem WireSystem WireTesting WireTesting WireTransport-ios WireUtilities WireUtilities Ziphy \\\n    --report-exclude ../wire-ios/Wire-iOS/Generated \\\n    -- -destination \"platform=iOS Simulator,name=iPhone 14\"\n";
 		};
 		5E055B28228AAF1500E91314 /* Embed Internal Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -11314,6 +11359,22 @@
 			};
 			name = Release;
 		};
+		594F41CE2BB30BFA00F6C171 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		594F41CF2BB30BFA00F6C171 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		8F42C556199244A700288E4D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -11640,6 +11701,15 @@
 			buildConfigurations = (
 				168A16B51D9597C2005CFA6C /* Debug */,
 				168A16B61D9597C2005CFA6C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		594F41D02BB30BFA00F6C171 /* Build configuration list for PBXAggregateTarget "Periphery" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				594F41CE2BB30BFA00F6C171 /* Debug */,
+				594F41CF2BB30BFA00F6C171 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
