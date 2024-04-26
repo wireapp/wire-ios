@@ -45,7 +45,6 @@ final class ConversationListTabBarTests: BaseSnapshotTestCase {
 
     override func tearDown() {
         sut = nil
-
         super.tearDown()
     }
 
