@@ -27,11 +27,11 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
         SelfUser.setupMockSelfUser(inTeam: UUID())
 
         mockSelfUser = SelfUser.provider?.providedSelfUser as? MockUserType
-        mockSelfUser.accentColorValue = .strongBlue
+        mockSelfUser.zmAccentColor = .blue
 
         mockOtherUser = MockUserType.createDefaultOtherUser()
     }

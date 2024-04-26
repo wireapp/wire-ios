@@ -39,7 +39,7 @@ struct ProfileDeviceDetailsView: View {
                 isCertificateViewPresented: $isCertificateViewPresented
             )
         }
-        .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+        .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
         .padding(.top, ViewConstants.Padding.medium)
         .frame(maxWidth: .infinity)
     }
@@ -57,7 +57,7 @@ struct ProfileDeviceDetailsView: View {
                 isVerified: viewModel.isProteusVerificationEnabled,
                 shouldShowActivatedDate: false
             )
-            .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+            .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
 
             if viewModel.isSelfClient {
                 Text(L10n.Localizable.Self.Settings.DeviceDetails.Fingerprint.subtitle)
@@ -76,7 +76,7 @@ struct ProfileDeviceDetailsView: View {
             sectionTitleView(title: L10n.Localizable.Device.Details.Section.Mls.signature.uppercased())
 
             DeviceMLSView(viewModel: viewModel)
-                .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+                .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
         }
         .frame(maxWidth: .infinity)
     }
@@ -85,13 +85,13 @@ struct ProfileDeviceDetailsView: View {
         HStack {
             Text(L10n.Localizable.Profile.Devices.Detail.ShowMyDevice.title)
                 .padding(.all, ViewConstants.Padding.standard)
-                .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
                 .font(UIFont.swiftUIFont(for: .bodyTwoSemibold))
             Spacer()
             Image(.chevronRight)
                 .padding(.trailing, ViewConstants.Padding.standard)
         }
-        .background(SemanticColors.View.backgroundDefaultWhite.swiftUIColor)
+        .background(Color(uiColor: SemanticColors.View.backgroundDefaultWhite))
     }
 
     var body: some View {
@@ -109,7 +109,7 @@ struct ProfileDeviceDetailsView: View {
                 }
             }
         }
-        .background(SemanticColors.View.backgroundDefault.swiftUIColor)
+        .background(Color(uiColor: SemanticColors.View.backgroundDefault))
         .environment(\.defaultMinListHeaderHeight, ViewConstants.Header.Height.minimum)
         .listStyle(.plain)
         .overlay(
@@ -123,7 +123,7 @@ struct ProfileDeviceDetailsView: View {
                 }
             }
         )
-        .background(SemanticColors.View.backgroundDefault.swiftUIColor)
+        .background(Color(uiColor: SemanticColors.View.backgroundDefault))
         .onAppear {
             viewModel.onAppear()
         }
@@ -165,7 +165,7 @@ struct ProfileDeviceDetailsView: View {
     func sectionTitleView(title: String, description: String? = nil) -> some View {
         Text(title)
             .font(FontSpec.mediumRegularFont.swiftUIFont)
-            .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
+            .foregroundColor(Color(uiColor: SemanticColors.Label.textSectionHeader))
             .padding([.leading, .top, .trailing], ViewConstants.Padding.standard)
 
         if let description = description {
@@ -174,13 +174,13 @@ struct ProfileDeviceDetailsView: View {
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
                     .font(UIFont.swiftUIFont(for: .subheadline))
-                    .foregroundColor(SemanticColors.Label.textCellSubtitle.swiftUIColor)
+                    .foregroundColor(Color(uiColor: SemanticColors.Label.textCellSubtitle))
                     .frame(height: ViewConstants.View.Height.small)
                     .padding([.leading, .top, .trailing], ViewConstants.Padding.standard)
                 Text(L10n.Localizable.Profile.Devices.Detail.VerifyMessage.link)
                     .underline()
                     .font(UIFont.swiftUIFont(for: .subheadline).bold())
-                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                    .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
                     .padding(.leading)
                     .onTapGesture {
                         viewModel.onHowToDoThatTapped()

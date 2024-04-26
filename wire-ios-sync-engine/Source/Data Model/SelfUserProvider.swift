@@ -22,5 +22,5 @@ import Foundation
 
 public protocol SelfUserProvider {
 
-    var providedSelfUser: UserType & ZMEditableUser { get }
+    var providedSelfUser: UserType & EditableUserType { get }
 }

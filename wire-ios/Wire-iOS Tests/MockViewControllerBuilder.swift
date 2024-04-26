@@ -16,21 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireSystem;
+import WireCommonComponents
+import UIKit
 
-#import <WireUtilities/ZMAccentColor.h>
-#import "ZMUser.h"
+@testable import Wire
 
-@class ZMEmailCredentials;
-@class ZMPhoneCredentials;
+struct MockViewControllerBuilder: ViewControllerBuilder {
+    func build() -> UIViewController { .init() }
+}
 
-@protocol ZMEditableUser <NSObject>
-
-@property (nonatomic, copy, nullable) NSString *name;
-@property (nonatomic) ZMAccentColor accentColorValue;
-@property (nonatomic, copy, readonly, nullable) NSString *emailAddress;
-@property (nonatomic, copy, readonly, nullable) NSString *phoneNumber;
-@property (nonatomic) BOOL readReceiptsEnabled;
-@property (nonatomic) BOOL needsRichProfileUpdate;
-
-@end
+extension ViewControllerBuilder where Self == MockViewControllerBuilder {
+    static var mock: Self { .init() }
+}

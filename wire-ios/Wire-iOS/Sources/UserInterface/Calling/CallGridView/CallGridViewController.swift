@@ -553,7 +553,7 @@ extension CallGridViewController {
 
 // MARK: - Extensions
 
-extension ZMEditableUser {
+extension EditableUserType {
     var selfStreamId: AVSClient {
 
         guard

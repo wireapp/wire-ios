@@ -319,6 +319,10 @@
 		5922D6D72BB56FA100A60408 /* Bundle+SecurityFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */; };
 		5922E92E2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */; };
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
+		5966D82A2BD6983900305BBC /* SelfProfileViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */; };
+		5966D82C2BD6995100305BBC /* MockViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D82B2BD6995100305BBC /* MockViewControllerBuilder.swift */; };
+		5966D8442BD7F05E00305BBC /* AccentColor+UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174AAB0218B62D200AFCC4D /* AccentColor+UIColor.swift */; };
+		5966D8452BD7F07800305BBC /* AccentColor+UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174AAB0218B62D200AFCC4D /* AccentColor+UIColor.swift */; };
 		596841CA2BD14D200009C6B8 /* ImageTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596841C92BD14D200009C6B8 /* ImageTransformer.swift */; };
 		596841CC2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596841CB2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift */; };
 		597A3BBA2B641F280020E337 /* UserStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB92B641F280020E337 /* UserStatus.swift */; };
@@ -336,8 +340,8 @@
 		59D8A62F2B7A75B0008236FF /* PersonalAccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */; };
 		59D8A6312B7A7C2D008236FF /* AccountViewFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A6302B7A7C2D008236FF /* AccountViewFactory.swift */; };
 		59D8A6332B7A7C37008236FF /* AccountViewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D8A6322B7A7C37008236FF /* AccountViewProtocol.swift */; };
+		59F02C112BD68F720077F147 /* ViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59F02C102BD68F720077F147 /* ViewControllerBuilder.swift */; };
 		5E001FA7229813FA00F22CDD /* ConversationStateAccessoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E001FA32297FA0000F22CDD /* ConversationStateAccessoryView.swift */; };
-		5E001FA82298152200F22CDD /* UIColor+AccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174AAB0218B62D200AFCC4D /* UIColor+AccentColor.swift */; };
 		5E001FD3229BD2F600F22CDD /* TargetConversationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E001FC8229BD2F200F22CDD /* TargetConversationCell.swift */; };
 		5E028DEC21F883DF00E5512A /* EmailPasswordTextFieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E028DEB21F883DF00E5512A /* EmailPasswordTextFieldCell.swift */; };
 		5E028DEE21F9C34D00E5512A /* AuthenticationNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E028DED21F9C34D00E5512A /* AuthenticationNavigationBar.swift */; };
@@ -1247,8 +1251,6 @@
 		E6579E462AFF9FFB004E7FD8 /* MockUserType+CodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52379223F5588000D4FE79 /* MockUserType+CodingKeys.swift */; };
 		E6579E472AFF9FFD004E7FD8 /* MockUserType+Creation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378223F5566F00D4FE79 /* MockUserType+Creation.swift */; };
 		E6579E482AFFA001004E7FD8 /* MockUserType+SelfLegalHoldSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378523F556DC00D4FE79 /* MockUserType+SelfLegalHoldSubject.swift */; };
-		E6579E492AFFA003004E7FD8 /* MockUserType+ValidatorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378A23F5574D00D4FE79 /* MockUserType+ValidatorType.swift */; };
-		E6579E4A2AFFA007004E7FD8 /* MockUserType+ZMEditableUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEED9B023F6EA4F008C94CA /* MockUserType+ZMEditableUser.swift */; };
 		E6579E4B2AFFA00A004E7FD8 /* MockServiceUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378E23F557A600D4FE79 /* MockServiceUserType.swift */; };
 		E6579E4C2AFFA024004E7FD8 /* MockServiceUserType+Creation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52379023F557B900D4FE79 /* MockServiceUserType+Creation.swift */; };
 		E6579E4D2AFFA024004E7FD8 /* MockCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = F127BD581E265FB40093B2F1 /* MockCollection.swift */; };
@@ -1308,7 +1310,7 @@
 		E666EDDC2B73EA3500C03E2B /* BackupActionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDDB2B73EA3500C03E2B /* BackupActionCell.swift */; };
 		E682939A2B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68293992B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift */; };
 		E6C25FC52AFFAAC300406A1C /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C25FC42AFFAAC300406A1C /* WireTesting.framework */; };
-		E6C25FC82AFFABBF00406A1C /* PhoneNumberTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96E230923EAD43A00C2195E /* PhoneNumberTests.swift */; };
+		E6C25FC82AFFABBF00406A1C /* UserPropertyValidator+phoneNumberValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96E230923EAD43A00C2195E /* UserPropertyValidator+phoneNumberValidationTests.swift */; };
 		E6C25FC92AFFABD100406A1C /* AvailabilityStringBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636E57BC2386BFD9005B4FD8 /* AvailabilityStringBuilderTests.swift */; };
 		E6C25FCA2AFFABD700406A1C /* UITextView+ReplaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 061282622379C25500C1A53C /* UITextView+ReplaceTests.swift */; };
 		E6C25FCB2AFFABE000406A1C /* UITraitEnvironmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF17C52F2321417600245EBF /* UITraitEnvironmentTests.swift */; };
@@ -1439,7 +1441,6 @@
 		EE469EB62A9E3AE800620EA4 /* emojis.json in Resources */ = {isa = PBXBuildFile; fileRef = EE469EB52A9E3AE700620EA4 /* emojis.json */; };
 		EE52378423F5567300D4FE79 /* MockUserType+Creation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378223F5566F00D4FE79 /* MockUserType+Creation.swift */; };
 		EE52378723F556DE00D4FE79 /* MockUserType+SelfLegalHoldSubject.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378523F556DC00D4FE79 /* MockUserType+SelfLegalHoldSubject.swift */; };
-		EE52378B23F5574D00D4FE79 /* MockUserType+ValidatorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378A23F5574D00D4FE79 /* MockUserType+ValidatorType.swift */; };
 		EE52378F23F557A600D4FE79 /* MockServiceUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52378E23F557A600D4FE79 /* MockServiceUserType.swift */; };
 		EE52379123F557B900D4FE79 /* MockServiceUserType+Creation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52379023F557B900D4FE79 /* MockServiceUserType+Creation.swift */; };
 		EE52379323F5588000D4FE79 /* MockUserType+CodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE52379223F5588000D4FE79 /* MockUserType+CodingKeys.swift */; };
@@ -1569,7 +1570,6 @@
 		EEE81E9623E0521300A1D035 /* TopPeopleLineCollectionViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE81E9523E0521300A1D035 /* TopPeopleLineCollectionViewControllerDelegate.swift */; };
 		EEE81E9823E0815600A1D035 /* ProfilePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE81E9723E0815600A1D035 /* ProfilePresenter.swift */; };
 		EEE81E9A23E091DF00A1D035 /* ProfilePresenter+ProfileViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEE81E9923E091DF00A1D035 /* ProfilePresenter+ProfileViewControllerDelegate.swift */; };
-		EEEED9B223F6EA53008C94CA /* MockUserType+ZMEditableUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEEED9B023F6EA4F008C94CA /* MockUserType+ZMEditableUser.swift */; };
 		EEF28EEA1F1613DA007642E2 /* MarkdownBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF28EE91F1613DA007642E2 /* MarkdownBarView.swift */; };
 		EEF28EED1F16692A007642E2 /* InputBarSecondaryButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF28EEC1F16692A007642E2 /* InputBarSecondaryButtonsView.swift */; };
 		EEF28EEF1F168039007642E2 /* ConversationInputBarViewController+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF28EEE1F168039007642E2 /* ConversationInputBarViewController+Markdown.swift */; };
@@ -2059,12 +2059,8 @@
 		01A5E046297FDAB500624B65 /* updateLicenses */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = updateLicenses; sourceTree = "<group>"; };
 		01A5E047297FDAB500624B65 /* updateStylekit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = updateStylekit; sourceTree = "<group>"; };
 		01A5E048297FDAB500624B65 /* copyExtraAudioNotifications */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = copyExtraAudioNotifications; sourceTree = "<group>"; };
-		01A5E04A297FDAB500624B65 /* install-templates.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "install-templates.sh"; sourceTree = "<group>"; };
 		01A5E04B297FDAB500624B65 /* embed-internal-resources */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "embed-internal-resources"; sourceTree = "<group>"; };
 		01A5E04C297FDAB500624B65 /* embedBuildInfo */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = embedBuildInfo; sourceTree = "<group>"; };
-		01A5E04E297FDAB500624B65 /* use-local-framework */ = {isa = PBXFileReference; lastKnownFileType = text; path = "use-local-framework"; sourceTree = "<group>"; };
-		01A5E04F297FDAB500624B65 /* convertLocalNotificationSounds */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = convertLocalNotificationSounds; sourceTree = "<group>"; };
-		01A5E050297FDAB500624B65 /* remove-bitcode.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "remove-bitcode.sh"; sourceTree = "<group>"; };
 		01A5E051297FDAB500624B65 /* datadog-conditional-framework.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "datadog-conditional-framework.sh"; sourceTree = "<group>"; };
 		01D8E7192BA39CE900B71CB7 /* E2EIPrivacyWarningChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EIPrivacyWarningChecker.swift; sourceTree = "<group>"; };
 		01F5EAE32B712DD6009FD25D /* LogFileDestination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogFileDestination.swift; sourceTree = "<group>"; };
@@ -2379,6 +2375,8 @@
 		5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+SecurityFlags.swift"; sourceTree = "<group>"; };
 		5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+initWithUserType.swift"; sourceTree = "<group>"; };
+		5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfProfileViewControllerBuilder.swift; sourceTree = "<group>"; };
+		5966D82B2BD6995100305BBC /* MockViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockViewControllerBuilder.swift; sourceTree = "<group>"; };
 		596841C92BD14D200009C6B8 /* ImageTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTransformer.swift; sourceTree = "<group>"; };
 		596841CB2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreImageBasedImageTransformer.swift; sourceTree = "<group>"; };
 		597A3BB92B641F280020E337 /* UserStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatus.swift; sourceTree = "<group>"; };
@@ -2394,6 +2392,7 @@
 		59D8A62E2B7A75B0008236FF /* PersonalAccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalAccountView.swift; sourceTree = "<group>"; };
 		59D8A6302B7A7C2D008236FF /* AccountViewFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewFactory.swift; sourceTree = "<group>"; };
 		59D8A6322B7A7C37008236FF /* AccountViewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewProtocol.swift; sourceTree = "<group>"; };
+		59F02C102BD68F720077F147 /* ViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllerBuilder.swift; sourceTree = "<group>"; };
 		5E001FA32297FA0000F22CDD /* ConversationStateAccessoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationStateAccessoryView.swift; sourceTree = "<group>"; };
 		5E001FC8229BD2F200F22CDD /* TargetConversationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetConversationCell.swift; sourceTree = "<group>"; };
 		5E028DEB21F883DF00E5512A /* EmailPasswordTextFieldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPasswordTextFieldCell.swift; sourceTree = "<group>"; };
@@ -3027,7 +3026,7 @@
 		A9681D8523884FF1004FE917 /* Message+DateFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Message+DateFormatter.swift"; sourceTree = "<group>"; };
 		A96A21F023D5B865005B5579 /* ConversationInputBarViewController+Files.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+Files.swift"; sourceTree = "<group>"; };
 		A96A21F223D5BC25005B5579 /* UIResponder+FirstResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIResponder+FirstResponder.swift"; sourceTree = "<group>"; };
-		A96E230923EAD43A00C2195E /* PhoneNumberTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneNumberTests.swift; sourceTree = "<group>"; };
+		A96E230923EAD43A00C2195E /* UserPropertyValidator+phoneNumberValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserPropertyValidator+phoneNumberValidationTests.swift"; sourceTree = "<group>"; };
 		A96E802724C828070010CD80 /* WipeDatabaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WipeDatabaseViewController.swift; sourceTree = "<group>"; };
 		A96E802924C846E40010CD80 /* WipeDatabaseViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WipeDatabaseViewControllerTests.swift; sourceTree = "<group>"; };
 		A96E803124CB2AB60010CD80 /* PasscodeSetupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasscodeSetupViewController.swift; sourceTree = "<group>"; };
@@ -3535,7 +3534,6 @@
 		EE469EB52A9E3AE700620EA4 /* emojis.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = emojis.json; sourceTree = "<group>"; };
 		EE52378223F5566F00D4FE79 /* MockUserType+Creation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockUserType+Creation.swift"; sourceTree = "<group>"; };
 		EE52378523F556DC00D4FE79 /* MockUserType+SelfLegalHoldSubject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockUserType+SelfLegalHoldSubject.swift"; sourceTree = "<group>"; };
-		EE52378A23F5574D00D4FE79 /* MockUserType+ValidatorType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockUserType+ValidatorType.swift"; sourceTree = "<group>"; };
 		EE52378E23F557A600D4FE79 /* MockServiceUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServiceUserType.swift; sourceTree = "<group>"; };
 		EE52379023F557B900D4FE79 /* MockServiceUserType+Creation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockServiceUserType+Creation.swift"; sourceTree = "<group>"; };
 		EE52379223F5588000D4FE79 /* MockUserType+CodingKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockUserType+CodingKeys.swift"; sourceTree = "<group>"; };
@@ -3653,7 +3651,6 @@
 		EEE81E9723E0815600A1D035 /* ProfilePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePresenter.swift; sourceTree = "<group>"; };
 		EEE81E9923E091DF00A1D035 /* ProfilePresenter+ProfileViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProfilePresenter+ProfileViewControllerDelegate.swift"; sourceTree = "<group>"; };
 		EEEB8B56260B685300554C39 /* UserRightTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRightTests.swift; sourceTree = "<group>"; };
-		EEEED9B023F6EA4F008C94CA /* MockUserType+ZMEditableUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockUserType+ZMEditableUser.swift"; sourceTree = "<group>"; };
 		EEF28EE91F1613DA007642E2 /* MarkdownBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MarkdownBarView.swift; path = ../../MarkdownBarView.swift; sourceTree = "<group>"; };
 		EEF28EEC1F16692A007642E2 /* InputBarSecondaryButtonsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputBarSecondaryButtonsView.swift; sourceTree = "<group>"; };
 		EEF28EEE1F168039007642E2 /* ConversationInputBarViewController+Markdown.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+Markdown.swift"; sourceTree = "<group>"; };
@@ -3980,7 +3977,7 @@
 		F16427071FCC5BF800D2ABFC /* SetPasswordStepDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPasswordStepDescription.swift; sourceTree = "<group>"; };
 		F16E8EA7214A910F005ED9E2 /* ConversationInputBarViewController+Mentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+Mentions.swift"; sourceTree = "<group>"; };
 		F174AAAE218A0B1A00AFCC4D /* ColorScheme.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorScheme.swift; sourceTree = "<group>"; };
-		F174AAB0218B62D200AFCC4D /* UIColor+AccentColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+AccentColor.swift"; sourceTree = "<group>"; };
+		F174AAB0218B62D200AFCC4D /* AccentColor+UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AccentColor+UIColor.swift"; sourceTree = "<group>"; };
 		F17B0A9C219489DB005ECAD0 /* NetworkCondition+Helper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NetworkCondition+Helper.swift"; sourceTree = "<group>"; };
 		F18993B52241356C00535A74 /* ConversationContentViewController+Scrolling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationContentViewController+Scrolling.swift"; sourceTree = "<group>"; };
 		F18993B722413C9800535A74 /* ConversationContentViewController+ScrollViewDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationContentViewController+ScrollViewDelegate.swift"; sourceTree = "<group>"; };
@@ -4130,12 +4127,8 @@
 				01A5E046297FDAB500624B65 /* updateLicenses */,
 				01A5E047297FDAB500624B65 /* updateStylekit */,
 				01A5E048297FDAB500624B65 /* copyExtraAudioNotifications */,
-				01A5E04A297FDAB500624B65 /* install-templates.sh */,
 				01A5E04B297FDAB500624B65 /* embed-internal-resources */,
 				01A5E04C297FDAB500624B65 /* embedBuildInfo */,
-				01A5E04E297FDAB500624B65 /* use-local-framework */,
-				01A5E04F297FDAB500624B65 /* convertLocalNotificationSounds */,
-				01A5E050297FDAB500624B65 /* remove-bitcode.sh */,
 				01A5E051297FDAB500624B65 /* datadog-conditional-framework.sh */,
 			);
 			path = Scripts;
@@ -5909,6 +5902,7 @@
 				7CC085451F7AA30F0010F96B /* DotView.swift */,
 				1639A80E225F863000868AB9 /* ProfileHeaderViewController.swift */,
 				8745476A1E9E54E600C206E5 /* SelfProfileViewController.swift */,
+				5966D8292BD6983900305BBC /* SelfProfileViewControllerBuilder.swift */,
 				1610366E20616EBC008AFDD0 /* SelfProfileViewController+NewDeviceAlert.swift */,
 				8758220821B6999E00D68266 /* SelfProfileViewController+SettingsChangeAlert.swift */,
 				59D8A62B2B7A73B2008236FF /* ShapeView.swift */,
@@ -6064,8 +6058,6 @@
 				EE52379223F5588000D4FE79 /* MockUserType+CodingKeys.swift */,
 				EE52378223F5566F00D4FE79 /* MockUserType+Creation.swift */,
 				EE52378523F556DC00D4FE79 /* MockUserType+SelfLegalHoldSubject.swift */,
-				EE52378A23F5574D00D4FE79 /* MockUserType+ValidatorType.swift */,
-				EEEED9B023F6EA4F008C94CA /* MockUserType+ZMEditableUser.swift */,
 				1658C19520A1E2FA00148F6D /* MockVoiceChannel.swift */,
 				5E97C30220F4CFDA00C806B4 /* MockZiphyClient.swift */,
 				EF207B3A2208438700738E84 /* MockZMUserSession.swift */,
@@ -6447,6 +6439,7 @@
 				CE8E4FB61DF17BBE0009F437 /* TextTransform */,
 				8F5A3E9919AE2C9E00D0E9DA /* sound */,
 				8FC8512F199245760008B66B /* syncengine */,
+				F174AAB0218B62D200AFCC4D /* AccentColor+UIColor.swift */,
 				160FD05321085F3900C517B5 /* ImageCache.swift */,
 				EE88E00523FAC9EA00D24703 /* SelfUser.swift */,
 				87F18BC71E02E7BF00C69D9B /* Reusable.swift */,
@@ -7309,6 +7302,7 @@
 				5E52375F20E7E41800649241 /* VerticalColumns */,
 				6370DA1F2577933400B5C8F1 /* Views */,
 				A923F1C32428C562003F361F /* ZipFile */,
+				5966D82B2BD6995100305BBC /* MockViewControllerBuilder.swift */,
 				25CCE9D32BA1EA09002AB21F /* ProfileDeviceDetailsViewTests.swift */,
 			);
 			path = "Wire-iOS Tests";
@@ -7699,7 +7693,6 @@
 				542CDF3F24B32E2100DF0B39 /* HandleChangeStateTests.swift */,
 				EF23740F230D49EC006F53F3 /* NetworkInfoTests.swift */,
 				63CE88A32506A83300E457C7 /* OrientationDeltaTests.swift */,
-				A96E230923EAD43A00C2195E /* PhoneNumberTests.swift */,
 				2577CB602B189989007D3443 /* String+FingerprintTests.swift */,
 				EFF92B6521A854BA0090DA66 /* String+PhoneNumberTests.swift */,
 				EF4FFB3422830BD200B69851 /* String+WholeRangeTests.swift */,
@@ -7708,6 +7701,7 @@
 				5EBF4A3A21BE984E0021CFFC /* TransformTextViewTests.swift */,
 				061282622379C25500C1A53C /* UITextView+ReplaceTests.swift */,
 				EF17C52F2321417600245EBF /* UITraitEnvironmentTests.swift */,
+				A96E230923EAD43A00C2195E /* UserPropertyValidator+phoneNumberValidationTests.swift */,
 				EEEB8B56260B685300554C39 /* UserRightTests.swift */,
 				87240381215B92F00094363B /* ZMUserMentionsTest.swift */,
 				E66258902B4D65FD00C23E79 /* Developer */,
@@ -8532,7 +8526,6 @@
 				5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */,
 				CE8E4FAA1DF066750009F437 /* FilePreviewGenerator.swift */,
 				16BBEC852469941D00801AEC /* UIColor+NamedColors.swift */,
-				F174AAB0218B62D200AFCC4D /* UIColor+AccentColor.swift */,
 				CE8E4FA91DF066750009F437 /* FileMetaDataGenerator.swift */,
 				CE06C93E1DF5C3D900497685 /* AVAsset+VideoConvert.swift */,
 				8778AAEC1F6BC6AD0022F53F /* AppLock.swift */,
@@ -8565,6 +8558,7 @@
 				E9EBE0D8281958BE0058C793 /* FontSpec.swift */,
 				E91F901F2A851AE400B1A5B8 /* FontBook.swift */,
 				01F5EAE32B712DD6009FD25D /* LogFileDestination.swift */,
+				59F02C102BD68F720077F147 /* ViewControllerBuilder.swift */,
 			);
 			path = WireCommonComponents;
 			sourceTree = "<group>";
@@ -9140,6 +9134,7 @@
 				06717E5E2865188000AF442C /* SemanticColors.swift in Sources */,
 				06F9864525CC1440005572C5 /* UIStackView+Helper.swift in Sources */,
 				BF6EC90A1EB1FD0C009D9A69 /* ExtensionBackupExcluder.swift in Sources */,
+				5966D8452BD7F07800305BBC /* AccentColor+UIColor.swift in Sources */,
 				A955D3D923F5791100304851 /* String+URL.swift in Sources */,
 				D3095761283CEB1C00CEC620 /* MediaShareRestrictionManager.swift in Sources */,
 				06E89B0025C82CA9008E3846 /* PasscodeTextField.swift in Sources */,
@@ -9619,6 +9614,7 @@
 				EE01D08625ADA3D5001DB205 /* AppLockModule.Presenter.swift in Sources */,
 				D5168F282008ED0700F8222A /* KeyboardBlockObserver.swift in Sources */,
 				EF7E96EE214BB41800475C63 /* ContactsViewController+ContactsDataSourceDelegate.swift in Sources */,
+				5966D8442BD7F05E00305BBC /* AccentColor+UIColor.swift in Sources */,
 				BF0BDF6D1DA6794E003C61DE /* ConversationInputBarViewController+Ephemeral.swift in Sources */,
 				5E21344421CCED3B00273D0D /* PhoneNumberInputView.swift in Sources */,
 				8751A6CB1FF6573D00804A58 /* QuickActionsManager.swift in Sources */,
@@ -10093,6 +10089,7 @@
 				871BC2571D34F8F800DF0793 /* NavigationTransition.swift in Sources */,
 				8775BF212008CF3500A8AD93 /* ServiceView.swift in Sources */,
 				253C67492B88A3BB00965DE1 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsDebugActions.swift in Sources */,
+				5966D82A2BD6983900305BBC /* SelfProfileViewControllerBuilder.swift in Sources */,
 				06C412B0239103910018866F /* ConversationInputBarViewController+DragAndDrop.swift in Sources */,
 				166390D61DC8AC0C00D7BF1C /* String+Image.swift in Sources */,
 				A90E4AC42381EFCD00468F31 /* ZMButton.swift in Sources */,
@@ -10366,7 +10363,6 @@
 			files = (
 				16DF3B682289B92000D09365 /* LegalHoldDetailsViewControllerSnapshotTests.swift in Sources */,
 				EFAFCA8D213433D7002B31A6 /* ConversationListViewControllerTests.swift in Sources */,
-				EE52378B23F5574D00D4FE79 /* MockUserType+ValidatorType.swift in Sources */,
 				F1CB5D29215A3108001CCF5D /* MentionsHandlerTests.swift in Sources */,
 				EECA835426F211210087ECB0 /* UIAlertControllerFeatureConfigSnapshotTests.swift in Sources */,
 				A9AC63E123FC4A2D00016ABC /* AVURLAsset+conversionTests.swift in Sources */,
@@ -10385,7 +10381,6 @@
 				D35EEDBF28C2004000949F02 /* API.swift in Sources */,
 				068F558724336CAE000DC813 /* DigitalSignatureVerificationViewControllerTest.swift in Sources */,
 				5E97C30420F4CFFF00C806B4 /* MockZiphyClient.swift in Sources */,
-				EEEED9B223F6EA53008C94CA /* MockUserType+ZMEditableUser.swift in Sources */,
 				BF16FC4C1DAFCA0000FF4325 /* EphemeralKeyboardViewControllerTests.swift in Sources */,
 				D30E113C2A98CE3000D8C62D /* EmoliRepositoryTests.swift in Sources */,
 				63F239352694A151000BFFC6 /* Array+Prefix.swift in Sources */,
@@ -10716,6 +10711,7 @@
 				EF282B94228AFA970042D6C5 /* RequestPasswordViewControllerSnapshotTests.swift in Sources */,
 				EF80466520D17130001A1C53 /* MessageDestructionTimeoutValueTests.swift in Sources */,
 				D35EEDBC28C2004000949F02 /* AccessAPIClient.swift in Sources */,
+				5966D82C2BD6995100305BBC /* MockViewControllerBuilder.swift in Sources */,
 				1659FCCD234E415200D06C1F /* MockLabel.swift in Sources */,
 				706B282C27B3049700A511BD /* MockClassificationProvider.swift in Sources */,
 				EF106E86204D8BDF00B9F0F6 /* MockDevice.swift in Sources */,
@@ -10778,7 +10774,6 @@
 				E6579E482AFFA001004E7FD8 /* MockUserType+SelfLegalHoldSubject.swift in Sources */,
 				E6579E572AFFA024004E7FD8 /* MockPanGestureRecognizer.swift in Sources */,
 				E6579E632AFFA024004E7FD8 /* SwiftMockLoader.swift in Sources */,
-				E6579E492AFFA003004E7FD8 /* MockUserType+ValidatorType.swift in Sources */,
 				E6579E7C2AFFA979004E7FD8 /* UserRightTests.swift in Sources */,
 				E6C25FE62B0274F600406A1C /* CountryTests.swift in Sources */,
 				E6C25FEC2B027A9500406A1C /* NetworkInfoTests.swift in Sources */,
@@ -10798,11 +10793,10 @@
 				E6579E6B2AFFA024004E7FD8 /* MockUser+Service.swift in Sources */,
 				E6C25FF02B027C0200406A1C /* ZMUserMentionsTest.swift in Sources */,
 				E6579E672AFFA024004E7FD8 /* MockUser+MockUserArray.swift in Sources */,
-				E6C25FC82AFFABBF00406A1C /* PhoneNumberTests.swift in Sources */,
+				E6C25FC82AFFABBF00406A1C /* UserPropertyValidator+phoneNumberValidationTests.swift in Sources */,
 				E6579E452AFF9FF8004E7FD8 /* MockUserType.swift in Sources */,
 				E6579E5A2AFFA024004E7FD8 /* MockApplication.swift in Sources */,
 				E6579E662AFFA024004E7FD8 /* MockUserRight.swift in Sources */,
-				E6579E4A2AFFA007004E7FD8 /* MockUserType+ZMEditableUser.swift in Sources */,
 				E6579E582AFFA024004E7FD8 /* MockZiphyClient.swift in Sources */,
 				E682939A2B9B600C00322645 /* ConversationMissedCallSystemMessageViewModelTests.swift in Sources */,
 				E6579E682AFFA024004E7FD8 /* MockClassificationProvider.swift in Sources */,
@@ -10850,7 +10844,6 @@
 			files = (
 				63495DB423EB2D7B002A7C59 /* AutomationHelper+BackendEnvironment.swift in Sources */,
 				7CCFC111228B1E8E007C365B /* WireStyleKit.swift in Sources */,
-				5E001FA82298152200F22CDD /* UIColor+AccentColor.swift in Sources */,
 				5922D6D72BB56FA100A60408 /* Bundle+SecurityFlags.swift in Sources */,
 				F15650C221DD0A8A00210504 /* BackendEnvironment+Shared.swift in Sources */,
 				160782E023C8ED960065392B /* UserDefaults+ApplicationGroup.swift in Sources */,
@@ -10866,6 +10859,7 @@
 				F15650A121DCF3E700210504 /* ExtensionSettings.swift in Sources */,
 				5EA952C32260F90A00C83FDB /* StyleKitIconSize.swift in Sources */,
 				F15650AE21DCFCED00210504 /* SettingsPropertyName.swift in Sources */,
+				59F02C112BD68F720077F147 /* ViewControllerBuilder.swift in Sources */,
 				010497D52940DEAC0046124D /* DatadogWrapper.swift in Sources */,
 				A9730DDC250287360061BF36 /* Bundle+ThirdPartyKeys.swift in Sources */,
 				63F65EFB2464444B00534A69 /* TimedCircularProgressView.swift in Sources */,

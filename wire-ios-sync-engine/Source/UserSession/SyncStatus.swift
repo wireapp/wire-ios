@@ -181,12 +181,11 @@ extension SyncStatus {
                 currentSyncPhase = .fetchingMissedEvents
                 needsToRestartQuickSync = false
                 zmLog.debug("restarting quick sync since push channel was closed")
-                return
+            } else {
+                zmLog.debug("sync complete")
+                notifyQuickSyncDidFinish()
+                isForceQuickSync = false
             }
-
-            zmLog.debug("sync complete")
-            notifyQuickSyncDidFinish()
-            isForceQuickSync = false
         }
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }
