@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,18 +17,11 @@
 //
 
 import Foundation
-import LocalAuthentication
 
-struct MockLAContext: LAContextProtocol {
+extension ZMUpdateEvent: SafeForLoggingStringConvertible {
 
-    var evaluatedPolicyDomainState: Data?
-    var canEvaluate = true
-
-    func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool {
-        return canEvaluate
+    public var safeForLoggingDescription: String {
+        return type.stringValue ?? "unknown"
     }
 
-    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void) {
-        reply(true, nil)
-    }
 }

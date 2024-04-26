@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import CoreData
 
 /// An object that provides encryption at rest.
 ///
@@ -55,11 +56,8 @@ public protocol EARServiceInterface: AnyObject {
     func lockDatabase()
 
     /// Unlock the database.
-    ///
-    /// - Parameters:
-    ///   - context: a user authenticated context.
 
-    func unlockDatabase(context: LAContext) throws
+    func unlockDatabase() throws
 
     /// Fetch all public keys.
     ///
@@ -76,23 +74,6 @@ public protocol EARServiceInterface: AnyObject {
     func fetchPrivateKeys(includingPrimary: Bool) throws -> EARPrivateKeys?
 
     func setInitialEARFlagValue(_ enabled: Bool)
-}
-
-public protocol EARServiceDelegate: AnyObject {
-
-    /// Prepare for the migration of existing database content.
-    ///
-    /// When the migration can be started, invoke the `onReady` closure.
-
-    func prepareForMigration(onReady: @escaping (NSManagedObjectContext) throws -> Void) rethrows
-
-}
-
-public enum EARServiceFailure: Error {
-
-    case cannotPerformMigration
-    case databaseKeyMissing
-
 }
 
 public class EARService: EARServiceInterface {
@@ -114,21 +95,27 @@ public class EARService: EARServiceInterface {
     private let databaseKeyDescription: DatabaseEARKeyDescription
     private let earStorage: EARStorage
 
+    private let authenticationContext: any AuthenticationContextProtocol
+
     // MARK: - Life cycle
 
     public convenience init(
         accountID: UUID,
         databaseContexts: [NSManagedObjectContext] = [],
         canPerformKeyMigration: Bool = false,
-        sharedUserDefaults: UserDefaults
+        sharedUserDefaults: UserDefaults,
+        authenticationContext: any AuthenticationContextProtocol
     ) {
+        let earStorage = EARStorage(userID: accountID, sharedUserDefaults: sharedUserDefaults)
+
         self.init(
             accountID: accountID,
             keyRepository: EARKeyRepository(),
             keyEncryptor: EARKeyEncryptor(),
             databaseContexts: databaseContexts,
             canPerformKeyMigration: canPerformKeyMigration,
-            earStorage: EARStorage(userID: accountID, sharedUserDefaults: sharedUserDefaults)
+            earStorage: earStorage,
+            authenticationContext: authenticationContext
         )
     }
 
@@ -138,15 +125,18 @@ public class EARService: EARServiceInterface {
         keyEncryptor: EARKeyEncryptorInterface = EARKeyEncryptor(),
         databaseContexts: [NSManagedObjectContext],
         canPerformKeyMigration: Bool,
-        earStorage: EARStorage
+        earStorage: EARStorage,
+        authenticationContext: AuthenticationContextProtocol
     ) {
         self.accountID = accountID
         self.keyRepository = keyRepository
         self.keyEncryptor = keyEncryptor
         self.earStorage = earStorage
         self.databaseContexts = databaseContexts
+        self.authenticationContext = authenticationContext
+
         primaryPublicKeyDescription = .primaryKeyDescription(accountID: accountID)
-        primaryPrivateKeyDescription = .primaryKeyDescription(accountID: accountID)
+        primaryPrivateKeyDescription = .primaryKeyDescription(accountID: accountID, context: nil)
         secondaryPublicKeyDescription = .secondaryKeyDescription(accountID: accountID)
         secondaryPrivateKeyDescription = .secondaryKeyDescription(accountID: accountID)
         databaseKeyDescription = .keyDescription(accountID: accountID)
@@ -169,7 +159,7 @@ public class EARService: EARServiceInterface {
     // MARK: - Migrate keys
 
     private func migrateKeysIfNeeded() {
-        WireLogger.ear.info("migrating ear keys if needed...")
+        WireLogger.ear.info("migrating ear keys if needed...", attributes: .safePublic)
 
         guard
             isEAREnabled,
@@ -193,19 +183,19 @@ public class EARService: EARServiceInterface {
         skipMigration: Bool = false
     ) throws {
         guard !context.encryptMessagesAtRest else {
-            WireLogger.ear.warn("skip enableEncryptionAtRest because EAR already enabled ")
+            WireLogger.ear.warn("skip enableEncryptionAtRest because EAR already enabled")
             return
         }
 
         WireLogger.ear.info("turning on EAR")
 
         let enableEAR: (NSManagedObjectContext) throws -> Void = { [weak self] context in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             do {
                 try self.deleteExistingKeys()
                 try self.generateKeys()
-                let databaseKey = try self.fetchDecyptedDatabaseKey(context: LAContext())
+                let databaseKey = try self.fetchDecryptedDatabaseKey()
 
                 if !skipMigration {
                     try context.migrateTowardEncryptionAtRest(databaseKey: databaseKey)
@@ -253,7 +243,7 @@ public class EARService: EARServiceInterface {
         }
 
         let disableEAR: (NSManagedObjectContext) throws -> Void = { [weak self] context in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             self.earStorage.enableEAR(false)
             context.encryptMessagesAtRest = false
@@ -294,7 +284,7 @@ public class EARService: EARServiceInterface {
     }
 
     func deleteExistingKeys() throws {
-        WireLogger.ear.info("deleting existing keys")
+        WireLogger.ear.debug("deleting existing keys")
         try deletePrimaryKeys()
         try deleteSecondaryKeys()
         try deleteDatabaseKey()
@@ -316,7 +306,7 @@ public class EARService: EARServiceInterface {
 
     @discardableResult
     func generateKeys() throws -> VolatileData {
-        WireLogger.ear.info("generating new keys")
+        WireLogger.ear.debug("generating new keys")
 
         let primaryPublicKey = try generatePrimaryKeys().publicKey
         let secondaryPublicKey = try generateSecondaryKeys().publicKey
@@ -357,7 +347,7 @@ public class EARService: EARServiceInterface {
     }
 
     private func generateSecondaryKeys() throws -> (publicKey: SecKey, privateKey: SecKey) {
-        WireLogger.ear.info("generating secondary keys")
+        WireLogger.ear.debug("generating secondary keys")
 
         do {
             let id = secondaryPrivateKeyDescription.id
@@ -373,7 +363,7 @@ public class EARService: EARServiceInterface {
     }
 
     private func storePrimaryPublicKey(_ key: SecKey) throws {
-        WireLogger.ear.info("storing primary public key")
+        WireLogger.ear.debug("storing primary public key")
         try keyRepository.storePublicKey(
             description: primaryPublicKeyDescription,
             key: key
@@ -381,7 +371,7 @@ public class EARService: EARServiceInterface {
     }
 
     private func storeSecondaryPublicKey(_ key: SecKey) throws {
-        WireLogger.ear.info("storing secondary public key")
+        WireLogger.ear.debug("storing secondary public key")
         try keyRepository.storePublicKey(
             description: secondaryPublicKeyDescription,
             key: key
@@ -389,7 +379,7 @@ public class EARService: EARServiceInterface {
     }
 
     private func storeDatabaseKey(_ key: Data) throws {
-        WireLogger.ear.info("storing database key")
+        WireLogger.ear.debug("storing database key")
         try keyRepository.storeDatabaseKey(
             description: databaseKeyDescription,
             key: key
@@ -404,6 +394,7 @@ public class EARService: EARServiceInterface {
         }
 
         do {
+            WireLogger.ear.debug("fetch public keys")
             return EARPublicKeys(
                 primary: try fetchPrimaryPublicKey(),
                 secondary: try fetchSecondaryPublicKey()
@@ -440,17 +431,18 @@ public class EARService: EARServiceInterface {
         }
     }
 
-    private func fetchPrimaryPrivateKey(context: LAContext? = nil) throws -> SecKey {
-        if let context = context {
-            let authenticatedKeyDescription = PrivateEARKeyDescription.primaryKeyDescription(
-                accountID: accountID,
-                context: context
-            )
+    private func fetchPrimaryPrivateKey() throws -> SecKey {
+        WireLogger.ear.debug("fetching private primary key")
 
-            return try keyRepository.fetchPrivateKey(description: authenticatedKeyDescription)
-        } else {
-            return try keyRepository.fetchPrivateKey(description: primaryPrivateKeyDescription)
-        }
+        // create a new description instead of the stored `primaryPrivateKeyDescription`,
+        // because it doesn't not use the `authenticationContext`.
+
+        let authenticatedKeyDescription: PrivateEARKeyDescription = .primaryKeyDescription(
+            accountID: accountID,
+            context: authenticationContext
+        )
+
+        return try keyRepository.fetchPrivateKey(description: authenticatedKeyDescription)
     }
 
     private func fetchSecondaryPrivateKey() throws -> SecKey {
@@ -459,8 +451,8 @@ public class EARService: EARServiceInterface {
 
     // MARK: - Database key
 
-    private func fetchDecyptedDatabaseKey(context: LAContext) throws -> VolatileData {
-        let privateKey = try fetchPrimaryPrivateKey(context: context)
+    private func fetchDecryptedDatabaseKey() throws -> VolatileData {
+        let privateKey = try fetchPrimaryPrivateKey()
         let encryptedDatabaseKeyData = try fetchEncryptedDatabaseKey()
         let databaseKeyData = try keyEncryptor.decryptDatabaseKey(
             encryptedDatabaseKeyData,
@@ -476,15 +468,15 @@ public class EARService: EARServiceInterface {
     // MARK: - Lock / unlock database
 
     public func lockDatabase() {
-        WireLogger.ear.info("locking database")
+        WireLogger.ear.info("locking database", attributes: .safePublic)
         setDatabaseKeyInAllContexts(nil)
         keyRepository.clearCache()
     }
 
-    public func unlockDatabase(context: LAContext) throws {
+    public func unlockDatabase() throws {
         do {
-            WireLogger.ear.info("unlocking database")
-            let databaseKey = try fetchDecyptedDatabaseKey(context: context)
+            WireLogger.ear.info("unlocking database", attributes: .safePublic)
+            let databaseKey = try fetchDecryptedDatabaseKey()
             setDatabaseKeyInAllContexts(databaseKey)
         } catch {
             WireLogger.ear.error("failed to unlock database: \(String(describing: error))")
@@ -504,36 +496,6 @@ public class EARService: EARServiceInterface {
                 block(context)
             }
         }
-    }
-
-}
-
-public struct EARPublicKeys {
-
-    public let primary: SecKey
-    public let secondary: SecKey
-
-    public init(
-        primary: SecKey,
-        secondary: SecKey
-    ) {
-        self.primary = primary
-        self.secondary = secondary
-    }
-
-}
-
-public struct EARPrivateKeys {
-
-    public let primary: SecKey?
-    public let secondary: SecKey
-
-    public init(
-        primary: SecKey?,
-        secondary: SecKey
-    ) {
-        self.primary = primary
-        self.secondary = secondary
     }
 
 }

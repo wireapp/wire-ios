@@ -25,10 +25,11 @@ import WireCommonComponents
 public final class AppRootRouter: NSObject {
 
     // MARK: - Public Property
+
     let screenCurtain = ScreenCurtain()
 
     // MARK: - Private Property
-    private let navigator: NavigatorProtocol
+
     private var appStateCalculator: AppStateCalculator
     private var urlActionRouter: URLActionRouter
 
@@ -48,6 +49,7 @@ public final class AppRootRouter: NSObject {
     private let teamMetadataRefresher = TeamMetadataRefresher()
 
     // MARK: - Private Set Property
+
     private(set) var sessionManager: SessionManager
 
     // TO DO: This should be private
@@ -57,13 +59,12 @@ public final class AppRootRouter: NSObject {
 
     // MARK: - Initialization
 
-    init(viewController: RootViewController,
-         navigator: NavigatorProtocol,
-         sessionManager: SessionManager,
-         appStateCalculator: AppStateCalculator
+    init(
+        viewController: RootViewController,
+        sessionManager: SessionManager,
+        appStateCalculator: AppStateCalculator
     ) {
         self.rootViewController = viewController
-        self.navigator = navigator
         self.sessionManager = sessionManager
         self.appStateCalculator = appStateCalculator
         self.urlActionRouter = URLActionRouter(viewController: viewController)
@@ -463,7 +464,6 @@ extension AppRootRouter {
     }
 }
 
-// TO DO: THIS PART MUST BE CLENED UP
 extension AppRootRouter {
     private func applicationWillTransition(to appState: AppState) {
         appStateTransitionGroup.enter()

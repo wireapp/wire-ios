@@ -106,12 +106,11 @@ public final class ZMUserSession: NSObject {
 
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     private(set) var coreCryptoProvider: CoreCryptoProvider
+    private(set) var userId: UUID
     private(set) lazy var proteusService: ProteusServiceInterface = ProteusService(coreCryptoProvider: coreCryptoProvider)
     private(set) var mlsService: MLSServiceInterface
     private(set) var proteusProvider: ProteusProviding!
     let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
-    let cRLsChecker: CertificateRevocationListsChecking
-    let cRLsDistributionPointsObserver: CRLsDistributionPointsObserving
     let mlsConversationVerificationStatusUpdater: MLSConversationVerificationStatusUpdating
     let observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol
     public let updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol
@@ -124,7 +123,8 @@ public final class ZMUserSession: NSObject {
 
     let earService: EARServiceInterface
 
-    public var appLockController: AppLockType
+    public internal(set) var appLockController: AppLockType
+    private let contextStorage = LAContextStorage()
 
     public var fileSharingFeature: Feature.FileSharing {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
@@ -181,6 +181,23 @@ public final class ZMUserSession: NSObject {
         return StopCertificateEnrollmentSnoozerUseCase(
             recurringActionService: recurringActionService,
             accountId: account.userIdentifier)
+    }()
+
+    lazy var cRLsChecker: CertificateRevocationListsChecker = {
+        return CertificateRevocationListsChecker(
+            userID: userId,
+            crlAPI: CertificateRevocationListAPI(),
+            mlsConversationsVerificationUpdater: mlsConversationVerificationStatusUpdater,
+            selfClientCertificateProvider: selfClientCertificateProvider,
+            coreCryptoProvider: coreCryptoProvider,
+            context: coreDataStack.syncContext
+        )
+    }()
+
+    lazy var cRLsDistributionPointsObserver: CRLsDistributionPointsObserver = {
+        return CRLsDistributionPointsObserver(
+            cRLsChecker: self.cRLsChecker
+        )
     }()
 
     public var hasCompletedInitialSync: Bool = false
@@ -284,19 +301,7 @@ public final class ZMUserSession: NSObject {
         transportSession.tearDown()
         notificationDispatcher.tearDown()
         callCenter?.tearDown()
-
-        // Wait for all sync operations to finish
-        syncManagedObjectContext.performGroupedBlockAndWait { }
-
-        let uiMOC = coreDataStack.viewContext
-        coreDataStack = nil
-
-        let shouldWaitOnUIMoc = !(OperationQueue.current == OperationQueue.main && uiMOC.concurrencyType == .mainQueueConcurrencyType)
-        if shouldWaitOnUIMoc {
-            uiMOC.performAndWait {
-                // warning: this will hang if the uiMoc queue is same as self.requestQueue (typically uiMoc queue is the main queue)
-            }
-        }
+        coreDataStack.close()
 
         NotificationCenter.default.removeObserver(self)
 
@@ -403,8 +408,6 @@ public final class ZMUserSession: NSObject {
         proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating? = nil,
         sharedUserDefaults: UserDefaults,
         useCaseFactory: UseCaseFactoryProtocol? = nil,
-        cRLsChecker: CertificateRevocationListsChecker? = nil,
-        cRLsDistributionPointsObserver: CRLsDistributionPointsObserver? = nil,
         observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol? = nil
     ) {
         coreDataStack.syncContext.performGroupedBlockAndWait {
@@ -427,7 +430,12 @@ public final class ZMUserSession: NSObject {
         self.topConversationsDirectory = TopConversationsDirectory(managedObjectContext: coreDataStack.viewContext)
         self.debugCommands = ZMUserSession.initDebugCommands()
         self.legacyHotFix = ZMHotFix(syncMOC: coreDataStack.syncContext)
-        self.appLockController = AppLockController(userId: userId, selfUser: .selfUser(in: coreDataStack.viewContext), legacyConfig: configuration.appLockConfig)
+        self.appLockController = AppLockController(
+            userId: userId,
+            selfUser: .selfUser(in: coreDataStack.viewContext),
+            legacyConfig: configuration.appLockConfig,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
+        )
         self.coreCryptoProvider = CoreCryptoProvider(
             selfUserID: userId,
             sharedContainerURL: coreDataStack.applicationContainer,
@@ -438,6 +446,7 @@ public final class ZMUserSession: NSObject {
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
         )
+        self.userId = userId
 
         self.lastE2EIUpdateDateRepository = LastE2EIdentityUpdateDateRepository(userID: userId, sharedUserDefaults: UserDefaults.standard)
         self.e2eiActivationDateRepository = E2EIActivationDateRepository(
@@ -460,7 +469,8 @@ public final class ZMUserSession: NSObject {
                 coreDataStack.searchContext
             ],
             canPerformKeyMigration: true,
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
         )
 
         let mlsService = mlsService ?? MLSService(
@@ -494,18 +504,6 @@ public final class ZMUserSession: NSObject {
         self.mlsConversationVerificationStatusUpdater = MLSConversationVerificationStatusUpdater(
             updateMLSGroupVerificationStatus: updateMLSGroupVerificationStatus,
             syncContext: coreDataStack.syncContext
-        )
-
-        self.cRLsChecker = cRLsChecker ?? CertificateRevocationListsChecker(
-            userID: userId,
-            crlAPI: CertificateRevocationListAPI(),
-            mlsConversationsVerificationUpdater: mlsConversationVerificationStatusUpdater,
-            coreCryptoProvider: coreCryptoProvider,
-            context: coreDataStack.syncContext
-        )
-
-        self.cRLsDistributionPointsObserver = cRLsDistributionPointsObserver ?? CRLsDistributionPointsObserver(
-            cRLsChecker: self.cRLsChecker
         )
 
         self.observeMLSGroupVerificationStatus = observeMLSGroupVerificationStatus ?? ObserveMLSGroupVerificationStatusUseCase(
@@ -560,12 +558,10 @@ public final class ZMUserSession: NSObject {
             self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
 
-            if e2eiFeature.isEnabled {
-                self.observeMLSGroupVerificationStatus.invoke()
-                self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
-                    from: self.mlsService.onNewCRLsDistributionPoints()
-                )
-            }
+            self.observeMLSGroupVerificationStatus.invoke()
+            self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
+                from: self.mlsService.onNewCRLsDistributionPoints()
+            )
         }
 
         registerForCalculateBadgeCountNotification()
@@ -619,7 +615,8 @@ public final class ZMUserSession: NSObject {
             transportSession: transportSession,
             proteusProvider: self.proteusProvider,
             mlsService: mlsService,
-            coreCryptoProvider: coreCryptoProvider
+            coreCryptoProvider: coreCryptoProvider,
+            usecaseFactory: useCaseFactory
         )
     }
 
@@ -792,8 +789,8 @@ public final class ZMUserSession: NSObject {
 
     // MARK: - Caches
 
-    func purgeTemporaryAssets() {
-        assetCache.purgeTemporaryAssets()
+    func purgeTemporaryAssets() throws {
+        try assetCache.purgeTemporaryAssets()
     }
 
 }
@@ -931,8 +928,8 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.notifyThirdPartyServices()
+            self?.checkE2EICertificateExpiryStatus()
         }
-        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
     }
 
     func processEvents() {
@@ -960,7 +957,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
                 }
             }
 
-            await managedObjectContext.perform(schedule: .enqueued) { [weak self] in
+            await managedObjectContext.perform { [weak self] in
                 self?.isPerformingSync = isSyncing || processingInterrupted
                 self?.updateNetworkState()
             }
@@ -998,6 +995,15 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
             self?.delegate?.clientRegistrationDidSucceed(accountId: accountId)
         }
+
+        if userClient.hasRegisteredMLSClient {
+            // Before the client was registered as an MLS client,
+            // They wouldn't have been able to migrate any conversations from Proteus to MLS.
+            // So we perform a slow sync to sync the conversations. This will ensure that
+            // the message protocol of each conversation is up-to-date.
+            // The client will then join any MLS groups they haven't joined yet.
+            syncStatus.forceSlowSync()
+        }
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {
@@ -1030,6 +1036,11 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
             self?.delegate?.authenticationInvalidated(error as NSError, accountId: accountId)
         }
+    }
+
+    func checkE2EICertificateExpiryStatus() {
+        guard e2eiFeature.isEnabled else { return }
+        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
     }
 }
 

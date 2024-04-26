@@ -58,6 +58,7 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
     enum Failure: Error {
         case missingIdentityProvider
         case missingClientId
+        case missingSelfClientID
         case failedToDecodeCertificate
         case failedToEnrollCertificate(_ underlyingError: Error)
     }
@@ -91,6 +92,7 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             try await e2eiRepository.fetchTrustAnchor()
         } catch {
             logger.warn("failed to register trust anchor: \(error.localizedDescription)")
+            throw error
         }
 
         do {
@@ -129,6 +131,11 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
         let selfClientId = await context.perform {
             ZMUser.selfUser(in: self.context).selfClient()?.remoteIdentifier
         }
+
+        guard let selfClientId else {
+            throw Failure.missingSelfClientID
+        }
+
         let isUpgradingMLSClient = await context.perform {
             ZMUser.selfUser(in: self.context).selfClient()?.hasRegisteredMLSClient ?? false
         }
@@ -140,10 +147,10 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             acmeAudience: acmeAudience)
         let oAuthResponse = try await authenticate(parameters)
 
-        let wireNonce = try await enrollment.getWireNonce(clientId: selfClientId ?? "")
+        let wireNonce = try await enrollment.getWireNonce(clientId: selfClientId)
         let dpopToken = try await enrollment.getDPoPToken(wireNonce)
         let wireAccessToken = try await enrollment.getWireAccessToken(
-            clientId: selfClientId ?? "",
+            clientId: selfClientId,
             dpopToken: dpopToken)
 
         let dpopChallengeResponse = try await enrollment.validateDPoPChallenge(
@@ -178,6 +185,7 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
                 isUpgradingMLSClient: isUpgradingMLSClient,
                 enrollment: enrollment,
                 certificateChain: certificateChain)
+            notifyE2EICertificateChange()
 
             return certificateChain
         } catch {
@@ -202,6 +210,10 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
             return nil
         }
         return clientId
+    }
+
+    private func notifyE2EICertificateChange() {
+        NotificationCenter.default.post(name: .e2eiCertificateChanged, object: self)
     }
 
 }

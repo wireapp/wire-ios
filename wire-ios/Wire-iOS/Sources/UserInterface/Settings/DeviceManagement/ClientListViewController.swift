@@ -223,14 +223,8 @@ final class ClientListViewController: UIViewController,
         }
         selectedDeviceInfoViewModel = viewModel
 
-        let detailsView = DeviceDetailsView(viewModel: viewModel) {
-            self.navigationController?.setNavigationBarHidden(false, animated: false)
-        }
-        let hostingViewController = UIHostingController(rootView: detailsView)
-        hostingViewController.view.backgroundColor = SemanticColors.View.backgroundDefault
-
-        navigationController.pushViewController(hostingViewController, animated: true)
-        navigationController.isNavigationBarHidden = true
+        let detailsViewController = DeviceInfoViewController(rootView: DeviceDetailsView(viewModel: viewModel))
+        navigationController.pushViewController(detailsViewController, animated: true)
     }
 
     private func makeDeviceInfoViewModel(
@@ -259,7 +253,7 @@ final class ClientListViewController: UIViewController,
             actionsHandler: deviceActionsHandler,
             conversationClientDetailsActions: deviceActionsHandler,
             debugMenuActionsHandler: deviceActionsHandler,
-            showDebugMenu: Bundle.developerModeEnabled
+            isDebugMenuAvailable: false
         )
     }
 
@@ -555,8 +549,6 @@ final class ClientListViewController: UIViewController,
             for (client, mlsClientId) in mlsClients {
                 if let e2eiCertificate = certificates.first(where: { $0.clientId == mlsClientId.rawValue }) {
                     client.e2eIdentityCertificate = e2eiCertificate
-                } else {
-                    client.e2eIdentityCertificate = makeNotActivatedE2EIdenityCertificate(client: client)
                 }
                 client.mlsThumbPrint = client.e2eIdentityCertificate?.mlsThumbprint
             }
@@ -598,24 +590,6 @@ final class ClientListViewController: UIViewController,
         }
 
         return clients.first { $0.clientId == selectedUserClient.clientId }
-    }
-
-    // MARK: Helpers
-
-    private func makeNotActivatedE2EIdenityCertificate(client: UserClient) -> E2eIdentityCertificate? {
-        guard let clientID = MLSClientID(userClient: client) else {
-            return nil
-        }
-
-        return E2eIdentityCertificate(
-            clientId: clientID.rawValue,
-            certificateDetails: "",
-            mlsThumbprint: "",
-            notValidBefore: .now,
-            expiryDate: .now,
-            certificateStatus: .notActivated,
-            serialNumber: ""
-        )
     }
 }
 

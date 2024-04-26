@@ -27,7 +27,7 @@ extension SessionManager: VoIPPushManagerDelegate {
         payload: [AnyHashable: Any],
         completion: @escaping () -> Void
     ) {
-        Logging.push.info("processing incoming (real) voIP push payload: \(payload)")
+        WireLogger.notifications.info("processing incoming (real) voIP push payload: \(payload)")
 
         // We were given some time to run, resume background task creation.
         BackgroundActivityFactory.shared.resume()
@@ -39,21 +39,24 @@ extension SessionManager: VoIPPushManagerDelegate {
             let activity = BackgroundActivityFactory.shared.startBackgroundActivity(
                 withName: "\(payload.stringIdentifier)",
                 expirationHandler: { [weak self] in
-                  Logging.push.warn("Processing push payload expired: \(payload)")
+                  WireLogger.notifications.warn("Processing push payload expired: \(payload)")
                   self?.notificationsTracker?.registerProcessingExpired()
                 }
             )
         else {
-            Logging.push.warn("Aborted processing of payload: \(payload)")
+            WireLogger.notifications.warn("Aborted processing of payload: \(payload)")
             notificationsTracker?.registerProcessingAborted()
             return completion()
         }
 
         withSession(for: account, perform: { userSession in
-            Logging.push.safePublic("Forwarding push payload to user session with account \(account.userIdentifier)")
+            WireLogger.notifications.info(
+                "Forwarding push payload to user session with account \(account.userIdentifier)",
+                attributes: .safePublic
+            )
 
             userSession.receivedPushNotification(with: payload, completion: { [weak self] in
-                Logging.push.info("Processing push payload completed")
+                WireLogger.notifications.info("Processing push payload completed")
                 self?.notificationsTracker?.registerNotificationProcessingCompleted()
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 completion()
