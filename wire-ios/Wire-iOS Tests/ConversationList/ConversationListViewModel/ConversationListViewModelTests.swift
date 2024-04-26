@@ -17,8 +17,9 @@
 //
 
 import XCTest
-@testable import Wire
 import DifferenceKit
+
+@testable import Wire
 
 final class MockConversationListViewModelDelegate: NSObject, ConversationListViewModelDelegate {
     func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: Int) {

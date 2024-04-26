@@ -339,10 +339,6 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         return startUIViewController
     }
 
-    func presentPeoplePicker() {
-        setState(.peoplePicker, animated: true)
-    }
-
     func presentSettings() {
         setState(.settings, animated: true)
     }
@@ -373,22 +369,27 @@ final class ConversationListViewController: UIViewController, ConversationListCo
 extension ConversationListViewController: UITabBarDelegate {
 
     func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        guard let type = item.type else { return }
+        guard let tabBar = tabBar as? ConversationListTabBar, let type = item.type else { return }
 
         switch type {
-        case .archive:
-            setState(.archived, animated: true)
         case .startUI:
-            presentPeoplePicker()
+            setState(.peoplePicker, animated: true) {
+                tabBar.selectedTab = .list
+            }
+        case .archive:
+            setState(.archived, animated: true) {
+                tabBar.selectedTab = .list
+            }
         case .list:
             listContentController.listViewModel.folderEnabled = false
         case .settings:
-            presentSettings()
+            // presentSettings()
+            assertionFailure("TODO [WPB-7306]: implement showing settings as tab")
         }
     }
 }
 
-private extension UITabBarItem {
+extension UITabBarItem {
 
     var type: TabBarItemType? {
         .allCases.first { $0.rawValue == tag }
@@ -436,6 +437,6 @@ extension UITabBar {
 extension ConversationListViewController: ConversationListTopBarViewControllerDelegate {
 
     func conversationListTopBarViewControllerDidSelectNewConversation(_ viewController: ConversationListTopBarViewController) {
-        presentPeoplePicker()
+        setState(.peoplePicker, animated: true)
     }
 }

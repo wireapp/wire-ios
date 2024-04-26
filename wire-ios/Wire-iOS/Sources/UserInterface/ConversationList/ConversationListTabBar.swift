@@ -27,8 +27,6 @@ enum TabBarItemType: Int, CaseIterable {
 
     case startUI, list, archive, settings
 
-    var order: Int { rawValue }
-
     var icon: UIImage {
         switch self {
         case .startUI:
@@ -116,7 +114,13 @@ final class ConversationListTabBar: UITabBar {
     private let archivedTab = UITabBarItem(type: .archive)
     private let settingsTab = UITabBarItem(type: .settings)
 
+    var selectedTab: TabBarItemType? {
+        get { selectedItem?.type }
+        set { selectedItem = items?.first { $0.type == newValue } }
+    }
+
     // MARK: - Init
+
     init() {
         super.init(frame: .zero)
         setupViews()
@@ -131,7 +135,8 @@ final class ConversationListTabBar: UITabBar {
 
         barTintColor = SemanticColors.View.backgroundConversationList
         isTranslucent = false
-        items = [startTab, listTab, archivedTab]
+        items = [startTab, listTab, archivedTab, settingsTab]
+        selectedItem = listTab
     }
 
     private func setupLargeContentViewer() {
@@ -149,7 +154,6 @@ extension ConversationListTabBar: UILargeContentViewerInteractionDelegate {
 
     func largeContentViewerInteraction(_: UILargeContentViewerInteraction, itemAt: CGPoint) -> UILargeContentViewerItem? {
         setupLargeContentViewer(at: itemAt)
-
         return self
     }
 
@@ -169,7 +173,7 @@ extension UITabBarItem {
                   image: type.icon.resize(for: .medium).withRenderingMode(.alwaysTemplate),
                   selectedImage: type.selectedIcon.resize(for: .medium).withRenderingMode(.alwaysTemplate))
 
-        tag = type.order
+        tag = type.rawValue
 
         /// Setup accessibility properties
         accessibilityIdentifier = type.accessibilityIdentifier
