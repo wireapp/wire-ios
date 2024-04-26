@@ -350,12 +350,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
             kind: kind
         )
 
-        if error != nil {
-            textFieldValidationDelegate?.validationUpdated(sender: self, error: error)
-            updateConfirmButton()
-        }
-
-        textFieldValidationDelegate?.validationUpdated(sender: self, error: nil)
+        textFieldValidationDelegate?.validationUpdated(sender: self, error: error)
         updateConfirmButton()
     }
 
