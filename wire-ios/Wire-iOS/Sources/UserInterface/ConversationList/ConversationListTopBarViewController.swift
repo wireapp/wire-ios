@@ -23,12 +23,13 @@ import WireCommonComponents
 
 final class ConversationListTopBarViewController: UIViewController {
 
+    weak var delegate: ConversationListTopBarViewControllerDelegate?
+
     private let account: Account
 
     private let selfUser: SelfUserType
     private var userSession: UserSession
     private let selfProfileViewControllerBuilder: ViewControllerBuilder
-    private let newConversationViewControllerBuilder: ViewControllerBuilder
     private var observerToken: NSObjectProtocol?
 
     var topBar: TopBar? {
@@ -41,14 +42,12 @@ final class ConversationListTopBarViewController: UIViewController {
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        selfProfileViewControllerBuilder: ViewControllerBuilder,
-        newConversationViewControllerBuilder: ViewControllerBuilder
+        selfProfileViewControllerBuilder: ViewControllerBuilder
     ) {
         self.account = account
         self.selfUser = selfUser
         self.userSession = userSession
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
-        self.newConversationViewControllerBuilder = newConversationViewControllerBuilder
 
         super.init(nibName: nil, bundle: nil)
 
@@ -100,9 +99,8 @@ final class ConversationListTopBarViewController: UIViewController {
         stackView.addArrangedSubview(UIButton(primaryAction: filterConversationsAction))
 
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
-        let newConversationAction = UIAction(image: newConversationImage) { [self] _ in
-            let viewController = newConversationViewControllerBuilder.build()
-            show(viewController, animated: true) {}
+        let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
+            self?.delegate?.conversationListTopBarViewControllerDidSelectNewConversation(self!)
         }
         stackView.addArrangedSubview(UIButton(primaryAction: newConversationAction))
     }

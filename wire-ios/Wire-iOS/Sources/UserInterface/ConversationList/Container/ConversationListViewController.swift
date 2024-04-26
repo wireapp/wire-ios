@@ -23,9 +23,9 @@ import WireSyncEngine
 
 enum ConversationListState {
     case conversationList
-    case peoplePicker
     case archived
     case settings
+    case peoplePicker
 }
 
 final class ConversationListViewController: UIViewController, ConversationListContainerViewModelDelegate {
@@ -39,7 +39,6 @@ final class ConversationListViewController: UIViewController, ConversationListCo
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
     private let selfProfileViewControllerBuilder: ViewControllerBuilder
-    private let newConversationViewControllerBuilder: ViewControllerBuilder
     let settingsViewControllerBuilder: ViewControllerBuilder
 
     /// for NetworkStatusViewDelegate
@@ -80,7 +79,6 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         selfUser: SelfUserType,
         userSession: UserSession,
         selfProfileViewControllerBuilder: ViewControllerBuilder,
-        newConversationViewControllerBuilder: ViewControllerBuilder,
         settingsViewControllerBuilder: ViewControllerBuilder
     ) {
         let viewModel = ConversationListViewController.ViewModel(
@@ -91,7 +89,6 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         self.init(
             viewModel: viewModel,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
-            newConversationViewControllerBuilder: newConversationViewControllerBuilder,
             settingsViewControllerBuilder: settingsViewControllerBuilder
         )
         onboardingHint.arrowPointToView = tabBar
@@ -100,20 +97,17 @@ final class ConversationListViewController: UIViewController, ConversationListCo
     required init(
         viewModel: ViewModel,
         selfProfileViewControllerBuilder: ViewControllerBuilder,
-        newConversationViewControllerBuilder: ViewControllerBuilder,
         settingsViewControllerBuilder: ViewControllerBuilder
     ) {
         self.viewModel = viewModel
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
-        self.newConversationViewControllerBuilder = newConversationViewControllerBuilder
         self.settingsViewControllerBuilder = settingsViewControllerBuilder
 
         topBarViewController = ConversationListTopBarViewController(
             account: viewModel.account,
             selfUser: viewModel.selfUser,
             userSession: viewModel.userSession,
-            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
-            newConversationViewControllerBuilder: newConversationViewControllerBuilder
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
@@ -138,6 +132,7 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         createViewConstraints()
 
         viewModel.viewController = self
+        topBarViewController.delegate = self
     }
 
     @available(*, unavailable)
@@ -452,5 +447,14 @@ extension UITabBar {
             return UITraitCollection(traitsFrom: [super.traitCollection, UITraitCollection(horizontalSizeClass: .compact)])
         }
         return super.traitCollection
+    }
+}
+
+// MARK: - ConversationListTopBarViewControllerDelegate
+
+extension ConversationListViewController: ConversationListTopBarViewControllerDelegate {
+
+    func conversationListTopBarViewControllerDidSelectNewConversation(_ viewController: ConversationListTopBarViewController) {
+        presentPeoplePicker()
     }
 }
