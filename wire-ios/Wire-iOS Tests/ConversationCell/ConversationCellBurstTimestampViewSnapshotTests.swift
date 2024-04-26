@@ -20,7 +20,6 @@ import SnapshotTesting
 import XCTest
 
 @testable import Wire
-import XCTest
 
 final class ConversationCellBurstTimestampViewSnapshotTests: BaseSnapshotTestCase {
 

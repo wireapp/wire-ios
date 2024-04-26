@@ -17,11 +17,10 @@
 //
 
 import avs
+import WireCommonComponents
 import XCTest
 
 @testable import Wire
-import WireCommonComponents
-import XCTest
 
 final class MockZMEditableUser: MockUser, ZMEditableUser, ValidatorType {
     var needsRichProfileUpdate: Bool = false
