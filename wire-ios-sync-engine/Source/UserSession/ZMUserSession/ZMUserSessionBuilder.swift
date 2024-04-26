@@ -89,7 +89,7 @@ struct ZMUserSessionBuilder {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
         }
 
-        let userSession = ZMUserSession(
+        return ZMUserSession(
             userId: userId,
             transportSession: transportSession,
             mediaManager: mediaManager,
@@ -117,8 +117,6 @@ struct ZMUserSessionBuilder {
             recurringActionService: recurringActionService,
             dependencies: dependencies
         )
-
-        return userSession
     }
 
     // MARK: - Setup Dependencies
@@ -180,7 +178,6 @@ struct ZMUserSessionBuilder {
             coreCryptoProvider: coreCryptoProvider,
             analytics: analytics
         )
-        let dependencies = UserSessionDependencies(caches: .init())
         let e2eiActivationDateRepository = E2EIActivationDateRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
@@ -239,7 +236,7 @@ struct ZMUserSessionBuilder {
         self.coreCryptoProvider = coreCryptoProvider
         self.coreDataStack = coreDataStack
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
-        self.dependencies = dependencies
+        self.dependencies = buildUserSessionDependencies(coreDataStack: coreDataStack)
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
         self.earService = earService
         self.flowManager = flowManager
@@ -256,5 +253,31 @@ struct ZMUserSessionBuilder {
         self.updateMLSGroupVerificationStatusUseCase = updateMLSGroupVerificationStatus
         self.useCaseFactory = useCaseFactory
         self.userId = userId
+    }
+
+    // MARK: UserSesssionDependencies
+
+    private func buildUserSessionDependencies(coreDataStack: CoreDataStack) -> UserSessionDependencies {
+        UserSessionDependencies(
+            caches: buildCaches(coreDataStack: coreDataStack)
+        )
+    }
+
+    private func buildCaches(coreDataStack: CoreDataStack) -> UserSessionDependencies.Caches {
+        let cacheLocation = FileManager.default.cachesURLForAccount(
+            with: coreDataStack.account.userIdentifier,
+            in: coreDataStack.applicationContainer
+        )
+
+        ZMUserSession.moveCachesIfNeededForAccount(
+            with: coreDataStack.account.userIdentifier,
+            in: coreDataStack.applicationContainer
+        )
+
+        return UserSessionDependencies.Caches(
+            fileAssets: FileAssetCache(location: cacheLocation),
+            userImages: UserImageLocalCache(location: cacheLocation),
+            searchUsers: NSCache()
+        )
     }
 }

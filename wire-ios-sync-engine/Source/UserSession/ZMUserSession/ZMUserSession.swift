@@ -393,8 +393,9 @@ public final class ZMUserSession: NSObject {
         operationLoop: ZMOperationLoop?,
         configuration: Configuration
     ) {
-        coreDataStack.linkContexts()
         coreDataStack.linkAnalytics(analytics)
+        coreDataStack.linkCaches(dependencies.caches)
+        coreDataStack.linkContexts()
 
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
         self.earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)
@@ -402,8 +403,6 @@ public final class ZMUserSession: NSObject {
         appLockController.delegate = self
         applicationStatusDirectory.syncStatus.syncStateDelegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
-
-        configureCaches()
 
         syncManagedObjectContext.performGroupedBlockAndWait { [self] in
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
@@ -487,33 +486,6 @@ public final class ZMUserSession: NSObject {
         }
         transportSession.setAccessTokenRenewalSuccessHandler { [weak self]  _, _ in
             self?.transportSessionAccessTokenDidSucceed()
-        }
-    }
-
-    private func configureCaches() {
-        let cacheLocation = FileManager.default.cachesURLForAccount(
-            with: coreDataStack.account.userIdentifier,
-            in: coreDataStack.applicationContainer
-        )
-
-        ZMUserSession.moveCachesIfNeededForAccount(
-            with: coreDataStack.account.userIdentifier,
-            in: coreDataStack.applicationContainer
-        )
-
-        let fileAssetCache = FileAssetCache(location: cacheLocation)
-        let userImageCache = UserImageLocalCache(location: cacheLocation)
-
-        dependencies.caches.fileAssets = fileAssetCache
-        dependencies.caches.userImages = userImageCache
-        dependencies.caches.searchUsers = NSCache()
-
-        managedObjectContext.zm_userImageCache = userImageCache
-        managedObjectContext.zm_fileAssetCache = fileAssetCache
-
-        syncManagedObjectContext.performGroupedBlockAndWait {
-            self.syncManagedObjectContext.zm_userImageCache = userImageCache
-            self.syncManagedObjectContext.zm_fileAssetCache = fileAssetCache
         }
     }
 
