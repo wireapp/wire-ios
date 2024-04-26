@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import Foundation
-import WireTesting
 import WireDataModel
 import WireDataModelSupport
-import WireTransport.Testing
-import avs
-@testable import WireSyncEngineSupport
 @testable import WireSyncEngine
+@testable import WireSyncEngineSupport
+import WireTesting
+import WireTransport.Testing
 
 final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 

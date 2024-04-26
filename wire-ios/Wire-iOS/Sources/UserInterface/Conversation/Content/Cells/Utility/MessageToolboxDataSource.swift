@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 
 /// The different contents that can be displayed inside the message toolbox.
 enum MessageToolboxContent: Equatable {

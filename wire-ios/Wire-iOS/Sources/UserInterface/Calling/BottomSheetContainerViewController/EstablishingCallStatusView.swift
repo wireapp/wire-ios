@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 
 extension CallStatusViewState {
     typealias CallStatus = L10n.Localizable.Call.Status

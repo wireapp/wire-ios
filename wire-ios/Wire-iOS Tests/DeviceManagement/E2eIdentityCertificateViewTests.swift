@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
 import SwiftUI
 @testable import Wire
+import XCTest
 
 final class E2eIdentityCertificateViewTests: BaseSnapshotTestCase {
 

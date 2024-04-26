@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import AddressBook
-import WireDataModel
-import WireCryptobox
 import avs
+import Foundation
+import WireCryptobox
+import WireDataModel
 @testable import WireSyncEngine
 
 @objcMembers

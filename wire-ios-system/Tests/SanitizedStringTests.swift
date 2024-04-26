@@ -18,8 +18,8 @@
 
 import Foundation
 
-import XCTest
 @testable import WireSystem
+import XCTest
 
 struct Item {
     var name: String

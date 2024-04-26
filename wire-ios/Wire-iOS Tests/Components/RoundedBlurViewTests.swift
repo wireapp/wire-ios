@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
 import SnapshotTesting
 @testable import Wire
+import XCTest
 
 final class RoundedBlurViewTests: XCTestCase {
 

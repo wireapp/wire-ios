@@ -17,8 +17,8 @@
 //
 
 import MobileCoreServices
-import WireUtilities
 import UniformTypeIdentifiers
+import WireUtilities
 
 extension NSItemProvider {
 

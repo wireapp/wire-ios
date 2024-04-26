@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import Security
 import LocalAuthentication
+import Security
 
 public protocol KeychainItem {
     associatedtype Value

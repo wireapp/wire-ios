@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireCryptobox
 import WireSystem
+import XCTest
 
 class EncryptionSessionsDirectoryTests: XCTestCase {
 

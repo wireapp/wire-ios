@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireRequestStrategy
 import WireDataModel
+import WireRequestStrategy
 
 public class MockApplicationStatus: NSObject, ApplicationStatus {
 

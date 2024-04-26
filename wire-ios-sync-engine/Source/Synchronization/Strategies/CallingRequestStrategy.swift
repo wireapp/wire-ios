@@ -18,8 +18,8 @@
 
 import Combine
 import Foundation
-import WireRequestStrategy
 import WireDataModel
+import WireRequestStrategy
 
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker, ZMContextChangeTrackerSource, ZMEventConsumer {

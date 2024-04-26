@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSystem
 import WireDataModel
+import WireSystem
 
 private let log = ZMSLog(tag: "Authentication")
 

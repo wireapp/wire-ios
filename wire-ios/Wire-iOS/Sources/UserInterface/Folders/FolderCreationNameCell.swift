@@ -17,7 +17,6 @@
 //
 
 import UIKit
-import Foundation
 
 final class FolderCreationNameCell: UICollectionViewCell {
 

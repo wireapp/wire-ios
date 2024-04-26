@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTransport
 import WireDataModel
+import WireTransport
 
 extension Payload {
     struct UpdateConversationName: CodableEventData {

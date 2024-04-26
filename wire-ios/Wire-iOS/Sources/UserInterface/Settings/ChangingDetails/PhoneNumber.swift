@@ -18,8 +18,8 @@
 
 import Foundation
 import libPhoneNumberiOS
-import WireUtilities
 import WireDataModel
+import WireUtilities
 
 struct PhoneNumber: Equatable {
     enum ValidationResult {

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import Foundation
 import WireDataModel
-import CoreData
 
 @objc(ZMCallStateObserver)
 public final class CallStateObserver: NSObject {

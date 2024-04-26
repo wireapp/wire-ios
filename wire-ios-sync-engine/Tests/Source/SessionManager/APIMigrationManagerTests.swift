@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import XCTest
-import WireTransport
 import WireDataModelSupport
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
+import WireTransport
+import XCTest
 
 class APIMigrationMock: APIMigration {
     var version: APIVersion

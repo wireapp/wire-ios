@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
-import WireCommonComponents
 import AppCenter
+import Foundation
+import WireCommonComponents
+import WireSyncEngine
 #if DISABLE_APPCENTER_CRASH_LOGGING
 #else
 import AppCenterCrashes

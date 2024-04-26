@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UIKit
 import AVFoundation
+import UIKit
 
 /// A protocol for allow tests to mock recordPermission
 protocol AVAudioSessionType {

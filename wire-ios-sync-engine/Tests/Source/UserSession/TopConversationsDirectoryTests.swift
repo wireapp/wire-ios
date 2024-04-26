@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
-import WireTesting
 @testable import WireSyncEngine
+import WireTesting
+import XCTest
 
 class TopConversationsDirectoryTests: MessagingTest {
 

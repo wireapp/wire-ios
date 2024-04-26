@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import MobileCoreServices
-import WireSyncEngine
+import UIKit
 import UniformTypeIdentifiers
+import WireSyncEngine
 
 extension UIImage {
     var jpegData: Data? {

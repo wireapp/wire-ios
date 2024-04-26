@@ -18,8 +18,8 @@
 
 import UIKit
 import WireCommonComponents
-import WireUtilities
 import WireSyncEngine
+import WireUtilities
 
 final class CallParticipantDetailsView: RoundedBlurView {
 

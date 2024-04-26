@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireUtilities
 import WireCommonComponents
-import WireTransport
 import WireSyncEngine
+import WireTransport
+import WireUtilities
 
 protocol PasscodeSetupInteractorInput: AnyObject {
     func validate(error: TextFieldValidator.ValidationError?)

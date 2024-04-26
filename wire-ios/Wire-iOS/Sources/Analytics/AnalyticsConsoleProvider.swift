@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSystem
 import WireDataModel
+import WireSystem
 
 private let tag = "<ANALYTICS>:"
 final class AnalyticsConsoleProvider: NSObject {

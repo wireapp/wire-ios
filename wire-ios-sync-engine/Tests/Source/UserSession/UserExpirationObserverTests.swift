@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
 import WireDataModel
 @testable import WireSyncEngine
+import XCTest
 
 extension ZMUser {
     func mockSetExpires(at date: Date) {

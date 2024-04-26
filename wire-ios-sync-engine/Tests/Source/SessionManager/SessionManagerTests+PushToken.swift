@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireTesting
 @testable import WireSyncEngine
+import WireTesting
+import XCTest
 
 final class SessionManagerPushTokenTests: IntegrationTest {
 

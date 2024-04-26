@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireTesting
 import WireDataModel
 import WireDataModelSupport
 @testable import WireRequestStrategy
+import WireTesting
+import XCTest
 
 final class ZMLocalNotificationTests_Message: ZMLocalNotificationTests {
 

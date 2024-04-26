@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import avs
-import WireTransport
-import WireUtilities
 import CallKit
+import Foundation
 import PushKit
 import UserNotifications
 import WireDataModel
 import WireRequestStrategy
+import WireTransport
+import WireUtilities
 
 private let log = WireLogger(tag: "SessionManager")
 

@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireSyncEngine
 import LocalAuthentication
 import WireDataModel
+import WireSyncEngine
 
 extension AppLockModule {
 

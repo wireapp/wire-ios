@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireDataModel
-import ZipArchive
-import WireUtilities
 import WireCryptobox
+import WireDataModel
+import WireUtilities
+import ZipArchive
 
 private let zmLog = ZMSLog(tag: "SessionManager")
 

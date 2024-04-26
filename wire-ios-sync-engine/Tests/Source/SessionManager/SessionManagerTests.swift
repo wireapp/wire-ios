@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireTesting
-import PushKit
 import LocalAuthentication
-import WireSyncEngineSupport
+import PushKit
 @testable import WireSyncEngine
+import WireSyncEngineSupport
+import WireTesting
+import XCTest
 
 final class SessionManagerTests: IntegrationTest {
 

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireRequestStrategy
 @testable import WireSyncEngine
+import XCTest
 
 final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
 

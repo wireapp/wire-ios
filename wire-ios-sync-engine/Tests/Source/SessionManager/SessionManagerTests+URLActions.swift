@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTesting
 @testable import WireSyncEngine
+import WireTesting
 
 class SessionManagerURLActionsTests: IntegrationTest {
 

@@ -18,8 +18,8 @@
 
 import Foundation
 import UserNotifications
-import WireTransport
 import WireCommonComponents
+import WireTransport
 
 final class SimpleNotificationService: UNNotificationServiceExtension, Loggable {
 

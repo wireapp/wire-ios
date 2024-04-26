@@ -19,8 +19,8 @@
 import Foundation
 import WireDataModelSupport
 import WireRequestStrategy
-import WireSyncEngineSupport
 @testable import WireSyncEngine
+import WireSyncEngineSupport
 
 class CallingRequestStrategyTests: MessagingTest {
 

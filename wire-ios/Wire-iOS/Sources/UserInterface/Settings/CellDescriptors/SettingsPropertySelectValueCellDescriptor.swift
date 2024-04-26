@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSystem
 import UIKit
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
 

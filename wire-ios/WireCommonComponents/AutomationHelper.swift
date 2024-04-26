@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireSystem
 import WireDataModel
 import WireSyncEngine
+import WireSystem
 
 public final class AutomationEmailCredentials: NSObject {
     public var email: String

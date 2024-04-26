@@ -17,9 +17,9 @@
 //
 
 import SnapshotTesting
+@testable import Wire
 import WireTransport
 import XCTest
-@testable import Wire
 
 final class LandingViewControllerSnapshotTests: BaseSnapshotTestCase {
 

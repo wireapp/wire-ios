@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireImages
 @testable import WireDataModel
+import WireImages
 
 class ZMConversationMessagesTests: ZMConversationTestsBase {
 

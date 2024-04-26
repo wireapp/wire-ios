@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireMockTransport
+import XCTest
 
 // MARK: - Teams
 class MockTransportSessionTeamTests: MockTransportSessionTests {

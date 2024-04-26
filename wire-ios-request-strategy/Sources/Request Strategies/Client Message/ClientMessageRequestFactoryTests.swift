@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireProtos
 import WireDataModel
-import WireUtilities
+import WireProtos
 @testable import WireRequestStrategy
+import WireUtilities
+import XCTest
 
 class ClientMessageRequestFactoryTests: MessagingTestBase {
 

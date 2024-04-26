@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import Down
 import UIKit
 import WireCommonComponents
-import Down
 
 protocol PasscodeSetupUserInterface: AnyObject {
     var createButtonEnabled: Bool { get set }

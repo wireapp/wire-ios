@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSystem
 import avs
+import Foundation
 import WireSyncEngine
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "MediaPlaybackManager")
 

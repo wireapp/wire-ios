@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import Foundation
 import LocalAuthentication
-import CoreData
 
 /// An object that provides encryption at rest.
 ///

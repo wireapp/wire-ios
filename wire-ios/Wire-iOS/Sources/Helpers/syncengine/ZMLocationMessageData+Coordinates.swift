@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Contacts
 import Foundation
 import MapKit
-import Contacts
 import WireDataModel
 
 extension Message {

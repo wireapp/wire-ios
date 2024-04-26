@@ -17,7 +17,6 @@
 //
 
 import UIKit
-import Foundation
 import WebKit
 import WireUtilities
 

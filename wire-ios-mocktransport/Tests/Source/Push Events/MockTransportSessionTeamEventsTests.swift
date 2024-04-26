@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireMockTransport
+import XCTest
 
 class MockTransportSessionTeamEventsTests: MockTransportSessionTests {
 

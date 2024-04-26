@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
 import WireDataModel
 import WireSyncEngine
-import UniformTypeIdentifiers
 
 protocol BackupRestoreControllerDelegate: AnyObject {
     func backupResoreControllerDidFinishRestoring(_ controller: BackupRestoreController)

@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import avs
-import WireSystem
-import WireSyncEngine
+import Foundation
 import WireCommonComponents
+import WireSyncEngine
+import WireSystem
 
 enum MediaManagerSound: String {
     case outgoingKnockSound = "ping_from_me"

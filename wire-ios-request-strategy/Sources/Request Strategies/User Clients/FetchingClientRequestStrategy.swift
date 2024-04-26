@@ -17,11 +17,11 @@
 //
 
 import Foundation
+import WireCryptobox
+import WireDataModel
 import WireSystem
 import WireTransport
 import WireUtilities
-import WireCryptobox
-import WireDataModel
 
 public let ZMNeedsToUpdateUserClientsNotificationUserObjectIDKey = "userObjectID"
 

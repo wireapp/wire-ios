@@ -18,10 +18,10 @@
 
 import Foundation
 import LocalAuthentication
-import WireSyncEngine
-import WireSyncEngineSupport
 import WireDataModelSupport
 import WireRequestStrategySupport
+import WireSyncEngine
+import WireSyncEngineSupport
 
 @testable import Wire
 

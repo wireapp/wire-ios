@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTransport
 import WireSyncEngine
+import WireTransport
 
 final class PreferredAPIVersionViewModel: ObservableObject {
 

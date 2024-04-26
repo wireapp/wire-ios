@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireLinkPreview
 import WireDataModel
+import WireLinkPreview
 import WireUtilities
 
 public final class LinkAttachmentDetectorHelper: NSObject {

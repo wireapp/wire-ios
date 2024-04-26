@@ -18,8 +18,8 @@
 
 import Foundation
 import WireDataModelSupport
-import XCTest
 @testable import WireSyncEngine
+import XCTest
 
 class MLSConferenceStaleParticipantsRemoverTests: MessagingTest {
 

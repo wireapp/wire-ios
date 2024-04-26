@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireCommonComponents
 import UserNotifications
+import WireCommonComponents
 import WireUtilities
 #if DATADOG_IMPORT
 import Datadog

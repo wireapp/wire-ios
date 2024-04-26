@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireDataModelSupport
 import WireRequestStrategySupport
-import WireSyncEngineSupport
 @testable import WireSyncEngine
+import WireSyncEngineSupport
+import XCTest
 
 final class CreateTeamOneOnOneConversationUseCaseTests: XCTestCase {
 

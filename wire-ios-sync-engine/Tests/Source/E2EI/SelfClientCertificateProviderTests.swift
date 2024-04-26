@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
+import XCTest
 
 class SelfClientCertificateProviderTests: MessagingTest {
 

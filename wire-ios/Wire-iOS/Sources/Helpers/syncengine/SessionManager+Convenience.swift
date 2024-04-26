@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
 import AVFoundation
 import avs
+import Foundation
 import WireCommonComponents
+import WireSyncEngine
 
 extension SessionManager {
     static var shared: SessionManager? {

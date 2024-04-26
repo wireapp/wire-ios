@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSystem
 import WireCommonComponents
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "TokenField")
 

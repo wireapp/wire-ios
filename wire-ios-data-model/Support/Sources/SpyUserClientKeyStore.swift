@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireDataModel
 import WireCryptobox
+import WireDataModel
 
 // used by tests to fake errors on genrating pre keys
 public class SpyUserClientKeyStore: UserClientKeysStore {

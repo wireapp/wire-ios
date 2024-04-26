@@ -18,8 +18,8 @@
 
 import UIKit
 import WireCommonComponents
-import WireShareEngine
 import WireDataModel
+import WireShareEngine
 
 private let cellReuseIdentifier = "AccountCell"
 

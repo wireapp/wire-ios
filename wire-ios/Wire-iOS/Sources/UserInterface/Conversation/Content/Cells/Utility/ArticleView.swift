@@ -17,9 +17,9 @@
 //
 
 import UIKit
-import WireLinkPreview
 import WireCommonComponents
 import WireDataModel
+import WireLinkPreview
 
 final class ArticleView: UIView {
 

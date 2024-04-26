@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import Foundation
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-import avs
-import WireCommonComponents
 
 // MARK: Audio Button
 

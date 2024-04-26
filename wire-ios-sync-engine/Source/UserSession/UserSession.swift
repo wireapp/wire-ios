@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireDataModel
 import LocalAuthentication
+import WireDataModel
 
 /// An abstraction of the user session for use in the presentation
 /// layer.

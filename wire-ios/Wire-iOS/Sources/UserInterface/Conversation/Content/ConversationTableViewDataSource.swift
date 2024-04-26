@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import DifferenceKit
+import WireDataModel
 import WireSyncEngine
 
 extension Int: Differentiable { }

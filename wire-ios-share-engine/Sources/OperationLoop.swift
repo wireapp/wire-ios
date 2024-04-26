@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import CoreData
-import WireTransport
+import Foundation
 import WireRequestStrategy
+import WireTransport
 
 let contextWasMergedNotification = Notification.Name("zm_contextWasSaved")
 

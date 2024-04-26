@@ -17,9 +17,9 @@
 //
 
 import UIKit
-import XCTest
 import WireTesting
 @testable import WireTransport
+import XCTest
 
 class BackgroundActivityFactoryTests: XCTestCase {
 

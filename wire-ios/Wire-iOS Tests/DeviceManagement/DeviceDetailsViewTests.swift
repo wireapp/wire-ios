@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SwiftUI
-import WireSyncEngineSupport
+@testable import Wire
 import WireRequestStrategySupport
+import WireSyncEngineSupport
+import XCTest
 
 final class DeviceDetailsViewTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
 

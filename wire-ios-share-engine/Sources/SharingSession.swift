@@ -18,9 +18,9 @@
 
 import Foundation
 import WireDataModel
-import WireTransport
-import WireRequestStrategy
 import WireLinkPreview
+import WireRequestStrategy
+import WireTransport
 
 final class PushMessageHandlerDummy: NSObject, PushMessageHandler {
 

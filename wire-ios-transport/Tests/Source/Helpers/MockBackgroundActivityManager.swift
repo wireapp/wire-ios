@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireTransport
 import WireTesting
+import WireTransport
 
 /**
  * A controllable objects that mocks the behavior of UIApplication regarding background tasks.

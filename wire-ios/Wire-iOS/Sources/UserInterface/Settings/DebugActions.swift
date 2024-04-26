@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AppCenterCrashes
 import Foundation
 import WireSyncEngine
-import AppCenterCrashes
 
 enum DebugActions {
 

@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UIKit
 import avs
-import WireSyncEngine
+import UIKit
 import WireCommonComponents
+import WireSyncEngine
 
 class BaseCallParticipantView: OrientableView, AVSIdentifierProvider {
 

@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireShareEngine
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
+import WireShareEngine
 
 typealias DegradationStrategyChoice = (DegradationStrategy) -> Void
 typealias SendingStateCallback = (_ type: SendingState) -> Void

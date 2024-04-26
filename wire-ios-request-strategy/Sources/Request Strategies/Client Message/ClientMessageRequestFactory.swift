@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireTransport
-import WireImages
-import WireDataModel
 import SwiftProtobuf
+import WireDataModel
+import WireImages
+import WireTransport
 
 private let zmLog = ZMSLog(tag: "Network")
 

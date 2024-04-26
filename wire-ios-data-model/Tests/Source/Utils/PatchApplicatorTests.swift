@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import XCTest
-@testable import WireDataModel
 import CoreData
+import Foundation
 import simd
+@testable import WireDataModel
+import XCTest
 
 class PatchApplicatorTests: ZMBaseManagedObjectTest {
 

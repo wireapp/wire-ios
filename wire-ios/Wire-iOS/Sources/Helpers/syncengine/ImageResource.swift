@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import FLAnimatedImage
+import UIKit
 import WireDataModel
 import WireLinkPreview
-import UIKit
 import WireSyncEngine
 
 extension ZMConversationMessage {

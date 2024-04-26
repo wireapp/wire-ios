@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 enum AlertChoice {
     case cancel, confirm, alreadyPresented, ok

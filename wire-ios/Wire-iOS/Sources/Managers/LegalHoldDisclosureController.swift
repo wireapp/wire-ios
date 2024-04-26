@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireDataModel
+import WireSyncEngine
 
 /**
  * An object that coordinates disclosing the legal hold state to the user.
