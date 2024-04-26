@@ -51,7 +51,7 @@
         <attribute name="accessRoleString" optional="YES" attributeType="String"/>
         <attribute name="accessRoleStringsV2" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData"/>
         <attribute name="archivedChangedTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="ciphersuite" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="ciphersuite" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
         <attribute name="clearedTimeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="commitPendingProposalDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="conversationType" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>

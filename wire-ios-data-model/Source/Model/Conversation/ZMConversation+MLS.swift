@@ -60,19 +60,19 @@ extension ZMConversation {
     public var ciphersuite: MLSCipherSuite? {
         get {
             willAccessValue(forKey: Self.ciphersuiteKey)
-            let rawValue = primitiveCiphersuite?.int16Value
+            let rawValue = primitiveCiphersuite
             didAccessValue(forKey: Self.ciphersuiteKey)
 
             guard let rawValue else {
                 return nil
             }
 
-            return MLSCipherSuite(rawValue: Int(rawValue))
+            return MLSCipherSuite(rawValue: Int(rawValue.int16Value))
         }
 
         set {
             willChangeValue(forKey: Self.ciphersuiteKey)
-            primitiveCiphersuite = NSNumber(value: newValue?.rawValue ?? 0)
+            primitiveCiphersuite = newValue.map({ NSNumber(value: $0.rawValue) })
             didChangeValue(forKey: Self.ciphersuiteKey)
         }
     }
