@@ -304,10 +304,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
                 title: SecuredGuestLinkWithPasswordLocale.AlertController.title,
                 message: SecuredGuestLinkWithPasswordLocale.AlertController.message
             )
-        } else {
-            // TODO: [AGIS] Sync with Wolfgang on the alert with the error
         }
-
     }
 
     @objc
