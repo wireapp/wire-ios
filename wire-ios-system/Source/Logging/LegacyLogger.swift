@@ -65,7 +65,7 @@ public class LegacyLogger: LoggerProtocol {
         }
     }
 
-    public func addTag(_ key: String, value: String?) {
+    public func addTag(_ key: LogAttributesKey, value: String?) {
         // do nothing
     }
 

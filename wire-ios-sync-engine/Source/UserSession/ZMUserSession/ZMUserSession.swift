@@ -304,7 +304,7 @@ public final class ZMUserSession: NSObject {
         coreDataStack.close()
 
         NotificationCenter.default.removeObserver(self)
-        WireLogger.authentication.addTag("selfUserClientId", value: nil)
+        WireLogger.authentication.addTag(.selfClientId, value: nil)
 
         tornDown = true
     }
@@ -577,7 +577,7 @@ public final class ZMUserSession: NSObject {
         configureRecurringActions()
 
         if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
-            WireLogger.authentication.addTag("selfUserClientId", value: clientId)
+            WireLogger.authentication.addTag(.selfClientId, value: clientId)
         }
     }
 
@@ -1011,7 +1011,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
         }
 
         let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
-        WireLogger.authentication.addTag("selfUserClientId", value: clientId)
+        WireLogger.authentication.addTag(.selfClientId, value: clientId)
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {

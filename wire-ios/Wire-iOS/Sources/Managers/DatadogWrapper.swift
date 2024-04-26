@@ -134,11 +134,11 @@ public final class DatadogWrapper {
         )
     }
 
-    public func addTag(_ key: String, value: String?) {
+    public func addTag(_ key: LogAttributesKey, value: String?) {
         if let value {
-            logger?.addAttribute(forKey: key, value: value)
+            logger?.addAttribute(forKey: key.rawValue, value: value)
         } else {
-            logger?.removeAttribute(forKey: key)
+            logger?.removeAttribute(forKey: key.rawValue)
         }
     }
 }
@@ -207,7 +207,7 @@ public final class DatadogWrapper {
     ) {}
 
     public func startMonitoring() {}
-    public func addTag(_ key: String, value: String?) {}
+    public func addTag(_ key: LogAttributesKey, value: String?) {}
 
     public var datadogUserId: String = "NONE"
 }

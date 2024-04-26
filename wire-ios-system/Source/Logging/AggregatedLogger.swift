@@ -71,7 +71,7 @@ public class AggregatedLogger: LoggerProtocol {
         }
     }
 
-    public func addTag(_ key: String, value: String?) {
+    public func addTag(_ key: LogAttributesKey, value: String?) {
         loggers.forEach {
             $0.addTag(key, value: value)
         }
