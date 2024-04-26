@@ -298,6 +298,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         syncMOC.performAndWait {
             sut.didFinishQuickSync()
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 1))
 
         // THEN
         XCTAssertTrue(waitForOfflineStatus())

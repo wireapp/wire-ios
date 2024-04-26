@@ -19,7 +19,7 @@
 @import WireImages;
 
 #import "ZMUser.h"
-#import "ZMEditableUser.h"
+#import "ZMEditableUserType.h"
 #import "ZMManagedObject+Internal.h"
 #import "ZMUser+OneOnOne.h"
 
@@ -74,7 +74,7 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 
 
 
-@interface ZMUser (Editable) <ZMEditableUser>
+@interface ZMUser (Editable) <ZMEditableUserType>
 
 @property (nullable, nonatomic, copy) NSString *emailAddress;
 @property (nullable, nonatomic, copy) NSString *phoneNumber;
