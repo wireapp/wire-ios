@@ -143,6 +143,7 @@ class Settings {
     static var shared: Settings = Settings()
 
     init() {
+        ExtensionSettings.shared.disableLinkPreviews = !SecurityFlags.generateLinkPreviews.isEnabled
         restoreLastUsedAVSSettings()
 
         startLogging()
