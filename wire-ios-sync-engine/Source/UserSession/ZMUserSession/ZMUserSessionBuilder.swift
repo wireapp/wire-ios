@@ -269,7 +269,8 @@ struct ZMUserSessionBuilder {
             in: coreDataStack.applicationContainer
         )
 
-        ZMUserSession.moveCachesIfNeededForAccount(
+        let relocator = CacheFileRelocator()
+        relocator.moveCachesIfNeededForAccount(
             with: coreDataStack.account.userIdentifier,
             in: coreDataStack.applicationContainer
         )

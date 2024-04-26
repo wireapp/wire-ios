@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import XCTest
 @testable import WireSyncEngine
 
-final class ZMUserSessionRelocationTests: ZMUserSessionTestsBase {
+final class CacheFileRelocatorTests: ZMUserSessionTestsBase {
 
     func testThatItMovesCaches() throws {
         // given
@@ -30,8 +30,10 @@ final class ZMUserSessionRelocationTests: ZMUserSessionTestsBase {
         let itemNames = try FileManager.default.contentsOfDirectory(atPath: oldLocation.path)
         XCTAssertTrue(itemNames.count > 0)
 
+        let relocator = CacheFileRelocator()
+
         // when
-        ZMUserSession.moveCachesIfNeededForAccount(with: self.userIdentifier, in: self.sut.sharedContainerURL)
+        relocator.moveCachesIfNeededForAccount(with: self.userIdentifier, in: self.sut.sharedContainerURL)
 
         // then
         let newLocation = FileManager.default.cachesURLForAccount(with: self.userIdentifier, in: self.sharedContainerURL)
@@ -48,10 +50,12 @@ final class ZMUserSessionRelocationTests: ZMUserSessionTestsBase {
         let cachesFolder = FileManager.default.cachesURLForAccount(with: nil, in: self.sut.sharedContainerURL)
         clearFolder(at: cachesFolder)
 
+        let relocator = CacheFileRelocator()
+
         // when
         let fileName = "com.apple.nsurlsessiond"
         let fileUrl = try writeTestFile(name: fileName, at: cachesFolder)
-        ZMUserSession.moveCachesIfNeededForAccount(with: self.userIdentifier, in: self.sut.sharedContainerURL)
+        relocator.moveCachesIfNeededForAccount(with: self.userIdentifier, in: self.sut.sharedContainerURL)
 
         // then
         let newFolder = FileManager.default.cachesURLForAccount(with: self.userIdentifier, in: self.sharedContainerURL)
@@ -65,10 +69,12 @@ final class ZMUserSessionRelocationTests: ZMUserSessionTestsBase {
         let cachesFolder = FileManager.default.cachesURLForAccount(with: nil, in: self.sut.sharedContainerURL)
         clearFolder(at: cachesFolder)
 
+        let relocator = CacheFileRelocator()
+
         // when
         let fileName = "example"
         let fileUrl = try writeTestFile(name: fileName, at: cachesFolder)
-        ZMUserSession.moveCachesIfNeededForAccount(with: self.userIdentifier, in: self.sut.sharedContainerURL)
+        relocator.moveCachesIfNeededForAccount(with: self.userIdentifier, in: self.sut.sharedContainerURL)
 
         // then
         let newFolder = FileManager.default.cachesURLForAccount(with: self.userIdentifier, in: self.sharedContainerURL)
@@ -76,14 +82,14 @@ final class ZMUserSessionRelocationTests: ZMUserSessionTestsBase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: newFolder.appendingPathComponent(fileName).path))      // tests that the file was moved to the account folder
     }
 
-    func clearFolder(at location: URL) {
+    private func clearFolder(at location: URL) {
         if FileManager.default.fileExists(atPath: location.path) {
             let items = try! FileManager.default.contentsOfDirectory(at: location, includingPropertiesForKeys: nil)
             items.forEach { try! FileManager.default.removeItem(at: $0) }
         }
     }
 
-    func writeTestFile(name: String, at location: URL) throws -> URL {
+    private func writeTestFile(name: String, at location: URL) throws -> URL {
         let content = "ZMUserSessionTest"
         let newLocation = location.appendingPathComponent(name)
         try content.write(to: newLocation, atomically: true, encoding: .utf8)
