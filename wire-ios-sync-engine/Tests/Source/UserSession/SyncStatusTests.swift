@@ -320,6 +320,22 @@ final class SyncStatusTests: MessagingTest {
         XCTAssertEqual(sut.currentSyncPhase, .fetchingLastUpdateEventID)
     }
 
+    func testThatItRestartsQuickSyncWhenPushChannelWasOpenedAfterNotificationFetchBegan() {
+        // given
+        lastEventIDRepository.storeLastEventID(UUID.timeBasedUUID() as UUID)
+        sut.pushChannelDidOpen()
+        sut.determineInitialSyncPhase()
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
+        XCTAssertFalse(sut.needsToRestartQuickSync)
+
+        // when
+        let beforePushChannelEstablished = sut.pushChannelEstablishedDate?.addingTimeInterval(-.oneSecond)
+        sut.completedFetchingNotificationStream(fetchBeganAt: beforePushChannelEstablished)
+
+        // then
+        XCTAssertEqual(sut.currentSyncPhase, .fetchingMissedEvents)
+    }
+
     func testThatItRestartsQuickSyncWhenPushChannelOpens_PreviousInQuickSync() {
         // given
         lastEventIDRepository.storeLastEventID(UUID.timeBasedUUID() as UUID)
