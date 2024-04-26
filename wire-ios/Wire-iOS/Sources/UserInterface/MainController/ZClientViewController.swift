@@ -331,7 +331,7 @@ final class ZClientViewController: UIViewController {
         currentConversation = conversation
         conversationRootController?.conversationViewController?.isFocused = focus
 
-        conversationListViewController.hideArchivedConversations()
+        conversationListViewController.setState(.conversationList, animated: true)
         pushContentViewController(conversationRootController, focusOnView: focus, animated: animated, completion: completion)
     }
 

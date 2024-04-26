@@ -60,13 +60,7 @@ final class ConversationListViewController: UIViewController {
     }()
 
     let listContentController: ConversationListContentController
-
-    let tabBar: ConversationListTabBar = {
-        let conversationListTabBar = ConversationListTabBar()
-        conversationListTabBar.showArchived = true
-        return conversationListTabBar
-    }()
-
+    let tabBar = ConversationListTabBar()
     let topBarViewController: ConversationListTopBarViewController
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
@@ -326,7 +320,7 @@ final class ConversationListViewController: UIViewController {
         })
     }
 
-    func scrollViewDidScroll(scrollView: UIScrollView!) {
+    func scrollViewDidScroll(scrollView: UIScrollView) {
         topBarViewController.scrollViewDidScroll(scrollView: scrollView)
     }
 
@@ -341,17 +335,6 @@ final class ConversationListViewController: UIViewController {
         let startUIViewController = StartUIViewController(userSession: viewModel.userSession)
         startUIViewController.delegate = viewModel
         return startUIViewController
-    }
-
-    func updateArchiveButtonVisibilityIfNeeded(showArchived: Bool) {
-        guard showArchived != tabBar.showArchived else {
-            return
-        }
-        tabBar.showArchived = showArchived
-    }
-
-    func hideArchivedConversations() {
-        setState(.conversationList, animated: true)
     }
 
     func presentPeoplePicker() {

@@ -116,16 +116,6 @@ final class ConversationListTabBar: UITabBar {
     private let folderTab = UITabBarItem(type: .folder)
     private let archivedTab = UITabBarItem(type: .archive)
 
-    var showArchived: Bool = false {
-        didSet {
-            var tabs: [UITabBarItem] = [startTab, listTab, folderTab]
-            if showArchived {
-                tabs.append(archivedTab)
-            }
-            setItems(tabs, animated: true)
-        }
-    }
-
     var selectedTab: TabBarItemType? {
         didSet {
             if let selectedTab = selectedTab {
