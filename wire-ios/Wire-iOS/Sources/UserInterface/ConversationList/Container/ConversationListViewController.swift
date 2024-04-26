@@ -333,10 +333,6 @@ final class ConversationListViewController: UIViewController {
         return startUIViewController
     }
 
-    func presentPeoplePicker() {
-        setState(.peoplePicker, animated: true)
-    }
-
     func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool {
         return listContentController.select(conversation,
                                      scrollTo: message,
@@ -364,13 +360,17 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 extension ConversationListViewController: UITabBarDelegate {
 
     func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        guard let type = item.type else { return }
+        guard let tabBar = tabBar as? ConversationListTabBar, let type = item.type else { return }
 
         switch type {
-        case .archive:
-            setState(.archived, animated: true)
         case .startUI:
-            presentPeoplePicker()
+            setState(.peoplePicker, animated: true) {
+                tabBar.selectedTab = .list
+            }
+        case .archive:
+            setState(.archived, animated: true) {
+                tabBar.selectedTab = .list
+            }
         case .folder:
             listContentController.listViewModel.folderEnabled = true
         case .list:
@@ -379,7 +379,7 @@ extension ConversationListViewController: UITabBarDelegate {
     }
 }
 
-private extension UITabBarItem {
+extension UITabBarItem {
 
     var type: TabBarItemType? {
         .allCases.first { $0.rawValue == tag }

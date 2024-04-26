@@ -214,7 +214,7 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
-        conversationListViewController.presentPeoplePicker()
+        conversationListViewController.setState(.peoplePicker, animated: true)
     }
 
     // MARK: Status bar
