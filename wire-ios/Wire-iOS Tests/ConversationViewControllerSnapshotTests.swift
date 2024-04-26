@@ -17,8 +17,8 @@
 //
 
 import SnapshotTesting
-import XCTest
 @testable import Wire
+import XCTest
 
 final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
 
@@ -114,7 +114,7 @@ extension ConversationViewControllerSnapshotTests {
         teamMember.user = otherUser
         teamMember.team = team
         otherUser.membership?.setTeamRole(.partner)
-        UIColor.setAccentOverride(.strongLimeGreen)
+        UIColor.setAccentOverride(.green)
 
         // when
         sut.updateGuestsBarVisibility()
@@ -128,7 +128,7 @@ extension ConversationViewControllerSnapshotTests {
         mockConversation.teamRemoteIdentifier = team?.remoteIdentifier
         mockConversation.addParticipantAndUpdateConversationState(user: serviceUser)
 
-        UIColor.setAccentOverride(.strongLimeGreen)
+        UIColor.setAccentOverride(.green)
 
         // when
         sut.updateGuestsBarVisibility()
@@ -147,7 +147,7 @@ extension ConversationViewControllerSnapshotTests {
         mockConversation.teamRemoteIdentifier = team?.remoteIdentifier
         mockConversation.addParticipantAndUpdateConversationState(user: serviceUser)
 
-        UIColor.setAccentOverride(.strongLimeGreen)
+        UIColor.setAccentOverride(.green)
 
         // when
         sut.updateGuestsBarVisibility()

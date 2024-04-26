@@ -16,6 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-extension MockUserType: ZMEditableUser { }
+public protocol UserPropertyNormalization {
+    func normalizeName(_ name: String) -> UserPropertyNormalizationResult<String>
+    func normalizeEmailAddress(_ emailAddress: String) -> UserPropertyNormalizationResult<String>
+    func normalizePassword(_ password: String) -> UserPropertyNormalizationResult<String>
+    func normalizeVerificationCode(_ verificationCode: String) -> UserPropertyNormalizationResult<String>
+    func normalizePhoneNumber(_ phoneNumber: String) -> UserPropertyNormalizationResult<String>
+}

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Photos
 import AVFoundation
+import Photos
 import UIKit
 import WireCommonComponents
 import WireSyncEngine

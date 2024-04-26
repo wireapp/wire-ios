@@ -17,8 +17,8 @@
 //
 
 import SnapshotTesting
-import XCTest
 @testable import Wire
+import XCTest
 
 final class FolderPickerControllerSnapshotTests: XCTestCase {
 
@@ -30,7 +30,7 @@ final class FolderPickerControllerSnapshotTests: XCTestCase {
 
         mockConversation = MockConversation.groupConversation()
         directory = MockConversationDirectory()
-        accentColor = .violet
+        accentColor = .purple
     }
 
     override func tearDown() {

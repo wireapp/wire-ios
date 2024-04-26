@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UIKit
-import WireDataModel
-import WireSyncEngine
 import avs
 import DifferenceKit
+import UIKit
 import WireCommonComponents
+import WireDataModel
+import WireSyncEngine
 
 protocol CallGridViewControllerDelegate: AnyObject {
     func callGridViewController(_ viewController: CallGridViewController, perform action: CallGridAction)
@@ -553,7 +552,7 @@ extension CallGridViewController {
 
 // MARK: - Extensions
 
-extension ZMEditableUser {
+extension EditableUserType {
     var selfStreamId: AVSClient {
 
         guard

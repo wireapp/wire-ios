@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 /**
  * Handles client registration errors related to the client limit.

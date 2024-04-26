@@ -16,9 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// This is used to highlight memory leaks of critical objects.
-/// In the code, add objects to the debugger by calling `MemoryReferenceDebugger.add`.
-/// When running tests, you should check that `MemoryReferenceDebugger.aliveObjects` is empty
-#define RecordReferenceForDebugging(ref) \
-    [MemoryReferenceDebugger register:ref line:__LINE__ file:__FILE__];
+import XCTest
 
+@testable import WireUtilities
+
+final class ZMAccentColorTests: XCTestCase {
+
+    func testTwoInstancesAreEqual() {
+        let amber0: ZMAccentColor = .amber
+        let amber1: ZMAccentColor? = .from(rawValue: AccentColor.amber.rawValue)
+        XCTAssertEqual(amber0, amber1)
+    }
+
+    func testTwoInstancesAreNotEqual() {
+        let blue: ZMAccentColor = .blue
+        let amber: ZMAccentColor = .amber
+        XCTAssertNotEqual(blue, amber)
+    }
+}

@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import Wire
+import XCTest
 
 final class ConversationListAccessoryViewTests: BaseSnapshotTestCase {
 
@@ -29,7 +29,7 @@ final class ConversationListAccessoryViewTests: BaseSnapshotTestCase {
         super.setUp()
         userSession = UserSessionMock()
         self.sut = ConversationListAccessoryView(mediaPlaybackManager: MediaPlaybackManager(name: "test", userSession: userSession))
-        accentColor = .violet
+        accentColor = .purple
     }
 
     override func tearDown() {

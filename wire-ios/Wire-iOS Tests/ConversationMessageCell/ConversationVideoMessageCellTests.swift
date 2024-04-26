@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class ConversationVideoMessageCellTests: ConversationMessageSnapshotTestCase {
 
@@ -26,7 +26,7 @@ final class ConversationVideoMessageCellTests: ConversationMessageSnapshotTestCa
 
     override func setUp() {
         super.setUp()
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
 
         mockSelfUser = MockUserType.createDefaultSelfUser()
 

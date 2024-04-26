@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 // MARK: - IncomingConnectionViewTests
 
@@ -31,7 +31,7 @@ final class IncomingConnectionViewTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
     }
 
     // MARK: - Snapshot Tests

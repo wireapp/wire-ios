@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireDataModelSupport
 @testable import WireRequestStrategy
+import XCTest
 
 class ProteusConversationParticipantsServiceTests: MessagingTestBase {
 

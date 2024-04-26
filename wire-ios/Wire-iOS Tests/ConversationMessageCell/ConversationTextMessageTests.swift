@@ -17,9 +17,9 @@
 //
 
 import SnapshotTesting
-import XCTest
-import WireLinkPreview
 @testable import Wire
+import WireLinkPreview
+import XCTest
 
 final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
 
@@ -30,7 +30,7 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
         message = createMessage()
     }
 

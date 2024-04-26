@@ -17,9 +17,9 @@
 //
 
 import SnapshotTesting
-import XCTest
-@testable import WireCommonComponents
 @testable import Wire
+import WireCommonComponents
+import XCTest
 
 // In this class the snapshot tests they don't look the same as in the real app.
 // The first and last button for the input bar look like they have 4 rounded corners
@@ -37,7 +37,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
         mockConversation = MockInputBarConversationType()
         mockClassificationProvider = MockClassificationProvider()
         userSession = UserSessionMock()

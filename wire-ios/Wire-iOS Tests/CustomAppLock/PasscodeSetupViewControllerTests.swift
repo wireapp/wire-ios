@@ -17,8 +17,8 @@
 //
 
 import SnapshotTesting
-import XCTest
 @testable import Wire
+import XCTest
 
 final class PasscodeSetupViewControllerTests: BaseSnapshotTestCase {
 
@@ -30,7 +30,7 @@ final class PasscodeSetupViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
     }
 
     // MARK: tearDown

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SnapshotTesting
+@testable import Wire
+import XCTest
 
 final class ContactsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
@@ -30,7 +30,7 @@ final class ContactsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        XCTestCase.accentColor = .strongBlue
+        XCTestCase.accentColor = .blue
         sut = ContactsViewController()
         sut.searchHeaderViewController.overrideUserInterfaceStyle = .dark
         sut.overrideUserInterfaceStyle = .dark

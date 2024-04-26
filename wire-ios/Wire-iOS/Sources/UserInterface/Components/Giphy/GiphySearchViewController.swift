@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import Ziphy
 import FLAnimatedImage
+import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
+import Ziphy
 
 protocol GiphySearchViewControllerDelegate: AnyObject {
     func giphySearchViewController(_ giphySearchViewController: GiphySearchViewController, didSelectImageData imageData: Data, searchTerm: String)
@@ -192,7 +192,7 @@ final class GiphySearchViewController: VerticalColumnCollectionViewController {
 
         cell.ziph = ziph
         cell.representation = representation
-        cell.backgroundColor = UIColor(for: AccentColor.random)
+        cell.backgroundColor = AccentColor.random.uiColor
         cell.isAccessibilityElement = true
         cell.accessibilityTraits.insert(.image)
         cell.accessibilityLabel = ziph.title

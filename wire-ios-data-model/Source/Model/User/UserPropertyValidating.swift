@@ -16,21 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireSystem;
-
-#import <WireUtilities/ZMAccentColor.h>
-#import "ZMUser.h"
-
-@class ZMEmailCredentials;
-@class ZMPhoneCredentials;
-
-@protocol ZMEditableUser <NSObject>
-
-@property (nonatomic, copy, nullable) NSString *name;
-@property (nonatomic) ZMAccentColor accentColorValue;
-@property (nonatomic, copy, readonly, nullable) NSString *emailAddress;
-@property (nonatomic, copy, readonly, nullable) NSString *phoneNumber;
-@property (nonatomic) BOOL readReceiptsEnabled;
-@property (nonatomic) BOOL needsRichProfileUpdate;
-
-@end
+public protocol UserPropertyValidating {
+    func validate(name: inout String?) throws -> Bool
+    func validate(emailAddress: inout String?) throws -> Bool
+    func validate(password: inout String?) throws -> Bool
+    func validate(phoneNumber: inout String?) throws -> Bool
+    func validate(phoneVerificationCode: inout String?) throws -> Bool
+}

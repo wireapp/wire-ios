@@ -16,27 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "ZMPropertyNormalizationResult.h"
+import XCTest
 
-@interface ZMPropertyNormalizationResult ()
+@testable import WireUtilities
 
-@property (nonatomic, readwrite, getter=isValid) BOOL valid;
-@property (nonatomic, readwrite, nullable) id normalizedValue;
-@property (nonatomic, readwrite, nullable) NSError* validationError;
+final class AccentColorTests: XCTestCase {
 
-@end
+    /// Ensures that the raw values haven't changed when migrating `ZMAccentColor` into Swift.
+    func testRawValues() {
 
-@implementation ZMPropertyNormalizationResult
+        XCTAssertEqual(AccentColor.blue.rawValue, 1)
+        XCTAssertEqual(AccentColor.green.rawValue, 2)
+        XCTAssertEqual(AccentColor.red.rawValue, 4)
+        XCTAssertEqual(AccentColor.amber.rawValue, 5)
+        XCTAssertEqual(AccentColor.turquoise.rawValue, 6)
+        XCTAssertEqual(AccentColor.purple.rawValue, 7)
 
-- (instancetype)initWithResult:(BOOL)valid normalizedValue:(id)normalizedValue validationError:(NSError *)validationError
-{
-    self = [super init];
-    if (self) {
-        self.valid = valid;
-        self.normalizedValue = normalizedValue;
-        self.validationError = validationError;
+        XCTAssertEqual(ZMAccentColor.min, .from(accentColor: .blue))
+        XCTAssertEqual(ZMAccentColor.max, .from(accentColor: .purple))
     }
-    return self;
 }
-
-@end

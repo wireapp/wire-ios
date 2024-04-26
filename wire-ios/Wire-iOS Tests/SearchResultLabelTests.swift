@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
 @testable import Wire
+import XCTest
 
 final class SearchResultLabelTests: ZMSnapshotTestCase {
     var sut: SearchResultLabel!
 
     override func setUp() {
         super.setUp()
-        accentColor = .violet
+        accentColor = .purple
     }
 
     override func tearDown() {

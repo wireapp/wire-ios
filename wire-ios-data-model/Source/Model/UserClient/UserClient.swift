@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreLocation
 import Foundation
 import WireCryptobox
-import CoreLocation
 import WireUtilities
 
 public let ZMUserClientNumberOfKeysRemainingKey = "numberOfKeysRemaining"

@@ -16,10 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+import UIKit
+import WireCommonComponents
 
-FOUNDATION_EXPORT const NSString * const zm_testing_environment_variable_name;
+@testable import Wire
 
-/// Returns true when the code is being executed in a testing environment.
-/// In order for this to work, the "ZM_TESTING" enviroment variable must be set to 1 in the test target
-FOUNDATION_EXPORT BOOL zm_isTesting(void);
+struct MockViewControllerBuilder: ViewControllerBuilder {
+    func build() -> UIViewController { .init() }
+}
+
+extension ViewControllerBuilder where Self == MockViewControllerBuilder {
+    static var mock: Self { .init() }
+}

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import CoreData
+import Foundation
 import WireSystem
 
 enum CoreDataStackError: Error {
@@ -342,10 +342,6 @@ public class CoreDataStack: NSObject, ContextProvider {
             }
 
             self.configureEventContext(self.eventContext)
-
-            #if DEBUG
-            MemoryReferenceDebugger.register(self.eventContext)
-            #endif
 
             completionHandler(nil)
         }

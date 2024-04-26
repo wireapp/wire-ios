@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SnapshotTesting
+@testable import Wire
+import XCTest
 
 final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTestHelper {
 
@@ -34,7 +34,7 @@ final class FolderCreationControllerSnapshotTests: XCTestCase, CoreDataFixtureTe
         let convo = createTeamGroupConversation()
         let conversationDirectory = coreDataFixture.uiMOC.conversationListDirectory()
         sut = FolderCreationController(conversation: convo, directory: conversationDirectory)
-        accentColor = .violet
+        accentColor = .purple
     }
 
     override func tearDown() {

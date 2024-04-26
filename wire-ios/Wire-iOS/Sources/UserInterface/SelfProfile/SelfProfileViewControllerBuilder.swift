@@ -16,13 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import Wire
+import UIKit
+import WireCommonComponents
+import WireSyncEngine
 
-extension MockUserType: ValidatorType {
+struct SelfProfileViewControllerBuilder: ViewControllerBuilder {
 
-    static func validate(name: inout String?) throws -> Bool {
-        return false
+    var selfUser: SettingsSelfUser
+    var userRightInterfaceType: UserRightInterface.Type
+    var userSession: UserSession
+
+    func build() -> SelfProfileViewController {
+        .init(
+            selfUser: selfUser,
+            userRightInterfaceType: userRightInterfaceType,
+            userSession: userSession
+        )
     }
-
 }

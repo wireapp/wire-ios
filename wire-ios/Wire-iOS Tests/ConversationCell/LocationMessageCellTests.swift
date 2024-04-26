@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class LocationMessageCellTests: ConversationMessageSnapshotTestCase {
 
@@ -29,7 +29,7 @@ final class LocationMessageCellTests: ConversationMessageSnapshotTestCase {
         super.setUp()
 
         mockSelfUser = MockUserType.createDefaultSelfUser()
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
     }
 
     override func tearDown() {

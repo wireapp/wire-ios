@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import XCTest
+@testable import WireDataModelSupport
+@testable import WireRequestStrategySupport
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
-@testable import WireRequestStrategySupport
-@testable import WireDataModelSupport
+import XCTest
 
 class CertificateRevocationListsCheckerTests: XCTestCase {
     private var coreDataHelper: CoreDataStackHelper!
