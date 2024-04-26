@@ -17,8 +17,8 @@
 //
 
 import WireDataModelSupport
-import WireTesting
 @testable import WireRequestStrategy
+import WireTesting
 
 public enum EventConversation {
     static let add = "conversation.message-add"

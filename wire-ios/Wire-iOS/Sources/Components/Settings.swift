@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSystem
-import WireSyncEngine
 import avs
+import Foundation
 import WireCommonComponents
+import WireSyncEngine
+import WireSystem
 
 enum SettingsLastScreen: Int {
     case none = 0

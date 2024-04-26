@@ -17,9 +17,8 @@
 //
 
 import UIKit
-
 @testable import Wire
-@testable import WireCommonComponents
+import WireCommonComponents
 
 struct ColorTile {
     let color: AccentColor

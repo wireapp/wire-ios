@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import CallKit
-import Intents
 import avs
+import CallKit
+import Foundation
+import Intents
 import WireRequestStrategy
 
 protocol CallKitManagerDelegate: AnyObject {

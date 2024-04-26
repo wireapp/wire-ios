@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import WireDataModelSupport
 import WireRequestStrategySupport
-import Combine
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 

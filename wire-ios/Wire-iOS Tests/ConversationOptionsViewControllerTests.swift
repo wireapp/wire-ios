@@ -18,9 +18,10 @@
 
 import XCTest
 import WireSyncEngine
-@testable import Wire
 import SnapshotTesting
 import WireSyncEngineSupport
+
+@testable import Wire
 
 // MARK: - MockOptionsViewModelConfiguration
 

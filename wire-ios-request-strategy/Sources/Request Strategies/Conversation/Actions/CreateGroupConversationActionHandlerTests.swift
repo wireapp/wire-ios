@@ -17,8 +17,8 @@
 //
 
 import WireDataModelSupport
-import XCTest
 @testable import WireRequestStrategy
+import XCTest
 
 final class CreateGroupConversationActionHandlerTests: ActionHandlerTestBase<CreateGroupConversationAction, CreateGroupConversationActionHandler> {
 

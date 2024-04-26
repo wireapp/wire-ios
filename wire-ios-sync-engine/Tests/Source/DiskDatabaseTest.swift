@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
-import WireTesting
 import WireDataModel
+import WireTesting
+import XCTest
 
 class DiskDatabaseTest: DatabaseTest {
 
