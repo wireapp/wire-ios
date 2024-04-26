@@ -245,5 +245,5 @@ public protocol UserSession: AnyObject {
     // MARK: - Dependency Injection
 
     /// Cache for search users.
-    var searchUsersCache: SearchUsersCache? { get }
+    var searchUsersCache: SearchUsersCache { get }
 }

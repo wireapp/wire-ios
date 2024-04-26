@@ -702,7 +702,7 @@ public final class ZMUserSession: NSObject {
     // MARK: Caches
 
     func purgeTemporaryAssets() throws {
-        try dependencies.caches.fileAssets?.purgeTemporaryAssets()
+        try dependencies.caches.fileAssets.purgeTemporaryAssets()
     }
 
 }

@@ -82,7 +82,7 @@ extension ZMUserSession: UserSession {
 
     // MARK: Dependency Injection
 
-    public var searchUsersCache: SearchUsersCache? {
+    public var searchUsersCache: SearchUsersCache {
         dependencies.caches.searchUsers
     }
 
