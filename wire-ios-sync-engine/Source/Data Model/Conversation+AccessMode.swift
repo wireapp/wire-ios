@@ -62,9 +62,14 @@ public enum WirelessLinkError: Error {
 
 extension ZMConversation {
 
-    /// Fetches the link to access the conversation.
-    /// @param completion called when the operation is ended. Called with .success and the link fetched. If the link
-    ///        was not generated yet, it is called with .success(nil).
+    /// Fetches the wireless link for accessing the conversation.
+    ///
+    /// - Parameters:
+    ///   - userSession: The user session used to fetch the link.
+    ///   - completion: A closure called when the operation is completed. It returns a `Result` with either the link fetched
+    ///                 along with its security status or an error.
+    ///
+    /// - Note: The completion closure is called with `.success` and the link fetched if successful. If the     link has not been generated yet, it is called with `.success(nil)`. If there are any errors during    the operation, it is called with `.failure` along with the corresponding error.
     public func fetchWirelessLink(in userSession: ZMUserSession, _ completion: @escaping (Result<(uri: String?, secured: Bool), Error>) -> Void) {
         guard canManageAccess else {
             return completion(.failure(WirelessLinkError.invalidOperation))
