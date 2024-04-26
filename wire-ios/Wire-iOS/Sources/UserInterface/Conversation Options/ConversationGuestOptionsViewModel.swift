@@ -17,9 +17,10 @@
 //
 
 import UIKit
-import WireUtilities
 import WireSyncEngine
 import WireTransport
+import WireUtilities
+import WireUtilities
 
 protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     var allowGuests: Bool { get }
