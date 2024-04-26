@@ -65,7 +65,7 @@ enum SettingKey: String, CaseIterable {
     case twitterOpeningRawValue = "TwitterOpeningRawValue"
     case mapsOpeningRawValue = "MapsOpeningRawValue"
     case browserOpeningRawValue = "BrowserOpeningRawValue"
-    case didMigrateHockeySettingInitially = "DidMigrateHockeySettingInitially"
+    case didMigrateHockeySettingInitially = "DidMigrateHockeySettingInitially" // still needed?
     case callingConstantBitRate = "CallingConstantBitRate"
     case disableLinkPreviews = "DisableLinkPreviews"
 }
@@ -152,7 +152,7 @@ class Settings {
         NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground(_:)), name: UIApplication.didEnterBackgroundNotification, object: nil)
     }
 
-    func migrateAppCenterAndOptOutSettingsToSharedDefaults() {
+    func migrateAppCenterAndOptOutSettingsToSharedDefaults() { // still needed?
         if !defaults.bool(forKey: SettingKey.didMigrateHockeySettingInitially.rawValue) {
             ExtensionSettings.shared.disableLinkPreviews = Settings.disableLinkPreviews
             defaults.set(true, forKey: SettingKey.didMigrateHockeySettingInitially.rawValue)
