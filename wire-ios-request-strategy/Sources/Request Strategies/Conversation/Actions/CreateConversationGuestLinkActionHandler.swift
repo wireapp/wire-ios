@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConversationGuestLinkAction> {
+final class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConversationGuestLinkAction> {
 
     // MARK: - Request generation
 
