@@ -26,8 +26,8 @@ struct SelfProfileViewControllerBuilder: ViewControllerBuilder {
     var userRightInterfaceType: UserRightInterface.Type
     var userSession: UserSession
 
-    func build() -> SelfProfileViewController {
-        .init(
+    func build() -> UIViewController {
+        SelfProfileViewController(
             selfUser: selfUser,
             userRightInterfaceType: userRightInterfaceType,
             userSession: userSession

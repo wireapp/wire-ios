@@ -16,21 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCommonComponents
-import WireDataModel
-
-protocol ConversationOptionsConfigurable {
-    func configure(with conversation: GroupDetailsConversationType)
-}
-
-// a ConversationOptionsCell that with a disclosure indicator on the right
-typealias GroupDetailsDisclosureOptionsCell = ConversationOptionsConfigurable & DisclosureCell
-
-class DisclosureCell: RightIconDetailsCell {
-    override func setUp() {
-        super.setUp()
-        accessoryColor = SemanticColors.Icon.foregroundDefault
-        accessory = .init(resource: .rightChevron)
-    }
+protocol ConversationListTopBarViewControllerDelegate: AnyObject {
+    func conversationListTopBarViewControllerDidSelectNewConversation(_ viewController: ConversationListTopBarViewController)
 }

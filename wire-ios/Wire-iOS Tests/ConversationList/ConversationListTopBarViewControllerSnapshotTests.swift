@@ -32,6 +32,7 @@ final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestC
 
     override func setUp() {
         super.setUp()
+
         mockAccount = Account.mockAccount(imageData: mockImageData)
         mockSelfUser = MockUserType.createSelfUser(name: "James Hetfield")
         userSession = UserSessionMock(mockUser: mockSelfUser)

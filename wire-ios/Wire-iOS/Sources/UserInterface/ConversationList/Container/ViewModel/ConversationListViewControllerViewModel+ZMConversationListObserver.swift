@@ -20,9 +20,9 @@ import Foundation
 import WireSyncEngine
 
 extension ConversationListViewController.ViewModel: ZMConversationListObserver {
+
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         updateNoConversationVisibility()
-        updateArchiveButtonVisibility()
     }
 }
 
@@ -41,10 +41,6 @@ extension ConversationListViewController.ViewModel {
 
             connectionRequestsObserverToken = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
         }
-    }
-
-    func updateArchiveButtonVisibility() {
-        viewController?.updateArchiveButtonVisibilityIfNeeded(showArchived: ZMConversationList.hasArchivedConversations)
     }
 
     var hasArchivedConversations: Bool {

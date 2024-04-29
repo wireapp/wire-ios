@@ -16,12 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 
 extension ConversationListViewController {
-    func setState(_ state: ConversationListState,
-                  animated: Bool,
-                  completion: Completion? = nil) {
+
+    func setState(
+        _ state: ConversationListState,
+        animated: Bool,
+        completion: Completion? = nil
+    ) {
         if self.state == state {
             completion?()
             return
@@ -37,6 +40,7 @@ extension ConversationListViewController {
             } else {
                 completion?()
             }
+
         case .peoplePicker:
             let startUIViewController = createPeoplePickerController()
             let navigationWrapper = startUIViewController.wrapInNavigationController(navigationControllerClass: NavigationController.self)
@@ -45,8 +49,21 @@ extension ConversationListViewController {
                 startUIViewController.showKeyboardIfNeeded()
                 completion?()
             }
+
         case .archived:
             show(createArchivedListViewController(), animated: animated, completion: completion)
+
+        case .settings:
+            let settingsViewController = settingsViewControllerBuilder.build()
+            let navigationController = settingsViewController.wrapInNavigationController(navigationBarClass: DefaultNavigationBar.self)
+            add(navigationController, to: contentContainer)
+            navigationController.view.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                navigationController.view.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
+                navigationController.view.topAnchor.constraint(equalTo: contentContainer.topAnchor),
+                contentContainer.trailingAnchor.constraint(equalTo: navigationController.view.trailingAnchor),
+                tabBar.topAnchor.constraint(equalTo: navigationController.view.bottomAnchor)
+            ])
         }
     }
 
@@ -54,5 +71,4 @@ extension ConversationListViewController {
         setState(.conversationList, animated: false)
         listContentController.selectInboxAndFocus(onView: focus)
     }
-
 }
