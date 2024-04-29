@@ -148,13 +148,42 @@ extension URLActionRouter: PresentationDelegate {
         switch action {
         case .connectBot:
             presentConfirmationAlert(title: UrlAction.title, message: UrlAction.ConnectToBot.message, decisionHandler: decisionHandler)
-        case .accessBackend:
-            decisionHandler(SecurityFlags.customBackend.isEnabled)
+        case .accessBackend(let url):
+            // Switching backend is handled below, so pass false here.
+            decisionHandler(false)
+            switchBackend(configURL: url)
         default:
             decisionHandler(true)
         }
     }
 
+    private func switchBackend(configURL: URL) {
+        guard
+            SecurityFlags.customBackend.isEnabled,
+            let sessionManager
+        else {
+            return
+        }
+
+        sessionManager.fetchBackendEnvironment(at: configURL) { [weak self] result in
+            guard let self else { return }
+
+            switch result {
+            case .success(let backendEnvironment):
+                self.requestUserConfirmationToSwitchBackend(backendEnvironment) { didConfirm in
+                    guard didConfirm else { return }
+                    sessionManager.switchBackend(to: backendEnvironment)
+                    BackendEnvironment.shared = backendEnvironment
+                }
+
+            case .failure(let error):
+                let localizedError = self.mapToLocalizedError(error)
+                self.presentLocalizedErrorAlert(localizedError)
+            }
+        }
+    }
+
+    // TODO: delete
     func didSwitchBackend(environment: BackendEnvironment) {
         BackendEnvironment.shared = environment
     }
@@ -190,17 +219,15 @@ extension URLActionRouter: PresentationDelegate {
         _ environment: BackendEnvironment,
         didConfirm: @escaping (Bool) -> Void
     ) {
-        DispatchQueue.main.async { [weak self] in
-            let viewModel = SwitchBackendConfirmationViewModel(
-                environment: environment,
-                didConfirm: didConfirm
-            )
+        let viewModel = SwitchBackendConfirmationViewModel(
+            environment: environment,
+            didConfirm: didConfirm
+        )
 
-            let view = SwitchBackendConfirmationView(viewModel: viewModel)
-            let hostingController = UIHostingController(rootView: view)
-            // TODO: Check if we can present...
-            self?.rootViewController.present(hostingController, animated: true)
-        }
+        let view = SwitchBackendConfirmationView(viewModel: viewModel)
+        let hostingController = UIHostingController(rootView: view)
+        // TODO: Check if we can present...
+        rootViewController.present(hostingController, animated: true)
     }
 
     // MARK: - Private Implementation
