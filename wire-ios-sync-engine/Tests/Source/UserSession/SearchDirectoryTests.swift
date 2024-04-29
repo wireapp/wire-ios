@@ -23,26 +23,60 @@ import Foundation
 
 final class SearchDirectoryTests: DatabaseTest {
 
+    private var mockCache: SearchUsersCache!
+    private var mockTransport: MockTransportSession!
+
+    override func setUp() {
+        super.setUp()
+
+        mockCache = SearchUsersCache()
+        mockTransport = MockTransportSession(dispatchGroup: dispatchGroup)
+    }
+
+    override func tearDown() {
+        mockCache = nil
+        mockTransport = nil
+
+        super.tearDown()
+    }
+
     func testThatItEmptiesTheSearchUserCacheOnTeardown() {
         // given
-        uiMOC.zm_searchUserCache = NSCache()
-        let mockTransport = MockTransportSession(dispatchGroup: dispatchGroup)
-        let uuid = UUID.create()
-        let sut = SearchDirectory(
-            searchContext: searchMOC,
-            contextProvider: coreDataStack!,
-            transportSession: mockTransport,
-            refreshUsersMissingMetadataAction: .dummy,
-            refreshConversationsMissingMetadataAction: .dummy
-        )
-        _ = ZMSearchUser(contextProvider: coreDataStack!, name: "John Doe", handle: "john", accentColor: .amber, remoteIdentifier: uuid)
-        XCTAssertNotNil(uiMOC.zm_searchUserCache?.object(forKey: uuid as NSUUID))
+        let uuid = UUID()
+        let sut = makeSearchDirectory()
+        insertSearchUser(remoteIdentifier: uuid)
+
+        XCTAssertNotNil(mockCache.object(forKey: uuid as NSUUID))
 
         // when
         sut.tearDown()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        XCTAssertNil(uiMOC.zm_searchUserCache?.object(forKey: uuid as NSUUID))
+        XCTAssertNil(mockCache.object(forKey: uuid as NSUUID))
+    }
+
+    // MARK: - Helpers
+
+    private func makeSearchDirectory() -> SearchDirectory {
+        SearchDirectory(
+            searchContext: searchMOC,
+            contextProvider: coreDataStack!,
+            transportSession: mockTransport,
+            searchUsersCache: mockCache,
+            refreshUsersMissingMetadataAction: .dummy,
+            refreshConversationsMissingMetadataAction: .dummy
+        )
+    }
+
+    private func insertSearchUser(remoteIdentifier: UUID) {
+        _ = ZMSearchUser(
+            contextProvider: coreDataStack!,
+            name: "John Doe",
+            handle: "john",
+            accentColor: .amber,
+            remoteIdentifier: remoteIdentifier,
+            searchUsersCache: mockCache
+        )
     }
 }

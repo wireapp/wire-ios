@@ -31,6 +31,8 @@ public class SearchTask {
     fileprivate let transportSession: TransportSessionType
     fileprivate let searchContext: NSManagedObjectContext
     fileprivate let contextProvider: ContextProvider
+    fileprivate let searchUsersCache: SearchUsersCache?
+
     fileprivate let task: Task
     fileprivate var userLookupTaskIdentifier: ZMTaskIdentifier?
     fileprivate var directoryTaskIdentifier: ZMTaskIdentifier?
@@ -44,7 +46,8 @@ public class SearchTask {
         addressBook: [],
         directory: [],
         conversations: [],
-        services: []
+        services: [],
+        searchUsersCache: nil
     )
 
     fileprivate var tasksRemaining = 0 {
@@ -61,25 +64,50 @@ public class SearchTask {
         }
     }
 
-    convenience init(request: SearchRequest,
-                     searchContext: NSManagedObjectContext,
-                     contextProvider: ContextProvider,
-                     transportSession: TransportSessionType) {
-        self.init(task: .search(searchRequest: request), searchContext: searchContext, contextProvider: contextProvider, transportSession: transportSession)
+    convenience init(
+        request: SearchRequest,
+        searchContext: NSManagedObjectContext,
+        contextProvider: ContextProvider,
+        transportSession: TransportSessionType,
+        searchUsersCache: SearchUsersCache?
+    ) {
+        self.init(
+            task: .search(searchRequest: request),
+            searchContext: searchContext,
+            contextProvider: contextProvider,
+            transportSession: transportSession,
+            searchUsersCache: searchUsersCache
+        )
     }
 
-    convenience init(lookupUserId userId: UUID,
-                     searchContext: NSManagedObjectContext,
-                     contextProvider: ContextProvider,
-                     transportSession: TransportSessionType) {
-        self.init(task: .lookup(userId: userId), searchContext: searchContext, contextProvider: contextProvider, transportSession: transportSession)
+    convenience init(
+        lookupUserId userId: UUID,
+        searchContext: NSManagedObjectContext,
+        contextProvider: ContextProvider,
+        transportSession: TransportSessionType,
+        searchUsersCache: SearchUsersCache?
+    ) {
+        self.init(
+            task: .lookup(userId: userId),
+            searchContext: searchContext,
+            contextProvider: contextProvider,
+            transportSession: transportSession,
+            searchUsersCache: searchUsersCache
+        )
     }
 
-    public init(task: Task, searchContext: NSManagedObjectContext, contextProvider: ContextProvider, transportSession: TransportSessionType) {
+    public init(
+        task: Task,
+        searchContext: NSManagedObjectContext,
+        contextProvider: ContextProvider,
+        transportSession: TransportSessionType,
+        searchUsersCache: SearchUsersCache?
+    ) {
         self.task = task
         self.transportSession = transportSession
         self.searchContext = searchContext
         self.contextProvider = contextProvider
+        self.searchUsersCache = searchUsersCache
     }
 
     public func addResultHandler(_ resultHandler: @escaping ResultHandler) {
@@ -143,12 +171,25 @@ extension SearchTask {
                 let copiedConnectedUsers = connectedUsers.compactMap { contextProvider.viewContext.object(with: $0.objectID) as? ZMUser }
 
                 let result = SearchResult(
-                    contacts: copiedConnectedUsers.map { ZMSearchUser(contextProvider: contextProvider, user: $0) },
-                    teamMembers: copiedTeamMembers.compactMap(\.user).map { ZMSearchUser(contextProvider: contextProvider, user: $0) },
+                    contacts: copiedConnectedUsers.map {
+                        ZMSearchUser(
+                            contextProvider: contextProvider,
+                            user: $0,
+                            searchUsersCache: searchUsersCache
+                        )
+                    },
+                    teamMembers: copiedTeamMembers.compactMap(\.user).map {
+                        ZMSearchUser(
+                            contextProvider: contextProvider,
+                            user: $0,
+                            searchUsersCache: searchUsersCache
+                        )
+                    },
                     addressBook: [],
                     directory: [],
                     conversations: [],
-                    services: []
+                    services: [],
+                    searchUsersCache: searchUsersCache
                 )
 
                 self.result = self.result.union(withLocalResult: result.copy(on: contextProvider.viewContext))
@@ -180,11 +221,27 @@ extension SearchTask {
 
                 let copiedConnectedUsers = connectedUsers.compactMap { contextProvider.viewContext.object(with: $0.objectID) as? ZMUser }
                 let searchConnectedUsers = copiedConnectedUsers
-                    .map { ZMSearchUser(contextProvider: contextProvider, user: $0) }
+                    .map {
+                        ZMSearchUser(
+                            contextProvider: contextProvider,
+                            user: $0,
+                            searchUsersCache: searchUsersCache
+                        )
+                    }
                     .filter { !$0.hasEmptyName }
 
-                let copiedteamMembers = teamMembers.compactMap { contextProvider.viewContext.object(with: $0.objectID) as? Member }
-                               let searchTeamMembers = copiedteamMembers.compactMap(\.user).map { ZMSearchUser(contextProvider: contextProvider, user: $0) }
+                let copiedteamMembers = teamMembers.compactMap {
+                    contextProvider.viewContext.object(with: $0.objectID) as? Member
+                }
+                let searchTeamMembers = copiedteamMembers
+                    .compactMap(\.user)
+                    .map {
+                        ZMSearchUser(
+                            contextProvider: contextProvider,
+                            user: $0,
+                            searchUsersCache: searchUsersCache
+                        )
+                    }
 
                 let result = SearchResult(
                     contacts: searchConnectedUsers,
@@ -192,7 +249,8 @@ extension SearchTask {
                     addressBook: [],
                     directory: [],
                     conversations: conversations,
-                    services: []
+                    services: [],
+                    searchUsersCache: searchUsersCache
                 )
 
                 self.result = self.result.union(withLocalResult: result.copy(on: contextProvider.viewContext))
@@ -301,10 +359,12 @@ extension SearchTask {
                 guard
                     let contextProvider = self?.contextProvider,
                     let payload = response.payload?.asDictionary(),
-                    let result = SearchResult(userLookupPayload: payload, contextProvider: contextProvider)
-                else {
-                        return
-                }
+                    let result = SearchResult(
+                        userLookupPayload: payload,
+                        contextProvider: contextProvider,
+                        searchUsersCache: self?.searchUsersCache
+                    )
+                else { return }
 
                 if let updatedResult = self?.result.union(withDirectoryResult: result) {
                     self?.result = updatedResult
@@ -353,7 +413,8 @@ extension SearchTask {
                         payload: payload,
                         query: searchRequest.query,
                         searchOptions: searchRequest.searchOptions,
-                        contextProvider: contextProvider
+                        contextProvider: contextProvider,
+                        searchUsersCache: self?.searchUsersCache
                     )
                 else {
                     self?.completeRemoteSearch()
@@ -496,7 +557,8 @@ extension SearchTask {
                     payload: documentPayload,
                     query: searchRequest.query,
                     searchOptions: searchRequest.searchOptions,
-                    contextProvider: contextProvider
+                    contextProvider: contextProvider,
+                    searchUsersCache: self?.searchUsersCache
                 ) else {
                     return
                 }
@@ -511,7 +573,8 @@ extension SearchTask {
                                 addressBook: prevResult.addressBook,
                                 directory: result.directory + prevResult.directory,
                                 conversations: prevResult.conversations,
-                                services: prevResult.services
+                                services: prevResult.services,
+                                searchUsersCache: self?.searchUsersCache
                             )
                         }
                     } else {
@@ -570,7 +633,12 @@ extension SearchTask {
                 guard
                     let contextProvider = self?.contextProvider,
                     let payload = response.payload?.asDictionary(),
-                    let result = SearchResult(servicesPayload: payload, query: searchRequest.query.string, contextProvider: contextProvider)
+                    let result = SearchResult(
+                        servicesPayload: payload,
+                        query: searchRequest.query.string,
+                        contextProvider: contextProvider,
+                        searchUsersCache: self?.searchUsersCache
+                    )
                     else {
                         return
                 }
