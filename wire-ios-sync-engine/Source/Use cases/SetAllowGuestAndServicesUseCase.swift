@@ -29,6 +29,12 @@ public protocol SetAllowGuestAndServicesUseCaseProtocol {
 
 struct SetAllowGuestAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol {
 
+    public enum SetAllowServicesError: Error {
+        case unknown
+        case invalidOperation
+        case contextUnavailable
+    }
+
     func invoke(
         conversation: ZMConversation,
         allowGuests: Bool,
@@ -44,7 +50,7 @@ struct SetAllowGuestAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol 
         }
 
         guard let context = conversation.managedObjectContext else {
-            return completion(.failure(ContextError.contextUnavailable))
+            return completion(.failure(SetAllowServicesError.contextUnavailable))
         }
 
         var action = SetAllowGuestsAndServicesAction(
