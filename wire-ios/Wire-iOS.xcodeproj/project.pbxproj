@@ -1573,6 +1573,11 @@
 		EEF28EEA1F1613DA007642E2 /* MarkdownBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF28EE91F1613DA007642E2 /* MarkdownBarView.swift */; };
 		EEF28EED1F16692A007642E2 /* InputBarSecondaryButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF28EEC1F16692A007642E2 /* InputBarSecondaryButtonsView.swift */; };
 		EEF28EEF1F168039007642E2 /* ConversationInputBarViewController+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF28EEE1F168039007642E2 /* ConversationInputBarViewController+Markdown.swift */; };
+		EEF37ED02BDFC8110055C9E1 /* FrameExpansion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF37ECF2BDFC8110055C9E1 /* FrameExpansion.swift */; };
+		EEF37ED22BDFC8C10055C9E1 /* Color+Named.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF37ED12BDFC8C10055C9E1 /* Color+Named.swift */; };
+		EEF37ED42BDFD2350055C9E1 /* WireTextStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF37ED32BDFD2350055C9E1 /* WireTextStyle.swift */; };
+		EEF37ED72BDFD2870055C9E1 /* PrimaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF37ED62BDFD2870055C9E1 /* PrimaryButtonStyle.swift */; };
+		EEF37ED92BDFD2AC0055C9E1 /* SecondaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF37ED82BDFD2AC0055C9E1 /* SecondaryButtonStyle.swift */; };
 		EEF6E3C428D86408001C1799 /* MessageProtocolSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF6E3C328D86408001C1799 /* MessageProtocolSectionController.swift */; };
 		EEF71F6321B1973D00F0FB30 /* ConversationCreateReceiptsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF71F6221B1973D00F0FB30 /* ConversationCreateReceiptsCell.swift */; };
 		EEF71F6521B19F5300F0FB30 /* ConversationCreateReceiptsSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF71F6421B19F5300F0FB30 /* ConversationCreateReceiptsSectionController.swift */; };
@@ -3513,7 +3518,7 @@
 		EE118BFF2031D17000BC68D6 /* MarkdownTextViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextViewTests.swift; sourceTree = "<group>"; };
 		EE1AFBFD2124330B003D1AE1 /* UNUserNotificationCenter+Permission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UNUserNotificationCenter+Permission.swift"; sourceTree = "<group>"; };
 		EE2538842166151C00932606 /* ConversationActionController+Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationActionController+Notifications.swift"; sourceTree = "<group>"; };
-		EE2BCA0A2BD7C95B000C2ED3 /* SwitchBackendConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SwitchBackendConfirmationView.swift; path = UserInterface/SwitchBackendConfirmationView.swift; sourceTree = "<group>"; };
+		EE2BCA0A2BD7C95B000C2ED3 /* SwitchBackendConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchBackendConfirmationView.swift; sourceTree = "<group>"; };
 		EE2BCA0C2BD7C987000C2ED3 /* SwitchBackendConfirmationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchBackendConfirmationViewModel.swift; sourceTree = "<group>"; };
 		EE2C42EB25B70F2200B07EFF /* AppLockModule.MockAuthenticationTypeDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockModule.MockAuthenticationTypeDetector.swift; sourceTree = "<group>"; };
 		EE2DF75D2875E2C30028ECA2 /* PreferredAPIVersionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferredAPIVersionView.swift; sourceTree = "<group>"; };
@@ -3658,6 +3663,11 @@
 		EEF28EE91F1613DA007642E2 /* MarkdownBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MarkdownBarView.swift; path = ../../MarkdownBarView.swift; sourceTree = "<group>"; };
 		EEF28EEC1F16692A007642E2 /* InputBarSecondaryButtonsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputBarSecondaryButtonsView.swift; sourceTree = "<group>"; };
 		EEF28EEE1F168039007642E2 /* ConversationInputBarViewController+Markdown.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+Markdown.swift"; sourceTree = "<group>"; };
+		EEF37ECF2BDFC8110055C9E1 /* FrameExpansion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameExpansion.swift; sourceTree = "<group>"; };
+		EEF37ED12BDFC8C10055C9E1 /* Color+Named.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Named.swift"; sourceTree = "<group>"; };
+		EEF37ED32BDFD2350055C9E1 /* WireTextStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireTextStyle.swift; sourceTree = "<group>"; };
+		EEF37ED62BDFD2870055C9E1 /* PrimaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButtonStyle.swift; sourceTree = "<group>"; };
+		EEF37ED82BDFD2AC0055C9E1 /* SecondaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonStyle.swift; sourceTree = "<group>"; };
 		EEF6E3C328D86408001C1799 /* MessageProtocolSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageProtocolSectionController.swift; sourceTree = "<group>"; };
 		EEF71F6221B1973D00F0FB30 /* ConversationCreateReceiptsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateReceiptsCell.swift; sourceTree = "<group>"; };
 		EEF71F6421B19F5300F0FB30 /* ConversationCreateReceiptsSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateReceiptsSectionController.swift; sourceTree = "<group>"; };
@@ -6402,8 +6412,6 @@
 				54B27985258113FD0043ED25 /* AuthenticatedRouter.swift */,
 				543DF6B125309E52001F6EA6 /* RootViewController.swift */,
 				546EEA8C2536DDF500195097 /* URLActionRouter.swift */,
-				EE2BCA0A2BD7C95B000C2ED3 /* SwitchBackendConfirmationView.swift */,
-				EE2BCA0C2BD7C987000C2ED3 /* SwitchBackendConfirmationViewModel.swift */,
 				546EEA8E2536DFAB00195097 /* SwitchingAccountRouter.swift */,
 				543DF684252DD7F0001F6EA6 /* NotificationObserver.swift */,
 				5405444E253842C200FAE77A /* LaunchSequenceOperation.swift */,
@@ -6563,6 +6571,7 @@
 		8FC8516F199245760008B66B /* UserInterface */ = {
 			isa = PBXGroup;
 			children = (
+				EEF37ECE2BDFC74C0055C9E1 /* SwitchBackend */,
 				061F34142B1A4F190099CBAB /* E2EIdentity */,
 				EE01D07F25ADA3AD001DB205 /* App Lock */,
 				A9BB638024C1DD910072143A /* CustomAppLock */,
@@ -7856,7 +7865,11 @@
 		E902B3B529ED3A2E0090DE32 /* SwiftUI Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				EEF37ED52BDFD2600055C9E1 /* Button styles */,
 				E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */,
+				EEF37ECF2BDFC8110055C9E1 /* FrameExpansion.swift */,
+				EEF37ED12BDFC8C10055C9E1 /* Color+Named.swift */,
+				EEF37ED32BDFD2350055C9E1 /* WireTextStyle.swift */,
 			);
 			path = "SwiftUI Helpers";
 			sourceTree = "<group>";
@@ -8053,6 +8066,24 @@
 				EEE455EA28B2E470005ACD74 /* NetworkPrimitives.swift */,
 			);
 			path = Network;
+			sourceTree = "<group>";
+		};
+		EEF37ECE2BDFC74C0055C9E1 /* SwitchBackend */ = {
+			isa = PBXGroup;
+			children = (
+				EE2BCA0A2BD7C95B000C2ED3 /* SwitchBackendConfirmationView.swift */,
+				EE2BCA0C2BD7C987000C2ED3 /* SwitchBackendConfirmationViewModel.swift */,
+			);
+			path = SwitchBackend;
+			sourceTree = "<group>";
+		};
+		EEF37ED52BDFD2600055C9E1 /* Button styles */ = {
+			isa = PBXGroup;
+			children = (
+				EEF37ED62BDFD2870055C9E1 /* PrimaryButtonStyle.swift */,
+				EEF37ED82BDFD2AC0055C9E1 /* SecondaryButtonStyle.swift */,
+			);
+			path = "Button styles";
 			sourceTree = "<group>";
 		};
 		EEFF3E7321B6755D000834A6 /* Sections */ = {
@@ -9203,6 +9234,7 @@
 				EF42658B2333DB9800DDAD0A /* ConversationListViewModelDelegate.swift in Sources */,
 				BFE3FEEA209747D6003D9AB5 /* CallStatusView.swift in Sources */,
 				A9806A3E23E41EF400691DFE /* Token.swift in Sources */,
+				EEF37ED02BDFC8110055C9E1 /* FrameExpansion.swift in Sources */,
 				A978D993236C587B00B568AE /* ZMUserSession+Shared.swift in Sources */,
 				5E8DA75A211B075E00360979 /* AuthenticationNoCredentialsErrorHandler.swift in Sources */,
 				551CD27822BA288B00EE9AE5 /* LegalHoldDisclosureController.swift in Sources */,
@@ -9638,6 +9670,7 @@
 				54B27986258113FD0043ED25 /* AuthenticatedRouter.swift in Sources */,
 				EF1A461821AD5A270009B6B9 /* GroupDetailsReceiptOptionsCell.swift in Sources */,
 				87EB6B871E2FCE080019B3C5 /* ZMConversationMessage+File.swift in Sources */,
+				EEF37ED42BDFD2350055C9E1 /* WireTextStyle.swift in Sources */,
 				87F18BBA1E01551600C69D9B /* VideoMessageView.swift in Sources */,
 				5EE73BEB212307D10032986D /* RegistrationActivationExistingAccountPolicyHandler.swift in Sources */,
 				63421E4B2614C25700ADA723 /* NotificationLabel.swift in Sources */,
@@ -9739,6 +9772,7 @@
 				EF18C7E41F9E4DA00085A832 /* NSString+FileNameForZMUser.swift in Sources */,
 				D5C34E8E203D75C5004A0986 /* ConversationGuestOptionsViewController.swift in Sources */,
 				BFAF4CB31CECA68200780537 /* AudioRecorder.swift in Sources */,
+				EEF37ED22BDFC8C10055C9E1 /* Color+Named.swift in Sources */,
 				EEE2DB0D2A95C6D10094835F /* GridLayoutView.swift in Sources */,
 				010497DA2940F4F40046124D /* CustomBackendView.swift in Sources */,
 				A96131A023E81CC300194608 /* ParticipantDeviceHeaderView.swift in Sources */,
@@ -9932,6 +9966,7 @@
 				87BEB03E1D3E44DE00DE9575 /* CameraCell.swift in Sources */,
 				A9614EF823C38C810012A718 /* ConnectRequestsViewController.swift in Sources */,
 				E52F448B2844E916008E11CB /* UITableViewCell+DisclosureIndicator.swift in Sources */,
+				EEF37ED72BDFD2870055C9E1 /* PrimaryButtonStyle.swift in Sources */,
 				A90E4ABF2381CD0200468F31 /* AccentColorChangeHandler.swift in Sources */,
 				EFDAC64722DE2AD100D63025 /* TeamImageView.swift in Sources */,
 				5E8FFC1021EE0CA60052DF03 /* AuthenticationButtonTapInputHandler.swift in Sources */,
@@ -10262,6 +10297,7 @@
 				87F18BC41E02E4C200C69D9B /* CollectionAudioCell.swift in Sources */,
 				87372F5121E3678000405D12 /* ConversationTableViewDataSource.swift in Sources */,
 				EF24036A20A198CC002813BE /* UIImagePickerController+iPadPopover.swift in Sources */,
+				EEF37ED92BDFD2AC0055C9E1 /* SecondaryButtonStyle.swift in Sources */,
 				87F18BB01E01533F00C69D9B /* CollectionFileCell.swift in Sources */,
 				EF6E9FE423193439000B7785 /* ConversationListViewController+State.swift in Sources */,
 				16E0FBAA2331119F000E3235 /* SettingsSignOutCellDescriptor.swift in Sources */,
