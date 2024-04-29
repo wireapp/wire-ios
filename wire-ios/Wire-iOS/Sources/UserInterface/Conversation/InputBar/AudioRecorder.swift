@@ -21,8 +21,6 @@ import MediaPlayer
 import WireSyncEngine
 import avs
 
-private let zmLog = ZMSLog(tag: "UI")
-
 public enum PlayingState: UInt, CustomStringConvertible {
     case idle, playing
 
@@ -170,7 +168,7 @@ public final class AudioRecorder: NSObject, AudioRecorderType {
             audioRecorder.delegate = self
             return audioRecorder
         } catch {
-            zmLog.error("Failed to initialize `AVAudioRecorder`!")
+            WireLogger.ui.error("Failed to initialize `AVAudioRecorder`!")
             return nil
         }
     }
@@ -228,7 +226,7 @@ public final class AudioRecorder: NSObject, AudioRecorderType {
             if successfullyStarted {
                 self.state = .recording(start: audioRecorder.deviceCurrentTime)
             } else {
-                zmLog.error("Failed to start audio recording")
+                WireLogger.ui.error("Failed to start audio recording")
             }
 
             completion(successfullyStarted)
@@ -286,7 +284,7 @@ public final class AudioRecorder: NSObject, AudioRecorderType {
             let attribs = try? FileManager.default.attributesOfItem(atPath: fileURL.path),
             let size = attribs[.size] as? UInt32,
             size > maxAllowedSize else { return false }
-        zmLog.debug("Audio message size is over the maximum amount allowed. File size is \(size), threshold is \(maxAllowedSize)")
+        WireLogger.ui.debug("Audio message size is over the maximum amount allowed. File size is \(size), threshold is \(maxAllowedSize)")
         return true
     }
 
@@ -304,7 +302,7 @@ public final class AudioRecorder: NSObject, AudioRecorderType {
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
         } catch let error {
-            zmLog.error("Failed change audio category for playback: \(error)")
+            WireLogger.ui.error("Failed change audio category for playback: \(error)")
         }
 
         setupDisplayLink()
@@ -417,7 +415,7 @@ extension AudioRecorder: AVAudioRecorderDelegate {
     }
 
     public func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
-        zmLog.error("Cannot finish recording: \(String(describing: error))")
+        WireLogger.ui.error("Cannot finish recording: \(String(describing: error))")
     }
 }
 
