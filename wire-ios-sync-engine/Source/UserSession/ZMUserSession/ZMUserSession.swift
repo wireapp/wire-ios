@@ -132,6 +132,11 @@ public final class ZMUserSession: NSObject {
         return featureRepository.fetchE2EI()
     }
 
+    public var mlsFeature: Feature.MLS {
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchMLS()
+    }
+
     public var gracePeriodEndDate: Date? {
         guard
             e2eiFeature.isEnabled,
@@ -252,8 +257,7 @@ public final class ZMUserSession: NSObject {
         )
 
         let apiProvider = APIProvider(httpClient: httpClient)
-
-        let e2eiSetupService = E2EISetupService(coreCryptoProvider: coreCryptoProvider)
+        let e2eiSetupService = E2EISetupService(coreCryptoProvider: coreCryptoProvider, featureRepository: featureRepository)
         let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
 
         let keyRotator = E2EIKeyPackageRotator(
@@ -288,7 +292,10 @@ public final class ZMUserSession: NSObject {
     private(set) public var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
     public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol = {
-        return GetIsE2EIdentityEnabledUseCase(coreCryptoProvider: coreCryptoProvider)
+        return GetIsE2EIdentityEnabledUseCase(
+            coreCryptoProvider: coreCryptoProvider,
+            featureRespository: featureRepository
+        )
     }()
 
     public private(set) lazy var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol = {
@@ -369,10 +376,48 @@ public final class ZMUserSession: NSObject {
         self.coreCryptoProvider = coreCryptoProvider
         self.lastEventIDRepository = lastEventIDRepository
         self.userId = userId
+<<<<<<< HEAD
         self.lastE2EIUpdateDateRepository = lastE2EIUpdateDateRepository
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
         self.applicationStatusDirectory = applicationStatusDirectory
         self.earService = earService
+=======
+
+        self.lastE2EIUpdateDateRepository = LastE2EIdentityUpdateDateRepository(userID: userId, sharedUserDefaults: UserDefaults.standard)
+        self.e2eiActivationDateRepository = E2EIActivationDateRepository(
+            userID: userId,
+            sharedUserDefaults: sharedUserDefaults)
+        self.applicationStatusDirectory = ApplicationStatusDirectory(
+            withManagedObjectContext: self.coreDataStack.syncContext,
+            cookieStorage: transportSession.cookieStorage,
+            requestCancellation: transportSession,
+            application: application,
+            lastEventIDRepository: lastEventIDRepository,
+            coreCryptoProvider: coreCryptoProvider,
+            analytics: analytics
+        )
+        self.earService = earService ?? EARService(
+            accountID: coreDataStack.account.userIdentifier,
+            databaseContexts: [
+                coreDataStack.viewContext,
+                coreDataStack.syncContext,
+                coreDataStack.searchContext
+            ],
+            canPerformKeyMigration: true,
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: contextStorage)
+        )
+
+        let mlsService = mlsService ?? MLSService(
+            context: coreDataStack.syncContext,
+            coreCryptoProvider: coreCryptoProvider,
+            conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
+            featureRepository: FeatureRepository(context: coreDataStack.syncContext),
+            userDefaults: .standard,
+            syncStatus: applicationStatusDirectory.syncStatus,
+            userID: coreDataStack.account.userIdentifier
+        )
+>>>>>>> 87c7249098 (feat: configurable ciphersuite WPB-8591 (#1347))
         self.mlsService = mlsService
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
