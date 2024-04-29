@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class ZMSDispatchGroup;
 
 /// Similar to a dispatch queue or NSOperationQueue
+NS_SWIFT_NAME(GroupQueue)
 @protocol ZMSGroupQueue <NSObject>
 
 /// Submits a block to the receiver's private queue and associates it with the
