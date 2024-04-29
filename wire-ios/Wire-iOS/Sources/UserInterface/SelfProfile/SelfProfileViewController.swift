@@ -79,6 +79,7 @@ final class SelfProfileViewController: UIViewController {
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
 
+        self.userSession = userSession
         self.userRightInterfaceType = userRightInterfaceType
         self.settingsCellDescriptorFactory = settingsCellDescriptorFactory
         self.rootGroup = rootGroup
