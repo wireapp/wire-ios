@@ -26,7 +26,6 @@ public protocol UnauthenticatedSessionDelegate: AnyObject {
     func session(session: UnauthenticatedSession, createdAccount account: Account)
     func session(session: UnauthenticatedSession, isExistingAccount account: Account) -> Bool
     func sessionIsAllowedToCreateNewAccount(_ session: UnauthenticatedSession) -> Bool
-    func switchBackend(to environment: BackendEnvironment) throws
 }
 
 @objc public protocol UserInfoParser: AnyObject {
