@@ -137,19 +137,14 @@ public final class AudioRecorder: NSObject, AudioRecorderType {
             return
         }
 
-        let fileName = String.filename(for: selfUser).appendingPathExtension(self.format.fileExtension())!
+        let fileName = String.filename(for: selfUser).appendingPathExtension(format.fileExtension())!
         let fileURL = NSURL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(fileName)
         self.fileURL = fileURL
-        let settings = [
-            AVFormatIDKey: self.format.audioFormat(),
-            AVSampleRateKey: 32000,
-            AVNumberOfChannelsKey: 1
-        ]
 
-        let audioRecorder = try? AVAudioRecorder(url: fileURL!, settings: settings)
-
-        audioRecorder?.isMeteringEnabled = true
-        audioRecorder?.delegate = self
+        let audioRecorder = makeAudioRecorder(
+            audioFormatID: format.audioFormat(),
+            fileURL: fileURL!
+        )
 
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(handleInterruption),
@@ -157,6 +152,27 @@ public final class AudioRecorder: NSObject, AudioRecorderType {
                                                object: AVAudioSession.sharedInstance())
 
         self.audioRecorder = audioRecorder
+    }
+
+    private func makeAudioRecorder(
+        audioFormatID: AudioFormatID,
+        fileURL: URL
+    ) -> AVAudioRecorder? {
+        let settings = [
+            AVFormatIDKey: audioFormatID,
+            AVSampleRateKey: 32000,
+            AVNumberOfChannelsKey: 1
+        ]
+
+        do {
+            let audioRecorder = try AVAudioRecorder(url: fileURL, settings: settings)
+            audioRecorder.isMeteringEnabled = true
+            audioRecorder.delegate = self
+            return audioRecorder
+        } catch {
+            zmLog.error("Failed to initialize `AVAudioRecorder`!")
+            return nil
+        }
     }
 
     private func setupDidEnterBackgroundObserver() {
@@ -189,7 +205,7 @@ public final class AudioRecorder: NSObject, AudioRecorderType {
     public func startRecording(_ completion: @escaping (_ success: Bool) -> Void) {
         createAudioRecorderIfNeeded()
 
-        guard let audioRecorder = self.audioRecorder else { return }
+        guard let audioRecorder else { return }
 
         AVSMediaManager.sharedInstance().startRecording {
             guard self.state == .initializing else {
