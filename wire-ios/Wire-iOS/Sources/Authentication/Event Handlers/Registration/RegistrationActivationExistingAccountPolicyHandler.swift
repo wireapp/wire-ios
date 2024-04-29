@@ -74,11 +74,6 @@ private extension AuthenticationCoordinatorAlertAction {
                   coordinatorActions: [.unwindState(withInterface: false), .executeFeedbackAction(.clearInputFields)])
     }
 
-    static var changePhone: Self {
-        Self.init(title: AlertStrings.changePhoneAction,
-                  coordinatorActions: [.unwindState(withInterface: false), .executeFeedbackAction(.clearInputFields)])
-    }
-
     static func login(email: String) -> Self {
         let credentials = LoginCredentials(emailAddress: email,
                                            hasPassword: true,
