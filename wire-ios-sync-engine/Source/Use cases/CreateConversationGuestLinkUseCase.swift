@@ -45,15 +45,15 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
                 case .failure(let error):
                     completion(.failure(error))
                 case .success:
-                    createWirelessLink(conversation: conversation, password: password, completion)
+                    createGuestLink(conversation: conversation, password: password, completion)
                 }
             }
         } else {
-            createWirelessLink(conversation: conversation, password: password, completion)
+            createGuestLink(conversation: conversation, password: password, completion)
         }
     }
 
-    func createWirelessLink(
+    func createGuestLink(
         conversation: ZMConversation,
         password: String?,
         _ completion: @escaping (Result<String?, Error>) -> Void
