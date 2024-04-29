@@ -56,7 +56,7 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
         let conversationID = try XCTUnwrap(conversationID)
         try test_itGeneratesARequest(
             for: action,
-            expectedPath: "/v0/conversations/\(conversationID.transportString())/code",
+            expectedPath: "/conversations/\(conversationID.transportString())/code",
             expectedMethod: .post,
             apiVersion: .v0
         )
