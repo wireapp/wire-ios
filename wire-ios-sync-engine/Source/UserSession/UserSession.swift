@@ -212,6 +212,8 @@ public protocol UserSession: AnyObject {
 
     var e2eiFeature: Feature.E2EI { get }
 
+    var mlsFeature: Feature.MLS { get }
+
     func fetchAllClients()
 
     // MARK: Use Cases
