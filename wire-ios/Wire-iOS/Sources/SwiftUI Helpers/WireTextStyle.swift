@@ -19,6 +19,8 @@
 import Foundation
 import SwiftUI
 
+/// Text styles defined in Wire's design system.
+
 enum WireTextStyle {
 
     case h1
@@ -38,8 +40,12 @@ enum WireTextStyle {
 
 extension Text {
 
-    @ViewBuilder
-    func textStyle(_ textStyle: WireTextStyle) -> some View {
+    /// Sets the font of the text in the view according to the given text style.
+    ///
+    /// - Parameter textStyle: The text style to use when displaying this Text
+    /// - Returns: Text that uses the style you specify.
+
+    func textStyle(_ textStyle: WireTextStyle) -> Text {
         switch textStyle {
         case .h1:
             font(.title3)
@@ -69,4 +75,3 @@ extension Text {
     }
 
 }
-
