@@ -25,6 +25,7 @@ public protocol MessageDependencyResolverInterface {
 
 public enum MessageDependencyResolverError: Error, Equatable {
     case legalHoldPendingApproval
+    case securityLevelDegraded
 }
 
 public class MessageDependencyResolver: MessageDependencyResolverInterface {
@@ -50,8 +51,13 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
                 throw MessageDependencyResolverError.legalHoldPendingApproval
             }
 
+//            let isExpired = await self.context.perform { message.isExpired }
+//            if isExpired {
+//                throw MessageDependencyResolverError.newError
+//            }
+
             if isSecurityLevelDegraded {
-                return false
+                throw MessageDependencyResolverError.securityLevelDegraded
             }
 
             let hasDependencies = await self.context.perform {

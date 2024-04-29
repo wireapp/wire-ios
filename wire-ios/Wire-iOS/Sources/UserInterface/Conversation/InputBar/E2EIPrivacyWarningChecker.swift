@@ -38,7 +38,7 @@ struct E2EIPrivacyWarningChecker {
     var showAlert: (() -> Void)?
 
     func performAction() {
-        guard conversation.isMLSConversationDegraded else {
+        guard conversation.isMLSConversationDegraded || conversation.isProteusConversationDegraded else {
             continueAction()
             return
         }

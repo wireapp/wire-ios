@@ -424,7 +424,7 @@ extension ZMConversation {
         }
     }
 
-    private func discardPendingMessagesAfterPrivacyChanges() {
+    public func discardPendingMessagesAfterPrivacyChanges() {
         guard let syncMOC = managedObjectContext?.zm_sync else { return }
         syncMOC.performGroupedBlock {
             guard let conversation = (try? syncMOC.existingObject(with: self.objectID)) as? ZMConversation else { return }
@@ -434,14 +434,10 @@ extension ZMConversation {
     }
 
     /// Accepts the privacy changes (legal hold and/or degradation) and resend the pending messages.
-    @objc(acknowledgePrivacyWarningWithResendIntent:) public func acknowledgePrivacyWarning(withResendIntent shouldResendMessages: Bool) {
-
-        if shouldResendMessages {
-            acknowledgePrivacyChanges()
-            resendPendingMessagesAfterPrivacyChanges()
-        } else {
-            discardPendingMessagesAfterPrivacyChanges()
-        }
+    @objc(acknowledgePrivacyWarningAndResendMessages)
+    public func acknowledgePrivacyWarningAndResendMessages() {
+        acknowledgePrivacyChanges()
+        resendPendingMessagesAfterPrivacyChanges()
     }
 
     /// Enumerates all messages from newest to oldest and apply a block to all ZMOTRMessage encountered, 

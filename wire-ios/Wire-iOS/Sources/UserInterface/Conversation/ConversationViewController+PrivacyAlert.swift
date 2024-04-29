@@ -129,15 +129,13 @@ extension ConversationViewController {
     private func performPrivacyAction(_ action: PrivacyAlertAction) {
         switch action {
         case .verifyDevices:
-            conversation.acknowledgePrivacyWarning(withResendIntent: false)
             presentVerificationScreen()
         case .legalHoldDetails:
-            conversation.acknowledgePrivacyWarning(withResendIntent: false)
             presentLegalHoldDetails()
         case .sendAnyway:
-            conversation.acknowledgePrivacyWarning(withResendIntent: true)
+            conversation.acknowledgePrivacyWarningAndResendMessages()
         case .cancel:
-            conversation.acknowledgePrivacyWarning(withResendIntent: false)
+            conversation.discardPendingMessagesAfterPrivacyChanges()
         case .sendAnywayWithAction(let closure):
             closure(true)
         case .cancelWithAction(let closure):

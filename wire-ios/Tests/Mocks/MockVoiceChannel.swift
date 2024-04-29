@@ -153,7 +153,7 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
 
     func continueByDecreasingConversationSecurity(userSession: ZMUserSession) {}
 
-    func leaveAndDecreaseConversationSecurity(userSession: ZMUserSession) {}
+    // func leaveAndDecreaseConversationSecurity(userSession: ZMUserSession) {}
 
     func join(video: Bool) -> Bool { return true }
 
