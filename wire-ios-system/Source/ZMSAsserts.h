@@ -43,62 +43,42 @@
  
  */
 
-#if DEBUG_ASSERT_PRODUCTION_CODE
 
-#   define Require(assertion) \
-	do { \
-		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMDebugAssertMessage(@"Assert", #assertion, __FILE__, __LINE__, nil); \
-			ZMCrash(#assertion, __FILE__, __LINE__); \
-		} \
-	} while (0)
+#define Require(assertion) do { \
+    if ( __builtin_expect(!(assertion), 0) ) { \
+        ZMCrash(#assertion, __FILE__, __LINE__); \
+    } \
+} while (0)
 
-#   define RequireString(assertion, frmt, ...) \
-	do { \
-		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMDebugAssertMessage(@"Assert", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
-			ZMCrashFormat(#assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
-		} \
-	} while (0)
-
-#else
-
-#   define Require(assertion) do { \
-		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMCrash(#assertion, __FILE__, __LINE__); \
-		} \
-	} while (0)
-#   define RequireString(assertion, frmt, ...) do { \
-		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMCrashFormat(#assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
-		} \
-	} while (0)
-
-#endif
+#define RequireString(assertion, frmt, ...) do { \
+    if ( __builtin_expect(!(assertion), 0) ) { \
+        ZMCrashFormat(#assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
+    } \
+} while (0)
 
 #define VerifyAction(assertion, action) \
-	do { \
-		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, nil); \
-			action; \
-		} \
-	} while (0)
+    do { \
+        if ( __builtin_expect(!(assertion), 0) ) { \
+            ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, nil); \
+            action; \
+        } \
+    } while (0)
 
 #define VerifyReturn(assertion) \
-	VerifyAction(assertion, return)
+    VerifyAction(assertion, return)
 
 #define VerifyReturnValue(assertion, value) \
-	VerifyAction(assertion, return (value))
+    VerifyAction(assertion, return (value))
 
 #define VerifyReturnNil(assertion) \
-	VerifyAction(assertion, return nil)
+    VerifyAction(assertion, return nil)
 
 #define VerifyString(assertion, frmt, ...) \
-	do { \
-		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
-		} \
-	} while (0)
+    do { \
+        if ( __builtin_expect(!(assertion), 0) ) { \
+            ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
+        } \
+    } while (0)
 
 
 #define VerifyActionString(assertion, action, frmt, ...) \
@@ -109,41 +89,33 @@
         } \
     } while (0)
 
-#if DEBUG_ASSERT_PRODUCTION_CODE
-# define Check(assertion)
-#else
-# define Check(assertion) \
-	do { \
-		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, nil); \
-		} \
-	} while (0)
-#endif
+#define Check(assertion) \
+    do { \
+        if ( __builtin_expect(!(assertion), 0) ) { \
+            ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, nil); \
+        } \
+    } while (0)
 
-#if DEBUG_ASSERT_PRODUCTION_CODE
-# define CheckString(assertion, frmt, ...)
-#else
-# define CheckString(assertion, frmt, ...) \
-	do { \
-		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
-		} \
-	} while (0)
-#endif
+#define CheckString(assertion, frmt, ...) \
+    do { \
+        if ( __builtin_expect(!(assertion), 0) ) { \
+            ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
+        } \
+    } while (0)
 
 
 #pragma mark -
 
-# define ZMCrash(reason, file, line) \
+#define ZMCrash(reason, file, line) \
 do { \
     ZMAssertionDump(reason, file, line, nil); \
-	__builtin_trap(); \
+    __builtin_trap(); \
 } while(0)
 
-# define ZMCrashFormat(reason, file, line, format, ...) \
+#define ZMCrashFormat(reason, file, line, format, ...) \
 do { \
     ZMAssertionDump(reason, file, line, format, ##__VA_ARGS__); \
-	__builtin_trap(); \
+    __builtin_trap(); \
 } while(0)
 
 
