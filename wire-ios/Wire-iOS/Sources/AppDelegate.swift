@@ -135,6 +135,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+
+        print("audio session: \(AVAudioSession.sharedInstance().category)")
+
         voIPPushManager.registerForVoIPPushes()
 
         temporaryFilesService.removeTemporaryData()

@@ -205,6 +205,9 @@ public final class AudioRecorder: NSObject, AudioRecorderType {
     public func startRecording(_ completion: @escaping (_ success: Bool) -> Void) {
         createAudioRecorderIfNeeded()
 
+        print("audio session: \(AVAudioSession.sharedInstance().category)")
+        print("audio session: \(AVAudioSession.sharedInstance().isInputAvailable)")
+
         guard let audioRecorder else { return }
 
         AVSMediaManager.sharedInstance().startRecording {
