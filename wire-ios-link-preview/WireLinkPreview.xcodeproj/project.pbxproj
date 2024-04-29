@@ -67,6 +67,7 @@
 		BF4F2B5E1E925AFE000B22D1 /* StringXMLEntityParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B541E925AFE000B22D1 /* StringXMLEntityParserTests.swift */; };
 		BFF057951D25434E004A2C29 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF0578A1D25434D004A2C29 /* WireLinkPreview.framework */; };
 		EE67F6B2296F0548001D7C88 /* HTMLString.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6B1296F0548001D7C88 /* HTMLString.xcframework */; };
+		EE9AEC8C2BD158EC00F7853F /* WireLinkPreview.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC8B2BD158EC00F7853F /* WireLinkPreview.docc */; };
 		EEE4AB2029548DE5004E26A3 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEE4AB1F29548DE5004E26A3 /* WireUtilities.framework */; };
 		F1202A761FA0830000296B4B /* crash.txt in Resources */ = {isa = PBXBuildFile; fileRef = F1202A751FA0830000296B4B /* crash.txt */; };
 /* End PBXBuildFile section */
@@ -177,6 +178,7 @@
 		BFF0578A1D25434D004A2C29 /* WireLinkPreview.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireLinkPreview.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFF057941D25434E004A2C29 /* WireLinkPreviewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireLinkPreviewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6B1296F0548001D7C88 /* HTMLString.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = HTMLString.xcframework; path = ../Carthage/Build/HTMLString.xcframework; sourceTree = "<group>"; };
+		EE9AEC8B2BD158EC00F7853F /* WireLinkPreview.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireLinkPreview.docc; sourceTree = "<group>"; };
 		EEE4AB1F29548DE5004E26A3 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1202A751FA0830000296B4B /* crash.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = crash.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -308,6 +310,7 @@
 		BFF057801D25434D004A2C29 = {
 			isa = PBXGroup;
 			children = (
+				EE9AEC8B2BD158EC00F7853F /* WireLinkPreview.docc */,
 				54BD49F91D41FDE5006E29D1 /* README.md */,
 				16A5FE0F215A868700AEEBBD /* Frameworks */,
 				BFF0578C1D25434D004A2C29 /* WireLinkPreview */,
@@ -414,9 +417,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BFF0579E1D25434E004A2C29 /* Build configuration list for PBXNativeTarget "WireLinkPreview" */;
 			buildPhases = (
+				BFF057871D25434D004A2C29 /* Headers */,
 				BFF057851D25434D004A2C29 /* Sources */,
 				BFF057861D25434D004A2C29 /* Frameworks */,
-				BFF057871D25434D004A2C29 /* Headers */,
 				E9EBFEE1276218B700F0DEBC /* Run SwiftLint */,
 				BFF057881D25434D004A2C29 /* Resources */,
 			);
@@ -581,6 +584,7 @@
 			files = (
 				5EDF03F4224A208E00C04007 /* HTMLDocument.swift in Sources */,
 				BF4F2B3F1E925AC9000B22D1 /* OpenGraphDataTypes.swift in Sources */,
+				EE9AEC8C2BD158EC00F7853F /* WireLinkPreview.docc in Sources */,
 				BF4F2B401E925AC9000B22D1 /* OpenGraphScanner.swift in Sources */,
 				BF4F2B3C1E925AC9000B22D1 /* LinkPreviewTypes.swift in Sources */,
 				5E9EA4B72241426A00D401B2 /* NSDataDetector+Links.swift in Sources */,
