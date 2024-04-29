@@ -17,7 +17,6 @@
 //
 
 #import <Foundation/Foundation.h>
-
 #import <AssertMacros.h>
 #import <WireSystem/ZMSDefines.h>
 
@@ -40,8 +39,6 @@
  VerifyString(assertion, frmt, ...)
  
  Check(assertion)
- CheckNil(obj)
- CheckNotNil(obj)
  CheckString(assertion, frmt, ...)
  
  */
@@ -69,7 +66,6 @@
 			ZMCrashFormat(#assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
 		} \
 	} while (0)
-
 
 #else
 
@@ -119,15 +115,6 @@
         } \
     } while (0)
 
-#define VerifyStringReturnNil(assertion, frmt, ...) \
-	do { \
-		if ( __builtin_expect(!(assertion), 0) ) { \
-			ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
-			return nil; \
-		} \
-	} while (0)
-
-
 #if DEBUG_ASSERT_PRODUCTION_CODE
 # define Check(assertion)
 #else
@@ -138,12 +125,6 @@
 		} \
 	} while (0)
 #endif
-
-#define CheckNil(value) \
-	Check(value == nil)
-
-#define CheckNotNil(value) \
-	Check(value != nil)
 
 #if DEBUG_ASSERT_PRODUCTION_CODE
 # define CheckString(assertion, frmt, ...)
