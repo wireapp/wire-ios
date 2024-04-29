@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 import WireDataModel
+import XCTest
 
 // Tests that an OTREntity returns the correct objects as dependencies
 // which must be resolved before the message can be sent.

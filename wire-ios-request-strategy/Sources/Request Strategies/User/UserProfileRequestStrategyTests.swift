@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
-import WireRequestStrategySupport
 @testable import WireRequestStrategy
+import WireRequestStrategySupport
+import XCTest
 
 class UserProfileRequestStrategyTests: MessagingTestBase {
 

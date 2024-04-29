@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSyncEngine
 import WireMockTransport
+import WireSyncEngine
 
 class OTRTests: IntegrationTest {
 

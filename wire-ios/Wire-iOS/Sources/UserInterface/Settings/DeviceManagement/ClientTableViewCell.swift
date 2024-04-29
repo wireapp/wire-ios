@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import CoreLocation
 import Contacts
-import WireDataModel
+import CoreLocation
+import UIKit
 import WireCommonComponents
+import WireDataModel
 
 final class ClientTableViewCell: UITableViewCell {
 

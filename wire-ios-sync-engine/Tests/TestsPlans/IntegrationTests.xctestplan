@@ -39,10 +39,6 @@
         "value" : "1"
       },
       {
-        "key" : "ZM_TESTING",
-        "value" : "1"
-      },
-      {
         "enabled" : false,
         "key" : "ZMLOG_TAGS",
         "value" : "MockTransportRequests"

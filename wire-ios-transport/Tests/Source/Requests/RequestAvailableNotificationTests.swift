@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireTransport
+import XCTest
 
 @objc class NotificationObserver: NSObject, RequestAvailableObserver {
 

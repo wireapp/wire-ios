@@ -18,9 +18,9 @@
 
 import Foundation
 import SnapshotTesting
-import XCTest
-import WireUtilities
 @testable import Wire
+import WireUtilities
+import XCTest
 
 final class CallParticipantsListHelper {
     static func participants(count participantCount: Int,

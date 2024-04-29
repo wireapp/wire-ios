@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTransport
 import WireTesting
+import WireTransport
 import XCTest
 
 final class ProxyCredentialsTests: ZMTBaseTest {

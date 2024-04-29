@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import Foundation
 import WireSyncEngine
-import avs
 
 extension ZMConversationMessage {
     var isSentBySelfUser: Bool {
