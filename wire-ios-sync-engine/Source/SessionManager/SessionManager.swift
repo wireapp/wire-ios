@@ -123,8 +123,8 @@ public protocol ForegroundNotificationResponder: AnyObject {
     func shouldPresentNotification(with userInfo: NotificationUserInfo) -> Bool
 }
 
-/// The `SessionManager` class handles the creation of `ZMUserSession` and `UnauthenticatedSession`
-/// objects, the handover between them as well as account switching.
+/// Manage the creation of `ZMUserSession` and `UnauthenticatedSession` objects and
+/// the switching between them.
 ///
 /// There are multiple things neccessary in order to store (and switch between) multiple accounts on one device, a couple of them are:
 /// 1. The folder structure in the app sandbox has to be modeled in a way in which files can be associated with a single account.
