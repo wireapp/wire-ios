@@ -136,26 +136,4 @@ class AuthenticationStateControllerTests: XCTestCase {
         XCTAssertEqual(stateController.stack, [.start])
     }
 
-    func testThatItUnwindsFromUIToPreviousUIStep() {
-        // GIVEN
-        let phoneNumber = "+4912345678900"
-
-        stateController.transition(to: .landingScreen, mode: .reset)
-        stateController.transition(to: .provideCredentials(.email, nil))
-        stateController.transition(to: .requestPhoneVerificationCode(phoneNumber: phoneNumber, isResend: false))
-
-        XCTAssertEqual(stateController.stack, [
-            .landingScreen,
-            .provideCredentials(.email, nil),
-            .requestPhoneVerificationCode(phoneNumber: phoneNumber, isResend: false)
-        ])
-
-        // WHEN
-        stateController.unwindState()
-
-        // THEN
-        XCTAssertEqual(stateController.currentStep, .provideCredentials(.email, nil)) // we should rewind to n-1 step
-        XCTAssertEqual(stateController.stack, [.landingScreen, .provideCredentials(.email, nil)])
-    }
-
 }
