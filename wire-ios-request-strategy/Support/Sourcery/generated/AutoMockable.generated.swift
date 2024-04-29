@@ -117,6 +117,24 @@ public class MockAPIProviderInterface: APIProviderInterface {
         }
     }
 
+    // MARK: - userClientAPI
+
+    public var userClientAPIApiVersion_Invocations: [APIVersion] = []
+    public var userClientAPIApiVersion_MockMethod: ((APIVersion) -> UserClientAPI)?
+    public var userClientAPIApiVersion_MockValue: UserClientAPI?
+
+    public func userClientAPI(apiVersion: APIVersion) -> UserClientAPI {
+        userClientAPIApiVersion_Invocations.append(apiVersion)
+
+        if let mock = userClientAPIApiVersion_MockMethod {
+            return mock(apiVersion)
+        } else if let mock = userClientAPIApiVersion_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `userClientAPIApiVersion`")
+        }
+    }
+
 }
 public class MockAcmeAPIInterface: AcmeAPIInterface {
 
@@ -1067,6 +1085,34 @@ public class MockSyncProgress: SyncProgress {
         }
 
         mock(phase)
+    }
+
+}
+public class MockUserClientAPI: UserClientAPI {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - deleteUserClient
+
+    public var deleteUserClientClientIdCredentials_Invocations: [(clientId: String, credentials: EmailCredentials?)] = []
+    public var deleteUserClientClientIdCredentials_MockError: Error?
+    public var deleteUserClientClientIdCredentials_MockMethod: ((String, EmailCredentials?) async throws -> Void)?
+
+    public func deleteUserClient(clientId: String, credentials: EmailCredentials?) async throws {
+        deleteUserClientClientIdCredentials_Invocations.append((clientId: clientId, credentials: credentials))
+
+        if let error = deleteUserClientClientIdCredentials_MockError {
+            throw error
+        }
+
+        guard let mock = deleteUserClientClientIdCredentials_MockMethod else {
+            fatalError("no mock for `deleteUserClientClientIdCredentials`")
+        }
+
+        try await mock(clientId, credentials)
     }
 
 }
