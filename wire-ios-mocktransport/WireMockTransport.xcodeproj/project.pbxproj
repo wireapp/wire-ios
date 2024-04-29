@@ -78,6 +78,7 @@
 		EE974121295498D2000C9340 /* WireProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE974120295498D2000C9340 /* WireProtos.framework */; };
 		EE974125295498DA000C9340 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE974124295498DA000C9340 /* WireCryptobox.framework */; };
 		EE974128295498E2000C9340 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE974127295498E2000C9340 /* WireTransport.framework */; };
+		EE9AEC922BD1596000F7853F /* WireMockTransport.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC912BD1596000F7853F /* WireMockTransport.docc */; };
 		EEA5656427D8AE0A0021ADA3 /* MockTransportSession+APIVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA5656327D8AE0A0021ADA3 /* MockTransportSession+APIVersion.swift */; };
 		EEA5656627D8AE5B0021ADA3 /* MockTransportSession+APIVersion.m in Sources */ = {isa = PBXBuildFile; fileRef = EEA5656527D8AE5B0021ADA3 /* MockTransportSession+APIVersion.m */; };
 		EEA5656827D8AE7D0021ADA3 /* MockTransportSession+APIVersion.h in Headers */ = {isa = PBXBuildFile; fileRef = EEA5656727D8AE7D0021ADA3 /* MockTransportSession+APIVersion.h */; };
@@ -242,6 +243,7 @@
 		EE974120295498D2000C9340 /* WireProtos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireProtos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE974124295498DA000C9340 /* WireCryptobox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireCryptobox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE974127295498E2000C9340 /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE9AEC912BD1596000F7853F /* WireMockTransport.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireMockTransport.docc; sourceTree = "<group>"; };
 		EEA5656327D8AE0A0021ADA3 /* MockTransportSession+APIVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+APIVersion.swift"; sourceTree = "<group>"; };
 		EEA5656527D8AE5B0021ADA3 /* MockTransportSession+APIVersion.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+APIVersion.m"; sourceTree = "<group>"; };
 		EEA5656727D8AE7D0021ADA3 /* MockTransportSession+APIVersion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+APIVersion.h"; sourceTree = "<group>"; };
@@ -474,6 +476,7 @@
 		54C902291B7532DD007162A8 = {
 			isa = PBXGroup;
 			children = (
+				EE9AEC912BD1596000F7853F /* WireMockTransport.docc */,
 				54C9024F1B7532F6007162A8 /* Resources */,
 				54C902351B7532DD007162A8 /* Source */,
 				54C902421B7532DD007162A8 /* Tests */,
@@ -802,9 +805,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 54C902491B7532DD007162A8 /* Build configuration list for PBXNativeTarget "WireMockTransport" */;
 			buildPhases = (
+				54C902301B7532DD007162A8 /* Headers */,
 				54C9022E1B7532DD007162A8 /* Sources */,
 				54C9022F1B7532DD007162A8 /* Frameworks */,
-				54C902301B7532DD007162A8 /* Headers */,
 				AD4812A62AB98F7500ED208C /* Run Swiftlint */,
 				54C902311B7532DD007162A8 /* Resources */,
 			);
@@ -929,6 +932,7 @@
 				54AE5A7A1B78FA43002757E9 /* MockTransportSession+registration.m in Sources */,
 				F14741531EC45F8900A3688C /* MockTeam.swift in Sources */,
 				F1519B601EC0A6FC00AD4E33 /* MockTransportSession+assets.swift in Sources */,
+				EE9AEC922BD1596000F7853F /* WireMockTransport.docc in Sources */,
 				F16C8BED20443F4A00677D31 /* MockTransportSession+conversations.swift in Sources */,
 				F110503F222051B200F3EB62 /* MockTransportSession+users.swift in Sources */,
 				5425EF021E1E339B006D7A01 /* MockTransportSession+search.m in Sources */,

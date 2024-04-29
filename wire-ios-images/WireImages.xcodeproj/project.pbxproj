@@ -72,6 +72,7 @@
 		EE98A0B1296EFD2F0055E981 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */; };
 		EE98A0B5296EFD3F0055E981 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE98A0B4296EFD3F0055E981 /* WireTesting.framework */; };
 		EE98A0B6296EFD3F0055E981 /* WireTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EE98A0B4296EFD3F0055E981 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EE9AEC8A2BD158D600F7853F /* WireImages.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC892BD158D600F7853F /* WireImages.docc */; };
 		EEB4197229548A3D00644D10 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEB4197129548A3D00644D10 /* WireUtilities.framework */; };
 		EEB4197329548A3D00644D10 /* WireUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = EEB4197129548A3D00644D10 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EEB7138B2B9F37BB00DB27F6 /* ZMImageFormat+StringValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEB7138A2B9F37BB00DB27F6 /* ZMImageFormat+StringValue.swift */; };
@@ -190,6 +191,7 @@
 		A9626B4A26932BE90043CC31 /* ZMImageDownsampleOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMImageDownsampleOperation.swift; sourceTree = "<group>"; };
 		EE98A0B0296EFD2F0055E981 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE98A0B4296EFD3F0055E981 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE9AEC892BD158D600F7853F /* WireImages.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireImages.docc; sourceTree = "<group>"; };
 		EEB4197129548A3D00644D10 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEB7138A2B9F37BB00DB27F6 /* ZMImageFormat+StringValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMImageFormat+StringValue.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -302,6 +304,7 @@
 		09DD1EA81B5D41E0005EBCC4 = {
 			isa = PBXGroup;
 			children = (
+				EE9AEC892BD158D600F7853F /* WireImages.docc */,
 				098CB1281B5FAD5A00712DF9 /* Sources */,
 				098CB1611B5FAD6300712DF9 /* Resources */,
 				098CB1651B5FAD6900712DF9 /* Tests */,
@@ -427,9 +430,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0969601F1B663E7C006DF53B /* Build configuration list for PBXNativeTarget "WireImages-ios" */;
 			buildPhases = (
+				096960091B663E7B006DF53B /* Headers */,
 				096960071B663E7B006DF53B /* Sources */,
 				096960081B663E7B006DF53B /* Frameworks */,
-				096960091B663E7B006DF53B /* Headers */,
 				AD4812A92AB9902400ED208C /* Run Swiftlint */,
 				0969600A1B663E7B006DF53B /* Resources */,
 			);
@@ -622,6 +625,7 @@
 				EEB7138B2B9F37BB00DB27F6 /* ZMImageFormat+StringValue.swift in Sources */,
 				096960351B663EF0006DF53B /* ZMImagePreprocessor.m in Sources */,
 				096960321B663EF0006DF53B /* ZMImageLoadOperation.m in Sources */,
+				EE9AEC8A2BD158D600F7853F /* WireImages.docc in Sources */,
 				0969602E1B663EF0006DF53B /* ZMAssetsPreprocessor.m in Sources */,
 				A9626B4B26932BEA0043CC31 /* ZMImageDownsampleOperation.swift in Sources */,
 			);

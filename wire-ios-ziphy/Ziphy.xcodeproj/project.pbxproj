@@ -32,6 +32,7 @@
 		DBF380651B15C0B800369FB7 /* Ziphy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBF380591B15C0B800369FB7 /* Ziphy.framework */; };
 		DBF380761B15C2D700369FB7 /* ZiphyClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF380751B15C2D700369FB7 /* ZiphyClient.swift */; };
 		DBF3807B1B15D32C00369FB7 /* ZiphyAnimatedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF3807A1B15D32C00369FB7 /* ZiphyAnimatedImage.swift */; };
+		EE9AEC9A2BD159F700F7853F /* Ziphy.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC992BD159F700F7853F /* Ziphy.docc */; };
 		EF2B16A421071D11007572DA /* ZiphyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2B16A321071D11007572DA /* ZiphyTests.swift */; };
 		EF2B16A62107247E007572DA /* ZiphHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2B16A52107247E007572DA /* ZiphHelper.swift */; };
 /* End PBXBuildFile section */
@@ -91,6 +92,7 @@
 		DBF3806A1B15C0B800369FB7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DBF380751B15C2D700369FB7 /* ZiphyClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZiphyClient.swift; sourceTree = "<group>"; };
 		DBF3807A1B15D32C00369FB7 /* ZiphyAnimatedImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZiphyAnimatedImage.swift; sourceTree = "<group>"; };
+		EE9AEC992BD159F700F7853F /* Ziphy.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = Ziphy.docc; sourceTree = "<group>"; };
 		EF2B16A321071D11007572DA /* ZiphyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZiphyTests.swift; sourceTree = "<group>"; };
 		EF2B16A52107247E007572DA /* ZiphHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZiphHelper.swift; sourceTree = "<group>"; };
 		EFEFAD1D206B8BF50046724E /* ZiphySearchResultsControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZiphySearchResultsControllerTests.swift; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 		DBF3804F1B15C0B800369FB7 = {
 			isa = PBXGroup;
 			children = (
+				EE9AEC992BD159F700F7853F /* Ziphy.docc */,
 				54FB26571D4669A6005574BF /* Resources */,
 				DBF3805B1B15C0B800369FB7 /* Sources */,
 				DBF380681B15C0B800369FB7 /* ZiphyTests */,
@@ -293,9 +296,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DBF3806F1B15C0B800369FB7 /* Build configuration list for PBXNativeTarget "Ziphy" */;
 			buildPhases = (
+				DBF380561B15C0B800369FB7 /* Headers */,
 				DBF380541B15C0B800369FB7 /* Sources */,
 				DBF380551B15C0B800369FB7 /* Frameworks */,
-				DBF380561B15C0B800369FB7 /* Headers */,
 				E91CAE9F27623A64005B13F0 /* Run SwiftLint */,
 				DBF380571B15C0B800369FB7 /* Resources */,
 			);
@@ -420,6 +423,7 @@
 				DB3A68591B18970F00900CF0 /* ZiphyUtils.swift in Sources */,
 				DB3A68571B18963600900CF0 /* ZiphyError.swift in Sources */,
 				DB772FB61B67D3AC0037CCAA /* Ziph.swift in Sources */,
+				EE9AEC9A2BD159F700F7853F /* Ziphy.docc in Sources */,
 				5EF5CDB020EFD73500CC98B0 /* URLRequestPromise.swift in Sources */,
 				DB29C9A21B6BD4170072D14E /* ZiphySearchResultsController.swift in Sources */,
 				5EF5CDA020EF672600CC98B0 /* ZiphyEndpoint.swift in Sources */,
