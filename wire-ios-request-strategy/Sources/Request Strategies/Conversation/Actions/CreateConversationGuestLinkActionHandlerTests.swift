@@ -101,12 +101,7 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
         )
 
         // THEN
-        XCTAssertNotNil(result, "Result should not be nil")
-        if let resultData = result {
-            XCTAssertEqual(resultData, expectedUri, "The URI should match the expected URI")
-        } else {
-            XCTFail("Result does not contain URI or is of unexpected type")
-        }
+        XCTAssertEqual(result, expectedUri)
     }
 
     func testCreateConversationGuestLinkFailure() throws {
