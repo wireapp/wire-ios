@@ -18,6 +18,8 @@
 
 #import <Foundation/Foundation.h>
 
+
+
 @interface ZMTImageComparator : NSObject
 
 - (instancetype)initWithImageDataA:(NSData *)imageDataA imageDataB:(NSData *)imageDataB;
