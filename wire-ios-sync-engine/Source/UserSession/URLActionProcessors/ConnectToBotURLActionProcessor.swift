@@ -18,15 +18,19 @@
 
 import Foundation
 
-class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
+final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
 
     var transportSession: TransportSessionType
     var eventProcessor: UpdateEventProcessor
     var contextProvider: ContextProvider
+    var searchUsersCache: SearchUsersCache?
 
-    init(contextprovider: ContextProvider,
-         transportSession: TransportSessionType,
-         eventProcessor: UpdateEventProcessor) {
+    init(
+        contextprovider: ContextProvider,
+        transportSession: TransportSessionType,
+        eventProcessor: UpdateEventProcessor,
+        searchUsersCache: SearchUsersCache?
+    ) {
         self.contextProvider = contextprovider
         self.transportSession = transportSession
         self.eventProcessor = eventProcessor
@@ -43,7 +47,8 @@ class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
             remoteIdentifier: serviceUserData.service,
             teamIdentifier: nil,
             user: nil,
-            contact: nil
+            contact: nil,
+            searchUsersCache: searchUsersCache
         )
         serviceUser.providerIdentifier = serviceUserData.provider.transportString()
         serviceUser.createConversation(

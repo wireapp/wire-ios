@@ -53,7 +53,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        usecaseFactory: UseCaseFactoryProtocol
+        usecaseFactory: UseCaseFactoryProtocol,
+        searchUsersCache: SearchUsersCache?
     ) {
 
         self.strategies = Self.buildStrategies(
@@ -70,7 +71,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             proteusProvider: proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            usecaseFactory: usecaseFactory
+            usecaseFactory: usecaseFactory,
+            searchUsersCache: searchUsersCache
         )
 
         self.requestStrategies = strategies.compactMap({ $0 as? RequestStrategy })
@@ -109,7 +111,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         proteusProvider: ProteusProviding,
         mlsService: MLSServiceInterface,
         coreCryptoProvider: CoreCryptoProviderProtocol,
-        usecaseFactory: UseCaseFactoryProtocol
+        usecaseFactory: UseCaseFactoryProtocol,
+        searchUsersCache: SearchUsersCache?
     ) -> [Any] {
         let syncMOC = contextProvider.syncContext
 
@@ -219,7 +222,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 managedObjectContext: syncMOC),
             SearchUserImageStrategy(
                 applicationStatus: applicationStatusDirectory,
-                managedObjectContext: syncMOC),
+                managedObjectContext: syncMOC,
+                searchUsersCache: searchUsersCache
+            ),
             ConnectionRequestStrategy(
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,

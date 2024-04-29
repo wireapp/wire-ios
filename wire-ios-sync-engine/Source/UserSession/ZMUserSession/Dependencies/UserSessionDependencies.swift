@@ -16,29 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import XCTest
+final class UserSessionDependencies {
+    var caches: Caches
 
-final class ZMSearchUserTests_Connections: ModelObjectsTests {
-
-    func testThatConnectSendsAConnectToUserNotification() {
-        // given
-        let searchUser = ZMSearchUser(
-            contextProvider: coreDataStack,
-            name: "John Doe",
-            handle: "johndoe",
-            accentColor: .turquoise,
-            remoteIdentifier: UUID(),
-            searchUsersCache: nil
-        )
-
-        // expect
-        customExpectation(forNotification: ConnectToUserAction.notificationName, object: nil)
-
-        // when
-        searchUser.connect { _ in }
-
-        // then
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    init(caches: Caches) {
+        self.caches = caches
     }
 }
