@@ -175,8 +175,8 @@ do { \
 #pragma mark - Assert reporting
 
 /// URL of the "last assertion" log file
-ZM_EXTERN NSURL* ZMLastAssertionFile(void);
+FOUNDATION_EXTERN NSURL* ZMLastAssertionFile(void);
 /// Dump a crash to the crash dump file
-ZM_EXTERN void ZMAssertionDump(const char * const assertion, const char * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,4,5)));
+FOUNDATION_EXTERN void ZMAssertionDump(const char * const assertion, const char * const filename, int linenumber, char const *format, ...) __attribute__((format(printf,4,5)));
 /// Dump a crash to the crash dump file
-ZM_EXTERN void ZMAssertionDump_NSString(NSString *assertion, NSString *filename, int linenumber, NSString *message);
+FOUNDATION_EXTERN void ZMAssertionDump_NSString(NSString *assertion, NSString *filename, int linenumber, NSString *message);
