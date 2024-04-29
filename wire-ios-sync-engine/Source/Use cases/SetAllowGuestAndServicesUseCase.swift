@@ -23,34 +23,28 @@ public protocol SetAllowGuestAndServicesUseCaseProtocol {
         conversation: ZMConversation,
         allowGuests: Bool,
         allowServices: Bool,
-        completion: @escaping (Result<Void, Error>) -> Void
+        completion: @escaping (Result<Void, SetAllowGuestsAndServicesAction.Failure>) -> Void
     )
 }
 
 struct SetAllowGuestAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol {
 
-    public enum SetAllowServicesError: Error {
-        case unknown
-        case invalidOperation
-        case contextUnavailable
-    }
-
     func invoke(
         conversation: ZMConversation,
         allowGuests: Bool,
         allowServices: Bool,
-        completion: @escaping (Result<Void, Error>) -> Void
+        completion: @escaping (Result<Void, SetAllowGuestsAndServicesAction.Failure>) -> Void
     ) {
         guard conversation.canManageAccess else {
-            return completion(.failure(SetAllowServicesError.invalidOperation))
+            return completion(.failure(.invalidOperation))
         }
 
         guard let apiVersion = BackendInfo.apiVersion else {
-            return completion(.failure(SetAllowServicesError.unknown))
+            return completion(.failure(.unknown))
         }
 
         guard let context = conversation.managedObjectContext else {
-            return completion(.failure(SetAllowServicesError.contextUnavailable))
+            return completion(.failure(.contextUnavailable))
         }
 
         var action = SetAllowGuestsAndServicesAction(
@@ -59,13 +53,6 @@ struct SetAllowGuestAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol 
             conversationID: conversation.objectID
         )
 
-        action.perform(in: context.notificationContext) { result in
-            switch result {
-            case .success:
-                completion(.success(()))
-            case .failure(let error):
-                completion(.failure(error))
-            }
+        action.perform(in: context.notificationContext, resultHandler: completion)
         }
     }
-}
