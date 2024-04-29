@@ -35,7 +35,7 @@ class RegistrationStrategyTests: MessagingTest {
 
         user = UnregisteredUser()
         user.name = "M. Jordan"
-        user.accentColorValue = .amber
+        user.accentColor = .amber
         user.verificationCode = "23"
         user.credentials = .email("some@email.com")
         user.password = "Aqa123456!"

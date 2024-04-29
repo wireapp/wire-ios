@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 /// A helper class to automatically register and unregister an observer for a notification with
 /// the notification center.

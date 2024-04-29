@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-import WireCommonComponents
 
 extension ZMUser {
     var hasValidEmail: Bool {
@@ -295,7 +294,7 @@ extension SettingsCellDescriptorFactory {
                     assertionFailure("ZMUser.selfUser() is nil")
                     return .none
                 }
-                return .color(selfUser.accentColor)
+                return .color((selfUser.accentColor ?? .default).uiColor)
             },
             presentationStyle: .navigation,
             presentationAction: AccentColorPickerController.init)

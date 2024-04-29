@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModel
 
 extension ZMCredentials {
     var isInvalid: Bool {
@@ -58,7 +58,7 @@ extension UnauthenticatedSession {
     @discardableResult public func requestEmailVerificationCodeForLogin(email: String) -> Bool {
         do {
             var email: String? = email
-            _ = try ZMUser.validate(emailAddress: &email)
+            _ = try userPropertyValidator.validate(emailAddress: &email)
         } catch {
             return false
         }

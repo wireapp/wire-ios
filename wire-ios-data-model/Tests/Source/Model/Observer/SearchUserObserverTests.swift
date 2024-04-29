@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireDataModelSupport
 @testable import WireDataModel
+import WireDataModelSupport
 
 final class SearchUserObserverTests: NotificationDispatcherTestBase {
 
@@ -69,7 +69,7 @@ final class SearchUserObserverTests: NotificationDispatcherTestBase {
         let user = ZMUser.insertNewObject(in: self.uiMOC)
         user.remoteIdentifier = UUID.create()
         self.uiMOC.saveOrRollback()
-        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: nil, accentColor: .deprecatedYellow, remoteIdentifier: nil, user: user)
+        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: nil, accentColor: .amber, remoteIdentifier: nil, user: user)
 
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
         self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)

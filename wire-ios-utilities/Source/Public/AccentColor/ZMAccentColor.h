@@ -16,13 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "ZMSTestDetection.h"
+#ifndef ZMAccentColor_h
+#define ZMAccentColor_h
 
-NSString * const zm_testing_environment_variable_name = @"ZM_TESTING";
+typedef int16_t ZMAccentColorRawValue;
 
-
-BOOL zm_isTesting(void) {
-    
-    NSString *value = [NSProcessInfo processInfo].environment[zm_testing_environment_variable_name];
-    return value != nil && [value isEqualToString:@"1"];
-}
+#endif /* ZMAccentColor_h */

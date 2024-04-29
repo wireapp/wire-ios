@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
 
@@ -42,7 +42,7 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(user.handle, "@user")
         XCTAssertEqual(user.domain, domain)
         XCTAssertEqual(user.remoteIdentifier, uuid)
-        XCTAssertEqual(user.accentColorValue, ZMAccentColor.init(rawValue: 5))
+        XCTAssertEqual(user.zmAccentColor?.rawValue, 5)
         XCTAssertFalse(user.isServiceUser)
         XCTAssertTrue(user.canBeConnected)
     }

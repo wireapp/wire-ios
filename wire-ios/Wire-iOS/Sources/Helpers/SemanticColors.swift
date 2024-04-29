@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireDataModel
-import WireCommonComponents
 import SwiftUI
+import WireCommonComponents
+import WireDataModel
 
 /// Naming convention:
 ///
@@ -269,39 +268,16 @@ enum SemanticColors {
 }
 
 extension UIColor {
+
+    convenience init(light: ColorResource, dark: ColorResource) {
+        self.init { traits in
+            .init(resource: traits.userInterfaceStyle == .dark ? dark : light)
+        }
+    }
+
     convenience init(light: ColorAsset, dark: ColorAsset) {
         self.init { traits in
-            return traits.userInterfaceStyle == .dark ? dark.color : light.color
+            traits.userInterfaceStyle == .dark ? dark.color : light.color
         }
-    }
-}
-
-extension UIColor {
-    var swiftUIColor: Color {
-        return Color(uiColor: self)
-    }
-
-    convenience init(for accentColor: AccentColor) {
-        switch accentColor {
-        case .blue:
-            self.init(light: Asset.Colors.blue500Light, dark: Asset.Colors.blue500Dark)
-        case .green:
-            self.init(light: Asset.Colors.green500Light, dark: Asset.Colors.green500Dark)
-        case .deprecatedYellow: // Deprecated
-            self.init(red: 0.996, green: 0.749, blue: 0.007, alpha: 1)
-        case .red:
-            self.init(light: Asset.Colors.red500Light, dark: Asset.Colors.red500Dark)
-        case .amber:
-            self.init(light: Asset.Colors.amber500Light, dark: Asset.Colors.amber500Dark)
-        case .turquoise:
-            self.init(light: Asset.Colors.turquoise500Light, dark: Asset.Colors.turquoise500Dark)
-        case .purple:
-            self.init(light: Asset.Colors.purple500Light, dark: Asset.Colors.purple500Dark)
-        }
-    }
-
-    convenience init(fromZMAccentColor accentColor: ZMAccentColor) {
-        let safeAccentColor = AccentColor(ZMAccentColor: accentColor) ?? .blue
-        self.init(for: safeAccentColor)
     }
 }

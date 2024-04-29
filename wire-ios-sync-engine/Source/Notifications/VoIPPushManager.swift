@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
+import CallKit
 import Foundation
 import PushKit
-import CallKit
-import avs
 
 public protocol VoIPPushManagerDelegate: AnyObject {
 

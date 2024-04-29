@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SnapshotTesting
-@testable import WireCommonComponents
+@testable import Wire
+import WireCommonComponents
+import XCTest
 
 final class VerticalColumnCollectionViewLayoutTests: XCTestCase {
 
@@ -29,7 +29,7 @@ final class VerticalColumnCollectionViewLayoutTests: XCTestCase {
         // square, upscale
         ColorTile(color: .purple, size: CGSize(width: 10, height: 10)),
         // portrait, downscale
-        ColorTile(color: .deprecatedYellow, size: CGSize(width: 1000, height: 1500)),
+        ColorTile(color: .amber, size: CGSize(width: 1000, height: 1500)),
         // landscape, upscale
         ColorTile(color: .turquoise, size: CGSize(width: 15, height: 10)),
         // landscape, downscale
@@ -40,7 +40,7 @@ final class VerticalColumnCollectionViewLayoutTests: XCTestCase {
         ColorTile(color: .red, size: CGSize(width: 1000, height: 1000)),
         ColorTile(color: .green, size: CGSize(width: 10, height: 15)),
         ColorTile(color: .purple, size: CGSize(width: 10, height: 10)),
-        ColorTile(color: .deprecatedYellow, size: CGSize(width: 1000, height: 1500))
+        ColorTile(color: .amber, size: CGSize(width: 1000, height: 1500))
     ]
 
     override func tearDown() {
@@ -53,5 +53,4 @@ final class VerticalColumnCollectionViewLayoutTests: XCTestCase {
 
         verifyInAllDeviceSizes(matching: sut)
     }
-
 }

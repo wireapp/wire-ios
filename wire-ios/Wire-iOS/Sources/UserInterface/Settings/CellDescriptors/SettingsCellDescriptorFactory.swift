@@ -16,34 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import Foundation
 import SafariServices
 import WireSyncEngine
-import avs
 
-class SettingsCellDescriptorFactory {
+struct SettingsCellDescriptorFactory {
+
     static let settingsDevicesCellIdentifier: String = "devices"
-    let settingsPropertyFactory: SettingsPropertyFactory
-    let userRightInterfaceType: UserRightInterface.Type
 
-    init(settingsPropertyFactory: SettingsPropertyFactory,
-         userRightInterfaceType: UserRightInterface.Type = UserRight.self) {
-        self.settingsPropertyFactory = settingsPropertyFactory
-        self.userRightInterfaceType = userRightInterfaceType
-    }
+    var settingsPropertyFactory: SettingsPropertyFactory
+    var userRightInterfaceType: UserRightInterface.Type
 
     func rootGroup(isTeamMember: Bool, userSession: UserSession) -> SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType {
         var rootElements: [SettingsCellDescriptorType] = []
 
         if ZMUser.selfUser()?.canManageTeam == true {
-            rootElements.append(self.manageTeamCell())
+            rootElements.append(manageTeamCell())
         }
 
         rootElements.append(settingsGroup(isTeamMember: isTeamMember, userSession: userSession))
         #if MULTIPLE_ACCOUNTS_DISABLED
             // We skip "add account" cell
         #else
-            rootElements.append(self.addAccountOrTeamCell())
+            rootElements.append(addAccountOrTeamCell())
         #endif
         let topSection = SettingsSectionDescriptor(cellDescriptors: rootElements)
 

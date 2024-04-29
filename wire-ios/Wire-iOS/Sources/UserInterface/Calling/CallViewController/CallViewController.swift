@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireSyncEngine
 import avs
+import UIKit
 import WireCommonComponents
+import WireSyncEngine
 
 protocol CallViewControllerDelegate: AnyObject {
     func callViewControllerDidDisappear(_ callController: CallViewController,

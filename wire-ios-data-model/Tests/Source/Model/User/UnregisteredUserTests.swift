@@ -16,45 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireDataModel
+import XCTest
 
-class UnregisteredUserTests: XCTestCase {
-
-    func testThatItValidatesTheUserName() {
-        // GIVEN
-        let validName = "Maria"
-        let longName = "Ro" + String(repeating: "x", count: 200) + "y"
-        let shortName = "M"
-
-        // THEN
-        XCTAssertTrue(UnregisteredUser.normalizedName(validName).isValid)
-        XCTAssertFalse(UnregisteredUser.normalizedName(longName).isValid)
-        XCTAssertFalse(UnregisteredUser.normalizedName(shortName).isValid)
-    }
-
-    func testThatItValidatesTheEmail() {
-        // GIVEN
-        let validEmail = "anette@foo.bar"
-        let invalidEmail = "kathrine@"
-
-        // THEN
-        XCTAssertTrue(UnregisteredUser.normalizedEmailAddress(validEmail).isValid)
-        XCTAssertFalse(UnregisteredUser.normalizedEmailAddress(invalidEmail).isValid)
-    }
-
-    func testThatItNormalizesTheEmailAddress() {
-        // GIVEN
-        let email = " john.doe@gmail.com "
-
-        // WHEN
-        let normalizedEmail = UnregisteredUser.normalizedEmailAddress(email)
-
-        // THEN
-        assertNormalizationValue(normalizedEmail, "john.doe@gmail.com")
-    }
+final class UnregisteredUserTests: XCTestCase {
 
     func testThatItReturnsCompletedWhenUserIsComplete_Email() {
+
         // GIVEN
         let user = UnregisteredUser()
 
@@ -62,7 +30,7 @@ class UnregisteredUserTests: XCTestCase {
         user.name = "Mario"
         user.credentials = .email("alexis@example.com")
         user.verificationCode = "123456"
-        user.accentColorValue = .turquoise
+        user.accentColor = .turquoise
         user.acceptedTermsOfService = true
         user.marketingConsent = false
 
@@ -77,29 +45,4 @@ class UnregisteredUserTests: XCTestCase {
         XCTAssertTrue(user.isComplete)
         XCTAssertFalse(user.needsPassword)
     }
-
-}
-
-// MARK: - Helpers
-
-private extension UnregisteredUserTests {
-
-    func assertNormalizationValue<T>(_ normalizationResult: NormalizationResult<T>, _ expectedValue: T) where T: Equatable {
-        guard case let .valid(value) = normalizationResult else {
-            XCTFail()
-            return
-        }
-
-        XCTAssertEqual(value, expectedValue)
-    }
-
-    func assertNormalizationErrorCode<T>(_ normalizationResult: NormalizationResult<T>, _ expectedCode: ZMManagedObjectValidationErrorCode) {
-        guard case let .invalid(errorCode) = normalizationResult else {
-            XCTFail()
-            return
-        }
-
-        XCTAssertEqual(errorCode, expectedCode)
-    }
-
 }

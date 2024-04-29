@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngineSupport
 import WireDataModelSupport
+import WireSyncEngineSupport
 import XCTest
 
 final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {

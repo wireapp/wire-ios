@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import WireSyncEngine
-import WireUtilities
-import WireTesting
-import WireMockTransport
 import WireDataModel
 import WireDataModelSupport
+import WireMockTransport
+@testable import WireSyncEngine
+import WireTesting
+import WireUtilities
+import XCTest
 
 @objcMembers
 public final class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegistrationStatusDelegate {

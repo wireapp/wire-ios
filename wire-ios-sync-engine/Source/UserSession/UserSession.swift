@@ -17,10 +17,8 @@
 //
 
 import Foundation
-import WireDataModel
 import LocalAuthentication
-
-public typealias SelfUserType = UserType & SelfLegalHoldSubject
+import WireDataModel
 
 /// An abstraction of the user session for use in the presentation
 /// layer.
