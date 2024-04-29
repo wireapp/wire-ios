@@ -157,37 +157,6 @@ extension URLActionRouter: PresentationDelegate {
         }
     }
 
-    private func switchBackend(configURL: URL) {
-        guard
-            SecurityFlags.customBackend.isEnabled,
-            let sessionManager
-        else {
-            return
-        }
-
-        sessionManager.fetchBackendEnvironment(at: configURL) { [weak self] result in
-            guard let self else { return }
-
-            switch result {
-            case .success(let backendEnvironment):
-                self.requestUserConfirmationToSwitchBackend(backendEnvironment) { didConfirm in
-                    guard didConfirm else { return }
-                    sessionManager.switchBackend(to: backendEnvironment)
-                    BackendEnvironment.shared = backendEnvironment
-                }
-
-            case .failure(let error):
-                let localizedError = self.mapToLocalizedError(error)
-                self.presentLocalizedErrorAlert(localizedError)
-            }
-        }
-    }
-
-    // TODO: delete
-    func didSwitchBackend(environment: BackendEnvironment) {
-        BackendEnvironment.shared = environment
-    }
-
     func shouldPerformActionWithMessage(_ message: String, action: URLAction, decisionHandler: @escaping (_ shouldPerformAction: Bool) -> Void) {
         switch action {
         case .joinConversation:
@@ -215,21 +184,6 @@ extension URLActionRouter: PresentationDelegate {
         navigate(to: .conversationList)
     }
 
-    func requestUserConfirmationToSwitchBackend(
-        _ environment: BackendEnvironment,
-        didConfirm: @escaping (Bool) -> Void
-    ) {
-        let viewModel = SwitchBackendConfirmationViewModel(
-            environment: environment,
-            didConfirm: didConfirm
-        )
-
-        let view = SwitchBackendConfirmationView(viewModel: viewModel)
-        let hostingController = UIHostingController(rootView: view)
-        // TODO: Check if we can present...
-        rootViewController.present(hostingController, animated: true)
-    }
-
     // MARK: - Private Implementation
     private func notifyCompanyLoginCompletion() {
         NotificationCenter.default.post(name: .companyLoginDidFinish, object: self)
@@ -250,37 +204,45 @@ extension URLActionRouter: PresentationDelegate {
         presentAlert(alert)
     }
 
-    private func presentCustomBackendAlert(with configurationURL: URL) {
-        let alert = UIAlertController(title: L10n.Localizable.UrlAction.SwitchBackend.title,
-                                      message: L10n.Localizable.UrlAction.SwitchBackend.message(configurationURL.absoluteString),
-                                      preferredStyle: .alert)
-
-        let agreeAction = UIAlertAction(title: L10n.Localizable.General.ok, style: .default) { [weak self] _ in
-            self?.rootViewController.isLoadingViewVisible = true
-            self?.switchBackend(with: configurationURL)
+    private func switchBackend(configURL: URL) {
+        guard
+            SecurityFlags.customBackend.isEnabled,
+            let sessionManager
+        else {
+            return
         }
-        alert.addAction(agreeAction)
 
-        let cancelAction = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel)
-        alert.addAction(cancelAction)
+        sessionManager.fetchBackendEnvironment(at: configURL) { [weak self] result in
+            guard let self else { return }
 
-        presentAlert(alert)
-    }
-
-    // TODO: [John] move this to unauthenticated session action handler
-    // TODO: map errors
-    private func switchBackend(with configurationURL: URL) {
-        sessionManager?.switchBackend(configuration: configurationURL) { [weak self] result in
-            self?.rootViewController.isLoadingViewVisible = false
             switch result {
-            case let .success(environment):
-                BackendEnvironment.shared = environment
-            case let .failure(error):
-                guard let strongSelf = self else { return }
-                let localizedError = strongSelf.mapToLocalizedError(error)
-                strongSelf.presentLocalizedErrorAlert(localizedError)
+            case .success(let backendEnvironment):
+                self.requestUserConfirmationToSwitchBackend(backendEnvironment) { didConfirm in
+                    guard didConfirm else { return }
+                    sessionManager.switchBackend(to: backendEnvironment)
+                    BackendEnvironment.shared = backendEnvironment
+                }
+
+            case .failure(let error):
+                let localizedError = self.mapToLocalizedError(error)
+                self.presentLocalizedErrorAlert(localizedError)
             }
         }
+    }
+
+    private func requestUserConfirmationToSwitchBackend(
+        _ environment: BackendEnvironment,
+        didConfirm: @escaping (Bool) -> Void
+    ) {
+        let viewModel = SwitchBackendConfirmationViewModel(
+            environment: environment,
+            didConfirm: didConfirm
+        )
+
+        let view = SwitchBackendConfirmationView(viewModel: viewModel)
+        let hostingController = UIHostingController(rootView: view)
+        // TODO: Check if we can present...
+        rootViewController.present(hostingController, animated: true)
     }
 
 }

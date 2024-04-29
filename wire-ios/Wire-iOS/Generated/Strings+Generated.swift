@@ -6031,13 +6031,6 @@ internal enum L10n {
         }
       }
       internal enum SwitchBackend {
-        /// This configuration will connect the app to a third-party server:
-        /// %@
-        internal static func message(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "url_action.switch_backend.message", String(describing: p1), fallback: "This configuration will connect the app to a third-party server:\n%@")
-        }
-        /// Connect to server
-        internal static let title = L10n.tr("Localizable", "url_action.switch_backend.title", fallback: "Connect to server")
         internal enum Error {
           /// Please check your internet connection, verify the link and try again.
           internal static let invalidBackend = L10n.tr("Localizable", "url_action.switch_backend.error.invalid_backend", fallback: "Please check your internet connection, verify the link and try again.")

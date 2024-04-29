@@ -71,8 +71,7 @@ public class UnauthenticatedSession: NSObject {
         self.urlActionProcessors = [CompanyLoginURLActionProcessor(delegate: self,
                                                                    authenticationStatus: authenticationStatus),
                                     StartLoginURLActionProcessor(delegate: self,
-                                                                 authenticationStatus: authenticationStatus),
-                                    SwitchBackendURLActionProcessor(delegate: self)
+                                                                 authenticationStatus: authenticationStatus)
         ]
         self.operationLoop = UnauthenticatedOperationLoop(
             transportSession: transportSession,

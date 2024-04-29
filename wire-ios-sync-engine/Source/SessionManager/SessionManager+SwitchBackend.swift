@@ -60,25 +60,4 @@ extension SessionManager {
         }
     }
 
-    // TODO: [John] delete
-    public func switchBackend(configuration url: URL, completed: @escaping CompletedSwitch) {
-        if let error = canSwitchBackend() {
-            completed(.failure(error))
-            return
-        }
-        dispatchGroup.enter()
-        BackendEnvironment.fetchEnvironment(url: url) { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let environment):
-                    self.environment = environment
-                    self.unauthenticatedSession = nil
-                    completed(.success(environment))
-                case .failure:
-                    completed(.failure(SwitchBackendError.invalidBackend))
-                }
-                self.dispatchGroup.leave()
-            }
-        }
-    }
 }
