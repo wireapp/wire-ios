@@ -190,7 +190,6 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
         case .replace:
             var viewControllers = presenter.viewControllers
             viewControllers[viewControllers.count - 1] = stepViewController
-            stateController.transition(to: .landingScreen, mode: .reset)
             presenter.setViewControllers(viewControllers, animated: true)
         case .rewindToOrReset(let milestone):
             var viewControllers = presenter.viewControllers
