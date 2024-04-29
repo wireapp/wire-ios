@@ -23,5 +23,3 @@
 @interface MockReachability : NSObject<ReachabilityProvider, TearDownCapable>
 
 @end
-
-
