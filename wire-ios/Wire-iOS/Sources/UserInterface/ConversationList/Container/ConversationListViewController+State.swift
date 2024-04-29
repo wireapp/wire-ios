@@ -52,18 +52,6 @@ extension ConversationListViewController {
 
         case .archived:
             show(createArchivedListViewController(), animated: animated, completion: completion)
-
-        case .settings:
-            let settingsViewController = settingsViewControllerBuilder.build()
-            let navigationController = settingsViewController.wrapInNavigationController(navigationBarClass: DefaultNavigationBar.self)
-            add(navigationController, to: contentContainer)
-            navigationController.view.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                navigationController.view.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
-                navigationController.view.topAnchor.constraint(equalTo: contentContainer.topAnchor),
-                contentContainer.trailingAnchor.constraint(equalTo: navigationController.view.trailingAnchor),
-                tabBar.topAnchor.constraint(equalTo: navigationController.view.bottomAnchor)
-            ])
         }
     }
 

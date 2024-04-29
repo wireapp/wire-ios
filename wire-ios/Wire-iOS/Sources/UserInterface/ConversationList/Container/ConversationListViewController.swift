@@ -24,7 +24,6 @@ import WireSyncEngine
 enum ConversationListState {
     case conversationList
     case archived
-    case settings
     case peoplePicker
 }
 
@@ -39,7 +38,6 @@ final class ConversationListViewController: UIViewController, ConversationListCo
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
     private let selfProfileViewControllerBuilder: ViewControllerBuilder
-    let settingsViewControllerBuilder: ViewControllerBuilder
 
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
@@ -72,8 +70,7 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        selfProfileViewControllerBuilder: ViewControllerBuilder,
-        settingsViewControllerBuilder: ViewControllerBuilder
+        selfProfileViewControllerBuilder: ViewControllerBuilder
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
@@ -82,20 +79,17 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         )
         self.init(
             viewModel: viewModel,
-            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
-            settingsViewControllerBuilder: settingsViewControllerBuilder
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
         onboardingHint.arrowPointToView = tabBar
     }
 
     required init(
         viewModel: ViewModel,
-        selfProfileViewControllerBuilder: ViewControllerBuilder,
-        settingsViewControllerBuilder: ViewControllerBuilder
+        selfProfileViewControllerBuilder: ViewControllerBuilder
     ) {
         self.viewModel = viewModel
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
-        self.settingsViewControllerBuilder = settingsViewControllerBuilder
 
         topBarViewController = ConversationListTopBarViewController(
             account: viewModel.account,
@@ -375,7 +369,8 @@ extension ConversationListViewController: UITabBarDelegate {
         case .list:
             listContentController.listViewModel.folderEnabled = false
         case .settings:
-            setState(.settings, animated: true) {
+            let alertController = UIAlertController(title: "not implemented yet", message: "will be done within [WPB-7306]", alertAction: .ok())
+            present(alertController, animated: true) {
                 tabBar.selectedTab = .list
             }
         }

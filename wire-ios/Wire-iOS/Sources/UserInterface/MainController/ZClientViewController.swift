@@ -74,8 +74,7 @@ final class ZClientViewController: UIViewController {
             account: account,
             selfUser: userSession.selfUser,
             userSession: userSession,
-            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
-            settingsViewControllerBuilder: settingsViewControllerBuilder
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
 
         colorSchemeController = .init(userSession: userSession)
