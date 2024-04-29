@@ -125,10 +125,6 @@ final class AuthenticationInterfaceBuilder {
             let backupStep = BackupRestoreStepDescription(context: context)
             return makeViewController(for: backupStep)
 
-        case .enterPhoneVerificationCode(let phoneNumber):
-            let verifyPhoneStep = VerifyPhoneStepDescription(phoneNumber: phoneNumber, allowChange: false)
-            return makeViewController(for: verifyPhoneStep)
-
         case .enterEmailVerificationCode(let email, _, _):
             let verifyEmailStep = VerifyEmailStepDescription(email: email, canChangeEmail: false)
             return makeViewController(for: verifyEmailStep)
@@ -154,8 +150,6 @@ final class AuthenticationInterfaceBuilder {
             switch credentials {
             case .email(let email):
                 step = VerifyEmailStepDescription(email: email)
-            case .phone(let phoneNumber):
-                step = VerifyPhoneStepDescription(phoneNumber: phoneNumber, allowChange: false)
             }
 
             return makeViewController(for: step)

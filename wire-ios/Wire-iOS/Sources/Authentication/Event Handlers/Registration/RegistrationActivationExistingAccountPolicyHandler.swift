@@ -34,7 +34,7 @@ final class RegistrationActivationExistingAccountPolicyHandler: AuthenticationEv
 
         // Only handle phoneNumberIsAlreadyRegistered and emailIsAlreadyRegistered errors
         switch error.userSessionErrorCode {
-        case .phoneNumberIsAlreadyRegistered, .emailIsAlreadyRegistered:
+        case .emailIsAlreadyRegistered:
             break
         default:
             return nil
@@ -58,13 +58,6 @@ final class RegistrationActivationExistingAccountPolicyHandler: AuthenticationEv
             let alert = AuthenticationCoordinatorAlert(title: AlertStrings.AccountExists.title,
                                                        message: AlertStrings.AccountExists.messageEmail,
                                                        actions: [.changeEmail, .login(email: email)])
-
-            actions.append(.presentAlert(alert))
-
-        case .phone(let number):
-            let alert = AuthenticationCoordinatorAlert(title: AlertStrings.AccountExists.title,
-                                                       message: AlertStrings.AccountExists.messagePhone,
-                                                       actions: [.changePhone, .login(phoneNumber: number)])
 
             actions.append(.presentAlert(alert))
         }
@@ -96,10 +89,5 @@ private extension AuthenticationCoordinatorAlertAction {
                                                                       isExpired: false)
         return Self.init(title: AlertStrings.changeSigninAction,
                          coordinatorActions: [.transition(.provideCredentials(.email, prefilledCredentials), mode: .replace)])
-    }
-
-    static func login(phoneNumber: String) -> Self {
-        Self.init(title: AlertStrings.changeSigninAction,
-                  coordinatorActions: [.showLoadingView, .performPhoneLoginFromRegistration(phoneNumber: phoneNumber)])
     }
 }

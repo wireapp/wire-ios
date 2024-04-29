@@ -138,14 +138,12 @@ final class AuthenticationEventResponderChain {
         registerHandler(AuthenticationClientRegistrationSuccessHandler(), to: &clientRegistrationSuccessHandlers)
 
         // loginErrorHandlers
-        registerHandler(AuthenticationPhoneLoginErrorHandler(), to: &loginErrorHandlers)
         registerHandler(AuthenticationEmailVerificationRequiredErrorHandler(), to: &loginErrorHandlers)
         registerHandler(AuthenticationEmailLoginUnknownErrorHandler(), to: &loginErrorHandlers)
         registerHandler(AuthenticationEmailFallbackErrorHandler(), to: &loginErrorHandlers)
         registerHandler(UserEmailUpdateFailureErrorHandler(), to: &loginErrorHandlers)
 
         // loginCodeHandlers
-        registerHandler(AuthenticationLoginCodeAvailableEventHandler(), to: &loginCodeHandlers)
         registerHandler(UserEmailUpdateCodeSentEventHandler(), to: &loginCodeHandlers)
 
         // registrationErrorHandlers
