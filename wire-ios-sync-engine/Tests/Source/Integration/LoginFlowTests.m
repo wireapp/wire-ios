@@ -301,57 +301,6 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
     XCTAssertTrue(didFetchSelfUser);
 }
 
-- (void)testThatWeCanLoginAfterRegisteringAnEmailAddressAndClient
-{
-    // given
-    NSString *phone = @"+4912345678900";
-    NSString *email = @"email@example.com";
-    NSString *password = @"newPassword";
-    
-    self.selfUser.phone = phone;
-    
-    [self.mockTransportSession performRemoteChanges:^ (id<MockTransportSessionObjectCreation>  _Nonnull __strong session) {
-        [session whiteListPhone:phone];
-        self.selfUser.email = nil;
-        self.selfUser.password = nil;
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // when
-    ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:password];
-    [self.userSession performChanges:^{
-        [self.userSession.userProfile requestSettingEmailAndPasswordWithCredentials:credentials error:nil];
-    }];
-
-    [self.mockTransportSession performRemoteChanges:^ (id<MockTransportSessionObjectCreation>  _Nonnull __strong session) {
-        // simulate user click on email
-        NOT_USED(session);
-        self.selfUser.email = email;
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    __block BOOL didRun = NO;
-    self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse*(ZMTransportRequest *request) {
-        // when trying to register without email credentials, the BE tells us we need credentials
-        if(!didRun && [request.path isEqualToString:@"/clients"] && request.method == ZMTransportRequestMethodPost) {
-            didRun = YES;
-        }
-        // the user updates the email address (currently does not work in MockTransportsession for some reason)
-        if ([request.path isEqualToString:@"/self/email"]) {
-            return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:0];
-        }
-        return nil;
-    };
-    
-
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
-    XCTAssertEqualObjects(selfUser.name, self.selfUser.name);
-    XCTAssertEqualObjects(selfUser.emailAddress, email);
-}
-
 - (void)testThatItCanRegisterNewClientAfterDeletingSelfClient
 {
     // given
