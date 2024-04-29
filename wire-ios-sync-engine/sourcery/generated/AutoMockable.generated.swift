@@ -343,6 +343,35 @@ class MockRecurringActionServiceInterface: RecurringActionServiceInterface {
 
 }
 
+public class MockRemoveUserClientUseCaseProtocol: RemoveUserClientUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeClientIdCredentials_Invocations: [(clientId: String, credentials: EmailCredentials?)] = []
+    public var invokeClientIdCredentials_MockError: Error?
+    public var invokeClientIdCredentials_MockMethod: ((String, EmailCredentials?) async throws -> Void)?
+
+    public func invoke(clientId: String, credentials: EmailCredentials?) async throws {
+        invokeClientIdCredentials_Invocations.append((clientId: clientId, credentials: credentials))
+
+        if let error = invokeClientIdCredentials_MockError {
+            throw error
+        }
+
+        guard let mock = invokeClientIdCredentials_MockMethod else {
+            fatalError("no mock for `invokeClientIdCredentials`")
+        }
+
+        try await mock(clientId, credentials)
+    }
+
+}
+
 public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneConversationsUseCaseProtocol {
 
     // MARK: - Life cycle
