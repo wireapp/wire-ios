@@ -29,10 +29,6 @@ public enum SetAllowServicesError: Error {
     case invalidOperation
 }
 
-public enum ContextError: Error {
-    case contextUnavailable
-}
-
 fileprivate extension ZMConversation {
     struct TransportKey {
         static let data = "data"
