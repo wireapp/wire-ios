@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSystem
 import UIKit
 import WireSyncEngine
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "Drag and drop images")
 

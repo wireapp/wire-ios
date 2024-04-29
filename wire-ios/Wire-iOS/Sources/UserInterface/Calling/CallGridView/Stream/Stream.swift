@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import DifferenceKit
 import Foundation
 import WireSyncEngine
-import DifferenceKit
 
 struct Stream: Equatable {
 

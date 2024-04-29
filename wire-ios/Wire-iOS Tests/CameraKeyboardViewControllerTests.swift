@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import AVFoundation
 import Photos
 import SnapshotTesting
 @testable import Wire
+import XCTest
 
 // MARK: - CameraKeyboardViewControllerDelegateMock
 

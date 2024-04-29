@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import WireSyncEngine
 @testable import WireDataModelSupport
+@testable import WireSyncEngine
+import XCTest
 
 class EventProcessorTests: MessagingTest {
 

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import CoreTelephony
+import Foundation
 import WireSyncEngine
 
 /// An object that provides information of changes to the user’s network conditions.

@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 
 /// An object that receives notification about the phone number input view.
 protocol PhoneNumberInputViewDelegate: AnyObject {
@@ -88,10 +87,12 @@ final class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidati
     )
     private let countryCodeInputView = IconButton()
     private let textField = ValidatedTextField(kind: .phoneNumber, leftInset: 8, style: .default)
+    private let userPropertyNormalizer: UserPropertyNormalization
 
     // MARK: - Initialization
 
     override init(frame: CGRect) {
+        userPropertyNormalizer = UserPropertyNormalizer(userPropertyValidator: UserPropertyValidator())
         super.init(frame: frame)
         configureSubviews()
         configureConstraints()
@@ -187,21 +188,23 @@ final class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidati
 
     private func configureValidation() {
 
-        textField.textFieldValidator.customValidator = { input in
-            let phoneNumber = self.country.e164PrefixString + input
-            let normalizedNumber = UnregisteredUser.normalizedPhoneNumber(phoneNumber)
+        textField.textFieldValidator.customValidator = { [weak self] input in
+            let phoneNumber = (self?.country.e164PrefixString ?? "") + input
 
-            switch normalizedNumber {
-            case .invalid(let errorCode):
-                switch errorCode {
-                case .tooLong: return .tooLong(kind: .phoneNumber)
-                case .tooShort: return .tooShort(kind: .phoneNumber)
-                default: return .invalidPhoneNumber
-                }
-            case .unknownError:
-                return .invalidPhoneNumber
-            case .valid:
+            guard let normalizationResult = self?.userPropertyNormalizer.normalizePhoneNumber(phoneNumber), !normalizationResult.isValid else {
                 return .none
+            }
+            guard let error = normalizationResult.validationError as? NSError else {
+                return .invalidPhoneNumber
+            }
+
+            switch error.code {
+            case ZMManagedObjectValidationErrorCode.tooLong.rawValue:
+                return .tooLong(kind: .phoneNumber)
+            case ZMManagedObjectValidationErrorCode.tooShort.rawValue:
+                return .tooShort(kind: .phoneNumber)
+            default:
+                return .invalidPhoneNumber
             }
         }
     }
@@ -307,7 +310,11 @@ final class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidati
             return shouldInsert(phoneNumber: updatedString)
         }
 
-        var number = PhoneNumber(countryCode: country.e164, numberWithoutCode: updatedString)
+        var number = PhoneNumber(
+            countryCode: country.e164,
+            numberWithoutCode: updatedString,
+            userPropertyValidator: UserPropertyValidator()
+        )
 
         switch number.validate() {
         case .containsInvalidCharacters, .tooLong:
@@ -376,7 +383,11 @@ final class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidati
 
     func validationUpdated(sender: UITextField, error: TextFieldValidator.ValidationError?) {
         self.validationError = error
-        let phoneNumber = PhoneNumber(countryCode: country.e164, numberWithoutCode: input)
+        let phoneNumber = PhoneNumber(
+            countryCode: country.e164,
+            numberWithoutCode: input,
+            userPropertyValidator: UserPropertyValidator()
+        )
         delegate?.phoneNumberInputView(self, didValidatePhoneNumber: phoneNumber, withResult: validationError)
     }
 
@@ -392,7 +403,11 @@ final class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidati
     }
 
     func submitValue() {
-        var phoneNumber = PhoneNumber(countryCode: country.e164, numberWithoutCode: textField.input)
+        var phoneNumber = PhoneNumber(
+            countryCode: country.e164,
+            numberWithoutCode: textField.input,
+            userPropertyValidator: UserPropertyValidator()
+        )
         let validationResult = phoneNumber.validate()
 
         delegate?.phoneNumberInputView(self, didValidatePhoneNumber: phoneNumber, withResult: validationError)
@@ -402,5 +417,4 @@ final class PhoneNumberInputView: UIView, UITextFieldDelegate, TextFieldValidati
             delegate?.phoneNumberInputView(self, didPickPhoneNumber: phoneNumber)
         }
     }
-
 }

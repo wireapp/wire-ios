@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireRequestStrategy
+import XCTest
 
 class CallEventContentTests: XCTestCase {
 

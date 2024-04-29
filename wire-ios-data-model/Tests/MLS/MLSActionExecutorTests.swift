@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import XCTest
-import WireCoreCrypto
 import Combine
+import Foundation
+import WireCoreCrypto
+import XCTest
 
 @testable import WireDataModel
 @testable import WireDataModelSupport
