@@ -614,6 +614,7 @@
 		EE997A16250629DC008336D2 /* ZMMessage+ProcessingError.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE997A15250629DC008336D2 /* ZMMessage+ProcessingError.swift */; };
 		EE9AD9162696F01700DD5F51 /* FeatureRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9AD9152696F01700DD5F51 /* FeatureRepository.swift */; };
 		EE9ADC47286F38D1002B2148 /* store2-102-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = EE9ADC46286F38D1002B2148 /* store2-102-0.wiredatabase */; };
+		EE9AEC822BD1570E00F7853F /* WireDataModel.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC812BD1570E00F7853F /* WireDataModel.docc */; };
 		EE9B9F572993E57900A257BC /* NSManagedObjectContext+ProteusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9B9F562993E57900A257BC /* NSManagedObjectContext+ProteusService.swift */; };
 		EE9B9F5929964F6A00A257BC /* NSManagedObjectContext+CoreCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9B9F5829964F6A00A257BC /* NSManagedObjectContext+CoreCrypto.swift */; };
 		EEA58F112B70E89B006DEE32 /* CoreDataStackHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62B972A2B680AB20099D5DC /* CoreDataStackHelper.swift */; };
@@ -1557,6 +1558,7 @@
 		EE997A15250629DC008336D2 /* ZMMessage+ProcessingError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMMessage+ProcessingError.swift"; sourceTree = "<group>"; };
 		EE9AD9152696F01700DD5F51 /* FeatureRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureRepository.swift; sourceTree = "<group>"; };
 		EE9ADC46286F38D1002B2148 /* store2-102-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-102-0.wiredatabase"; sourceTree = "<group>"; };
+		EE9AEC812BD1570E00F7853F /* WireDataModel.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireDataModel.docc; sourceTree = "<group>"; };
 		EE9B9F562993E57900A257BC /* NSManagedObjectContext+ProteusService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+ProteusService.swift"; sourceTree = "<group>"; };
 		EE9B9F5829964F6A00A257BC /* NSManagedObjectContext+CoreCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+CoreCrypto.swift"; sourceTree = "<group>"; };
 		EEA58F122B7115A1006DEE32 /* ModelHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelHelper.swift; sourceTree = "<group>"; };
@@ -3437,6 +3439,7 @@
 		F9C9A4F21CAD5DF10039E10C = {
 			isa = PBXGroup;
 			children = (
+				EE9AEC812BD1570E00F7853F /* WireDataModel.docc */,
 				543089B71D420165004D8AC4 /* README.md */,
 				F9A708641CAEF9BD00C2F5FE /* Default-568h@2x.png */,
 				F9C9A6771CAD7A790039E10C /* Resources */,
@@ -3745,9 +3748,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F9C9A5101CAD5DF10039E10C /* Build configuration list for PBXNativeTarget "WireDataModel" */;
 			buildPhases = (
+				F9C9A4F91CAD5DF10039E10C /* Headers */,
 				F9C9A4F71CAD5DF10039E10C /* Sources */,
 				F9C9A4F81CAD5DF10039E10C /* Frameworks */,
-				F9C9A4F91CAD5DF10039E10C /* Headers */,
 				668BEFB527453BF600866A25 /* Run Swiftlint */,
 				F9C9A4FA1CAD5DF10039E10C /* Resources */,
 			);
@@ -4015,6 +4018,7 @@
 				166A2A0D25FB991800B4A4F8 /* CoreDataStack.swift in Sources */,
 				F9A706AE1CAEE01D00C2F5FE /* SetSnapshot.swift in Sources */,
 				162A81DD202DA4BC00F6200C /* AssetCache.swift in Sources */,
+				EE9AEC822BD1570E00F7853F /* WireDataModel.docc in Sources */,
 				EEBACDAB25B9C4B0000210AC /* AppLockAuthenticationResult.swift in Sources */,
 				638805652410FE920043B641 /* ButtonState.swift in Sources */,
 				63B1335A29A503D100009D84 /* MLSActionExecutor.swift in Sources */,
