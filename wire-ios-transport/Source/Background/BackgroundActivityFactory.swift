@@ -88,8 +88,8 @@ import WireUtilities
      */
 
     @objc(startBackgroundActivityWithName:)
-    public func startBackgroundActivity(withName name: String) -> BackgroundActivity? {
-        return startActivityIfPossible(name, nil)
+    public func startBackgroundActivity(name: String) -> BackgroundActivity? {
+        startActivityIfPossible(name, nil)
     }
 
     /**
@@ -101,7 +101,7 @@ import WireUtilities
 
     @objc(startBackgroundActivityWithName:expirationHandler:)
     public func startBackgroundActivity(name: String, expirationHandler: @escaping (() -> Void)) -> BackgroundActivity? {
-        return startActivityIfPossible(name, expirationHandler)
+        startActivityIfPossible(name, expirationHandler)
     }
 
     /**
