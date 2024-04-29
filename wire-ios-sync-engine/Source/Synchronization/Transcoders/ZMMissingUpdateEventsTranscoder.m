@@ -161,7 +161,8 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
 - (NSUUID *)processUpdateEventsAndReturnLastNotificationIDFromResponse:(ZMTransportResponse *)response
 {
-    ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:10 label:NSStringFromClass(self.class)];
+    NSString *tpLabel = NSStringFromClass(self.class);
+    ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:10 label:tpLabel];
     NSArray *eventsDictionaries = [self.class eventDictionariesFromPayload:response.payload];
 
     NSMutableArray<ZMUpdateEvent *> *parsedEvents = [NSMutableArray array];

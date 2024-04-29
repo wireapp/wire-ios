@@ -101,7 +101,7 @@ public class NotificationStreamSync: NSObject, ZMRequestGenerator, ZMSimpleListR
 
     @objc(processUpdateEventsAndReturnLastNotificationIDFromPayload:)
     func processUpdateEventsAndReturnLastNotificationID(from payload: ZMTransportData?) -> UUID? {
-        let tp = ZMSTimePoint(interval: 10, label: NSStringFromClass(type(of: self)))
+        let tp = TimePoint(interval: 10, label: NSStringFromClass(type(of: self)))
         var latestEventId: UUID?
         let source = ZMUpdateEventSource.pushNotification
 

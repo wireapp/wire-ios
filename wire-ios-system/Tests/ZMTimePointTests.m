@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <XCTest/XCTest.h>
-#import "ZMSTimePoint.h"
+@import XCTest;
+@import WireSystem.Swift;
 
 @interface ZMTimePointTests : XCTestCase
-
 @end
 
 @implementation ZMTimePointTests
@@ -28,8 +27,8 @@
 - (void)testThatATimePointDoesNotWarnTooEarly
 {
     // given
-    ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:1000];
-    
+    ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:1000];
+
     // then
     XCTAssertFalse([tp warnIfLongerThanInterval]);
 }
@@ -37,8 +36,8 @@
 - (void)testThatATimePointWarnsIfTooMuchTimeHasPassed
 {
     // given
-    ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:0.01];
-    
+    ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:0.01];
+
     // when
     [NSThread sleepForTimeInterval:0.1];
     
