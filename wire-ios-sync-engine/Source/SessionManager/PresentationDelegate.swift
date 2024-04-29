@@ -62,7 +62,7 @@ public protocol PresentationDelegate: AnyObject {
     // TODO: [John] document
     func requestUserConfirmationToSwitchBackend(
         _ environment: BackendEnvironment,
-        decisionHandler: @escaping (_ didConfirm: Bool) -> Void
+        didConfirm: @escaping (Bool) -> Void
     )
 
     /// Called when an URLAction was successfully performed.

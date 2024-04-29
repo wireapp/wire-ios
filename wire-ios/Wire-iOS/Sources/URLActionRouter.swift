@@ -188,12 +188,12 @@ extension URLActionRouter: PresentationDelegate {
 
     func requestUserConfirmationToSwitchBackend(
         _ environment: BackendEnvironment,
-        decisionHandler: @escaping (Bool) -> Void
+        didConfirm: @escaping (Bool) -> Void
     ) {
         DispatchQueue.main.async { [weak self] in
             let viewModel = SwitchBackendConfirmationViewModel(
                 environment: environment,
-                decisionHandler: decisionHandler
+                didConfirm: didConfirm
             )
 
             let view = SwitchBackendConfirmationView(viewModel: viewModel)

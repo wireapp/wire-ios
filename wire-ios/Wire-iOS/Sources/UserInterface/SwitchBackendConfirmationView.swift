@@ -151,7 +151,7 @@ struct SwitchBackendConfirmationView: View {
             teamsURL: "www.teams.staging.com",
             accountsURL: "www.accounts.staging.com",
             websiteURL: "www.wire.com",
-            decisionHandler: { _ in }
+            didConfirm: { _ in }
         )
     )
 }

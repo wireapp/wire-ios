@@ -33,13 +33,31 @@ extension SessionManager {
         return nil
     }
 
-    public func switchBackend(to environment: BackendEnvironment) throws {
-        guard accountManager.accounts.isEmpty else {
-            throw SwitchBackendError.loggedInAccounts
-        }
-
+    public func switchBackend(to environment: BackendEnvironment) {
         self.environment = environment
         unauthenticatedSession = nil
+    }
+
+    public func fetchBackendEnvironment(
+        at url: URL,
+        completion: @escaping (Result<BackendEnvironment, Error>) -> Void
+    ) {
+        if let error = canSwitchBackend() {
+            completion(.failure(error))
+            return
+        }
+        dispatchGroup.enter()
+        BackendEnvironment.fetchEnvironment(url: url) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let environment):
+                    completion(.success(environment))
+                case .failure:
+                    completion(.failure(SwitchBackendError.invalidBackend))
+                }
+                self.dispatchGroup.leave()
+            }
+        }
     }
 
     // TODO: [John] delete

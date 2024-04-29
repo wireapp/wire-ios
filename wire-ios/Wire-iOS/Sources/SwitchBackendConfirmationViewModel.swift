@@ -34,11 +34,11 @@ final class SwitchBackendConfirmationViewModel {
 
     // MARK: - Life cycle
 
-    let decisionHandler: (_ didConfirm: Bool) -> Void
+    let didConfirm: (Bool) -> Void
 
     convenience init(
         environment: BackendEnvironment,
-        decisionHandler: @escaping ((Bool) -> Void)
+        didConfirm: @escaping (Bool) -> Void
     ) {
         self.init(
             backendName: environment.title,
@@ -48,7 +48,7 @@ final class SwitchBackendConfirmationViewModel {
             teamsURL: environment.teamsURL.absoluteString,
             accountsURL: environment.accountsURL.absoluteString,
             websiteURL: environment.websiteURL.absoluteString,
-            decisionHandler: decisionHandler
+            didConfirm: didConfirm
         )
     }
 
@@ -60,7 +60,7 @@ final class SwitchBackendConfirmationViewModel {
         teamsURL: String,
         accountsURL: String,
         websiteURL: String,
-        decisionHandler: @escaping (Bool) -> Void
+        didConfirm: @escaping (Bool) -> Void
     ) {
         self.backendName = backendName
         self.backendURL = backendURL
@@ -69,7 +69,7 @@ final class SwitchBackendConfirmationViewModel {
         self.teamsURL = teamsURL
         self.accountsURL = accountsURL
         self.websiteURL = websiteURL
-        self.decisionHandler = decisionHandler
+        self.didConfirm = didConfirm
     }
 
     // MARK: - Events
@@ -84,10 +84,10 @@ final class SwitchBackendConfirmationViewModel {
     func handleEvent(_ event: Event) {
         switch event {
         case .userDidCancel:
-            decisionHandler(false)
+            didConfirm(false)
 
         case .userDidConfirm:
-            decisionHandler(true)
+            didConfirm(true)
         }
     }
 
