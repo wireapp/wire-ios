@@ -43,12 +43,6 @@
  
  */
 
-
-#define ZMTrap() do { \
-		ZMCrash("Trap", __FILE__, __LINE__); \
-	} while (0)
-
-
 #if DEBUG_ASSERT_PRODUCTION_CODE
 
 #   define Require(assertion) \
