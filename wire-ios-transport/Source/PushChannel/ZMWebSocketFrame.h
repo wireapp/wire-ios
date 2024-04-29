@@ -19,8 +19,9 @@
 @import Foundation;
 @import WireSystem;
 
-@class DataBuffer;
+NS_ASSUME_NONNULL_BEGIN
 
+@class DataBuffer;
 
 typedef NS_ENUM(uint8_t, ZMWebSocketFrameType) {
     ZMWebSocketFrameTypeInvalid = 0,
@@ -38,17 +39,13 @@ typedef NS_ENUM(NSInteger, ZMWebSocketFrameErrorCode) {
     ZMWebSocketFrameErrorCodeParseError,
 };
 
-
-
-
-
 /// Web Socket Frame according to RFC 6455
 /// http://tools.ietf.org/html/rfc6455
 @interface ZMWebSocketFrame : NSObject
 
 /// The passed in error will be set to @c ZMWebSocketFrameErrorDomain and one of
 /// @c ZMWebSocketFrameErrorCodeDataTooShort or @c ZMWebSocketFrameErrorCodeParseError
-- (instancetype)initWithDataBuffer:(DataBuffer *)dataBuffer error:(NSError **)error NS_DESIGNATED_INITIALIZER ZM_NON_NULL(1, 2);
+- (instancetype)initWithDataBuffer:(DataBuffer *)dataBuffer error:(NSError * _Nullable __autoreleasing * _Nullable)error NS_DESIGNATED_INITIALIZER;
 
 /// Creates a binary frame with the given payload.
 - (instancetype)initWithBinaryFrameWithPayload:(NSData *)payload NS_DESIGNATED_INITIALIZER;
@@ -62,3 +59,5 @@ typedef NS_ENUM(NSInteger, ZMWebSocketFrameErrorCode) {
 @property (nonatomic, readonly) dispatch_data_t frameData;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -30,7 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSError *)tryAgainLaterError;
 + (NSError *)tryAgainLaterErrorWithUserInfo:(nullable NSDictionary *)userInfo;
 
-
 /// @c YES if the request what cancelled
 @property (nonatomic, readonly) BOOL isExpiredRequestError;
 
@@ -39,7 +38,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// If the sender can re-enqueue the error (e.g. ZMUpstreamModifiedObjectSync et al.) it should reset the state for the corresponding object.
 /// If the sender can @e not re-enqueue if should assume that the request failed.
 @property (nonatomic, readonly) BOOL isTryAgainLaterError;
-
 
 + (nullable NSError *)transportErrorFromURLTask:(NSURLSessionTask *)task expired:(BOOL)expired;
 

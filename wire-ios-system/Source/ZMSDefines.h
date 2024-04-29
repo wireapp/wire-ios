@@ -16,14 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#ifndef ZM_EXTERN
-#  define ZM_EXTERN FOUNDATION_EXTERN
-#endif
-
 #define ZM_UNUSED __attribute__((unused))
 #define NOT_USED(x) do { (void)(x); } while (0)
-#define ZM_REQUIRES_SUPER __attribute__((objc_requires_super))
-#define ZM_NON_NULL(x, ...) __attribute__((nonnull(x, ##__VA_ARGS__)))
 #define ZM_MUST_USE_RETURN __attribute__((warn_unused_result))
 
 /// @def ZM_WEAK
