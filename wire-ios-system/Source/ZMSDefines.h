@@ -18,7 +18,6 @@
 
 #define ZM_UNUSED __attribute__((unused))
 #define NOT_USED(x) do { (void)(x); } while (0)
-#define ZM_REQUIRES_SUPER __attribute__((objc_requires_super))
 #define ZM_MUST_USE_RETURN __attribute__((warn_unused_result))
 #if __has_extension(attribute_deprecated_with_message)
 # define ZM_DEPRECATED(message) __attribute__((deprecated(message)))
