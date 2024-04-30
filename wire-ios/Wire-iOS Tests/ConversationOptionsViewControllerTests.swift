@@ -69,6 +69,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
 
     var mockConversation: MockConversation!
     var mockUserSession: UserSessionMock!
+    var mockUseCaseFactory: MockUseCaseFactoryProtocol!
     var mockCreateSecuredGuestLinkUseCase: MockCreateConversationGuestLinkUseCaseProtocol!
 
     // MARK: - setUp method
@@ -77,7 +78,8 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         super.setUp()
         BackendInfo.storage = .temporary()
         mockConversation = MockConversation()
-        mockUserSession = UserSessionMock()
+        mockUseCaseFactory = MockUseCaseFactoryProtocol()
+        mockUserSession = UserSessionMock(mockUseCaseFactory: mockUseCaseFactory)
         mockCreateSecuredGuestLinkUseCase = MockCreateConversationGuestLinkUseCaseProtocol()
     }
 
@@ -87,6 +89,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         BackendInfo.storage = UserDefaults.standard
         mockConversation = nil
         mockUserSession = nil
+        mockUseCaseFactory = nil
         mockCreateSecuredGuestLinkUseCase = nil
         super.tearDown()
     }
@@ -415,6 +418,10 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         mock.viewModelDidReceiveError_MockMethod = { _, _ in }
         viewModel.delegate = mock
 
+        mockUseCaseFactory.createConversationGuestLinkUseCase_MockMethod = {
+            return self.mockCreateSecuredGuestLinkUseCase
+        }
+
         mockCreateSecuredGuestLinkUseCase.invokeConversationPasswordCompletion_MockMethod = { _, _, _ in }
 
         // WHEN
@@ -436,6 +443,10 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
 
         let mock = MockConversationGuestOptionsViewModelDelegate()
         mock.viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
+
+        mockUseCaseFactory.createConversationGuestLinkUseCase_MockMethod = {
+            return self.mockCreateSecuredGuestLinkUseCase
+        }
 
         mockCreateSecuredGuestLinkUseCase.invokeConversationPasswordCompletion_MockMethod = { _, _, _ in }
 
