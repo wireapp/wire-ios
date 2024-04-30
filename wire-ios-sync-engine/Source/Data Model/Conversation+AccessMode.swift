@@ -37,6 +37,7 @@ fileprivate extension ZMConversation {
     struct TransportKey {
         static let data = "data"
         static let uri = "uri"
+        static let hasPassword = "has_password"
     }
 }
 
@@ -83,7 +84,7 @@ extension ZMConversation {
         request.add(ZMCompletionHandler(on: managedObjectContext!) { response in
             if response.httpStatus == 200,
                let payloadDict = response.payload?.asDictionary() {
-                let hasPassword = payloadDict["has_password"] as? Bool ?? false
+                let hasPassword = payloadDict[ZMConversation.TransportKey.hasPassword] as? Bool ?? false
                 if let uri = payloadDict[ZMConversation.TransportKey.uri] as? String {
                     completion(.success((uri: uri, secured: hasPassword)))
                 } else {
