@@ -48,7 +48,7 @@ extension AppLockModule.View {
 
         private let shieldViewContainer = UIView()
         private let contentContainerView = UIView()
-        private let blurView = UIVisualEffectView.blurView()
+        private lazy var blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
 
         private let messageLabel = DynamicFontLabel(fontSpec: .largeRegularFont, color: SemanticColors.Label.textWhite)
 

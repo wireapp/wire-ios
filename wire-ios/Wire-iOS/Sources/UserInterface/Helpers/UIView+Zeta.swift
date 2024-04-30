@@ -106,10 +106,3 @@ extension UIView {
         return nibView
     }
 }
-
-extension UIVisualEffectView {
-    static func blurView() -> UIVisualEffectView {
-        let blurEffect = UIBlurEffect(style: .dark)
-        return UIVisualEffectView(effect: blurEffect)
-    }
-}
