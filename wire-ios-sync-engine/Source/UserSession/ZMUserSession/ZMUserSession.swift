@@ -84,8 +84,6 @@ public final class ZMUserSession: NSObject {
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
 
-    let useCaseFactory: UseCaseFactoryProtocol
-
     public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
@@ -338,7 +336,6 @@ public final class ZMUserSession: NSObject {
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         proteusToMLSMigrationCoordinator: any ProteusToMLSMigrationCoordinating,
         sharedUserDefaults: UserDefaults,
-        useCaseFactory: any UseCaseFactoryProtocol,
         observeMLSGroupVerificationStatusUseCase: any ObserveMLSGroupVerificationStatusUseCaseProtocol,
         appLock: any AppLockType,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
@@ -377,7 +374,6 @@ public final class ZMUserSession: NSObject {
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
-        self.useCaseFactory = useCaseFactory
         self.updateMLSGroupVerificationStatus = updateMLSGroupVerificationStatusUseCase
         self.mlsConversationVerificationStatusUpdater = mlsConversationVerificationStatusUpdater
         self.observeMLSGroupVerificationStatus = observeMLSGroupVerificationStatusUseCase
@@ -490,7 +486,7 @@ public final class ZMUserSession: NSObject {
     }
 
     private func createStrategyDirectory(useLegacyPushNotifications: Bool) -> StrategyDirectoryProtocol {
-        return StrategyDirectory(
+        StrategyDirectory(
             contextProvider: coreDataStack,
             applicationStatusDirectory: applicationStatusDirectory,
             cookieStorage: transportSession.cookieStorage,
@@ -504,7 +500,6 @@ public final class ZMUserSession: NSObject {
             proteusProvider: self.proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            usecaseFactory: useCaseFactory,
             searchUsersCache: dependencies.caches.searchUsers
         )
     }
