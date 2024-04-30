@@ -26,7 +26,7 @@ public protocol CheckOneOnOneConversationIsReadyUseCaseProtocol {
     /// Will return `false` if there is no conversation or if there's an `mls` conversation that isn't established
     ///
     /// - Parameter userID: The qualified ID of the user to check the one on one conversation for
-    /// - Returns: wether or not the one on one conversation is ready
+    /// - Returns: Whether the one on one conversation is ready.
     func invoke(userID: QualifiedID) async throws -> Bool
 
 }
