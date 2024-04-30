@@ -81,4 +81,5 @@ public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
     deinit {
         previewDownloader.tearDown()
     }
+
 }

@@ -101,6 +101,7 @@ final class UserSessionMock: UserSession {
     var requireCustomAppLockPasscode: Bool = false
     var isCustomAppLockPasscodeSet: Bool = false
     var needsToNotifyUserOfAppLockConfiguration: Bool = false
+    let searchUsersCache = SearchUsersCache()
 
     func openAppLock() throws {
         openApp.append(())
