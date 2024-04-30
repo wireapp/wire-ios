@@ -18,22 +18,18 @@
 
 import Foundation
 
-// whitelisted files, so the FileRelocator doesn't consider to check these system files.
-// - com.apple.nsurlsessiond is used by the system as cache while sharing an item.
-// - .DS_Store is the hidden file for folder preferences used in macOS (only for simulator)
-private let whitelistedFiles = ["com.apple.nsurlsessiond", ".DS_Store"]
-private let zmLog = ZMSLog(tag: "ZMUserSession")
+struct CacheFileRelocator {
 
-extension ZMUserSession {
+    // whitelisted files, so the FileRelocator doesn't consider to check these system files.
+    // - com.apple.nsurlsessiond is used by the system as cache while sharing an item.
+    // - .DS_Store is the hidden file for folder preferences used in macOS (only for simulator)
+    private let whitelistedFiles = ["com.apple.nsurlsessiond", ".DS_Store"]
+    private let zmLog = ZMSLog(tag: "ZMUserSession")
 
     /// Checks the Library/Caches folder in the shared container directory for files that have not been assigned to a user account 
     /// and moves them to a folder named `wire-account-{accountIdentifier}` if there is no user-account folder yet
     /// It asserts if the caches folder contains unassigned files even though there is already an existing user account folder as this would be considered a programmer error
-    @objc public static func moveCachesIfNeededForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL) {
-        // swiftlint:disable todo_requires_jira_link
-        // FIXME: accountIdentifier should be non-nullable
-        guard let accountIdentifier = accountIdentifier else { return }
-
+    func moveCachesIfNeededForAccount(with accountIdentifier: UUID, in sharedContainerURL: URL) {
         let fm = FileManager.default
         let newCacheLocation = fm.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL)
         let oldCacheLocation = fm.cachesURLForAccount(with: nil, in: sharedContainerURL)
@@ -42,8 +38,8 @@ extension ZMUserSession {
         else { return }
 
         try! fm.createAndProtectDirectory(at: newCacheLocation)
+        // swiftlint:disable:next todo_requires_jira_link
         // FIXME: Use dictionary grouping in Swift4
-        // swiftlint:enable todo_requires_jira_link
         // see https://developer.apple.com/documentation/swift/dictionary/2893436-init
         let result = group(fileNames: files.filter { !whitelistedFiles.contains($0) })
         if result.assigned.count == 0 {
@@ -68,7 +64,7 @@ extension ZMUserSession {
     }
 
     /// Groups files by checking if the fileName starts with the cachesFolderPrefix
-    static func group(fileNames: [String]) -> (assigned: [String], unassigned: [String]) {
+    func group(fileNames: [String]) -> (assigned: [String], unassigned: [String]) {
         let result: ([String], [String]) = fileNames.reduce(([], [])) { tempResult, fileName in
             if fileName.hasPrefix(FileManager.cachesFolderPrefix) {
                 return (tempResult.0 + [fileName], tempResult.1)
