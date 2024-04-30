@@ -294,6 +294,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             results: [.success(())],
             context: syncMOC.notificationContext
         )
+        let pushSupportedProtocolsActionHandler = MockActionHandler<PushSupportedProtocolsAction>(
+            result: .success(()),
+            context: syncMOC.notificationContext
+        )
 
         syncMOC.performAndWait {
             sut.didFinishQuickSync()
@@ -302,6 +306,8 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
         // THEN
         XCTAssertTrue(waitForOfflineStatus())
+        XCTAssertEqual(mockGetFeatureConfigsActionHandler.performedActions.count, 1)
+        XCTAssertEqual(pushSupportedProtocolsActionHandler.performedActions.count, 1)
     }
 
     func testThatWeSetUserSessionToSynchronizingWhenSyncIsStarted() {
