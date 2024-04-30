@@ -11,8 +11,6 @@
 		01CB030E2A0CED010000CFF2 /* WireLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CB030C2A0CED010000CFF2 /* WireLogger.swift */; };
 		01CB030F2A0CED010000CFF2 /* Flow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01CB030D2A0CED010000CFF2 /* Flow.swift */; };
 		096A3A211B67CEF700565001 /* ZMSLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 096A3A1D1B67CEF700565001 /* ZMSLogging.m */; };
-		16962EDD20221F970069D88D /* ZMSLogNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 16962EDB20221F970069D88D /* ZMSLogNotifications.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		16962EDE20221F970069D88D /* ZMSLogNotifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 16962EDC20221F970069D88D /* ZMSLogNotifications.m */; };
 		16BBA1F02AF2611000CDF38A /* SystemLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16BBA1EF2AF2611000CDF38A /* SystemLogger.swift */; };
 		5442AB7F1CA29CC000BC099C /* ZMSAsserts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5442AB7E1CA29CC000BC099C /* ZMSAsserts.swift */; };
 		544CFC511B70B933007AA694 /* ZMSLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 096A3A1E1B67CEF700565001 /* ZMSLog.swift */; };
@@ -69,8 +67,6 @@
 		096A3A1D1B67CEF700565001 /* ZMSLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZMSLogging.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		096A3A1E1B67CEF700565001 /* ZMSLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMSLog.swift; sourceTree = "<group>"; };
 		09F186211B68FD52007A3DA6 /* WireSystem-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "WireSystem-Info.plist"; sourceTree = "<group>"; };
-		16962EDB20221F970069D88D /* ZMSLogNotifications.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMSLogNotifications.h; sourceTree = "<group>"; };
-		16962EDC20221F970069D88D /* ZMSLogNotifications.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMSLogNotifications.m; sourceTree = "<group>"; };
 		16BBA1EF2AF2611000CDF38A /* SystemLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemLogger.swift; sourceTree = "<group>"; };
 		3ECC35191AD436750089FD4B /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5442AB7E1CA29CC000BC099C /* ZMSAsserts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMSAsserts.swift; sourceTree = "<group>"; };
@@ -210,8 +206,6 @@
 				54D573691DBFBAFA00D6C2C4 /* ZMSLog+Recording.swift */,
 				096A3A1C1B67CEF700565001 /* ZMSLogging.h */,
 				096A3A1D1B67CEF700565001 /* ZMSLogging.m */,
-				16962EDB20221F970069D88D /* ZMSLogNotifications.h */,
-				16962EDC20221F970069D88D /* ZMSLogNotifications.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -295,7 +289,6 @@
 				548662521B344CB400298EFD /* ZMSDefines.h in Headers */,
 				546E9AB61B72536F00769771 /* ZMSLogging.h in Headers */,
 				5473E7CA1B31A95A00C6A937 /* WireSystem.h in Headers */,
-				16962EDD20221F970069D88D /* ZMSLogNotifications.h in Headers */,
 				54F249C81BB9242900040600 /* ZMSDispatchGroup.h in Headers */,
 				54F5148C1B7377CA00FACDAA /* ZMSGroupQueue.h in Headers */,
 				548662461B344AAB00298EFD /* ZMSAsserts.h in Headers */,
@@ -455,7 +448,6 @@
 				594450562BDFE8BF003ACC98 /* TimePoint.swift in Sources */,
 				54DB81651DBFACE800AF495D /* CircularArray.swift in Sources */,
 				EE9AEC842BD1585500F7853F /* WireSystem.docc in Sources */,
-				16962EDE20221F970069D88D /* ZMSLogNotifications.m in Sources */,
 				59059B9C2B4DBA1D0087D1F1 /* DateProviding.swift in Sources */,
 				F1670FAE22A7C5F500BC6811 /* SanitizedString.swift in Sources */,
 				F19E554522AA8748005C792D /* SafeForLoggingStringConvertible.swift in Sources */,

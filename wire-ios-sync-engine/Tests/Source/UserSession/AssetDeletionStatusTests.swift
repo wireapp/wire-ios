@@ -17,11 +17,12 @@
 //
 
 import WireDataModel
+
 @testable import WireSyncEngine
 
 // MARK: - Mocks
 
-@objc final class FakeGroupQueue: NSObject, ZMSGroupQueue {
+@objc final class FakeGroupQueue: NSObject, GroupQueue {
 
     var dispatchGroup: ZMSDispatchGroup! {
         return nil
