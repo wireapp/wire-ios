@@ -69,7 +69,7 @@ extension SessionManager: VoIPPushManagerDelegate {
 
         guard
             let account = accountManager.account(with: accountID),
-            let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "processPendingCallEvents")
+            let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "processPendingCallEvents")
         else {
             WireLogger.calling.error("failed to process pending call events preemptively")
             return
