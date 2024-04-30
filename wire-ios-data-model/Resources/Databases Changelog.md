@@ -4,9 +4,9 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
-* added `ciphersuite` attribute on the Conversation entity
-
 ### 2.117.0
+
+* added `ciphersuite` attribute on the Conversation entity
 
 ### 2.116.0
 

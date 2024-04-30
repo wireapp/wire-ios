@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-binary "wire-avs.json" "9.6.12"
-github "microsoft/plcrashreporter" "1.11.1"
-=======
 binary "wire-avs.json" "9.7.11"
 github "microsoft/plcrashreporter" "1.11.2"
->>>>>>> 87c7249098 (feat: configurable ciphersuite WPB-8591 (#1347))
 github "wireapp/Down" "v2.3.4_xcframework"
 github "wireapp/FLAnimatedImage" "1.0.17"
 github "wireapp/HTMLString" "6.0.1_xcframework"

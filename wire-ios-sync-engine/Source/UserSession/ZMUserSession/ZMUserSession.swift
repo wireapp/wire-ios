@@ -376,48 +376,10 @@ public final class ZMUserSession: NSObject {
         self.coreCryptoProvider = coreCryptoProvider
         self.lastEventIDRepository = lastEventIDRepository
         self.userId = userId
-<<<<<<< HEAD
         self.lastE2EIUpdateDateRepository = lastE2EIUpdateDateRepository
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
         self.applicationStatusDirectory = applicationStatusDirectory
         self.earService = earService
-=======
-
-        self.lastE2EIUpdateDateRepository = LastE2EIdentityUpdateDateRepository(userID: userId, sharedUserDefaults: UserDefaults.standard)
-        self.e2eiActivationDateRepository = E2EIActivationDateRepository(
-            userID: userId,
-            sharedUserDefaults: sharedUserDefaults)
-        self.applicationStatusDirectory = ApplicationStatusDirectory(
-            withManagedObjectContext: self.coreDataStack.syncContext,
-            cookieStorage: transportSession.cookieStorage,
-            requestCancellation: transportSession,
-            application: application,
-            lastEventIDRepository: lastEventIDRepository,
-            coreCryptoProvider: coreCryptoProvider,
-            analytics: analytics
-        )
-        self.earService = earService ?? EARService(
-            accountID: coreDataStack.account.userIdentifier,
-            databaseContexts: [
-                coreDataStack.viewContext,
-                coreDataStack.syncContext,
-                coreDataStack.searchContext
-            ],
-            canPerformKeyMigration: true,
-            sharedUserDefaults: sharedUserDefaults,
-            authenticationContext: AuthenticationContext(storage: contextStorage)
-        )
-
-        let mlsService = mlsService ?? MLSService(
-            context: coreDataStack.syncContext,
-            coreCryptoProvider: coreCryptoProvider,
-            conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
-            featureRepository: FeatureRepository(context: coreDataStack.syncContext),
-            userDefaults: .standard,
-            syncStatus: applicationStatusDirectory.syncStatus,
-            userID: coreDataStack.account.userIdentifier
-        )
->>>>>>> 87c7249098 (feat: configurable ciphersuite WPB-8591 (#1347))
         self.mlsService = mlsService
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
