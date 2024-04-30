@@ -107,12 +107,6 @@ extension SettingsCellDescriptorFactory {
         }
 
         developerCellDescriptors.append(
-            Button(title: "Generate test crash",
-                   isDestructive: false,
-                   selectAction: DebugActions.generateTestCrash)
-        )
-
-        developerCellDescriptors.append(
             Button(title: "Trigger slow sync",
                    isDestructive: false,
                    selectAction: DebugActions.triggerSlowSync)
