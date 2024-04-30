@@ -72,6 +72,8 @@ final class UserSessionMock: UserSession {
     var selfUser: SelfUserType
     var mockConversationList: ZMConversationList?
 
+    var searchUsersCache: SearchUsersCache
+
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
         let mock = MockGetMLSFeatureUseCaseProtocol()
         mock.invoke_MockValue = .init(status: .disabled, config: .init())
@@ -88,6 +90,7 @@ final class UserSessionMock: UserSession {
 
     init(selfUser: SelfUserType) {
         self.selfUser = selfUser
+        searchUsersCache = .init()
     }
 
     var lock: SessionLock? = .screen
