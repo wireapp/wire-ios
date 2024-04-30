@@ -241,7 +241,6 @@ extension URLActionRouter: PresentationDelegate {
 
         let view = SwitchBackendConfirmationView(viewModel: viewModel)
         let hostingController = UIHostingController(rootView: view)
-        // TODO: Check if we can present...
         rootViewController.present(hostingController, animated: true)
     }
 
