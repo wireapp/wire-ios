@@ -831,9 +831,14 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         WaitingGroupTask(context: syncContext) { [self] in
             do {
+                let resolveOneOnOneUseCase = ResolveOneOnOneConversationsUseCase(
+                    context: syncContext,
+                    mlsService: mlsService
+                )
                 var getFeatureConfigAction = GetFeatureConfigsAction()
+
                 try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
-                try await useCaseFactory.createResolveOneOnOneUseCase().invoke()
+                try await resolveOneOnOneUseCase.invoke()
             } catch {
                 WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
             }

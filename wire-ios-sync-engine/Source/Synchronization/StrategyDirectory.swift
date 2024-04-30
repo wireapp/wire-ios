@@ -322,7 +322,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 managedObjectContext: syncMOC,
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
-                resolveOneOnOneConversations: usecaseFactory.createResolveOneOnOneUseCase()
+                mlsService: mlsService
             ),
             ResetSessionRequestStrategy(
                 managedObjectContext: syncMOC,
