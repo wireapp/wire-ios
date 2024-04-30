@@ -76,7 +76,7 @@ static id valueOrNSNull(id obj) {
     return [self nextObjectToSynchronizeNotInOperationSet:nil];
 }
 
-- (ZMManagedObject *)nextObjectToSynchronizeNotInOperationSet:(ZMSyncOperationSet *)operationSet;
+- (ZMManagedObject *)nextObjectToSynchronizeNotInOperationSet:(ZMSyncOperationSet * _Nullable)operationSet;
 {
     NSSet *forbiddenSet = self.managedObjectsBeingSynchronized;
     if (operationSet != nil) {

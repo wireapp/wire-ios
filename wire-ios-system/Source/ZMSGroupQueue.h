@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class ZMSDispatchGroup;
 
 /// Similar to a dispatch queue or NSOperationQueue
@@ -28,7 +30,7 @@
 /// an autorelease pool and a call to @c -processPendingChanges
 ///
 /// @sa -performBlock:
-- (void)performGroupedBlock:(dispatch_block_t)block ZM_NON_NULL(1);
+- (void)performGroupedBlock:(dispatch_block_t)block;
 
 /// The underlying dispatch group that is used for @c -performGroupedBlock:
 ///
@@ -37,3 +39,5 @@
 @property (nonatomic, readonly) ZMSDispatchGroup *dispatchGroup;
 
 @end
+
+NS_ASSUME_NONNULL_END

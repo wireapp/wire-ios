@@ -180,12 +180,21 @@ final class ZClientViewController: UIViewController {
             restoreStartupState()
         }
 
-        NotificationCenter.default.addObserver(self, selector: #selector(colorSchemeControllerDidApplyChanges(_:)), name: NSNotification.colorSchemeControllerDidApplyColorSchemeChange, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(colorSchemeControllerDidApplyChanges(_:)),
+            name: .colorSchemeControllerDidApplyColorSchemeChange,
+            object: nil
+        )
 
         if Bundle.developerModeEnabled {
             // better way of dealing with this?
-            NotificationCenter.default.addObserver(self, selector: #selector(requestLoopNotification(_:)), name: NSNotification.Name(rawValue: ZMLoggingRequestLoopNotificationName), object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(inconsistentStateNotification(_:)), name: NSNotification.Name(rawValue: ZMLoggingInconsistentStateNotificationName), object: nil)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(requestLoopNotification(_:)),
+                name: .loggingRequestLoop,
+                object: nil
+            )
         }
 
         setupUserChangeInfoObserver()
@@ -419,13 +428,6 @@ final class ZClientViewController: UIViewController {
     private func requestLoopNotification(_ notification: Notification?) {
         guard let path = notification?.userInfo?["path"] as? String else { return }
         DebugAlert.showSendLogsMessage(message: "A request loop is going on at \(path)")
-    }
-
-    @objc
-    private func inconsistentStateNotification(_ notification: Notification?) {
-        if let userInfo = notification?.userInfo?[ZMLoggingDescriptionKey] {
-            DebugAlert.showSendLogsMessage(message: "We detected an inconsistent state: \(userInfo)")
-        }
     }
 
     /// Attempt to load the last viewed conversation associated with the current account.

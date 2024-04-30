@@ -116,5 +116,4 @@ protocol RouterInterface: RouterPresenterInterface {
     /// A weak reference to the view controller
 
     var view: View! { get set }
-
 }

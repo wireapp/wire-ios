@@ -19,11 +19,12 @@
 #import <Foundation/Foundation.h>
 #import <WireSystem/WireSystem.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 @interface NSArray (ZMFunctional)
 
-- (NSArray *)mapWithBlock:(id(^)(id obj))block ZM_NON_NULL(1);
-- (NSArray *)filterWithBlock:(BOOL(^)(id obj))block ZM_NON_NULL(1);
+- (NSArray *)mapWithBlock:(id(^)(id obj))block;
+- (NSArray *)filterWithBlock:(BOOL(^)(id obj))block;
 
 - (NSArray *)flattenWithBlock:(NSArray *(^)(id obj))block;
 
@@ -31,8 +32,8 @@
 
 - (NSArray *)objectsOfClass:(Class)desiredClass;
 
-- (id)firstObjectMatchingWithBlock:(BOOL(^)(id obj))evaluator ZM_NON_NULL(1);
-- (BOOL)containsObjectMatchingWithBlock:(BOOL(^)(id obj))evaluator ZM_NON_NULL(1);
+- (id)firstObjectMatchingWithBlock:(BOOL(^)(id obj))evaluator;
+- (BOOL)containsObjectMatchingWithBlock:(BOOL(^)(id obj))evaluator;
 
 @end
 
@@ -41,6 +42,8 @@
 
 - (NSSet *)mapWithBlock:(id(^)(id obj))block;
 - (NSSet *)objectsOfClass:(Class)desiredClass;
-- (id)anyObjectMatchingWithBlock:(BOOL(^)(id obj))evaluator ZM_NON_NULL(1);
+- (id)anyObjectMatchingWithBlock:(BOOL(^)(id obj))evaluator;
 
 @end
+
+NS_ASSUME_NONNULL_END

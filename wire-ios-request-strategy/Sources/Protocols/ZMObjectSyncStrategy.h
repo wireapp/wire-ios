@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly, weak) NSManagedObjectContext *managedObjectContext;
 
-- (void)tearDown ZM_REQUIRES_SUPER;
+- (void)tearDown;
 
 @end
 

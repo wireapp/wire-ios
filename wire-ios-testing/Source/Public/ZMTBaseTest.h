@@ -32,8 +32,8 @@ typedef BOOL(^VerificationBlock)(void);
 /// Verify all mocks
 - (void)verifyMocksNow;
 
-- (void)setUp ZM_REQUIRES_SUPER;
-- (void)tearDown ZM_REQUIRES_SUPER;
+- (void)setUp;
+- (void)tearDown;
 
 /// Should be wrapped in call to @c XCTAssert()
 - (BOOL)waitOnMainLoopUntilBlock:(nonnull VerificationBlock)block timeout:(NSTimeInterval)timeout ZM_MUST_USE_RETURN;

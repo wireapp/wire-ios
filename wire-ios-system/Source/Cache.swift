@@ -16,10 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 /// In memory cache with support for generics.
-
 public final class Cache<Key: Hashable, Value> {
     private var cache: [Key: EntryMetadata] = [:]
     private var cacheBuffer: CircularArray<Key>
@@ -133,5 +130,4 @@ public final class Cache<Key: Hashable, Value> {
 
         return true
     }
-
 }

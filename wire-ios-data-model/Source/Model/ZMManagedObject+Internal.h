@@ -110,9 +110,9 @@ extern NSString * _Nonnull const ZMManagedObjectLocallyModifiedKeysKey;
 - (BOOL)hasLocalModificationsForKeys:(nonnull NSSet *)keys;
 - (BOOL)hasLocalModificationsForKey:(nonnull NSString *)key;
 
-- (nonnull NSSet <NSString *> *)keysTrackedForLocalModifications ZM_REQUIRES_SUPER;
-- (nonnull NSSet <NSString *> *)filterUpdatedLocallyModifiedKeys:(nonnull NSSet<NSString *> *)updatedKeys ZM_REQUIRES_SUPER;
-- (void)updateKeysThatHaveLocalModifications ZM_REQUIRES_SUPER;
+- (nonnull NSSet <NSString *> *)keysTrackedForLocalModifications;
+- (nonnull NSSet <NSString *> *)filterUpdatedLocallyModifiedKeys:(nonnull NSSet<NSString *> *)updatedKeys;
+- (void)updateKeysThatHaveLocalModifications;
 
 @end
 
