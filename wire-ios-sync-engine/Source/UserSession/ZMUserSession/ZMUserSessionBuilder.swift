@@ -201,6 +201,7 @@ struct ZMUserSessionBuilder {
             context: coreDataStack.syncContext,
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
+            featureRepository: FeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
             syncStatus: applicationStatusDirectory.syncStatus,
             userID: coreDataStack.account.userIdentifier
