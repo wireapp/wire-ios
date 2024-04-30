@@ -47,8 +47,8 @@ protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
 
 final class ConversationGuestOptionsViewModel {
 
-    private let userSession: UserSession
     private let conversation: ZMConversation
+    private let createSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
 
     struct State {
         var rows = [CellConfiguration]()
@@ -92,11 +92,12 @@ final class ConversationGuestOptionsViewModel {
     init(
         configuration: ConversationGuestOptionsViewModelConfiguration,
         conversation: ZMConversation,
-        userSession: UserSession
+        createSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
     ) {
         self.configuration = configuration
         self.conversation = conversation
-        self.userSession = userSession
+        self.createSecureGuestLinkUseCase = createSecureGuestLinkUseCase
+
         updateRows()
         configuration.allowGuestsChangedHandler = { [weak self] allowGuests in
             guard let `self` = self else { return }
@@ -243,9 +244,7 @@ final class ConversationGuestOptionsViewModel {
             self?.showLoadingCell = true
         }
 
-        let conversationGuestLinkUseCase = userSession.useCaseFactory.createConversationGuestLinkUseCase()
-
-        conversationGuestLinkUseCase.invoke(conversation: conversation, password: nil) { result in
+        createSecureGuestLinkUseCase.invoke(conversation: conversation, password: nil) { result in
             switch result {
             case .success(let link):
                 self.link = link
@@ -272,7 +271,7 @@ final class ConversationGuestOptionsViewModel {
                     delegate?.viewModel(
                         self,
                         presentCreateSecureGuestLink: CreateSecureGuestLinkViewController(
-                            userSession: userSession,
+                            conversationSecureGuestLinkUseCase: createSecureGuestLinkUseCase,
                             conversation: conversation).wrapInNavigationController(),
                         animated: true
                     )

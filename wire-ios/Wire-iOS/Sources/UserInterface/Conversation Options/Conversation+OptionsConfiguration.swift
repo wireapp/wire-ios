@@ -87,7 +87,7 @@ extension ZMConversation {
 
         func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
 
-            userSession.useCaseFactory.createSetGuestsAndServicesUseCase().invoke(
+            userSession.makeSetConversationGuestsAndServicesUseCase().invoke(
                 conversation: conversation,
                 allowGuests: allowGuests,
                 allowServices: conversation.allowServices
@@ -104,7 +104,7 @@ extension ZMConversation {
 
         func setAllowServices(_ allowServices: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
 
-            userSession.useCaseFactory.createSetGuestsAndServicesUseCase().invoke(
+            userSession.makeSetConversationGuestsAndServicesUseCase().invoke(
                 conversation: conversation,
                 allowGuests: conversation.allowGuests,
                 allowServices: allowServices

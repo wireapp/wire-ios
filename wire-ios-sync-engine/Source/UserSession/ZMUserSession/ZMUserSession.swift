@@ -85,7 +85,7 @@ public final class ZMUserSession: NSObject {
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
 
-    public let useCaseFactory: UseCaseFactoryProtocol
+    let useCaseFactory: UseCaseFactoryProtocol
 
     public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
 

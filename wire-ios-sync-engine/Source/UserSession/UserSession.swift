@@ -24,8 +24,6 @@ import WireDataModel
 /// layer.
 public protocol UserSession: AnyObject {
 
-    var useCaseFactory: UseCaseFactoryProtocol { get }
-
     /// The current session lock, if any.
 
     var lock: SessionLock? { get }
@@ -232,6 +230,10 @@ public protocol UserSession: AnyObject {
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface? { get }
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol
+
+    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol
+
+    func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol
 
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 

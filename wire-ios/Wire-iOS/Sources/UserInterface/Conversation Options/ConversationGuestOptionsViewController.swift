@@ -44,7 +44,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
             viewModel: .init(
                 configuration: configuration,
                 conversation: conversation,
-                userSession: userSession
+                createSecureGuestLinkUseCase: userSession.makeConversationSecureGuestLinkUseCase()
             )
         )
     }

@@ -19,7 +19,7 @@
 import Foundation
 
 // sourcery: AutoMockable
-public protocol UseCaseFactoryProtocol {
+protocol UseCaseFactoryProtocol {
 
     func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol
     func createConversationGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol
@@ -33,7 +33,7 @@ struct UseCaseFactory: UseCaseFactoryProtocol {
     var supportedProtocolService: SupportedProtocolsServiceInterface
     var oneOnOneResolver: OneOnOneResolverInterface
 
-    public func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
+    func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
         ResolveOneOnOneConversationsUseCase(
             context: context,
             supportedProtocolService: supportedProtocolService,
@@ -41,11 +41,11 @@ struct UseCaseFactory: UseCaseFactoryProtocol {
         )
     }
 
-    public func createConversationGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+    func createConversationGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
         CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: createSetGuestsAndServicesUseCase())
     }
 
-    public func createSetGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
+    func createSetGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
         SetAllowGuestAndServicesUseCase()
     }
 

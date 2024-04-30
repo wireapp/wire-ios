@@ -290,6 +290,14 @@ extension ZMUserSession: UserSession {
         return GetMLSFeatureUseCase(featureRepository: featureRepository)
     }
 
+    public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+        return useCaseFactory.createConversationGuestLinkUseCase()
+    }
+
+    public func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
+        return useCaseFactory.createSetGuestsAndServicesUseCase()
+    }
+
     @MainActor
     public func fetchSelfConversationMLSGroupID() async -> MLSGroupID? {
         return await syncContext.perform {

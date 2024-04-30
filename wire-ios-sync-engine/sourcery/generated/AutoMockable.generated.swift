@@ -812,20 +812,19 @@ public class MockStopCertificateEnrollmentSnoozerUseCaseProtocol: StopCertificat
 
 }
 
-public class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
+class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
 
     // MARK: - Life cycle
 
-    public init() {}
 
 
     // MARK: - createResolveOneOnOneUseCase
 
-    public var createResolveOneOnOneUseCase_Invocations: [Void] = []
-    public var createResolveOneOnOneUseCase_MockMethod: (() -> ResolveOneOnOneConversationsUseCaseProtocol)?
-    public var createResolveOneOnOneUseCase_MockValue: ResolveOneOnOneConversationsUseCaseProtocol?
+    var createResolveOneOnOneUseCase_Invocations: [Void] = []
+    var createResolveOneOnOneUseCase_MockMethod: (() -> ResolveOneOnOneConversationsUseCaseProtocol)?
+    var createResolveOneOnOneUseCase_MockValue: ResolveOneOnOneConversationsUseCaseProtocol?
 
-    public func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
+    func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
         createResolveOneOnOneUseCase_Invocations.append(())
 
         if let mock = createResolveOneOnOneUseCase_MockMethod {
@@ -839,11 +838,11 @@ public class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
 
     // MARK: - createConversationGuestLinkUseCase
 
-    public var createConversationGuestLinkUseCase_Invocations: [Void] = []
-    public var createConversationGuestLinkUseCase_MockMethod: (() -> CreateConversationGuestLinkUseCaseProtocol)?
-    public var createConversationGuestLinkUseCase_MockValue: CreateConversationGuestLinkUseCaseProtocol?
+    var createConversationGuestLinkUseCase_Invocations: [Void] = []
+    var createConversationGuestLinkUseCase_MockMethod: (() -> CreateConversationGuestLinkUseCaseProtocol)?
+    var createConversationGuestLinkUseCase_MockValue: CreateConversationGuestLinkUseCaseProtocol?
 
-    public func createConversationGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+    func createConversationGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
         createConversationGuestLinkUseCase_Invocations.append(())
 
         if let mock = createConversationGuestLinkUseCase_MockMethod {
@@ -857,11 +856,11 @@ public class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
 
     // MARK: - createSetGuestsAndServicesUseCase
 
-    public var createSetGuestsAndServicesUseCase_Invocations: [Void] = []
-    public var createSetGuestsAndServicesUseCase_MockMethod: (() -> SetAllowGuestAndServicesUseCaseProtocol)?
-    public var createSetGuestsAndServicesUseCase_MockValue: SetAllowGuestAndServicesUseCaseProtocol?
+    var createSetGuestsAndServicesUseCase_Invocations: [Void] = []
+    var createSetGuestsAndServicesUseCase_MockMethod: (() -> SetAllowGuestAndServicesUseCaseProtocol)?
+    var createSetGuestsAndServicesUseCase_MockValue: SetAllowGuestAndServicesUseCaseProtocol?
 
-    public func createSetGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
+    func createSetGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
         createSetGuestsAndServicesUseCase_Invocations.append(())
 
         if let mock = createSetGuestsAndServicesUseCase_MockMethod {
