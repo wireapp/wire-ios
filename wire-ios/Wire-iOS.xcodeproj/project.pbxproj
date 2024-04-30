@@ -1232,7 +1232,6 @@
 		D5F22D4C2048052900879444 /* UIAlertController+RemoveAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F22D4B2048052900879444 /* UIAlertController+RemoveAction.swift */; };
 		D5F4387B206BBBB9003F1F14 /* Analytics+HistoryBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F4387A206BBBB9003F1F14 /* Analytics+HistoryBackup.swift */; };
 		D5F8BFF42007AC84008F8C3D /* UIView+TableViewHeaderFooterSizing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5F8BFF32007AC84008F8C3D /* UIView+TableViewHeaderFooterSizing.swift */; };
-		DB3E943A1B96EDBD00990482 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8741CFAE1A937EDF00A56A63 /* LaunchScreen.xib */; };
 		DBF7235F1B5566B80036F4C5 /* a_lot_of_people.json in Resources */ = {isa = PBXBuildFile; fileRef = DBF7235E1B5566B80036F4C5 /* a_lot_of_people.json */; };
 		E5085E6F28CA26E1009A5971 /* SettingsAppearanceCellDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5085E6E28CA26E1009A5971 /* SettingsAppearanceCellDescriptor.swift */; };
 		E5085E7328CA27D4009A5971 /* AccentColor+Name.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5085E7228CA27D4009A5971 /* AccentColor+Name.swift */; };
@@ -2783,7 +2782,6 @@
 		873DC9581D4796C100C1C9B0 /* CameraKeyboardViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraKeyboardViewControllerTests.swift; sourceTree = "<group>"; };
 		873DC95B1D479A0500C1C9B0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		873F91942189BB3C00E1DBB9 /* MessageReplyPreviewViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReplyPreviewViewTests.swift; sourceTree = "<group>"; };
-		8741CFAE1A937EDF00A56A63 /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		8741DB611C1EFE2D00BDB470 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		8742C2E11E51BD7900329FB6 /* TextSearchInputView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextSearchInputView.swift; sourceTree = "<group>"; };
 		8742C2E91E5309FC00329FB6 /* NSAttributedString+Highlight.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Highlight.swift"; sourceTree = "<group>"; };
@@ -6381,7 +6379,6 @@
 				A9EB722423C3A47B00DA8240 /* AppDelegate.swift */,
 				163495881F015389004E80DB /* AppDelegate+Network.swift */,
 				F1141C961F5EB2DC005340B3 /* WireApplication.swift */,
-				8741CFAE1A937EDF00A56A63 /* LaunchScreen.xib */,
 				543DF69E252F5A4B001F6EA6 /* Main.storyboard */,
 				5489E20D252C84BE0010461D /* AppStateCalculator.swift */,
 				543DF6AC25309641001F6EA6 /* AppRootRouter.swift */,
@@ -8848,7 +8845,6 @@
 				0143895E2BC81DC200EC6920 /* PrivacyInfo.xcprivacy in Resources */,
 				BF0BDF721DA7A9D8003C61DE /* RedactedScript-Regular.ttf in Resources */,
 				5E39FC5F225CBBD400C682B8 /* password_rules.json in Resources */,
-				DB3E943A1B96EDBD00990482 /* LaunchScreen.xib in Resources */,
 				EF2B0DD121CA8EF1003B2882 /* url.json in Resources */,
 				A9E674D724F514710058FC72 /* email.json in Resources */,
 				1658D2051D3E742A00249609 /* ping_from_them.caf in Resources */,
