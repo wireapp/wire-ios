@@ -19,23 +19,20 @@
 #import "MockTransportSessionTests.h"
 @import WireMockTransport;
 
-@interface MockTransportSessionEmailPhoneVerificationTests : MockTransportSessionTests
+@interface MockTransportSessionEmailVerificationTests: MockTransportSessionTests
 
 @end
 
-@implementation MockTransportSessionEmailPhoneVerificationTests
-
-// MARK:- Phone activation and validation
-
+@implementation MockTransportSessionEmailVerificationTests
 
 - (void)testThatItReturns400WhenRequestingTheVerificationEmailAndTheEmailAddressIsMissing
 {
     // GIVEN
-    
+
     __block MockUser *selfUser;
     NSString *email = @"doo@example.com";
     NSString *password = @"Bar481516";
-    
+
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
         selfUser.email = email;
@@ -43,11 +40,11 @@
         selfUser.isEmailValidated = NO;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     // WHEN
     NSString *path = @"/activate/send";
     ZMTransportResponse *response = [self responseForPayload:@{} path:path method:ZMTransportRequestMethodPost apiVersion:0];
-    
+
     // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 400);
@@ -56,11 +53,11 @@
 - (void)testThatItReturns409WhenRequestingTheVerificationEmailAndTheEmailAddressBelongsToAnActivatedUser
 {
     // GIVEN
-    
+
     __block MockUser *selfUser;
     NSString *email = @"doo@example.com";
     NSString *password = @"Bar481516";
-    
+
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
         selfUser.email = email;
@@ -68,13 +65,13 @@
         selfUser.isEmailValidated = YES;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     // WHEN
     NSString *path = @"/activate/send";
     ZMTransportResponse *response = [self responseForPayload:@{
-                                                               @"email": email,
-                                                               } path:path method:ZMTransportRequestMethodPost apiVersion:0];
-    
+        @"email": email,
+    } path:path method:ZMTransportRequestMethodPost apiVersion:0];
+
     // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 409);
@@ -84,11 +81,11 @@
 - (void)testThatItReturns200WhenRequestingTheVerificationEmailAndTheEmailAddressIsValidAndNotActivated
 {
     // GIVEN
-    
+
     __block MockUser *selfUser;
     NSString *email = @"doo@example.com";
     NSString *password = @"Bar481516";
-    
+
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Food"];
         selfUser.email = email;
@@ -96,13 +93,13 @@
         selfUser.isEmailValidated = NO;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
-    
+
     // WHEN
     NSString *path = @"/activate/send";
     ZMTransportResponse *response = [self responseForPayload:@{
-                                                               @"email": email,
-                                                               } path:path method:ZMTransportRequestMethodPost apiVersion:0];
-    
+        @"email": email,
+    } path:path method:ZMTransportRequestMethodPost apiVersion:0];
+
     // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 200);
@@ -189,90 +186,5 @@
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertFalse([self.sut.emailsWaitingForVerificationForRegistration containsObject:email]);
 }
-
-// MARK:- Phone activation and validation
-
-- (void)testThatItCanRequestThePhoneNumberValidationCode
-{
-    // GIVEN
-    NSDictionary *requestPayload = @{@"phone":@"+49123456789"};
-    
-    // WHEN
-    NSString *path = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
-    ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMTransportRequestMethodPost apiVersion:0];
-    
-    // THEN
-    XCTAssertEqual(response.HTTPStatus, 200);
-}
-
-- (void)testThatItReturnsDuplicatedPhoneWhenRequestingThePhoneNumberValidationCodeForAnExistingPhone
-{
-    // GIVEN
-    NSString *phone = @"+49123456789";
-    NSDictionary *requestPayload = @{@"phone":phone};
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        MockUser *user = [session insertUserWithName:@"foo"];
-        user.phone = phone;
-    }];
-    
-    // WHEN
-    NSString *path = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
-    ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMTransportRequestMethodPost apiVersion:0];
-    
-    // THEN
-    XCTAssertEqual(response.HTTPStatus, 409);
-}
-
-- (void)testThatItAcceptsTheDryRunOfAPhoneNumberValidationIfTheValidationCodeWasRequested
-{
-    // GIVEN
-    NSString *phone = @"+4900000000";
-    NSDictionary *codeRequestPayload = @{@"phone":phone};
-    NSDictionary *validationPayload = @{@"phone":phone,@"code":self.sut.phoneVerificationCodeForRegistration,@"dryrun":@YES};
-    NSString *codeRequestPath = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
-    NSString *validationPath = [NSString pathWithComponents:@[@"/", @"activate"]];
-    [self responseForPayload:codeRequestPayload path:codeRequestPath method:ZMTransportRequestMethodPost apiVersion:0];
-    
-    // WHEN
-    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMTransportRequestMethodPost apiVersion:0];
-    
-    // THEN
-    XCTAssertEqual(response.HTTPStatus, 200);
-    XCTAssertTrue([self.sut.phoneNumbersWaitingForVerificationForRegistration containsObject:phone]);
-
-}
-
-- (void)testThatItRejectsTheDryRunResultOfAPhoneNumberValidationIfTheValidationCodeWasNotRequested
-{
-    // GIVEN
-    NSString *phone = @"+4900000000";
-    NSDictionary *validationPayload = @{@"phone":phone,@"code":self.sut.phoneVerificationCodeForRegistration,@"dryrun":@YES};
-    NSString *validationPath = [NSString pathWithComponents:@[@"/", @"activate"]];
-    
-    // WHEN
-    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMTransportRequestMethodPost apiVersion:0];
-    
-    // THEN
-    XCTAssertEqual(response.HTTPStatus, 404);
-}
-
-- (void)testThatItRemovesAPhoneNumberFromTheListOfToValidateIfWithoutDryRun
-{
-    // GIVEN
-    NSString *phone = @"+4900000000";
-    NSDictionary *codeRequestPayload = @{@"phone":phone};
-    NSDictionary *validationPayload = @{@"phone":phone,@"code":self.sut.phoneVerificationCodeForRegistration};
-    NSString *codeRequestPath = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
-    NSString *validationPath = [NSString pathWithComponents:@[@"/", @"activate"]];
-    [self responseForPayload:codeRequestPayload path:codeRequestPath method:ZMTransportRequestMethodPost apiVersion:0];
-    
-    // WHEN
-    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMTransportRequestMethodPost apiVersion:0];
-    
-    // THEN
-    XCTAssertEqual(response.HTTPStatus, 200);
-    XCTAssertFalse([self.sut.phoneNumbersWaitingForVerificationForRegistration containsObject:phone]);
-}
-
 
 @end

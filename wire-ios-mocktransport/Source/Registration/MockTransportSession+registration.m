@@ -139,12 +139,11 @@
         NSDictionary *userDetails = [request.payload asDictionary];
         
         NSString *code = [userDetails optionalStringForKey:@"code"];
-        NSString *phone = [userDetails optionalStringForKey:@"phone"];
         NSString *email = [userDetails optionalStringForKey:@"email"];
 
         BOOL dryrun = ((NSNumber *)[userDetails optionalNumberForKey:@"dryrun"]).boolValue;
         
-        if(code == nil && (phone == nil || email == nil)) {
+        if(code == nil && email == nil) {
             return [self errorResponseWithCode:400 reason:@"missing-key" apiVersion:request.apiVersion];
         }
 
@@ -158,32 +157,6 @@
                 }
                 return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
 
-            }
-        }
-        else if([self.phoneNumbersWaitingForVerificationForRegistration containsObject:phone]) {
-            if(![code isEqualToString:self.phoneVerificationCodeForRegistration]) {
-                return [self errorResponseWithCode:404 reason:@"not-found" apiVersion:request.apiVersion];
-            }
-            else {
-                if(!dryrun) {
-                    [self.phoneNumbersWaitingForVerificationForRegistration removeObject:phone];
-                }
-                return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
-
-            }
-        }
-        else if([self.phoneNumbersWaitingForVerificationForProfile containsObject:phone]) {
-            if(![code isEqualToString:self.phoneVerificationCodeForUpdatingProfile]) {
-                return [self errorResponseWithCode:404 reason:@"not-found" apiVersion:request.apiVersion];
-            }
-            else {
-                if(!dryrun) {
-                    [self.phoneNumbersWaitingForVerificationForProfile removeObject:phone];
-                    self.selfUser.phone = phone;
-                    [self saveAndCreatePushChannelEventForSelfUser];
-                }
-                return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
-                
             }
         }
         else {
@@ -201,9 +174,8 @@
         NSDictionary *userDetails = [request.payload asDictionary];
         
         NSString *email = [userDetails optionalStringForKey:@"email"];
-        NSString *phone = [userDetails optionalStringForKey:@"phone"];
-        
-        if(email == nil && phone == nil) {
+
+        if (email == nil) {
             return [self errorResponseWithCode:400 reason:@"missing-key" apiVersion:request.apiVersion];
         }
         
@@ -220,13 +192,6 @@
 
             [self.emailsWaitingForVerificationForRegistration addObject:email];
 
-        }
-        else if(phone != nil) {
-            if([self userWithPhone:phone] != nil) {
-                return [self errorResponseWithCode:409 reason:@"key-exists" apiVersion:request.apiVersion];
-            }
-            
-            [self.phoneNumbersWaitingForVerificationForRegistration addObject:phone];
         }
         
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
