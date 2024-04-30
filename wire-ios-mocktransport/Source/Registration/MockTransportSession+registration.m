@@ -34,17 +34,6 @@
     return nil;
 }
 
-- (MockUser *)userWithPhone:(NSString *)phone {
-    NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
-    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"phone == %@", phone];
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
-    if(users.count > 0u) {
-        return users.firstObject;
-    }
-    return nil;
-}
-
-
 /// Handles "/register"
 - (ZMTransportResponse *)processRegistrationRequest:(ZMTransportRequest *)request
 {
@@ -54,15 +43,13 @@
         
         NSString *name = [userDetails optionalStringForKey:@"name"];
         NSString *email = [userDetails optionalStringForKey:@"email"];
-        NSString *phone = [userDetails optionalStringForKey:@"phone"];
         NSString *password = [userDetails optionalStringForKey:@"password"];
-        NSString *phoneCode = [userDetails optionalStringForKey:@"phone_code"];
         NSString *invitationCode = [userDetails optionalStringForKey:@"invitation_code"];
 
         if( name == nil
-           || (email == nil && phone == nil)
+           || (email == nil)
            || (email != nil && password == nil)
-           || (phone != nil && phoneCode == nil && invitationCode == nil))
+           || (invitationCode == nil))
         {
             return [self errorResponseWithCode:400 reason:@"missing-key" apiVersion:request.apiVersion];
         }
@@ -70,20 +57,6 @@
         // check if it's already there
         if(email != nil && [self userWithEmail:email] != nil) {
             return [self errorResponseWithCode:409 reason:@"key-exists" apiVersion:request.apiVersion];
-        }
-        if(phone != nil && [self userWithPhone:phone] != nil) {
-            return [self errorResponseWithCode:409 reason:@"key-exists" apiVersion:request.apiVersion];
-        }
-        
-        if (phone != nil) {
-            if (![self.phoneNumbersWaitingForVerificationForRegistration containsObject:phone])
-            {
-                return [self errorResponseWithCode:404 reason:@"invalid-key" apiVersion:request.apiVersion];
-            }
-            
-            if(![phoneCode isEqualToString:self.phoneVerificationCodeForRegistration]) {
-                return [self errorResponseWithCode:404 reason:@"invalid-credentials" apiVersion:request.apiVersion];
-            }
         }
         
         // at this point, we validated everything
@@ -97,7 +70,6 @@
         }
         user.password = password;
         user.email = email;
-        user.phone = phone;
         if(userDetails[@"accent_id"] != nil) {
             user.accentID = (ZMAccentColorRawValue) [[userDetails numberForKey:@"accent_id"] integerValue];
         }
@@ -109,16 +81,10 @@
         }
         
         NSMutableDictionary *payload = [@{@"email": (user.email != nil && shouldReturnEmail) ? user.email : [NSNull null],
-                                  @"phone": user.phone != nil ? user.phone : [NSNull null],
                                   @"accent_id": @(user.accentID),
                                   @"name": user.name,
                                   @"id": user.identifier
                                   } mutableCopy];
-        
-        // phone registration completed. this also triggers log in
-        if(phone != nil && invitationCode == nil) {
-            [self.phoneNumbersWaitingForVerificationForRegistration removeObject:phone];
-        }
 
         NSString *cookiesValue = @"fake cookie";
         

@@ -69,9 +69,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 @property (atomic) BOOL clientCompletedLogin;
 
 @property (nonatomic) NSMutableSet* whitelistedEmails;
-@property (nonatomic) NSMutableSet *phoneNumbersWaitingForVerificationForRegistration;
-@property (nonatomic) NSMutableSet *phoneNumbersWaitingForVerificationForLogin;
-@property (nonatomic) NSMutableSet *phoneNumbersWaitingForVerificationForProfile;
 
 @property (nonatomic) NSMutableSet *emailsWaitingForVerificationForRegistration;
 
@@ -123,9 +120,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         _generatedPushEvents = [NSMutableArray array];
         self.taskIdentifierMapping = [NSMutableDictionary new];
         self.whitelistedEmails = [NSMutableSet set];
-        self.phoneNumbersWaitingForVerificationForRegistration = [NSMutableSet set];
-        self.phoneNumbersWaitingForVerificationForLogin = [NSMutableSet set];
-        self.phoneNumbersWaitingForVerificationForProfile = [NSMutableSet set];
 
         self.emailsWaitingForVerificationForRegistration = [NSMutableSet set];
         
@@ -456,7 +450,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
              @[@"/users", @"processUsersRequest:"],
              @[@"/clients", @"processClientsRequest:"],
              @[@"/conversations", @"processConversationsRequest:"],
-             @[@"/login/send", @"processLoginCodeRequest:"],
              @[@"/login", @"processLoginRequest:"],
              @[@"/self", @"processSelfUserRequest:"],
              @[@"/assets/v4", @"processAssetV4Request:"],
@@ -775,11 +768,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     for(MockUser *user in users) {
         user.isEmailValidated = YES;
     }
-}
-
-- (void)whiteListPhone:(NSString *)phone;
-{
-    [self.phoneNumbersWaitingForVerificationForLogin addObject:phone];
 }
 
 - (void)remotelyAcceptConnectionToUser:(MockUser*)user;

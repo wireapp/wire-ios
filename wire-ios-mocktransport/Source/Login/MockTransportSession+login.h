@@ -22,7 +22,6 @@
 @interface MockTransportSession (Login)
 
 - (ZMTransportResponse *)processLoginRequest:(ZMTransportRequest *)sessionRequest;
-- (ZMTransportResponse *)processLoginCodeRequest:(ZMTransportRequest *)sessionRequest;
 - (ZMTransportResponse *)processVerificationCodeSendRequest:(ZMTransportRequest *)sessionRequest;
 
 @end
