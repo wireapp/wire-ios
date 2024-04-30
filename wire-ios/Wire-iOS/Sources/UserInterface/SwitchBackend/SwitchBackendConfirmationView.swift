@@ -39,7 +39,7 @@ struct SwitchBackendConfirmationView: View {
     @ViewBuilder
     private var title: some View {
         Text(Strings.title)
-            .textStyle(.h2)
+            .font(.textStyle(.h2))
             .foregroundStyle(Color.primaryText)
     }
 
@@ -116,7 +116,7 @@ struct SwitchBackendConfirmationView: View {
             dismiss()
         } label: {
             Text(L10n.Localizable.General.cancel)
-                .textStyle(.buttonBig)
+                .font(.textStyle(.buttonBig))
         }
         .buttonStyle(SecondaryButton())
     }
@@ -128,7 +128,7 @@ struct SwitchBackendConfirmationView: View {
             dismiss()
         } label: {
             Text(Strings.proceed)
-                .textStyle(.buttonBig)
+                .font(.textStyle(.buttonBig))
         }
         .buttonStyle(PrimaryButton())
     }

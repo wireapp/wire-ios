@@ -36,7 +36,7 @@ struct E2EIdentityCertificateDetailsView: View {
         HStack {
             Spacer()
             Text(L10n.Localizable.Device.Details.CertificateDetails.title)
-                .font(UIFont.swiftUIFont(for: .headline))
+                .font(.textStyle(.h3))
                 .accessibilityIdentifier("CertificateDetailsTitle")
             Spacer()
         }
@@ -63,7 +63,7 @@ struct E2EIdentityCertificateDetailsView: View {
     private var certificateView: some View {
         ScrollView {
             Text(certificateDetails)
-                .font(UIFont.swiftUIFont(for: .caption1).monospaced())
+                .font(.textStyle(.subline1).monospaced())
                 .padding()
                 .frame(maxHeight: .infinity)
                 .accessibilityIdentifier("CertificateDetailsView")
@@ -89,7 +89,7 @@ struct E2EIdentityCertificateDetailsView: View {
             },
             label: {
                 Text(L10n.Localizable.Content.Message.download)
-                    .font(UIFont.swiftUIFont(for: .bodyTwoSemibold))
+                    .font(.textStyle(.body2))
             }
         )
         .accessibilityIdentifier("DownloadButton")

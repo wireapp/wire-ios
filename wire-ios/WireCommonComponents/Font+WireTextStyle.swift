@@ -19,58 +19,39 @@
 import Foundation
 import SwiftUI
 
-/// Text styles defined in Wire's design system.
+extension Font {
 
-enum WireTextStyle {
-
-    case h1
-    case h2
-    case h3
-    case h4
-    case h5
-    case body1
-    case body2
-    case body3
-    case subline1
-    case link
-    case buttonSmall
-    case buttonBig
-
-}
-
-extension Text {
-
-    /// Sets the font of the text in the view according to the given text style.
+    /// Creates a font from the given text style.
     ///
-    /// - Parameter textStyle: The text style to use when displaying this Text
-    /// - Returns: Text that uses the style you specify.
+    /// - Parameter textStyle: The text style to use to create the Font.
+    /// - Returns: Font that uses the style you specify.
 
-    func textStyle(_ textStyle: WireTextStyle) -> Text {
+    public static func textStyle(_ textStyle: WireTextStyle) -> Font {
         switch textStyle {
+        case .largeTitle:
+            .largeTitle
         case .h1:
-            font(.title3)
+            .title3
         case .h2:
-            font(.title3).bold()
+            .title3.bold()
         case .h3:
-            font(.headline)
+            .headline
         case .h4:
-            font(.subheadline)
+            .subheadline
         case .h5:
-            font(.footnote)
+            .footnote
         case .body1:
-            font(.body)
+            .body
         case .body2:
-            font(.callout).fontWeight(.semibold)
+            .callout.weight(.semibold)
         case .body3:
-            font(.callout).bold()
+            .callout.bold()
         case .subline1:
-            font(.caption)
-        case .link:
-            font(.body).underline()
+            .caption
         case .buttonSmall:
             fatalError("not implemented")
         case .buttonBig:
-            font(.title3).fontWeight(.semibold)
+            .title3.weight(.semibold)
         }
     }
 
