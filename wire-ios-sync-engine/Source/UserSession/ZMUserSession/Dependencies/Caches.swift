@@ -17,28 +17,21 @@
 //
 
 import WireDataModel
-import XCTest
 
-final class ZMSearchUserTests_Connections: ModelObjectsTests {
+extension UserSessionDependencies {
+    final class Caches {
+        var fileAssets: FileAssetCache
+        var userImages: UserImageLocalCache
+        var searchUsers: SearchUsersCache
 
-    func testThatConnectSendsAConnectToUserNotification() {
-        // given
-        let searchUser = ZMSearchUser(
-            contextProvider: coreDataStack,
-            name: "John Doe",
-            handle: "johndoe",
-            accentColor: .turquoise,
-            remoteIdentifier: UUID(),
-            searchUsersCache: nil
-        )
-
-        // expect
-        customExpectation(forNotification: ConnectToUserAction.notificationName, object: nil)
-
-        // when
-        searchUser.connect { _ in }
-
-        // then
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        init(
+            fileAssets: FileAssetCache,
+            userImages: UserImageLocalCache,
+            searchUsers: SearchUsersCache
+        ) {
+            self.fileAssets = fileAssets
+            self.userImages = userImages
+            self.searchUsers = searchUsers
+        }
     }
 }
