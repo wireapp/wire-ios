@@ -20,15 +20,17 @@ import UIKit
 import WireDataModel
 import WireSyncEngine
 
-extension NSNotification.Name {
-    static let didCreateSecureGuestLink = NSNotification.Name("didCreateSecureGuestLink")
-}
-
 final class ConversationGuestOptionsViewController: UIViewController,
                                                     UITableViewDelegate,
                                                     UITableViewDataSource,
                                                     SpinnerCapable,
                                                     ConversationGuestOptionsViewModelDelegate {
+
+    enum Conversation {
+        static let didCreateSecureGuestLinkNotification = Notification.Name(
+            "Conversation.didCreateSecureGuestLink"
+        )
+    }
 
     private let tableView = UITableView()
     private var viewModel: ConversationGuestOptionsViewModel
@@ -72,7 +74,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
         super.viewWillAppear(animated)
 
         guestLinkObserver = NotificationCenter.default.addObserver(
-            forName: .didCreateSecureGuestLink,
+            forName: Conversation.didCreateSecureGuestLinkNotification,
             object: nil,
             queue: .main) { [weak self] notification in
                 self?.handleGuestLinkNotification(notification)
