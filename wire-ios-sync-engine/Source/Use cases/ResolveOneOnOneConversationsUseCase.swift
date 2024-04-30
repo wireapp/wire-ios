@@ -28,8 +28,32 @@ public protocol ResolveOneOnOneConversationsUseCaseProtocol {
 struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseProtocol {
 
     let context: NSManagedObjectContext
-    let supportedProtocolService: SupportedProtocolsServiceInterface
-    let resolver: OneOnOneResolverInterface
+    let supportedProtocolService: any SupportedProtocolsServiceInterface
+    let resolver: any OneOnOneResolverInterface
+
+    init(
+        context: NSManagedObjectContext,
+        mlsService: any MLSServiceInterface
+    ) {
+        let supportedProtocolService = SupportedProtocolsService(context: context)
+        let oneOnOneResolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+
+        self.init(
+            context: context,
+            supportedProtocolService: supportedProtocolService,
+            resolver: oneOnOneResolver
+        )
+    }
+
+    init(
+        context: NSManagedObjectContext,
+        supportedProtocolService: any SupportedProtocolsServiceInterface,
+        resolver: any OneOnOneResolverInterface
+    ) {
+        self.context = context
+        self.supportedProtocolService = supportedProtocolService
+        self.resolver = resolver
+    }
 
     func invoke() async throws {
         let (oldProtocols, newProtocols) = await context.perform {
