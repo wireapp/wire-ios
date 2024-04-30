@@ -99,11 +99,11 @@ extension UIView {
 
 extension UIView {
     static func shieldView() -> UIView {
-        guard let shieldView = UIStoryboard(name: "Main", bundle: .main).instantiateInitialViewController()?.view else {
-            assertionFailure()
-            return .init()
-        }
-        return shieldView
+        let loadedObjects = UINib(nibName: "ScreenCurtain", bundle: nil).instantiate(withOwner: .none, options: .none)
+
+        let nibView = loadedObjects.first as! UIView
+
+        return nibView
     }
 }
 

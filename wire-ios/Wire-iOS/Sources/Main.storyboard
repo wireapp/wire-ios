@@ -17,15 +17,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="Wire/Shield" translatesAutoresizingMaskIntoConstraints="NO" id="KML-s6-hr3" userLabel="Image - Logo">
-                                <rect key="frame" x="105" y="322.5" width="204" height="265"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <rect key="frame" x="105" y="315.5" width="204" height="265"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="MYb-r6-9JB"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="KML-s6-hr3" firstAttribute="centerX" secondItem="MYb-r6-9JB" secondAttribute="centerX" id="8sN-5A-1W8"/>
-                            <constraint firstItem="KML-s6-hr3" firstAttribute="centerY" secondItem="MYb-r6-9JB" secondAttribute="centerY" id="Miv-V9-xEk"/>
+                            <constraint firstItem="KML-s6-hr3" firstAttribute="centerX" secondItem="T9H-gL-yO2" secondAttribute="centerX" id="8sN-5A-1W8"/>
+                            <constraint firstItem="KML-s6-hr3" firstAttribute="centerY" secondItem="T9H-gL-yO2" secondAttribute="centerY" id="Miv-V9-xEk"/>
                         </constraints>
                     </view>
                 </viewController>

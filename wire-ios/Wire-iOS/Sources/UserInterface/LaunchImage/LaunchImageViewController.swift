@@ -43,10 +43,15 @@ class LaunchImageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        if let shieldView = UIStoryboard(name: "Main", bundle: .main).instantiateInitialViewController()?.view {
-            shieldView.translatesAutoresizingMaskIntoConstraints = false
-            view.addSubview(shieldView)
-            contentView = shieldView
+        let loadedObjects = UINib(nibName: "ScreenCurtain", bundle: nil).instantiate(withOwner: nil, options: nil)
+
+        let nibView = loadedObjects.first as? UIView
+        nibView?.translatesAutoresizingMaskIntoConstraints = false
+        if let nibView = nibView {
+            view.addSubview(nibView)
+        }
+        if let nibView = nibView {
+            contentView = nibView
         }
 
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
