@@ -118,7 +118,7 @@ struct SwitchBackendConfirmationView: View {
             Text(L10n.Localizable.General.cancel)
                 .font(.textStyle(.buttonBig))
         }
-        .buttonStyle(SecondaryButton())
+        .buttonStyle(SecondaryButtonStyle())
     }
 
     @ViewBuilder
@@ -130,7 +130,7 @@ struct SwitchBackendConfirmationView: View {
             Text(Strings.proceed)
                 .font(.textStyle(.buttonBig))
         }
-        .buttonStyle(PrimaryButton())
+        .buttonStyle(PrimaryButtonStyle())
     }
 
 }

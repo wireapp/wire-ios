@@ -19,7 +19,9 @@
 import Foundation
 import SwiftUI
 
-struct SecondaryButton: SwiftUI.ButtonStyle {
+/// The secondary button style as defined in Wire's design system.
+
+struct SecondaryButtonStyle: SwiftUI.ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
             configuration.label
