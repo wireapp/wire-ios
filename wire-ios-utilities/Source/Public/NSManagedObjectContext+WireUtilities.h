@@ -16,17 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
-#import <WireSystem/WireSystem.h>
+@import CoreData;
+@import WireSystem;
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class DispatchGroupContext;
 
-@interface NSManagedObjectContext (ZMSGroupQueue) <ZMSGroupQueue>
-
-@property (nonatomic, readonly, null_unspecified) DispatchGroupContext *dispatchGroupContext;
+@interface NSManagedObjectContext (ZMSGroupQueue)
 
 - (void)createDispatchGroups;
 

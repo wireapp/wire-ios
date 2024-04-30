@@ -24,15 +24,13 @@ public extension NSManagedObjectContext {
 
     @discardableResult func performGroupedAndWait<T>(_ execute: @escaping (NSManagedObjectContext) -> T) -> T {
         var result: T!
-        let groups = dispatchGroupContext?.enterAll(except: nil)
+        let groups = dispatchGroupContext.enterAll(except: nil)
         let tp = TimePoint(interval: NSManagedObjectContext.timeout)
 
         performAndWait {
             tp.resetTime()
             result = execute(self)
-            groups.apply {
-                dispatchGroupContext?.leave($0)
-            }
+            dispatchGroupContext.leave(groups)
             tp.warnIfLongerThanInterval()
         }
 
@@ -42,16 +40,14 @@ public extension NSManagedObjectContext {
     @discardableResult func performGroupedAndWait<T>(_ execute: @escaping (NSManagedObjectContext) throws -> T) throws -> T {
         var result: T!
         var thrownError: Error?
-        let groups = dispatchGroupContext?.enterAll(except: nil)
+        let groups = dispatchGroupContext.enterAll(except: nil)
         let tp = TimePoint(interval: NSManagedObjectContext.timeout)
 
         performAndWait {
             do {
                 tp.resetTime()
                 result = try execute(self)
-                groups.apply {
-                    dispatchGroupContext?.leave($0)
-                }
+                dispatchGroupContext.leave(groups)
                 tp.warnIfLongerThanInterval()
             } catch {
                 thrownError = error
@@ -59,9 +55,7 @@ public extension NSManagedObjectContext {
         }
 
         if let error = thrownError {
-            groups.apply {
-                dispatchGroupContext?.leave($0)
-            }
+            dispatchGroupContext.leave(groups)
             throw error
         } else {
             return result

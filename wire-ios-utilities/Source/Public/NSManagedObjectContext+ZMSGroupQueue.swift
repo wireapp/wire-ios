@@ -16,32 +16,30 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CoreData
+import WireSystem
 
-@objcMembers
-public final class DispatchGroupQueue: NSObject, GroupQueue {
+extension NSManagedObjectContext: GroupQueue {
 
-    let queue: DispatchQueue
-    let dispatchGroupContext: DispatchGroupContext
-
-    public init(queue: DispatchQueue) {
-        self.queue = queue
-        self.dispatchGroupContext = DispatchGroupContext(groups: [])
-    }
-
-    public  var dispatchGroup: ZMSDispatchGroup {
+    @objc
+    public var dispatchGroup: ZMSDispatchGroup {
         dispatchGroupContext.groups[0]
     }
 
-    public func add(_ group: ZMSDispatchGroup) {
-        self.dispatchGroupContext.add(group)
-    }
-
+    @objc
     public func performGroupedBlock(_ block: @escaping () -> Void) {
-        let groups = dispatchGroupContext.enterAll()
-        queue.async {
-            block()
-            self.dispatchGroupContext.leave(groups)
-        }
+        fatalError("TODO")
     }
 }
+
+extension NSManagedObjectContext {
+
+    @objc
+    var dispatchGroupContext: DispatchGroupContext {
+        get { objc_getAssociatedObject(self, &AssociatedDispatchGroupContextKey) as! DispatchGroupContext }
+        set { objc_setAssociatedObject(self, &AssociatedDispatchGroupContextKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
+    }
+}
+
+private var AssociatedDispatchGroupContextKey = 0
+// private var AssociatedPendingSaveCountKey = 0

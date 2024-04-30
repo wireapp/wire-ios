@@ -17,7 +17,7 @@
 //
 
 @import WireSystem;
-#import <WireUtilities/WireUtilities-Swift.h>
+#import "WireUtilities/WireUtilities-Swift.h"
 #import "NSManagedObjectContext+WireUtilities.h"
 #import <objc/runtime.h>
 
@@ -37,12 +37,6 @@ static NSTimeInterval const PerformWarningTimeout = 10;
     objc_setAssociatedObject(self, &AssociatedPendingSaveCountKey, @(newCounter), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
-
-- (DispatchGroupContext *)dispatchGroupContext
-{
-    return objc_getAssociatedObject(self, &AssociatedDispatchGroupContextKey);
-}
-
 - (void)createDispatchGroups
 {
     NSArray<ZMSDispatchGroup *> *groups = [NSMutableArray arrayWithObjects:
@@ -54,18 +48,6 @@ static NSTimeInterval const PerformWarningTimeout = 10;
     
     DispatchGroupContext *dispatchGroupContext = [[DispatchGroupContext alloc] initWithGroups:groups];
     objc_setAssociatedObject(self, &AssociatedDispatchGroupContextKey, dispatchGroupContext, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (void)performGroupedBlock:(dispatch_block_t)block;
-{
-    NSArray *groups = [self.dispatchGroupContext enterAllExcept:nil];
-    ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:PerformWarningTimeout];
-    [self performBlock:^{
-        [tp resetTime];
-        block();
-        [self.dispatchGroupContext leaveGroups:groups];
-        [tp warnIfLongerThanInterval];
-    }];
 }
 
 - (void)performGroupedBlockAndWait:(dispatch_block_t)block;
@@ -91,11 +73,6 @@ static NSTimeInterval const PerformWarningTimeout = 10;
         [self performGroupedBlock:block];
         [self.dispatchGroupContext leaveGroups:groups];
     }];
-}
-
-- (ZMSDispatchGroup *)dispatchGroup;
-{
-    return self.dispatchGroupContext.groups.firstObject;
 }
 
 - (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request;

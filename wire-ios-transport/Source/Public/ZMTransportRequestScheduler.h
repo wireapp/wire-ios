@@ -15,10 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+@import Foundation;
+@import WireSystem;
+@import WireUtilities;
 
-#import <Foundation/Foundation.h>
-#import <WireSystem/WireSystem.h>
-#import <WireUtilities/WireUtilities.h>
 #import <WireTransport/ZMReachability.h>
 #import <WireTransport/ZMTransportRequest.h>
 
@@ -37,8 +37,6 @@ enum {
     FederationRemoteError = 533
 };
 
-
-
 typedef NS_ENUM(int8_t, ZMTransportRequestSchedulerState) {
     ZMTransportRequestSchedulerStateNormal = 1,
     ZMTransportRequestSchedulerStateOffline,
@@ -49,8 +47,6 @@ typedef NS_ENUM(int8_t, ZMTransportRequestSchedulerState) {
 
 /// For use with @c concurrentRequestCountLimit when there's no limit in effect.
 extern NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited;
-
-
 
 @interface ZMTransportRequestScheduler : NSObject <ZMReachabilityObserver, ZMSGroupQueue, TearDownCapable>
 
@@ -71,13 +67,14 @@ extern NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited;
 /// The transport session uses this to determine whether to continue requesting an access token
 - (BOOL)canSendRequests;
 
+- (void)performGroupedBlock:(dispatch_block_t)block;
 
 @property (atomic, readonly) NSInteger concurrentRequestCountLimit;
 @property (nonatomic) ZMTransportRequestSchedulerState schedulerState;
 @property (nonatomic, readonly) id<ReachabilityProvider> reachability;
+@property (nonatomic, readonly) ZMSDispatchGroup *group;
 
 @end
-
 
 
 @protocol ZMTransportRequestSchedulerItem <NSObject>
@@ -118,7 +115,6 @@ extern NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited;
 - (void)schedulerWentOffline:(ZMTransportRequestScheduler *)scheduler;
 
 @end
-
 
 
 @interface ZMTransportRequestScheduler (Testing)

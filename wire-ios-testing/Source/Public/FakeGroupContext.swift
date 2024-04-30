@@ -21,7 +21,7 @@ import WireSystem
 
 @objcMembers public class FakeGroupContext: NSObject, GroupQueue {
 
-    public let dispatchGroup: ZMSDispatchGroup!
+    public let dispatchGroup: ZMSDispatchGroup
     fileprivate let queue: DispatchQueue!
 
     public static var main: FakeGroupContext {
