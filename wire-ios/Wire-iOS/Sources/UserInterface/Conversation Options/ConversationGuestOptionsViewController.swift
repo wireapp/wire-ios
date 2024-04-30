@@ -32,6 +32,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
 
     private let tableView = UITableView()
     private var viewModel: ConversationGuestOptionsViewModel
+    var guestLinkObserver: NSObjectProtocol?
 
     var dismissSpinner: SpinnerCompletion?
 
@@ -62,23 +63,24 @@ final class ConversationGuestOptionsViewController: UIViewController,
     }
 
     deinit {
-        NotificationCenter.default.removeObserver(self)
+        if let observer = guestLinkObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handleGuestLinkNotification(_ :)),
-            name: .didCreateSecureGuestLink,
-            object: nil
-        )
+        guestLinkObserver = NotificationCenter.default.addObserver(
+            forName: .didCreateSecureGuestLink,
+            object: nil,
+            queue: .main) { [weak self] notification in
+                self?.handleGuestLinkNotification(notification)
+            }
 
         setupNavigationBar()
     }
 
-    @objc
     private func handleGuestLinkNotification(_ notification: Notification) {
         if let link = notification.userInfo?["link"] as? String {
             viewModel.securedLink = link
