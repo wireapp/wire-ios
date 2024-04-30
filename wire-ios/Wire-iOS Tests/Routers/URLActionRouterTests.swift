@@ -111,7 +111,7 @@ final class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
 
     func updateActiveCallPresentationState() { }
 
-    func minimizeCallOverlay(animated: Bool, withCompletion completion: Completion?) { }
+    func minimizeCallOverlay(animated: Bool, completion: () -> Void) { }
 
     var didNavigateToDestination: NavigationDestination?
     func navigate(to destination: NavigationDestination) {

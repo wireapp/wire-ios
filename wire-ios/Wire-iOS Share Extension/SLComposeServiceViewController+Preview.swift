@@ -120,6 +120,7 @@ extension SLComposeServiceViewController {
 
     private func loadSystemPreviewForAttachment(_ item: NSItemProvider, type: AttachmentType, completionHandler: @escaping (PreviewItem, PreviewDisplayMode?) -> Void) {
         item.loadPreviewImage(options: [NSItemProviderPreferredImageSizeKey: PreviewDisplayMode.pixelSize]) { container, error in
+            @MainActor
             func useFallbackIcon() {
                 let fallbackIcon = self.fallbackIcon(forAttachment: item, ofType: type)
                 completionHandler(.placeholder(fallbackIcon), .placeholder)

@@ -31,6 +31,40 @@ extension ConversationListViewController {
         updateLegalHoldIndictor()
     }
 
+    // MARK: - Title View
+
+    func setupTitleView() {
+        let titleLabel = UILabel()
+        titleLabel.font = FontSpec(.normal, .semibold).font
+        titleLabel.textColor = SemanticColors.Label.textDefault
+        titleLabel.accessibilityTraits = .header
+        titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        titleLabel.setContentHuggingPriority(.required, for: .horizontal)
+        titleLabel.setContentHuggingPriority(.required, for: .vertical)
+        titleLabel.text = L10n.Localizable.List.title
+        titleLabel.accessibilityValue = L10n.Localizable.List.title
+        navigationItem.titleView = titleLabel
+        self.titleViewLabel = titleLabel
+    }
+
+    // MARK: - Navigation Bar Items
+
+    func setupRightNavigationBarButtons() {
+
+        let filerImage = UIImage(resource: .ConversationList.Header.filterConversations)
+        let filterConversationsAction = UIAction(image: filerImage) { _ in
+            assertionFailure("TODO [WPB-7298]: implement filtering")
+        }
+        navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: filterConversationsAction))]
+
+        let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
+        let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
+            self?.setState(.peoplePicker, animated: true)
+        }
+        navigationItem.rightBarButtonItems?.append(.init(customView: UIButton(primaryAction: newConversationAction)))
+    }
+
     // MARK: - Account View
 
     func updateAccountView() {
@@ -83,41 +117,6 @@ extension ConversationListViewController {
         selfProfileViewControllerBuilder
             .build()
             .wrapInNavigationController(navigationControllerClass: NavigationController.self)
-    }
-
-    // MARK: - Title View
-
-    func updateTitleView() {
-        if viewModel.selfUser.isTeamMember {
-            defer { userStatusViewController?.userStatus = viewModel.selfUserStatus }
-            guard userStatusViewController == nil else { return }
-
-            let userStatusViewController = UserStatusViewController(options: .header, settings: .shared)
-            navigationItem.titleView = userStatusViewController.view
-            userStatusViewController.delegate = self
-            self.userStatusViewController = userStatusViewController
-
-        } else {
-            defer {
-                titleViewLabel?.text = viewModel.selfUserStatus.name
-                titleViewLabel?.accessibilityValue = viewModel.selfUserStatus.name
-            }
-            guard titleViewLabel == nil else { return }
-            if let userStatusViewController {
-                removeChild(userStatusViewController)
-            }
-
-            let titleLabel = UILabel()
-            titleLabel.font = FontSpec(.normal, .semibold).font
-            titleLabel.textColor = SemanticColors.Label.textDefault
-            titleLabel.accessibilityTraits = .header
-            titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-            titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-            titleLabel.setContentHuggingPriority(.required, for: .horizontal)
-            titleLabel.setContentHuggingPriority(.required, for: .vertical)
-            navigationItem.titleView = titleLabel
-            self.titleViewLabel = titleLabel
-        }
     }
 
     // MARK: - Legal Hold

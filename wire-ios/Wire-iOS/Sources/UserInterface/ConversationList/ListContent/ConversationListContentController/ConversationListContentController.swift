@@ -42,10 +42,6 @@ final class ConversationListContentController: UICollectionViewController, Popov
 
     let userSession: UserSession
 
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
     init(userSession: UserSession) {
         self.userSession = userSession
         let flowLayout = BoundsAwareFlowLayout()
@@ -67,9 +63,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
         super.loadView()
 
         listViewModel.delegate = self
-
         setupViews()
-
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -98,11 +92,11 @@ final class ConversationListContentController: UICollectionViewController, Popov
     }
 
     private func activeMediaPlayerChanged() {
-        DispatchQueue.main.async(execute: {
+        DispatchQueue.main.async {
             for cell in self.collectionView.visibleCells {
                 (cell as? ConversationListCell)?.updateAppearance()
             }
-        })
+        }
     }
 
     func reload() {

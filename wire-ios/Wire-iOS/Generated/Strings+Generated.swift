@@ -952,12 +952,6 @@ internal enum L10n {
         /// Double tap to open list of archived conversations
         internal static let hint = L10n.tr("Accessibility", "tabBar.archived.hint", fallback: "Double tap to open list of archived conversations")
       }
-      internal enum Contacts {
-        /// Contacts
-        internal static let description = L10n.tr("Accessibility", "tabBar.contacts.description", fallback: "Contacts")
-        /// Double tap to search for people and open contact list
-        internal static let hint = L10n.tr("Accessibility", "tabBar.contacts.hint", fallback: "Double tap to search for people and open contact list")
-      }
       internal enum Conversations {
         /// List of recent conversations
         internal static let description = L10n.tr("Accessibility", "tabBar.conversations.description", fallback: "List of recent conversations")
@@ -968,12 +962,6 @@ internal enum L10n {
         /// Log in via email
         internal static let description = L10n.tr("Accessibility", "tabBar.email.description", fallback: "Log in via email")
       }
-      internal enum Folders {
-        /// List of conversations organized in folders
-        internal static let description = L10n.tr("Accessibility", "tabBar.folders.description", fallback: "List of conversations organized in folders")
-        /// Double tap to open list of conversations organized in folders
-        internal static let hint = L10n.tr("Accessibility", "tabBar.folders.hint", fallback: "Double tap to open list of conversations organized in folders")
-      }
       internal enum Item {
         /// Selected
         internal static let value = L10n.tr("Accessibility", "tabBar.item.value", fallback: "Selected")
@@ -981,6 +969,12 @@ internal enum L10n {
       internal enum Phone {
         /// Log in via phone number
         internal static let description = L10n.tr("Accessibility", "tabBar.phone.description", fallback: "Log in via phone number")
+      }
+      internal enum Settings {
+        /// Settings
+        internal static let description = L10n.tr("Accessibility", "tabBar.settings.description", fallback: "Settings")
+        /// Double tap to open settings
+        internal static let hint = L10n.tr("Accessibility", "tabBar.settings.hint", fallback: "Double tap to open settings")
       }
     }
   }
@@ -2660,17 +2654,13 @@ internal enum L10n {
           /// Archive
           internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.archived.title", fallback: "Archive")
         }
-        internal enum Contacts {
-          /// Contacts
-          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.contacts.title", fallback: "Contacts")
-        }
         internal enum Conversations {
           /// Conversations
           internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.conversations.title", fallback: "Conversations")
         }
-        internal enum Folders {
-          /// Folders
-          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.folders.title", fallback: "Folders")
+        internal enum Settings {
+          /// Settings
+          internal static let title = L10n.tr("Localizable", "conversation_list.bottom_bar.settings.title", fallback: "Settings")
         }
       }
       internal enum DataUsagePermissionAlert {
