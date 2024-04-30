@@ -16,9 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import AppCenter
-import AppCenterAnalytics
-import AppCenterDistribute
 import avs
 import WireCommonComponents
 import WireSyncEngine
