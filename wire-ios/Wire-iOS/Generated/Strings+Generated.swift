@@ -2862,8 +2862,10 @@ internal enum L10n {
             }
           }
           internal enum Mls {
-            /// MLS with Ed25519 Signature
-            internal static let signature = L10n.tr("Localizable", "device.details.section.mls.signature", fallback: "MLS with Ed25519 Signature")
+            /// MLS with %@ Signature
+            internal static func signature(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "device.details.section.mls.signature", String(describing: p1), fallback: "MLS with %@ Signature")
+            }
             /// MLS Thumbprint: %@
             internal static func thumbprint(_ p1: Any) -> String {
               return L10n.tr("Localizable", "device.details.section.mls.thumbprint", String(describing: p1), fallback: "MLS Thumbprint: %@")
@@ -4960,8 +4962,8 @@ internal enum L10n {
             internal static let title = L10n.tr("Localizable", "registration.signin.too_many_devices.manage_button.title", fallback: "Manage devices")
           }
           internal enum ManageScreen {
-            /// Remove a Device
-            internal static let title = L10n.tr("Localizable", "registration.signin.too_many_devices.manage_screen.title", fallback: "Remove a Device")
+            /// Remove a device
+            internal static let title = L10n.tr("Localizable", "registration.signin.too_many_devices.manage_screen.title", fallback: "Remove a device")
           }
           internal enum SignOutButton {
             /// Log out

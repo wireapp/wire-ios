@@ -61,6 +61,7 @@ public protocol SwiftConversationLike {
     var mutedMessageTypes: MutedMessageTypes { get set }
     var sortedOtherParticipants: [UserType] { get }
     var sortedServiceUsers: [UserType] { get }
+    var ciphersuite: MLSCipherSuite? { get }
 }
 
 extension ZMConversation: ConversationLike {
