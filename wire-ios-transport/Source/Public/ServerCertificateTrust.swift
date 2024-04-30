@@ -71,6 +71,8 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
 
     private func verifyServerTrustWithPinnedKeys(_ serverTrust: SecTrust, _ pinnedKeys: [SecKey]) -> Bool {
         var someError: CFError?
+        // serverTrust is the certificate coming from the backend server we make request to, so next line will
+        // check that the certificate is not expired
         guard SecTrustEvaluateWithError(serverTrust, &someError) else {
             WireLogger.backend.error(someError?.localizedDescription ?? "verifyServerTrustWithPinnedKeys unknown error")
             return false
@@ -79,7 +81,7 @@ final class ServerCertificateTrust: NSObject, BackendTrustProvider {
         guard !pinnedKeys.isEmpty else {
             return true
         }
-
+        // only checks the publicKey of certificate_key (located in Backend.bundle of the app) with the server public key
         guard let publicKey = publicKeyAssociatedWithServerTrust(serverTrust) else {
             return false
         }

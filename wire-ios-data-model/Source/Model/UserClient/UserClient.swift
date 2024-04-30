@@ -126,7 +126,12 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Clients that ignore this client trust (currently can contain only self client)
     @NSManaged public var ignoredByClients: Set<UserClient>
 
-    public var e2eIdentityCertificate: E2eIdentityCertificate?
+    public var e2eIdentityCertificate: E2eIdentityCertificate? {
+        didSet {
+            NotificationCenter.default.post(name: .e2eiCertificateChanged, object: self)
+        }
+    }
+
     public var mlsThumbPrint: String?
 
     public var isLegalHoldDevice: Bool {
@@ -415,11 +420,15 @@ public extension UserClient {
         let deviceClass = payloadAsDictionary.optionalString(forKey: "class")
         let activationDate = payloadAsDictionary.date(for: "time")
         let lastActiveDate = payloadAsDictionary.optionalDate(forKey: "last_active")
-        let mlsPublicKeys = payloadAsDictionary.optionalDictionary(forKey: "mls_public_keys")
-        let mlsEd25519 = mlsPublicKeys?.optionalString(forKey: "ed25519")
         let result = fetchOrCreateUserClient(with: id, in: context)
         let client = result.client
         let isNewClient = result.isNewClient
+        let mlsPublicKeys = payloadAsDictionary.optionalDictionary(forKey: "mls_public_keys")
+        let mlsEd25519 = mlsPublicKeys?.optionalString(forKey: "ed25519")
+        let mlsEd448 = mlsPublicKeys?.optionalString(forKey: "ed448")
+        let mlsP256 = mlsPublicKeys?.optionalString(forKey: "p256")
+        let mlsP384 = mlsPublicKeys?.optionalString(forKey: "p384")
+        let mlsP521 = mlsPublicKeys?.optionalString(forKey: "p521")
 
         client.label = label
         client.type = DeviceType(rawValue: type)
@@ -428,15 +437,13 @@ public extension UserClient {
         client.activationDate = activationDate
         client.lastActiveDate = lastActiveDate
         client.remoteIdentifier = id
-        if let mlsEd25519 {
-            client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519)
-        }
+        client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519,
+                                             ed448: mlsEd448,
+                                             p256: mlsP256,
+                                             p384: mlsP384,
+                                             p521: mlsP521)
         let selfUser = ZMUser.selfUser(in: context)
         client.user = client.user ?? selfUser
-
-        if let ed22519Key = mlsPublicKeys?["ed25519"] as? String {
-            client.mlsPublicKeys.ed25519 = ed22519Key
-        }
 
         if isNewClient {
             client.needsSessionMigration = selfUser.domain == nil
@@ -949,4 +956,9 @@ extension UserClient {
         )
     }
 
+}
+
+public extension Notification.Name {
+    // This notification is used to notify of end-to-end identity certificate changes
+    static let e2eiCertificateChanged = NSNotification.Name("E2EICertificateStatusChanged")
 }

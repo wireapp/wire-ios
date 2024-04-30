@@ -88,8 +88,8 @@ public extension Feature {
 
             }
 
+            @objc
             public enum MLSCipherSuite: Int, Codable {
-
                 case MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519 = 1
                 case MLS_128_DHKEMP256_AES128GCM_SHA256_P256 = 2
                 case MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519 = 3
@@ -97,7 +97,6 @@ public extension Feature {
                 case MLS_256_DHKEMP521_AES256GCM_SHA512_P521 = 5
                 case MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448 = 6
                 case MLS_256_DHKEMP384_AES256GCM_SHA384_P384 = 7
-
             }
 
         }
