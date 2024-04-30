@@ -42,6 +42,23 @@
     return user;
 }
 
+- (MockUser *)userForPhone:(NSString *)phone
+{
+    __block MockUser *user;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation>  __unused session) {
+        
+        NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
+        fetchRequest.predicate = [NSPredicate predicateWithFormat: @"phone == %@", phone];
+        
+        NSArray *users = [self.sut.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+        
+        if (users.count == 1) {
+            user = users[0];
+        }
+    }];
+    return user;
+}
+
 - (void)testThatRegistrationReturns404OnWrongMethod
 {
     // GIVEN
@@ -266,6 +283,7 @@
         XCTAssertEqualObjects(user.password, payload[@"password"]);
         XCTAssertEqualObjects(user.name, payload[@"name"]);
         XCTAssertEqualObjects(user.email, payload[@"email"]);
+        XCTAssertEqualObjects(user.phone, payload[@"phone"]);
         XCTAssertEqual(user.accentID, [payload[@"accent_id"] integerValue]);
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -315,6 +333,115 @@
     // THEN
     XCTAssertEqual(response.HTTPStatus, 409);
     XCTAssertEqualObjects([response payloadLabel], @"key-exists");
+}
+
+- (void)requestVerificationCodeForPhone:(NSString *)phone {
+    NSDictionary *requestPayload = @{@"phone":phone};
+    NSString *path = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
+    [self responseForPayload:requestPayload path:path method:ZMTransportRequestMethodPost apiVersion:0];
+}
+
+- (void)testThatRegistrationWithPhoneNumberReturns201AndCreatesAUserIfItHasAValidPhoneVerificationCode
+{
+    // GIVEN
+    NSString *phone = @"+490000000";
+    NSDictionary *payload = @{
+                              @"name" : @"Someone someone",
+                              @"phone" : phone,
+                              @"phone_code" : self.sut.phoneVerificationCodeForRegistration,
+                              };
+    [self requestVerificationCodeForPhone:phone];
+    
+    // WHEN
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMTransportRequestMethodPost apiVersion:0];
+    
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 200);
+    MockUser *user = [self userForPhone:phone];
+    XCTAssertNotNil(user);
+    XCTAssertEqualObjects(user.name, payload[@"name"]);
+    XCTAssertEqualObjects(user.phone, payload[@"phone"]);
+}
+
+- (void)testThatRegistrationWithPhoneNumberReturns201AndSetsTheCookie
+{
+    // GIVEN
+    NSString *phone = @"+490000000";
+    NSDictionary *payload = @{
+                              @"name" : @"Someone someone",
+                              @"phone" : phone,
+                              @"phone_code" : self.sut.phoneVerificationCodeForRegistration,
+                              };
+    [self requestVerificationCodeForPhone:phone];
+    
+    // expect
+    __block NSData *cookieData;
+    [[(id) self.sut.cookieStorage expect] setAuthenticationCookieData:ZM_ARG_SAVE(cookieData)];
+    
+    // WHEN
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMTransportRequestMethodPost apiVersion:0];
+    
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 200);
+    XCTAssertNotNil(cookieData);
+}
+
+- (void)testThatRegistrationWithPhoneNumberReturns409ItThereIsAlreadyAUserWithThatPhone
+{
+    // GIVEN
+    NSString *phone = @"+490000000";
+    NSDictionary *payload = @{
+                              @"name" : @"Someone someone",
+                              @"phone" : phone,
+                              @"phone_code" : self.sut.phoneVerificationCodeForRegistration,
+                              };
+    
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        MockUser *user = [session insertUserWithName:payload[@"name"]];
+        user.phone = payload[@"phone"];
+    }];
+    
+    // WHEN
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMTransportRequestMethodPost apiVersion:0];
+    
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 409);
+    XCTAssertEqualObjects([response payloadLabel], @"key-exists");
+}
+
+- (void)testThatRegistrationWithPhoneNumberReturns404IfThereIsNoPhoneWithPendingVerificationCode
+{
+    // GIVEN
+    NSString *phone = @"+490000000";
+    NSDictionary *payload = @{
+                              @"name" : @"Someone someone",
+                              @"phone" : phone,
+                              @"phone_code" : self.sut.phoneVerificationCodeForRegistration,
+                              };
+    
+    // WHEN
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMTransportRequestMethodPost apiVersion:0];
+    
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 404);
+}
+
+- (void)testThatRegistrationWithPhoneNumberReturns404IfTheVerificationCodeIsWrong
+{
+    // GIVEN
+    NSString *phone = @"+490000000";
+    NSDictionary *payload = @{
+                              @"name" : @"Someone someone",
+                              @"phone" : phone,
+                              @"phone_code" : self.sut.invalidPhoneVerificationCode,
+                              };
+    [self requestVerificationCodeForPhone:phone];
+    
+    // WHEN
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMTransportRequestMethodPost apiVersion:0];
+    
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 404);
 }
 
 @end

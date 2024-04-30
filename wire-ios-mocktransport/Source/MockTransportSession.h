@@ -170,6 +170,8 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 /// Whitelist an email so that registration is automatically verified
 - (void)whiteListEmail:(NSString *)email;
+/// Whitelist a phone so that we can login directly without asking for the code first (used in tests)
+- (void)whiteListPhone:(NSString *)phone;
 
 /// simulate the other party accepting a connection request
 - (void)remotelyAcceptConnectionToUser:(MockUser*)user;
@@ -215,4 +217,16 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 @end
 
+@interface MockTransportSession (PhoneVerification)
+
+@property (nonatomic, readonly) NSString *phoneVerificationCodeForRegistration;
+@property (nonatomic, readonly) NSString *phoneVerificationCodeForLogin;
+@property (nonatomic, readonly) NSString *phoneVerificationCodeForUpdatingProfile;
+@property (nonatomic, readonly) NSString *invalidPhoneVerificationCode;
+
+@end
+
+
+
 NS_ASSUME_NONNULL_END
+

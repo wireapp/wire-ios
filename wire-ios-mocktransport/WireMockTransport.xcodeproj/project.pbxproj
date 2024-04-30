@@ -59,7 +59,7 @@
 		54AE5A8F1B78FA43002757E9 /* MockTransportSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A6E1B78FA43002757E9 /* MockTransportSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54AE5A911B78FA43002757E9 /* WireMockTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A701B78FA43002757E9 /* WireMockTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54AE5AA11B78FA62002757E9 /* MockTransportSessionAddressBookTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A921B78FA62002757E9 /* MockTransportSessionAddressBookTests.m */; };
-		54AE5AA61B78FA62002757E9 /* MockTransportSessionEmailVerificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A971B78FA62002757E9 /* MockTransportSessionEmailVerificationTests.m */; };
+		54AE5AA61B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A971B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m */; };
 		54AE5AAB1B78FA62002757E9 /* MockTransportSessionRequestsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A9C1B78FA62002757E9 /* MockTransportSessionRequestsTests.m */; };
 		54C9023F1B7532DD007162A8 /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54C902331B7532DD007162A8 /* WireMockTransport.framework */; };
 		54FAE6821E3A025500E6DE42 /* MockTransportSessionObjectCreationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FAE6801E3A01F000E6DE42 /* MockTransportSessionObjectCreationTests.swift */; };
@@ -204,7 +204,7 @@
 		54AE5A931B78FA62002757E9 /* MockTransportPushTokenTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportPushTokenTests.m; sourceTree = "<group>"; };
 		54AE5A951B78FA62002757E9 /* MockTransportSessionConnectionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionConnectionsTests.m; sourceTree = "<group>"; };
 		54AE5A961B78FA62002757E9 /* MockTransportSessionConversationsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionConversationsTests.m; sourceTree = "<group>"; };
-		54AE5A971B78FA62002757E9 /* MockTransportSessionEmailVerificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionEmailVerificationTests.m; sourceTree = "<group>"; };
+		54AE5A971B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionEmailPhoneVerificationTests.m; sourceTree = "<group>"; };
 		54AE5A991B78FA62002757E9 /* MockTransportSessionLoginTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionLoginTests.m; sourceTree = "<group>"; };
 		54AE5A9A1B78FA62002757E9 /* MockTransportSessionPushChannelTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = MockTransportSessionPushChannelTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		54AE5A9B1B78FA62002757E9 /* MockTransportSessionRegistrationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionRegistrationTests.m; sourceTree = "<group>"; };
@@ -417,7 +417,7 @@
 		0641A8BF239827AE00B24621 /* Registration */ = {
 			isa = PBXGroup;
 			children = (
-				54AE5A971B78FA62002757E9 /* MockTransportSessionEmailVerificationTests.m */,
+				54AE5A971B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m */,
 				54AE5A9B1B78FA62002757E9 /* MockTransportSessionRegistrationTests.m */,
 			);
 			path = Registration;
@@ -987,7 +987,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				54AE5AA61B78FA62002757E9 /* MockTransportSessionEmailVerificationTests.m in Sources */,
+				54AE5AA61B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m in Sources */,
 				F157FE8A205FFF7B00BC25F1 /* MockTransportSessionRegistrationTests.m in Sources */,
 				F157FE86205FFEFC00BC25F1 /* MockTransportSessionTests.m in Sources */,
 				F1F3FE9820F39ECF00B0BAF3 /* MockTransportPushTokenTests.swift in Sources */,

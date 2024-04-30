@@ -226,6 +226,9 @@
     else if([request matchesWithPath:@"/self" method:ZMTransportRequestMethodPut]) {
         return [self putSelfResponseWithPayload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
+    else if([request matchesWithPath:@"/self/phone" method:ZMTransportRequestMethodPut]) {
+        return [self putSelfPhoneWithPayload:[request.payload asDictionary] apiVersion:request.apiVersion];
+    }
     else if([request matchesWithPath:@"/self/email" method:ZMTransportRequestMethodPut]) {
         return [self putSelfEmailWithPayload:[request.payload asDictionary] apiVersion:request.apiVersion];
     }
@@ -244,7 +247,25 @@
     return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil apiVersion:apiVersion];
 }
 
-
+- (ZMTransportResponse *)putSelfPhoneWithPayload:(NSDictionary *)payload apiVersion:(APIVersion)apiVersion
+{
+    NSString *phone = [payload asDictionary][@"phone"];
+    if(phone == nil) {
+        return [self errorResponseWithCode:400 reason:@"missing-key" apiVersion:apiVersion];
+    }
+    
+    NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"phone == %@", phone];
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+    
+    if(users.count > 0) {
+        return [self errorResponseWithCode:409 reason:@"key-exist" apiVersion:apiVersion];
+    }
+    else {
+        [self.phoneNumbersWaitingForVerificationForProfile addObject:phone];
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:apiVersion];
+    }
+}
 
 - (ZMTransportResponse *)putSelfEmailWithPayload:(NSDictionary *)payload apiVersion:(APIVersion)apiVersion
 {

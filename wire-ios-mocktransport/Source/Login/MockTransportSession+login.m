@@ -34,10 +34,11 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
     if([request matchesWithPath:@"/login" method:ZMTransportRequestMethodPost]) {
         NSString *password = [request.payload.asDictionary optionalStringForKey:@"password"];
         NSString *email = [request.payload.asDictionary optionalStringForKey:@"email"];
+        NSString *phone = [request.payload.asDictionary optionalStringForKey:@"phone"];
         NSString *code = [request.payload.asDictionary optionalStringForKey:@"code"];
         NSString *verificationCode = [request.payload.asDictionary optionalStringForKey:@"verification_code"];
 
-        if((password == nil || email == nil) && code == nil) {
+        if((password == nil || email == nil) && (code == nil || phone == nil)) {
             return [self errorResponseWithCode:400 reason:@"missing-key" apiVersion:request.apiVersion];
         }
 
@@ -48,12 +49,25 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
                 return [self errorResponseWithCode:403 reason:@"code-authentication-failed" apiVersion:request.apiVersion];
             }
         }
+
+        if(phone != nil
+           && (
+               ! [self.phoneNumbersWaitingForVerificationForLogin containsObject:phone] ||
+               ! [self.phoneVerificationCodeForLogin isEqualToString:code]
+               )
+           )
+        {
+            return [self errorResponseWithCode:404 reason:@"invalid-key" apiVersion:request.apiVersion];
+        }
         
         NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
         if(email != nil) {
             fetchRequest.predicate = [NSPredicate predicateWithFormat: @"email == %@ AND password == %@", email, password];
         }
-
+        else if(phone != nil) {
+            fetchRequest.predicate = [NSPredicate predicateWithFormat: @"phone == %@", phone];
+        }
+        
         NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
         
         if (users.count < 1) {
@@ -65,7 +79,11 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         if(!user.isEmailValidated) {
             return [self errorResponseWithCode:403 reason:@"pending-activation" apiVersion:request.apiVersion];
         }
-
+        
+        if(phone != nil) {
+            [self.phoneNumbersWaitingForVerificationForLogin removeObject:phone];
+        }
+        
         NSString *cookiesValue = @"fake cookie";
 
         if ([ZMPersistentCookieStorage cookiesPolicy] != NSHTTPCookieAcceptPolicyNever) {
@@ -84,6 +102,32 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
 
         NSDictionary *headers = @{ @"Set-Cookie": [NSString stringWithFormat:@"zuid=%@", cookiesValue] };
         return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil headers:headers apiVersion:request.apiVersion];
+    }
+    return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
+}
+
+/// handles /login/send
+- (ZMTransportResponse *)processLoginCodeRequest:(ZMTransportRequest *)request;
+{
+    if ([request matchesWithPath:@"/login/send" method:ZMTransportRequestMethodPost]) {
+        NSString *phone = [request.payload.asDictionary optionalStringForKey:@"phone"];
+        
+        if(phone == nil) {
+            return [self errorResponseWithCode:400 reason:@"missing-key" apiVersion:request.apiVersion];
+        }
+        
+        NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
+        fetchRequest.predicate = [NSPredicate predicateWithFormat: @"phone == %@", phone];
+        NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+        
+        if (users.count < 1) {
+            return [self errorResponseWithCode:404 reason:@"not-found" apiVersion:request.apiVersion];
+        }
+        else {
+            [self.phoneNumbersWaitingForVerificationForLogin addObject:phone];
+            return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil apiVersion:request.apiVersion];
+        }
+        
     }
     return [self errorResponseWithCode:404 reason:@"no-endpoint" apiVersion:request.apiVersion];
 }
