@@ -20,7 +20,6 @@ import UIKit
 import WireSyncEngine
 import WireTransport
 import WireUtilities
-import WireUtilities
 
 protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     var allowGuests: Bool { get }
@@ -333,7 +332,7 @@ final class ConversationGuestOptionsViewModel {
                 switch result {
                 case .success:
                     self.updateRows()
-                    if self.link == nil || self.securedLink == nil && allowGuests {
+                    if (self.link == nil || self.securedLink == nil) && allowGuests {
                         self.fetchLink()
                     }
                 case .failure(let error): self.delegate?.viewModel(self, didReceiveError: error)
