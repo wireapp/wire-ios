@@ -42,6 +42,7 @@ final class UserClientCell: SeparatorCollectionViewCell {
         style: .subline1,
         color: LabelColors.textCellSubtitle
     )
+
     let proteusIdLabel = DynamicFontLabel(
         style: .subline1,
         color: LabelColors.textCellSubtitle
