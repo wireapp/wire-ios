@@ -1447,10 +1447,6 @@
 		EE67F6D9296F06B3001D7C88 /* FLAnimatedImage.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE67F6DE296F06CE001D7C88 /* libcmark.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6DD296F06CE001D7C88 /* libcmark.xcframework */; };
 		EE67F6DF296F06CE001D7C88 /* libcmark.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6DD296F06CE001D7C88 /* libcmark.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		EE67F6E4296F06F1001D7C88 /* AppCenterDistribute.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6E0296F06F0001D7C88 /* AppCenterDistribute.xcframework */; };
-		EE67F6E6296F06F1001D7C88 /* AppCenter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6E1296F06F1001D7C88 /* AppCenter.xcframework */; };
-		EE67F6E8296F06F1001D7C88 /* AppCenterCrashes.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6E2296F06F1001D7C88 /* AppCenterCrashes.xcframework */; };
-		EE67F6EA296F06F1001D7C88 /* AppCenterAnalytics.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6E3296F06F1001D7C88 /* AppCenterAnalytics.xcframework */; };
 		EE67F73E296F0E7D001D7C88 /* Ziphy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F73D296F0E7D001D7C88 /* Ziphy.framework */; };
 		EE67F73F296F0E7D001D7C88 /* Ziphy.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F73D296F0E7D001D7C88 /* Ziphy.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE67F741296F0EBC001D7C88 /* WireCanvas.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F740296F0EBC001D7C88 /* WireCanvas.framework */; };
@@ -1690,8 +1686,6 @@
 		EF37C3892256614300EA0C32 /* ConnectRequestsCellSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF37C3882256614300EA0C32 /* ConnectRequestsCellSnapshotTests.swift */; };
 		EF39BD2E233E2FDA00F02DDB /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF39BD2D233E2FDA00F02DDB /* main.swift */; };
 		EF39BD30233E418B00F02DDB /* FileManager+Directory.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF39BD2F233E418B00F02DDB /* FileManager+Directory.swift */; };
-		EF3B26DC2370585700245701 /* AppCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B02231209B6E4E00DF25D8 /* AppCenter.swift */; };
-		EF3B26E52370596300245701 /* CrashReporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3B26E42370596300245701 /* CrashReporter.swift */; };
 		EF3BA5D421075FC60093048F /* ConversationInputBarViewController+Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3BA5D321075FC60093048F /* ConversationInputBarViewController+Language.swift */; };
 		EF3BA5D72107688D0093048F /* InputLanguageSettable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3BA5D62107688D0093048F /* InputLanguageSettable.swift */; };
 		EF3BD69D225CC53B00ABB9B6 /* PermissionDeniedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3BD69B225CC53B00ABB9B6 /* PermissionDeniedViewController.swift */; };
@@ -3048,7 +3042,6 @@
 		A9A6506524D1C32300B6A68D /* PasswordValidationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordValidationResult.swift; sourceTree = "<group>"; };
 		A9A687D8250B7AA900AEE878 /* WipeDatabaseWireframe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WipeDatabaseWireframe.swift; sourceTree = "<group>"; };
 		A9AC63E023FC4A2D00016ABC /* AVURLAsset+conversionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVURLAsset+conversionTests.swift"; sourceTree = "<group>"; };
-		A9B02231209B6E4E00DF25D8 /* AppCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCenter.swift; sourceTree = "<group>"; };
 		A9BA580C2497994D005B806B /* ContextMenuDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextMenuDelegate.swift; sourceTree = "<group>"; };
 		A9BBD8CD26A5D47C00C768B1 /* UIEdgeInsets+directionAware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIEdgeInsets+directionAware.swift"; sourceTree = "<group>"; };
 		A9C33DFD23D0704F0069C8BB /* MediaPlaybackManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlaybackManager.swift; sourceTree = "<group>"; };
@@ -3529,10 +3522,6 @@
 		EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FLAnimatedImage.xcframework; path = ../Carthage/Build/FLAnimatedImage.xcframework; sourceTree = "<group>"; };
 		EE67F6DA296F06C2001D7C88 /* FormatterKit.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FormatterKit.xcframework; path = ../Carthage/Build/FormatterKit.xcframework; sourceTree = "<group>"; };
 		EE67F6DD296F06CE001D7C88 /* libcmark.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = libcmark.xcframework; path = ../Carthage/Build/libcmark.xcframework; sourceTree = "<group>"; };
-		EE67F6E0296F06F0001D7C88 /* AppCenterDistribute.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AppCenterDistribute.xcframework; path = ../Carthage/Build/AppCenterDistribute.xcframework; sourceTree = "<group>"; };
-		EE67F6E1296F06F1001D7C88 /* AppCenter.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AppCenter.xcframework; path = ../Carthage/Build/AppCenter.xcframework; sourceTree = "<group>"; };
-		EE67F6E2296F06F1001D7C88 /* AppCenterCrashes.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AppCenterCrashes.xcframework; path = ../Carthage/Build/AppCenterCrashes.xcframework; sourceTree = "<group>"; };
-		EE67F6E3296F06F1001D7C88 /* AppCenterAnalytics.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = AppCenterAnalytics.xcframework; path = ../Carthage/Build/AppCenterAnalytics.xcframework; sourceTree = "<group>"; };
 		EE67F730296F0DB5001D7C88 /* FBSnapshotTestCase.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FBSnapshotTestCase.xcframework; path = ../Carthage/Build/FBSnapshotTestCase.xcframework; sourceTree = "<group>"; };
 		EE67F735296F0DE4001D7C88 /* WireDataModel.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModel.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSyncEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3777,7 +3766,6 @@
 		EF37C3882256614300EA0C32 /* ConnectRequestsCellSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectRequestsCellSnapshotTests.swift; sourceTree = "<group>"; };
 		EF39BD2D233E2FDA00F02DDB /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		EF39BD2F233E418B00F02DDB /* FileManager+Directory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Directory.swift"; sourceTree = "<group>"; };
-		EF3B26E42370596300245701 /* CrashReporter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrashReporter.swift; sourceTree = "<group>"; };
 		EF3BA5D321075FC60093048F /* ConversationInputBarViewController+Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+Language.swift"; sourceTree = "<group>"; };
 		EF3BA5D62107688D0093048F /* InputLanguageSettable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputLanguageSettable.swift; sourceTree = "<group>"; };
 		EF3BD69B225CC53B00ABB9B6 /* PermissionDeniedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionDeniedViewController.swift; sourceTree = "<group>"; };
@@ -4085,10 +4073,6 @@
 				01E29C8D2996A2710024E1A7 /* Datadog.xcframework in Frameworks */,
 				01E29C8E2996A2710024E1A7 /* DatadogCrashReporting.xcframework in Frameworks */,
 				EE8297192971A0CA00F12CAA /* WireSyncEngine.framework in Frameworks */,
-				EE67F6E8296F06F1001D7C88 /* AppCenterCrashes.xcframework in Frameworks */,
-				EE67F6E6296F06F1001D7C88 /* AppCenter.xcframework in Frameworks */,
-				EE67F6E4296F06F1001D7C88 /* AppCenterDistribute.xcframework in Frameworks */,
-				EE67F6EA296F06F1001D7C88 /* AppCenterAnalytics.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4304,7 +4288,6 @@
 				5E7F012F213E928300C6F3E9 /* Sources */,
 				5E7F012D213E91F700C6F3E9 /* Supporting Files */,
 				BF2756DA1E38E16D00082786 /* ShareExtensionAnalytics.swift */,
-				EF3B26E42370596300245701 /* CrashReporter.swift */,
 			);
 			path = "Wire-iOS Share Extension";
 			sourceTree = "<group>";
@@ -5446,10 +5429,6 @@
 				EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */,
 				EE67F735296F0DE4001D7C88 /* WireDataModel.framework */,
 				EE67F730296F0DB5001D7C88 /* FBSnapshotTestCase.xcframework */,
-				EE67F6E1296F06F1001D7C88 /* AppCenter.xcframework */,
-				EE67F6E3296F06F1001D7C88 /* AppCenterAnalytics.xcframework */,
-				EE67F6E2296F06F1001D7C88 /* AppCenterCrashes.xcframework */,
-				EE67F6E0296F06F0001D7C88 /* AppCenterDistribute.xcframework */,
 				EE67F6DD296F06CE001D7C88 /* libcmark.xcframework */,
 				EE67F6DA296F06C2001D7C88 /* FormatterKit.xcframework */,
 				EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */,
@@ -8494,7 +8473,6 @@
 				BFB332671E3A2D95003B0CD2 /* ExtensionSettings.swift */,
 				161541BB1E28FFAE00AC2FFB /* CircularProgressView.swift */,
 				63F65EF92464426200534A69 /* TimedCircularProgressView.swift */,
-				A9B02231209B6E4E00DF25D8 /* AppCenter.swift */,
 				8784D4581E818AA4007A6867 /* CGFloat+Hairline.swift */,
 				BF6EC9051EB1FC3D009D9A69 /* URL+Backup.swift */,
 				F18998B52111F76500A7FC95 /* UIApplication+ShareExtension.swift */,
@@ -9089,7 +9067,6 @@
 				06F9864725CC14BB005572C5 /* Constants.swift in Sources */,
 				06E89AFE25C82C51008E3846 /* UnlockViewController.swift in Sources */,
 				06E69AB425C8301D00B678BF /* UIColor+TeamCreation.swift in Sources */,
-				EF3B26E52370596300245701 /* CrashReporter.swift in Sources */,
 				EF2DB834231678360055BDB4 /* UnsentGifImageSendable.swift in Sources */,
 				BF96A6CA1E2FD3340057974A /* NSExtensionContext+Attachments.swift in Sources */,
 				06717E5E2865188000AF442C /* SemanticColors.swift in Sources */,
@@ -10813,7 +10790,6 @@
 				63F65EFB2464444B00534A69 /* TimedCircularProgressView.swift in Sources */,
 				06E69AB825C9A37700B678BF /* AttributedStringOperators.swift in Sources */,
 				F15650AD21DCFC8700210504 /* AppLock.swift in Sources */,
-				EF3B26DC2370585700245701 /* AppCenter.swift in Sources */,
 				A98370BC2488101500515687 /* URL+FileSize.swift in Sources */,
 				E9EBE0D228194F2D0058C793 /* FontScheme.swift in Sources */,
 				5E3E1B732260DA200053AC59 /* StyleKitIcons.generated.swift in Sources */,
