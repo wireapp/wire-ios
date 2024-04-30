@@ -94,6 +94,9 @@ final class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConver
 
             action.succeed(with: payload.uri)
 
+        case (400, nil):
+            action.fail(with: .invalidRequest)
+
         case (403, "invalid-op"?):
             action.fail(with: .invalidOperation)
 

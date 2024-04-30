@@ -25,6 +25,7 @@ public enum CreateConversationGuestLinkError: Error, Equatable {
     case noConversation
     case failedToDecodePayload
     case unknown
+    case invalidRequest
 
 }
 

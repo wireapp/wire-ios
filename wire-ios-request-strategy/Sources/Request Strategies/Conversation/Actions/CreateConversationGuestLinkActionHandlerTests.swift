@@ -148,13 +148,8 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
         // GIVEN
         let statusCode = 400
 
-        let payload: [AnyHashable: Any] = [
-            "code": "SOME-UNIQUE-CODE",
-            "has_password": false,
-            "key": "sampleKey123"
-        ]
-
         // WHEN && THEN
-        test_itHandlesFailure(.failure(status: statusCode, error: .unknown))
+        test_itHandlesFailure(.failure(status: statusCode, error: .invalidRequest))
     }
+
 }
