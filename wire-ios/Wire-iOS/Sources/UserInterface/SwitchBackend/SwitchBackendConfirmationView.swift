@@ -57,32 +57,38 @@ struct SwitchBackendConfirmationView: View {
 
                 itemView(
                     title: Strings.backendUrl,
-                    value: viewModel.backendURL
+                    value: viewModel.backendURL,
+                    isURL: true
                 )
 
                 itemView(
                     title: Strings.backendWsurl,
-                    value: viewModel.backendWSURL
+                    value: viewModel.backendWSURL,
+                    isURL: true
                 )
 
                 itemView(
                     title: Strings.blacklistUrl,
-                    value: viewModel.blacklistURL
+                    value: viewModel.blacklistURL,
+                    isURL: true
                 )
 
                 itemView(
                     title: Strings.teamsUrl,
-                    value: viewModel.teamsURL
+                    value: viewModel.teamsURL,
+                    isURL: true
                 )
 
                 itemView(
                     title: Strings.accountsUrl,
-                    value: viewModel.accountsURL
+                    value: viewModel.accountsURL,
+                    isURL: true
                 )
 
                 itemView(
                     title: Strings.websiteUrl,
-                    value: viewModel.websiteURL
+                    value: viewModel.websiteURL,
+                    isURL: true
                 )
             }
         }
@@ -91,13 +97,15 @@ struct SwitchBackendConfirmationView: View {
     @ViewBuilder
     private func itemView(
         title: String,
-        value: String
+        value: String,
+        isURL: Bool = false
     ) -> some View {
         VStack {
             Text(title)
                 .foregroundStyle(Color.secondaryText)
             Text(value)
                 .foregroundStyle(Color.primaryText)
+                .accessibilityTextContentType(isURL ? .fileSystem : .plain)
         }
     }
 
