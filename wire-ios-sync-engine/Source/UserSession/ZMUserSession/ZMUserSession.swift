@@ -826,8 +826,8 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         WaitingGroupTask(context: syncContext) { [self] in
             do {
-                let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
                 var getFeatureConfigAction = GetFeatureConfigsAction()
+                let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
 
                 try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
                 try await resolveOneOnOneUseCase.invoke()
