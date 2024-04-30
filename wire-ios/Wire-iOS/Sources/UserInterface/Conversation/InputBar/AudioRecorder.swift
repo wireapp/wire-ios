@@ -21,13 +21,7 @@ import Foundation
 import MediaPlayer
 import WireSyncEngine
 
-<<<<<<< HEAD
-private let zmLog = ZMSLog(tag: "UI")
-
 enum PlayingState: UInt, CustomStringConvertible {
-=======
-public enum PlayingState: UInt, CustomStringConvertible {
->>>>>>> 80473886fc (fix: Microphone is not working on iOS 17 Simulator [WPB-8806] (#1356))
     case idle, playing
 
     var description: String {
@@ -302,18 +296,15 @@ final class AudioRecorder: NSObject, AudioRecorderType {
     // MARK: Playing
 
     func playRecording() {
-        guard let audioRecorder = self.audioRecorder,
-            ZMUserSession.shared()?.isCallOngoing == false else { return }
+        guard
+            let audioRecorder = self.audioRecorder,
+            ZMUserSession.shared()?.isCallOngoing == false
+        else { return }
 
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
-<<<<<<< HEAD
         } catch {
-            zmLog.error("Failed change audio category for playback: \(error)")
-=======
-        } catch let error {
             WireLogger.ui.error("Failed change audio category for playback: \(error)")
->>>>>>> 80473886fc (fix: Microphone is not working on iOS 17 Simulator [WPB-8806] (#1356))
         }
 
         setupDisplayLink()
@@ -425,13 +416,8 @@ extension AudioRecorder: AVAudioRecorderDelegate {
         AVSMediaManager.sharedInstance().stopRecording()
     }
 
-<<<<<<< HEAD
     func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
-        zmLog.error("Cannot finish recording: \(String(describing: error))")
-=======
-    public func audioRecorderEncodeErrorDidOccur(_ recorder: AVAudioRecorder, error: Error?) {
         WireLogger.ui.error("Cannot finish recording: \(String(describing: error))")
->>>>>>> 80473886fc (fix: Microphone is not working on iOS 17 Simulator [WPB-8806] (#1356))
     }
 }
 
