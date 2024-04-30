@@ -16,8 +16,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="wire-logo-shield" translatesAutoresizingMaskIntoConstraints="NO" id="KML-s6-hr3" userLabel="Image - Logo">
-                                <rect key="frame" x="106" y="324" width="202" height="262"/>
+                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="Wire/Shield" translatesAutoresizingMaskIntoConstraints="NO" id="KML-s6-hr3" userLabel="Image - Logo">
+                                <rect key="frame" x="105" y="322.5" width="204" height="265"/>
                                 <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </imageView>
                         </subviews>
@@ -35,6 +35,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="wire-logo-shield" width="202" height="262"/>
+        <image name="Wire/Shield" width="204" height="265"/>
     </resources>
 </document>

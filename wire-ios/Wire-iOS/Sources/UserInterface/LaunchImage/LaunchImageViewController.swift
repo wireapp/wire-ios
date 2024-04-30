@@ -23,7 +23,7 @@ class LaunchImageViewController: UIViewController {
 
     private var shouldShowLoadingScreenOnViewDidLoad = false
 
-    private var contentView: UIView!
+    private weak var contentView: UIView!
     private let loadingScreenLabel = UILabel()
     private let activityIndicator = ProgressSpinner()
 
@@ -43,15 +43,10 @@ class LaunchImageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let loadedObjects = UINib(nibName: "LaunchScreen", bundle: nil).instantiate(withOwner: nil, options: nil)
-
-        let nibView = loadedObjects.first as? UIView
-        nibView?.translatesAutoresizingMaskIntoConstraints = false
-        if let nibView = nibView {
-            view.addSubview(nibView)
-        }
-        if let nibView = nibView {
-            contentView = nibView
+        if let shieldView = UIStoryboard(name: "Main", bundle: .main).instantiateInitialViewController()?.view {
+            shieldView.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(shieldView)
+            contentView = shieldView
         }
 
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false

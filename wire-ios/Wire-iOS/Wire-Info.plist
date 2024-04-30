@@ -159,7 +159,7 @@
 		<key>UIColorName</key>
 		<string>Black</string>
 		<key>UIImageName</key>
-		<string>wire-logo-shield</string>
+		<string>Wire/Shield</string>
 		<key>UIImageRespectsSafeAreaInsets</key>
 		<true/>
 	</dict>
