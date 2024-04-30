@@ -21,7 +21,7 @@ import UIKit
 final class RotationAwareNavigationController: UINavigationController, PopoverPresenter, SpinnerCapable {
 
     // MARK: SpinnerCapable
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     // PopoverPresenter
     weak var presentedPopover: UIPopoverPresentationController?

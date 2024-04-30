@@ -19,7 +19,7 @@
 import UIKit
 
 final class BackupViewController: UIViewController, SpinnerCapable {
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     private let tableView = UITableView(frame: .zero)
     private var cells: [UITableViewCell.Type] = []

@@ -29,7 +29,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
     private let tableView = UITableView()
     private var viewModel: ConversationGuestOptionsViewModel
 
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations

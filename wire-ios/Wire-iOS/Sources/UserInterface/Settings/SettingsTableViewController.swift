@@ -20,7 +20,7 @@ import UIKit
 import WireSyncEngine
 
 class SettingsBaseTableViewController: UIViewController, SpinnerCapable {
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     var tableView: UITableView
     let topSeparator = OverflowSeparatorView()

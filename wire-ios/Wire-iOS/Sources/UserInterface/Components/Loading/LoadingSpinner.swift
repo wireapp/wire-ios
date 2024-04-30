@@ -19,10 +19,9 @@
 import UIKit
 
 typealias SpinnerCapableViewController = UIViewController & SpinnerCapable
-typealias SpinnerCompletion = Completion
 
 protocol SpinnerCapable: AnyObject {
-    var dismissSpinner: SpinnerCompletion? { get set }
+    var dismissSpinner: (() -> Void)? { get set }
 }
 
 extension SpinnerCapable where Self: UIViewController {
@@ -104,7 +103,7 @@ final class LoadingSpinnerView: UIView {
 
 // MARK: - SpinnerCapableNavigationController
 final class SpinnerCapableNavigationController: UINavigationController, SpinnerCapable {
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     override var childForStatusBarStyle: UIViewController? {
         return topViewController

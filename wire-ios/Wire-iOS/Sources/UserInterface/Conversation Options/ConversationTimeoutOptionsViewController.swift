@@ -44,7 +44,7 @@ extension ZMConversation {
 }
 
 final class ConversationTimeoutOptionsViewController: UIViewController, SpinnerCapable {
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     private let conversation: ZMConversation
     private var items: [Item] = []

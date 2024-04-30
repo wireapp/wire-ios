@@ -23,7 +23,7 @@ import XCTest
 // MARK: - MockLoadingViewController
 
 final class MockLoadingViewController: SpinnerCapableViewController {
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 }
 
 // MARK: - LoadingViewControllerTests

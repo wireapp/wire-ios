@@ -29,7 +29,7 @@ final class ConversationServicesOptionsViewController: UIViewController,
     private let tableView = UITableView()
     private var viewModel: ConversationServicesOptionsViewModel
 
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations

@@ -29,7 +29,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     // MARK: PopoverPresenter
     var presentedPopover: UIPopoverPresentationController?
     var popoverPointToView: UIView?
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     weak var delegate: ConversationContentViewControllerDelegate?
     let conversation: ZMConversation

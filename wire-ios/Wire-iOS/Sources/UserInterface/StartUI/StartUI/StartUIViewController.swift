@@ -23,7 +23,7 @@ import WireSyncEngine
 private let zmLog = ZMSLog(tag: "StartUIViewController")
 
 final class StartUIViewController: UIViewController, SpinnerCapable {
-    var dismissSpinner: SpinnerCompletion?
+    var dismissSpinner: (() -> Void)?
 
     static let InitiallyShowsKeyboardConversationThreshold = 10
 
