@@ -31,17 +31,17 @@ final class ClientTableViewCell: UITableViewCell {
         style: .h3,
         color: LabelColors.textDefault
     )
-    
+
     let mlsThumbprintLabel = DynamicFontLabel(
         style: .subline1,
         color: LabelColors.textCellSubtitle
     )
-    
+
     let proteusIdLabel = DynamicFontLabel(
         style: .subline1,
         color: LabelColors.textCellSubtitle
     )
-    
+
     let statusStackView = UIStackView()
 
     var viewModel: ClientTableViewCellModel? {
