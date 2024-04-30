@@ -310,4 +310,16 @@ final class UserSessionMock: UserSession {
     )
 
     func fetchAllClients() {}
+
+    func createTeamOneOnOne(
+        with user: UserType,
+        completion: @escaping (Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+    ) {
+    }
+
+    var mockCheckOneOnOneConversationIsReady: MockCheckOneOnOneConversationIsReadyUseCaseProtocol?
+    var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
+        mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
+    }
+
 }
