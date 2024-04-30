@@ -23,11 +23,11 @@ import WireSyncEngine
 
 enum ConversationListState {
     case conversationList
-    case peoplePicker
     case archived
+    case peoplePicker
 }
 
-final class ConversationListViewController: UIViewController {
+final class ConversationListViewController: UIViewController, ConversationListContainerViewModelDelegate {
 
     let viewModel: ViewModel
 
@@ -37,6 +37,7 @@ final class ConversationListViewController: UIViewController {
     /// private
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
+    private let selfProfileViewControllerBuilder: ViewControllerBuilder
 
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
@@ -69,24 +70,26 @@ final class ConversationListViewController: UIViewController {
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
-        selfProfileViewControllerBuilder: some ViewControllerBuilder
+        selfProfileViewControllerBuilder: ViewControllerBuilder
     ) {
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
             selfUser: selfUser,
-            userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
+            userSession: userSession
         )
-        self.init(viewModel: viewModel, selfProfileViewControllerBuilder: selfProfileViewControllerBuilder)
+        self.init(
+            viewModel: viewModel,
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+        )
         onboardingHint.arrowPointToView = tabBar
     }
 
     required init(
         viewModel: ViewModel,
-        selfProfileViewControllerBuilder: some ViewControllerBuilder
+        selfProfileViewControllerBuilder: ViewControllerBuilder
     ) {
         self.viewModel = viewModel
+        self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
 
         topBarViewController = ConversationListTopBarViewController(
             account: viewModel.account,
@@ -94,7 +97,6 @@ final class ConversationListViewController: UIViewController {
             userSession: viewModel.userSession,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
-        topBarViewController.selfUserStatus = viewModel.selfUserStatus
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(userSession: viewModel.userSession)
@@ -118,6 +120,7 @@ final class ConversationListViewController: UIViewController {
         createViewConstraints()
 
         viewModel.viewController = self
+        topBarViewController.delegate = self
     }
 
     @available(*, unavailable)
@@ -162,15 +165,12 @@ final class ConversationListViewController: UIViewController {
 
         ZClientViewController.shared?.notifyUserOfDisabledAppLockIfNeeded()
 
-        viewModel.updateE2EICertifiedStatus()
-
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
 
             ZClientViewController.shared?.showDataUsagePermissionDialogIfNeeded()
             ZClientViewController.shared?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
-
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -193,11 +193,11 @@ final class ConversationListViewController: UIViewController {
     }
 
     override var shouldAutorotate: Bool {
-        return true
+        true
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .portrait
+        .portrait
     }
 
     // MARK: - setup UI
@@ -310,10 +310,10 @@ final class ConversationListViewController: UIViewController {
     }
 
     func hideNoContactLabel(animated: Bool) {
-        UIView.animate(withDuration: animated ? 0.20 : 0.0, animations: {
+        UIView.animate(withDuration: animated ? 0.20 : 0.0) {
             self.noConversationLabel.alpha = 0.0
             self.onboardingHint.alpha = 0.0
-        })
+        }
     }
 
     func scrollViewDidScroll(scrollView: UIScrollView) {
@@ -333,25 +333,24 @@ final class ConversationListViewController: UIViewController {
         return startUIViewController
     }
 
-    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool {
-        return listContentController.select(conversation,
-                                     scrollTo: message,
-                                     focusOnView: focus,
-                                     animated: animated,
-                                     completion: completion)
+    func selectOnListContentController(
+        _ conversation: ZMConversation!,
+        scrollTo message: ZMConversationMessage?,
+        focusOnView focus: Bool,
+        animated: Bool,
+        completion: (() -> Void)?
+    ) -> Bool {
+        listContentController.select(
+            conversation,
+            scrollTo: message,
+            focusOnView: focus,
+            animated: animated,
+            completion: completion
+        )
     }
 
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
         UIAlertController.showNewsletterSubscriptionDialogIfNeeded(presentViewController: self, completionHandler: completionHandler)
-    }
-}
-
-// MARK: - ViewModel Delegate
-
-extension ConversationListViewController: ConversationListContainerViewModelDelegate {
-
-    func conversationListViewControllerViewModel(_ viewModel: ViewModel, didUpdate selfUserStatus: UserStatus) {
-        topBarViewController.selfUserStatus = selfUserStatus
     }
 }
 
@@ -363,18 +362,17 @@ extension ConversationListViewController: UITabBarDelegate {
         guard let tabBar = tabBar as? ConversationListTabBar, let type = item.type else { return }
 
         switch type {
-        case .startUI:
-            setState(.peoplePicker, animated: true) {
-                tabBar.selectedTab = .list
-            }
         case .archive:
             setState(.archived, animated: true) {
                 tabBar.selectedTab = .list
             }
-        case .folder:
-            listContentController.listViewModel.folderEnabled = true
         case .list:
             listContentController.listViewModel.folderEnabled = false
+        case .settings:
+            let alertController = UIAlertController(title: "not implemented yet", message: "will be done within [WPB-7306]", alertAction: .ok())
+            present(alertController, animated: true) {
+                tabBar.selectedTab = .list
+            }
         }
     }
 }
@@ -419,5 +417,14 @@ extension UITabBar {
             return UITraitCollection(traitsFrom: [super.traitCollection, UITraitCollection(horizontalSizeClass: .compact)])
         }
         return super.traitCollection
+    }
+}
+
+// MARK: - ConversationListTopBarViewControllerDelegate
+
+extension ConversationListViewController: ConversationListTopBarViewControllerDelegate {
+
+    func conversationListTopBarViewControllerDidSelectNewConversation(_ viewController: ConversationListTopBarViewController) {
+        setState(.peoplePicker, animated: true)
     }
 }

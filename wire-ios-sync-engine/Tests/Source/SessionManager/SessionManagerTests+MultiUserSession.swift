@@ -519,7 +519,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
     // the background as soon as the SessionManager is created
     func testThatABackgroundTaskCanBeCreatedAfterCreatingSessionManager() {
         // WHEN
-        let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "PushActivity")
+        let activity = BackgroundActivityFactory.shared.startBackgroundActivity(name: "PushActivity")
 
         // THEN
         XCTAssertNotNil(activity)

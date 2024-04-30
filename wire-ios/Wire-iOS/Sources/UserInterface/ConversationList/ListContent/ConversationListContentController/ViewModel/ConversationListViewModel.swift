@@ -184,6 +184,7 @@ final class ConversationListViewModel: NSObject {
         }
     }
 
+    // TODO [WPB-7307]: remove everything regarding folders
     var folderEnabled: Bool {
         get {
             return state.folderEnabled
@@ -645,6 +646,7 @@ final class ConversationListViewModel: NSObject {
 
     private struct State: Codable, Equatable {
         var collapsed: Set<SectionIdentifier>
+        // TODO [WPB-7307]: remove everything regarding folders
         var folderEnabled: Bool
 
         init() {

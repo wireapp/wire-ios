@@ -16,12 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 
 extension ConversationListViewController {
-    func setState(_ state: ConversationListState,
-                  animated: Bool,
-                  completion: Completion? = nil) {
+
+    func setState(
+        _ state: ConversationListState,
+        animated: Bool,
+        completion: Completion? = nil
+    ) {
         if self.state == state {
             completion?()
             return
@@ -37,6 +40,7 @@ extension ConversationListViewController {
             } else {
                 completion?()
             }
+
         case .peoplePicker:
             let startUIViewController = createPeoplePickerController()
             let navigationWrapper = startUIViewController.wrapInNavigationController(navigationControllerClass: NavigationController.self)
@@ -45,6 +49,7 @@ extension ConversationListViewController {
                 startUIViewController.showKeyboardIfNeeded()
                 completion?()
             }
+
         case .archived:
             show(createArchivedListViewController(), animated: animated, completion: completion)
         }
@@ -54,5 +59,4 @@ extension ConversationListViewController {
         setState(.conversationList, animated: false)
         listContentController.selectInboxAndFocus(onView: focus)
     }
-
 }

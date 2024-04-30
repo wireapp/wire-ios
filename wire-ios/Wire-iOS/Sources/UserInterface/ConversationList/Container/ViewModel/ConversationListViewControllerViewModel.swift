@@ -27,11 +27,6 @@ typealias ResultHandler = (_ succeeded: Bool) -> Void
 
 protocol ConversationListContainerViewModelDelegate: AnyObject {
 
-    func conversationListViewControllerViewModel(
-        _ viewModel: ConversationListViewController.ViewModel,
-        didUpdate selfUserStatus: UserStatus
-    )
-
     func scrollViewDidScroll(scrollView: UIScrollView)
 
     func setState(
@@ -46,7 +41,13 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
     func showPermissionDeniedViewController()
 
     @discardableResult
-    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool
+    func selectOnListContentController(
+        _ conversation: ZMConversation!,
+        scrollTo message: ZMConversationMessage?,
+        focusOnView focus: Bool,
+        animated: Bool,
+        completion: (() -> Void)?
+    ) -> Bool
 }
 
 extension ConversationListViewController {
@@ -61,15 +62,9 @@ extension ConversationListViewController {
         }
 
         let account: Account
-
-        private(set) var selfUserStatus: UserStatus {
-            didSet { viewController?.conversationListViewControllerViewModel(self, didUpdate: selfUserStatus) }
-        }
-
         let selfUser: SelfUserType
         let conversationListType: ConversationListHelperType.Type
         let userSession: UserSession
-        private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
         private let notificationCenter: NotificationCenter
 
         var selectedConversation: ZMConversation?
@@ -77,7 +72,6 @@ extension ConversationListViewController {
         private var didBecomeActiveNotificationToken: Any?
         private var e2eiCertificateChangedToken: Any?
         private var initialSyncObserverToken: Any?
-        private var userObservationToken: NSObjectProtocol?
         /// observer tokens which are assigned when viewDidLoad
         var allConversationsObserverToken: NSObjectProtocol?
         var connectionRequestsObserverToken: NSObjectProtocol?
@@ -89,19 +83,14 @@ extension ConversationListViewController {
             selfUser: SelfUserType,
             conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
             userSession: UserSession,
-            isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
             notificationCenter: NotificationCenter = .default
         ) {
             self.account = account
             self.selfUser = selfUser
             self.conversationListType = conversationListType
             self.userSession = userSession
-            self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
-            selfUserStatus = .init(user: selfUser, isE2EICertified: false)
             self.notificationCenter = notificationCenter
             super.init()
-
-            updateE2EICertifiedStatus()
         }
 
         deinit {
@@ -122,28 +111,15 @@ extension ConversationListViewController.ViewModel {
 
         if let userSession = ZMUserSession.shared() {
             initialSyncObserverToken = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
-            userObservationToken = userSession.addUserObserver(self, for: selfUser)
         }
 
         updateObserverTokensForActiveTeam()
-
-        didBecomeActiveNotificationToken = notificationCenter.addObserver(forName: UIApplication.didBecomeActiveNotification,
-                                                                          object: nil,
-                                                                          queue: .main) { [weak self] _ in
-            self?.updateE2EICertifiedStatus()
-        }
-
-        e2eiCertificateChangedToken = notificationCenter.addObserver(forName: .e2eiCertificateChanged,
-                                                                     object: nil,
-                                                                     queue: .main) { [weak self] _ in
-            self?.updateE2EICertifiedStatus()
-        }
     }
 
     func savePendingLastRead() {
-        userSession.enqueue({
+        userSession.enqueue {
             self.selectedConversation?.savePendingLastRead()
-        })
+        }
     }
 
     /// Select a conversation and move the focus to the conversation view.
@@ -225,32 +201,6 @@ extension ConversationListViewController.ViewModel {
         })
 
         return true
-    }
-
-    func updateE2EICertifiedStatus() {
-        Task { @MainActor in
-            do {
-                selfUserStatus.isE2EICertified = try await isSelfUserE2EICertifiedUseCase.invoke()
-            } catch {
-                WireLogger.e2ei.error("failed to get E2EI certification status: \(error)")
-            }
-        }
-    }
-}
-
-extension ConversationListViewController.ViewModel: UserObserving {
-
-    func userDidChange(_ changeInfo: UserChangeInfo) {
-        if changeInfo.nameChanged {
-            selfUserStatus.name = changeInfo.user.name ?? ""
-        }
-        if changeInfo.trustLevelChanged {
-            selfUserStatus.isProteusVerified = changeInfo.user.isVerified
-            updateE2EICertifiedStatus()
-        }
-        if changeInfo.availabilityChanged {
-            selfUserStatus.availability = changeInfo.user.availability
-        }
     }
 }
 

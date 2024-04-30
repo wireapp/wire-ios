@@ -32,6 +32,7 @@ final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestC
 
     override func setUp() {
         super.setUp()
+
         mockAccount = Account.mockAccount(imageData: mockImageData)
         mockSelfUser = MockUserType.createSelfUser(name: "James Hetfield")
         userSession = UserSessionMock(mockUser: mockSelfUser)
@@ -82,14 +83,6 @@ final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestC
     }
 
     // MARK: - use cases
-
-    func testForLongName() {
-        mockSelfUser.name = "Johannes Chrysostomus Wolfgangus Theophilus Mozart"
-
-        setupSut()
-
-        verify(matching: sut)
-    }
 
     func testForOverflowSeperatorIsShownWhenScrollViewScrollsDown() {
         setupSut()

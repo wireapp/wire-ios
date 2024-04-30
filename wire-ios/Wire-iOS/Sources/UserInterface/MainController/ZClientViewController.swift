@@ -50,8 +50,8 @@ final class ZClientViewController: UIViewController {
     var dataUsagePermissionDialogDisplayed = false
 
     private let colorSchemeController: ColorSchemeController
-    private var incomingApnsObserver: Any?
-    private var networkAvailabilityObserverToken: Any?
+    private var incomingApnsObserver: NSObjectProtocol?
+    private var networkAvailabilityObserverToken: NSObjectProtocol?
     private var pendingInitialStateRestore = false
 
     /// init method for testing allows injecting an Account object and self user
@@ -70,7 +70,6 @@ final class ZClientViewController: UIViewController {
             account: account,
             selfUser: userSession.selfUser,
             userSession: userSession,
-            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
 
@@ -393,7 +392,7 @@ final class ZClientViewController: UIViewController {
         if userSession.ringingCallConversation != nil {
             dismissAction()
         } else {
-            minimizeCallOverlay(animated: true, withCompletion: dismissAction)
+            minimizeCallOverlay(animated: true, completion: dismissAction)
         }
     }
 
@@ -707,8 +706,10 @@ final class ZClientViewController: UIViewController {
         (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
     }
 
-    func minimizeCallOverlay(animated: Bool,
-                             withCompletion completion: Completion?) {
-        router?.minimizeCallOverlay(animated: animated, withCompletion: completion)
+    func minimizeCallOverlay(
+        animated: Bool,
+        completion: @escaping Completion
+    ) {
+        router?.minimizeCallOverlay(animated: animated, completion: completion)
     }
 }

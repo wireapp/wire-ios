@@ -23,36 +23,26 @@ import WireSyncEngine
 
 final class ConversationListTopBarViewController: UIViewController {
 
-    private let account: Account
+    weak var delegate: ConversationListTopBarViewControllerDelegate?
 
-    /// Name, availability and verification info about the self user.
-    var selfUserStatus = UserStatus() {
-        didSet { updateTitleView() }
-    }
+    private let account: Account
 
     private let selfUser: SelfUserType
     private var userSession: UserSession
-    private let selfProfileViewControllerBuilder: any ViewControllerBuilder
+    private let selfProfileViewControllerBuilder: ViewControllerBuilder
     private var observerToken: NSObjectProtocol?
 
     var topBar: TopBar? {
         view as? TopBar
     }
 
-    private weak var userStatusViewController: UserStatusViewController?
     private weak var titleViewLabel: UILabel?
 
-    /// init a ConversationListTopBarViewController
-    ///
-    /// - Parameters:
-    ///   - account: the Account of the user
-    ///   - selfUser: the self user object. Allow to inject a mock self user for testing
-    ///   - selfProfileViewControllerBuilder: a builder for the self profile view controller
     init(
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        selfProfileViewControllerBuilder: some ViewControllerBuilder
+        selfProfileViewControllerBuilder: ViewControllerBuilder
     ) {
         self.account = account
         self.selfUser = selfUser
@@ -80,46 +70,56 @@ final class ConversationListTopBarViewController: UIViewController {
         view.backgroundColor = SemanticColors.View.backgroundConversationList
         view.addBorder(for: .bottom)
 
-        updateTitleView()
+        setupTitleView()
+        setupNavigationBarItemStackViews()
         updateAccountView()
         updateLegalHoldIndictor()
+        setupRightNavigationBarButtons()
+    }
+
+    // MARK: - Navigation Bar Items
+
+    private func setupNavigationBarItemStackViews() {
+
+        let leftNavigationBarItemsStackView = UIStackView()
+        topBar?.leftView = leftNavigationBarItemsStackView
+
+        let rightNavigationBarItemsStackView = UIStackView()
+        rightNavigationBarItemsStackView.spacing = 24
+        topBar?.rightView = rightNavigationBarItemsStackView
+    }
+
+    private func setupRightNavigationBarButtons() {
+        guard let stackView = topBar?.rightView as? UIStackView else { return }
+
+        let filerImage = UIImage(resource: .ConversationList.Header.filterConversations)
+        let filterConversationsAction = UIAction(image: filerImage) { _ in
+            assertionFailure("TODO [WPB-7298]: implement filtering")
+        }
+        stackView.addArrangedSubview(UIButton(primaryAction: filterConversationsAction))
+
+        let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
+        let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
+            self?.delegate?.conversationListTopBarViewControllerDidSelectNewConversation(self!)
+        }
+        stackView.addArrangedSubview(UIButton(primaryAction: newConversationAction))
     }
 
     // MARK: - Title View
 
-    func updateTitleView() {
-        if selfUser.isTeamMember {
-            defer { userStatusViewController?.userStatus = selfUserStatus }
-            guard userStatusViewController == nil else { return }
-
-            let userStatusViewController = UserStatusViewController(options: .header, settings: .shared)
-            addChild(userStatusViewController)
-            topBar?.middleView = userStatusViewController.view
-            userStatusViewController.didMove(toParent: self)
-            userStatusViewController.delegate = self
-            self.userStatusViewController = userStatusViewController
-
-        } else {
-            defer {
-                titleViewLabel?.text = selfUserStatus.name
-                titleViewLabel?.accessibilityValue = selfUserStatus.name
-            }
-            guard titleViewLabel == nil else { return }
-            if let userStatusViewController {
-                removeChild(userStatusViewController)
-            }
-
-            let titleLabel = UILabel()
-            titleLabel.font = FontSpec(.normal, .semibold).font
-            titleLabel.textColor = SemanticColors.Label.textDefault
-            titleLabel.accessibilityTraits = .header
-            titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-            titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-            titleLabel.setContentHuggingPriority(.required, for: .horizontal)
-            titleLabel.setContentHuggingPriority(.required, for: .vertical)
-            topBar?.middleView = titleLabel
-            self.titleViewLabel = titleLabel
-        }
+    func setupTitleView() {
+        let titleLabel = UILabel()
+        titleLabel.font = FontSpec(.normal, .semibold).font
+        titleLabel.textColor = SemanticColors.Label.textDefault
+        titleLabel.accessibilityTraits = .header
+        titleLabel.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+        titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
+        titleLabel.setContentHuggingPriority(.required, for: .horizontal)
+        titleLabel.setContentHuggingPriority(.required, for: .vertical)
+        titleLabel.text = L10n.Localizable.List.title
+        titleLabel.accessibilityValue = L10n.Localizable.List.title
+        topBar?.middleView = titleLabel
+        self.titleViewLabel = titleLabel
     }
 
     private func createLegalHoldView() -> UIView {
@@ -171,8 +171,11 @@ final class ConversationListTopBarViewController: UIViewController {
         return button
     }
 
-    func updateAccountView() {
-        topBar?.leftView = createAccountView()
+    private func updateAccountView() {
+        guard let stackView = topBar?.leftView as? UIStackView else { return }
+
+        stackView.arrangedSubviews.first?.removeFromSuperview()
+        stackView.insertArrangedSubview(createAccountView(), at: 0)
     }
 
     private func createAccountView() -> UIView {
@@ -203,13 +206,16 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     func updateLegalHoldIndictor() {
+        guard let currentStackView = topBar?.leftView as? UIStackView else { return }
+
+        currentStackView.arrangedSubviews[1...].forEach { $0.removeFromSuperview() }
         switch selfUser.legalHoldStatus {
         case .disabled:
-            topBar?.rightView = nil
+            break
         case .pending:
-            topBar?.rightView = createPendingLegalHoldRequestView()
+            currentStackView.addArrangedSubview(createPendingLegalHoldRequestView())
         case .enabled:
-            topBar?.rightView = createLegalHoldView()
+            currentStackView.addArrangedSubview(createLegalHoldView())
         }
     }
 
@@ -282,20 +288,6 @@ extension ConversationListTopBarViewController: UserObserving {
         }
         if changeInfo.legalHoldStatusChanged {
             updateLegalHoldIndictor()
-        }
-    }
-}
-
-// MARK: - UserStatusViewControllerDelegate
-
-extension ConversationListTopBarViewController: UserStatusViewControllerDelegate {
-
-    func userStatusViewController(_ viewController: UserStatusViewController, didSelect availability: Availability) {
-        guard viewController === userStatusViewController else { return }
-
-        // this should be done by some use case instead of accessing the `session` and the `UserType` directly here
-        userSession.perform { [weak self] in
-            self?.selfUser.availability = availability
         }
     }
 }
