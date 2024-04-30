@@ -31,11 +31,19 @@ public struct SearchResult {
     public var conversations: [ZMConversation]
     /// Bots.
     public var services: [ServiceUser]
+    /// Cache for search users.
+    let searchUsersCache: SearchUsersCache?
 }
 
 extension SearchResult {
 
-    public init?(payload: [AnyHashable: Any], query: SearchRequest.Query, searchOptions: SearchOptions, contextProvider: ContextProvider) {
+    public init?(
+        payload: [AnyHashable: Any],
+        query: SearchRequest.Query,
+        searchOptions: SearchOptions,
+        contextProvider: ContextProvider,
+        searchUsersCache: SearchUsersCache?
+    ) {
         guard let documents = payload["documents"] as? [[String: Any]] else {
             return nil
         }
@@ -46,13 +54,18 @@ extension SearchResult {
             return !query.isHandleQuery || name?.hasPrefix("@") ?? true || handle?.contains(query.string.lowercased()) ?? false
         }
 
-        let searchUsers = ZMSearchUser.searchUsers(from: filteredDocuments, contextProvider: contextProvider)
+        let searchUsers = ZMSearchUser.searchUsers(
+            from: filteredDocuments,
+            contextProvider: contextProvider,
+            searchUsersCache: searchUsersCache
+        )
 
         contacts = []
         addressBook = []
         directory = searchUsers.filter({ !$0.isConnected && !$0.isTeamMember })
         conversations = []
         services = []
+        self.searchUsersCache = searchUsersCache
 
         if searchOptions.contains(.teamMembers) &&
            searchOptions.isDisjoint(with: .excludeNonActiveTeamMembers) {
@@ -62,12 +75,21 @@ extension SearchResult {
         }
     }
 
-    public init?(servicesPayload servicesFullPayload: [AnyHashable: Any], query: String, contextProvider: ContextProvider) {
+    public init?(
+        servicesPayload servicesFullPayload: [AnyHashable: Any],
+        query: String,
+        contextProvider: ContextProvider,
+        searchUsersCache: SearchUsersCache?
+    ) {
         guard let servicesPayload = servicesFullPayload["services"] as? [[String: Any]] else {
             return nil
         }
 
-        let searchUsersServices = ZMSearchUser.searchUsers(from: servicesPayload, contextProvider: contextProvider)
+        let searchUsersServices = ZMSearchUser.searchUsers(
+            from: servicesPayload,
+            contextProvider: contextProvider,
+            searchUsersCache: searchUsersCache
+        )
 
         contacts = []
         teamMembers = []
@@ -75,14 +97,24 @@ extension SearchResult {
         directory = []
         conversations = []
         services = searchUsersServices
+        self.searchUsersCache = searchUsersCache
     }
 
-    public init?(userLookupPayload: [AnyHashable: Any], contextProvider: ContextProvider
+    public init?(
+        userLookupPayload: [AnyHashable: Any],
+        contextProvider: ContextProvider,
+        searchUsersCache: SearchUsersCache?
     ) {
-        guard let userLookupPayload = userLookupPayload as? [String: Any],
-              let searchUser = ZMSearchUser.searchUser(from: userLookupPayload, contextProvider: contextProvider),
-              searchUser.user == nil ||
-              searchUser.user?.isTeamMember == false else {
+        guard
+            let userLookupPayload = userLookupPayload as? [String: Any],
+            let searchUser = ZMSearchUser.searchUser(
+                from: userLookupPayload,
+                contextProvider: contextProvider,
+                searchUsersCache: searchUsersCache
+            ),
+            searchUser.user == nil
+            || searchUser.user?.isTeamMember == false
+        else {
             return nil
         }
 
@@ -92,6 +124,7 @@ extension SearchResult {
         directory = [searchUser]
         conversations = []
         services = []
+        self.searchUsersCache = searchUsersCache
     }
 
     mutating func extendWithMembershipPayload(payload: MembershipListPayload) {
@@ -120,41 +153,54 @@ extension SearchResult {
 
     func copy(on context: NSManagedObjectContext) -> SearchResult {
 
-        let copiedConversations = conversations.compactMap { context.object(with: $0.objectID) as? ZMConversation }
+        let copiedConversations = conversations.compactMap {
+            context.object(with: $0.objectID) as? ZMConversation
+        }
 
-        return SearchResult(contacts: contacts,
-                            teamMembers: teamMembers,
-                            addressBook: addressBook,
-                            directory: directory,
-                            conversations: copiedConversations,
-                            services: services)
+        return SearchResult(
+            contacts: contacts,
+            teamMembers: teamMembers,
+            addressBook: addressBook,
+            directory: directory,
+            conversations: copiedConversations,
+            services: services,
+            searchUsersCache: searchUsersCache
+        )
     }
 
     func union(withLocalResult result: SearchResult) -> SearchResult {
-        return SearchResult(contacts: result.contacts,
-                            teamMembers: result.teamMembers,
-                            addressBook: result.addressBook,
-                            directory: directory,
-                            conversations: result.conversations,
-                            services: services)
+        SearchResult(contacts: result.contacts,
+                     teamMembers: result.teamMembers,
+                     addressBook: result.addressBook,
+                     directory: directory,
+                     conversations: result.conversations,
+                     services: services,
+                     searchUsersCache: searchUsersCache
+        )
     }
 
     func union(withServiceResult result: SearchResult) -> SearchResult {
-        return SearchResult(contacts: contacts,
-                            teamMembers: teamMembers,
-                            addressBook: addressBook,
-                            directory: directory,
-                            conversations: conversations,
-                            services: result.services)
+        SearchResult(
+            contacts: contacts,
+            teamMembers: teamMembers,
+            addressBook: addressBook,
+            directory: directory,
+            conversations: conversations,
+            services: result.services,
+            searchUsersCache: searchUsersCache
+        )
     }
 
     func union(withDirectoryResult result: SearchResult) -> SearchResult {
-        return SearchResult(contacts: contacts,
-                            teamMembers: Array(Set(teamMembers).union(result.teamMembers)),
-                            addressBook: addressBook,
-                            directory: result.directory,
-                            conversations: conversations,
-                            services: services)
+        SearchResult(
+            contacts: contacts,
+            teamMembers: Array(Set(teamMembers).union(result.teamMembers)),
+            addressBook: addressBook,
+            directory: result.directory,
+            conversations: conversations,
+            services: services,
+            searchUsersCache: searchUsersCache
+        )
     }
 
 }
