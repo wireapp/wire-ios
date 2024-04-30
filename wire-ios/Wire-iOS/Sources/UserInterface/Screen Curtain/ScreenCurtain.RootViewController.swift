@@ -22,6 +22,15 @@ extension ScreenCurtain {
 
     final class RootViewController: UIViewController {
 
+        @available(*, unavailable)
+        required init?(coder aDecoder: NSCoder) {
+            fatalError("init(coder:) is not supported")
+        }
+
+        override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+            super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        }
+
         // MARK: - Properties
 
         override var prefersStatusBarHidden: Bool {

@@ -57,6 +57,15 @@ final class RootViewController: UIViewController {
         return childViewController
     }
 
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+
     func set(childViewController newViewController: UIViewController?,
              animated: Bool = false,
              completion: (() -> Void)? = nil) {
