@@ -8087,6 +8087,28 @@
 			path = "Button styles";
 			sourceTree = "<group>";
 		};
+		EEF37EDF2BE0E7560055C9E1 /* Typography */ = {
+			isa = PBXGroup;
+			children = (
+				EEF37ED32BDFD2350055C9E1 /* WireTextStyle.swift */,
+				EEF37EDB2BDFD9970055C9E1 /* Font+WireTextStyle.swift */,
+				EEF37EDD2BDFD9FB0055C9E1 /* UIFont+WireTextStyle.swift */,
+				E9EBE0CF28194D7E0058C793 /* DynamicTypeCapable.swift */,
+				EEF37EE02BE0E7710055C9E1 /* Legacy */,
+			);
+			path = Typography;
+			sourceTree = "<group>";
+		};
+		EEF37EE02BE0E7710055C9E1 /* Legacy */ = {
+			isa = PBXGroup;
+			children = (
+				E9EBE0D128194F2D0058C793 /* FontScheme.swift */,
+				E9EBE0D328194F890058C793 /* FontScheme+DynamicType.swift */,
+				E9EBE0D8281958BE0058C793 /* FontSpec.swift */,
+			);
+			path = Legacy;
+			sourceTree = "<group>";
+		};
 		EEFF3E7321B6755D000834A6 /* Sections */ = {
 			isa = PBXGroup;
 			children = (
@@ -8553,6 +8575,7 @@
 			isa = PBXGroup;
 			children = (
 				1E5E0CE71B6B8EDB003B0CAC /* Icons */,
+				EEF37EDF2BE0E7560055C9E1 /* Typography */,
 				CE8E4FB21DF066EE0009F437 /* AudioProcessing.swift */,
 				06F9864825CC1518005572C5 /* AccessoryTextField.swift */,
 				EF1EB850235F008F00575DD9 /* Bundle+InfoDict.swift */,
@@ -8585,13 +8608,6 @@
 				A98370B9248806E600515687 /* UIAlertController+factory.swift */,
 				A98370BB2488101500515687 /* URL+FileSize.swift */,
 				A9730DDB250287360061BF36 /* Bundle+ThirdPartyKeys.swift */,
-				E9EBE0CF28194D7E0058C793 /* DynamicTypeCapable.swift */,
-				EEF37ED32BDFD2350055C9E1 /* WireTextStyle.swift */,
-				EEF37EDB2BDFD9970055C9E1 /* Font+WireTextStyle.swift */,
-				EEF37EDD2BDFD9FB0055C9E1 /* UIFont+WireTextStyle.swift */,
-				E9EBE0D128194F2D0058C793 /* FontScheme.swift */,
-				E9EBE0D328194F890058C793 /* FontScheme+DynamicType.swift */,
-				E9EBE0D8281958BE0058C793 /* FontSpec.swift */,
 				01F5EAE32B712DD6009FD25D /* LogFileDestination.swift */,
 			);
 			path = WireCommonComponents;
