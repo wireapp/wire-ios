@@ -30,7 +30,41 @@ enum ProfileViewControllerContext {
     case profileViewer
 }
 
-final class ProfileViewControllerViewModel: NSObject {
+// sourcery: AutoMockable
+protocol ProfileViewControllerViewModeling {
+
+    var viewModelDelegate: ProfileViewControllerViewModelDelegate? { get set }
+
+    var classification: SecurityClassification? { get }
+    var userSet: UserSet { get }
+    var userSession: UserSession { get }
+    var user: UserType { get }
+    var viewer: UserType { get }
+    var conversation: ZMConversation? { get }
+    var context: ProfileViewControllerContext { get }
+    var hasUserClientListTab: Bool { get }
+    var blockTitle: String? { get }
+    var allBlockResult: [BlockResult] { get }
+    var hasLegalHoldItem: Bool { get }
+    var incomingRequestFooterHidden: Bool { get }
+
+    func updateActionsList()
+    func sendConnectionRequest()
+    func acceptConnectionRequest()
+    func ignoreConnectionRequest()
+    func cancelConnectionRequest(completion: @escaping Completion)
+    func openOneToOneConversation()
+    func startOneToOneConversation()
+    func archiveConversation()
+    func updateMute(enableNotifications: Bool)
+    func handleNotificationResult(_ result: NotificationResult)
+    func handleBlockAndUnblock()
+    func handleDeleteResult(_ result: ClearContentResult)
+    func transitionToListAndEnqueue(leftViewControllerRevealed: Bool, _ block: @escaping () -> Void)
+
+}
+
+final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewModeling {
     let user: UserType
     let conversation: ZMConversation?
     let viewer: UserType
@@ -38,23 +72,18 @@ final class ProfileViewControllerViewModel: NSObject {
     let classificationProvider: SecurityClassificationProviding?
     let userSession: UserSession
 
-    weak var delegate: ProfileViewControllerDelegate? {
-        didSet {
-            backButtonTitleDelegate = delegate as? BackButtonTitleDelegate
-        }
-    }
-
-    weak var backButtonTitleDelegate: BackButtonTitleDelegate?
+    weak var viewModelDelegate: ProfileViewControllerViewModelDelegate?
 
     private var observerToken: NSObjectProtocol?
-    weak var viewModelDelegate: ProfileViewControllerViewModelDelegate?
+    private let profileActionsFactory: ProfileActionsFactoryProtocol
 
     init(user: UserType,
          conversation: ZMConversation?,
          viewer: UserType,
          context: ProfileViewControllerContext,
          classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
-         userSession: UserSession
+         userSession: UserSession,
+         profileActionsFactory: ProfileActionsFactoryProtocol
     ) {
         self.user = user
         self.conversation = conversation
@@ -62,6 +91,8 @@ final class ProfileViewControllerViewModel: NSObject {
         self.context = context
         self.classificationProvider = classificationProvider
         self.userSession = userSession
+        self.profileActionsFactory = profileActionsFactory
+
         super.init()
 
         observerToken = userSession.addUserObserver(self, for: user)
@@ -73,10 +104,6 @@ final class ProfileViewControllerViewModel: NSObject {
 
     var hasLegalHoldItem: Bool {
         return user.isUnderLegalHold || conversation?.isUnderLegalHold == true
-    }
-
-    var shouldShowVerifiedShield: Bool {
-        return user.isVerified && context != .deviceList
     }
 
     var hasUserClientListTab: Bool {
@@ -98,16 +125,6 @@ final class ProfileViewControllerViewModel: NSObject {
 
     var allBlockResult: [BlockResult] {
         return BlockResult.all(isBlocked: user.isBlocked)
-    }
-
-    func cancelConnectionRequest(completion: @escaping Completion) {
-        self.user.cancelConnectionRequest { [weak self] error in
-            if let error = error as? ConnectToUserError {
-                self?.viewModelDelegate?.presentError(error)
-            } else {
-                completion()
-            }
-        }
     }
 
     func toggleBlocked() {
@@ -144,7 +161,7 @@ final class ProfileViewControllerViewModel: NSObject {
             case .success(let conversation):
                 self?.transition(to: conversation)
             case .failure(let error):
-                WireLogger.conversation.error("failed to create team one on one from profile view: \(error)")
+                WireLogger.conversation.warn("failed to create team one on one from profile view: \(error)")
                 guard let username = self?.user.name else { return }
                 self?.viewModelDelegate?.presentConversationCreationError(username: username)
             }
@@ -213,32 +230,20 @@ final class ProfileViewControllerViewModel: NSObject {
     // MARK: - Helpers
 
     func transitionToListAndEnqueue(leftViewControllerRevealed: Bool = true, _ block: @escaping () -> Void) {
-        ZClientViewController.shared?.transitionToList(animated: true,
-                                                       leftViewControllerRevealed: leftViewControllerRevealed) {
-                                                        self.enqueueChanges(block)
+        ZClientViewController.shared?.transitionToList(
+            animated: true,
+            leftViewControllerRevealed: leftViewControllerRevealed
+        ) {
+            self.enqueueChanges(block)
         }
     }
 
-    func enqueueChanges(_ block: @escaping () -> Void) {
+    private func enqueueChanges(_ block: @escaping () -> Void) {
         userSession.enqueue(block)
     }
 
     private func transition(to conversation: ZMConversation) {
-        delegate?.profileViewController(
-            viewModelDelegate as? ProfileViewController,
-            wantsToNavigateTo: conversation)
-    }
-
-    // MARK: - Factories
-
-    var profileActionsFactory: ProfileActionsFactory {
-        return ProfileActionsFactory(
-            user: user,
-            viewer: viewer,
-            conversation: conversation,
-            context: context,
-            userSession: userSession
-        )
+        viewModelDelegate?.transition(to: conversation)
     }
 
     // MARK: Connect
@@ -274,6 +279,16 @@ final class ProfileViewControllerViewModel: NSObject {
         }
     }
 
+    func cancelConnectionRequest(completion: @escaping Completion) {
+        self.user.cancelConnectionRequest { [weak self] error in
+            if let error = error as? ConnectToUserError {
+                self?.viewModelDelegate?.presentError(error)
+            } else {
+                completion()
+            }
+        }
+    }
+
 }
 
 extension ProfileViewControllerViewModel: UserObserving {
@@ -291,13 +306,7 @@ extension ProfileViewControllerViewModel: UserObserving {
     }
 }
 
-extension ProfileViewControllerViewModel: BackButtonTitleDelegate {
-
-    func suggestedBackButtonTitle(for controller: ProfileViewController?) -> String? {
-        return user.name?.uppercasedWithCurrentLocale
-    }
-}
-
+// sourcery: AutoMockable
 protocol ProfileViewControllerViewModelDelegate: AnyObject {
     func setupNavigationItems()
     func updateFooterActionsViews(_ actions: [ProfileAction])
@@ -307,4 +316,5 @@ protocol ProfileViewControllerViewModelDelegate: AnyObject {
     func presentConversationCreationError(username: String)
     func startAnimatingActivity()
     func stopAnimatingActivity()
+    func transition(to conversation: ZMConversation)
 }

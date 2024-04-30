@@ -47,25 +47,16 @@ extension ZMConversationType {
 }
 
 final class ProfileViewController: UIViewController {
-    let viewModel: ProfileViewControllerViewModel
     weak var viewControllerDismisser: ViewControllerDismisser?
+    var delegate: ProfileViewControllerDelegate?
 
+    private var viewModel: ProfileViewControllerViewModeling
     private let profileFooterView = ProfileFooterView()
     private let incomingRequestFooter = IncomingRequestFooterView()
     private let securityLevelView = SecurityLevelView()
     private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
     private let activityIndicator = UIActivityIndicatorView(style: .large)
-
     private var tabsController: TabBarController?
-
-    var delegate: ProfileViewControllerDelegate? {
-        get {
-            return viewModel.delegate
-        }
-        set {
-            viewModel.delegate = newValue
-        }
-    }
 
     // MARK: - init
 
@@ -85,13 +76,22 @@ final class ProfileViewController: UIViewController {
             profileViewControllerContext = conversation?.conversationType.profileViewControllerContext ?? .oneToOneConversation
         }
 
+        let profileActionsFactory = ProfileActionsFactory(
+            user: user,
+            viewer: viewer,
+            conversation: conversation,
+            context: profileViewControllerContext,
+            userSession: userSession
+        )
+
         let viewModel = ProfileViewControllerViewModel(
             user: user,
             conversation: conversation,
             viewer: viewer,
             context: profileViewControllerContext,
             classificationProvider: classificationProvider,
-            userSession: userSession
+            userSession: userSession,
+            profileActionsFactory: profileActionsFactory
         )
 
         self.init(viewModel: viewModel)
@@ -101,7 +101,7 @@ final class ProfileViewController: UIViewController {
         self.viewControllerDismisser = viewControllerDismisser
     }
 
-    required init(viewModel: ProfileViewControllerViewModel) {
+    required init(viewModel: ProfileViewControllerViewModeling) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
 
@@ -529,14 +529,6 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
 }
 
-extension ProfileViewController: ProfileViewControllerDelegate {
-
-    func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
-        delegate?.profileViewController(controller, wantsToNavigateTo: conversation)
-    }
-
-}
-
 extension ProfileViewController: ConversationCreationControllerDelegate {
 
     func conversationCreationController(
@@ -623,5 +615,9 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
 
     func stopAnimatingActivity() {
         activityIndicator.stopAnimating()
+    }
+
+    func transition(to conversation: ZMConversation) {
+        delegate?.profileViewController(self, wantsToNavigateTo: conversation)
     }
 }
