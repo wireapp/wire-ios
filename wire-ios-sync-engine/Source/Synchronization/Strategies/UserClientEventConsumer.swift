@@ -34,16 +34,12 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
         managedObjectContext: NSManagedObjectContext,
         clientRegistrationStatus: ZMClientRegistrationStatus,
         clientUpdateStatus: ClientUpdateStatus,
-        mlsService: any MLSServiceInterface
+        resolveOneOnOneConversations: any ResolveOneOnOneConversationsUseCaseProtocol
     ) {
         self.managedObjectContext = managedObjectContext
         self.clientRegistrationStatus = clientRegistrationStatus
         self.clientUpdateStatus = clientUpdateStatus
-
-        self.resolveOneOnOneConversations = ResolveOneOnOneConversationsUseCase(
-            context: managedObjectContext,
-            mlsService: mlsService
-        )
+        self.resolveOneOnOneConversations = resolveOneOnOneConversations
 
         super.init()
     }

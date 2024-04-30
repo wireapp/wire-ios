@@ -121,16 +121,21 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             context: syncMOC,
             apiProvider: apiProvider)
         let messageDependencyResolver = MessageDependencyResolver(context: syncMOC)
-        let quickSyncObserver = QuickSyncObserver(context: syncMOC,
-                                                  applicationStatus: applicationStatusDirectory,
-                                                  notificationContext: syncMOC.notificationContext)
+        let quickSyncObserver = QuickSyncObserver(
+            context: syncMOC,
+            applicationStatus: applicationStatusDirectory,
+            notificationContext: syncMOC.notificationContext
+        )
         let messageSender = MessageSender(
             apiProvider: apiProvider,
             clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus,
             sessionEstablisher: sessionEstablisher,
             messageDependencyResolver: messageDependencyResolver,
             quickSyncObserver: quickSyncObserver,
-            context: syncMOC)
+            context: syncMOC
+        )
+        let oneOnOneResolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+
         let strategies: [Any] = [
 
             UserClientRequestStrategy(
@@ -226,7 +231,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncProgress: applicationStatusDirectory.syncStatus,
-                oneOneOneResolver: OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+                oneOneOneResolver: oneOnOneResolver
             ),
             ConversationRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -312,14 +317,18 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             TerminateFederationRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory),
+                applicationStatus: applicationStatusDirectory
+            ),
             ConversationStatusStrategy(
                 managedObjectContext: syncMOC),
             UserClientEventConsumer(
                 managedObjectContext: syncMOC,
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus,
-                mlsService: mlsService
+                resolveOneOnOneConversations: makeResolveOneOnOneConversationsUseCase(
+                    context: syncMOC,
+                    resolver: oneOnOneResolver
+                )
             ),
             ResetSessionRequestStrategy(
                 managedObjectContext: syncMOC,
@@ -327,7 +336,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             UserImageAssetUpdateStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatusDirectory: applicationStatusDirectory,
-                userProfileImageUpdateStatus: applicationStatusDirectory.userProfileImageUpdateStatus),
+                userProfileImageUpdateStatus: applicationStatusDirectory.userProfileImageUpdateStatus
+            ),
             localNotificationDispatcher,
             MLSRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -349,4 +359,16 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         return strategies
     }
 
+    // MARK: Use Cases
+
+    private static func makeResolveOneOnOneConversationsUseCase(
+        context: NSManagedObjectContext,
+        resolver: any OneOnOneResolverInterface
+    ) -> any ResolveOneOnOneConversationsUseCaseProtocol {
+        ResolveOneOnOneConversationsUseCase(
+            context: context,
+            supportedProtocolService: SupportedProtocolsService(context: context),
+            resolver: resolver
+        )
+    }
 }
