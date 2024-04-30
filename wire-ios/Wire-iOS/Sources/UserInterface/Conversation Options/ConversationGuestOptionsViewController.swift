@@ -34,7 +34,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
 
     private let tableView = UITableView()
     private var viewModel: ConversationGuestOptionsViewModel
-    var guestLinkObserver: NSObjectProtocol?
+    private var guestLinkObserver: NSObjectProtocol?
 
     var dismissSpinner: SpinnerCompletion?
 
