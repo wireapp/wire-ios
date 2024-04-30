@@ -2872,8 +2872,10 @@ internal enum L10n {
             }
           }
           internal enum Mls {
-            /// MLS with Ed25519 Signature
-            internal static let signature = L10n.tr("Localizable", "device.details.section.mls.signature", fallback: "MLS with Ed25519 Signature")
+            /// MLS with %@ Signature
+            internal static func signature(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "device.details.section.mls.signature", String(describing: p1), fallback: "MLS with %@ Signature")
+            }
             /// MLS Thumbprint: %@
             internal static func thumbprint(_ p1: Any) -> String {
               return L10n.tr("Localizable", "device.details.section.mls.thumbprint", String(describing: p1), fallback: "MLS Thumbprint: %@")

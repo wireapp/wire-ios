@@ -381,9 +381,11 @@ public final class SharingSession {
             coreCryptoProvider: coreCryptoProvider,
             notificationContext: coreDataStack.syncContext.notificationContext
         )
+        let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
-            commitSender: commitSender
+            commitSender: commitSender,
+            featureRepository: featureRepository
         )
         let contextStorage = LAContextStorage()
         let earService = EARService(

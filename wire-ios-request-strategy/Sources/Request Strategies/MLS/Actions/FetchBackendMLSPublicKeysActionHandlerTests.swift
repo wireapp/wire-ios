@@ -61,7 +61,7 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBa
         // Given
         let removalKey = Data([1, 2, 3])
         let payload = ResponsePayload(
-            removal: .init(ed25519: removalKey.base64EncodedString())
+            removal: .init(ed25519: removalKey.base64EncodedString(), ed448: nil, p256: nil, p384: nil, p521: nil)
         )
 
         // When

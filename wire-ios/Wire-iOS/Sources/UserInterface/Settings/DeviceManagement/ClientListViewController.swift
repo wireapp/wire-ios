@@ -249,6 +249,7 @@ final class ClientListViewController: UIViewController,
             userClient: client,
             isSelfClient: client.isSelfClient(),
             gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+            mlsCiphersuite: MLSCipherSuite(rawValue: userSession.mlsFeature.config.defaultCipherSuite.rawValue),
             isFromConversation: false,
             actionsHandler: deviceActionsHandler,
             conversationClientDetailsActions: deviceActionsHandler,
@@ -532,7 +533,7 @@ final class ClientListViewController: UIViewController,
         let mlsClients: [UserClient: MLSClientID] = Dictionary(
             uniqueKeysWithValues:
                 userClients
-                .filter { $0.mlsPublicKeys.ed25519 != nil }
+                .filter { $0.mlsPublicKeys.allKeys.isNonEmpty }
                 .compactMap {
                     if let mlsClientId = MLSClientID(userClient: $0) {
                         ($0, mlsClientId)

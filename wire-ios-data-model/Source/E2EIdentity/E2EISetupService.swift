@@ -52,6 +52,7 @@ public final class E2EISetupService: E2EISetupServiceInterface {
 
     // MARK: - Properties
 
+    private let featureRepository: FeatureRepositoryInterface
     private let coreCryptoProvider: CoreCryptoProviderProtocol
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -61,8 +62,9 @@ public final class E2EISetupService: E2EISetupServiceInterface {
 
     // MARK: - Life cycle
 
-    public init(coreCryptoProvider: CoreCryptoProviderProtocol) {
+    public init(coreCryptoProvider: CoreCryptoProviderProtocol, featureRepository: FeatureRepositoryInterface) {
         self.coreCryptoProvider = coreCryptoProvider
+        self.featureRepository = featureRepository
     }
 
     // MARK: - Public interface
@@ -115,32 +117,22 @@ public final class E2EISetupService: E2EISetupServiceInterface {
         isUpgradingClient: Bool,
         expirySec: UInt32?
     ) async throws -> E2eiEnrollment {
-            let ciphersuite = CiphersuiteName.default.rawValue
-            let expirySec = expirySec ?? UInt32(TimeInterval.oneDay * 90)
+        let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
+        let expirySec = expirySec ?? UInt32(TimeInterval.oneDay * 90)
 
-            return try await coreCrypto.perform {
-                if isUpgradingClient {
-                    let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
-                    if e2eiIsEnabled {
-                        return try await $0.e2eiNewRotateEnrollment(
-                            displayName: userName,
-                            handle: handle,
-                            team: teamId.uuidString.lowercased(),
-                            expirySec: expirySec,
-                            ciphersuite: ciphersuite
-                        )
-                    } else {
-                        return try await $0.e2eiNewActivationEnrollment(
-                            displayName: userName,
-                            handle: handle,
-                            team: teamId.uuidString.lowercased(),
-                            expirySec: expirySec,
-                            ciphersuite: ciphersuite
-                        )
-                    }
+        return try await coreCrypto.perform {
+            if isUpgradingClient {
+                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
+                if e2eiIsEnabled {
+                    return try await $0.e2eiNewRotateEnrollment(
+                        displayName: userName,
+                        handle: handle,
+                        team: teamId.uuidString.lowercased(),
+                        expirySec: expirySec,
+                        ciphersuite: ciphersuite
+                    )
                 } else {
-                    return try await $0.e2eiNewEnrollment(
-                        clientId: clientID.rawValue,
+                    return try await $0.e2eiNewActivationEnrollment(
                         displayName: userName,
                         handle: handle,
                         team: teamId.uuidString.lowercased(),
@@ -148,8 +140,18 @@ public final class E2EISetupService: E2EISetupServiceInterface {
                         ciphersuite: ciphersuite
                     )
                 }
+            } else {
+                return try await $0.e2eiNewEnrollment(
+                    clientId: clientID.rawValue,
+                    displayName: userName,
+                    handle: handle,
+                    team: teamId.uuidString.lowercased(),
+                    expirySec: expirySec,
+                    ciphersuite: ciphersuite
+                )
             }
         }
+    }
 
     enum Failure: Error {
         case failedToSetupE2eIClient(_ underlyingError: Error)

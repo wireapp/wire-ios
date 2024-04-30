@@ -240,9 +240,11 @@ public final class NotificationSession {
             coreCryptoProvider: coreCryptoProvider,
             notificationContext: coreDataStack.syncContext.notificationContext
         )
+        let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
-            commitSender: commitSender
+            commitSender: commitSender,
+            featureRepository: featureRepository
         )
 
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
