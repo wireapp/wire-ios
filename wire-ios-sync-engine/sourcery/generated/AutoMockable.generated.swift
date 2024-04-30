@@ -102,10 +102,10 @@ public class MockCreateConversationGuestLinkUseCaseProtocol: CreateConversationG
 
     // MARK: - invoke
 
-    public var invokeConversationPasswordCompletion_Invocations: [(conversation: ZMConversation, password: String?, completion: (Result<String?, Error>) -> Void)] = []
-    public var invokeConversationPasswordCompletion_MockMethod: ((ZMConversation, String?, @escaping (Result<String?, Error>) -> Void) -> Void)?
+    public var invokeConversationPasswordCompletion_Invocations: [(conversation: ZMConversation, password: String?, completion: (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void)] = []
+    public var invokeConversationPasswordCompletion_MockMethod: ((ZMConversation, String?, @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void) -> Void)?
 
-    public func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String?, Error>) -> Void) {
+    public func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void) {
         invokeConversationPasswordCompletion_Invocations.append((conversation: conversation, password: password, completion: completion))
 
         guard let mock = invokeConversationPasswordCompletion_MockMethod else {
@@ -749,10 +749,10 @@ public class MockSetAllowGuestAndServicesUseCaseProtocol: SetAllowGuestAndServic
 
     // MARK: - invoke
 
-    public var invokeConversationAllowGuestsAllowServicesCompletion_Invocations: [(conversation: ZMConversation, allowGuests: Bool, allowServices: Bool, completion: (Result<Void, SetAllowGuestsAndServicesAction.Failure>) -> Void)] = []
-    public var invokeConversationAllowGuestsAllowServicesCompletion_MockMethod: ((ZMConversation, Bool, Bool, @escaping (Result<Void, SetAllowGuestsAndServicesAction.Failure>) -> Void) -> Void)?
+    public var invokeConversationAllowGuestsAllowServicesCompletion_Invocations: [(conversation: ZMConversation, allowGuests: Bool, allowServices: Bool, completion: (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void)] = []
+    public var invokeConversationAllowGuestsAllowServicesCompletion_MockMethod: ((ZMConversation, Bool, Bool, @escaping (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void) -> Void)?
 
-    public func invoke(conversation: ZMConversation, allowGuests: Bool, allowServices: Bool, completion: @escaping (Result<Void, SetAllowGuestsAndServicesAction.Failure>) -> Void) {
+    public func invoke(conversation: ZMConversation, allowGuests: Bool, allowServices: Bool, completion: @escaping (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void) {
         invokeConversationAllowGuestsAllowServicesCompletion_Invocations.append((conversation: conversation, allowGuests: allowGuests, allowServices: allowServices, completion: completion))
 
         guard let mock = invokeConversationAllowGuestsAllowServicesCompletion_MockMethod else {

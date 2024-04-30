@@ -18,26 +18,30 @@
 
 import Foundation
 
+public enum CreateConversationGuestLinkUseCaseError: Error {
+
+    case invalidOperation
+    case contextUnavailable
+    case networkError(Error)
+    case failedToEnableGuestAccess(Error)
+
+}
+
 // sourcery: AutoMockable
 public protocol CreateConversationGuestLinkUseCaseProtocol {
 
-    func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String?, Error>) -> Void)
+    func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void)
 
 }
 
 struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol {
-
-    enum CreateConversationGuestLinkUseCaseError: Error {
-        case invalidOperation
-        case contextUnavailable
-    }
 
     let setGuestsAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol
 
     public func invoke(
         conversation: ZMConversation,
         password: String?,
-        completion: @escaping (Result<String?, Error>) -> Void
+        completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void
     ) {
 
         if conversation.isLegacyAccessMode {
@@ -48,7 +52,7 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
             ) { result in
                 switch result {
                 case .failure(let error):
-                    completion(.failure(error))
+                    completion(.failure(.failedToEnableGuestAccess(error)))
                 case .success:
                     createGuestLink(conversation: conversation, password: password, completion)
                 }
@@ -61,7 +65,7 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
     func createGuestLink(
         conversation: ZMConversation,
         password: String?,
-        _ completion: @escaping (Result<String?, Error>) -> Void
+        _ completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void
     ) {
         guard conversation.canManageAccess else {
             return completion(.failure(CreateConversationGuestLinkUseCaseError.invalidOperation))
@@ -81,7 +85,7 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
             case .success(let link):
                 completion(.success(link))
             case .failure(let error):
-                completion(.failure(error))
+                completion(.failure(.networkError(error)))
             }
         }
     }

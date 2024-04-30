@@ -16,6 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public enum SetAllowGuestsAndServicesUseCaseError: Error {
+
+    case invalidOperation
+    case contextUnavailable
+    case networkError(Error)
+
+}
+
 // sourcery: AutoMockable
 public protocol SetAllowGuestAndServicesUseCaseProtocol {
 
@@ -23,7 +31,7 @@ public protocol SetAllowGuestAndServicesUseCaseProtocol {
         conversation: ZMConversation,
         allowGuests: Bool,
         allowServices: Bool,
-        completion: @escaping (Result<Void, SetAllowGuestsAndServicesAction.Failure>) -> Void
+        completion: @escaping (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void
     )
 }
 
@@ -33,14 +41,10 @@ struct SetAllowGuestAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol 
         conversation: ZMConversation,
         allowGuests: Bool,
         allowServices: Bool,
-        completion: @escaping (Result<Void, SetAllowGuestsAndServicesAction.Failure>) -> Void
+        completion: @escaping (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void
     ) {
         guard conversation.canManageAccess else {
             return completion(.failure(.invalidOperation))
-        }
-
-        guard let apiVersion = BackendInfo.apiVersion else {
-            return completion(.failure(.unknown))
         }
 
         guard let context = conversation.managedObjectContext else {
@@ -53,6 +57,14 @@ struct SetAllowGuestAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol 
             conversationID: conversation.objectID
         )
 
-        action.perform(in: context.notificationContext, resultHandler: completion)
+        action.perform(in: context.notificationContext) { result in
+            switch result {
+            case .success:
+                completion(.success(()))
+            case .failure(let error):
+                completion(.failure(.networkError(error)))
+            }
+
         }
     }
+}
