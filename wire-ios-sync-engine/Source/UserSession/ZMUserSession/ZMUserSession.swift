@@ -826,10 +826,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         WaitingGroupTask(context: syncContext) { [self] in
             do {
-                let resolveOneOnOneUseCase = ResolveOneOnOneConversationsUseCase(
-                    context: syncContext,
-                    mlsService: mlsService
-                )
+                let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
                 var getFeatureConfigAction = GetFeatureConfigsAction()
 
                 try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
@@ -844,6 +841,17 @@ extension ZMUserSession: ZMSyncStateDelegate {
         Task {
             await self.cRLsChecker.checkExpiredCRLs()
         }
+    }
+
+    private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext) -> any ResolveOneOnOneConversationsUseCaseProtocol {
+        let supportedProtocolService = SupportedProtocolsService(context: context)
+        let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+
+        return ResolveOneOnOneConversationsUseCase(
+            context: context,
+            supportedProtocolService: supportedProtocolService,
+            resolver: resolver
+        )
     }
 
     func processEvents() {

@@ -31,30 +31,6 @@ struct ResolveOneOnOneConversationsUseCase: ResolveOneOnOneConversationsUseCaseP
     let supportedProtocolService: any SupportedProtocolsServiceInterface
     let resolver: any OneOnOneResolverInterface
 
-    init(
-        context: NSManagedObjectContext,
-        mlsService: any MLSServiceInterface
-    ) {
-        let supportedProtocolService = SupportedProtocolsService(context: context)
-        let oneOnOneResolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
-
-        self.init(
-            context: context,
-            supportedProtocolService: supportedProtocolService,
-            resolver: oneOnOneResolver
-        )
-    }
-
-    init(
-        context: NSManagedObjectContext,
-        supportedProtocolService: any SupportedProtocolsServiceInterface,
-        resolver: any OneOnOneResolverInterface
-    ) {
-        self.context = context
-        self.supportedProtocolService = supportedProtocolService
-        self.resolver = resolver
-    }
-
     func invoke() async throws {
         let (oldProtocols, newProtocols) = await context.perform {
             let selfUser = ZMUser.selfUser(in: context)
