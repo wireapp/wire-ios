@@ -180,11 +180,21 @@ final class ZClientViewController: UIViewController {
             restoreStartupState()
         }
 
-        NotificationCenter.default.addObserver(self, selector: #selector(colorSchemeControllerDidApplyChanges(_:)), name: NSNotification.colorSchemeControllerDidApplyColorSchemeChange, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(colorSchemeControllerDidApplyChanges(_:)),
+            name: .colorSchemeControllerDidApplyColorSchemeChange,
+            object: nil
+        )
 
         if Bundle.developerModeEnabled {
             // better way of dealing with this?
-            NotificationCenter.default.addObserver(self, selector: #selector(requestLoopNotification(_:)), name: NSNotification.Name(rawValue: ZMLoggingRequestLoopNotificationName), object: nil)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(requestLoopNotification(_:)),
+                name: .loggingRequestLoop,
+                object: nil
+            )
         }
 
         setupUserChangeInfoObserver()
