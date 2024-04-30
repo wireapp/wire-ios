@@ -16,26 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@import WireUtilities;
+import Foundation
 
-#import "NSURL+LaunchOptions.h"
+public enum MLSSignatureAlgorithm: String, CustomStringConvertible {
+    case ed25519
+    case ed448
+    case p256
+    case p384
+    case p521
 
-@implementation NSURL (LaunchOptions)
-
-- (NSString *)codeForPhoneVerification
-{
-    if (!self.isURLForPhoneVerification) {
-        return nil;
+    public var description: String {
+        rawValue
     }
-    return [self.path substringFromIndex:1];
 }
-
-- (BOOL)isURLForPhoneVerification
-{
-    return
-    [self.scheme isEqualToString:@"wire"]
-    && [self.host isEqualToString:@"verify-phone"]
-    && self.path.length > 1;
-}
-
-@end
