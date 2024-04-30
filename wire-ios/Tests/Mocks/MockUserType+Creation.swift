@@ -44,16 +44,21 @@ extension MockUserType {
         return user
     }
 
-    /// Creates a connected user with the specified name and team membership.
+    /// Creates a connected user with the specified name, domain and team membership.
     ///
     /// - Parameters:
     ///   - name: The name of the user.
+    ///   - domain: The domain of the user.
     ///   - teamID: The ID of the team of the user, or `nil` if they're not on a team.
     ///
     /// - Returns: A configured mock user object to use as a user the self-user can interact with.
 
-    class func createConnectedUser(name: String, inTeam teamID: UUID? = nil) -> MockUserType {
-        let user = createUser(name: name, inTeam: teamID)
+    class func createConnectedUser(
+        name: String,
+        domain: String? = nil,
+        inTeam teamID: UUID? = nil
+    ) -> MockUserType {
+        let user = createUser(name: name, domain: domain, inTeam: teamID)
         user.isSelfUser = false
         user.isConnected = true
         user.emailAddress = teamID != nil ? "test@email.com" : nil
@@ -61,16 +66,21 @@ extension MockUserType {
         return user
     }
 
-    /// Creates a user with the specified name and team membership.
+    /// Creates a user with the specified name, domain and team membership.
     ///
     /// - Parameters:
     ///   - name: The name of the user.
+    ///   - domain: The domain of the user.
     ///   - teamID: The ID of the team of the user, or `nil` if they're not on a team.
     ///
     /// - Returns: A standard mock user object with default values.
 
     class func createUser(
         name: String,
+<<<<<<< HEAD
+=======
+        domain: String? = nil,
+>>>>>>> 4a6000814a (feat: update 1:1 creation flow and handle errors WPB-6938 (#1321))
         inTeam teamID: UUID? = nil
     ) -> MockUserType {
         let user = MockUserType()
@@ -80,6 +90,8 @@ extension MockUserType {
         user.initials = PersonName.person(withName: name, schemeTagger: nil).initials
         user.teamIdentifier = teamID
         user.teamRole = teamID != nil ? .member : .none
+        user.remoteIdentifier = .create()
+        user.domain = domain
         return user
     }
 

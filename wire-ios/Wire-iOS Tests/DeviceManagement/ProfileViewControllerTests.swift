@@ -18,7 +18,11 @@
 
 import SnapshotTesting
 @testable import Wire
+<<<<<<< HEAD
 import XCTest
+=======
+@testable import WireSyncEngineSupport
+>>>>>>> 4a6000814a (feat: update 1:1 creation flow and handle errors WPB-6938 (#1321))
 
 final class ProfileViewControllerTests: BaseSnapshotTestCase {
 
@@ -30,13 +34,24 @@ final class ProfileViewControllerTests: BaseSnapshotTestCase {
     private var userSession: UserSessionMock!
     private var teamIdentifier: UUID!
     private var mockClassificationProvider: MockClassificationProvider!
+    private var mockCheckOneOneOneIsReady: MockCheckOneOnOneConversationIsReadyUseCaseProtocol!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
+<<<<<<< HEAD
         accentColor = .blue
+=======
+        accentColor = .strongBlue
+
+        mockCheckOneOneOneIsReady = MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
+        mockCheckOneOneOneIsReady.invokeUserID_MockValue = true
+
+>>>>>>> 4a6000814a (feat: update 1:1 creation flow and handle errors WPB-6938 (#1321))
         userSession = UserSessionMock()
+        userSession.mockCheckOneOnOneConversationIsReady = mockCheckOneOneOneIsReady
+
         teamIdentifier = UUID()
         selfUser = MockUser.createSelfUser(name: "George Johnson", inTeam: teamIdentifier)
         selfUser.handle = "georgejohnson"
@@ -45,6 +60,7 @@ final class ProfileViewControllerTests: BaseSnapshotTestCase {
         mockUser = MockUser.createConnectedUser(name: "Catherine Jackson", inTeam: teamIdentifier)
         mockUser.handle = "catherinejackson"
         mockUser.feature(withUserClients: 6)
+        mockUser.domain = "domain.com"
 
         mockClassificationProvider = MockClassificationProvider()
     }
@@ -58,7 +74,7 @@ final class ProfileViewControllerTests: BaseSnapshotTestCase {
         userSession = nil
         teamIdentifier = nil
         mockClassificationProvider = nil
-
+        mockCheckOneOneOneIsReady = nil
         super.tearDown()
     }
 
