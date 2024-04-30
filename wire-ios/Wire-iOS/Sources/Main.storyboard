@@ -18,7 +18,6 @@
                         <subviews>
                             <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleAspectFit" image="Wire/Shield" translatesAutoresizingMaskIntoConstraints="NO" id="KML-s6-hr3" userLabel="Image - Logo">
                                 <rect key="frame" x="105" y="315.5" width="204" height="265"/>
-                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="MYb-r6-9JB"/>
