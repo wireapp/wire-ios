@@ -136,7 +136,6 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         WireLogger.shareExtension.info("share extension loaded")
         currentAccount = accountManager?.selectedAccount
         ExtensionBackupExcluder.exclude()
-        CrashReporter.setupAppCenterIfNeeded()
         updateAccount(currentAccount)
 
         if let sortedAttachments = extensionContext?.attachments.sorted {
