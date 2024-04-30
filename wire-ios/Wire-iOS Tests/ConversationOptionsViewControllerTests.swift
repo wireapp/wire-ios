@@ -67,6 +67,8 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
 
 final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
 
+    // MARK: - Properties
+
     var mockConversation: MockConversation!
     var mockUserSession: UserSessionMock!
     var mockUseCaseFactory: MockUseCaseFactoryProtocol!
@@ -94,16 +96,23 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         super.tearDown()
     }
 
+    // MARK: - Helper methods
+
+    private func makeViewModel(config: MockOptionsViewModelConfiguration) -> ConversationGuestOptionsViewModel {
+        ConversationGuestOptionsViewModel(
+            configuration: config,
+            conversation: mockConversation.convertToRegularConversation(),
+            userSession: mockUserSession
+        )
+    }
+
     // MARK: Renders Guests Screen when AllowGuests is either enabled or disabled
 
     func testThatItRendersGuestsScreenWhenAllowGuestsIsEnabled() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        let viewModel = ConversationGuestOptionsViewModel(
-            configuration: config,
-            conversation: mockConversation.convertToRegularConversation(),
-            userSession: mockUserSession
-        )
+        let viewModel = makeViewModel(config: config)
+
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
         verify(matching: sut)
@@ -112,7 +121,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
     func testThatItRendersGuestsScreenWhenAllowGuestsIsEnabled_DarkTheme() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         sut.overrideUserInterfaceStyle = .dark
 
@@ -123,7 +132,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
     func testThatItRendersGuestsScreenWhenAllowGuestsIsDisabled() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: false)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
         verify(matching: sut)
@@ -132,7 +141,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
     func testThatItRendersGuestsScreenWhenAllowGuestsIsDisabled_DarkTheme() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: false)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         sut.overrideUserInterfaceStyle = .dark
 
@@ -146,7 +155,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         config.linkResult = .success("https://app.wire.com/772bfh1bbcssjs982637 3nbbdsn9917nbbdaehkej827648-72bns9")
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
         verify(matching: sut)
@@ -156,7 +165,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         config.linkResult = .success("https://app.wire.com/772bfh1bbcssjs982637 3nbbdsn9917nbbdaehkej827648-72bns9")
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         sut.overrideUserInterfaceStyle = .dark
 
@@ -168,7 +177,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         config.linkResult = .success("https://app.wire.com/772bfh1bbcssjs982637 3nbbdsn9917nbbdaehkej827648-72bns9")
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         viewModel.copyInProgress = true
         // THEN
@@ -179,7 +188,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         config.linkResult = .success("https://app.wire.com/772bfh1bbcssjs982637 3nbbdsn9917nbbdaehkej827648-72bns9")
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         viewModel.copyInProgress = true
         sut.overrideUserInterfaceStyle = .dark
@@ -192,7 +201,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         config.linkResult = .success(nil)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
         verify(matching: sut)
@@ -202,7 +211,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         config.linkResult = .success(nil)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         sut.overrideUserInterfaceStyle = .dark
 
@@ -215,7 +224,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         let config = MockOptionsViewModelConfiguration(allowGuests: true, guestLinkFeatureStatus: .disabled)
         config.isConversationFromSelfTeam = true
         config.linkResult = .success(nil)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
         verify(matching: sut)
@@ -226,7 +235,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         let config = MockOptionsViewModelConfiguration(allowGuests: true, guestLinkFeatureStatus: .disabled)
         config.isConversationFromSelfTeam = true
         config.linkResult = .success(nil)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         sut.overrideUserInterfaceStyle = .dark
 
@@ -239,7 +248,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         let config = MockOptionsViewModelConfiguration(allowGuests: true, guestLinkFeatureStatus: .disabled)
         config.isConversationFromSelfTeam = false
         config.linkResult = .success(nil)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
         verify(matching: sut)
@@ -250,7 +259,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         let config = MockOptionsViewModelConfiguration(allowGuests: true, guestLinkFeatureStatus: .disabled)
         config.isConversationFromSelfTeam = false
         config.linkResult = .success(nil)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         sut.overrideUserInterfaceStyle = .dark
 
@@ -263,7 +272,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         let config = MockOptionsViewModelConfiguration(allowGuests: true, guestLinkFeatureStatus: .enabled)
         config.isConversationFromSelfTeam = false
         config.linkResult = .success(nil)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
         verify(matching: sut)
@@ -274,7 +283,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         let config = MockOptionsViewModelConfiguration(allowGuests: true, guestLinkFeatureStatus: .enabled)
         config.isConversationFromSelfTeam = false
         config.linkResult = .success(nil)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         sut.overrideUserInterfaceStyle = .dark
 
@@ -285,7 +294,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
     func testThatItRendersAllowGuests_WhenGuestLinkFeatureStatusIsUnknown() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true, guestLinkFeatureStatus: .unknown)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
         verify(matching: sut)
@@ -294,7 +303,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
     func testThatItRendersAllowGuests_WhenGuestLinkFeatureStatusIsUnknown_DarkTheme() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true, guestLinkFeatureStatus: .unknown)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         sut.overrideUserInterfaceStyle = .dark
 
@@ -307,7 +316,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
     func testThatItRendersItsTitle() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
         verify(matching: sut.wrapInNavigationController())
@@ -319,7 +328,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: false)
         config.linkResult = .success(nil)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         XCTAssertNotNil(config.allowGuestsChangedHandler)
         config.allowGuests = true
@@ -331,7 +340,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
     func testThatItUpdatesWhenItReceivesAChange_Loading() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: false)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         XCTAssertNotNil(config.allowGuestsChangedHandler)
         config.allowGuests = true
@@ -343,7 +352,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
     func testThatItRendersLoading() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: false)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         let navigationController = sut.wrapInNavigationController()
         // WHEN
@@ -355,7 +364,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
     func testThatItRendersLoading_DarkTheme() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: false)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         sut.overrideUserInterfaceStyle = .dark
         let navigationController = sut.wrapInNavigationController()
@@ -384,7 +393,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         config.areGuestPresent = false
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         // Show the alert
         let sut = viewModel.setAllowGuests(false)
         // THEN
@@ -394,7 +403,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
     func testThatItRendersRemoveGuestsWarning() throws {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         // for ConversationOptionsViewModel's delegate
         _ = ConversationGuestOptionsViewController(viewModel: viewModel)
         // Show the alert
@@ -411,7 +420,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         BackendInfo.apiVersion = .v4
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        let viewModel = ConversationGuestOptionsViewModel(configuration: config, conversation: mockConversation.convertToRegularConversation(), userSession: mockUserSession)
+        let viewModel = makeViewModel(config: config)
         let mock = MockConversationGuestOptionsViewModelDelegate()
         mock.viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
         mock.viewModelDidUpdateState_MockMethod = { _, _ in }
@@ -435,11 +444,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         BackendInfo.apiVersion = .v3
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        let viewModel = ConversationGuestOptionsViewModel(
-            configuration: config,
-            conversation: mockConversation.convertToRegularConversation(),
-            userSession: mockUserSession
-        )
+        let viewModel = makeViewModel(config: config)
 
         let mock = MockConversationGuestOptionsViewModelDelegate()
         mock.viewModelSourceViewPresentGuestLinkTypeSelection_MockMethod = { _, _, _ in }
