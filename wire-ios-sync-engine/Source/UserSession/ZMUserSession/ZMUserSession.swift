@@ -578,7 +578,7 @@ public final class ZMUserSession: NSObject {
             Logging.network.warn("Request loop happening at path: \(path)")
 
             DispatchQueue.main.async {
-                NotificationCenter.default.post(name: Notification.Name(rawValue: ZMLoggingRequestLoopNotificationName),
+                NotificationCenter.default.post(name: .loggingRequestLoop,
                                                 object: nil,
                                                 userInfo: ["path": path])
             }
@@ -990,5 +990,10 @@ extension ZMUserSession: ContextProvider {
     public var eventContext: NSManagedObjectContext {
         return coreDataStack.eventContext
     }
+}
 
+// MARK: - NotificationName + LoggingRequestLoopNotificationName
+
+extension Notification.Name {
+    public static let loggingRequestLoop = Self("LoggingRequestLoopNotificationName")
 }
