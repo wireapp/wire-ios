@@ -764,33 +764,6 @@ public class MockStopCertificateEnrollmentSnoozerUseCaseProtocol: StopCertificat
 
 }
 
-public class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - createResolveOneOnOneUseCase
-
-    public var createResolveOneOnOneUseCase_Invocations: [Void] = []
-    public var createResolveOneOnOneUseCase_MockMethod: (() -> ResolveOneOnOneConversationsUseCaseProtocol)?
-    public var createResolveOneOnOneUseCase_MockValue: ResolveOneOnOneConversationsUseCaseProtocol?
-
-    public func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
-        createResolveOneOnOneUseCase_Invocations.append(())
-
-        if let mock = createResolveOneOnOneUseCase_MockMethod {
-            return mock()
-        } else if let mock = createResolveOneOnOneUseCase_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `createResolveOneOnOneUseCase`")
-        }
-    }
-
-}
-
 public class MockUserProfile: UserProfile {
 
     // MARK: - Life cycle
