@@ -23,12 +23,12 @@ import XCTest
 
 final class ScreenCurtainTests: XCTestCase {
 
-    var sut: ScreenCurtain!
+    var sut: ScreenCurtainWindow!
     var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
-        sut = ScreenCurtain()
+        sut = ScreenCurtainWindow()
         userSession = UserSessionMock()
         sut.userSession = userSession
     }

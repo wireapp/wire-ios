@@ -326,6 +326,7 @@
 		596841CA2BD14D200009C6B8 /* ImageTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596841C92BD14D200009C6B8 /* ImageTransformer.swift */; };
 		596841CC2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596841CB2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift */; };
 		597A3BBA2B641F280020E337 /* UserStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB92B641F280020E337 /* UserStatus.swift */; };
+		59800F502BE3BD38003730B3 /* ScreenCurtainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59800F4F2BE3BD38003730B3 /* ScreenCurtainView.swift */; };
 		5995C7752BC7E0F400F97BA8 /* DeviceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */; };
 		59A0A6972BC55DCF00FBFCF5 /* DeviceInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A0A6962BC55DCF00FBFCF5 /* DeviceInfoViewController.swift */; };
 		59A1F1472B7BA226002CB679 /* UserStatus+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */; };
@@ -1092,7 +1093,7 @@
 		BFB5972320E62EB6008720ED /* CancelableItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB5972220E62EB6008720ED /* CancelableItem.swift */; };
 		BFBB03061D5DF4CB0065AF4F /* InputBarButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBB03051D5DF4CB0065AF4F /* InputBarButtonsView.swift */; };
 		BFBB03081D61AF8D0065AF4F /* InputBarEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBB03071D61AF8D0065AF4F /* InputBarEditView.swift */; };
-		BFBBD1ED20D9238B00BFC4AD /* ScreenCurtain.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBBD1EC20D9238B00BFC4AD /* ScreenCurtain.swift */; };
+		BFBBD1ED20D9238B00BFC4AD /* ScreenCurtainWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBBD1EC20D9238B00BFC4AD /* ScreenCurtainWindow.swift */; };
 		BFBDDBC61DB0D51C00BEED02 /* ConversationInputBarButtonState.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBDDBC51DB0D51C00BEED02 /* ConversationInputBarButtonState.swift */; };
 		BFBE45771E36205F009FBF60 /* Error+Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBE45761E36205F009FBF60 /* Error+Logging.swift */; };
 		BFC0673D2099DD7D00204179 /* CallInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFC0673C2099DD7D00204179 /* CallInfoViewController.swift */; };
@@ -2375,6 +2376,7 @@
 		596841C92BD14D200009C6B8 /* ImageTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTransformer.swift; sourceTree = "<group>"; };
 		596841CB2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreImageBasedImageTransformer.swift; sourceTree = "<group>"; };
 		597A3BB92B641F280020E337 /* UserStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatus.swift; sourceTree = "<group>"; };
+		59800F4F2BE3BD38003730B3 /* ScreenCurtainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCurtainView.swift; sourceTree = "<group>"; };
 		5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoView.swift; sourceTree = "<group>"; };
 		59A0A6962BC55DCF00FBFCF5 /* DeviceInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoViewController.swift; sourceTree = "<group>"; };
 		59A1F1462B7BA226002CB679 /* UserStatus+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+Helpers.swift"; sourceTree = "<group>"; };
@@ -3261,7 +3263,7 @@
 		BFB5972220E62EB6008720ED /* CancelableItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CancelableItem.swift; sourceTree = "<group>"; };
 		BFBB03051D5DF4CB0065AF4F /* InputBarButtonsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputBarButtonsView.swift; sourceTree = "<group>"; };
 		BFBB03071D61AF8D0065AF4F /* InputBarEditView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputBarEditView.swift; sourceTree = "<group>"; };
-		BFBBD1EC20D9238B00BFC4AD /* ScreenCurtain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCurtain.swift; sourceTree = "<group>"; };
+		BFBBD1EC20D9238B00BFC4AD /* ScreenCurtainWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCurtainWindow.swift; sourceTree = "<group>"; };
 		BFBDDBC51DB0D51C00BEED02 /* ConversationInputBarButtonState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationInputBarButtonState.swift; sourceTree = "<group>"; };
 		BFBE45761E36205F009FBF60 /* Error+Logging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Error+Logging.swift"; sourceTree = "<group>"; };
 		BFC0673C2099DD7D00204179 /* CallInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallInfoViewController.swift; sourceTree = "<group>"; };
@@ -7937,9 +7939,10 @@
 		EE430EBA25C208A90056BDE3 /* ScreenCurtain */ = {
 			isa = PBXGroup;
 			children = (
-				8741CFAE1A937EDF00A56A63 /* ScreenCurtain.xib */,
-				BFBBD1EC20D9238B00BFC4AD /* ScreenCurtain.swift */,
+				59800F4F2BE3BD38003730B3 /* ScreenCurtainView.swift */,
 				8FC85255199245760008B66B /* ScreenCurtainViewController.swift */,
+				BFBBD1EC20D9238B00BFC4AD /* ScreenCurtainWindow.swift */,
+				8741CFAE1A937EDF00A56A63 /* ScreenCurtain.xib */,
 			);
 			path = ScreenCurtain;
 			sourceTree = "<group>";
@@ -9315,6 +9318,7 @@
 				5E4BC1CC218CA94D00A8682E /* ZMConversationMessage+Date.swift in Sources */,
 				D3DE46052923BB13000F1055 /* BottomSheetContainerViewController.swift in Sources */,
 				EF4265892333BA7600DDAD0A /* ConversationListViewModel.swift in Sources */,
+				59800F502BE3BD38003730B3 /* ScreenCurtainView.swift in Sources */,
 				5E1D74C32266221800AD1F32 /* AccentColorProvider.swift in Sources */,
 				068500BD26B9580700721F80 /* FileMessageRestrictionView.swift in Sources */,
 				061EF88D27971EC000584C53 /* SettingsProfileLinkCellDescriptor.swift in Sources */,
@@ -9984,7 +9988,7 @@
 				D5D65A0F2074CFBB00D7F3C3 /* AuthenticationType.swift in Sources */,
 				5EFE9C19212C1D6E007932A6 /* RegistrationActivationCodeSentEventHandler.swift in Sources */,
 				BF79B0FE20A99762001BF4FE /* CallParticipantView.swift in Sources */,
-				BFBBD1ED20D9238B00BFC4AD /* ScreenCurtain.swift in Sources */,
+				BFBBD1ED20D9238B00BFC4AD /* ScreenCurtainWindow.swift in Sources */,
 				E95B0A1A2B559C850088B778 /* ConversationDomainsStoppedFederatingSystemMessageCellDescription.swift in Sources */,
 				87A15FDF1E08318B00AED79B /* CollectionLoadingCell.swift in Sources */,
 				EF5396D521B03AC3004CF034 /* NSTextAttachment+Icon.swift in Sources */,
