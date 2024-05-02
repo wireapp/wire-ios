@@ -1501,6 +1501,7 @@
 		EE9A857D29896CF400064A9C /* DatadogCrashReporting.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A857A29896CDA00064A9C /* DatadogCrashReporting.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE9A8586298B0A3B00064A9C /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */; };
 		EE9B56A72AE7EA08001D7C2E /* UserSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9B56A62AE7EA08001D7C2E /* UserSessionMock.swift */; };
+		EE9BB9EA2BE3953F00DBD3A6 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9BB9E92BE3953F00DBD3A6 /* SnapshotHelper.swift */; };
 		EE9EE24028DB12920009F144 /* JobTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE9EE23F28DB12920009F144 /* JobTests.swift */; };
 		EEA1ED7325BF430B006D07D3 /* AppLockModule.View.LockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8736F1831E4B67F0001CBA62 /* AppLockModule.View.LockView.swift */; };
 		EEA4F47C2410054100DBEA3D /* HashBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA4F47B2410054100DBEA3D /* HashBox.swift */; };
@@ -1583,6 +1584,7 @@
 		EEF37EDA2BDFD9620055C9E1 /* WireTextStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF37ED32BDFD2350055C9E1 /* WireTextStyle.swift */; };
 		EEF37EDC2BDFD9970055C9E1 /* Font+WireTextStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF37EDB2BDFD9970055C9E1 /* Font+WireTextStyle.swift */; };
 		EEF37EDE2BDFD9FB0055C9E1 /* UIFont+WireTextStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF37EDD2BDFD9FB0055C9E1 /* UIFont+WireTextStyle.swift */; };
+		EEF37EE22BE141C80055C9E1 /* SwitchBackendConfirmationViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF37EE12BE141C80055C9E1 /* SwitchBackendConfirmationViewTests.swift */; };
 		EEF6E3C428D86408001C1799 /* MessageProtocolSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF6E3C328D86408001C1799 /* MessageProtocolSectionController.swift */; };
 		EEF71F6321B1973D00F0FB30 /* ConversationCreateReceiptsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF71F6221B1973D00F0FB30 /* ConversationCreateReceiptsCell.swift */; };
 		EEF71F6521B19F5300F0FB30 /* ConversationCreateReceiptsSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF71F6421B19F5300F0FB30 /* ConversationCreateReceiptsSectionController.swift */; };
@@ -3609,6 +3611,7 @@
 		EE9A8581298B068A00064A9C /* WireNotificationEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireNotificationEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9A8585298B0A3B00064A9C /* WireNotificationEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireNotificationEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE9B56A62AE7EA08001D7C2E /* UserSessionMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSessionMock.swift; sourceTree = "<group>"; };
+		EE9BB9E92BE3953F00DBD3A6 /* SnapshotHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotHelper.swift; sourceTree = "<group>"; };
 		EE9EE23F28DB12920009F144 /* JobTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobTests.swift; sourceTree = "<group>"; };
 		EEA4F47B2410054100DBEA3D /* HashBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HashBox.swift; sourceTree = "<group>"; };
 		EEA65C2625D27A8300AA7519 /* Strings+Generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Strings+Generated.swift"; sourceTree = "<group>"; };
@@ -3678,6 +3681,7 @@
 		EEF37ED82BDFD2AC0055C9E1 /* SecondaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonStyle.swift; sourceTree = "<group>"; };
 		EEF37EDB2BDFD9970055C9E1 /* Font+WireTextStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+WireTextStyle.swift"; sourceTree = "<group>"; };
 		EEF37EDD2BDFD9FB0055C9E1 /* UIFont+WireTextStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+WireTextStyle.swift"; sourceTree = "<group>"; };
+		EEF37EE12BE141C80055C9E1 /* SwitchBackendConfirmationViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SwitchBackendConfirmationViewTests.swift; path = "Wire-iOS Tests/SwitchBackendConfirmationViewTests.swift"; sourceTree = SOURCE_ROOT; };
 		EEF6E3C328D86408001C1799 /* MessageProtocolSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageProtocolSectionController.swift; sourceTree = "<group>"; };
 		EEF71F6221B1973D00F0FB30 /* ConversationCreateReceiptsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateReceiptsCell.swift; sourceTree = "<group>"; };
 		EEF71F6421B19F5300F0FB30 /* ConversationCreateReceiptsSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateReceiptsSectionController.swift; sourceTree = "<group>"; };
@@ -8177,6 +8181,7 @@
 		EF2121982292EEA4006C4293 /* SwiftSnapshotTesting */ = {
 			isa = PBXGroup;
 			children = (
+				EE9BB9E92BE3953F00DBD3A6 /* SnapshotHelper.swift */,
 				EF2121992292EEF3006C4293 /* XCTestCase+SnapshotTesting.swift */,
 			);
 			path = SwiftSnapshotTesting;
@@ -8359,6 +8364,7 @@
 		EF61B33E1FC8461200D8E631 /* AccessoryTextField */ = {
 			isa = PBXGroup;
 			children = (
+				EEF37EE12BE141C80055C9E1 /* SwitchBackendConfirmationViewTests.swift */,
 				EED92352278DA9D2002D4D9D /* AccentColorPickerSnapshotTests.swift */,
 				EEAC654B206BD64700365C0C /* LinkInteractionTextViewTests.swift */,
 				EF159F361FD59556006E0A9C /* TextFieldValidatorTests.swift */,
@@ -10564,6 +10570,7 @@
 				162917CC1F8CC176000F3E92 /* NetworkStatusViewTests.swift in Sources */,
 				1661C71B21A7113A003DCE1C /* ConversationFileMessageCellTests.swift in Sources */,
 				5E35F78D21870EDB00D3F4FE /* ConversationPingMessageTests.swift in Sources */,
+				EEF37EE22BE141C80055C9E1 /* SwitchBackendConfirmationViewTests.swift in Sources */,
 				EF2128EE2056D55400C1673B /* NetworkStatusViewControllerTests.swift in Sources */,
 				669105C327397E6A00324115 /* NSAttributedString+DownTests.swift in Sources */,
 				EFDBA24722942FBB00874A15 /* UIAlertViewController+CompanyLoginTests.swift in Sources */,
@@ -10806,6 +10813,7 @@
 				87656FD11FB5FF0300D5286C /* FilePreviewGeneratorTests.swift in Sources */,
 				BFAAB23F1DED95B100CBC096 /* UserNameDetailViewTests.swift in Sources */,
 				5E65A79A212FF7CD008BFCC0 /* AuthenticationStateControllerTests.swift in Sources */,
+				EE9BB9EA2BE3953F00DBD3A6 /* SnapshotHelper.swift in Sources */,
 				BF808B511DE605DF00718076 /* ChangeHandleViewControllerTests.swift in Sources */,
 				873DC9591D4796C100C1C9B0 /* CameraKeyboardViewControllerTests.swift in Sources */,
 				1658C19A20A1F00500148F6D /* CallInfoTestFixture.swift in Sources */,
