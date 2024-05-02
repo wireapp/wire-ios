@@ -17,6 +17,7 @@
 //
 
 import Foundation
+
 @testable import WireSyncEngine
 
 class RegistrationStrategyTests: MessagingTest {
@@ -37,7 +38,7 @@ class RegistrationStrategyTests: MessagingTest {
         user.name = "M. Jordan"
         user.accentColor = .amber
         user.verificationCode = "23"
-        user.credentials = .email("some@email.com")
+        user.unverifiedEmail = "some@email.com"
         user.password = "Aqa123456!"
         user.acceptedTermsOfService = true
         user.marketingConsent = true

@@ -54,7 +54,7 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
                        "locale": NSLocale.formattedLocaleIdentifier()!]
 
         let transportRequest = ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue)
-        registrationStatus.phase = .sendActivationCode(credentials: .email(email))
+        registrationStatus.phase = .sendActivationCode(unverifiedEmail: email)
 
         // when
 
@@ -68,7 +68,7 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
     func testThatItNotifiesStatusAfterSuccessfulResponseToSendingActivationCode() {
         // given
         let email = "john@smith.com"
-        registrationStatus.phase = .sendActivationCode(credentials: .email(email))
+        registrationStatus.phase = .sendActivationCode(unverifiedEmail: email)
         let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
         // when
@@ -91,7 +91,7 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
                        "dryrun": true] as [String: Any]
 
         let transportRequest = ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: APIVersion.v0.rawValue)
-        registrationStatus.phase = .checkActivationCode(credentials: .email(email), code: code)
+        registrationStatus.phase = .checkActivationCode(unverifiedEmail: email, code: code)
 
         // when
 
@@ -106,7 +106,7 @@ class RegistrationCredentialVerificationStrategyTests: MessagingTest {
         // given
         let email = "john@smith.com"
         let code = "123456"
-        registrationStatus.phase = .checkActivationCode(credentials: .email(email), code: code)
+        registrationStatus.phase = .checkActivationCode(unverifiedEmail: email, code: code)
         let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue)
 
         // when
@@ -162,7 +162,7 @@ extension RegistrationCredentialVerificationStrategyTests: RegistrationStatusStr
     func checkSendingCodeResponseError(with code: ZMUserSessionErrorCode, errorLabel: String, httpStatus: NSInteger, file: StaticString = #file, line: UInt = #line) {
         // given
         let email = "john@smith.com"
-        let phase: RegistrationPhase = .sendActivationCode(credentials: .email(email))
+        let phase: RegistrationPhase = .sendActivationCode(unverifiedEmail: email)
 
         // when & then
         checkResponseError(with: phase, code: code, errorLabel: errorLabel, httpStatus: httpStatus)
@@ -172,10 +172,9 @@ extension RegistrationCredentialVerificationStrategyTests: RegistrationStatusStr
         // given
         let email = "john@smith.com"
         let activationCode = "123456"
-        let phase: RegistrationPhase = .checkActivationCode(credentials: .email(email), code: activationCode)
+        let phase: RegistrationPhase = .checkActivationCode(unverifiedEmail: email, code: activationCode)
 
         // when & then
         checkResponseError(with: phase, code: code, errorLabel: errorLabel, httpStatus: httpStatus)
     }
-
 }
