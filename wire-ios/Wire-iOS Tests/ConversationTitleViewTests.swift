@@ -80,6 +80,7 @@ final class ConversationTitleViewTests: BaseSnapshotTestCase {
     func testThatItUpdatesTheTitleViewAndRendersValidCertificate() {
         // when
         conversation.messageProtocol = .mls
+        conversation.isE2EIEnabled = true
         conversation.mlsVerificationStatus = .verified
         sut = createSut(conversation: conversation)
 
