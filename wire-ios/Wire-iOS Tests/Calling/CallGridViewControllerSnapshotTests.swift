@@ -79,11 +79,13 @@ final class CallGridViewControllerSnapshotTests: BaseSnapshotTestCase {
     }
 
     override func tearDown() {
+        CallingConfiguration.resetDefaultConfig()
         sut = nil
         mediaManager = nil
+        configuration = nil
+        selfStream = nil
+        selfAVSClient = nil
         mockHintView = nil
-        CallingConfiguration.resetDefaultConfig()
-
         super.tearDown()
     }
 
