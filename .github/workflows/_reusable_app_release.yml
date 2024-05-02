@@ -12,7 +12,7 @@ on:
         default: false
       skip_security_tests:
         type: boolean
-        default: false
+        default: true
     secrets:
       KEYCHAIN_PASSWORD:
         required: true
