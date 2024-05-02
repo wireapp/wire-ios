@@ -19,10 +19,7 @@
 import UIKit
 import WireSyncEngine
 
-/**
- * Valid response actions for authentication events.
- */
-
+/// Valid response actions for authentication events.
 enum AuthenticationCoordinatorAction {
     case showLoadingView
     case hideLoadingView
@@ -43,7 +40,6 @@ enum AuthenticationCoordinatorAction {
     case repeatAction
     case displayInlineError(NSError)
     case continueFlowWithLoginCode(String)
-    case switchCredentialsType // TODO: can this be removed? only email is supported
     case startRegistrationFlow(unverifiedEmail: String)
     case startLoginFlow(AuthenticationLoginRequest, AuthenticationProxyCredentialsInput?)
     case setFullName(String)
@@ -71,20 +67,14 @@ enum AuthenticationCoordinatorAction {
 
 // MARK: - Alerts
 
-/**
- * A customizable alert to display inside the coordinator's presenter.
- */
-
+/// A customizable alert to display inside the coordinator's presenter.
 struct AuthenticationCoordinatorAlert {
     let title: String?
     let message: String?
     let actions: [AuthenticationCoordinatorAlertAction]
 }
 
-/**
- * An action that is part of an authentication coordinator alert.
- */
-
+/// An action that is part of an authentication coordinator alert.
 struct AuthenticationCoordinatorAlertAction {
     let title: String
     let coordinatorActions: [AuthenticationCoordinatorAction]
@@ -102,10 +92,7 @@ extension AuthenticationCoordinatorAlertAction {
     static let cancel: AuthenticationCoordinatorAlertAction = AuthenticationCoordinatorAlertAction(title: L10n.Localizable.General.cancel, coordinatorActions: [], style: .cancel)
 }
 
-/**
- * A customizable alert to display inside the coordinator's presenter.
- */
-
+/// A customizable alert to display inside the coordinator's presenter.
 struct AuthenticationCoordinatorErrorAlert {
     let error: NSError
     let completionActions: [AuthenticationCoordinatorAction]
@@ -126,7 +113,6 @@ extension AuthenticationCoordinatorAction {
         typealias Alert = L10n.Localizable.Landing.CustomBackend.Alert
 
         let env = BackendEnvironment.shared
-
         let info = [
             Alert.Message.backendName,
             env.title,
@@ -134,8 +120,12 @@ extension AuthenticationCoordinatorAction {
             env.backendURL.absoluteString
         ].joined(separator: "\n")
 
-        return .presentAlert(.init(title: Alert.title,
-                                            message: info,
-                                            actions: [.ok]))
+        return .presentAlert(
+            .init(
+                title: Alert.title,
+                message: info,
+                actions: [.ok]
+            )
+        )
     }
 }
