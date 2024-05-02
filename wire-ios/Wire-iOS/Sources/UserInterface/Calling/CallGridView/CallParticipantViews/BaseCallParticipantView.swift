@@ -21,7 +21,7 @@ import UIKit
 import WireCommonComponents
 import WireSyncEngine
 
-class BaseCallParticipantView: OrientableView, AVSIdentifierProvider {
+class BaseCallParticipantView: OrientableView {
 
     // MARK: - Public Properties
 

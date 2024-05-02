@@ -23,16 +23,3 @@ import WireSyncEngine
 protocol AVSIdentifierProvider {
     var stream: Stream { get }
 }
-
-extension AVSVideoView: AVSIdentifierProvider {
-
-    var stream: Stream {
-        return Stream(
-            streamId: AVSClient(userId: AVSIdentifier.from(string: userid), clientId: clientid),
-            user: nil,
-            callParticipantState: .connected(videoState: .stopped, microphoneState: .unmuted),
-            activeSpeakerState: .inactive,
-            isPaused: false
-        )
-    }
-}
