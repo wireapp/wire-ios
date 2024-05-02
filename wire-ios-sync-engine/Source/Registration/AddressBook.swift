@@ -18,7 +18,7 @@
 
 import Contacts
 import Foundation
-import libPhoneNumberiOS
+import libPhoneNumberiOS // TODO [WPB-8822]: try to remove this framework (also from Cartfile)
 
 /// Wraps the system address book to return `ZMAddressBookContact` when iterating, filtering out those
 /// without a valid email or phone
