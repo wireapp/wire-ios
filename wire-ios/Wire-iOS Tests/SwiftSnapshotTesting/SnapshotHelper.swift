@@ -85,7 +85,7 @@ struct SnapshotHelper {
     }
 
     // MARK: - Verify views
-    
+
     /// Verify a SwiftUI view.
     ///
     /// - Parameters:
@@ -107,7 +107,7 @@ struct SnapshotHelper {
             line: line
         )
     }
-    
+
     /// Verify a SwiftUI view.
     ///
     /// - Parameters:
@@ -115,7 +115,7 @@ struct SnapshotHelper {
     ///   - testName: The name of the reference image.
     ///   - file: The invoking file name.
     ///   - line: The invoking line numer.
-    
+
     func verify<View: SwiftUI.View>(
         matching value: View,
         testName: String = #function,
