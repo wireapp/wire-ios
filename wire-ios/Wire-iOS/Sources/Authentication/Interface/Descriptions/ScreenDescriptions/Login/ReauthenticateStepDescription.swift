@@ -43,12 +43,6 @@ final class ReauthenticateStepDescription: AuthenticationStepDescription {
             } else {
                 subtext = .markdown(from: L10n.Localizable.Signin.Email.MissingPassword.subtitle, style: .login)
             }
-        case .phone?:
-            if prefilledCredentials?.isExpired == true {
-                subtext = .markdown(from: L10n.Localizable.SigninLogout.Phone.subheadline, style: .login)
-            } else {
-                subtext = .markdown(from: L10n.Localizable.Signin.Phone.MissingPassword.subtitle, style: .login)
-            }
         case .none:
             subtext = .markdown(from: L10n.Localizable.SigninLogout.subheadline, style: .login)
         }

@@ -34,7 +34,6 @@ enum AuthenticationCoordinatorAction {
     case completeLoginFlow
     case startPostLoginFlow
     case transition(AuthenticationFlowStep, mode: AuthenticationStateController.StateChangeMode)
-    case performPhoneLoginFromRegistration(phoneNumber: String)
     case requestEmailVerificationCode(email: String, password: String)
     case configureNotifications
     case startIncrementalUserCreation(UnregisteredUser)
@@ -114,7 +113,6 @@ struct AuthenticationCoordinatorErrorAlert {
 
 enum AuthenticationLoginRequest {
     case email(address: String, password: String)
-    case phoneNumber(String)
 }
 
 struct AuthenticationProxyCredentialsInput {

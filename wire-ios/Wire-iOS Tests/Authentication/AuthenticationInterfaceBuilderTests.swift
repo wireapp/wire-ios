@@ -17,8 +17,9 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
@@ -65,11 +66,6 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
         runSnapshotTest(for: .createCredentials(UnregisteredUser()))
     }
 
-    func testActivationScreen_Phone() {
-        let phoneNumber = UnverifiedCredentials.phone("+0123456789")
-        runSnapshotTest(for: .enterActivationCode(phoneNumber, user: UnregisteredUser()))
-    }
-
     func testActivationScreen_Email() {
         let email = UnverifiedCredentials.email("test@example.com")
         runSnapshotTest(for: .enterActivationCode(email, user: UnregisteredUser()))
@@ -88,10 +84,6 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
     }
 
     // MARK: - Login
-
-    func testLoginScreen_Phone() throws {
-        runSnapshotTest(for: .provideCredentials(.phone, nil))
-    }
 
     func testLoginScreen_Email() {
         runSnapshotTest(for: .provideCredentials(.email, nil))
@@ -130,10 +122,6 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
         runSnapshotTest(for: .provideCredentials(.email, nil))
     }
 
-    func testLoginScreen_PhoneNumberVerification() {
-        runSnapshotTest(for: .enterPhoneVerificationCode(phoneNumber: "+0123456789"))
-    }
-
     func testBackupScreen_NewDevice() {
         runSnapshotTest(for: .noHistory(credentials: nil, context: .newDevice))
     }
@@ -160,31 +148,17 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
     }
 
     func testReauthenticate_Email_TokenExpired() {
-        let credentials = LoginCredentials(emailAddress: "test@example.com", phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
+        let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
     }
 
     func testReauthenticate_Email_DuringLogin() {
-        let credentials = LoginCredentials(emailAddress: "test@example.com", phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
-        runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: false))
-    }
-
-    func testReauthenticate_EmailAndPhone_TokenExpired() {
-        let credentials = LoginCredentials(emailAddress: "test@example.com", phoneNumber: "+33123456789", hasPassword: true, usesCompanyLogin: false)
-
-        // Email should have priority
-        runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
-    }
-
-    func testReauthenticate_Phone_DuringLogin() {
-        let credentials = LoginCredentials(emailAddress: nil, phoneNumber: "+33123456789", hasPassword: true, usesCompanyLogin: false)
-
-        // Email should have priority
+        let credentials = LoginCredentials(emailAddress: "test@example.com", hasPassword: true, usesCompanyLogin: false)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: false))
     }
 
     func testReauthenticate_CompanyLogin() {
-        let credentials = LoginCredentials(emailAddress: nil, phoneNumber: nil, hasPassword: false, usesCompanyLogin: true)
+        let credentials = LoginCredentials(emailAddress: nil, hasPassword: false, usesCompanyLogin: true)
         runSnapshotTest(for: .reauthenticate(credentials: credentials, numberOfAccounts: 1, isSignedOut: true))
     }
 
