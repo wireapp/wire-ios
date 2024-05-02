@@ -39,6 +39,7 @@ final class RegistrationStrategyTests: MessagingTest {
         user.accentColor = .amber
         user.verificationCode = "23"
         user.unverifiedEmail = "some@email.com"
+        user.password = "Aqa123456!"
         user.acceptedTermsOfService = true
         user.marketingConsent = true
     }

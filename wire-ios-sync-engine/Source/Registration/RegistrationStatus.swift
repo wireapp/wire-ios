@@ -51,7 +51,7 @@ public protocol RegistrationStatusDelegate: AnyObject {
 
 protocol RegistrationStatusProtocol: AnyObject {
     /// The current registration phase.
-    var phase: RegistrationPhase { get }
+    var phase: RegistrationPhase? { get }
 
     /// An error occured during the current registration phase.
     func handleError(_ error: Error)
@@ -69,7 +69,7 @@ protocol RegistrationStatusProtocol: AnyObject {
 public class RegistrationStatus: RegistrationStatusProtocol {
 
     /// The current phase of registration.
-    public var phase: RegistrationPhase = .none
+    public var phase: RegistrationPhase? = .none
 
     /// Whether registration completed.
     public internal(set) var completedRegistration: Bool = false

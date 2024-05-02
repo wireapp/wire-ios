@@ -16,12 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// Phases of registration.
 public enum RegistrationPhase: Equatable {
     case sendActivationCode(unverifiedEmail: String)
     case checkActivationCode(unverifiedEmail: String, code: String)
     case createUser(user: UnregisteredUser)
     case createTeam(team: UnregisteredTeam)
-
-    case none // TODO: replace by Optional<RegistrationPhase>.none
 }
