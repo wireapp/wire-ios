@@ -1,6 +1,6 @@
 # Certificate pinning
 
-Verify identity of Backend servers by checking certificates.
+Verify the identity of backend servers by checking certificates.
 
 ## Overview
 
