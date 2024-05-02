@@ -77,6 +77,9 @@
 		068F558724336CAE000DC813 /* DigitalSignatureVerificationViewControllerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068F558624336CAE000DC813 /* DigitalSignatureVerificationViewControllerTest.swift */; };
 		06A5CFB62632A4D4006D2891 /* ConversationSenderMessageDetailsCellSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06A5CFB52632A4D4006D2891 /* ConversationSenderMessageDetailsCellSnapshotTests.swift */; };
 		06ADE9DF2BBD65E2008BA0B3 /* UIAlertController+RevokedCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADE9DE2BBD65E2008BA0B3 /* UIAlertController+RevokedCertificate.swift */; };
+		06ADE9F12BC7C515008BA0B3 /* RemoveClientsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADE9F02BC7C515008BA0B3 /* RemoveClientsViewController.swift */; };
+		06ADE9F32BC7C53A008BA0B3 /* RemoveClientTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADE9F22BC7C53A008BA0B3 /* RemoveClientTableViewCell.swift */; };
+		06ADEA062BD22D40008BA0B3 /* RemoveClientsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06ADEA052BD22D40008BA0B3 /* RemoveClientsViewModel.swift */; };
 		06B3091326AEDC990057AF9E /* UIAlertController+FeatureConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B3091226AEDC990057AF9E /* UIAlertController+FeatureConfig.swift */; };
 		06C1074425B9973E00C099D3 /* PasswordCharacterClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C1074325B9973E00C099D3 /* PasswordCharacterClass.swift */; };
 		06C1074625B99C4A00C099D3 /* PasswordRuleSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06C1074525B99C4A00C099D3 /* PasswordRuleSet.swift */; };
@@ -582,6 +585,7 @@
 		638332EA250282D200D18F42 /* OrientationDelta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638332E9250282D200D18F42 /* OrientationDelta.swift */; };
 		638C88C62680F92D0074D512 /* MockCallGridHintNotificationLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638C88C52680F92D0074D512 /* MockCallGridHintNotificationLabel.swift */; };
 		639290A2252633E600046171 /* UIAlertController+DegradedCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639290A1252633E600046171 /* UIAlertController+DegradedCall.swift */; };
+		63991EB42BD66BC30079E681 /* ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63991EB32BD66BC30079E681 /* ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift */; };
 		639A8F2D26DE41ED0080B8FE /* CallStatusViewInputType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639A8F2C26DE41EC0080B8FE /* CallStatusViewInputType.swift */; };
 		639A8F3A26DE42AF0080B8FE /* CallStatusViewInputTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639A8F3626DE429F0080B8FE /* CallStatusViewInputTypeTests.swift */; };
 		63A5E6E424C1ACFC00F7D401 /* SettingsCellDescriptorFactory+Advanced.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A5E6E324C1ACFC00F7D401 /* SettingsCellDescriptorFactory+Advanced.swift */; };
@@ -2127,6 +2131,9 @@
 		068F558624336CAE000DC813 /* DigitalSignatureVerificationViewControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DigitalSignatureVerificationViewControllerTest.swift; sourceTree = "<group>"; };
 		06A5CFB52632A4D4006D2891 /* ConversationSenderMessageDetailsCellSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationSenderMessageDetailsCellSnapshotTests.swift; sourceTree = "<group>"; };
 		06ADE9DE2BBD65E2008BA0B3 /* UIAlertController+RevokedCertificate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+RevokedCertificate.swift"; sourceTree = "<group>"; };
+		06ADE9F02BC7C515008BA0B3 /* RemoveClientsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveClientsViewController.swift; sourceTree = "<group>"; };
+		06ADE9F22BC7C53A008BA0B3 /* RemoveClientTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveClientTableViewCell.swift; sourceTree = "<group>"; };
+		06ADEA052BD22D40008BA0B3 /* RemoveClientsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveClientsViewModel.swift; sourceTree = "<group>"; };
 		06B3091226AEDC990057AF9E /* UIAlertController+FeatureConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+FeatureConfig.swift"; sourceTree = "<group>"; };
 		06C1074325B9973E00C099D3 /* PasswordCharacterClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordCharacterClass.swift; sourceTree = "<group>"; };
 		06C1074525B99C4A00C099D3 /* PasswordRuleSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordRuleSet.swift; sourceTree = "<group>"; };
@@ -2651,6 +2658,7 @@
 		638C88C52680F92D0074D512 /* MockCallGridHintNotificationLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCallGridHintNotificationLabel.swift; sourceTree = "<group>"; };
 		6391628B24F6A39D0054962E /* CallParticipantViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallParticipantViewTests.swift; sourceTree = "<group>"; };
 		639290A1252633E600046171 /* UIAlertController+DegradedCall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+DegradedCall.swift"; sourceTree = "<group>"; };
+		63991EB32BD66BC30079E681 /* ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift"; sourceTree = "<group>"; };
 		639A8F2C26DE41EC0080B8FE /* CallStatusViewInputType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallStatusViewInputType.swift; sourceTree = "<group>"; };
 		639A8F3626DE429F0080B8FE /* CallStatusViewInputTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallStatusViewInputTypeTests.swift; sourceTree = "<group>"; };
 		63A5E6E324C1ACFC00F7D401 /* SettingsCellDescriptorFactory+Advanced.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsCellDescriptorFactory+Advanced.swift"; sourceTree = "<group>"; };
@@ -4227,6 +4235,16 @@
 				068F07282829BC41003E3249 /* LegacyNotificationServiceTest.swift */,
 			);
 			path = "Notification Service Extension";
+			sourceTree = "<group>";
+		};
+		06ADE9EF2BC7C4D9008BA0B3 /* RemoveClients */ = {
+			isa = PBXGroup;
+			children = (
+				06ADE9F02BC7C515008BA0B3 /* RemoveClientsViewController.swift */,
+				06ADE9F22BC7C53A008BA0B3 /* RemoveClientTableViewCell.swift */,
+				06ADEA052BD22D40008BA0B3 /* RemoveClientsViewModel.swift */,
+			);
+			path = RemoveClients;
 			sourceTree = "<group>";
 		};
 		06B3091126AEDC830057AF9E /* UIAlertController */ = {
@@ -5845,6 +5863,7 @@
 		873C5FE21C10426A00D5132A /* DeviceManagement */ = {
 			isa = PBXGroup;
 			children = (
+				06ADE9EF2BC7C4D9008BA0B3 /* RemoveClients */,
 				EF98987520C6AAD2005680C5 /* ClientColorVariantProtocol.swift */,
 				873C5FE31C10426A00D5132A /* ClientListViewController.swift */,
 				8744D5BD1C41D6C2000F8F93 /* SettingsClientViewController.swift */,
@@ -8238,6 +8257,7 @@
 				EF29CDC122D3907000EB2380 /* ConversationListViewControllerViewModel+ConversationListContentDelegate.swift */,
 				EF46ECCC231D5B4B00D425DA /* ConversationListViewControllerViewModel+StartUIDelegate.swift */,
 				EF471BE52326637E008E11A5 /* ConversationListViewControllerViewModel+ArchivedListViewControllerDelegate.swift */,
+				63991EB32BD66BC30079E681 /* ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift */,
 				EF223F602327EE90004480FA /* ZMConversationList+HasConversation.swift */,
 			);
 			path = ViewModel;
@@ -9687,6 +9707,7 @@
 				5E65A7A021303FCE008BFCC0 /* AuthenticationCoordinator+CompanyLogin.swift in Sources */,
 				2572EC5E2B148EE50075A7BE /* CopyValueView.swift in Sources */,
 				5E8C38B0212DC472002AE12B /* AuthenticationCoordinator+LandingScreen.swift in Sources */,
+				63991EB42BD66BC30079E681 /* ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift in Sources */,
 				7C4789852021F40E00A38442 /* AddBotError+UIHandler.swift in Sources */,
 				EF6E9FE623193478000B7785 /* UIViewControllerTransitioningDelegate+Present.swift in Sources */,
 				5E65A79E21303F97008BFCC0 /* AuthenticationCoordinator+UserChange.swift in Sources */,
@@ -10072,6 +10093,7 @@
 				A9EB722323C1581A00DA8240 /* ContactsViewController.swift in Sources */,
 				EF98987620C6AAD2005680C5 /* ClientColorVariantProtocol.swift in Sources */,
 				16519D8B232108EF00C9D76D /* ConversationActionController+DeleteGroup.swift in Sources */,
+				06ADEA062BD22D40008BA0B3 /* RemoveClientsViewModel.swift in Sources */,
 				871BC2571D34F8F800DF0793 /* NavigationTransition.swift in Sources */,
 				8775BF212008CF3500A8AD93 /* ServiceView.swift in Sources */,
 				253C67492B88A3BB00965DE1 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsDebugActions.swift in Sources */,
@@ -10090,6 +10112,7 @@
 				BF0BDF801DAB8923003C61DE /* EphemeralKeyboardViewController.swift in Sources */,
 				5E65A7A32130412E008BFCC0 /* UserEmailChangeEventHandler.swift in Sources */,
 				5E8DA784211C3F2D00360979 /* AuthenticationEmailLoginUnknownErrorHandler.swift in Sources */,
+				06ADE9F12BC7C515008BA0B3 /* RemoveClientsViewController.swift in Sources */,
 				EF17B0D6223A70D1006252A8 /* SketchColorPickerController.swift in Sources */,
 				16829EDF2010D60800F579A0 /* InviteTeamMemberSection.swift in Sources */,
 				87E8D0BD21821E6F00BD26AC /* ConversationContentViewController+Reply.swift in Sources */,
@@ -10119,6 +10142,7 @@
 				060C06652B73DFC700B484C6 /* E2EINotificationActionsHandler.swift in Sources */,
 				E9C0B3612B55933600BC80E8 /* ConversationParticipantsChangedSystemMessageCellDescription.swift in Sources */,
 				16E2A0A61F6BF233005F4DB1 /* ZMConversation+Calling.swift in Sources */,
+				06ADE9F32BC7C53A008BA0B3 /* RemoveClientTableViewCell.swift in Sources */,
 				BFCF31DD1DA52ECE0039B3DC /* KeyboardHeight.swift in Sources */,
 				87A752171E002F6C004317DB /* ConversationRootViewController.swift in Sources */,
 				16A5FDC52154F53F00AEEBBD /* NSAttributedString+MessageFormatting.swift in Sources */,

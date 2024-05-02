@@ -164,7 +164,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                         title: "Supported protocols",
                         value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", "))
                     ),
-                    .text(TextItem(title: "MLS public key", value: selfClient?.mlsPublicKeys.ed25519?.uppercased() ?? "None"))
+                    .text(TextItem(title: "MLS public key", value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None"))
                 ]
             ))
         }

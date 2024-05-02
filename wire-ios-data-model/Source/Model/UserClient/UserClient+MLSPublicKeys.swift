@@ -58,7 +58,7 @@ extension UserClient {
 
     @objc
     public var hasRegisteredMLSClient: Bool {
-        return mlsPublicKeys.ed25519 != nil && needsToUploadMLSPublicKeys == false
+        return !mlsPublicKeys.isEmpty && needsToUploadMLSPublicKeys == false
     }
 
     // MARK: MLSPublicKeys
@@ -98,9 +98,30 @@ extension UserClient {
     public struct MLSPublicKeys: Codable, Equatable {
 
         public internal(set) var ed25519: String?
+        public internal(set) var ed448: String?
+        public internal(set) var p256: String?
+        public internal(set) var p384: String?
+        public internal(set) var p521: String?
 
-        public init(ed25519: String? = nil) {
+        public init(ed25519: String? = nil,
+                    ed448: String? = nil,
+                    p256: String? = nil,
+                    p384: String? = nil,
+                    p521: String? = nil
+        ) {
             self.ed25519 = ed25519
+            self.ed448 = ed448
+            self.p256 = p256
+            self.p384 = p384
+            self.p521 = p521
+        }
+
+        public var isEmpty: Bool {
+            return allKeys.isEmpty
+        }
+
+        public var allKeys: [String] {
+            [ed25519, ed448, p256, p384, p521].compactMap({ $0 })
         }
 
     }
