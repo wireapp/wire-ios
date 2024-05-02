@@ -20,7 +20,6 @@ import UIKit
 import WireSyncEngine
 
 /// A window used to obfuscate the main content window when the app is inactive.
-
 final class ScreenCurtain: UIWindow {
 
     // MARK: - Properties
@@ -31,7 +30,7 @@ final class ScreenCurtain: UIWindow {
 
     override init(frame: CGRect = UIScreen.main.bounds) {
         super.init(frame: frame)
-        rootViewController = RootViewController()
+        rootViewController = ScreenCurtainViewController()
         backgroundColor = .clear
         isOpaque = false
         windowLevel = .statusBar - 1
