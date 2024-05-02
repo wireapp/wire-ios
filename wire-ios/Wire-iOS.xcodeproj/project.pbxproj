@@ -1489,7 +1489,7 @@
 		EE8E9267202496C2000F4752 /* NSAttributedString+Down.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8E9266202496C2000F4752 /* NSAttributedString+Down.swift */; };
 		EE8E926E2024F085000F4752 /* MarkdownTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE8E926D2024F085000F4752 /* MarkdownTextView.swift */; };
 		EE948F1923E17778000A663E /* ContactsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE948F1823E17778000A663E /* ContactsDataSource.swift */; };
-		EE94CA1925C2E490005F1155 /* ScreenCurtainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE94CA0B25C2E48B005F1155 /* ScreenCurtainTests.swift */; };
+		EE94CA1925C2E490005F1155 /* ScreenCurtainWindowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE94CA0B25C2E48B005F1155 /* ScreenCurtainWindowTests.swift */; };
 		EE961C202A9F036A008127A6 /* Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE961C1F2A9F036A008127A6 /* Emoji.swift */; };
 		EE98A09E296ED46D0055E981 /* DeviceConfigurationEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE98A09D296ED46D0055E981 /* DeviceConfigurationEventHandler.swift */; };
 		EE997A1A2507A851008336D2 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE997A192507A851008336D2 /* Logging.swift */; };
@@ -3574,7 +3574,7 @@
 		EE8E9266202496C2000F4752 /* NSAttributedString+Down.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+Down.swift"; sourceTree = "<group>"; };
 		EE8E926D2024F085000F4752 /* MarkdownTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextView.swift; sourceTree = "<group>"; };
 		EE948F1823E17778000A663E /* ContactsDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsDataSource.swift; sourceTree = "<group>"; };
-		EE94CA0B25C2E48B005F1155 /* ScreenCurtainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCurtainTests.swift; sourceTree = "<group>"; };
+		EE94CA0B25C2E48B005F1155 /* ScreenCurtainWindowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCurtainWindowTests.swift; sourceTree = "<group>"; };
 		EE961C1F2A9F036A008127A6 /* Emoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emoji.swift; sourceTree = "<group>"; };
 		EE98A09D296ED46D0055E981 /* DeviceConfigurationEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceConfigurationEventHandler.swift; sourceTree = "<group>"; };
 		EE997A192507A851008336D2 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
@@ -7199,7 +7199,7 @@
 				8758CDB82191A7D60031BE0F /* ReplyComposingViewTests.swift */,
 				EF282B93228AFA970042D6C5 /* RequestPasswordViewControllerSnapshotTests.swift */,
 				EF15A7B320BC304A00A045C7 /* SavableImageTests.swift */,
-				EE94CA0B25C2E48B005F1155 /* ScreenCurtainTests.swift */,
+				EE94CA0B25C2E48B005F1155 /* ScreenCurtainWindowTests.swift */,
 				879489E61E5464CF0071B2C1 /* SearchResultLabelTests.swift */,
 				EF2971552099AD3000EFE6A4 /* SelfProfileViewControllerTests.swift */,
 				A9CF740D24891498007A11DC /* Settings+Reset.swift */,
@@ -10350,7 +10350,7 @@
 				25F85D7E2B83447200FBE21F /* E2eIdentityCertificate+Mocks.swift in Sources */,
 				EF17B0DB223A9B87006252A8 /* ConnectRequestsViewControllerSnapshotTests.swift in Sources */,
 				7CAB951320650F0F004BAFC4 /* ShareDestinationCellTests.swift in Sources */,
-				EE94CA1925C2E490005F1155 /* ScreenCurtainTests.swift in Sources */,
+				EE94CA1925C2E490005F1155 /* ScreenCurtainWindowTests.swift in Sources */,
 				16814842228C74C10069F16F /* UserClientCellTests.swift in Sources */,
 				EF0D9972205BC74F002D488E /* NetworkStatusViewControllerSnapshotTests.swift in Sources */,
 				7CB1B0C5200E13A600BD7CE9 /* MockPhotoPermissionsController.swift in Sources */,
