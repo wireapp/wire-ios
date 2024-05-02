@@ -579,7 +579,6 @@
 		6372AAA72492719100C5F307 /* GridCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6372AAA62492719100C5F307 /* GridCell.swift */; };
 		6372AAAA249A4F2600C5F307 /* Int+Even.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6372AAA9249A4F2600C5F307 /* Int+Even.swift */; };
 		637387BD2644331F004FEF79 /* Stream+ActiveSpeaker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637387BC2644331F004FEF79 /* Stream+ActiveSpeaker.swift */; };
-		637387C326443364004FEF79 /* AVSIdentifierProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637387C226443364004FEF79 /* AVSIdentifierProvider.swift */; };
 		637387C726443C31004FEF79 /* VideoKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637387C626443C31004FEF79 /* VideoKind.swift */; };
 		637387CD26458EDB004FEF79 /* ScalableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637387CC26458EDB004FEF79 /* ScalableView.swift */; };
 		637387D52645B931004FEF79 /* AVSVideoViewProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 637387D42645B931004FEF79 /* AVSVideoViewProtocol.swift */; };
@@ -2638,7 +2637,6 @@
 		6372AAA62492719100C5F307 /* GridCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridCell.swift; sourceTree = "<group>"; };
 		6372AAA9249A4F2600C5F307 /* Int+Even.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Even.swift"; sourceTree = "<group>"; };
 		637387BC2644331F004FEF79 /* Stream+ActiveSpeaker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Stream+ActiveSpeaker.swift"; sourceTree = "<group>"; };
-		637387C226443364004FEF79 /* AVSIdentifierProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSIdentifierProvider.swift; sourceTree = "<group>"; };
 		637387C626443C31004FEF79 /* VideoKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoKind.swift; sourceTree = "<group>"; };
 		637387CC26458EDB004FEF79 /* ScalableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScalableView.swift; sourceTree = "<group>"; };
 		637387D42645B931004FEF79 /* AVSVideoViewProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSVideoViewProtocol.swift; sourceTree = "<group>"; };
@@ -5344,7 +5342,6 @@
 				634497D824A492140000131D /* CallParticipantDetailView.swift */,
 				63421E3626149D7500ADA723 /* PinchToZoomRule.swift */,
 				637387C626443C31004FEF79 /* VideoKind.swift */,
-				637387C226443364004FEF79 /* AVSIdentifierProvider.swift */,
 				637387D42645B931004FEF79 /* AVSVideoViewProtocol.swift */,
 			);
 			path = CallParticipantViews;
@@ -9196,7 +9193,6 @@
 				EE742AB8284DE66400A6B5F3 /* DeveloperToolsViewModel.swift in Sources */,
 				BFAF4CAD1CEB670F00780537 /* AudioRecordViewController.swift in Sources */,
 				1682AEC3204840E7003A052A /* SectionCollectionViewController.swift in Sources */,
-				637387C326443364004FEF79 /* AVSIdentifierProvider.swift in Sources */,
 				25644D8B2B21D1CD007DA01F /* E2EIdentityCertificateDetailsView.swift in Sources */,
 				BF86E11B1C245BF9001D9430 /* UserClient+Fingerprint.swift in Sources */,
 				A97017D32410016B00BE6EF7 /* SpinnerButton.swift in Sources */,
