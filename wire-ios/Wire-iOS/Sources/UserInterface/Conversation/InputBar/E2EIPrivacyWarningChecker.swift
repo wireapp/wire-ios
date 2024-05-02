@@ -19,12 +19,12 @@
 import Foundation
 import WireDataModel
 
-protocol E2EIPrivacyWarningPresenter: AnyObject {
-    func presentE2EIPrivacyWarningAlert(_ notification: Notification)
+protocol PrivacyWarningPresenter: AnyObject {
+    func presentPrivacyWarningAlert(_ notification: Notification)
 }
 
-// Checks if E2EIPrivacyWarningAlert needs to be presented before given action
-struct E2EIPrivacyWarningChecker {
+// Checks if PrivacyWarningAlert needs to be presented before given action
+struct PrivacyWarningChecker {
     enum AlertType: Int {
         case message, outgoingCall, incomingCall
     }
@@ -46,12 +46,12 @@ struct E2EIPrivacyWarningChecker {
         if let showAlert {
             showAlert()
         } else {
-            NotificationCenter.default.post(.presentE2EIPrivacyWarningAlert(type: alertType))
+            NotificationCenter.default.post(.presentPrivacyWarningAlert(type: alertType))
         }
 
         Task {
             var shouldContinue = false
-            for await notification in NotificationCenter.default.notifications(named: .e2eiPrivacyWarningConfirm) {
+            for await notification in NotificationCenter.default.notifications(named: .privacyWarningConfirm) {
                 shouldContinue = notification.sendAnyway
                 break
             }
@@ -69,16 +69,16 @@ struct E2EIPrivacyWarningChecker {
     }
 
     // Notifies all MLSConversationChecker about user's choice following e2eiPrivacyWarningAlert
-    static func e2eiPrivacyWarningConfirm(sendAnyway: Bool) {
-        NotificationCenter.default.post(.e2eiPrivacyWarningConfirm(sendAnyway: sendAnyway))
+    static func privacyWarningConfirm(sendAnyway: Bool) {
+        NotificationCenter.default.post(.privacyWarningConfirm(sendAnyway: sendAnyway))
     }
 
     // add object in charge to present e2eiPrivacyWarningAlert
-    static func addPresenter(_ observer: E2EIPrivacyWarningPresenter) -> SelfUnregisteringNotificationCenterToken {
-        let token = NotificationCenter.default.addObserver(forName: .presentE2EIPrivacyWarningAlert,
+    static func addPresenter(_ observer: PrivacyWarningPresenter) -> SelfUnregisteringNotificationCenterToken {
+        let token = NotificationCenter.default.addObserver(forName: .presentPrivacyWarningAlert,
                                                object: nil,
                                                queue: .main) { [weak observer] note in
-            observer?.presentE2EIPrivacyWarningAlert(note)
+            observer?.presentPrivacyWarningAlert(note)
         }
 
         return SelfUnregisteringNotificationCenterToken(token)
@@ -86,8 +86,8 @@ struct E2EIPrivacyWarningChecker {
 }
 
 private extension Notification.Name {
-    static let presentE2EIPrivacyWarningAlert = Notification.Name("presentE2EIPrivacyWarningAlert")
-    static let e2eiPrivacyWarningConfirm = Notification.Name("e2eiPrivacyWarningConfirm")
+    static let presentPrivacyWarningAlert = Notification.Name("presentPrivacyWarningAlert")
+    static let privacyWarningConfirm = Notification.Name("privacyWarningConfirm")
 }
 
 private extension Notification {
@@ -103,18 +103,18 @@ private extension Notification {
 
 extension Notification {
 
-    var alertType: E2EIPrivacyWarningChecker.AlertType? {
-        userInfo?["alertType"] as? E2EIPrivacyWarningChecker.AlertType
+    var alertType: PrivacyWarningChecker.AlertType? {
+        userInfo?["alertType"] as? PrivacyWarningChecker.AlertType
     }
 }
 
 private extension Notification {
 
-    static func e2eiPrivacyWarningConfirm(sendAnyway: Bool) -> Notification {
-        Notification(name: .e2eiPrivacyWarningConfirm, object: nil, userInfo: ["sendAnyway": sendAnyway])
+    static func privacyWarningConfirm(sendAnyway: Bool) -> Notification {
+        Notification(name: .privacyWarningConfirm, object: nil, userInfo: ["sendAnyway": sendAnyway])
     }
 
-    static func presentE2EIPrivacyWarningAlert(type: E2EIPrivacyWarningChecker.AlertType) -> Notification {
-        Notification(name: .presentE2EIPrivacyWarningAlert, object: nil, userInfo: ["alertType": type])
+    static func presentPrivacyWarningAlert(type: PrivacyWarningChecker.AlertType) -> Notification {
+        Notification(name: .presentPrivacyWarningAlert, object: nil, userInfo: ["alertType": type])
     }
 }

@@ -846,7 +846,6 @@ extension WireCallCenterV3 {
     func send(token: WireCallMessageToken, conversationId: AVSIdentifier, targets: AVSClientList?, data: Data, dataLength: Int, overMLSSelfConversation: Bool = false) {
         Self.logger.info("sending call message for AVS")
         zmLog.debug("\(self): send call message, transport = \(String(describing: transport))")
-
         transport?.send(data: data, conversationId: conversationId, targets: targets.map(\.clients), overMLSSelfConversation: overMLSSelfConversation, completionHandler: { [weak self] status in
             self?.avsWrapper.handleResponse(httpStatus: status, reason: "", context: token)
         })
