@@ -22,5 +22,6 @@ public enum RegistrationPhase: Equatable {
     case checkActivationCode(unverifiedEmail: String, code: String)
     case createUser(user: UnregisteredUser)
     case createTeam(team: UnregisteredTeam)
+
     case none // TODO: replace by Optional<RegistrationPhase>.none
 }
