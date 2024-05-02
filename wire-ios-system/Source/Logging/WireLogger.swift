@@ -193,6 +193,7 @@ public extension WireLogger {
     static let shareExtension = WireLogger(tag: "share-extension")
     static let sync = WireLogger(tag: "sync")
     static let system = WireLogger(tag: "system")
+    static let ui = WireLogger(tag: "UI")
     static let updateEvent = WireLogger(tag: "update-event")
     static let userClient = WireLogger(tag: "user-client")
 }
@@ -204,5 +205,4 @@ final class WireLoggerObjc: NSObject {
     static func assertionDumpLog(_ message: String) {
         WireLogger.system.critical(message, attributes: .safePublic)
     }
-
 }

@@ -16,8 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "ZMSLogNotifications.h"
+import Foundation
 
-NSNotificationName const ZMLoggingDescriptionKey = @"ZMLoggingDescription";
-NSNotificationName const ZMLoggingRequestLoopNotificationName = @"ZMLoggingRequestLoopNotificationName";
-NSNotificationName const ZMLoggingInconsistentStateNotificationName = @"ZMLoggingInconsistentStateNotificationName";
+public enum MLSSignatureAlgorithm: String, CustomStringConvertible {
+    case ed25519
+    case ed448
+    case p256
+    case p384
+    case p521
+
+    public var description: String {
+        rawValue
+    }
+}
