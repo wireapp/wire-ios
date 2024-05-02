@@ -49,7 +49,7 @@ final class AudioEffectsPickerViewController: UIViewController {
 
     var state: State = .none
 
-    private let effects: [AVSAudioEffectType] = AVSAudioEffectType.displayedEffects
+    private let effects: [AVSAudioEffectType]
     var normalizedLoudness: [Float] = []
     private var lastLayoutSize = CGSize.zero
 
@@ -103,9 +103,14 @@ final class AudioEffectsPickerViewController: UIViewController {
         fatal("init?(coder) is not implemented")
     }
 
-    init(recordingPath: String, duration: TimeInterval) {
+    init(
+        recordingPath: String,
+        duration: TimeInterval,
+        effects: [AVSAudioEffectType]
+    ) {
         self.duration = duration
         self.recordingPath = recordingPath
+        self.effects = effects
         super.init(nibName: .none, bundle: .none)
     }
 

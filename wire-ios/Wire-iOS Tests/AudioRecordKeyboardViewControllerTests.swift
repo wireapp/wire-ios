@@ -107,7 +107,24 @@ final class AudioRecordKeyboardViewControllerTests: BaseSnapshotTestCase {
         self.userSession = UserSessionMock()
         self.audioRecorder = MockAudioRecorder()
         self.mockDelegate = MockAudioRecordKeyboardDelegate()
-        self.sut = AudioRecordKeyboardViewController(audioRecorder: self.audioRecorder, userSession: userSession)
+
+        let effects: [AVSAudioEffectType] = [
+            .none,
+            .pitchupInsane,
+            .pitchdownInsane,
+            .paceupMed,
+            .reverbMax,
+            .chorusMax,
+            .vocoderMed,
+            .pitchUpDownMax
+        ]
+
+        self.sut = AudioRecordKeyboardViewController(
+            audioRecorder: self.audioRecorder,
+            userSession: userSession,
+            effects: effects
+        )
+
         self.sut.delegate = self.mockDelegate
     }
 

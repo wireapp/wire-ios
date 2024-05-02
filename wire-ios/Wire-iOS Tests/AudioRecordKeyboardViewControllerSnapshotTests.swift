@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 @testable import Wire
 import XCTest
 
@@ -33,9 +34,17 @@ final class AudioRecordKeyboardViewControllerSnapshotTests: BaseSnapshotTestCase
         super.setUp()
         self.mockUserSession = UserSessionMock()
         self.mockAudioRecorder = MockAudioRecorder()
+
+        let effects: [AVSAudioEffectType] = [
+            .none,
+            .pitchupInsane
+        ]
+
         self.sut = AudioRecordKeyboardViewController(
             audioRecorder: mockAudioRecorder,
-            userSession: mockUserSession
+            userSession: mockUserSession,
+            effects: effects
+
         )
     }
 

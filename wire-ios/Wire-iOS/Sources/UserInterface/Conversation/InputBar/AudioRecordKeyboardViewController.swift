@@ -66,6 +66,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     private var accentColorChangeHandler: AccentColorChangeHandler?
     private var effectPickerViewController: AudioEffectsPickerViewController?
 
+    private var effects: [AVSAudioEffectType]
     private var currentEffect: AVSAudioEffectType = .none
     private var currentEffectFilePath: String?
 
@@ -77,17 +78,38 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
     // MARK: - Life Cycle
 
     convenience init(userSession: UserSession) {
-        self.init(audioRecorder: AudioRecorder(
+        let audioRecorder = AudioRecorder(
             format: .wav,
             maxRecordingDuration: userSession.maxAudioMessageLength,
-            maxFileSize: userSession.maxUploadFileSize),
-            userSession: userSession
+            maxFileSize: userSession.maxUploadFileSize
+        )
+
+        let effects: [AVSAudioEffectType] = [
+            .none,
+            .pitchupInsane,
+            .pitchdownInsane,
+            .paceupMed,
+            .reverbMax,
+            .chorusMax,
+            .vocoderMed,
+            .pitchUpDownMax
+        ]
+
+        self.init(
+            audioRecorder: audioRecorder,
+            userSession: userSession,
+            effects: effects
         )
     }
 
-    init(audioRecorder: AudioRecorderType, userSession: UserSession) {
+    init(
+        audioRecorder: AudioRecorderType,
+        userSession: UserSession,
+        effects: [AVSAudioEffectType]
+    ) {
         self.recorder = audioRecorder
         self.userSession = userSession
+        self.effects = effects
         super.init(nibName: nil, bundle: nil)
         configureViews(userSession: userSession)
         configureAudioRecorder()
@@ -161,7 +183,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
 
         let recordingHintText = L10n.Localizable.Conversation.InputBar.AudioMessage.Keyboard.recordTip("%@")
 
-        let effects = AVSAudioEffectType.displayedEffects.filter { $0 != .none }
+        let effects = effects.filter { $0 != .none }
         let randomIndex = Int.random(in: 0..<effects.count)
         let effect = effects[randomIndex]
         let image = effect.icon.makeImage(size: 14, color: color)
@@ -405,7 +427,12 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
                 self.closeEffectsPicker(animated: false)
             }
 
-            let picker = AudioEffectsPickerViewController(recordingPath: noizeReducePath, duration: self.recorder.currentDuration)
+            let picker = AudioEffectsPickerViewController(
+                recordingPath: noizeReducePath,
+                duration: self.recorder.currentDuration,
+                effects: self.effects
+            )
+
             self.addChild(picker)
             picker.delegate = self
             picker.view.alpha = 0

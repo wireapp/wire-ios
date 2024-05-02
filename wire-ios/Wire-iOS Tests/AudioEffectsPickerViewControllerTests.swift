@@ -31,7 +31,24 @@ final class AudioEffectsPickerViewControllerTests: BaseSnapshotTestCase {
     override func setUp() {
         super.setUp()
         let path = Bundle(for: type(of: self)).path(forResource: "audio_sample", ofType: "m4a")!
-        self.sut = AudioEffectsPickerViewController(recordingPath: path, duration: TimeInterval(10.0))
+
+        let effects: [AVSAudioEffectType] = [
+            .none,
+            .pitchupInsane,
+            .pitchdownInsane,
+            .paceupMed,
+            .reverbMax,
+            .chorusMax,
+            .vocoderMed,
+            .pitchUpDownMax
+        ]
+
+        self.sut = AudioEffectsPickerViewController(
+            recordingPath: path,
+            duration: TimeInterval(10.0),
+            effects: effects
+        )
+
         self.sut.normalizedLoudness = (0...100).map { Float($0) / 100.0 }
         self.sut.progressView.samples = self.sut.normalizedLoudness
     }
