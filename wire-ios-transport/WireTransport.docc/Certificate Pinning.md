@@ -4,7 +4,7 @@ Verify the identity of backend servers by checking certificates.
 
 ## Overview
 
-In order to make sure we're talking to the right server, we use certificate pinning. This means that we check the certificate of the server we're talking to against a known certificate. If the certificates match, we know we're talking to the right server.
+Certificate pinning is a process to ensure a client is communicating with a trusted server. To achieve this, the client compares a certificate obtained from a server with a known certificate that it has stored locally. If the certificates match then the server is considered trustworthy.
 
 
 Here, we only verify the public key of the certificate that way when server changes its certificate (and keeping the same public key), we won't have to update all clients. We also check the certificate downloaded from the server is not expired.
