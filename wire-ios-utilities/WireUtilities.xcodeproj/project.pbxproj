@@ -18,7 +18,6 @@
 		09F028D91B78BE2700BADDB6 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 09F028D81B78BE2700BADDB6 /* ViewController.m */; };
 		09F028DC1B78BE2700BADDB6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09F028DA1B78BE2700BADDB6 /* Main.storyboard */; };
 		09F028DE1B78BE2700BADDB6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F028DD1B78BE2700BADDB6 /* Images.xcassets */; };
-		09F028E11B78BE2700BADDB6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 09F028DF1B78BE2700BADDB6 /* LaunchScreen.xib */; };
 		16030DC021AEA0FE00F8032E /* Array+PartitionByKeyPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16030DBF21AEA0FE00F8032E /* Array+PartitionByKeyPath.swift */; };
 		16030DC221AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16030DC121AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift */; };
 		1623F8F52AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1623F8F42AF1278A004F0319 /* NSManagedObjectContext+DispatchGroups.swift */; };
@@ -229,7 +228,6 @@
 		09F028D81B78BE2700BADDB6 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		09F028DB1B78BE2700BADDB6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		09F028DD1B78BE2700BADDB6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		09F028E01B78BE2700BADDB6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		09F028F61B78BEBB00BADDB6 /* WireUtilities-tests-host.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "WireUtilities-tests-host.entitlements"; sourceTree = "<group>"; };
 		16030DBF21AEA0FE00F8032E /* Array+PartitionByKeyPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+PartitionByKeyPath.swift"; sourceTree = "<group>"; };
 		16030DC121AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayPartitionByKeyPathTests.swift; sourceTree = "<group>"; };
@@ -452,7 +450,6 @@
 				09F028D81B78BE2700BADDB6 /* ViewController.m */,
 				09F028DA1B78BE2700BADDB6 /* Main.storyboard */,
 				09F028DD1B78BE2700BADDB6 /* Images.xcassets */,
-				09F028DF1B78BE2700BADDB6 /* LaunchScreen.xib */,
 				09F028D01B78BE2700BADDB6 /* Supporting Files */,
 			);
 			path = "WireUtilities-tests-host";
@@ -914,7 +911,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				09F028DC1B78BE2700BADDB6 /* Main.storyboard in Resources */,
-				09F028E11B78BE2700BADDB6 /* LaunchScreen.xib in Resources */,
 				09F028DE1B78BE2700BADDB6 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1145,14 +1141,6 @@
 				09F028DB1B78BE2700BADDB6 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		09F028DF1B78BE2700BADDB6 /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				09F028E01B78BE2700BADDB6 /* Base */,
-			);
-			name = LaunchScreen.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

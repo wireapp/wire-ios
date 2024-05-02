@@ -23,7 +23,6 @@
 		EE67F711296F0BB5001D7C88 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE67F710296F0BB5001D7C88 /* ViewController.swift */; };
 		EE67F714296F0BB5001D7C88 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EE67F712296F0BB5001D7C88 /* Main.storyboard */; };
 		EE67F716296F0BB5001D7C88 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EE67F715296F0BB5001D7C88 /* Assets.xcassets */; };
-		EE67F719296F0BB5001D7C88 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EE67F717296F0BB5001D7C88 /* LaunchScreen.storyboard */; };
 		EE67F724296F0C1B001D7C88 /* FBSnapshotTestCase.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F723296F0C1B001D7C88 /* FBSnapshotTestCase.xcframework */; };
 		EE9AEC9C2BD15A0C00F7853F /* WireCanvas.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC9B2BD15A0C00F7853F /* WireCanvas.docc */; };
 /* End PBXBuildFile section */
@@ -89,7 +88,6 @@
 		EE67F710296F0BB5001D7C88 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		EE67F713296F0BB5001D7C88 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		EE67F715296F0BB5001D7C88 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		EE67F718296F0BB5001D7C88 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EE67F71A296F0BB5001D7C88 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EE67F723296F0C1B001D7C88 /* FBSnapshotTestCase.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FBSnapshotTestCase.xcframework; path = ../Carthage/Build/FBSnapshotTestCase.xcframework; sourceTree = "<group>"; };
 		EE9AEC9B2BD15A0C00F7853F /* WireCanvas.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireCanvas.docc; sourceTree = "<group>"; };
@@ -233,7 +231,6 @@
 				EE67F710296F0BB5001D7C88 /* ViewController.swift */,
 				EE67F712296F0BB5001D7C88 /* Main.storyboard */,
 				EE67F715296F0BB5001D7C88 /* Assets.xcassets */,
-				EE67F717296F0BB5001D7C88 /* LaunchScreen.storyboard */,
 				EE67F71A296F0BB5001D7C88 /* Info.plist */,
 			);
 			path = WireCanvasTestHost;
@@ -377,7 +374,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EE67F719296F0BB5001D7C88 /* LaunchScreen.storyboard in Resources */,
 				EE67F716296F0BB5001D7C88 /* Assets.xcassets in Resources */,
 				EE67F714296F0BB5001D7C88 /* Main.storyboard in Resources */,
 			);
@@ -462,14 +458,6 @@
 				EE67F713296F0BB5001D7C88 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		EE67F717296F0BB5001D7C88 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				EE67F718296F0BB5001D7C88 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -613,8 +601,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WireCanvasTestHost/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -693,8 +679,6 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WireCanvasTestHost/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (

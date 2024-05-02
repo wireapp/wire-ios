@@ -19,7 +19,6 @@
 		5471A65F1D24215B0092A9A9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5471A65E1D24215B0092A9A9 /* ViewController.m */; };
 		5471A6621D24215B0092A9A9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5471A6601D24215B0092A9A9 /* Main.storyboard */; };
 		5471A6641D24215B0092A9A9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5471A6631D24215B0092A9A9 /* Assets.xcassets */; };
-		5471A6671D24215B0092A9A9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5471A6651D24215B0092A9A9 /* LaunchScreen.storyboard */; };
 		5471A66E1D24221A0092A9A9 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0928E2341BA0777A0057232E /* WireCryptobox.framework */; };
 		5471A6741D242D740092A9A9 /* PointerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5471A6731D242D740092A9A9 /* PointerWrapper.swift */; };
 		5471A6781D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5471A6771D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift */; };
@@ -146,7 +145,6 @@
 		5471A65E1D24215B0092A9A9 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		5471A6611D24215B0092A9A9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5471A6631D24215B0092A9A9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		5471A6661D24215B0092A9A9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5471A6681D24215B0092A9A9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5471A6731D242D740092A9A9 /* PointerWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointerWrapper.swift; sourceTree = "<group>"; };
 		5471A6771D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = EncryptionSessionsDirectory.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -303,7 +301,6 @@
 				5471A65E1D24215B0092A9A9 /* ViewController.m */,
 				5471A6601D24215B0092A9A9 /* Main.storyboard */,
 				5471A6631D24215B0092A9A9 /* Assets.xcassets */,
-				5471A6651D24215B0092A9A9 /* LaunchScreen.storyboard */,
 				5471A6681D24215B0092A9A9 /* Info.plist */,
 				5471A6571D24215B0092A9A9 /* Supporting Files */,
 			);
@@ -680,7 +677,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5471A6671D24215B0092A9A9 /* LaunchScreen.storyboard in Resources */,
 				5471A6641D24215B0092A9A9 /* Assets.xcassets in Resources */,
 				5471A6621D24215B0092A9A9 /* Main.storyboard in Resources */,
 			);
@@ -798,14 +794,6 @@
 				5471A6611D24215B0092A9A9 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		5471A6651D24215B0092A9A9 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5471A6661D24215B0092A9A9 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

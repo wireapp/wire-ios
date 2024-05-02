@@ -31,7 +31,6 @@
 		870253EA1DAB7AA00095D272 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E91DAB7AA00095D272 /* ViewController.m */; };
 		870253ED1DAB7AA00095D272 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 870253EB1DAB7AA00095D272 /* Main.storyboard */; };
 		870253EF1DAB7AA00095D272 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 870253EE1DAB7AA00095D272 /* Assets.xcassets */; };
-		870253F21DAB7AA00095D272 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 870253F01DAB7AA00095D272 /* LaunchScreen.storyboard */; };
 		870253F91DAB7B190095D272 /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; };
 		87B91C041E5C586D00A5EC11 /* NSData+MediaMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B91C031E5C586D00A5EC11 /* NSData+MediaMetadata.swift */; };
 		87B91C061E5C5D8600A5EC11 /* NSDataMetadataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B91C051E5C5D8600A5EC11 /* NSDataMetadataTests.swift */; };
@@ -150,7 +149,6 @@
 		870253E91DAB7AA00095D272 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		870253EC1DAB7AA00095D272 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		870253EE1DAB7AA00095D272 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		870253F11DAB7AA00095D272 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		870253F31DAB7AA00095D272 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		87B91C031E5C586D00A5EC11 /* NSData+MediaMetadata.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+MediaMetadata.swift"; sourceTree = "<group>"; };
 		87B91C051E5C5D8600A5EC11 /* NSDataMetadataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDataMetadataTests.swift; sourceTree = "<group>"; };
@@ -350,7 +348,6 @@
 				870253E91DAB7AA00095D272 /* ViewController.m */,
 				870253EB1DAB7AA00095D272 /* Main.storyboard */,
 				870253EE1DAB7AA00095D272 /* Assets.xcassets */,
-				870253F01DAB7AA00095D272 /* LaunchScreen.storyboard */,
 				870253F31DAB7AA00095D272 /* Info.plist */,
 				870253E21DAB7AA00095D272 /* Supporting Files */,
 			);
@@ -582,7 +579,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				870253F21DAB7AA00095D272 /* LaunchScreen.storyboard in Resources */,
 				870253EF1DAB7AA00095D272 /* Assets.xcassets in Resources */,
 				870253ED1DAB7AA00095D272 /* Main.storyboard in Resources */,
 			);
@@ -675,14 +671,6 @@
 				870253EC1DAB7AA00095D272 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		870253F01DAB7AA00095D272 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				870253F11DAB7AA00095D272 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

@@ -11,7 +11,6 @@
 		5E2BEC56214BA4A600E65B53 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2BEC55214BA4A600E65B53 /* ViewController.swift */; };
 		5E2BEC59214BA4A600E65B53 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E2BEC57214BA4A600E65B53 /* Main.storyboard */; };
 		5E2BEC5B214BA4A700E65B53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E2BEC5A214BA4A700E65B53 /* Assets.xcassets */; };
-		5E2BEC5E214BA4A700E65B53 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E2BEC5C214BA4A700E65B53 /* LaunchScreen.storyboard */; };
 		5E9EA4B72241426A00D401B2 /* NSDataDetector+Links.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4B62241426A00D401B2 /* NSDataDetector+Links.swift */; };
 		5E9EA4BD2241445F00D401B2 /* LinkAttachmentTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4BC2241445F00D401B2 /* LinkAttachmentTypes.swift */; };
 		5E9EA4BF22414FE100D401B2 /* LinkAttachmentDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4BE22414FE100D401B2 /* LinkAttachmentDetector.swift */; };
@@ -108,7 +107,6 @@
 		5E2BEC55214BA4A600E65B53 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		5E2BEC58214BA4A600E65B53 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5E2BEC5A214BA4A700E65B53 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		5E2BEC5D214BA4A700E65B53 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5E2BEC5F214BA4A700E65B53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5E9EA4B62241426A00D401B2 /* NSDataDetector+Links.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSDataDetector+Links.swift"; sourceTree = "<group>"; };
 		5E9EA4BC2241445F00D401B2 /* LinkAttachmentTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkAttachmentTypes.swift; sourceTree = "<group>"; };
@@ -230,7 +228,6 @@
 				5E2BEC55214BA4A600E65B53 /* ViewController.swift */,
 				5E2BEC57214BA4A600E65B53 /* Main.storyboard */,
 				5E2BEC5A214BA4A700E65B53 /* Assets.xcassets */,
-				5E2BEC5C214BA4A700E65B53 /* LaunchScreen.storyboard */,
 				5E2BEC5F214BA4A700E65B53 /* Info.plist */,
 			);
 			path = WireLinkPreviewTestsHost;
@@ -503,7 +500,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5E2BEC5E214BA4A700E65B53 /* LaunchScreen.storyboard in Resources */,
 				5E2BEC5B214BA4A700E65B53 /* Assets.xcassets in Resources */,
 				5E2BEC59214BA4A600E65B53 /* Main.storyboard in Resources */,
 			);
@@ -646,14 +642,6 @@
 				5E2BEC58214BA4A600E65B53 /* Base */,
 			);
 			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		5E2BEC5C214BA4A700E65B53 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				5E2BEC5D214BA4A700E65B53 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
