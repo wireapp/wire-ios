@@ -19,21 +19,9 @@
 import Foundation
 import WireSyncEngine
 
-/**
- * The type of credentials to ask when the user is creating or
- * providing credentials.
- */
-
-enum AuthenticationCredentialsType {
-    /// Register by email.
-    case email
-}
-
-/**
- * The context that caused the user to not have a complete history.
- */
-
+/// The context that caused the user to not have a complete history.
 enum NoHistoryContext {
+
     /// The user signed into this device for the first time.
     case newDevice
 
@@ -41,10 +29,7 @@ enum NoHistoryContext {
     case loggedOut
 }
 
-/**
- * Steps of the authentication flow.
- */
-
+/// Steps of the authentication flow.
 indirect enum AuthenticationFlowStep: Equatable {
 
     // Initial Steps
@@ -53,7 +38,7 @@ indirect enum AuthenticationFlowStep: Equatable {
     case reauthenticate(credentials: LoginCredentials?, numberOfAccounts: Int, isSignedOut: Bool)
 
     // Sign-In
-    case provideCredentials(AuthenticationCredentialsType, AuthenticationPrefilledCredentials?)
+    case provideCredentials(AuthenticationPrefilledCredentials?)
     case enterEmailVerificationCode(email: String, password: String, isResend: Bool)
     case authenticateEmailCredentials(ZMEmailCredentials)
     case companyLogin
@@ -73,9 +58,9 @@ indirect enum AuthenticationFlowStep: Equatable {
 
     // Registration
     case createCredentials(UnregisteredUser)
-    case sendActivationCode(UnverifiedCredentials, user: UnregisteredUser, isResend: Bool)
-    case enterActivationCode(UnverifiedCredentials, user: UnregisteredUser)
-    case activateCredentials(UnverifiedCredentials, user: UnregisteredUser, code: String)
+    case sendActivationCode(unverifiedEmail: String, user: UnregisteredUser, isResend: Bool)
+    case enterActivationCode(unverifiedEmail: String, user: UnregisteredUser)
+    case activateCredentials(unverifiedEmail: String, user: UnregisteredUser, code: String)
     case incrementalUserCreation(UnregisteredUser, IntermediateRegistrationStep)
     case createUser(UnregisteredUser)
 
@@ -128,10 +113,7 @@ indirect enum AuthenticationFlowStep: Equatable {
 
 // MARK: - Intermediate Steps
 
-/**
- * Intermediate steps required for user registration.
- */
-
+/// Intermediate steps required for user registration.
 enum IntermediateRegistrationStep: Equatable {
     case start, provideMarketingConsent, setName, setPassword
 

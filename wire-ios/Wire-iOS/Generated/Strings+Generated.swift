@@ -5693,8 +5693,6 @@ internal enum L10n {
       }
     }
     internal enum SigninLogout {
-      /// Your session expired. You need to log in again to continue.
-      internal static let subheadline = L10n.tr("Localizable", "signin_logout.subheadline", fallback: "Your session expired. You need to log in again to continue.")
       internal enum Email {
         /// Your session expired. Enter your email address and password to continue.
         internal static let subheadline = L10n.tr("Localizable", "signin_logout.email.subheadline", fallback: "Your session expired. Enter your email address and password to continue.")

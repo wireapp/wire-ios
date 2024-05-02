@@ -43,8 +43,8 @@ enum AuthenticationCoordinatorAction {
     case repeatAction
     case displayInlineError(NSError)
     case continueFlowWithLoginCode(String)
-    case switchCredentialsType(AuthenticationCredentialsType)
-    case startRegistrationFlow(UnverifiedCredentials)
+    case switchCredentialsType // TODO: can this be removed? only email is supported
+    case startRegistrationFlow(unverifiedEmail: String)
     case startLoginFlow(AuthenticationLoginRequest, AuthenticationProxyCredentialsInput?)
     case setFullName(String)
     case setUsername(String)

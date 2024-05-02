@@ -333,8 +333,8 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
             case .continueFlowWithLoginCode(let code):
                 continueFlow(withVerificationCode: code)
 
-            case .switchCredentialsType(let newType):
-                switchCredentialsType(newType)
+            case .switchCredentialsType:
+                switchCredentialsType()
 
             case .startRegistrationFlow(let unverifiedCredential):
                 activateNetworkSessions { [weak self] _ in
@@ -541,13 +541,14 @@ extension AuthenticationCoordinator {
     // MARK: - Registration Code
 
     /// Switches the type of credentials in the current step.
-    private func switchCredentialsType(_ newType: AuthenticationCredentialsType) {
+    /// The only supported type is email.
+    private func switchCredentialsType() {
         switch stateController.currentStep {
         case .createCredentials(let unregisteredUser):
             let newStep = AuthenticationFlowStep.createCredentials(unregisteredUser)
             stateController.transition(to: newStep, mode: .replace)
         case .provideCredentials:
-            let newStep = AuthenticationFlowStep.provideCredentials(newType, nil)
+            let newStep = AuthenticationFlowStep.provideCredentials(nil)
             stateController.transition(to: newStep, mode: .replace)
         default:
             log.warn("The current step does not support credential type switching")
@@ -563,7 +564,7 @@ extension AuthenticationCoordinator {
      * - parameter credentials: The unverified credentials to register with.
      */
 
-    private func startRegistration(_ credentials: UnverifiedCredentials) {
+    private func startRegistration(_ unverifiedEmail: String) {
         guard case let .createCredentials(unregisteredUser) = stateController.currentStep, let presenter = self.presenter else {
             log.error("Cannot start phone registration outside of registration flow.")
             return
@@ -572,24 +573,24 @@ extension AuthenticationCoordinator {
         UIAlertController.requestTOSApproval(over: presenter, forTeamAccount: false) { approved in
             if approved {
                 unregisteredUser.acceptedTermsOfService = true
-                unregisteredUser.credentials = credentials
-                self.sendActivationCode(credentials, unregisteredUser, isResend: false)
+                unregisteredUser.unverifiedEmail = unverifiedEmail
+                self.sendActivationCode(unverifiedEmail, unregisteredUser, isResend: false)
             }
         }
     }
 
     /// Sends the registration activation code.
-    private func sendActivationCode(_ credentials: UnverifiedCredentials, _ user: UnregisteredUser, isResend: Bool) {
+    private func sendActivationCode(_ unverifiedEmail: String, _ user: UnregisteredUser, isResend: Bool) {
         presenter?.isLoadingViewVisible = true
-        stateController.transition(to: .sendActivationCode(credentials, user: user, isResend: isResend))
-        registrationStatus.sendActivationCode(to: credentials)
+        stateController.transition(to: .sendActivationCode(unverifiedEmail: unverifiedEmail, user: user, isResend: isResend))
+        registrationStatus.sendActivationCode(to: unverifiedEmail)
     }
 
     /// Asks the registration status to activate the credentials with the code provided by the user.
-    private func activateCredentials(credentials: UnverifiedCredentials, user: UnregisteredUser, code: String) {
+    private func activateCredentials(unverifiedEmail: String, user: UnregisteredUser, code: String) {
         presenter?.isLoadingViewVisible = true
-        stateController.transition(to: .activateCredentials(credentials, user: user, code: code))
-        registrationStatus.checkActivationCode(credentials: credentials, code: code)
+        stateController.transition(to: .activateCredentials(unverifiedEmail: unverifiedEmail, user: user, code: code))
+        registrationStatus.checkActivationCode(unverifiedEmail: unverifiedEmail, code: code)
     }
 
     // MARK: - Linear Registration
@@ -725,8 +726,8 @@ extension AuthenticationCoordinator {
         case .enterEmailVerificationCode(let email, let password, _):
             let credentials = ZMEmailCredentials(email: email, password: password, emailVerificationCode: code)
             requestEmailLogin(with: credentials)
-        case .enterActivationCode(let unverifiedCredentials, let user):
-            activateCredentials(credentials: unverifiedCredentials, user: user, code: code)
+        case .enterActivationCode(let unverifiedEmail, let user):
+            activateCredentials(unverifiedEmail: unverifiedEmail, user: user, code: code)
         default:
             log.error("Cannot continue flow with user code in the current state (\(stateController.currentStep)")
         }

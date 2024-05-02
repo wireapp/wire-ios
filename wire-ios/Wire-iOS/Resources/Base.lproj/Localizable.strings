@@ -1604,7 +1604,6 @@
 "signin.confirm" = "Log In";
 "signin.company_idp.button.title" = "For Companies";
 
-"signin_logout.subheadline" = "Your session expired. You need to log in again to continue.";
 "signin_logout.email.subheadline" = "Your session expired. Enter your email address and password to continue.";
 "signin_logout.sso.subheadline" = "Your session expired. Log in with your enterprise account to continue.";
 "signin_logout.sso.buton" = "Enterprise log in";
