@@ -60,7 +60,7 @@ extension ConversationListViewController {
         permissions.view.fitIn(view: view)
         pushPermissionDeniedViewController = permissions
 
-        concealContentContainer()
+        contentContainer.alpha = 0
     }
 
     @objc func applicationDidBecomeActive(_ notif: Notification) {
@@ -73,9 +73,5 @@ extension ConversationListViewController {
                                                name: UIApplication.didBecomeActiveNotification,
                                                object: nil)
 
-    }
-
-    private func concealContentContainer() {
-        contentContainer.alpha = 0
     }
 }

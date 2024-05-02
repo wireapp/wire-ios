@@ -103,7 +103,7 @@ final class ConversationListViewController: UIViewController {
         topBarViewController.selfUserStatus = viewModel.selfUserStatus
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
-        listContentController = ConversationListContentController(userSession: viewModel.userSession)
+        listContentController = .init(userSession: viewModel.userSession)
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
 
         super.init(nibName: nil, bundle: nil)
@@ -219,7 +219,12 @@ final class ConversationListViewController: UIViewController {
 
     private func setupListContentController() {
         listContentController.contentDelegate = viewModel
-        add(listContentController, to: contentContainer)
+        let navigationController = UINavigationController(rootViewController: listContentController)
+        navigationController.navigationBar.isTranslucent = false
+        navigationController.navigationBar.barTintColor = SemanticColors.View.backgroundConversationList
+        navigationController.navigationBar.backgroundColor = SemanticColors.View.backgroundConversationList
+        navigationController.navigationBar.shadowImage
+        add(navigationController, to: contentContainer)
     }
 
     private func setupNoConversationLabel() {
@@ -245,10 +250,8 @@ final class ConversationListViewController: UIViewController {
     private func createViewConstraints() {
         guard
             let topBarView = topBarViewController.view,
-            let conversationList = listContentController.view
-        else {
-            return
-        }
+            let conversationList = listContentController.navigationController!.view
+        else { return }
 
         [
             contentContainer,

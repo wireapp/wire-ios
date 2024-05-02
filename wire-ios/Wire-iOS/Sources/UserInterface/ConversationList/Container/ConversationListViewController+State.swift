@@ -54,5 +54,4 @@ extension ConversationListViewController {
         setState(.conversationList, animated: false)
         listContentController.selectInboxAndFocus(onView: focus)
     }
-
 }
