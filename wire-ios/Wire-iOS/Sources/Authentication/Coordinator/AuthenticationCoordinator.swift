@@ -333,9 +333,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
             case .continueFlowWithLoginCode(let code):
                 continueFlow(withVerificationCode: code)
 
-            case .switchCredentialsType:
-                switchCredentialsType()
-
             case .startRegistrationFlow(let unverifiedCredential):
                 activateNetworkSessions { [weak self] _ in
                     self?.startRegistration(unverifiedCredential)
@@ -539,21 +536,6 @@ extension AuthenticationCoordinator {
     }
 
     // MARK: - Registration Code
-
-    /// Switches the type of credentials in the current step.
-    /// The only supported type is email.
-    private func switchCredentialsType() {
-        switch stateController.currentStep {
-        case .createCredentials(let unregisteredUser):
-            let newStep = AuthenticationFlowStep.createCredentials(unregisteredUser)
-            stateController.transition(to: newStep, mode: .replace)
-        case .provideCredentials:
-            let newStep = AuthenticationFlowStep.provideCredentials(nil)
-            stateController.transition(to: newStep, mode: .replace)
-        default:
-            log.warn("The current step does not support credential type switching")
-        }
-    }
 
     /**
      * Starts the registration flow with the specified credentials.
