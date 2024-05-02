@@ -124,7 +124,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
 
             mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
 
-            _ = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .success(()), context: syncContext.notificationContext)
+            let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .success(()), context: syncContext.notificationContext)
 
             let expectation = XCTestExpectation(description: "completion should be called")
 
@@ -155,7 +155,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
             role.actions = [action]
             mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
 
-            _ = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .failure(.unknown), context: syncContext.notificationContext)
+            let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .failure(.unknown), context: syncContext.notificationContext)
 
             let expectation = XCTestExpectation(description: "Completion should be called with a failure due to insufficient permissions")
 
@@ -165,7 +165,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
                 switch result {
                 case .success:
                     XCTFail("Expected operation to fail, but it succeeded.")
-                case .failure(let error):
+                case .failure:
                     print("Operation failed")
                 }
                 expectation.fulfill()
