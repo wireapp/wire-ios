@@ -94,15 +94,3 @@ extension UIView {
         return intersection
     }
 }
-
-// MARK: - factory methods
-
-extension UIView {
-    static func shieldView() -> UIView {
-        let loadedObjects = UINib(nibName: "ScreenCurtain", bundle: nil).instantiate(withOwner: .none, options: .none)
-
-        let nibView = loadedObjects.first as! UIView
-
-        return nibView
-    }
-}

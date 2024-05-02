@@ -30,7 +30,7 @@ final class ScreenCurtainWindow: UIWindow {
 
     override init(frame: CGRect = UIScreen.main.bounds) {
         super.init(frame: frame)
-        // rootViewController = ScreenCurtainViewController()
+
         rootViewController = UIHostingController(rootView: ScreenCurtainView())
         backgroundColor = .clear
         isOpaque = false
