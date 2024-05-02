@@ -133,8 +133,6 @@
 	<string>In order to authenticate in the app allow Wire to access the Face ID feature.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allow Wire to access your location so you can send your location to others.</string>
-	<key>NSMainStoryboardFile</key>
-	<string>Main</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow Wire to access your microphone so you can talk to people and send audio messages.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
