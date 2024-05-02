@@ -20,10 +20,9 @@ import XCTest
 import SnapshotTesting
 @testable import Wire
 import UIKit
-import SwiftUI
 
 // Precision of matching snapshots. Lower this value to fix issue with difference with Intel and Apple Silicon
-private let precision: Float = 1.0
+private let precision: Float = 0.90
 private let perceptualPrecision: Float = 0.98
 
 extension ViewImageConfig: Hashable {
@@ -375,33 +374,6 @@ extension XCTestCase {
                                      file: file,
                                      testName: testName,
                                      line: line)
-
-        XCTAssertNil(failure, file: file, line: line)
-    }
-
-    func verify<View: SwiftUI.View>(
-        matching value: View,
-        layout: SwiftUISnapshotLayout = .sizeThatFits,
-        traits: UITraitCollection = .init(),
-        named name: String? = nil,
-        file: StaticString = #file,
-        testName: String = #function,
-        line: UInt = #line
-    ) {
-        let failure = verifySnapshot(
-            matching: value,
-            as: .image(
-                precision: precision,
-                perceptualPrecision: perceptualPrecision,
-                layout: layout,
-                traits: traits
-            ),
-            named: name,
-            snapshotDirectory: snapshotDirectory(file: file),
-            file: file,
-            testName: testName,
-            line: line
-        )
 
         XCTAssertNil(failure, file: file, line: line)
     }
