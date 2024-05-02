@@ -20,9 +20,9 @@ import Foundation
 
 @testable import WireSyncEngine
 
-class RegistrationStrategyTests: MessagingTest {
+final class RegistrationStrategyTests: MessagingTest {
     var registrationStatus: TestRegistrationStatus!
-    var sut: WireSyncEngine.RegistrationStrategy!
+    var sut: RegistrationStrategy!
     var userInfoParser: MockUserInfoParser!
     var team: UnregisteredTeam!
     var user: UnregisteredUser!
@@ -31,7 +31,7 @@ class RegistrationStrategyTests: MessagingTest {
         super.setUp()
         registrationStatus = TestRegistrationStatus()
         userInfoParser = MockUserInfoParser()
-        sut = WireSyncEngine.RegistrationStrategy(groupQueue: self.syncMOC, status: registrationStatus, userInfoParser: userInfoParser)
+        sut = RegistrationStrategy(groupQueue: self.syncMOC, status: registrationStatus, userInfoParser: userInfoParser)
         team = UnregisteredTeam(teamName: "Dream Team", email: "some@email.com", emailCode: "23", fullName: "M. Jordan", password: "qwerty", accentColor: .amber)
 
         user = UnregisteredUser()

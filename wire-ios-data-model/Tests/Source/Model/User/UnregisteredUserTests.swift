@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireDataModel
 import XCTest
+
+@testable import WireDataModel
 
 final class UnregisteredUserTests: XCTestCase {
 
@@ -28,7 +29,7 @@ final class UnregisteredUserTests: XCTestCase {
 
         // WHEN
         user.name = "Mario"
-        user.credentials = .email("alexis@example.com")
+        user.unverifiedEmail = "alexis@example.com"
         user.verificationCode = "123456"
         user.accentColor = .turquoise
         user.acceptedTermsOfService = true

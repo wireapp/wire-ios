@@ -17,10 +17,12 @@
 //
 
 import Foundation
+
 @testable import WireSyncEngine
 
 class RegistrationStatusTests: MessagingTest {
-    var sut: WireSyncEngine.RegistrationStatus!
+
+    var sut: RegistrationStatus!
     var delegate: MockRegistrationStatusDelegate!
     var email: String!
     var code: String!
@@ -30,7 +32,7 @@ class RegistrationStatusTests: MessagingTest {
     override func setUp() {
         super.setUp()
 
-        sut = WireSyncEngine.RegistrationStatus()
+        sut = RegistrationStatus()
         delegate = MockRegistrationStatusDelegate()
         sut.delegate = delegate
         email = "some@foo.bar"
