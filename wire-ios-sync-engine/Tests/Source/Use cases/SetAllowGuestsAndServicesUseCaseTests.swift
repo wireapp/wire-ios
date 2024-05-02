@@ -166,7 +166,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
                 case .success:
                     XCTFail("Expected operation to fail, but it succeeded.")
                 case .failure(let error):
-                    XCTFail("Test failed with error: \(error)")
+                    print("Operation failed")
                 }
                 expectation.fulfill()
             }
