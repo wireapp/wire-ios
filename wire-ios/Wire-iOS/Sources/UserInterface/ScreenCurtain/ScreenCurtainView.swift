@@ -25,7 +25,8 @@ struct ScreenCurtainView: View {
             Spacer()
             HStack {
                 Spacer()
-                Image(.Wire.shield)
+                // for some reason `Image(.Wire.shield)` didn't show the shield
+                Image(uiImage: .init(resource: .Wire.shield))
                 Spacer()
             }
             Spacer()

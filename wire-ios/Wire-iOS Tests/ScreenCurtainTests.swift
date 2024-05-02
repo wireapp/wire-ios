@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import SnapshotTesting
-@testable import Wire
 import XCTest
 
-final class ScreenCurtainTests: XCTestCase {
+@testable import Wire
+
+final class ScreenCurtainTests: BaseSnapshotTestCase {
 
     var sut: ScreenCurtainWindow!
     var userSession: UserSessionMock!
@@ -95,5 +94,4 @@ final class ScreenCurtainTests: XCTestCase {
         // Then
         verify(matching: sut.rootViewController!)
     }
-
 }
