@@ -37,7 +37,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     /// Types of flow provided by the view controller.
     enum FlowType {
-        case login(AuthenticationCredentialsType, AuthenticationPrefilledCredentials?)
+        case login(AuthenticationPrefilledCredentials?)
         case registration
         case reauthentication(AuthenticationPrefilledCredentials?)
     }
@@ -49,13 +49,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     var prefilledCredentials: AuthenticationPrefilledCredentials? {
         didSet {
             updatePrefilledCredentials()
-        }
-    }
-
-    /// The type of credentials that the user is currently entering.
-    var credentialsType: AuthenticationCredentialsType = .email {
-        didSet {
-            updateCredentialsType()
         }
     }
 
@@ -98,22 +91,19 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     convenience init(flowType: FlowType, backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }) {
         switch flowType {
-        case .login(let credentialsType, let credentials):
+        case .login(let credentials):
             let description = LogInStepDescription()
             self.init(description: description, contentCenterConstraintActivation: false)
-            self.credentialsType = credentials?.primaryCredentialsType ?? credentialsType
             self.prefilledCredentials = credentials
             self.shouldUseScrollView = true
         case .reauthentication(let credentials):
             let description = ReauthenticateStepDescription(prefilledCredentials: credentials)
             self.init(description: description, contentCenterConstraintActivation: false)
-            self.credentialsType = credentials?.primaryCredentialsType ?? .email
             self.prefilledCredentials = credentials
             self.shouldUseScrollView = true
         case .registration:
             let description = PersonalRegistrationStepDescription()
             self.init(description: description, contentCenterConstraintActivation: true)
-            self.credentialsType = .email
             self.shouldUseScrollView = false
         }
 
@@ -353,18 +343,14 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
 
     private var contextualFirstResponder: UIResponder? {
         switch flowType {
-        case .login?:
-            switch credentialsType {
-            case .email: return emailPasswordInputField
-            }
-        case .registration?:
-            return emailInputField
-        case .reauthentication?:
-            switch credentialsType {
-            case .email: return emailPasswordInputField
-            }
-        default:
-            return nil
+        case .login:
+            emailPasswordInputField
+        case .registration:
+            emailInputField
+        case .reauthentication:
+            emailPasswordInputField
+        case .none:
+            .none
         }
     }
 
@@ -379,26 +365,17 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
     private func updateCredentialsType() {
         clearError()
 
-        switch credentialsType {
-        case .email:
-            emailPasswordInputField.isHidden = isRegistering
-            emailInputField.isHidden = !isRegistering
-            loginButton.isHidden = isRegistering
-            forgotPasswordButton.isHidden = isRegistering
+        emailPasswordInputField.isHidden = isRegistering
+        emailInputField.isHidden = !isRegistering
+        loginButton.isHidden = isRegistering
+        forgotPasswordButton.isHidden = isRegistering
 
-            setSecondaryViewHidden(false)
-        }
+        setSecondaryViewHidden(false)
     }
 
     private func updatePrefilledCredentials() {
-        guard let prefilledCredentials = self.prefilledCredentials else {
-            return
-        }
-
-        switch prefilledCredentials.primaryCredentialsType {
-        case .email:
-            emailPasswordInputField.prefill(email: prefilledCredentials.credentials.emailAddress)
-        }
+        guard let prefilledCredentials else { return }
+        emailPasswordInputField.prefill(email: prefilledCredentials.credentials.emailAddress)
     }
 
     override func clearInputFields() {

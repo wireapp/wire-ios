@@ -41,26 +41,19 @@ final class RegistrationActivationExistingAccountPolicyHandler: AuthenticationEv
         }
 
         // Only handle errors during activation requests
-        let credentials: UnverifiedCredentials
-
+        let unverifiedEmail: String
         switch currentStep {
-        case let .sendActivationCode(userCredentials, _, _):
-            credentials = userCredentials
+        case let .sendActivationCode(email, _, _):
+            unverifiedEmail = email
         default:
             return nil
         }
 
-        // Create the actions
         var actions: [AuthenticationCoordinatorAction] = [.hideLoadingView]
-
-        switch credentials {
-        case .email(let email):
-            let alert = AuthenticationCoordinatorAlert(title: AlertStrings.AccountExists.title,
-                                                       message: AlertStrings.AccountExists.messageEmail,
-                                                       actions: [.changeEmail, .login(email: email)])
-
-            actions.append(.presentAlert(alert))
-        }
+        let alert = AuthenticationCoordinatorAlert(title: AlertStrings.AccountExists.title,
+                                                   message: AlertStrings.AccountExists.messageEmail,
+                                                   actions: [.changeEmail, .login(email: unverifiedEmail)])
+        actions.append(.presentAlert(alert))
 
         return actions
     }
@@ -75,14 +68,18 @@ private extension AuthenticationCoordinatorAlertAction {
     }
 
     static func login(email: String) -> Self {
-        let credentials = LoginCredentials(emailAddress: email,
-                                           hasPassword: true,
-                                           usesCompanyLogin: false)
-
-        let prefilledCredentials = AuthenticationPrefilledCredentials(primaryCredentialsType: .email,
-                                                                      credentials: credentials,
-                                                                      isExpired: false)
-        return Self.init(title: AlertStrings.changeSigninAction,
-                         coordinatorActions: [.transition(.provideCredentials(.email, prefilledCredentials), mode: .replace)])
+        let credentials = LoginCredentials(
+            emailAddress: email,
+            hasPassword: true,
+            usesCompanyLogin: false
+        )
+        let prefilledCredentials = AuthenticationPrefilledCredentials(
+            credentials: credentials,
+            isExpired: false
+        )
+        return Self.init(
+            title: AlertStrings.changeSigninAction,
+            coordinatorActions: [.transition(.provideCredentials(prefilledCredentials), mode: .replace)]
+        )
     }
 }

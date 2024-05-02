@@ -84,8 +84,8 @@ public class RegistrationStatus: RegistrationStatusProtocol {
      * - parameter credentials: The credentials (phone or email) to activate.
      */
 
-    public func sendActivationCode(to credentials: UnverifiedCredentials) {
-        phase = .sendActivationCode(credentials: credentials)
+    public func sendActivationCode(to unverifiedEmail: String) {
+        phase = .sendActivationCode(unverifiedEmail: unverifiedEmail)
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 
@@ -95,8 +95,8 @@ public class RegistrationStatus: RegistrationStatusProtocol {
      * - parameter code: The activation code sent by the backend that needs to be verified.
      */
 
-    public func checkActivationCode(credentials: UnverifiedCredentials, code: String) {
-        phase = .checkActivationCode(credentials: credentials, code: code)
+    public func checkActivationCode(unverifiedEmail: String, code: String) {
+        phase = .checkActivationCode(unverifiedEmail: unverifiedEmail, code: code)
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 

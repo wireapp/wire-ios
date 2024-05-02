@@ -37,7 +37,7 @@ final class AuthenticationInterfaceBuilder {
     var backendEnvironmentProvider: () -> BackendEnvironmentProvider
 
     var backendEnvironment: BackendEnvironmentProvider {
-        return backendEnvironmentProvider()
+        backendEnvironmentProvider()
     }
 
     // MARK: - Initialization
@@ -47,8 +47,10 @@ final class AuthenticationInterfaceBuilder {
      * - parameter featureProvider: The object to use when checking for features
      */
 
-    init(featureProvider: AuthenticationFeatureProvider,
-         backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }) {
+    init(
+        featureProvider: AuthenticationFeatureProvider,
+         backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }
+    ) {
         self.featureProvider = featureProvider
         self.backendEnvironmentProvider = backendEnvironmentProvider
     }
@@ -83,10 +85,8 @@ final class AuthenticationInterfaceBuilder {
 
             } else {
                 let prefill: AuthenticationPrefilledCredentials?
-
                 if let credentials = credentials, credentials.emailAddress != nil {
-                    let prefillType: AuthenticationCredentialsType = .email
-                    prefill = AuthenticationPrefilledCredentials(primaryCredentialsType: prefillType, credentials: credentials, isExpired: isSignedOut)
+                    prefill = AuthenticationPrefilledCredentials(credentials: credentials, isExpired: isSignedOut)
                 } else {
                     prefill = nil
                 }
@@ -102,8 +102,8 @@ final class AuthenticationInterfaceBuilder {
             )
             return viewController
 
-        case .provideCredentials(let credentialsFlowType, let prefill):
-            return makeCredentialsViewController(for: .login(credentialsFlowType, prefill))
+        case .provideCredentials(let prefill):
+            return makeCredentialsViewController(for: .login(prefill))
 
         case .createCredentials:
             return makeCredentialsViewController(for: .registration)
@@ -144,14 +144,8 @@ final class AuthenticationInterfaceBuilder {
             let viewController = makeViewController(for: addUsernameStep)
             return viewController
 
-        case .enterActivationCode(let credentials, _):
-            let step: AuthenticationStepDescription
-
-            switch credentials {
-            case .email(let email):
-                step = VerifyEmailStepDescription(email: email)
-            }
-
+        case .enterActivationCode(let unverifiedEmail, _):
+            let step = VerifyEmailStepDescription(email: unverifiedEmail)
             return makeViewController(for: step)
 
         case .pendingEmailLinkVerification(let emailCredentials):
@@ -243,8 +237,6 @@ final class AuthenticationInterfaceBuilder {
      */
 
     private func makeCredentialsViewController(for flowType: AuthenticationCredentialsViewController.FlowType) -> AuthenticationCredentialsViewController {
-        let viewController = AuthenticationCredentialsViewController(flowType: flowType, backendEnvironmentProvider: backendEnvironmentProvider)
-        return viewController
+        .init(flowType: flowType, backendEnvironmentProvider: backendEnvironmentProvider)
     }
-
 }
