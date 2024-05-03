@@ -58,7 +58,6 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
             // GIVEN
             let role = Role.insertNewObject(in: syncContext)
             let action = Action.insertNewObject(in: syncContext)
-            role.name = "wire_admin"
             action.name = "modify_conversation_access"
             role.actions = [action]
 
@@ -80,20 +79,13 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
                 expectation.fulfill()
             }
 
-            wait(for: [expectation], timeout: 4.0)
+            wait(for: [expectation], timeout: 0.4)
         }
     }
 
     func testGuestEnablementFails_WithInsufficientPermissions() async {
         await syncContext.perform { [self] in
             // GIVEN
-            let role = Role.insertNewObject(in: syncContext)
-            let action = Action.insertNewObject(in: syncContext)
-
-            action.name = "modify_conversation_access"
-            role.actions = [action]
-            mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
-
             let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .failure(.unknown), context: syncContext.notificationContext)
 
             let expectation = XCTestExpectation(description: "Completion should be called with a failure due to insufficient permissions")
@@ -105,12 +97,12 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
                 case .success:
                     XCTFail("Expected operation to fail, but it succeeded.")
                 case .failure(let error):
-                    print("Operation failed")
+                    break
                 }
                 expectation.fulfill()
             }
 
-            wait(for: [expectation], timeout: 4.0)
+            wait(for: [expectation], timeout: 0.4)
         }
     }
 
@@ -134,7 +126,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
                 // THEN
                 switch result {
                 case .success:
-                    print("Operation successful")
+                    break
                 case .failure(let error):
                     XCTFail("Test failed with error: \(error)")
                 }
@@ -142,7 +134,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
                 expectation.fulfill()
             }
 
-            wait(for: [expectation], timeout: 4.0)
+            wait(for: [expectation], timeout: 0.4)
         }
     }
 
@@ -150,15 +142,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
 
         await syncContext.perform { [self] in
             // GIVEN
-            let role = Role.insertNewObject(in: syncContext)
-            let action = Action.insertNewObject(in: syncContext)
-
-            action.name = "modify_conversation_access"
-            role.actions = [action]
-            mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
-
             let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .failure(.unknown), context: syncContext.notificationContext)
-
             let expectation = XCTestExpectation(description: "Completion should be called with a failure due to insufficient permissions")
 
             // WHEN
@@ -168,12 +152,12 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
                 case .success:
                     XCTFail("Expected operation to fail, but it succeeded.")
                 case .failure:
-                    print("Operation failed")
+                    break
                 }
                 expectation.fulfill()
             }
 
-            wait(for: [expectation], timeout: 4.0)
+            wait(for: [expectation], timeout: 0.4)
         }
     }
 
