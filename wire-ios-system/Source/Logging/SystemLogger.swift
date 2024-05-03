@@ -86,6 +86,10 @@ struct SystemLogger: LoggerProtocol {
         log(message, attributes: attributes, osLogType: .fault)
     }
 
+    func addTag(_ key: LogAttributesKey, value: String?) {
+        log("🤖 add \(key.rawValue) = \(value) - NO EFFECT HERE", attributes: nil, osLogType: .info)
+    }
+
     private func log(_ message: LogConvertible, attributes: LogAttributes?, osLogType: OSLogType) {
         var logger: OSLog = OSLog.default
         if let tag = attributes?["tag"] as? String {

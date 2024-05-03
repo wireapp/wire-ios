@@ -3042,6 +3042,12 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "error.conversation.title", fallback: "Error")
         /// The conversation is full
         internal static let tooManyMembers = L10n.tr("Localizable", "error.conversation.too_many_members", fallback: "The conversation is full")
+        internal enum Oneonone {
+          /// You can't start the conversation with %@ right now. %@ needs to open Wire or log in again first. Please try again later.
+          internal static func cannotStart(_ p1: Any, _ p2: Any) -> String {
+            return L10n.tr("Localizable", "error.conversation.oneonone.cannot_start", String(describing: p1), String(describing: p2), fallback: "You can't start the conversation with %@ right now. %@ needs to open Wire or log in again first. Please try again later.")
+          }
+        }
       }
       internal enum Email {
         /// Please enter a valid email address
@@ -4426,6 +4432,8 @@ internal enum L10n {
       }
       /// Remove?
       internal static let removeDialogTitle = L10n.tr("Localizable", "profile.remove_dialog_title", fallback: "Remove?")
+      /// Start conversation
+      internal static let startConversationButtonTitle = L10n.tr("Localizable", "profile.start_conversation_button_title", fallback: "Start conversation")
       /// Unblock…
       internal static let unblockButtonTitle = L10n.tr("Localizable", "profile.unblock_button_title", fallback: "Unblock…")
       /// Unblock
