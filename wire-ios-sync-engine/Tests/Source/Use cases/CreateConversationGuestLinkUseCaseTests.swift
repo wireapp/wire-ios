@@ -56,6 +56,9 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
     override func tearDown() async throws {
         stack = nil
         sut = nil
+        mockSelfUser = nil
+        mockConversation = nil
+        setAllowGuestAndServicesUseCase = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
     }
@@ -75,6 +78,38 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
             mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
 
             let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(result: .success("www.test.com"), context: syncContext.notificationContext)
+
+            let expectation = XCTestExpectation(description: "Guest link creation")
+
+            sut.invoke(conversation: mockConversation, password: nil) { result in
+                switch result {
+                case .success(let link):
+                    XCTAssertNotNil(link)
+                case .failure(let error):
+                    XCTFail("Test failed with error: \(error)")
+                }
+
+                expectation.fulfill()
+            }
+
+            wait(for: [expectation], timeout: 0.5)
+        }
+    }
+
+    func testThatLinkGenerationSucceeds_LegacyMode() async {
+
+        await syncContext.perform { [self] in
+            // GIVEN
+            let role = Role.insertNewObject(in: syncContext)
+            let action = Action.insertNewObject(in: syncContext)
+            role.name = "wire_admin"
+            action.name = "modify_conversation_access"
+            role.actions = [action]
+            mockConversation.accessMode = [.invite]
+            mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
+
+            let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(result: .success("www.test.com"), context: syncContext.notificationContext)
+            let setGuestAndServicesMockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .success(()), context: syncContext.notificationContext)
 
             let expectation = XCTestExpectation(description: "Guest link creation")
 

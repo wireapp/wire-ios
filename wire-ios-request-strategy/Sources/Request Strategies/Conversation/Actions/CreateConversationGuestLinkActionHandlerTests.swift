@@ -48,6 +48,8 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
 
     override func tearDown() async throws {
         stack = nil
+        coreDataStackHelper = nil
+        conversationID = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
     }
