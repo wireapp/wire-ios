@@ -16,16 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
-import XCTest
+import Foundation
+import WireTransport
 
-final class CountryTests: XCTestCase {
+public extension UserType {
 
-    func testThatCountryFromDeviceGivesCurrentCountry() {
-        // GIVEN
-        let countryFromDevice = Country.countryFromDevice!
+    var qualifiedID: QualifiedID? {
+        guard
+            let uuid = remoteIdentifier,
+            let domain = domain ?? BackendInfo.domain
+        else {
+            return nil
+        }
 
-        // WHEN & THEN
-        XCTAssertEqual(countryFromDevice.iso, "us")
+        return QualifiedID(uuid: uuid, domain: domain)
     }
+
 }

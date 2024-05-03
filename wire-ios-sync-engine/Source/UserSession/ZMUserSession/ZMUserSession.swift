@@ -311,6 +311,23 @@ public final class ZMUserSession: NSObject {
             gracePeriodEndDate: gracePeriodEndDate)
     }()
 
+    public lazy var removeUserClient: RemoveUserClientUseCaseProtocol? = {
+        let httpClient = HttpClientImpl(
+            transportSession: transportSession,
+            queue: syncContext
+        )
+        let apiProvider = APIProvider(httpClient: httpClient)
+        guard let apiVersion = BackendInfo.apiVersion else {
+            WireLogger.backend.warn("apiVersion not resolved")
+
+            return nil
+        }
+
+        return RemoveUserClientUseCase(
+            userClientAPI: apiProvider.userClientAPI(apiVersion: apiVersion),
+            syncContext: syncContext)
+    }()
+
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
@@ -450,6 +467,10 @@ public final class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
+
+        if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
+            WireLogger.authentication.addTag(.selfClientId, value: clientId)
+        }
     }
 
     // MARK: - Deinitalize
@@ -475,6 +496,7 @@ public final class ZMUserSession: NSObject {
         contextStorage.clear()
 
         NotificationCenter.default.removeObserver(self)
+        WireLogger.authentication.addTag(.selfClientId, value: nil)
 
         tornDown = true
     }
@@ -931,6 +953,18 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
             self?.delegate?.clientRegistrationDidSucceed(accountId: accountId)
         }
+
+        if userClient.hasRegisteredMLSClient {
+            // Before the client was registered as an MLS client,
+            // They wouldn't have been able to migrate any conversations from Proteus to MLS.
+            // So we perform a slow sync to sync the conversations. This will ensure that
+            // the message protocol of each conversation is up-to-date.
+            // The client will then join any MLS groups they haven't joined yet.
+            syncStatus.forceSlowSync()
+        }
+
+        let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
+        WireLogger.authentication.addTag(.selfClientId, value: clientId)
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {
