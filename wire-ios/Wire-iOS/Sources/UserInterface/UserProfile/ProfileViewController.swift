@@ -48,7 +48,7 @@ extension ZMConversationType {
 
 final class ProfileViewController: UIViewController {
     weak var viewControllerDismisser: ViewControllerDismisser?
-    var delegate: ProfileViewControllerDelegate?
+    weak var delegate: ProfileViewControllerDelegate?
 
     private var viewModel: ProfileViewControllerViewModeling
     private let profileFooterView = ProfileFooterView()
@@ -101,7 +101,7 @@ final class ProfileViewController: UIViewController {
         self.viewControllerDismisser = viewControllerDismisser
     }
 
-    required init(viewModel: ProfileViewControllerViewModeling) {
+    required init(viewModel: any ProfileViewControllerViewModeling) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
 
