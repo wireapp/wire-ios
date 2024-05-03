@@ -107,7 +107,6 @@ platform :ios do
         options[:override_folder] = "BK-COLUMN1"
         options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_RESTRICTED']
         options[:app_center_app_name] = ENV['C1_APP_CENTER_APP_NAME_RESTRICTED']
-        options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         options[:produce_debug_builds] = true
@@ -121,7 +120,6 @@ platform :ios do
         options[:override_folder] = "BK-COLUMN2"
         options[:s3_subfolder] = ENV['C2_S3_SUBFOLDER_RESTRICTED']
         options[:app_center_app_name] = ENV['C2_APP_CENTER_APP_NAME_RESTRICTED']
-        options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         options[:produce_debug_builds] = true
@@ -135,7 +133,6 @@ platform :ios do
         options[:override_folder] = "BK-COLUMN3"
         options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_RESTRICTED']
         options[:app_center_app_name] = ENV['C3_APP_CENTER_APP_NAME_RESTRICTED']
-        options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         options[:produce_debug_builds] = true
@@ -149,7 +146,6 @@ platform :ios do
         options[:override_folder] = "BK-COLUMN1"
         options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_PRODUCTION']
         options[:app_center_app_name] = ENV['C1_APP_CENTER_APP_NAME_PRODUCTION']
-        options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         save_app_name('Column 1 Production')
@@ -162,7 +158,6 @@ platform :ios do
         options[:override_folder] = "BK-COLUMN2"
         options[:s3_subfolder] = ENV['C2_S3_SUBFOLDER_PRODUCTION']
         options[:app_center_app_name] = ENV['C2_APP_CENTER_APP_NAME_PRODUCTION']
-        options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         save_app_name('Column 2 Production')
@@ -175,7 +170,6 @@ platform :ios do
         options[:override_folder] = "BK-COLUMN3"
         options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_PRODUCTION']
         options[:app_center_app_name] = ENV['C3_APP_CENTER_APP_NAME_PRODUCTION']
-        options[:run_security_tests] = !ENV['SKIP_SECURITY_TESTS'] || true
         options[:upload_app_store] = true
         options[:upload_app_center] = true
         save_app_name('Column 3 Production')
@@ -185,7 +179,8 @@ platform :ios do
     def build_and_upload_app(options)
         options[:build_number] = generate_build_number
         prepare_for_release(options)
-        if options[:run_security_tests] || false
+        build = Build.new(options: options)
+        if !build.skip_security_tests
             UI.message "🤖 Run security tests"
             create_simulator_if_needed
             security_plans(options)
@@ -534,6 +529,7 @@ class Build
     attr_reader :for_simulator
     attr_reader :configuration
     attr_reader :enable_datadog
+    attr_reader :skip_security_tests
 
     def initialize(options:)
         build_number = options[:build_number]
@@ -554,6 +550,7 @@ class Build
         end
 
         @enable_datadog = ENV['ENABLE_DATADOG'] == "true" || ENV['ENABLE_DATADOG'] == "1"
+        @skip_security_tests = ENV['SKIP_SECURITY_TESTS'] == "true" || ENV['SKIP_SECURITY_TESTS'] == "1"
         @build_number = build_number
         
         for_simulator = options[:for_simulator]
