@@ -244,7 +244,9 @@ final class ConversationGuestOptionsViewModel {
             self?.showLoadingCell = true
         }
 
-        createSecureGuestLinkUseCase.invoke(conversation: conversation, password: nil) { result in
+        createSecureGuestLinkUseCase.invoke(conversation: conversation, password: nil) { [weak self] result in
+            guard let self = self else { return }
+
             switch result {
             case .success(let link):
                 self.link = link
@@ -255,7 +257,6 @@ final class ConversationGuestOptionsViewModel {
             item.cancel()
             self.showLoadingCell = false
         }
-
     }
 
     /// Starts the Guest Link Creation Flow
@@ -268,11 +269,15 @@ final class ConversationGuestOptionsViewModel {
                 guard let `self` = self else { return }
                 switch guestLinkType {
                 case .secure:
+                    let viewController = CreateSecureGuestLinkViewController(
+                        conversationSecureGuestLinkUseCase: createSecureGuestLinkUseCase,
+                        conversation: conversation
+                    )
+
+                    let navigationController = viewController.wrapInNavigationController()
                     delegate?.viewModel(
                         self,
-                        presentCreateSecureGuestLink: CreateSecureGuestLinkViewController(
-                            conversationSecureGuestLinkUseCase: createSecureGuestLinkUseCase,
-                            conversation: conversation).wrapInNavigationController(),
+                        presentCreateSecureGuestLink: navigationController,
                         animated: true
                     )
                 case .normal:
