@@ -127,23 +127,34 @@ final class ProfileViewControllerViewModel: NSObject {
     }
 
     func openOneToOneConversation() {
-        guard let userSession = ZMUserSession.shared() else {
-            return
-        }
-
         if let conversation = user.oneToOneConversation {
             transition(to: conversation)
         } else {
-            userSession.createTeamOneOnOne(with: user) { [weak self] in
-                switch $0 {
-                case .success(let conversation):
-                    self?.transition(to: conversation)
+            startOneToOneConversation()
+        }
+    }
 
-                case .failure(let error):
-                    WireLogger.conversation.error("failed to create team one on one from profile view: \(error)")
-                }
+    func startOneToOneConversation() {
+        viewModelDelegate?.startAnimatingActivity()
+
+        userSession.createTeamOneOnOne(with: user) { [weak self] in
+            self?.viewModelDelegate?.stopAnimatingActivity()
+
+            switch $0 {
+            case .success(let conversation):
+                self?.transition(to: conversation)
+            case .failure(let error):
+                WireLogger.conversation.error("failed to create team one on one from profile view: \(error)")
+                guard let username = self?.user.name else { return }
+                self?.viewModelDelegate?.presentConversationCreationError(username: username)
             }
         }
+    }
+
+    func updateActionsList() {
+        profileActionsFactory.makeActionsList(completion: { actions in
+            self.viewModelDelegate?.updateFooterActionsViews(actions)
+        })
     }
 
     // MARK: - Action Handlers
@@ -170,7 +181,7 @@ final class ProfileViewControllerViewModel: NSObject {
         userSession.enqueue {
             self.conversation?.mutedMessageTypes = enableNotifications ? .none : .all
             // update the footer view to display the correct mute/unmute button
-            self.viewModelDelegate?.updateFooterViews()
+            self.updateActionsList()
         }
     }
 
@@ -221,7 +232,13 @@ final class ProfileViewControllerViewModel: NSObject {
     // MARK: - Factories
 
     var profileActionsFactory: ProfileActionsFactory {
-        return ProfileActionsFactory(user: user, viewer: viewer, conversation: conversation, context: context)
+        return ProfileActionsFactory(
+            user: user,
+            viewer: viewer,
+            conversation: conversation,
+            context: context,
+            userSession: userSession
+        )
     }
 
     // MARK: Connect
@@ -231,7 +248,7 @@ final class ProfileViewControllerViewModel: NSObject {
             if let error = error as? ConnectToUserError {
                 self?.viewModelDelegate?.presentError(error)
             }
-            self?.viewModelDelegate?.updateFooterViews()
+            self?.updateActionsList()
         }
     }
 
@@ -241,7 +258,8 @@ final class ProfileViewControllerViewModel: NSObject {
                 self?.viewModelDelegate?.presentError(error)
             } else {
                 self?.user.refreshData()
-                self?.viewModelDelegate?.updateFooterViews()
+                self?.updateActionsList()
+                self?.viewModelDelegate?.updateIncomingRequestFooter()
             }
         }
     }
@@ -267,7 +285,8 @@ extension ProfileViewControllerViewModel: UserObserving {
         }
 
         if note.user.isAccountDeleted || note.connectionStateChanged {
-            viewModelDelegate?.updateFooterViews()
+            updateActionsList()
+            viewModelDelegate?.updateIncomingRequestFooter()
         }
     }
 }
@@ -281,7 +300,11 @@ extension ProfileViewControllerViewModel: BackButtonTitleDelegate {
 
 protocol ProfileViewControllerViewModelDelegate: AnyObject {
     func setupNavigationItems()
-    func updateFooterViews()
+    func updateFooterActionsViews(_ actions: [ProfileAction])
+    func updateIncomingRequestFooter()
     func returnToPreviousScreen()
     func presentError(_ error: LocalizedError)
+    func presentConversationCreationError(username: String)
+    func startAnimatingActivity()
+    func stopAnimatingActivity()
 }

@@ -43,7 +43,7 @@ extension UserType {
         return [self].materialize(in: context).first
     }
 
-    fileprivate func unbox(in context: NSManagedObjectContext) -> ZMUser? {
+    func unbox(in context: NSManagedObjectContext) -> ZMUser? {
         if let user = self as? ZMUser {
             return user
         } else if let searchUser = self as? ZMSearchUser {
