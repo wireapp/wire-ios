@@ -89,21 +89,13 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
                 expectation.fulfill()
             }
 
-            wait(for: [expectation], timeout: 4.0)
+            wait(for: [expectation], timeout: 0.5)
         }
     }
 
     func testThatLinkGenerationFails() async {
 
         await syncContext.perform { [self] in
-            // GIVEN
-            let role = Role.insertNewObject(in: syncContext)
-            let action = Action.insertNewObject(in: syncContext)
-            role.name = "wire_admin"
-            action.name = "modify_conversation_access"
-            role.actions = [action]
-
-            mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
 
             let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(result: .failure(.unknown), context: syncContext.notificationContext)
 
@@ -111,16 +103,16 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
 
             sut.invoke(conversation: mockConversation, password: nil) { result in
                 switch result {
-                case .success(let success):
+                case .success:
                     XCTFail("Expected operation to fail, but it succeeded.")
-                case .failure(let error):
-                    print("Operation failed with \(error)")
+                case .failure:
+                    break
                 }
 
                 expectation.fulfill()
             }
 
-            wait(for: [expectation], timeout: 4.0)
+            wait(for: [expectation], timeout: 0.5)
         }
     }
 
