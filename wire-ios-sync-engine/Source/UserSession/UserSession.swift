@@ -24,6 +24,11 @@ import WireDataModel
 /// layer.
 public protocol UserSession: AnyObject {
 
+    // MARK: - Mixed properties and methods
+
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: structure mixed methods and properties in sections
+
     /// The current session lock, if any.
 
     var lock: SessionLock? { get }
@@ -209,9 +214,11 @@ public protocol UserSession: AnyObject {
 
     var e2eiFeature: Feature.E2EI { get }
 
+    var mlsFeature: Feature.MLS { get }
+
     func fetchAllClients()
 
-    // MARK: Use Cases
+    // MARK: - Use Cases
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
 
@@ -234,4 +241,9 @@ public protocol UserSession: AnyObject {
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 
     func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol?
+
+    // MARK: - Dependency Injection
+
+    /// Cache for search users.
+    var searchUsersCache: SearchUsersCache { get }
 }

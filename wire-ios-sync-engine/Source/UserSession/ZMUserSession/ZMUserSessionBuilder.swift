@@ -25,8 +25,6 @@ struct ZMUserSessionBuilder {
 
     // MARK: - Properties
 
-    // Properties required for initialization
-
     private var analytics: (any AnalyticsType)?
     private var appVersion: String?
     private var appLock: (any AppLockType)?
@@ -36,6 +34,7 @@ struct ZMUserSessionBuilder {
     private var coreCryptoProvider: (any CoreCryptoProviderProtocol)?
     private var coreDataStack: CoreDataStack?
     private var cryptoboxMigrationManager: (any CryptoboxMigrationManagerInterface)?
+    private var dependencies: UserSessionDependencies?
     private var e2eiActivationDateRepository: (any E2EIActivationDateRepositoryProtocol)?
     private var earService: (any EARServiceInterface)?
     private var flowManager: (any FlowManagerType)?
@@ -70,6 +69,7 @@ struct ZMUserSessionBuilder {
             let coreDataStack,
             let cryptoboxMigrationManager,
             let e2eiActivationDateRepository,
+            let dependencies,
             let earService,
             let flowManager,
             let lastE2EIUpdateDateRepository,
@@ -89,7 +89,7 @@ struct ZMUserSessionBuilder {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
         }
 
-        let userSession = ZMUserSession(
+        return ZMUserSession(
             userId: userId,
             transportSession: transportSession,
             mediaManager: mediaManager,
@@ -114,10 +114,9 @@ struct ZMUserSessionBuilder {
             updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatusUseCase,
             mlsConversationVerificationStatusUpdater: mlsConversationVerificationStatusUpdater,
             contextStorage: contextStorage,
-            recurringActionService: recurringActionService
+            recurringActionService: recurringActionService,
+            dependencies: dependencies
         )
-
-        return userSession
     }
 
     // MARK: - Setup Dependencies
@@ -206,6 +205,7 @@ struct ZMUserSessionBuilder {
             context: coreDataStack.syncContext,
             coreCryptoProvider: coreCryptoProvider,
             conversationEventProcessor: ConversationEventProcessor(context: coreDataStack.syncContext),
+            featureRepository: FeatureRepository(context: coreDataStack.syncContext),
             userDefaults: .standard,
             syncStatus: applicationStatusDirectory.syncStatus,
             userID: coreDataStack.account.userIdentifier
@@ -237,6 +237,7 @@ struct ZMUserSessionBuilder {
         self.coreCryptoProvider = coreCryptoProvider
         self.coreDataStack = coreDataStack
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
+        self.dependencies = buildUserSessionDependencies(coreDataStack: coreDataStack)
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
         self.earService = earService
         self.flowManager = flowManager
@@ -253,5 +254,32 @@ struct ZMUserSessionBuilder {
         self.updateMLSGroupVerificationStatusUseCase = updateMLSGroupVerificationStatus
         self.useCaseFactory = useCaseFactory
         self.userId = userId
+    }
+
+    // MARK: UserSesssionDependencies
+
+    private func buildUserSessionDependencies(coreDataStack: CoreDataStack) -> UserSessionDependencies {
+        UserSessionDependencies(
+            caches: buildCaches(coreDataStack: coreDataStack)
+        )
+    }
+
+    private func buildCaches(coreDataStack: CoreDataStack) -> UserSessionDependencies.Caches {
+        let cacheLocation = FileManager.default.cachesURLForAccount(
+            with: coreDataStack.account.userIdentifier,
+            in: coreDataStack.applicationContainer
+        )
+
+        let relocator = CacheFileRelocator()
+        relocator.moveCachesIfNeededForAccount(
+            with: coreDataStack.account.userIdentifier,
+            in: coreDataStack.applicationContainer
+        )
+
+        return UserSessionDependencies.Caches(
+            fileAssets: FileAssetCache(location: cacheLocation),
+            userImages: UserImageLocalCache(location: cacheLocation),
+            searchUsers: NSCache()
+        )
     }
 }

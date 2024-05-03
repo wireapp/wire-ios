@@ -16,22 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <XCTest/XCTest.h>
-#import <WireSystem/WireSystem.h>
+import Foundation
 
-static NSString* ZMLogTag = @"Testing";
+public enum MLSSignatureAlgorithm: String, CustomStringConvertible {
+    case ed25519
+    case ed448
+    case p256
+    case p384
+    case p521
 
-@interface ZMLoggingTests : XCTestCase
-@end
-
-@implementation ZMLoggingTests
-
-- (void)testThatLogMacrosCompile    
-{
-    ZMLogError(@"Test");
-    ZMLogWarn(@"Test");
-    ZMLogInfo(@"Test");
-    ZMLogDebug(@"Test");
+    public var description: String {
+        rawValue
+    }
 }
-
-@end

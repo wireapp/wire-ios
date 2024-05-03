@@ -16,12 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+import Foundation
 
-@interface NSURL (LaunchOptions)
+extension CoreDataStack {
+    func linkCaches(_ caches: UserSessionDependencies.Caches) {
+        viewContext.zm_fileAssetCache = caches.fileAssets
+        viewContext.zm_userImageCache = caches.userImages
 
-- (BOOL)isURLForPhoneVerification;
-
-- (NSString *)codeForPhoneVerification;
-
-@end
+        syncContext.performGroupedBlockAndWait {
+            self.syncContext.zm_fileAssetCache = caches.fileAssets
+            self.syncContext.zm_userImageCache = caches.userImages
+        }
+    }
+}

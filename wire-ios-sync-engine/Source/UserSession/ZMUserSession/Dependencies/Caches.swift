@@ -16,8 +16,22 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+import WireDataModel
 
-extern NSString * const ZMLoggingDescriptionKey;
-extern NSString * const ZMLoggingRequestLoopNotificationName;
-extern NSString * const ZMLoggingInconsistentStateNotificationName;
+extension UserSessionDependencies {
+    final class Caches {
+        var fileAssets: FileAssetCache
+        var userImages: UserImageLocalCache
+        var searchUsers: SearchUsersCache
+
+        init(
+            fileAssets: FileAssetCache,
+            userImages: UserImageLocalCache,
+            searchUsers: SearchUsersCache
+        ) {
+            self.fileAssets = fileAssets
+            self.userImages = userImages
+            self.searchUsers = searchUsers
+        }
+    }
+}

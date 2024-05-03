@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "ZMSLogNotifications.h"
+final class UserSessionDependencies {
+    var caches: Caches
 
-NSNotificationName const ZMLoggingDescriptionKey = @"ZMLoggingDescription";
-NSNotificationName const ZMLoggingRequestLoopNotificationName = @"ZMLoggingRequestLoopNotificationName";
-NSNotificationName const ZMLoggingInconsistentStateNotificationName = @"ZMLoggingInconsistentStateNotificationName";
+    init(caches: Caches) {
+        self.caches = caches
+    }
+}
