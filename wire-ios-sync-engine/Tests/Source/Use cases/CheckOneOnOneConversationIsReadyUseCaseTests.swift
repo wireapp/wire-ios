@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireTesting
-@testable import WireSyncEngine
 @testable import WireDataModelSupport
+@testable import WireSyncEngine
+import WireTesting
+import XCTest
 
-class OneOnOneConversationCreationStatusUseCaseTests: XCTestCase {
+class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
 
     private var sut: CheckOneOnOneConversationIsReadyUseCase!
     private var coreDataStack: CoreDataStack!
