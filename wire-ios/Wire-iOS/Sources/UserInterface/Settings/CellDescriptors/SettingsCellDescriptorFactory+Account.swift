@@ -80,11 +80,6 @@ extension SettingsCellDescriptorFactory {
 
         if let user = SelfUser.provider?.providedSelfUser {
             if !user.usesCompanyLogin {
-                if !user.hasTeam || user.phoneNumber?.isEmpty == false,
-                   let phoneElement = phoneElement() {
-                    cellDescriptors.append(phoneElement)
-                }
-
                 cellDescriptors.append(emailElement(enabled: userRightInterfaceType.selfUserIsPermitted(to: .editEmail), userSession: userSession))
             }
 
@@ -203,14 +198,6 @@ extension SettingsCellDescriptorFactory {
             )
         } else {
             return textValueCellDescriptor(propertyName: .email, enabled: enabled)
-        }
-    }
-
-    func phoneElement() -> SettingsCellDescriptorType? {
-        if let phoneNumber = ZMUser.selfUser()?.phoneNumber, !phoneNumber.isEmpty {
-            return textValueCellDescriptor(propertyName: .phone, enabled: false)
-        } else {
-            return nil
         }
     }
 

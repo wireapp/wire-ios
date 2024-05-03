@@ -28,7 +28,7 @@ final class RegistrationActivationCodeSentEventHandler: AuthenticationEventHandl
 
     func handleEvent(currentStep: AuthenticationFlowStep, context: Void) -> [AuthenticationCoordinatorAction]? {
         // Only handle email activation success
-        guard case let .sendActivationCode(credentials, user, isResend) = currentStep else {
+        guard case let .sendActivationCode(unverifiedEmail, user, isResend) = currentStep else {
             return nil
         }
 
@@ -36,7 +36,7 @@ final class RegistrationActivationCodeSentEventHandler: AuthenticationEventHandl
         var actions: [AuthenticationCoordinatorAction] = [.hideLoadingView]
 
         if !isResend {
-            let nextStep = AuthenticationFlowStep.enterActivationCode(credentials, user: user)
+            let nextStep = AuthenticationFlowStep.enterActivationCode(unverifiedEmail: unverifiedEmail, user: user)
             actions.append(AuthenticationCoordinatorAction.transition(nextStep, mode: .normal))
         } else {
             actions.append(.unwindState(withInterface: false))

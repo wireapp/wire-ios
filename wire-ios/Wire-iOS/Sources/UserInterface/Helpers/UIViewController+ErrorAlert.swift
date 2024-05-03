@@ -42,8 +42,6 @@ extension UIViewController {
                 message = L10n.Localizable.Error.Input.tooShort
             case .emailAddressIsInvalid:
                 message = L10n.Localizable.Error.Email.invalid
-            case .phoneNumberContainsInvalidCharacters:
-                message = L10n.Localizable.Error.Phone.invalid
             default:
                 break
             }
@@ -64,18 +62,14 @@ extension UIViewController {
                 message = L10n.Localizable.Error.User.networkError
             case .emailIsAlreadyRegistered:
                 message = L10n.Localizable.Error.User.emailIsTaken
-            case .phoneNumberIsAlreadyRegistered:
-                message = L10n.Localizable.Error.User.phoneIsTaken
-            case .invalidPhoneNumberVerificationCode, .invalidEmailVerificationCode, .invalidActivationCode:
-                message = L10n.Localizable.Error.User.phoneCodeInvalid
+            case .invalidEmailVerificationCode, .invalidActivationCode:
+                message = L10n.Localizable.Error.User.verificationCodeInvalid
             case .registrationDidFailWithUnknownError:
                 message = L10n.Localizable.Error.User.registrationUnknownError
-            case .invalidPhoneNumber:
-                message = L10n.Localizable.Error.Phone.invalid
             case .invalidEmail:
                 message = L10n.Localizable.Error.Email.invalid
             case .codeRequestIsAlreadyPending:
-                message = L10n.Localizable.Error.User.phoneCodeTooMany
+                 message = L10n.Localizable.Error.User.verificationCodeTooMany
             case .clientDeletedRemotely:
                 message = L10n.Localizable.Error.User.deviceDeletedRemotely
             case .lastUserIdentityCantBeDeleted:

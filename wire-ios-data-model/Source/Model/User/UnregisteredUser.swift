@@ -16,19 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/**
- * The representation of a user that is going through the registration process.
- *
- * Typically, you create this object once you start the registration flow and start asking
- * for credentails and metadata. You set the values to the properties of this class
- * as the user provides them to the app.
- *
- * You then use it to register the user with the backend.
- */
-
+/// The representation of a user that is going through the registration process.
+///
+/// Typically, you create this object once you start the registration flow and start asking
+/// for credentails and metadata. You set the values to the properties of this class
+/// as the user provides them to the app.
+///
+/// You then use it to register the user with the backend.
 public class UnregisteredUser {
 
-    public var credentials: UnverifiedCredentials?
+    public var unverifiedEmail = ""
     public var verificationCode: String?
     public var name: String?
     public var accentColorValue: ZMAccentColorRawValue?
@@ -56,7 +53,7 @@ public class UnregisteredUser {
     public var isComplete: Bool {
         let passwordStepFinished = needsPassword ? password != nil : true
 
-        return credentials != nil
+        return !unverifiedEmail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
             && verificationCode != nil
             && name != nil
             && accentColor != nil
@@ -67,12 +64,7 @@ public class UnregisteredUser {
 
     /// Whether the user needs a password.
     public var needsPassword: Bool {
-        switch credentials {
-        case .phone?:
-            return false
-        default:
-            return password == nil
-        }
+        password == nil
     }
 
 }
@@ -82,7 +74,7 @@ public class UnregisteredUser {
 extension UnregisteredUser: Equatable {
 
     public static func == (lhs: UnregisteredUser, rhs: UnregisteredUser) -> Bool {
-        return lhs.credentials == rhs.credentials
+        return lhs.unverifiedEmail == rhs.unverifiedEmail
             && lhs.verificationCode == rhs.verificationCode
             && lhs.name == rhs.name
             && lhs.accentColor == rhs.accentColor

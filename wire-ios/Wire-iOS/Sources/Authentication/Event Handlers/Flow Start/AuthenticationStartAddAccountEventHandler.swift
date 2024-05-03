@@ -18,10 +18,7 @@
 
 import Foundation
 
-/**
- * Handles requests to add a new user account.
- */
-
+/// Handles requests to add a new user account.
 final class AuthenticationStartAddAccountEventHandler: AuthenticationEventHandler {
 
     let featureProvider: AuthenticationFeatureProvider
@@ -34,10 +31,9 @@ final class AuthenticationStartAddAccountEventHandler: AuthenticationEventHandle
     func handleEvent(currentStep: AuthenticationFlowStep, context: (NSError?, Int)) -> [AuthenticationCoordinatorAction]? {
         if featureProvider.allowOnlyEmailLogin {
             // Hide the landing screen if account creation is disabled.
-            return [.transition(.provideCredentials(.email, nil), mode: .reset)]
+            return [.transition(.provideCredentials(nil), mode: .reset)]
         } else {
             return [.transition(.landingScreen, mode: .reset)]
         }
     }
-
 }

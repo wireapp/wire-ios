@@ -17,6 +17,7 @@
 //
 
 import Foundation
+
 @testable import WireSyncEngine
 
 class TestRegistrationStatus: WireSyncEngine.RegistrationStatusProtocol {
@@ -32,7 +33,7 @@ class TestRegistrationStatus: WireSyncEngine.RegistrationStatusProtocol {
         successCalled += 1
     }
 
-    var phase: RegistrationPhase = .none
+    var phase: RegistrationPhase? = .none
 }
 
 protocol RegistrationStatusStrategyTestHelper {
