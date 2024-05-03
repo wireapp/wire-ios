@@ -87,12 +87,12 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
             if let result {
                 switch result {
                 case .success(let conversation):
-                    weakSelf.delegate?.startUI(weakSelf, didSelect: conversation)
+                    delegate?.startUI(self, didSelect: conversation)
                 case .failure(let error):
-                    error.displayAddBotError(in: weakSelf)
+                    error.displayAddBotError(in: self)
                 }
             } else {
-                weakSelf.navigationController?.dismiss(animated: true, completion: nil)
+                navigationController?.dismiss(animated: true, completion: nil)
             }
         }
 

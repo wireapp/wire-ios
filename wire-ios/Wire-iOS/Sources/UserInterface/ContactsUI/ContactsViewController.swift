@@ -198,9 +198,9 @@ final class ContactsViewController: UIViewController {
 
         UIView.animate(withKeyboardNotification: notification, in: view, animations: { [weak self] keyboardFrame in
             guard let self else { return }
-            weakSelf.bottomContainerBottomConstraint?.constant = -(willAppear ? keyboardFrame.height : 0)
-            weakSelf.bottomEdgeConstraint?.constant = -padding - (willAppear ? 0 : UIScreen.safeArea.bottom)
-            weakSelf.view.layoutIfNeeded()
+            bottomContainerBottomConstraint?.constant = -(willAppear ? keyboardFrame.height : 0)
+            bottomEdgeConstraint?.constant = -padding - (willAppear ? 0 : UIScreen.safeArea.bottom)
+            view.layoutIfNeeded()
         })
     }
 

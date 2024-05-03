@@ -162,8 +162,8 @@ final class SearchResultsView: UIView {
             guard let self else { return }
 
             let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
-            weakSelf.accessoryViewBottomOffsetConstraint?.constant = -keyboardHeight
-            weakSelf.layoutIfNeeded()
+            accessoryViewBottomOffsetConstraint?.constant = -keyboardHeight
+            layoutIfNeeded()
         })
     }
 

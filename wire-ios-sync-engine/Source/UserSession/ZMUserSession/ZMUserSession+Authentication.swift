@@ -110,10 +110,10 @@ extension ZMUserSession {
             guard let self else { return }
 
             if response.httpStatus == 200 {
-                self?.delegate?.userDidLogout(accountId: accountID)
+                delegate?.userDidLogout(accountId: accountID)
                 completion(.success(()))
             } else {
-                completion(.failure(strongSelf.errorFromFailedDeleteResponse(response)))
+                completion(.failure(errorFromFailedDeleteResponse(response)))
             }
         }))
 

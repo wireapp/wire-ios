@@ -41,21 +41,21 @@ extension ApplicationStateObserving {
                                                                 object: nil,
                                                                 queue: nil) { [weak self] _ in
             guard let self else { return }
-            observer.applicationDidEnterBackground()
+            applicationDidEnterBackground()
         })
 
         addObserverToken(NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification,
                                                                 object: nil,
                                                                 queue: nil) { [weak self] _ in
             guard let self else { return }
-            observer.applicationDidBecomeActive()
+            applicationDidBecomeActive()
         })
 
         addObserverToken(NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification,
                                                                 object: nil,
                                                                 queue: nil) { [weak self] _ in
             guard let self else { return }
-            observer.applicationWillEnterForeground()
+            applicationWillEnterForeground()
         })
     }
 }
@@ -71,7 +71,7 @@ extension ContentSizeCategoryObserving {
                                                                 object: nil,
                                                                 queue: nil) { [weak self] _ in
             guard let self else { return }
-            observer.contentSizeCategoryDidChange()
+            contentSizeCategoryDidChange()
         })
     }
 }
@@ -90,8 +90,7 @@ extension AudioPermissionsObserving {
         addObserverToken(NotificationCenter.default.addObserver(forName: Notification.Name.UserGrantedAudioPermissions,
                                                                 object: nil,
                                                                 queue: nil) { [weak self] _ in
-            guard let self else { return }
-            observer.userDidGrantAudioPermissions()
+            self?.userDidGrantAudioPermissions()
         })
     }
 }

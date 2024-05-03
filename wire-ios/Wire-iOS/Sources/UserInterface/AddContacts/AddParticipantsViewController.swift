@@ -390,8 +390,8 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
 
             let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
 
-            weakSelf.bottomConstraint.constant = -(keyboardHeight + weakSelf.bottomMargin)
-            weakSelf.view.layoutIfNeeded()
+            bottomConstraint.constant = -(keyboardHeight + bottomMargin)
+            view.layoutIfNeeded()
         })
     }
 

@@ -755,11 +755,11 @@ final class ConversationInputBarViewController: UIViewController,
 
             guard let self else { return }
 
-            let inRotation = weakSelf.inRotation
-            let isRecording = weakSelf.audioRecordKeyboardViewController?.isRecording ?? false
+            let inRotation = inRotation
+            let isRecording = audioRecordKeyboardViewController?.isRecording ?? false
 
             if !inRotation && !isRecording {
-                weakSelf.mode = .textInput
+                mode = .textInput
             }
         }
 

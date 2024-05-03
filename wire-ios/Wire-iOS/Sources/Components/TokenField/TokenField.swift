@@ -354,20 +354,20 @@ final class TokenField: UIView {
 
             guard let self else { return }
 
-            if weakSelf.isCollapsed {
-                weakSelf.textView.attributedText = weakSelf.collapsedString
-                weakSelf.invalidateIntrinsicContentSize()
-                UIView.animate(withDuration: 0.2, animations: {
-                    weakSelf.textView.setContentOffset(CGPoint.zero, animated: false)
-                })
+            if isCollapsed {
+                textView.attributedText = collapsedString
+                invalidateIntrinsicContentSize()
+                UIView.animate(withDuration: 0.2) {
+                    self.textView.setContentOffset(CGPoint.zero, animated: false)
+                }
             } else {
-                weakSelf.textView.attributedText = weakSelf.string(forTokens: weakSelf.tokens)
-                weakSelf.invalidateIntrinsicContentSize()
-                if weakSelf.textView.attributedText.length > 0 {
-                    weakSelf.textView.selectedRange = NSRange(location: weakSelf.textView.attributedText.length, length: 0)
-                    UIView.animate(withDuration: 0.2, animations: {
-                        weakSelf.textView.scrollRangeToVisible(weakSelf.textView.selectedRange)
-                    })
+                textView.attributedText = string(forTokens: tokens)
+                invalidateIntrinsicContentSize()
+                if textView.attributedText.length > 0 {
+                    textView.selectedRange = NSRange(location: textView.attributedText.length, length: 0)
+                    UIView.animate(withDuration: 0.2) {
+                        self.textView.scrollRangeToVisible(self.textView.selectedRange)
+                    }
                 }
             }
         }

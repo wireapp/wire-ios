@@ -49,11 +49,11 @@ final class IncomingConnectionViewController: UIViewController {
         connectionView = IncomingConnectionView(user: user)
         connectionView.onAccept = { [weak self] _ in
             guard let self else { return }
-            weakSelf.onAction?(.accept)
+            onAction?(.accept)
         }
         connectionView.onIgnore = { [weak self] _ in
             guard let self else { return }
-            weakSelf.onAction?(.ignore)
+            onAction?(.ignore)
         }
 
         view = connectionView

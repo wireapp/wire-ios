@@ -648,11 +648,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             collections.delegate = self
 
             collections.onDismiss = { [weak self] _ in
-                guard let self else {
-                    return
-                }
-
-                weakSelf.collectionController?.dismiss(animated: true)
+                guard let self else { return }
+                collectionController?.dismiss(animated: true)
             }
             collectionController = collections
         } else {

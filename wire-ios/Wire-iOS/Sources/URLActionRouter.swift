@@ -229,8 +229,8 @@ extension URLActionRouter: PresentationDelegate {
                 BackendEnvironment.shared = environment
             case let .failure(error):
                 guard let self else { return }
-                let localizedError = strongSelf.mapToLocalizedError(error)
-                strongSelf.presentLocalizedErrorAlert(localizedError)
+                let localizedError = mapToLocalizedError(error)
+                presentLocalizedErrorAlert(localizedError)
             }
         }
     }

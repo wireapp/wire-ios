@@ -100,7 +100,7 @@ enum MessageDestructionType: String {
                 return log.debug("not forwarding timer, nil message or zombie")
             }
 
-            strongSelf.messageTimerDidFire(message: message, userInfo: userInfo)
+            messageTimerDidFire(message: message, userInfo: userInfo)
         }
     }
 

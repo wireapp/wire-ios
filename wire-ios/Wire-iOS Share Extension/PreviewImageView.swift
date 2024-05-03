@@ -40,6 +40,7 @@ enum PreviewDisplayMode {
     }
 }
 
+// TODO: remove
 extension Optional where Wrapped == PreviewDisplayMode {
 
     /// Combines the current display mode with the current one if they're compatible.
@@ -48,13 +49,12 @@ extension Optional where Wrapped == PreviewDisplayMode {
             return otherMode
         }
 
-        guard case let .mixed(count, _) = currentMode else {
-            return currentMode
+        guard case let .mixed(count, _) = self else {
+            return self
         }
 
         return .mixed(count, otherMode)
     }
-
 }
 
 /**

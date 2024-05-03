@@ -91,9 +91,8 @@ final class StartUIInviteActionBar: UIView {
         UIView.animate(withKeyboardNotification: notification, in: self, animations: { [weak self] _ in
             guard let self else { return }
 
-            weakSelf.bottomEdgeConstraint.constant = -weakSelf.padding - (diff > 0 ? 0 : UIScreen.safeArea.bottom)
-            weakSelf.layoutIfNeeded()
+            bottomEdgeConstraint.constant = -padding - (diff > 0 ? 0 : UIScreen.safeArea.bottom)
+            layoutIfNeeded()
         })
     }
-
 }

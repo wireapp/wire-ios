@@ -29,10 +29,10 @@ protocol SimpleTextFieldDelegate: AnyObject {
 extension Optional where Wrapped == String {
     var value: SimpleTextField.Value? {
         guard let self else { return nil }
-        if let error = SimpleTextFieldValidator().validate(text: value) {
+        if let error = SimpleTextFieldValidator().validate(text: self) {
             return .error(error)
         }
-        return .valid(value)
+        return .valid(self)
     }
 }
 

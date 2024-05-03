@@ -170,9 +170,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         }
 
         timeObserverToken = avPlayer?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 1, timescale: 60), queue: DispatchQueue.main, using: { [weak self] time in
-            guard let self,
-                let duration = weakSelf.avPlayer?.currentItem?.asset.duration
-                else { return }
+            guard let self, let duration = avPlayer?.currentItem?.asset.duration else { return }
 
             let itemRange = CMTimeRangeMake(start: CMTimeMake(value: 0, timescale: 1), duration: duration)
 
@@ -180,7 +178,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
 
             let normalizedTime = CMTimeMapTimeFromRangeToRange(time, fromRange: itemRange, toRange: normalizedRange)
 
-            weakSelf.progress = CMTimeGetSeconds(normalizedTime)
+            progress = CMTimeGetSeconds(normalizedTime)
         })
 
         messageObserverToken = userSession.addMessageObserver(
@@ -301,8 +299,8 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         delay(0.1) { [weak self] in
             guard let self else { return }
 
-            weakSelf.clearNowPlayingState()
-            weakSelf.state = .completed
+            clearNowPlayingState()
+            state = .completed
         }
     }
 

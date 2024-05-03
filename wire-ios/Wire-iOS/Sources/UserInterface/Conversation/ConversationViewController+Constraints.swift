@@ -81,8 +81,7 @@ extension ConversationViewController {
         if invisibleInputAccessoryView.window == nil {
             UIView.animate(withKeyboardNotification: notification, in: view, animations: { [weak self] keyboardFrameInView in
                 guard let self else { return }
-
-                weakSelf.inputBarBottomMargin?.constant = -keyboardFrameInView.size.height
+                inputBarBottomMargin?.constant = -keyboardFrameInView.size.height
             })
         } else {
             if let screenRect: CGRect = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,

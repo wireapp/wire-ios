@@ -18,6 +18,7 @@
 
 import Foundation
 
+// TODO: remove
 public extension Optional where Wrapped == String {
 
     /// The non-empty string value, if it exists.
@@ -25,11 +26,11 @@ public extension Optional where Wrapped == String {
     var nonEmptyValue: Self {
         guard
             let self,
-            !string.isEmpty
+            !self.isEmpty
         else {
             return nil
         }
 
-        return string
+        return self
     }
 }

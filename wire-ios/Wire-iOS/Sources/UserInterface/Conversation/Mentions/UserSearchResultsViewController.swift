@@ -101,7 +101,7 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         keyboardObserver = KeyboardBlockObserver { [weak self] info in
             guard let self else { return }
             if let isKeyboardCollapsed = info.isKeyboardCollapsed {
-                weakSelf.isKeyboardCollapsed = isKeyboardCollapsed
+                self.isKeyboardCollapsed = isKeyboardCollapsed
             }
         }
     }

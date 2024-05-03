@@ -275,8 +275,8 @@ final class SettingsPropertyFactory {
                         self.delegate?.asyncMethodDidStart(self)
                         userSession.setMarketingConsent(granted: number.boolValue) { [weak self] _ in
                             if let self {
-                                weakSelf.marketingConsent = SettingsPropertyValue.number(value: number)
-                                weakSelf.delegate?.asyncMethodDidComplete(weakSelf)
+                                marketingConsent = SettingsPropertyValue.number(value: number)
+                                delegate?.asyncMethodDidComplete(self)
                             }
                         }
                     }

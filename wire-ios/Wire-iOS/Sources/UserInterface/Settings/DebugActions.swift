@@ -359,7 +359,6 @@ private extension Optional {
 
     func description(else defaultDescription: String) -> String {
         guard let self else { return defaultDescription }
-        return String(describing: value)
+        return String(describing: self)
     }
-
 }

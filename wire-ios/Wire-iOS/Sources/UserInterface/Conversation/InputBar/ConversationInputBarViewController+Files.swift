@@ -86,15 +86,18 @@ extension ConversationInputBarViewController {
             return
         }
 
-        FileMetaDataGenerator.metadataForFileAtURL(url,
-                                                   UTI: url.UTI(),
-                                                   name: url.lastPathComponent) { [weak self] metadata in
+        FileMetaDataGenerator.metadataForFileAtURL(
+            url,
+            UTI: url.UTI(),
+            name: url.lastPathComponent
+        ) { [weak self] metadata in
+
             guard let self else { return }
 
-            weakSelf.impactFeedbackGenerator.prepare()
-            ZMUserSession.shared()?.perform({
+            impactFeedbackGenerator.prepare()
+            ZMUserSession.shared()?.perform {
 
-                weakSelf.impactFeedbackGenerator.impactOccurred()
+                self.impactFeedbackGenerator.impactOccurred()
 
                 var conversationMediaAction: ConversationMediaAction = .fileTransfer
 
@@ -114,7 +117,7 @@ extension ConversationInputBarViewController {
                 }
 
                 completion()
-            })
+            }
         }
         parent?.dismiss(animated: true)
     }
