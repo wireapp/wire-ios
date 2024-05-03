@@ -99,10 +99,7 @@ final class CallParticipantView: BaseCallParticipantView {
             }
         } else {
             createVideoContainer()
-
-            if shouldFill {
-                updateVideoShouldFill(true)
-            }
+            updateVideoShouldFill(shouldFill)
 
             executeAnimations(animated: animated, animationBlock: { [weak self] in
                 self?.blurView.effect = nil
@@ -164,7 +161,9 @@ final class CallParticipantView: BaseCallParticipantView {
     // MARK: Override Base
 
     override func updateVideoShouldFill(_ shouldFill: Bool) {
-        if videoView == nil {
+        if shouldFill, videoView == nil {
+            // [WPB-8954] Setup video only when the video really starts to avoid
+            // calls crashing on the iOS 17 simulator.
             let videoView = AVSVideoView()
             videoView.backgroundColor = .clear
             videoView.userid = stream.streamId.avsIdentifier.serialized
