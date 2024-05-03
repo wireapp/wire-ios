@@ -314,7 +314,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
         var event: ZMUpdateEvent?
         var team: Team!
 
-        syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             // given
             team = Team.insertNewObject(in: self.syncMOC)
             self.mockApplicationStatus.mockSynchronizationState = .online
@@ -341,7 +341,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
         }
 
         // when
-        syncMOC.performGroupedAndWait { context in
+        await syncMOC.performGrouped { context in
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
 
             context.saveOrRollback()

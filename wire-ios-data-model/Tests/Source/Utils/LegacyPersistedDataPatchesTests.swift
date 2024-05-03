@@ -199,7 +199,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         var selfClient: UserClient!
         var newClient: UserClient!
 
-        syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             selfClient = self.createSelfClient(onMOC: self.syncMOC)
             let newUser = ZMUser.insertNewObject(in: self.syncMOC)
             newUser.remoteIdentifier = UUID.create()
@@ -211,7 +211,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         let didEstablishSession = await selfClient.establishSessionWithClient(newClient, usingPreKey: hardcodedPrekey)
         XCTAssertTrue(didEstablishSession)
 
-        syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             // swiftlint:disable todo_requires_jira_link
             // TODO: [John] use flag here
             // swiftlint:enable todo_requires_jira_link
@@ -363,7 +363,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         var selfClient: UserClient!
         var otherUserClient: UserClient!
 
-        syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             selfClient = self.createSelfClient(onMOC: self.syncMOC)
 
             otherUser = ZMUser.insertNewObject(in: self.syncMOC)
@@ -381,7 +381,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
         )
         XCTAssertTrue(didEstablishSession)
 
-        syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             let otrURL = self.syncMOC.zm_cryptKeyStore.cryptoboxDirectory
             self.syncMOC.saveOrRollback()
 

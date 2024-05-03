@@ -328,7 +328,7 @@ extension EventDecoder {
 
         await block(filterInvalidEvents(from: events))
 
-        eventMOC.performGroupedAndWait { _ in
+        await eventMOC.performGrouped { _ in
             storedEvents.forEach(self.eventMOC.delete(_:))
             self.eventMOC.saveOrRollback()
         }

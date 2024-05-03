@@ -174,7 +174,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             // No op
         }
 
-        self.syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
             otherClient.user = ZMUser.insertNewObject(in: self.syncMOC)
@@ -187,7 +187,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         try await otherClient.deleteSession()
 
         // Then
-        self.syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             XCTAssertEqual(mockProteusService.deleteSessionId_Invocations, [otherClient.proteusSessionID])
         }
 
@@ -201,7 +201,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         var otherClient: UserClient!
         var preKeys: [(id: UInt16, prekey: String)] = []
 
-        self.syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             selfClient = self.createSelfClient(onMOC: self.syncMOC)
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
@@ -244,7 +244,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             // No op
         }
 
-        self.syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
@@ -260,7 +260,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         // Then
         XCTAssertEqual(mockProteusService.deleteSessionId_Invocations, [otherClientSessionID])
 
-        self.syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             XCTAssertTrue(otherClient.isZombieObject)
         }
 
@@ -274,7 +274,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         var selfClient: UserClient!
         var otherClient: UserClient!
 
-        self.syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             selfClient = self.createSelfClient(onMOC: self.syncMOC)
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform({ sessionsDirectory in
                 preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
@@ -315,7 +315,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         var otherClient2: UserClient!
         var conversation: ZMConversation!
 
-        self.syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
 
             let otherClient1 = UserClient.insertNewObject(in: self.syncMOC)
@@ -351,7 +351,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         _ = await syncMOC.perform { self.syncMOC.saveOrRollback() }
 
         // then
-        self.syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             XCTAssertTrue(otherClient2.isZombieObject)
             XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevel.secure)
             XCTAssertEqual(conversation.allMessages.count, 2)
@@ -370,7 +370,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         var otherUser: ZMUser!
         var otherClient: UserClient!
 
-        self.syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
 
@@ -391,7 +391,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         await otherClient.deleteClientAndEndSession()
 
         // then
-        self.syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             XCTAssertTrue(otherClient.isZombieObject)
             XCTAssertTrue(otherUser.clients.isEmpty)
             XCTAssertTrue(otherUser.needsToBeUpdatedFromBackend)
@@ -899,7 +899,7 @@ extension UserClientTests {
         var v2SessionIdentifier: EncryptionSessionIdentifier!
         var v3SessionIdentifier: EncryptionSessionIdentifier!
 
-        syncMOC.performGroupedAndWait { [self] _ in
+        await syncMOC.performGrouped { [self] _ in
             selfClient = createSelfClient(onMOC: syncMOC)
             otherClient = UserClient.insertNewObject(in: syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
@@ -937,7 +937,7 @@ extension UserClientTests {
         XCTAssertTrue(didEstablishSession)
         XCTAssertTrue(hasSession)
 
-        syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 XCTAssertTrue(sessionsDirectory.hasSession(for: v2SessionIdentifier))
                 XCTAssertFalse(sessionsDirectory.hasSession(for: v3SessionIdentifier))
@@ -965,7 +965,7 @@ extension UserClientTests {
         var v2SessionIdentifier: EncryptionSessionIdentifier!
         var v3SessionIdentifier: EncryptionSessionIdentifier!
 
-        syncMOC.performGroupedAndWait { [self] _ in
+        await syncMOC.performGrouped { [self] _ in
             selfClient = createSelfClient(onMOC: syncMOC)
             otherClient = UserClient.insertNewObject(in: syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
@@ -1004,7 +1004,7 @@ extension UserClientTests {
         XCTAssertTrue(didEstablishSession)
         XCTAssertTrue(hasSession)
 
-        syncMOC.performGroupedAndWait { [self] _ in
+        await syncMOC.performGrouped { [self] _ in
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 XCTAssertTrue(sessionsDirectory.hasSession(for: v2SessionIdentifier))
                 XCTAssertFalse(sessionsDirectory.hasSession(for: v3SessionIdentifier))
@@ -1087,7 +1087,7 @@ extension UserClientTests {
         var clientB: UserClient!
         var sessionId: EncryptionSessionIdentifier!
 
-        context.performGroupedAndWait { _ in
+        await context.performGrouped { _ in
             sut = self.createSelfClient(onMOC: context)
             let userB = self.createUser(in: context)
             clientB = self.createClient(for: userB, createSessionWithSelfUser: false, onMOC: context)

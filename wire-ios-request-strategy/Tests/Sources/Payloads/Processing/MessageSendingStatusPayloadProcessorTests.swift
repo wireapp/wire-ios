@@ -46,7 +46,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         var message: MockOTREntity!
         var payload: Payload.MessageSendingStatus!
 
-        self.syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let deleted: Payload.ClientListByQualifiedUserID =
             [self.domain:
@@ -67,7 +67,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         )
 
         // then
-        self.syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             XCTAssertTrue(self.otherClient.isDeleted)
         }
     }
@@ -78,7 +78,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         var payload: Payload.MessageSendingStatus!
         var clientID: String!
 
-        syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             clientID = UUID().transportString()
             let missing: Payload.ClientListByQualifiedUserID =
@@ -100,7 +100,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         )
 
         // then
-        self.syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             XCTAssertEqual(self.selfClient.missingClients!.count, 1)
             XCTAssertEqual(self.selfClient.missingClients!.first!.remoteIdentifier, clientID)
         }
@@ -111,7 +111,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         var message: MockOTREntity!
         var payload: Payload.MessageSendingStatus!
 
-        syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let clientID = UUID().transportString()
             let userClient = UserClient.fetchUserClient(withRemoteId: clientID,
@@ -137,7 +137,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         )
 
         // then
-        syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             XCTAssertEqual(self.selfClient.missingClients!.count, 0)
         }
     }
@@ -147,7 +147,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         var message: MockOTREntity!
         var payload: Payload.MessageSendingStatus!
 
-        syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let redundant: Payload.ClientListByQualifiedUserID =
             [self.domain:
@@ -168,7 +168,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         )
 
         // then
-        syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             XCTAssertTrue(self.otherUser.needsToBeUpdatedFromBackend)
         }
     }
@@ -178,7 +178,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         var message: MockOTREntity!
         var payload: Payload.MessageSendingStatus!
 
-        syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let redundant: Payload.ClientListByQualifiedUserID =
             [self.domain:
@@ -199,7 +199,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         )
 
         // then
-        syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             XCTAssertTrue(message.conversation!.needsToBeUpdatedFromBackend)
         }
     }
@@ -209,7 +209,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         var message: MockOTREntity!
         var payload: Payload.MessageSendingStatus!
 
-        syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let clientID = UUID().transportString()
             let failedToConfirm: Payload.ClientListByQualifiedUserID =
@@ -231,7 +231,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         )
 
         // then
-        syncMOC.performGroupedAndWait { _ in
+        await syncMOC.performGrouped { _ in
             XCTAssertEqual(message.isFailedToSendUsers, true)
         }
     }
@@ -241,7 +241,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         var message: ZMClientMessage!
         var payload: Payload.MessageSendingStatus!
 
-        try self.syncMOC.performGroupedAndWait { _ in
+        try await syncMOC.performGrouped { _ in
             guard let textMessage = try self.groupConversation.appendText(content: "Test message") as? ZMClientMessage else {
                 XCTFail("Failed to add message")
                 return
