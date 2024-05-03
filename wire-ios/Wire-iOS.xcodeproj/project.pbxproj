@@ -5322,13 +5322,13 @@
 			isa = PBXGroup;
 			children = (
 				6316C3F92654142700D7E806 /* Components */,
-				634497DA24A49BF70000131D /* BaseCallParticipantView.swift */,
-				BF79B0FB20A98B60001BF4FE /* SelfCallParticipantView.swift */,
-				BF79B0FD20A99762001BF4FE /* CallParticipantView.swift */,
-				634497D824A492140000131D /* CallParticipantDetailView.swift */,
-				63421E3626149D7500ADA723 /* PinchToZoomRule.swift */,
-				637387C626443C31004FEF79 /* VideoKind.swift */,
 				E66D4E812BE525DF00C7F374 /* AVSVideoContainerView.swift */,
+				634497DA24A49BF70000131D /* BaseCallParticipantView.swift */,
+				634497D824A492140000131D /* CallParticipantDetailView.swift */,
+				BF79B0FD20A99762001BF4FE /* CallParticipantView.swift */,
+				63421E3626149D7500ADA723 /* PinchToZoomRule.swift */,
+				BF79B0FB20A98B60001BF4FE /* SelfCallParticipantView.swift */,
+				637387C626443C31004FEF79 /* VideoKind.swift */,
 			);
 			path = CallParticipantViews;
 			sourceTree = "<group>";
