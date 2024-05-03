@@ -133,6 +133,14 @@ public final class DatadogWrapper {
             attributes: attributes
         )
     }
+
+    public func addTag(_ key: LogAttributesKey, value: String?) {
+        if let value {
+            logger?.addAttribute(forKey: key.rawValue, value: value)
+        } else {
+            logger?.removeAttribute(forKey: key.rawValue)
+        }
+    }
 }
 
 extension DatadogWrapper: RemoteLogger {
@@ -199,6 +207,7 @@ public final class DatadogWrapper {
     ) {}
 
     public func startMonitoring() {}
+    public func addTag(_ key: LogAttributesKey, value: String?) {}
 
     public var datadogUserId: String = "NONE"
 }

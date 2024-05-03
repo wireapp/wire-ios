@@ -18,62 +18,58 @@
 
 import Foundation
 
-public class AggregatedLogger: LoggerProtocol {
-    private var loggers: [LoggerProtocol] = []
+/// Logger to write logs to fileSystem via ZMSLog
+public class LegacyLogger: LoggerProtocol {
 
-    init(loggers: [LoggerProtocol]) {
-        self.loggers = loggers
-    }
+    private var loggers = [String: ZMSLog]()
 
-    public func addLogger(_ logger: LoggerProtocol) {
-        self.loggers.append(logger)
+    subscript(tag: String) -> ZMSLog {
+        if loggers[tag] == nil {
+            loggers[tag] = ZMSLog(tag: tag)
+        }
+        return loggers[tag]!
     }
 
     public func debug(_ message: LogConvertible, attributes: LogAttributes?) {
-        loggers.forEach {
-            $0.debug(message, attributes: attributes)
-        }
+        log(message, attributes: attributes, level: .debug)
     }
 
     public func info(_ message: LogConvertible, attributes: LogAttributes?) {
-        loggers.forEach {
-            $0.info(message, attributes: attributes)
-        }
+        log(message, attributes: attributes, level: .info)
     }
 
     public func notice(_ message: LogConvertible, attributes: LogAttributes?) {
-        loggers.forEach {
-            $0.notice(message, attributes: attributes)
-        }
+        log(message, attributes: attributes, level: .warn)
     }
 
     public func warn(_ message: LogConvertible, attributes: LogAttributes?) {
-        loggers.forEach {
-            $0.warn(message, attributes: attributes)
-        }
+        log(message, attributes: attributes, level: .warn)
     }
 
     public func error(_ message: LogConvertible, attributes: LogAttributes?) {
-        loggers.forEach {
-            $0.error(message, attributes: attributes)
-        }
+        log(message, attributes: attributes, level: .error)
     }
 
     public func critical(_ message: LogConvertible, attributes: LogAttributes?) {
-        loggers.forEach {
-            $0.critical(message, attributes: attributes)
-        }
+        log(message, attributes: attributes, level: .error)
     }
 
-    public func persist(fileDestination: FileLoggerDestination) async {
-        for logger in loggers {
-            await logger.persist(fileDestination: fileDestination)
+    private func log(_ message: LogConvertible, attributes: LogAttributes?, level: ZMLogLevel_t) {
+        let entry = SanitizedString(value: message.logDescription)
+
+        if let tag = attributes?["tag"] as? String {
+
+            self[tag].safePublic(entry, level: level, osLogOn: false)
+        } else {
+            self["legacy"].safePublic(entry, level: level, osLogOn: false)
         }
     }
 
     public func addTag(_ key: LogAttributesKey, value: String?) {
-        loggers.forEach {
-            $0.addTag(key, value: value)
-        }
+        // do nothing
+    }
+
+    public func persist(fileDestination: FileLoggerDestination) async {
+        // do nothing
     }
 }
