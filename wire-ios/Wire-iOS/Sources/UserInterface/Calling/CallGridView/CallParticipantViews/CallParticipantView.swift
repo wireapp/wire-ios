@@ -164,16 +164,22 @@ final class CallParticipantView: BaseCallParticipantView {
         if shouldFill, videoView == nil {
             // [WPB-8954] Setup video only when the video really starts to avoid
             // calls crashing on the iOS 17 simulator.
-            let videoView = AVSVideoView()
-            videoView.backgroundColor = .clear
-            videoView.userid = stream.streamId.avsIdentifier.serialized
-            videoView.clientid = stream.streamId.clientId
-            videoView.shouldFill = shouldFill
+            let videoView = makeVideoView()
             self.videoView = videoView
 
             videoContainerView?.setupVideoView(videoView)
         }
 
         videoView?.shouldFill = shouldFill
+    }
+
+    private func makeVideoView() -> AVSVideoView {
+        let videoView = AVSVideoView()
+        videoView.backgroundColor = .clear
+        videoView.userid = stream.streamId.avsIdentifier.serialized
+        videoView.clientid = stream.streamId.clientId
+        videoView.shouldFill = shouldFill
+
+        return videoView
     }
 }

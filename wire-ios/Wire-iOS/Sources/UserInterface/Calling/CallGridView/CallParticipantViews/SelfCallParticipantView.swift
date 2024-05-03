@@ -95,15 +95,6 @@ final class SelfCallParticipantView: BaseCallParticipantView {
     }
 
     func startCapture() {
-        if previewView == nil {
-            let previewView = AVSVideoPreview()
-            previewView.backgroundColor = .clear
-            previewView.shouldFill = shouldFill
-            self.previewView = previewView
-
-            videoContainerView?.setupVideoView(previewView)
-        }
-
         previewView?.startVideoCapture()
     }
 
@@ -114,6 +105,23 @@ final class SelfCallParticipantView: BaseCallParticipantView {
     // MARK: Override Base
 
     override func updateVideoShouldFill(_ shouldFill: Bool) {
+        if shouldFill, previewView == nil {
+            // [WPB-8954] Setup video only when the video really starts to avoid
+            // calls crashing on the iOS 17 simulator.
+            let previewView = makeVideoPreviewView()
+            self.previewView = previewView
+
+            videoContainerView?.setupVideoView(previewView)
+        }
+
         previewView?.shouldFill = shouldFill
+    }
+
+    private func makeVideoPreviewView() -> AVSVideoPreview {
+        let previewView = AVSVideoPreview()
+        previewView.backgroundColor = .clear
+        previewView.shouldFill = shouldFill
+
+        return previewView
     }
 }
