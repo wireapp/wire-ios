@@ -65,7 +65,7 @@ extension Sequence where Element: ZMSearchUser {
         let nonExistingUsers = filter { $0.user == nil }
             .map { (userID: $0.remoteIdentifier, teamID: $0.teamIdentifier, domain: $0.domain) }
 
-        context.performGroupedAndWait { context in
+        context.performGroupedBlockAndWait {
             nonExistingUsers.forEach {
                 guard let remoteIdentifier = $0.userID else { return }
 

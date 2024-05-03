@@ -33,14 +33,14 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        syncMOC.performGroupedAndWait { context in
-            let user = ZMUser.insertNewObject(in: context)
+        syncMOC.performGroupedBlockAndWait {
+            let user = ZMUser.insertNewObject(in: self.syncMOC)
             let userID = UUID()
             user.remoteIdentifier = userID
             user.domain = self.owningDomain
             self.user = user
 
-            let conversation = ZMConversation.insertGroupConversation(moc: context, participants: [])!
+            let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [])!
             let conversationID = UUID()
             conversation.remoteIdentifier = conversationID
             conversation.conversationType = .group
