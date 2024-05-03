@@ -120,6 +120,7 @@ public final class MLSService: MLSServiceInterface {
     private let logger = WireLogger.mls
     private let groupsBeingRepaired = GroupsBeingRepaired()
     private let syncStatus: SyncStatusProtocol
+    private let featureRepository: FeatureRepositoryInterface
 
     private var coreCrypto: SafeCoreCryptoProtocol {
         get async throws {
@@ -153,6 +154,7 @@ public final class MLSService: MLSServiceInterface {
         context: NSManagedObjectContext,
         coreCryptoProvider: CoreCryptoProviderProtocol,
         conversationEventProcessor: ConversationEventProcessorProtocol,
+        featureRepository: FeatureRepositoryInterface,
         userDefaults: UserDefaults,
         syncStatus: SyncStatusProtocol,
         userID: UUID
@@ -165,7 +167,8 @@ public final class MLSService: MLSServiceInterface {
             userDefaults: userDefaults,
             actionsProvider: MLSActionsProvider(),
             syncStatus: syncStatus,
-            userID: userID
+            userID: userID,
+            featureRepository: featureRepository
         )
     }
 
@@ -182,16 +185,21 @@ public final class MLSService: MLSServiceInterface {
         delegate: MLSServiceDelegate? = nil,
         syncStatus: SyncStatusProtocol,
         userID: UUID,
+        featureRepository: FeatureRepositoryInterface,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface = SubconversationGroupIDRepository()
     ) {
+        let commitSender = CommitSender(
+            coreCryptoProvider: coreCryptoProvider,
+            notificationContext: context.notificationContext
+        )
+
         self.context = context
         self.coreCryptoProvider = coreCryptoProvider
+        self.featureRepository = featureRepository
         self.mlsActionExecutor = mlsActionExecutor ?? MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
-            commitSender: CommitSender(
-                coreCryptoProvider: coreCryptoProvider,
-                notificationContext: context.notificationContext
-            )
+            commitSender: commitSender,
+            featureRepository: featureRepository
         )
         self.conversationEventProcessor = conversationEventProcessor
         self.staleKeyMaterialDetector = staleKeyMaterialDetector
@@ -458,19 +466,20 @@ public final class MLSService: MLSServiceInterface {
                     [try await $0.getExternalSender(conversationId: parentGroupID.data)]
                 }
             } else if let backendPublicKeys = await fetchBackendPublicKeys() {
-                externalSenders = backendPublicKeys.ed25519Keys
+                externalSenders = backendPublicKeys.externalSenderKeys
             } else {
                 throw MLSGroupCreationError.failedToGetExternalSenders
             }
 
+            let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
             let config = ConversationConfiguration(
-                ciphersuite: CiphersuiteName.default.rawValue,
+                ciphersuite: ciphersuite,
                 externalSenders: externalSenders,
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             )
 
             try await coreCrypto.perform {
-                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: CiphersuiteName.default.rawValue)
+                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
                 try await $0.createConversation(
                     conversationId: groupID.data,
                     creatorCredentialType: e2eiIsEnabled ? .x509 : .basic,
@@ -683,8 +692,9 @@ public final class MLSService: MLSServiceInterface {
 
     private func shouldQueryUnclaimedKeyPackagesCount() async -> Bool {
         do {
+            let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
             let estimatedLocalKeyPackageCount = try await coreCrypto.perform {
-                try await $0.clientValidKeypackagesCount(ciphersuite: CiphersuiteName.default.rawValue, credentialType: .basic)
+                try await $0.clientValidKeypackagesCount(ciphersuite: ciphersuite, credentialType: .basic)
             }
             let shouldCountRemainingKeyPackages = estimatedLocalKeyPackageCount < halfOfTargetUnclaimedKeyPackageCount
 
@@ -737,10 +747,11 @@ public final class MLSService: MLSServiceInterface {
         var keyPackages = [Data]()
 
         do {
+            let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
             keyPackages = try await coreCrypto.perform {
-                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: CiphersuiteName.default.rawValue)
+                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
                 return try await $0.clientKeypackages(
-                    ciphersuite: CiphersuiteName.default.rawValue,
+                    ciphersuite: ciphersuite,
                     credentialType: e2eiIsEnabled ? .x509 : .basic,
                     amountRequested: amountRequested
                 ) }
@@ -1102,11 +1113,12 @@ public final class MLSService: MLSServiceInterface {
         logger.info("requesting to join group (\(groupID.safeForLoggingDescription)")
 
         do {
+            let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
             let proposal = try await coreCrypto.perform {
                 try await $0.newExternalAddProposal(conversationId: groupID.data,
-                                              epoch: epoch,
-                                            ciphersuite: CiphersuiteName.default.rawValue,
-                                              credentialType: .basic)
+                                                    epoch: epoch,
+                                                    ciphersuite: ciphersuite,
+                                                    credentialType: .basic)
             }
 
             try await sendProposal(proposal, groupID: groupID)

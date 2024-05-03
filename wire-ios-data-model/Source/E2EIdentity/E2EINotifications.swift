@@ -16,22 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <XCTest/XCTest.h>
-#import <WireSystem/WireSystem.h>
+import Foundation
 
-static NSString* ZMLogTag = @"Testing";
+extension Notification.Name {
 
-@interface ZMLoggingTests : XCTestCase
-@end
+    // This notification is used to check the E2EIdentity Certificate expiry status
+    public static let checkForE2EICertificateExpiryStatus = Self("CheckForE2EICertificateExpiryStatus")
 
-@implementation ZMLoggingTests
-
-- (void)testThatLogMacrosCompile    
-{
-    ZMLogError(@"Test");
-    ZMLogWarn(@"Test");
-    ZMLogInfo(@"Test");
-    ZMLogDebug(@"Test");
+    // Used to notify of end-to-end identity certificate changes
+    public static let e2eiCertificateChanged = Self("E2EICertificateStatusChanged")
 }
-
-@end
