@@ -17,13 +17,12 @@
 //
 
 import CoreData
-import Foundation
 
 public extension NSManagedObjectContext {
 
     static private let timeout: TimeInterval = 10
 
-    @discardableResult
+    @discardableResult @available(*, noasync)
     func performGroupedAndWait<T>(_ execute: @escaping (NSManagedObjectContext) -> T) -> T {
 
         var result: T!
@@ -40,7 +39,8 @@ public extension NSManagedObjectContext {
         return result
     }
 
-    @discardableResult func performGroupedAndWait<T>(
+    @discardableResult @available(*, noasync)
+    func performGroupedAndWait<T>(
         _ execute: @escaping (NSManagedObjectContext) throws -> T
     ) throws -> T {
 
