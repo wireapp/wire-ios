@@ -471,6 +471,10 @@ public final class ZMUserSession: NSObject {
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
         restoreDebugCommandsState()
         configureRecurringActions()
+
+        if let clientId = selfUserClient?.safeRemoteIdentifier.safeForLoggingDescription {
+            WireLogger.authentication.addTag(.selfClientId, value: clientId)
+        }
     }
 
     // MARK: - Deinitalize
@@ -496,6 +500,7 @@ public final class ZMUserSession: NSObject {
         contextStorage.clear()
 
         NotificationCenter.default.removeObserver(self)
+        WireLogger.authentication.addTag(.selfClientId, value: nil)
 
         tornDown = true
     }
@@ -949,6 +954,9 @@ extension ZMUserSession: ZMSyncStateDelegate {
             // The client will then join any MLS groups they haven't joined yet.
             syncStatus.forceSlowSync()
         }
+
+        let clientId = userClient.safeRemoteIdentifier.safeForLoggingDescription
+        WireLogger.authentication.addTag(.selfClientId, value: clientId)
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {
