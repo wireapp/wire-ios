@@ -18,7 +18,7 @@
 
 import WireDataModel
 
-class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuestsAndServicesAction> {
+final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuestsAndServicesAction> {
 
     private lazy var eventProcessor = ConversationEventProcessor(context: context)
 
