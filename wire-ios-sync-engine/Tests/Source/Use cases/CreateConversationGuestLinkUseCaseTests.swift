@@ -76,12 +76,12 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
 
             let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(result: .success("www.test.com"), context: syncContext.notificationContext)
 
-            let expectation = XCTestExpectation(description: "completion should be called")
+            let expectation = XCTestExpectation(description: "Guest link creation")
 
             sut.invoke(conversation: mockConversation, password: nil) { result in
                 switch result {
-                case .success(let success):
-                    print("Operation successful")
+                case .success(let link):
+                    XCTAssertNotNil(link)
                 case .failure(let error):
                     XCTFail("Test failed with error: \(error)")
                 }
@@ -123,4 +123,5 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
             wait(for: [expectation], timeout: 4.0)
         }
     }
+
 }

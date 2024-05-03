@@ -138,6 +138,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
                 case .failure(let error):
                     XCTFail("Test failed with error: \(error)")
                 }
+
                 expectation.fulfill()
             }
 
