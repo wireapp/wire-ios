@@ -18,12 +18,12 @@
 
 import CoreData
 
-public extension NSManagedObjectContext {
+extension NSManagedObjectContext {
 
     static private let timeout: TimeInterval = 10
 
     @discardableResult @available(*, noasync)
-    func performGroupedAndWait<T>(_ execute: @escaping (NSManagedObjectContext) -> T) -> T {
+    public func performGroupedAndWait<T>(_ execute: @escaping (NSManagedObjectContext) -> T) -> T {
 
         var result: T!
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
@@ -39,8 +39,25 @@ public extension NSManagedObjectContext {
         return result
     }
 
+    @discardableResult
+    public func performGrouped<T>(_ execute: @escaping (NSManagedObjectContext) -> T) async -> T {
+
+        var result: T!
+        let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
+        let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
+
+        await perform {
+            tp.resetTime()
+            result = execute(self)
+            self.dispatchGroupContext?.leave(groups)
+            tp.warnIfLongerThanInterval()
+        }
+
+        return result
+    }
+
     @discardableResult @available(*, noasync)
-    func performGroupedAndWait<T>(
+    public func performGroupedAndWait<T>(
         _ execute: @escaping (NSManagedObjectContext) throws -> T
     ) throws -> T {
 

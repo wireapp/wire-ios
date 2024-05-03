@@ -72,7 +72,8 @@ final class UserClientRequestStrategyTests: RequestStrategyTestBase {
 
     override func setUp() {
         super.setUp()
-        self.syncMOC.performGroupedBlockAndWait {
+
+        syncMOC.performGroupedBlockAndWait {
             let spyKeyStore = SpyUserClientKeyStore(
                 accountDirectory: self.accountDirectory,
                 applicationContainer: self.sharedContainerURL
