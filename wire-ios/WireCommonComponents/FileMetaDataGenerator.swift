@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AVFoundation
 import Foundation
 import MobileCoreServices
 import WireDataModel
-import AVFoundation
 
 private let zmLog = ZMSLog(tag: "UI")
 
-public final class FileMetaDataGenerator: NSObject {
+public final class FileMetaDataGenerator {
 
-    static public func metadataForFileAtURL(_ url: URL, UTI uti: String, name: String, completion: @escaping (ZMFileMetadata) -> Void) {
+    public static func metadataForFileAtURL(_ url: URL, UTI uti: String, name: String, completion: @escaping (ZMFileMetadata) -> Void) {
         SharedPreviewGenerator.generator.generatePreview(url, UTI: uti) { preview in
             let thumbnail = preview != nil ? preview!.jpegData(compressionQuality: 0.9) : nil
 

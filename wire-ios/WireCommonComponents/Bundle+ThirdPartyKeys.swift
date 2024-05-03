@@ -18,20 +18,10 @@
 
 import Foundation
 
-public extension Bundle {
-    // MARK: - AppCenter
-    static var appCenterAppId: String? {
-        guard let scheme = Bundle.appMainBundle.infoDictionary?["CFBundleURLTypes"] as? [[String: Any]],
-            let item = scheme.first,
-            let key = item["CFBundleURLSchemes"] as? [String],
-            let appCenterID = key.first else { return nil }
-        return appCenterID.replacingOccurrences(of: "appcenter-", with: "")
-    }
-    static var useAppCenter: Bool {
-        return appMainBundle.infoForKey("UseAppCenter") == "1"
-    }
+extension Bundle {
+
     // MARK: - Countly
-    static var countlyAppKey: String? {
-        return appMainBundle.infoForKey("CountlyAppKey")
+    public static var countlyAppKey: String? {
+        appMainBundle.infoForKey("CountlyAppKey")
     }
 }

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class ConversationListTabBarTests: BaseSnapshotTestCase {
 
@@ -29,7 +29,7 @@ final class ConversationListTabBarTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .brightYellow
+        accentColor = .amber
         UIView.performWithoutAnimation({
             self.sut = ConversationListTabBar()
             sut.backgroundColor = UIColor(white: 0.2, alpha: 1) // In order to make the separator more visible
@@ -66,7 +66,7 @@ final class ConversationListTabBarTests: BaseSnapshotTestCase {
     func testThatItShowsTheContactsTitleAndHidesTheArchivedButtonWhen_ShowArchived_WasSetToYesAndIsSetToNo() throws {
         // GIVEN
         // To make the snapshot distinguishable from the inital state
-        accentColor = .strongBlue
+        accentColor = .blue
         sut.showArchived = true
 
         // WHEN

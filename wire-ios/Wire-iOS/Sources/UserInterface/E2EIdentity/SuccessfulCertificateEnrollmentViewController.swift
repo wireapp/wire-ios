@@ -27,7 +27,7 @@ final class SuccessfulCertificateEnrollmentViewController: AuthenticationStepVie
     // MARK: - Properties
 
     var certificateDetails: String = ""
-    public var onOkTapped: ((_ viewController: SuccessfulCertificateEnrollmentViewController) -> Void)?
+    var onOkTapped: ((_ viewController: SuccessfulCertificateEnrollmentViewController) -> Void)?
 
     // Based on this value, appropriate texts are displayed for update certifcate or enroll certificate for E2EI
     private let isUpdateMode: Bool

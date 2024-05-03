@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class ArchivedNavigationBarTests: BaseSnapshotTestCase {
 
@@ -25,7 +25,7 @@ final class ArchivedNavigationBarTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .violet
+        accentColor = .purple
         sut = ArchivedNavigationBar(title: "Archive")
     }
 

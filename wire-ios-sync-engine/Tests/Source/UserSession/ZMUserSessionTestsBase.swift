@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModelSupport
-import WireSyncEngineSupport
-import WireRequestStrategySupport
 import Combine
+import WireDataModelSupport
+import WireRequestStrategySupport
 @testable import WireSyncEngine
+@testable import WireSyncEngineSupport
 
 class ZMUserSessionTestsBase: MessagingTest {
 
@@ -39,7 +39,7 @@ class ZMUserSessionTestsBase: MessagingTest {
     var mockUseCaseFactory: MockUseCaseFactoryProtocol!
     var mockResolveOneOnOneConversationUseCase: MockResolveOneOnOneConversationsUseCaseProtocol!
     var mockGetFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
-    var mockProteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating!
+    var mockRecurringActionService: MockRecurringActionServiceInterface!
 
     var sut: ZMUserSession!
 
@@ -83,7 +83,9 @@ class ZMUserSessionTestsBase: MessagingTest {
             return self.mockResolveOneOnOneConversationUseCase
         }
 
-        mockProteusToMLSMigrationCoordinator = MockProteusToMLSMigrationCoordinating()
+        mockRecurringActionService = MockRecurringActionServiceInterface()
+        mockRecurringActionService.registerAction_MockMethod = { _ in }
+        mockRecurringActionService.performActionsIfNeeded_MockMethod = { }
 
         sut = createSut()
         sut.sessionManager = mockSessionManager
@@ -108,6 +110,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.flowManagerMock = nil
         self.mockUseCaseFactory = nil
         self.mockResolveOneOnOneConversationUseCase = nil
+        self.mockRecurringActionService = nil
         self.mockEARService.delegate = nil
         self.mockEARService = nil
         let sut = self.sut
@@ -148,7 +151,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             mediaManager: mediaManager,
             mlsService: mockMLSService,
             observeMLSGroupVerificationStatus: mockObserveMLSGroupVerificationStatusUseCase,
-            proteusToMLSMigrationCoordinator: mockProteusToMLSMigrationCoordinator,
+            proteusToMLSMigrationCoordinator: MockProteusToMLSMigrationCoordinating(),
+            recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
             useCaseFactory: mockUseCaseFactory,

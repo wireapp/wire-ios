@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SwiftUI
+@testable import Wire
 import WireRequestStrategySupport
+import XCTest
 
 final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
 
@@ -92,6 +92,7 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
                                             userClient: client,
                                             isSelfClient: false,
                                             gracePeriod: 0,
+                                            mlsCiphersuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519,
                                             isFromConversation: true,
                                             actionsHandler: deviceActions,
                                             conversationClientDetailsActions: MockConversationUserClientDetailsActions(),

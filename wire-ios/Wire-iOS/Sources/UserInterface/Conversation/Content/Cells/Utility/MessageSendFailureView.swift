@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Down
 import UIKit
 import WireCommonComponents
-import Down
 
 final class MessageSendFailureView: UIView {
 
@@ -91,7 +91,7 @@ final class MessageSendFailureView: UIView {
 }
 
 // MARK: - DownStyle extension
-    public extension DownStyle {
+    extension DownStyle {
 
     static var errorLabelStyle: DownStyle {
         let style = DownStyle()

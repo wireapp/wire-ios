@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
+import XCTest
 
 @testable import Wire
 
@@ -25,11 +25,11 @@ final class IncomingRequestFooterTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        UIColor.setAccentOverride(.strongBlue)
+        UIColor.setAccentOverride(.blue)
     }
 
     override func tearDown() {
-        UIColor.setAccentOverride(.undefined)
+        UIColor.setAccentOverride(nil)
         super.tearDown()
     }
 

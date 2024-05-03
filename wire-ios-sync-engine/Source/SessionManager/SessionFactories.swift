@@ -90,6 +90,7 @@ open class AuthenticatedSessionFactory {
             mlsService: nil,
             observeMLSGroupVerificationStatus: nil,
             proteusToMLSMigrationCoordinator: nil,
+            recurringActionService: nil,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
             useCaseFactory: nil,
@@ -131,11 +132,11 @@ open class UnauthenticatedSessionFactory {
     let appVersion: String
 
     init(
-      appVersion: String,
-      environment: BackendEnvironmentProvider,
-      proxyUsername: String?,
-      proxyPassword: String?,
-      reachability: Reachability
+        appVersion: String,
+        environment: BackendEnvironmentProvider,
+        proxyUsername: String?,
+        proxyPassword: String?,
+        reachability: Reachability
     ) {
         self.environment = environment
         self.proxyUsername = proxyUsername
@@ -145,24 +146,25 @@ open class UnauthenticatedSessionFactory {
     }
 
     func session(
-      delegate: UnauthenticatedSessionDelegate,
-      authenticationStatusDelegate: ZMAuthenticationStatusDelegate
+        delegate: UnauthenticatedSessionDelegate,
+        authenticationStatusDelegate: ZMAuthenticationStatusDelegate
     ) -> UnauthenticatedSession {
         let transportSession = UnauthenticatedTransportSession(
-          environment: environment,
-          proxyUsername: proxyUsername,
-          proxyPassword: proxyPassword,
-          reachability: reachability,
-          applicationVersion: appVersion,
-          readyForRequests: readyForRequests
+            environment: environment,
+            proxyUsername: proxyUsername,
+            proxyPassword: proxyPassword,
+            reachability: reachability,
+            applicationVersion: appVersion,
+            readyForRequests: readyForRequests
         )
 
-      return UnauthenticatedSession(
-        transportSession: transportSession,
-        reachability: reachability,
-        delegate: delegate,
-        authenticationStatusDelegate: authenticationStatusDelegate
-      )
+        return UnauthenticatedSession(
+            transportSession: transportSession,
+            reachability: reachability,
+            delegate: delegate,
+            authenticationStatusDelegate: authenticationStatusDelegate,
+            userPropertyValidator: UserPropertyValidator()
+        )
     }
 
     public func updateProxy(username: String?, password: String?) {

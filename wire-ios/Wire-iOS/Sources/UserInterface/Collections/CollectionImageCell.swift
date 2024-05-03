@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
-import WireSystem
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -67,7 +66,7 @@ final class CollectionImageCell: CollectionCell {
         ])
     }
 
-    public override func prepareForReuse() {
+    override func prepareForReuse() {
         super.prepareForReuse()
         message = .none
         isHeightCalculated = false

@@ -16,19 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 
 // MARK: - Reaction
 
-public struct MessageReactionMetadata: Equatable {
+struct MessageReactionMetadata: Equatable {
 
     let emoji: Emoji.ID
     let count: UInt
     let isSelfUserReacting: Bool
 
-    public static func == (lhs: MessageReactionMetadata, rhs: MessageReactionMetadata) -> Bool {
+    static func == (lhs: MessageReactionMetadata, rhs: MessageReactionMetadata) -> Bool {
         return lhs.emoji == rhs.emoji && lhs.count == rhs.count && lhs.isSelfUserReacting == rhs.isSelfUserReacting
     }
 

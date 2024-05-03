@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 @testable import WireDataModel
+import XCTest
 
-class UserTypeTests_Materialize: ModelObjectsTests {
+final class UserTypeTests_Materialize: ModelObjectsTests {
 
     func testThatWeCanMaterializeSearchUsers() {
         // given
         let userIDs = [UUID(), UUID(), UUID()]
-        let searchUsers = userIDs.map({ createSearchUser(name: "John Doe", remoteIdentifier: $0) }) as [UserType]
+        let searchUsers = userIDs.map({ createSearchUser(name: "John Doe", remoteIdentifier: $0, teamIdentifier: nil) }) as [UserType]
 
         // when
         let materializedUsers = searchUsers.materialize(in: uiMOC)
@@ -38,12 +38,11 @@ class UserTypeTests_Materialize: ModelObjectsTests {
         // given
         let team = createTeam(in: uiMOC)
         _ = createMembership(in: uiMOC, user: selfUser, team: team)
-        let teamSearchUser = ZMSearchUser(contextProvider: self.coreDataStack,
-                                          name: "Team",
-                                          handle: "team",
-                                          accentColor: .brightOrange,
-                                          remoteIdentifier: UUID(),
-                                          teamIdentifier: team.remoteIdentifier)
+        let teamSearchUser = createSearchUser(
+            name: "Team",
+            remoteIdentifier: UUID(),
+            teamIdentifier: team.remoteIdentifier
+        )
         uiMOC.saveOrRollback()
 
         // when
@@ -56,12 +55,12 @@ class UserTypeTests_Materialize: ModelObjectsTests {
     func testThatSearchUserWithoutRemoteIdentifierIsIgnored() {
         // given
         let userIDs = [UUID(), UUID(), UUID()]
-        let incompleteSearchUser = ZMSearchUser(contextProvider: self.coreDataStack,
-                                                name: "Incomplete",
-                                                handle: "incomplete",
-                                                accentColor: .brightOrange,
-                                                remoteIdentifier: nil)
-        var searchUsers = userIDs.map({ createSearchUser(name: "John Doe", remoteIdentifier: $0) }) as [UserType]
+        let incompleteSearchUser = createSearchUser(
+            name: "Incomplete",
+            remoteIdentifier: nil,
+            teamIdentifier: nil
+        )
+        var searchUsers = userIDs.map({ createSearchUser(name: "John Doe", remoteIdentifier: $0, teamIdentifier: nil) }) as [UserType]
         searchUsers.append(incompleteSearchUser)
 
         // when
@@ -90,12 +89,20 @@ class UserTypeTests_Materialize: ModelObjectsTests {
 
     // MARK: - Helpers
 
-    func createSearchUser(name: String, remoteIdentifier: UUID = UUID()) -> ZMSearchUser {
-        return ZMSearchUser(contextProvider: self.coreDataStack,
-                            name: name.capitalized,
-                            handle: name.lowercased(),
-                            accentColor: .brightOrange,
-                            remoteIdentifier: remoteIdentifier)
+    func createSearchUser(
+        name: String,
+        remoteIdentifier: UUID?,
+        teamIdentifier: UUID?
+    ) -> ZMSearchUser {
+        ZMSearchUser(
+            contextProvider: coreDataStack,
+            name: name.capitalized,
+            handle: name.lowercased(),
+            accentColor: .amber,
+            remoteIdentifier: remoteIdentifier,
+            teamIdentifier: teamIdentifier,
+            searchUsersCache: nil
+        )
     }
 
 }

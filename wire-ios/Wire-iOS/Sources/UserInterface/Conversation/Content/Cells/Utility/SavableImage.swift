@@ -17,9 +17,9 @@
 //
 
 import Photos
+import UIKit
 import WireSystem
 import WireUtilities
-import UIKit
 
 protocol PhotoLibraryProtocol {
     func performChanges(_ changeBlock: @escaping () -> Swift.Void, completionHandler: ((Bool, Error?) -> Swift.Void)?)
@@ -90,7 +90,7 @@ final class SavableImage: NSObject {
         return isGIF ? .gif(SavableImage.storeGIF(imageData)) : .image(imageData)
     }
 
-    public func saveToLibrary(withCompletion completion: ImageSaveCompletion? = .none) {
+    func saveToLibrary(withCompletion completion: ImageSaveCompletion? = .none) {
         guard !writeInProgess else { return }
         writeInProgess = true
         let source = createSource()

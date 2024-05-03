@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UserNotifications
 import UIKit
+import UserNotifications
 
 extension ConversationListViewController: PermissionDeniedViewControllerDelegate {
-    public func continueWithoutPermission(_ viewController: PermissionDeniedViewController) {
+    func continueWithoutPermission(_ viewController: PermissionDeniedViewController) {
         closePushPermissionDeniedDialog()
     }
 }

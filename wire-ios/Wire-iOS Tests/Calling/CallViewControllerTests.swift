@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 extension XCTestCase {
-    public func verifyDeallocation<T: AnyObject>(of instanceGenerator: () -> (T)) {
+    func verifyDeallocation<T: AnyObject>(of instanceGenerator: () -> (T)) {
         weak var weakInstance: T?
         var instance: T?
 

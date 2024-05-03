@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import WireDataModel
-import WireSystem
 import WireRequestStrategy
-import Combine
+import WireSystem
 
 typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
 & UserSessionSelfUserClientDelegate
@@ -30,16 +30,13 @@ typealias UserSessionDelegate = UserSessionEncryptionAtRestDelegate
 @objcMembers
 public final class ZMUserSession: NSObject {
 
+    // MARK: Properties
+
     private let appVersion: String
     private var tokens: [Any] = []
     private var tornDown: Bool = false
 
     private(set) var isNetworkOnline = true
-    var isPerformingSync = true {
-        willSet {
-            notificationDispatcher.operationMode = newValue ? .economical : .normal
-        }
-    }
 
     private(set) var coreDataStack: CoreDataStack!
     let application: ZMApplication
@@ -56,7 +53,6 @@ public final class ZMUserSession: NSObject {
     private(set) var notificationDispatcher: NotificationDispatcher
     private(set) var localNotificationDispatcher: LocalNotificationDispatcher?
     let applicationStatusDirectory: ApplicationStatusDirectory
-    private var assetCache: FileAssetCache?
     private(set) var callStateObserver: CallStateObserver?
     var messageReplyObserver: ManagedObjectContextChangeObserver?
     var likeMesssageObserver: ManagedObjectContextChangeObserver?
@@ -67,10 +63,8 @@ public final class ZMUserSession: NSObject {
     // When we move to the monorepo, uncomment hotFixApplicator
     // let hotFixApplicator = PatchApplicator<HotfixPatch>(lastRunVersionKey: "lastRunHotFixVersion")
     var accessTokenRenewalObserver: AccessTokenRenewalObserver?
-    var recurringActionService = RecurringActionService(
-        storage: .standard,
-        dateProvider: .system
-    ) as RecurringActionServiceInterface
+
+    var recurringActionService: any RecurringActionServiceInterface
 
     var cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
     private(set) var coreCryptoProvider: CoreCryptoProviderProtocol
@@ -83,16 +77,35 @@ public final class ZMUserSession: NSObject {
     let observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol
     public let updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol
 
-    public var syncStatus: SyncStatusProtocol {
-        return applicationStatusDirectory.syncStatus
-    }
-
     public lazy var featureRepository = FeatureRepository(context: syncContext)
 
     let earService: EARServiceInterface
 
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
+
+    let useCaseFactory: UseCaseFactoryProtocol
+
+    public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
+
+    let lastEventIDRepository: LastEventIDRepositoryInterface
+    let conversationEventProcessor: ConversationEventProcessor
+
+    public var hasCompletedInitialSync: Bool = false
+
+    public var topConversationsDirectory: TopConversationsDirectory
+
+    // MARK: Computed Properties
+
+    var isPerformingSync = true {
+        willSet {
+            notificationDispatcher.operationMode = newValue ? .economical : .normal
+        }
+    }
+
+    public var syncStatus: SyncStatusProtocol {
+        return applicationStatusDirectory.syncStatus
+    }
 
     public var fileSharingFeature: Feature.FileSharing {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
@@ -117,6 +130,11 @@ public final class ZMUserSession: NSObject {
     public var e2eiFeature: Feature.E2EI {
         let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
         return featureRepository.fetchE2EI()
+    }
+
+    public var mlsFeature: Feature.MLS {
+        let featureRepository = FeatureRepository(context: coreDataStack.viewContext)
+        return featureRepository.fetchMLS()
     }
 
     public var gracePeriodEndDate: Date? {
@@ -168,10 +186,6 @@ public final class ZMUserSession: NSObject {
         )
     }()
 
-    public var hasCompletedInitialSync: Bool = false
-
-    public var topConversationsDirectory: TopConversationsDirectory
-
     public var managedObjectContext: NSManagedObjectContext { // TODO jacob we don't want this to be public
         return coreDataStack.viewContext
     }
@@ -212,22 +226,6 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    // temporary function to simplify call to EventProcessor
-    // might be replaced by something more elegant
-    public func processUpdateEvents(_ events: [ZMUpdateEvent]) {
-        WaitingGroupTask(context: self.syncContext) {
-            try? await self.updateEventProcessor?.processEvents(events)
-        }
-    }
-
-    // temporary function to simplify call to ConversationEventProcessor
-    // might be replaced by something more elegant
-    public func processConversationEvents(_ events: [ZMUpdateEvent]) {
-        WaitingGroupTask(context: self.syncContext) {
-            await self.conversationEventProcessor.processConversationEvents(events)
-        }
-    }
-
     public var isNotificationContentHidden: Bool {
         get {
             guard let value = managedObjectContext.persistentStoreMetadata(forKey: LocalNotificationDispatcher.ZMShouldHideNotificationContentKey) as? NSNumber else {
@@ -239,41 +237,6 @@ public final class ZMUserSession: NSObject {
         set {
             managedObjectContext.setPersistentStoreMetadata(NSNumber(value: newValue), key: LocalNotificationDispatcher.ZMShouldHideNotificationContentKey)
         }
-    }
-
-    let useCaseFactory: UseCaseFactoryProtocol
-
-    weak var delegate: UserSessionDelegate?
-
-    // swiftlint:disable:next todo_requires_jira_link
-    // TODO: remove this property and move functionality to separate protocols under UserSessionDelegate
-    public weak var sessionManager: SessionManagerType?
-
-    // MARK: - Tear down
-
-    deinit {
-        require(tornDown, "tearDown must be called before the ZMUserSession is deallocated")
-    }
-
-    public func tearDown() {
-        guard !tornDown else { return }
-
-        tokens.removeAll()
-        application.unregisterObserverForStateChange(self)
-        callStateObserver = nil
-        syncStrategy?.tearDown()
-        syncStrategy = nil
-        operationLoop?.tearDown()
-        operationLoop = nil
-        transportSession.tearDown()
-        notificationDispatcher.tearDown()
-        callCenter?.tearDown()
-        coreDataStack.close()
-        contextStorage.clear()
-
-        NotificationCenter.default.removeObserver(self)
-
-        tornDown = true
     }
 
     /// - Note: this is safe if coredataStack and proteus are ready
@@ -294,8 +257,7 @@ public final class ZMUserSession: NSObject {
         )
 
         let apiProvider = APIProvider(httpClient: httpClient)
-
-        let e2eiSetupService = E2EISetupService(coreCryptoProvider: coreCryptoProvider)
+        let e2eiSetupService = E2EISetupService(coreCryptoProvider: coreCryptoProvider, featureRepository: featureRepository)
         let onNewCRLsDistributionPointsSubject = PassthroughSubject<CRLsDistributionPoints, Never>()
 
         let keyRotator = E2EIKeyPackageRotator(
@@ -330,7 +292,10 @@ public final class ZMUserSession: NSObject {
     private(set) public var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
     public private(set) lazy var getIsE2eIdentityEnabled: GetIsE2EIdentityEnabledUseCaseProtocol = {
-        return GetIsE2EIdentityEnabledUseCase(coreCryptoProvider: coreCryptoProvider)
+        return GetIsE2EIdentityEnabledUseCase(
+            coreCryptoProvider: coreCryptoProvider,
+            featureRespository: featureRepository
+        )
     }()
 
     public private(set) lazy var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol = {
@@ -351,10 +316,20 @@ public final class ZMUserSession: NSObject {
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
-    public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
 
-    let lastEventIDRepository: LastEventIDRepositoryInterface
-    let conversationEventProcessor: ConversationEventProcessor
+    // MARK: Dependency Injection
+
+    let dependencies: UserSessionDependencies
+
+    // MARK: Delegates
+
+    weak var delegate: UserSessionDelegate?
+
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: remove this property and move functionality to separate protocols under UserSessionDelegate
+    public weak var sessionManager: SessionManagerType?
+
+    // MARK: - Initialize
 
     init(
         userId: UUID,
@@ -380,7 +355,9 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory: ApplicationStatusDirectory,
         updateMLSGroupVerificationStatusUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol,
         mlsConversationVerificationStatusUpdater: any MLSConversationVerificationStatusUpdating,
-        contextStorage: LAContextStorable
+        contextStorage: LAContextStorable,
+        recurringActionService: any RecurringActionServiceInterface,
+        dependencies: UserSessionDependencies
     ) {
         self.application = application
         self.appVersion = appVersion
@@ -412,6 +389,8 @@ public final class ZMUserSession: NSObject {
         self.mlsConversationVerificationStatusUpdater = mlsConversationVerificationStatusUpdater
         self.observeMLSGroupVerificationStatus = observeMLSGroupVerificationStatusUseCase
         self.contextStorage = contextStorage
+        self.recurringActionService = recurringActionService
+        self.dependencies = dependencies
     }
 
     func setup(
@@ -421,8 +400,9 @@ public final class ZMUserSession: NSObject {
         operationLoop: ZMOperationLoop?,
         configuration: Configuration
     ) {
-        coreDataStack.linkContexts()
         coreDataStack.linkAnalytics(analytics)
+        coreDataStack.linkCaches(dependencies.caches)
+        coreDataStack.linkContexts()
 
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
         self.earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)
@@ -430,8 +410,6 @@ public final class ZMUserSession: NSObject {
         appLockController.delegate = self
         applicationStatusDirectory.syncStatus.syncStateDelegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
-
-        configureCaches()
 
         syncManagedObjectContext.performGroupedBlockAndWait { [self] in
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
@@ -478,6 +456,35 @@ public final class ZMUserSession: NSObject {
         configureRecurringActions()
     }
 
+    // MARK: - Deinitalize
+
+    deinit {
+        require(tornDown, "tearDown must be called before the ZMUserSession is deallocated")
+    }
+
+    public func tearDown() {
+        guard !tornDown else { return }
+
+        tokens.removeAll()
+        application.unregisterObserverForStateChange(self)
+        callStateObserver = nil
+        syncStrategy?.tearDown()
+        syncStrategy = nil
+        operationLoop?.tearDown()
+        operationLoop = nil
+        transportSession.tearDown()
+        notificationDispatcher.tearDown()
+        callCenter?.tearDown()
+        coreDataStack.close()
+        contextStorage.clear()
+
+        NotificationCenter.default.removeObserver(self)
+
+        tornDown = true
+    }
+
+    // MARK: - Methods
+
     private func configureTransportSession() {
         transportSession.pushChannel.clientID = selfUserClient?.remoteIdentifier
         transportSession.setNetworkStateDelegate(self)
@@ -486,32 +493,6 @@ public final class ZMUserSession: NSObject {
         }
         transportSession.setAccessTokenRenewalSuccessHandler { [weak self]  _, _ in
             self?.transportSessionAccessTokenDidSucceed()
-        }
-    }
-
-    private func configureCaches() {
-        let cacheLocation = FileManager.default.cachesURLForAccount(
-            with: coreDataStack.account.userIdentifier,
-            in: coreDataStack.applicationContainer
-        )
-
-        ZMUserSession.moveCachesIfNeededForAccount(
-            with: coreDataStack.account.userIdentifier,
-            in: coreDataStack.applicationContainer
-        )
-
-        let fileAssetCache = FileAssetCache(location: cacheLocation)
-        let userImageCache = UserImageLocalCache(location: cacheLocation)
-
-        self.assetCache = fileAssetCache
-
-        managedObjectContext.zm_userImageCache = userImageCache
-        managedObjectContext.zm_fileAssetCache = fileAssetCache
-        managedObjectContext.zm_searchUserCache = NSCache()
-
-        syncManagedObjectContext.performGroupedBlockAndWait {
-            self.syncManagedObjectContext.zm_userImageCache = userImageCache
-            self.syncManagedObjectContext.zm_fileAssetCache = fileAssetCache
         }
     }
 
@@ -530,7 +511,8 @@ public final class ZMUserSession: NSObject {
             proteusProvider: self.proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            usecaseFactory: useCaseFactory
+            usecaseFactory: useCaseFactory,
+            searchUsersCache: dependencies.caches.searchUsers
         )
     }
 
@@ -546,12 +528,17 @@ public final class ZMUserSession: NSObject {
 
     private func createURLActionProcessors() -> [URLActionProcessor] {
         return [
-            DeepLinkURLActionProcessor(contextProvider: coreDataStack,
-                                       transportSession: transportSession,
-                                       eventProcessor: updateEventProcessor!),
-            ConnectToBotURLActionProcessor(contextprovider: coreDataStack,
-                                           transportSession: transportSession,
-                                           eventProcessor: updateEventProcessor!)
+            DeepLinkURLActionProcessor(
+                contextProvider: coreDataStack,
+                transportSession: transportSession,
+                eventProcessor: updateEventProcessor!
+            ),
+            ConnectToBotURLActionProcessor(
+                contextprovider: coreDataStack,
+                transportSession: transportSession,
+                eventProcessor: updateEventProcessor!,
+                searchUsersCache: dependencies.caches.searchUsers
+            )
         ]
     }
 
@@ -591,7 +578,7 @@ public final class ZMUserSession: NSObject {
             Logging.network.warn("Request loop happening at path: \(path)")
 
             DispatchQueue.main.async {
-                NotificationCenter.default.post(name: Notification.Name(rawValue: ZMLoggingRequestLoopNotificationName),
+                NotificationCenter.default.post(name: .loggingRequestLoop,
                                                 object: nil,
                                                 userInfo: ["path": path])
             }
@@ -629,13 +616,31 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    // MARK: - Network
+    // MARK: Progress Events
+
+    // temporary function to simplify call to EventProcessor
+    // might be replaced by something more elegant
+    public func processUpdateEvents(_ events: [ZMUpdateEvent]) {
+        WaitingGroupTask(context: self.syncContext) {
+            try? await self.updateEventProcessor?.processEvents(events)
+        }
+    }
+
+    // temporary function to simplify call to ConversationEventProcessor
+    // might be replaced by something more elegant
+    public func processConversationEvents(_ events: [ZMUpdateEvent]) {
+        WaitingGroupTask(context: self.syncContext) {
+            await self.conversationEventProcessor.processConversationEvents(events)
+        }
+    }
+
+    // MARK: Network
 
     public func requestResyncResources() {
         applicationStatusDirectory.requestResyncResources()
     }
 
-    // MARK: - Access Token
+    // MARK: Access Token
 
     private func renewAccessTokenIfNeeded(for userClient: UserClient) {
         guard
@@ -647,7 +652,7 @@ public final class ZMUserSession: NSObject {
         renewAccessToken(with: clientID)
     }
 
-    // MARK: - Perform changes
+    // MARK: Perform changes
 
     public func saveOrRollbackChanges() {
         managedObjectContext.saveOrRollback()
@@ -692,7 +697,7 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    // MARK: - Account
+    // MARK: Account
 
     public func initiateUserDeletion() {
         syncManagedObjectContext.performGroupedBlock {
@@ -701,13 +706,15 @@ public final class ZMUserSession: NSObject {
         }
     }
 
-    // MARK: - Caches
+    // MARK: Caches
 
     func purgeTemporaryAssets() throws {
-        try assetCache?.purgeTemporaryAssets()
+        try dependencies.caches.fileAssets.purgeTemporaryAssets()
     }
 
 }
+
+// MARK: - ZMNetworkStateDelegate
 
 extension ZMUserSession: ZMNetworkStateDelegate {
 
@@ -743,6 +750,9 @@ extension ZMUserSession: ZMNetworkStateDelegate {
         networkState = state
     }
 }
+
+// MARK: - UpdateEventProcessor
+
 // swiftlint:disable todo_requires_jira_link
 // TODO: [jacob] find another way of providing the event processor to ZMissingEventTranscoder
 // swiftlint:enable todo_requires_jira_link
@@ -759,6 +769,8 @@ extension ZMUserSession: UpdateEventProcessor {
         try await updateEventProcessor?.processBufferedEvents()
     }
 }
+
+// MARK: - ZMSyncStateDelegate
 
 extension ZMUserSession: ZMSyncStateDelegate {
 
@@ -947,11 +959,15 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
 }
 
+// MARK: - URLActionProcessor
+
 extension ZMUserSession: URLActionProcessor {
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
         urlActionProcessors?.forEach({ $0.process(urlAction: urlAction, delegate: delegate) })
     }
 }
+
+// MARK: - ContextProvider
 
 extension ZMUserSession: ContextProvider {
 
@@ -974,5 +990,10 @@ extension ZMUserSession: ContextProvider {
     public var eventContext: NSManagedObjectContext {
         return coreDataStack.eventContext
     }
+}
 
+// MARK: - NotificationName + LoggingRequestLoopNotificationName
+
+extension Notification.Name {
+    public static let loggingRequestLoop = Self("LoggingRequestLoopNotificationName")
 }

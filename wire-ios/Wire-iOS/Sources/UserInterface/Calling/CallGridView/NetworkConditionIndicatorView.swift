@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireSyncEngine
 
@@ -24,7 +23,7 @@ final class NetworkConditionIndicatorView: UIView, RoundedViewProtocol {
 
     private let label = UILabel()
 
-    public override class var layerClass: AnyClass {
+    override class var layerClass: AnyClass {
         return ContinuousMaskLayer.self
     }
 

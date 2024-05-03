@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class ConversationFileMessageTests: ConversationMessageSnapshotTestCase {
 
@@ -27,7 +27,7 @@ final class ConversationFileMessageTests: ConversationMessageSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
 
         mockSelfUser = MockUserType.createDefaultSelfUser()
         message = MockMessageFactory.fileTransferMessage(sender: mockSelfUser)

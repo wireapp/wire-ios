@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import MessageUI
-import WireDataModel
 import UIKit
-import WireSystem
 import WireCommonComponents
+import WireDataModel
+import WireSystem
 
 /// Presents debug alerts
 final class DebugAlert {
@@ -170,9 +169,11 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         }
     }
 
-    public func mailComposeController(_ controller: MFMailComposeViewController,
-                                      didFinishWith result: MFMailComposeResult,
-                                      error: Error?) {
+    func mailComposeController(
+        _ controller: MFMailComposeViewController,
+        didFinishWith result: MFMailComposeResult,
+        error: Error?
+    ) {
         self.mailViewController = nil
         controller.dismiss(animated: true)
         type(of: self).senderInstance = nil

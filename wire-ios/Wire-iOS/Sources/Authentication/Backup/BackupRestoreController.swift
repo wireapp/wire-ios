@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
 import WireDataModel
 import WireSyncEngine
-import UniformTypeIdentifiers
 
 protocol BackupRestoreControllerDelegate: AnyObject {
     func backupResoreControllerDidFinishRestoring(_ controller: BackupRestoreController)
@@ -156,7 +156,7 @@ final class BackupRestoreController: NSObject {
 }
 
 extension BackupRestoreController: UIDocumentPickerDelegate {
-    public func documentPicker(
+    func documentPicker(
         _ controller: UIDocumentPickerViewController,
         didPickDocumentAt url: URL) {
             WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")

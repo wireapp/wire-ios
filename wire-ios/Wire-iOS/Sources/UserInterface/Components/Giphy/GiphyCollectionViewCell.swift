@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import FLAnimatedImage
 import UIKit
 import Ziphy
-import FLAnimatedImage
 
 final class GiphyCollectionViewCell: UICollectionViewCell {
 

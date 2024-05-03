@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTesting
 @testable import WireSyncEngine
+import WireTesting
 
 public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
 
@@ -30,13 +30,17 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
 
     public override func setUp() {
         super.setUp()
+
         transportSession = TestUnauthenticatedTransportSession()
         mockDelegate = MockUnauthenticatedSessionDelegate()
         reachability = MockReachability()
-        sut = UnauthenticatedSession(transportSession: transportSession,
-                                     reachability: reachability,
-                                     delegate: mockDelegate,
-                                     authenticationStatusDelegate: mockAuthenticationStatusDelegate)
+        sut = .init(
+            transportSession: transportSession,
+            reachability: reachability,
+            delegate: mockDelegate,
+            authenticationStatusDelegate: mockAuthenticationStatusDelegate,
+            userPropertyValidator: UserPropertyValidator()
+        )
         sut.groupQueue.add(dispatchGroup)
         setCurrentAPIVersion(.v0)
     }
@@ -48,6 +52,7 @@ public final class UnauthenticatedSessionTests_DomainLookup: ZMTBaseTest {
         mockDelegate = nil
         reachability = nil
         resetCurrentAPIVersion()
+
         super.tearDown()
     }
 

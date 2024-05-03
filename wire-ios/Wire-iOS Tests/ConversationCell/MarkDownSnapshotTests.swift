@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class MarkDownSnapshotTests: ConversationMessageSnapshotTestCase {
     var mockOtherUser: MockUserType!
@@ -27,7 +27,7 @@ final class MarkDownSnapshotTests: ConversationMessageSnapshotTestCase {
         super.setUp()
 
         mockOtherUser = MockUserType.createUser(name: "Bruno")
-        UIColor.setAccentOverride(.vividRed)
+        UIColor.setAccentOverride(.red)
 
         mockSelfUser = MockUserType.createDefaultSelfUser()
     }

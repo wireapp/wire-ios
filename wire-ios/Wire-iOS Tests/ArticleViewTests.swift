@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+@testable import Wire
 import WireDataModel
 import WireLinkPreview
 import XCTest
-@testable import Wire
 
 // MARK: - MockConversationMessageCellDelegate
 
@@ -104,7 +104,7 @@ final class ArticleViewTests: BaseSnapshotTestCase {
     override func setUp() {
         super.setUp()
 
-        accentColor = .strongBlue
+        accentColor = .blue
     }
 
     // MARK: - tearDown

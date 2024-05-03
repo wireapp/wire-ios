@@ -60,7 +60,7 @@ final class ConversationStartedSystemMessageCell: ConversationIconBasedCell, Con
 
 extension ConversationStartedSystemMessageCell {
 
-    public override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+    override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
         delegate?.conversationMessageWantsToOpenParticipantsDetails(self, selectedUsers: selectedUsers, sourceView: self)
 
         return false

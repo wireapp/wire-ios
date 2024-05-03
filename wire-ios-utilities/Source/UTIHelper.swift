@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreServices
 import Foundation
 import UniformTypeIdentifiers
-import CoreServices
 #if os(iOS)
     import MobileCoreServices
 #endif

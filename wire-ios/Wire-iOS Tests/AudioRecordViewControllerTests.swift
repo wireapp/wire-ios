@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import avs
 @testable import Wire
+import XCTest
 
 private final class MockAudioRecordViewControllerDelegate: NSObject, AudioRecordViewControllerDelegate {
 
@@ -41,7 +41,7 @@ final class AudioRecordViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
         userSession = UserSessionMock()
         sut = AudioRecordViewController(userSession: userSession)
         delegate = MockAudioRecordViewControllerDelegate()

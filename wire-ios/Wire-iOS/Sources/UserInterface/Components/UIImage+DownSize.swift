@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 extension CGSize {
@@ -34,7 +33,7 @@ extension CGFloat {
     enum Image {
         /// Maximum image size that would show in a UIImageView.
         /// Tested on iPhone 5s and found that the image size limitation is ~5000px
-        static public let maxSupportedLength: CGFloat = 5000
+        static let maxSupportedLength: CGFloat = 5000
     }
 }
 

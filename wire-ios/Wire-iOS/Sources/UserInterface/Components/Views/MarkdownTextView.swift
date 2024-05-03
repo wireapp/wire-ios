@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import MobileCoreServices
 import Down
+import MobileCoreServices
 import UIKit
-import WireSyncEngine
-import WireCommonComponents
 import UniformTypeIdentifiers
+import WireCommonComponents
+import WireSyncEngine
 
 extension Notification.Name {
     static let MarkdownTextViewDidChangeActiveMarkdown = Notification.Name("MarkdownTextViewDidChangeActiveMarkdown")
@@ -160,7 +159,7 @@ final class MarkdownTextView: NextResponderTextView {
         UIPasteboard.general.setValue(copiedAttributedTextPlainText, forPasteboardType: UTType.plainText.identifier)
     }
 
-    public override var selectedTextRange: UITextRange? {
+    override var selectedTextRange: UITextRange? {
         didSet { activeMarkdown = self.markdownAtSelection() }
     }
 

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 
@@ -99,7 +98,7 @@ final class ConversationAudioMessageCell: RoundedView, ConversationMessageCell {
         ])
     }
 
-    override public var tintColor: UIColor! {
+    override var tintColor: UIColor! {
         didSet {
             self.transferView.tintColor = self.tintColor
         }

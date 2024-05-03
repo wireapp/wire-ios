@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import FLAnimatedImage
 import MobileCoreServices
 import Photos
-import FLAnimatedImage
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -219,11 +219,11 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
 }
 
 extension ConversationInputBarViewController: UIVideoEditorControllerDelegate {
-    public func videoEditorControllerDidCancel(_ editor: UIVideoEditorController) {
+    func videoEditorControllerDidCancel(_ editor: UIVideoEditorController) {
         editor.dismiss(animated: true, completion: .none)
     }
 
-    public func videoEditorController(_ editor: UIVideoEditorController, didSaveEditedVideoToPath editedVideoPath: String) {
+    func videoEditorController(_ editor: UIVideoEditorController, didSaveEditedVideoToPath editedVideoPath: String) {
         editor.dismiss(animated: true, completion: .none)
 
         editor.isLoadingViewVisible = true

@@ -49,7 +49,7 @@ final class WebLinkTextView: UITextView {
     }
 
     /// non-selectable textview
-    override public var selectedTextRange: UITextRange? {
+    override var selectedTextRange: UITextRange? {
         get { return nil }
         set { /* no-op */ }
     }
@@ -71,7 +71,7 @@ final class WebLinkTextView: UITextView {
 
 extension WebLinkTextView: UITextDragDelegate {
 
-    public func textDraggableView(_ textDraggableView: UIView & UITextDraggable, itemsForDrag dragRequest: UITextDragRequest) -> [UIDragItem] {
+    func textDraggableView(_ textDraggableView: UIView & UITextDraggable, itemsForDrag dragRequest: UITextDragRequest) -> [UIDragItem] {
         return []
     }
 

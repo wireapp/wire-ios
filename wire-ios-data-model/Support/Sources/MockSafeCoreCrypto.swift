@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireDataModel
 import WireCoreCrypto
+import WireDataModel
 
 public class MockSafeCoreCrypto: SafeCoreCryptoProtocol {
 

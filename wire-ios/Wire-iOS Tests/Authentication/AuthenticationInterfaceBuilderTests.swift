@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
 @testable import Wire
+import XCTest
 
 final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
@@ -28,7 +28,7 @@ final class AuthenticationInterfaceBuilderTests: BaseSnapshotTestCase, CoreDataF
     override func setUp() {
         super.setUp()
         coreDataFixture = CoreDataFixture()
-        accentColor = .strongBlue
+        accentColor = .blue
 
         featureProvider = MockAuthenticationFeatureProvider()
         builder = AuthenticationInterfaceBuilder(featureProvider: featureProvider, backendEnvironmentProvider: {

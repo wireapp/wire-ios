@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
 
@@ -43,7 +43,7 @@ final class GroupDetailsViewControllerSnapshotTests: BaseSnapshotTestCase {
         otherUser.remoteIdentifier = .init()
         otherUser.isConnected = true
         otherUser.handle = "bruno"
-        otherUser.accentColorValue = .brightOrange
+        otherUser.zmAccentColor = .amber
 
         userSession = UserSessionMock(mockUser: mockSelfUser)
     }

@@ -16,18 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CallKit
+import UIKit
 import UserNotifications
-import WireRequestStrategy
-import WireNotificationEngine
 import WireCommonComponents
 import WireDataModel
+import WireNotificationEngine
+import WireRequestStrategy
 import WireSyncEngine
 import WireUtilities
-import UIKit
-import CallKit
 
-public protocol CallEventHandlerProtocol {
+protocol CallEventHandlerProtocol {
     func reportIncomingVoIPCall(_ payload: [String: Any])
 }
 
@@ -44,11 +43,11 @@ final class CallEventHandler: CallEventHandlerProtocol {
 
 }
 
-public final class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
+final class LegacyNotificationService: UNNotificationServiceExtension, NotificationSessionDelegate {
 
     // MARK: - Properties
 
-    public var callEventHandler: CallEventHandlerProtocol = CallEventHandler()
+    var callEventHandler: CallEventHandlerProtocol = CallEventHandler()
 
     private var session: NotificationSession?
     private var contentHandler: ((UNNotificationContent) -> Void)?
@@ -76,7 +75,7 @@ public final class LegacyNotificationService: UNNotificationServiceExtension, No
 
     // MARK: - Methods
 
-    public override func didReceive(
+    override func didReceive(
         _ request: UNNotificationRequest,
         withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
     ) {
@@ -99,7 +98,7 @@ public final class LegacyNotificationService: UNNotificationServiceExtension, No
         session?.processPushNotification(with: request.content.userInfo)
     }
 
-    public override func serviceExtensionTimeWillExpire() {
+    override func serviceExtensionTimeWillExpire() {
         WireLogger.notifications.warn("legacy service extension will expire")
         finishWithoutShowingNotification()
     }
@@ -110,7 +109,7 @@ public final class LegacyNotificationService: UNNotificationServiceExtension, No
         tearDown()
     }
 
-    public func notificationSessionDidGenerateNotification(
+    func notificationSessionDidGenerateNotification(
         _ notification: ZMLocalNotification?,
         unreadConversationCount: Int
     ) {
@@ -141,7 +140,7 @@ public final class LegacyNotificationService: UNNotificationServiceExtension, No
         contentHandler(content)
     }
 
-    public func reportCallEvent(
+    func reportCallEvent(
         _ callEvent: CallEventPayload,
         currentTimestamp: TimeInterval
     ) {
@@ -154,7 +153,7 @@ public final class LegacyNotificationService: UNNotificationServiceExtension, No
         ])
     }
 
-    public func notificationSessionDidFailWithError(error: NotificationSessionError) {
+    func notificationSessionDidFailWithError(error: NotificationSessionError) {
         WireLogger.notifications.error("session failed with error: \(error.localizedDescription)")
         finishWithoutShowingNotification()
     }

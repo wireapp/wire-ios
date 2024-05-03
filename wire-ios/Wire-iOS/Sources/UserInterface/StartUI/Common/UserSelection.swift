@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireUtilities
 import WireDataModel
+import WireUtilities
 
 @objc
 protocol UserSelectionObserver: AnyObject {

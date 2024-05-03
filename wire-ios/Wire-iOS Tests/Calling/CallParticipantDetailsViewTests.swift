@@ -18,8 +18,8 @@
 
 import Foundation
 import SnapshotTesting
-import XCTest
 @testable import Wire
+import XCTest
 
 class CallParticipantDetailsViewTests: XCTestCase {
 

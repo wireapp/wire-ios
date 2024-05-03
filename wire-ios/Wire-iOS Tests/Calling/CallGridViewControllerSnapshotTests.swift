@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SnapshotTesting
+@testable import Wire
 import WireUtilities
+import XCTest
 
 struct MockCallGridViewControllerInput: CallGridViewControllerInput, Equatable {
     var isConnected: Bool = true
@@ -54,7 +54,7 @@ final class CallGridViewControllerSnapshotTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
         mediaManager = ZMMockAVSMediaManager()
         configuration = MockCallGridViewControllerInput()
         mockHintView = MockCallGridHintNotificationLabel()

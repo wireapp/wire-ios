@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
-public struct LabelStyle {
+struct LabelStyle {
     var backgroundColor: UIColor
     var textColor: UIColor
 
@@ -45,7 +44,7 @@ public struct LabelStyle {
 
 extension UILabel: Stylable {
 
-    public func applyStyle(_ style: LabelStyle) {
+    func applyStyle(_ style: LabelStyle) {
         backgroundColor = style.backgroundColor
         textColor = style.textColor
     }

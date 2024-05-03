@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 extension UIView {
 
-    public func updateVisibleViews(_ views: [UIView], visibleViews: [UIView], animated: Bool) {
+    func updateVisibleViews(_ views: [UIView], visibleViews: [UIView], animated: Bool) {
         if animated {
             UIView.transition(with: self, duration: 0.35, options: .transitionCrossDissolve, animations: {
                 self.updateVisibleViews(views, visibleViews: visibleViews)
@@ -31,7 +30,7 @@ extension UIView {
         }
     }
 
-    public func updateVisibleViews(_ views: [UIView], visibleViews: [UIView]) {
+    func updateVisibleViews(_ views: [UIView], visibleViews: [UIView]) {
         let allViews = Set(views)
         let hiddenViews = allViews.subtracting(visibleViews)
 

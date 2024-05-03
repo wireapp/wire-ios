@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 
@@ -24,7 +23,7 @@ protocol PasscodeTextFieldDelegate: AnyObject {
     func textFieldValueChanged(_ value: String?)
 }
 
-class PasscodeTextField: AccessoryTextField {
+final class PasscodeTextField: AccessoryTextField {
 
     // MARK: - Constants
 

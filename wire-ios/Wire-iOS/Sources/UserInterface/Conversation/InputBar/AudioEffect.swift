@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import Foundation
 import WireCommonComponents
 import WireSystem
-import avs
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -113,7 +113,7 @@ extension AVSAudioEffectType: CustomStringConvertible {
         }
     }
 
-    public var accessibilityLabel: String {
+    var accessibilityLabel: String {
         typealias AudioRecord = L10n.Accessibility.AudioRecord
 
         switch self {

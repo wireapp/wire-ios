@@ -17,8 +17,8 @@
 //
 
 import SnapshotTesting
-import XCTest
 @testable import Wire
+import XCTest
 
 final class ConversationCreationControllerSnapshotTests: BaseSnapshotTestCase {
 
@@ -30,7 +30,7 @@ final class ConversationCreationControllerSnapshotTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .violet
+        accentColor = .purple
     }
 
     // MARK: - tearDown

@@ -16,22 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import WireSyncEngine
 
 extension ZClientViewController: UserObserving {
 
-    public func userDidChange(_ changeInfo: UserChangeInfo) {
+    func userDidChange(_ changeInfo: UserChangeInfo) {
         if changeInfo.accentColorValueChanged {
             UIApplication.shared.firstKeyWindow?.tintColor = UIColor.accent()
         }
     }
 
     @objc func setupUserChangeInfoObserver() {
-        userObserverToken = userSession.addUserObserver(
-            self,
-            for: userSession.selfUser
-        )
+        userObserverToken = userSession.addUserObserver(self, for: userSession.selfUser)
     }
-
 }

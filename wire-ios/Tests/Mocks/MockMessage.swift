@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import WireDataModel
 import WireLinkPreview
 import XCTest
-import WireDataModel
 
 final class MockCompositeMessageData: NSObject, CompositeMessageData {
     var items: [CompositeMessageItem] = []
@@ -425,7 +425,7 @@ class MockMessage: NSObject, ZMConversationMessage, ConversationCompositeMessage
     var isObfuscated: Bool = false
 
     var deletionTimeout: TimeInterval = -1
-    public var destructionDate: Date?
+    var destructionDate: Date?
 
     func startSelfDestructionIfNeeded() -> Bool {
         return true

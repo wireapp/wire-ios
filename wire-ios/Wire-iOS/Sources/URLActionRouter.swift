@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 extension Notification.Name {
     static let companyLoginDidFinish = Notification.Name("Wire.CompanyLoginDidFinish")
@@ -53,8 +53,10 @@ class URLActionRouter: URLActionRouterProtocol {
     private var pendingAlert: UIAlertController?
 
     // MARK: - Initialization
-    public init(viewController: RootViewController,
-                sessionManager: SessionManager? = nil) {
+    init(
+        viewController: RootViewController,
+        sessionManager: SessionManager? = nil
+    ) {
         self.rootViewController = viewController
         self.sessionManager = sessionManager
     }

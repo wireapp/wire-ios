@@ -17,9 +17,8 @@
 //
 
 import Foundation
-import ZipArchive
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 extension ConversationInputBarViewController: UINavigationControllerDelegate {}
 

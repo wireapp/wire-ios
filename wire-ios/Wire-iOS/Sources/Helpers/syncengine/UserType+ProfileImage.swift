@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireSyncEngine
 import WireDataModel
+import WireSyncEngine
 
-public var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
+var defaultUserImageCache: ImageCache<UIImage> = ImageCache()
 
 typealias ProfileImageCompletion = (_ image: UIImage?, _ cacheHit: Bool) -> Void
 

@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 // MARK: - Update left navigator bar item when size class changes
 extension ConversationViewController {
@@ -252,7 +252,7 @@ extension ConversationViewController: CollectionsViewControllerDelegate {
 
 extension ConversationViewController: WireCallCenterCallStateObserver {
 
-    public func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
         updateRightNavigationItemsButtons()
     }
 

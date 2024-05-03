@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-import WireCommonComponents
 
 // Describes the icon to be shown for the conversation in the list.
 enum ConversationStatusIcon: Equatable {
@@ -312,7 +312,7 @@ final class CallingMatcher: ConversationStatusMatcher {
         return CallingMatcher.icon(for: conversation.voiceChannel?.state, conversation: conversation)
     }
 
-    public static func icon(for state: CallState?, conversation: ConversationStatusProvider?) -> ConversationStatusIcon? {
+    static func icon(for state: CallState?, conversation: ConversationStatusProvider?) -> ConversationStatusIcon? {
 
         guard let state = state else {
             return nil

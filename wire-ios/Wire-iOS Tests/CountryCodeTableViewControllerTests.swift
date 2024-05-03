@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class CountryCodeTableViewControllerTests: XCTestCase {
 
@@ -25,7 +25,7 @@ final class CountryCodeTableViewControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
         sut = CountryCodeTableViewController()
     }
 

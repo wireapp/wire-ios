@@ -18,33 +18,38 @@
 
 import Foundation
 
-class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
+final class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
 
     var transportSession: TransportSessionType
     var eventProcessor: UpdateEventProcessor
     var contextProvider: ContextProvider
+    var searchUsersCache: SearchUsersCache?
 
-    init(contextprovider: ContextProvider,
-         transportSession: TransportSessionType,
-         eventProcessor: UpdateEventProcessor) {
+    init(
+        contextprovider: ContextProvider,
+        transportSession: TransportSessionType,
+        eventProcessor: UpdateEventProcessor,
+        searchUsersCache: SearchUsersCache?
+    ) {
         self.contextProvider = contextprovider
         self.transportSession = transportSession
         self.eventProcessor = eventProcessor
     }
 
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
-        guard case .connectBot(let serviceUserData) = urlAction else {
-            return
-        }
+        guard case .connectBot(let serviceUserData) = urlAction else { return }
 
-        let serviceUser = ZMSearchUser(contextProvider: contextProvider,
-                                       name: "",
-                                       handle: nil,
-                                       accentColor: .strongBlue,
-                                       remoteIdentifier: serviceUserData.service,
-                                       teamIdentifier: nil,
-                                       user: nil,
-                                       contact: nil)
+        let serviceUser = ZMSearchUser(
+            contextProvider: contextProvider,
+            name: "",
+            handle: nil,
+            accentColor: .blue,
+            remoteIdentifier: serviceUserData.service,
+            teamIdentifier: nil,
+            user: nil,
+            contact: nil,
+            searchUsersCache: searchUsersCache
+        )
         serviceUser.providerIdentifier = serviceUserData.provider.transportString()
         serviceUser.createConversation(
             transportSession: transportSession,
@@ -59,5 +64,4 @@ class ConnectToBotURLActionProcessor: NSObject, URLActionProcessor {
             }
         }
     }
-
 }

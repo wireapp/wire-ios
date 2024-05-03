@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
 @testable import Wire
+import XCTest
 
 final class SettingsTechnicalReportViewControllerSnapshotTests: BaseSnapshotTestCase {
 
@@ -30,7 +30,7 @@ final class SettingsTechnicalReportViewControllerSnapshotTests: BaseSnapshotTest
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
     }
 
     // MARK: - tearDown

@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import Social
-import WireShareEngine
+import LocalAuthentication
 import MobileCoreServices
-import WireDataModel
+import Social
+import UIKit
+import UniformTypeIdentifiers
 import WireCommonComponents
 import WireCoreCrypto
+import WireDataModel
 import WireLinkPreview
-import LocalAuthentication
-import UniformTypeIdentifiers
+import WireShareEngine
 
 typealias Completion = () -> Void
 private let zmLog = ZMSLog(tag: "UI")
@@ -136,7 +136,6 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         WireLogger.shareExtension.info("share extension loaded")
         currentAccount = accountManager?.selectedAccount
         ExtensionBackupExcluder.exclude()
-        CrashReporter.setupAppCenterIfNeeded()
         updateAccount(currentAccount)
 
         if let sortedAttachments = extensionContext?.attachments.sorted {

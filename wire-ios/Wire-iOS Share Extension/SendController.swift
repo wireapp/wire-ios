@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireShareEngine
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
+import WireShareEngine
 
 typealias DegradationStrategyChoice = (DegradationStrategy) -> Void
 typealias SendingStateCallback = (_ type: SendingState) -> Void
@@ -54,7 +54,7 @@ final class SendController {
     private var timeoutWorkItem: DispatchWorkItem?
     private var timedOut = false
 
-    public var sentAllSendables = false
+    var sentAllSendables = false
 
     init(text: String, attachments: [NSItemProvider], conversation: WireShareEngine.Conversation, sharingSession: SharingSession) {
 
