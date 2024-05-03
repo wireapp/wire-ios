@@ -30,6 +30,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     var mockSafeCoreCrypto: MockSafeCoreCrypto!
     var mockCoreCryptoProvider: MockCoreCryptoProviderProtocol!
     var mockCommitSender: MockCommitSending!
+    var mockFeatureRepository: MockFeatureRepositoryInterface!
     var sut: MLSActionExecutor!
     var cancellable: AnyCancellable!
 
@@ -41,10 +42,12 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
         mockCoreCryptoProvider.coreCrypto_MockValue = mockSafeCoreCrypto
         mockCommitSender = MockCommitSending()
+        mockFeatureRepository = MockFeatureRepositoryInterface()
 
         sut = MLSActionExecutor(
             coreCryptoProvider: mockCoreCryptoProvider,
-            commitSender: mockCommitSender
+            commitSender: mockCommitSender,
+            featureRepository: mockFeatureRepository
         )
     }
 
@@ -530,6 +533,12 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         // Mock join by external commit
         var mockJoinByExternalCommitArguments = [Data]()
 
+        // Mock MLS feature config
+        mockFeatureRepository.fetchMLS_MockValue = Feature.MLS(
+            status: .enabled,
+            config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
+        )
+
         mockCoreCrypto.joinByExternalCommitGroupInfoCustomConfigurationCredentialType_MockMethod = { groupState, _, _ in
             mockJoinByExternalCommitArguments.append(groupState)
             return .init(
@@ -583,6 +592,12 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         mockCommitSender.sendExternalCommitBundleFor_MockMethod = { _, _ in
             return []
         }
+
+        // Mock MLS feature config
+        mockFeatureRepository.fetchMLS_MockValue = Feature.MLS(
+            status: .enabled,
+            config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
+        )
 
         // Set up expectation to receive the new distribution points
         let expectation = XCTestExpectation(description: "received value")

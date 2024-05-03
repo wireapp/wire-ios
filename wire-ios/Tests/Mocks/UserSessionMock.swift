@@ -72,6 +72,8 @@ final class UserSessionMock: UserSession {
     var selfUser: SelfUserType
     var mockConversationList: ZMConversationList?
 
+    var searchUsersCache: SearchUsersCache
+
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
         let mock = MockGetMLSFeatureUseCaseProtocol()
         mock.invoke_MockValue = .init(status: .disabled, config: .init())
@@ -94,6 +96,7 @@ final class UserSessionMock: UserSession {
         selfUser: SelfUserType
     ) {
         self.selfUser = selfUser
+        searchUsersCache = .init()
     }
 
     var lock: SessionLock? = .screen
@@ -307,5 +310,22 @@ final class UserSessionMock: UserSession {
 
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
 
+    var mlsFeature: Feature.MLS = Feature.MLS(
+        status: .enabled,
+        config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
+    )
+
     func fetchAllClients() {}
+
+    func createTeamOneOnOne(
+        with user: UserType,
+        completion: @escaping (Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+    ) {
+    }
+
+    var mockCheckOneOnOneConversationIsReady: MockCheckOneOnOneConversationIsReadyUseCaseProtocol?
+    var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
+        mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
+    }
+
 }

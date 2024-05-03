@@ -55,7 +55,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         DeveloperFlagOperation(),
         BackendEnvironmentOperation(),
         TrackingOperation(),
-        AppCenterOperation(),
         PerformanceDebuggerOperation(),
         AVSLoggingOperation(),
         AutomationHelperOperation(),
@@ -79,7 +78,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         return SessionManager.shared?.unauthenticatedSession
     }
 
-    var appCenterInitCompletion: Completion?
     var launchOptions: LaunchOptions = [:]
 
     static var shared: AppDelegate {

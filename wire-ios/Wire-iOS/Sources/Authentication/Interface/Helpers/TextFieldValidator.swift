@@ -28,7 +28,6 @@ final class TextFieldValidator {
         case tooLong(kind: ValidatedTextField.Kind)
         case invalidUsername
         case invalidEmail
-        case invalidPhoneNumber
         case invalidPassword([PasswordValidationResult.Violation])
         case custom(String)
     }
@@ -84,9 +83,7 @@ final class TextFieldValidator {
             guard subset && text.isEqualToUnicodeName else { return .invalidUsername }
             guard text.count >= HandleValidation.allowedLength.lowerBound else { return .tooShort(kind: .username) }
             guard text.count <= HandleValidation.allowedLength.upperBound else { return .tooLong(kind: .username) }
-        case .phoneNumber, .unknown:
-            // phone number is validated with the custom validator
-            break
+        case .unknown: break
         }
 
         return .none
@@ -117,8 +114,6 @@ extension TextFieldValidator.ValidationError: LocalizedError {
                 // swiftlint:disable todo_requires_jira_link
                 // TODO: - [AGIS] This string doesn't exist, replace it
                 return "unknown.guidance.tooshort".localized
-            case .phoneNumber:
-                return L10n.Localizable.Phone.Guidance.tooshort
             case .username:
                 return L10n.Localizable.Name.Guidance.tooshort
             }
@@ -134,15 +129,11 @@ extension TextFieldValidator.ValidationError: LocalizedError {
                 // TODO: - [AGIS] This string doesn't exist, replace it
                 // swiftlint:enable todo_requires_jira_link
                 return "unknown.guidance.toolong".localized
-            case .phoneNumber:
-                return L10n.Localizable.Phone.Guidance.toolong
             case .username:
                 return L10n.Localizable.Name.Guidance.toolong
             }
         case .invalidEmail:
             return L10n.Localizable.Email.Guidance.invalid
-        case .invalidPhoneNumber:
-            return L10n.Localizable.Phone.Guidance.invalid
         case .custom(let description):
             return description
         case .invalidPassword(let violations):
