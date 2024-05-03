@@ -74,7 +74,7 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         XCTAssertFalse(sender.isConnected)
     }
 
-    // swiftlint:disable:next
+    // swiftlint:disable:next invalid_swiftlint_command
     // TODO: jacob this can only be tested in an integration test or with better mocks
 //    func testThatItCallsShowConversationListAndConnects_ForPushNotificationCategoryConnectWithAcceptAction() {
 //        // given
