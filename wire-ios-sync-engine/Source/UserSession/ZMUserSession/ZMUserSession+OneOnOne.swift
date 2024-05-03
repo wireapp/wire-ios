@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 extension ZMUserSession {
 
@@ -71,5 +72,4 @@ extension ZMUserSession {
             }
         }
     }
-
 }

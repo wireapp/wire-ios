@@ -256,7 +256,6 @@
 		252183272B4C183A000C4325 /* SystemSaveFilePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252183252B4C16CB000C4325 /* SystemSaveFilePresenter.swift */; };
 		2521832C2B4C1B8B000C4325 /* SaveFileManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2521832B2B4C1B8B000C4325 /* SaveFileManagerTests.swift */; };
 		2521832E2B4C1BDB000C4325 /* MockSystemSaveFilePresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2521832D2B4C1BDB000C4325 /* MockSystemSaveFilePresenter.swift */; };
-		252FE2802B59725C00D94DBD /* MockLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 252FE27F2B59725C00D94DBD /* MockLogger.swift */; };
 		253C67492B88A3BB00965DE1 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsDebugActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 253C67482B88A3BB00965DE1 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsDebugActions.swift */; };
 		253C674F2B8D0BED00965DE1 /* WireRequestStrategySupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 253C674E2B8D0BED00965DE1 /* WireRequestStrategySupport.framework */; };
 		253C67502B8D0BED00965DE1 /* WireRequestStrategySupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 253C674E2B8D0BED00965DE1 /* WireRequestStrategySupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -591,6 +590,7 @@
 		638332EA250282D200D18F42 /* OrientationDelta.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638332E9250282D200D18F42 /* OrientationDelta.swift */; };
 		638C88C62680F92D0074D512 /* MockCallGridHintNotificationLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638C88C52680F92D0074D512 /* MockCallGridHintNotificationLabel.swift */; };
 		639290A2252633E600046171 /* UIAlertController+DegradedCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639290A1252633E600046171 /* UIAlertController+DegradedCall.swift */; };
+		63991EB42BD66BC30079E681 /* ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63991EB32BD66BC30079E681 /* ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift */; };
 		639A8F2D26DE41ED0080B8FE /* CallStatusViewInputType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639A8F2C26DE41EC0080B8FE /* CallStatusViewInputType.swift */; };
 		639A8F3A26DE42AF0080B8FE /* CallStatusViewInputTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639A8F3626DE429F0080B8FE /* CallStatusViewInputTypeTests.swift */; };
 		63A5E6E424C1ACFC00F7D401 /* SettingsCellDescriptorFactory+Advanced.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A5E6E324C1ACFC00F7D401 /* SettingsCellDescriptorFactory+Advanced.swift */; };
@@ -2295,7 +2295,6 @@
 		252183252B4C16CB000C4325 /* SystemSaveFilePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemSaveFilePresenter.swift; sourceTree = "<group>"; };
 		2521832B2B4C1B8B000C4325 /* SaveFileManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveFileManagerTests.swift; sourceTree = "<group>"; };
 		2521832D2B4C1BDB000C4325 /* MockSystemSaveFilePresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSystemSaveFilePresenter.swift; sourceTree = "<group>"; };
-		252FE27F2B59725C00D94DBD /* MockLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockLogger.swift; sourceTree = "<group>"; };
 		253C67482B88A3BB00965DE1 /* DeviceDetailsViewActionsHandler+ConversationUserClientDetailsDebugActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DeviceDetailsViewActionsHandler+ConversationUserClientDetailsDebugActions.swift"; sourceTree = "<group>"; };
 		253C674E2B8D0BED00965DE1 /* WireRequestStrategySupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireRequestStrategySupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2545AEBB2B85FDF2007B5721 /* MockContextProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockContextProvider.swift; sourceTree = "<group>"; };
@@ -2640,6 +2639,7 @@
 		638C88C52680F92D0074D512 /* MockCallGridHintNotificationLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCallGridHintNotificationLabel.swift; sourceTree = "<group>"; };
 		6391628B24F6A39D0054962E /* CallParticipantViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallParticipantViewTests.swift; sourceTree = "<group>"; };
 		639290A1252633E600046171 /* UIAlertController+DegradedCall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+DegradedCall.swift"; sourceTree = "<group>"; };
+		63991EB32BD66BC30079E681 /* ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift"; sourceTree = "<group>"; };
 		639A8F2C26DE41EC0080B8FE /* CallStatusViewInputType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallStatusViewInputType.swift; sourceTree = "<group>"; };
 		639A8F3626DE429F0080B8FE /* CallStatusViewInputTypeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallStatusViewInputTypeTests.swift; sourceTree = "<group>"; };
 		63A5E6E324C1ACFC00F7D401 /* SettingsCellDescriptorFactory+Advanced.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SettingsCellDescriptorFactory+Advanced.swift"; sourceTree = "<group>"; };
@@ -8158,7 +8158,6 @@
 				EF98987120C5A47A005680C5 /* DeviceDetailsViewTests.swift */,
 				25644D8C2B222892007DA01F /* E2eIdentityCertificateViewTests.swift */,
 				252183232B4C0457000C4325 /* DeviceDetailsViewActionsHandlerTests.swift */,
-				252FE27F2B59725C00D94DBD /* MockLogger.swift */,
 				25A7E62B2B67FB55002451A4 /* ClientTableViewCellTests.swift */,
 				2545AEBB2B85FDF2007B5721 /* MockContextProvider.swift */,
 			);
@@ -8207,6 +8206,7 @@
 				EF29CDC122D3907000EB2380 /* ConversationListViewControllerViewModel+ConversationListContentDelegate.swift */,
 				EF46ECCC231D5B4B00D425DA /* ConversationListViewControllerViewModel+StartUIDelegate.swift */,
 				EF471BE52326637E008E11A5 /* ConversationListViewControllerViewModel+ArchivedListViewControllerDelegate.swift */,
+				63991EB32BD66BC30079E681 /* ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift */,
 				EF223F602327EE90004480FA /* ZMConversationList+HasConversation.swift */,
 			);
 			path = ViewModel;
@@ -9650,6 +9650,7 @@
 				5E65A7A021303FCE008BFCC0 /* AuthenticationCoordinator+CompanyLogin.swift in Sources */,
 				2572EC5E2B148EE50075A7BE /* CopyValueView.swift in Sources */,
 				5E8C38B0212DC472002AE12B /* AuthenticationCoordinator+LandingScreen.swift in Sources */,
+				63991EB42BD66BC30079E681 /* ConversationListViewControllerViewModel+ProfileViewControllerDelegate.swift in Sources */,
 				7C4789852021F40E00A38442 /* AddBotError+UIHandler.swift in Sources */,
 				EF6E9FE623193478000B7785 /* UIViewControllerTransitioningDelegate+Present.swift in Sources */,
 				5E65A79E21303F97008BFCC0 /* AuthenticationCoordinator+UserChange.swift in Sources */,
@@ -10536,7 +10537,6 @@
 				637387E026492833004FEF79 /* ScalableViewTests.swift in Sources */,
 				EF18140A21B17FB3008F7DA8 /* GroupDetailsReceiptOptionsCellTests.swift in Sources */,
 				EF8D7D4920D8FCA500F98666 /* MockConversation+TimedMessage.swift in Sources */,
-				252FE2802B59725C00D94DBD /* MockLogger.swift in Sources */,
 				879489E71E5464CF0071B2C1 /* SearchResultLabelTests.swift in Sources */,
 				A96E802A24C846E40010CD80 /* WipeDatabaseViewControllerTests.swift in Sources */,
 				870C92671E8CE55800A10995 /* RandomGeneratorFromDataTests.swift in Sources */,
