@@ -19,6 +19,7 @@
 import UIKit
 import struct WireSystem.WireLogger
 
+/// A placerholder container for AVSVideo to start the rendering only if the view is instantiated and setup.
 final class AVSVideoContainerView: UIView {
 
     private weak var videoView: UIView?
@@ -53,9 +54,5 @@ final class AVSVideoContainerView: UIView {
             trailingAnchor.constraint(equalTo: view.trailingAnchor),
             bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
-    }
-
-    func removeVideoView() {
-        videoView?.removeFromSuperview()
     }
 }
