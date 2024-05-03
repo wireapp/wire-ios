@@ -1578,7 +1578,6 @@
 		EEF28EEA1F1613DA007642E2 /* MarkdownBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF28EE91F1613DA007642E2 /* MarkdownBarView.swift */; };
 		EEF28EED1F16692A007642E2 /* InputBarSecondaryButtonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF28EEC1F16692A007642E2 /* InputBarSecondaryButtonsView.swift */; };
 		EEF28EEF1F168039007642E2 /* ConversationInputBarViewController+Markdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF28EEE1F168039007642E2 /* ConversationInputBarViewController+Markdown.swift */; };
-		EEF37ED02BDFC8110055C9E1 /* FrameExpansion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF37ECF2BDFC8110055C9E1 /* FrameExpansion.swift */; };
 		EEF37ED22BDFC8C10055C9E1 /* Color+Named.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF37ED12BDFC8C10055C9E1 /* Color+Named.swift */; };
 		EEF37ED72BDFD2870055C9E1 /* PrimaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF37ED62BDFD2870055C9E1 /* PrimaryButtonStyle.swift */; };
 		EEF37ED92BDFD2AC0055C9E1 /* SecondaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF37ED82BDFD2AC0055C9E1 /* SecondaryButtonStyle.swift */; };
@@ -3676,7 +3675,6 @@
 		EEF28EE91F1613DA007642E2 /* MarkdownBarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MarkdownBarView.swift; path = ../../MarkdownBarView.swift; sourceTree = "<group>"; };
 		EEF28EEC1F16692A007642E2 /* InputBarSecondaryButtonsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputBarSecondaryButtonsView.swift; sourceTree = "<group>"; };
 		EEF28EEE1F168039007642E2 /* ConversationInputBarViewController+Markdown.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+Markdown.swift"; sourceTree = "<group>"; };
-		EEF37ECF2BDFC8110055C9E1 /* FrameExpansion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameExpansion.swift; sourceTree = "<group>"; };
 		EEF37ED12BDFC8C10055C9E1 /* Color+Named.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Named.swift"; sourceTree = "<group>"; };
 		EEF37ED32BDFD2350055C9E1 /* WireTextStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireTextStyle.swift; sourceTree = "<group>"; };
 		EEF37ED62BDFD2870055C9E1 /* PrimaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButtonStyle.swift; sourceTree = "<group>"; };
@@ -7895,7 +7893,6 @@
 			children = (
 				EEF37ED52BDFD2600055C9E1 /* Button styles */,
 				E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */,
-				EEF37ECF2BDFC8110055C9E1 /* FrameExpansion.swift */,
 				EEF37ED12BDFC8C10055C9E1 /* Color+Named.swift */,
 			);
 			path = "SwiftUI Helpers";
@@ -9282,7 +9279,6 @@
 				EF42658B2333DB9800DDAD0A /* ConversationListViewModelDelegate.swift in Sources */,
 				BFE3FEEA209747D6003D9AB5 /* CallStatusView.swift in Sources */,
 				A9806A3E23E41EF400691DFE /* Token.swift in Sources */,
-				EEF37ED02BDFC8110055C9E1 /* FrameExpansion.swift in Sources */,
 				A978D993236C587B00B568AE /* ZMUserSession+Shared.swift in Sources */,
 				5E8DA75A211B075E00360979 /* AuthenticationNoCredentialsErrorHandler.swift in Sources */,
 				551CD27822BA288B00EE9AE5 /* LegalHoldDisclosureController.swift in Sources */,

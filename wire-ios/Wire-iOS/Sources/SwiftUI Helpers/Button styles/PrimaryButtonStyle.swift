@@ -26,7 +26,7 @@ struct PrimaryButtonStyle: SwiftUI.ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
             configuration.label
                 .padding()
-                .expandToFill(axis: .horizontal)
+                .frame(maxWidth: .infinity)
                 .background(Color.primaryButtonBackground)
                 .foregroundStyle(Color.primaryButtonText)
                 .clipShape(.rect(cornerRadius: 16))
