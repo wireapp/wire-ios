@@ -97,16 +97,16 @@ final class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConver
         case (400, nil):
             action.fail(with: .invalidRequest)
 
-        case (403, "invalid-op"?):
+        case (403, "invalid-op"):
             action.fail(with: .invalidOperation)
 
-        case (404, "no-conversation-code"?):
+        case (404, "no-conversation-code"):
             action.fail(with: .noCode)
 
-        case (404, "no-conversation"?):
+        case (404, "no-conversation"):
             action.fail(with: .noConversation)
 
-        case (409, "guest-links-disabled"?):
+        case (409, "guest-links-disabled"):
             action.fail(with: .guestLinksDisabled)
 
         default:
