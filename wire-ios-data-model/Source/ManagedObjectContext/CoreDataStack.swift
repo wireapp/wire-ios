@@ -19,6 +19,7 @@
 import CoreData
 import Foundation
 import WireSystem
+import WireUtilities
 
 enum CoreDataStackError: Error {
     case simulateDatabaseLoadingFailure
@@ -45,7 +46,6 @@ public protocol ContextProvider {
     var syncContext: NSManagedObjectContext { get }
     var searchContext: NSManagedObjectContext { get }
     var eventContext: NSManagedObjectContext { get }
-
 }
 
 extension URL {
@@ -369,7 +369,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     func configureViewContext(_ context: NSManagedObjectContext) {
         context.markAsUIContext()
         context.createDispatchGroups()
-        dispatchGroup.apply(context.add)
+        dispatchGroup.map(context.addGroup(_:))
         context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
         ZMUser.selfUser(in: context)
         Label.fetchOrCreateFavoriteLabel(in: context, create: true)
@@ -388,7 +388,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         context.markAsSyncContext()
         context.performAndWait {
             context.createDispatchGroups()
-            dispatchGroup.apply(context.add)
+            dispatchGroup.map(context.addGroup(_:))
             context.setupLocalCachedSessionAndSelfUser()
 
             context.accountDirectoryURL = accountContainer
@@ -419,7 +419,7 @@ public class CoreDataStack: NSObject, ContextProvider {
         context.markAsSearch()
         context.performAndWait {
             context.createDispatchGroups()
-            dispatchGroup.apply(context.add)
+            dispatchGroup.map(context.addGroup(_:))
             context.setupLocalCachedSessionAndSelfUser()
             context.undoManager = nil
             context.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
@@ -430,7 +430,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     func configureEventContext(_ context: NSManagedObjectContext) {
         context.performAndWait {
             context.createDispatchGroups()
-            dispatchGroup.apply(context.add)
+            dispatchGroup.map(context.addGroup(_:))
         }
     }
 

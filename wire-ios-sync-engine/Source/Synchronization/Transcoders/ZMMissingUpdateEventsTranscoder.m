@@ -135,7 +135,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
             timestamp = [event.timestamp dateByAddingTimeInterval:-offset];
         }
         
-        NSArray <ZMConversation *> *conversations = [self.managedObjectContext executeFetchRequestOrAssert:[ZMConversation sortedFetchRequest]];
+        NSArray <ZMConversation *> *conversations = (NSArray <ZMConversation *> *) [self.managedObjectContext executeFetchRequestOrAssert:[ZMConversation sortedFetchRequest]];
         for (ZMConversation *conversation in conversations) {
             if (nil == timestamp) {
                 // In case we did not receive a payload we will add 1/10th to the last modified date of
