@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UIKit
-import WireSyncEngine
 import SwiftUI
+import WireSyncEngine
 
 final class UserClientListViewController: UIViewController,
                                           UICollectionViewDelegateFlowLayout,
@@ -201,6 +199,7 @@ final class UserClientListViewController: UIViewController,
             userClient: client,
             isSelfClient: client.isSelfClient(),
             gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+            mlsCiphersuite: MLSCipherSuite(rawValue: userSession.mlsFeature.config.defaultCipherSuite.rawValue),
             isFromConversation: true,
             actionsHandler: deviceActionsHandler,
             conversationClientDetailsActions: deviceActionsHandler,

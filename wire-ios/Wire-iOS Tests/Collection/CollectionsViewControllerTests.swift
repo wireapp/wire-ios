@@ -17,9 +17,9 @@
 //
 
 import SnapshotTesting
-import XCTest
-import WireDataModel
 @testable import Wire
+import WireDataModel
+import XCTest
 
 // MARK: - CollectionsViewControllerTests
 

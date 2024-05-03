@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireLinkPreview
 import WireDataModel
+import WireLinkPreview
 import WireUtilities
 
 @objcMembers public final class LinkPreviewPreprocessor: LinkPreprocessor<LinkMetadata> {

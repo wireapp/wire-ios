@@ -16,16 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import CallKit
+import UIKit
 import UserNotifications
-import WireRequestStrategy
-import WireNotificationEngine
 import WireCommonComponents
 import WireDataModel
+import WireNotificationEngine
+import WireRequestStrategy
 import WireSyncEngine
 import WireUtilities
-import UIKit
-import CallKit
 
 protocol CallEventHandlerProtocol {
     func reportIncomingVoIPCall(_ payload: [String: Any])

@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import XCTest
 import WireDataModelSupport
+@testable import WireSyncEngine
 import WireSyncEngineSupport
 import WireTesting
-@testable import WireSyncEngine
+import XCTest
 
 final class GetUserClientFingerprintUseCaseTests: MessagingTest {
     var sut: GetUserClientFingerprintUseCase!

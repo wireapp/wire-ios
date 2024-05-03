@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireSyncEngine
 import WireUtilities
+import XCTest
 
 var sampleUploadState: UserProfileImageUpdateStatus.ImageState {
     return UserProfileImageUpdateStatus.ImageState.upload(image: Data())

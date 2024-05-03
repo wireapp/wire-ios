@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import SnapshotTesting
+@testable import Wire
 import XCTest
 
 final class ConversationAudioMessageCellTests: ConversationMessageSnapshotTestCase {

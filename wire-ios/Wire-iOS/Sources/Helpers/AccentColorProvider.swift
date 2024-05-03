@@ -17,14 +17,14 @@
 //
 
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 
 extension UserType {
 
     /// Returns the current accent color of the user.
     var accentColor: UIColor {
-        .init(fromZMAccentColor: accentColorValue)
+        (zmAccentColor?.accentColor ?? .default).uiColor
     }
 }
 
@@ -33,11 +33,11 @@ extension UnregisteredUser {
     /// The accent color value of the unregistered user.
     var accentColor: AccentColor? {
         get {
-            return accentColorValue.flatMap(AccentColor.init)
+            guard let accentColorValue else { return nil }
+            return .init(rawValue: accentColorValue)
         }
         set {
-            accentColorValue = newValue?.zmAccentColor
+            accentColorValue = newValue?.rawValue
         }
     }
-
 }

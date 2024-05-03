@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireTransport
+import XCTest
 
 class RequestLogTests: XCTestCase {
 

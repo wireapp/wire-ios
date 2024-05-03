@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import FLAnimatedImage
 @testable import Wire
+import XCTest
 
 final class ConfirmAssetViewControllerTests: BaseSnapshotTestCase {
 
@@ -76,5 +76,4 @@ final class ConfirmAssetViewControllerTests: BaseSnapshotTestCase {
         // THEN
         XCTAssertFalse(sut.showEditingOptions)
     }
-
 }

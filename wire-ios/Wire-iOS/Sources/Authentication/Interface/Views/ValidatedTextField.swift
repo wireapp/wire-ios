@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 
@@ -40,7 +39,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         case name(isTeam: Bool)
         case password(isNew: Bool)
         case passcode(isNew: Bool)
-        case phoneNumber
         case username
         case unknown
     }
@@ -230,10 +228,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
             autocapitalizationType = .none
             accessibilityIdentifier = "UsernameField"
             textContentType = .username
-        case .phoneNumber:
-            textContentType = .telephoneNumber
-            keyboardType = .numberPad
-            accessibilityIdentifier = "PhoneNumberField"
         case .unknown:
             keyboardType = .asciiCapable
             textContentType = nil

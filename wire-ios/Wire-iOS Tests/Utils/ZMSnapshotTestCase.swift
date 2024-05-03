@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import FBSnapshotTestCase
-@testable import WireCommonComponents
 import UIKit
+@testable import Wire
+import WireCommonComponents
 
 extension UITableViewCell: UITableViewDelegate, UITableViewDataSource {
     func wrapInTableView() -> UITableView {
@@ -140,7 +140,7 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
         coreDataStack = nil
         documentsDirectory = nil
         snapshotBackgroundColor = nil
-        UIColor.setAccentOverride(.undefined)
+        UIColor.setAccentOverride(nil)
         UIView.setAnimationsEnabled(true)
         super.tearDown()
     }

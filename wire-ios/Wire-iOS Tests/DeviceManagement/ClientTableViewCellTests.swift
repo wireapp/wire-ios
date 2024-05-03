@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class ClientTableViewCellTests: BaseSnapshotTestCase {
     var sut: ClientTableViewCell!
@@ -163,7 +163,8 @@ extension ClientTableViewCellModel {
                      proteusLabelText: proteusId.isNonEmpty ? DeviceDetailsSection.Proteus.value(proteusId) : "",
                      mlsThumbprintLabelText: mlsThumbprint.isNonEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbprint) : "",
                      isProteusVerified: isProteusVerified,
-                     e2eIdentityStatus: e2eIdentityCertificateStatus)
+                     e2eIdentityStatus: e2eIdentityCertificateStatus,
+                     activationDate: .now)
     }
 
 }

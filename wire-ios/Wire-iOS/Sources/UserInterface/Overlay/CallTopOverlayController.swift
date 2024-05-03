@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import avs
 import UIKit
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-import avs
-import WireCommonComponents
 
 // MARK: - CallTopOverlayControllerDelegate
 

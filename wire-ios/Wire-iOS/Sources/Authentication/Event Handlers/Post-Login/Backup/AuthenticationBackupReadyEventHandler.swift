@@ -42,8 +42,6 @@ final class AuthenticationBackupReadyEventHandler: AuthenticationEventHandler {
         switch currentStep {
         case .authenticateEmailCredentials(let credentials):
             authenticationCredentials = credentials
-        case .authenticatePhoneCredentials(let credentials):
-            authenticationCredentials = credentials
         case .companyLogin:
             authenticationCredentials = nil
         case .noHistory:

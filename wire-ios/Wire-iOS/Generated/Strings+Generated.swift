@@ -2872,8 +2872,10 @@ internal enum L10n {
             }
           }
           internal enum Mls {
-            /// MLS with Ed25519 Signature
-            internal static let signature = L10n.tr("Localizable", "device.details.section.mls.signature", fallback: "MLS with Ed25519 Signature")
+            /// MLS with %@ Signature
+            internal static func signature(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "device.details.section.mls.signature", String(describing: p1), fallback: "MLS with %@ Signature")
+            }
             /// MLS Thumbprint: %@
             internal static func thumbprint(_ p1: Any) -> String {
               return L10n.tr("Localizable", "device.details.section.mls.thumbprint", String(describing: p1), fallback: "MLS Thumbprint: %@")
@@ -3083,10 +3085,6 @@ internal enum L10n {
           internal static let title = L10n.tr("Localizable", "error.message.send.title", fallback: "Messages cannot be sent")
         }
       }
-      internal enum Phone {
-        /// Please enter a valid phone number
-        internal static let invalid = L10n.tr("Localizable", "error.phone.invalid", fallback: "Please enter a valid phone number")
-      }
       internal enum User {
         /// You can’t add more than 3 accounts.
         internal static let accountLimitReached = L10n.tr("Localizable", "error.user.account_limit_reached", fallback: "You can’t add more than 3 accounts.")
@@ -3103,22 +3101,20 @@ internal enum L10n {
         internal static let emailIsTaken = L10n.tr("Localizable", "error.user.email_is_taken", fallback: "The email address you provided has already been registered. Please try again.")
         /// Please verify your details and try again.
         internal static let invalidCredentials = L10n.tr("Localizable", "error.user.invalid_credentials", fallback: "Please verify your details and try again.")
-        /// Either an email address or a phone number is required.
-        internal static let lastIdentityCantBeDeleted = L10n.tr("Localizable", "error.user.last_identity_cant_be_deleted", fallback: "Either an email address or a phone number is required.")
+        /// An email address is required.
+        internal static let lastIdentityCantBeDeleted = L10n.tr("Localizable", "error.user.last_identity_cant_be_deleted", fallback: "An email address is required.")
         /// Please verify your details and try again.
         internal static let needsCredentials = L10n.tr("Localizable", "error.user.needs_credentials", fallback: "Please verify your details and try again.")
         /// There seems to be a problem with your network. Please try again later.
         internal static let networkError = L10n.tr("Localizable", "error.user.network_error", fallback: "There seems to be a problem with your network. Please try again later.")
-        /// Please enter a valid code
-        internal static let phoneCodeInvalid = L10n.tr("Localizable", "error.user.phone_code_invalid", fallback: "Please enter a valid code")
-        /// We already sent you a code via SMS. Tap Resend after 10 minutes to get a new one.
-        internal static let phoneCodeTooMany = L10n.tr("Localizable", "error.user.phone_code_too_many", fallback: "We already sent you a code via SMS. Tap Resend after 10 minutes to get a new one.")
-        /// The phone number you provided has already been registered. Please try again.
-        internal static let phoneIsTaken = L10n.tr("Localizable", "error.user.phone_is_taken", fallback: "The phone number you provided has already been registered. Please try again.")
         /// Something went wrong. Please try again.
         internal static let registrationUnknownError = L10n.tr("Localizable", "error.user.registration_unknown_error", fallback: "Something went wrong. Please try again.")
         /// Something went wrong, please try again
         internal static let unkownError = L10n.tr("Localizable", "error.user.unkown_error", fallback: "Something went wrong, please try again")
+        /// Please enter a valid verification code.
+        internal static let verificationCodeInvalid = L10n.tr("Localizable", "error.user.verification_code_invalid", fallback: "Please enter a valid verification code.")
+        /// We already sent you a verification code. Tap Resend after 10 minutes to get a new one.
+        internal static let verificationCodeTooMany = L10n.tr("Localizable", "error.user.verification_code_too_many", fallback: "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.")
       }
     }
     internal enum FailedToGetCertificate {
@@ -4395,16 +4391,6 @@ internal enum L10n {
         internal static let createConversation = L10n.tr("Localizable", "peoplepicker.title.create_conversation", fallback: "Create group")
       }
     }
-    internal enum Phone {
-      internal enum Guidance {
-        /// Invalid phone number
-        internal static let invalid = L10n.tr("Localizable", "phone.guidance.invalid", fallback: "Invalid phone number")
-        /// Too many characters
-        internal static let toolong = L10n.tr("Localizable", "phone.guidance.toolong", fallback: "Too many characters")
-        /// Phone number is too short
-        internal static let tooshort = L10n.tr("Localizable", "phone.guidance.tooshort", fallback: "Phone number is too short")
-      }
-    }
     internal enum Profile {
       /// Block…
       internal static let blockButtonTitle = L10n.tr("Localizable", "profile.block_button_title", fallback: "Block…")
@@ -4600,14 +4586,8 @@ internal enum L10n {
     internal enum Registration {
       /// Sign Up
       internal static let confirm = L10n.tr("Localizable", "registration.confirm", fallback: "Sign Up")
-      /// Country Code
-      internal static let phoneCode = L10n.tr("Localizable", "registration.phone_code", fallback: "Country Code")
-      /// Country
-      internal static let phoneCountry = L10n.tr("Localizable", "registration.phone_country", fallback: "Country")
       /// Email
       internal static let registerByEmail = L10n.tr("Localizable", "registration.register_by_email", fallback: "Email")
-      /// Phone
-      internal static let registerByPhone = L10n.tr("Localizable", "registration.register_by_phone", fallback: "Phone")
       /// Registration
       internal static let title = L10n.tr("Localizable", "registration.title", fallback: "Registration")
       internal enum AddEmailPassword {
@@ -4616,18 +4596,6 @@ internal enum L10n {
           internal static let paragraph = L10n.tr("Localizable", "registration.add_email_password.hero.paragraph", fallback: "This lets you use Wire on multiple devices.")
           /// Add your email and password
           internal static let title = L10n.tr("Localizable", "registration.add_email_password.hero.title", fallback: "Add your email and password")
-        }
-      }
-      internal enum AddPhoneNumber {
-        internal enum Hero {
-          /// This helps us find people you may know. We never share it.
-          internal static let paragraph = L10n.tr("Localizable", "registration.add_phone_number.hero.paragraph", fallback: "This helps us find people you may know. We never share it.")
-          /// Add phone number
-          internal static let title = L10n.tr("Localizable", "registration.add_phone_number.hero.title", fallback: "Add phone number")
-        }
-        internal enum SkipButton {
-          /// Not now
-          internal static let title = L10n.tr("Localizable", "registration.add_phone_number.skip_button.title", fallback: "Not now")
         }
       }
       internal enum AddressBookAccessDenied {
@@ -4651,8 +4619,6 @@ internal enum L10n {
       internal enum Alert {
         /// Register with Another Email
         internal static let changeEmailAction = L10n.tr("Localizable", "registration.alert.change_email_action", fallback: "Register with Another Email")
-        /// Register with Another Number
-        internal static let changePhoneAction = L10n.tr("Localizable", "registration.alert.change_phone_action", fallback: "Register with Another Number")
         /// Log In
         internal static let changeSigninAction = L10n.tr("Localizable", "registration.alert.change_signin_action", fallback: "Log In")
         internal enum AccountExists {
@@ -4660,10 +4626,6 @@ internal enum L10n {
           /// 
           ///  Use another email address, or try to log in if you own this account.
           internal static let messageEmail = L10n.tr("Localizable", "registration.alert.account_exists.message_email", fallback: "The email address you used to register is already linked to an account.\n\n Use another email address, or try to log in if you own this account.")
-          /// The phone number you used to register is already linked to an account.
-          /// 
-          /// Use another phone number, or try to log in if you own this account.
-          internal static let messagePhone = L10n.tr("Localizable", "registration.alert.account_exists.message_phone", fallback: "The phone number you used to register is already linked to an account.\n\nUse another phone number, or try to log in if you own this account.")
           /// Account Exists
           internal static let title = L10n.tr("Localizable", "registration.alert.account_exists.title", fallback: "Account Exists")
         }
@@ -4671,14 +4633,10 @@ internal enum L10n {
       internal enum CloseEmailInvitationButton {
         /// Use another email
         internal static let emailTitle = L10n.tr("Localizable", "registration.close_email_invitation_button.email_title", fallback: "Use another email")
-        /// Register by phone
-        internal static let phoneTitle = L10n.tr("Localizable", "registration.close_email_invitation_button.phone_title", fallback: "Register by phone")
       }
       internal enum ClosePhoneInvitationButton {
         /// Register by email
         internal static let emailTitle = L10n.tr("Localizable", "registration.close_phone_invitation_button.email_title", fallback: "Register by email")
-        /// Use another phone
-        internal static let phoneTitle = L10n.tr("Localizable", "registration.close_phone_invitation_button.phone_title", fallback: "Use another phone")
       }
       internal enum CountrySelect {
         /// Country
@@ -4727,12 +4685,6 @@ internal enum L10n {
         internal static let placeholder = L10n.tr("Localizable", "registration.enter_name.placeholder", fallback: "Your full name")
         /// Edit Name
         internal static let title = L10n.tr("Localizable", "registration.enter_name.title", fallback: "Edit Name")
-      }
-      internal enum EnterPhoneNumber {
-        /// Phone number
-        internal static let placeholder = L10n.tr("Localizable", "registration.enter_phone_number.placeholder", fallback: "Phone number")
-        /// Edit phone number
-        internal static let title = L10n.tr("Localizable", "registration.enter_phone_number.title", fallback: "Edit phone number")
       }
       internal enum LaunchBackButton {
         /// Back
@@ -4839,40 +4791,6 @@ internal enum L10n {
         /// Create an account
         internal static let title = L10n.tr("Localizable", "registration.personal.title", fallback: "Create an account")
       }
-      internal enum Phone {
-        internal enum CountryCode {
-          /// Double tap to use a phone number from this country.
-          internal static let hint = L10n.tr("Localizable", "registration.phone.country_code.hint", fallback: "Double tap to use a phone number from this country.")
-        }
-        internal enum Verify {
-          /// Verify phone number
-          internal static let label = L10n.tr("Localizable", "registration.phone.verify.label", fallback: "Verify phone number")
-        }
-        internal enum VerifyField {
-          /// Verification Code
-          internal static let label = L10n.tr("Localizable", "registration.phone.verify_field.label", fallback: "Verification Code")
-        }
-      }
-      internal enum PhoneCode {
-        /// Double tap to select another country code.
-        internal static let hint = L10n.tr("Localizable", "registration.phone_code.hint", fallback: "Double tap to select another country code.")
-      }
-      internal enum PhoneCountry {
-        /// Double tap to select another country.
-        internal static let hint = L10n.tr("Localizable", "registration.phone_country.hint", fallback: "Double tap to select another country.")
-      }
-      internal enum PhoneInvitation {
-        /// Invitation
-        internal static let title = L10n.tr("Localizable", "registration.phone_invitation.title", fallback: "Invitation")
-        internal enum Hero {
-          /// You are one step away from creating your account.
-          internal static let paragraph = L10n.tr("Localizable", "registration.phone_invitation.hero.paragraph", fallback: "You are one step away from creating your account.")
-          /// Hello, %@
-          internal static func title(_ p1: Any) -> String {
-            return L10n.tr("Localizable", "registration.phone_invitation.hero.title", String(describing: p1), fallback: "Hello, %@")
-          }
-        }
-      }
       internal enum PushAccessDenied {
         internal enum Hero {
           /// Enable Notifications in Settings.
@@ -4962,8 +4880,8 @@ internal enum L10n {
             internal static let title = L10n.tr("Localizable", "registration.signin.too_many_devices.manage_button.title", fallback: "Manage devices")
           }
           internal enum ManageScreen {
-            /// Remove a Device
-            internal static let title = L10n.tr("Localizable", "registration.signin.too_many_devices.manage_screen.title", fallback: "Remove a Device")
+            /// Remove a device
+            internal static let title = L10n.tr("Localizable", "registration.signin.too_many_devices.manage_screen.title", fallback: "Remove a device")
           }
           internal enum SignOutButton {
             /// Log out
@@ -5022,19 +4940,6 @@ internal enum L10n {
           internal static let buttonTitle = L10n.tr("Localizable", "registration.verify_email.resend.button_title", fallback: "Re-send")
           /// Didn’t get the message?
           internal static let instructions = L10n.tr("Localizable", "registration.verify_email.resend.instructions", fallback: "Didn’t get the message?")
-        }
-      }
-      internal enum VerifyPhoneNumber {
-        /// Enter the verification code we sent to %@
-        internal static func instructions(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "registration.verify_phone_number.instructions", String(describing: p1), fallback: "Enter the verification code we sent to %@")
-        }
-        /// Resend
-        internal static let resend = L10n.tr("Localizable", "registration.verify_phone_number.resend", fallback: "Resend")
-        /// No code showing up?
-        /// You can request a new one in %.0f seconds
-        internal static func resendPlaceholder(_ p1: Float) -> String {
-          return L10n.tr("Localizable", "registration.verify_phone_number.resend_placeholder", p1, fallback: "No code showing up?\nYou can request a new one in %.0f seconds")
         }
       }
     }
@@ -5222,8 +5127,6 @@ internal enum L10n {
             internal static let red = L10n.tr("Localizable", "self.settings.account_picture_group.accent_color.red", fallback: "Red")
             /// Turquoise
             internal static let turquoise = L10n.tr("Localizable", "self.settings.account_picture_group.accent_color.turquoise", fallback: "Turquoise")
-            /// Yellow
-            internal static let yellow = L10n.tr("Localizable", "self.settings.account_picture_group.accent_color.yellow", fallback: "Yellow")
           }
           internal enum Alert {
             /// Choose from Library
@@ -5296,49 +5199,6 @@ internal enum L10n {
           internal enum Name {
             /// Name
             internal static let title = L10n.tr("Localizable", "self.settings.account_section.name.title", fallback: "Name")
-          }
-          internal enum Phone {
-            /// Phone
-            internal static let title = L10n.tr("Localizable", "self.settings.account_section.phone.title", fallback: "Phone")
-          }
-          internal enum PhoneNumber {
-            internal enum Change {
-              /// Remove Phone Number
-              internal static let remove = L10n.tr("Localizable", "self.settings.account_section.phone_number.change.remove", fallback: "Remove Phone Number")
-              /// Save
-              internal static let save = L10n.tr("Localizable", "self.settings.account_section.phone_number.change.save", fallback: "Save")
-              /// Phone
-              internal static let title = L10n.tr("Localizable", "self.settings.account_section.phone_number.change.title", fallback: "Phone")
-              internal enum Remove {
-                /// Remove Phone Number
-                internal static let action = L10n.tr("Localizable", "self.settings.account_section.phone_number.change.remove.action", fallback: "Remove Phone Number")
-              }
-              internal enum Resend {
-                /// Verification code was resent to %@.
-                internal static func message(_ p1: Any) -> String {
-                  return L10n.tr("Localizable", "self.settings.account_section.phone_number.change.resend.message", String(describing: p1), fallback: "Verification code was resent to %@.")
-                }
-                /// Code resent
-                internal static let title = L10n.tr("Localizable", "self.settings.account_section.phone_number.change.resend.title", fallback: "Code resent")
-              }
-              internal enum Verify {
-                /// Enter code
-                internal static let codePlaceholder = L10n.tr("Localizable", "self.settings.account_section.phone_number.change.verify.code_placeholder", fallback: "Enter code")
-                /// Enter the verification code we sent to: %@.
-                internal static func description(_ p1: Any) -> String {
-                  return L10n.tr("Localizable", "self.settings.account_section.phone_number.change.verify.description", String(describing: p1), fallback: "Enter the verification code we sent to: %@.")
-                }
-                /// Resend Code
-                internal static let resend = L10n.tr("Localizable", "self.settings.account_section.phone_number.change.verify.resend", fallback: "Resend Code")
-                /// No code showing up?
-                /// You can request a new one every 30 seconds.
-                internal static let resendDescription = L10n.tr("Localizable", "self.settings.account_section.phone_number.change.verify.resend_description", fallback: "No code showing up?\nYou can request a new one every 30 seconds.")
-                /// Save
-                internal static let save = L10n.tr("Localizable", "self.settings.account_section.phone_number.change.verify.save", fallback: "Save")
-                /// Verify
-                internal static let title = L10n.tr("Localizable", "self.settings.account_section.phone_number.change.verify.title", fallback: "Verify")
-              }
-            }
           }
           internal enum ProfileLink {
             /// Profile link
@@ -5825,12 +5685,6 @@ internal enum L10n {
           internal static let subtitle = L10n.tr("Localizable", "signin.email.missing_password.subtitle", fallback: "Enter your email address and password to continue.")
         }
       }
-      internal enum Phone {
-        internal enum MissingPassword {
-          /// Enter your phone number to continue.
-          internal static let subtitle = L10n.tr("Localizable", "signin.phone.missing_password.subtitle", fallback: "Enter your phone number to continue.")
-        }
-      }
       internal enum UseEmail {
         /// Login with Email
         internal static let label = L10n.tr("Localizable", "signin.use_email.label", fallback: "Login with Email")
@@ -5841,21 +5695,11 @@ internal enum L10n {
         /// Log in with 1Password
         internal static let label = L10n.tr("Localizable", "signin.use_one_password.label", fallback: "Log in with 1Password")
       }
-      internal enum UsePhone {
-        /// Login with Phone
-        internal static let label = L10n.tr("Localizable", "signin.use_phone.label", fallback: "Login with Phone")
-      }
     }
     internal enum SigninLogout {
-      /// Your session expired. You need to log in again to continue.
-      internal static let subheadline = L10n.tr("Localizable", "signin_logout.subheadline", fallback: "Your session expired. You need to log in again to continue.")
       internal enum Email {
         /// Your session expired. Enter your email address and password to continue.
         internal static let subheadline = L10n.tr("Localizable", "signin_logout.email.subheadline", fallback: "Your session expired. Enter your email address and password to continue.")
-      }
-      internal enum Phone {
-        /// Your session expired. Enter your phone number to continue.
-        internal static let subheadline = L10n.tr("Localizable", "signin_logout.phone.subheadline", fallback: "Your session expired. Enter your phone number to continue.")
       }
       internal enum Sso {
         /// Enterprise log in
@@ -5893,8 +5737,6 @@ internal enum L10n {
         internal enum Button {
           /// Change email
           internal static let changeEmail = L10n.tr("Localizable", "team.activation_code.button.change_email", fallback: "Change email")
-          /// Change phone number
-          internal static let changePhone = L10n.tr("Localizable", "team.activation_code.button.change_phone", fallback: "Change phone number")
           /// Resend code
           internal static let resend = L10n.tr("Localizable", "team.activation_code.button.resend", fallback: "Resend code")
         }

@@ -18,9 +18,9 @@
 
 import Foundation
 import WireDataModel
-import WireTransport
-import WireRequestStrategy
 import WireLinkPreview
+import WireRequestStrategy
+import WireTransport
 
 final class PushMessageHandlerDummy: NSObject, PushMessageHandler {
 
@@ -381,9 +381,11 @@ public final class SharingSession {
             coreCryptoProvider: coreCryptoProvider,
             notificationContext: coreDataStack.syncContext.notificationContext
         )
+        let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
-            commitSender: commitSender
+            commitSender: commitSender,
+            featureRepository: featureRepository
         )
         let contextStorage = LAContextStorage()
         let earService = EARService(

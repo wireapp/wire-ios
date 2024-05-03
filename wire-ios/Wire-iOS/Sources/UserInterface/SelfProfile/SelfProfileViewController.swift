@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 /**
  * The first page of the user settings.
@@ -26,10 +26,7 @@ import WireCommonComponents
 
 final class SelfProfileViewController: UIViewController {
 
-    /// The user that is viewing their settings.
-    let selfUser: SettingsSelfUser
-
-    var userRightInterfaceType: UserRightInterface.Type = UserRight.self
+    var userRightInterfaceType: UserRightInterface.Type
     var settingsCellDescriptorFactory: SettingsCellDescriptorFactory?
     var rootGroup: (SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType)?
 
@@ -60,11 +57,12 @@ final class SelfProfileViewController: UIViewController {
      * - parameter userRightInterfaceType: The type of object to determine the user permissions.
      */
 
-    init(selfUser: SettingsSelfUser,
-         userRightInterfaceType: UserRightInterface.Type = UserRight.self,
-         userSession: UserSession) {
+    init(
+        selfUser: SettingsSelfUser,
+        userRightInterfaceType: UserRightInterface.Type,
+        userSession: UserSession
+    ) {
 
-        self.selfUser = selfUser
         self.userSession = userSession
 
         // Create the settings hierarchy

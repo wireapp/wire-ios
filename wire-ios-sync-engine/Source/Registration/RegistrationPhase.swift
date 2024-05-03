@@ -16,16 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-/**
- * Phases of registration.
- */
-
 public enum RegistrationPhase: Equatable {
-    case sendActivationCode(credentials: UnverifiedCredentials)
-    case checkActivationCode(credentials: UnverifiedCredentials, code: String)
+    case sendActivationCode(unverifiedEmail: String)
+    case checkActivationCode(unverifiedEmail: String, code: String)
     case createUser(user: UnregisteredUser)
     case createTeam(team: UnregisteredTeam)
-    case none
 }

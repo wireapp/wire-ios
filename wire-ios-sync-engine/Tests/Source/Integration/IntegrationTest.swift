@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import Foundation
-import WireTesting
 import WireDataModel
 import WireDataModelSupport
-import WireTransport.Testing
-import avs
-@testable import WireSyncEngineSupport
 @testable import WireSyncEngine
+@testable import WireSyncEngineSupport
+import WireTesting
+import WireTransport.Testing
 
 final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 
@@ -114,10 +114,13 @@ final class MockUnauthenticatedSessionFactory: UnauthenticatedSessionFactory {
 
     override func session(delegate: UnauthenticatedSessionDelegate,
                           authenticationStatusDelegate: ZMAuthenticationStatusDelegate) -> UnauthenticatedSession {
-        return UnauthenticatedSession(transportSession: transportSession,
-                                      reachability: reachability,
-                                      delegate: delegate,
-                                      authenticationStatusDelegate: authenticationStatusDelegate)
+        .init(
+            transportSession: transportSession,
+            reachability: reachability,
+            delegate: delegate,
+            authenticationStatusDelegate: authenticationStatusDelegate,
+            userPropertyValidator: UserPropertyValidator()
+        )
     }
 }
 
@@ -361,7 +364,7 @@ extension IntegrationTest {
             user1.email = "user1@example.com"
             user1.phone = "6543"
             user1.domain = "local@domain.com"
-            user1.accentID = 3
+            user1.accentID = 5
             session.addProfilePicture(to: user1)
             session.addV3ProfilePicture(to: user1)
             self.user1 = user1

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
 
@@ -31,7 +31,7 @@ final class StartedConversationCellTests: ConversationMessageSnapshotTestCase {
         SelfUser.setupMockSelfUser(inTeam: UUID())
 
         mockSelfUser = SelfUser.provider?.providedSelfUser as? MockUserType
-        mockSelfUser.accentColorValue = .blue
+        mockSelfUser.zmAccentColor = .blue
 
         mockOtherUser = MockUserType.createDefaultOtherUser()
     }

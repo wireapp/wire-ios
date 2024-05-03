@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireTesting
-import WireDataModel
 import WireCryptobox
+import WireDataModel
+import WireTesting
 
 @testable import WireRequestStrategy
 

@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireShareEngine
-import MobileCoreServices
 import AVFoundation
-import WireCommonComponents
 import ImageIO
+import MobileCoreServices
+import UIKit
+import WireCommonComponents
 import WireDataModel
+import WireShareEngine
 
 /// Error that can happen during the preparation or sending operation
 enum UnsentSendableError: Error {
