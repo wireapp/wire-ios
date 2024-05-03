@@ -42,8 +42,8 @@ final class SelfCallParticipantView: BaseCallParticipantView {
         super.setupViews()
 
         let videoContainerView = AVSVideoContainerView()
-        videoContainerView.backgroundColor = .clear
         videoContainerView.translatesAutoresizingMaskIntoConstraints = false
+        videoContainerView.backgroundColor = .clear
         self.videoContainerView = videoContainerView
 
         let scalableView = ScalableView(isScalingEnabled: shouldEnableScaling)
