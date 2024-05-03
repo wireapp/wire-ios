@@ -62,14 +62,14 @@ extension UIViewController {
                 message = L10n.Localizable.Error.User.networkError
             case .emailIsAlreadyRegistered:
                 message = L10n.Localizable.Error.User.emailIsTaken
-            case .invalidEmailVerificationCode, .invalidActivationCode: break
-               // message = L10n.Localizable.Error.User.phoneCodeInvalid
+            case .invalidEmailVerificationCode, .invalidActivationCode:
+                message = L10n.Localizable.Error.User.verificationCodeInvalid
             case .registrationDidFailWithUnknownError:
                 message = L10n.Localizable.Error.User.registrationUnknownError
             case .invalidEmail:
                 message = L10n.Localizable.Error.Email.invalid
-            case .codeRequestIsAlreadyPending: break
-                // message = L10n.Localizable.Error.User.phoneCodeTooMany
+            case .codeRequestIsAlreadyPending:
+                 message = L10n.Localizable.Error.User.verificationCodeTooMany
             case .clientDeletedRemotely:
                 message = L10n.Localizable.Error.User.deviceDeletedRemotely
             case .lastUserIdentityCantBeDeleted:

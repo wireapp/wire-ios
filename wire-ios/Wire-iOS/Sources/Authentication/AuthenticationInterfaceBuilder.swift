@@ -49,7 +49,7 @@ final class AuthenticationInterfaceBuilder {
 
     init(
         featureProvider: AuthenticationFeatureProvider,
-         backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }
+        backendEnvironmentProvider: @escaping () -> BackendEnvironmentProvider = { BackendEnvironment.shared }
     ) {
         self.featureProvider = featureProvider
         self.backendEnvironmentProvider = backendEnvironmentProvider
