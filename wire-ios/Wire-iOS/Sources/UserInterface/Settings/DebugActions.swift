@@ -286,7 +286,7 @@ enum DebugActions {
             conversations?.forEach({ _ = $0.estimatedUnreadCount })
         }
         userSession.syncManagedObjectContext.dispatchGroup.wait(forInterval: 5)
-        userSession.syncManagedObjectContext.performGroupedBlockAndWait {
+        userSession.syncManagedObjectContext.performGroupedAndWait { _ in
             conversations = nil
             userSession.syncManagedObjectContext.saveOrRollback()
         }
@@ -300,7 +300,7 @@ enum DebugActions {
             if let number = NumberFormatter().number(from: $0) {
                 callback(number.intValue)
             } else {
-              alert("ERROR: not a number")
+                alert("ERROR: not a number")
             }
         }
     }
@@ -361,5 +361,4 @@ private extension Optional {
         guard let value = self else { return defaultDescription }
         return String(describing: value)
     }
-
 }

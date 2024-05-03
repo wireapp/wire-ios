@@ -55,7 +55,7 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
         self.eventMOC = eventMOC
         self.syncMOC = syncMOC
         super.init()
-        self.eventMOC.performGroupedBlockAndWait {
+        self.eventMOC.performGroupedAndWait { _ in
             self.createReceivedPushEventIDsStoreIfNecessary()
         }
     }
@@ -328,12 +328,11 @@ extension EventDecoder {
 
         await block(filterInvalidEvents(from: events))
 
-        eventMOC.performGroupedBlockAndWait {
-            storedEvents.forEach(self.eventMOC.delete(_:))
-            self.eventMOC.saveOrRollback()
+        eventMOC.performGroupedAndWait { context in
+            storedEvents.forEach(context.delete(_:))
+            context.saveOrRollback()
         }
     }
-
 }
 
 // MARK: - List of already received event IDs
@@ -400,8 +399,8 @@ extension EventDecoder {
 
     /// Discards the list of already received events
     public func discardListOfAlreadyReceivedPushEventIDs() {
-        self.eventMOC.performGroupedBlockAndWait {
-            self.eventMOC.setPersistentStoreMetadata(array: [String](), key: previouslyReceivedEventIDsKey)
+        eventMOC.performGroupedAndWait { context in
+            context.setPersistentStoreMetadata(array: [String](), key: previouslyReceivedEventIDsKey)
         }
     }
 }

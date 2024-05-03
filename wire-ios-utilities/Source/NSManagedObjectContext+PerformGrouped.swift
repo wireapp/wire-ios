@@ -20,38 +20,40 @@ import CoreData
 import Foundation
 
 public extension NSManagedObjectContext {
+
     static private let timeout: TimeInterval = 10
 
-    @discardableResult func performGroupedAndWait<T>(_ execute: @escaping (NSManagedObjectContext) -> T) -> T {
+    @discardableResult
+    func performGroupedAndWait<T>(_ execute: @escaping (NSManagedObjectContext) -> T) -> T {
+
         var result: T!
-        let groups = dispatchGroupContext?.enterAll(except: nil)
+        let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
 
         performAndWait {
             tp.resetTime()
             result = execute(self)
-            groups.apply {
-                dispatchGroupContext?.leave($0)
-            }
+            dispatchGroupContext?.leave(groups)
             tp.warnIfLongerThanInterval()
         }
 
         return result
     }
 
-    @discardableResult func performGroupedAndWait<T>(_ execute: @escaping (NSManagedObjectContext) throws -> T) throws -> T {
+    @discardableResult func performGroupedAndWait<T>(
+        _ execute: @escaping (NSManagedObjectContext) throws -> T
+    ) throws -> T {
+
         var result: T!
         var thrownError: Error?
-        let groups = dispatchGroupContext?.enterAll(except: nil)
+        let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
 
         performAndWait {
             do {
                 tp.resetTime()
                 result = try execute(self)
-                groups.apply {
-                    dispatchGroupContext?.leave($0)
-                }
+                dispatchGroupContext?.leave(groups)
                 tp.warnIfLongerThanInterval()
             } catch {
                 thrownError = error
@@ -59,9 +61,7 @@ public extension NSManagedObjectContext {
         }
 
         if let error = thrownError {
-            groups.apply {
-                dispatchGroupContext?.leave($0)
-            }
+            dispatchGroupContext?.leave(groups)
             throw error
         } else {
             return result
@@ -74,6 +74,7 @@ public extension NSManagedObjectContext {
  We call ``NSManagedObjectContext/enterAllGroupsExceptSecondary()`` before the Task and leave the groups at the end.
  */
 public struct WaitingGroupTask {
+
     let context: NSManagedObjectContext
 
     public init(context: NSManagedObjectContext) {
