@@ -74,8 +74,8 @@ extension ConversationListViewController {
 
         var selectedConversation: ZMConversation?
 
-        private var didBecomeActiveNotificationToken: Any?
-        private var e2eiCertificateChangedToken: Any?
+        private var didBecomeActiveNotificationToken: NSObjectProtocol?
+        private var e2eiCertificateChangedToken: NSObjectProtocol?
         private var initialSyncObserverToken: Any?
         private var userObservationToken: NSObjectProtocol?
         /// observer tokens which are assigned when viewDidLoad
@@ -133,9 +133,11 @@ extension ConversationListViewController.ViewModel {
             self?.updateE2EICertifiedStatus()
         }
 
-        e2eiCertificateChangedToken = notificationCenter.addObserver(forName: .e2eiCertificateChanged,
-                                                                     object: nil,
-                                                                     queue: .main) { [weak self] _ in
+        e2eiCertificateChangedToken = notificationCenter.addObserver(
+            forName: .e2eiCertificateChanged,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             self?.updateE2EICertifiedStatus()
         }
     }
