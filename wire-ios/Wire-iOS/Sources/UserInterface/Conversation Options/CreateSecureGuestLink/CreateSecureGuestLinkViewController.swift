@@ -19,6 +19,7 @@
 import Down
 import UIKit
 import WireCommonComponents
+import WireSyncEngine
 
 class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecuredLinkViewModelDelegate {
 
@@ -29,11 +30,25 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     typealias SecuredGuestLinkWithPasswordLocale = L10n.Localizable.SecuredGuestLinkWithPassword
     typealias SecureGuestLinkAccessibilityLocale = L10n.Accessibility.CreateSecureGuestLink
 
+    let conversation: ZMConversation
+    let conversationSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
+
     weak var delegate: ValidatedTextFieldDelegate?
 
-    private lazy var viewModel: CreateSecureGuestLinkViewModel = {
-        CreateSecureGuestLinkViewModel(delegate: self)
+    private lazy var viewModel: CreateSecureConversationGuestLinkViewModel = {
+        CreateSecureConversationGuestLinkViewModel(delegate: self, conversationGuestLinkUseCase: conversationSecureGuestLinkUseCase)
     }()
+
+    // MARK: - Initializer
+    init(conversationSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol, conversation: ZMConversation) {
+        self.conversationSecureGuestLinkUseCase = conversationSecureGuestLinkUseCase
+        self.conversation = conversation
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -296,15 +311,11 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
     @objc
     func createSecuredLinkButtonTapped(_ sender: UIButton) {
-        if handlePasswordValidation(for: securedGuestLinkPasswordTextfield) {
-            UIPasteboard.general.string = securedGuestLinkPasswordTextfield.text
-
-            UIAlertController.presentPasswordCopiedAlert(
-                on: self,
-                title: SecuredGuestLinkWithPasswordLocale.AlertController.title,
-                message: SecuredGuestLinkWithPasswordLocale.AlertController.message
-            )
-        }
+        viewModel.createSecuredGuestLinkIfValid(
+            conversation: conversation,
+            passwordField: securedGuestLinkPasswordTextfield,
+            confirmPasswordField: securedGuestLinkPasswordValidatedTextField
+        )
     }
 
     @objc
@@ -337,11 +348,33 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     // MARK: - CreatePasswordSecuredLinkViewModelDelegate
 
     func viewModel(
-        _ viewModel: CreateSecureGuestLinkViewModel,
+        _ viewModel: CreateSecureConversationGuestLinkViewModel,
         didGeneratePassword password: String
     ) {
         securedGuestLinkPasswordTextfield.text = password
         securedGuestLinkPasswordValidatedTextField.text = password
+    }
+
+    func viewModelDidValidatePasswordSuccessfully(_ viewModel: CreateSecureConversationGuestLinkViewModel) {
+
+        UIAlertController.presentPasswordCopiedAlert(
+            on: self,
+            title: SecuredGuestLinkWithPasswordLocale.AlertController.title,
+            message: SecuredGuestLinkWithPasswordLocale.AlertController.message
+        )
+
+    }
+
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String) {
+
+    }
+
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didCreateLink link: String) {
+        print("Link created successfully: \(link)")
+    }
+
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToCreateLinkWithError error: Error) {
+        print("Failed to create link: \(error.localizedDescription)")
     }
 }
 // MARK: - ValidatedTextFieldDelegate

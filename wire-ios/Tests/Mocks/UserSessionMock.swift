@@ -78,15 +78,21 @@ final class UserSessionMock: UserSession {
         return mock
     }
 
-    convenience init(mockUser: MockZMEditableUser) {
+    convenience init(
+        mockUser: MockZMEditableUser
+    ) {
         self.init(selfUser: mockUser)
     }
 
-    convenience init(mockUser: MockUserType = .createDefaultSelfUser()) {
+    convenience init(
+        mockUser: MockUserType = .createDefaultSelfUser()
+    ) {
         self.init(selfUser: mockUser)
     }
 
-    init(selfUser: SelfUserType) {
+    init(
+        selfUser: SelfUserType
+    ) {
         self.selfUser = selfUser
     }
 
@@ -289,6 +295,14 @@ final class UserSessionMock: UserSession {
 
     var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol {
         MockUpdateMLSGroupVerificationStatusUseCaseProtocol()
+    }
+
+    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+        MockCreateConversationGuestLinkUseCaseProtocol()
+    }
+
+    func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
+        MockSetAllowGuestAndServicesUseCaseProtocol()
     }
 
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)

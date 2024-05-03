@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireSyncEngine
 import WireTransport
 import WireUtilities
 
@@ -29,7 +30,6 @@ protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     var allowGuestsChangedHandler: ((Bool) -> Void)? { get set }
     var guestLinkFeatureStatusChangedHandler: ((GuestLinkFeatureStatus) -> Void)? { get set }
     func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void)
-    func createConversationLink(completion: @escaping (Result<String, Error>) -> Void)
     func fetchConversationLink(completion: @escaping (Result<String?, Error>) -> Void)
     func deleteLink(completion: @escaping (Result<Void, Error>) -> Void)
 }
@@ -42,9 +42,14 @@ protocol ConversationGuestOptionsViewModelDelegate: AnyObject {
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, presentGuestLinkTypeSelection completion: @escaping (GuestLinkType) -> Void)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, sourceView: UIView?, confirmRevokingLink completion: @escaping (Bool) -> Void)
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, wantsToShareMessage message: String, sourceView: UIView?)
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, presentCreateSecureGuestLink viewController: UIViewController, animated: Bool)
 }
 
 final class ConversationGuestOptionsViewModel {
+
+    private let conversation: ZMConversation
+    private let createSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
+
     struct State {
         var rows = [CellConfiguration]()
         var isLoading = false
@@ -84,8 +89,15 @@ final class ConversationGuestOptionsViewModel {
 
     private let configuration: ConversationGuestOptionsViewModelConfiguration
 
-    init(configuration: ConversationGuestOptionsViewModelConfiguration) {
+    init(
+        configuration: ConversationGuestOptionsViewModelConfiguration,
+        conversation: ZMConversation,
+        createSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
+    ) {
         self.configuration = configuration
+        self.conversation = conversation
+        self.createSecureGuestLinkUseCase = createSecureGuestLinkUseCase
+
         updateRows()
         configuration.allowGuestsChangedHandler = { [weak self] allowGuests in
             guard let `self` = self else { return }
@@ -232,11 +244,14 @@ final class ConversationGuestOptionsViewModel {
             self?.showLoadingCell = true
         }
 
-        configuration.createConversationLink { [weak self] result in
-            guard let `self` = self else { return }
+        createSecureGuestLinkUseCase.invoke(conversation: conversation, password: nil) { [weak self] result in
+            guard let self = self else { return }
+
             switch result {
-            case .success(let link): self.link = link
-            case .failure(let error): self.delegate?.viewModel(self, didReceiveError: error)
+            case .success(let link):
+                self.link = link
+            case .failure(let error):
+                self.delegate?.viewModel(self, didReceiveError: error)
             }
 
             item.cancel()
@@ -248,10 +263,23 @@ final class ConversationGuestOptionsViewModel {
     /// - Parameter view: the source view which triggers create action
     func startGuestLinkCreationFlow(from view: UIView? = nil) {
         if isGuestLinkWithPasswordAvailable {
-            delegate?.viewModel(self, sourceView: view, presentGuestLinkTypeSelection: { [weak self] guestLinkType in
+            delegate?.viewModel(self,
+                                sourceView: view,
+                                presentGuestLinkTypeSelection: { [weak self] guestLinkType in
                 guard let `self` = self else { return }
                 switch guestLinkType {
-                case .secure: break
+                case .secure:
+                    let viewController = CreateSecureGuestLinkViewController(
+                        conversationSecureGuestLinkUseCase: createSecureGuestLinkUseCase,
+                        conversation: conversation
+                    )
+
+                    let navigationController = viewController.wrapInNavigationController()
+                    delegate?.viewModel(
+                        self,
+                        presentCreateSecureGuestLink: navigationController,
+                        animated: true
+                    )
                 case .normal:
                     createLink()
                 }

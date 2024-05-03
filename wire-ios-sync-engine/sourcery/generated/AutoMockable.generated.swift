@@ -93,6 +93,30 @@ public class MockCertificateRevocationListsChecking: CertificateRevocationListsC
 
 }
 
+public class MockCreateConversationGuestLinkUseCaseProtocol: CreateConversationGuestLinkUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeConversationPasswordCompletion_Invocations: [(conversation: ZMConversation, password: String?, completion: (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void)] = []
+    public var invokeConversationPasswordCompletion_MockMethod: ((ZMConversation, String?, @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void) -> Void)?
+
+    public func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void) {
+        invokeConversationPasswordCompletion_Invocations.append((conversation: conversation, password: password, completion: completion))
+
+        guard let mock = invokeConversationPasswordCompletion_MockMethod else {
+            fatalError("no mock for `invokeConversationPasswordCompletion`")
+        }
+
+        mock(conversation, password, completion)
+    }
+
+}
+
 public class MockE2EIdentityCertificateUpdateStatusUseCaseProtocol: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -716,6 +740,30 @@ public class MockSessionManagerDelegate: SessionManagerDelegate {
 
 }
 
+public class MockSetAllowGuestAndServicesUseCaseProtocol: SetAllowGuestAndServicesUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - invoke
+
+    public var invokeConversationAllowGuestsAllowServicesCompletion_Invocations: [(conversation: ZMConversation, allowGuests: Bool, allowServices: Bool, completion: (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void)] = []
+    public var invokeConversationAllowGuestsAllowServicesCompletion_MockMethod: ((ZMConversation, Bool, Bool, @escaping (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void) -> Void)?
+
+    public func invoke(conversation: ZMConversation, allowGuests: Bool, allowServices: Bool, completion: @escaping (Result<Void, SetAllowGuestsAndServicesUseCaseError>) -> Void) {
+        invokeConversationAllowGuestsAllowServicesCompletion_Invocations.append((conversation: conversation, allowGuests: allowGuests, allowServices: allowServices, completion: completion))
+
+        guard let mock = invokeConversationAllowGuestsAllowServicesCompletion_MockMethod else {
+            fatalError("no mock for `invokeConversationAllowGuestsAllowServicesCompletion`")
+        }
+
+        mock(conversation, allowGuests, allowServices, completion)
+    }
+
+}
+
 public class MockSnoozeCertificateEnrollmentUseCaseProtocol: SnoozeCertificateEnrollmentUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -764,20 +812,19 @@ public class MockStopCertificateEnrollmentSnoozerUseCaseProtocol: StopCertificat
 
 }
 
-public class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
+class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
 
     // MARK: - Life cycle
 
-    public init() {}
 
 
     // MARK: - createResolveOneOnOneUseCase
 
-    public var createResolveOneOnOneUseCase_Invocations: [Void] = []
-    public var createResolveOneOnOneUseCase_MockMethod: (() -> ResolveOneOnOneConversationsUseCaseProtocol)?
-    public var createResolveOneOnOneUseCase_MockValue: ResolveOneOnOneConversationsUseCaseProtocol?
+    var createResolveOneOnOneUseCase_Invocations: [Void] = []
+    var createResolveOneOnOneUseCase_MockMethod: (() -> ResolveOneOnOneConversationsUseCaseProtocol)?
+    var createResolveOneOnOneUseCase_MockValue: ResolveOneOnOneConversationsUseCaseProtocol?
 
-    public func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
+    func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
         createResolveOneOnOneUseCase_Invocations.append(())
 
         if let mock = createResolveOneOnOneUseCase_MockMethod {
@@ -786,6 +833,42 @@ public class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
             return mock
         } else {
             fatalError("no mock for `createResolveOneOnOneUseCase`")
+        }
+    }
+
+    // MARK: - createConversationGuestLinkUseCase
+
+    var createConversationGuestLinkUseCase_Invocations: [Void] = []
+    var createConversationGuestLinkUseCase_MockMethod: (() -> CreateConversationGuestLinkUseCaseProtocol)?
+    var createConversationGuestLinkUseCase_MockValue: CreateConversationGuestLinkUseCaseProtocol?
+
+    func createConversationGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+        createConversationGuestLinkUseCase_Invocations.append(())
+
+        if let mock = createConversationGuestLinkUseCase_MockMethod {
+            return mock()
+        } else if let mock = createConversationGuestLinkUseCase_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `createConversationGuestLinkUseCase`")
+        }
+    }
+
+    // MARK: - createSetGuestsAndServicesUseCase
+
+    var createSetGuestsAndServicesUseCase_Invocations: [Void] = []
+    var createSetGuestsAndServicesUseCase_MockMethod: (() -> SetAllowGuestAndServicesUseCaseProtocol)?
+    var createSetGuestsAndServicesUseCase_MockValue: SetAllowGuestAndServicesUseCaseProtocol?
+
+    func createSetGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
+        createSetGuestsAndServicesUseCase_Invocations.append(())
+
+        if let mock = createSetGuestsAndServicesUseCase_MockMethod {
+            return mock()
+        } else if let mock = createSetGuestsAndServicesUseCase_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `createSetGuestsAndServicesUseCase`")
         }
     }
 

@@ -20,22 +20,28 @@ import WireCommonComponents
 import XCTest
 
 @testable import Wire
+import WireSyncEngineSupport
 
 class CreateSecureGuestLinkViewModelTests: XCTestCase {
 
     // MARK: - Properties
 
-    var viewModel: CreateSecureGuestLinkViewModel!
+    var viewModel: CreateSecureConversationGuestLinkViewModel!
     var mockDelegate: MockCreatePasswordSecuredLinkViewModelDelegate!
     var textField: ValidatedTextField!
     var confirmPasswordField: ValidatedTextField!
+    var conversationGuestLinkUseCase: MockCreateConversationGuestLinkUseCaseProtocol!
 
     // MARK: - setUp
 
     override func setUp() {
         super.setUp()
         FontScheme.configure(with: .large)
-        viewModel = CreateSecureGuestLinkViewModel(delegate: mockDelegate)
+        conversationGuestLinkUseCase = MockCreateConversationGuestLinkUseCaseProtocol()
+        viewModel = CreateSecureConversationGuestLinkViewModel(
+            delegate: mockDelegate,
+            conversationGuestLinkUseCase: conversationGuestLinkUseCase
+        )
         mockDelegate = MockCreatePasswordSecuredLinkViewModelDelegate()
         viewModel.delegate = mockDelegate
         textField = ValidatedTextField(style: .default)
@@ -49,6 +55,7 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
         mockDelegate = nil
         textField = nil
         confirmPasswordField = nil
+        conversationGuestLinkUseCase = nil
         super.tearDown()
     }
 
@@ -59,6 +66,8 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
     func testGenerateRandomPassword() {
         // GIVEN && WHEN
         let randomPassword = viewModel.generateRandomPassword()
+
+        conversationGuestLinkUseCase.invokeConversationPasswordCompletion_MockMethod = { _, _, _ in }
 
         // THEN
         XCTAssertTrue(randomPassword.count >= 15 && randomPassword.count <= 20, "Password length should be between 15 and 20 characters")

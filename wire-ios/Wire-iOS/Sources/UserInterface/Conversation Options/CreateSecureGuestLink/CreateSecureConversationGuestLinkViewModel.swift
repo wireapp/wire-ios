@@ -18,26 +18,40 @@
 
 import Foundation
 import UIKit
+import WireSyncEngine
 
 // MARK: - CreatePasswordSecuredLinkViewModelDelegate
 
 // sourcery: AutoMockable
 protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
-    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didGeneratePassword password: String)
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didGeneratePassword password: String)
+    func viewModelDidValidatePasswordSuccessfully(_ viewModel: CreateSecureConversationGuestLinkViewModel)
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String)
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didCreateLink link: String)
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToCreateLinkWithError error: Error)
 }
 
 // MARK: - CreateSecureGuestLinkViewModel
 
-final class CreateSecureGuestLinkViewModel {
+final class CreateSecureConversationGuestLinkViewModel {
+
+    enum LinkCreationError: Error {
+        case underfinedLink
+    }
 
     // MARK: - Properties
 
     weak var delegate: CreatePasswordSecuredLinkViewModelDelegate?
+    private let conversationGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
 
     // MARK: - Init
 
-    init(delegate: CreatePasswordSecuredLinkViewModelDelegate?) {
+    init(
+        delegate: CreatePasswordSecuredLinkViewModelDelegate?,
+        conversationGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
+    ) {
         self.delegate = delegate
+        self.conversationGuestLinkUseCase = conversationGuestLinkUseCase
     }
 
     // MARK: - Methods
@@ -60,6 +74,34 @@ final class CreateSecureGuestLinkViewModel {
         }
 
         return true
+    }
+
+    func createSecuredGuestLinkIfValid(conversation: ZMConversation, passwordField: ValidatedTextField, confirmPasswordField: ValidatedTextField) {
+        guard validatePassword(for: passwordField, against: confirmPasswordField) else {
+            delegate?.viewModel(self, didFailToValidatePasswordWithReason: "Password validation failed.")
+            return
+        }
+
+        guard let password = passwordField.text else {
+            return
+        }
+
+        UIPasteboard.general.string = password
+
+        conversationGuestLinkUseCase.invoke(conversation: conversation, password: password) { [weak self] result in
+            guard let self = self else { return }
+
+            switch result {
+            case .success(let link?):
+                self.delegate?.viewModel(self, didCreateLink: link)
+            case .success(nil):
+                self.delegate?.viewModel(self, didFailToCreateLinkWithError: LinkCreationError.underfinedLink)
+            case .failure(let error):
+                self.delegate?.viewModel(self, didFailToCreateLinkWithError: error)
+            }
+        }
+
+        delegate?.viewModelDidValidatePasswordSuccessfully(self)
     }
 
     func generateRandomPassword() -> String {

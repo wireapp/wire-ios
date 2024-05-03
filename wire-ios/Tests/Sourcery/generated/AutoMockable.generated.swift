@@ -192,6 +192,21 @@ class MockConversationGuestOptionsViewModelDelegate: ConversationGuestOptionsVie
         mock(viewModel, message, sourceView)
     }
 
+    // MARK: - viewModel
+
+    var viewModelPresentCreateSecureGuestLinkAnimated_Invocations: [(viewModel: ConversationGuestOptionsViewModel, viewController: UIViewController, animated: Bool)] = []
+    var viewModelPresentCreateSecureGuestLinkAnimated_MockMethod: ((ConversationGuestOptionsViewModel, UIViewController, Bool) -> Void)?
+
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, presentCreateSecureGuestLink viewController: UIViewController, animated: Bool) {
+        viewModelPresentCreateSecureGuestLinkAnimated_Invocations.append((viewModel: viewModel, viewController: viewController, animated: animated))
+
+        guard let mock = viewModelPresentCreateSecureGuestLinkAnimated_MockMethod else {
+            fatalError("no mock for `viewModelPresentCreateSecureGuestLinkAnimated`")
+        }
+
+        mock(viewModel, viewController, animated)
+    }
+
 }
 
 class MockConversationUserClientDetailsActions: ConversationUserClientDetailsActions {
@@ -240,10 +255,10 @@ class MockCreatePasswordSecuredLinkViewModelDelegate: CreatePasswordSecuredLinkV
 
     // MARK: - viewModel
 
-    var viewModelDidGeneratePassword_Invocations: [(viewModel: CreateSecureGuestLinkViewModel, password: String)] = []
-    var viewModelDidGeneratePassword_MockMethod: ((CreateSecureGuestLinkViewModel, String) -> Void)?
+    var viewModelDidGeneratePassword_Invocations: [(viewModel: CreateSecureConversationGuestLinkViewModel, password: String)] = []
+    var viewModelDidGeneratePassword_MockMethod: ((CreateSecureConversationGuestLinkViewModel, String) -> Void)?
 
-    func viewModel(_ viewModel: CreateSecureGuestLinkViewModel, didGeneratePassword password: String) {
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didGeneratePassword password: String) {
         viewModelDidGeneratePassword_Invocations.append((viewModel: viewModel, password: password))
 
         guard let mock = viewModelDidGeneratePassword_MockMethod else {
@@ -251,6 +266,66 @@ class MockCreatePasswordSecuredLinkViewModelDelegate: CreatePasswordSecuredLinkV
         }
 
         mock(viewModel, password)
+    }
+
+    // MARK: - viewModelDidValidatePasswordSuccessfully
+
+    var viewModelDidValidatePasswordSuccessfully_Invocations: [CreateSecureConversationGuestLinkViewModel] = []
+    var viewModelDidValidatePasswordSuccessfully_MockMethod: ((CreateSecureConversationGuestLinkViewModel) -> Void)?
+
+    func viewModelDidValidatePasswordSuccessfully(_ viewModel: CreateSecureConversationGuestLinkViewModel) {
+        viewModelDidValidatePasswordSuccessfully_Invocations.append(viewModel)
+
+        guard let mock = viewModelDidValidatePasswordSuccessfully_MockMethod else {
+            fatalError("no mock for `viewModelDidValidatePasswordSuccessfully`")
+        }
+
+        mock(viewModel)
+    }
+
+    // MARK: - viewModel
+
+    var viewModelDidFailToValidatePasswordWithReason_Invocations: [(viewModel: CreateSecureConversationGuestLinkViewModel, reason: String)] = []
+    var viewModelDidFailToValidatePasswordWithReason_MockMethod: ((CreateSecureConversationGuestLinkViewModel, String) -> Void)?
+
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToValidatePasswordWithReason reason: String) {
+        viewModelDidFailToValidatePasswordWithReason_Invocations.append((viewModel: viewModel, reason: reason))
+
+        guard let mock = viewModelDidFailToValidatePasswordWithReason_MockMethod else {
+            fatalError("no mock for `viewModelDidFailToValidatePasswordWithReason`")
+        }
+
+        mock(viewModel, reason)
+    }
+
+    // MARK: - viewModel
+
+    var viewModelDidCreateLink_Invocations: [(viewModel: CreateSecureConversationGuestLinkViewModel, link: String)] = []
+    var viewModelDidCreateLink_MockMethod: ((CreateSecureConversationGuestLinkViewModel, String) -> Void)?
+
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didCreateLink link: String) {
+        viewModelDidCreateLink_Invocations.append((viewModel: viewModel, link: link))
+
+        guard let mock = viewModelDidCreateLink_MockMethod else {
+            fatalError("no mock for `viewModelDidCreateLink`")
+        }
+
+        mock(viewModel, link)
+    }
+
+    // MARK: - viewModel
+
+    var viewModelDidFailToCreateLinkWithError_Invocations: [(viewModel: CreateSecureConversationGuestLinkViewModel, error: Error)] = []
+    var viewModelDidFailToCreateLinkWithError_MockMethod: ((CreateSecureConversationGuestLinkViewModel, Error) -> Void)?
+
+    func viewModel(_ viewModel: CreateSecureConversationGuestLinkViewModel, didFailToCreateLinkWithError error: Error) {
+        viewModelDidFailToCreateLinkWithError_Invocations.append((viewModel: viewModel, error: error))
+
+        guard let mock = viewModelDidFailToCreateLinkWithError_MockMethod else {
+            fatalError("no mock for `viewModelDidFailToCreateLinkWithError`")
+        }
+
+        mock(viewModel, error)
     }
 
 }

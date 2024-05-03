@@ -41,7 +41,11 @@ final class ConversationGuestOptionsViewController: UIViewController,
             userSession: userSession
         )
         self.init(
-            viewModel: .init(configuration: configuration)
+            viewModel: .init(
+                configuration: configuration,
+                conversation: conversation,
+                createSecureGuestLinkUseCase: userSession.makeConversationSecureGuestLinkUseCase()
+            )
         )
     }
 
@@ -138,15 +142,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
         presentGuestLinkTypeSelection completion: @escaping (GuestLinkType) -> Void
     ) {
         let alertController = UIAlertController.guestLinkTypeController { guestLinkType in
-            switch guestLinkType {
-            case .secure:
-                self.present(
-                    CreateSecureGuestLinkViewController().wrapInNavigationController(),
-                    animated: true
-                )
-            case .normal:
-                completion(.normal)
-            }
+            completion(guestLinkType)
         }
         present(alertController, animated: true)
 
@@ -165,6 +161,10 @@ final class ConversationGuestOptionsViewController: UIViewController,
         present(activityController, animated: true)
 
         activityController.configPopover(pointToView: sourceView ?? view)
+    }
+
+    func viewModel(_ viewModel: ConversationGuestOptionsViewModel, presentCreateSecureGuestLink viewController: UIViewController, animated: Bool) {
+        present(viewController, animated: animated)
     }
 
     // MARK: – UITableViewDelegate & UITableViewDataSource
