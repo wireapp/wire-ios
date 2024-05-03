@@ -1560,7 +1560,7 @@
 "registration.signin.too_many_devices.manage_button.title" = "Manage devices";
 "registration.signin.too_many_devices.sign_out_button.title" = "Log out";
 
-"registration.signin.too_many_devices.manage_screen.title" = "Remove a Device";
+"registration.signin.too_many_devices.manage_screen.title" = "Remove a device";
 
 "registration.signin.alert.password_needed.title" = "Password needed";
 "registration.signin.alert.password_needed.message" = "Please enter your Password in order to log in.";
