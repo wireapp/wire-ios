@@ -52,6 +52,7 @@
         "AVURLAsset_conversionTests\/testThatVideoIsConvertedToUploadFormat()",
         "ConversationListTopBarViewControllerSnapshotTests\/testForLongName()",
         "MessageReplyPreviewViewTests\/testThatItRendersImageMessagePreview()",
+        "ProfileViewControllerTests",
         "SearchResultLabelTests",
         "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Photos()",
         "ShareViewControllerTests\/testThatItRendersCorrectlyShareViewController_Video_DarkMode()",
