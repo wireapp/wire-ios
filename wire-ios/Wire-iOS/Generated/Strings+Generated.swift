@@ -3555,6 +3555,16 @@ internal enum L10n {
         /// New guests will not be able to join with this link. Current guests will still have access.
         internal static let message = L10n.tr("Localizable", "guest_room.revoke_link.message", fallback: "New guests will not be able to join with this link. Current guests will still have access.")
       }
+      internal enum SecureLink {
+        internal enum Header {
+          /// People who want to join the conversation via the guest link need to enter this password first. 
+          /// 
+          /// Forgot password? Revoke the link and create a new one.
+          internal static let subtitle = L10n.tr("Localizable", "guest_room.secure_link.header.subtitle", fallback: "People who want to join the conversation via the guest link need to enter this password first. \n\nForgot password? Revoke the link and create a new one.")
+          /// Link is password secured
+          internal static let title = L10n.tr("Localizable", "guest_room.secure_link.header.title", fallback: "Link is password secured")
+        }
+      }
       internal enum Share {
         /// Join me in a conversation on Wire:
         /// %@

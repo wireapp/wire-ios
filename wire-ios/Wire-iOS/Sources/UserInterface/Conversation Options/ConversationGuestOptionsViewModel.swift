@@ -30,7 +30,7 @@ protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     var allowGuestsChangedHandler: ((Bool) -> Void)? { get set }
     var guestLinkFeatureStatusChangedHandler: ((GuestLinkFeatureStatus) -> Void)? { get set }
     func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void)
-    func fetchConversationLink(completion: @escaping (Result<String?, Error>) -> Void)
+    func fetchConversationLink(completion: @escaping (Result<(uri: String?, secured: Bool), Error>) -> Void)
     func deleteLink(completion: @escaping (Result<Void, Error>) -> Void)
 }
 
@@ -62,6 +62,12 @@ final class ConversationGuestOptionsViewModel {
     }
 
     private var link: String?
+
+    var securedLink: String? {
+        didSet {
+            updateRows()
+        }
+    }
 
     var copyInProgress = false {
         didSet {
@@ -137,7 +143,12 @@ final class ConversationGuestOptionsViewModel {
 
         switch configuration.guestLinkFeatureStatus {
         case .enabled:
-            rows.append(.linkHeader)
+            if securedLink != nil {
+                rows.append(.secureLinkHeader)
+            } else {
+                rows.append(.linkHeader)
+            }
+
             if !configuration.isConversationFromSelfTeam {
                 rows.append(.info(infoText(isSelfTeam: configuration.isConversationFromSelfTeam, isDisabled: true)))
             } else if showLoadingCell {
@@ -146,6 +157,11 @@ final class ConversationGuestOptionsViewModel {
                 // Check if we have a link already
                 if let link = link {
                     rows.append(.text(link))
+                    rows.append(copyInProgress ? .copiedLink : .copyLink { [weak self] _ in self?.copyLink() })
+                    rows.append(.shareLink { [weak self] view in self?.shareLink(view: view) })
+                    rows.append(.revokeLink { [weak self] _ in self?.revokeLink() })
+                } else if let securedLink = securedLink {
+                    rows.append(.text(securedLink))
                     rows.append(copyInProgress ? .copiedLink : .copyLink { [weak self] _ in self?.copyLink() })
                     rows.append(.shareLink { [weak self] view in self?.shareLink(view: view) })
                     rows.append(.revokeLink { [weak self] _ in self?.revokeLink() })
@@ -194,6 +210,7 @@ final class ConversationGuestOptionsViewModel {
                 switch result {
                 case .success:
                     self.link = nil
+                    self.securedLink = nil
                     self.updateRows()
                 case .failure(let error):
                     self.delegate?.viewModel(self, didReceiveError: error)
@@ -209,12 +226,15 @@ final class ConversationGuestOptionsViewModel {
     ///
     /// - Parameter view: the source view which triggers shareLink action
     private func shareLink(view: UIView? = nil) {
-        guard let link = link else { return }
+        let linkToShare = securedLink ?? link
+        guard let link = linkToShare else { return }
         let message = L10n.Localizable.GuestRoom.Share.message(link)
         delegate?.viewModel(self, wantsToShareMessage: message, sourceView: view)
     }
 
     private func copyLink() {
+        let linkToCopy = securedLink ?? link
+        guard let link = linkToCopy else { return }
         UIPasteboard.general.string = link
         copyInProgress = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
@@ -228,10 +248,17 @@ final class ConversationGuestOptionsViewModel {
         }
 
         configuration.fetchConversationLink { [weak self] result in
-            guard let `self` = self else { return }
+            guard let self = self else { return }
             switch result {
-            case .success(let link): self.link = link
-            case .failure(let error): self.delegate?.viewModel(self, didReceiveError: error)
+            case .success(let linkData):
+                if linkData.secured {
+                    self.securedLink = linkData.uri
+                } else {
+                    self.link = linkData.uri
+                }
+
+            case .failure(let error):
+                self.delegate?.viewModel(self, didReceiveError: error)
             }
 
             item.cancel()
@@ -257,6 +284,7 @@ final class ConversationGuestOptionsViewModel {
             item.cancel()
             self.showLoadingCell = false
         }
+
     }
 
     /// Starts the Guest Link Creation Flow
@@ -309,7 +337,7 @@ final class ConversationGuestOptionsViewModel {
                 switch result {
                 case .success:
                     self.updateRows()
-                    if self.link == nil && allowGuests {
+                    if (self.link == nil && self.securedLink == nil) && allowGuests {
                         self.fetchLink()
                     }
                 case .failure(let error): self.delegate?.viewModel(self, didReceiveError: error)
@@ -327,6 +355,7 @@ final class ConversationGuestOptionsViewModel {
                 guard let `self` = self else { return }
                 guard remove else { return self.updateRows() }
                 self.link = nil
+                self.securedLink = nil
                 _setAllowGuests()
             })
         } else {

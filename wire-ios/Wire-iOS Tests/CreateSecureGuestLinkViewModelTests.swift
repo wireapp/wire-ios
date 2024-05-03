@@ -30,6 +30,7 @@ class CreateSecureGuestLinkViewModelTests: XCTestCase {
     var mockDelegate: MockCreatePasswordSecuredLinkViewModelDelegate!
     var textField: ValidatedTextField!
     var confirmPasswordField: ValidatedTextField!
+
     var conversationGuestLinkUseCase: MockCreateConversationGuestLinkUseCaseProtocol!
 
     // MARK: - setUp

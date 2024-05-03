@@ -35,6 +35,10 @@ protocol CreatePasswordSecuredLinkViewModelDelegate: AnyObject {
 
 final class CreateSecureConversationGuestLinkViewModel {
 
+    enum UserInfoKeys {
+        static let link = "link"
+    }
+
     enum LinkCreationError: Error {
         case underfinedLink
     }
@@ -94,6 +98,12 @@ final class CreateSecureConversationGuestLinkViewModel {
             switch result {
             case .success(let link?):
                 self.delegate?.viewModel(self, didCreateLink: link)
+                NotificationCenter.default.post(
+                    name: ConversationGuestLink.didCreateSecureGuestLinkNotification,
+                    object: nil,
+                    userInfo: [UserInfoKeys.link: link]
+                )
+
             case .success(nil):
                 self.delegate?.viewModel(self, didFailToCreateLinkWithError: LinkCreationError.underfinedLink)
             case .failure(let error):

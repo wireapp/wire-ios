@@ -110,7 +110,7 @@ class ConversationTests_Guests: IntegrationTest {
         conversation.fetchWirelessLink(in: self.userSession!) { result in
             switch result {
             case .success(let link):
-                XCTAssertNil(link)
+                XCTAssertNil(link.uri)
             case .failure:
                 XCTFail()
             }
@@ -126,12 +126,12 @@ class ConversationTests_Guests: IntegrationTest {
 
     func testThatItSendsRequestToFetchTheLink_LinkExists() {
         // given
-        let existingLink = "https://wire-website.com/some-magic-link"
+        let existingLink: (uri: String, secured: Bool) = ("https://wire-website.com/some-magic-link", false)
 
         mockTransportSession.performRemoteChanges { _ in
             self.groupConversationWithWholeTeam.accessMode = ["code", "invite"]
             self.groupConversationWithWholeTeam.accessRoleV2 = ["team_member", "non_team_member", "guest", "service"]
-            self.groupConversationWithWholeTeam.link = existingLink
+            self.groupConversationWithWholeTeam.link = existingLink.uri
         }
         XCTAssert(login())
 
@@ -146,7 +146,7 @@ class ConversationTests_Guests: IntegrationTest {
         conversation.fetchWirelessLink(in: self.userSession!) { result in
             switch result {
             case .success(let link):
-                XCTAssertEqual(link, existingLink)
+                XCTAssertEqual(link.uri, existingLink.uri)
             case .failure:
                 XCTFail()
             }

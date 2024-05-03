@@ -1455,6 +1455,9 @@
 
 "guest_room.link.button.title" = "Create Link";
 
+"guest_room.secure_link.header.title" = "Link is password secured";
+"guest_room.secure_link.header.subtitle" = "People who want to join the conversation via the guest link need to enter this password first. \n\nForgot password? Revoke the link and create a new one.";
+
 "guest_room.create.link_with_password.action" = "Create password secured link";
 "guest_room.create.link_without_password.action" = "Create link without password";
 
