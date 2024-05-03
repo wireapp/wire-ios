@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,24 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-extension UINavigationItem {
+/// Text styles defined in Wire's design system.
 
-    @available(*, deprecated, message: "Please use `setDynamicFontLabel(title:)`!")
-    func setupNavigationBarTitle(title: String) {
-        let titleLabel = DynamicFontLabel(
-            text: title,
-            fontSpec: .headerSemiboldFont,
-            color: SemanticColors.Label.textDefault)
-        titleView = titleLabel
-    }
+public enum WireTextStyle {
 
-    func setDynamicFontLabel(title: String) {
-        titleView = DynamicFontLabel(
-            text: title,
-            style: .h3,
-            color: SemanticColors.Label.textDefault
-        )
-    }
+    case largeTitle
+    case h1
+    case h2
+    case h3
+    case h4
+    case h5
+    case body1
+    case body2
+    case body3
+    case subline1
+    case buttonSmall
+    case buttonBig
+
 }

@@ -84,9 +84,9 @@ struct ProfileDeviceDetailsView: View {
     private var showDeviceFingerPrintView: some View {
         HStack {
             Text(L10n.Localizable.Profile.Devices.Detail.ShowMyDevice.title)
+                .font(.textStyle(.body2))
                 .padding(.all, ViewConstants.Padding.standard)
                 .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
-                .font(UIFont.swiftUIFont(for: .bodyTwoSemibold))
             Spacer()
             Asset.Images.chevronRight.swiftUIImage
                 .padding(.trailing, ViewConstants.Padding.standard)
@@ -171,15 +171,16 @@ struct ProfileDeviceDetailsView: View {
         if let description = description {
             VStack(alignment: .leading) {
                 Text(description)
+                    .font(.textStyle(.h4))
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
-                    .font(UIFont.swiftUIFont(for: .subheadline))
                     .foregroundColor(SemanticColors.Label.textCellSubtitle.swiftUIColor)
                     .frame(height: ViewConstants.View.Height.small)
                     .padding([.leading, .top, .trailing], ViewConstants.Padding.standard)
                 Text(L10n.Localizable.Profile.Devices.Detail.VerifyMessage.link)
                     .underline()
-                    .font(UIFont.swiftUIFont(for: .subheadline).bold())
+                    .font(.textStyle(.h4))
+                    .bold()
                     .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
                     .padding(.leading)
                     .onTapGesture {
