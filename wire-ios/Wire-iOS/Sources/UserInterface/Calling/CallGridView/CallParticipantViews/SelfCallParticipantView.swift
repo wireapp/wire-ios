@@ -98,6 +98,7 @@ final class SelfCallParticipantView: BaseCallParticipantView {
         if previewView == nil {
             let previewView = AVSVideoPreview()
             previewView.backgroundColor = .clear
+            previewView.shouldFill = shouldFill
             self.previewView = previewView
 
             videoContainerView?.setupVideoView(previewView)
