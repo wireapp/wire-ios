@@ -57,6 +57,12 @@ extension NSManagedObjectContext {
         set { objc_setAssociatedObject(self, &AssociatedDispatchGroupContextKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
 
+    /// List of all groups associated with this context
+    @objc
+    var allGroups: [ZMSDispatchGroup] {
+        dispatchGroupContext.groups
+    }
+
     @objc
     func createDispatchGroups() {
         let groups = [
@@ -65,6 +71,54 @@ extension NSManagedObjectContext {
             ZMSDispatchGroup(label: "ZMSGroupQueue second")
         ]
         dispatchGroupContext = DispatchGroupContext(groups: groups)
+    }
+
+    /// Schedules a notification block to be submitted to the receiver's
+    /// queue once all blocks associated with the receiver's group have completed.
+    ///
+    /// If no blocks are associated with the receiver's group (i.e. the group is empty)
+    /// then the notification block will be submitted immediately.
+    ///
+    /// The receiver's group will be empty at the time the notification block is submitted to
+    /// the receiver's queue.
+    ///
+    /// @sa  dispatch_group_notify()
+    @objc
+    func notifyWhenGroupIsEmpty(_ block: @escaping () -> Void) {
+        // We need to enter & leave all but the first group to make sure that any work added by
+        // this method is stil being tracked by the other groups.
+        let firstGroup = dispatchGroup
+        let groups = dispatchGroupContext.enterAll(except: firstGroup)
+        firstGroup.notify(on: .global()) {
+            self.performGroupedBlock(block)
+            self.dispatchGroupContext.leave(groups)
+        }
+    }
+
+    /// Executes a fetch request and asserts in case of error
+    /// For generic requests in Swift please refer to `func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T]`
+    @objc
+    func executeFetchRequestOrAssert(_ request: NSFetchRequest<NSFetchRequestResult>) -> NSPersistentStoreResult { // TODO: try to remove
+        try! execute(request)
+    }
+
+    /// Adds a group to the receiver. All blocks associated with the receiver's group will
+    /// also be associated with this group.
+    ///
+    /// This is used for testing. It is not thread safe.
+    @objc
+    func addGroup(_ dispatchGroup: ZMSDispatchGroup) {
+        dispatchGroupContext.add(dispatchGroup)
+    }
+
+    @objc
+    func enterAllGroups() -> [ZMSDispatchGroup] {
+        dispatchGroupContext.enterAll()
+    }
+
+    @objc
+    func leaveAllGroups(_ groups: [ZMSDispatchGroup]) {
+        dispatchGroupContext.leave(groups)
     }
 }
 
