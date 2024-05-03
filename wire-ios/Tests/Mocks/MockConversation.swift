@@ -25,6 +25,7 @@ import WireRequestStrategy
 class SwiftMockConversation: NSObject, Conversation {
 
     var isMLSConversationDegraded: Bool = false
+    var isProteusConversationDegraded: Bool = false
 
 	var relatedConnectionState: ZMConnectionStatus = .invalid
 

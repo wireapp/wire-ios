@@ -161,18 +161,18 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         }
     }
 
-//    func testThatItDoesDecreaseTheSecurityLevelWhenAskedToMakeNotSecure() {
-//        // given
-//        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-//        conversation.conversationType = .oneOnOne
-//        conversation.securityLevel = .secureWithIgnored
-//
-//        // when
-//        conversation.acknowledgePrivacyWarningAndResendMessages()
-//
-//        // then
-//        XCTAssertEqual(conversation.securityLevel, .notSecure)
-//    }
+    func testThatItDoesDecreaseTheSecurityLevelWhenAskedToMakeNotSecure() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.conversationType = .oneOnOne
+        conversation.securityLevel = .secureWithIgnored
+
+        // when
+        conversation.acknowledgePrivacyWarningAndResendMessages()
+
+        // then
+        XCTAssertEqual(conversation.securityLevel, .notSecure)
+    }
 
     func testThatItInsertsAnIgnoredClientsSystemMessageWhenAddingAConversationParticipantInASecuredConversation() {
         self.syncMOC.performGroupedAndWait { _ in
@@ -656,54 +656,54 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         }
     }
 
-//    func testItCancelsAllMessagesThatCausedDegradation() {
-//        var conversation: ZMConversation! = nil
-//        var message1: ZMOTRMessage! = nil
-//        var message2: ZMOTRMessage! = nil
-//        var message3: ZMOTRMessage! = nil
-//
-//        self.syncMOC.performGroupedAndWait { _ in
-//
-//            // GIVEN
-//            self.createSelfClient()
-//            conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-//            conversation.conversationType = .group
-//            let user = self.insertUser(conversation: conversation, userIsTrusted: true, moc: self.syncMOC)
-//            conversation.securityLevel = .secure
-//
-//            message1 = try! conversation.appendText(content: "foo 2") as! ZMOTRMessage
-//            Thread.sleep(forTimeInterval: 0.1) // cause system time to advance
-//            message2 = try! conversation.appendText(content: "foo 3") as! ZMOTRMessage
-//            Thread.sleep(forTimeInterval: 0.1) // cause system time to advance
-//            message3 = try! conversation.appendImage(from: self.verySmallJPEGData()) as! ZMOTRMessage
-//
-//            let client = UserClient.insertNewObject(in: self.syncMOC)
-//            client.remoteIdentifier = "aabbccdd"
-//            client.user = user
-//            conversation.decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set([client]), causedBy: message2)
-//            self.syncMOC.saveOrRollback()
-//        }
-//
-//        // WHEN
-//        let uiConversation = try! self.uiMOC.existingObject(with: conversation.objectID) as! ZMConversation
-//        uiConversation.acknowledgePrivacyWarningAndResendMessages()
-//
-//        self.syncMOC.performGroupedAndWait { moc in
-//            moc.refreshAllObjects()
-//
-//            // THEN
-//            XCTAssertTrue(message1.isExpired)
-//            XCTAssertFalse(message1.causedSecurityLevelDegradation)
-//            XCTAssertTrue(message2.isExpired)
-//            XCTAssertFalse(message2.causedSecurityLevelDegradation)
-//            XCTAssertEqual(message2.deliveryState, .failedToSend)
-//            XCTAssertTrue(message3.isExpired)
-//            XCTAssertFalse(message3.causedSecurityLevelDegradation)
-//            XCTAssertEqual(message3.deliveryState, .failedToSend)
-//            XCTAssertFalse(conversation.allUsersTrusted)
-//            XCTAssertEqual(conversation.securityLevel, .notSecure)
-//        }
-//    }
+    func testItCancelsAllMessagesThatCausedDegradation() {
+        var conversation: ZMConversation! = nil
+        var message1: ZMOTRMessage! = nil
+        var message2: ZMOTRMessage! = nil
+        var message3: ZMOTRMessage! = nil
+
+        self.syncMOC.performGroupedAndWait { _ in
+
+            // GIVEN
+            self.createSelfClient()
+            conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.conversationType = .group
+            let user = self.insertUser(conversation: conversation, userIsTrusted: true, moc: self.syncMOC)
+            conversation.securityLevel = .secure
+
+            message1 = try! conversation.appendText(content: "foo 2") as! ZMOTRMessage
+            Thread.sleep(forTimeInterval: 0.1) // cause system time to advance
+            message2 = try! conversation.appendText(content: "foo 3") as! ZMOTRMessage
+            Thread.sleep(forTimeInterval: 0.1) // cause system time to advance
+            message3 = try! conversation.appendImage(from: self.verySmallJPEGData()) as! ZMOTRMessage
+
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            client.remoteIdentifier = "aabbccdd"
+            client.user = user
+            conversation.decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set([client]), causedBy: message2)
+            self.syncMOC.saveOrRollback()
+        }
+
+        // WHEN
+        let uiConversation = try! self.uiMOC.existingObject(with: conversation.objectID) as! ZMConversation
+        uiConversation.discardPendingMessagesAfterPrivacyChanges()
+
+        self.syncMOC.performGroupedAndWait { moc in
+            moc.refreshAllObjects()
+
+            // THEN
+            XCTAssertTrue(message1.isExpired)
+            XCTAssertFalse(message1.causedSecurityLevelDegradation)
+            XCTAssertTrue(message2.isExpired)
+            XCTAssertFalse(message2.causedSecurityLevelDegradation)
+            XCTAssertEqual(message2.deliveryState, .failedToSend)
+            XCTAssertTrue(message3.isExpired)
+            XCTAssertFalse(message3.causedSecurityLevelDegradation)
+            XCTAssertEqual(message3.deliveryState, .failedToSend)
+            XCTAssertFalse(conversation.allUsersTrusted)
+            XCTAssertEqual(conversation.securityLevel, .secureWithIgnored)
+        }
+    }
 
     func testItMarksConversationAsNotSecureAfterResendMessages() {
         var conversation: ZMConversation! = nil

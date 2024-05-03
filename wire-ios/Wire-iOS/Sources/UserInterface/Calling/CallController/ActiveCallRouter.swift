@@ -178,11 +178,12 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
             let alert: UIAlertController
             switch reason {
             case .degradedUser(user: let user):
-                alert = UIAlertController.makeOutgoingDegradedProteusCall(degradedUser: user?.value,
-                                                                          callEnded: true,
-                                                                          confirmationBlock: { continueDegradedCall in
-                    completion(continueDegradedCall ? .confirm : .cancel)
-                    postCallActionCompletion()
+                alert = UIAlertController.makeOutgoingDegradedProteusCall(
+                    degradedUser: user?.value,
+                    callEnded: true,
+                    confirmationBlock: { continueDegradedCall in
+                        completion(continueDegradedCall ? .confirm : .cancel)
+                        postCallActionCompletion()
                 })
             case .invalidCertificate:
                 alert = UIAlertController.makeEndingDegradedMLSCall(cancelBlock: {
@@ -192,6 +193,7 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
             }
 
             self?.presentedDegradedAlert = alert
+
             self?.rootViewController.present(alert, animated: true)
         }
     }

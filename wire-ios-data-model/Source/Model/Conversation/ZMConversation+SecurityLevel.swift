@@ -424,6 +424,7 @@ extension ZMConversation {
         }
     }
 
+    @objc(discardPendingMessagesAfterPrivacyChanges)
     public func discardPendingMessagesAfterPrivacyChanges() {
         guard let syncMOC = managedObjectContext?.zm_sync else { return }
         syncMOC.performGroupedBlock {

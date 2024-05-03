@@ -23,6 +23,31 @@ import XCTest
 
 final class MessageSenderTests: MessagingTestBase {
 
+    func testThatWhenSecurityLevelIsDegraded_thenFailWithSecurityLevelDegraded() async throws {
+        // given
+        await syncMOC.perform { [self] in
+            groupConversation?.setPrimitiveValue(
+                NSNumber(value: ZMConversationSecurityLevel.secureWithIgnored.rawValue), forKey: "securityLevel"
+            )
+        }
+
+        let message = GenericMessageEntity(
+            message: GenericMessage(content: Text(content: "Hello World")),
+            context: syncMOC,
+            conversation: groupConversation,
+            completionHandler: nil)
+
+        let (_, messageSender) = Arrangement(coreDataStack: coreDataStack)
+            .withQuickSyncObserverCompleting()
+            .withMessageDependencyResolverReturning(result: .failure(.securityLevelDegraded))
+            .arrange()
+
+        // then
+        await assertItThrows(error: MessageDependencyResolverError.securityLevelDegraded) {
+            try await messageSender.sendMessage(message: message)
+        }
+    }
+
     func testThatBeforeSendingMessage_thenCallDependencyResolver() async throws {
         // given
         let message = GenericMessageEntity(
