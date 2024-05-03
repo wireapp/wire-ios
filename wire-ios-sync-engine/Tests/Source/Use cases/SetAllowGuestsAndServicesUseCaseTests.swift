@@ -54,6 +54,8 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
     override func tearDown() async throws {
         stack = nil
         sut = nil
+        mockSelfUser = nil
+        mockConversation = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
     }

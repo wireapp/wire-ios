@@ -72,11 +72,13 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
         _ completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void
     ) {
         guard conversation.canManageAccess else {
-            return completion(.failure(CreateConversationGuestLinkUseCaseError.invalidOperation))
+            completion(.failure(CreateConversationGuestLinkUseCaseError.invalidOperation))
+            return
         }
 
         guard let context = conversation.managedObjectContext else {
-            return completion(.failure(CreateConversationGuestLinkUseCaseError.contextUnavailable))
+            completion(.failure(CreateConversationGuestLinkUseCaseError.contextUnavailable))
+            return
         }
 
         var action = CreateConversationGuestLinkAction(
