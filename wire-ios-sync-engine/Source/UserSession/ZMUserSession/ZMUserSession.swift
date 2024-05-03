@@ -851,6 +851,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
         Task {
             await self.cRLsChecker.checkExpiredCRLs()
         }
+
+        managedObjectContext.performGroupedBlock { [weak self] in
+            self?.checkE2EICertificateExpiryStatus()
+        }
     }
 
     func processEvents() {
@@ -955,7 +959,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     func checkE2EICertificateExpiryStatus() {
         guard e2eiFeature.isEnabled else { return }
 
-        NotificationCenter.default.post(name: E2EI.checkForE2EICertificateExpiryStatus, object: nil)
+        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
     }
 }
 
