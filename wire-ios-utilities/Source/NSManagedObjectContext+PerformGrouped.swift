@@ -25,35 +25,35 @@ extension NSManagedObjectContext {
     @discardableResult @available(*, noasync)
     public func performGroupedAndWait<T>(_ execute: @escaping (NSManagedObjectContext) -> T) -> T {
 
-        var result: T!
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
 
-        performAndWait {
+        return performAndWait {
+
             tp.resetTime()
-            result = execute(self)
+            let result = execute(self)
+
             dispatchGroupContext?.leave(groups)
             tp.warnIfLongerThanInterval()
+            return result
         }
-
-        return result
     }
 
     @discardableResult
     public func performGrouped<T>(_ execute: @escaping (NSManagedObjectContext) -> T) async -> T {
 
-        var result: T!
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
 
-        await perform {
+        return await perform {
+
             tp.resetTime()
-            result = execute(self)
+            let result = execute(self)
+
             self.dispatchGroupContext?.leave(groups)
             tp.warnIfLongerThanInterval()
+            return result
         }
-
-        return result
     }
 
     @discardableResult @available(*, noasync)
@@ -61,27 +61,17 @@ extension NSManagedObjectContext {
         _ execute: @escaping (NSManagedObjectContext) throws -> T
     ) throws -> T {
 
-        var result: T!
-        var thrownError: Error?
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
 
-        performAndWait {
-            do {
-                tp.resetTime()
-                result = try execute(self)
+        return try performAndWait {
+
+            tp.resetTime()
+            defer {
                 dispatchGroupContext?.leave(groups)
                 tp.warnIfLongerThanInterval()
-            } catch {
-                thrownError = error
             }
-        }
-
-        if let error = thrownError {
-            dispatchGroupContext?.leave(groups)
-            throw error
-        } else {
-            return result
+            return try execute(self)
         }
     }
 
@@ -90,30 +80,21 @@ extension NSManagedObjectContext {
         _ execute: @escaping (NSManagedObjectContext) throws -> T
     ) async throws -> T {
 
-        var result: T!
-        var thrownError: Error?
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
         let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
 
-        await perform {
-            do {
-                tp.resetTime()
-                result = try execute(self)
+        return try await perform {
+
+            tp.resetTime()
+            defer {
                 self.dispatchGroupContext?.leave(groups)
                 tp.warnIfLongerThanInterval()
-            } catch {
-                thrownError = error
             }
-        }
-
-        if let error = thrownError {
-            dispatchGroupContext?.leave(groups)
-            throw error
-        } else {
-            return result
+            return try execute(self)
         }
     }
 }
+
 /**
  Wrapper around Task to make sure tests are waiting for the task to be finished using dispatchGroups attached to NSManagedObjectContext.
 
