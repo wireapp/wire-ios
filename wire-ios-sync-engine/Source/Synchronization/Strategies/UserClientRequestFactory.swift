@@ -29,7 +29,7 @@ enum UserClientRequestError: Error {
 // TODO: when we should update last pre key or signaling keys?
 // swiftlint:enable todo_requires_jira_link
 
-public final class UserClientRequestFactory {
+extension UserClientRequestFactory {
 
     public func registerClientRequest(
         _ client: UserClient,

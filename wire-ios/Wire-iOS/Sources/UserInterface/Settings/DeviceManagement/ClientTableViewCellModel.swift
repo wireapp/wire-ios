@@ -25,6 +25,7 @@ struct ClientTableViewCellModel {
     let mlsThumbprintLabelText: String
     let isProteusVerified: Bool
     let e2eIdentityStatus: E2EIdentityCertificateStatus?
+    let activationDate: Date?
 
     private typealias DeviceDetailsSection = L10n.Localizable.Device.Details.Section
 
@@ -32,12 +33,14 @@ struct ClientTableViewCellModel {
          proteusLabelText: String,
          mlsThumbprintLabelText: String,
          isProteusVerified: Bool,
-         e2eIdentityStatus: E2EIdentityCertificateStatus?) {
+         e2eIdentityStatus: E2EIdentityCertificateStatus?,
+         activationDate: Date?) {
         self.title = title
         self.proteusLabelText = proteusLabelText
         self.mlsThumbprintLabelText = mlsThumbprintLabelText
         self.isProteusVerified = isProteusVerified
         self.e2eIdentityStatus = e2eIdentityStatus
+        self.activationDate = activationDate
     }
 
     init(userClient: UserClientType,
@@ -55,5 +58,6 @@ struct ClientTableViewCellModel {
         let mlsThumbPrint = userClient.mlsThumbPrint?.fingerprintStringWithSpaces ?? ""
         mlsThumbprintLabelText = mlsThumbPrint.isNonEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbPrint) : ""
         e2eIdentityStatus = userClient.e2eIdentityCertificate?.status
+        activationDate = userClient.activationDate
     }
 }
