@@ -155,7 +155,13 @@ public final class LegacyNotificationService: UNNotificationServiceExtension, No
     }
 
     public func notificationSessionDidFailWithError(error: NotificationSessionError) {
-        WireLogger.notifications.error("session failed with error: \(error.localizedDescription)")
+        switch error {
+        case .alreadyFetchedEvent:
+            WireLogger.notifications.warn("session failed with error: \(error.localizedDescription)")
+        default:
+            WireLogger.notifications.error("session failed with error: \(error.localizedDescription)")
+        }
+
         finishWithoutShowingNotification()
     }
 
