@@ -17,8 +17,8 @@
 //
 
 import SwiftUI
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 protocol RemoveClientsViewControllerDelegate: AnyObject {
     func finishedDeleting(_ clientListViewController: RemoveClientsViewController)
