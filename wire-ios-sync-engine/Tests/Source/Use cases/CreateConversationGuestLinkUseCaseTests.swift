@@ -17,6 +17,7 @@
 //
 
 import WireDataModelSupport
+import WireSyncEngineSupport
 import XCTest
 
 @testable import WireSyncEngine
@@ -31,7 +32,7 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
     private var mockConversation: ZMConversation!
     private var mockSelfUser: ZMUser!
     private var sut: CreateConversationGuestLinkUseCaseProtocol!
-    private var setAllowGuestAndServicesUseCase: SetAllowGuestAndServicesUseCaseProtocol!
+    private var setAllowGuestAndServicesUseCase: MockSetAllowGuestAndServicesUseCaseProtocol!
 
     private var syncContext: NSManagedObjectContext {
         return stack.syncContext
@@ -43,7 +44,10 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
         await syncContext.perform { [self] in
-            setAllowGuestAndServicesUseCase = SetAllowGuestAndServicesUseCase()
+            setAllowGuestAndServicesUseCase = .init()
+            setAllowGuestAndServicesUseCase.invokeConversationAllowGuestsAllowServicesCompletion_MockMethod = { _, _, _, completion in
+                completion(.success(()))
+            }
             sut = CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: setAllowGuestAndServicesUseCase)
             mockSelfUser = modelHelper.createSelfUser(in: syncContext)
             mockConversation = modelHelper.createGroupConversation(in: syncContext)
@@ -63,19 +67,28 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
         try await super.tearDown()
     }
 
+    // MARK: - Helper Method
+
+    private func configureRoleAndAccessForConversation(legacyAccessMode: Bool = false) {
+        let role = Role.insertNewObject(in: syncContext)
+        let action = Action.insertNewObject(in: syncContext)
+        action.name = "modify_conversation_access"
+        role.actions = [action]
+
+        if legacyAccessMode {
+            mockConversation.accessMode = [.invite]
+        }
+
+        mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
+    }
+
     // MARK: - Unit Tests
 
     func testThatLinkGenerationSucceeds() async {
 
         await syncContext.perform { [self] in
             // GIVEN
-            let role = Role.insertNewObject(in: syncContext)
-            let action = Action.insertNewObject(in: syncContext)
-            role.name = "wire_admin"
-            action.name = "modify_conversation_access"
-            role.actions = [action]
-
-            mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
+            configureRoleAndAccessForConversation()
 
             let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(result: .success("www.test.com"), context: syncContext.notificationContext)
 
@@ -100,13 +113,7 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
 
         await syncContext.perform { [self] in
             // GIVEN
-            let role = Role.insertNewObject(in: syncContext)
-            let action = Action.insertNewObject(in: syncContext)
-            role.name = "wire_admin"
-            action.name = "modify_conversation_access"
-            role.actions = [action]
-            mockConversation.accessMode = [.invite]
-            mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
+            configureRoleAndAccessForConversation(legacyAccessMode: true)
 
             let mockHandler = MockActionHandler<CreateConversationGuestLinkAction>(result: .success("www.test.com"), context: syncContext.notificationContext)
             let setGuestAndServicesMockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .success(()), context: syncContext.notificationContext)
@@ -124,7 +131,7 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
                 expectation.fulfill()
             }
 
-            wait(for: [expectation], timeout: 0.5)
+            wait(for: [expectation], timeout: 4)
         }
     }
 

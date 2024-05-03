@@ -66,7 +66,7 @@ struct CreateConversationGuestLinkUseCase: CreateConversationGuestLinkUseCasePro
         }
     }
 
-    func createGuestLink(
+    private func createGuestLink(
         conversation: ZMConversation,
         password: String?,
         _ completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void
