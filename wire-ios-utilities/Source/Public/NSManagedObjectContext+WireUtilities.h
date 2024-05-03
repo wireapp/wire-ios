@@ -25,8 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSManagedObjectContext (ZMSGroupQueue)
 
-- (void)createDispatchGroups;
-
 /// Schedules a notification block to be submitted to the receiver's
 /// queue once all blocks associated with the receiver's group have completed.
 ///
@@ -48,21 +46,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// List of all groups associated with this context
 - (NSArray <ZMSDispatchGroup*>*_Nonnull)allGroups;
 
-/// Performs a block and wait for completion.
-/// @note: The block is not retained after its execution. This means that if the queue
-/// is not running (e.g. blocked by a deadlock), the block and all its captured variables
-/// will be retained, otherwise it will eventually be released.
-/// @attention: Be *very careful* not to create deadlocks.
-- (void)performGroupedBlockAndWait:(dispatch_block_t _Null_unspecified)block;
-
 /// Executes a fetch request and asserts in case of error
 /// For generic requests in Swift please refer to `func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T]`
 - (nonnull NSArray *)executeFetchRequestOrAssert:(nonnull NSFetchRequest *)request;
 
 - (NSArray<ZMSDispatchGroup*>*_Nonnull)enterAllGroups;
 - (void)leaveAllGroups:(NSArray <ZMSDispatchGroup*>*_Null_unspecified)groups;
-
-@property (nonatomic) int pendingSaveCounter;
 
 @end
 

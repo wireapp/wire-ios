@@ -21,46 +21,7 @@
 #import "NSManagedObjectContext+WireUtilities.h"
 #import <objc/runtime.h>
 
-static char const AssociatedPendingSaveCountKey;
-static char const AssociatedDispatchGroupContextKey;
-static NSTimeInterval const PerformWarningTimeout = 10;
-
 @implementation NSManagedObjectContext (ZMSGroupQueue)
-
-- (int)pendingSaveCounter;
-{
-    NSNumber *n = objc_getAssociatedObject(self,  &AssociatedPendingSaveCountKey);
-    return [n intValue];
-}
-- (void)setPendingSaveCounter:(int)newCounter;
-{
-    objc_setAssociatedObject(self, &AssociatedPendingSaveCountKey, @(newCounter), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (void)createDispatchGroups
-{
-    NSArray<ZMSDispatchGroup *> *groups = [NSMutableArray arrayWithObjects:
-                                           [ZMSDispatchGroup groupWithLabel:@"ZMSGroupQueue first"],
-                                           // The secondary group gets -performGroupedBlock: added to it, but is not affected by
-                                           // -notifyWhenGroupIsEmpty: -- that method needs to add extra blocks to the firstGroup, though.
-                                           [ZMSDispatchGroup groupWithLabel:@"ZMSGroupQueue second"],
-                                           nil];
-    
-    DispatchGroupContext *dispatchGroupContext = [[DispatchGroupContext alloc] initWithGroups:groups];
-    objc_setAssociatedObject(self, &AssociatedDispatchGroupContextKey, dispatchGroupContext, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (void)performGroupedBlockAndWait:(dispatch_block_t)block;
-{
-    NSArray *groups = [self.dispatchGroupContext enterAllExcept:nil];
-    ZMSTimePoint *tp = [[ZMSTimePoint alloc] initWithInterval:PerformWarningTimeout];
-    [self performBlockAndWait:^{
-        [tp resetTime];
-        block();
-        [self.dispatchGroupContext leaveGroups:groups];
-        [tp warnIfLongerThanInterval];
-    }];
-}
 
 - (void)notifyWhenGroupIsEmpty:(dispatch_block_t)block;
 {
