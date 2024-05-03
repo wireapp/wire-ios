@@ -34,7 +34,7 @@ final class SwitchBackendConfirmationViewModel {
 
     // MARK: - Life cycle
 
-    let didConfirm: (Bool) -> Void
+    private let didConfirm: (Bool) -> Void
 
     convenience init(
         environment: BackendEnvironment,
