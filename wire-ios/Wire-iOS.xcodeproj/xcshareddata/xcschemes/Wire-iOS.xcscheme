@@ -218,10 +218,6 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-DisableAppCenterUpdates 1"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
             argument = "-SkipFirstTimeUseChecks 1"
             isEnabled = "NO">
          </CommandLineArgument>

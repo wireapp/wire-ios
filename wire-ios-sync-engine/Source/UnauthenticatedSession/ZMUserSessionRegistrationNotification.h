@@ -22,7 +22,6 @@
 @class ZMAuthenticationStatus;
 @class UnauthenticatedSession;
 
-
 typedef NS_ENUM(NSUInteger, ZMUserSessionRegistrationNotificationType) {
     ZMRegistrationNotificationEmailVerificationDidSucceed,
     ZMRegistrationNotificationEmailVerificationDidFail,
