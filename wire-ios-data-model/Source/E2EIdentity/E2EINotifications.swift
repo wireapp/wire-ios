@@ -16,12 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+import Foundation
 
-@interface NSURL (LaunchOptions)
+extension Notification.Name {
 
-- (BOOL)isURLForPhoneVerification;
+    // This notification is used to check the E2EIdentity Certificate expiry status
+    public static let checkForE2EICertificateExpiryStatus = Self("CheckForE2EICertificateExpiryStatus")
 
-- (NSString *)codeForPhoneVerification;
-
-@end
+    // Used to notify of end-to-end identity certificate changes
+    public static let e2eiCertificateChanged = Self("E2EICertificateStatusChanged")
+}

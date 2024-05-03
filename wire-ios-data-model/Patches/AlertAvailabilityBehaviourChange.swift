@@ -37,6 +37,5 @@ struct AvailabilityBehaviourChange {
         default:
             selfUser.needsToNotifyAvailabilityBehaviourChange = .alert
         }
-
     }
 }
