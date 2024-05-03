@@ -1645,7 +1645,7 @@
 "error.user.email_is_taken" = "The email address you provided has already been registered. Please try again.";
 "error.user.registration_unknown_error" = "Something went wrong. Please try again.";
 "error.user.device_deleted_remotely" = "You have been logged out from another device.";
-"error.user.last_identity_cant_be_deleted" = "Either an email address is required.";
+"error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "This account is no longer authorized to log in.";
 "error.user.account_limit_reached" = "You can’t add more than 3 accounts.";
 

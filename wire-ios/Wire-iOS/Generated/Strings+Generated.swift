@@ -3101,8 +3101,8 @@ internal enum L10n {
         internal static let emailIsTaken = L10n.tr("Localizable", "error.user.email_is_taken", fallback: "The email address you provided has already been registered. Please try again.")
         /// Please verify your details and try again.
         internal static let invalidCredentials = L10n.tr("Localizable", "error.user.invalid_credentials", fallback: "Please verify your details and try again.")
-        /// Either an email address is required.
-        internal static let lastIdentityCantBeDeleted = L10n.tr("Localizable", "error.user.last_identity_cant_be_deleted", fallback: "Either an email address is required.")
+        /// An email address is required.
+        internal static let lastIdentityCantBeDeleted = L10n.tr("Localizable", "error.user.last_identity_cant_be_deleted", fallback: "An email address is required.")
         /// Please verify your details and try again.
         internal static let needsCredentials = L10n.tr("Localizable", "error.user.needs_credentials", fallback: "Please verify your details and try again.")
         /// There seems to be a problem with your network. Please try again later.
