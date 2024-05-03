@@ -16,16 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
-import XCTest
+import Foundation
 
-final class CountryTests: XCTestCase {
+extension Notification.Name {
 
-    func testThatCountryFromDeviceGivesCurrentCountry() {
-        // GIVEN
-        let countryFromDevice = Country.countryFromDevice!
+    // This notification is used to check the E2EIdentity Certificate expiry status
+    public static let checkForE2EICertificateExpiryStatus = Self("CheckForE2EICertificateExpiryStatus")
 
-        // WHEN & THEN
-        XCTAssertEqual(countryFromDevice.iso, "us")
-    }
+    // Used to notify of end-to-end identity certificate changes
+    public static let e2eiCertificateChanged = Self("E2EICertificateStatusChanged")
 }

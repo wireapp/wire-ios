@@ -313,6 +313,23 @@ public final class ZMUserSession: NSObject {
             gracePeriodEndDate: gracePeriodEndDate)
     }()
 
+    public lazy var removeUserClient: RemoveUserClientUseCaseProtocol? = {
+        let httpClient = HttpClientImpl(
+            transportSession: transportSession,
+            queue: syncContext
+        )
+        let apiProvider = APIProvider(httpClient: httpClient)
+        guard let apiVersion = BackendInfo.apiVersion else {
+            WireLogger.backend.warn("apiVersion not resolved")
+
+            return nil
+        }
+
+        return RemoveUserClientUseCase(
+            userClientAPI: apiProvider.userClientAPI(apiVersion: apiVersion),
+            syncContext: syncContext)
+    }()
+
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
@@ -851,6 +868,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
         Task {
             await self.cRLsChecker.checkExpiredCRLs()
         }
+
+        managedObjectContext.performGroupedBlock { [weak self] in
+            self?.checkE2EICertificateExpiryStatus()
+        }
     }
 
     func processEvents() {
@@ -955,7 +976,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     func checkE2EICertificateExpiryStatus() {
         guard e2eiFeature.isEnabled else { return }
 
-        NotificationCenter.default.post(name: E2EI.checkForE2EICertificateExpiryStatus, object: nil)
+        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
     }
 }
 
