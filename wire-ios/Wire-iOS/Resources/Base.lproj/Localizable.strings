@@ -1643,6 +1643,8 @@
 "error.user.account_pending_activation" = "The account you are trying access is pending activation. Please verify your details.";
 "error.user.network_error" = "There seems to be a problem with your network. Please try again later.";
 "error.user.email_is_taken" = "The email address you provided has already been registered. Please try again.";
+"error.user.verification_code_invalid" = "Please enter a valid verification code.";
+"error.user.verification_code_too_many" = "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.";
 "error.user.registration_unknown_error" = "Something went wrong. Please try again.";
 "error.user.device_deleted_remotely" = "You have been logged out from another device.";
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";

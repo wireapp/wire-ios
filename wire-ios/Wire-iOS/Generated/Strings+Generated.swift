@@ -3111,6 +3111,10 @@ internal enum L10n {
         internal static let registrationUnknownError = L10n.tr("Localizable", "error.user.registration_unknown_error", fallback: "Something went wrong. Please try again.")
         /// Something went wrong, please try again
         internal static let unkownError = L10n.tr("Localizable", "error.user.unkown_error", fallback: "Something went wrong, please try again")
+        /// Please enter a valid verification code.
+        internal static let verificationCodeInvalid = L10n.tr("Localizable", "error.user.verification_code_invalid", fallback: "Please enter a valid verification code.")
+        /// We already sent you a verification code. Tap Resend after 10 minutes to get a new one.
+        internal static let verificationCodeTooMany = L10n.tr("Localizable", "error.user.verification_code_too_many", fallback: "We already sent you a verification code. Tap Resend after 10 minutes to get a new one.")
       }
     }
     internal enum FailedToGetCertificate {
