@@ -225,14 +225,14 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             return try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
         }
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             _ = try? self.syncMOC.obtainPermanentIDs(for: [message])
         }
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // WHEN
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             message.textMessageData?.requestLinkPreviewImageDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

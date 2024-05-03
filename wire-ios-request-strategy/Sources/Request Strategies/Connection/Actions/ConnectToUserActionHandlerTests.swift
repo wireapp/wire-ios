@@ -165,7 +165,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     // MARK: - Helper
 
     func assertFailure(_ expectedError: ConnectToUserAction.Failure, on response: ZMTransportResponse) {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             // given
             let userID = UUID()
             let domain = self.owningDomain

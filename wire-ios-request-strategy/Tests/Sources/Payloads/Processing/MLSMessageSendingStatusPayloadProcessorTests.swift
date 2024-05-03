@@ -29,7 +29,7 @@ final class MLSMessageSendingStatusPayloadProcessorTests: MessagingTestBase {
 
         sut = MLSMessageSendingStatusPayloadProcessor()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             self.otherUser.domain = self.domain
         }
     }

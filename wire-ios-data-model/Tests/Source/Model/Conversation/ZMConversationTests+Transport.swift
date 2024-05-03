@@ -24,7 +24,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     // MARK: Access Mode
 
     func testThatItUpdateAccessStatus() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             let accessRoles: Set<ConversationAccessRoleV2> = [.teamMember, .guest, .service]
             let accessMode = ConversationAccessMode.allowGuests
@@ -41,7 +41,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     // MARK: Receipt Mode
 
     func testThatItUpdateReadReceiptStatusAndInsertsSystemMessage_ForNonEmptyConversations() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.appendNewConversationSystemMessage(at: Date(), users: Set())
@@ -56,7 +56,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     }
 
     func testThatItDoesntInsertsSystemMessage_WhenReadReceiptStatusDoesntChange() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.hasReadReceiptsEnabled = true
@@ -72,7 +72,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     // MARK: Archiving
 
     func testThatItUpdateArchiveStatus() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             let timestamp = Date()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
 
@@ -88,7 +88,7 @@ class ZMConversationTests_Transport: ZMConversationTestsBase {
     // MARK: Muting
 
     func testThatItUpdateMutedStatus() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             let timestamp = Date()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             let mutedMessages: MutedMessageTypes = .all

@@ -22,7 +22,7 @@ import XCTest
 class ZMConversationTests_UnreadMessages: ZMConversationTestsBase {
 
     func testThatItCalculatesLastUnreadMessages() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .group

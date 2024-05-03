@@ -76,7 +76,7 @@ class DatabaseTest: ZMTBaseTest {
         uiMOC.zm_fileAssetCache = fileAssetCache
         uiMOC.zm_userImageCache = userImageCache
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             self.syncMOC.zm_fileAssetCache = fileAssetCache
             self.uiMOC.zm_userImageCache = userImageCache
         }

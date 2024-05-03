@@ -40,7 +40,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
         sut = DeliveryReceiptRequestStrategy(managedObjectContext: syncMOC,
                                              messageSender: mockMessageSender)
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             let user = ZMUser.insertNewObject(in: self.syncMOC)
             user.remoteIdentifier = UUID.create()
 

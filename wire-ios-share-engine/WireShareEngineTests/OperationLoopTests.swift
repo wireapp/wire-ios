@@ -109,7 +109,7 @@ extension OperationLoopTests {
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMoc.performGroupedBlockAndWait {
+        syncMoc.performGroupedAndWait { _ in
             syncUser.name = "Jean Claude YouKnowWho"
             self.syncMoc.saveOrRollback()
         }

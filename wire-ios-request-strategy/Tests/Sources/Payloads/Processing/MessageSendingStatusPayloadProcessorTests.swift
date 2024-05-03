@@ -29,7 +29,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
 
         sut = MessageSendingStatusPayloadProcessor()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             self.otherUser.domain = self.domain
         }
     }
@@ -78,7 +78,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         var payload: Payload.MessageSendingStatus!
         var clientID: String!
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             clientID = UUID().transportString()
             let missing: Payload.ClientListByQualifiedUserID =
@@ -111,7 +111,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         var message: MockOTREntity!
         var payload: Payload.MessageSendingStatus!
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let clientID = UUID().transportString()
             let userClient = UserClient.fetchUserClient(withRemoteId: clientID,
@@ -137,7 +137,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         )
 
         // then
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             XCTAssertEqual(self.selfClient.missingClients!.count, 0)
         }
     }
@@ -147,7 +147,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         var message: MockOTREntity!
         var payload: Payload.MessageSendingStatus!
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let redundant: Payload.ClientListByQualifiedUserID =
             [self.domain:
@@ -168,7 +168,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         )
 
         // then
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             XCTAssertTrue(self.otherUser.needsToBeUpdatedFromBackend)
         }
     }
@@ -178,7 +178,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         var message: MockOTREntity!
         var payload: Payload.MessageSendingStatus!
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let redundant: Payload.ClientListByQualifiedUserID =
             [self.domain:
@@ -199,7 +199,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         )
 
         // then
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             XCTAssertTrue(message.conversation!.needsToBeUpdatedFromBackend)
         }
     }
@@ -209,7 +209,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         var message: MockOTREntity!
         var payload: Payload.MessageSendingStatus!
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
             let clientID = UUID().transportString()
             let failedToConfirm: Payload.ClientListByQualifiedUserID =
@@ -231,7 +231,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         )
 
         // then
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             XCTAssertEqual(message.isFailedToSendUsers, true)
         }
     }
@@ -280,7 +280,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
     // MARK: - Payload mapping
 
     func testThatItReturnsMissingClientListByUser() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             // given
             let expectedThirdUserClientList = [UUID().transportString(), UUID().transportString()]
             let thirdDomain = "third.domain.com"
@@ -333,7 +333,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
 
         // when
         var clientListByUser = Payload.ClientListByUser()
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             clientListByUser = self.sut.missingClientListByUser(
                 from: payload,
                 context: self.syncMOC
@@ -343,7 +343,7 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // then
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             guard let user = ZMUser.fetch(with: userID, domain: self.domain, in: self.syncMOC) else {
                 return XCTFail("user was not created")
             }

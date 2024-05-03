@@ -428,7 +428,7 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory.syncStatus.syncStateDelegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
 
-        syncManagedObjectContext.performGroupedBlockAndWait { [self] in
+        syncManagedObjectContext.performGroupedAndWait { [self] _ in
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
             self.configureTransportSession()
 

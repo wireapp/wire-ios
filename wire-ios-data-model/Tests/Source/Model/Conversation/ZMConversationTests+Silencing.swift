@@ -54,7 +54,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
     }
 
     func testThatSilencingUpdatesPropertiesWhenPerformedOnSEContext() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             // given
             let timestamp = Date()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)

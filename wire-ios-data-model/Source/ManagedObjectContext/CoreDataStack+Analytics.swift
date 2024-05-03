@@ -19,7 +19,7 @@
 extension CoreDataStack {
 
     public func linkAnalytics(_ analytics: (any AnalyticsType)?) {
-        syncContext.performGroupedBlockAndWait {
+        syncContext.performGroupedAndWait { _ in
             self.syncContext.analytics = analytics
         }
     }

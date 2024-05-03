@@ -328,7 +328,7 @@ extension EventDecoder {
 
         await block(filterInvalidEvents(from: events))
 
-        eventMOC.performGroupedBlockAndWait {
+        eventMOC.performGroupedAndWait { _ in
             storedEvents.forEach(self.eventMOC.delete(_:))
             self.eventMOC.saveOrRollback()
         }
@@ -399,7 +399,7 @@ extension EventDecoder {
 
     /// Discards the list of already received events
     public func discardListOfAlreadyReceivedPushEventIDs() {
-        self.eventMOC.performGroupedBlockAndWait {
+        self.eventMOC.performGroupedAndWait { _ in
             self.eventMOC.setPersistentStoreMetadata(array: [String](), key: previouslyReceivedEventIDsKey)
         }
     }

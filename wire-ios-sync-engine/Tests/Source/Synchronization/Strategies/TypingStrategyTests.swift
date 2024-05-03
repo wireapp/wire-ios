@@ -80,7 +80,7 @@ final class TypingStrategyTests: MessagingTest {
 
         self.sut = TypingStrategy(applicationStatus: mockApplicationStatus, syncContext: syncMOC, uiContext: uiMOC, typing: typing)
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             self.conversationA = ZMConversation.insertNewObject(in: self.syncMOC)
             self.conversationA.remoteIdentifier = UUID.create()
             self.userA = ZMUser.insertNewObject(in: self.syncMOC)

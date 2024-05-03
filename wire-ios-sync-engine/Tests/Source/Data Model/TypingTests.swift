@@ -94,7 +94,7 @@ class TypingTests: MessagingTest, ZMTypingChangeObserver {
 
     func testThatItSendsOutANotificationWhenAUserStartsTyping() {
         // When
-        syncMOC.performGroupedBlockAndWait { self.sut.setIsTyping(true, for: self.userA, in: self.conversationA) }
+        syncMOC.performGroupedAndWait { _ in self.sut.setIsTyping(true, for: self.userA, in: self.conversationA) }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
@@ -107,13 +107,13 @@ class TypingTests: MessagingTest, ZMTypingChangeObserver {
 
     func testThatItDoesNotSendOutANotificationWhenTheUserIsAlreadyTyping() {
         // Given
-        syncMOC.performGroupedBlockAndWait { self.sut.setIsTyping(true, for: self.userA, in: self.conversationA) }
+        syncMOC.performGroupedAndWait { _ in self.sut.setIsTyping(true, for: self.userA, in: self.conversationA) }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         resetNotifications()
 
         // When
-        syncMOC.performGroupedBlockAndWait { self.sut.setIsTyping(true, for: self.userA, in: self.conversationA) }
+        syncMOC.performGroupedAndWait { _ in self.sut.setIsTyping(true, for: self.userA, in: self.conversationA) }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
@@ -122,13 +122,13 @@ class TypingTests: MessagingTest, ZMTypingChangeObserver {
 
     func testThatItSendsOutANotificationWhenAUserStopsTyping() {
         // Given
-        syncMOC.performGroupedBlockAndWait { self.sut.setIsTyping(true, for: self.userA, in: self.conversationA) }
+        syncMOC.performGroupedAndWait { _ in self.sut.setIsTyping(true, for: self.userA, in: self.conversationA) }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         resetNotifications()
 
         // When
-        syncMOC.performGroupedBlockAndWait { self.sut.setIsTyping(false, for: self.userA, in: self.conversationA) }
+        syncMOC.performGroupedAndWait { _ in self.sut.setIsTyping(false, for: self.userA, in: self.conversationA) }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
@@ -144,7 +144,7 @@ class TypingTests: MessagingTest, ZMTypingChangeObserver {
         let timeout = 0.1
         sut.timeout = timeout
 
-        syncMOC.performGroupedBlockAndWait { self.sut.setIsTyping(true, for: self.userA, in: self.conversationA) }
+        syncMOC.performGroupedAndWait { _ in self.sut.setIsTyping(true, for: self.userA, in: self.conversationA) }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         resetNotifications()
@@ -165,14 +165,14 @@ class TypingTests: MessagingTest, ZMTypingChangeObserver {
         let timeout = 0.5
         sut.timeout = timeout
 
-        syncMOC.performGroupedBlockAndWait { self.sut.setIsTyping(true, for: self.userA, in: self.conversationA) }
+        syncMOC.performGroupedAndWait { _ in self.sut.setIsTyping(true, for: self.userA, in: self.conversationA) }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         resetNotifications()
         spinMainQueue(withTimeout: timeout * 0.5)
 
         // When user types again
-        syncMOC.performGroupedBlockAndWait { self.sut.setIsTyping(true, for: self.userA, in: self.conversationA) }
+        syncMOC.performGroupedAndWait { _ in self.sut.setIsTyping(true, for: self.userA, in: self.conversationA) }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         spinMainQueue(withTimeout: timeout * 0.5)
@@ -186,13 +186,13 @@ class TypingTests: MessagingTest, ZMTypingChangeObserver {
         let timeout = 0.1
         sut.timeout = timeout
 
-        syncMOC.performGroupedBlockAndWait { self.sut.setIsTyping(true, for: self.userA, in: self.conversationA) }
+        syncMOC.performGroupedAndWait { _ in self.sut.setIsTyping(true, for: self.userA, in: self.conversationA) }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         resetNotifications()
         spinMainQueue(withTimeout: timeout * 0.5)
 
-        syncMOC.performGroupedBlockAndWait { self.sut.setIsTyping(true, for: self.userB, in: self.conversationA) }
+        syncMOC.performGroupedAndWait { _ in self.sut.setIsTyping(true, for: self.userB, in: self.conversationA) }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         resetNotifications()

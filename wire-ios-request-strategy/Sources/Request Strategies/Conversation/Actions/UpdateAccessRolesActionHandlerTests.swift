@@ -29,7 +29,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [])!
             let conversationID = UUID()
             conversation.remoteIdentifier = conversationID

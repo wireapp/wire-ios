@@ -169,7 +169,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     // MARK: - Helpers
 
     func assertFailure(_ expectedError: UpdateConnectionAction.Failure, on response: ZMTransportResponse) {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             // given
             var action = UpdateConnectionAction(connection: self.oneToOneConnection, newStatus: .accepted)
 

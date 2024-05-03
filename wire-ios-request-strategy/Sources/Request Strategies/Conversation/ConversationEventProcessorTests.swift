@@ -553,15 +553,15 @@ final class ConversationEventProcessorTests: MessagingTestBase {
         var event: ZMUpdateEvent!
 
         // GIVEN: local & synced timeouts exist
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             self.groupConversation.setMessageDestructionTimeoutValue(.fiveMinutes, for: .selfUser)
         }
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             self.groupConversation.setMessageDestructionTimeoutValue(.oneHour, for: .groupConversation)
         }
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             XCTAssertNotNil(self.groupConversation.activeMessageDestructionTimeoutValue)
 
             // "turn off" synced timeout
@@ -597,7 +597,7 @@ final class ConversationEventProcessorTests: MessagingTestBase {
 
         var event: ZMUpdateEvent!
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             XCTAssertNil(self.groupConversation.activeMessageDestructionTimeoutValue)
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)

@@ -110,7 +110,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             guard let message = message else {
                 XCTFail("failed to create message")
                 return
@@ -138,7 +138,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             // WHEN
             let request = self.sut.nextRequest(for: .v0)
 
@@ -160,7 +160,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             // WHEN
             let request = self.sut.nextRequest(for: .v0)
 
@@ -182,7 +182,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             // WHEN
             let request = self.sut.nextRequest(for: .v0)
 
@@ -256,7 +256,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             // THEN
             XCTAssertTrue(message.hasDownloadedFile)
         }

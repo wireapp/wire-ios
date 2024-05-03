@@ -22,7 +22,7 @@ import XCTest
 class ZMLocalNotificationLocalizationTests: ZMLocalNotificationTests {
 
     func testThatItLocalizesCallkitCallerName() {
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             let result: (ZMUser, ZMConversation) -> String = {
                 $1.localizedCallerName(with: $0)
             }

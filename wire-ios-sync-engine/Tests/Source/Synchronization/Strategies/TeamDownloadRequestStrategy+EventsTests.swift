@@ -34,7 +34,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         )
         sut = TeamDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             let user = ZMUser.selfUser(in: self.syncMOC)
             user.remoteIdentifier = self.userIdentifier
             self.syncMOC.saveOrRollback()
@@ -199,7 +199,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         processEvent(fromPayload: payload)
 
         // then
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             XCTAssertNotNil(ZMUser.fetch(with: userId, in: self.syncMOC))
 
             // users won't be deleted as we might be in other (non-team) conversations with them
@@ -212,7 +212,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         let teamId = UUID.create()
         var userId: UUID!
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             // given
             let user = ZMUser.selfUser(in: self.syncMOC)
             userId = user.remoteIdentifier!
@@ -251,7 +251,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         let teamConversationId = UUID.create(), conversationId = UUID.create()
         let userId = UUID.create()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             // given
             let user = ZMUser.insertNewObject(in: self.syncMOC)
             user.remoteIdentifier = userId
@@ -281,7 +281,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         processEvent(fromPayload: payload)
 
         // then
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             guard let user = ZMUser.fetch(with: userId, in: self.syncMOC) else { return XCTFail("No User") }
             guard Team.fetch(with: teamId, in: self.syncMOC) != nil else { return XCTFail("No User") }
             XCTAssertNil(user.membership)
@@ -297,7 +297,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         let teamConversationId = UUID.create(), teamAnotherConversationId = UUID.create(), conversationId = UUID.create()
         let userId = UUID.create()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             // given
             let user = ZMUser.insertNewObject(in: self.syncMOC)
             user.remoteIdentifier = userId
@@ -337,7 +337,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         processEvent(fromPayload: payload)
 
         // then
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             guard let user = ZMUser.fetch(with: userId, in: self.syncMOC) else { return XCTFail("No User") }
             guard Team.fetch(with: teamId, in: self.syncMOC) != nil else { return XCTFail("No User") }
             XCTAssertNil(user.membership)
@@ -410,7 +410,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         let conversationId = UUID.create()
         let teamId = UUID.create()
 
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             _ = Team.fetchOrCreate(with: teamId, create: true, in: self.syncMOC, created: nil)
         }
 
@@ -425,7 +425,7 @@ final class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
         processEvent(fromPayload: payload)
 
         // then
-        syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedAndWait { _ in
             XCTAssertNil(ZMConversation.fetch(with: conversationId, in: self.syncMOC))
         }
     }

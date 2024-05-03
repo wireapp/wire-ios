@@ -37,7 +37,7 @@ class EventDecoderDecryptionTests: MessagingTestBase {
             eventDecoder: sut
         )
 
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedAndWait { _ in
             // THEN
             XCTAssertEqual(decryptedEvent.senderUUID, self.otherUser.remoteIdentifier!)
             XCTAssertEqual(decryptedEvent.recipientClientID, self.selfClient.remoteIdentifier!)
