@@ -218,16 +218,12 @@ public protocol UserSession: AnyObject {
 
     func fetchAllClients()
 
-<<<<<<< HEAD
-    // MARK: - Use Cases
-=======
     func createTeamOneOnOne(
         with user: UserType,
         completion: @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
     )
 
     // MARK: Use Cases
->>>>>>> 4a6000814a (feat: update 1:1 creation flow and handle errors WPB-6938 (#1321))
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
 

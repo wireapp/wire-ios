@@ -77,10 +77,7 @@ extension MockUserType {
 
     class func createUser(
         name: String,
-<<<<<<< HEAD
-=======
         domain: String? = nil,
->>>>>>> 4a6000814a (feat: update 1:1 creation flow and handle errors WPB-6938 (#1321))
         inTeam teamID: UUID? = nil
     ) -> MockUserType {
         let user = MockUserType()

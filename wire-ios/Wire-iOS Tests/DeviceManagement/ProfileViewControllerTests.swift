@@ -17,12 +17,9 @@
 //
 
 import SnapshotTesting
-@testable import Wire
-<<<<<<< HEAD
 import XCTest
-=======
+@testable import Wire
 @testable import WireSyncEngineSupport
->>>>>>> 4a6000814a (feat: update 1:1 creation flow and handle errors WPB-6938 (#1321))
 
 final class ProfileViewControllerTests: BaseSnapshotTestCase {
 
@@ -40,15 +37,12 @@ final class ProfileViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-<<<<<<< HEAD
+
         accentColor = .blue
-=======
-        accentColor = .strongBlue
 
         mockCheckOneOneOneIsReady = MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
         mockCheckOneOneOneIsReady.invokeUserID_MockValue = true
 
->>>>>>> 4a6000814a (feat: update 1:1 creation flow and handle errors WPB-6938 (#1321))
         userSession = UserSessionMock()
         userSession.mockCheckOneOnOneConversationIsReady = mockCheckOneOneOneIsReady
 

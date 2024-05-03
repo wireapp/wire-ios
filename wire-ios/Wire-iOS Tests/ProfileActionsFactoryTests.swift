@@ -16,12 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
-<<<<<<< HEAD
 import XCTest
-=======
+@testable import Wire
 @testable import WireSyncEngineSupport
->>>>>>> 4a6000814a (feat: update 1:1 creation flow and handle errors WPB-6938 (#1321))
 
 final class ProfileActionsFactoryTests: XCTestCase {
 
