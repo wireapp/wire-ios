@@ -131,7 +131,7 @@ final class CreateConversationGuestLinkUseCaseTests: XCTestCase {
                 expectation.fulfill()
             }
 
-            wait(for: [expectation], timeout: 4)
+            wait(for: [expectation], timeout: 0.5)
         }
     }
 
