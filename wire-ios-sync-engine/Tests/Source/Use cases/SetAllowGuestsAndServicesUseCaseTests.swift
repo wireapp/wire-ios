@@ -23,6 +23,8 @@ import XCTest
 
 final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
 
+    // MARK: - Properties
+
     private let coreDataStackHelper = CoreDataStackHelper()
     private var stack: CoreDataStack!
     private let modelHelper = ModelHelper()
@@ -33,6 +35,8 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
     private var syncContext: NSManagedObjectContext {
         return stack.syncContext
     }
+
+    // MARK: - setUp
 
     override func setUp() async throws {
         try await super.setUp()
@@ -45,6 +49,8 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
         }
     }
 
+    // MARK: - tearDown
+
     override func tearDown() async throws {
         stack = nil
         sut = nil
@@ -52,16 +58,24 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
         try await super.tearDown()
     }
 
+    // MARK: - Helper method
+
+    private func setUpRoleAndAction() {
+        let role = Role.insertNewObject(in: syncContext)
+        let action = Action.insertNewObject(in: syncContext)
+        action.name = "modify_conversation_access"
+        role.actions = [action]
+
+        mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
+    }
+
+    // MARK: Unit Tests
+
     func testGuestEnablementSucceeds() async {
 
         await syncContext.perform { [self] in
             // GIVEN
-            let role = Role.insertNewObject(in: syncContext)
-            let action = Action.insertNewObject(in: syncContext)
-            action.name = "modify_conversation_access"
-            role.actions = [action]
-
-            mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
+            setUpRoleAndAction()
 
             let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .success(()), context: syncContext.notificationContext)
 
@@ -110,12 +124,7 @@ final class SetAllowGuestsAndServicesUseCaseTests: XCTestCase {
 
         await syncContext.perform { [self] in
             // GIVEN
-            let role = Role.insertNewObject(in: syncContext)
-            let action = Action.insertNewObject(in: syncContext)
-            action.name = "modify_conversation_access"
-            role.actions = [action]
-
-            mockConversation.addParticipantAndUpdateConversationState(user: mockSelfUser, role: role)
+            setUpRoleAndAction()
 
             let mockHandler = MockActionHandler<SetAllowGuestsAndServicesAction>(result: .success(()), context: syncContext.notificationContext)
 
