@@ -30,7 +30,11 @@ public enum CreateConversationGuestLinkUseCaseError: Error {
 // sourcery: AutoMockable
 public protocol CreateConversationGuestLinkUseCaseProtocol {
 
-    func invoke(conversation: ZMConversation, password: String?, completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void)
+    func invoke(
+        conversation: ZMConversation,
+        password: String?,
+        completion: @escaping (Result<String?, CreateConversationGuestLinkUseCaseError>) -> Void
+    )
 
 }
 
