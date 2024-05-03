@@ -31,13 +31,9 @@ final class CallParticipantView: BaseCallParticipantView {
         }
     }
 
-    override var videoView: AVSVideoViewProtocol? {
-        previewView
-    }
-
     // MARK: - Private Properties
 
-    private var previewView: AVSVideoView?
+    private weak var videoView: AVSVideoView?
     private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
     private let pausedLabel = UILabel(
         key: "call.video.paused",
@@ -94,13 +90,12 @@ final class CallParticipantView: BaseCallParticipantView {
             blurView.isHidden = false
             pausedLabel.isHidden = false
 
-            executeAnimations(animated: animated, animationBlock: { [weak self] in
+            executeAnimations(animated: animated) { [weak self] in
                 self?.blurView.effect = UIBlurEffect(style: .dark)
                 self?.pausedLabel.alpha = 1
-            }, completionBlock: { [weak self] _ in
-                self?.previewView?.removeFromSuperview()
-                self?.previewView = nil
-            })
+            } completionBlock: { [weak self] _ in
+                self?.videoContainerView?.removeFromSuperview()
+            }
         } else {
             createPreviewView()
 
@@ -118,16 +113,23 @@ final class CallParticipantView: BaseCallParticipantView {
     }
 
     private func createPreviewView() {
-        let preview = AVSVideoView()
-        preview.backgroundColor = .clear
-        preview.userid = stream.streamId.avsIdentifier.serialized
-        preview.clientid = stream.streamId.clientId
-        preview.shouldFill = shouldFill
-        previewView = preview
+        let videoView = AVSVideoView()
+        videoView.backgroundColor = .clear
+        videoView.userid = stream.streamId.avsIdentifier.serialized
+        videoView.clientid = stream.streamId.clientId
+        videoView.shouldFill = shouldFill
+        self.videoView = videoView
+
+        let videoContainerView = AVSVideoContainerView()
+        videoContainerView.backgroundColor = .clear
+        videoContainerView.translatesAutoresizingMaskIntoConstraints = false
+        self.videoContainerView = videoContainerView
+
+        videoContainerView.addVideoView(videoView)
 
         // Adding the preview into a container allows smoother scaling
         let scalableView = ScalableView(isScalingEnabled: shouldEnableScaling)
-        scalableView.addSubview(preview)
+        scalableView.addSubview(videoContainerView)
         self.scalableView?.removeFromSuperview()
         self.scalableView = scalableView
 
@@ -137,14 +139,14 @@ final class CallParticipantView: BaseCallParticipantView {
             insertSubview(scalableView, belowSubview: userDetailsView)
         }
 
-        [scalableView, preview].forEach {
+        [scalableView, videoContainerView].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             $0.fitIn(view: self)
         }
     }
 
     private func createSnapshotView() {
-        guard let snapshotView = previewView?.snapshotView(afterScreenUpdates: true) else { return }
+        guard let snapshotView = videoView?.snapshotView(afterScreenUpdates: true) else { return }
         insertSubview(snapshotView, belowSubview: blurView)
         snapshotView.translatesAutoresizingMaskIntoConstraints = false
         snapshotView.fitIn(view: blurView)

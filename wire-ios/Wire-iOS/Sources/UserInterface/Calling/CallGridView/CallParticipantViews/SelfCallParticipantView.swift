@@ -22,17 +22,13 @@ import WireSyncEngine
 
 final class SelfCallParticipantView: BaseCallParticipantView {
 
-    var previewView = AVSVideoPreview()
+    private weak var previewView: AVSVideoPreview!
 
     override var stream: Stream {
         didSet {
             guard stream.callParticipantState.videoState != self.videoState else { return }
             updateCaptureState(with: stream.callParticipantState.videoState)
         }
-    }
-
-    override var videoView: AVSVideoViewProtocol? {
-        previewView
     }
 
     private var videoState: VideoState?
@@ -43,11 +39,14 @@ final class SelfCallParticipantView: BaseCallParticipantView {
 
     override func setupViews() {
         super.setupViews()
-        previewView.backgroundColor = .clear
-        previewView.translatesAutoresizingMaskIntoConstraints = false
+
+        let videoContainerView = AVSVideoContainerView()
+        videoContainerView.backgroundColor = .clear
+        videoContainerView.translatesAutoresizingMaskIntoConstraints = false
+        self.videoContainerView = videoContainerView
 
         let scalableView = ScalableView(isScalingEnabled: shouldEnableScaling)
-        scalableView.addSubview(previewView)
+        scalableView.addSubview(videoContainerView)
         insertSubview(scalableView, belowSubview: userDetailsView)
         self.scalableView = scalableView
     }
@@ -55,7 +54,10 @@ final class SelfCallParticipantView: BaseCallParticipantView {
     override func createConstraints() {
         super.createConstraints()
 
-        [previewView, scalableView].forEach {
+        [
+            videoContainerView,
+            scalableView
+        ].forEach {
             $0?.translatesAutoresizingMaskIntoConstraints = false
             $0?.fitIn(view: self)
         }
@@ -92,6 +94,14 @@ final class SelfCallParticipantView: BaseCallParticipantView {
     }
 
     func startCapture() {
+        if previewView == nil {
+            let previewView = AVSVideoPreview()
+            previewView.backgroundColor = .clear
+            self.previewView = previewView
+
+            videoContainerView?.addVideoView(previewView)
+        }
+
         previewView.startVideoCapture()
     }
 

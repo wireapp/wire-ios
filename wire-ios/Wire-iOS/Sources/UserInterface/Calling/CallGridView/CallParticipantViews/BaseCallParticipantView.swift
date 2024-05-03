@@ -65,7 +65,8 @@ class BaseCallParticipantView: OrientableView {
     var scalableView: ScalableView?
     var avatarView = UserImageView(size: .normal)
     var userSession = ZMUserSession.shared()
-    private(set) var videoView: AVSVideoViewProtocol?
+
+    weak var videoContainerView: AVSVideoContainerView?
     private var borderLayer = CALayer()
 
     // MARK: - Private Properties
@@ -224,7 +225,7 @@ class BaseCallParticipantView: OrientableView {
     private func updateFillMode() {
         // Reset scale if the view was zoomed in
         scalableView?.resetScale()
-        videoView?.shouldFill = shouldFill
+        videoContainerView?.shouldFill = shouldFill
     }
 
     // MARK: - Border Style
