@@ -119,6 +119,28 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         }
     }
 
+    func testItSlowSyncsAfterRegisteringMLSClient() async throws {
+        // GIVEN
+        let userClient = await syncMOC.perform {
+            let userClient = self.createSelfClient()
+            userClient.mlsPublicKeys = .init(ed25519: "ed25519")
+            userClient.needsToUploadMLSPublicKeys = false
+            return userClient
+        }
+
+        // WHEN
+        await syncMOC.perform {
+            self.sut.didRegisterSelfUserClient(userClient)
+        }
+
+        // THEN
+        let syncStatus = try await syncMOC.perform {
+            try XCTUnwrap(self.sut.syncStatus as? SyncStatus)
+        }
+
+        XCTAssertTrue(syncStatus.isSlowSyncing)
+    }
+
     func testThatPerformChangesAreDoneSynchronouslyOnTheMainQueue() {
         // GIVEN
         var executed: Bool = false
