@@ -313,6 +313,23 @@ public final class ZMUserSession: NSObject {
             gracePeriodEndDate: gracePeriodEndDate)
     }()
 
+    public lazy var removeUserClient: RemoveUserClientUseCaseProtocol? = {
+        let httpClient = HttpClientImpl(
+            transportSession: transportSession,
+            queue: syncContext
+        )
+        let apiProvider = APIProvider(httpClient: httpClient)
+        guard let apiVersion = BackendInfo.apiVersion else {
+            WireLogger.backend.warn("apiVersion not resolved")
+
+            return nil
+        }
+
+        return RemoveUserClientUseCase(
+            userClientAPI: apiProvider.userClientAPI(apiVersion: apiVersion),
+            syncContext: syncContext)
+    }()
+
     public lazy var changeUsername: ChangeUsernameUseCaseProtocol = {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
@@ -851,6 +868,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
         Task {
             await self.cRLsChecker.checkExpiredCRLs()
         }
+
+        managedObjectContext.performGroupedBlock { [weak self] in
+            self?.checkE2EICertificateExpiryStatus()
+        }
     }
 
     func processEvents() {
@@ -919,6 +940,15 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
             self?.delegate?.clientRegistrationDidSucceed(accountId: accountId)
         }
+
+        if userClient.hasRegisteredMLSClient {
+            // Before the client was registered as an MLS client,
+            // They wouldn't have been able to migrate any conversations from Proteus to MLS.
+            // So we perform a slow sync to sync the conversations. This will ensure that
+            // the message protocol of each conversation is up-to-date.
+            // The client will then join any MLS groups they haven't joined yet.
+            syncStatus.forceSlowSync()
+        }
     }
 
     public func didFailToRegisterSelfUserClient(error: Error) {
@@ -955,7 +985,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
     func checkE2EICertificateExpiryStatus() {
         guard e2eiFeature.isEnabled else { return }
 
-        NotificationCenter.default.post(name: E2EI.checkForE2EICertificateExpiryStatus, object: nil)
+        NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
     }
 }
 

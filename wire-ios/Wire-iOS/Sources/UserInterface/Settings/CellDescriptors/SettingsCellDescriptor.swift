@@ -234,8 +234,6 @@ extension SettingsPropertyName {
             return Account.Handle.title
         case .email:
             return Account.Email.title
-        case .phone:
-            return Account.Phone.title
         case .team:
             return Account.Team.title
         case .domain:
