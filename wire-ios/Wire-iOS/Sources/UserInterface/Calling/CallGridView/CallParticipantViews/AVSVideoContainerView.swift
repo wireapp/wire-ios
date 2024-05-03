@@ -21,16 +21,7 @@ import struct WireSystem.WireLogger
 
 final class AVSVideoContainerView: UIView {
 
-    var shouldFill: Bool {
-        get {
-            videoView?.shouldFill == true
-        }
-        set {
-            videoView?.shouldFill = newValue
-        }
-    }
-
-    private weak var videoView: (any AVSVideoViewProtocol)?
+    private weak var videoView: UIView?
 
     init() {
         super.init(frame: .zero)
@@ -41,7 +32,7 @@ final class AVSVideoContainerView: UIView {
         fatalError("not implemented")
     }
 
-    func addVideoView(_ view: any AVSVideoViewProtocol) {
+    func setupVideoView(_ view: UIView) {
         guard videoView == nil else {
             WireLogger.ui.error(
                 "video view cannot be added, because it contains already a view!",

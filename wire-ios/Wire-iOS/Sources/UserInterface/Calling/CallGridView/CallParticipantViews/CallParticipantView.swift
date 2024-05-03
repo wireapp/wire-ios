@@ -33,6 +33,7 @@ final class CallParticipantView: BaseCallParticipantView {
 
     // MARK: - Private Properties
 
+    private weak var videoContainerView: AVSVideoContainerView?
     private weak var videoView: AVSVideoView?
     private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
     private let pausedLabel = UILabel(
@@ -97,7 +98,11 @@ final class CallParticipantView: BaseCallParticipantView {
                 self?.videoContainerView?.removeFromSuperview()
             }
         } else {
-            createPreviewView()
+            createVideoContainer()
+
+            if shouldFill {
+                updateVideoShouldFill(true)
+            }
 
             executeAnimations(animated: animated, animationBlock: { [weak self] in
                 self?.blurView.effect = nil
@@ -112,20 +117,12 @@ final class CallParticipantView: BaseCallParticipantView {
         }
     }
 
-    private func createPreviewView() {
-        let videoView = AVSVideoView()
-        videoView.backgroundColor = .clear
-        videoView.userid = stream.streamId.avsIdentifier.serialized
-        videoView.clientid = stream.streamId.clientId
-        videoView.shouldFill = shouldFill
-        self.videoView = videoView
-
+    private func createVideoContainer() {
         let videoContainerView = AVSVideoContainerView()
         videoContainerView.backgroundColor = .clear
         videoContainerView.translatesAutoresizingMaskIntoConstraints = false
+        self.videoContainerView?.removeFromSuperview()
         self.videoContainerView = videoContainerView
-
-        videoContainerView.addVideoView(videoView)
 
         // Adding the preview into a container allows smoother scaling
         let scalableView = ScalableView(isScalingEnabled: shouldEnableScaling)
@@ -162,5 +159,22 @@ final class CallParticipantView: BaseCallParticipantView {
             animationBlock()
             completionBlock(true)
         }
+    }
+
+    // MARK: Override Base
+
+    override func updateVideoShouldFill(_ shouldFill: Bool) {
+        if videoView == nil {
+            let videoView = AVSVideoView()
+            videoView.backgroundColor = .clear
+            videoView.userid = stream.streamId.avsIdentifier.serialized
+            videoView.clientid = stream.streamId.clientId
+            videoView.shouldFill = shouldFill
+            self.videoView = videoView
+
+            videoContainerView?.setupVideoView(videoView)
+        }
+
+        videoView?.shouldFill = shouldFill
     }
 }

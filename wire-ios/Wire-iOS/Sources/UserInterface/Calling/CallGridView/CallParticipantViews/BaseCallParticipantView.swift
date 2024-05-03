@@ -66,7 +66,6 @@ class BaseCallParticipantView: OrientableView {
     var avatarView = UserImageView(size: .normal)
     var userSession = ZMUserSession.shared()
 
-    weak var videoContainerView: AVSVideoContainerView?
     private var borderLayer = CALayer()
 
     // MARK: - Private Properties
@@ -225,7 +224,11 @@ class BaseCallParticipantView: OrientableView {
     private func updateFillMode() {
         // Reset scale if the view was zoomed in
         scalableView?.resetScale()
-        videoContainerView?.shouldFill = shouldFill
+        updateVideoShouldFill(shouldFill)
+    }
+
+    func updateVideoShouldFill(_ shouldFill: Bool) {
+        assertionFailure("not implemented! override in subclasses")
     }
 
     // MARK: - Border Style
