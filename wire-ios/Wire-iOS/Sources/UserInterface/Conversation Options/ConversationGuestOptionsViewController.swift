@@ -51,7 +51,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
             viewModel: .init(
                 configuration: configuration,
                 conversation: conversation,
-                userSession: userSession
+                createSecureGuestLinkUseCase: userSession.makeConversationSecureGuestLinkUseCase()
             )
         )
     }
@@ -191,7 +191,7 @@ final class ConversationGuestOptionsViewController: UIViewController,
     }
 
     func viewModel(_ viewModel: ConversationGuestOptionsViewModel, presentCreateSecureGuestLink viewController: UIViewController, animated: Bool) {
-        self.present(viewController, animated: animated, completion: nil)
+        present(viewController, animated: animated)
     }
 
     // MARK: – UITableViewDelegate & UITableViewDataSource

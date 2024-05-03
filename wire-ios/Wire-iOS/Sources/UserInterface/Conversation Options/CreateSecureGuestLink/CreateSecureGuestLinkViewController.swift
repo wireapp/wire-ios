@@ -30,18 +30,18 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     typealias SecuredGuestLinkWithPasswordLocale = L10n.Localizable.SecuredGuestLinkWithPassword
     typealias SecureGuestLinkAccessibilityLocale = L10n.Accessibility.CreateSecureGuestLink
 
-    let userSession: UserSession
     let conversation: ZMConversation
+    let conversationSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol
 
     weak var delegate: ValidatedTextFieldDelegate?
 
     private lazy var viewModel: CreateSecureConversationGuestLinkViewModel = {
-        CreateSecureConversationGuestLinkViewModel(delegate: self, conversationGuestLinkUseCase: userSession.useCaseFactory.createConversationGuestLinkUseCase())
+        CreateSecureConversationGuestLinkViewModel(delegate: self, conversationGuestLinkUseCase: conversationSecureGuestLinkUseCase)
     }()
 
     // MARK: - Initializer
-    init(userSession: UserSession, conversation: ZMConversation) {
-        self.userSession = userSession
+    init(conversationSecureGuestLinkUseCase: CreateConversationGuestLinkUseCaseProtocol, conversation: ZMConversation) {
+        self.conversationSecureGuestLinkUseCase = conversationSecureGuestLinkUseCase
         self.conversation = conversation
         super.init(nibName: nil, bundle: nil)
     }

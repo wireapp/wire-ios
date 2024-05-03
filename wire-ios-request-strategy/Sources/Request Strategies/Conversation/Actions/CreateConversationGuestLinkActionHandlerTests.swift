@@ -48,8 +48,49 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
 
     override func tearDown() async throws {
         stack = nil
+        conversationID = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
+    }
+
+    func testCreateConversationGuestLinkRequestGeneration_APIV0() throws {
+        let conversationID = try XCTUnwrap(conversationID)
+        try test_itGeneratesARequest(
+            for: action,
+            expectedPath: "/conversations/\(conversationID.transportString())/code",
+            expectedMethod: .post,
+            apiVersion: .v0
+        )
+    }
+
+    func testCreateConversationGuestLinkRequestGeneration_APIV1() throws {
+        let conversationID = try XCTUnwrap(conversationID)
+        try test_itGeneratesARequest(
+            for: action,
+            expectedPath: "/v1/conversations/\(conversationID.transportString())/code",
+            expectedMethod: .post,
+            apiVersion: .v1
+        )
+    }
+
+    func testCreateConversationGuestLinkRequestGeneration_APIV2() throws {
+        let conversationID = try XCTUnwrap(conversationID)
+        try test_itGeneratesARequest(
+            for: action,
+            expectedPath: "/v2/conversations/\(conversationID.transportString())/code",
+            expectedMethod: .post,
+            apiVersion: .v2
+        )
+    }
+
+    func testCreateConversationGuestLinkRequestGeneration_APIV3() throws {
+        let conversationID = try XCTUnwrap(conversationID)
+        try test_itGeneratesARequest(
+            for: action,
+            expectedPath: "/v3/conversations/\(conversationID.transportString())/code",
+            expectedMethod: .post,
+            apiVersion: .v3
+        )
     }
 
     func testCreateConversationGuestLinkRequestGeneration_APIV4() throws {
@@ -101,25 +142,15 @@ final class CreateConversationGuestLinkActionHandlerTests: ActionHandlerTestBase
         )
 
         // THEN
-        XCTAssertNotNil(result, "Result should not be nil")
-        if let resultData = result {
-            XCTAssertEqual(resultData, expectedUri, "The URI should match the expected URI")
-        } else {
-            XCTFail("Result does not contain URI or is of unexpected type")
-        }
+        XCTAssertEqual(result, expectedUri)
     }
 
     func testCreateConversationGuestLinkFailure() throws {
         // GIVEN
         let statusCode = 400
 
-        let payload: [AnyHashable: Any] = [
-            "code": "SOME-UNIQUE-CODE",
-            "has_password": false,
-            "key": "sampleKey123"
-        ]
-
         // WHEN && THEN
-        test_itHandlesFailure(.failure(status: statusCode, error: .unknown))
+        test_itHandlesFailure(.failure(status: statusCode, error: .invalidRequest))
     }
+
 }

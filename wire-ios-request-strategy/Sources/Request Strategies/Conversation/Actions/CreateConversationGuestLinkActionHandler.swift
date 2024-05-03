@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConversationGuestLinkAction> {
+final class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConversationGuestLinkAction> {
 
     // MARK: - Request generation
 
@@ -70,7 +70,9 @@ class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConversation
 
         switch (response.httpStatus, response.payloadLabel()) {
         case (201, _):
-            // This is an update event and therefore this is why we leave it as is
+            // Handling an update event: Update events can have dynamic payloads,
+            // which differ from static events where we encapsulate data in structs like ConversationCodeInfo.
+            // Here, we directly parse only necessary fields (e.g., 'uri') to maintain flexibility.
             guard let payload = response.payload?.asDictionary(),
                   let data = payload["data"] as? [String: Any],
                   let uri = data["uri"] as? String else {
@@ -92,25 +94,19 @@ class CreateConversationGuestLinkActionHandler: ActionHandler<CreateConversation
 
             action.succeed(with: payload.uri)
 
-            guard let payload = response.payload?.asDictionary(),
-                  let uri = payload["uri"] as? String else {
+        case (400, nil):
+            action.fail(with: .invalidRequest)
 
-                action.fail(with: .failedToDecodePayload)
-                return
-            }
-
-            action.succeed(with: uri)
-
-        case (403, "invalid-op"?):
+        case (403, "invalid-op"):
             action.fail(with: .invalidOperation)
 
-        case (404, "no-conversation-code"?):
+        case (404, "no-conversation-code"):
             action.fail(with: .noCode)
 
-        case (404, "no-conversation"?):
+        case (404, "no-conversation"):
             action.fail(with: .noConversation)
 
-        case (409, "guest-links-disabled"?):
+        case (409, "guest-links-disabled"):
             action.fail(with: .guestLinksDisabled)
 
         default:

@@ -20,20 +20,8 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "ConversationLink")
 
-public enum SetAllowGuestsError: Error {
-    case unknown
-}
-
-public enum SetAllowServicesError: Error {
-    case unknown
-    case invalidOperation
-}
-
-public enum ContextError: Error {
-    case contextUnavailable
-}
-
 fileprivate extension ZMConversation {
+
     struct TransportKey {
         static let data = "data"
         static let uri = "uri"

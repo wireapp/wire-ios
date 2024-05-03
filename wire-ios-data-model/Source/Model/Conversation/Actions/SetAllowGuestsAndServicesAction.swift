@@ -24,6 +24,7 @@ public struct SetAllowGuestsAndServicesAction: EntityAction {
         case domainUnavailable
         case failToDecodeResponsePayload
         case failedToRetrieveConversation
+        case unknown
     }
 
     public let allowGuests: Bool

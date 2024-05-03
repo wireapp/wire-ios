@@ -86,7 +86,10 @@ final class CreateSecureConversationGuestLinkViewModel {
             return
         }
 
-        let password = passwordField.text ?? ""
+        guard let password = passwordField.text else {
+            return
+        }
+
         UIPasteboard.general.string = password
 
         conversationGuestLinkUseCase.invoke(conversation: conversation, password: password) { [weak self] result in

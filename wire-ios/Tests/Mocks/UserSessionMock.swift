@@ -81,22 +81,19 @@ final class UserSessionMock: UserSession {
     }
 
     convenience init(
-        mockUser: MockZMEditableUser,
-        mockUseCaseFactory: MockUseCaseFactoryProtocol = MockUseCaseFactoryProtocol()
+        mockUser: MockZMEditableUser
     ) {
-        self.init(selfUser: mockUser, mockUseCaseFactory: mockUseCaseFactory)
+        self.init(selfUser: mockUser)
     }
 
     convenience init(
-        mockUser: MockUserType = .createDefaultSelfUser(),
-        mockUseCaseFactory: MockUseCaseFactoryProtocol = MockUseCaseFactoryProtocol()
+        mockUser: MockUserType = .createDefaultSelfUser()
     ) {
-        self.init(selfUser: mockUser, mockUseCaseFactory: mockUseCaseFactory)
+        self.init(selfUser: mockUser)
     }
 
     init(
-        selfUser: SelfUserType,
-        mockUseCaseFactory: MockUseCaseFactoryProtocol = MockUseCaseFactoryProtocol()
+        selfUser: SelfUserType
     ) {
         self.selfUser = selfUser
         self.useCaseFactory = mockUseCaseFactory
@@ -301,6 +298,14 @@ final class UserSessionMock: UserSession {
 
     var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol {
         MockUpdateMLSGroupVerificationStatusUseCaseProtocol()
+    }
+
+    func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
+        MockCreateConversationGuestLinkUseCaseProtocol()
+    }
+
+    func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
+        MockSetAllowGuestAndServicesUseCaseProtocol()
     }
 
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
