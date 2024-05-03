@@ -618,6 +618,42 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(processConversationEventsCalls[0], [updateEvent])
     }
 
+    func test_ClaimKeyPackagesWithCorrectCipherSuite_BeforeAddingMembersToConversation_Successfully() async throws {
+        // Given
+        let id = UUID.create()
+        let domain = "example.com"
+        let mlsGroupID = MLSGroupID(Data([1, 2, 3]))
+        let mlsUser = [MLSUser(id: id, domain: domain)]
+
+        // Mock no pending proposals.
+        mockMLSActionExecutor.mockCommitPendingProposals = { _ in
+            throw CommitError.noPendingProposals
+        }
+
+        // Mock claiming a key package.
+        var keyPackage: KeyPackage!
+        mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod = { userID, _, _, _, _ in
+            keyPackage = self.createKeyPackage(userID: userID, domain: domain)
+            return [keyPackage]
+        }
+
+        // Mock adding members to the conversation.
+        var mockAddMembersArguments = [([KeyPackage], MLSGroupID)]()
+        let updateEvent = dummyMemberJoinEvent()
+
+        mockMLSActionExecutor.mockAddMembers = {
+            mockAddMembersArguments.append(($0, $1))
+            return [updateEvent]
+        }
+
+        // When
+        try await sut.addMembersToConversation(with: mlsUser, for: mlsGroupID)
+
+        // Then
+        let claimKeyPackagesInvocation = self.mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_Invocations.first
+        XCTAssertEqual(claimKeyPackagesInvocation?.ciphersuite.rawValue, defaultCipherSuite.rawValue)
+    }
+
     func test_CommitPendingProposals_BeforeAddingMembersToConversation_Successfully() async throws {
         // Given
         let groupID = MLSGroupID.random()
