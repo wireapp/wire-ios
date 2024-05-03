@@ -281,7 +281,7 @@ public class CoreDataStack: NSObject, ContextProvider {
 
         dispatchGroup.enter()
         loadMessagesStore { error in
-            if let error = error {
+            if let error {
                 WireLogger.localStorage.error("failed to load message store: \(error)", attributes: .safePublic)
             }
             loadingStoreError = loadingStoreError ?? error
@@ -290,7 +290,7 @@ public class CoreDataStack: NSObject, ContextProvider {
 
         dispatchGroup.enter()
         loadEventStore { error in
-            if let error = error {
+            if let error {
                 WireLogger.localStorage.error("failed to load event store: \(error)")
             }
             loadingStoreError = loadingStoreError ?? error
@@ -487,7 +487,7 @@ class PersistentContainer: NSPersistentContainer {
     }
 
     var storeExists: Bool {
-        guard let storeURL = storeURL else {
+        guard let storeURL else {
             return false
         }
 
@@ -495,7 +495,7 @@ class PersistentContainer: NSPersistentContainer {
     }
 
     var needsMigration: Bool {
-        guard let storeURL = storeURL, storeExists else {
+        guard let storeURL, storeExists else {
             return false
         }
 

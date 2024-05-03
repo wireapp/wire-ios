@@ -24,7 +24,7 @@ public extension Optional where Wrapped == String {
 
     var nonEmptyValue: Self {
         guard
-            let string = self,
+            let self,
             !string.isEmpty
         else {
             return nil

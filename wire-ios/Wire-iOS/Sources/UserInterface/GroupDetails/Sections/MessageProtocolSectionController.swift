@@ -50,7 +50,7 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
 
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
-        guard let collectionView = collectionView else { return }
+        guard let collectionView else { return }
         Cell.register(in: collectionView)
     }
 

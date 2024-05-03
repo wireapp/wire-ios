@@ -357,7 +357,7 @@ final class ConversationViewController: UIViewController {
     @objc
     private func titleViewTapped() {
         if let superview = titleView.superview,
-           let participantsController = participantsController {
+           let participantsController {
             presentParticipantsViewController(participantsController, from: superview)
         }
     }
@@ -589,7 +589,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                                                             mentions: [Mention]) {
         contentViewController.didFinishEditing(message)
         userSession.enqueue({
-            if let newText = newText,
+            if let newText,
                !newText.isEmpty {
                 let fetchLinkPreview = !Settings.disableLinkPreviews
                 message.textMessageData?.editText(newText, mentions: mentions, fetchLinkPreview: fetchLinkPreview)
@@ -648,7 +648,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             collections.delegate = self
 
             collections.onDismiss = { [weak self] _ in
-                guard let weakSelf = self else {
+                guard let self else {
                     return
                 }
 

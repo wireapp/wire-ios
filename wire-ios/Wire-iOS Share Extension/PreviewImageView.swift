@@ -44,7 +44,7 @@ extension Optional where Wrapped == PreviewDisplayMode {
 
     /// Combines the current display mode with the current one if they're compatible.
     func combine(with otherMode: PreviewDisplayMode?) -> PreviewDisplayMode? {
-        guard let currentMode = self else {
+        guard let self else {
             return otherMode
         }
 

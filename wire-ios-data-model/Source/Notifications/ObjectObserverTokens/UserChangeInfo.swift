@@ -69,7 +69,7 @@ extension ZMUser: ObjectInSnapshot {
         var originalChanges = changes.originalChanges
         let clientChanges = originalChanges.removeValue(forKey: UserClientChangeInfoKey) as? [NSObject: [String: Any]]
 
-        if let clientChanges = clientChanges {
+        if let clientChanges {
             var userClientChangeInfos = [UserClientChangeInfo]()
             clientChanges.forEach {
                 let changeInfo = UserClientChangeInfo(object: $0)

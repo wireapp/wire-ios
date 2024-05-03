@@ -57,7 +57,7 @@ extension UIAlertAction {
 
         setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")
 
-        if let icon = icon {
+        if let icon {
             let image = UIImage.imageForIcon(icon, size: 24, color: tintColor)
             setValue(image.withRenderingMode(.alwaysOriginal), forKey: "image")
         }

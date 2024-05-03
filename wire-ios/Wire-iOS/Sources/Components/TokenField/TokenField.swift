@@ -352,7 +352,7 @@ final class TokenField: UIView {
 
         let compeltionBlock: ((Bool) -> Void)? = {[weak self] _ in
 
-            guard let weakSelf = self else { return }
+            guard let self else { return }
 
             if weakSelf.isCollapsed {
                 weakSelf.textView.attributedText = weakSelf.collapsedString
@@ -442,7 +442,7 @@ final class TokenField: UIView {
         textView.textStorage.addAttributes(textAttributes, range: NSRange(location: 0, length: textView.textStorage.length))
         textView.textStorage.endEditing()
 
-        if let toLabelText = toLabelText {
+        if let toLabelText {
             toLabel.attributedText = NSMutableAttributedString(string: toLabelText, attributes: textAttributes)
         } else {
             toLabel.text = ""

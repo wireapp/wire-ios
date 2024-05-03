@@ -218,7 +218,7 @@ extension ConversationListViewController.ViewModel {
         UNUserNotificationCenter.current().checkPushesDisabled({ [weak self] pushesDisabled in
             DispatchQueue.main.async {
                 if pushesDisabled,
-                    let weakSelf = self {
+                    let self {
                     Settings.shared[.lastPushAlertDate] = Date()
 
                     weakSelf.viewController?.showPermissionDeniedViewController()

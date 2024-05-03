@@ -919,7 +919,7 @@ struct ConversationEventPayloadProcessor {
         for conversation: ZMConversation?,
         from type: ZMConversationType
     ) -> ZMConversationType {
-        guard let conversation = conversation else {
+        guard let conversation else {
             return type
         }
 

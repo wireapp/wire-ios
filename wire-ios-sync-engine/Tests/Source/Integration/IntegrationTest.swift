@@ -266,7 +266,7 @@ extension IntegrationTest {
     @objc
     func createSessionManager() {
         guard
-            let application = application,
+            let application,
             let transportSession = mockTransportSession
         else {
             return XCTFail()
@@ -317,7 +317,7 @@ extension IntegrationTest {
     @objc
     func createSharedSearchDirectory() {
         guard sharedSearchDirectory == nil else { return }
-        guard let userSession = userSession else { XCTFail("Could not create shared SearchDirectory");  return }
+        guard let userSession else { XCTFail("Could not create shared SearchDirectory");  return }
         sharedSearchDirectory = SearchDirectory(userSession: userSession)
     }
 

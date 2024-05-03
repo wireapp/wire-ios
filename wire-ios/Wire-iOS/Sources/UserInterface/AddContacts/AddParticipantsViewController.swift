@@ -29,7 +29,7 @@ extension ConversationLike where Self: SwiftConversationLike {
         }
 
         // Access mode and/or role is unknown: let's try to add and observe the result.
-        guard let accessMode = accessMode else {
+        guard let accessMode else {
             return true
         }
 
@@ -215,7 +215,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         userSelection.add(observer: self)
 
         searchGroupSelector.onGroupSelected = { [weak self] group in
-            guard let `self` = self else {
+            guard let self else {
                 return
             }
             // Remove selected users when switching to services tab to avoid the user confusion: users in the field are
@@ -359,7 +359,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
             }
         }()
 
-        guard let title = title else { return }
+        guard let title else { return }
         navigationItem.setupNavigationBarTitle(title: title.capitalized)
 
     }
@@ -386,7 +386,7 @@ final class AddParticipantsViewController: UIViewController, SpinnerCapable {
         let inputAccessoryHeight = firstResponder?.inputAccessoryView?.bounds.size.height ?? 0
 
         UIView.animate(withKeyboardNotification: notification, in: self.view, animations: { [weak self] keyboardFrameInView in
-            guard let weakSelf = self else { return }
+            guard let self else { return }
 
             let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
 
@@ -492,7 +492,7 @@ extension AddParticipantsViewController: SearchResultsViewControllerDelegate {
             actionType: .addService(conversation as! ZMConversation),
             userSession: userSession
         ) { [weak self] result in
-            guard let `self` = self, let result = result else { return }
+            guard let self, let result else { return }
             switch result {
             case .success:
                 self.dismiss(animated: true)

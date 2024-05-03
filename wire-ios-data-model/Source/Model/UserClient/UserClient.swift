@@ -535,7 +535,7 @@ public extension UserClient {
 public extension UserClient {
 
     @objc func isSelfClient() -> Bool {
-        guard let managedObjectContext = managedObjectContext,
+        guard let managedObjectContext,
               let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
         else { return false }
         return self == selfClient
@@ -868,7 +868,7 @@ extension UserClient {
 
     private var sessionIdentifier_V3: EncryptionSessionIdentifier? {
         guard
-            let user = user,
+            let user,
             let domain = user.domain ?? BackendInfo.domain,
             let userIdentifier = user.remoteIdentifier,
             let clientIdentifier = remoteIdentifier
@@ -885,7 +885,7 @@ extension UserClient {
 
     public func migrateSessionIdentifierFromV1IfNeeded(sessionDirectory: EncryptionSessionsDirectory) {
         guard
-            let sessionIdentifier_V1 = sessionIdentifier_V1,
+            let sessionIdentifier_V1,
             let sessionIdentifier = sessionIdentifier_V2
         else {
             return
@@ -897,7 +897,7 @@ extension UserClient {
 
     public func migrateSessionIdentifierFromV2IfNeeded(sessionDirectory: EncryptionSessionsDirectory) {
         guard
-            let sessionIdentifier_V2 = sessionIdentifier_V2,
+            let sessionIdentifier_V2,
             let sessionIdentifier = sessionIdentifier_V3
         else {
             return
@@ -941,7 +941,7 @@ extension UserClient {
 
     private var proteusSessionID_V3: ProteusSessionID? {
         guard
-            let user = user,
+            let user,
             let domain = user.domain ?? BackendInfo.domain,
             let userID = user.remoteIdentifier,
             let clientID = remoteIdentifier

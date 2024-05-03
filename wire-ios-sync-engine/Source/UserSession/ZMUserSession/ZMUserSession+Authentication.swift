@@ -107,7 +107,7 @@ extension ZMUserSession {
         let request = ZMTransportRequest(path: "/clients/\(selfClientIdentifier)", method: .delete, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
 
         request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] response in
-            guard let strongSelf = self else { return }
+            guard let self else { return }
 
             if response.httpStatus == 200 {
                 self?.delegate?.userDidLogout(accountId: accountID)

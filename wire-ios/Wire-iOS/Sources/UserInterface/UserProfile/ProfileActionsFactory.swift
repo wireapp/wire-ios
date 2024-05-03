@@ -201,7 +201,7 @@ final class ProfileActionsFactory {
             }
 
             // Notifications, Archive, Delete Contents if available for every 1:1
-            if let conversation = conversation {
+            if let conversation {
                 let notificationAction: ProfileAction = viewer.isTeamMember ? .manageNotifications : .mute(isMuted: conversation.mutedMessageTypes != .none)
                 actions.append(contentsOf: [notificationAction, .archive, .deleteContents])
             }
@@ -243,7 +243,7 @@ final class ProfileActionsFactory {
             }
 
             // Only non-guests and non-partners are allowed to remove
-            if let conversation = conversation, viewer.canRemoveUser(from: conversation) {
+            if let conversation, viewer.canRemoveUser(from: conversation) {
                 actions.append(.removeFromGroup)
             }
 

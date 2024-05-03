@@ -89,7 +89,7 @@ extension ConversationInputBarViewController {
         FileMetaDataGenerator.metadataForFileAtURL(url,
                                                    UTI: url.UTI(),
                                                    name: url.lastPathComponent) { [weak self] metadata in
-            guard let weakSelf = self else { return }
+            guard let self else { return }
 
             weakSelf.impactFeedbackGenerator.prepare()
             ZMUserSession.shared()?.perform({

@@ -82,7 +82,7 @@ final class DirectorySectionController: SearchSectionController {
         if user.isBlocked {
             user.accept { [weak self] error in
                 guard
-                    let strongSelf = self,
+                    let self,
                     let error = error as? LocalizedError
                 else {
                     return
@@ -93,7 +93,7 @@ final class DirectorySectionController: SearchSectionController {
         } else {
             user.connect { [weak self] error in
                 guard
-                    let strongSelf = self,
+                    let self,
                     let error = error as? ConnectToUserError
                 else {
                     return

@@ -359,7 +359,7 @@ public final class MLSService: MLSServiceInterface {
         ) { [weak self] _ in
             guard
                 let self,
-                let context = context else {
+                let context else {
                 return
             }
 
@@ -813,7 +813,7 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Joining conversations
 
     public func joinNewGroup(with groupID: MLSGroupID) async throws {
-        guard let context = context else {
+        guard let context else {
             logger.warn("MLSService is missing sync context")
             return
         }
@@ -842,7 +842,7 @@ public final class MLSService: MLSServiceInterface {
     /// Generates a list of groups for which the `mlsStatus` is `pendingJoin`
     /// and sends external commits to join these groups
     public func performPendingJoins() async throws {
-        guard let context = context else {
+        guard let context else {
             return
         }
 
@@ -910,7 +910,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func fetchAndRepairParentGroup(with groupID: MLSGroupID) async {
-        guard let context = context else {
+        guard let context else {
             return
         }
 
@@ -979,7 +979,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func fetchAndRepairSubgroup(parentGroupID: MLSGroupID) async {
-        guard let context = context else { return }
+        guard let context else { return }
 
         do {
             logger.info("repairing out of sync subgroup... (parent: \(parentGroupID.safeForLoggingDescription))")
@@ -1071,7 +1071,7 @@ public final class MLSService: MLSServiceInterface {
         var epoch: UInt64?
 
         await context.perform {
-            if let subgroup = subgroup {
+            if let subgroup {
                 groupID = subgroup.groupID
                 epoch = UInt64(subgroup.epoch)
             } else {
@@ -1138,7 +1138,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("sending proposal in group (\(groupID.safeForLoggingDescription))")
 
-            guard let context = context else { return }
+            guard let context else { return }
 
             let updateEvents = try await actionsProvider.sendMessage(
                 data,
@@ -1198,7 +1198,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("sending external commit to join group (\(logInfo))")
 
-            guard let context = context else { return }
+            guard let context else { return }
 
             guard let parentConversationInfo = fetchConversationInfo(
                 with: parentID,
@@ -1216,7 +1216,7 @@ public final class MLSService: MLSServiceInterface {
 
             let updateEvents: [ZMUpdateEvent]
 
-            if let subgroupID = subgroupID {
+            if let subgroupID {
                 updateEvents = try await mlsActionExecutor.joinGroup(
                     subgroupID,
                     groupInfo: groupInfo
@@ -1255,8 +1255,8 @@ public final class MLSService: MLSServiceInterface {
         }
 
         guard
-            let conversation = conversation,
-            let qualifiedID = qualifiedID
+            let conversation,
+            let qualifiedID
         else {
             return nil
         }
@@ -1308,7 +1308,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     public func commitPendingProposalsIfNeeded() {
-        guard let context = context else {
+        guard let context else {
             return
         }
 
@@ -1357,7 +1357,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func sortedGroupsWithPendingCommits() async -> [(MLSGroupID, Date)] {
-        guard let context = context else {
+        guard let context else {
             return []
         }
 
@@ -1403,7 +1403,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func existsPendingProposals(in groupID: MLSGroupID) -> Bool {
-        guard let context = context else { return false }
+        guard let context else { return false }
 
         var groupHasPendingProposals = false
 
@@ -1439,7 +1439,7 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func clearPendingProposalCommitDate(for groupID: MLSGroupID) {
-        guard let context = context else {
+        guard let context else {
             return
         }
 
@@ -1740,7 +1740,7 @@ public final class MLSService: MLSServiceInterface {
     // MARK: - Proteus to MLS Migration
 
     public func startProteusToMLSMigration() async throws {
-        guard let context = context else {
+        guard let context else {
             assertionFailure("MLSService.context is nil")
             return
         }
