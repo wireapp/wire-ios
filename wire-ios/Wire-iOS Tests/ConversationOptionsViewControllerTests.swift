@@ -17,14 +17,10 @@
 //
 
 import SnapshotTesting
+@testable import Wire
 import WireSyncEngine
 import WireSyncEngineSupport
 import XCTest
-@testable import Wire
-
-@testable import Wire
-
-// MARK: - MockOptionsViewModelConfiguration
 
 final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModelConfiguration {
 
@@ -111,7 +107,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
-      
+
         // THEN
         verify(matching: sut)
     }
@@ -120,7 +116,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         let viewModel = makeViewModel(config: config)
-      
+
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         sut.overrideUserInterfaceStyle = .dark
 
@@ -143,7 +139,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: false)
         let viewModel = makeViewModel(config: config)
-      
+
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         sut.overrideUserInterfaceStyle = .dark
 
@@ -156,7 +152,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
     func testThatItRendersAllowGuests_WithLink() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        config.linkResult = .success("https://app.wire.com/772bfh1bbcssjs982637 3nbbdsn9917nbbdaehkej827648-72bns9")
+        config.linkResult = .success((uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9", secured: false))
         let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
@@ -166,7 +162,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
     func testThatItRendersAllowGuests_WithLink_DarkTheme() {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
-        config.linkResult = .success("https://app.wire.com/772bfh1bbcssjs982637 3nbbdsn9917nbbdaehkej827648-72bns9")
+        config.linkResult = .success((uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9", secured: false))
         let viewModel = makeViewModel(config: config)
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         sut.overrideUserInterfaceStyle = .dark
@@ -179,10 +175,10 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
 
-        config.linkResult = .success("https://app.wire.com/772bfh1bbcssjs982637 3nbbdsn9917nbbdaehkej827648-72bns9")
+        config.linkResult = .success((uri: "https://app.wire.com/772bfh1bbcssjs9826373nbbdsn9917nbbdaehkej827648-72bns9", secured: false))
         let viewModel = makeViewModel(config: config)
 
-       let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
+        let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         viewModel.copyInProgress = true
         // THEN
         verify(matching: sut)
@@ -206,7 +202,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true)
         config.linkResult = .success((uri: nil, secured: false))
-       let viewModel = makeViewModel(config: config)
+        let viewModel = makeViewModel(config: config)
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
@@ -283,9 +279,9 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true, guestLinkFeatureStatus: .enabled)
         config.isConversationFromSelfTeam = false
-      
+
         config.linkResult = .success((uri: nil, secured: false))
-         let viewModel = makeViewModel(config: config)
+        let viewModel = makeViewModel(config: config)
 
         let sut = ConversationGuestOptionsViewController(viewModel: viewModel)
         // THEN
@@ -296,7 +292,7 @@ final class ConversationOptionsViewControllerTests: BaseSnapshotTestCase {
         // GIVEN
         let config = MockOptionsViewModelConfiguration(allowGuests: true, guestLinkFeatureStatus: .enabled)
         config.isConversationFromSelfTeam = false
-      
+
         config.linkResult = .success((uri: nil, secured: false))
         let viewModel = makeViewModel(config: config)
 

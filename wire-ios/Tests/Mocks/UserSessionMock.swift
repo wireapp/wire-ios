@@ -27,8 +27,6 @@ import WireSyncEngineSupport
 
 final class UserSessionMock: UserSession {
 
-    var useCaseFactory: UseCaseFactoryProtocol
-
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
     func fetchSelfConversationMLSGroupID() async -> WireDataModel.MLSGroupID? {
@@ -96,7 +94,6 @@ final class UserSessionMock: UserSession {
         selfUser: SelfUserType
     ) {
         self.selfUser = selfUser
-        self.useCaseFactory = mockUseCaseFactory
     }
 
     var lock: SessionLock? = .screen
