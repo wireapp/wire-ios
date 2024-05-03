@@ -24,7 +24,7 @@ final class SwitchBackendConfirmationViewTests: XCTestCase {
     let helper = SnapshotHelper()
         .withLayout(.device(config: .iPhone13))
 
-    func createSUT() -> SwitchBackendConfirmationView {
+    private func createSUT() -> SwitchBackendConfirmationView {
         SwitchBackendConfirmationView(viewModel: SwitchBackendConfirmationViewModel(
             backendName: "Staging",
             backendURL: "www.staging.com",
