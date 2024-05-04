@@ -40,6 +40,7 @@ enum PreviewDisplayMode {
     }
 }
 
+// TODO: remove or rewrite?
 extension Optional where Wrapped == PreviewDisplayMode {
 
     /// Combines the current display mode with the current one if they're compatible.

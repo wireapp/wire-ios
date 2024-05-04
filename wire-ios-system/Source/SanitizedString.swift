@@ -66,11 +66,11 @@ extension SanitizedString: SafeForLoggingStringConvertible {
     }
 }
 
+// TODO: remove
 extension Optional: SafeForLoggingStringConvertible
     where Wrapped: SafeForLoggingStringConvertible {
 
     public var safeForLoggingDescription: String {
         return self.map { $0.safeForLoggingDescription } ?? "nil"
     }
-
 }

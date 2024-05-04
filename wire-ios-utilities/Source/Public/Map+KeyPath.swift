@@ -44,6 +44,7 @@ extension Sequence {
     }
 }
 
+// TODO: remove
 extension Optional {
     public func map<Value>(_ keyPath: KeyPath<Wrapped, Value>) -> Value? {
         return map { $0[keyPath: keyPath] }
