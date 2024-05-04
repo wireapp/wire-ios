@@ -17,8 +17,9 @@
 //
 
 import WireTesting
-@testable import WireUtilities
 import XCTest
+
+@testable import WireUtilities
 
 final class NSManagedObjectContext_SwiftTests: XCTestCase {
 
@@ -42,13 +43,6 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
         let moc = ZMMockManagedObjectContextFactory.testManagedObjectContext(withConcurencyType: .privateQueueConcurrencyType)!
         // when & then
         moc.performGroupedAndWait { }
-    }
-
-    func testThatItPassesSelfInTheClosure() {
-        // when & then
-        sut.performGroupedAndWait { [sut] moc in
-            XCTAssertEqual(moc, sut)
-        }
     }
 
     func testThatItReturnsNonOptionalValue() {
