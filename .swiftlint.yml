@@ -1,3 +1,18 @@
+# potential rules to enable:
+# unhandled_throwing_task !
+# trailing_closure
+# self_in_property_initialization
+# prefer_self_in_static_references
+# prefer_self_type_over_type_of_self
+# redundant_self_in_closure
+# direct_return
+# implicit_return
+# redundant_nil_coalescing
+# redundant_type_annotation
+# unneeded_parentheses_in_closure_argument
+# untyped_error_in_catch
+# unused_capture_list
+# TODO: check disabled_rules
 opt_in_rules:
   - closure_spacing
   - file_header
