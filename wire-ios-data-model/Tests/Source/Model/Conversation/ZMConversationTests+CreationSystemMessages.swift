@@ -82,7 +82,7 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
     }
 
     func testThatItDoesNotSetAllTeamUsersAddedWhenItIsNotTheCaseForTeamUser() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let team = self.createTeam(in: self.syncMOC)
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -107,7 +107,7 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
     }
 
     func testThatItDoesSetAllTeamUsersAddedWhenItIsTheCaseForTeamUser() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let team = self.createTeam(in: self.syncMOC)
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -131,7 +131,7 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
     }
 
     func testThatItIncludesNumberOfGuestsAddedInNewConversationSystemMessageWithAllTeamUsers() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let team = self.createTeam(in: self.syncMOC)
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -161,7 +161,7 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
     }
 
     func testThatItIncludesNumberOfGuestsAddedInNewConversationSystemMessageWithoutAllTeamUsers() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let team = self.createTeam(in: self.syncMOC)
             let selfUser = ZMUser.selfUser(in: self.syncMOC)

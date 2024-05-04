@@ -53,7 +53,7 @@ final class SelfUserRequestStrategyTests: MessagingTestBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // WHEN
             let request = self.sut.nextRequest(for: .v4)
             XCTAssertNil(request)
@@ -67,7 +67,7 @@ final class SelfUserRequestStrategyTests: MessagingTestBase {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // WHEN
             guard let request = self.sut.nextRequest(for: .v5) else {
                 return XCTFail("expected a request")

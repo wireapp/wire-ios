@@ -257,7 +257,7 @@ final class ClientMessageTests: BaseZMClientMessageTests {
     }
 
     func testThatItCanUpdateAnExistingLinkPreviewInTheDataSetWithoutCreatingMultipleOnes() throws {
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             // given
             let nonce = UUID.create()
             let message = ZMClientMessage(nonce: nonce, managedObjectContext: self.syncMOC)

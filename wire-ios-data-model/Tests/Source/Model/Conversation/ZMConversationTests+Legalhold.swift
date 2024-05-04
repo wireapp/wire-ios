@@ -360,7 +360,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
         var legalHoldClient: UserClient!
         var conversation: ZMConversation!
 
-        await syncMOC.performGrouped { _ in
+        await syncMOC.performGrouped {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
             let otherUserB = ZMUser.insertNewObject(in: self.syncMOC)
@@ -381,7 +381,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
         await legalHoldClient.deleteClientAndEndSession()
 
         // THEN
-        await syncMOC.performGrouped { _ in
+        await syncMOC.performGrouped {
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
             let lastMessage = conversation.lastMessage as? ZMSystemMessage
             XCTAssertTrue(lastMessage?.systemMessageType == .legalHoldDisabled)

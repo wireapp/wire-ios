@@ -36,7 +36,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
     }
 
     func testThatConversationIsMarkedForDownload() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             XCTAssertFalse(self.oneToOneConversation.needsToBeUpdatedFromBackend)
             let payload = self.createConnectionPayload(self.oneToOneConnection, status: .blocked)
@@ -53,7 +53,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
     }
 
     func testThatConversationLastModifiedDateIsUpdated() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let modifiedDate = Date()
             let payload = self.createConnectionPayload(self.oneToOneConnection, lastUpdate: modifiedDate)
@@ -70,7 +70,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
     }
 
     func testThatAnExistingConversationIsLinkedToTheConnection() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             self.oneToOneConnection.to.oneOnOneConversation = nil
 
@@ -91,7 +91,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
     }
 
     func testThatANonExistingConversationIsCreatedAndLinkedToTheConnection() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             BackendInfo.isFederationEnabled = true
             let conversationID: QualifiedID = .randomID()
@@ -113,7 +113,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
     }
 
     func testThatOtherUserIsAddedToConversation() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let payload = self.createConnectionPayload(to: self.thirdUser.qualifiedID!)
 
@@ -129,7 +129,7 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
     }
 
     func testThatConnectionStatusIsUpdated() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let allCases: [ZMConnectionStatus] = [
                 .accepted,
                 .blocked,

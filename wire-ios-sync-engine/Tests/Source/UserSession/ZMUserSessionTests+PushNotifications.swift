@@ -332,7 +332,7 @@ extension ZMUserSessionTests_PushNotifications {
     func userInfoWithConversation(hasMessage: Bool = false) -> NotificationUserInfo {
         let conversationId = UUID()
         var messageNonce: UUID?
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
 
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .oneOnOne

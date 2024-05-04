@@ -41,7 +41,7 @@ final class LocalNotificationDispatcherCallingTests: DatabaseTest {
         sut.notificationCenter = notificationCenter
         sut.callingNotifications.notificationCenter = notificationCenter
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let sender = ZMUser.insertNewObject(in: self.syncMOC)
             sender.name = "Callie"
             sender.remoteIdentifier = UUID()

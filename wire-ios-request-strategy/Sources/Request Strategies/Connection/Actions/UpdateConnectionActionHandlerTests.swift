@@ -38,7 +38,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     // MARK: - Request Generation
 
     func testThatItCreatesARequestForUpdatingConnection_APIV0() throws {
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             // given
             let userID = self.oneToOneConnection.to.remoteIdentifier!
             let action = UpdateConnectionAction(connection: self.oneToOneConnection,
@@ -56,7 +56,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCreatesARequestForUpdatingConnection_APIV1() throws {
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             // given
             let userID = self.oneToOneConnection.to.qualifiedID!
             let action = UpdateConnectionAction(connection: self.oneToOneConnection,
@@ -169,7 +169,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     // MARK: - Helpers
 
     func assertFailure(_ expectedError: UpdateConnectionAction.Failure, on response: ZMTransportResponse) {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             var action = UpdateConnectionAction(connection: self.oneToOneConnection, newStatus: .accepted)
 

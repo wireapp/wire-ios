@@ -69,7 +69,7 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
     }
 
     func testThatItCreatesARequestForConversation() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let convo1 = self.createConversationToDownload()
             self.mockApplicationStatus.mockSynchronizationState = .online
@@ -85,7 +85,7 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
     }
 
     func testThatItFetchInitialObjectsFromTracker() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let convo1 = self.createConversationToDownload()
             self.mockApplicationStatus.mockSynchronizationState = .online
@@ -99,7 +99,7 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
     }
 
     func testItDoesNotGenerateARequestIfTheConversationShouldNotDownloadRoles() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let convo1 = self.createConversationToDownload()
             self.mockApplicationStatus.mockSynchronizationState = .online
@@ -116,7 +116,7 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
 
     func testThatItParsesRolesFromResponse() {
         var convo1: ZMConversation?
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             convo1 = self.createConversationToDownload()
             self.mockApplicationStatus.mockSynchronizationState = .online
@@ -132,7 +132,7 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertEqual(convo1!.nonTeamRoles.count, 2)
             guard let admin = convo1!.nonTeamRoles.first(where: { $0.name == "wire_admin" }),
@@ -147,7 +147,7 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
 
     func testThatItSetsNeedsToDownloadRolesToFalse_WhenTheResponseIs404() {
         var convo1: ZMConversation?
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             convo1 = self.createConversationToDownload()
             self.mockApplicationStatus.mockSynchronizationState = .online
@@ -163,7 +163,7 @@ final class ConversationRoleDownstreamRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertFalse(convo1!.needsToDownloadRoles)
 

@@ -135,7 +135,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
             label: label,
             apiVersion: apiVersion
         )
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.handler.handleResponse(response, action: action)
         }
 

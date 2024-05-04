@@ -33,7 +33,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let user = ZMUser.insertNewObject(in: self.syncMOC)
             let userID = UUID()
             user.remoteIdentifier = userID
@@ -74,7 +74,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
     // MARK: - Request Generation
 
     func testThatItCreatesARequestForAddingAParticipant_V0() throws {
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             // given
             let userID = self.user.remoteIdentifier!
             let conversationID = self.conversation.remoteIdentifier!
@@ -91,7 +91,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCreatesARequestForAddingAParticipant_V1() throws {
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             // given
             let conversationID = self.conversation.remoteIdentifier!
             let action = AddParticipantAction(users: [self.user], conversation: self.conversation)
@@ -107,7 +107,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCreatesARequestForAddingAParticipant_V2() throws {
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             // given
             let conversationDomain = self.conversation.domain!
             let conversationID = self.conversation.remoteIdentifier!

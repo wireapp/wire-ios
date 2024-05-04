@@ -36,7 +36,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
         )
         sut = TeamDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let user = ZMUser.selfUser(in: self.syncMOC)
             user.remoteIdentifier = UUID()
             user.teamIdentifier = self.teamID
@@ -99,7 +99,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItDoesNotCreateARequestIfThereIsNoTeamNeedingToBeUpdated() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = .create()
@@ -115,7 +115,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItCreatesAReuqestForATeamThatNeedsToBeUpdatedFromTheBackend() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = .create()
@@ -156,7 +156,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertFalse(team.needsToBeUpdatedFromBackend)
             XCTAssertEqual(team.name, "Wire GmbH")
@@ -191,7 +191,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertTrue(team == nil || team.isZombieObject)
         }
@@ -218,7 +218,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // then
             self.boostrapChangeTrackers(with: team)
             XCTAssertNil(self.sut.nextRequestIfAllowed(for: .v0))
@@ -257,7 +257,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertNil(Team.fetch(with: teamId, in: self.syncMOC))
             XCTAssertNotNil(ZMConversation.fetch(with: conversationId, in: self.syncMOC))
@@ -296,7 +296,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertNil(Team.fetch(with: teamId, in: self.syncMOC))
 
@@ -314,7 +314,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
         var event: ZMUpdateEvent?
         var team: Team!
 
-        await syncMOC.performGrouped { _ in
+        await syncMOC.performGrouped {
             // given
             team = Team.insertNewObject(in: self.syncMOC)
             self.mockApplicationStatus.mockSynchronizationState = .online
@@ -455,7 +455,7 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
     }
 
     private func mockNonTeamUser() throws {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let user = ZMUser.selfUser(in: self.syncMOC)
             user.teamIdentifier = nil
         }

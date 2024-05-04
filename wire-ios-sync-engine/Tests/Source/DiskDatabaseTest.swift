@@ -28,7 +28,7 @@ final class DiskDatabaseTest: DatabaseTest {
     public override func setUp() {
         super.setUp()
 
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             selfUser.remoteIdentifier = self.accountId
         }

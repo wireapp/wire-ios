@@ -47,7 +47,7 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
     // MARK: Request generation
 
     func testThatItSendsSessionResetMessage_WhenUserClientNeedsToNotifyOtherUserAboutSessionReset() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let otherUser = self.createUser()
             let otherClient = self.createClient(user: otherUser)
@@ -71,7 +71,7 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
 
     func testThatItResetsNeedsToNotifyOtherUserAboutSessionReset_WhenReceivingTheResponse() {
         var otherClient: UserClient!
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let otherUser = self.createUser()
             _ = self.setupOneToOneConversation(with: otherUser)
@@ -88,7 +88,7 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             XCTAssertFalse(otherClient.needsToNotifyOtherUserAboutSessionReset)
         }
     }

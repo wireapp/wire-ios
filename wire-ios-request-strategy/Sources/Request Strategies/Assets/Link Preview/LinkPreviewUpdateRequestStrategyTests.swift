@@ -73,7 +73,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDoesNotScheduleMessageInState_Uploaded_ForOtherUser() {
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // Given
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let message = self.insertMessage(with: .uploaded)
@@ -91,7 +91,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     func testThatItDoesCreateARequestInState_Uploaded() {
         apiVersion = .v1
 
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // Given
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let message = self.insertMessage(with: .uploaded)
@@ -107,7 +107,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     func testThatItDoesNotCreateARequestAfterGettingsAResponseForIt() {
         apiVersion = .v1
         var message: ZMClientMessage!
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // Given
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             message = self.insertMessage(with: .uploaded)
@@ -115,7 +115,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // When
             self.process(message)
         }
@@ -135,7 +135,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     }
 
     func verifyThatItDoesNotScheduleMessageUpdate(for state: ZMLinkPreviewState, file: StaticString = #file, line: UInt = #line) {
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // Given
             self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
             let message = self.insertMessage(with: state)

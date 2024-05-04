@@ -435,7 +435,7 @@ public class CoreDataStack: NSObject, ContextProvider {
     }
 
     public func linkContexts() {
-        syncContext.performGroupedAndWait { _ in
+        syncContext.performGroupedAndWait {
             self.syncContext.zm_userInterface = self.viewContext
         }
         viewContext.zm_sync = syncContext

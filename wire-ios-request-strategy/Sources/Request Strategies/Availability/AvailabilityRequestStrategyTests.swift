@@ -83,7 +83,7 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDoesntBroadcastWhenAvailabilityIsModifiedForOtherUsers() {
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // given
             self.messageSender.broadcastMessageMessage_MockMethod = { _ in }
 

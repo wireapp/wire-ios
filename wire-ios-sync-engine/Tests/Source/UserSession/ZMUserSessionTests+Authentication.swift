@@ -29,7 +29,7 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         previousApiVersion = BackendInfo.apiVersion
         BackendInfo.apiVersion = .v0
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.createSelfClient()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

@@ -229,7 +229,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) {
 
             // when
-            syncMOC.performGroupedAndWait { _ in
+            syncMOC.performGroupedAndWait {
                 let syncUser = self.syncMOC.object(with: user.objectID) as! ZMUser
                 syncUser.name = "bar"
                 self.syncMOC.saveOrRollback()
@@ -259,7 +259,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
 
             // when
             user = nil
-            syncMOC.performGroupedAndWait { _ in
+            syncMOC.performGroupedAndWait {
                 let syncUser = self.syncMOC.object(with: objectID) as! ZMUser
                 syncUser.name = "bar"
                 self.syncMOC.saveOrRollback()
@@ -543,7 +543,7 @@ final class NotificationDispatcherTests: NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
         withExtendedLifetime(ConversationChangeInfo.add(observer: conversationObserver, for: conv)) {
 
-            syncMOC.performGroupedAndWait { _ in
+            syncMOC.performGroupedAndWait {
                 let syncConv = try! self.syncMOC.existingObject(with: conv.objectID) as! ZMConversation
                 syncConv.userDefinedName = "foo"
                 self.syncMOC.saveOrRollback()

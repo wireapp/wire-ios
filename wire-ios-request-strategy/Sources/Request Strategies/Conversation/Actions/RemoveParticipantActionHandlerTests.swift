@@ -29,7 +29,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let user = ZMUser.insertNewObject(in: self.syncMOC)
             let userID = UUID()
             user.remoteIdentifier = userID
@@ -65,7 +65,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
     // MARK: - Request Generation
 
     func testThatItCreatesARequestForRemovingAParticipant_NonFederated() throws {
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             // given
             let userID = self.user.remoteIdentifier!.transportString()
             let conversationID = self.conversation.remoteIdentifier!.transportString()
@@ -81,7 +81,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCreatesARequestForRemovingAParticipant_Federated() throws {
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             // given
             let userID = self.user.remoteIdentifier!
             let conversationID = self.conversation.remoteIdentifier!
@@ -200,7 +200,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
 
         let memberLeaveTimestamp = Date().addingTimeInterval(1000)
 
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let message = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)

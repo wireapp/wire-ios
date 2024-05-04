@@ -54,7 +54,7 @@ final class LocalNotificationDispatcherTests: DatabaseTest {
          self.sut.failedMessageNotifications,
          self.sut.callingNotifications].forEach { $0.notificationCenter = notificationCenter }
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.user1 = ZMUser.insertNewObject(in: self.syncMOC)
             self.user2 = ZMUser.insertNewObject(in: self.syncMOC)
             self.user1.remoteIdentifier = UUID.create()
@@ -94,7 +94,7 @@ extension LocalNotificationDispatcherTests {
     func testThatItCreatesNotificationFromMessagesIfNotActive() {
         // GIVEN
         let text = UUID.create().transportString()
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let event = self.createUpdateEvent(UUID.create(), conversationID: self.conversation1.remoteIdentifier!, genericMessage: GenericMessage(content: Text(content: text)), senderID: self.user1.remoteIdentifier)
 
             // WHEN
@@ -117,7 +117,7 @@ extension LocalNotificationDispatcherTests {
     }
 
     func testThatItCreatesNotificationFromSystemMessagesIfNotActive() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let messageTimer = MessageDestructionTimeoutValue.fiveMinutes
             let payload: [String: Any] = [
@@ -184,7 +184,7 @@ extension LocalNotificationDispatcherTests {
     }
 
     func testThatWhenFailingAMessageItSchedulesANotification() {
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // GIVEN
             let message = try! self.conversation1.appendText(content: "bar") as! ZMClientMessage
             message.sender = self.user1

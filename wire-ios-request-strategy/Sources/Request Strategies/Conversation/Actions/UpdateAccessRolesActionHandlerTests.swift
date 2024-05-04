@@ -29,7 +29,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [])!
             let conversationID = UUID()
             conversation.remoteIdentifier = conversationID
@@ -55,7 +55,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
     // MARK: - Request generation
 
     func testThatItCreatesAnExpectedRequestForUpdatingAccessRoles_V0() throws {
-        try syncMOC.performGroupedAndWait { _ in
+        try syncMOC.performGroupedAndWait {
             // given
             let conversationID = self.conversation.remoteIdentifier!
             let action = UpdateAccessRolesAction(conversation: self.conversation,

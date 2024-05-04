@@ -222,7 +222,7 @@ extension IntegrationTest {
     @objc
     func destroySessionManager() {
         destroyTimers()
-        userSession?.managedObjectContext.performGroupedAndWait { _ in
+        userSession?.managedObjectContext.performGroupedAndWait {
             self.userSession?.tearDown()
         }
         userSession = nil
@@ -504,7 +504,7 @@ extension IntegrationTest {
 
     @objc(userForMockUser:)
     func user(for mockUser: MockUser) -> ZMUser? {
-        let uuid = mockUser.managedObjectContext!.performGroupedAndWait { _ in
+        let uuid = mockUser.managedObjectContext!.performGroupedAndWait {
             return UUID(transportString: mockUser.identifier)!
         }
         let data = (uuid as NSUUID).data() as NSData
@@ -521,7 +521,7 @@ extension IntegrationTest {
 
     @objc(conversationForMockConversation:)
     func conversation(for mockConversation: MockConversation) -> ZMConversation? {
-        let uuid = mockConversation.managedObjectContext!.performGroupedAndWait { _ in
+        let uuid = mockConversation.managedObjectContext!.performGroupedAndWait {
             return UUID(transportString: mockConversation.identifier)!
         }
         let data = (uuid as NSUUID).data() as NSData

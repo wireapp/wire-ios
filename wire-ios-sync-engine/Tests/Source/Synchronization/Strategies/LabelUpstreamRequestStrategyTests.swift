@@ -35,7 +35,7 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
         mockApplicationStatus.mockSynchronizationState = .online
         sut = LabelUpstreamRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.conversation1 = ZMConversation.insertNewObject(in: self.syncMOC)
             self.conversation1.remoteIdentifier = UUID()
 
@@ -60,7 +60,7 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
         let labelUpdate = WireSyncEngine.LabelUpdate(id: Label.fetchFavoriteLabel(in: uiMOC).remoteIdentifier!, type: 1, name: nil, conversations: [conversation1Id])
         let expectedPayload = WireSyncEngine.LabelPayload(labels: [labelUpdate])
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let label = Label.fetchFavoriteLabel(in: self.syncMOC)
             label.conversations = Set([self.conversation1])
@@ -82,7 +82,7 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
         let labelUpdate = WireSyncEngine.LabelUpdate(id: Label.fetchFavoriteLabel(in: uiMOC).remoteIdentifier!, type: 1, name: nil, conversations: [])
         let expectedPayload = WireSyncEngine.LabelPayload(labels: [labelUpdate])
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             var created = false
             let label = Label.fetchOrCreate(remoteIdentifier: UUID(), create: true, in: self.syncMOC, created: &created)!
@@ -104,28 +104,28 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
 
     func testThatItUploadLabels_WhenModifyingConversations() {
         // given
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let label = Label.insertNewObject(in: self.syncMOC)
             label.modifiedKeys = Set(["conversations"])
             self.sut.objectsDidChange(Set([label]))
         }
 
         // then
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             XCTAssertNotNil(self.sut.nextRequestIfAllowed(for: .v0))
         }
     }
 
     func testThatItUploadLabels_WhenModifyingName() {
         // given
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let label = Label.insertNewObject(in: self.syncMOC)
             label.modifiedKeys = Set(["name"])
             self.sut.objectsDidChange(Set([label]))
         }
 
         // then
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             XCTAssertNotNil(self.sut.nextRequestIfAllowed(for: .v0))
         }
     }
@@ -135,7 +135,7 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
         var label2: Label!
 
         // given
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             label1 = Label.insertNewObject(in: self.syncMOC)
             label2 = Label.insertNewObject(in: self.syncMOC)
             label1.modifiedKeys = Set(["name"])
@@ -144,7 +144,7 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
         }
 
         // when
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             guard let request = self.sut.nextRequestIfAllowed(for: .v0) else { return XCTFail() }
             label2.modifiedKeys = Set(["name"])
             self.syncMOC.saveOrRollback()
@@ -154,7 +154,7 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             XCTAssertNotNil(self.sut.nextRequestIfAllowed(for: .v0))
         }
     }
@@ -163,21 +163,21 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
         var label: Label!
 
         // given
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             label = Label.insertNewObject(in: self.syncMOC)
             label.modifiedKeys = Set(["name"])
             self.sut.objectsDidChange(Set([label]))
         }
 
         // when
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             guard let request = self.sut.nextRequestIfAllowed(for: .v0) else { return XCTFail() }
             request.complete(with: ZMTransportResponse(payload: nil, httpStatus: 201, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             XCTAssertNil(label.modifiedKeys)
         }
     }
@@ -186,7 +186,7 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
         var label: Label!
 
         // given
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             label = Label.insertNewObject(in: self.syncMOC)
             label.markForDeletion()
             label.modifiedKeys = Set(["markedForDeletion"])
@@ -194,14 +194,14 @@ class LabelUpstreamRequestStrategyTests: MessagingTest {
         }
 
         // when
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             guard let request = self.sut.nextRequestIfAllowed(for: .v0) else { return XCTFail() }
             request.complete(with: ZMTransportResponse(payload: nil, httpStatus: 201, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue))
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             XCTAssertTrue(label.isZombieObject)
         }
     }

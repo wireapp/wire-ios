@@ -31,7 +31,7 @@ class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
         self.uiMOC.saveOrRollback()
 
         // THEN
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             let message = self.syncMOC.object(with: message.objectID) as! ZMMessage
             XCTAssertTrue(message.isExpired)
             XCTAssertTrue(message.causedSecurityLevelDegradation)
@@ -72,7 +72,7 @@ class ZMConversationPrepareToSendTests: ZMConversationTestsBase {
         self.uiMOC.saveOrRollback()
 
         // THEN
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             let message = self.syncMOC.object(with: message.objectID) as! ZMMessage
             XCTAssertTrue(message.isExpired)
             XCTAssertTrue(message.causedSecurityLevelDegradation)

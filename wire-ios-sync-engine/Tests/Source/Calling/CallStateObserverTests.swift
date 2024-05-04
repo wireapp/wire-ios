@@ -35,7 +35,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
     override func setUp() {
         super.setUp()
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let sender = ZMUser.insertNewObject(in: self.syncMOC)
             sender.name = "Sender"
             sender.remoteIdentifier = UUID()
@@ -117,7 +117,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         sut.callCenterDidChange(callState: .terminating(reason: .canceled), conversation: conversationUI, caller: senderUI, timestamp: nil, previousCallState: nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // then
             if let message = self.conversationUI.lastMessage as? ZMSystemMessage {
                 XCTAssertEqual(message.systemMessageType, .missedCall)
@@ -185,7 +185,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         conversationUI.needsToBeUpdatedFromBackend = true
         uiMOC.saveOrRollback()
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.syncMOC.refreshAllObjects()
         }
 
@@ -204,7 +204,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
         conversationUI.mutedMessageTypes = .regular
         uiMOC.saveOrRollback()
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.syncMOC.refreshAllObjects()
         }
 
@@ -304,7 +304,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
     func testThatMissedCallMessageAndNotificationIsAppendedForGroupCallNotJoined() {
 
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             // given
             self.conversation.conversationType = .group
             self.syncMOC.saveOrRollback()
@@ -323,7 +323,7 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
 
     func testThatMissedCallNotificationIsNotForwardedForGroupCallAnsweredElsewhere() {
         // given
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             self.conversation.conversationType = .group
             self.syncMOC.saveOrRollback()
         }

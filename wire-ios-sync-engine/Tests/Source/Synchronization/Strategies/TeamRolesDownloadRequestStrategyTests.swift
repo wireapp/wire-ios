@@ -34,7 +34,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
         )
         sut = TeamRolesDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus, syncStatus: mockSyncStatus)
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let user = ZMUser.selfUser(in: self.syncMOC)
             user.remoteIdentifier = UUID()
         }
@@ -95,7 +95,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItDoesNotCreateARequestIfThereIsNoTeamNeedingToBeUpdated() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = .create()
@@ -111,7 +111,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItCreatesARequestForATeamThatNeedsToBeUpdatedFromTheBackend() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = .create()
@@ -131,7 +131,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
     func testThatItUpdatesTheTeamWithTheResponse() {
         var team: Team!
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             team = Team.insertNewObject(in: self.syncMOC)
             self.mockApplicationStatus.mockSynchronizationState = .online
@@ -147,7 +147,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertEqual(team.roles.count, 2)
             guard let adminRole = team.roles.first(where: { $0.name == "superuser" }),
@@ -170,7 +170,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
 
         self.mockSyncStatus.mockPhase = .fetchingTeamRoles
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let team = Team.insertNewObject(in: self.syncMOC)
             self.mockApplicationStatus.mockSynchronizationState = .online
@@ -192,7 +192,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
 
     func testThatItDoesNotUpdatesSyncStepOutsideOfSync() {
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let team = Team.insertNewObject(in: self.syncMOC)
             self.mockApplicationStatus.mockSynchronizationState = .online
@@ -214,7 +214,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
 
     func testThatItFinishedSyncStepIfNoTeam() {
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             self.mockSyncStatus.mockPhase = .fetchingTeamRoles
 
@@ -230,7 +230,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
     func testThatItCreatesNoNewRequestAfterReceivingAResponse() {
         var team: Team!
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = .create()
@@ -247,7 +247,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // then
             self.boostrapChangeTrackers(with: team)
             XCTAssertNil(self.sut.nextRequest(for: .v0))
@@ -257,7 +257,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
     func testThatItDoesNotRemoveATeamWhenReceiving403() {
         let teamId = UUID.create()
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let team = Team.insertNewObject(in: self.syncMOC)
             self.mockApplicationStatus.mockSynchronizationState = .online
@@ -280,7 +280,7 @@ class TeamRolesDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertNotNil(Team.fetch(with: teamId, in: self.syncMOC))
         }

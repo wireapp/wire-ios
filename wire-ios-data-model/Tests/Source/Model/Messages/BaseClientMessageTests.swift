@@ -60,7 +60,7 @@ class BaseZMClientMessageTests: BaseZMMessageTests {
 
         super.setUp()
 
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait {
             self.syncSelfUser = ZMUser.selfUser(in: self.syncMOC)
 
             self.syncSelfClient1 = self.createSelfClient(onMOC: self.syncMOC)
@@ -134,7 +134,7 @@ class BaseZMClientMessageTests: BaseZMMessageTests {
     }
 
     override func tearDown() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             self.syncMOC.setPersistentStoreMetadata(nil as String?, key: "PersistedClientId")
         }
         wipeCaches()

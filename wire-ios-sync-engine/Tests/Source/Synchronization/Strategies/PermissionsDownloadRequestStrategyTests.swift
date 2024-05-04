@@ -41,7 +41,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItDoesNotCreateARequestIfThereIsNoMemberToBeRedownloaded() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             self.mockApplicationStatus.mockSynchronizationState = .online
             let member = Member.insertNewObject(in: self.syncMOC)
@@ -57,7 +57,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItCreatesAReuqestForAMemberThatNeedsToBeRedownloadItsMembersFromTheBackend() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let teamId = UUID.create(), userId = UUID.create()
             let team = Team.insertNewObject(in: self.syncMOC)
@@ -79,7 +79,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
     }
 
     func testThatItDoesNotCreateARequestDuringSync() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // given
             let member = Member.insertNewObject(in: self.syncMOC)
             member.remoteIdentifier = .create()
@@ -125,7 +125,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertFalse(member.needsToBeUpdatedFromBackend)
             XCTAssertEqual(member.permissions, [.createConversation, .addRemoveConversationMember])
@@ -134,7 +134,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // then
             self.boostrapChangeTrackers(with: member)
             XCTAssertNil(self.sut.nextRequestIfAllowed(for: .v0))
@@ -166,7 +166,7 @@ class PermissionsDownloadRequestStrategyTests: MessagingTest {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // then
             XCTAssertNil(Member.fetch(with: userid, in: self.syncMOC))
         }

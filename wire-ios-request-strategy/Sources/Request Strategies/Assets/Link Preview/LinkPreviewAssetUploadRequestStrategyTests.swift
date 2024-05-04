@@ -125,7 +125,7 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
 extension LinkPreviewAssetUploadRequestStrategyTests {
 
     func testThatItCreatesRequestForProcessedLinkPreview() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let article = self.createArticle()
             let message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article)
@@ -145,7 +145,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
     }
 
     func testThatItDoesntCreateUnauthenticatedRequests() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let article = self.createArticle()
             let message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article)
@@ -162,7 +162,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
     }
 
     func testThatItDoesntCreateRequestsForUnprocessedLinkPreview() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let article = self.createArticle()
             let message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .waitingToBeProcessed, linkPreview: article)
@@ -178,7 +178,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
     }
 
     func testThatItDoesntCreateRequestsForLinkPreviewStateDone() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let article = self.createArticle()
             let message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .done, linkPreview: article)
@@ -194,7 +194,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
     }
 
     func testThatItDoesNotCreateARequestIfThereIsNoImageInTheCache() {
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             // GIVEN
             let article = self.createArticle()
             let message = self.createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article)
@@ -235,7 +235,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             let linkPreview = message.underlyingMessage!.linkPreviews.first!
             XCTAssertEqual(linkPreview.image.uploaded.otrKey, otrKey)
             XCTAssertEqual(linkPreview.image.uploaded.sha256, sha256)
@@ -270,7 +270,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        syncMOC.performGroupedAndWait { _ in
+        syncMOC.performGroupedAndWait {
             XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.uploaded)
         }
     }

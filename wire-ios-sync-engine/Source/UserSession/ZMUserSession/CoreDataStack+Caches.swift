@@ -24,9 +24,9 @@ extension CoreDataStack {
         viewContext.zm_fileAssetCache = caches.fileAssets
         viewContext.zm_userImageCache = caches.userImages
 
-        syncContext.performGroupedAndWait { context in
-            context.zm_fileAssetCache = caches.fileAssets
-            context.zm_userImageCache = caches.userImages
+        syncContext.performGroupedAndWait {
+            syncContext.zm_fileAssetCache = caches.fileAssets
+            syncContext.zm_userImageCache = caches.userImages
         }
     }
 }
