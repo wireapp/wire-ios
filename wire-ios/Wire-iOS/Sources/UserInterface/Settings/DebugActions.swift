@@ -181,9 +181,9 @@ enum DebugActions {
         }
 
         let message = """
-        Max supported version: \((APIVersion.allCases.max()?.rawValue).description(else: "None"))
-        Currently selected version: \((BackendInfo.apiVersion?.rawValue).description(else: "None"))
-        Local domain: \(BackendInfo.domain.description(else: "None"))
+        Max supported version: \(APIVersion.allCases.max().map { "\($0.rawValue)" } ?? "None")
+        Currently selected version: \(BackendInfo.apiVersion.map { "\($0.rawValue)" } ?? "None")
+        Local domain: \(BackendInfo.domain ?? "None")
         Is federation enabled: \(BackendInfo.isFederationEnabled)
         """
 
@@ -353,13 +353,4 @@ enum DebugActions {
         }
         while (currentCount > 0)
     }
-}
-
-private extension Optional {
-
-    func description(else defaultDescription: String) -> String {
-        guard let value = self else { return defaultDescription }
-        return String(describing: value)
-    }
-
 }

@@ -54,7 +54,6 @@ extension Optional where Wrapped == PreviewDisplayMode {
 
         return .mixed(count, otherMode)
     }
-
 }
 
 /**
