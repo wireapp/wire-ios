@@ -205,7 +205,7 @@ public extension ServiceUser {
             return
         }
 
-        guard let serviceUserData = serviceUserData else {
+        guard let serviceUserData else {
             completionHandler(.failure(AddBotError.general))
             return
         }

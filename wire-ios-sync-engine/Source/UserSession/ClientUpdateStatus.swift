@@ -146,7 +146,7 @@ public enum ClientUpdateError: NSInteger {
             excludingSelfClient = []
         }
 
-        if let error = error {
+        if let error {
             throw error
         }
         return excludingSelfClient

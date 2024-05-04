@@ -105,7 +105,7 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
                 $0.value == nil)
         })
 
-        if let previewAssetRequest = previewAssetRequest,
+        if let previewAssetRequest,
            let assetKeys = previewAssetRequest.value,
            let request = request(for: assetKeys, size: .preview, user: previewAssetRequest.key, apiVersion: apiVersion) {
             requestedPreviewAssetsInProgress.insert(previewAssetRequest.key)
@@ -122,7 +122,7 @@ final class SearchUserImageStrategy: AbstractRequestStrategy {
                 $0.value == nil)
         })
 
-        if let completeAssetRequest = completeAssetRequest,
+        if let completeAssetRequest,
            let assetKeys = completeAssetRequest.value,
            let request = request(for: assetKeys, size: .complete, user: completeAssetRequest.key, apiVersion: apiVersion) {
             requestedCompleteAssetsInProgress.insert(completeAssetRequest.key)

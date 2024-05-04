@@ -137,7 +137,7 @@ public struct CallEventContent: Codable {
     }
 
     public var isVideo: Bool {
-        guard let properties = properties else {
+        guard let properties else {
             return false
         }
 

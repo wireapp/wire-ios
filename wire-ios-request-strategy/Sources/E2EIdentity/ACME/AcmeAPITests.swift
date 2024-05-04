@@ -30,7 +30,7 @@ final class AcmeAPITests: ZMTBaseTest {
         super.setUp()
 
         mockHttpClient = MockHttpClient()
-        if let mockHttpClient = mockHttpClient {
+        if let mockHttpClient {
             let path = "https://acme/defaultteams/directory"
             acmeApi = AcmeAPI(acmeDiscoveryPath: path, httpClient: mockHttpClient)
         }
@@ -293,7 +293,7 @@ class MockHttpClient: HttpClientCustom {
 
     func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
         sentRequests.append(request)
-        guard let mockResponse = mockResponse else {
+        guard let mockResponse else {
             throw NetworkError.errorDecodingURLResponse(mockResponse!.1)
         }
         return mockResponse

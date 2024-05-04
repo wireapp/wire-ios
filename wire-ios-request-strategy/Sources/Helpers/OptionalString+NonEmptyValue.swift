@@ -32,5 +32,4 @@ public extension Optional where Wrapped == String {
 
         return string
     }
-
 }
