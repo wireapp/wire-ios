@@ -23,74 +23,64 @@ extension NSManagedObjectContext {
     static private let timeout: TimeInterval = 10
 
     @discardableResult @available(*, noasync)
-    public func performGroupedAndWait<T>(_ execute: @escaping (NSManagedObjectContext) -> T) -> T {
+    public func performGroupedAndWait<T>(_ block: () -> T) -> T {
 
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
-        let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
-
         return performAndWait {
 
-            tp.resetTime()
-            let result = execute(self)
-
-            dispatchGroupContext?.leave(groups)
-            tp.warnIfLongerThanInterval()
-            return result
-        }
-    }
-
-    @discardableResult
-    public func performGrouped<T>(_ execute: @escaping (NSManagedObjectContext) -> T) async -> T {
-
-        let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
-        let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
-
-        return await perform {
-
-            tp.resetTime()
-            let result = execute(self)
-
-            self.dispatchGroupContext?.leave(groups)
-            tp.warnIfLongerThanInterval()
-            return result
-        }
-    }
-
-    @discardableResult @available(*, noasync)
-    public func performGroupedAndWait<T>(
-        _ execute: @escaping (NSManagedObjectContext) throws -> T
-    ) throws -> T {
-
-        let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
-        let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
-
-        return try performAndWait {
-
-            tp.resetTime()
+            let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
             defer {
                 dispatchGroupContext?.leave(groups)
                 tp.warnIfLongerThanInterval()
             }
-            return try execute(self)
+            return block()
+        }
+    }
+
+    @discardableResult
+    public func performGrouped<T>(_ block: @escaping () -> T) async -> T {
+
+        let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
+        return await perform {
+
+            let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
+            defer {
+                self.dispatchGroupContext?.leave(groups)
+                tp.warnIfLongerThanInterval()
+            }
+            return block()
+        }
+    }
+
+    @discardableResult @available(*, noasync)
+    public func performGroupedAndWait<T>(_ block: () throws -> T) throws -> T {
+
+        let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
+        return try performAndWait {
+
+            let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
+            defer {
+                dispatchGroupContext?.leave(groups)
+                tp.warnIfLongerThanInterval()
+            }
+            return try block()
         }
     }
 
     @discardableResult
     public func performGrouped<T>(
-        _ execute: @escaping (NSManagedObjectContext) throws -> T
+        _ execute: @escaping () throws -> T
     ) async throws -> T {
 
         let groups = dispatchGroupContext?.enterAll(except: nil) ?? []
-        let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
-
         return try await perform {
 
-            tp.resetTime()
+            let tp = ZMSTimePoint(interval: NSManagedObjectContext.timeout)
             defer {
                 self.dispatchGroupContext?.leave(groups)
                 tp.warnIfLongerThanInterval()
             }
-            return try execute(self)
+            return try execute()
         }
     }
 }
