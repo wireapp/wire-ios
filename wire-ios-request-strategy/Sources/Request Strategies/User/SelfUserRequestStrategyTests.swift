@@ -27,11 +27,11 @@ final class SelfUserRequestStrategyTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        syncMOC.performGroupedAndWait { context in
+        syncMOC.performGroupedAndWait {
             self.applicationStatus = MockApplicationStatus()
             self.applicationStatus.mockSynchronizationState = .online
             self.sut = SelfUserRequestStrategy(
-                withManagedObjectContext: context,
+                withManagedObjectContext: syncMOC,
                 applicationStatus: self.applicationStatus
             )
         }

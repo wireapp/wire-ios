@@ -899,7 +899,7 @@ extension UserClientTests {
         var v2SessionIdentifier: EncryptionSessionIdentifier!
         var v3SessionIdentifier: EncryptionSessionIdentifier!
 
-        await syncMOC.performGrouped { [self] _ in
+        await syncMOC.performGrouped { [self] in
             selfClient = createSelfClient(onMOC: syncMOC)
             otherClient = UserClient.insertNewObject(in: syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
@@ -965,7 +965,7 @@ extension UserClientTests {
         var v2SessionIdentifier: EncryptionSessionIdentifier!
         var v3SessionIdentifier: EncryptionSessionIdentifier!
 
-        await syncMOC.performGrouped { [self] _ in
+        await syncMOC.performGrouped { [self] in
             selfClient = createSelfClient(onMOC: syncMOC)
             otherClient = UserClient.insertNewObject(in: syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
@@ -1004,7 +1004,7 @@ extension UserClientTests {
         XCTAssertTrue(didEstablishSession)
         XCTAssertTrue(hasSession)
 
-        await syncMOC.performGrouped { [self] _ in
+        await syncMOC.performGrouped { [self] in
             self.syncMOC.zm_cryptKeyStore.encryptionContext.perform { sessionsDirectory in
                 XCTAssertTrue(sessionsDirectory.hasSession(for: v2SessionIdentifier))
                 XCTAssertFalse(sessionsDirectory.hasSession(for: v3SessionIdentifier))

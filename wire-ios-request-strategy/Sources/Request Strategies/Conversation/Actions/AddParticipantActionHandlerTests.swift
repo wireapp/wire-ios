@@ -148,7 +148,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
         var response: ZMTransportResponse!
         var action: AddParticipantAction!
 
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             action = AddParticipantAction(users: [user], conversation: conversation)
@@ -193,7 +193,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItRefetchTeamUsers_On403() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             let team = Team.insertNewObject(in: self.syncMOC)
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -228,7 +228,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
         var action: AddParticipantAction!
 
         var response: ZMTransportResponse!
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             action = AddParticipantAction(users: [user], conversation: conversation)
@@ -272,7 +272,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_On204() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             var action = AddParticipantAction(users: [user], conversation: conversation)
 
@@ -296,7 +296,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_OnError() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             var action = AddParticipantAction(users: [user], conversation: conversation)
 
@@ -321,7 +321,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_OnNonFederatingDomainsError() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // Given
             let applesDomain = "apples@domain.com"
             let bananasDomain = "bananas@domain.com"
@@ -371,7 +371,7 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_OnUnreachableDomainsError() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // Given
             let unreachableDomain = "foma.wire.link"
             let unreachableUser = ZMUser.insertNewObject(in: self.syncMOC)

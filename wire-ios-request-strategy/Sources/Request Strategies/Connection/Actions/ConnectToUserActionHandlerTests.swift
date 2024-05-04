@@ -87,7 +87,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItProcessConnectionEventInTheResponse() throws {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             let userID = UUID()
             let domain = self.owningDomain
@@ -108,7 +108,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_On200() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             let userID = UUID()
             let domain = self.owningDomain
@@ -136,7 +136,7 @@ class ConnectToUserActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_OnError() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             let userID = UUID()
             let domain = self.owningDomain

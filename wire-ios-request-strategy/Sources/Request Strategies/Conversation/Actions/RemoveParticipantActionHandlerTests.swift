@@ -120,7 +120,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItProcessMemberLeaveEventInTheResponse() throws {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             conversation.addParticipantAndUpdateConversationState(user: self.user, role: nil)
 
@@ -158,7 +158,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
 
     func testThatItProcessesMemberLeaveEventInTheResponse_Bots() throws {
 
-        syncMOC.performGroupedAndWait { [self] syncMOC in
+        syncMOC.performGroupedAndWait {
             // given
             conversation.addParticipantAndUpdateConversationState(user: service, role: nil)
 
@@ -240,7 +240,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_On200() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             conversation.addParticipantAndUpdateConversationState(user: self.user, role: nil)
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -275,7 +275,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_On204() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             var action = RemoveParticipantAction(user: user, conversation: conversation)
 
@@ -299,7 +299,7 @@ class RemoveParticipantActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_OnError() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             var action = RemoveParticipantAction(user: user, conversation: conversation)
 

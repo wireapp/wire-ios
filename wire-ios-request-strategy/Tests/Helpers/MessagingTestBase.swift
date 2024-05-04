@@ -468,7 +468,7 @@ extension MessagingTestBase {
 
     func setupTimers() {
         syncMOC.performGroupedAndWait {
-            $0.zm_createMessageObfuscationTimer()
+            syncMOC.zm_createMessageObfuscationTimer()
         }
         uiMOC.zm_createMessageDeletionTimer()
     }

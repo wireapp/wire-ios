@@ -73,7 +73,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCreatesAnExpectedRequestForUpdatingAccessRoles_V1() throws {
-        try syncMOC.performGroupedAndWait { [self] _ in
+        try syncMOC.performGroupedAndWait { [self] in
             // given
             let conversationDomain = conversation.domain!
             let conversationID = conversation.remoteIdentifier!
@@ -115,7 +115,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItProcessUpdateAccessRolesEventInTheResponse() throws {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             let action = UpdateAccessRolesAction(conversation: self.conversation,
                                                  accessMode: accessMode,
@@ -155,7 +155,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_On200() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             var action = UpdateAccessRolesAction(conversation: self.conversation,
                                                  accessMode: accessMode,
@@ -188,7 +188,7 @@ final class UpdateAccessRolesActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_OnError() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             var action = UpdateAccessRolesAction(conversation: self.conversation,
                                                  accessMode: accessMode,

@@ -341,10 +341,10 @@ final class TeamDownloadRequestStrategyTests: MessagingTest {
         }
 
         // when
-        await syncMOC.performGrouped { context in
+        await syncMOC.performGrouped {
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
 
-            context.saveOrRollback()
+            self.syncMOC.saveOrRollback()
 
             // then
             let result = team.members.contains { member in

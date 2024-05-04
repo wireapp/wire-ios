@@ -91,7 +91,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItProcessConnectionEventInTheResponse() throws {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             let newStatus: ZMConnectionStatus = .blocked
             let action = UpdateConnectionAction(connection: self.oneToOneConnection,
@@ -113,7 +113,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_On200() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             var action = UpdateConnectionAction(connection: self.oneToOneConnection,
                                                 newStatus: .blocked)
@@ -141,7 +141,7 @@ class UpdateConnectionActionHandlerTests: MessagingTestBase {
     }
 
     func testThatItCallsResultHandler_OnError() {
-        syncMOC.performGroupedAndWait { [self] _ in
+        syncMOC.performGroupedAndWait { [self] in
             // given
             var action = UpdateConnectionAction(connection: self.oneToOneConnection,
                                                 newStatus: .blocked)

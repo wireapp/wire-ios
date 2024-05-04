@@ -27,10 +27,10 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        self.syncMOC.performGroupedAndWait { moc in
+        syncMOC.performGroupedAndWait {
             self.applicationStatus = MockApplicationStatus()
             self.applicationStatus.mockSynchronizationState = .online
-            self.sut = UserRichProfileRequestStrategy(withManagedObjectContext: moc, applicationStatus: self.applicationStatus)
+            self.sut = UserRichProfileRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.applicationStatus)
         }
     }
 

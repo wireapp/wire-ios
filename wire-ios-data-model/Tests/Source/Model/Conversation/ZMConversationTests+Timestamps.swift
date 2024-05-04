@@ -162,7 +162,7 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
     func testThatNeedsToCalculateUnreadMessagesFlagIsUpdatedWhenMessageFromUpdateEventIsInserted() throws {
 
         // given
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait {
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.remoteIdentifier = UUID.create()
 

@@ -35,7 +35,8 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        self.syncMOC.performGroupedAndWait { syncMOC in
+
+        syncMOC.performGroupedAndWait {
             self.groupConversation.domain = "example.com"
             self.applicationStatus = MockApplicationStatus()
             self.mockMessageSender = MockMessageSenderInterface()

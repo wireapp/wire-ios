@@ -310,7 +310,7 @@ class ConversationRequestStrategyTests: MessagingTestBase {
         fetchConversationsDuringSlowSync(failed: [conversationID])
 
         // then
-        try syncMOC.performGroupedAndWait { syncMOC in
+        try syncMOC.performGroupedAndWait {
             let conversation = try XCTUnwrap(ZMConversation.fetch(with: conversationID.uuid,
                                                                   domain: conversationID.domain,
                                                                   in: syncMOC))

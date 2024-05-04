@@ -165,17 +165,17 @@ extension IntegrationTest {
 
     func setupTimers() {
         userSession?.syncManagedObjectContext.performGroupedAndWait {
-            $0.zm_createMessageObfuscationTimer()
+            userSession?.syncManagedObjectContext.zm_createMessageObfuscationTimer()
         }
         userSession?.managedObjectContext.zm_createMessageDeletionTimer()
     }
 
     func destroyTimers() {
         userSession?.syncManagedObjectContext.performGroupedAndWait {
-            $0.zm_teardownMessageObfuscationTimer()
+            userSession?.syncManagedObjectContext.zm_teardownMessageObfuscationTimer()
         }
         userSession?.managedObjectContext.performGroupedAndWait {
-            $0.zm_teardownMessageDeletionTimer()
+            userSession?.syncManagedObjectContext.zm_teardownMessageDeletionTimer()
         }
     }
 
