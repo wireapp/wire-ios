@@ -80,7 +80,7 @@ final class CollectionImageCell: CollectionCell {
     override func updateForMessage(changeInfo: MessageChangeInfo?) {
         super.updateForMessage(changeInfo: changeInfo)
 
-        guard let changeInfo = changeInfo, changeInfo.imageChanged else { return }
+        guard let changeInfo, changeInfo.imageChanged else { return }
 
         updateViews()
     }

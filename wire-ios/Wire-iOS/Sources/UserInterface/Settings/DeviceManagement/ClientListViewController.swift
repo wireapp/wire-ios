@@ -193,8 +193,8 @@ final class ClientListViewController: UIViewController,
     }
 
     func openDetailsOfClient(_ client: UserClient) {
-        guard let userSession = userSession,
-              let contextProvider = contextProvider,
+        guard let userSession,
+              let contextProvider,
               let navigationController = self.navigationController
         else {
             assertionFailure("Unable to display Devices screen.UserSession and/or navigation instances are nil")
@@ -274,7 +274,7 @@ final class ClientListViewController: UIViewController,
     }
 
     private func createConstraints() {
-        guard let clientsTableView = clientsTableView else {
+        guard let clientsTableView else {
             return
         }
 
@@ -422,7 +422,7 @@ final class ClientListViewController: UIViewController,
 
             switch self.convertSection((indexPath as NSIndexPath).section) {
             case 0:
-                if let selfClient = selfClient {
+                if let selfClient {
                     cell.viewModel = .init(userClient: selfClient, shouldSetType: false)
                     cell.wr_editable = false
                 }

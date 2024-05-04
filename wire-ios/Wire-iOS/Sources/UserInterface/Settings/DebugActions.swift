@@ -28,7 +28,7 @@ enum DebugActions {
         textToCopy: String? = nil) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        if let textToCopy = textToCopy {
+        if let textToCopy {
             alert.addAction(UIAlertAction(title: "Copy", style: .default) { _ in
                 UIPasteboard.general.string = textToCopy
             })
@@ -358,8 +358,7 @@ enum DebugActions {
 private extension Optional {
 
     func description(else defaultDescription: String) -> String {
-        guard let value = self else { return defaultDescription }
-        return String(describing: value)
+        guard let self else { return defaultDescription }
+        return String(describing: self)
     }
-
 }

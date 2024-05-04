@@ -246,7 +246,7 @@ final class ConversationListItemView: UIView {
     func update(for conversation: ConversationListCellConversation?) {
         self.conversation = conversation
 
-        guard let conversation = conversation else {
+        guard let conversation else {
             self.configure(with: nil, subtitle: nil)
             return
         }

@@ -28,11 +28,11 @@ protocol SimpleTextFieldDelegate: AnyObject {
 
 extension Optional where Wrapped == String {
     var value: SimpleTextField.Value? {
-        guard let value = self else { return nil }
-        if let error = SimpleTextFieldValidator().validate(text: value) {
+        guard let self else { return nil }
+        if let error = SimpleTextFieldValidator().validate(text: self) {
             return .error(error)
         }
-        return .valid(value)
+        return .valid(self)
     }
 }
 
@@ -136,7 +136,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
         }
 
         set {
-            if let newValue = newValue {
+            if let newValue {
                 attributedPlaceholder = attributedPlaceholderString(placeholder: newValue)
             }
         }
@@ -144,7 +144,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     override var accessibilityValue: String? {
         get {
-            guard let text = text,
+            guard let text,
                   !text.isEmpty else {
                       return super.accessibilityValue ?? placeholder
                   }

@@ -47,10 +47,10 @@ class LaunchImageViewController: UIViewController {
 
         let nibView = loadedObjects.first as? UIView
         nibView?.translatesAutoresizingMaskIntoConstraints = false
-        if let nibView = nibView {
+        if let nibView {
             view.addSubview(nibView)
         }
-        if let nibView = nibView {
+        if let nibView {
             contentView = nibView
         }
 

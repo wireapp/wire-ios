@@ -204,7 +204,7 @@ extension CompanyLoginController {
     // MARK: - Error Handling
 
     private func handleValidationErrorIfNeeded(_ error: ValidationError?) -> Bool {
-        guard let error = error else { return false }
+        guard let error else { return false }
 
         switch error {
         case .invalidCode:
@@ -309,7 +309,7 @@ extension CompanyLoginController {
         detector.detectCopiedRequestCode { [isAutoDetectionEnabled, presentCompanyLoginAlert] result in
             // This might have changed in the meantime.
             guard isAutoDetectionEnabled else { return }
-            guard let result = result, !onlyNew || result.isNew else { return }
+            guard let result, !onlyNew || result.isNew else { return }
             presentCompanyLoginAlert(result.code, nil, true)
         }
     }

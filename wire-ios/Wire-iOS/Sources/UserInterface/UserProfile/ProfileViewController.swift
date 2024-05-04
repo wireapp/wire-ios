@@ -79,7 +79,7 @@ final class ProfileViewController: UIViewController {
         userSession: UserSession
     ) {
         let profileViewControllerContext: ProfileViewControllerContext
-        if let context = context {
+        if let context {
             profileViewControllerContext = context
         } else {
             profileViewControllerContext = conversation?.conversationType.profileViewControllerContext ?? .oneToOneConversation
@@ -375,7 +375,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
     private func openSelfProfile() {
         // Do not reveal list view for iPad regular mode
         let leftViewControllerRevealed: Bool
-        if let presentingViewController = presentingViewController {
+        if let presentingViewController {
             leftViewControllerRevealed = !presentingViewController.isIPadRegular(device: UIDevice.current)
         } else {
             leftViewControllerRevealed = true
@@ -544,7 +544,7 @@ extension ProfileViewController: ConversationCreationControllerDelegate {
         didCreateConversation conversation: ZMConversation
     ) {
         controller.dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
 
             delegate?.profileViewController(
                 self,

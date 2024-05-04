@@ -29,7 +29,7 @@ protocol UserCellSubtitleProtocol: AnyObject {
 
 extension UserCellSubtitleProtocol where Self: UIView {
     func subtitle(forRegularUser user: UserType?) -> NSAttributedString? {
-        guard let user = user else { return nil }
+        guard let user else { return nil }
 
         var components: [NSAttributedString?] = []
 
