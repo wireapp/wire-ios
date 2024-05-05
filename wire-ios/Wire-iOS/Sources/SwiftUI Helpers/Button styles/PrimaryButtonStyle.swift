@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,24 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
+import SwiftUI
 
-extension UINavigationItem {
+/// The primary button style as defined in Wire's design system.
 
-    @available(*, deprecated, message: "Please use `setDynamicFontLabel(title:)`!")
-    func setupNavigationBarTitle(title: String) {
-        let titleLabel = DynamicFontLabel(
-            text: title,
-            fontSpec: .headerSemiboldFont,
-            color: SemanticColors.Label.textDefault)
-        titleView = titleLabel
-    }
+struct PrimaryButtonStyle: SwiftUI.ButtonStyle {
 
-    func setDynamicFontLabel(title: String) {
-        titleView = DynamicFontLabel(
-            text: title,
-            style: .h3,
-            color: SemanticColors.Label.textDefault
-        )
-    }
+    func makeBody(configuration: Configuration) -> some View {
+            configuration.label
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.primaryButtonBackground)
+                .foregroundStyle(Color.primaryButtonText)
+                .clipShape(.rect(cornerRadius: 16))
+        }
+
 }
