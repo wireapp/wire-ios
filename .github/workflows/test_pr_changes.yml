@@ -65,7 +65,7 @@ jobs:
       
       - name: Setup selective testing
         run: |
-          mint run mikeger/XcodeSelectiveTesting@0.9.3
+          mint run mikeger/XcodeSelectiveTesting@0.9.3 --base-branch $GITHUB_BASE_REF
       - name: Run tests
         run: |
           xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS -testPlan AllTests -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee xcodebuild-wire-ios.log | bundle exec xcpretty --report junit --output build/reports/Wire-iOS.junit
