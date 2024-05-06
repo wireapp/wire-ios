@@ -68,7 +68,7 @@ extension AppLockModule.View {
         init() {
             super.init(frame: .zero)
 
-            let shieldView = AppLockView()
+            let shieldView: UIView = AppLockView()
             shieldViewContainer.addSubview(shieldView)
 
             addSubview(shieldViewContainer)
