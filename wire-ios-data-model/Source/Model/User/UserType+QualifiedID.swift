@@ -16,22 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
+import WireTransport
 
-final class CountryCell: UITableViewCell {
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: .value1, reuseIdentifier: reuseIdentifier)
+public extension UserType {
+
+    var qualifiedID: QualifiedID? {
+        guard
+            let uuid = remoteIdentifier,
+            let domain = domain ?? BackendInfo.domain
+        else {
+            return nil
+        }
+
+        return QualifiedID(uuid: uuid, domain: domain)
     }
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func configure(for country: Country) {
-        textLabel?.text = country.displayName
-        detailTextLabel?.text = "+\(country.e164)"
-
-        accessibilityHint = L10n.Localizable.Registration.Phone.CountryCode.hint
-    }
 }

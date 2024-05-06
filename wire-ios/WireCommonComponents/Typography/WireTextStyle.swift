@@ -16,16 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
-import XCTest
+import Foundation
 
-final class CountryTests: XCTestCase {
+/// Text styles defined in Wire's design system.
 
-    func testThatCountryFromDeviceGivesCurrentCountry() {
-        // GIVEN
-        let countryFromDevice = Country.countryFromDevice!
+public enum WireTextStyle {
 
-        // WHEN & THEN
-        XCTAssertEqual(countryFromDevice.iso, "us")
-    }
+    case largeTitle
+    case h1
+    case h2
+    case h3
+    case h4
+    case h5
+    case body1
+    case body2
+    case body3
+    case subline1
+    case buttonSmall
+    case buttonBig
+
 }

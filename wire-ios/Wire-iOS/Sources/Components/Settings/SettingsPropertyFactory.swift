@@ -142,9 +142,6 @@ final class SettingsPropertyFactory {
         case .email:
             return getOnlyProperty(propertyName: propertyName, value: selfUser?.emailAddress)
 
-        case .phone:
-            return getOnlyProperty(propertyName: propertyName, value: selfUser?.phoneNumber)
-
         case .handle:
             return getOnlyProperty(propertyName: propertyName, value: selfUser?.handleDisplayString(withDomain: BackendInfo.isFederationEnabled))
 

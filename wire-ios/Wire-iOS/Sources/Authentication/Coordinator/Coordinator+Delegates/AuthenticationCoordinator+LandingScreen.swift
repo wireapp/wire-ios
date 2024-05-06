@@ -29,7 +29,7 @@ extension AuthenticationCoordinator: LandingViewControllerDelegate {
 
             executeActions([.showLoadingView, .startLoginFlow(loginRequest, proxyCredentials)])
         } else {
-            stateController.transition(to: .provideCredentials(.email, nil))
+            stateController.transition(to: .provideCredentials(nil))
         }
     }
 
