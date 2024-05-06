@@ -76,20 +76,20 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     // swiftlint:disable:next invalid_swiftlint_command
     // TODO: jacob this can only be tested in an integration test or with better mocks
-//    func testThatItCallsShowConversationListAndConnects_ForPushNotificationCategoryConnectWithAcceptAction() {
-//        // given
-//        let sender = ZMUser.insertNewObject(in: uiMOC)
-//        sender.remoteIdentifier = UUID()
-//
-//        let userInfo = userInfoWithConnectionRequest(from: sender)
-//
-//        // when
-//        handle(conversationAction: .connect, category: .connect, userInfo: userInfo)
-//
-//        // then
-//        XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.0, sut)
-//        XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.1.remoteIdentifier, userInfo.conversationID!)
-//    }
+    func skip_testThatItCallsShowConversationListAndConnects_ForPushNotificationCategoryConnectWithAcceptAction() {
+        // given
+        let sender = ZMUser.insertNewObject(in: uiMOC)
+        sender.remoteIdentifier = UUID()
+
+        let userInfo = userInfoWithConnectionRequest(from: sender)
+
+        // when
+        handle(conversationAction: .connect, category: .connect, userInfo: userInfo)
+
+        // then
+        XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.0, sut)
+        XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.1.remoteIdentifier, userInfo.conversationID!)
+    }
 
     func testThatItMutesAndDoesNotShowConversation_ForPushNotificationCategoryConversationWithMuteAction() {
         // given
