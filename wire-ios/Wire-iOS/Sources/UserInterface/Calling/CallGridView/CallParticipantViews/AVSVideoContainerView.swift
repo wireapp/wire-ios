@@ -24,15 +24,6 @@ final class AVSVideoContainerView: UIView {
 
     private weak var videoView: UIView?
 
-    init() {
-        super.init(frame: .zero)
-    }
-
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("not implemented")
-    }
-
     func setupVideoView(_ view: UIView) {
         guard videoView == nil else {
             WireLogger.ui.error(
