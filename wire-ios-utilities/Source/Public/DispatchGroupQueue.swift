@@ -29,8 +29,8 @@ public final class DispatchGroupQueue: NSObject, ZMSGroupQueue {
         dispatchGroupContext = DispatchGroupContext(groups: [])
     }
 
-    public  var dispatchGroup: ZMSDispatchGroup {
-        dispatchGroupContext.groups[0]
+    public var dispatchGroup: ZMSDispatchGroup? {
+        dispatchGroupContext.groups.first
     }
 
     public func add(_ group: ZMSDispatchGroup) {
