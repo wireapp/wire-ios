@@ -177,13 +177,13 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
             path = "/assets/v3/\(assetId)"
 
         case .v1:
-            let domain = user.domain?.isEmpty == false ? user.domain! : BackendInfo.domain
+            let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
             guard let domain else { return nil }
 
             path = "/assets/v4/\(domain)/\(assetId)"
 
         case .v2, .v3, .v4, .v5, .v6:
-            let domain = user.domain?.isEmpty == false ? user.domain! : BackendInfo.domain
+            let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
             guard let domain else { return nil }
 
             path = "/assets/\(domain)/\(assetId)"

@@ -326,7 +326,7 @@ internal struct WirelessRequestFactory {
         switch apiVersion {
 
         case .v3, .v4, .v5, .v6:
-            let domain = conversation.domain?.isEmpty == false ? conversation.domain! : BackendInfo.domain
+            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
             guard let domain else {
                 fatal("no domain associated with conversation, can't make the request")
             }
