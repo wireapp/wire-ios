@@ -16,24 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
+import SwiftUI
 
-extension UINavigationItem {
+/// The secondary button style as defined in Wire's design system.
 
-    @available(*, deprecated, message: "Please use `setDynamicFontLabel(title:)`!")
-    func setupNavigationBarTitle(title: String) {
-        let titleLabel = DynamicFontLabel(
-            text: title,
-            fontSpec: .headerSemiboldFont,
-            color: SemanticColors.Label.textDefault)
-        titleView = titleLabel
-    }
+struct SecondaryButtonStyle: SwiftUI.ButtonStyle {
 
-    func setDynamicFontLabel(title: String) {
-        titleView = DynamicFontLabel(
-            text: title,
-            style: .h3,
-            color: SemanticColors.Label.textDefault
-        )
-    }
+    func makeBody(configuration: Configuration) -> some View {
+            configuration.label
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.secondaryButtonBackground)
+                .foregroundStyle(Color.secondaryButtonText)
+                .clipShape(.rect(cornerRadius: 16))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.secondaryButtonBorder, lineWidth: 1)
+                )
+        }
+
 }
