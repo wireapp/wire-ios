@@ -78,11 +78,6 @@ final class LocationSelectionViewController: UIViewController {
         return manager
     }()
 
-    private var userLocationAuthorized: Bool {
-        let status = appLocationManager.authorizationStatus
-        return status == .authorizedAlways || status == .authorizedWhenInUse
-    }
-
     // MARK: - Lifecycle Methods
 
     override func viewDidLoad() {
@@ -98,7 +93,7 @@ final class LocationSelectionViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if !userLocationAuthorized {
+        if !appLocationManager.userLocationAuthorized {
             mapViewController.mapView.restoreLocation(animated: animated)
         }
         appLocationManager.requestLocationAuthorization()
@@ -179,14 +174,14 @@ final class LocationSelectionViewController: UIViewController {
     // MARK: - Helpers
 
     private func updateUserLocation() {
-        mapViewController.mapView.showsUserLocation = userLocationAuthorized
-        if userLocationAuthorized {
+        mapViewController.mapView.showsUserLocation = appLocationManager.userLocationAuthorized
+        if appLocationManager.userLocationAuthorized {
             appLocationManager.startUpdatingLocation()
         }
     }
 
     private func zoomToUserLocation(_ animated: Bool) {
-        guard userLocationAuthorized else { return presentUnauthorizedAlert() }
+        guard appLocationManager.userLocationAuthorized else { return presentUnauthorizedAlert() }
         let region = MKCoordinateRegion(center: mapViewController.mapView.userLocation.coordinate, latitudinalMeters: 50, longitudinalMeters: 50)
         mapViewController.mapView.setRegion(region, animated: animated)
     }

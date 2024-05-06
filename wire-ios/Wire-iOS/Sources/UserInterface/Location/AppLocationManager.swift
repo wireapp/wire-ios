@@ -39,6 +39,11 @@ final class AppLocationManager: NSObject {
         return locationManager.authorizationStatus
     }
 
+    var userLocationAuthorized: Bool {
+        let status = authorizationStatus
+        return status == .authorizedAlways || status == .authorizedWhenInUse
+    }
+
     // MARK: - Init
 
     override init() {
