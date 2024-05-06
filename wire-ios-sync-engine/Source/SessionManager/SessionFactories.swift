@@ -93,7 +93,6 @@ open class AuthenticatedSessionFactory {
             recurringActionService: nil,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
-            useCaseFactory: nil,
             userId: account.userIdentifier
         )
 

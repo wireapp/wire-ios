@@ -83,7 +83,6 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
-            useCaseFactory: nil,
             userId: account.userIdentifier
         )
 

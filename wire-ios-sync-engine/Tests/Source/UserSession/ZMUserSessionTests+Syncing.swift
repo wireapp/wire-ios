@@ -16,16 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
-@testable import WireSyncEngine
+import WireDataModelSupport
 import XCTest
 
+@testable import WireRequestStrategy
+@testable import WireSyncEngine
+
 final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
+
+    // The mock in this place is a workaround, because somewhere down the line the test funcs call
+    // `func startQuickSync()` and this calls `PushSupportedProtocolsAction`.
+    // A proper solution and mocking requires a further refactoring.
+    private var mockPushSupportedProtocolsActionHandler: MockActionHandler<PushSupportedProtocolsAction>!
 
     override func setUp() {
         super.setUp()
 
         mockMLSService.repairOutOfSyncConversations_MockMethod = { }
+
+        mockPushSupportedProtocolsActionHandler = .init(
+            result: .success(()),
+            context: syncMOC.notificationContext
+        )
+    }
+
+    override func tearDown() {
+        mockPushSupportedProtocolsActionHandler = nil
+
+        super.tearDown()
     }
 
     // MARK: Helpers
