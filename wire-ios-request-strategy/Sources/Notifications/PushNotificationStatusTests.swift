@@ -16,19 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireRequestStrategy
 import XCTest
 
-@objc class FakeGroupQueue: NSObject, ZMSGroupQueue {
+@testable import WireRequestStrategy
 
-    var dispatchGroup: ZMSDispatchGroup! {
-        return nil
+@objc
+class FakeGroupQueue: NSObject, ZMSGroupQueue {
+
+    var dispatchGroup: ZMSDispatchGroup? {
+        nil
     }
 
     func performGroupedBlock(_ block: @escaping () -> Void) {
         block()
     }
-
 }
 
 // MARK: - Tests
