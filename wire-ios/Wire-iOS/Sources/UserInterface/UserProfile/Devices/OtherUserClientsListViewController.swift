@@ -21,9 +21,9 @@ import UIKit
 import WireSyncEngine
 import SwiftUI
 
-final class UserClientListViewController: UIViewController,
-                                          UICollectionViewDelegateFlowLayout,
-                                          UICollectionViewDataSource {
+final class OtherUserClientsListViewController: UIViewController,
+                                                UICollectionViewDelegateFlowLayout,
+                                                UICollectionViewDataSource {
 
     private let headerView: ParticipantDeviceHeaderView
     private let collectionView = UICollectionView(forGroupedSections: ())
@@ -46,7 +46,7 @@ final class UserClientListViewController: UIViewController,
          contextProvider: ContextProvider?,
          mlsGroupId: MLSGroupID?) {
         self.user = user
-        self.clients = UserClientListViewController.clientsSortedByRelevance(for: user)
+        self.clients = OtherUserClientsListViewController.clientsSortedByRelevance(for: user)
         self.headerView = ParticipantDeviceHeaderView(userName: user.name ?? "")
         self.userSession = userSession
         self.contextProvider = contextProvider
@@ -173,7 +173,7 @@ final class UserClientListViewController: UIViewController,
             client: client,
             contextProvider: contextProvider
         )
-        let detailsViewController = DeviceInfoViewController(rootView: ProfileDeviceDetailsView(viewModel: viewModel))
+        let detailsViewController = DeviceInfoViewController(rootView: OtherUserDeviceDetailsView(viewModel: viewModel))
         navigationController.pushViewController(detailsViewController, animated: true)
     }
 
@@ -211,7 +211,7 @@ final class UserClientListViewController: UIViewController,
     }
 }
 
-extension UserClientListViewController: UserObserving {
+extension OtherUserClientsListViewController: UserObserving {
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
         guard changeInfo.clientsChanged || changeInfo.trustLevelChanged else { return }
@@ -220,13 +220,13 @@ extension UserClientListViewController: UserObserving {
         // TODO: add clients to userType
         // swiftlint:enable todo_requires_jira_link
         headerView.showUnencryptedLabel = (user as? ZMUser)?.clients.isEmpty == true
-        clients = UserClientListViewController.clientsSortedByRelevance(for: user)
+        clients = OtherUserClientsListViewController.clientsSortedByRelevance(for: user)
         updateCertificatesForUserClients()
     }
 
 }
 
-extension UserClientListViewController: ParticipantDeviceHeaderViewDelegate {
+extension OtherUserClientsListViewController: ParticipantDeviceHeaderViewDelegate {
     func participantsDeviceHeaderViewDidTapLearnMore(_ headerView: ParticipantDeviceHeaderView) {
         URL.wr_fingerprintLearnMore.openInApp(above: self)
     }
