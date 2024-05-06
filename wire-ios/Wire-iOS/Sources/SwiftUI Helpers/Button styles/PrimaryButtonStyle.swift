@@ -17,8 +17,19 @@
 //
 
 import Foundation
+import SwiftUI
 
-public enum E2EI {
-    // This notification is used to check the E2EIdentity Certificate expiry status
-    public static let checkForE2EICertificateExpiryStatus = Notification.Name("CheckForE2EICertificateExpiryStatus")
+/// The primary button style as defined in Wire's design system.
+
+struct PrimaryButtonStyle: SwiftUI.ButtonStyle {
+
+    func makeBody(configuration: Configuration) -> some View {
+            configuration.label
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.primaryButtonBackground)
+                .foregroundStyle(Color.primaryButtonText)
+                .clipShape(.rect(cornerRadius: 16))
+        }
+
 }
