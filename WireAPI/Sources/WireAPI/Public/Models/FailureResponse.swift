@@ -31,7 +31,7 @@ public struct FailureResponse: Decodable, Error {
     public let label: String
 
     /// The error message.
-    
+
     public let message: String
 
 }
