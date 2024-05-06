@@ -17,26 +17,23 @@
 //
 
 import Foundation
+import SwiftUI
 
-// sourcery: AutoMockable
-public protocol UseCaseFactoryProtocol {
+/// The secondary button style as defined in Wire's design system.
 
-    func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol
+struct SecondaryButtonStyle: SwiftUI.ButtonStyle {
 
-}
-
-struct UseCaseFactory: UseCaseFactoryProtocol {
-
-    var context: NSManagedObjectContext
-    var supportedProtocolService: SupportedProtocolsServiceInterface
-    var oneOnOneResolver: OneOnOneResolverInterface
-
-    public func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
-        ResolveOneOnOneConversationsUseCase(
-            context: context,
-            supportedProtocolService: supportedProtocolService,
-            resolver: oneOnOneResolver
-        )
-    }
+    func makeBody(configuration: Configuration) -> some View {
+            configuration.label
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.secondaryButtonBackground)
+                .foregroundStyle(Color.secondaryButtonText)
+                .clipShape(.rect(cornerRadius: 16))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.secondaryButtonBorder, lineWidth: 1)
+                )
+        }
 
 }
