@@ -18,21 +18,21 @@
 
 import CoreLocation
 
-// MARK: - AppLocationManagerDelegate
-
 protocol AppLocationManagerDelegate: AnyObject {
+
     func didUpdateLocations(_ locations: [CLLocation])
+
     func didFailWithError(_ error: Error)
+
     func didChangeAuthorization(status: CLAuthorizationStatus)
+
 }
 
 class AppLocationManager: NSObject {
 
     // MARK: - Properties
 
-    static let shared = AppLocationManager()
-
-    private let locationManager = CLLocationManager()
+    private let locationManager: CLLocationManager
     weak var delegate: AppLocationManagerDelegate?
 
     var authorizationStatus: CLAuthorizationStatus {
@@ -41,7 +41,8 @@ class AppLocationManager: NSObject {
 
     // MARK: - Init
 
-    override private init() {
+    init(locationManager: CLLocationManager) {
+        self.locationManager = locationManager
         super.init()
         locationManager.delegate = self
     }
@@ -76,5 +77,4 @@ extension AppLocationManager: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         delegate?.didChangeAuthorization(status: status)
     }
-
 }

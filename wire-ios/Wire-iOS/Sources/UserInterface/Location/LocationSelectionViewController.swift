@@ -72,8 +72,14 @@ final class LocationSelectionViewController: UIViewController {
     private var userShowedInitially = false
     private var mapDidRender = false
 
+    lazy var appLocationManager: AppLocationManager = {
+        let manager = AppLocationManager(locationManager: CLLocationManager())
+        manager.delegate = self
+        return manager
+    }()
+
     private var userLocationAuthorized: Bool {
-        let status = AppLocationManager.shared.authorizationStatus
+        let status = appLocationManager.authorizationStatus
         return status == .authorizedAlways || status == .authorizedWhenInUse
     }
 
@@ -82,7 +88,6 @@ final class LocationSelectionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        AppLocationManager.shared.delegate = self
         mapManager.delegate = self
         toolBar.delegate = self
         sendViewController.delegate = self
@@ -94,13 +99,13 @@ final class LocationSelectionViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         if !userLocationAuthorized { mapManager.mapView.restoreLocation(animated: true) }
-        AppLocationManager.shared.requestLocationAuthorization()
+        appLocationManager.requestLocationAuthorization()
         endEditing()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        AppLocationManager.shared.stopUpdatingLocation()
+        appLocationManager.stopUpdatingLocation()
         mapManager.mapView.storeLocation()
     }
 
@@ -174,7 +179,7 @@ final class LocationSelectionViewController: UIViewController {
     private func updateUserLocation() {
         mapManager.mapView.showsUserLocation = userLocationAuthorized
         if userLocationAuthorized {
-            AppLocationManager.shared.startUpdatingLocation()
+            appLocationManager.startUpdatingLocation()
         }
     }
 
@@ -313,11 +318,11 @@ extension LocationSelectionViewController: AppLocationManagerDelegate {
     func didChangeAuthorization(status: CLAuthorizationStatus) {
         switch status {
         case .notDetermined:
-            AppLocationManager.shared.requestLocationAuthorization()
+            appLocationManager.requestLocationAuthorization()
         case .restricted, .denied:
             presentUnauthorizedAlert()
         case .authorizedAlways, .authorizedWhenInUse:
-            AppLocationManager.shared.startUpdatingLocation()
+            appLocationManager.startUpdatingLocation()
             mapManager.mapView.showsUserLocation = true
         @unknown default: break
         }
