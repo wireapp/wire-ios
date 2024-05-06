@@ -548,7 +548,10 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("adding members to group (\(groupID.safeForLoggingDescription)) with users: \(users)")
             guard !users.isEmpty else { throw MLSAddMembersError.noMembersToAdd }
-            guard let ciphersuite = MLSCipherSuite(rawValue: await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue) else { throw MLSAddMembersError.noMembersToAdd}
+            let mlsConfig = await featureRepository.fetchMLS().config
+            guard let ciphersuite = MLSCipherSuite(rawValue: mlsConfig.defaultCipherSuite.rawValue) else {
+                throw MLSAddMembersError.noMembersToAdd
+            }
             let keyPackages = try await claimKeyPackages(for: users, ciphersuite: ciphersuite)
 
             let events = if keyPackages.isEmpty {
