@@ -526,6 +526,7 @@ public final class MLSService: MLSServiceInterface {
         case noMembersToAdd
         case noInviteesToAdd
         case failedToClaimKeyPackages(users: [MLSUser])
+        case invalidCiphersuite
     }
 
     /// Add users to MLS group in the given conversation.
@@ -550,7 +551,7 @@ public final class MLSService: MLSServiceInterface {
             guard !users.isEmpty else { throw MLSAddMembersError.noMembersToAdd }
             let mlsConfig = await featureRepository.fetchMLS().config
             guard let ciphersuite = MLSCipherSuite(rawValue: mlsConfig.defaultCipherSuite.rawValue) else {
-                throw MLSAddMembersError.noMembersToAdd
+                throw MLSAddMembersError.invalidCiphersuite
             }
             let keyPackages = try await claimKeyPackages(for: users, ciphersuite: ciphersuite)
 
