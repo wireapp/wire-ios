@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import SwiftUI
 import SnapshotTesting
+import SwiftUI
+import XCTest
 
 /// A helper object for verifying image snapshots.
 ///

@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import SwiftUI
 import WireTransport
+import SwiftUI
 
 extension AuthenticationCoordinator: CompanyLoginControllerDelegate {
 
