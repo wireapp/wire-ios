@@ -228,7 +228,7 @@ class BaseCallParticipantView: OrientableView {
     }
 
     func updateVideoShouldFill(_ shouldFill: Bool) {
-        // TODO: override in subsclasses
+        // overide in subclasses
     }
 
     // MARK: - Border Style
