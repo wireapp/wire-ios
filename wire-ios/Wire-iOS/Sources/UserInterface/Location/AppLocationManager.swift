@@ -28,7 +28,7 @@ protocol AppLocationManagerDelegate: AnyObject {
 
 }
 
-class AppLocationManager: NSObject {
+final class AppLocationManager: NSObject {
 
     // MARK: - Properties
 

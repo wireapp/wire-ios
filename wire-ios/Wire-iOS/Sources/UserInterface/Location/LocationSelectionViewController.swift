@@ -62,7 +62,7 @@ final class LocationSelectionViewController: UIViewController {
     let locationButtonContainer = UIView()
     var sendControllerHeightConstraint: NSLayoutConstraint?
 
-    private var mapViewController = MapViewController()
+    private let mapViewController = MapViewController()
     private let toolBar = ModalTopBar()
     private let locationManager = CLLocationManager()
     private let geocoder = CLGeocoder()
@@ -98,7 +98,9 @@ final class LocationSelectionViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if !userLocationAuthorized { mapViewController.mapView.restoreLocation(animated: true) }
+        if !userLocationAuthorized {
+            mapViewController.mapView.restoreLocation(animated: animated)
+        }
         appLocationManager.requestLocationAuthorization()
         endEditing()
     }
