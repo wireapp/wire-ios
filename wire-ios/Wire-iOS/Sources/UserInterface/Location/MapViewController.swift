@@ -20,7 +20,7 @@ import MapKit
 
 // MARK: - MapManagerDelegate
 
-protocol MapManagerDelegate: AnyObject {
+protocol MapViewControllerDelegate: AnyObject {
 
     func mapManager(_ viewController: MapViewController, didUpdateUserLocation userLocation: MKUserLocation)
     func mapManager(_ viewController: MapViewController, regionDidChangeAnimated animated: Bool)
@@ -35,7 +35,7 @@ final class MapViewController: NSObject {
     // MARK: - Properties
 
     let mapView = MKMapView()
-    weak var delegate: MapManagerDelegate?
+    weak var delegate: MapViewControllerDelegate?
 
     // MARK: - Init
 

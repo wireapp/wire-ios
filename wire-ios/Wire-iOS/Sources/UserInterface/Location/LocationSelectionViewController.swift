@@ -262,7 +262,7 @@ extension LocationSelectionViewController: ModalTopBarDelegate {
 
 // MARK: - Map Manager Delegate
 
-extension LocationSelectionViewController: MapManagerDelegate {
+extension LocationSelectionViewController: MapViewControllerDelegate {
 
     func mapManager(_ manager: MapViewController, didUpdateUserLocation userLocation: MKUserLocation) {
         if !userShowedInitially {
