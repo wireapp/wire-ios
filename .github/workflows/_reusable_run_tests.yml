@@ -229,7 +229,7 @@ jobs:
           xcodebuild test -retry-tests-on-failure -workspace wire-ios-mono.xcworkspace -scheme WireDataModel -destination 'platform=iOS Simulator,OS=${{ env.IOS_VERSION }},name=${{ env.IPHONE_MODEL }}' | tee -a xcodebuild-wire-ios-data-model.log | bundle exec xcpretty --report junit --output build/reports/WireDataModel.junit
           exit ${PIPESTATUS[0]}
 
-      - name: Test WireRequestStrategy
+      - name: Test WireAPI
         if: ${{ inputs.wire-api || inputs.all }}
         run: |
           echo "WireAPI has changes"
