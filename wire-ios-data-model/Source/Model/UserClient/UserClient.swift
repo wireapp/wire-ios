@@ -437,11 +437,7 @@ public extension UserClient {
         client.activationDate = activationDate
         client.lastActiveDate = lastActiveDate
         client.remoteIdentifier = id
-        client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519,
-                                             ed448: mlsEd448,
-                                             p256: mlsP256,
-                                             p384: mlsP384,
-                                             p521: mlsP521)
+
         let selfUser = ZMUser.selfUser(in: context)
         client.user = client.user ?? selfUser
 
@@ -452,6 +448,14 @@ public extension UserClient {
         if client.isLegalHoldDevice, isNewClient {
             selfUser.legalHoldRequest = nil
             selfUser.needsToAcknowledgeLegalHoldStatus = true
+        }
+
+        if !client.isSelfClient() {
+            client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519,
+                                                 ed448: mlsEd448,
+                                                 p256: mlsP256,
+                                                 p384: mlsP384,
+                                                 p521: mlsP521)
         }
 
         if let selfClient = selfUser.selfClient() {
