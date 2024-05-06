@@ -172,19 +172,19 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
         let path: String
         switch apiVersion {
+
         case .v0:
             path = "/assets/v3/\(assetId)"
+
         case .v1:
-            guard let domain = user.domain.nonEmptyValue ?? BackendInfo.domain else {
-                return nil
-            }
+            let domain = user.domain?.isEmpty == false ? user.domain! : BackendInfo.domain
+            guard let domain else { return nil }
 
             path = "/assets/v4/\(domain)/\(assetId)"
 
         case .v2, .v3, .v4, .v5, .v6:
-            guard let domain = user.domain.nonEmptyValue ?? BackendInfo.domain else {
-                return nil
-            }
+            let domain = user.domain?.isEmpty == false ? user.domain! : BackendInfo.domain
+            guard let domain else { return nil }
 
             path = "/assets/\(domain)/\(assetId)"
         }

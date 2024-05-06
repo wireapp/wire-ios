@@ -23,15 +23,16 @@ public final class AssetDownloadRequestFactory: NSObject {
 
     public func requestToGetAsset(withKey key: String, token: String?, domain: String?, apiVersion: APIVersion) -> ZMTransportRequest? {
         let path: String
+        let domain = domain?.isEmpty == false ? domain! : BackendInfo.domain
 
         switch apiVersion {
         case .v0:
             path = "/assets/v3/\(key)"
         case .v1:
-            guard let domain = domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
+            guard let domain else { return nil }
             path = "/assets/v4/\(domain)/\(key)"
         case .v2, .v3, .v4, .v5, .v6:
-            guard let domain = domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
+            guard let domain else { return nil }
             path = "/assets/\(domain)/\(key)"
         }
 
@@ -39,5 +40,4 @@ public final class AssetDownloadRequestFactory: NSObject {
         request?.forceToBackgroundSession()
         return request
     }
-
 }

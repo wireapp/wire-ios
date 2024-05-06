@@ -589,7 +589,7 @@ public final class MLSService: MLSServiceInterface {
             }
         }
 
-        if failedUsers.isNonEmpty {
+        if !failedUsers.isEmpty {
             throw MLSAddMembersError.failedToClaimKeyPackages(users: failedUsers)
         }
 
