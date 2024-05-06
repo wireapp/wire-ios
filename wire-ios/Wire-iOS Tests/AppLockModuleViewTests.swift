@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SnapshotTesting
-@testable import Wire
 import XCTest
+
+@testable import Wire
 
 final class AppLockModuleViewTests: BaseSnapshotTestCase {
 
@@ -130,4 +130,14 @@ final class AppLockModuleViewTests: BaseSnapshotTestCase {
         verify(matching: sut)
     }
 
+    // MARK: - Nib Loading
+
+    func test_AppLockViewIsLoaded() {
+
+        // When
+        let sut = AppLockView()
+
+        // Then
+        XCTAssertNotNil(sut)
+    }
 }
