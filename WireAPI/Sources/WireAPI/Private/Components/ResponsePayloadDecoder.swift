@@ -21,8 +21,7 @@ import Foundation
 enum ResponsePayloadDecoderError: Error {
 
     case missingResponseData
-    case failedToDecodeSuccess(Error)
-    case failedToDecodeFailure(Error)
+    case failedToDecodePayload(Decodable.Type, Error)
 
 }
 
@@ -37,51 +36,24 @@ struct ResponsePayloadDecoder {
         self.decoder = decoder
     }
 
-    /// Decode the payload of a response.
-    ///
-    /// - Parameters:
-    ///   - response: The http response to decode.
-    ///   - type: The api model type to decode into.
-    ///
-    /// - Throws: `ResponsePayloadDecoderError` if decoding was unsuccessful.
-    /// - Returns: A `Result` with the success response or a failure response.
-
     func decodePayload<T: Decodable>(
         from response: HTTPResponse,
         as type: T.Type
-    ) throws -> Result<
-        T,
-        FailureResponse
-    > {
-        switch response.code {
-        case 100...300:
-            return .success(try decodeSuccess(response))
-        default:
-            return .failure(try decodeFailure(response))
-        }
-    }
-
-    private func decodeSuccess<T: Decodable>(_ response: HTTPResponse) throws -> T {
+    ) throws -> T {
         guard let data = response.payload else {
             throw ResponsePayloadDecoderError.missingResponseData
         }
 
         do {
-            return try decoder.decode(T.self, from: data)
+            return try decoder.decode(
+                T.self,
+                from: data
+            )
         } catch {
-            throw ResponsePayloadDecoderError.failedToDecodeSuccess(error)
-        }
-    }
-
-    private func decodeFailure(_ response: HTTPResponse) throws -> FailureResponse {
-        guard let data = response.payload else {
-            throw ResponsePayloadDecoderError.missingResponseData
-        }
-
-        do {
-            return try decoder.decode(FailureResponse.self, from: data)
-        } catch {
-            throw ResponsePayloadDecoderError.failedToDecodeFailure(error)
+            throw ResponsePayloadDecoderError.failedToDecodePayload(
+                T.self,
+                error
+            )
         }
     }
 

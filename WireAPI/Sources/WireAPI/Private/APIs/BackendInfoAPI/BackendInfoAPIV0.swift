@@ -37,15 +37,22 @@ class BackendInfoAPIV0: BackendInfoAPI {
 
         let response = try await httpClient.executeRequest(request)
 
-        switch try decoder.decodePayload(
-            from: response,
-            as: BackendInfoResponseV0.self
-        ) {
-        case .success(let payload):
+        switch response.code {
+        case 200:
+            let payload = try decoder.decodePayload(
+                from: response,
+                as: BackendInfoResponseV0.self
+            )
+
             return payload.toParent()
 
-        case .failure(let payload):
-            throw payload
+        default:
+            let failure = try decoder.decodePayload(
+                from: response,
+                as: FailureResponse.self
+            )
+
+            throw failure
         }
     }
 

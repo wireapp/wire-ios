@@ -28,16 +28,23 @@ class BackendInfoAPIV2: BackendInfoAPIV1 {
 
         let response = try await httpClient.executeRequest(request)
 
-        // New: decode V2 payload.
-        switch try decoder.decodePayload(
-            from: response,
-            as: BackendInfoResponseV2.self
-        ) {
-        case .success(let payload):
+        switch response.code {
+        case 200:
+            // New: decode V2 payload.
+            let payload = try decoder.decodePayload(
+                from: response,
+                as: BackendInfoResponseV2.self
+            )
+
             return payload.toParent()
 
-        case .failure(let payload):
-            throw payload
+        default:
+            let failure = try decoder.decodePayload(
+                from: response,
+                as: FailureResponse.self
+            )
+
+            throw failure
         }
     }
 
