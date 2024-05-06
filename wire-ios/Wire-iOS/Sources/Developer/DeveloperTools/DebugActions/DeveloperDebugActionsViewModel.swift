@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import WireAPI
 import WireDataModel
 import WireSyncEngine
-import WireAPI
 
 final class DeveloperDebugActionsViewModel: ObservableObject {
 
