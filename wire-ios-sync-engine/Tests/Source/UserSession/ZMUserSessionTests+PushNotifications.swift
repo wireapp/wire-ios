@@ -28,6 +28,29 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
     typealias ConversationAction = WireSyncEngine.ConversationNotificationAction
     typealias CallAction = WireSyncEngine.CallNotificationAction
 
+    // The mock in this place is a workaround, because the test funcs call
+    // `func handle(...)` and this calls `sut.didFinishQuickSync()` and this calls `PushSupportedProtocolsAction`.
+    // A proper solution and mocking requires a further refactoring.
+    private var mockPushSupportedProtocolsActionHandler: MockActionHandler<PushSupportedProtocolsAction>!
+
+    // MARK: Setup
+
+    override func setUp() {
+        super.setUp()
+        mockPushSupportedProtocolsActionHandler = .init(
+            result: .success(()),
+            context: syncMOC.notificationContext
+        )
+    }
+
+    override func tearDown() {
+        mockPushSupportedProtocolsActionHandler = nil
+
+        super.tearDown()
+    }
+
+    // MARK: Tests
+
     func testThatItCallsShowConversationList_ForPushNotificationCategoryConversationWithoutConversation() {
         // when
         handle(conversationAction: nil, category: .conversation, userInfo: NotificationUserInfo())
@@ -51,7 +74,8 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         XCTAssertFalse(sender.isConnected)
     }
 
-    // TODO jacob this can only be tested in an integration test or with better mocks
+    // swiftlint:disable:next invalid_swiftlint_command
+    // TODO: jacob this can only be tested in an integration test or with better mocks
 //    func testThatItCallsShowConversationListAndConnects_ForPushNotificationCategoryConnectWithAcceptAction() {
 //        // given
 //        let sender = ZMUser.insertNewObject(in: uiMOC)
