@@ -22,9 +22,9 @@ import MapKit
 
 protocol MapManagerDelegate: AnyObject {
 
-    func mapManager(_ manager: MapViewController, didUpdateUserLocation userLocation: MKUserLocation)
-    func mapManager(_ manager: MapViewController, regionDidChangeAnimated animated: Bool)
-    func mapManagerDidFinishRenderingMap(_ manager: MapViewController, fullyRendered: Bool)
+    func mapManager(_ viewController: MapViewController, didUpdateUserLocation userLocation: MKUserLocation)
+    func mapManager(_ viewController: MapViewController, regionDidChangeAnimated animated: Bool)
+    func mapManagerDidFinishRenderingMap(_ viewController: MapViewController, fullyRendered: Bool)
 
 }
 
