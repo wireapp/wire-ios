@@ -455,6 +455,12 @@ public final class MLSService: MLSServiceInterface {
         logger.info("creating group for id: \(groupID.safeForLoggingDescription)")
 
         do {
+            let ciphersuiteRawValue = await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue
+
+            guard let ciphersuite = MLSCipherSuite(rawValue: ciphersuiteRawValue) else {
+                throw MLSGroupCreationError.failedToCreateGroup
+            }
+
             let externalSenders: [Data]
             if let parentGroupID {
                 // Anyone in the parent conversation can create a subconversation,
@@ -466,20 +472,18 @@ public final class MLSService: MLSServiceInterface {
                     [try await $0.getExternalSender(conversationId: parentGroupID.data)]
                 }
             } else if let backendPublicKeys = await fetchBackendPublicKeys() {
-                externalSenders = backendPublicKeys.externalSenderKeys
+                externalSenders = backendPublicKeys.externalSenderKey(for: ciphersuite)
             } else {
                 throw MLSGroupCreationError.failedToGetExternalSenders
             }
-
-            let ciphersuite = UInt16(await featureRepository.fetchMLS().config.defaultCipherSuite.rawValue)
             let config = ConversationConfiguration(
-                ciphersuite: ciphersuite,
+                ciphersuite: UInt16(ciphersuite.rawValue),
                 externalSenders: externalSenders,
                 custom: .init(keyRotationSpan: nil, wirePolicy: nil)
             )
 
             try await coreCrypto.perform {
-                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
+                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: UInt16(ciphersuite.rawValue))
                 try await $0.createConversation(
                     conversationId: groupID.data,
                     creatorCredentialType: e2eiIsEnabled ? .x509 : .basic,
@@ -522,6 +526,7 @@ public final class MLSService: MLSServiceInterface {
         case noMembersToAdd
         case noInviteesToAdd
         case failedToClaimKeyPackages(users: [MLSUser])
+        case invalidCiphersuite
     }
 
     /// Add users to MLS group in the given conversation.
@@ -544,7 +549,11 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("adding members to group (\(groupID.safeForLoggingDescription)) with users: \(users)")
             guard !users.isEmpty else { throw MLSAddMembersError.noMembersToAdd }
-            let keyPackages = try await claimKeyPackages(for: users)
+            let mlsConfig = await featureRepository.fetchMLS().config
+            guard let ciphersuite = MLSCipherSuite(rawValue: mlsConfig.defaultCipherSuite.rawValue) else {
+                throw MLSAddMembersError.invalidCiphersuite
+            }
+            let keyPackages = try await claimKeyPackages(for: users, ciphersuite: ciphersuite)
 
             let events = if keyPackages.isEmpty {
                 // CC does not accept empty keypackages in addMembers, but
@@ -563,7 +572,8 @@ public final class MLSService: MLSServiceInterface {
     }
 
     private func claimKeyPackages(
-        for users: [MLSUser]
+        for users: [MLSUser],
+        ciphersuite: MLSCipherSuite
     ) async throws -> [KeyPackage] {
 
         guard let context else {
@@ -579,6 +589,7 @@ public final class MLSService: MLSServiceInterface {
                 let keyPackages = try await actionsProvider.claimKeyPackages(
                     userID: user.id,
                     domain: user.domain,
+                    ciphersuite: ciphersuite,
                     excludedSelfClientID: user.selfClientID,
                     in: context.notificationContext
                 )

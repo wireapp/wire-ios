@@ -84,8 +84,13 @@ final class MLSEncryptionServiceTests: XCTestCase {
         let unencryptedMessage = Data.random()
 
         // Mock
+<<<<<<< HEAD
         mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = { _, _ in
             throw CryptoError.InvalidByteArrayError(message: "bad bytes!")
+=======
+        mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = { (_, _) in
+            throw CryptoError.invalidByteArrayError
+>>>>>>> d574821e7e (feat: configurable cipher-suite [follow up] WPB-8591 (#1379))
         }
 
         // Then
