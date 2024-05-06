@@ -269,18 +269,18 @@ extension LocationSelectionViewController: ModalTopBarDelegate {
 
 extension LocationSelectionViewController: MapViewControllerDelegate {
 
-    func mapManager(_ manager: MapViewController, didUpdateUserLocation userLocation: MKUserLocation) {
+    func mapViewController(_ viewController: MapViewController, didUpdateUserLocation userLocation: MKUserLocation) {
         if !userShowedInitially {
             userShowedInitially = true
             mapManager.zoomToUserLocation(animated: true)
         }
     }
 
-    func mapManager(_ manager: MapViewController, regionDidChangeAnimated animated: Bool) {
+    func mapViewController(_ viewController: MapViewController, regionDidChangeAnimated animated: Bool) {
         formatAndUpdateAddress()
     }
 
-    func mapManagerDidFinishRenderingMap(_ manager: MapViewController, fullyRendered: Bool) {
+    func mapViewControllerDidFinishRenderingMap(_ viewController: MapViewController, fullyRendered: Bool) {
         mapDidRender = true
         formatAndUpdateAddress()
     }
