@@ -34,7 +34,7 @@ final class ProfileViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
 
         let teamIdentifier = UUID()
         selfUser = MockUser.createSelfUser(name: "George Johnson", inTeam: teamIdentifier)
@@ -56,6 +56,8 @@ final class ProfileViewControllerTests: BaseSnapshotTestCase {
         mockViewModel.hasLegalHoldItem = false
         mockViewModel.updateActionsList_MockMethod = { }
         mockViewModel.context = .profileViewer
+        mockViewModel.setDelegate_MockMethod = { _ in }
+        mockViewModel.setConversationTransitionClosure_MockMethod = { _ in }
     }
 
     // MARK: - tearDown
@@ -99,7 +101,7 @@ final class ProfileViewControllerTests: BaseSnapshotTestCase {
 
         // WHEN
         sut = ProfileViewController(viewModel: mockViewModel)
-        let navWrapperController = sut.wrapInNavigationController(setBackgroundColor: true)
+        let navWrapperController = sut.wrapInNavigationController()
         sut.viewDidAppear(false)
 
         // THEN

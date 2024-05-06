@@ -50,7 +50,7 @@ final class ProfileViewController: UIViewController {
     weak var viewControllerDismisser: ViewControllerDismisser?
     weak var delegate: ProfileViewControllerDelegate?
 
-    private var viewModel: ProfileViewControllerViewModeling
+    private let viewModel: ProfileViewControllerViewModeling
     private let profileFooterView = ProfileFooterView()
     private let incomingRequestFooter = IncomingRequestFooterView()
     private let securityLevelView = SecurityLevelView()
@@ -105,6 +105,10 @@ final class ProfileViewController: UIViewController {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
 
+        viewModel.setConversationTransitionClosure { [weak self] conversation in
+            self?.delegate?.profileViewController(self, wantsToNavigateTo: conversation)
+        }
+
         let user = viewModel.user
 
         user.refreshData()
@@ -154,8 +158,7 @@ final class ProfileViewController: UIViewController {
 
     override func loadView() {
         super.loadView()
-
-        viewModel.viewModelDelegate = self
+        viewModel.setDelegate(self)
     }
 
     override func viewDidLoad() {
@@ -617,7 +620,4 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
         activityIndicator.stopAnimating()
     }
 
-    func transition(to conversation: ZMConversation) {
-        delegate?.profileViewController(self, wantsToNavigateTo: conversation)
-    }
 }

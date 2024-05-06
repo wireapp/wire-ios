@@ -33,8 +33,6 @@ enum ProfileViewControllerContext {
 // sourcery: AutoMockable
 protocol ProfileViewControllerViewModeling {
 
-    var viewModelDelegate: ProfileViewControllerViewModelDelegate? { get set }
-
     var classification: SecurityClassification? { get }
     var userSet: UserSet { get }
     var userSession: UserSession { get }
@@ -52,6 +50,7 @@ protocol ProfileViewControllerViewModeling {
     func sendConnectionRequest()
     func acceptConnectionRequest()
     func ignoreConnectionRequest()
+    // TODO: Make it async https://wearezeta.atlassian.net/browse/WPB-9028
     func cancelConnectionRequest(completion: @escaping Completion)
     func openOneToOneConversation()
     func startOneToOneConversation()
@@ -61,29 +60,38 @@ protocol ProfileViewControllerViewModeling {
     func handleBlockAndUnblock()
     func handleDeleteResult(_ result: ClearContentResult)
     func transitionToListAndEnqueue(leftViewControllerRevealed: Bool, _ block: @escaping () -> Void)
+    func setConversationTransitionClosure(_ closure: @escaping (ZMConversation) -> Void)
+    func setDelegate(_ delegate: ProfileViewControllerViewModelDelegate)
 
 }
 
 final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewModeling {
+    
+    // MARK: - Properties
+
     let user: UserType
     let conversation: ZMConversation?
     let viewer: UserType
     let context: ProfileViewControllerContext
-    let classificationProvider: SecurityClassificationProviding?
     let userSession: UserSession
 
-    weak var viewModelDelegate: ProfileViewControllerViewModelDelegate?
+    private weak var viewModelDelegate: ProfileViewControllerViewModelDelegate?
 
     private var observerToken: NSObjectProtocol?
     private let profileActionsFactory: ProfileActionsFactoryProtocol
+    private let classificationProvider: SecurityClassificationProviding?
+    private var conversationTransitionClosure: ((ZMConversation) -> Void)?
 
-    init(user: UserType,
-         conversation: ZMConversation?,
-         viewer: UserType,
-         context: ProfileViewControllerContext,
-         classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
-         userSession: UserSession,
-         profileActionsFactory: ProfileActionsFactoryProtocol
+    // MARK: - Life cycle
+
+    init(
+        user: UserType,
+        conversation: ZMConversation?,
+        viewer: UserType,
+        context: ProfileViewControllerContext,
+        classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared(),
+        userSession: UserSession,
+        profileActionsFactory: ProfileActionsFactoryProtocol
     ) {
         self.user = user
         self.conversation = conversation
@@ -97,6 +105,8 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
 
         observerToken = userSession.addUserObserver(self, for: user)
     }
+
+    // MARK: - Computed Properties
 
     var classification: SecurityClassification? {
         classificationProvider?.classification(users: [user], conversationDomain: nil) ?? .none
@@ -127,6 +137,14 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
         return BlockResult.all(isBlocked: user.isBlocked)
     }
 
+    // MARK: - Delegate
+
+    func setDelegate(_ delegate: any ProfileViewControllerViewModelDelegate) {
+        viewModelDelegate = delegate
+    }
+
+    // MARK: - Blocking
+
     func toggleBlocked() {
         if user.isBlocked {
             user.accept { [weak self] error in
@@ -142,6 +160,18 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
             }
         }
     }
+
+    func handleBlockAndUnblock() {
+        switch context {
+        case .search:
+            // Stay on this VC and let user to decise what to do next
+            enqueueChanges(toggleBlocked)
+        default:
+            transitionToListAndEnqueue { self.toggleBlocked() }
+        }
+    }
+
+    // MARK: - Opening Conversation
 
     func openOneToOneConversation() {
         if let conversation = user.oneToOneConversation {
@@ -168,13 +198,13 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
         }
     }
 
+    // MARK: - Actions List
+
     func updateActionsList() {
         profileActionsFactory.makeActionsList(completion: { actions in
             self.viewModelDelegate?.updateFooterActionsViews(actions)
         })
     }
-
-    // MARK: - Action Handlers
 
     func archiveConversation() {
         transitionToListAndEnqueue {
@@ -182,17 +212,7 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
         }
     }
 
-    func handleBlockAndUnblock() {
-        switch context {
-        case .search:
-            // Stay on this VC and let user to decise what to do next
-            enqueueChanges(toggleBlocked)
-        default:
-            transitionToListAndEnqueue { self.toggleBlocked() }
-        }
-    }
-
-    // MARK: - Notifications
+    // MARK: - Mute
 
     func updateMute(enableNotifications: Bool) {
         userSession.enqueue {
@@ -202,6 +222,8 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
         }
     }
 
+    // MARK: - Notifications
+
     func handleNotificationResult(_ result: NotificationResult) {
         if let mutedMessageTypes = result.mutedMessageTypes {
             userSession.perform {
@@ -210,7 +232,7 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
         }
     }
 
-    // MARK: Delete Contents
+    // MARK: - Deletion
 
     func handleDeleteResult(_ result: ClearContentResult) {
         guard case .delete(leave: let leave) = result else { return }
@@ -227,7 +249,7 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
         }
     }
 
-    // MARK: - Helpers
+    // MARK: - Transition
 
     func transitionToListAndEnqueue(leftViewControllerRevealed: Bool = true, _ block: @escaping () -> Void) {
         ZClientViewController.shared?.transitionToList(
@@ -238,12 +260,8 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
         }
     }
 
-    private func enqueueChanges(_ block: @escaping () -> Void) {
-        userSession.enqueue(block)
-    }
-
-    private func transition(to conversation: ZMConversation) {
-        viewModelDelegate?.transition(to: conversation)
+    func setConversationTransitionClosure(_ closure: @escaping (ZMConversation) -> Void) {
+        self.conversationTransitionClosure = closure
     }
 
     // MARK: Connect
@@ -289,9 +307,21 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
         }
     }
 
+    // MARK: - Helpers
+
+    private func enqueueChanges(_ block: @escaping () -> Void) {
+        userSession.enqueue(block)
+    }
+
+    private func transition(to conversation: ZMConversation) {
+        conversationTransitionClosure?(conversation)
+    }
+
 }
 
 extension ProfileViewControllerViewModel: UserObserving {
+
+    // MARK: - User Changes
 
     func userDidChange(_ note: UserChangeInfo) {
 
@@ -316,5 +346,4 @@ protocol ProfileViewControllerViewModelDelegate: AnyObject {
     func presentConversationCreationError(username: String)
     func startAnimatingActivity()
     func stopAnimatingActivity()
-    func transition(to conversation: ZMConversation)
 }

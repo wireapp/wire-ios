@@ -275,6 +275,32 @@ class MockDeviceDetailsViewActions: DeviceDetailsViewActions {
 
 }
 
+class MockImageTransformer: ImageTransformer {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - adjustInputSaturation
+
+    var adjustInputSaturationValueImage_Invocations: [(value: CGFloat, image: UIImage)] = []
+    var adjustInputSaturationValueImage_MockMethod: ((CGFloat, UIImage) -> UIImage?)?
+    var adjustInputSaturationValueImage_MockValue: UIImage??
+
+    func adjustInputSaturation(value: CGFloat, image: UIImage) -> UIImage? {
+        adjustInputSaturationValueImage_Invocations.append((value: value, image: image))
+
+        if let mock = adjustInputSaturationValueImage_MockMethod {
+            return mock(value, image)
+        } else if let mock = adjustInputSaturationValueImage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `adjustInputSaturationValueImage`")
+        }
+    }
+
+}
+
 class MockProfileActionsFactoryProtocol: ProfileActionsFactoryProtocol {
 
     // MARK: - Life cycle
@@ -424,31 +450,12 @@ class MockProfileViewControllerViewModelDelegate: ProfileViewControllerViewModel
         mock()
     }
 
-    // MARK: - transition
-
-    var transitionTo_Invocations: [ZMConversation] = []
-    var transitionTo_MockMethod: ((ZMConversation) -> Void)?
-
-    func transition(to conversation: ZMConversation) {
-        transitionTo_Invocations.append(conversation)
-
-        guard let mock = transitionTo_MockMethod else {
-            fatalError("no mock for `transitionTo`")
-        }
-
-        mock(conversation)
-    }
-
 }
 
 class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
 
     // MARK: - Life cycle
 
-
-    // MARK: - viewModelDelegate
-
-    var viewModelDelegate: ProfileViewControllerViewModelDelegate?
 
     // MARK: - classification
 
@@ -732,6 +739,36 @@ class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
         }
 
         mock(leftViewControllerRevealed, block)
+    }
+
+    // MARK: - setConversationTransitionClosure
+
+    var setConversationTransitionClosure_Invocations: [(ZMConversation) -> Void] = []
+    var setConversationTransitionClosure_MockMethod: ((@escaping (ZMConversation) -> Void) -> Void)?
+
+    func setConversationTransitionClosure(_ closure: @escaping (ZMConversation) -> Void) {
+        setConversationTransitionClosure_Invocations.append(closure)
+
+        guard let mock = setConversationTransitionClosure_MockMethod else {
+            fatalError("no mock for `setConversationTransitionClosure`")
+        }
+
+        mock(closure)
+    }
+
+    // MARK: - setDelegate
+
+    var setDelegate_Invocations: [ProfileViewControllerViewModelDelegate] = []
+    var setDelegate_MockMethod: ((ProfileViewControllerViewModelDelegate) -> Void)?
+
+    func setDelegate(_ delegate: ProfileViewControllerViewModelDelegate) {
+        setDelegate_Invocations.append(delegate)
+
+        guard let mock = setDelegate_MockMethod else {
+            fatalError("no mock for `setDelegate`")
+        }
+
+        mock(delegate)
     }
 
 }

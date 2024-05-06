@@ -53,7 +53,6 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
         mockViewModelDelegate = MockProfileViewControllerViewModelDelegate()
         mockViewModelDelegate.startAnimatingActivity_MockMethod = {}
         mockViewModelDelegate.stopAnimatingActivity_MockMethod = {}
-        mockViewModelDelegate.transitionTo_MockMethod = { _ in }
 
         sut = ProfileViewControllerViewModel(
             user: user,
@@ -65,7 +64,7 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
             profileActionsFactory: mockProfileActionsFactory
         )
 
-        sut.viewModelDelegate = mockViewModelDelegate
+        sut.setDelegate(mockViewModelDelegate)
     }
 
     override func tearDown() {
@@ -85,11 +84,16 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
         // Mock conversation
         user.oneToOneConversation = oneToOneConversation
 
+        var transitionCount = 0
+        sut.setConversationTransitionClosure { _ in
+            transitionCount += 1
+        }
+
         // When
         sut.openOneToOneConversation()
 
         // Then
-        XCTAssertEqual(mockViewModelDelegate.transitionTo_Invocations.count, 1)
+        XCTAssertEqual(transitionCount, 1)
     }
 
     func test_OpenOneToOneConversation_CreatesConversation_WhenNoneExists() async {
@@ -101,6 +105,11 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
             expectation.fulfill()
         }
 
+        var transitionCount = 0
+        sut.setConversationTransitionClosure { _ in
+            transitionCount += 1
+        }
+
         // When
         sut.openOneToOneConversation()
 
@@ -108,7 +117,7 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
         await fulfillment(of: [expectation], timeout: 0.5)
 
         XCTAssertEqual(mockUserSession.createTeamOneOnOneWithCompletion_Invocations.count, 1)
-        XCTAssertEqual(mockViewModelDelegate.transitionTo_Invocations.count, 1)
+        XCTAssertEqual(transitionCount, 1)
     }
 
     // MARK: - Start 1:1 conversation
@@ -121,6 +130,10 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
             completion(.success(self.oneToOneConversation))
             expectation.fulfill()
         }
+        var transitionCount = 0
+        sut.setConversationTransitionClosure { _ in
+            transitionCount += 1
+        }
 
         // When
         sut.startOneToOneConversation()
@@ -131,7 +144,7 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
         XCTAssertEqual(mockViewModelDelegate.startAnimatingActivity_Invocations.count, 1)
         XCTAssertEqual(mockUserSession.createTeamOneOnOneWithCompletion_Invocations.count, 1)
         XCTAssertEqual(mockViewModelDelegate.stopAnimatingActivity_Invocations.count, 1)
-        XCTAssertEqual(mockViewModelDelegate.transitionTo_Invocations.count, 1)
+        XCTAssertEqual(transitionCount, 1)
     }
 
     func test_StartOneToOneConversation_Failure() async {
