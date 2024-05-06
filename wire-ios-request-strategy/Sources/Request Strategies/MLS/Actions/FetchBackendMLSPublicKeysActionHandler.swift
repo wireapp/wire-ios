@@ -50,6 +50,14 @@ class FetchBackendMLSPublicKeysActionHandler: ActionHandler<FetchBackendMLSPubli
 
         struct MLSKeys: Codable, Equatable {
 
+            enum CodingKeys: String, CodingKey {
+                case ed25519
+                case ed448
+                case p256 = "ecdsa_secp256r1_sha256"
+                case p384 = "ecdsa_secp384r1_sha384"
+                case p521 = "ecdsa_secp521r1_sha512"
+            }
+
             let ed25519: String?
             let ed448: String?
             let p256: String?
