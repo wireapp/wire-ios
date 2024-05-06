@@ -81,9 +81,12 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
 
         button.titleLabel?.adjustsFontForContentSizeCategory = true
         button.setTitle(SecuredGuestLinkWithPasswordLocale.GeneratePasswordButton.title, for: .normal)
-        button.setImage(.init(resource: .shield), for: .normal)
+        button.setImage(.init(resource: .secureGuestLinkShield), for: .normal)
+        button.tintColor = SemanticColors.Icon.foregroundDefaultBlack
+
         button.addTarget(self, action: #selector(generatePasswordButtonTapped), for: .touchUpInside)
         button.imageEdgeInsets.right = 10.0
+
         return button
     }()
 

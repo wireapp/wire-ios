@@ -46,7 +46,7 @@ final class SecureLinkHeaderCell: UITableViewCell, CellConfigurationConfigurable
         [iconImageView, titleLabel, subtitleLabel].forEach(contentView.addSubview)
 
         iconImageView.contentMode = .scaleAspectFit
-        iconImageView.image = UIImage(resource: .shield)
+        iconImageView.image = UIImage(resource: .secureGuestLinkShield)
         iconImageView.tintColor = SemanticColors.Icon.foregroundDefaultBlack
 
         titleLabel.font = UIFont.font(for: .footnoteSemibold)
