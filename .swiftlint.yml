@@ -65,7 +65,8 @@ excluded:
   - sourcery
   - vendor
   - wire-ios/Templates
-  - /*/Package.swift
+  - "scripts/Package.swift"
+  - "WireAPI/Package.swift"
   - "wire-ios-data-model/Support/Sourcery/generated/AutoMockable.generated.swift"
   - "wire-ios-protos/Protos/messages.pb.swift"
   - "wire-ios-protos/Protos/mls.pb.swift"
