@@ -166,7 +166,7 @@ extension SimpleTextField: SimpleTextFieldValidatorDelegate {
             guard let text else { return .error(.empty) }
             if let error = validator.validate(text: text) {
                 return .error(error)
-            } else { 
+            } else {
                 return .valid(text)
             }
         }()

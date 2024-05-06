@@ -19,12 +19,12 @@
 import Foundation
 import WireTransport
 
-public final class AssetDownloadRequestFactory: NSObject {
+public final class AssetDownloadRequestFactory {
 
     public func requestToGetAsset(withKey key: String, token: String?, domain: String?, apiVersion: APIVersion) -> ZMTransportRequest? {
-        let path: String
-        let domain = domain?.isEmpty == false ? domain! : BackendInfo.domain
 
+        let domain = if let domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        let path: String
         switch apiVersion {
         case .v0:
             path = "/assets/v3/\(key)"

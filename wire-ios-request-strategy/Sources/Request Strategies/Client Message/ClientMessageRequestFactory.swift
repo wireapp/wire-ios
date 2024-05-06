@@ -54,7 +54,7 @@ public final class ClientMessageRequestFactory: NSObject {
             )
 
         case .v1, .v2, .v3, .v4, .v5, .v6:
-            let domain = domain?.isEmpty == false ? domain! : BackendInfo.domain
+            let domain = if let domain, !domain.isEmpty { domain } else { BackendInfo.domain }
             guard let domain else {
                 zmLog.error("could not create request: missing domain")
                 return nil
