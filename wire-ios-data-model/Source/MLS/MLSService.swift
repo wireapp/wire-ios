@@ -1837,7 +1837,7 @@ public struct MLSUser: Equatable {
 
     public init(from user: ZMUser) {
         id = user.remoteIdentifier
-        domain = user.domain?.selfOrNilIfEmpty ?? BackendInfo.domain!
+        domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain! }
 
         if user.isSelfUser, let selfClientID = user.selfClient()?.remoteIdentifier {
             self.selfClientID = selfClientID
