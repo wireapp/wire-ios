@@ -74,6 +74,7 @@ platform :ios do
         options[:build_type] = "Playground"
         options[:upload_testflight] = true
         options[:upload_dsyms_to_datadog] = true
+        options[:extra_distribution_groups] = ["Wire Employees", "Externals - Non Wire Employees"]
         options[:produce_debug_builds] = true
         save_app_name('Playground')
         build_and_upload_app(options)
@@ -86,6 +87,7 @@ platform :ios do
         options[:upload_testflight] = true
         options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
+        options[:extra_distribution_groups] = ["Wire Employees", "Externals - Non Wire Employees"]
         save_app_name('Testflight Beta')
         build_and_upload_app(options)
         `export TEMP='APPCENTER_INSTALL_LINK=For \'Beta\' build there is no AppCenter link, please visit Testflight to install the app' && echo $TEMP >> ./.post_build/.env`
@@ -398,13 +400,20 @@ platform :ios do
     def upload_testflight(options)
         build = Build.new(options: options)
         sh "cp ../wire-ios/Configuration/Appfile ."
+        
+        # we add this group to get a review from Apple when we upload new build version
+        # in order to speed up distribution to real external groups
+        groups = ["Default External Testers"]
+        if build.send_to_externals
+            groups += options[:extra_distribution_groups]
+        end
 
         upload_to_testflight(
             api_key_path: appstoreconnect_api_key_file_path,
             ipa: "#{build.artifact_path(with_filename: true)}.ipa",
             skip_waiting_for_build_processing: false,
             distribute_external: true,
-            groups: ["Default External Testers", "Externals - Non Wire Employees"],
+            groups: groups,
             submit_beta_review: true,
             changelog: changelog(build)
         )
@@ -530,6 +539,8 @@ class Build
     attr_reader :configuration
     attr_reader :enable_datadog
     attr_reader :skip_security_tests
+    # send to non-default external distribution list
+    attr_reader :send_to_externals
 
     def initialize(options:)
         build_number = options[:build_number]
@@ -549,6 +560,7 @@ class Build
             @git_branch = ENV['GITHUB_REF_NAME']
         end
 
+        @send_to_externals = ENV['SEND_TO_EXTERNALS'] == "true" || ENV['SEND_TO_EXTERNALS'] == "1"
         @enable_datadog = ENV['ENABLE_DATADOG'] == "true" || ENV['ENABLE_DATADOG'] == "1"
         @skip_security_tests = ENV['SKIP_SECURITY_TESTS'] == "true" || ENV['SKIP_SECURITY_TESTS'] == "1"
         @build_number = build_number

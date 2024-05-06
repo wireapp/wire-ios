@@ -13,6 +13,10 @@ on:
       skip_security_tests:
         type: boolean
         default: true
+      distribute_externals:
+        type: boolean
+        default: false
+
     secrets:
       KEYCHAIN_PASSWORD:
         required: true
@@ -109,6 +113,7 @@ jobs:
       C3_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C3_APP_CENTER_APP_NAME_PRODUCTION }}
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
       SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
+      SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       
     steps:
       - name: Add Masks
