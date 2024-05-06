@@ -33,9 +33,17 @@ extension SessionManager {
         return nil
     }
 
-    public func switchBackend(configuration url: URL, completed: @escaping CompletedSwitch) {
+    public func switchBackend(to environment: BackendEnvironment) {
+        self.environment = environment
+        unauthenticatedSession = nil
+    }
+
+    public func fetchBackendEnvironment(
+        at url: URL,
+        completion: @escaping (Result<BackendEnvironment, Error>) -> Void
+    ) {
         if let error = canSwitchBackend() {
-            completed(.failure(error))
+            completion(.failure(error))
             return
         }
         dispatchGroup.enter()
@@ -43,14 +51,13 @@ extension SessionManager {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let environment):
-                    self.environment = environment
-                    self.unauthenticatedSession = nil
-                    completed(.success(environment))
+                    completion(.success(environment))
                 case .failure:
-                    completed(.failure(SwitchBackendError.invalidBackend))
+                    completion(.failure(SwitchBackendError.invalidBackend))
                 }
                 self.dispatchGroup.leave()
             }
         }
     }
+
 }

@@ -40,7 +40,7 @@ final class LocationSendViewController: UIViewController {
     )
 
     private let addressLabel: UILabel = {
-        let label = DynamicFontLabel(style: .body, color: SemanticColors.Label.textDefault)
+        let label = DynamicFontLabel(style: .body1, color: SemanticColors.Label.textDefault)
         label.numberOfLines = 0
         return label
     }()

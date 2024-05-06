@@ -33,12 +33,20 @@ final class UserClientCell: SeparatorCollectionViewCell {
     typealias IconColors = SemanticColors.Icon
 
     // MARK: - Properties
-    let nameLabel = DynamicFontLabel(style: .headline,
-                                     color: LabelColors.textDefault)
-    let mlsThumbprintLabel = DynamicFontLabel(style: .caption1,
-                                        color: LabelColors.textCellSubtitle)
-    let proteusIdLabel = DynamicFontLabel(style: .caption1,
-                                            color: LabelColors.textCellSubtitle)
+    let nameLabel = DynamicFontLabel(
+        style: .h3,
+        color: LabelColors.textDefault
+    )
+
+    let mlsThumbprintLabel = DynamicFontLabel(
+        style: .subline1,
+        color: LabelColors.textCellSubtitle
+    )
+
+    let proteusIdLabel = DynamicFontLabel(
+        style: .subline1,
+        color: LabelColors.textCellSubtitle
+    )
 
     private let statusStackView = UIStackView()
     private let contentWrapView = UIView()
