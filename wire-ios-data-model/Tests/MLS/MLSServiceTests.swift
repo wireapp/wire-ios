@@ -491,11 +491,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         mockMLSActionExecutor.mockCommitPendingProposals = { _ in [] }
         mockMLSActionExecutor.mockUpdateKeyMaterial = { _ in [] }
 
-<<<<<<< HEAD
-        mockActionsProvider.claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod = { _, _, _, _ in
-=======
-        mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod = { (_, _, _, _, _) in
->>>>>>> d574821e7e (feat: configurable cipher-suite [follow up] WPB-8591 (#1379))
+        mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod = { _, _, _, _, _ in
             users.map {
                 KeyPackage(
                     client: .randomAlphanumerical(length: 4),
