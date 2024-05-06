@@ -78,7 +78,7 @@ platform :ios do
         options[:produce_debug_builds] = true
         save_app_name('Playground')
         build_and_upload_app(options)
-        `export TEMP='APPCENTER_INSTALL_LINK=For \'Playground\' build there is no AppCenter link, please visit Testflight to install the app' && echo $TEMP >> ./.post_build/.env`
+        `export TEMP='APPCENTER_INSTALL_LINK=#{ENV['BETA_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
     end
 
     desc "Build & Upload Testflight Beta build"
@@ -90,7 +90,7 @@ platform :ios do
         options[:extra_distribution_groups] = ["Wire Employees", "Externals - Non Wire Employees"]
         save_app_name('Testflight Beta')
         build_and_upload_app(options)
-        `export TEMP='APPCENTER_INSTALL_LINK=For \'Beta\' build there is no AppCenter link, please visit Testflight to install the app' && echo $TEMP >> ./.post_build/.env`
+        `export TEMP='APPCENTER_INSTALL_LINK=#{ENV['PLAYGROUND_TESTFLIGHT_LINK']}'' && echo $TEMP >> ./.post_build/.env`
     end
 
     desc "Build & Upload Public AppStore build"
