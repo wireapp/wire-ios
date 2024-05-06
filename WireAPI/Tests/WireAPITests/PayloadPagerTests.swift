@@ -26,11 +26,23 @@ final class PayloadPagerTests: XCTestCase {
         let sut = PayloadPager<String>(start: "first") { index in
             switch index {
             case "first":
-                return (["A", "B", "C"], hasMore: true, nextStart: "second")
+                return PayloadPager.Page(
+                    element: ["A", "B", "C"],
+                    hasMore: true,
+                    nextStart: "second"
+                )
             case "second":
-                return (["D", "E", "F"], hasMore: true, nextStart: "third")
+                return PayloadPager.Page(
+                    element: ["D", "E", "F"],
+                    hasMore: true,
+                    nextStart: "third"
+                )
             case "third":
-                return (["G", "H", "I"], hasMore: false, nextStart: "")
+                return PayloadPager.Page(
+                    element: ["G", "H", "I"],
+                    hasMore: false,
+                    nextStart: ""
+                )
             default:
                 throw TestError(message: "unknown index: \(index)")
             }

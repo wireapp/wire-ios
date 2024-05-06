@@ -25,7 +25,6 @@ struct PayloadPager<Payload>: AsyncSequence {
 
     typealias Element = [Payload]
     typealias PageFetcher = (String) async throws -> Page
-    typealias Page = (Element, hasMore: Bool, nextStart: String)
 
     var start: String
     let fetchPage: PageFetcher
@@ -35,6 +34,14 @@ struct PayloadPager<Payload>: AsyncSequence {
             start: start,
             fetchPage: fetchPage
         )
+    }
+
+    struct Page {
+
+        let element: Element
+        let hasMore: Bool
+        let nextStart: String
+
     }
 
     struct Iterator: AsyncIteratorProtocol {
@@ -53,10 +60,10 @@ struct PayloadPager<Payload>: AsyncSequence {
 
         mutating func next() async throws -> [Payload]? {
             guard hasMore else { return nil }
-            let (payloads, hasMore, nextStart) = try await fetchPage(start)
-            self.hasMore = hasMore
-            self.start = nextStart
-            return payloads
+            let page = try await fetchPage(start)
+            self.hasMore = page.hasMore
+            self.start = page.nextStart
+            return page.element
         }
     }
 

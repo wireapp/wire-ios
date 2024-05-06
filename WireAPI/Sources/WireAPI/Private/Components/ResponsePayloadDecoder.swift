@@ -32,10 +32,6 @@ struct ResponsePayloadDecoder {
 
     let decoder: JSONDecoder
 
-    init(decoder: JSONDecoder) {
-        self.decoder = decoder
-    }
-
     func decodePayload<T: Decodable>(
         from response: HTTPResponse,
         as type: T.Type

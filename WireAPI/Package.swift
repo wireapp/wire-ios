@@ -11,10 +11,13 @@ let package = Package(
         .library(
             name: "WireAPI",
             targets: ["WireAPI"]
-        ),
+        )
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
+        .package(
+            url: "https://github.com/apple/swift-docc-plugin",
+            from: "1.1.0"
+        )
     ],
     targets: [
         .target(

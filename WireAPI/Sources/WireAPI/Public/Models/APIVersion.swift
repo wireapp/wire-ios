@@ -18,6 +18,8 @@
 
 import Foundation
 
+// swiftlint:disable identifier_name
+
 /// A type representing all the versions of the Wire api.
 
 public enum APIVersion: UInt, CaseIterable {
@@ -48,3 +50,5 @@ public enum APIVersion: UInt, CaseIterable {
     public static let developmentVersions: Set<Self> = Set(allCases).subtracting(productionVersions)
 
 }
+
+// swiftlint:enable identifier_name

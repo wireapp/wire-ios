@@ -31,12 +31,6 @@ struct RequestBodyEncoder {
 
     let encoder: JSONEncoder
 
-    /// Create a new encoder with a json encoder.
-
-    init(encoder: JSONEncoder) {
-        self.encoder = encoder
-    }
-
     /// Encode the given api model into a json string.
 
     func encodeBody<T: Encodable>(_ body: T) throws -> String {
