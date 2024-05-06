@@ -1359,7 +1359,7 @@
 		E98B61102B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */; };
 		E98B61112B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */; };
 		E9929EF72BCEC6FB00C40274 /* AppLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9929EF62BCEC6FB00C40274 /* AppLocationManager.swift */; };
-		E9929EF92BCEDE5900C40274 /* MapManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9929EF82BCEDE5900C40274 /* MapManager.swift */; };
+		E9929EF92BCEDE5900C40274 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9929EF82BCEDE5900C40274 /* MapViewController.swift */; };
 		E9A60C7329716A70001D0E14 /* UITextField+DoneBarButtonItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */; };
 		E9B439312B0783BD0069DA63 /* SelfProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B439302B0783BD0069DA63 /* SelfProvider.swift */; };
 		E9B439322B0783BD0069DA63 /* SelfProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B439302B0783BD0069DA63 /* SelfProvider.swift */; };
@@ -3446,7 +3446,7 @@
 		E989695628EC430B0088F0CE /* SecondaryButtonDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondaryButtonDescription.swift; sourceTree = "<group>"; };
 		E98B610F2B5820BD0030E021 /* SwiftMockConversation+ConversationCreation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftMockConversation+ConversationCreation.swift"; sourceTree = "<group>"; };
 		E9929EF62BCEC6FB00C40274 /* AppLocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLocationManager.swift; sourceTree = "<group>"; };
-		E9929EF82BCEDE5900C40274 /* MapManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapManager.swift; sourceTree = "<group>"; };
+		E9929EF82BCEDE5900C40274 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		E9A60C7229716A70001D0E14 /* UITextField+DoneBarButtonItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+DoneBarButtonItem.swift"; sourceTree = "<group>"; };
 		E9B439302B0783BD0069DA63 /* SelfProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfProvider.swift; sourceTree = "<group>"; };
 		E9B580CB27B3E71900A5814D /* ConversationOptionsServicesViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationOptionsServicesViewControllerTests.swift; sourceTree = "<group>"; };
@@ -6109,7 +6109,7 @@
 				87DCF4991D34E9E600BB420F /* ModalTopBar.swift */,
 				87DCF49A1D34E9E600BB420F /* NSUserDefaults+Location.swift */,
 				E9929EF62BCEC6FB00C40274 /* AppLocationManager.swift */,
-				E9929EF82BCEDE5900C40274 /* MapManager.swift */,
+				E9929EF82BCEDE5900C40274 /* MapViewController.swift */,
 			);
 			path = Location;
 			sourceTree = "<group>";
@@ -9317,7 +9317,7 @@
 				E9C0B35D2B558F1700BC80E8 /* ConversationStartedSystemMessageCell.swift in Sources */,
 				5E8FFC2621F0879B0052DF03 /* ReauthenticateWithCompanyLoginStepDescription.swift in Sources */,
 				5E8C38B2212E9799002AE12B /* AuthenticationStartMissingCredentialsErrorHandler.swift in Sources */,
-				E9929EF92BCEDE5900C40274 /* MapManager.swift in Sources */,
+				E9929EF92BCEDE5900C40274 /* MapViewController.swift in Sources */,
 				5E9E8AA1216277800058D6E1 /* AuthenticationPostRegistrationFields.swift in Sources */,
 				5E8FFC2F21F0941C0052DF03 /* AccessoryTextFieldCell.swift in Sources */,
 				E9C0B3532B558A3800BC80E8 /* ConversationRenamedSystemMessageCell.swift in Sources */,

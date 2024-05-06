@@ -21,14 +21,16 @@ import MapKit
 // MARK: - MapManagerDelegate
 
 protocol MapManagerDelegate: AnyObject {
-    func mapManager(_ manager: MapManager, didUpdateUserLocation userLocation: MKUserLocation)
-    func mapManager(_ manager: MapManager, regionDidChangeAnimated animated: Bool)
-    func mapManagerDidFinishRenderingMap(_ manager: MapManager, fullyRendered: Bool)
+
+    func mapManager(_ manager: MapViewController, didUpdateUserLocation userLocation: MKUserLocation)
+    func mapManager(_ manager: MapViewController, regionDidChangeAnimated animated: Bool)
+    func mapManagerDidFinishRenderingMap(_ manager: MapViewController, fullyRendered: Bool)
+
 }
 
-// MARK: - MapManager
+// MARK: - MapViewController
 
-class MapManager: NSObject {
+final class MapViewController: NSObject {
 
     // MARK: - Properties
 
@@ -66,7 +68,7 @@ class MapManager: NSObject {
 
 // MARK: - MKMapViewDelegate
 
-extension MapManager: MKMapViewDelegate {
+extension MapViewController: MKMapViewDelegate {
 
     func mapView(_ mapView: MKMapView, didUpdate userLocation: MKUserLocation) {
         delegate?.mapManager(self, didUpdateUserLocation: userLocation)

@@ -62,7 +62,7 @@ final class LocationSelectionViewController: UIViewController {
     let locationButtonContainer = UIView()
     var sendControllerHeightConstraint: NSLayoutConstraint?
 
-    private var mapManager = MapManager()
+    private var mapManager = MapViewController()
     private let toolBar = ModalTopBar()
     private let locationManager = CLLocationManager()
     private let geocoder = CLGeocoder()
@@ -264,18 +264,18 @@ extension LocationSelectionViewController: ModalTopBarDelegate {
 
 extension LocationSelectionViewController: MapManagerDelegate {
 
-    func mapManager(_ manager: MapManager, didUpdateUserLocation userLocation: MKUserLocation) {
+    func mapManager(_ manager: MapViewController, didUpdateUserLocation userLocation: MKUserLocation) {
         if !userShowedInitially {
             userShowedInitially = true
             mapManager.zoomToUserLocation(animated: true)
         }
     }
 
-    func mapManager(_ manager: MapManager, regionDidChangeAnimated animated: Bool) {
+    func mapManager(_ manager: MapViewController, regionDidChangeAnimated animated: Bool) {
         formatAndUpdateAddress()
     }
 
-    func mapManagerDidFinishRenderingMap(_ manager: MapManager, fullyRendered: Bool) {
+    func mapManagerDidFinishRenderingMap(_ manager: MapViewController, fullyRendered: Bool) {
         mapDidRender = true
         formatAndUpdateAddress()
     }
