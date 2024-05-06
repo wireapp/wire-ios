@@ -285,7 +285,7 @@ enum DebugActions {
             conversations = try? userSession.syncManagedObjectContext.fetch(NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
             conversations?.forEach({ _ = $0.estimatedUnreadCount })
         }
-        userSession.syncManagedObjectContext.dispatchGroup.wait(forInterval: 5)
+        userSession.syncManagedObjectContext.dispatchGroup?.wait(forInterval: 5)
         userSession.syncManagedObjectContext.performGroupedBlockAndWait {
             conversations = nil
             userSession.syncManagedObjectContext.saveOrRollback()
