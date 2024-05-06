@@ -20,7 +20,7 @@ import Foundation
 
 /// A http request to be sent to a server.
 
-public struct HTTPRequest {
+public struct HTTPRequest: Equatable {
 
     /// The path of the endpoint.
 

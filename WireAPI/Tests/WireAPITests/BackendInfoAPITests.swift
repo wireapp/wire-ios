@@ -19,17 +19,91 @@
 import XCTest
 @testable import WireAPI
 
-final class BackendInfoAPITests: XCTest {
+final class BackendInfoAPITests: XCTestCase {
 
     private var httpClient: HTTPClient!
 
-    func testGetBackendInfoV0() async throws {
+    // MARK: - V0
+
+    func testGetBackendInfoRequestV0() async throws {
         // Given
-        let sut = BackendInfoAPIV0(httpClient: <#T##any HTTPClient#>)
+        let httpClient = HTTPClientMock()
+        let sut = BackendInfoAPIV0(httpClient: httpClient)
 
         // When
+        _ = try? await sut.getBackendInfo()
 
         // Then
+        XCTAssertEqual(
+            httpClient.receivedRequest,
+            HTTPRequest(
+                path: "/api-version",
+                method: .get
+            )
+        )
+    }
+
+    func testGetBackendInfoResponseV0() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(
+            code: 200,
+            jsonResponse: """
+            {
+                "domain": "example.com",
+                "federation": true,
+                "supported": [0, 1, 2]
+            }
+            """
+        )
+
+        let sut = BackendInfoAPIV0(httpClient: httpClient)
+
+        // When
+        let result = try await sut.getBackendInfo()
+
+        // Then
+        XCTAssertEqual(
+            result,
+            BackendInfo(
+                domain: "example.com",
+                isFederationEnabled: true,
+                supportedVersions: [.v0, .v1, .v2],
+                developmentVersions: []
+            )
+        )
+    }
+
+    // MARK: - V2
+
+    func testGetBackendInfoResponseV2() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(
+            code: 200,
+            jsonResponse: """
+            {
+                "domain": "example.com",
+                "federation": true,
+                "supported": [0, 1, 2],
+                "development": [3]
+            }
+            """
+        )
+
+        let sut = BackendInfoAPIV2(httpClient: httpClient)
+
+        // When
+        let result = try await sut.getBackendInfo()
+
+        // Then
+        XCTAssertEqual(
+            result,
+            BackendInfo(
+                domain: "example.com",
+                isFederationEnabled: true,
+                supportedVersions: [.v0, .v1, .v2],
+                developmentVersions: [.v3]
+            )
+        )
     }
 
 }

@@ -17,3 +17,45 @@
 //
 
 import Foundation
+@testable import WireAPI
+
+struct HTTPClientMockError: Error {
+
+    let message: String
+
+}
+
+final class HTTPClientMock: HTTPClient {
+
+    var receivedRequest: HTTPRequest?
+    var executeRequestMock: (HTTPRequest) async throws -> HTTPResponse
+
+    convenience init() {
+        self.init { request in
+            throw HTTPClientMockError(message: "response not mocked for request: \(request.path)")
+        }
+    }
+
+    convenience init(code: Int, jsonResponse: String) throws {
+        guard let payload = jsonResponse.data(using: .utf8) else {
+            throw HTTPClientMockError(message: "failed to create response payload data")
+        }
+
+        self.init { _ in
+            HTTPResponse(
+                code: code,
+                payload: payload
+            )
+        }
+    }
+
+    init(executeRequestMock: @escaping (HTTPRequest) async throws -> HTTPResponse) {
+        self.executeRequestMock = executeRequestMock
+    }
+
+    func executeRequest(_ request: HTTPRequest) async throws -> HTTPResponse {
+        receivedRequest = request
+        return try await executeRequestMock(request)
+    }
+
+}
