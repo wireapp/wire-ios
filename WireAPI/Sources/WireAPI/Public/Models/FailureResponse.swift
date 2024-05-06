@@ -22,6 +22,16 @@ import Foundation
 
 public struct FailureResponse: Decodable, Error {
 
-    // TODO: implement
+    /// The http status code.
+
+    public let code: Int
+
+    /// The name of the error.
+
+    public let label: String
+
+    /// The error message.
+    
+    public let message: String
 
 }
