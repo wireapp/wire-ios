@@ -73,7 +73,7 @@ final class LocationSelectionViewController: UIViewController {
     private var mapDidRender = false
 
     lazy var appLocationManager: AppLocationManager = {
-        let manager = AppLocationManager(locationManager: CLLocationManager())
+        let manager = AppLocationManager()
         manager.delegate = self
         return manager
     }()
