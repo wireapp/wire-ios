@@ -26,15 +26,15 @@ final class RemoveClientTableViewCell: UITableViewCell {
     // MARK: - Properties
 
     private let deviceNameLabel = DynamicFontLabel(
-        style: .headline,
+        style: .h3,
         color: LabelColors.textDefault)
 
     private let proteusIdLabel = DynamicFontLabel(
-        style: .caption1,
+        style: .subline1,
         color: LabelColors.textCellSubtitle)
 
     private let activationDateLabel = DynamicFontLabel(
-        style: .caption1,
+        style: .subline1,
         color: LabelColors.textCellSubtitle)
 
     var viewModel: ClientTableViewCellModel? {
