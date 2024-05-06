@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,23 +17,22 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-import WireCommonComponents
-
-typealias SelfUserType = UserType & SelfLegalHoldSubject
 
 final class ConversationListTopBarViewController: UIViewController {
 
     private let account: Account
 
     /// Name, availability and verification info about the self user.
-    public var selfUserStatus = UserStatus() {
+    var selfUserStatus = UserStatus() {
         didSet { updateTitleView() }
     }
 
     private let selfUser: SelfUserType
     private var userSession: UserSession
+    private let selfProfileViewControllerBuilder: any ViewControllerBuilder
     private var observerToken: NSObjectProtocol?
 
     var topBar: TopBar? {
@@ -48,14 +47,17 @@ final class ConversationListTopBarViewController: UIViewController {
     /// - Parameters:
     ///   - account: the Account of the user
     ///   - selfUser: the self user object. Allow to inject a mock self user for testing
+    ///   - selfProfileViewControllerBuilder: a builder for the self profile view controller
     init(
         account: Account,
         selfUser: SelfUserType,
-        userSession: UserSession
+        userSession: UserSession,
+        selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         self.account = account
         self.selfUser = selfUser
         self.userSession = userSession
+        self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
 
         super.init(nibName: nil, bundle: nil)
 
@@ -250,13 +252,12 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     func createSettingsViewController(selfUser: ZMUser) -> UIViewController {
-        // instead of having the dependency for `SelfProfileViewController` we could inject a factory
-        // returning the `UIViewController` subclass and only have the presentation logic at this place
-        let selfProfileViewController = SelfProfileViewController(selfUser: selfUser, userSession: userSession)
-        return selfProfileViewController.wrapInNavigationController(navigationControllerClass: NavigationController.self)
+        selfProfileViewControllerBuilder
+            .build()
+            .wrapInNavigationController(navigationControllerClass: NavigationController.self)
     }
 
-    func scrollViewDidScroll(scrollView: UIScrollView!) {
+    func scrollViewDidScroll(scrollView: UIScrollView) {
         topBar?.leftSeparatorLineView.scrollViewDidScroll(scrollView: scrollView)
         topBar?.rightSeparatorLineView.scrollViewDidScroll(scrollView: scrollView)
     }

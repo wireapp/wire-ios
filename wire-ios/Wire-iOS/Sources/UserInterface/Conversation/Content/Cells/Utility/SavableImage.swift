@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 //
 
 import Photos
+import UIKit
 import WireSystem
 import WireUtilities
-import UIKit
 
 protocol PhotoLibraryProtocol {
     func performChanges(_ changeBlock: @escaping () -> Swift.Void, completionHandler: ((Bool, Error?) -> Swift.Void)?)
@@ -90,7 +90,7 @@ final class SavableImage: NSObject {
         return isGIF ? .gif(SavableImage.storeGIF(imageData)) : .image(imageData)
     }
 
-    public func saveToLibrary(withCompletion completion: ImageSaveCompletion? = .none) {
+    func saveToLibrary(withCompletion completion: ImageSaveCompletion? = .none) {
         guard !writeInProgess else { return }
         writeInProgess = true
         let source = createSource()

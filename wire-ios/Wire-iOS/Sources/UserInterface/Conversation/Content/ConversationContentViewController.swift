@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +17,10 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDataModel
 import WireRequestStrategy
 import WireSyncEngine
-import WireCommonComponents
 
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 
@@ -47,7 +48,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     /// It appears when the user has scrolled up past a certain point in the conversation.
     lazy var scrollToBottomButton = {
         let button = ZMButton(style: .scrollToBottomButtonStyle, cornerRadius: scrollToBottomButtonHeight / 2)
-        let icon = Asset.Images.downArrow.image
+        let icon = UIImage(resource: .downArrow)
 
         button.setImage(icon, for: .normal)
         button.setImage(icon, for: .highlighted)

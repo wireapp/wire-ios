@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UIKit
-import WireSyncEngine
 import SwiftUI
+import WireSyncEngine
 
 final class UserClientListViewController: UIViewController,
                                           UICollectionViewDelegateFlowLayout,
@@ -201,6 +199,7 @@ final class UserClientListViewController: UIViewController,
             userClient: client,
             isSelfClient: client.isSelfClient(),
             gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+            mlsCiphersuite: MLSCipherSuite(rawValue: userSession.mlsFeature.config.defaultCipherSuite.rawValue),
             isFromConversation: true,
             actionsHandler: deviceActionsHandler,
             conversationClientDetailsActions: deviceActionsHandler,

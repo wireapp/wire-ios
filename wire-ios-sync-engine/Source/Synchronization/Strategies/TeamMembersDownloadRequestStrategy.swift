@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -71,7 +71,7 @@ public final class TeamMembersDownloadRequestStrategy: AbstractRequestStrategy, 
         }
 
         // as per WPB-6485 we ignore the hasMore
-        payload.members.forEach { (membershipPayload) in
+        payload.members.forEach { membershipPayload in
             membershipPayload.createOrUpdateMember(team: team, in: managedObjectContext)
         }
 

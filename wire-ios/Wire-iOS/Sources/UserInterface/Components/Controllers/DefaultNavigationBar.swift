@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,17 +59,15 @@ class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
 }
 
 extension UIViewController {
+
     func wrapInNavigationController(
         navigationControllerClass: UINavigationController.Type = RotationAwareNavigationController.self,
-        navigationBarClass: AnyClass? = DefaultNavigationBar.self,
-        setBackgroundColor: Bool = false
+        navigationBarClass: AnyClass? = DefaultNavigationBar.self
     ) -> UINavigationController {
         let navigationController = navigationControllerClass.init(navigationBarClass: navigationBarClass, toolbarClass: nil)
         navigationController.setViewControllers([self], animated: false)
 
-        if setBackgroundColor {
-            navigationController.view.backgroundColor = SemanticColors.View.backgroundDefault
-        }
+        navigationController.view.backgroundColor = SemanticColors.View.backgroundDefault
 
         return navigationController
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -50,7 +50,8 @@ final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestC
         sut = ConversationListTopBarViewController(
             account: mockAccount,
             selfUser: mockSelfUser,
-            userSession: userSession
+            userSession: userSession,
+            selfProfileViewControllerBuilder: .mock
         )
         sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 48)
         sut.view.backgroundColor = .black

@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,17 +17,24 @@
 //
 
 import XCTest
+
 @testable import Wire
 
 final class ZClientViewControllerTests: XCTestCase {
-    var sut: ZClientViewController!
-    var userSession: UserSessionMock!
+
+    private var imageTransformer: MockImageTransformer!
+    private var sut: ZClientViewController!
+    private var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
 
+        imageTransformer = .init()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
-        sut = ZClientViewController(account: Account.mockAccount(imageData: mockImageData), userSession: userSession)
+        sut = ZClientViewController(
+            account: Account.mockAccount(imageData: mockImageData),
+            userSession: userSession
+        )
     }
 
     override func tearDown() {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireTesting
-import PushKit
 import LocalAuthentication
-import WireSyncEngineSupport
+import PushKit
 @testable import WireSyncEngine
+import WireSyncEngineSupport
+import WireTesting
+import XCTest
 
 final class SessionManagerTests: IntegrationTest {
 
@@ -139,6 +139,7 @@ final class SessionManagerTests: IntegrationTest {
             analytics: nil,
             delegate: nil,
             application: application,
+            dispatchGroup: dispatchGroup,
             environment: sessionManager!.environment,
             configuration: SessionManagerConfiguration(blacklistDownloadInterval: -1),
             requiredPushTokenType: .standard,
@@ -182,6 +183,7 @@ final class SessionManagerTests: IntegrationTest {
         withExtendedLifetime(destroyToken) {
             testSessionManager.tearDownBackgroundSession(for: account.userIdentifier)
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertEqual([account.userIdentifier], observer.destroyedUserSessions)
@@ -233,6 +235,7 @@ final class SessionManagerTests: IntegrationTest {
             analytics: nil,
             delegate: self.mockDelegate,
             application: application,
+            dispatchGroup: dispatchGroup,
             environment: sessionManager!.environment,
             configuration: SessionManagerConfiguration(blacklistDownloadInterval: -1),
             detector: jailbreakDetector,
@@ -278,6 +281,7 @@ final class SessionManagerTests: IntegrationTest {
         withExtendedLifetime(destroyToken) {
             NotificationCenter.default.post(Notification(name: UIApplication.didReceiveMemoryWarningNotification))
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertEqual([account1.userIdentifier], observer.destroyedUserSessions)
@@ -357,8 +361,8 @@ final class SessionManagerTests: IntegrationTest {
         }
 
         // WHEN && THEN
-        sut.start(launchOptions: [:])
         sut.accountManager.addAndSelect(createAccount())
+        sut.start(launchOptions: [:])
         XCTAssertEqual(sut.accountManager.accounts.count, 1)
 
         performIgnoringZMLogError {
@@ -430,6 +434,7 @@ final class SessionManagerTests: IntegrationTest {
 
         // GIVEN
         XCTAssertTrue(login())
+        let account = try XCTUnwrap(sessionManager?.accountManager.selectedAccount)
         let observer = MockSessionManagerObserver()
         let token = sessionManager?.addSessionManagerDestroyedSessionObserver(observer)
         let tempUrl = tmpDirectoryPath.appendingPathComponent("testFile.txt")
@@ -441,8 +446,9 @@ final class SessionManagerTests: IntegrationTest {
 
         // WHEN
         withExtendedLifetime(token) {
-            sessionManager?.logoutCurrentSession()
+            sessionManager?.delete(account: account)
         }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         let fileCount = try FileManager.default.contentsOfDirectory(atPath: tmpDirectoryPath.path).count
 
@@ -453,29 +459,18 @@ final class SessionManagerTests: IntegrationTest {
 
     func testThatItClearsCRLExpirationDatesAfterLogout() throws {
         // GIVEN
-        let account = createAccount()
-        let sut = sessionManagerBuilder.build()
-        sut.accountManager.addAndSelect(account)
-        sut.start(launchOptions: [:])
-        sut.delegate = mockDelegate
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(login())
+        let account = try XCTUnwrap(sessionManager?.accountManager.selectedAccount)
 
         let url = try XCTUnwrap( URL(string: "https://example.com"))
         let expirationDatesRepository = CRLExpirationDatesRepository(userID: account.userIdentifier)
         expirationDatesRepository.storeCRLExpirationDate(.now, for: url)
 
-        let expectation = XCTestExpectation(description: "session torn down")
-        mockDelegate.sessionManagerWillLogoutErrorUserSessionCanBeTornDown_MockMethod = { _, block in
-            block?()
-            expectation.fulfill()
-        }
-
         // WHEN
-        sut.logoutCurrentSession()
+        sessionManager?.delete(account: account)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        wait(for: [expectation], timeout: 0.5)
         XCTAssertTrue(expirationDatesRepository.fetchAllCRLExpirationDates().isEmpty)
     }
 

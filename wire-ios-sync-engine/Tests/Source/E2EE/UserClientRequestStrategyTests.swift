@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import WireSyncEngine
-import WireUtilities
-import WireTesting
-import WireMockTransport
 import WireDataModel
 import WireDataModelSupport
+import WireMockTransport
+@testable import WireSyncEngine
+import WireTesting
+import WireUtilities
+import XCTest
 
 @objcMembers
 public final class MockClientRegistrationStatusDelegate: NSObject, ZMClientRegistrationStatusDelegate {

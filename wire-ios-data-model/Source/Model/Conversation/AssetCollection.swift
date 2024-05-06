@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -206,7 +206,7 @@ public class AssetCollection: NSObject, ZMCollection {
 
             // Map to ui assets
             var uiAssets = [CategoryMatch: [ZMMessage]]()
-            newAssets.forEach { (category, messages) in
+            newAssets.forEach { category, messages in
                 let uiValues = messages.compactMap { (try? self.uiMOC?.existingObject(with: $0.objectID)) as? ZMMessage }
                 uiAssets[category] = uiValues
             }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,11 @@
 //
 
 import UIKit
-import Foundation
 import WebKit
 import WireUtilities
 
 // MARK: - Error states
-public enum DigitalSignatureVerificationError: Error {
+enum DigitalSignatureVerificationError: Error {
     case postCodeRetry
     case authenticationFailed
     case otherError

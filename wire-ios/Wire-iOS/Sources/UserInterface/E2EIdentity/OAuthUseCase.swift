@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,19 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import AppAuth
+import Foundation
+import WireRequestStrategy
 import WireSystem
 import WireUtilities
-import WireRequestStrategy
 
-public protocol OAuthUseCaseInterface {
+protocol OAuthUseCaseInterface {
 
     func invoke(parameters: OAuthParameters) async throws -> OAuthResponse
 
 }
 
-public class OAuthUseCase: OAuthUseCaseInterface {
+class OAuthUseCase: OAuthUseCaseInterface {
 
     private let logger = WireLogger.e2ei
     private var currentAuthorizationFlow: OIDExternalUserAgentSession?
@@ -38,7 +38,7 @@ public class OAuthUseCase: OAuthUseCaseInterface {
         self.targetViewController = targetViewController
     }
 
-    public func invoke(parameters: OAuthParameters) async throws -> OAuthResponse {
+    func invoke(parameters: OAuthParameters) async throws -> OAuthResponse {
         logger.info("invoke authentication flow")
 
         guard let redirectURI = URL(string: "wire://e2ei/oauth2redirect") else {

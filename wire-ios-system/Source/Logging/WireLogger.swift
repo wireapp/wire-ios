@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -165,6 +165,7 @@ extension String: LogConvertible {
 public extension WireLogger {
 
     static let apiMigration = WireLogger(tag: "api-migration")
+    static let appState = WireLogger(tag: "AppState")
     static let appDelegate = WireLogger(tag: "AppDelegate")
     static let appLock = WireLogger(tag: "AppLock")
     static let assets = WireLogger(tag: "assets")
@@ -188,12 +189,13 @@ public extension WireLogger {
     static let push = WireLogger(tag: "push")
     static let proteus = WireLogger(tag: "proteus")
     static let session = WireLogger(tag: "session")
+    static let sessionManager = WireLogger(tag: "SessionManager")
     static let shareExtension = WireLogger(tag: "share-extension")
     static let sync = WireLogger(tag: "sync")
     static let system = WireLogger(tag: "system")
+    static let ui = WireLogger(tag: "UI")
     static let updateEvent = WireLogger(tag: "update-event")
     static let userClient = WireLogger(tag: "user-client")
-
 }
 
 /// Class to proxy WireLogger methods to Objective-C
@@ -203,5 +205,4 @@ final class WireLoggerObjc: NSObject {
     static func assertionDumpLog(_ message: String) {
         WireLogger.system.critical(message, attributes: .safePublic)
     }
-
 }

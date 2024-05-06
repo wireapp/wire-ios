@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import CoreData
+import Foundation
 import WireRequestStrategy
 
 @objcMembers
@@ -72,7 +72,7 @@ public final class ApplicationStatusDirectory: NSObject, ApplicationStatus {
         self.assetDeletionStatus = AssetDeletionStatus(provider: managedObjectContext, queue: managedObjectContext)
         super.init()
 
-        callInProgressObserverToken = NotificationInContext.addObserver(name: CallStateObserver.CallInProgressNotification, context: managedObjectContext.notificationContext) { [weak self] (note) in
+        callInProgressObserverToken = NotificationInContext.addObserver(name: CallStateObserver.CallInProgressNotification, context: managedObjectContext.notificationContext) { [weak self] note in
             managedObjectContext.performGroupedBlock {
                 if let callInProgress = note.userInfo[CallStateObserver.CallInProgressKey] as? Bool {
                     self?.operationStatus.hasOngoingCall = callInProgress

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireDataModel
-import WireMockTransport
-import WireTesting
-import WireRequestStrategy
+@testable import WireDataModelSupport
 import WireLinkPreview
-import WireDataModelSupport
+import WireMockTransport
+import WireRequestStrategy
 @testable import WireShareEngine
+import WireTesting
+import XCTest
 
 final class FakeAuthenticationStatus: AuthenticationStatusProvider {
     var state: AuthenticationState = .authenticated
@@ -140,7 +140,7 @@ class BaseTest: ZMTBaseTest {
         mockEARService = MockEARServiceInterface()
         mockEARService.enableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
         mockEARService.disableEncryptionAtRestContextSkipMigration_MockMethod = { _, _ in }
-        mockEARService.unlockDatabaseContext_MockMethod = { _ in }
+        mockEARService.unlockDatabase_MockMethod = { }
         mockEARService.lockDatabase_MockMethod = { }
 
         mockProteusService = MockProteusServiceInterface()
@@ -173,7 +173,8 @@ class BaseTest: ZMTBaseTest {
         let earService = EARService(
             accountID: accountIdentifier,
             databaseContexts: [coreDataStack.viewContext, coreDataStack.syncContext],
-            sharedUserDefaults: sharedUserDefaults
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: MockAuthenticationContextProtocol()
         )
         return try SharingSession(
             accountIdentifier: accountIdentifier,
@@ -188,6 +189,7 @@ class BaseTest: ZMTBaseTest {
             appLockConfig: AppLockController.LegacyConfig(),
             cryptoboxMigrationManager: mockCryptoboxMigrationManager,
             earService: earService,
+            contextStorage: MockLAContextStorable(),
             proteusService: mockProteusService,
             mlsDecryptionService: mockMLSDecryptionService,
             sharedUserDefaults: .temporary()

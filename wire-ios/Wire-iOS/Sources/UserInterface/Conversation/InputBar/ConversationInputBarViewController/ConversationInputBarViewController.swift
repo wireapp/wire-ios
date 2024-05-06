@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AVFoundation
+import avs
 import MobileCoreServices
 import Photos
 import UIKit
 import WireSyncEngine
-import avs
-import AVFoundation
 
 enum ConversationInputBarViewControllerMode {
     case textInput
@@ -900,7 +901,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
         viewController.delegate = self
         viewController.navigationItem.setupNavigationBarTitle(title: conversation.displayNameWithFallback)
 
-        parent?.present(viewController.wrapInNavigationController(setBackgroundColor: true), animated: true)
+        parent?.present(viewController.wrapInNavigationController(), animated: true)
     }
 }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ extension UserProfileUpdateStatus {
         observer: UserProfileUpdateObserver,
         in notificationContext: NotificationContext
     ) -> Any {
-        return NotificationInContext.addObserver(name: UserProfileUpdateNotification.notificationName, context: notificationContext, queue: .main) { [weak observer] (note) in
+        return NotificationInContext.addObserver(name: UserProfileUpdateNotification.notificationName, context: notificationContext, queue: .main) { [weak observer] note in
             guard let note = note.userInfo[UserProfileUpdateNotification.userInfoKey] as? UserProfileUpdateNotification,
                   let observer = observer else {
                     return

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import XCTest
-import WireTesting
 import ImageIO
 @testable import WireImages
+import WireTesting
+import XCTest
 
 class NSDataMetadataTests: XCTestCase {
     func testThatItThrowsForEmptyData() {
@@ -30,7 +30,7 @@ class NSDataMetadataTests: XCTestCase {
         var errorReceived: Error? = .none
         do {
             _ = try data.wr_removingImageMetadata()
-        } catch let error {
+        } catch {
             errorReceived = error
         }
 
@@ -45,7 +45,7 @@ class NSDataMetadataTests: XCTestCase {
         var errorReceived: Error? = .none
         do {
             _ = try data.wr_removingImageMetadata()
-        } catch let error {
+        } catch {
             errorReceived = error
         }
 

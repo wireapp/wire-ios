@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import AVKit
+import Foundation
 import PassKit
 import WireSyncEngine
 
@@ -85,7 +85,7 @@ final class MessagePresenter: NSObject {
 
         documentInteractionController = UIDocumentInteractionController(url: URL(fileURLWithPath: tmpPath))
         documentInteractionController?.delegate = self
-        if !preview || false == documentInteractionController?.presentPreview(animated: true),
+        if !preview || documentInteractionController?.presentPreview(animated: true) == false,
            let rect = targetViewController?.view.convert(targetView.bounds, from: targetView),
            let view = targetViewController?.view {
 
@@ -124,7 +124,7 @@ final class MessagePresenter: NSObject {
         if !message.isFileDownloaded() {
             message.fileMessageData?.requestFileDownload()
 
-            fileAvailabilityObserver = MessageKeyPathObserver(message: message, keypath: \.fileAvailabilityChanged) { [weak self] (message) in
+            fileAvailabilityObserver = MessageKeyPathObserver(message: message, keypath: \.fileAvailabilityChanged) { [weak self] message in
                 guard message.isFileDownloaded() else { return }
 
                 self?.openFileMessage(message, targetView: targetView)

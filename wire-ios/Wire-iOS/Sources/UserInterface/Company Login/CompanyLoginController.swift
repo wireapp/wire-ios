@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireCommonComponents
 import UIKit
-import WireTransport
+import WireCommonComponents
 import WireSyncEngine
+import WireTransport
 
 protocol CompanyLoginControllerDelegate: AnyObject {
 
@@ -61,7 +60,7 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
     private static let fallbackURLScheme = "wire-sso"
 
     // Whether performing a company login is supported on the current build.
-    static public let isCompanyLoginEnabled = true
+    static let isCompanyLoginEnabled = true
 
     private var token: Any?
     private let detector: CompanyLoginRequestDetector
@@ -90,7 +89,7 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
     }
 
     /// Create a new `CompanyLoginController` instance using the specified requester.
-    public required init(detector: CompanyLoginRequestDetector, requester: CompanyLoginRequester) {
+    required init(detector: CompanyLoginRequestDetector, requester: CompanyLoginRequester) {
         self.detector = detector
         self.requester = requester
         self.flowHandler = CompanyLoginFlowHandler(callbackScheme: requester.callbackScheme)
@@ -318,7 +317,7 @@ extension CompanyLoginController {
 
 // MARK: - Flow
 extension CompanyLoginController: CompanyLoginFlowHandlerDelegate {
-    public func companyLoginRequester(_ requester: CompanyLoginRequester, didRequestIdentityValidationAtURL url: URL) {
+    func companyLoginRequester(_ requester: CompanyLoginRequester, didRequestIdentityValidationAtURL url: URL) {
         delegate?.controllerDidStartCompanyLoginFlow(self)
         flowHandler.open(authenticationURL: url)
     }

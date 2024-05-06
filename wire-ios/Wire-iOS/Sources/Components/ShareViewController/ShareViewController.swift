@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 
@@ -212,7 +211,7 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     private func keyboardFrameWillChange(notification: Notification) {
         let inputAccessoryHeight = UIResponder.currentFirst?.inputAccessoryView?.bounds.size.height ?? 0
 
-        UIView.animate(withKeyboardNotification: notification, in: self.view, animations: {[weak self] (keyboardFrameInView) in
+        UIView.animate(withKeyboardNotification: notification, in: self.view, animations: {[weak self] keyboardFrameInView in
             guard let weakSelf = self else { return }
 
             let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireSystem
 
@@ -30,7 +29,7 @@ final class SaveFileManager: NSObject, SaveFileActions {
     private let logger: LoggerProtocol = WireLogger.e2ei
     private let systemSaveFilePresenter: SystemSaveFilePresenting
 
-    public init(systemFileSavePresenter: SystemSaveFilePresenting) {
+    init(systemFileSavePresenter: SystemSaveFilePresenting) {
         self.systemSaveFilePresenter = systemFileSavePresenter
     }
 

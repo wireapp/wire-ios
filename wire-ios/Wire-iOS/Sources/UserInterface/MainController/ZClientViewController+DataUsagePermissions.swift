@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 
@@ -38,12 +37,12 @@ extension ZClientViewController {
 
         let alertController = UIAlertController(title: L10n.Localizable.ConversationList.DataUsagePermissionAlert.title, message: L10n.Localizable.ConversationList.DataUsagePermissionAlert.message, preferredStyle: .alert)
 
-        alertController.addAction(UIAlertAction(title: L10n.Localizable.ConversationList.DataUsagePermissionAlert.disagree, style: .cancel, handler: { (_) in
+        alertController.addAction(UIAlertAction(title: L10n.Localizable.ConversationList.DataUsagePermissionAlert.disagree, style: .cancel, handler: { _ in
             TrackingManager.shared.disableCrashSharing = true
             TrackingManager.shared.disableAnalyticsSharing = true
         }))
 
-        alertController.addAction(UIAlertAction(title: L10n.Localizable.ConversationList.DataUsagePermissionAlert.agree, style: .default, handler: { (_) in
+        alertController.addAction(UIAlertAction(title: L10n.Localizable.ConversationList.DataUsagePermissionAlert.agree, style: .default, handler: { _ in
             TrackingManager.shared.disableCrashSharing = false
             TrackingManager.shared.disableAnalyticsSharing = false
         }))

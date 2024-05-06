@@ -126,7 +126,6 @@
 		BF453F1D1CC63C4800403E1C /* ZMTaskIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = BF453F1B1CC63C4800403E1C /* ZMTaskIdentifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF453F1E1CC63C4800403E1C /* ZMTaskIdentifier.m in Sources */ = {isa = PBXBuildFile; fileRef = BF453F1C1CC63C4800403E1C /* ZMTaskIdentifier.m */; };
 		BF49E9441E929B9B0006C4F0 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BF49E93B1E929B9B0006C4F0 /* AppDelegate.m */; };
-		BF49E9451E929B9B0006C4F0 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = BF49E93D1E929B9B0006C4F0 /* LaunchScreen.xib */; };
 		BF49E9461E929B9B0006C4F0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BF49E93F1E929B9B0006C4F0 /* Main.storyboard */; };
 		BF49E9471E929B9B0006C4F0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF49E9411E929B9B0006C4F0 /* Images.xcassets */; };
 		BF49E9481E929B9B0006C4F0 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BF49E9431E929B9B0006C4F0 /* ViewController.m */; };
@@ -147,6 +146,7 @@
 		EE7F3DEB29548F88000D247D /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE7F3DEA29548F88000D247D /* WireUtilities.framework */; };
 		EE7F3DEC29548F88000D247D /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE7F3DEA29548F88000D247D /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE98AD0F2AAAF114005C30AD /* TLSVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE98AD0E2AAAF114005C30AD /* TLSVersion.swift */; };
+		EE9AEC8E2BD1590E00F7853F /* WireTransport.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC8D2BD1590E00F7853F /* WireTransport.docc */; };
 		EEAD28FD2BC00057001054D6 /* ZMUpdateEvent+SafeForLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEAD28FC2BC00057001054D6 /* ZMUpdateEvent+SafeForLogging.swift */; };
 		EF1A09A41FF6AC7500F89634 /* ZMPersistentCookieStorage+Testing.h in Headers */ = {isa = PBXBuildFile; fileRef = EF1A09A31FF6A73200F89634 /* ZMPersistentCookieStorage+Testing.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F108BCC821C3CB6D00E1BBE3 /* Backend.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F108BCC721C3CB6C00E1BBE3 /* Backend.bundle */; };
@@ -357,7 +357,6 @@
 		BF453F1C1CC63C4800403E1C /* ZMTaskIdentifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTaskIdentifier.m; sourceTree = "<group>"; };
 		BF49E93A1E929B9B0006C4F0 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		BF49E93B1E929B9B0006C4F0 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		BF49E93E1E929B9B0006C4F0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		BF49E9401E929B9B0006C4F0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Main.storyboard; sourceTree = "<group>"; };
 		BF49E9411E929B9B0006C4F0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		BF49E9421E929B9B0006C4F0 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
@@ -377,6 +376,7 @@
 		EE67F6F0296F079E001D7C88 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE7F3DEA29548F88000D247D /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE98AD0E2AAAF114005C30AD /* TLSVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TLSVersion.swift; sourceTree = "<group>"; };
+		EE9AEC8D2BD1590E00F7853F /* WireTransport.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireTransport.docc; sourceTree = "<group>"; };
 		EEAD28FC2BC00057001054D6 /* ZMUpdateEvent+SafeForLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUpdateEvent+SafeForLogging.swift"; sourceTree = "<group>"; };
 		EF1A09A31FF6A73200F89634 /* ZMPersistentCookieStorage+Testing.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ZMPersistentCookieStorage+Testing.h"; sourceTree = "<group>"; };
 		EF1A09A51FF6BEE300F89634 /* testing.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = testing.modulemap; sourceTree = "<group>"; };
@@ -469,6 +469,7 @@
 		3E88BC9D1B1F35DF00232589 = {
 			isa = PBXGroup;
 			children = (
+				EE9AEC8D2BD1590E00F7853F /* WireTransport.docc */,
 				EF1A09A51FF6BEE300F89634 /* testing.modulemap */,
 				54BD49FD1D41FE0B006E29D1 /* README.md */,
 				5499FF661B31C66C00835C8B /* Source */,
@@ -846,7 +847,6 @@
 		BF49E93C1E929B9B0006C4F0 /* Base.lproj */ = {
 			isa = PBXGroup;
 			children = (
-				BF49E93D1E929B9B0006C4F0 /* LaunchScreen.xib */,
 				BF49E93F1E929B9B0006C4F0 /* Main.storyboard */,
 			);
 			path = Base.lproj;
@@ -943,9 +943,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3E88BCBD1B1F35DF00232589 /* Build configuration list for PBXNativeTarget "WireTransport-ios" */;
 			buildPhases = (
+				3E88BCA41B1F35DF00232589 /* Headers */,
 				3E88BCA21B1F35DF00232589 /* Sources */,
 				3E88BCA31B1F35DF00232589 /* Frameworks */,
-				3E88BCA41B1F35DF00232589 /* Headers */,
 				AD4812A82AB98FF100ED208C /* Run Swiftlint */,
 				3E88BCA51B1F35DF00232589 /* Resources */,
 			);
@@ -1028,7 +1028,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF49E9471E929B9B0006C4F0 /* Images.xcassets in Resources */,
-				BF49E9451E929B9B0006C4F0 /* LaunchScreen.xib in Resources */,
 				BF49E9461E929B9B0006C4F0 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1139,6 +1138,7 @@
 				BF453F1E1CC63C4800403E1C /* ZMTaskIdentifier.m in Sources */,
 				BF3EDB251F2619820015D158 /* ZMPersistentCookieStorage+Label.swift in Sources */,
 				59FFFB762B74E100008F0E1B /* Date+TransportCoding.swift in Sources */,
+				EE9AEC8E2BD1590E00F7853F /* WireTransport.docc in Sources */,
 				5431ABFF1DB4C35B0040343C /* RequestLoopDetection.swift in Sources */,
 				5499FFDE1B31C66D00835C8B /* ZMWebSocketHandshake.m in Sources */,
 				54CA15B91B32F2C1008D3787 /* ZMTransportResponse.m in Sources */,
@@ -1230,14 +1230,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		BF49E93D1E929B9B0006C4F0 /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				BF49E93E1E929B9B0006C4F0 /* Base */,
-			);
-			name = LaunchScreen.xib;
-			sourceTree = "<group>";
-		};
 		BF49E93F1E929B9B0006C4F0 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

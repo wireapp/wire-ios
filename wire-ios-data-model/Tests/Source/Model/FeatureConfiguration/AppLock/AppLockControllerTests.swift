@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,23 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import LocalAuthentication
-@testable import WireDataModel
+@_spi(AppLockControllerState) @testable import WireDataModel
+@testable import WireDataModelSupport
+import XCTest
 
 final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     var selfUser: ZMUser!
 
+    private var mockAuthenticationContext: MockAuthenticationContextProtocol!
+
     override func setUp() {
         super.setUp()
+
         selfUser = ZMUser.selfUser(in: uiMOC)
         selfUser.remoteIdentifier = .create()
         selfUser.isAppLockActive = true
+
+        mockAuthenticationContext = MockAuthenticationContextProtocol()
+        mockAuthenticationContext.evaluatePolicyLocalizedReasonReply_MockMethod = { _, _, completion in
+            completion(true, nil)
+        }
     }
 
     override func tearDown() {
+        mockAuthenticationContext = nil
         selfUser = nil
+
         super.tearDown()
     }
 
@@ -308,7 +319,8 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         let sut = createSut()
         try sut.updatePasscode("boo!")
 
-        let mockBiometricsState = MockBiometricsState()
+        let mockBiometricsState = MockBiometricsStateProtocol()
+        mockBiometricsState.persistState_MockMethod = { }
         sut.biometricsState = mockBiometricsState
 
         // When
@@ -317,7 +329,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         // Then
         XCTAssertEqual(result, .granted)
         XCTAssertFalse(sut.isLocked)
-        XCTAssertTrue(mockBiometricsState.didCallPersistState)
+        XCTAssertEqual(mockBiometricsState.persistState_Invocations.count, 1)
 
         // Clean up
         try sut.deletePasscode()
@@ -329,7 +341,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         let sut = createSut()
         try sut.updatePasscode("boo!")
 
-        let mockBiometricsState = MockBiometricsState()
+        let mockBiometricsState = MockBiometricsStateProtocol()
         sut.biometricsState = mockBiometricsState
 
         // When
@@ -338,7 +350,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         // Then
         XCTAssertEqual(result, .denied)
         XCTAssertTrue(sut.isLocked)
-        XCTAssertFalse(mockBiometricsState.didCallPersistState)
+        XCTAssert(mockBiometricsState.persistState_Invocations.isEmpty)
 
         // Clean up
         try sut.deletePasscode()
@@ -400,15 +412,15 @@ extension AppLockControllerTests {
     typealias Output = AppLockAuthenticationResult
 
     private func assert(input: Input, output: Output, file: StaticString = #file, line: UInt = #line) {
+        mockAuthenticationContext.canEvaluatePolicyError_MockValue = input.canEvaluate
+
         let sut = createSut()
 
-        let mockBiometricsState = MockBiometricsState()
-        mockBiometricsState._biometricsChanged = input.biometricsChanged
+        let mockBiometricsState = MockBiometricsStateProtocol()
+        mockBiometricsState.biometricsChangedIn_MockValue = input.biometricsChanged
         sut.biometricsState = mockBiometricsState
 
-        let context = MockLAContext(canEvaluate: input.canEvaluate)
-
-        let assertion: (Output, LAContextProtocol) -> Void = { result, _ in
+        let assertion: (Output) -> Void = { result in
             XCTAssertEqual(result, output, file: file, line: line)
 
             if output == .granted {
@@ -418,14 +430,20 @@ extension AppLockControllerTests {
             }
         }
 
-        sut.evaluateAuthentication(passcodePreference: input.passcodePreference,
-                                   description: "",
-                                   context: context,
-                                   callback: assertion)
+        sut.evaluateAuthentication(
+            passcodePreference: input.passcodePreference,
+            description: "",
+            callback: assertion
+        )
     }
 
     private func createSut(legacyConfig: AppLockController.LegacyConfig? = nil) -> AppLockController {
-        return AppLockController(userId: selfUser.remoteIdentifier, selfUser: selfUser, legacyConfig: legacyConfig)
+        AppLockController(
+            userId: selfUser.remoteIdentifier,
+            selfUser: selfUser,
+            legacyConfig: legacyConfig,
+            authenticationContext: mockAuthenticationContext
+        )
     }
 
     private func createSut(forceAppLock: Bool = false, timeout: UInt = 10) -> AppLockController {
@@ -433,7 +451,12 @@ extension AppLockControllerTests {
         let appLock = Feature.fetch(name: .appLock, context: uiMOC)!
         appLock.config = try! JSONEncoder().encode(config)
 
-        return AppLockController(userId: selfUser.remoteIdentifier, selfUser: selfUser, legacyConfig: nil)
+        return AppLockController(
+            userId: selfUser.remoteIdentifier,
+            selfUser: selfUser,
+            legacyConfig: nil,
+            authenticationContext: mockAuthenticationContext
+        )
     }
 
     class Delegate: AppLockDelegate {

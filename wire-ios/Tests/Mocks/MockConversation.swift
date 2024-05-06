@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +17,8 @@
 //
 
 import Foundation
-import WireRequestStrategy
 @testable import Wire
+import WireRequestStrategy
 
 // swiftlint:disable todo_requires_jira_link
 // TODO: rename to MockConversation after objc MockConversation is retired
@@ -77,6 +78,8 @@ class SwiftMockConversation: NSObject, Conversation {
     var areServicesPresent: Bool = false
 
     var domain: String?
+
+    var ciphersuite: WireDataModel.MLSCipherSuite? = .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
 }
 
 final class MockGroupDetailsConversation: SwiftMockConversation, GroupDetailsConversation {

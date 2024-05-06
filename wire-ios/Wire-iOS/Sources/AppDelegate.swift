@@ -18,11 +18,11 @@
 
 // Test CI: modify this line to run ci tests, sometimes it's the easiest way.
 
+import avs
 import UIKit
 import WireCommonComponents
-import WireSyncEngine
-import avs
 import WireCoreCrypto
+import WireSyncEngine
 
 enum ApplicationLaunchType {
     case unknown
@@ -55,7 +55,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         DeveloperFlagOperation(),
         BackendEnvironmentOperation(),
         TrackingOperation(),
-        AppCenterOperation(),
         PerformanceDebuggerOperation(),
         AVSLoggingOperation(),
         AutomationHelperOperation(),
@@ -79,7 +78,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         return SessionManager.shared?.unauthenticatedSession
     }
 
-    var appCenterInitCompletion: Completion?
     var launchOptions: LaunchOptions = [:]
 
     static var shared: AppDelegate {

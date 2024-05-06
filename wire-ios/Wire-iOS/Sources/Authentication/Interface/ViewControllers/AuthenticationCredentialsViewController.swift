@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
+import WireCommonComponents
+import WireDataModel
 import WireSystem
 import WireTransport
-import WireCommonComponents
 
 /**
  * The view controller to use to ask the user to enter their credentials.
@@ -483,7 +483,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         case .email:
             emailPasswordInputField.prefill(email: prefilledCredentials.credentials.emailAddress)
         case .phone:
-            if let phoneNumber = prefilledCredentials.credentials.phoneNumber.flatMap(PhoneNumber.init(fullNumber:)) {
+            if let phoneNumber = prefilledCredentials.credentials.phoneNumber.flatMap({ phoneNumber in PhoneNumber(fullNumber: phoneNumber, userPropertyValidator: UserPropertyValidator() ) }) {
                 phoneInputView.setPhoneNumber(phoneNumber)
             }
         }
@@ -594,7 +594,7 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         countryCodePicker.delegate = self
         countryCodePicker.modalPresentationStyle = .formSheet
 
-        let navigationController = countryCodePicker.wrapInNavigationController(navigationBarClass: DefaultNavigationBar.self, setBackgroundColor: true)
+        let navigationController = countryCodePicker.wrapInNavigationController(navigationBarClass: DefaultNavigationBar.self)
         present(navigationController, animated: true)
     }
 

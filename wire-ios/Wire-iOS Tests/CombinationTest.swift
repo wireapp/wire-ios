@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 struct Mutator<SUT: Copyable, Variant: Hashable> {
     typealias Applicator = (SUT, Variant) -> (SUT)
@@ -107,7 +107,7 @@ class CombinationTestTest: XCTestCase {
 
         let test = CombinationTest(mutable: BoolPair(first: false, second: false), mutators: [firstMutator, secondMutator])
 
-        XCTAssertEqual(test.testAll { (variation) -> (Bool?) in
+        XCTAssertEqual(test.testAll { variation -> (Bool?) in
             return variation.result.calculate() == variation.combinationChain.allSatisfy { $0 }
         }.count, 0)
     }

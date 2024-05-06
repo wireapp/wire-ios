@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UIKit
-import WireDataModel
-import WireSyncEngine
 import avs
 import DifferenceKit
+import UIKit
 import WireCommonComponents
+import WireDataModel
+import WireSyncEngine
 
 protocol CallGridViewControllerDelegate: AnyObject {
     func callGridViewController(_ viewController: CallGridViewController, perform action: CallGridAction)
@@ -191,7 +190,7 @@ final class CallGridViewController: SpinnerCapableViewController {
 
     // MARK: - Public Interface
 
-    public func handleDoubleTap(gesture: UIGestureRecognizer) {
+    func handleDoubleTap(gesture: UIGestureRecognizer) {
         let location = gesture.location(in: gridView)
         toggleMaximized(view: streamView(at: location))
     }
@@ -355,7 +354,7 @@ final class CallGridViewController: SpinnerCapableViewController {
         }
 
         // We have a stream but don't have a preview view yet.
-        if nil == thumbnailViewController.contentView, let previewView = selfCallParticipantView {
+        if thumbnailViewController.contentView == nil, let previewView = selfCallParticipantView {
             Log.calling.debug("Adding self video to floating preview")
             thumbnailViewController.setThumbnailContentView(previewView, contentSize: .previewSize(for: traitCollection))
         }
@@ -553,7 +552,7 @@ extension CallGridViewController {
 
 // MARK: - Extensions
 
-extension ZMEditableUser {
+extension EditableUserType {
     var selfStreamId: AVSClient {
 
         guard

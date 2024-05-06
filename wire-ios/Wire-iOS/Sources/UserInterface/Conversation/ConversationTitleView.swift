@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -116,7 +116,7 @@ extension NSTextAttachment {
 
     fileprivate static func proteusVerifiedShield() -> NSTextAttachment {
         let attachment = NSTextAttachment()
-        let shield = Asset.Images.verifiedShield.image
+        let shield = UIImage(resource: .verifiedShield)
         attachment.image = shield
         let ratio = shield.size.width / shield.size.height
         let height: CGFloat = 12
@@ -126,7 +126,7 @@ extension NSTextAttachment {
 
     fileprivate static func e2eiVerifiedShield() -> NSTextAttachment {
         let attachment = NSTextAttachment()
-        let shield = Asset.Images.certificateValid.image
+        let shield = UIImage(resource: .certificateValid)
         attachment.image = shield
         attachment.bounds = CGRect(x: 0, y: -2, width: shield.size.width, height: shield.size.height)
         return attachment

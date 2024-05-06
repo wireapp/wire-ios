@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
-import WireSystem
 import WireDataModel
 import WireSyncEngine
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "ConversationViewController+ConversationContentViewControllerDelegate")
 
@@ -41,7 +41,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
 
         endEditing()
 
-        createAndPresentParticipantsPopoverController(with: frame, from: view, contentViewController: profileViewController.wrapInNavigationController(setBackgroundColor: true))
+        createAndPresentParticipantsPopoverController(with: frame, from: view, contentViewController: profileViewController.wrapInNavigationController())
     }
 
     func conversationContentViewController(
@@ -145,7 +145,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             userSession: userSession,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
-        let navigationController = groupDetailsViewController.wrapInNavigationController(setBackgroundColor: true)
+        let navigationController = groupDetailsViewController.wrapInNavigationController()
         groupDetailsViewController.presentGuestOptions(animated: false)
         presentParticipantsViewController(navigationController, from: sourceView)
     }
@@ -164,7 +164,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
             userSession: userSession,
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase
         )
-        let navigationController = groupDetailsViewController.wrapInNavigationController(setBackgroundColor: true)
+        let navigationController = groupDetailsViewController.wrapInNavigationController()
         groupDetailsViewController.presentServicesOptions(animated: false)
         presentParticipantsViewController(navigationController, from: sourceView)
     }

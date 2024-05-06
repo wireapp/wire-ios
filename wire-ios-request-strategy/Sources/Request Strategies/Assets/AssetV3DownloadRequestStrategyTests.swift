@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import WireDataModel
 @testable import WireRequestStrategy
 import XCTest
-import WireDataModel
 
 private let testDataURL = Bundle(for: AssetV3DownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
 
@@ -579,7 +579,7 @@ extension AssetV3DownloadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         self.syncMOC.performGroupedBlockAndWait {
-            self.sut.contextChangeTrackers.forEach { (tracker) in
+            self.sut.contextChangeTrackers.forEach { tracker in
                 tracker.objectsDidChange([message])
             }
 

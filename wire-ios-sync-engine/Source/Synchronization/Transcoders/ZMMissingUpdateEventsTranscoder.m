@@ -1,21 +1,20 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import WireUtilities;
 @import WireTransport;
@@ -44,6 +43,7 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 @property (nonatomic) NotificationsTracker *notificationsTracker;
 @property (nonatomic) BOOL useLegacyPushNotifications;
 @property (nonatomic) id<LastEventIDRepositoryInterface> lastEventIDRepository;
+@property (nonatomic) BOOL isProcessingEvents;
 
 
 - (void)appendPotentialGapSystemMessageIfNeededWithResponse:(ZMTransportResponse *)response;
@@ -159,11 +159,11 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     return [payload.asDictionary optionalArrayForKey:@"notifications"].asDictionaries;
 }
 
-- (NSUUID *)processUpdateEventsAndReturnLastNotificationIDFromPayload:(id<ZMTransportData>)payload
+- (NSUUID *)processUpdateEventsAndReturnLastNotificationIDFromResponse:(ZMTransportResponse *)response
 {
     ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:10 label:NSStringFromClass(self.class)];
-    NSArray *eventsDictionaries = [self.class eventDictionariesFromPayload:payload];
-    
+    NSArray *eventsDictionaries = [self.class eventDictionariesFromPayload:response.payload];
+
     NSMutableArray<ZMUpdateEvent *> *parsedEvents = [NSMutableArray array];
     NSMutableArray<NSUUID *> *eventIds = [NSMutableArray array];
     NSUUID *latestEventId = nil;
@@ -185,12 +185,26 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     ZMLogWithLevelAndTag(ZMLogLevelInfo, ZMTAG_EVENT_PROCESSING, @"Downloaded %lu event(s)", (unsigned long)parsedEvents.count);
 
     BOOL finished = !self.listPaginator.hasMoreToFetch;
+    NSDate *fetchDate = self.listPaginator.lastResetFetchDate;
     NSArray<ZMSDispatchGroup *> *groups = [self.managedObjectContext enterAllGroupsExceptSecondary];
+    self.isProcessingEvents = YES;
 
+    NSLog(@"ZMMissingUpdateEventsTranscoder process %lu events", (unsigned long)parsedEvents.count);
     [self.eventProcessor processEvents:parsedEvents completionHandler:^(NSError * _Nullable error) {
         NOT_USED(error);
         [self.managedObjectContext performBlock:^{
             [self.pushNotificationStatus didFetchEventIds:eventIds lastEventId:latestEventId finished:finished];
+            
+            if (finished) {
+                [self.syncStatus completedFetchingNotificationStreamFetchBeganAt:fetchDate];
+
+                if (self.operationStatus.operationState == SyncEngineOperationStateBackgroundFetch) {
+                    [self updateBackgroundFetchResultWithResponse:response];
+                }
+
+                self.isProcessingEvents = NO;
+            }
+
             [self.managedObjectContext leaveAllGroups:groups];
         }];
     }];
@@ -259,10 +273,14 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
     // We want to create a new request if we are either currently fetching the paginated stream
     // or if we have a new notification ID that requires a pingback.
    
-    if ((self.isFetchingStreamForAPNS && self.useLegacyPushNotifications) || self.isFetchingStreamInBackground || self.isSyncing) {
-        
+    if ((self.isFetchingStreamForAPNS && self.useLegacyPushNotifications) || self.isFetchingStreamInBackground || 
+        self.isSyncing) {
+
         // We only reset the paginator if it is neither in progress nor has more pages to fetch.
-        if (self.listPaginator.status != ZMSingleRequestInProgress && !self.listPaginator.hasMoreToFetch) {
+        if (self.listPaginator.status != ZMSingleRequestInProgress &&
+            !self.listPaginator.hasMoreToFetch &&
+            !self.isProcessingEvents
+        ) {
             [self.listPaginator resetFetching];
         }
 
@@ -302,31 +320,22 @@ NSUInteger const ZMMissingUpdateEventsTranscoderListPageSize = 500;
 
     NOT_USED(paginator);
     SyncStatus *syncStatus = self.syncStatus;
-    OperationStatus *operationStatus = self.operationStatus;
     
     NSString *timestamp = ((NSString *) response.payload.asDictionary[@"time"]);
     if (timestamp) {
         [self updateServerTimeDeltaWithTimestamp:timestamp];
     }
 
-    NSUUID *latestEventId = [self processUpdateEventsAndReturnLastNotificationIDFromPayload:response.payload];
-
-    if (operationStatus.operationState == SyncEngineOperationStateBackgroundFetch) {
-        // This call affects the `isFetchingStreamInBackground` property and should never preceed
-        // the call to `processUpdateEventsAndReturnLastNotificationIDFromPayload:syncStrategy`.
-        [self updateBackgroundFetchResultWithResponse:response];
-    }
+    NSUUID *latestEventId = [self processUpdateEventsAndReturnLastNotificationIDFromResponse:response];
 
     if (!self.listPaginator.hasMoreToFetch) {
         [self.previouslyReceivedEventIDsCollection discardListOfAlreadyReceivedPushEventIDs];
     }
     
     [self appendPotentialGapSystemMessageIfNeededWithResponse:response];
-    
+
     if (response.result == ZMTransportResponseStatusPermanentError) {
         [syncStatus failedFetchingNotificationStream];
-    } else if (!self.listPaginator.hasMoreToFetch) {
-        [syncStatus completedFetchingNotificationStreamFetchBeganAt:self.listPaginator.lastResetFetchDate];
     }
     
     return latestEventId;

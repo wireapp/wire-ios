@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireCommonComponents
 @testable import Wire
+import WireCommonComponents
 
 struct ColorTile {
     let color: AccentColor
@@ -62,7 +62,7 @@ final class ColorTilesViewController: VerticalColumnCollectionViewController, De
                                  cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let tile = tiles[indexPath.row]
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "tile", for: indexPath)
-        cell.contentView.backgroundColor = UIColor(for: tile.color)
+        cell.contentView.backgroundColor = tile.color.uiColor
         return cell
     }
 

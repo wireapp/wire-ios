@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@ import UIKit
 
 public typealias AlertActionHandler = (UIAlertAction) -> Void
 
-public extension UIAlertController {
+extension UIAlertController {
 
     /// Create an alert with a OK button
     ///
@@ -28,9 +29,11 @@ public extension UIAlertController {
     ///   - message: message of the alert
     ///   - okActionHandler: a nullable closure for the OK button
     /// - Returns: the alert presented
-    static func alertWithOKButton(title: String? = nil,
-                                  message: String,
-                                  okActionHandler: AlertActionHandler? = nil) -> UIAlertController {
+    public static func alertWithOKButton(
+        title: String? = nil,
+        message: String,
+        okActionHandler: AlertActionHandler? = nil
+    ) -> UIAlertController {
         let alert = UIAlertController(title: title,
                                       message: message,
                                       preferredStyle: .alert)
@@ -41,9 +44,11 @@ public extension UIAlertController {
         return alert
     }
 
-    convenience init(title: String? = nil,
-                     message: String,
-                     alertAction: UIAlertAction) {
+    public convenience init(
+        title: String? = nil,
+        message: String,
+        alertAction: UIAlertAction
+    ) {
         self.init(title: title,
                   message: message,
                   preferredStyle: .alert)
@@ -52,12 +57,12 @@ public extension UIAlertController {
 
 }
 
-public extension UIAlertAction {
-    static func ok(_ completion: ((UIAlertAction) -> Void)? = nil) -> UIAlertAction {
+extension UIAlertAction {
+    public static func ok(_ completion: ((UIAlertAction) -> Void)? = nil) -> UIAlertAction {
         return UIAlertAction.ok(style: .default, handler: completion)
     }
 
-    static func ok(style: Style = .default, handler: ((UIAlertAction) -> Void)? = nil) -> UIAlertAction {
+    public static func ok(style: Style = .default, handler: ((UIAlertAction) -> Void)? = nil) -> UIAlertAction {
         return UIAlertAction(
             title: "general.ok".localized,
             style: style,

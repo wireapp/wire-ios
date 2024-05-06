@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ extension ZMConversation {
     static let commitPendingProposalDateKey = "commitPendingProposalDate"
 
     @objc
-    static let cipherSuiteKey = #keyPath(cipherSuite)
+    static let ciphersuiteKey = "ciphersuite"
 
     @objc
     static let epochKey = #keyPath(epoch)
@@ -49,13 +49,33 @@ extension ZMConversation {
 
     // MARK: Properties
 
-    @NSManaged public var cipherSuite: NSNumber?
+    @NSManaged private var primitiveCiphersuite: NSNumber?
 
     @NSManaged public var epoch: UInt64
 
     @NSManaged public var epochTimestamp: Date?
 
     @NSManaged private var primitiveMessageProtocol: NSNumber
+
+    public var ciphersuite: MLSCipherSuite? {
+        get {
+            willAccessValue(forKey: Self.ciphersuiteKey)
+            let rawValue = primitiveCiphersuite
+            didAccessValue(forKey: Self.ciphersuiteKey)
+
+            guard let rawValue else {
+                return nil
+            }
+
+            return MLSCipherSuite(rawValue: Int(rawValue.int16Value))
+        }
+
+        set {
+            willChangeValue(forKey: Self.ciphersuiteKey)
+            primitiveCiphersuite = newValue.map({ NSNumber(value: $0.rawValue) })
+            didChangeValue(forKey: Self.ciphersuiteKey)
+        }
+    }
 
     /// The message protocol used to exchange messages in this conversation.
 

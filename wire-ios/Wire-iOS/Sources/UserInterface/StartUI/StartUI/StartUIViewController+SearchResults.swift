@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
 import UIKit
+import WireSyncEngine
 import WireSystem
 
 final class StartUIView: UIView { }
@@ -120,7 +119,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
             self.navigationController?.pushViewController(avoiding, animated: true) {
             }
         } else {
-            let embeddedNavigationController = controller.wrapInNavigationController(setBackgroundColor: true)
+            let embeddedNavigationController = controller.wrapInNavigationController()
             embeddedNavigationController.modalPresentationStyle = .formSheet
             self.present(embeddedNavigationController, animated: true)
         }

@@ -87,7 +87,10 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
         guard let request = transportBuilder.buildTransportRequest() else {
             // finish sync instead of fail, because we can never execute a request
-            WireLogger.sync.warn("can not create transport request, one reason could be an unsupported api version!")
+            WireLogger.sync.warn(
+                "can not create transport request, one reason could be an unsupported api version!",
+                attributes: .safePublic
+            )
             finishSlowSync()
             return nil
         }
@@ -99,7 +102,10 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
         guard isSlowSyncing else {
             // skip result if we are not in the slow sync...
             assertionFailure("expected response during slow sync phase!")
-            WireLogger.sync.error("received response, but expected during slow sync phase '\(syncPhase.description)'!")
+            WireLogger.sync.error(
+                "received response, but expected during slow sync phase '\(syncPhase.description)'!",
+                attributes: .safePublic
+            )
             return
         }
 
@@ -128,7 +134,10 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
     }
 
     private func failSlowSync() {
-        WireLogger.sync.error("failed slow sync phase '\(syncPhase.description)'!")
+        WireLogger.sync.error(
+            "failed slow sync phase '\(syncPhase.description)'!",
+            attributes: .safePublic
+        )
         managedObjectContext.performAndWait {
             self.syncProgress.failCurrentSyncPhase(phase: self.syncPhase)
         }

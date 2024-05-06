@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 protocol CallInfoViewControllerDelegate: AnyObject {
     func infoViewController(_ viewController: CallInfoViewController, perform action: CallAction)
@@ -66,7 +65,6 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
 
     weak var delegate: CallInfoViewControllerDelegate?
 
-    private let backgroundViewController: BackgroundViewController
     private let stackView = UIStackView(axis: .vertical)
     private let statusViewController: CallStatusViewController
     private let accessoryViewController: CallAccessoryViewController
@@ -92,8 +90,6 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
             selfUser: selfUser,
             userSession: userSession
         )
-
-        backgroundViewController = BackgroundViewController(user: selfUser, userSession: userSession)
 
         super.init(nibName: nil, bundle: nil)
         accessoryViewController.delegate = self
@@ -125,8 +121,6 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
     }
 
     private func setupViews() {
-        addToSelf(backgroundViewController)
-
         stackView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(stackView)
         stackView.alignment = .center
@@ -150,8 +144,6 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
             actionsView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             accessoryViewController.view.widthAnchor.constraint(equalTo: view.widthAnchor)
         ])
-
-        backgroundViewController.view.fitIn(view: view)
     }
 
     private func updateNavigationItem() {
@@ -178,7 +170,6 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
         actionsView.update(with: configuration)
         statusViewController.configuration = configuration
         accessoryViewController.configuration = configuration
-        backgroundViewController.view.isHidden = configuration.videoPlaceholderState == .hidden
         updateAccessoryView()
 
         if configuration.networkQuality.isNormal {

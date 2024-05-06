@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,7 +53,12 @@ public final class MLSRequestStrategy: AbstractRequestStrategy {
             applicationStatus: applicationStatus
         )
 
-        configuration = [.allowsRequestsDuringSlowSync, .allowsRequestsWhileOnline]
+        configuration = [
+            .allowsRequestsDuringSlowSync,
+            .allowsRequestsWhileOnline,
+            .allowsRequestsDuringQuickSync,
+            .allowsRequestsWhileWaitingForWebsocket
+        ]
     }
 
     // MARK: - Requests

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireSyncEngine
+import XCTest
 
 class ConversationTests_LegalHold: ConversationTestsBase {
 
@@ -25,7 +25,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         // given
         XCTAssertTrue(login())
         let conversation = self.conversation(for: selfToUser1Conversation)
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")
         }
 
@@ -46,7 +46,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         XCTAssertTrue(login())
         let conversation = self.conversation(for: selfToUser1Conversation)
         var legalHoldClient: MockUserClient!
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             legalHoldClient = session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")
         }
 
@@ -60,7 +60,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(conversation?.legalHoldStatus, .enabled)
 
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.deleteUserClient(withIdentifier: legalHoldClient.identifier!, for: self.user1)
         }
 
@@ -93,7 +93,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         }
 
         let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")
         }
         await self.userSession?.managedObjectContext.perform {
@@ -132,7 +132,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
 
         let conversationParticipantsService = ConversationParticipantsService(context: userSession!.managedObjectContext)
 
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")
         }
         legalHoldUser.fetchUserClients()
@@ -166,12 +166,12 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         let otherUserClient = user1.clients.anyObject() as! MockUserClient
         let conversation = self.conversation(for: selfToUser1Conversation)
 
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")
         }
 
         // when
-        mockTransportSession.performRemoteChanges { (_) in
+        mockTransportSession.performRemoteChanges { _ in
             var genericMessage = GenericMessage(content: Text(content: "Hello"))
             genericMessage.setLegalHoldStatus(.enabled)
             do {
@@ -197,7 +197,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         var legalHoldClient: MockUserClient!
         let conversation = self.conversation(for: selfToUser1Conversation)
 
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             legalHoldClient = session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")
         }
 
@@ -206,7 +206,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         XCTAssertEqual(conversation?.legalHoldStatus, .pendingApproval)
 
         // when
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.deleteUserClient(withIdentifier: legalHoldClient.identifier!, for: self.user1)
             var genericMessage = GenericMessage(content: Text(content: "Hello"))
             genericMessage.setLegalHoldStatus(.disabled)
@@ -231,7 +231,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         let conversation = self.conversation(for: selfToUser1Conversation)
 
         // when
-        mockTransportSession.performRemoteChanges { (_) in
+        mockTransportSession.performRemoteChanges { _ in
             var genericMessage = GenericMessage(content: Text(content: "Hello"))
             genericMessage.setLegalHoldStatus(.enabled)
             do {
@@ -254,7 +254,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         let otherUserClient = user1.clients.anyObject() as! MockUserClient
         let conversation = self.conversation(for: selfToUser1Conversation)
 
-        mockTransportSession.performRemoteChanges { (session) in
+        mockTransportSession.performRemoteChanges { session in
             session.registerClient(for: self.user1, label: "Legal Hold", type: "legalhold", deviceClass: "legalhold")
         }
 
@@ -265,7 +265,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         XCTAssertEqual(conversation?.legalHoldStatus, .pendingApproval)
 
         // when
-        mockTransportSession.performRemoteChanges { (_) in
+        mockTransportSession.performRemoteChanges { _ in
             var genericMessage = GenericMessage(content: Text(content: "Hello"))
             genericMessage.setLegalHoldStatus(.disabled)
             do {

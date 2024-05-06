@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ extension CoreDataStack {
 
         let storeFiles = messageStoreFiles + eventStoreFiles
 
-        try storeFiles.forEach { (storeFile) in
+        try storeFiles.forEach { storeFile in
             if fileManager.fileExists(atPath: storeFile.path) {
                 try fileManager.removeItem(at: storeFile)
             }
@@ -110,7 +110,7 @@ extension CoreDataStack {
 
         do {
             try clearStorage()
-        } catch let error {
+        } catch {
             Logging.localStorage.error("Failed to clear storage: \(error)")
         }
     }

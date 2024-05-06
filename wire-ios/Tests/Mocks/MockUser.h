@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
 
 @import Foundation;
 @import WireSyncEngine;
@@ -38,7 +37,7 @@
 @property (nonatomic, readwrite, copy) NSString *phoneNumber;
 @property (nonatomic, readwrite, copy) NSString *handle;
 @property (nonatomic, readwrite, copy) NSString *domain;
-@property (nonatomic) ZMAccentColor accentColorValue;
+@property (nonatomic) ZMAccentColorRawValue accentColorValue;
 @property (nonatomic, readwrite) BOOL isBlocked;
 @property (nonatomic, readwrite) BOOL isIgnored;
 @property (nonatomic, readwrite) BOOL isPendingApprovalByOtherUser;

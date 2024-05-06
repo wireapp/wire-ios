@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -275,9 +275,9 @@ extension UserProfileImageUpdateStatus: ZMAssetsPreprocessorDelegate {
 
     public func preprocessingCompleteOperation(for imageOwner: ZMImageOwner) -> Operation? {
         let dispatchGroup = syncMOC.dispatchGroup
-        dispatchGroup?.enter()
+        dispatchGroup.enter()
         return BlockOperation {
-            dispatchGroup?.leave()
+            dispatchGroup.leave()
         }
     }
 }

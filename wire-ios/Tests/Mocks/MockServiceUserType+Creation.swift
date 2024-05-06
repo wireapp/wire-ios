@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ extension MockServiceUserType {
         serviceUser.displayName = name
         serviceUser.initials = PersonName.person(withName: name, schemeTagger: nil).initials
         serviceUser.handle = serviceUser.name?.lowercased()
-        serviceUser.accentColorValue = .brightOrange
+        serviceUser.zmAccentColor = .amber
         serviceUser.providerIdentifier = UUID.create().transportString()
         serviceUser.serviceIdentifier = UUID.create().transportString()
         return serviceUser

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import Foundation
 // MARK: - Stylable Protocol
 
 /// Objects conforming to this protocol opt in to apply a certain style to UI elements
-public protocol Stylable {
+protocol Stylable {
 
     associatedtype StyleConfiguration
     /// This method is called when we apply a certain style such as titleColor, backgroundColor to a UI Element

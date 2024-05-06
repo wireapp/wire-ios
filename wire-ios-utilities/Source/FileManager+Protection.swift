@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ public extension URL {
             var resourceValues = URLResourceValues()
             resourceValues.isExcludedFromBackup = true
             try mutableCopy.setResourceValues(resourceValues)
-        } catch let error {
+        } catch {
             throw error
         }
     }

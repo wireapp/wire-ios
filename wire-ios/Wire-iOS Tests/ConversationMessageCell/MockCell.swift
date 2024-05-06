@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ final class MockCellDescription<T>: ConversationMessageCellDescription {
     var accessibilityLabel: String?
 
     init() {
-        let backgroundColor = UIColor(for: .red)
+        let backgroundColor = AccentColor.red.uiColor
         configuration = View.Configuration(backgroundColor: backgroundColor)
     }
 }

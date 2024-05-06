@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-import WireCommonComponents
 
 extension ZMUser {
     var hasValidEmail: Bool {
@@ -222,7 +221,7 @@ extension SettingsCellDescriptorFactory {
                 return ChangeHandleViewController()
             }
 
-            if let selfUser = ZMUser.selfUser(), nil != selfUser.handle {
+            if let selfUser = ZMUser.selfUser(), selfUser.handle != nil {
 
                 let preview: PreviewGeneratorType = { _ in
                     guard let handleDisplayString = selfUser.handleDisplayString(withDomain: federationEnabled) else {
@@ -295,7 +294,7 @@ extension SettingsCellDescriptorFactory {
                     assertionFailure("ZMUser.selfUser() is nil")
                     return .none
                 }
-                return .color(selfUser.accentColor)
+                return .color((selfUser.accentColor ?? .default).uiColor)
             },
             presentationStyle: .navigation,
             presentationAction: AccentColorPickerController.init)

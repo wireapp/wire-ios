@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import avs
 import Combine
+import Foundation
 
 private let zmLog = ZMSLog(tag: "calling")
 
@@ -877,7 +877,7 @@ extension WireCallCenterV3 {
     /// Sends the config request when requested by AVS through `wcall_config_req_h`.
     func requestCallConfig() {
         zmLog.debug("\(self): requestCallConfig(), transport = \(String(describing: transport))")
-        transport?.requestCallConfig(completionHandler: { [weak self] (config, httpStatusCode) in
+        transport?.requestCallConfig(completionHandler: { [weak self] config, httpStatusCode in
             guard let `self` = self else { return }
             zmLog.debug("\(self): self.avsWrapper.update with \(String(describing: config))")
             self.avsWrapper.update(callConfig: config, httpStatusCode: httpStatusCode)

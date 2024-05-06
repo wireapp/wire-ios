@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 // MARK: - Framework comparison
 class FrameworkVersionTests: XCTestCase {
@@ -135,7 +135,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
         // GIVEN
         var patchApplied = false
-        let patch = LegacyPersistedDataPatch(version: "9999.32.32") { (moc) in
+        let patch = LegacyPersistedDataPatch(version: "9999.32.32") { moc in
             XCTAssertEqual(moc, self.syncMOC)
             patchApplied = true
         }
@@ -153,7 +153,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
         // GIVEN
         var patchApplied = false
-        let patch = LegacyPersistedDataPatch(version: "10000000.32.32") { (moc) in
+        let patch = LegacyPersistedDataPatch(version: "10000000.32.32") { moc in
             XCTAssertEqual(moc, self.syncMOC)
             patchApplied = true
         }
@@ -175,7 +175,7 @@ class LegacyPersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
         // GIVEN
         var patchApplied = false
-        let patch = LegacyPersistedDataPatch(version: "0.0.1") { (_) in
+        let patch = LegacyPersistedDataPatch(version: "0.0.1") { _ in
             XCTFail()
             patchApplied = true
         }

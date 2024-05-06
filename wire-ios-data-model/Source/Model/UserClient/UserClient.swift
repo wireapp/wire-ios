@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreLocation
 import Foundation
 import WireCryptobox
-import CoreLocation
 import WireUtilities
 
 public let ZMUserClientNumberOfKeysRemainingKey = "numberOfKeysRemaining"
@@ -415,11 +415,15 @@ public extension UserClient {
         let deviceClass = payloadAsDictionary.optionalString(forKey: "class")
         let activationDate = payloadAsDictionary.date(for: "time")
         let lastActiveDate = payloadAsDictionary.optionalDate(forKey: "last_active")
-        let mlsPublicKeys = payloadAsDictionary.optionalDictionary(forKey: "mls_public_keys")
-        let mlsEd25519 = mlsPublicKeys?.optionalString(forKey: "ed25519")
         let result = fetchOrCreateUserClient(with: id, in: context)
         let client = result.client
         let isNewClient = result.isNewClient
+        let mlsPublicKeys = payloadAsDictionary.optionalDictionary(forKey: "mls_public_keys")
+        let mlsEd25519 = mlsPublicKeys?.optionalString(forKey: "ed25519")
+        let mlsEd448 = mlsPublicKeys?.optionalString(forKey: "ed448")
+        let mlsP256 = mlsPublicKeys?.optionalString(forKey: "p256")
+        let mlsP384 = mlsPublicKeys?.optionalString(forKey: "p384")
+        let mlsP521 = mlsPublicKeys?.optionalString(forKey: "p521")
 
         client.label = label
         client.type = DeviceType(rawValue: type)
@@ -428,15 +432,13 @@ public extension UserClient {
         client.activationDate = activationDate
         client.lastActiveDate = lastActiveDate
         client.remoteIdentifier = id
-        if let mlsEd25519 {
-            client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519)
-        }
+        client.mlsPublicKeys = MLSPublicKeys(ed25519: mlsEd25519,
+                                             ed448: mlsEd448,
+                                             p256: mlsP256,
+                                             p384: mlsP384,
+                                             p521: mlsP521)
         let selfUser = ZMUser.selfUser(in: context)
         client.user = client.user ?? selfUser
-
-        if let ed22519Key = mlsPublicKeys?["ed25519"] as? String {
-            client.mlsPublicKeys.ed25519 = ed22519Key
-        }
 
         if isNewClient {
             client.needsSessionMigration = selfUser.domain == nil
@@ -643,7 +645,7 @@ public extension UserClient {
         var didEstablishSession = false
         managedObjectContext?.performAndWait {
 
-            keystore.encryptionContext.perform { (sessionsDirectory) in
+            keystore.encryptionContext.perform { sessionsDirectory in
 
                 // Session is already established?
                 if sessionsDirectory.hasSession(for: sessionId) {
@@ -657,7 +659,7 @@ public extension UserClient {
             // if at the end of the block the session is still there. Just to be safe, I split the operations
             // in two separate `perform` blocks.
 
-            keystore.encryptionContext.perform { (sessionsDirectory) in
+            keystore.encryptionContext.perform { sessionsDirectory in
                 do {
                     try sessionsDirectory.createClientSession(sessionId, base64PreKeyString: preKey)
                     didEstablishSession = true

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ public extension NSManagedObjectContext {
         do {
             let result = try fetch(request)
             return result
-        } catch let error {
+        } catch {
             WireLogger.localStorage.error("CoreData: Error in fetching request : \(request),  \(error.localizedDescription)")
             assertionFailure("Error in fetching \(error.localizedDescription)")
             return []

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
-import PassKit
 import AVKit
+import PassKit
+@testable import Wire
+import XCTest
 
 final class MessagePresenterTests: XCTestCase {
 
@@ -97,11 +97,10 @@ final class MessagePresenterTests: XCTestCase {
         let message = MockMessageFactory.passFileTransferMessage()
         let fileURL = try XCTUnwrap(message.fileMessageData?.temporaryURLToDecryptedFile())
 
-        // WHEN && THEN
-        do {
-            _ = try await sut.makePassesViewController(fileURL: fileURL)
-        } catch {
-            XCTFail("expected not to throw an error!")
-        }
+        // WHEN
+        _ = try await sut.makePassesViewController(fileURL: fileURL)
+
+        // THEN
+        // expected not to throw an error!
     }
 }

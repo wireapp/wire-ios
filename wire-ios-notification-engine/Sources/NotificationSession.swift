@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -240,12 +240,20 @@ public final class NotificationSession {
             coreCryptoProvider: coreCryptoProvider,
             notificationContext: coreDataStack.syncContext.notificationContext
         )
+        let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
-            commitSender: commitSender
+            commitSender: commitSender,
+            featureRepository: featureRepository
         )
 
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
+
+        let earService = EARService(
+            accountID: accountIdentifier,
+            sharedUserDefaults: sharedUserDefaults,
+            authenticationContext: AuthenticationContext(storage: LAContextStorage())
+        )
 
         try self.init(
             coreDataStack: coreDataStack,
@@ -257,7 +265,7 @@ public final class NotificationSession {
             accountIdentifier: accountIdentifier,
             pushNotificationStrategy: pushNotificationStrategy,
             cryptoboxMigrationManager: cryptoboxMigrationManager,
-            earService: EARService(accountID: accountIdentifier, sharedUserDefaults: sharedUserDefaults),
+            earService: earService,
             proteusService: ProteusService(coreCryptoProvider: coreCryptoProvider),
             mlsDecryptionService: MLSDecryptionService(context: coreDataStack.syncContext, mlsActionExecutor: mlsActionExecutor)
         )
