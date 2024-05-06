@@ -43,14 +43,3 @@ extension Sequence {
         return all { $0[keyPath: keyPath] }
     }
 }
-
-// TODO: remove
-extension Optional {
-    public func map<Value>(_ keyPath: KeyPath<Wrapped, Value>) -> Value? {
-        return map { $0[keyPath: keyPath] }
-    }
-
-    public func flatMap<Value>(_ keyPath: KeyPath<Wrapped, Value?>) -> Value? {
-        return flatMap { $0[keyPath: keyPath] }
-    }
-}
