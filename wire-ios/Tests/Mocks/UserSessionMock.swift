@@ -18,6 +18,7 @@
 
 import Foundation
 import LocalAuthentication
+import WireDataModel
 import WireDataModelSupport
 import WireRequestStrategySupport
 import WireSyncEngine
@@ -104,6 +105,8 @@ final class UserSessionMock: UserSession {
     var requireCustomAppLockPasscode: Bool = false
     var isCustomAppLockPasscodeSet: Bool = false
     var needsToNotifyUserOfAppLockConfiguration: Bool = false
+
+    var searchUsersCache: SearchUsersCache { fatalError("not implemented yet") }
 
     func openAppLock() throws {
         openApp.append(())
@@ -302,4 +305,16 @@ final class UserSessionMock: UserSession {
     )
 
     func fetchAllClients() {}
+
+    func createTeamOneOnOne(
+        with user: UserType,
+        completion: @escaping (Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+    ) {
+    }
+
+    var mockCheckOneOnOneConversationIsReady: MockCheckOneOnOneConversationIsReadyUseCaseProtocol?
+    var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
+        mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
+    }
+
 }

@@ -34,7 +34,7 @@ protocol AVSMediaManagerInterface {
 extension AVSMediaManager: AVSMediaManagerInterface {
 }
 
-typealias SettingsSelfUser = EditableUserType & UserType
+typealias SettingsSelfUser = UserType & EditableUserType
 
 enum SettingsPropertyError: Error {
     case WrongValue(String)
@@ -141,9 +141,6 @@ final class SettingsPropertyFactory {
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
         case .email:
             return getOnlyProperty(propertyName: propertyName, value: selfUser?.emailAddress)
-
-        case .phone:
-            return getOnlyProperty(propertyName: propertyName, value: selfUser?.phoneNumber)
 
         case .handle:
             return getOnlyProperty(propertyName: propertyName, value: selfUser?.handleDisplayString(withDomain: BackendInfo.isFederationEnabled))

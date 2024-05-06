@@ -319,6 +319,10 @@ public enum Payload {
             case federationDenied = "federation-denied"
             case federationRemoteError = "federation-remote-error"
             case mlsStaleMessage = "mls-stale-message"
+            case clientNotFound = "client-not-found"
+            case invalidCredentials = "invalid-credentials"
+            case missingAuth = "missing-auth"
+            case badRequest = "bad-request"
             case unknown
 
             public init(from decoder: Decoder) throws {
@@ -340,10 +344,10 @@ public enum Payload {
             self.data = data
         }
 
-        let code: Int
-        let label: Label
-        let message: String
-        let data: FederationFailure?
+        public let code: Int
+        public let label: Label
+        public let message: String
+        public let data: FederationFailure?
 
     }
 

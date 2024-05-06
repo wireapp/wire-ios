@@ -274,7 +274,6 @@ final class APIMigrationManagerTests: MessagingTest {
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: mockTransportSession,
-            useCaseFactory: nil,
             userId: .create()
         )
 

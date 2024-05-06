@@ -25,85 +25,71 @@ enum TabBarItemType: Int, CaseIterable {
     typealias BottomBar = L10n.Localizable.ConversationList.BottomBar
     typealias TabBar = L10n.Accessibility.TabBar
 
-    case startUI, list, folder, archive
-
-    var order: Int {
-        return rawValue
-    }
+    case list, archive, settings
 
     var icon: UIImage {
         switch self {
-        case .startUI:
-            return .init(resource: .contactsOutline)
         case .list:
             return .init(resource: .conversationsOutline)
-        case .folder:
-            return .init(resource: .foldersOutline)
         case .archive:
             return .init(resource: .archiveOutline)
+        case .settings:
+            return .init(resource: .ConversationList.TabBar.settings)
         }
     }
 
     var selectedIcon: UIImage {
         switch self {
-        case .startUI:
-            return .init(resource: .contactsFilled)
         case .list:
             return .init(resource: .conversationsFilled)
-        case .folder:
-            return .init(resource: .foldersFilled)
         case .archive:
             return .init(resource: .archiveFilled)
+        case .settings:
+            return .init(resource: .ConversationList.TabBar.settingsFilled)
         }
     }
 
     var title: String {
         switch self {
-        case .startUI:
-            return BottomBar.Contacts.title
         case .list:
-            return BottomBar.Conversations.title
-        case .folder:
-            return BottomBar.Folders.title
+            BottomBar.Conversations.title
         case .archive:
-            return BottomBar.Archived.title
+            BottomBar.Archived.title
+        case .settings:
+            BottomBar.Settings.title
         }
     }
 
     var accessibilityIdentifier: String {
         switch self {
-        case .startUI:
-            return "bottomBarPlusButton"
         case .list:
             return "bottomBarRecentListButton"
-        case .folder:
-            return "bottomBarFolderListButton"
         case .archive:
             return "bottomBarArchivedButton"
+        case .settings:
+            return "bottomBarSettingsButton"
         }
     }
 
     var accessibilityLabel: String {
         switch self {
-        case .startUI:
-            return TabBar.Contacts.description
         case .list:
             return TabBar.Conversations.description
-        case .folder:
-            return TabBar.Folders.description
         case .archive:
             return TabBar.Archived.description
+        case .settings:
+            return TabBar.Settings.description
         }
     }
 
     var accessibilityHint: String? {
         switch self {
-        case .startUI:
-            return TabBar.Contacts.hint
         case .archive:
-            return TabBar.Archived.hint
-        case .list, .folder:
-            return nil
+            TabBar.Archived.hint
+        case .list:
+            nil
+        case .settings:
+            TabBar.Settings.hint
         }
     }
 
@@ -111,37 +97,17 @@ enum TabBarItemType: Int, CaseIterable {
 
 final class ConversationListTabBar: UITabBar {
 
-    private let startTab = UITabBarItem(type: .startUI)
     private let listTab = UITabBarItem(type: .list)
-    private let folderTab = UITabBarItem(type: .folder)
     private let archivedTab = UITabBarItem(type: .archive)
-
-    var showArchived: Bool = false {
-        didSet {
-            var tabs: [UITabBarItem] = [startTab, listTab, folderTab]
-            if showArchived {
-                tabs.append(archivedTab)
-            }
-            setItems(tabs, animated: true)
-        }
-    }
+    private let settingsTab = UITabBarItem(type: .settings)
 
     var selectedTab: TabBarItemType? {
-        didSet {
-            if let selectedTab = selectedTab {
-                switch selectedTab {
-                case .archive, .startUI:
-                    return
-                case .list:
-                    selectedItem = listTab
-                case .folder:
-                    selectedItem = folderTab
-                }
-            }
-        }
+        get { selectedItem?.type }
+        set { selectedItem = items?.first { $0.type == newValue } }
     }
 
     // MARK: - Init
+
     init() {
         super.init(frame: .zero)
         setupViews()
@@ -156,7 +122,8 @@ final class ConversationListTabBar: UITabBar {
 
         barTintColor = SemanticColors.View.backgroundConversationList
         isTranslucent = false
-        items = [startTab, listTab, folderTab, archivedTab]
+        items = [listTab, archivedTab, settingsTab]
+        selectedItem = listTab
     }
 
     private func setupLargeContentViewer() {
@@ -166,21 +133,6 @@ final class ConversationListTabBar: UITabBar {
         showsLargeContentViewer = true
         scalesLargeContentImage = true
     }
-
-}
-
-// MARK: - ConversationListViewModelRestorationDelegate
-
-extension ConversationListTabBar: ConversationListViewModelRestorationDelegate {
-
-    func listViewModel(_ model: ConversationListViewModel?, didRestoreFolderEnabled enabled: Bool) {
-        if enabled {
-            selectedTab = .folder
-        } else {
-            selectedTab = .list
-        }
-    }
-
 }
 
 // MARK: - UILargeContentViewerInteractionDelegate
@@ -189,7 +141,6 @@ extension ConversationListTabBar: UILargeContentViewerInteractionDelegate {
 
     func largeContentViewerInteraction(_: UILargeContentViewerInteraction, itemAt: CGPoint) -> UILargeContentViewerItem? {
         setupLargeContentViewer(at: itemAt)
-
         return self
     }
 
@@ -200,7 +151,6 @@ extension ConversationListTabBar: UILargeContentViewerInteractionDelegate {
         largeContentTitle = tabBarItem.title
         largeContentImage = tabBarItem.image
     }
-
 }
 
 extension UITabBarItem {
@@ -210,35 +160,29 @@ extension UITabBarItem {
                   image: type.icon.resize(for: .medium).withRenderingMode(.alwaysTemplate),
                   selectedImage: type.selectedIcon.resize(for: .medium).withRenderingMode(.alwaysTemplate))
 
-        tag = type.order
+        tag = type.rawValue
 
         /// Setup accessibility properties
         accessibilityIdentifier = type.accessibilityIdentifier
         accessibilityLabel = type.accessibilityLabel
         accessibilityHint = type.accessibilityHint
     }
-
 }
 
 private extension UITabBar {
 
     func tabBarItem(at location: CGPoint) -> UITabBarItem? {
-        guard let itemsCount = items?.count else {
-            return nil
-        }
+        guard let itemsCount = items?.count else { return nil }
 
-        let itemWidth: CGFloat = (self.frame.width / CGFloat(itemsCount))
+        let itemWidth: CGFloat = (frame.width / CGFloat(itemsCount))
 
         switch location.x {
         case 0 ..< itemWidth:
-            return UITabBarItem(type: .startUI)
-        case itemWidth ..< (2 * itemWidth):
             return UITabBarItem(type: .list)
-        case (2 * itemWidth) ..< (3 * itemWidth):
-            return UITabBarItem(type: .folder)
-        default:
+        case itemWidth ..< (2 * itemWidth):
             return UITabBarItem(type: .archive)
+        default:
+            return UITabBarItem(type: .settings)
         }
     }
-
 }
