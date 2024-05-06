@@ -16,22 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-final class CountryCell: UITableViewCell {
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: .value1, reuseIdentifier: reuseIdentifier)
-    }
+extension Notification.Name {
 
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    // This notification is used to check the E2EIdentity Certificate expiry status
+    public static let checkForE2EICertificateExpiryStatus = Self("CheckForE2EICertificateExpiryStatus")
 
-    func configure(for country: Country) {
-        textLabel?.text = country.displayName
-        detailTextLabel?.text = "+\(country.e164)"
-
-        accessibilityHint = L10n.Localizable.Registration.Phone.CountryCode.hint
-    }
+    // Used to notify of end-to-end identity certificate changes
+    public static let e2eiCertificateChanged = Self("E2EICertificateStatusChanged")
 }
