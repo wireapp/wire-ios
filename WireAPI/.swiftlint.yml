@@ -1,5 +1,0 @@
-included:
-  - Sources
-
-excluded:
-  - */Package.swift
