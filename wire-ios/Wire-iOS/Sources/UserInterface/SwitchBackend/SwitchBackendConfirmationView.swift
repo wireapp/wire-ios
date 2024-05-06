@@ -34,6 +34,7 @@ struct SwitchBackendConfirmationView: View {
             buttons
         }
         .padding()
+        .interactiveDismissDisabled()
     }
 
     @ViewBuilder
