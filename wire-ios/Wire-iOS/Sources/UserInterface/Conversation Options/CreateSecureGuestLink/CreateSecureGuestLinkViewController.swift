@@ -307,6 +307,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
     @objc
     func generatePasswordButtonTapped() {
         viewModel.requestRandomPassword()
+        textFieldDidChange(securedGuestLinkPasswordTextfield)
     }
 
     @objc
