@@ -91,12 +91,17 @@ enum ProfileAction: Equatable {
 
 }
 
+// sourcery: AutoMockable
+protocol ProfileActionsFactoryProtocol {
+    func makeActionsList(completion: @escaping ([ProfileAction]) -> Void)
+}
+
 /**
  * An object that returns the actions that a user can perform in the scope
  * of a conversation.
  */
 
-final class ProfileActionsFactory {
+final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
 
     // MARK: - Environmemt
 
