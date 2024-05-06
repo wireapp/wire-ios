@@ -26,7 +26,7 @@ final class AppRootRouter: NSObject {
 
     // MARK: - Public Property
 
-    let screenCurtain = ScreenCurtain()
+    let screenCurtain = ScreenCurtainWindow()
 
     // MARK: - Private Property
 

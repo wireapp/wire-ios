@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import SwiftUI
 import WireSyncEngine
 
 /// A window used to obfuscate the main content window when the app is inactive.
-
-final class ScreenCurtain: UIWindow {
+final class ScreenCurtainWindow: UIWindow {
 
     // MARK: - Properties
 
@@ -31,7 +30,8 @@ final class ScreenCurtain: UIWindow {
 
     override init(frame: CGRect = UIScreen.main.bounds) {
         super.init(frame: frame)
-        rootViewController = RootViewController()
+
+        rootViewController = UIHostingController(rootView: ScreenCurtainView())
         backgroundColor = .clear
         isOpaque = false
         windowLevel = .statusBar - 1
@@ -70,5 +70,4 @@ final class ScreenCurtain: UIWindow {
         let shouldShow = userSession?.requiresScreenCurtain ?? false
         isHidden = !shouldShow
     }
-
 }

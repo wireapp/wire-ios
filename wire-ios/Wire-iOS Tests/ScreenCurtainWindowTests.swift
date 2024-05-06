@@ -16,19 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import SnapshotTesting
-@testable import Wire
 import XCTest
 
-final class ScreenCurtainTests: XCTestCase {
+@testable import Wire
 
-    var sut: ScreenCurtain!
+final class ScreenCurtainWindowTests: BaseSnapshotTestCase {
+
+    var sut: ScreenCurtainWindow!
     var userSession: UserSessionMock!
 
     override func setUp() {
         super.setUp()
-        sut = ScreenCurtain()
+        sut = ScreenCurtainWindow()
         userSession = UserSessionMock()
         sut.userSession = userSession
     }
@@ -95,5 +94,4 @@ final class ScreenCurtainTests: XCTestCase {
         // Then
         verify(matching: sut.rootViewController!)
     }
-
 }
