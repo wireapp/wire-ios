@@ -17,11 +17,8 @@
 //
 
 import WireCommonComponents
-<<<<<<< HEAD
 import WireSyncEngine
-=======
 import SwiftUI
->>>>>>> b381c371f4 (feat: improve backend confirmation alert WPB-4242 (#1348))
 
 extension Notification.Name {
     static let companyLoginDidFinish = Notification.Name("Wire.CompanyLoginDidFinish")

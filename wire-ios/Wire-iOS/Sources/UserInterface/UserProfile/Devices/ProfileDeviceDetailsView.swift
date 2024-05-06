@@ -86,12 +86,7 @@ struct ProfileDeviceDetailsView: View {
             Text(L10n.Localizable.Profile.Devices.Detail.ShowMyDevice.title)
                 .font(.textStyle(.body2))
                 .padding(.all, ViewConstants.Padding.standard)
-<<<<<<< HEAD
-                .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
-                .font(UIFont.swiftUIFont(for: .bodyTwoSemibold))
-=======
-                .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
->>>>>>> b381c371f4 (feat: improve backend confirmation alert WPB-4242 (#1348))
+                .foregroundColor(Color(SemanticColors.Label.textDefault))
             Spacer()
             Image(.chevronRight)
                 .padding(.trailing, ViewConstants.Padding.standard)
@@ -179,24 +174,14 @@ struct ProfileDeviceDetailsView: View {
                     .font(.textStyle(.h4))
                     .multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
-<<<<<<< HEAD
-                    .font(UIFont.swiftUIFont(for: .subheadline))
-                    .foregroundColor(Color(uiColor: SemanticColors.Label.textCellSubtitle))
-=======
-                    .foregroundColor(SemanticColors.Label.textCellSubtitle.swiftUIColor)
->>>>>>> b381c371f4 (feat: improve backend confirmation alert WPB-4242 (#1348))
+                    .foregroundColor(Color(SemanticColors.Label.textCellSubtitle))
                     .frame(height: ViewConstants.View.Height.small)
                     .padding([.leading, .top, .trailing], ViewConstants.Padding.standard)
                 Text(L10n.Localizable.Profile.Devices.Detail.VerifyMessage.link)
                     .underline()
-<<<<<<< HEAD
-                    .font(UIFont.swiftUIFont(for: .subheadline).bold())
-                    .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
-=======
                     .font(.textStyle(.h4))
                     .bold()
-                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
->>>>>>> b381c371f4 (feat: improve backend confirmation alert WPB-4242 (#1348))
+                    .foregroundColor(Color(SemanticColors.Label.textDefault))
                     .padding(.leading)
                     .onTapGesture {
                         viewModel.onHowToDoThatTapped()
