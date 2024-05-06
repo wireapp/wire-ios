@@ -2,4 +2,4 @@ included:
   - Sources
 
 excluded:
-  - Package.swift
+  - */Package.swift
