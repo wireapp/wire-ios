@@ -211,7 +211,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
     func sessionManagerCreated(userSession: ZMUserSession) {
         log.info("Session manager created session: \(userSession)")
-        currentPostRegistrationFields().apply(sendPostRegistrationFields)
+        currentPostRegistrationFields().map(sendPostRegistrationFields)
     }
 
     func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {

@@ -156,7 +156,7 @@ final class ConversationActionController {
     }
 
     private func prepare(viewController: UIViewController, with context: PresentationContext) {
-        viewController.popoverPresentationController.apply {
+        viewController.popoverPresentationController.map {
             $0.sourceView = context.view
             $0.sourceRect = context.rect
         }
@@ -165,7 +165,7 @@ final class ConversationActionController {
     private func present(_ controller: UIViewController,
                          currentContext: PresentationContext?,
                          target: UIViewController) {
-        currentContext.apply {
+        currentContext.map {
             prepare(viewController: controller, with: $0)
         }
 

@@ -621,7 +621,7 @@ extension IntegrationTest {
         changesAfterInterruption: ((_ session: MockTransportSessionObjectCreation) -> Void)? = nil) {
 
         closePushChannelAndWaitUntilClosed()
-        changesBeforeInterruption.apply(mockTransportSession.performRemoteChanges)
+        changesBeforeInterruption.map(mockTransportSession.performRemoteChanges)
         mockTransportSession.performRemoteChanges { session in
             session.clearNotifications()
 
