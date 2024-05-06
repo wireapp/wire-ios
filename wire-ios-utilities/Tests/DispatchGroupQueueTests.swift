@@ -17,6 +17,7 @@
 //
 
 import WireTesting
+
 @testable import WireUtilities
 
 final class DispatchGroupQueueTests: ZMTBaseTest {
@@ -25,7 +26,6 @@ final class DispatchGroupQueueTests: ZMTBaseTest {
 
     override func tearDown() {
         sut = nil
-
         super.tearDown()
     }
 
@@ -38,13 +38,12 @@ final class DispatchGroupQueueTests: ZMTBaseTest {
 
         // when
         sut.performGroupedBlock {
-            self.sut.dispatchGroup.notify(on: DispatchQueue.main, block: {
+            self.sut.dispatchGroup?.notify(on: .main) {
                 groupIsEmpty.fulfill()
-            })
+            }
         }
 
         // then
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
-
 }

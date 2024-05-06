@@ -17,8 +17,9 @@
 //
 
 import WireTesting
-@testable import WireUtilities
 import XCTest
+
+@testable import WireUtilities
 
 final class NSManagedObjectContext_SwiftTests: XCTestCase {
 
@@ -27,7 +28,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
     var sut: NSManagedObjectContext!
 
     override func setUp() {
-      super.setUp()
+        super.setUp()
         sut = ZMMockManagedObjectContextFactory.testManagedObjectContext(withConcurencyType: .privateQueueConcurrencyType)
         sut.createDispatchGroups()
     }
@@ -83,7 +84,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
 
     func testThatItReturnsNonOptionalValue_Throwing() throws {
         // given
-        sut.dispatchGroup.enter()
+        sut.dispatchGroup?.enter()
         let expectation = self.expectation(description: "wait for group to be left on error")
         let group = try XCTUnwrap(sut.dispatchGroup)
         group.notify(on: DispatchQueue.main) {
@@ -104,7 +105,7 @@ final class NSManagedObjectContext_SwiftTests: XCTestCase {
             // then
             XCTAssert(error is TestError)
         }
-        sut.dispatchGroup.leave()
+        sut.dispatchGroup?.leave()
 
         wait(for: [expectation], timeout: 0.5)
     }

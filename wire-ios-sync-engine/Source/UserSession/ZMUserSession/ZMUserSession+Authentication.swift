@@ -82,7 +82,7 @@ extension ZMUserSession {
             deleteUserKeychainItems()
         }
 
-        syncManagedObjectContext.dispatchGroup.notify(on: .main) {
+        syncManagedObjectContext.dispatchGroup?.notify(on: .main) {
             self.tearDown()
             completion()
         }

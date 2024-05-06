@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 ///
 /// It can be used to associate a block with the receiver without running it on the
 /// receiver's queue.
-@property (nonatomic, readonly) ZMSDispatchGroup *dispatchGroup;
+@property (nonatomic, readonly, nullable) ZMSDispatchGroup *dispatchGroup;
 
 @end
 
