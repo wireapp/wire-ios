@@ -22,8 +22,9 @@ import WireSyncEngine
 
 final class SelfCallParticipantView: BaseCallParticipantView {
 
+    weak var previewView: AVSVideoPreview?
+
     private weak var videoContainerView: AVSVideoContainerView?
-    private weak var previewView: AVSVideoPreview?
 
     override var stream: Stream {
         didSet {
@@ -117,7 +118,7 @@ final class SelfCallParticipantView: BaseCallParticipantView {
         previewView?.shouldFill = shouldFill
     }
 
-    private func makeVideoPreviewView() -> AVSVideoPreview {
+    func makeVideoPreviewView() -> AVSVideoPreview {
         let previewView = AVSVideoPreview()
         previewView.backgroundColor = .clear
         previewView.shouldFill = shouldFill
