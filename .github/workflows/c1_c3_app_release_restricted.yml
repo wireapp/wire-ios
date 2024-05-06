@@ -10,10 +10,12 @@ jobs:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_1_restricted
+      skip_security_tests: false
     secrets: inherit
 
   column_3_restricted:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_3_restricted
+      skip_security_tests: false
     secrets: inherit
