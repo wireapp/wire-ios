@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireAPI
 import WireDataModel
 import WireSyncEngine
 
@@ -45,7 +44,6 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
             .init(title: "Update Conversation to mixed protocol", action: updateConversationProtocolToMixed),
             .init(title: "Update Conversation to MLS protocol", action: updateConversationProtocolToMLS),
             .init(title: "Update MLS migration status", action: updateMLSMigrationStatus),
-            .init(title: "Make request", action: makeRequest)
         ]
     }
 
@@ -132,18 +130,4 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
         }
     }
 
-    private func makeRequest() {
-        guard let userSession = ZMUserSession.shared() else { return }
-        let api = userSession.makeBackendInfoAPI()
-        let logger = WireLogger(tag: "api")
-
-        Task {
-            do {
-                let backendInfo = try await api.getBackendInfo()
-                logger.debug("success getting backend info: \(backendInfo)")
-            } catch {
-                logger.error("failed to get backend info: \(error)")
-            }
-        }
-    }
 }
