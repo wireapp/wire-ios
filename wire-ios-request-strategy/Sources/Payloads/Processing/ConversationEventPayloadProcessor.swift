@@ -720,6 +720,10 @@ struct ConversationEventPayloadProcessor {
         {
             conversation.mlsGroupID = mlsGroupID
         }
+
+        if let ciphersuite = payload.cipherSuite {
+            conversation.ciphersuite = MLSCipherSuite(rawValue: Int(ciphersuite))
+        }
     }
 
     func updateMetadata(

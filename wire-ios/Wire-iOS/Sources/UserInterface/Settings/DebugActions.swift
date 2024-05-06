@@ -16,8 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import AppCenterCrashes
-import Foundation
+import UIKit
 import WireSyncEngine
 
 enum DebugActions {
@@ -30,9 +29,9 @@ enum DebugActions {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         if let textToCopy = textToCopy {
-            alert.addAction(UIAlertAction(title: "Copy", style: .default, handler: { _ in
+            alert.addAction(UIAlertAction(title: "Copy", style: .default) { _ in
                 UIPasteboard.general.string = textToCopy
-            }))
+            })
         }
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         controller.present(alert, animated: false)
@@ -197,10 +196,6 @@ enum DebugActions {
         controller.present(alert, animated: true)
     }
 
-    static func generateTestCrash(_ type: SettingsCellDescriptorType) {
-        Crashes.generateTestCrash()
-    }
-
     static func reloadUserInterface(_ type: SettingsCellDescriptorType) {
         guard let appRootRouter = (UIApplication.shared.delegate as? AppDelegate)?.appRootRouter else {
             return
@@ -290,7 +285,7 @@ enum DebugActions {
             conversations = try? userSession.syncManagedObjectContext.fetch(NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
             conversations?.forEach({ _ = $0.estimatedUnreadCount })
         }
-        userSession.syncManagedObjectContext.dispatchGroup.wait(forInterval: 5)
+        userSession.syncManagedObjectContext.dispatchGroup?.wait(forInterval: 5)
         userSession.syncManagedObjectContext.performGroupedBlockAndWait {
             conversations = nil
             userSession.syncManagedObjectContext.saveOrRollback()

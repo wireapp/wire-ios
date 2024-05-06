@@ -69,8 +69,8 @@ extension ConversationListViewController {
 
         var selectedConversation: ZMConversation?
 
-        private var didBecomeActiveNotificationToken: Any?
-        private var e2eiCertificateChangedToken: Any?
+        private var didBecomeActiveNotificationToken: NSObjectProtocol?
+        private var e2eiCertificateChangedToken: NSObjectProtocol?
         private var initialSyncObserverToken: Any?
         /// observer tokens which are assigned when viewDidLoad
         var allConversationsObserverToken: NSObjectProtocol?

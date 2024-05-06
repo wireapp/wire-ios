@@ -36,10 +36,6 @@ final class AuthenticationLoginCredentialsInputHandler: AuthenticationEventHandl
             let request = AuthenticationLoginRequest.email(address: emailPassword.email, password: emailPassword.password)
 
             return [.startLoginFlow(request, proxyCredentials)]
-        } else if let phoneNumber = context as? PhoneNumber {
-            let request = AuthenticationLoginRequest.phoneNumber(phoneNumber.fullNumber)
-            // here phone input is not available with proxy credentials form
-            return [.startLoginFlow(request, nil)]
         } else {
             return nil
         }
