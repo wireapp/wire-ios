@@ -87,7 +87,7 @@ extension UIAlertController {
         var token: Any?
 
         func tearDown() {
-            token.apply(NotificationCenter.default.removeObserver)
+            token.map(NotificationCenter.default.removeObserver)
         }
 
         // Configure the actions

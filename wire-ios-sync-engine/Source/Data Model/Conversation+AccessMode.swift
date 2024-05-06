@@ -324,12 +324,15 @@ internal struct WirelessRequestFactory {
         let path: String
 
         switch apiVersion {
+
         case .v3, .v4, .v5, .v6:
-            guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else {
+            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+            guard let domain else {
                 fatal("no domain associated with conversation, can't make the request")
             }
             path = "/conversations/\(domain)/\(identifier)/access"
             payload["access_role"] = accessRoles.map(\.rawValue)
+
         case .v2, .v1, .v0:
             path = "/conversations/\(identifier)/access"
             payload["access_role"] = ConversationAccessRole.fromAccessRoleV2(accessRoles).rawValue

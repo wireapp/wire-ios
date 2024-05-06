@@ -98,7 +98,7 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             )
         }
 
-        guard rotateBundle.commits.isNonEmpty else {
+        guard !rotateBundle.commits.isEmpty else {
             // TODO: [WPB-6281] [jacob] remove this guard when implementing
             return
         }

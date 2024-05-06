@@ -56,7 +56,7 @@ struct ClientTableViewCellModel {
         proteusLabelText = DeviceDetailsSection.Proteus.value(proteusId)
         isProteusVerified = userClient.verified
         let mlsThumbPrint = userClient.mlsThumbPrint?.fingerprintStringWithSpaces ?? ""
-        mlsThumbprintLabelText = mlsThumbPrint.isNonEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbPrint) : ""
+        mlsThumbprintLabelText = !mlsThumbPrint.isEmpty ? DeviceDetailsSection.Mls.thumbprint(mlsThumbPrint) : ""
         e2eIdentityStatus = userClient.e2eIdentityCertificate?.status
         activationDate = userClient.activationDate
     }

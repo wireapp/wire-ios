@@ -416,8 +416,8 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             }
 
             let request: ZMTransportRequest
-
             switch apiVersion {
+
             case .v0:
                 request = ZMTransportRequest(path: "/conversations/\(conversationID)",
                                              method: .put,
@@ -425,16 +425,20 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                                              apiVersion: apiVersion.rawValue)
 
             case .v1, .v2, .v3, .v4, .v5, .v6:
-                guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
+                let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+                guard let domain else { return nil }
+
                 request = ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/name",
                                              method: .put,
                                              payload: payloadAsString as ZMTransportData?,
                                              apiVersion: apiVersion.rawValue)
             }
 
-            let conversationUserDefinedNameKey: Set<String> = [ZMConversationUserDefinedNameKey]
-            return ZMUpstreamRequest(keys: conversationUserDefinedNameKey,
-                                     transportRequest: request)
+            let conversationUserDefinedNameKey = Set([ZMConversationUserDefinedNameKey])
+            return ZMUpstreamRequest(
+                keys: conversationUserDefinedNameKey,
+                transportRequest: request
+            )
         }
 
         if keys.contains(ZMConversationArchivedChangedTimeStampKey) ||
@@ -451,17 +455,23 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
             let request: ZMTransportRequest
 
             switch apiVersion {
+
             case .v0:
                 request = ZMTransportRequest(path: "/conversations/\(conversationID)/self",
                                              method: .put,
                                              payload: payloadAsString as ZMTransportData?,
                                              apiVersion: apiVersion.rawValue)
+
             case .v1, .v2, .v3, .v4, .v5, .v6:
-                guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else { return nil }
-                request = ZMTransportRequest(path: "/conversations/\(domain)/\(conversationID)/self",
-                                             method: .put,
-                                             payload: payloadAsString as ZMTransportData?,
-                                             apiVersion: apiVersion.rawValue)
+                let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+                guard let domain else { return nil }
+
+                request = ZMTransportRequest(
+                    path: "/conversations/\(domain)/\(conversationID)/self",
+                    method: .put,
+                    payload: payloadAsString as ZMTransportData?,
+                    apiVersion: apiVersion.rawValue
+                )
             }
 
             let changedKeys = keys.intersection([
@@ -473,7 +483,6 @@ extension ConversationRequestStrategy: ZMUpstreamTranscoder {
                 keys: changedKeys,
                 transportRequest: request
             )
-
         }
 
         return nil

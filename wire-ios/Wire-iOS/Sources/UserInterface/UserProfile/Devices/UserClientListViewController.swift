@@ -249,7 +249,7 @@ extension Array where Element: UserClientType {
         do {
             let certificates = try await userSession.getE2eIdentityCertificates.invoke(mlsGroupId: mlsGroupId,
                                                                                        clientIds: mlsClienIds)
-            if certificates.isNonEmpty {
+            if !certificates.isEmpty {
                 for client in userClients {
                     let mlsClientIdRawValue = mlsClients[client.clientId.hashValue]?.rawValue
                     client.e2eIdentityCertificate = certificates.first(where: { $0.clientId == mlsClientIdRawValue })

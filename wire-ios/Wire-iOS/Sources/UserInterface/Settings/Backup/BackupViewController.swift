@@ -150,7 +150,7 @@ private extension BackupViewController {
         activityController.completionWithItemsHandler = { [weak self] _, _, _, _ in
             self?.backupSource.clearPreviousBackups()
         }
-        activityController.popoverPresentationController.apply {
+        activityController.popoverPresentationController.map {
             $0.sourceView = tableView
             $0.sourceRect = tableView.rectForRow(at: indexPath)
         }

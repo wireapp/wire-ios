@@ -121,7 +121,7 @@ final class AudioRecorder: NSObject, AudioRecorderType {
     }
 
     deinit {
-        token.apply(NotificationCenter.default.removeObserver)
+        token.map(NotificationCenter.default.removeObserver)
         removeDisplayLink()
         audioRecorder?.delegate = nil
     }

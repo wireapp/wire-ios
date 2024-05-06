@@ -57,11 +57,4 @@ extension ZMSLog {
         df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSS Z"
         return df
     }()
-
-    private static var isRunningSystemTests: Bool {
-        guard let path = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"]
-            else { return false }
-        return path.contains("WireSystem Tests")
-    }
-
 }

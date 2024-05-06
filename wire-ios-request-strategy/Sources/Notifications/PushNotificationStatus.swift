@@ -104,7 +104,7 @@ open class PushNotificationStatus: NSObject {
     public func didFetch(eventIds: [UUID], lastEventId: UUID?, finished: Bool) {
         let highestRankingEventId = eventIdRanking.firstObject as? UUID
 
-        highestRankingEventId.apply(eventIdRanking.remove)
+        highestRankingEventId.map(eventIdRanking.remove)
         eventIdRanking.minusSet(Set<UUID>(eventIds))
 
         WireLogger.updateEvent.info("finished fetching all available events, last event id: " + String(describing: lastEventId?.uuidString))

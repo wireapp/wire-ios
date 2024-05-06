@@ -132,7 +132,7 @@ final class BackupRestoreController: NSObject {
 
     private func requestPassword(completion: @escaping (String) -> Void) {
         let controller = UIAlertController.requestRestorePassword { password in
-            password.apply(completion)
+            password.map(completion)
         }
 
         target.present(controller, animated: true, completion: nil)

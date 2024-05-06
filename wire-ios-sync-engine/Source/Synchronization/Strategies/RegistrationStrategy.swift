@@ -45,7 +45,7 @@ extension RegistrationStrategy: ZMSingleRequestTranscoder {
 
     func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
         if response.result == .success {
-            response.extractUserInfo().apply {
+            response.extractUserInfo().map {
                 userInfoParser?.upgradeToAuthenticatedSession(with: $0)
             }
             registrationStatus.success()

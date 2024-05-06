@@ -105,7 +105,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
 
         defer {
             if var continuations = continuationsByGroupID[groupID] {
-                if continuations.isNonEmpty {
+                if !continuations.isEmpty {
                     continuations.removeFirst().resume()
                     continuationsByGroupID[groupID] = continuations
                 }

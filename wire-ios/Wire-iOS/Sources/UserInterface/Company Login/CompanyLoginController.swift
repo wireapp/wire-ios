@@ -107,7 +107,7 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
     }
 
     deinit {
-        token.apply(NotificationCenter.default.removeObserver)
+        token.map(NotificationCenter.default.removeObserver)
     }
 
     private func setupObservers() {
@@ -171,7 +171,7 @@ extension CompanyLoginController {
             error: error,
             completion: { [weak self] input in
                 self?.ssoAlert = nil
-                input.apply(inputHandler)
+                input.map(inputHandler)
             }
         )
 

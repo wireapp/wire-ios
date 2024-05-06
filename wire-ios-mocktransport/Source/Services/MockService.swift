@@ -23,7 +23,7 @@ import Foundation
     @NSManaged public var identifier: String
     @NSManaged public var name: String
     @NSManaged public var handle: String?
-    @NSManaged public var accentID: Int
+    @NSManaged public var accentID: Int32
     @NSManaged public var provider: String
     @NSManaged public var summary: String?
     @NSManaged public var serviceDescription: String?

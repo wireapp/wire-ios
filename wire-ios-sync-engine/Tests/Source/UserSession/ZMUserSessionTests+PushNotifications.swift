@@ -76,7 +76,7 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
 
     // swiftlint:disable:next todo_requires_jira_link
     // TODO: jacob this can only be tested in an integration test or with better mocks
-    func skip_testThatItCallsShowConversationListAndConnects_ForPushNotificationCategoryConnectWithAcceptAction() throws {
+    func skip_testThatItCallsShowConversationListAndConnects_ForPushNotificationCategoryConnectWithAcceptAction() {
         // given
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID()

@@ -54,18 +54,19 @@ class ConnectToUserActionHandler: ActionHandler<ConnectToUserAction> {
     }
 
     func federatedRequest(for action: ActionHandler<ConnectToUserAction>.Action, apiVersion: APIVersion) -> ZMTransportRequest? {
-        guard
-            apiVersion > .v0,
-            let domain = action.domain.nonEmptyValue ?? BackendInfo.domain
-        else {
+
+        let domain = if let domain = action.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        guard apiVersion > .v0, let domain else {
             Logging.network.error("Can't create request for connection request")
             return nil
         }
 
-        return ZMTransportRequest(path: "/connections/\(domain)/\(action.userID.transportString())",
-                                  method: .post,
-                                  payload: nil,
-                                  apiVersion: apiVersion.rawValue)
+        return ZMTransportRequest(
+            path: "/connections/\(domain)/\(action.userID.transportString())",
+            method: .post,
+            payload: nil,
+            apiVersion: apiVersion.rawValue
+        )
     }
 
     override func handleResponse(_ response: ZMTransportResponse, action: ActionHandler<ConnectToUserAction>.Action) {

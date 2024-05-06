@@ -39,7 +39,7 @@ extension UserCellSubtitleProtocol where Self: UIView {
             components.append(domain && UserCell.boldFont.font!)
         }
 
-        WirelessExpirationTimeFormatter.shared.string(for: user).apply {
+        WirelessExpirationTimeFormatter.shared.string(for: user).map {
             components.append($0 && UserCell.boldFont.font!)
         }
 
