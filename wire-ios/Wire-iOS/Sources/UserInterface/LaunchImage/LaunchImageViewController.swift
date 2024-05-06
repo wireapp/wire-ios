@@ -43,9 +43,7 @@ class LaunchImageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let contentView = UINib(nibName: "AppLock", bundle: nil)
-            .instantiate(withOwner: nil, options: nil)
-            .first as! UIView
+        let contentView = AppLockView()
         contentView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(contentView)
         self.contentView = contentView

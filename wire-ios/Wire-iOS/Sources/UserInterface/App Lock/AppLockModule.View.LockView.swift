@@ -68,9 +68,7 @@ extension AppLockModule.View {
         init() {
             super.init(frame: .zero)
 
-            let shieldView = UINib(nibName: "AppLock", bundle: nil)
-                .instantiate(withOwner: .none, options: .none)
-                .first as! UIView
+            let shieldView = AppLockView()
             shieldViewContainer.addSubview(shieldView)
 
             addSubview(shieldViewContainer)
