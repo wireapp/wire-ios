@@ -228,7 +228,7 @@ class BaseCallParticipantView: OrientableView {
     }
 
     func updateVideoShouldFill(_ shouldFill: Bool) {
-        assertionFailure("not implemented! override in subclasses")
+        // TODO: override in subsclasses
     }
 
     // MARK: - Border Style
