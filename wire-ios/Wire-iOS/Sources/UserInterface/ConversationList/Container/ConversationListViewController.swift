@@ -213,10 +213,9 @@ final class ConversationListViewController: UIViewController, ConversationListCo
     private func setupListContentController() {
         listContentController.contentDelegate = viewModel
         let navigationController = UINavigationController(rootViewController: listContentController)
-        navigationController.navigationBar.isTranslucent = false
-        navigationController.navigationBar.barTintColor = SemanticColors.View.backgroundConversationList
-        navigationController.navigationBar.backgroundColor = SemanticColors.View.backgroundConversationList
-        navigationController.navigationBar.shadowImage
+        // navigationController.navigationBar.isTranslucent = false
+        // navigationController.navigationBar.barTintColor = SemanticColors.View.backgroundConversationList
+        // navigationController.navigationBar.backgroundColor = SemanticColors.View.backgroundConversationList
         add(navigationController, to: contentContainer)
     }
 
