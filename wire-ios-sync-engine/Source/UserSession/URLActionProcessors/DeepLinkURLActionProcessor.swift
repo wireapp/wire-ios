@@ -43,7 +43,10 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 contextProvider: contextProvider
             ) { [weak self] response in
 
-                guard let self, let delegate else { return }
+                guard let strongSelf = self,
+                      let delegate else {
+                    return
+                }
 
                 let viewContext = contextProvider.viewContext
 

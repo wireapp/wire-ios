@@ -12,7 +12,7 @@
 # unneeded_parentheses_in_closure_argument
 # untyped_error_in_catch
 # unused_capture_list
-# TODO: check disabled_rules
+# TODO: also check disabled_rules
 opt_in_rules:
   - closure_spacing
   - file_header
