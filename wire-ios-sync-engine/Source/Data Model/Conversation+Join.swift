@@ -95,7 +95,7 @@ extension ZMConversation {
                     }
                 }
 
-            /// The user is already a participant in the conversation
+                /// The user is already a participant in the conversation
             case 204:
                 // If we get to this case, then we need to re-sync local conversations
                 // TODO: implement re-syncing conversations
@@ -121,11 +121,16 @@ extension ZMConversation {
     ///   - completion: a handler when the network request completes with the response payload that contains the conversation ID and name
     static func fetchIdAndName(key: String,
                                code: String,
+                               hasPassword: Bool,
                                transportSession: TransportSessionType,
                                contextProvider: ContextProvider,
-                               completion: @escaping (Result<(conversationId: UUID, conversationName: String), Error>) -> Void) {
+                               completion: @escaping (Result<(conversationId: UUID, conversationName: String, hasPassword: Bool), Error>) -> Void) {
 
-        guard let request = ConversationJoinRequestFactory.requestForGetConversation(key: key, code: code) else {
+        guard let apiVersion = BackendInfo.apiVersion else {
+            return
+        }
+
+        guard let request = ConversationJoinRequestFactory.requestForGetConversation(key: key, code: code, hasPassword: hasPassword) else {
             completion(.failure(ConversationFetchError.unknown))
             return
         }
@@ -136,15 +141,17 @@ extension ZMConversation {
                 guard let payload = response.payload as? [AnyHashable: Any],
                       let conversationString = payload["id"] as? String,
                       let conversationId = UUID(uuidString: conversationString),
-                      let conversationName = payload["name"] as? String else {
+                      let conversationName = payload["name"] as? String,
+                      let passwordProtected = (apiVersion.rawValue >= 4 && apiVersion.rawValue <= 6) ? payload["has_password"] as? Bool : nil else {
+
                     completion(.failure(ConversationFetchError.unknown))
                     return
                 }
-                let fetchResult = (conversationId, conversationName)
+                let fetchResult = (conversationId, conversationName, passwordProtected)
                 completion(.success(fetchResult))
             default:
                 let error = ConversationFetchError(response: response)
-                Logging.network.debug("Error fetching conversation ID and name using a reusable code: \(error)")
+                Logging.network.debug("Error fetching conversation ID and name: \(error)")
                 completion(.failure(error))
             }
         }))
@@ -170,13 +177,24 @@ struct ConversationJoinRequestFactory {
         return ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
-    static func requestForGetConversation(key: String, code: String) -> ZMTransportRequest? {
+    static func requestForGetConversation(key: String, code: String, hasPassword: Bool) -> ZMTransportRequest? {
         guard let apiVersion = BackendInfo.apiVersion else { return nil }
 
         var url = URLComponents()
         url.path = joinConversationsPath
-        url.queryItems = [URLQueryItem(name: URLQueryItem.Key.conversationKey, value: key),
-                          URLQueryItem(name: URLQueryItem.Key.conversationCode, value: code)]
+
+        var queryItems = [
+            URLQueryItem(name: URLQueryItem.Key.conversationKey, value: key),
+            URLQueryItem(name: URLQueryItem.Key.conversationCode, value: code)
+        ]
+
+        if apiVersion.rawValue >= 4 && apiVersion.rawValue <= 6 {
+            queryItems.append( URLQueryItem(name: "has_password", value: hasPassword ? "true" : "false"))
+
+        }
+
+        url.queryItems = queryItems
+
         guard let urlString = url.string else {
             return nil
         }

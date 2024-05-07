@@ -70,7 +70,7 @@ class URLActionTests: ZMTBaseTest {
         let action = try URLAction(url: url)
 
         // then
-        XCTAssertEqual(action, URLAction.joinConversation(key: key, code: code))
+        XCTAssertEqual(action, URLAction.joinConversation(key: key, code: code, hasPassword: false))
     }
 
     func testThatItParsesOpenConversationLink() throws {

@@ -33,7 +33,7 @@ public enum URLAction: Equatable {
     case startLogin
 
     /// Join a public conversation
-    case joinConversation(key: String, code: String)
+    case joinConversation(key: String, code: String, hasPassword: Bool)
 
     /// Navigate to a conversation
     case openConversation(id: UUID)
@@ -101,12 +101,14 @@ extension URLAction {
         case URL.DeepLink.conversationJoin:
             guard
                 let key = components.query(for: URLQueryItem.Key.conversationKey),
-                let code = components.query(for: URLQueryItem.Key.conversationCode)
+                let code = components.query(for: URLQueryItem.Key.conversationCode),
+                let hasPasswordString = components.query(for: URLQueryItem.Key.hasPassword),
+                let hasPassword = Bool(hasPasswordString)
             else {
                 throw DeepLinkRequestError.malformedLink
             }
 
-            self = .joinConversation(key: key, code: code)
+            self = .joinConversation(key: key, code: code, hasPassword: hasPassword)
 
         case URL.DeepLink.conversation:
             if let lastComponent = url.pathComponents.last,
@@ -199,5 +201,6 @@ extension URLQueryItem.Key {
 
     static let conversationKey = "key"
     static let conversationCode = "code"
+    static let hasPassword = "has_password"
 
 }
