@@ -22,7 +22,7 @@ public extension ZMConversation {
 
     func isFederating(with user: UserType) -> Bool {
         guard
-            let domain = domain,
+            let domain,
             let userDomain = user.domain
         else { return false }
 

@@ -65,8 +65,8 @@ final class EmojiRepository: EmojiRepositoryInterface {
 
     func registerRecentlyUsedEmojis(_ emojis: [Emoji.ID]) {
         guard
-            let emojiDirectory = emojiDirectory,
-            let recentlyUsedEmojisURL = recentlyUsedEmojisURL
+            let emojiDirectory,
+            let recentlyUsedEmojisURL
         else {
             return
         }
@@ -77,7 +77,7 @@ final class EmojiRepository: EmojiRepositoryInterface {
 
     func fetchRecentlyUsedEmojis() -> [Emoji] {
         guard
-            let recentlyUsedEmojisURL = recentlyUsedEmojisURL,
+            let recentlyUsedEmojisURL,
             let emojiValues = NSArray(contentsOf: recentlyUsedEmojisURL) as? [String]
         else {
             return []

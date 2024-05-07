@@ -30,7 +30,7 @@ extension UIAlertController {
         var token: Any?
 
         func complete(_ result: String?) {
-            token.apply(NotificationCenter.default.removeObserver)
+            token.map(NotificationCenter.default.removeObserver)
             completion(result)
         }
 

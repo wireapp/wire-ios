@@ -25,6 +25,7 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
 
     let domain = "example.com"
     let userId = UUID()
+    let ciphersuite = MLSCipherSuite.MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
     let excludedSelfCliendId = UUID().transportString()
     let clientId = UUID().transportString()
 
@@ -32,7 +33,8 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
         super.setUp()
         action = ClaimMLSKeyPackageAction(
             domain: domain,
-            userId: userId
+            userId: userId,
+            ciphersuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
         )
         handler = ClaimMLSKeyPackageActionHandler(context: syncMOC)
     }
@@ -44,9 +46,10 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
             for: ClaimMLSKeyPackageAction(
                 domain: domain,
                 userId: userId,
+                ciphersuite: ciphersuite,
                 excludedSelfClientId: excludedSelfCliendId
             ),
-            expectedPath: "/v5/mls/key-packages/claim/\(domain)/\(userId.transportString())",
+            expectedPath: "/v5/mls/key-packages/claim/\(domain)/\(userId.transportString())?ciphersuite=\(ciphersuite.rawValue)",
             expectedPayload: ["skip_own": excludedSelfCliendId],
             expectedMethod: .post,
             apiVersion: .v5
@@ -67,7 +70,12 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
         BackendInfo.domain = nil
 
         test_itDoesntGenerateARequest(
-            action: ClaimMLSKeyPackageAction(domain: "", userId: userId, excludedSelfClientId: excludedSelfCliendId),
+            action: ClaimMLSKeyPackageAction(
+                domain: "",
+                userId: userId,
+                ciphersuite: ciphersuite,
+                excludedSelfClientId: excludedSelfCliendId
+            ),
             apiVersion: .v5,
             expectedError: .missingDomain
         )
@@ -108,7 +116,8 @@ class ClaimMLSKeyPackageActionHandlerTests: ActionHandlerTestBase<ClaimMLSKeyPac
         let selfUser = ZMUser.selfUser(in: uiMOC)
         action = ClaimMLSKeyPackageAction(
             domain: selfUser.domain,
-            userId: selfUser.remoteIdentifier
+            userId: selfUser.remoteIdentifier,
+            ciphersuite: ciphersuite
         )
 
         test_itHandlesSuccess(

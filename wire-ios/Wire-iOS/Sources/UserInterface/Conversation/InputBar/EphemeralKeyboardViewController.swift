@@ -194,7 +194,7 @@ final class EphemeralKeyboardViewController: UIViewController {
 
         UIAlertController.requestCustomTimeInterval(over: UIApplication.shared.topmostViewController(onlyFullScreen: true)!) { [weak self] result in
 
-            guard let `self` = self else {
+            guard let self else {
                 return
             }
 

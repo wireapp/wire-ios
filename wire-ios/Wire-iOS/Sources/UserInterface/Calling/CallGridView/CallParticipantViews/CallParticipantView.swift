@@ -131,7 +131,7 @@ final class CallParticipantView: BaseCallParticipantView {
         self.scalableView?.removeFromSuperview()
         self.scalableView = scalableView
 
-        if let snapshotView = snapshotView {
+        if let snapshotView {
             insertSubview(scalableView, belowSubview: snapshotView)
         } else {
             insertSubview(scalableView, belowSubview: userDetailsView)

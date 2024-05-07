@@ -16,20 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 
-public extension Optional where Wrapped == String {
-
-    /// The non-empty string value, if it exists.
-
-    var nonEmptyValue: Self {
-        guard
-            let string = self,
-            !string.isEmpty
-        else {
-            return nil
-        }
-
-        return string
-    }
+func AppLockView() -> UIView! {
+    UINib(nibName: "AppLock", bundle: nil)
+        .instantiate(withOwner: .none, options: .none)
+        .first as? UIView
 }

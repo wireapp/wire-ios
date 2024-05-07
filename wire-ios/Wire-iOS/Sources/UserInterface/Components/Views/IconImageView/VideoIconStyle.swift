@@ -47,7 +47,7 @@ enum VideoIconStyle: String, IconImageStyle {
 
 extension VideoIconStyle {
     init(state: VideoState?) {
-        guard let state = state else {
+        guard let state else {
             self = .hidden
             return
         }
