@@ -186,7 +186,7 @@ final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtur
 
         // WHEN
         let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
-        let supportsVisitLink = actionController.canPerformAction(#selector(ConversationMessageActionController.visitLink(path:)))
+        let supportsVisitLink = actionController.canPerformAction(#selector(ConversationMessageActionController.visitLink))
 
         // THEN
         XCTAssertTrue(supportsVisitLink)

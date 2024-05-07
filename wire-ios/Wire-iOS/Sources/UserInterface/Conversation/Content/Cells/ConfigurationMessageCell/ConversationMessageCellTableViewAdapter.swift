@@ -183,7 +183,7 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
     }
 
     func showSecuredMenu(for text: String) {
-        let actions = [MessageAction.visitLink(text), MessageAction.reply, MessageAction.edit, MessageAction.openDetails, MessageAction.delete, MessageAction.cancel]
+        let actions = [MessageAction.visitLink, MessageAction.reply, MessageAction.edit, MessageAction.openDetails, MessageAction.delete, MessageAction.cancel]
         guard let controller = messageActionsMenuController(with: actions) else { return }
         display(messageActionsController: controller)
     }
