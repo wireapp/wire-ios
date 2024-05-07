@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 import WireRequestStrategy
 
 final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
@@ -34,7 +35,7 @@ final class ClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     // MARK: - Methods
 
     var clientIsReadyForRequests: Bool {
-        if let clientId = context.persistentStoreMetadata(forKey: "PersistedClientId") as? String {
+        if let clientId = context.persistentStoreMetadata(forKey: ZMPersistedClientIdKey) as? String {
             // swiftlint:disable todo_requires_jira_link
             // TODO: move constant into shared framework
             // swiftlint:enable todo_requires_jira_link
