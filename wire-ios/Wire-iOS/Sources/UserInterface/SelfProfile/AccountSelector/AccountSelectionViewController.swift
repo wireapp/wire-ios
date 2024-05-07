@@ -25,17 +25,21 @@ typealias AccountSelectorController = AccountSelectionViewController
 
 final class AccountSelectionViewController: UIViewController {
 
-    weak var delegate: AccountSelectionViewControllerDelegate?
-
+    private let accountSwitcher: AccountSwitcher
     private var accountsView = AccountSelectorView()
     private var applicationDidBecomeActiveToken: NSObjectProtocol!
 
-    init() {
+    init(accountSwitcher: AccountSwitcher) {
+        self.accountSwitcher = accountSwitcher
         super.init(nibName: nil, bundle: nil)
 
-        applicationDidBecomeActiveToken = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil, using: { [weak self] _ in
+        applicationDidBecomeActiveToken = NotificationCenter.default.addObserver(
+            forName: UIApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: nil
+        ) { [weak self] _ in
             self?.updateShowAccountsIfNeeded()
-        })
+        }
 
         accountsView.delegate = self
         view.addSubview(accountsView)
@@ -48,6 +52,10 @@ final class AccountSelectionViewController: UIViewController {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func viewDidLoad() {
+        fatalError()
     }
 
     private var showAccounts: Bool = false
@@ -69,14 +77,20 @@ extension AccountSelectorController: AccountSelectorViewDelegate {
 
     func accountSelectorDidSelect(account: Account) {
         guard
-            account != SessionManager.shared?.accountManager.selectedAccount,
+            account != accountSwitcher.currentAccount,
             ZClientViewController.shared?.conversationListViewController.presentedViewController != nil
         else { return }
 
         ZClientViewController.shared?.conversationListViewController.dismiss(animated: true) {
 
             AppDelegate.shared.mediaPlaybackManager?.stop()
-            self.delegate?.accountSelectionViewController(self, didSwitchTo: account)
+            Task {
+                do {
+                    try await self.accountSwitcher.switchTo(account: account)
+                } catch {
+                    WireLogger.sessionManager.error("failed to switch accounts: \(error)")
+                }
+            }
         }
     }
 }

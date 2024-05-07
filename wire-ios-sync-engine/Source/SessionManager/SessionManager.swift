@@ -1556,6 +1556,10 @@ extension SessionManager: AccountSwitcher {
         case unexpectedError(_ description: String)
     }
 
+    public var currentAccount: Account? {
+        accountManager.selectedAccount
+    }
+
     public func switchTo(account: Account) async throws {
         _ = try await withCheckedThrowingContinuation { continuation in
             self.select(account, completion: continuation.resume(with:), tearDownCompletion: {})

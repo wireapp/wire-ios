@@ -20,21 +20,19 @@ import UIKit
 import WireCommonComponents
 import WireSyncEngine
 
-struct SelfProfileViewControllerBuilder {
+struct SelfProfileViewControllerBuilder: ViewControllerBuilder {
 
     var selfUser: SettingsSelfUser
     var userRightInterfaceType: UserRightInterface.Type
     var userSession: UserSession
-    var accountSelectionDelegate: any AccountSelectionViewControllerDelegate
+    var accountSelectorControllerBuilder: any ViewControllerBuilder
 
-    func build(
-        accountSelectionDelegate: some AccountSelectionViewControllerDelegate
-    ) -> SelfProfileViewController {
+    func build() -> SelfProfileViewController {
         .init(
             selfUser: selfUser,
             userRightInterfaceType: userRightInterfaceType,
             userSession: userSession,
-            accountSelectionDelegate: accountSelectionDelegate
+            accountSelectorControllerBuilder: accountSelectorControllerBuilder
         )
     }
 }

@@ -33,7 +33,7 @@ final class SelfProfileViewController: UIViewController {
     // MARK: - Views
 
     private let settingsController: SettingsTableViewController
-    private let accountSelectorController = AccountSelectorController()
+    private let accountSelectorController: UIViewController
     private let profileContainerView = UIView()
     private let profileHeaderViewController: ProfileHeaderViewController
     private let profileImagePicker = ProfileImagePickerManager()
@@ -61,11 +61,11 @@ final class SelfProfileViewController: UIViewController {
         selfUser: SettingsSelfUser,
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
-        accountSelectionDelegate: AccountSelectionViewControllerDelegate
+        accountSelectorControllerBuilder: any ViewControllerBuilder
     ) {
 
         self.userSession = userSession
-        accountSelectorController.delegate = accountSelectionDelegate
+        accountSelectorController = accountSelectorControllerBuilder.build()
 
         // Create the settings hierarchy
 

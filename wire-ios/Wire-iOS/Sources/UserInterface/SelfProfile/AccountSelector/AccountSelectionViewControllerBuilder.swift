@@ -16,8 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
+import WireCommonComponents
 import WireDataModel
 
-protocol AccountSelectionViewControllerDelegate: AnyObject {
-    func accountSelectionViewController(_ viewController: AccountSelectionViewController, didSwitchTo account: Account)
+struct AccountSelectionViewControllerBuilder: ViewControllerBuilder {
+
+    var accountSwitcher: AccountSwitcher
+
+    func build() -> UIViewController {
+        AccountSelectionViewController(accountSwitcher: accountSwitcher)
+    }
 }

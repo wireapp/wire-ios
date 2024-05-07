@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+// sourcery: AutoMockable
 public protocol AccountSwitcher {
-
+    var currentAccount: Account? { get }
     func switchTo(account: Account) async throws
 }
