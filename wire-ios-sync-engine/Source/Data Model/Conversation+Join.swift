@@ -123,7 +123,7 @@ extension ZMConversation {
                                code: String,
                                transportSession: TransportSessionType,
                                contextProvider: ContextProvider,
-                               completion: @escaping (Result<(conversationId: UUID, conversationName: String, hasPassword: Bool?), Error>) -> Void) {
+                               completion: @escaping (Result<(conversationId: UUID, conversationName: String, hasPassword: Bool), Error>) -> Void) {
 
         guard let apiVersion = BackendInfo.apiVersion else {
             completion(.failure(ConversationFetchError.unknown))
@@ -146,9 +146,11 @@ extension ZMConversation {
                     return
                 }
 
-                var passwordProtected: Bool?
+                let passwordProtected: Bool
                 if apiVersion.rawValue >= 4 {
-                    passwordProtected = payload["has_password"] as? Bool
+                    passwordProtected = payload["has_password"] as? Bool ?? false
+                } else {
+                    passwordProtected = false
                 }
 
                 let fetchResult = (conversationId, conversationName, passwordProtected)
