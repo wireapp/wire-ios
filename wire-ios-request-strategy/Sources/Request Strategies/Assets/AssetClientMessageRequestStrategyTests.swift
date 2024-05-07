@@ -124,7 +124,7 @@ final class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             message.updateTransferState(transferState, synchronize: true) // TODO jacob
         }
 
-        if let sender = sender {
+        if let sender {
             message.sender = sender
         }
 

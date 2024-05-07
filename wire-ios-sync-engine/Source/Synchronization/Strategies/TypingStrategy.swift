@@ -44,7 +44,7 @@ public struct TypingEvent {
                             isTyping: Bool,
                             ifDifferentFrom other: TypingEvent?) -> TypingEvent? {
         let newEvent = TypingEvent(date: Date(), objectID: objectID, isTyping: isTyping)
-        if let other = other, newEvent.isEqual(other: other) {
+        if let other, newEvent.isEqual(other: other) {
             return nil
         }
         return newEvent

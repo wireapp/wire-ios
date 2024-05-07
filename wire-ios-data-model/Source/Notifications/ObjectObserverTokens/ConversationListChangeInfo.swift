@@ -71,7 +71,7 @@ extension ConversationListChangeInfo {
     @objc(addObserver:forList:managedObjectContext:)
     public static func addListObserver(_ observer: ZMConversationListObserver, for list: ZMConversationList?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
 
-        if let list = list {
+        if let list {
             zmLog.debug("Registering observer \(observer) for list \(list.identifier)")
         } else {
             zmLog.debug("Registering observer \(observer) for all lists")

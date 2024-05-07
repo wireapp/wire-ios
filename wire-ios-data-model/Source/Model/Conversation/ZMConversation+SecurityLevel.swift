@@ -474,7 +474,7 @@ extension ZMConversation {
     }
 
     fileprivate var undeliveredMessages: [ZMOTRMessage] {
-        guard let managedObjectContext = managedObjectContext else { return [] }
+        guard let managedObjectContext else { return [] }
 
         let timeoutLimit = Date().addingTimeInterval(-ZMMessage.defaultExpirationTime())
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
@@ -584,7 +584,7 @@ extension ZMConversation {
         case .addedClients(let clients, let message):
             affectedUsers = Set(clients.compactMap(\.user))
             addedClients = clients
-            if let message = message, message.conversation == self {
+            if let message, message.conversation == self {
                 timestamp = self.timestamp(before: message)
             } else {
                 timestamp = clients.compactMap(\.discoveryDate).first?.previousNearestTimestamp
@@ -641,11 +641,11 @@ extension ZMConversation {
         systemMessage.addedUsers = addedUsers
         systemMessage.clients = clients ?? Set()
         systemMessage.serverTimestamp = timestamp
-        if let duration = duration {
+        if let duration {
             systemMessage.duration = duration
         }
 
-        if let messageTimer = messageTimer {
+        if let messageTimer {
             systemMessage.messageTimer = NSNumber(value: messageTimer)
         }
 

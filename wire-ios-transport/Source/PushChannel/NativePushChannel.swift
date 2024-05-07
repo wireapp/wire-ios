@@ -118,8 +118,8 @@ final class NativePushChannel: NSObject, PushChannelType {
         guard
             keepOpen,
             websocketTask == nil,
-            let accessToken = accessToken,
-            let websocketURL = websocketURL
+            let accessToken,
+            let websocketURL
         else {
             return
         }
@@ -225,7 +225,7 @@ extension NativePushChannel: ZMTimerClient {
     func timerDidFire(_ timer: ZMTimer!) {
         Logging.pushChannel.debug("Sending ping")
         websocketTask?.sendPing(pongReceiveHandler: { error in
-            if let error = error {
+            if let error {
                 Logging.pushChannel.debug("Failed to send ping: \(error)")
             }
         })

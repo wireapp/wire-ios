@@ -65,8 +65,8 @@ extension SessionManager {
 
     func process(urlAction action: URLAction, on processor: URLActionProcessor) {
         presentationDelegate?.shouldPerformAction(action, decisionHandler: { [weak self] shouldPerformAction in
-            guard shouldPerformAction, let strongSelf = self else { return }
-            processor.process(urlAction: action, delegate: strongSelf.presentationDelegate)
+            guard shouldPerformAction, let self else { return }
+            processor.process(urlAction: action, delegate: presentationDelegate)
         })
     }
 
@@ -86,7 +86,7 @@ extension SessionManager {
     }
 
     var canProcessUrlAction: Bool {
-        guard let delegate = delegate else {
+        guard let delegate else {
             return false
         }
         return delegate.isInAuthenticatedAppState || delegate.isInUnathenticatedAppState

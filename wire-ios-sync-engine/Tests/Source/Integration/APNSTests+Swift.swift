@@ -51,7 +51,7 @@ class APNSTests_Swift: APNSTestsBase {
         XCTAssertEqual(self.application?.applicationIconBadgeNumber, 0)
 
         // WHEN
-        guard let userSession = userSession else {
+        guard let userSession else {
             XCTFail("missing userSession")
             return
         }

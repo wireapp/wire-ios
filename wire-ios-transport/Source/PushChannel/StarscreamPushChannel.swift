@@ -115,8 +115,8 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         guard
             keepOpen,
             webSocket == nil,
-            let accessToken = accessToken,
-            let websocketURL = websocketURL
+            let accessToken,
+            let websocketURL
         else {
             return
         }

@@ -37,7 +37,7 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
     public typealias ConsumeBlock = (([ZMUpdateEvent]) async -> Void)
 
     static var BatchSize: Int {
-        if let testingBatchSize = testingBatchSize {
+        if let testingBatchSize {
             return testingBatchSize
         }
         return 500

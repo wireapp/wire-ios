@@ -333,7 +333,7 @@ extension WireCallCenterV3 {
         return NotificationInContext.addObserver(name: WireCallCenterCallParticipantNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
             guard
                 let note = note.userInfo[WireCallCenterCallParticipantNotification.userInfoKey] as? WireCallCenterCallParticipantNotification,
-                let observer = observer,
+                let observer,
                 note.conversationId == conversation.avsIdentifier
             else { return }
 
@@ -353,7 +353,7 @@ extension WireCallCenterV3 {
         return NotificationInContext.addObserver(name: VoiceGainNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
             guard
                 let note = note.userInfo[VoiceGainNotification.userInfoKey] as? VoiceGainNotification,
-                let observer = observer,
+                let observer,
                 let user = ZMUser.fetch(with: note.userId.identifier,
                                         domain: note.userId.domain,
                                         in: context)
@@ -391,7 +391,7 @@ extension WireCallCenterV3 {
     internal class func addMuteStateObserver(observer: MuteStateObserver, context: NSManagedObjectContext) -> Any {
         return NotificationInContext.addObserver(name: WireCallCenterMutedNotification.notificationName, context: context.notificationContext, object: nil, queue: .main) { [weak observer] note in
             guard let note = note.userInfo[WireCallCenterMutedNotification.userInfoKey] as? WireCallCenterMutedNotification,
-                let observer = observer
+                let observer
                 else { return }
             observer.callCenterDidChange(muted: note.muted)
         }

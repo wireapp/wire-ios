@@ -29,7 +29,7 @@ extension XCTestCase {
             kSecAttrKeySizeInBits as String: 256
         ] as CFDictionary
         privateKeySec = SecKeyCreateRandomKey(keyattributes, &error)
-        if let privateKeySec = privateKeySec {
+        if let privateKeySec {
             publicKeySec = SecKeyCopyPublicKey(privateKeySec)
         }
         return (publicKeySec!, privateKeySec!)

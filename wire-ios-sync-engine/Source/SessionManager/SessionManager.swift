@@ -510,7 +510,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         // non nil in order to process the notification
         BackgroundActivityFactory.shared.activityManager = UIApplication.shared
 
-        if let analytics = analytics {
+        if let analytics {
             self.notificationsTracker = NotificationsTracker(analytics: analytics)
         } else {
             self.notificationsTracker = nil
@@ -523,7 +523,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
         pushTokenService.onTokenChange = { [weak self] _ in
             guard
-                let `self` = self,
+                let self,
                 let session = self.activeUserSession
             else {
                 return
@@ -552,7 +552,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 application: application,
                 minTLSVersion: minTLSVersion,
                 blacklistCallback: { [weak self] blacklisted in
-                    guard let `self` = self, !self.isAppVersionBlacklisted else { return }
+                    guard let self, !self.isAppVersionBlacklisted else { return }
 
                     if blacklisted {
                         self.isAppVersionBlacklisted = true
@@ -646,7 +646,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         loadSession(for: account) { [weak self] session in
-            guard let `self` = self, let session = session else { return }
+            guard let self, let session else { return }
             self.updateCurrentAccount(in: session.managedObjectContext)
             session.application(self.application, didFinishLaunching: launchOptions)
         }
@@ -670,7 +670,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 self?.loadSession(for: account) { [weak self] session in
                     self?.isSelectingAccount = false
 
-                    if let session = session {
+                    if let session {
                         self?.accountManager.select(account)
                         completion?(session)
                     }
@@ -1539,8 +1539,8 @@ extension SessionManager {
 
     public func confirmSwitchingAccount(completion: @escaping () -> Void) {
         guard
-            let switchingDelegate = switchingDelegate,
-            let activeUserSession = activeUserSession,
+            let switchingDelegate,
+            let activeUserSession,
             activeUserSession.isCallOngoing
         else {
             return completion()

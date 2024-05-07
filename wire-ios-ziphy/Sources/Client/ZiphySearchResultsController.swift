@@ -62,7 +62,7 @@ public final class ZiphySearchResultsController {
 
         self.paginationController?.fetchBlock = { [weak self] offset in
 
-            guard let `self` = self else {
+            guard let self else {
                 return nil
             }
 
@@ -80,7 +80,7 @@ public final class ZiphySearchResultsController {
         paginationController = ZiphyPaginationController()
 
         self.paginationController?.fetchBlock = { [weak self] offset in
-            guard let `self` = self else {
+            guard let self else {
                 return nil
             }
 

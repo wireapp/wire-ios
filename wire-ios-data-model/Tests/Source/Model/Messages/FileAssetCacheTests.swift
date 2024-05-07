@@ -438,7 +438,7 @@ class FileAssetCacheTests: XCTestCase {
 
         // then
         XCTAssertNotNil(assetURL)
-        if let assetURL = assetURL {
+        if let assetURL {
             let data = try? Data(contentsOf: assetURL)
             XCTAssertNil(data)
         }

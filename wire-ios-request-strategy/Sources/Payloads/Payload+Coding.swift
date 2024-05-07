@@ -115,7 +115,7 @@ extension Encodable {
     ///   - encoder: JSONEncoder to use
 
     func payloadData(apiVersion: APIVersion? = nil, encoder: JSONEncoder = .defaultEncoder) -> Data? {
-        if let apiVersion = apiVersion {
+        if let apiVersion {
             encoder.setAPIVersion(apiVersion)
         }
 

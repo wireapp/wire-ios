@@ -259,7 +259,7 @@ extension GenericMessage {
             }
         )
 
-        guard let encryptedData = encryptedData else {
+        guard let encryptedData else {
             return nil
         }
 
@@ -304,7 +304,7 @@ extension GenericMessage {
             }
         )
 
-        guard let encryptedData = encryptedData else {
+        guard let encryptedData else {
             return nil
         }
 
@@ -346,7 +346,7 @@ extension GenericMessage {
             }
         )
 
-        guard let encryptedData = encryptedData else {
+        guard let encryptedData else {
             return nil
         }
 

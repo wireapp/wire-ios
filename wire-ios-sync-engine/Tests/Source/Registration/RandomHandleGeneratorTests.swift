@@ -121,7 +121,7 @@ extension NSRegularExpression {
 
     /// Check if the string has a match for this regex
     fileprivate func matches(_ string: String?) -> Bool {
-        guard let string = string else {
+        guard let string else {
             return false
         }
 

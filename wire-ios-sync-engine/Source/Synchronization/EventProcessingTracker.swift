@@ -102,7 +102,7 @@ import WireDataModel
     }
 
     private func setPersistedAttributes(_ attributes: [String: NSObject]?, for event: String) {
-        if let attributes = attributes {
+        if let attributes {
             eventAttributes[event] = attributes
         } else {
             eventAttributes.removeValue(forKey: event)

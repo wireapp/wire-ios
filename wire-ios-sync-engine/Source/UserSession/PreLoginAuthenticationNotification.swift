@@ -39,11 +39,11 @@ extension LoginCredentials {
         userInfo[ZMUserHasPasswordKey] = hasPassword
         userInfo[ZMUserUsesCompanyLoginCredentialKey] = usesCompanyLogin
 
-        if let emailAddress = emailAddress, !emailAddress.isEmpty {
+        if let emailAddress, !emailAddress.isEmpty {
             userInfo[ZMEmailCredentialKey] = emailAddress
         }
 
-        if let phoneNumber = phoneNumber, !phoneNumber.isEmpty {
+        if let phoneNumber, !phoneNumber.isEmpty {
             userInfo[ZMPhoneCredentialKey] = phoneNumber
         }
 

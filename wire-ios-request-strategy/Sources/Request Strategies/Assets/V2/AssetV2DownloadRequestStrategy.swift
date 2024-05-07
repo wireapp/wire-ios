@@ -66,7 +66,7 @@ import WireTransport
 
     func didRequestToDownloadAsset(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             guard let object = try? self.managedObjectContext.existingObject(with: objectID) else { return }
             guard let message = object as? ZMAssetClientMessage else { return }
             message.isDownloading = true
@@ -77,7 +77,7 @@ import WireTransport
 
     func cancelOngoingRequestForAssetClientMessage(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             guard let message = self.managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage else { return }
             guard message.version < 3 else { return }
             guard let identifier = message.associatedTaskIdentifier else { return }

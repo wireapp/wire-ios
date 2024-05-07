@@ -179,7 +179,7 @@ public final class AVSWrapper: AVSWrapperType {
         let error: Int32
         let buffer: Data
 
-        if let data = data {
+        if let data {
             error = 0
             buffer = data
         } else {
@@ -339,7 +339,7 @@ public final class AVSWrapper: AVSWrapperType {
     }
 
     private let sendCallMessageHandler: Handler.CallMessageSend = { token, conversationId, senderUserId, senderClientId, targetsCString, _, data, dataLength, _, myClientsOnly, contextRef in
-        guard let token = token else {
+        guard let token else {
             return EINVAL
         }
 
@@ -416,7 +416,7 @@ public final class AVSWrapper: AVSWrapperType {
     }
 
     private let sendSFTCallMessageHandler: Handler.SFTCallMessageSend = { token, url, data, dataLength, contextRef in
-        guard let token = token else { return EINVAL }
+        guard let token else { return EINVAL }
 
         let bytes = UnsafeBufferPointer<UInt8>(start: data, count: dataLength)
         let transformedData = Data(buffer: bytes)

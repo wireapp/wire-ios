@@ -89,7 +89,7 @@ public final class PrekeyPayloadProcessor: PrekeyPayloadProcessorInterface {
                     continue
                 }
 
-                if let prekey = prekey {
+                if let prekey {
                     await missingClient.establishSessionAndUpdateMissingClients(
                         prekey: prekey,
                         selfClient: selfClient

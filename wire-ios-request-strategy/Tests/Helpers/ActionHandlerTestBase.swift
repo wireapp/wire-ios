@@ -56,7 +56,7 @@ class ActionHandlerTestBase<Action: EntityAction, Handler: ActionHandler<Action>
             XCTAssertEqual(request.payload as? Payload, expectedPayload)
         }
 
-        if let expectedAcceptType = expectedAcceptType {
+        if let expectedAcceptType {
             XCTAssertEqual(request.acceptedResponseMediaTypes, expectedAcceptType)
         }
 
@@ -315,7 +315,7 @@ extension ActionHandlerTestBase {
     ) -> ZMTransportResponse {
         var payload = payload
 
-        if payload == nil, let label = label {
+        if payload == nil, let label {
             payload = ["label": label] as ZMTransportData
         }
 

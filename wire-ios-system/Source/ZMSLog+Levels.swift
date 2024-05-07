@@ -60,7 +60,7 @@ private var logTagToLogger: [String: OSLog] = [:]
     }
 
     static func logger(tag: String?) -> OSLog {
-        guard let tag = tag else { return OSLog.default }
+        guard let tag else { return OSLog.default }
         if logTagToLogger[tag] == nil {
             let bundleID = Bundle.main.bundleIdentifier ?? "com.wire.zmessaging.test"
             let logger = OSLog(subsystem: bundleID, category: tag)

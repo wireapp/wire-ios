@@ -58,11 +58,11 @@ extension ZMBaseManagedObjectTest {
     @discardableResult func createMembership(in moc: NSManagedObjectContext, user: ZMUser, team: Team?, with permissions: Permissions? = nil) -> Member {
         let member = Member.insertNewObject(in: moc)
         member.user = user
-        if let team = team {
+        if let team {
             member.team = team
             member.user?.teamIdentifier = team.remoteIdentifier
         }
-        if let permissions = permissions {
+        if let permissions {
             member.permissions = permissions
         }
         return member

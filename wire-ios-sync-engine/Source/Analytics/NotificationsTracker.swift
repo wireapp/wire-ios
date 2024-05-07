@@ -83,7 +83,7 @@ import WireDataModel
 
     public func dispatchEvent() {
         isolationQueue.sync {
-            if let analytics = analytics, let attributes = analytics.persistedAttributes(for: eventName), !attributes.isEmpty {
+            if let analytics, let attributes = analytics.persistedAttributes(for: eventName), !attributes.isEmpty {
                 analytics.tagEvent(eventName, attributes: attributes)
                 analytics.setPersistedAttributes(nil, for: eventName)
             }

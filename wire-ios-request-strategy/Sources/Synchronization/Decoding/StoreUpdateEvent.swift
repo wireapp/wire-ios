@@ -99,7 +99,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         publicKeys: EARPublicKeys?
     ) {
         guard
-            let publicKeys = publicKeys,
+            let publicKeys,
             let unencryptedPayload = storedEvent.payload
         else {
             return
@@ -310,7 +310,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         // background.
         let key = storedEvent.isCallEvent ? privateKeys?.secondary : privateKeys?.primary
 
-        guard let key = key else {
+        guard let key else {
             throw DecryptionFailure.privateKeyUnavailable
         }
 

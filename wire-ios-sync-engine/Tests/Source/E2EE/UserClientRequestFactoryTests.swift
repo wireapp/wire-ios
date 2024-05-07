@@ -139,7 +139,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
 
         XCTAssertEqual(payload.type, DeviceType.permanent.rawValue)
 
-        if let credentials = credentials {
+        if let credentials {
             XCTAssertEqual(payload.password, credentials.password)
         }
 

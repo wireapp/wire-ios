@@ -480,7 +480,7 @@ extension SearchTask {
             tasksRemaining -= 1
         }
 
-        if let searchResult = searchResult {
+        if let searchResult {
             result = result.union(withDirectoryResult: searchResult)
         }
     }
@@ -672,7 +672,7 @@ extension SearchTask {
 extension ZMSearchUser {
 
     public var hasEmptyName: Bool {
-        guard let name = name else {
+        guard let name else {
             return true
         }
         return name.isEmpty

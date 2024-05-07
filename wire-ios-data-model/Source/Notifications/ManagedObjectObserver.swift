@@ -42,7 +42,7 @@ import Foundation
     }
 
     deinit {
-        guard let token = token else { return }
+        guard let token else { return }
         NotificationCenter.default.removeObserver(token)
     }
 

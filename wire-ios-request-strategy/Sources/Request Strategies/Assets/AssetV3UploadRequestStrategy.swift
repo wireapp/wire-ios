@@ -139,7 +139,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             )
         }
 
-        guard let request = request else {
+        guard let request else {
             fatal("Could not create asset request")
         }
 

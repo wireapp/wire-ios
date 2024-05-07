@@ -408,14 +408,14 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         request.httpBody = data
 
         ephemeralURLSession.task(with: request) { data, response, error in
-            if let error = error {
+            if let error {
                 completionHandler(.failure(SFTResponseError.transport(error: error)))
                 return
             }
 
             guard
                 let response = response as? HTTPURLResponse,
-                let data = data
+                let data
             else {
                 completionHandler(.failure(SFTResponseError.missingData))
                 return

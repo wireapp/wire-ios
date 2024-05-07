@@ -87,7 +87,7 @@ extension ZMConversation {
         return NotificationInContext.addObserver(name: ZMConversation.typingNotificationName,
                                                  context: self.managedObjectContext!.notificationContext,
                                                  object: self) { [weak observer, weak self] note in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             let users = note.userInfo[typingNotificationUsersKey] as? Set<ZMUser> ?? Set()
             observer?.typingDidChange(conversation: self, typingUsers: Array(users))

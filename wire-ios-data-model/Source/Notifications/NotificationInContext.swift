@@ -59,7 +59,7 @@ import WireUtilities
                 object: AnyObject? = nil,
                 userInfo: [String: Any]? = nil) {
         var userInfo = userInfo ?? [:]
-        if let object = object {
+        if let object {
             userInfo[NotificationInContext.objectInNotificationKey] = object
         }
         self.notification = Notification(name: name,

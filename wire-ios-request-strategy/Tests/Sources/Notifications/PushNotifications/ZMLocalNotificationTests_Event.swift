@@ -173,7 +173,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
             var note: ZMLocalNotification?
 
             // when
-            if let event = event {
+            if let event {
                 note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.uiMOC)
             }
 

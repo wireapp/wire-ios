@@ -49,7 +49,7 @@ public class ZMClientMessage: ZMOTRMessage {
     }
 
     public override var hashOfContent: Data? {
-        guard let serverTimestamp = serverTimestamp else {
+        guard let serverTimestamp else {
             return nil
         }
         return underlyingMessage?.hashOfContent(with: serverTimestamp)
@@ -108,8 +108,8 @@ public class ZMClientMessage: ZMOTRMessage {
             nonce = originalID
         case .buttonAction:
             guard
-                let managedObjectContext = managedObjectContext,
-                let conversation = conversation else {
+                let managedObjectContext,
+                let conversation else {
                     return
             }
             ZMClientMessage.expireButtonState(forButtonAction: genericMessage.buttonAction,
@@ -145,8 +145,8 @@ public class ZMClientMessage: ZMOTRMessage {
         case .deleted:
             let originalID = UUID(uuidString: genericMessage.deleted.messageID)
             guard
-                let managedObjectContext = managedObjectContext,
-                let conversation = conversation else {
+                let managedObjectContext,
+                let conversation else {
                     return
             }
 

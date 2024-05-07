@@ -36,7 +36,7 @@ class MentionTests: ZMBaseManagedObjectTest {
             $0.length = Int32(length)
             $0.userID = userId
 
-            if let domain = domain {
+            if let domain {
                 $0.qualifiedUserID = WireProtos.QualifiedUserId.with {
                     $0.id = userId
                     $0.domain = domain

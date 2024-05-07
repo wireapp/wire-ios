@@ -54,7 +54,7 @@ final class CallParticipantsSnapshot {
             userVerifiedMap[zmuser] = userIsVerified
 
             if userWasVerified && !userIsVerified {
-                guard let selfUser = selfUser else { return }
+                guard let selfUser else { return }
                 let degradedUser = selfUser.isTrusted ? zmuser : selfUser
                 callCenter.callDidDegrade(conversationId: conversationId, degradedUser: degradedUser)
                 break

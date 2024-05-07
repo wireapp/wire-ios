@@ -55,7 +55,7 @@ extension ZMAssetClientMessage {
         }
         deleteContent()
 
-        if let obfuscatedMessage = obfuscatedMessage {
+        if let obfuscatedMessage {
             do {
                 _ = try createNewGenericMessageData(with: obfuscatedMessage)
             } catch {

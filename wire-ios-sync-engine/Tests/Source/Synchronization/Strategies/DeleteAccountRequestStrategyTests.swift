@@ -53,7 +53,7 @@ class DeleteAccountRequestStrategyTests: MessagingTest, AccountDeletedObserver {
         let request: ZMTransportRequest? = self.sut.nextRequest(for: .v0)
 
         // then
-        if let request = request {
+        if let request {
             XCTAssertEqual(request.method, ZMTransportRequestMethod.delete)
             XCTAssertEqual(request.path, "/self")
             XCTAssertTrue(request.needsAuthentication)

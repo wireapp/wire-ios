@@ -121,7 +121,7 @@ extension ZMMessageTests_SystemMessages {
         ]
 
         var data: [String: Any]
-        if let domain = domain {
+        if let domain {
             if updateEventType == .conversationMemberJoin {
                 data = ["users": usersIDs.map {
                     ["qualified_id":

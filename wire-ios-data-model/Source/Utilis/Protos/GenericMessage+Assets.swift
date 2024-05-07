@@ -75,10 +75,10 @@ public extension WireProtos.Asset {
 
     init(original: WireProtos.Asset.Original?, preview: WireProtos.Asset.Preview?) {
         self = WireProtos.Asset.with({
-            if let original = original {
+            if let original {
                 $0.original = original
             }
-            if let preview = preview {
+            if let preview {
                 $0.preview = preview
             }
         })
@@ -117,7 +117,7 @@ public extension WireProtos.Asset.Original {
         self = WireProtos.Asset.Original.with {
             $0.size = size
             $0.mimeType = mimeType
-            if let name = name {
+            if let name {
                 $0.name = name
             }
             if let imageMeta = imageMetaData {
@@ -130,7 +130,7 @@ public extension WireProtos.Asset.Original {
         self = WireProtos.Asset.Original.with {
             $0.size = size
             $0.mimeType = mimeType
-            if let name = name {
+            if let name {
                 $0.name = name
             }
             $0.audio = WireProtos.Asset.AudioMetaData.with {
@@ -168,7 +168,7 @@ public extension WireProtos.Asset.Preview {
             $0.size = size
             $0.mimeType = mimeType
             $0.image = imageMetadata
-            if let remoteData = remoteData {
+            if let remoteData {
                 $0.remote = remoteData
             }
         })
@@ -248,7 +248,7 @@ extension GenericMessage {
     }
 
     mutating func updateAsset(_ block: (inout WireProtos.Asset) -> Void) {
-        guard let content = content else {
+        guard let content else {
             return
         }
         switch content {
@@ -269,11 +269,11 @@ extension WireProtos.Asset.RemoteData {
     mutating func update(assetId: String, token: String?, domain: String?) {
         assetID = assetId
 
-        if let token = token {
+        if let token {
             assetToken = token
         }
 
-        if let domain = domain {
+        if let domain {
             assetDomain = domain
         }
     }

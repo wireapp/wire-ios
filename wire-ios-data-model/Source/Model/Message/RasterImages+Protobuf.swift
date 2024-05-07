@@ -36,7 +36,7 @@ fileprivate extension ImageAsset {
 
 public extension GenericMessage {
     var hasRasterImage: Bool {
-        guard let content = content else { return false }
+        guard let content else { return false }
         switch content {
         case .image(let data):
             return data.isRaster

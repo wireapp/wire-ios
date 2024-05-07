@@ -69,7 +69,7 @@ extension UnauthenticatedOperationLoop: RequestAvailableObserver {
 
     private var generator: ZMTransportRequestGenerator {
         return { [weak self] in
-            guard let `self` = self else { return nil }
+            guard let self else { return nil }
             guard let apiVersion = BackendInfo.apiVersion else { return nil }
             let request = (self.requestStrategies as NSArray).nextRequest(for: apiVersion)
             guard let queue = self.operationQueue else { return nil }

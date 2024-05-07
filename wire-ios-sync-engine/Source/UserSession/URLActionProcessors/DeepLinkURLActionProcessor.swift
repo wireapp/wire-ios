@@ -44,7 +44,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             ) { [weak self] response in
 
                 guard let strongSelf = self,
-                      let delegate = delegate else {
+                      let delegate else {
                     return
                 }
 
@@ -153,7 +153,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             }
 
             upToDateConversation.joinNewMLSGroup(id: groupId) { error in
-                if let error = error {
+                if let error {
                     WireLogger.mls.debug("failed to join MLS group: \(error)")
                     completion(.failure(error))
                 } else {

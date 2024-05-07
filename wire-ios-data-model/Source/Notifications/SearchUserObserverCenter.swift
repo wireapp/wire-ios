@@ -67,7 +67,7 @@ public class SearchUserSnapshot {
     /// Updates the snapshot values for the observableKeys keys,
     /// returns the changes keys if keys changed or nil when nothing changed
     func updateAndNotify() {
-        guard let searchUser = searchUser else { return }
+        guard let searchUser else { return }
         let newSnapshotValues = SearchUserSnapshot.createSnapshots(searchUser: searchUser)
 
         var changedKeys = [String]()
@@ -87,7 +87,7 @@ public class SearchUserSnapshot {
     /// Post a UserChangeInfo for the specified SearchUser
     func postNotification(changedKeys: [String]) {
         guard changedKeys.count > 0,
-            let searchUser = searchUser,
+            let searchUser,
             let moc = self.managedObjectContext
             else { return }
 

@@ -442,7 +442,7 @@ final class TokenField: UIView {
         textView.textStorage.addAttributes(textAttributes, range: NSRange(location: 0, length: textView.textStorage.length))
         textView.textStorage.endEditing()
 
-        if let toLabelText = toLabelText {
+        if let toLabelText {
             toLabel.attributedText = NSMutableAttributedString(string: toLabelText, attributes: textAttributes)
         } else {
             toLabel.text = ""

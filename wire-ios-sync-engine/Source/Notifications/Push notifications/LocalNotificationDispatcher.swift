@@ -53,7 +53,7 @@ import UserNotifications
         Logging.push.safePublic("Scheduling local notification with id=\(note.id)")
 
         notificationCenter.add(note.request, withCompletionHandler: { error in
-            if let error = error {
+            if let error {
                 Logging.push.safePublic("Error scheduling local notification")
                 Logging.push.error("Scheduling Error: \(error)")
             } else {
@@ -196,7 +196,7 @@ extension LocalNotificationDispatcher {
             idToDelete = UUID(uuidString: hidden)
         }
 
-        if let idToDelete = idToDelete {
+        if let idToDelete {
             eventNotifications.cancelCurrentNotifications(messageNonce: idToDelete)
         }
     }
