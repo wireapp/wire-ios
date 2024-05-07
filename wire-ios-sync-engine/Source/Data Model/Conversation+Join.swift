@@ -141,9 +141,9 @@ extension ZMConversation {
                     return
                 }
 
-                let passwordProtected = payload["has_password"] as? Bool ?? false
+                let hasPassword = payload["has_password"] as? Bool ?? false
 
-                let fetchResult = (conversationId, conversationName, passwordProtected)
+                let fetchResult = (conversationId, conversationName, hasPassword)
                 completion(.success(fetchResult))
             default:
                 let error = ConversationFetchError(response: response)
