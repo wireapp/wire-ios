@@ -1452,7 +1452,6 @@ extension SessionManager {
     public static var companyLoginRequestTimestampKey: String {
         return "WireCompanyLoginTimesta;p"
     }
-
 }
 
 // MARK: - End-to-end Identity

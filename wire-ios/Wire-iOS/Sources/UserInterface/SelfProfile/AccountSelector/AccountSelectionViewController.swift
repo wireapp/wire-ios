@@ -20,9 +20,6 @@ import UIKit
 import WireSyncEngine
 import WireSystem
 
-// TODO [WPB-7307]: remove typealias
-typealias AccountSelectorController = AccountSelectionViewController
-
 final class AccountSelectionViewController: UIViewController {
 
     private let accountSwitcher: AccountSwitcher
@@ -70,7 +67,7 @@ final class AccountSelectionViewController: UIViewController {
     }
 }
 
-extension AccountSelectorController: AccountSelectorViewDelegate {
+extension AccountSelectionViewController: AccountSelectorViewDelegate {
 
     func accountSelectorDidSelect(account: Account) {
         guard

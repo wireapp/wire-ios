@@ -68,7 +68,7 @@ final class ZClientViewController: UIViewController {
             selfUser: userSession.selfUser,
             userRightInterfaceType: UserRight.self,
             userSession: userSession,
-            accountSelectorControllerBuilder: accountSelectionViewControllerBuilder
+            accountSelectionViewControllerBuilder: accountSelectionViewControllerBuilder
         )
         conversationListViewController = .init(
             account: account,

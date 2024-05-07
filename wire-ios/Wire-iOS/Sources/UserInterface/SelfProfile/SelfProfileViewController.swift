@@ -33,7 +33,7 @@ final class SelfProfileViewController: UIViewController {
     // MARK: - Views
 
     private let settingsController: SettingsTableViewController
-    private let accountSelectorController: UIViewController
+    private let accountSelectionViewController: UIViewController
     private let profileContainerView = UIView()
     private let profileHeaderViewController: ProfileHeaderViewController
     private let profileImagePicker = ProfileImagePickerManager()
@@ -61,11 +61,11 @@ final class SelfProfileViewController: UIViewController {
         selfUser: SettingsSelfUser,
         userRightInterfaceType: UserRightInterface.Type,
         userSession: UserSession,
-        accountSelectorControllerBuilder: any ViewControllerBuilder
+        accountSelectionViewControllerBuilder: any ViewControllerBuilder
     ) {
 
         self.userSession = userSession
-        accountSelectorController = accountSelectorControllerBuilder.build()
+        accountSelectionViewController = accountSelectionViewControllerBuilder.build()
 
         // Create the settings hierarchy
 
@@ -151,7 +151,7 @@ final class SelfProfileViewController: UIViewController {
 
     private func configureAccountTitle() {
         if SessionManager.shared?.accountManager.accounts.count > 1 {
-            navigationItem.titleView = accountSelectorController.view
+            navigationItem.titleView = accountSelectionViewController.view
         } else {
             navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Self.account.capitalized)
         }
@@ -161,11 +161,11 @@ final class SelfProfileViewController: UIViewController {
         profileHeaderViewController.view.translatesAutoresizingMaskIntoConstraints = false
         profileContainerView.translatesAutoresizingMaskIntoConstraints = false
         settingsController.view.translatesAutoresizingMaskIntoConstraints = false
-        accountSelectorController.view.translatesAutoresizingMaskIntoConstraints = false
+        accountSelectionViewController.view.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            // accountSelectorController
-            accountSelectorController.view.heightAnchor.constraint(equalToConstant: 44),
+            // accountSelectionViewController
+            accountSelectionViewController.view.heightAnchor.constraint(equalToConstant: 44),
 
             // profileContainerView
             profileContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
