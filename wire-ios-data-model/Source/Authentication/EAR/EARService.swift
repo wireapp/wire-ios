@@ -250,7 +250,7 @@ public class EARService: EARServiceInterface {
         if skipMigration {
             WireLogger.ear.info("skipping migration")
             try enableEAR(context)
-        } else if let delegate = delegate {
+        } else if let delegate {
             WireLogger.ear.info("preparing for migration")
             try delegate.prepareForMigration { context in
                 try enableEAR(context)
@@ -311,7 +311,7 @@ public class EARService: EARServiceInterface {
         if skipMigration {
             WireLogger.ear.info("skipping migration")
             try disableEAR(context)
-        } else if let delegate = delegate {
+        } else if let delegate {
             WireLogger.ear.info("preparing for migration")
             try delegate.prepareForMigration { context in
                 try disableEAR(context)

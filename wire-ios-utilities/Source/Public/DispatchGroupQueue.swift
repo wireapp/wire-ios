@@ -26,15 +26,15 @@ public final class DispatchGroupQueue: NSObject, GroupQueue {
 
     public init(queue: DispatchQueue) {
         self.queue = queue
-        self.dispatchGroupContext = DispatchGroupContext(groups: [])
+        dispatchGroupContext = DispatchGroupContext(groups: [])
     }
 
-    public  var dispatchGroup: ZMSDispatchGroup {
-        dispatchGroupContext.groups[0]
+    public var dispatchGroup: ZMSDispatchGroup? {
+        dispatchGroupContext.groups.first
     }
 
     public func add(_ group: ZMSDispatchGroup) {
-        self.dispatchGroupContext.add(group)
+        dispatchGroupContext.add(group)
     }
 
     public func performGroupedBlock(_ block: @escaping () -> Void) {

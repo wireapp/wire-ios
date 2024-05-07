@@ -40,23 +40,6 @@ enum PreviewDisplayMode {
     }
 }
 
-extension Optional where Wrapped == PreviewDisplayMode {
-
-    /// Combines the current display mode with the current one if they're compatible.
-    func combine(with otherMode: PreviewDisplayMode?) -> PreviewDisplayMode? {
-        guard let currentMode = self else {
-            return otherMode
-        }
-
-        guard case let .mixed(count, _) = currentMode else {
-            return currentMode
-        }
-
-        return .mixed(count, otherMode)
-    }
-
-}
-
 /**
  * An image view used to preview the content of a post.
  */

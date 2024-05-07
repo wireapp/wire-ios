@@ -155,7 +155,7 @@ class SettingsTableCell: SettingsTableCellProtocol {
 
     var icon: StyleKitIcon? {
         didSet {
-            if let icon = icon {
+            if let icon {
                 iconImageView.setTemplateIcon(icon, size: .tiny)
                 cellNameLabelToIconInset.isActive = true
             } else {

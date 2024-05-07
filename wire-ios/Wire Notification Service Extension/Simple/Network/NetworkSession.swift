@@ -100,7 +100,7 @@ final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDele
 
         cookieProvider.setRequestHeaderFieldsOn(urlRequest)
 
-        if let accessToken = accessToken {
+        if let accessToken {
             urlRequest.addValue(accessToken.headerValue, forHTTPHeaderField: "Authorization")
         }
 

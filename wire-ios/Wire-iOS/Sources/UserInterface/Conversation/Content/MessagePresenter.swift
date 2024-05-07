@@ -149,7 +149,7 @@ final class MessagePresenter: NSObject {
         } else if
             fileMessageData.isVideo,
             let fileURL = fileMessageData.temporaryURLToDecryptedFile(),
-            let mediaPlaybackManager = mediaPlaybackManager
+            let mediaPlaybackManager
         {
             let player = AVPlayer(url: fileURL)
             mediaPlayerController = MediaPlayerController(player: player, message: message, delegate: mediaPlaybackManager)
@@ -199,7 +199,7 @@ final class MessagePresenter: NSObject {
                           actionResponder delegate: MessageActionResponder,
                           userSession: UserSession) {
         let imageViewController = viewController(forImageMessage: message, actionResponder: delegate, userSession: userSession)
-        if let imageViewController = imageViewController {
+        if let imageViewController {
             // to allow image rotation, present the image viewer in full screen style
             imageViewController.modalPresentationStyle = .fullScreen
             modalTargetController?.present(imageViewController, animated: true)

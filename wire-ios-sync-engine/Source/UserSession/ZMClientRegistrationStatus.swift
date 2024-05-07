@@ -495,7 +495,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             client.remoteIdentifier != selfClient.remoteIdentifier
         }
 
-        if otherClients.isNonEmpty {
+        if !otherClients.isEmpty {
             selfClient.missesClients(otherClients)
             selfClient.setLocallyModifiedKeys(Set(["missingClients"]))
         }

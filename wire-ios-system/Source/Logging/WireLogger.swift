@@ -19,6 +19,9 @@
 import Foundation
 
 public struct WireLogger: LoggerProtocol {
+    public func addTag(_ key: LogAttributesKey, value: String?) {
+        Self.provider?.addTag(key, value: value)
+    }
 
   public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger()])
 
@@ -127,6 +130,12 @@ public struct WireLogger: LoggerProtocol {
 
 public typealias LogAttributes = [String: Encodable]
 
+public enum LogAttributesKey: String {
+    case selfClientId = "self_client_id"
+    case selfUserId = "self_user_id"
+    case eventId = "event_id"
+}
+
 public extension LogAttributes {
     static var safePublic = ["public": true]
 }
@@ -141,6 +150,8 @@ public protocol LoggerProtocol {
   func critical(_ message: LogConvertible, attributes: LogAttributes?)
 
   func persist(fileDestination: FileLoggerDestination) async
+
+  func addTag(_ key: LogAttributesKey, value: String?)
 }
 
 extension LoggerProtocol {

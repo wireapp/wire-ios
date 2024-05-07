@@ -34,7 +34,7 @@ final class TopPeopleSectionController: SearchSectionController {
 
         createInnerCollectionView()
 
-        if let topConversationsDirectory = topConversationsDirectory {
+        if let topConversationsDirectory {
             self.token = topConversationsDirectory.add(observer: self)
             self.innerCollectionViewController.topPeople = topConversationsDirectory.topConversations
             topConversationsDirectory.refreshTopConversations()
@@ -71,7 +71,7 @@ final class TopPeopleSectionController: SearchSectionController {
     }
 
     override var isHidden: Bool {
-        if let topConversationsDirectory = topConversationsDirectory {
+        if let topConversationsDirectory {
             return topConversationsDirectory.topConversations.isEmpty
         } else {
             return true
