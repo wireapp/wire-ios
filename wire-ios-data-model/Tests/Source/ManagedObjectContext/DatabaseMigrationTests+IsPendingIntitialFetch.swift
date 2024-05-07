@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import Foundation
-import WireDataModelSupport
 @testable import WireDataModel
+import WireDataModelSupport
+import XCTest
 
 class DatabaseMigrationTests_IsPendingInitialFetch: XCTestCase {
 

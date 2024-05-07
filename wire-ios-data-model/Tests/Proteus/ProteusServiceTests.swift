@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 import WireCoreCrypto
+import XCTest
 
 @testable import WireDataModel
 @testable import WireDataModelSupport

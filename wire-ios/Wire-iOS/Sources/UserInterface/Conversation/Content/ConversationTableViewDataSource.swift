@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
 import DifferenceKit
+import WireDataModel
 import WireSyncEngine
 
 extension Int: Differentiable { }
@@ -334,7 +334,7 @@ final class ConversationTableViewDataSource: NSObject {
         loadNewerMessages()
 
         // 3. Get the index path of the message that should stay displayed
-        if let newestMessageBeforeReload = newestMessageBeforeReload,
+        if let newestMessageBeforeReload,
            let sectionIndex = self.index(of: newestMessageBeforeReload) {
 
             // 4. Get the frame of that message
@@ -475,7 +475,7 @@ extension ConversationTableViewDataSource {
     }
 
     func isPreviousSenderSame(forMessage message: ZMConversationMessage?, at index: Int) -> Bool {
-        guard let message = message,
+        guard let message,
             Message.isNormal(message),
             !Message.isKnock(message) else { return false }
 

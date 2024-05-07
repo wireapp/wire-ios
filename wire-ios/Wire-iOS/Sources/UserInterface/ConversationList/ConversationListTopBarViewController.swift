@@ -17,9 +17,9 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-import WireCommonComponents
 
 final class ConversationListTopBarViewController: UIViewController {
 

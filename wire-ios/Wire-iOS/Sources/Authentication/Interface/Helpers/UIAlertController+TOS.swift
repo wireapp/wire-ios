@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import SafariServices
 import UIKit
 
@@ -31,7 +30,7 @@ extension UIAlertController {
             let webViewController: BrowserViewController
             webViewController = BrowserViewController(url: url)
             webViewController.completion = { [weak controller] in
-                if let controller = controller {
+                if let controller {
                     UIAlertController.requestTOSApproval(over: controller, forTeamAccount: forTeamAccount, completion: completion)
                 }
             }

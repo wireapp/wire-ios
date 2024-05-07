@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import WireTesting
 import WireCryptobox
+import WireDataModel
 @testable import WireRequestStrategy
+import WireTesting
 
 class MessagingTestBase: ZMTBaseTest {
 

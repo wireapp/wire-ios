@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireDataModel
-import Intents
 import CallKit
+import Foundation
+import Intents
 import OCMock
+import WireDataModel
 
 @testable import WireSyncEngine
 

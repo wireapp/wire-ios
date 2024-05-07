@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import MobileCoreServices
+import UIKit
 import WireSyncEngine
 
 class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExternalScreenCellDescriptorType {
@@ -80,7 +80,7 @@ class SettingsAppearanceCellDescriptor: SettingsCellDescriptorType, SettingsExte
 
         switch self.presentationStyle {
         case .alert:
-            if let viewController = viewController {
+            if let viewController {
                 controllerToShow.configPopover(pointToView: viewController.view)
             }
             viewController?.present(controllerToShow, animated: true)

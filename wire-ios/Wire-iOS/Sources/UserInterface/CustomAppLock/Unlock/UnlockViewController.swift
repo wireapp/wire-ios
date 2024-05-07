@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 import WireDataModel
@@ -210,7 +209,7 @@ final class UnlockViewController: UIViewController {
     private func unlock() -> Bool {
         guard
             let passcode = validatedTextField.text,
-            let userSession = userSession,
+            let userSession,
             userSession.evaluateAuthentication(customPasscode: passcode) == .granted
         else {
             return false

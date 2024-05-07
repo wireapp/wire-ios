@@ -70,7 +70,7 @@ extension ConversationNewDeviceSystemMessageCell {
         interaction: UITextItemInteraction
     ) -> Bool {
 
-        guard let linkTarget = linkTarget,
+        guard let linkTarget,
               url == type(of: self).userClientURL,
               let zClientViewController = ZClientViewController.shared else { return false }
 

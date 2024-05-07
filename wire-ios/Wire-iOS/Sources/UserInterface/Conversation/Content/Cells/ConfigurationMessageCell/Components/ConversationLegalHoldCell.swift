@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 
 final class ConversationLegalHoldSystemMessageCell: ConversationIconBasedCell, ConversationMessageCell {
 
@@ -103,7 +103,7 @@ extension ConversationLegalHoldSystemMessageCell {
     override func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
 
         if url == ConversationLegalHoldSystemMessageCell.legalHoldURL,
-            let conversation = conversation,
+            let conversation,
             let clientViewController = ZClientViewController.shared {
 
             LegalHoldDetailsViewController.present(in: clientViewController, conversation: conversation, userSession: clientViewController.userSession)

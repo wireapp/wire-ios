@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 
 typealias ConversationListItemViewConversation = ConversationAvatarViewConversation & ConversationStatusProvider & ConnectedUserProvider
 
@@ -247,7 +246,7 @@ final class ConversationListItemView: UIView {
     func update(for conversation: ConversationListCellConversation?) {
         self.conversation = conversation
 
-        guard let conversation = conversation else {
+        guard let conversation else {
             self.configure(with: nil, subtitle: nil)
             return
         }

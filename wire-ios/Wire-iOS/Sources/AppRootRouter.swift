@@ -16,17 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireSyncEngine
 import avs
+import UIKit
 import WireCommonComponents
+import WireSyncEngine
 
 // MARK: - AppRootRouter
 final class AppRootRouter: NSObject {
 
     // MARK: - Public Property
 
-    let screenCurtain = ScreenCurtain()
+    let screenCurtain = ScreenCurtainWindow()
 
     // MARK: - Private Property
 
@@ -172,7 +172,7 @@ final class AppRootRouter: NSObject {
         // Perform the wait on a background queue so we don't cause a
         // deadlock on the main queue.
         appStateTransitionQueue.async { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             self.appStateTransitionGroup.wait()
 
@@ -352,7 +352,7 @@ extension AppRootRouter {
             statusProvider: AuthenticationStatusProvider()
         )
 
-        guard let authenticationCoordinator = authenticationCoordinator else {
+        guard let authenticationCoordinator else {
             completion()
             return
         }
@@ -612,7 +612,7 @@ extension AppRootRouter: ApplicationStateObserving {
     }
 
     func updateOverlayWindowFrame(size: CGSize? = nil) {
-        if let size = size {
+        if let size {
             screenCurtain.frame.size = size
         } else {
             screenCurtain.frame = UIApplication.shared.firstKeyWindow?.frame ?? UIScreen.main.bounds

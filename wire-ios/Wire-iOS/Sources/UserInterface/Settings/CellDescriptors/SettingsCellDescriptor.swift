@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireCommonComponents
 import UIKit
+import WireCommonComponents
 
 // * Top-level structure overview:
 // * Settings group (screen) @c SettingsGroupCellDescriptorType contains
@@ -235,8 +234,6 @@ extension SettingsPropertyName {
             return Account.Handle.title
         case .email:
             return Account.Email.title
-        case .phone:
-            return Account.Phone.title
         case .team:
             return Account.Team.title
         case .domain:

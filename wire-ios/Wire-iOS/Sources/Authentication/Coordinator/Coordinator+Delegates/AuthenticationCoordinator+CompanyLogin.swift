@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
 import UIKit
+import WireTransport
 
 extension AuthenticationCoordinator: CompanyLoginControllerDelegate {
 
@@ -45,4 +46,19 @@ extension AuthenticationCoordinator: CompanyLoginControllerDelegate {
     func controllerDidCancelCompanyLoginFlow(_ controller: CompanyLoginController) {
         cancelCompanyLogin()
     }
+
+    func controller(
+        _ controller: CompanyLoginController,
+        didRequestUserConfirmationToSwitchToBackend environment: BackendEnvironment,
+        didConfirm: @escaping (Bool) -> Void
+    ) {
+        let viewModel = SwitchBackendConfirmationViewModel(
+            environment: environment,
+            didConfirm: didConfirm
+        )
+        let view = SwitchBackendConfirmationView(viewModel: viewModel)
+        let hostingController = UIHostingController(rootView: view)
+        presenter?.present(hostingController, animated: true)
+    }
+
 }

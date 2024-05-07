@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import FBSnapshotTestCase
-@testable import WireCommonComponents
 import UIKit
+@testable import Wire
+import WireCommonComponents
 
 extension UITableViewCell: UITableViewDelegate, UITableViewDataSource {
     func wrapInTableView() -> UITableView {
@@ -323,7 +323,7 @@ extension ZMSnapshotTestCase {
                             line: UInt = #line) {
         for (deviceName, size) in sizes {
             view.frame = CGRect(origin: .zero, size: size)
-            if let configuration = configuration {
+            if let configuration {
                 let isIPad = XCTestCase.tabletScreenSizes.values.contains(size)
                 UIView.performWithoutAnimation({
                     configuration(view, isIPad)

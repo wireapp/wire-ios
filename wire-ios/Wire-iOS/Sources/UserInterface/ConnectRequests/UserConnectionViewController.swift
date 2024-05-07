@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireSyncEngine
 
@@ -49,12 +48,12 @@ final class IncomingConnectionViewController: UIViewController {
     override func loadView() {
         connectionView = IncomingConnectionView(user: user)
         connectionView.onAccept = { [weak self] _ in
-            guard let weakSelf = self else { return }
-            weakSelf.onAction?(.accept)
+            guard let self else { return }
+            onAction?(.accept)
         }
         connectionView.onIgnore = { [weak self] _ in
-            guard let weakSelf = self else { return }
-            weakSelf.onAction?(.ignore)
+            guard let self else { return }
+            onAction?(.ignore)
         }
 
         view = connectionView

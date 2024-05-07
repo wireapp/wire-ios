@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 class KeyboardAvoidingViewController: UIViewController, SpinnerCapable {
@@ -105,7 +104,7 @@ class KeyboardAvoidingViewController: UIViewController, SpinnerCapable {
 
     @objc
     private func keyboardFrameWillChange(_ notification: Notification?) {
-        guard let bottomEdgeConstraint = bottomEdgeConstraint else { return }
+        guard let bottomEdgeConstraint else { return }
 
         guard !disabledWhenInsidePopover || !isInsidePopover else {
             bottomEdgeConstraint.constant = 0

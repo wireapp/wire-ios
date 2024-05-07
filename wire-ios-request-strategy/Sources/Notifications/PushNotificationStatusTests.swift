@@ -17,18 +17,19 @@
 //
 
 import XCTest
+
 @testable import WireRequestStrategy
 
-@objc class FakeGroupQueue: NSObject, ZMSGroupQueue {
+@objc
+class FakeGroupQueue: NSObject, ZMSGroupQueue {
 
-    var dispatchGroup: ZMSDispatchGroup! {
-        return nil
+    var dispatchGroup: ZMSDispatchGroup? {
+        nil
     }
 
     func performGroupedBlock(_ block: @escaping () -> Void) {
         block()
     }
-
 }
 
 // MARK: - Tests

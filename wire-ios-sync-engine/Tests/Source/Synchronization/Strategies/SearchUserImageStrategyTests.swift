@@ -16,36 +16,52 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import WireDataModel
+@testable import WireSyncEngine
 
-let UserRequestURL = "/users?ids="
+final class SearchUserImageStrategyTests: MessagingTest {
 
-class FakeSearchDirectory: NSObject {}
+    private let userRequestURL = "/users?ids="
 
-class SearchUserImageStrategyTests: MessagingTest {
+    private var sut: SearchUserImageStrategy!
 
-    var sut: SearchUserImageStrategy!
-    var mockApplicationStatus: MockApplicationStatus!
+    private var mockApplicationStatus: MockApplicationStatus!
+    private var mockCache: SearchUsersCache!
 
     override func setUp() {
         super.setUp()
-        uiMOC.zm_searchUserCache = NSCache()
+
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .online
-        sut = SearchUserImageStrategy(applicationStatus: mockApplicationStatus, managedObjectContext: uiMOC)
+        mockCache = SearchUsersCache()
+
+        sut = SearchUserImageStrategy(
+            applicationStatus: mockApplicationStatus,
+            managedObjectContext: uiMOC,
+            searchUsersCache: mockCache
+        )
     }
 
     override func tearDown() {
-        sut = nil
-        uiMOC.zm_searchUserCache = nil
         mockApplicationStatus = nil
+        mockCache = nil
+
+        sut = nil
+
         BackendInfo.domain = nil
+
         super.tearDown()
     }
 
     func createSearchUser() -> ZMSearchUser {
-        return ZMSearchUser(contextProvider: coreDataStack, name: "Foo", handle: "foo", accentColor: .amber, remoteIdentifier: UUID())
+        return ZMSearchUser(
+            contextProvider: coreDataStack,
+            name: "Foo",
+            handle: "foo",
+            accentColor: .amber,
+            remoteIdentifier: UUID(),
+            searchUsersCache: mockCache
+        )
     }
 
     func userIDs(from searchUsers: Set<ZMSearchUser>) -> Set<UUID> {
@@ -75,10 +91,10 @@ class SearchUserImageStrategyTests: MessagingTest {
     }
 
     func userIDs(in getRequest: ZMTransportRequest) -> Set<UUID> {
-        if !getRequest.path.hasPrefix(UserRequestURL) {
+        if !getRequest.path.hasPrefix(userRequestURL) {
             return Set()
         }
-        let userIDs = String(getRequest.path[UserRequestURL.endIndex...])
+        let userIDs = String(getRequest.path[userRequestURL.endIndex...])
         let tokens = userIDs.components(separatedBy: ",").compactMap { UUID(uuidString: $0) }
         return Set(tokens)
     }
@@ -91,9 +107,8 @@ class SearchUserImageStrategyTests: MessagingTest {
         }
         return users
     }
-}
 
-extension SearchUserImageStrategyTests {
+    // MARK: - Tests
 
     func testThatItReturnsNoRequestIfThereIsNoRequestUserProfile() {
         // given
@@ -119,7 +134,7 @@ extension SearchUserImageStrategyTests {
         XCTAssertEqual(request.method, .get)
         XCTAssertTrue(request.needsAuthentication)
 
-        XCTAssertTrue(request.path.hasPrefix(UserRequestURL))
+        XCTAssertTrue(request.path.hasPrefix(userRequestURL))
         let expectedUserIDs = userIDs(from: searchSet)
         XCTAssertEqual(userIDs(in: request), expectedUserIDs)
     }
@@ -240,11 +255,7 @@ extension SearchUserImageStrategyTests {
         XCTAssertEqual(userIDs(in: request2).count, 0)
     }
 
-}
-
-// MARK: - ImageAssets
-
-extension SearchUserImageStrategyTests {
+    // MARK: - ImageAssets
 
     func testThatNextRequestCreatesARequestForAnAssetID(apiVersion: APIVersion) {
         // given

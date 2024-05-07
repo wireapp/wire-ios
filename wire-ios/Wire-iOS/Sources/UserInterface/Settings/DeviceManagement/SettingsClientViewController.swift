@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireSyncEngine
 
@@ -394,10 +393,10 @@ extension SettingsClientViewController: ClientRemovalObserverDelegate {
 extension UserClient {
     var information: String {
         var lines = [String]()
-        if let model = model {
+        if let model {
             lines.append("Device: \(model)")
         }
-        if let remoteIdentifier = remoteIdentifier {
+        if let remoteIdentifier {
             lines.append("ID: \(remoteIdentifier)")
         }
         if let pushToken = PushTokenStorage.pushToken {

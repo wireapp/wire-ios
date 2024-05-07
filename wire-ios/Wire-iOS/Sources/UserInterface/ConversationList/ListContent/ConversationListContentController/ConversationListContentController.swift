@@ -17,7 +17,6 @@
 //
 
 import DifferenceKit
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
@@ -92,7 +91,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
-        if let token = token {
+        if let token {
             NotificationCenter.default.removeObserver(token)
             self.token = nil
         }
@@ -374,7 +373,7 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
             focusOnNextSelection = false
         }
 
-        guard let item = item else {
+        guard let item else {
             // Deselect all items in the collection view
             let indexPaths = collectionView.indexPathsForSelectedItems
             (indexPaths as NSArray?)?.enumerateObjects({ obj, _, _ in

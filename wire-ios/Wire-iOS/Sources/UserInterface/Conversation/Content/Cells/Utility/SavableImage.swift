@@ -17,9 +17,9 @@
 //
 
 import Photos
+import UIKit
 import WireSystem
 import WireUtilities
-import UIKit
 
 protocol PhotoLibraryProtocol {
     func performChanges(_ changeBlock: @escaping () -> Swift.Void, completionHandler: ((Bool, Error?) -> Swift.Void)?)
@@ -111,7 +111,7 @@ final class SavableImage: NSObject {
             } completionHandler: { success, error in
                 DispatchQueue.main.async {
                     self.writeInProgess = false
-                    error.apply(self.warnAboutError)
+                    error.map(self.warnAboutError)
                     cleanup(success)
                 }
             }

@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import MobileCoreServices
-import WireSyncEngine
+import UIKit
 import UniformTypeIdentifiers
+import WireSyncEngine
 
 extension UIImage {
     var jpegData: Data? {
@@ -78,7 +78,7 @@ class ImagePickerManager: NSObject {
 
     private func getImage(fromSourceType sourceType: UIImagePickerController.SourceType) {
         guard UIImagePickerController.isSourceTypeAvailable(sourceType),
-              let viewController = viewController else {
+              let viewController else {
                   return
               }
 

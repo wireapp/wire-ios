@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Photos
 import UIKit
 import WireCommonComponents
@@ -80,7 +79,7 @@ final class AssetCell: UICollectionViewCell {
                 imageRequestTag = PHInvalidImageRequestID
             }
 
-            guard let asset = asset else {
+            guard let asset else {
                 durationView.text = ""
                 durationView.isHidden = true
                 return
@@ -95,7 +94,7 @@ final class AssetCell: UICollectionViewCell {
                                                    contentMode: .aspectFill,
                                                    options: type(of: self).imageFetchOptions,
                                                    resultHandler: { [weak self] result, _ in
-                                                    guard let `self` = self,
+                                                    guard let self,
                                                         self.representedAssetIdentifier == asset.localIdentifier
                                                         else { return }
                                                     self.imageView.image = result

@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 typealias ContactsCellActionButtonHandler = (UserType, ContactsCell.Action) -> Void
 
@@ -228,7 +228,7 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
     }
 
     @objc func actionButtonPressed(sender: Any?) {
-        if let user = user, let action = action {
+        if let user, let action {
             actionButtonHandler?(user, action)
         }
     }

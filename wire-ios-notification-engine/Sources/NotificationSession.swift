@@ -240,9 +240,11 @@ public final class NotificationSession {
             coreCryptoProvider: coreCryptoProvider,
             notificationContext: coreDataStack.syncContext.notificationContext
         )
+        let featureRepository = FeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
             coreCryptoProvider: coreCryptoProvider,
-            commitSender: commitSender
+            commitSender: commitSender,
+            featureRepository: featureRepository
         )
 
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
@@ -335,6 +337,11 @@ public final class NotificationSession {
                 WireLogger.notifications.error("Not displaying notification because app is not authenticated")
                 self.delegate?.notificationSessionDidFailWithError(error: .accountNotAuthenticated)
                 return
+            }
+
+            let selfClient = ZMUser(context: self.coreDataStack.syncContext).selfClient()
+            if let clientId = selfClient?.safeRemoteIdentifier.safeForLoggingDescription {
+                WireLogger.authentication.addTag(.selfClientId, value: clientId)
             }
 
             self.fetchEvents(fromPushChannelPayload: payload)

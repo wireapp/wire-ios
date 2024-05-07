@@ -36,7 +36,7 @@ final class TopBar: UIView {
                 new.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
                 new.centerYAnchor.constraint(equalTo: centerYAnchor)]
 
-            if let middleView = middleView {
+            if let middleView {
                 constraints.append(new.trailingAnchor.constraint(lessThanOrEqualTo: middleView.leadingAnchor))
             }
 
@@ -60,7 +60,7 @@ final class TopBar: UIView {
                 new.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
                 new.centerYAnchor.constraint(equalTo: centerYAnchor)]
 
-            if let middleView = middleView {
+            if let middleView {
                 constraints.append(new.leadingAnchor.constraint(greaterThanOrEqualTo: middleView.trailingAnchor))
             }
 

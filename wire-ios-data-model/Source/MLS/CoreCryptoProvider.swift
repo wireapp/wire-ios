@@ -47,6 +47,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private let sharedContainerURL: URL
     private let accountDirectory: URL
     private let cryptoboxMigrationManager: CryptoboxMigrationManagerInterface
+    private let featureRespository: FeatureRepositoryInterface
     private let syncContext: NSManagedObjectContext
     private let allowCreation: Bool
     private var coreCrypto: SafeCoreCrypto?
@@ -67,6 +68,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         self.syncContext = syncContext
         self.allowCreation = allowCreation
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
+        self.featureRespository = FeatureRepository(context: syncContext)
     }
 
     public func coreCrypto() async throws -> SafeCoreCryptoProtocol {
@@ -75,10 +77,11 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
     public func initialiseMLSWithBasicCredentials(mlsClientID: MLSClientID) async throws {
         WireLogger.mls.info("Initialising MLS client with basic credentials")
+        let defaultCiphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite
         _ = try await coreCrypto().perform { coreCrypto in
             try await coreCrypto.mlsInit(
                 clientId: Data(mlsClientID.rawValue.utf8),
-                ciphersuites: [CiphersuiteName.default.rawValue],
+                ciphersuites: [UInt16(defaultCiphersuite.rawValue)],
                 nbKeyPackage: nil
             )
             try await generateClientPublicKeys(with: coreCrypto, credentialType: .basic)
@@ -110,7 +113,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             }
         }
 
-        if let coreCrypto = coreCrypto {
+        if let coreCrypto {
             return coreCrypto
         } else {
             loadingCoreCrypto = true
@@ -176,10 +179,11 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
 
         // Initialise MLS if we have previously registered an MLS client
-        if let mlsClientID = mlsClientID {
+        if let mlsClientID {
+            let cipherSuite = UInt16(await featureRespository.fetchMLS().config.defaultCipherSuite.rawValue)
             try await coreCrypto.perform { try await $0.mlsInit(
                 clientId: Data(mlsClientID.rawValue.utf8),
-                ciphersuites: [CiphersuiteName.default.rawValue],
+                ciphersuites: [cipherSuite],
                 nbKeyPackage: nil) }
         }
     }
@@ -238,14 +242,27 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     }
 
     private func generateClientPublicKeys(with coreCrypto: CoreCryptoProtocol, credentialType: MlsCredentialType) async throws {
-        WireLogger.mls.info("generating ed25519 public key")
+        WireLogger.mls.info("generating public key")
+        let ciphersuite = await featureRespository.fetchMLS().config.defaultCipherSuite
         let keyBytes = try await coreCrypto.clientPublicKey(
-            ciphersuite: CiphersuiteName.default.rawValue,
+            ciphersuite: UInt16(ciphersuite.rawValue),
             credentialType: credentialType
         )
         let keyData = Data(keyBytes)
         var keys = UserClient.MLSPublicKeys()
-        keys.ed25519 = keyData.base64EncodedString()
+
+        switch ciphersuite {
+        case .MLS_128_DHKEMP256_AES128GCM_SHA256_P256:
+            keys.p256 = keyData.base64EncodedString()
+        case .MLS_256_DHKEMP384_AES256GCM_SHA384_P384:
+            keys.p384 = keyData.base64EncodedString()
+        case .MLS_256_DHKEMP521_AES256GCM_SHA512_P521:
+            keys.p521 = keyData.base64EncodedString()
+        case .MLS_256_DHKEMX448_AES256GCM_SHA512_Ed448, .MLS_256_DHKEMX448_CHACHA20POLY1305_SHA512_Ed448:
+            keys.ed448 = keyData.base64EncodedString()
+        case .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519, .MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519:
+            keys.ed25519 = keyData.base64EncodedString()
+        }
 
         await syncContext.perform {
             ZMUser.selfUser(in: self.syncContext).selfClient()?.mlsPublicKeys = keys

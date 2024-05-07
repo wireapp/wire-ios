@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSyncEngine
 import WireShareEngine
+import WireSyncEngine
 
 protocol SessionFileRestrictionsProtocol {
     var isFileSharingEnabled: Bool { get }

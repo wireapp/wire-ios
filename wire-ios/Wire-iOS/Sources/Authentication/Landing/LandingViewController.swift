@@ -17,10 +17,10 @@
 //
 
 import UIKit
+import WireCommonComponents
+import WireSyncEngine
 import WireSystem
 import WireTransport
-import WireSyncEngine
-import WireCommonComponents
 
 protocol LandingViewControllerDelegate: AnyObject {
     func landingViewControllerDidChooseCreateAccount()

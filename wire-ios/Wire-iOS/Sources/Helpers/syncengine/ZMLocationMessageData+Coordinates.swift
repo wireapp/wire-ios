@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Contacts
 import Foundation
 import MapKit
-import Contacts
 import WireDataModel
 
 extension Message {
@@ -49,7 +49,7 @@ extension LocationMessageData {
 
     var mapItem: MKMapItem? {
         var addressDictionary: [String: AnyObject]?
-        if let name = name {
+        if let name {
             addressDictionary = [CNPostalAddressStreetKey: name as AnyObject]
         }
 

@@ -65,7 +65,7 @@ extension MediaAssetView where Self: FLAnimatedImageView {
         }
 
         set {
-            if let newValue = newValue {
+            if let newValue {
                 if newValue.isGIF == true {
                     animatedImage = newValue as? FLAnimatedImage
                 } else {

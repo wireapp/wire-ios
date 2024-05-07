@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
@@ -43,7 +42,7 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
     @objc
     func deviceOrientationChanged(_ notification: Notification?) {
         guard
-            let controllerToPresentOn = controllerToPresentOn,
+            let controllerToPresentOn,
             controllerToPresentOn.isIPadRegular()
         else { return }
 

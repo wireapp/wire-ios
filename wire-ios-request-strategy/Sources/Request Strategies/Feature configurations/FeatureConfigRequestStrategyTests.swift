@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireRequestStrategySupport
 @testable import WireRequestStrategy
+import WireRequestStrategySupport
+import XCTest
 
 final class FeatureConfigRequestStrategyTests: MessagingTestBase {
 

@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 
 enum AvailabilityStringBuilder {
 
@@ -68,7 +68,7 @@ enum AvailabilityStringBuilder {
             title += youSuffix
         }
 
-        guard let textColor = color, let iconColor = iconColor else { return nil }
+        guard let textColor = color, let iconColor else { return nil }
         let icon = AvailabilityStringBuilder.icon(for: availability, with: iconColor, and: fontSize)
         var attributedText = IconStringsBuilder.iconString(
             leadingIcons: [icon].compactMap(\.self),

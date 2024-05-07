@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import Contacts
 import AddressBook
+import Contacts
+import Foundation
 
 @objcMembers public class AddressBookEntry: ZMManagedObject {
 
