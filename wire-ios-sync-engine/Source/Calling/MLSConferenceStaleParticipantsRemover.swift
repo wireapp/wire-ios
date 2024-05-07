@@ -234,7 +234,7 @@ private extension MLSClientID {
         }
         guard
             let userID = remoteIdentifier?.transportString(),
-            let domain = domain
+            let domain
         else {
             return nil
         }

@@ -72,7 +72,7 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
             let (otr, sha) = (otrKey ?? Data.randomEncryptionKey(), sha256 ?? Data.zmRandomSHA256Key())
             let remoteData = WireProtos.Asset.RemoteData.with {
                 $0.assetID = assetID
-                if let assetDomain = assetDomain {
+                if let assetDomain {
                     $0.assetDomain = assetDomain
                 }
                 $0.otrKey = otr

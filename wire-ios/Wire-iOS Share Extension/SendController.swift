@@ -124,7 +124,7 @@ final class SendController {
         if unsentSendables.contains(where: { $0.needsPreparation }) {
             progress(.preparing)
             prepare(unsentSendables: unsentSendables) { [weak self] in
-                guard let `self` = self else { return }
+                guard let self else { return }
                 guard !self.isCancelled else {
                     return progress(.done)
                 }
@@ -201,7 +201,7 @@ final class SendController {
 
         let appendToMessages: (Sendable?) -> Void = { sendable in
             defer { sendingGroup.leave() }
-            guard let sendable = sendable else { return }
+            guard let sendable else { return }
             messages.append(sendable)
         }
 
@@ -215,7 +215,7 @@ final class SendController {
         let error = unsentSendables.compactMap(\.error).first
 
         sendingGroup.notify(queue: .main) {
-            if let error = error {
+            if let error {
                 completion(.failure(error))
             } else {
                 completion(.success(messages))

@@ -222,7 +222,7 @@ extension AddressBookTests {
         self.addressBook.encodeWithCompletionHandler(queue, startingContactIndex: 0, maxNumberOfContacts: 100) { chunk in
 
             // then
-            if let chunk = chunk {
+            if let chunk {
                 XCTAssertEqual(chunk.numberOfTotalContacts, 3)
                 XCTAssertEqual(chunk.includedContacts, UInt(0)..<UInt(3))
                 let expected = [
@@ -281,7 +281,7 @@ extension AddressBookTests {
         self.addressBook.encodeWithCompletionHandler(queue, startingContactIndex: 0, maxNumberOfContacts: 2) { chunk in
 
             // then
-            if let chunk = chunk {
+            if let chunk {
                 XCTAssertEqual(chunk.numberOfTotalContacts, 3)
                 XCTAssertEqual(chunk.includedContacts, UInt(0)..<UInt(2))
                 let expected = [
@@ -319,7 +319,7 @@ extension AddressBookTests {
         self.addressBook.encodeWithCompletionHandler(queue, startingContactIndex: 1, maxNumberOfContacts: 2) { chunk in
 
             // then
-            if let chunk = chunk {
+            if let chunk {
                 XCTAssertEqual(chunk.numberOfTotalContacts, 4)
                 XCTAssertEqual(chunk.includedContacts, UInt(1)..<UInt(3))
                 let expected = [
@@ -356,7 +356,7 @@ extension AddressBookTests {
         self.addressBook.encodeWithCompletionHandler(queue, startingContactIndex: 2, maxNumberOfContacts: 20) { chunk in
 
             // then
-            if let chunk = chunk {
+            if let chunk {
                 XCTAssertEqual(chunk.numberOfTotalContacts, 4)
                 XCTAssertEqual(chunk.includedContacts, UInt(2)..<UInt(4))
                 let expected = [
@@ -392,7 +392,7 @@ extension AddressBookTests {
         self.addressBook.encodeWithCompletionHandler(queue, startingContactIndex: 20, maxNumberOfContacts: 20) { chunk in
 
             // then
-            if let chunk = chunk {
+            if let chunk {
                 XCTAssertEqual(chunk.numberOfTotalContacts, 3)
                 XCTAssertEqual(chunk.includedContacts, UInt(20)..<UInt(20))
                 XCTAssertEqual(chunk.otherContactsHashes.count, 0)
@@ -452,7 +452,7 @@ extension AddressBookTests {
 
 // MARK: - Helpers
 private func checkEqual(lhs: [String: [String]]?, rhs: [String: [String]]?, line: UInt = #line, file: StaticString = #file) {
-    guard let lhs = lhs, let rhs = rhs else {
+    guard let lhs, let rhs else {
         XCTFail("Value is nil", file: file, line: line)
         return
     }

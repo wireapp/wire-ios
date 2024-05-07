@@ -74,7 +74,7 @@ extension MockTransportSession {
             break
         }
 
-        if let response = response {
+        if let response {
             return response
         } else {
             return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil, apiVersion: request.apiVersion)
@@ -82,7 +82,7 @@ extension MockTransportSession {
     }
 
     private func fetchTeam(with identifier: String?, apiVersion: APIVersion) -> ZMTransportResponse? {
-        guard let identifier = identifier else { return nil }
+        guard let identifier else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate),
               let selfMemberships = selfUser.memberships, selfMemberships.contains(where: { $0.team == team })
@@ -106,7 +106,7 @@ extension MockTransportSession {
 
     private func paginate(teams: [MockTeam], start: String?, size: Int?) -> ([MockTeam], Bool) {
         var startTeamIndex: Int?
-        if let start = start {
+        if let start {
             for (idx, team) in teams.enumerated() where team.identifier == start {
                 if idx + 1 < teams.count {
                     startTeamIndex = idx + 1
@@ -130,7 +130,7 @@ extension MockTransportSession {
     }
 
     private func deleteTeamConversation(teamId: String?, conversationId: String?, apiVersion: APIVersion) -> ZMTransportResponse? {
-        guard let teamId = teamId, let conversationId = conversationId  else { return nil }
+        guard let teamId, let conversationId  else { return nil }
 
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
 
@@ -152,7 +152,7 @@ extension MockTransportSession {
     }
 
     private func sendTeamInvitation(with identifier: String?, apiVersion: APIVersion) -> ZMTransportResponse? {
-        guard let identifier = identifier else { return nil }
+        guard let identifier else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound(apiVersion: apiVersion) }
 
@@ -164,7 +164,7 @@ extension MockTransportSession {
     }
 
     private func fetchMembersForTeam(with teamId: String?, apiVersion: APIVersion) -> ZMTransportResponse? {
-        guard let teamId = teamId else { return nil }
+        guard let teamId else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound(apiVersion: apiVersion) }
         if let permissionError = ensurePermission(.getMemberPermissions, in: team, apiVersion: apiVersion) {
@@ -180,7 +180,7 @@ extension MockTransportSession {
     }
 
     private func fetchMembersForTeam(with teamId: String?, userIds: [String]?, apiVersion: APIVersion) -> ZMTransportResponse? {
-        guard let teamId = teamId, let userIds = userIds else { return nil }
+        guard let teamId, let userIds else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound(apiVersion: apiVersion) }
         let members = team.members.filter({ userIds.contains($0.user.identifier) })
@@ -197,7 +197,7 @@ extension MockTransportSession {
     }
 
     private func fetchRolesForTeam(with identifier: String?, apiVersion: APIVersion) -> ZMTransportResponse? {
-        guard let identifier = identifier else { return nil }
+        guard let identifier else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound(apiVersion: apiVersion) }
 
@@ -209,7 +209,7 @@ extension MockTransportSession {
     }
 
     private func fetchMemberForTeam(withTeamId teamId: String?, userId: String?, apiVersion: APIVersion) -> ZMTransportResponse? {
-        guard let teamId = teamId, let userId = userId else { return nil }
+        guard let teamId, let userId else { return nil }
         let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
         guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound(apiVersion: apiVersion) }
         guard let member = team.members.first(where: { $0.user.identifier == userId }) else { return .notTeamMember(apiVersion: apiVersion) }
@@ -235,7 +235,7 @@ extension MockTransportSession {
 
     private func approveUserLegalHold(inTeam teamId: String?, forUser userId: String?, payload: ZMTransportData?, method: ZMTransportRequestMethod, apiVersion: APIVersion) -> ZMTransportResponse? {
         // 1) Assert request contents
-        guard let teamId = teamId, let userId = userId else { return nil }
+        guard let teamId, let userId else { return nil }
         guard method == .put else { return nil }
 
         // 2) Check the user in the team

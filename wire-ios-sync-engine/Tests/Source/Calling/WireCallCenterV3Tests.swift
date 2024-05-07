@@ -36,13 +36,13 @@ final class WireCallCenterTransportMock: WireCallCenterTransport {
     }
 
     func requestCallConfig(completionHandler: @escaping CallConfigRequestCompletion) {
-        if let mockCallConfigResponse = mockCallConfigResponse {
+        if let mockCallConfigResponse {
             completionHandler(mockCallConfigResponse.0, mockCallConfigResponse.1)
         }
     }
 
     func requestClientsList(conversationId: AVSIdentifier, completionHandler: @escaping ([AVSClient]) -> Void) {
-        if let mockClientsRequestResponse = mockClientsRequestResponse {
+        if let mockClientsRequestResponse {
             completionHandler(mockClientsRequestResponse)
         }
     }

@@ -197,7 +197,7 @@ public extension ZMUser {
                 return true
             }
 
-            if let team = team {
+            if let team {
                 // If the self user belongs to a team he/she's a guest in every non team conversation
                 return conversation.teamRemoteIdentifier != team.remoteIdentifier
             } else {
