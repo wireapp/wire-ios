@@ -352,7 +352,7 @@ final class ConversationListViewModel: NSObject {
     // TODO: Question: we may have multiple items in folders now. return array of IndexPaths?
     // swiftlint:enable todo_requires_jira_link
     func indexPath(for item: ConversationListItem?) -> IndexPath? {
-        guard let item = item else { return nil }
+        guard let item else { return nil }
 
         for (sectionIndex, section) in sections.enumerated() {
             if let index = section.index(for: item) {
@@ -511,7 +511,7 @@ final class ConversationListViewModel: NSObject {
         guard let conversationDirectory = userSession?.conversationDirectory else { return }
 
         var newValue: [Section]
-        if let kind = kind,
+        if let kind,
             let sectionNumber = self.sectionNumber(for: kind) {
             newValue = sections
             let newList = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
@@ -535,13 +535,13 @@ final class ConversationListViewModel: NSObject {
             delegate?.reload(using: changeset, interrupt: { _ in
                 return false
             }, setData: { data in
-                if let data = data {
+                if let data {
                     self.sections = data
                 }
             })
         }
 
-        if let kind = kind,
+        if let kind,
            let sectionNumber = sectionNumber(for: kind) {
             delegate?.listViewModel(self, didUpdateSection: sectionNumber)
         } else {
@@ -553,7 +553,7 @@ final class ConversationListViewModel: NSObject {
 
     @discardableResult
     func select(itemToSelect: ConversationListItem?) -> Bool {
-        guard let itemToSelect = itemToSelect else {
+        guard let itemToSelect else {
             internalSelect(itemToSelect: nil)
             return false
         }
@@ -576,7 +576,7 @@ final class ConversationListViewModel: NSObject {
     private func internalSelect(itemToSelect: ConversationListItem?) {
         selectedItem = itemToSelect
 
-        if let itemToSelect = itemToSelect {
+        if let itemToSelect {
             delegate?.listViewModel(self, didSelectItem: itemToSelect)
         }
     }
@@ -632,7 +632,7 @@ final class ConversationListViewModel: NSObject {
             delegate?.reload(using: changeset, interrupt: { _ in
                 return false
             }, setData: { data in
-                if let data = data {
+                if let data {
                     self.sections = data
                 }
             })
@@ -695,7 +695,7 @@ final class ConversationListViewModel: NSObject {
     }
 
     static var persistentURL: URL? {
-        guard let persistentDirectory = persistentDirectory else { return nil }
+        guard let persistentDirectory else { return nil }
 
         return URL.directoryURL(persistentDirectory)?.appendingPathComponent(ConversationListViewModel.persistentFilename)
     }

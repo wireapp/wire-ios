@@ -60,22 +60,24 @@ extension SLComposeServiceViewController {
             let defaultDisplayMode: PreviewDisplayMode? = numberOfAttachments > 1 ? .mixed(numberOfAttachments, nil) : nil
 
             switch attachmentType {
+
             case .walletPass, .image:
                 self.loadSystemPreviewForAttachment(attachment, type: attachmentType) { image, preferredDisplayMode in
-                    completeTask(image, defaultDisplayMode.combine(with: preferredDisplayMode))
+                    completeTask(image, .combined(defaultDisplayMode, preferredDisplayMode))
                 }
 
             case .video:
                 self.loadSystemPreviewForAttachment(attachment, type: attachmentType) { image, preferredDisplayMode in
-                    completeTask(image, defaultDisplayMode.combine(with: preferredDisplayMode) ?? .video)
+                    completeTask(image, .combined(defaultDisplayMode, preferredDisplayMode) ?? .video)
                 }
 
             case .rawFile,
                  .fileUrl:
                 let fallbackIcon = self.fallbackIcon(forAttachment: attachment, ofType: .rawFile)
-                completeTask(.placeholder(fallbackIcon), defaultDisplayMode.combine(with: .placeholder))
+                completeTask(.placeholder(fallbackIcon), .combined(defaultDisplayMode, .placeholder))
+
             case .url:
-                let displayMode = defaultDisplayMode.combine(with: .placeholder)
+                let displayMode = PreviewDisplayMode.combined(defaultDisplayMode, .placeholder)
 
                 attachment.fetchURL {
                     if let url = $0 {
@@ -163,5 +165,20 @@ extension SLComposeServiceViewController {
             return .paperclip
         }
     }
+}
 
+// MARK: - PreviewDisplayMode.combined
+
+extension PreviewDisplayMode {
+
+    /// Combines the current display mode with the current one if they're compatible.
+    fileprivate static func combined(
+        _ defaultDisplayMode: PreviewDisplayMode?,
+        _ preferredDisplayMode: PreviewDisplayMode?
+    ) -> Self? {
+
+        guard let defaultDisplayMode else { return preferredDisplayMode }
+        guard case .mixed(let count, _) = defaultDisplayMode else { return defaultDisplayMode }
+        return .mixed(count, preferredDisplayMode)
+    }
 }

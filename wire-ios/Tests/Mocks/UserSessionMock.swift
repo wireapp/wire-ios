@@ -106,8 +106,6 @@ final class UserSessionMock: UserSession {
     var isCustomAppLockPasscodeSet: Bool = false
     var needsToNotifyUserOfAppLockConfiguration: Bool = false
 
-    var searchUsersCache: SearchUsersCache { fatalError("not implemented yet") }
-
     func openAppLock() throws {
         openApp.append(())
     }
@@ -306,10 +304,20 @@ final class UserSessionMock: UserSession {
 
     func fetchAllClients() {}
 
+    var createTeamOneOnOneWithCompletion_Invocations: [(user: UserType, completion: (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void)] = []
+    var createTeamOneOnOneWithCompletion_MockMethod: ((UserType, @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void) -> Void)?
+
     func createTeamOneOnOne(
         with user: UserType,
-        completion: @escaping (Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+        completion: @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
     ) {
+        createTeamOneOnOneWithCompletion_Invocations.append((user: user, completion: completion))
+
+        guard let mock = createTeamOneOnOneWithCompletion_MockMethod else {
+            fatalError("no mock for `createTeamOneOnOneWithCompletion`")
+        }
+
+        mock(user, completion)
     }
 
     var mockCheckOneOnOneConversationIsReady: MockCheckOneOnOneConversationIsReadyUseCaseProtocol?

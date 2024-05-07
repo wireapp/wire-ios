@@ -98,7 +98,7 @@ struct ProfileDeviceDetailsView: View {
         ScrollView {
             VStack(alignment: .leading) {
                 if viewModel.isE2eIdentityEnabled {
-                    if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
+                    if let thumbprint = viewModel.mlsThumbprint, !thumbprint.isEmpty {
                         mlsView
                     }
                     e2eIdentityCertificateView
@@ -168,7 +168,7 @@ struct ProfileDeviceDetailsView: View {
             .foregroundColor(Color(uiColor: SemanticColors.Label.textSectionHeader))
             .padding([.leading, .top, .trailing], ViewConstants.Padding.standard)
 
-        if let description = description {
+        if let description {
             VStack(alignment: .leading) {
                 Text(description)
                     .font(.textStyle(.h4))

@@ -109,7 +109,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         performImageSaveAnimation snapshotView: UIView?,
         sourceRect: CGRect
     ) {
-        if let snapshotView = snapshotView {
+        if let snapshotView {
             view.addSubview(snapshotView)
         }
         snapshotView?.frame = view.convert(sourceRect, from: contentViewController.view)
@@ -182,7 +182,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
                 )
         }
 
-        if let participantsController = participantsController {
+        if let participantsController {
             presentParticipantsViewController(participantsController, from: sourceView)
         }
     }
