@@ -45,6 +45,7 @@ final class AccountSelectionViewController: UIViewController {
         view.addSubview(accountsView)
         accountsView.translatesAutoresizingMaskIntoConstraints = false
         accountsView.fitIn(view: view)
+        accountsView.accounts = SessionManager.shared?.accountManager.accounts ?? []
 
         setShowAccounts(to: SessionManager.shared?.accountManager.accounts.count > 1)
     }
@@ -52,10 +53,6 @@ final class AccountSelectionViewController: UIViewController {
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func viewDidLoad() {
-        fatalError()
     }
 
     private var showAccounts: Bool = false

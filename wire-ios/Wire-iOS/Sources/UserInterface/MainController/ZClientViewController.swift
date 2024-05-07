@@ -61,9 +61,8 @@ final class ZClientViewController: UIViewController {
     ) {
         self.userSession = userSession
 
-        let accountSwitcher: AccountSwitcher! = nil
         let accountSelectionViewControllerBuilder = AccountSelectionViewControllerBuilder(
-            accountSwitcher: accountSwitcher
+            accountSwitcher: SessionManager.shared!
         )
         let selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
             selfUser: userSession.selfUser,

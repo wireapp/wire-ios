@@ -24,7 +24,7 @@ protocol AccountView: BaseAccountView {
     var collapsed: Bool { get set }
     var hasUnreadMessages: Bool { get }
     var account: Account { get }
-    var onTap: (Account?) -> Void { get set }
+    var onTap: (Account) -> Void { get set }
 
     func createDotConstraints() -> [NSLayoutConstraint]
     func update()

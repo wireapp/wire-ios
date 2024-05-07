@@ -25,91 +25,50 @@ protocol AccountSelectorViewDelegate: AnyObject {
 }
 
 final class AccountSelectorView: UIView {
+
     weak var delegate: AccountSelectorViewDelegate?
 
-    private var selfUserObserverToken: NSObjectProtocol!
-    private var applicationDidBecomeActiveToken: NSObjectProtocol!
+    private var accountViews: [BaseAccountView] = []
+    private let lineView = UIStackView()
 
-    fileprivate var accounts: [Account]? {
+    var accounts = [Account]() {
         didSet {
-            guard ZMUserSession.shared() != nil else {
-                return
+            lineView.arrangedSubviews.forEach { subview in
+                subview.removeFromSuperview()
             }
-
-            accountViews = accounts?.map({ AccountViewFactory.viewFor(account: $0, displayContext: .accountSelector) }) ?? []
-
+            accountViews = accounts.compactMap { account in
+                AccountViewFactory.viewFor(account: account, displayContext: .accountSelector)
+            }
             accountViews.forEach { accountView in
                 accountView.unreadCountStyle = .current
                 accountView.onTap = { [weak self] account in
-                    guard let account else { return }
                     self?.delegate?.accountSelectorDidSelect(account: account)
                 }
+                lineView.addArrangedSubview(accountView)
+                accountView.collapsed = false
             }
-
-            lineView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-
-            accountViews.forEach {
-                lineView.addArrangedSubview($0)
-            }
-            topOffsetConstraint.constant = imagesCollapsed ? -20 : 0
-            accountViews.forEach { $0.collapsed = imagesCollapsed }
         }
     }
 
-    private var accountViews: [BaseAccountView] = []
-    private lazy var lineView: UIStackView = {
-        let view = UIStackView(axis: .horizontal)
-        view.spacing = 6
-        view.translatesAutoresizingMaskIntoConstraints = false
-
-        return view
-    }()
-
-    private var topOffsetConstraint: NSLayoutConstraint!
-
-    var imagesCollapsed: Bool = false {
-        didSet {
-            topOffsetConstraint.constant = imagesCollapsed ? -20 : 0
-
-            accountViews.forEach { $0.collapsed = imagesCollapsed }
-
-            layoutIfNeeded()
-        }
-    }
-
-    init() {
-        super.init(frame: .zero)
-
-        addSubview(lineView)
-
-        topOffsetConstraint = lineView.centerYAnchor.constraint(equalTo: centerYAnchor)
-
-        NSLayoutConstraint.activate([
-            topOffsetConstraint,
-            lineView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            lineView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            lineView.heightAnchor.constraint(equalTo: heightAnchor)
-        ])
-
-        applicationDidBecomeActiveToken = NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification, object: nil, queue: nil, using: { [weak self] _ in
-            self?.updateAccounts()
-        })
-
-        updateAccounts()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupSubviews()
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
-    fileprivate func updateAccounts() {
-        accounts = SessionManager.shared?.accountManager.accounts
-    }
-}
-
-private extension Account {
-    var isActive: Bool {
-        return SessionManager.shared?.accountManager.selectedAccount == self
+    private func setupSubviews() {
+        lineView.spacing = 6
+        lineView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(lineView)
+        NSLayoutConstraint.activate([
+            lineView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            lineView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            lineView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            lineView.heightAnchor.constraint(equalTo: heightAnchor)
+        ])
     }
 }

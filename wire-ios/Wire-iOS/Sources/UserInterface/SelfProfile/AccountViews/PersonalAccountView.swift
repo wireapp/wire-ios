@@ -56,9 +56,7 @@ final class PersonalAccountView: BaseAccountView, AccountView {
         }
 
         self.imageViewContainer.addSubview(userImageView)
-
         userImageView.translatesAutoresizingMaskIntoConstraints = false
-
         userImageView.fitIn(view: imageViewContainer, inset: 2)
 
         update()
@@ -95,6 +93,7 @@ final class PersonalAccountView: BaseAccountView, AccountView {
 }
 
 extension PersonalAccountView {
+
     override func userDidChange(_ changeInfo: UserChangeInfo) {
         super.userDidChange(changeInfo)
         if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {

@@ -63,7 +63,7 @@ class BaseAccountView: UIView {
         layoutSubviews()
     }
 
-    var onTap: (Account?) -> Void = { _ in }
+    var onTap: (Account) -> Void = { _ in }
 
     var accessibilityState: String {
        typealias ConversationListHeaderAccessibilityLocale = L10n.Localizable.ConversationList.Header.SelfTeam.AccessibilityValue

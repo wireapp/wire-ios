@@ -65,12 +65,7 @@ public class MockAccountSwitcher: AccountSwitcher {
 
     // MARK: - currentAccount
 
-    public var currentAccount: Account {
-        get { return underlyingCurrentAccount }
-        set(value) { underlyingCurrentAccount = value }
-    }
-
-    public var underlyingCurrentAccount: Account!
+    public var currentAccount: Account?
 
 
     // MARK: - switchTo

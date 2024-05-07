@@ -17,6 +17,7 @@
 //
 
 // sourcery: AutoMockable
+@MainActor
 public protocol AccountSwitcher {
     var currentAccount: Account? { get }
     func switchTo(account: Account) async throws
