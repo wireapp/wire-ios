@@ -40,22 +40,22 @@ extension ApplicationStateObserving {
         addObserverToken(NotificationCenter.default.addObserver(forName: UIApplication.didEnterBackgroundNotification,
                                                                 object: nil,
                                                                 queue: nil) { [weak self] _ in
-            guard let observer = self else { return }
-            observer.applicationDidEnterBackground()
+            guard let self else { return }
+            applicationDidEnterBackground()
         })
 
         addObserverToken(NotificationCenter.default.addObserver(forName: UIApplication.didBecomeActiveNotification,
                                                                 object: nil,
                                                                 queue: nil) { [weak self] _ in
-            guard let observer = self else { return }
-            observer.applicationDidBecomeActive()
+            guard let self else { return }
+            applicationDidBecomeActive()
         })
 
         addObserverToken(NotificationCenter.default.addObserver(forName: UIApplication.willEnterForegroundNotification,
                                                                 object: nil,
                                                                 queue: nil) { [weak self] _ in
-            guard let observer = self else { return }
-            observer.applicationWillEnterForeground()
+            guard let self else { return }
+            applicationWillEnterForeground()
         })
     }
 }
@@ -70,8 +70,8 @@ extension ContentSizeCategoryObserving {
         addObserverToken(NotificationCenter.default.addObserver(forName: UIContentSizeCategory.didChangeNotification,
                                                                 object: nil,
                                                                 queue: nil) { [weak self] _ in
-            guard let observer = self else { return }
-            observer.contentSizeCategoryDidChange()
+            guard let self else { return }
+            contentSizeCategoryDidChange()
         })
     }
 }
@@ -90,8 +90,7 @@ extension AudioPermissionsObserving {
         addObserverToken(NotificationCenter.default.addObserver(forName: Notification.Name.UserGrantedAudioPermissions,
                                                                 object: nil,
                                                                 queue: nil) { [weak self] _ in
-            guard let observer = self else { return }
-            observer.userDidGrantAudioPermissions()
+            self?.userDidGrantAudioPermissions()
         })
     }
 }
