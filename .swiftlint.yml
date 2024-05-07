@@ -7,6 +7,7 @@ opt_in_rules:
   - reduce_into
   - shorthand_optional_binding
   - sorted_imports
+  - unhandled_throwing_task
   - unneeded_parentheses_in_closure_argument
   - unused_optional_binding
   - yoda_condition

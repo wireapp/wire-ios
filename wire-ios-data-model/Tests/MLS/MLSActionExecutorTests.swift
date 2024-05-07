@@ -118,11 +118,19 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // When
         Task {
-            _ = try await sut.updateKeyMaterial(for: groupID)
+            do {
+                _ = try await sut.updateKeyMaterial(for: groupID)
+            } catch {
+                XCTFail(String(reflecting: error))
+            }
         }
         Task {
-            try await Task.sleep(nanoseconds: 1_000_000) // ensure we decrypt after update material
-            try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID)
+            do {
+                try await Task.sleep(nanoseconds: 1_000_000) // ensure we decrypt after update material
+                try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID)
+            } catch {
+                XCTFail(String(reflecting: error))
+            }
         }
 
         mockCoreCrypto.decryptMessageConversationIdPayload_MockMethod = { _, _ in
@@ -206,11 +214,19 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // When
         Task {
-            _ = try await sut.updateKeyMaterial(for: groupID1)
+            do {
+                _ = try await sut.updateKeyMaterial(for: groupID1)
+            } catch {
+                XCTFail(String(reflecting: error))
+            }
         }
         Task {
-            try await Task.sleep(nanoseconds: 1_000_000) // ensure we decrypt after update material
-            try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID2)
+            do {
+                try await Task.sleep(nanoseconds: 1_000_000) // ensure we decrypt after update material
+                try await _ = sut.decryptMessage(Data.random(byteCount: 1), in: groupID2)
+            } catch {
+                XCTFail(String(reflecting: error))
+            }
         }
 
         // the update key material operation shouldn't block the decrypt message

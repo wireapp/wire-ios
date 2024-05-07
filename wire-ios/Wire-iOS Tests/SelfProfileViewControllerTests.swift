@@ -143,7 +143,11 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
         // prevent app crash when checking Analytics.shared.isOptout
         Analytics.shared = Analytics(optedOut: true)
         selfUser = MockUserType.createSelfUser(name: userName, inTeam: teamMember ? UUID() : nil)
-        sut = SelfProfileViewController(selfUser: selfUser, userRightInterfaceType: MockUserRight.self, userSession: userSession)
+        sut = SelfProfileViewController(
+            selfUser: selfUser,
+            userRightInterfaceType: MockUserRight.self,
+            userSession: userSession
+        )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }
 }

@@ -40,7 +40,7 @@ final class QuickSyncObserverTests: MessagingTestBase {
 
         Task {
             // Sleeping in order to hit the code path where we start observing .quickSyncCompletedNotification
-            try await Task.sleep(nanoseconds: 250_000_000)
+            try? await Task.sleep(nanoseconds: 250_000_000)
             NotificationInContext(name: .quickSyncCompletedNotification, context: syncMOC.notificationContext).post()
         }
 
@@ -52,8 +52,7 @@ final class QuickSyncObserverTests: MessagingTestBase {
 
     struct Arrangement {
 
-        struct Scaffolding {
-        }
+        struct Scaffolding {}
 
         let coreDataStack: CoreDataStack
         let applicationStatus = MockApplicationStatus()

@@ -53,7 +53,7 @@ final class MessageDependencyResolverTests: MessagingTestBase {
 
         Task {
             // Sleeping in order to hit the code path where we start observing RequestAvailable
-            try await Task.sleep(nanoseconds: 250_000_000)
+            try? await Task.sleep(nanoseconds: 250_000_000)
 
             await syncMOC.perform {
                 self.groupConversation.needsToBeUpdatedFromBackend = false
