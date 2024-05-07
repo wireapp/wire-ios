@@ -255,7 +255,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         mockCoreCrypto.exportSecretKeyConversationIdKeyLength_MockMethod = { _, _ in
-            throw CryptoError.conversationNotFound
+            throw CryptoError.ConversationNotFound(message: "conversation not found")
         }
 
         // When / Then
@@ -405,7 +405,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             XCTAssertEqual($1, .basic)
             XCTAssertEqual($2, config)
 
-            throw CryptoError.malformedIdentifier
+            throw CryptoError.MalformedIdentifier(message: "malformed identifier")
         }
 
         // when / then
