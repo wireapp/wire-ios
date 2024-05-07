@@ -25,6 +25,10 @@ final class BackendInfoAPITests: XCTestCase {
 
     // MARK: - V0
 
+    func testFail() {
+        XCTFail("test failed")
+    }
+
     func testGetBackendInfoRequestV0() async throws {
         // Given
         let httpClient = HTTPClientMock()
