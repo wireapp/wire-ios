@@ -16,32 +16,25 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import SwiftUI
 
-final class Optional_ApplyTests: XCTestCase {
+struct ScreenCurtainView: View {
 
-    func testThatItExecutesTheBlockIfSelfIsSome() {
-        // given
-        let sut: Int? = 42
-        var closurePrameter: Int?
-
-        // when
-        sut.apply {
-            closurePrameter = $0
+    var body: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                // for some reason `Image(.Wire.shield)` didn't show the shield
+                Image(uiImage: .init(resource: .Wire.shield))
+                Spacer()
+            }
+            Spacer()
         }
-
-        // then
-        XCTAssertEqual(closurePrameter, 42)
+        .background(.black)
     }
+}
 
-    func testThatItDoesNotExecuteTheBlockIfSelfIsNone() {
-        // given
-        let sut: Int? = nil
-
-        // then
-        sut.apply { _ in
-            XCTFail()
-        }
-    }
-
+#Preview {
+    ScreenCurtainView()
 }
