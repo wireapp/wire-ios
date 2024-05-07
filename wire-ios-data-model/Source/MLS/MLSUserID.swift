@@ -48,18 +48,10 @@ public struct MLSUserID {
         )
     }
 
-    public init?(
-        userID: String,
-        domain: String
-    ) {
-        guard
-            userID.isNonEmpty,
-            domain.isNonEmpty
-        else {
+    public init?(userID: String, domain: String) {
+        if userID.isEmpty || domain.isEmpty {
             return nil
         }
-
         rawValue = "\(userID.lowercased())@\(domain.lowercased())"
     }
-
 }

@@ -39,6 +39,13 @@ protocol CompanyLoginControllerDelegate: AnyObject {
 
     /// Called when the company login controller cancels the company login flow.
     func controllerDidCancelCompanyLoginFlow(_ controller: CompanyLoginController)
+
+    /// Called when the company login contoller requires user confirmation to switch backend.
+    func controller(
+        _ controller: CompanyLoginController,
+        didRequestUserConfirmationToSwitchToBackend environment: BackendEnvironment,
+        didConfirm: @escaping (Bool) -> Void
+    )
 }
 
 ///
@@ -100,7 +107,7 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
     }
 
     deinit {
-        token.apply(NotificationCenter.default.removeObserver)
+        token.map(NotificationCenter.default.removeObserver)
     }
 
     private func setupObservers() {
@@ -128,6 +135,22 @@ extension CompanyLoginController {
         }
     }
 
+    private func requestUserConfirmationForBackendSwitch(
+        to environment: BackendEnvironment,
+        didConfirm: @escaping (Bool) -> Void
+    ) {
+        guard let delegate else {
+            didConfirm(false)
+            return
+        }
+
+        delegate.controller(
+            self,
+            didRequestUserConfirmationToSwitchToBackend: environment,
+            didConfirm: didConfirm
+        )
+    }
+
     /// Presents the email/SSO login alert
     /// - parameter prefilledInput: fills the alert input field (optional)
     /// - parameter error: displays error in the alert (optional)
@@ -148,7 +171,7 @@ extension CompanyLoginController {
             error: error,
             completion: { [weak self] input in
                 self?.ssoAlert = nil
-                input.apply(inputHandler)
+                input.map(inputHandler)
             }
         )
 
@@ -274,15 +297,24 @@ extension CompanyLoginController {
     ///
     /// - Parameter url: backend url to switch to
     func updateBackendEnvironment(with url: URL) {
+        guard let sessionManager = SessionManager.shared else {
+            return
+        }
+
         delegate?.controller(self, showLoadingView: true)
-        SessionManager.shared?.switchBackend(configuration: url) { [weak self] result in
+
+        sessionManager.fetchBackendEnvironment(at: url) { [weak self] result in
             guard let self else { return }
             self.delegate?.controller(self, showLoadingView: false)
 
             switch result {
             case .success(let backendEnvironment):
-                BackendEnvironment.shared = backendEnvironment
-                self.startAutomaticSSOFlow(promptOnError: false)
+                self.requestUserConfirmationForBackendSwitch(to: backendEnvironment) { didConfirm in
+                    guard didConfirm else { return }
+                    sessionManager.switchBackend(to: backendEnvironment)
+                    BackendEnvironment.shared = backendEnvironment
+                    self.startAutomaticSSOFlow(promptOnError: false)
+                }
             case .failure(let error):
                 if case .loggedInAccounts = error as? SessionManager.SwitchBackendError {
                     self.presentCompanyLoginAlert(error: .domainAssociatedWithWrongServer)

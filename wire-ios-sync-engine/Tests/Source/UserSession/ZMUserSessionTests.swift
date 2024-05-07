@@ -316,6 +316,10 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
             results: [.success(())],
             context: syncMOC.notificationContext
         )
+        let pushSupportedProtocolsActionHandler = MockActionHandler<PushSupportedProtocolsAction>(
+            result: .success(()),
+            context: syncMOC.notificationContext
+        )
 
         syncMOC.performAndWait {
             sut.didFinishQuickSync()
@@ -324,6 +328,8 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
         // THEN
         XCTAssertTrue(waitForOfflineStatus())
+        XCTAssertEqual(mockGetFeatureConfigsActionHandler.performedActions.count, 1)
+        XCTAssertEqual(pushSupportedProtocolsActionHandler.performedActions.count, 1)
     }
 
     func testThatWeSetUserSessionToSynchronizingWhenSyncIsStarted() {
@@ -472,7 +478,11 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         mockMLSService.uploadKeyPackagesIfNeeded_MockMethod = {}
         mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
 
-        let handler = MockActionHandler<GetFeatureConfigsAction>(
+        let getFeatureConfigsActionHandler = MockActionHandler<GetFeatureConfigsAction>(
+            result: .success(()),
+            context: syncMOC.notificationContext
+        )
+        let pushSupportedProtocolsActionHandler = MockActionHandler<PushSupportedProtocolsAction>(
             result: .success(()),
             context: syncMOC.notificationContext
         )
@@ -491,13 +501,14 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
-        withExtendedLifetime(handler) {
-            XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
-            XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
-            XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
-            XCTAssertFalse(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
+        XCTAssertFalse(mockMLSService.performPendingJoins_Invocations.isEmpty)
+        XCTAssertFalse(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.isEmpty)
+        XCTAssertFalse(mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_Invocations.isEmpty)
+        XCTAssertFalse(mockMLSService.commitPendingProposalsIfNeeded_Invocations.isEmpty)
 
-            XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
-        }
+        XCTAssertEqual(mockRecurringActionService.performActionsIfNeeded_Invocations.count, 1)
+
+        XCTAssertEqual(getFeatureConfigsActionHandler.performedActions.count, 1)
+        XCTAssertEqual(pushSupportedProtocolsActionHandler.performedActions.count, 1)
     }
 }

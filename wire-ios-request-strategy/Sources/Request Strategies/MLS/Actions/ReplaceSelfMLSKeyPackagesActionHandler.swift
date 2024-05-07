@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 
-class ReplaceSelfMLSKeyPackagesActionHandler: ActionHandler<ReplaceSelfMLSKeyPackagesAction> {
+final class ReplaceSelfMLSKeyPackagesActionHandler: ActionHandler<ReplaceSelfMLSKeyPackagesAction> {
 
     // MARK: - Methods
 
@@ -31,7 +30,7 @@ class ReplaceSelfMLSKeyPackagesActionHandler: ActionHandler<ReplaceSelfMLSKeyPac
             return nil
         }
 
-        guard action.clientID.isNonEmpty, action.keyPackages.isNonEmpty else {
+        guard !action.clientID.isEmpty, !action.keyPackages.isEmpty else {
             action.fail(with: .invalidParameters)
             return nil
         }
@@ -64,5 +63,4 @@ class ReplaceSelfMLSKeyPackagesActionHandler: ActionHandler<ReplaceSelfMLSKeyPac
             action.fail(with: .unknown(status: response.httpStatus))
         }
     }
-
 }

@@ -27,7 +27,7 @@ class DynamicFontButton: StylableButton, DynamicTypeCapable {
 
     private let onRedrawFont: () -> UIFont?
 
-    init(style: UIFont.FontStyle = .body) {
+    init(style: WireTextStyle = .body1) {
         // Not needed when we use a font style.
         onRedrawFont = { return nil }
         super.init(frame: .zero)
