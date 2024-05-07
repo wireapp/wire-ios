@@ -121,7 +121,6 @@ extension ZMConversation {
     ///   - completion: a handler when the network request completes with the response payload that contains the conversation ID and name
     static func fetchIdAndName(key: String,
                                code: String,
-                               hasPassword: Bool,
                                transportSession: TransportSessionType,
                                contextProvider: ContextProvider,
                                completion: @escaping (Result<(conversationId: UUID, conversationName: String, hasPassword: Bool), Error>) -> Void) {
@@ -130,7 +129,7 @@ extension ZMConversation {
             return
         }
 
-        guard let request = ConversationJoinRequestFactory.requestForGetConversation(key: key, code: code, hasPassword: hasPassword) else {
+        guard let request = ConversationJoinRequestFactory.requestForGetConversation(key: key, code: code) else {
             completion(.failure(ConversationFetchError.unknown))
             return
         }
@@ -177,7 +176,7 @@ struct ConversationJoinRequestFactory {
         return ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
     }
 
-    static func requestForGetConversation(key: String, code: String, hasPassword: Bool) -> ZMTransportRequest? {
+    static func requestForGetConversation(key: String, code: String) -> ZMTransportRequest? {
         guard let apiVersion = BackendInfo.apiVersion else { return nil }
 
         var url = URLComponents()
@@ -187,11 +186,6 @@ struct ConversationJoinRequestFactory {
             URLQueryItem(name: URLQueryItem.Key.conversationKey, value: key),
             URLQueryItem(name: URLQueryItem.Key.conversationCode, value: code)
         ]
-
-        if apiVersion.rawValue >= 4 && apiVersion.rawValue <= 6 {
-            queryItems.append( URLQueryItem(name: "has_password", value: hasPassword ? "true" : "false"))
-
-        }
 
         url.queryItems = queryItems
 
