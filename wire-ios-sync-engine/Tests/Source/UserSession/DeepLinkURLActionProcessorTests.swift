@@ -107,7 +107,7 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
 
     func testThatItCompletesTheJoinConversationAction_WhenCodeIsValid() {
         // GIVEN
-        let action: URLAction = .joinConversation(key: "test-key", code: "test-code", hasPassword: false)
+        let action: URLAction = .joinConversation(key: "test-key", code: "test-code")
 
         let expectation = XCTestExpectation(description: "wait for completedURLAction")
         presentationDelegate.completedURLActionCallsCompletion = {
@@ -128,7 +128,7 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
 
     func testThatItReportsTheJoinConversationActionAsFailed_WhenCodeIsInvalid() {
         // GIVEN
-        let action: URLAction = .joinConversation(key: "test-key", code: "wrong-code", hasPassword: false)
+        let action: URLAction = .joinConversation(key: "test-key", code: "wrong-code")
 
         // WHEN
         sut.process(urlAction: action, delegate: presentationDelegate)
