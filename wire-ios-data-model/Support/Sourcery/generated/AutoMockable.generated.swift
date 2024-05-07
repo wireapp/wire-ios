@@ -4106,16 +4106,24 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - createSelfGroup
 
     public var createSelfGroupFor_Invocations: [MLSGroupID] = []
-    public var createSelfGroupFor_MockMethod: ((MLSGroupID) async -> Void)?
+    public var createSelfGroupFor_MockError: Error?
+    public var createSelfGroupFor_MockMethod: ((MLSGroupID) async throws -> MLSCipherSuite)?
+    public var createSelfGroupFor_MockValue: MLSCipherSuite?
 
-    public func createSelfGroup(for groupID: MLSGroupID) async {
+    public func createSelfGroup(for groupID: MLSGroupID) async throws -> MLSCipherSuite {
         createSelfGroupFor_Invocations.append(groupID)
 
-        guard let mock = createSelfGroupFor_MockMethod else {
-            fatalError("no mock for `createSelfGroupFor`")
+        if let error = createSelfGroupFor_MockError {
+            throw error
         }
 
-        await mock(groupID)
+        if let mock = createSelfGroupFor_MockMethod {
+            return try await mock(groupID)
+        } else if let mock = createSelfGroupFor_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `createSelfGroupFor`")
+        }
     }
 
     // MARK: - joinGroup
@@ -4162,40 +4170,46 @@ public class MockMLSServiceInterface: MLSServiceInterface {
 
     public var establishGroupForWith_Invocations: [(groupID: MLSGroupID, users: [MLSUser])] = []
     public var establishGroupForWith_MockError: Error?
-    public var establishGroupForWith_MockMethod: ((MLSGroupID, [MLSUser]) async throws -> Void)?
+    public var establishGroupForWith_MockMethod: ((MLSGroupID, [MLSUser]) async throws -> MLSCipherSuite)?
+    public var establishGroupForWith_MockValue: MLSCipherSuite?
 
-    public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws {
+    public func establishGroup(for groupID: MLSGroupID, with users: [MLSUser]) async throws -> MLSCipherSuite {
         establishGroupForWith_Invocations.append((groupID: groupID, users: users))
 
         if let error = establishGroupForWith_MockError {
             throw error
         }
 
-        guard let mock = establishGroupForWith_MockMethod else {
+        if let mock = establishGroupForWith_MockMethod {
+            return try await mock(groupID, users)
+        } else if let mock = establishGroupForWith_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `establishGroupForWith`")
         }
-
-        try await mock(groupID, users)
     }
 
     // MARK: - createGroup
 
     public var createGroupForParentGroupID_Invocations: [(groupID: MLSGroupID, parentGroupID: MLSGroupID?)] = []
     public var createGroupForParentGroupID_MockError: Error?
-    public var createGroupForParentGroupID_MockMethod: ((MLSGroupID, MLSGroupID?) async throws -> Void)?
+    public var createGroupForParentGroupID_MockMethod: ((MLSGroupID, MLSGroupID?) async throws -> MLSCipherSuite)?
+    public var createGroupForParentGroupID_MockValue: MLSCipherSuite?
 
-    public func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws {
+    public func createGroup(for groupID: MLSGroupID, parentGroupID: MLSGroupID?) async throws -> MLSCipherSuite {
         createGroupForParentGroupID_Invocations.append((groupID: groupID, parentGroupID: parentGroupID))
 
         if let error = createGroupForParentGroupID_MockError {
             throw error
         }
 
-        guard let mock = createGroupForParentGroupID_MockMethod else {
+        if let mock = createGroupForParentGroupID_MockMethod {
+            return try await mock(groupID, parentGroupID)
+        } else if let mock = createGroupForParentGroupID_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `createGroupForParentGroupID`")
         }
-
-        try await mock(groupID, parentGroupID)
     }
 
     // MARK: - conversationExists
