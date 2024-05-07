@@ -20,6 +20,7 @@ import UIKit
 import WireSyncEngine
 import WireSystem
 
+// TODO: remove
 final class AccountSelectionViewController: UIViewController {
 
     private let accountSwitcher: AccountSwitcher

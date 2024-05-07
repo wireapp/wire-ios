@@ -20,9 +20,9 @@ import WireDataModel
 
 enum AccountViewFactory {
 
-    static func viewFor(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) -> AccountView {
+    static func viewFor(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) -> AccountView! {
 
         return TeamAccountView(account: account, user: user, displayContext: displayContext) ??
-               PersonalAccountView(account: account, user: user, displayContext: displayContext)!
+               PersonalAccountView(account: account, user: user, displayContext: displayContext)
     }
 }

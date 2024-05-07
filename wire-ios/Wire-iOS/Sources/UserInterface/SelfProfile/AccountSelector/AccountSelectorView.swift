@@ -28,25 +28,10 @@ final class AccountSelectorView: UIView {
 
     weak var delegate: AccountSelectorViewDelegate?
 
-    private var accountViews: [BaseAccountView] = []
     private let stackView = UIStackView()
 
     var accounts = [Account]() {
-        didSet {
-            stackView.arrangedSubviews.forEach { subview in
-                subview.removeFromSuperview()
-            }
-            accountViews = accounts.compactMap { account in
-                AccountViewFactory.viewFor(account: account, displayContext: .accountSelector)
-            }
-            accountViews.forEach { accountView in
-                accountView.unreadCountStyle = .current
-                accountView.onTap = { [weak self] account in
-                    self?.delegate?.accountSelectorDidSelect(account: account)
-                }
-                stackView.addArrangedSubview(accountView)
-            }
-        }
+        didSet { updateStackView() }
     }
 
     override init(frame: CGRect) {
@@ -69,5 +54,19 @@ final class AccountSelectorView: UIView {
             stackView.trailingAnchor.constraint(equalTo: trailingAnchor),
             stackView.heightAnchor.constraint(equalTo: heightAnchor)
         ])
+    }
+
+    private func updateStackView() {
+        stackView.arrangedSubviews.forEach { subview in
+            subview.removeFromSuperview()
+        }
+        accounts.forEach { account in
+            guard let accountView = AccountViewFactory.viewFor(account: account, displayContext: .accountSelector) else { return }
+            accountView.unreadCountStyle = .current
+            accountView.onTap = { [weak self] account in
+                self?.delegate?.accountSelectorDidSelect(account: account)
+            }
+            stackView.addArrangedSubview(accountView)
+        }
     }
 }
