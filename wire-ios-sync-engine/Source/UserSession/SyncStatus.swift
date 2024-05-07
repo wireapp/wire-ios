@@ -130,7 +130,7 @@ extension Notification.Name {
 
     public func performQuickSync() async {
         return await withCheckedContinuation { [weak self] continuation in
-            guard let `self` = self else {
+            guard let self else {
                 continuation.resume()
                 return
             }
@@ -211,7 +211,7 @@ extension SyncStatus {
     }
 
     public func persistLastUpdateEventID() {
-        guard let lastUpdateEventID = lastUpdateEventID else { return }
+        guard let lastUpdateEventID else { return }
         WireLogger.sync.debug("persist last eventID: \(lastUpdateEventID)")
         lastEventIDRepository.storeLastEventID(lastUpdateEventID)
     }

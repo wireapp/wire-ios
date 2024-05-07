@@ -56,7 +56,7 @@ public final class ImageV2DownloadRequestStrategy: AbstractRequestStrategy {
 
     func didRequestToDownloadImage(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             guard let object = try? self.managedObjectContext.existingObject(with: objectID) else { return }
             guard let message = object as? ZMAssetClientMessage else { return }
             self.downstreamSync.whiteListObject(message)

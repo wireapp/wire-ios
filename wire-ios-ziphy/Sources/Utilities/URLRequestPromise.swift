@@ -143,7 +143,7 @@ final class URLRequestPromise: CancelableTask {
             return .networkError(networkError)
         }
 
-        guard let data = data else {
+        guard let data else {
             return .badResponse("No data was returned by the server.")
         }
 
@@ -157,7 +157,7 @@ final class URLRequestPromise: CancelableTask {
     }
 
     private func handleErrorIfNeeded(_ error: ZiphyError?) {
-        guard let error = error else {
+        guard let error else {
             return
         }
 

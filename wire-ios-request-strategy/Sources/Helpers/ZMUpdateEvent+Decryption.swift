@@ -34,7 +34,7 @@ extension ZMUpdateEvent {
 
         var data = [plaintextPayloadKey: decryptedData.base64EncodedString()]
 
-        if let senderClientID = senderClientID {
+        if let senderClientID {
             data["sender"] = senderClientID
         }
 
