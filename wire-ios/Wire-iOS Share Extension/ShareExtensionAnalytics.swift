@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireShareEngine
-import WireCommonComponents
 import MobileCoreServices
 import UniformTypeIdentifiers
+import WireCommonComponents
+import WireShareEngine
 
 enum AttachmentType: Int, CaseIterable {
     static func < (lhs: AttachmentType, rhs: AttachmentType) -> Bool {

@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireSyncEngine
 
@@ -119,7 +118,7 @@ extension UIAlertController {
                 preferredStyle: .alert
             )
 
-            if let error = error {
+            if let error {
                 let attributedString = NSAttributedString.companyLoginString(
                     withMessage: copy.message,
                     error: error.description(for: copy)

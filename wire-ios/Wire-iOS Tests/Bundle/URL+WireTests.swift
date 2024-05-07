@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireTransport
 @testable import Wire
+import WireTransport
+import XCTest
 
 final class URL_WireTests: XCTestCase {
 

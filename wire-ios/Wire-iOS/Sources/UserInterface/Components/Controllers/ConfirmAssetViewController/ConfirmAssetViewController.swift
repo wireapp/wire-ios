@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import UIKit
 import AVKit
 import FLAnimatedImage
+import UIKit
 import WireCommonComponents
 
 final class ConfirmAssetViewController: UIViewController {
@@ -346,7 +345,7 @@ final class ConfirmAssetViewController: UIViewController {
         case .image(let mediaAsset):
             let imageSize: CGSize = mediaAsset.size
 
-            if let imagePreviewView = imagePreviewView {
+            if let imagePreviewView {
 
             constraints += [
                 // dimension
@@ -364,7 +363,7 @@ final class ConfirmAssetViewController: UIViewController {
             ]
 
             // Image Toolbar Inside Image
-            if let imageToolbarViewInsideImage = imageToolbarViewInsideImage {
+            if let imageToolbarViewInsideImage {
                 constraints += [
                     imageToolbarViewInsideImage.leadingAnchor.constraint(equalTo: imagePreviewView.leadingAnchor),
                     imageToolbarViewInsideImage.trailingAnchor.constraint(equalTo: imagePreviewView.trailingAnchor),

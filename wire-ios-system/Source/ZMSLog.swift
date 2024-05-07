@@ -18,7 +18,6 @@
 
 import Foundation
 import os.log
-
 import ZipArchive
 
 /// Represents an entry to be logged.

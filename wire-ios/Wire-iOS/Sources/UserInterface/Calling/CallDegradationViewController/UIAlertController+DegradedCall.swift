@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireSyncEngine
 
@@ -38,7 +37,7 @@ extension UIAlertController {
 
         let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-        if let confirmationBlock = confirmationBlock {
+        if let confirmationBlock {
             controller.addAction(UIAlertAction(title: GeneralLocale.cancel, style: .cancel) { _ in
                 confirmationBlock(false)
             })
@@ -64,7 +63,7 @@ extension UIAlertController {
             let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
             // Add actions
-            if let confirmationBlock = confirmationBlock {
+            if let confirmationBlock {
                 controller.addAction(UIAlertAction(title: DegradedCall.Action.continue, style: .default) { _ in
                     confirmationBlock(true)
                 })
@@ -91,7 +90,7 @@ extension UIAlertController {
             let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
             // Add actions
-            if let confirmationBlock = confirmationBlock {
+            if let confirmationBlock {
                 controller.addAction(UIAlertAction(title: DegradedCall.Action.continue, style: .default) { _ in
                     confirmationBlock(true)
                 })

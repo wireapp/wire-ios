@@ -18,9 +18,9 @@
 
 import Foundation
 import SnapshotTesting
-import XCTest
-import WireUtilities
 @testable import Wire
+import WireUtilities
+import XCTest
 
 final class CallParticipantsListHelper {
     static func participants(count participantCount: Int,
@@ -32,7 +32,7 @@ final class CallParticipantsListHelper {
             .map { mockUsers[$0] }
             .sorted { $0.name < $1.name }
         var callParticipantState: CallParticipantState = .connecting
-        if let videoState = videoState, let microphoneState = microphoneState {
+        if let videoState, let microphoneState {
             callParticipantState = .connected(videoState: videoState, microphoneState: microphoneState)
         }
 

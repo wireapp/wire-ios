@@ -53,6 +53,7 @@
 		CEF709DA1C1599ED00AF3718 /* ZMMockEntity2.h in Headers */ = {isa = PBXBuildFile; fileRef = CE6B7B2D1C11ED5F00FC4C2E /* ZMMockEntity2.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		EE49A5572954850800406C4F /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE49A5562954850800406C4F /* WireSystem.framework */; };
 		EE67F6AF296F0510001D7C88 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F6AE296F0510001D7C88 /* OCMock.xcframework */; };
+		EE9AEC862BD1589E00F7853F /* WireTesting.docc in Sources */ = {isa = PBXBuildFile; fileRef = EE9AEC852BD1589E00F7853F /* WireTesting.docc */; };
 		F97E28BE1D8AACEA00A77567 /* UUID+WireTesting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F97E28BD1D8AACEA00A77567 /* UUID+WireTesting.swift */; };
 /* End PBXBuildFile section */
 
@@ -138,6 +139,7 @@
 		CEB8FD681C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMMockManagedObjectContextFactory.m; sourceTree = "<group>"; };
 		EE49A5562954850800406C4F /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6AE296F0510001D7C88 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = ../Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
+		EE9AEC852BD1589E00F7853F /* WireTesting.docc */ = {isa = PBXFileReference; lastKnownFileType = folder.documentationcatalog; path = WireTesting.docc; sourceTree = "<group>"; };
 		F97E28BD1D8AACEA00A77567 /* UUID+WireTesting.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UUID+WireTesting.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -165,6 +167,7 @@
 		096AD7B11B68D41D00E007A8 = {
 			isa = PBXGroup;
 			children = (
+				EE9AEC852BD1589E00F7853F /* WireTesting.docc */,
 				54BD49F11D41FA56006E29D1 /* README.md */,
 				096AD7DD1B68D6BD00E007A8 /* Source */,
 				096AD7E21B68D6BD00E007A8 /* Tests */,
@@ -358,9 +361,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 096AD7D11B68D41D00E007A8 /* Build configuration list for PBXNativeTarget "WireTesting" */;
 			buildPhases = (
+				096AD7B81B68D41D00E007A8 /* Headers */,
 				096AD7B61B68D41D00E007A8 /* Sources */,
 				096AD7B71B68D41D00E007A8 /* Frameworks */,
-				096AD7B81B68D41D00E007A8 /* Headers */,
 				AD4812AB2AB9907100ED208C /* Run Swiftlint */,
 				096AD7B91B68D41D00E007A8 /* Resources */,
 			);
@@ -484,6 +487,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE9AEC862BD1589E00F7853F /* WireTesting.docc in Sources */,
 				87B0EF5C2139687500CE1931 /* ManagedObjectContextChangesMerger.swift in Sources */,
 				59059B912B4DA4EF0087D1F1 /* MockStaticDateProvider.swift in Sources */,
 				09A218021B78DFAF0076547A /* ZMTSwiftHelpers.swift in Sources */,

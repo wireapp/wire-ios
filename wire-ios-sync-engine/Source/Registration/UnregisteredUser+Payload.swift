@@ -16,39 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 
 extension UnregisteredUser {
 
-    /**
-     * The dictionary payload that contains the resources to transmit to the backend
-     * when registering the user.
-     */
-
+    /// The dictionary payload that contains the resources to transmit to the backend
     var payload: ZMTransportData {
-        guard self.isComplete else {
+        guard isComplete else {
             fatalError("Attempt to register an incomplete user.")
         }
 
         var payload: [String: Any] = [:]
-
-        switch credentials! {
-        case .phone(let number):
-            payload["phone"] = number
-            payload["phone_code"] = verificationCode!
-
-        case .email(let address):
-            payload["email"] = address
-            payload["email_code"] = verificationCode!
-        }
-
+        payload["email"] = unverifiedEmail
+        payload["email_code"] = verificationCode!
         payload["accent_id"] = accentColor?.rawValue ?? AccentColor.default.rawValue
         payload["name"] = name!
         payload["locale"] = NSLocale.formattedLocaleIdentifier()
         payload["label"] = CookieLabel.current.value
         payload["password"] = password
-
         return payload as ZMTransportData
     }
 }

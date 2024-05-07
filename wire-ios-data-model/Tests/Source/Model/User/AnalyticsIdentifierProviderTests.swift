@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
 
@@ -83,7 +83,7 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
         let identifier = try XCTUnwrap(sut.analyticsIdentifier)
 
         try syncMOC.performAndWait {
-            var selfConv = try syncMOC.existingObject(with: selfConversation.objectID) as! ZMConversation
+            let selfConv = try syncMOC.existingObject(with: selfConversation.objectID) as! ZMConversation
 
             XCTAssertEqual(selfConv.numberOfDataTransferMessagesContaining(analyticsIdentifier: identifier), 1)
         }
@@ -100,7 +100,7 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
 
         let selfConversation = ZMConversation.selfConversation(in: uiMOC)
         try syncMOC.performAndWait {
-            var selfConv = try syncMOC.existingObject(with: selfConversation.objectID) as! ZMConversation
+            let selfConv = try syncMOC.existingObject(with: selfConversation.objectID) as! ZMConversation
 
             XCTAssertEqual(selfConv.numberOfDataTransferMessagesContaining(analyticsIdentifier: identifier), 1)
         }
@@ -109,7 +109,7 @@ final class AnalyticsIdentifierProviderTests: ModelObjectsTests {
 
         // Then
         try syncMOC.performAndWait {
-            var selfConv = try syncMOC.existingObject(with: selfConversation.objectID) as! ZMConversation
+            let selfConv = try syncMOC.existingObject(with: selfConversation.objectID) as! ZMConversation
 
             XCTAssertEqual(selfConv.numberOfDataTransferMessagesContaining(analyticsIdentifier: identifier), 1)
         }

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 public extension NSManagedObjectContext {
     static private let timeout: TimeInterval = 10
@@ -30,7 +30,7 @@ public extension NSManagedObjectContext {
         performAndWait {
             tp.resetTime()
             result = execute(self)
-            groups.apply {
+            groups.map {
                 dispatchGroupContext?.leave($0)
             }
             tp.warnIfLongerThanInterval()
@@ -49,7 +49,7 @@ public extension NSManagedObjectContext {
             do {
                 tp.resetTime()
                 result = try execute(self)
-                groups.apply {
+                groups.map {
                     dispatchGroupContext?.leave($0)
                 }
                 tp.warnIfLongerThanInterval()
@@ -59,7 +59,7 @@ public extension NSManagedObjectContext {
         }
 
         if let error = thrownError {
-            groups.apply {
+            groups.map {
                 dispatchGroupContext?.leave($0)
             }
             throw error

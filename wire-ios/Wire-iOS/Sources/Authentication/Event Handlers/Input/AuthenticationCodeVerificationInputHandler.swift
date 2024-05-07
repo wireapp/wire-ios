@@ -34,7 +34,7 @@ final class AuthenticationCodeVerificationInputHandler: AuthenticationEventHandl
 
         // Only handle input during non-team code validation
         switch currentStep {
-        case .enterActivationCode, .enterPhoneVerificationCode, .enterEmailVerificationCode:
+        case .enterActivationCode, .enterEmailVerificationCode:
             return [.continueFlowWithLoginCode(code)]
         default:
             return nil

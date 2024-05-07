@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
-import WireTesting
 @testable import WireDataModel
+import WireTesting
+import XCTest
 
 class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 

@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 enum TabBarItemType: Int, CaseIterable {
 
@@ -128,7 +128,7 @@ final class ConversationListTabBar: UITabBar {
 
     var selectedTab: TabBarItemType? {
         didSet {
-            if let selectedTab = selectedTab {
+            if let selectedTab {
                 switch selectedTab {
                 case .archive, .startUI:
                     return

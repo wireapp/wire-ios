@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireUtilities
 import WireSystem
+import WireUtilities
 
 extension ZMUser: UserType {
 

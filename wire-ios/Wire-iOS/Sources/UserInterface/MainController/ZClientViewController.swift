@@ -18,8 +18,8 @@
 
 import avs
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 final class ZClientViewController: UIViewController {
 
@@ -180,12 +180,21 @@ final class ZClientViewController: UIViewController {
             restoreStartupState()
         }
 
-        NotificationCenter.default.addObserver(self, selector: #selector(colorSchemeControllerDidApplyChanges(_:)), name: NSNotification.colorSchemeControllerDidApplyColorSchemeChange, object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(colorSchemeControllerDidApplyChanges(_:)),
+            name: .colorSchemeControllerDidApplyColorSchemeChange,
+            object: nil
+        )
 
         if Bundle.developerModeEnabled {
             // better way of dealing with this?
-            NotificationCenter.default.addObserver(self, selector: #selector(requestLoopNotification(_:)), name: NSNotification.Name(rawValue: ZMLoggingRequestLoopNotificationName), object: nil)
-            NotificationCenter.default.addObserver(self, selector: #selector(inconsistentStateNotification(_:)), name: NSNotification.Name(rawValue: ZMLoggingInconsistentStateNotificationName), object: nil)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(requestLoopNotification(_:)),
+                name: .loggingRequestLoop,
+                object: nil
+            )
         }
 
         setupUserChangeInfoObserver()
@@ -242,7 +251,7 @@ final class ZClientViewController: UIViewController {
 
         // if changing from compact width to regular width, make sure current conversation is loaded
         if previousTraitCollection?.horizontalSizeClass == .compact && traitCollection.horizontalSizeClass == .regular {
-            if let currentConversation = currentConversation {
+            if let currentConversation {
                 select(conversation: currentConversation)
             } else {
                 attemptToLoadLastViewedConversation(withFocus: false, animated: false)
@@ -321,7 +330,7 @@ final class ZClientViewController: UIViewController {
         var conversationRootController: ConversationRootViewController?
         if conversation === currentConversation,
            conversationRootController != nil {
-            if let message = message {
+            if let message {
                 conversationRootController?.scroll(to: message)
             }
         } else {
@@ -401,7 +410,7 @@ final class ZClientViewController: UIViewController {
 
     // MARK: - ColorSchemeControllerDidApplyChangesNotification
     private func reloadCurrentConversation() {
-        guard let currentConversation = currentConversation else { return }
+        guard let currentConversation else { return }
 
         let currentConversationViewController = ConversationRootViewController(conversation: currentConversation, message: nil, clientViewController: self, userSession: userSession)
 
@@ -419,13 +428,6 @@ final class ZClientViewController: UIViewController {
     private func requestLoopNotification(_ notification: Notification?) {
         guard let path = notification?.userInfo?["path"] as? String else { return }
         DebugAlert.showSendLogsMessage(message: "A request loop is going on at \(path)")
-    }
-
-    @objc
-    private func inconsistentStateNotification(_ notification: Notification?) {
-        if let userInfo = notification?.userInfo?[ZMLoggingDescriptionKey] {
-            DebugAlert.showSendLogsMessage(message: "We detected an inconsistent state: \(userInfo)")
-        }
     }
 
     /// Attempt to load the last viewed conversation associated with the current account.
@@ -513,7 +515,7 @@ final class ZClientViewController: UIViewController {
     func setTopOverlay(to viewController: UIViewController?, animated: Bool = true) {
         topOverlayViewController?.willMove(toParent: nil)
 
-        if let previousViewController = topOverlayViewController, let viewController = viewController {
+        if let previousViewController = topOverlayViewController, let viewController {
             addChild(viewController)
             viewController.view.frame = topOverlayContainer.bounds
             viewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -560,7 +562,7 @@ final class ZClientViewController: UIViewController {
                 self.topOverlayViewController = nil
                 self.updateSplitViewTopConstraint()
             }
-        } else if let viewController = viewController {
+        } else if let viewController {
             addChild(viewController)
             viewController.view.frame = topOverlayContainer.bounds
             viewController.view.translatesAutoresizingMaskIntoConstraints = false

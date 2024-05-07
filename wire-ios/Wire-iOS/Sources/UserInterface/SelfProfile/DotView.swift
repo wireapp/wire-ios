@@ -62,7 +62,7 @@ final class DotView: UIView {
         createConstraints()
 
         if let userSession = ZMUserSession.shared(),
-            let user = user {
+            let user {
             userObserver = UserChangeInfo.add(observer: self, for: user, in: userSession)
         }
 
@@ -87,7 +87,7 @@ final class DotView: UIView {
     }
 
     private func createClientObservers() {
-        guard let user = user else { return }
+        guard let user else { return }
         clientsObserverTokens = user.clients.compactMap { UserClientChangeInfo.add(observer: self, for: $0) }
     }
 

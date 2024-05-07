@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
@@ -24,7 +23,7 @@ import WireSyncEngine
 final class RemoveClientStepViewController: UIViewController, AuthenticationCoordinatedViewController {
 
     var authenticationCoordinator: AuthenticationCoordinator?
-    let clientListController: ClientListViewController
+    let clientListController: RemoveClientsViewController
     var userInterfaceSizeClass: (UITraitEnvironment) -> UIUserInterfaceSizeClass = {traitEnvironment in
        return traitEnvironment.traitCollection.horizontalSizeClass
     }
@@ -44,10 +43,9 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
             return ZMEmailCredentials(email: email, password: password)
         }
 
-        clientListController = ClientListViewController(clientsList: clients,
-                                                        credentials: emailCredentials,
-                                                        showTemporary: false,
-                                                        showLegalHold: false)
+        clientListController = RemoveClientsViewController(
+            clientsList: clients,
+            credentials: emailCredentials)
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -61,7 +59,7 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title.capitalized)
+        navigationItem.setDynamicFontLabel(title: L10n.Localizable.Registration.Signin.TooManyDevices.ManageScreen.title)
         configureSubviews()
         configureConstraints()
         updateBackButton()
@@ -71,7 +69,6 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
         view.backgroundColor = SemanticColors.View.backgroundDefault
 
         clientListController.view.backgroundColor = .clear
-        clientListController.editingList = true
         clientListController.delegate = self
         addToSelf(clientListController)
     }
@@ -133,10 +130,16 @@ final class RemoveClientStepViewController: UIViewController, AuthenticationCoor
 
 // MARK: - ClientListViewControllerDelegate
 
-extension RemoveClientStepViewController: ClientListViewControllerDelegate {
+extension RemoveClientStepViewController: RemoveClientsViewControllerDelegate {
 
-    func finishedDeleting(_ clientListViewController: ClientListViewController) {
+    func finishedDeleting(_ clientListViewController: RemoveClientsViewController) {
         authenticationCoordinator?.executeActions([.unwindState(withInterface: true), .showLoadingView])
+    }
+
+    func failedToDeleteClients(_ error: Error) {
+        let alert = AuthenticationCoordinatorErrorAlert(error: error as NSError,
+                                                        completionActions: [.unwindState(withInterface: false)])
+        authenticationCoordinator?.executeActions([.hideLoadingView, .presentErrorAlert(alert)])
     }
 
 }

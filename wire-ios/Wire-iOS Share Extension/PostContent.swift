@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import MobileCoreServices
 import UIKit
 import WireCommonComponents
 import WireShareEngine
-import MobileCoreServices
 
 /// Content that is shared on a share extension post attempt
 final class PostContent {
@@ -31,7 +30,7 @@ final class PostContent {
     private var sendController: SendController?
 
     var sentAllSendables: Bool {
-        guard let sendController = sendController else { return false }
+        guard let sendController else { return false }
         return sendController.sentAllSendables
     }
 

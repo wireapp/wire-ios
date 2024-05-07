@@ -125,7 +125,7 @@ final class ConversationListCellTests: BaseSnapshotTestCase {
 
         sut.overrideUserInterfaceStyle = .dark
 
-        if let icon = icon {
+        if let icon {
             sut.itemView.rightAccessory.icon = icon
         }
 

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AVFoundation
 import Foundation
 import WireSyncEngine
-import AVFoundation
 
 private let zmLog = ZMSLog(tag: "ConversationInputBarViewController - Image Picker")
 
@@ -113,7 +113,7 @@ extension ConversationInputBarViewController {
 
         AVURLAsset.convertVideoToUploadFormat(at: videoTempURL, fileLengthLimit: Int64(userSession.maxUploadFileSize)) { resultURL, _, error in
             if error == nil,
-               let resultURL = resultURL {
+               let resultURL {
                 self.uploadFile(at: resultURL)
             }
 

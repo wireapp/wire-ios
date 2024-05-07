@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import MessageUI
-import WireDataModel
 import UIKit
-import WireSystem
 import WireCommonComponents
+import WireDataModel
+import WireSystem
 
 /// Presents debug alerts
 final class DebugAlert {
@@ -80,7 +79,7 @@ final class DebugAlert {
             alert.addAction(alertAction)
         }
 
-        if let cancelText = cancelText {
+        if let cancelText {
             let cancelAction = UIAlertAction(title: cancelText, style: .cancel) { _ in
                 isShown = false
             }

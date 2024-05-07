@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireSyncEngine
 
@@ -117,7 +116,7 @@ final class TextSearchResultCell: UITableViewCell {
     }
 
     private func updateTextView() {
-        guard let message = message else {
+        guard let message else {
             return
         }
 
