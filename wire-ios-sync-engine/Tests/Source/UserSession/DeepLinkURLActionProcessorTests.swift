@@ -49,64 +49,64 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
     // MARK: Tests
 
     func testThatItAsksForConversationToBeShown() {
-        // given
+        // GIVEN
         let conversationId = UUID()
         let action: URLAction = .openConversation(id: conversationId)
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = conversationId
 
-        // when
+        // WHEN
         sut.process(urlAction: action, delegate: presentationDelegate)
 
-        // then
+        // THEN
         XCTAssertEqual(presentationDelegate.showConversationCalls.count, 1)
         XCTAssertEqual(presentationDelegate.showConversationCalls.first, conversation)
     }
 
     func testThatItReportsTheActionAsFailed_WhenTheConversationDoesntExist() {
-        // given
+        // GIVEN
         let conversationId = UUID()
         let action: URLAction = .openConversation(id: conversationId)
 
-        // when
+        // WHEN
         sut.process(urlAction: action, delegate: presentationDelegate)
 
-        // then
+        // THEN
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.count, 1)
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.0, action)
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.1 as? DeepLinkRequestError, .invalidConversationLink)
     }
 
     func testThatItAsksToShowUserProfile_WhenUserIsKnown() {
-        // given
+        // GIVEN
         let userId = UUID()
         let action: URLAction = .openUserProfile(id: userId)
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = userId
 
-        // when
+        // WHEN
         sut.process(urlAction: action, delegate: presentationDelegate)
 
-        // then
+        // THEN
         XCTAssertEqual(presentationDelegate.showUserProfileCalls.count, 1)
         XCTAssertEqual(presentationDelegate.showUserProfileCalls.first as? ZMUser, user)
     }
 
     func testThatItAsksToShowConnectionRequest_WhenUserIsUnknown() {
-        // given
+        // GIVEN
         let userId = UUID()
         let action: URLAction = .openUserProfile(id: userId)
 
-        // when
+        // WHEN
         sut.process(urlAction: action, delegate: presentationDelegate)
 
-        // then
+        // THEN
         XCTAssertEqual(presentationDelegate.showConnectionRequestCalls.count, 1)
         XCTAssertEqual(presentationDelegate.showConnectionRequestCalls.first, userId)
     }
 
     func testThatItCompletesTheJoinConversationAction_WhenCodeIsValid() {
-        // given
+        // GIVEN
         let action: URLAction = .joinConversation(key: "test-key", code: "test-code")
 
         let expectation = XCTestExpectation(description: "wait for completedURLAction")
@@ -114,12 +114,12 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
             expectation.fulfill()
         }
 
-        // when
+        // WHEN
         sut.process(urlAction: action, delegate: presentationDelegate)
 
         self.wait(for: [expectation], timeout: 5)
 
-        // then
+        // THEN
         XCTAssertEqual(mockUpdateEventProcessor.processedEvents.count, 1)
         XCTAssertEqual(mockUpdateEventProcessor.processedEvents.first?.type, .conversationMemberJoin)
         XCTAssertEqual(presentationDelegate.completedURLActionCalls.count, 1)
@@ -127,14 +127,14 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
     }
 
     func testThatItReportsTheJoinConversationActionAsFailed_WhenCodeIsInvalid() {
-        // given
+        // GIVEN
         let action: URLAction = .joinConversation(key: "test-key", code: "wrong-code")
 
-        // when
+        // WHEN
         sut.process(urlAction: action, delegate: presentationDelegate)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        // then
+        // THEN
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.count, 1)
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.0, action)
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.1 as? ConversationFetchError, ConversationFetchError.invalidCode)

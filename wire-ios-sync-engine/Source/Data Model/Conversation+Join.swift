@@ -95,7 +95,7 @@ extension ZMConversation {
                     }
                 }
 
-            /// The user is already a participant in the conversation
+                /// The user is already a participant in the conversation
             case 204:
                 // If we get to this case, then we need to re-sync local conversations
                 // TODO: implement re-syncing conversations
@@ -123,7 +123,7 @@ extension ZMConversation {
                                code: String,
                                transportSession: TransportSessionType,
                                contextProvider: ContextProvider,
-                               completion: @escaping (Result<(conversationId: UUID, conversationName: String), Error>) -> Void) {
+                               completion: @escaping (Result<(conversationId: UUID, conversationName: String, hasPassword: Bool), Error>) -> Void) {
 
         guard let request = ConversationJoinRequestFactory.requestForGetConversation(key: key, code: code) else {
             completion(.failure(ConversationFetchError.unknown))
@@ -140,11 +140,14 @@ extension ZMConversation {
                     completion(.failure(ConversationFetchError.unknown))
                     return
                 }
-                let fetchResult = (conversationId, conversationName)
+
+                let hasPassword = payload["has_password"] as? Bool ?? false
+
+                let fetchResult = (conversationId, conversationName, hasPassword)
                 completion(.success(fetchResult))
             default:
                 let error = ConversationFetchError(response: response)
-                Logging.network.debug("Error fetching conversation ID and name using a reusable code: \(error)")
+                Logging.network.debug("Error fetching conversation ID and name: \(error)")
                 completion(.failure(error))
             }
         }))
@@ -175,8 +178,12 @@ struct ConversationJoinRequestFactory {
 
         var url = URLComponents()
         url.path = joinConversationsPath
-        url.queryItems = [URLQueryItem(name: URLQueryItem.Key.conversationKey, value: key),
-                          URLQueryItem(name: URLQueryItem.Key.conversationCode, value: code)]
+
+        url.queryItems = [
+            URLQueryItem(name: URLQueryItem.Key.conversationKey, value: key),
+            URLQueryItem(name: URLQueryItem.Key.conversationCode, value: code)
+        ]
+
         guard let urlString = url.string else {
             return nil
         }

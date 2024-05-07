@@ -51,7 +51,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 let viewContext = strongSelf.contextProvider.viewContext
 
                 switch response {
-                case .success((let conversationId, let conversationName)):
+                case .success((let conversationId, let conversationName, _)):
                     // First of all, we should try to fetch the conversation with ID from the response.
                     // If the conversation doesn't exist, we should initiate a request to join the conversation
                     if let conversation = ZMConversation.fetch(with: conversationId, in: viewContext),
