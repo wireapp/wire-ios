@@ -187,12 +187,10 @@ struct ConversationJoinRequestFactory {
         var url = URLComponents()
         url.path = joinConversationsPath
 
-        let queryItems = [
+        url.queryItems = [
             URLQueryItem(name: URLQueryItem.Key.conversationKey, value: key),
             URLQueryItem(name: URLQueryItem.Key.conversationCode, value: code)
         ]
-
-        url.queryItems = queryItems
 
         guard let urlString = url.string else {
             return nil
