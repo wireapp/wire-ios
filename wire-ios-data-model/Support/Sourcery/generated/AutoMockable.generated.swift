@@ -3728,24 +3728,24 @@ class MockMLSActionsProviderProtocol: MLSActionsProviderProtocol {
 
     // MARK: - claimKeyPackages
 
-    var claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_Invocations: [(userID: UUID, domain: String?, excludedSelfClientID: String?, context: NotificationContext)] = []
-    var claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockError: Error?
-    var claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod: ((UUID, String?, String?, NotificationContext) async throws -> [KeyPackage])?
-    var claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockValue: [KeyPackage]?
+    var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_Invocations: [(userID: UUID, domain: String?, ciphersuite: MLSCipherSuite, excludedSelfClientID: String?, context: NotificationContext)] = []
+    var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockError: Error?
+    var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod: ((UUID, String?, MLSCipherSuite, String?, NotificationContext) async throws -> [KeyPackage])?
+    var claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue: [KeyPackage]?
 
-    func claimKeyPackages(userID: UUID, domain: String?, excludedSelfClientID: String?, in context: NotificationContext) async throws -> [KeyPackage] {
-        claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_Invocations.append((userID: userID, domain: domain, excludedSelfClientID: excludedSelfClientID, context: context))
+    func claimKeyPackages(userID: UUID, domain: String?, ciphersuite: MLSCipherSuite, excludedSelfClientID: String?, in context: NotificationContext) async throws -> [KeyPackage] {
+        claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_Invocations.append((userID: userID, domain: domain, ciphersuite: ciphersuite, excludedSelfClientID: excludedSelfClientID, context: context))
 
-        if let error = claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockError {
+        if let error = claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockError {
             throw error
         }
 
-        if let mock = claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockMethod {
-            return try await mock(userID, domain, excludedSelfClientID, context)
-        } else if let mock = claimKeyPackagesUserIDDomainExcludedSelfClientIDIn_MockValue {
+        if let mock = claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockMethod {
+            return try await mock(userID, domain, ciphersuite, excludedSelfClientID, context)
+        } else if let mock = claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue {
             return mock
         } else {
-            fatalError("no mock for `claimKeyPackagesUserIDDomainExcludedSelfClientIDIn`")
+            fatalError("no mock for `claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn`")
         }
     }
 
