@@ -231,13 +231,13 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
         if typeURL {
             attachment.fetchURL { [weak self] url in
-                guard let weakSelf = self else { return }
-                if (url != nil && !url!.isFileURL) || !weakSelf.typeData {
-                    weakSelf.error = .unsupportedAttachment
+                guard let self else { return }
+                if (url != nil && !url!.isFileURL) || !typeData {
+                    error = .unsupportedAttachment
                     return completion()
                 }
 
-                weakSelf.prepareAsFileData(name: url?.lastPathComponent, completion: completion)
+                prepareAsFileData(name: url?.lastPathComponent, completion: completion)
             }
         } else if typePass {
             prepareAsWalletPass(name: nil, completion: completion)
