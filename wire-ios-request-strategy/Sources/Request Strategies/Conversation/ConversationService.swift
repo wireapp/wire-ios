@@ -365,14 +365,6 @@ public final class ConversationService: ConversationServiceInterface {
             return
         }
 
-        await syncContext.perform {
-            self.createGroupFlow.checkpoint(description: "marking MLS ZMConversation ready, group ID (\(String(describing: syncConversation.mlsGroupID)))")
-
-            // Self user is creator, so we don't need to process a welcome message
-            syncConversation.mlsStatus = .ready
-            syncContext.saveOrRollback()
-        }
-
         let (mlsGroupID, mlsService) = await syncContext.perform {
             (syncConversation.mlsGroupID, syncContext.mlsService)
         }
@@ -380,7 +372,16 @@ public final class ConversationService: ConversationServiceInterface {
         guard let mlsGroupID, let mlsService else { return }
 
         self.createGroupFlow.checkpoint(description: "create MLS group with ID (\(mlsGroupID))")
-        try await mlsService.createGroup(for: mlsGroupID, parentGroupID: nil)
+        let ciphersuite = try await mlsService.createGroup(for: mlsGroupID, parentGroupID: nil)
+
+        await syncContext.perform {
+            self.createGroupFlow.checkpoint(description: "marking MLS ZMConversation ready, group ID (\(String(describing: syncConversation.mlsGroupID)))")
+
+            // Self user is creator, so we don't need to process a welcome message
+            syncConversation.mlsStatus = .ready
+            syncConversation.ciphersuite = ciphersuite
+            syncContext.saveOrRollback()
+        }
 
         let participantsService = participantsServiceBuilder(syncContext)
         self.createGroupFlow.checkpoint(description: MLSAddParticipantLog(users: syncParticipants, groupId: mlsGroupID))
