@@ -264,7 +264,7 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateGuestIndicator() {
-        if let conversation = conversation {
+        if let conversation {
             guestIndicatorStack.isHidden = !user.isGuest(in: conversation)
         } else {
             guestIndicatorStack.isHidden = !viewer.isTeamMember || viewer.canAccessCompanyInformation(of: user)
