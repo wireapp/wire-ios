@@ -85,7 +85,7 @@ final class MessageReactionsCell: UIView, ConversationMessageCell {
                 isToggled: reaction.isSelfUserReacting
             ) { [weak self] in
                 guard
-                    let `self` = self,
+                    let self,
                     let message = self.message
                 else {
                     return

@@ -78,7 +78,7 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
             viewController = alert
         } else {
             requestPasswordController = RequestPasswordController(context: .logout, callback: { [weak self] password in
-                guard let password = password else { return }
+                guard let password else { return }
 
                 self?.logout(password: password)
             })

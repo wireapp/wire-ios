@@ -87,7 +87,7 @@ extension IconButton {
 
         borderWidth = 0
 
-        if let width = width {
+        if let width {
             widthAnchor.constraint(equalToConstant: width).isActive = true
             heightAnchor.constraint(greaterThanOrEqualToConstant: width).isActive = true
         }

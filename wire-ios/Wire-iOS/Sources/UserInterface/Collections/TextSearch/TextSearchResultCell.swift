@@ -116,7 +116,7 @@ final class TextSearchResultCell: UITableViewCell {
     }
 
     private func updateTextView() {
-        guard let message = message else {
+        guard let message else {
             return
         }
 

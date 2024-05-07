@@ -459,7 +459,7 @@ extension AuthenticationStepController {
             self.secondaryErrorView = nil
         }
 
-        if let error = error, let errorDescription = stepDescription.secondaryView?.display(on: error) {
+        if let error, let errorDescription = stepDescription.secondaryView?.display(on: error) {
             let view = errorDescription.create()
             self.secondaryErrorView = view
             secondaryViewsStackView.arrangedSubviews.forEach { $0.isHidden = true }

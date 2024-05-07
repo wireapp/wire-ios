@@ -213,7 +213,7 @@ final class AudioMessageView: UIView, TransferView {
     }
 
     private func configureVisibleViews(forFileMessageData fileMessageData: ZMFileMessageData, isInitial: Bool) {
-        guard let fileMessage = fileMessage,
+        guard let fileMessage,
               let state = FileMessageViewState.fromConversationMessage(fileMessage) else { return }
 
         var visibleViews = [playButton, timeLabel]
@@ -253,7 +253,7 @@ final class AudioMessageView: UIView, TransferView {
         var duration: Int? = .none
 
         if isOwnTrackPlayingInAudioPlayer() {
-            if let audioTrackPlayer = audioTrackPlayer {
+            if let audioTrackPlayer {
                 duration = Int(audioTrackPlayer.elapsedTime)
             }
         } else {
@@ -277,7 +277,7 @@ final class AudioMessageView: UIView, TransferView {
     }
 
     private func updateActivePlayButton() {
-        guard let audioTrackPlayer = audioTrackPlayer else { return }
+        guard let audioTrackPlayer else { return }
 
         playButton.backgroundColor = SemanticColors.Icon.backgroundDefault
 
@@ -299,7 +299,7 @@ final class AudioMessageView: UIView, TransferView {
     }
 
     private func updateActivePlayerProgressAnimated(_ animated: Bool) {
-        guard let audioTrackPlayer = audioTrackPlayer else { return }
+        guard let audioTrackPlayer else { return }
 
         let progress: Float
         var animated = animated
@@ -327,9 +327,9 @@ final class AudioMessageView: UIView, TransferView {
 
     private func playTrack() {
         let userSession = ZMUserSession.shared()
-        guard let fileMessage = fileMessage,
+        guard let fileMessage,
               let fileMessageData = fileMessage.fileMessageData,
-              let audioTrackPlayer = audioTrackPlayer,
+              let audioTrackPlayer,
               userSession == nil || userSession!.isCallOngoing == false else {
                   return
               }
@@ -379,7 +379,7 @@ final class AudioMessageView: UIView, TransferView {
     private func isOwnTrackPlayingInAudioPlayer() -> Bool {
         guard let message = fileMessage,
               let audioTrack = message.audioTrack,
-              let audioTrackPlayer = audioTrackPlayer
+              let audioTrackPlayer
         else {
             return false
         }
@@ -394,7 +394,7 @@ final class AudioMessageView: UIView, TransferView {
         isPausedForIncomingCall = false
 
         guard
-            let fileMessage = fileMessage,
+            let fileMessage,
             let fileMessageData = fileMessage.fileMessageData
         else {
             return
@@ -453,7 +453,7 @@ final class AudioMessageView: UIView, TransferView {
     // MARK: - Proximity Listener
 
     private func updateProximityObserverState() {
-        guard let audioTrackPlayer = audioTrackPlayer, isOwnTrackPlayingInAudioPlayer() else { return }
+        guard let audioTrackPlayer, isOwnTrackPlayingInAudioPlayer() else { return }
 
         if audioTrackPlayer.isPlaying {
             proximityMonitorManager?.startListening()

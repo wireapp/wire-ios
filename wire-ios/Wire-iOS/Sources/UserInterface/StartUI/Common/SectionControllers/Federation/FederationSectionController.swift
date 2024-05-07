@@ -38,7 +38,7 @@ final class FederationSectionController: SearchSectionController {
     override func prepareForUse(in collectionView: UICollectionView?) {
         super.prepareForUse(in: collectionView)
 
-        guard let collectionView = collectionView else {
+        guard let collectionView else {
             return
         }
 

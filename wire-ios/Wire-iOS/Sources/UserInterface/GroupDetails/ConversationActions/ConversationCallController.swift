@@ -33,7 +33,7 @@ final class ConversationCallController: NSObject {
 
     func startAudioCall(started: Completion?) {
         let startCall = { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) {
                 started?()
                 self.conversation.startAudioCall()
@@ -54,7 +54,7 @@ final class ConversationCallController: NSObject {
 
     func startVideoCall(started: Completion?) {
         let startVideoCall = { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) {
                 started?()
                 self.conversation.startVideoCall()

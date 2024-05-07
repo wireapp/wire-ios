@@ -44,7 +44,7 @@ class MarkdownTextStorage: NSTextStorage {
         // after automatically inserts corrections or fullstops after a space.
         // If the needsCheck flag is set (after characters are replaced) & the
         // attrs is missing the markdown id, then we need to included it.
-        if  needsCheck, let attrs = attrs, attrs[NSAttributedString.Key.markdownID] == nil {
+        if  needsCheck, let attrs, attrs[NSAttributedString.Key.markdownID] == nil {
             needsCheck = false
             storage.addAttribute(NSAttributedString.Key.markdownID, value: currentMarkdown, range: range)
         }

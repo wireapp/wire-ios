@@ -149,7 +149,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
         sections.append(backendInfoSection)
 
-        if let selfUser = selfUser {
+        if let selfUser {
             sections.append(Section(
                 header: "Self user",
                 items: [
@@ -244,7 +244,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func checkRegisteredTokens() {
         guard
-            let selfClient = selfClient,
+            let selfClient,
             let clientID = selfClient.remoteIdentifier,
             let context = selfClient.managedObjectContext?.notificationContext
         else {
@@ -323,7 +323,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func stopBellaFomaFederating() {
         guard
-            let selfClient = selfClient,
+            let selfClient,
             let context = selfClient.managedObjectContext
         else {
             return
@@ -335,7 +335,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func stopFederatingDomain(domain: String) {
         guard
-            let selfClient = selfClient,
+            let selfClient,
             let context = selfClient.managedObjectContext
         else {
             return

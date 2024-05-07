@@ -562,7 +562,7 @@ extension CollectionsViewController: UICollectionViewDelegate, UICollectionViewD
             header.section = section
             header.totalItemsCount = UInt(moreElementsToSee(in: section) ? elements(for: section).count : 0)
             header.selectionAction = { [weak self] section in
-                guard let `self` = self else {
+                guard let self else {
                     return
                 }
                 let collectionController = CollectionsViewController(collection: self.collection, sections: section, messages: self.elements(for: section), fetchingDone: self.fetchingDone, userSession: userSession)

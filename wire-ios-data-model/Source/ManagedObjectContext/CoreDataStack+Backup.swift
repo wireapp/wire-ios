@@ -285,7 +285,7 @@ extension CoreDataStack {
 
         try context.performGroupedAndWait { context in
             if context.encryptMessagesAtRest {
-                guard let databaseKey = databaseKey else { throw BackupError.missingEAREncryptionKey }
+                guard let databaseKey else { throw BackupError.missingEAREncryptionKey }
                 try context.migrateAwayFromEncryptionAtRest(databaseKey: databaseKey)
                 context.encryptMessagesAtRest = false
                 _ = context.makeMetadataPersistent()

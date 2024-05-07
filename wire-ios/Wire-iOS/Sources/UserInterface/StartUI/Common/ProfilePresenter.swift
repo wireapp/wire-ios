@@ -42,7 +42,7 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
     @objc
     func deviceOrientationChanged(_ notification: Notification?) {
         guard
-            let controllerToPresentOn = controllerToPresentOn,
+            let controllerToPresentOn,
             controllerToPresentOn.isIPadRegular()
         else { return }
 

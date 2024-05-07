@@ -32,7 +32,7 @@ extension ConversationListViewController {
         case .conversationList:
             view.alpha = 1
 
-            if let presentedViewController = presentedViewController {
+            if let presentedViewController {
                 presentedViewController.dismiss(animated: true, completion: completion)
             } else {
                 completion?()

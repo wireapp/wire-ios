@@ -89,7 +89,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         addressContainerView.addSubview(addressLabel)
         obfuscationView.isHidden = true
 
-        guard let font = labelFont, let color = labelTextColor, let containerColor = containerColor else { return }
+        guard let font = labelFont, let color = labelTextColor, let containerColor else { return }
         addressLabel.font = font
         addressLabel.textColor = color
         addressContainerView.backgroundColor = containerColor

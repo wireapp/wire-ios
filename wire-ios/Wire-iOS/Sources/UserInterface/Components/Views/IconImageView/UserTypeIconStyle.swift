@@ -69,7 +69,7 @@ extension UserTypeIconStyle {
             self = .federated
         } else if user.isExternalPartner {
             self = .external
-        } else if let conversation = conversation {
+        } else if let conversation {
             self = !user.isGuest(in: conversation) || user.isSelfUser ? .member : .guest
         } else {
             self = !selfUserHasTeam || user.isTeamMember || user.isServiceUser

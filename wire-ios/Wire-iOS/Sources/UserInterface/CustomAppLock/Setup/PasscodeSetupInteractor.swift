@@ -49,7 +49,7 @@ extension PasscodeSetupInteractor: PasscodeSetupInteractorInput {
     }
 
     func validate(error: TextFieldValidator.ValidationError?) {
-        guard let error = error else {
+        guard let error else {
             interactorOutput?.passcodeValidated(result: .valid)
             return
         }

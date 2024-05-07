@@ -126,7 +126,7 @@ final class RequestPasswordController {
 
         okAction?.isEnabled = passwordField.text?.isEmpty == false
 
-        if let inputValidation = inputValidation {
+        if let inputValidation {
             okAction?.isEnabled = inputValidation(passwordField.text)
         }
     }

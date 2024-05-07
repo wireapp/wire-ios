@@ -168,7 +168,7 @@ struct ProfileDeviceDetailsView: View {
             .foregroundColor(Color(uiColor: SemanticColors.Label.textSectionHeader))
             .padding([.leading, .top, .trailing], ViewConstants.Padding.standard)
 
-        if let description = description {
+        if let description {
             VStack(alignment: .leading) {
                 Text(description)
                     .font(.textStyle(.h4))

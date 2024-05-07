@@ -251,7 +251,7 @@ final class ZClientViewController: UIViewController {
 
         // if changing from compact width to regular width, make sure current conversation is loaded
         if previousTraitCollection?.horizontalSizeClass == .compact && traitCollection.horizontalSizeClass == .regular {
-            if let currentConversation = currentConversation {
+            if let currentConversation {
                 select(conversation: currentConversation)
             } else {
                 attemptToLoadLastViewedConversation(withFocus: false, animated: false)
@@ -330,7 +330,7 @@ final class ZClientViewController: UIViewController {
         var conversationRootController: ConversationRootViewController?
         if conversation === currentConversation,
            conversationRootController != nil {
-            if let message = message {
+            if let message {
                 conversationRootController?.scroll(to: message)
             }
         } else {
@@ -410,7 +410,7 @@ final class ZClientViewController: UIViewController {
 
     // MARK: - ColorSchemeControllerDidApplyChangesNotification
     private func reloadCurrentConversation() {
-        guard let currentConversation = currentConversation else { return }
+        guard let currentConversation else { return }
 
         let currentConversationViewController = ConversationRootViewController(conversation: currentConversation, message: nil, clientViewController: self, userSession: userSession)
 
@@ -515,7 +515,7 @@ final class ZClientViewController: UIViewController {
     func setTopOverlay(to viewController: UIViewController?, animated: Bool = true) {
         topOverlayViewController?.willMove(toParent: nil)
 
-        if let previousViewController = topOverlayViewController, let viewController = viewController {
+        if let previousViewController = topOverlayViewController, let viewController {
             addChild(viewController)
             viewController.view.frame = topOverlayContainer.bounds
             viewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -562,7 +562,7 @@ final class ZClientViewController: UIViewController {
                 self.topOverlayViewController = nil
                 self.updateSplitViewTopConstraint()
             }
-        } else if let viewController = viewController {
+        } else if let viewController {
             addChild(viewController)
             viewController.view.frame = topOverlayContainer.bounds
             viewController.view.translatesAutoresizingMaskIntoConstraints = false

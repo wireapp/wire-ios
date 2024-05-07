@@ -101,7 +101,7 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
             profileUser = nil
         }
 
-        if let profileUser = profileUser {
+        if let profileUser {
             let profileViewController = ProfileViewController(
                 user: profileUser,
                 viewer: selfUser,

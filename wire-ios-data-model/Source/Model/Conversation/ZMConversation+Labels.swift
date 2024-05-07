@@ -26,7 +26,7 @@ extension ZMConversation {
             return labels.any({ $0.kind == .favorite })
         }
         set {
-            guard let managedObjectContext = managedObjectContext else { return }
+            guard let managedObjectContext else { return }
 
             let favoriteLabel = Label.fetchFavoriteLabel(in: managedObjectContext)
 

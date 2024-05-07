@@ -323,7 +323,7 @@ extension ZMSnapshotTestCase {
                             line: UInt = #line) {
         for (deviceName, size) in sizes {
             view.frame = CGRect(origin: .zero, size: size)
-            if let configuration = configuration {
+            if let configuration {
                 let isIPad = XCTestCase.tabletScreenSizes.values.contains(size)
                 UIView.performWithoutAnimation({
                     configuration(view, isIPad)

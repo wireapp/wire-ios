@@ -32,8 +32,8 @@ protocol PopoverPresenter: AnyObject {
 
 extension PopoverPresenter where Self: UIViewController {
     func updatePopoverSourceRect() {
-        guard let presentedPopover = presentedPopover,
-              let popoverPointToView = popoverPointToView else { return }
+        guard let presentedPopover,
+              let popoverPointToView else { return }
 
         presentedPopover.sourceRect = popoverPointToView.popoverSourceRect(from: self)
     }

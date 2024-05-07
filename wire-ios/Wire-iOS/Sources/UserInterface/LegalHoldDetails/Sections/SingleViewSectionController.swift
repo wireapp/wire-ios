@@ -30,7 +30,7 @@ final class CollectionViewCellAdapter: UICollectionViewCell {
 
             contentView.subviews.forEach({ $0.removeFromSuperview() })
 
-            guard let wrappedView = wrappedView else { return }
+            guard let wrappedView else { return }
 
             wrappedView.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview(wrappedView)

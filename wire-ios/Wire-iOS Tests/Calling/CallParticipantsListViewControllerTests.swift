@@ -32,7 +32,7 @@ final class CallParticipantsListHelper {
             .map { mockUsers[$0] }
             .sorted { $0.name < $1.name }
         var callParticipantState: CallParticipantState = .connecting
-        if let videoState = videoState, let microphoneState = microphoneState {
+        if let videoState, let microphoneState {
             callParticipantState = .connected(videoState: videoState, microphoneState: microphoneState)
         }
 

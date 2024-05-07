@@ -56,7 +56,7 @@ final class UnsentGifImageSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             completion(self.gifImageData.flatMap(self.conversation.appendImage))
         }
     }

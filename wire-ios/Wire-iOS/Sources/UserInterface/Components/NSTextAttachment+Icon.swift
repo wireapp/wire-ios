@@ -34,7 +34,7 @@ extension NSTextAttachment {
     ) -> NSTextAttachment {
 
         let image: UIImage
-        if let insets = insets {
+        if let insets {
             image = icon.makeImage(size: iconSize, color: color).with(insets: insets, backgroundColor: .clear)!
         } else {
             image = icon.makeImage(size: iconSize, color: color)

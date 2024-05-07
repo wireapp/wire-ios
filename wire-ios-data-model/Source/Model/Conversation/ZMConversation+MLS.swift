@@ -133,7 +133,7 @@ extension ZMConversation {
             let value = primitiveMlsStatus?.int16Value
             didAccessValue(forKey: Self.mlsStatusKey)
 
-            guard let value = value else {
+            guard let value else {
                 return nil
             }
 
@@ -167,7 +167,7 @@ extension ZMConversation {
             let value = primitiveValue(forKey: Self.mlsVerificationStatusKey) as? MLSVerificationStatus.RawValue
             didAccessValue(forKey: Self.mlsVerificationStatusKey)
 
-            guard let value = value else { return nil }
+            guard let value else { return nil }
             guard let status = MLSVerificationStatus(rawValue: value) else {
                 return nil
             }

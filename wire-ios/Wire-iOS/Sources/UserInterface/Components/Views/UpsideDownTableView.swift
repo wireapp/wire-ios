@@ -78,7 +78,7 @@ final class UpsideDownTableView: UITableView {
                 return
             }
             /// do not set contentOffset if the user is panning on the bottom edge of pannableView (with 10 pt threshold)
-            if let pannableView = pannableView,
+            if let pannableView,
                self.panGestureRecognizer.location(in: self.superview).y >= pannableView.frame.maxY - 10 {
                 return
             }

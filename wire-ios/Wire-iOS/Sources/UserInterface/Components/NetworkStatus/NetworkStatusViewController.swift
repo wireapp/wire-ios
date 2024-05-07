@@ -185,7 +185,7 @@ extension NetworkStatusViewController: ZMNetworkAvailabilityObserver {
 extension NetworkStatusViewController {
     func shouldShowOnIPad() -> Bool {
         guard isIPadRegular(device: device) else { return true }
-        guard let delegate = delegate else { return true }
+        guard let delegate else { return true }
 
         let newOrientation = application.statusBarOrientation
 

@@ -29,7 +29,7 @@ extension ConversationListViewController.ViewModel: ConversationListContentDeleg
     }
 
     func conversationListDidScroll(_ controller: ConversationListContentController?) {
-        guard let controller = controller else { return }
+        guard let controller else { return }
 
         viewController?.scrollViewDidScroll(scrollView: controller.collectionView)
     }

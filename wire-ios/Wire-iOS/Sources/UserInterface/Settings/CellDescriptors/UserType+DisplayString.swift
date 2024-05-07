@@ -30,21 +30,21 @@ extension UserType {
 
     private var handleAndDomainString: String? {
         guard
-            let handleString = handleString,
-            let domainString = domainString
+            let handleString,
+            let domainString
         else { return self.handleString }
 
         return handleString + domainString
     }
 
     private var handleString: String? {
-        guard let handle = handle else { return .none }
+        guard let handle else { return .none }
 
         return "@" + handle
     }
 
     var domainString: String? {
-        guard let domain = domain else { return .none }
+        guard let domain else { return .none }
 
         return "@" + domain
     }

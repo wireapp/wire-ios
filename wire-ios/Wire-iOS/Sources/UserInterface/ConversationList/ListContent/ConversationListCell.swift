@@ -104,7 +104,7 @@ final class ConversationListCell: SwipeMenuCollectionCell,
             var overscrolled = false
             if offset > frame.width / ConversationListCell.OverscrollRatio {
                 overscrolled = true
-            } else if let overscrollStartDate = overscrollStartDate {
+            } else if let overscrollStartDate {
                 let diff = Date().timeIntervalSince(overscrollStartDate)
                 overscrolled = diff > ConversationListCell.IgnoreOverscrollTimeInterval
             }

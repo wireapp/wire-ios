@@ -33,7 +33,7 @@ extension ZMConversationMessage {
     private func announcementText() -> String? {
         if isKnock {
             return ConversationAnnouncement.Ping.description(senderName)
-        } else if isText, let textMessageData = textMessageData {
+        } else if isText, let textMessageData {
             let messageText = NSAttributedString.format(message: textMessageData, isObfuscated: isObfuscated)
             return "\(ConversationAnnouncement.Text.description(senderName)), \(messageText.string)"
         } else if isImage {

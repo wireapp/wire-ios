@@ -95,5 +95,4 @@ final class StartUIInviteActionBar: UIView {
             weakSelf.layoutIfNeeded()
         })
     }
-
 }

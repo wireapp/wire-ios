@@ -51,7 +51,7 @@ extension ContactsViewController {
             ZClientViewController.shared?.select(conversation: conversation, focusOnView: true, animated: true)
         }
 
-        if let navigationController = navigationController {
+        if let navigationController {
             navigationController.popToRootViewController(animated: false, completion: showConversation)
         } else {
             showConversation()

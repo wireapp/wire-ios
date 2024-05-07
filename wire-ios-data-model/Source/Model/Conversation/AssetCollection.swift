@@ -91,7 +91,7 @@ public class AssetCollection: NSObject, ZMCollection {
             fatal("syncMOC not accessible")
         }
         syncMOC.performGroupedBlock { [weak self] in
-            guard let `self` = self, !self.tornDown else { return }
+            guard let self, !self.tornDown else { return }
             guard let conversation = self.conversation,
                 let syncConversation = (try? syncMOC.existingObject(with: conversation.objectID)) as? ZMConversation else {
                 return
@@ -191,7 +191,7 @@ public class AssetCollection: NSObject, ZMCollection {
         }
 
         syncConversation.managedObjectContext?.performGroupedBlock { [weak self] in
-            guard let `self` = self, !self.tornDown else { return }
+            guard let self, !self.tornDown else { return }
             self.fetchNextIfNotTornDown(limit: AssetCollection.defaultFetchCount, type: type, syncConversation: syncConversation)
         }
     }
@@ -202,7 +202,7 @@ public class AssetCollection: NSObject, ZMCollection {
         }
 
         uiMOC?.performGroupedBlock { [weak self] in
-            guard let `self` = self, !self.tornDown else { return }
+            guard let self, !self.tornDown else { return }
 
             // Map to ui assets
             var uiAssets = [CategoryMatch: [ZMMessage]]()
@@ -228,7 +228,7 @@ public class AssetCollection: NSObject, ZMCollection {
 
     private func notifyDelegateFetchingIsDone(result: AssetFetchResult) {
         self.uiMOC?.performGroupedBlock { [weak self] in
-            guard let `self` = self, !self.tornDown else { return }
+            guard let self, !self.tornDown else { return }
             self.delegate.assetCollectionDidFinishFetching(collection: self, result: result)
         }
     }

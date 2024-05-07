@@ -232,7 +232,7 @@ class MockUserType: NSObject, UserType, Decodable, EditableUserType {
     func canAccessCompanyInformation(of user: UserType) -> Bool {
         guard
             let otherUser = user as? MockUserType,
-            let teamIdentifier = teamIdentifier,
+            let teamIdentifier,
             let otherTeamIdentifier = otherUser.teamIdentifier
             else { return false }
 

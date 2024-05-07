@@ -30,7 +30,7 @@ final class PostContent {
     private var sendController: SendController?
 
     var sentAllSendables: Bool {
-        guard let sendController = sendController else { return false }
+        guard let sendController else { return false }
         return sendController.sentAllSendables
     }
 

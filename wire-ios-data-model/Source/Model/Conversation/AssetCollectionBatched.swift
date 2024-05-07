@@ -78,7 +78,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
             fatal("syncMOC not accessible")
         }
         syncMOC.performGroupedBlock { [weak self] in
-            guard let `self` = self, !self.tornDown else { return }
+            guard let self, !self.tornDown else { return }
             guard let conversation = self.conversation,
                   let syncConversation = (try? syncMOC.existingObject(with: conversation.objectID)) as? ZMConversation else {
                 return
@@ -163,7 +163,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
         }
 
         managedObjectContext.performGroupedBlock { [weak self] in
-            guard let `self` = self, !self.tornDown else { return }
+            guard let self, !self.tornDown else { return }
             self.categorizeNextBatch(type: type, allMessages: allMessages, managedObjectContext: managedObjectContext)
         }
     }
@@ -173,7 +173,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
             return
         }
         uiMOC?.performGroupedBlock { [weak self] in
-            guard let `self` = self, !self.tornDown else { return }
+            guard let self, !self.tornDown else { return }
 
             // Map assets to UI assets
             var uiAssets = [CategoryMatch: [ZMMessage]]()
@@ -199,7 +199,7 @@ public class AssetCollectionBatched: NSObject, ZMCollection {
 
     private func notifyDelegateFetchingIsDone(result: AssetFetchResult) {
         self.uiMOC?.performGroupedBlock { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             var result = result
             if result == .success {
                 // Since we are setting the assets in a performGroupedBlock on the uiMOC, we might not know if there are assets or not when we call notifyDelegateFetchingIsDone. Therefore we check for assets here.

@@ -123,7 +123,7 @@ class NotificationLabel: RoundedBlurView {
     }
 
     private func startTimer(with timeInterval: TimeInterval?) {
-        guard let timeInterval = timeInterval else { return }
+        guard let timeInterval else { return }
 
         timer = .scheduledTimer(withTimeInterval: timeInterval, repeats: false) { [weak self] _ in
             self?.animateMessage(show: false)

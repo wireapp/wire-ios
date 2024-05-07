@@ -157,7 +157,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     }
 
     func updateSaveButtonState(enabled: Bool? = nil) {
-        if let enabled = enabled {
+        if let enabled {
             navigationItem.rightBarButtonItem?.isEnabled = enabled
         } else {
             navigationItem.rightBarButtonItem?.isEnabled = state.isValid

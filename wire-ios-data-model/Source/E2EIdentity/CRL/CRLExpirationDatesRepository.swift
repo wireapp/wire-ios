@@ -90,7 +90,7 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
             let expirationDate = storage.date(forKey: .expirationDate(dp: distributionPoint))
 
             guard
-                let expirationDate = expirationDate,
+                let expirationDate,
                 let url = URL(string: distributionPoint)
             else {
                 continue
@@ -117,7 +117,7 @@ public class CRLExpirationDatesRepository: CRLExpirationDatesRepositoryProtocol 
     private func storeDistributionPointIfNeeded(_ dpString: String) {
         let knownDistributionPoints = storage.object(forKey: Key.distributionPoints) as? [String]
 
-        if var knownDistributionPoints = knownDistributionPoints, !knownDistributionPoints.contains(dpString) {
+        if var knownDistributionPoints, !knownDistributionPoints.contains(dpString) {
             knownDistributionPoints.append(dpString)
             storage.set(knownDistributionPoints, forKey: .distributionPoints)
             return

@@ -111,7 +111,7 @@ final class BadgeUserImageView: UserImageView {
 
     /// Updates the badge icon.
     private func updateBadgeIcon() {
-        guard let user = user else {
+        guard let user else {
             badgeIcon = .none
             return
         }
@@ -136,7 +136,7 @@ final class BadgeUserImageView: UserImageView {
     private func updateIconView(with icon: StyleKitIcon?, animated: Bool) {
         badgeImageView.image = nil
 
-        if let icon = icon {
+        if let icon {
             let hideBadge = {
                 self.badgeImageView.transform = CGAffineTransform(scaleX: 1.8, y: 1.8)
                 self.badgeImageView.alpha = 0

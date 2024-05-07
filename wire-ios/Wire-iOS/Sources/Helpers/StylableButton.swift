@@ -63,7 +63,7 @@ class StylableButton: UIButton, Stylable {
     }
 
     func setBackgroundImageColor(_ color: UIColor?, for state: UIControl.State) {
-        if let color = color {
+        if let color {
             setBackgroundImage(UIImage.singlePixelImage(with: color.resolvedColor(with: traitCollection)), for: state)
         } else {
             setBackgroundImage(nil, for: state)

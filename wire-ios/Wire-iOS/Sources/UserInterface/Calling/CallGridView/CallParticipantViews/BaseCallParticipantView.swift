@@ -247,7 +247,7 @@ class BaseCallParticipantView: OrientableView, AVSIdentifierProvider {
 
     func layout(forInterfaceOrientation interfaceOrientation: UIInterfaceOrientation,
                 deviceOrientation: UIDeviceOrientation) {
-        guard let superview = superview else { return }
+        guard let superview else { return }
 
         delta = .equal
 

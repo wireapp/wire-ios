@@ -118,7 +118,7 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
 
     private var filterString: String? = .none {
         didSet {
-            if let filterString = filterString, !filterString.isEmpty {
+            if let filterString, !filterString.isEmpty {
                 self.filteredDestinations = self.destinations.filter {
                     let name = $0.displayNameWithFallback
                     return name.range(of: filterString, options: .caseInsensitive) != nil

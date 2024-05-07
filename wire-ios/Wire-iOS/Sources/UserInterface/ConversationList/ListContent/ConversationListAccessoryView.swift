@@ -147,7 +147,7 @@ final class ConversationListAccessoryView: UIView {
     private var viewForState: UIView? {
         typealias ConversationListVoiceOver = L10n.Localizable.ConversationList.Voiceover.Status
 
-        guard let icon = icon else { return nil }
+        guard let icon else { return nil }
         badgeView.backgroundColor = ViewColors.backgroundDefaultBlack
         let iconTintColor = IconColors.foregroundDefaultWhite
 
@@ -235,7 +235,7 @@ final class ConversationListAccessoryView: UIView {
         self.expandTransparentIconViewWidthConstraint.constant = defaultViewWidth
         self.expandWidthConstraint.constant = defaultViewWidth
 
-        guard let icon = icon else {
+        guard let icon else {
             self.badgeView.isHidden = true
             self.transparentIconView.isHidden = true
 

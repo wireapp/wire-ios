@@ -40,7 +40,7 @@ enum IconStringsBuilder {
 
         // Adds the down arrow if the view is interactive
         if interactive {
-            if let titleFont = titleFont {
+            if let titleFont {
                 let iconImage: UIImage = StyleKitIcon.downArrow.makeImage(
                     size: .custom(15),
                     color: SemanticColors.Icon.foregroundPlainDownArrow).withRenderingMode(.alwaysTemplate)

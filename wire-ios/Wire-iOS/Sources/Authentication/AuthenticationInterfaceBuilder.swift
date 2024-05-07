@@ -85,7 +85,7 @@ final class AuthenticationInterfaceBuilder {
 
             } else {
                 let prefill: AuthenticationPrefilledCredentials?
-                if let credentials = credentials, credentials.emailAddress != nil {
+                if let credentials, credentials.emailAddress != nil {
                     prefill = AuthenticationPrefilledCredentials(credentials: credentials, isExpired: isSignedOut)
                 } else {
                     prefill = nil

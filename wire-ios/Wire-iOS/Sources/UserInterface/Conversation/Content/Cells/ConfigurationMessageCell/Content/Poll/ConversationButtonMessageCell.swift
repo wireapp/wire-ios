@@ -61,7 +61,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
     }
 
     private func updateUI() {
-        guard let config = config else {
+        guard let config else {
             return
         }
 

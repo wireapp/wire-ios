@@ -169,7 +169,7 @@ final class MessageToolboxDataSource {
         let deliveryStateString = selfMessageStatus(for: message)
 
         if let timestampString = self.timestampString(message), message.isSent {
-            if let deliveryStateString = deliveryStateString, message.shouldShowDeliveryState {
+            if let deliveryStateString, message.shouldShowDeliveryState {
                 return (timestampString && attributes, deliveryStateString, countdownStatus)
             } else {
                 return (timestampString && attributes, nil, countdownStatus)

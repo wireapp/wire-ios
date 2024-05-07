@@ -40,7 +40,7 @@ final class AccountSelectorView: UIView {
             accountViews.forEach { accountView in
                 accountView.unreadCountStyle = .current
                 accountView.onTap = { [weak self] account in
-                    guard let account = account else { return }
+                    guard let account else { return }
                     self?.delegate?.accountSelectorDidSelect(account: account)
                 }
             }

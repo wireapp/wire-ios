@@ -159,7 +159,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
     @MainActor
     private func fetchSelfConversationMLSGroupID() async -> MLSGroupID? {
         await contextProvider.syncContext.perform { [weak self] in
-            guard let self = self else {
+            guard let self else {
                 return nil
             }
             return ZMConversation.fetchSelfMLSConversation(in: self.contextProvider.syncContext)?.mlsGroupID

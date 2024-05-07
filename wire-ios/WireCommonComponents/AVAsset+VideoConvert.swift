@@ -139,7 +139,7 @@ extension AVURLAsset {
             return completion(nil, nil, ConversionFailure.exportSessionUnavailable)
         }
 
-        if let fileLengthLimit = fileLengthLimit {
+        if let fileLengthLimit {
             exportSession.fileLengthLimit = fileLengthLimit
         }
 
@@ -171,7 +171,7 @@ extension AVAssetExportSession {
         metadataItemFilter = AVMetadataItemFilter.forSharing()
         weak var session: AVAssetExportSession? = self
         exportAsynchronously {
-            if let session = session,
+            if let session,
                let error = session.error {
                 zmLog.error("Export session error: status=\(session.status.rawValue) error=\(error) output=\(exportURL)")
             }

@@ -96,7 +96,7 @@ class ColorPickerController: UIViewController {
 
         var color: AccentColor? {
             didSet {
-                if let color = color {
+                if let color {
                     colorView.backgroundColor = color.uiColor
                 }
             }
