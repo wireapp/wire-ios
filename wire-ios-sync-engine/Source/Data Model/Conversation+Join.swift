@@ -125,11 +125,6 @@ extension ZMConversation {
                                contextProvider: ContextProvider,
                                completion: @escaping (Result<(conversationId: UUID, conversationName: String, hasPassword: Bool), Error>) -> Void) {
 
-        guard let apiVersion = BackendInfo.apiVersion else {
-            completion(.failure(ConversationFetchError.unknown))
-            return
-        }
-
         guard let request = ConversationJoinRequestFactory.requestForGetConversation(key: key, code: code) else {
             completion(.failure(ConversationFetchError.unknown))
             return
