@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDataModel
 import WireSyncEngine
 
 protocol AccountSelectorViewDelegate: AnyObject {

@@ -18,8 +18,15 @@
 
 import UIKit
 import WireSyncEngine
+import WireSystem
 
-final class AccountSelectorController: UIViewController {
+// TODO [WPB-7307]: remove typealias
+typealias AccountSelectorController = AccountSelectionViewController
+
+final class AccountSelectionViewController: UIViewController {
+
+    weak var delegate: AccountSelectionViewControllerDelegate?
+
     private var accountsView = AccountSelectorView()
     private var applicationDidBecomeActiveToken: NSObjectProtocol!
 
@@ -64,14 +71,12 @@ extension AccountSelectorController: AccountSelectorViewDelegate {
         guard
             account != SessionManager.shared?.accountManager.selectedAccount,
             ZClientViewController.shared?.conversationListViewController.presentedViewController != nil
-        else {
-            return
-        }
+        else { return }
 
-        ZClientViewController.shared?.conversationListViewController.dismiss(animated: true,
-                                                                             completion: {
+        ZClientViewController.shared?.conversationListViewController.dismiss(animated: true) {
+
             AppDelegate.shared.mediaPlaybackManager?.stop()
-            SessionManager.shared?.select(account)
-        })
+            self.delegate?.accountSelectionViewController(self, didSwitchTo: account)
+        }
     }
 }

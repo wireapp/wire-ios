@@ -16,25 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCommonComponents
-import WireSyncEngine
+import WireDataModel
 
-struct SelfProfileViewControllerBuilder {
-
-    var selfUser: SettingsSelfUser
-    var userRightInterfaceType: UserRightInterface.Type
-    var userSession: UserSession
-    var accountSelectionDelegate: any AccountSelectionViewControllerDelegate
-
-    func build(
-        accountSelectionDelegate: some AccountSelectionViewControllerDelegate
-    ) -> SelfProfileViewController {
-        .init(
-            selfUser: selfUser,
-            userRightInterfaceType: userRightInterfaceType,
-            userSession: userSession,
-            accountSelectionDelegate: accountSelectionDelegate
-        )
-    }
+protocol AccountSelectionViewControllerDelegate: AnyObject {
+    func accountSelectionViewController(_ viewController: AccountSelectionViewController, didSwitchTo account: Account)
 }

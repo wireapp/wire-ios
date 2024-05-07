@@ -60,10 +60,12 @@ final class SelfProfileViewController: UIViewController {
     init(
         selfUser: SettingsSelfUser,
         userRightInterfaceType: UserRightInterface.Type,
-        userSession: UserSession
+        userSession: UserSession,
+        accountSelectionDelegate: AccountSelectionViewControllerDelegate
     ) {
 
         self.userSession = userSession
+        accountSelectorController.delegate = accountSelectionDelegate
 
         // Create the settings hierarchy
 
