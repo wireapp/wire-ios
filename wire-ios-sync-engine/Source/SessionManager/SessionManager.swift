@@ -656,7 +656,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     public func select(
         _ account: Account,
         completion: ((ZMUserSession?) -> Void)? = nil,
-        tearDownCompletion: @escaping () -> Void = {}
+        tearDownCompletion: (() -> Void)? = nil
     ) {
         guard !isSelectingAccount else {
             completion?(nil)
@@ -677,7 +677,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 from: selectedAccount,
                 userSessionCanBeTornDown: { [weak self] in
                     self?.activeUserSession = nil
-                    tearDownCompletion()
+                    tearDownCompletion?()
                     guard let self else {
                         completion?(nil)
                         return
