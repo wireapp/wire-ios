@@ -72,7 +72,7 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
     }
 
     var callStartDate: Date? {
-        if let mockCallDuration = mockCallDuration {
+        if let mockCallDuration {
             return Date(timeIntervalSinceNow: -mockCallDuration)
         } else {
             return nil

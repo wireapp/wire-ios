@@ -83,7 +83,6 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
-            useCaseFactory: nil,
             userId: account.userIdentifier
         )
 
@@ -621,7 +620,7 @@ extension IntegrationTest {
         changesAfterInterruption: ((_ session: MockTransportSessionObjectCreation) -> Void)? = nil) {
 
         closePushChannelAndWaitUntilClosed()
-        changesBeforeInterruption.apply(mockTransportSession.performRemoteChanges)
+        changesBeforeInterruption.map(mockTransportSession.performRemoteChanges)
         mockTransportSession.performRemoteChanges { session in
             session.clearNotifications()
 

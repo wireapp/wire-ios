@@ -160,7 +160,7 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
 
     /// Call this when the presented finished presenting.
     func completePresentation() {
-        if let pendingModal = pendingModal {
+        if let pendingModal {
             presenter?.present(pendingModal, animated: true)
             self.pendingModal = nil
         }
@@ -189,12 +189,11 @@ extension AuthenticationCoordinator: AuthenticationStateControllerDelegate {
         case .replace:
             var viewControllers = presenter.viewControllers
             viewControllers[viewControllers.count - 1] = stepViewController
-            stateController.transition(to: .landingScreen, mode: .reset)
             presenter.setViewControllers(viewControllers, animated: true)
         case .rewindToOrReset(let milestone):
             var viewControllers = presenter.viewControllers
             let rewindedController = viewControllers.first { milestone.shouldRewind(to: $0) }
-            if let rewindedController = rewindedController {
+            if let rewindedController {
                 viewControllers = [viewControllers.prefix { !milestone.shouldRewind(to: $0) }, [rewindedController], [stepViewController]].flatMap { $0 }
                 presenter.setViewControllers(viewControllers, animated: true)
             } else {
@@ -211,7 +210,7 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
     func sessionManagerCreated(userSession: ZMUserSession) {
         log.info("Session manager created session: \(userSession)")
-        currentPostRegistrationFields().apply(sendPostRegistrationFields)
+        currentPostRegistrationFields().map(sendPostRegistrationFields)
     }
 
     func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {
@@ -654,7 +653,7 @@ extension AuthenticationCoordinator {
             }
         }
 
-        if let proxyCredentials = proxyCredentials {
+        if let proxyCredentials {
             sessionManager.saveProxyCredentials(username: proxyCredentials.username,
                                                 password: proxyCredentials.password)
         }
@@ -764,7 +763,7 @@ extension AuthenticationCoordinator {
 
     /// Manually start the company login flow.
     private func startCompanyLoginFlowIfPossible(linkCode: UUID?) {
-        if let linkCode = linkCode {
+        if let linkCode {
             companyLoginController?.attemptLoginWithSSOCode(linkCode)
         } else {
             companyLoginController?.displayCompanyLoginPrompt()

@@ -63,7 +63,7 @@ class MediaShareRestrictionManager {
     // MARK: - Public Properties
 
     var level: MediaShareRestrictionLevel {
-        if let sessionRestriction = sessionRestriction, !sessionRestriction.isFileSharingEnabled {
+        if let sessionRestriction, !sessionRestriction.isFileSharingEnabled {
             return .APIFlag
         }
         return isFileSharingFlagEnabled ? .none : .securityFlag
