@@ -72,15 +72,13 @@ class BaseAccountView: UIView {
         return result
     }
 
-    init?(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
+    init(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
         self.account = account
 
         dotView = DotView(user: user)
         dotView.hasUnreadMessages = account.unreadConversationCount > 0
 
         super.init(frame: .zero)
-
-        guard let accountView = self as? AccountView else { return nil }
 
         if let userSession = SessionManager.shared?.activeUserSession {
             selfUserObserver = UserChangeInfo.add(observer: self, for: userSession.providedSelfUser, in: userSession)
@@ -92,7 +90,7 @@ class BaseAccountView: UIView {
 
         [imageViewContainer, outlineView, selectionView, dotView].forEach(addSubview)
 
-        let dotConstraints = accountView.createDotConstraints()
+        let dotConstraints = createDotConstraints()
 
         let containerInset: CGFloat = 6
 
@@ -147,6 +145,10 @@ class BaseAccountView: UIView {
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func createDotConstraints() -> [NSLayoutConstraint] {
+        fatalError("Subclasses must override this method!")
     }
 
     func update() {

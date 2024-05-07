@@ -19,7 +19,7 @@
 import UIKit
 import WireDataModel
 
-final class PersonalAccountView: BaseAccountView, AccountView {
+final class PersonalAccountView: BaseAccountView {
 
     let userImageView = {
         let avatarImageView = AvatarImageView(frame: .zero)
@@ -34,7 +34,7 @@ final class PersonalAccountView: BaseAccountView, AccountView {
     private var conversationListObserver: NSObjectProtocol!
     private var connectionRequestObserver: NSObjectProtocol!
 
-    override init?(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
+    override init(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
         super.init(account: account, user: user, displayContext: displayContext)
 
         self.isAccessibilityElement = true
@@ -75,7 +75,7 @@ final class PersonalAccountView: BaseAccountView, AccountView {
         }
     }
 
-    func createDotConstraints() -> [NSLayoutConstraint] {
+    override func createDotConstraints() -> [NSLayoutConstraint] {
         let dotSize: CGFloat = 9
         dotView.translatesAutoresizingMaskIntoConstraints = false
         imageViewContainer.translatesAutoresizingMaskIntoConstraints = false

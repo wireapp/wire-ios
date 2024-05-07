@@ -61,7 +61,7 @@ final class AccountSelectorView: UIView {
             subview.removeFromSuperview()
         }
         accounts.forEach { account in
-            guard let accountView = AccountViewFactory.viewFor(account: account, displayContext: .accountSelector) else { return }
+            let accountView = AccountViewBuilder(account: account, displayContext: .accountSelector).build()
             accountView.unreadCountStyle = .current
             accountView.onTap = { [weak self] account in
                 self?.delegate?.accountSelectorView(self!, didSelect: account)
