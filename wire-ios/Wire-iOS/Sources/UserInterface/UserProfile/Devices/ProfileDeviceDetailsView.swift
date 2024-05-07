@@ -98,7 +98,7 @@ struct ProfileDeviceDetailsView: View {
         ScrollView {
             VStack(alignment: .leading) {
                 if viewModel.isE2eIdentityEnabled {
-                    if let thumbprint = viewModel.mlsThumbprint, thumbprint.isNonEmpty {
+                    if let thumbprint = viewModel.mlsThumbprint, !thumbprint.isEmpty {
                         mlsView
                     }
                     e2eIdentityCertificateView

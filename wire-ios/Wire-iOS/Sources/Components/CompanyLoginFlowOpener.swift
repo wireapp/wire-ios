@@ -52,7 +52,7 @@ final class CompanyLoginFlowHandler {
     }
 
     deinit {
-        token.apply(NotificationCenter.default.removeObserver)
+        token.map(NotificationCenter.default.removeObserver)
     }
 
     // MARK: - Initialization
