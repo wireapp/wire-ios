@@ -109,7 +109,7 @@ final class UserClientListViewController: UIViewController,
 
     private func updateCertificatesForUserClients() {
         Task {
-            if let mlsGroupId = mlsGroupId {
+            if let mlsGroupId {
                 clients = await clients.updateCertificates(
                     mlsGroupId: mlsGroupId, userSession: userSession)
             }
@@ -161,7 +161,7 @@ final class UserClientListViewController: UIViewController,
     private func openDetailsOfClient(_ client: UserClient) {
         guard
             let navigationController,
-            let contextProvider = contextProvider
+            let contextProvider
         else {
             assertionFailure("Unable to display details from conversations as navigation instance is nil")
             return

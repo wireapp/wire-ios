@@ -132,7 +132,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
         }
 
         set {
-            if let newValue = newValue {
+            if let newValue {
                 attributedPlaceholder = attributedPlaceholderString(placeholder: newValue)
             }
         }
@@ -140,7 +140,7 @@ final class SimpleTextField: UITextField, DynamicTypeCapable {
 
     override var accessibilityValue: String? {
         get {
-            guard let text = text,
+            guard let text,
                   !text.isEmpty else {
                       return super.accessibilityValue ?? placeholder
                   }

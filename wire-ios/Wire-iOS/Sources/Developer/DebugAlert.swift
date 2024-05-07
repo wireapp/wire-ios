@@ -79,7 +79,7 @@ final class DebugAlert {
             alert.addAction(alertAction)
         }
 
-        if let cancelText = cancelText {
+        if let cancelText {
             let cancelAction = UIAlertAction(title: cancelText, style: .cancel) { _ in
                 isShown = false
             }

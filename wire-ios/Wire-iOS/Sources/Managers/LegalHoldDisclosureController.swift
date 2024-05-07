@@ -208,7 +208,7 @@ final class LegalHoldDisclosureController: UserObserving {
         }
 
         dismissAlertIfNeeded(presentedAlertController) {
-            if let alertController = alertController {
+            if let alertController {
                 self.presentedAlertController = alertController
                 self.presenter(alertController, true, nil)
             } else {

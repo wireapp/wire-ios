@@ -90,7 +90,7 @@ final class CompanyLoginFlowHandler {
 
     private func openSafariAuthenticationSession(at url: URL) {
         let session = ASWebAuthenticationSession(url: url, callbackURLScheme: callbackScheme) { url, _ in
-            if let url = url {
+            if let url {
                 self.processURL(url)
             }
 

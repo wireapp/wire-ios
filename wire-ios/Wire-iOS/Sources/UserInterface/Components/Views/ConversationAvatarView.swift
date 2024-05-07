@@ -161,7 +161,7 @@ final class ConversationAvatarView: UIView {
     private var conversation: ConversationAvatarViewConversation? = .none {
         didSet {
 
-            guard let conversation = conversation else {
+            guard let conversation else {
                 self.clippingView.subviews.forEach { $0.isHidden = true }
                 return
             }
