@@ -39,11 +39,7 @@ fileprivate extension UserDefaults {
 
     private let defaults = UserDefaults.shared()
     private(set) public var accounts = [Account]()
-    private var selectedAccount_: Account?
-    private(set) public var selectedAccount: Account? { // The currently selected account or `nil` in case there is none
-        get { selectedAccount_ }
-        set { selectedAccount_ = newValue }
-    }
+    private(set) public var selectedAccount: Account? // The currently selected account or `nil` in case there is none
 
     private var store: AccountStore
 

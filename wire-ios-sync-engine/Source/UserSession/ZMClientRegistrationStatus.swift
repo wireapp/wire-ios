@@ -267,7 +267,6 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
     public static func needsToRegisterClient(in context: NSManagedObjectContext) -> Bool {
         // replace with selfUser.client.remoteIdentifier == nil
         if let clientID = context.persistentStoreMetadata(forKey: ZMPersistedClientIdKey) as? String {
-            print("#><# clientID.isEmpty:", clientID.isEmpty)
             return clientID.isEmpty
         } else {
             return true
@@ -313,9 +312,6 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
     func observeClientUpdates() {
         clientUpdateObserverToken = ZMClientUpdateNotification.addObserver(context: managedObjectContext) { [weak self] type, clientIDs, error in
-            if let error {
-                print("#><#", String(reflecting: error))
-            }
             self?.managedObjectContext.performGroupedBlock {
                 switch type {
                 case .fetchCompleted:
