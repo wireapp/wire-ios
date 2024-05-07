@@ -394,7 +394,7 @@ final class FullscreenImageViewController: UIViewController {
             weakSelf.imageView?.center = CGPoint(x: weakSelf.imageView?.center.x ?? 0.0, y: proxy.center.y)
             weakSelf.imageView?.transform = proxy.transform.concatenating(weakSelf.imageViewStartingTransform)
         }
-        if let attachmentBehavior = attachmentBehavior {
+        if let attachmentBehavior {
             animator.addBehavior(attachmentBehavior)
         }
 
@@ -460,7 +460,7 @@ final class FullscreenImageViewController: UIViewController {
                 })
             }
         }
-        if let attachmentBehavior = attachmentBehavior {
+        if let attachmentBehavior {
             animator.removeBehavior(attachmentBehavior)
         }
         animator.addBehavior(push)
