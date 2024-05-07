@@ -16,9 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-// sourcery: AutoMockable
-@MainActor
-public protocol AccountSwitcher {
-    var currentAccount: Account? { get }
-    func switchTo(account: Account) async throws
+import WireSyncEngine
+
+extension SessionManager: AccountSelector {
+
+    public var currentAccount: Account? {
+        accountManager.selectedAccount
+    }
+
+    public func switchTo(account: Account, completion: @escaping ((any UserSession)?) -> Void) {
+        select(account, completion: completion, tearDownCompletion: {})
+    }
 }

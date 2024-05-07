@@ -655,11 +655,11 @@ public final class SessionManager: NSObject, SessionManagerType {
     /// - tearDownCompletion: runs when the UI no longer holds any references to the previous user session.
     public func select(
         _ account: Account,
-        completion: @escaping (Result<ZMUserSession, Error>) -> Void = { _ in },
+        completion: @escaping (ZMUserSession?) -> Void = { _ in },
         tearDownCompletion: @escaping () -> Void = {}
     ) {
         guard !isSelectingAccount else {
-            return completion(.failure(SwitchAccountError.unexpectedError("isSelectingAccount == false")))
+            return completion(nil)
         }
 
         confirmSwitchingAccount { [weak self] in
@@ -668,7 +668,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             let selectedAccount = self?.accountManager.selectedAccount
 
             guard let delegate = self?.delegate else {
-                return completion(.failure(SwitchAccountError.unexpectedError("weak self or delegate == nil")))
+                return completion(nil)
             }
             delegate.sessionManagerWillOpenAccount(
                 account,
@@ -677,16 +677,16 @@ public final class SessionManager: NSObject, SessionManagerType {
                     self?.activeUserSession = nil
                     tearDownCompletion()
                     guard let self else {
-                        return completion(.failure(SwitchAccountError.unexpectedError("weak self == nil")))
+                        return completion(nil)
                     }
                     loadSession(for: account) { [weak self] session in
                         self?.isSelectingAccount = false
 
                         if let session {
                             self?.accountManager.select(account)
-                            completion(.success(session))
+                            completion(session)
                         } else {
-                            completion(.failure(SwitchAccountError.unexpectedError("session == nil")))
+                            completion(nil)
                         }
                     }
                 }
@@ -1549,21 +1549,7 @@ extension SessionManager {
     }
 }
 
-extension SessionManager: AccountSwitcher {
-
-    enum SwitchAccountError: Error {
-        case unexpectedError(_ description: String)
-    }
-
-    public var currentAccount: Account? {
-        accountManager.selectedAccount
-    }
-
-    public func switchTo(account: Account) async throws {
-        _ = try await withCheckedThrowingContinuation { continuation in
-            self.select(account, completion: continuation.resume(with:), tearDownCompletion: {})
-        }
-    }
+extension SessionManager {
 
     public func confirmSwitchingAccount(completion: @escaping () -> Void) {
         guard

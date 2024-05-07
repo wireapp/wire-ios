@@ -56,6 +56,49 @@ import WireSyncEngine
 
 
 
+public class MockAccountSelector: AccountSelector {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - currentAccount
+
+    public var currentAccount: Account?
+
+
+    // MARK: - switchTo
+
+    public var switchToAccount_Invocations: [Account] = []
+    public var switchToAccount_MockMethod: ((Account) -> Void)?
+
+    public func switchTo(account: Account) {
+        switchToAccount_Invocations.append(account)
+
+        guard let mock = switchToAccount_MockMethod else {
+            fatalError("no mock for `switchToAccount`")
+        }
+
+        mock(account)
+    }
+
+    // MARK: - switchTo
+
+    public var switchToAccountCompletion_Invocations: [(account: Account, completion: (UserSession?) -> Void)] = []
+    public var switchToAccountCompletion_MockMethod: ((Account, @escaping (UserSession?) -> Void) -> Void)?
+
+    public func switchTo(account: Account, completion: @escaping (UserSession?) -> Void) {
+        switchToAccountCompletion_Invocations.append((account: account, completion: completion))
+
+        guard let mock = switchToAccountCompletion_MockMethod else {
+            fatalError("no mock for `switchToAccountCompletion`")
+        }
+
+        mock(account, completion)
+    }
+
+}
+
 class MockBackupSource: BackupSource {
 
     // MARK: - Life cycle

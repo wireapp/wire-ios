@@ -328,7 +328,8 @@
 		5966D8452BD7F07800305BBC /* AccentColor+UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F174AAB0218B62D200AFCC4D /* AccentColor+UIColor.swift */; };
 		596841CA2BD14D200009C6B8 /* ImageTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596841C92BD14D200009C6B8 /* ImageTransformer.swift */; };
 		596841CC2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596841CB2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift */; };
-		597949A82BEA4D75008BDB69 /* AccountSelectionViewControllerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597949A72BEA4D75008BDB69 /* AccountSelectionViewControllerBuilder.swift */; };
+		597949C72BEA7B90008BDB69 /* AccountSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597949C62BEA7B90008BDB69 /* AccountSelector.swift */; };
+		597949C92BEA7BCA008BDB69 /* SessionManager+AccountSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597949C82BEA7BCA008BDB69 /* SessionManager+AccountSelector.swift */; };
 		597A3BBA2B641F280020E337 /* UserStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB92B641F280020E337 /* UserStatus.swift */; };
 		59800F502BE3BD38003730B3 /* ScreenCurtainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59800F4F2BE3BD38003730B3 /* ScreenCurtainView.swift */; };
 		5995C7752BC7E0F400F97BA8 /* DeviceInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */; };
@@ -758,7 +759,6 @@
 		87656FD11FB5FF0300D5286C /* FilePreviewGeneratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87656FD01FB5FF0300D5286C /* FilePreviewGeneratorTests.swift */; };
 		876AE7601C159A9C00E3E743 /* StringFingerprintTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 876AE75F1C159A9C00E3E743 /* StringFingerprintTests.swift */; };
 		876B94821D7D8C870063AE89 /* UIView+SlideInState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 876B94811D7D8C870063AE89 /* UIView+SlideInState.swift */; };
-		876EECB31F5078D200E269F3 /* AccountSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 876EECB21F5078D200E269F3 /* AccountSelectionViewController.swift */; };
 		8775BF1C2007C6B900A8AD93 /* SearchGroupSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8775BF1B2007C6B900A8AD93 /* SearchGroupSelector.swift */; };
 		8775BF1E2007CFB200A8AD93 /* UIControlBlockAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8775BF1D2007CFB200A8AD93 /* UIControlBlockAPI.swift */; };
 		8775BF212008CF3500A8AD93 /* ServiceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8775BF202008CF3500A8AD93 /* ServiceView.swift */; };
@@ -2378,7 +2378,8 @@
 		5966D82B2BD6995100305BBC /* MockViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockViewControllerBuilder.swift; sourceTree = "<group>"; };
 		596841C92BD14D200009C6B8 /* ImageTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTransformer.swift; sourceTree = "<group>"; };
 		596841CB2BD14E550009C6B8 /* CoreImageBasedImageTransformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreImageBasedImageTransformer.swift; sourceTree = "<group>"; };
-		597949A72BEA4D75008BDB69 /* AccountSelectionViewControllerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSelectionViewControllerBuilder.swift; sourceTree = "<group>"; };
+		597949C62BEA7B90008BDB69 /* AccountSelector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountSelector.swift; sourceTree = "<group>"; };
+		597949C82BEA7BCA008BDB69 /* SessionManager+AccountSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+AccountSelector.swift"; sourceTree = "<group>"; };
 		597A3BB92B641F280020E337 /* UserStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserStatus.swift; sourceTree = "<group>"; };
 		59800F4F2BE3BD38003730B3 /* ScreenCurtainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCurtainView.swift; sourceTree = "<group>"; };
 		5995C7742BC7E0F400F97BA8 /* DeviceInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInfoView.swift; sourceTree = "<group>"; };
@@ -2831,7 +2832,6 @@
 		87656FD01FB5FF0300D5286C /* FilePreviewGeneratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePreviewGeneratorTests.swift; sourceTree = "<group>"; };
 		876AE75F1C159A9C00E3E743 /* StringFingerprintTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StringFingerprintTests.swift; sourceTree = "<group>"; };
 		876B94811D7D8C870063AE89 /* UIView+SlideInState.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+SlideInState.swift"; sourceTree = "<group>"; };
-		876EECB21F5078D200E269F3 /* AccountSelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountSelectionViewController.swift; sourceTree = "<group>"; };
 		8774F0C61B4AB2DD002256A6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8775BF1B2007C6B900A8AD93 /* SearchGroupSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchGroupSelector.swift; sourceTree = "<group>"; };
 		8775BF1D2007CFB200A8AD93 /* UIControlBlockAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIControlBlockAPI.swift; sourceTree = "<group>"; };
@@ -4656,9 +4656,9 @@
 		597949A22BEA3A8D008BDB69 /* AccountSelector */ = {
 			isa = PBXGroup;
 			children = (
-				876EECB21F5078D200E269F3 /* AccountSelectionViewController.swift */,
-				597949A72BEA4D75008BDB69 /* AccountSelectionViewControllerBuilder.swift */,
+				597949C62BEA7B90008BDB69 /* AccountSelector.swift */,
 				8708C6801F50860100845C7D /* AccountSelectorView.swift */,
+				597949C82BEA7BCA008BDB69 /* SessionManager+AccountSelector.swift */,
 			);
 			path = AccountSelector;
 			sourceTree = "<group>";
@@ -9305,6 +9305,7 @@
 				87B8C3421DF9788B0015EC89 /* TweetOpening.swift in Sources */,
 				A97FA6FE23B5883A005257A8 /* StartUIDelegate.swift in Sources */,
 				87CB36BA1D74782B007AB4E5 /* LikeButton.swift in Sources */,
+				597949C72BEA7B90008BDB69 /* AccountSelector.swift in Sources */,
 				A9A6506624D1C32300B6A68D /* PasswordValidationResult.swift in Sources */,
 				068F558524321891000DC813 /* DigitalSignatureVerificationViewController.swift in Sources */,
 				875E7D192188BCA500E571B7 /* MessagePreviewView.swift in Sources */,
@@ -9370,7 +9371,6 @@
 				63F23990269F242B000BFFC6 /* CallActionIconType.swift in Sources */,
 				D5168F2A2008F3EF00F8222A /* UIEdgeInsets+Adjusting.swift in Sources */,
 				BFE4185D209B06D600503C7C /* AVSMediaManager+Helper.swift in Sources */,
-				597949A82BEA4D75008BDB69 /* AccountSelectionViewControllerBuilder.swift in Sources */,
 				5E4BC1CC218CA94D00A8682E /* ZMConversationMessage+Date.swift in Sources */,
 				D3DE46052923BB13000F1055 /* BottomSheetContainerViewController.swift in Sources */,
 				EF4265892333BA7600DDAD0A /* ConversationListViewModel.swift in Sources */,
@@ -9383,6 +9383,7 @@
 				011853962AE6BA5D0071FA32 /* ProfileClientViewModel.swift in Sources */,
 				D5189473204D543C00C095C1 /* InitialSyncObserver.swift in Sources */,
 				87DCF49E1D34E9E600BB420F /* ModalTopBar.swift in Sources */,
+				597949C92BEA7BCA008BDB69 /* SessionManager+AccountSelector.swift in Sources */,
 				F16427041FCC5BB600D2ABFC /* VerifyEmailStepDescription.swift in Sources */,
 				87F18BBE1E015BBB00C69D9B /* TransferView.swift in Sources */,
 				164C29AD1ED446660026562A /* UserSelection.swift in Sources */,
@@ -9490,7 +9491,6 @@
 				1695B9D82B91307600E9342A /* ConversationSecureSystemMessageSectionDescription.swift in Sources */,
 				634497D924A492140000131D /* CallParticipantDetailView.swift in Sources */,
 				A95E561123FBF0C0005F8E8D /* UIViewControllerContextTransitioning+Helper.swift in Sources */,
-				876EECB31F5078D200E269F3 /* AccountSelectionViewController.swift in Sources */,
 				16626502217DACBE00300F45 /* ConversationMessageCellTableViewAdapter.swift in Sources */,
 				161B75C820B6BCB50002B0F7 /* ZMUserSession+Calling.swift in Sources */,
 				EFF9404822414E03004F3115 /* ZClientViewController+ProfileViewControllerDelegate.swift in Sources */,

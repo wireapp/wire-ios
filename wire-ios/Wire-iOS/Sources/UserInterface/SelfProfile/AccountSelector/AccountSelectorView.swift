@@ -21,7 +21,7 @@ import WireDataModel
 import WireSyncEngine
 
 protocol AccountSelectorViewDelegate: AnyObject {
-    func accountSelectorDidSelect(account: Account)
+    func accountSelectorView(_ view: AccountSelectorView, didSelect account: Account)
 }
 
 final class AccountSelectorView: UIView {
@@ -64,7 +64,7 @@ final class AccountSelectorView: UIView {
             guard let accountView = AccountViewFactory.viewFor(account: account, displayContext: .accountSelector) else { return }
             accountView.unreadCountStyle = .current
             accountView.onTap = { [weak self] account in
-                self?.delegate?.accountSelectorDidSelect(account: account)
+                self?.delegate?.accountSelectorView(self!, didSelect: account)
             }
             stackView.addArrangedSubview(accountView)
         }

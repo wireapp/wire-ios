@@ -57,39 +57,6 @@ import WireCoreCrypto
 
 
 
-public class MockAccountSwitcher: AccountSwitcher {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-    // MARK: - currentAccount
-
-    public var currentAccount: Account?
-
-
-    // MARK: - switchTo
-
-    public var switchToAccount_Invocations: [Account] = []
-    public var switchToAccount_MockError: Error?
-    public var switchToAccount_MockMethod: ((Account) async throws -> Void)?
-
-    public func switchTo(account: Account) async throws {
-        switchToAccount_Invocations.append(account)
-
-        if let error = switchToAccount_MockError {
-            throw error
-        }
-
-        guard let mock = switchToAccount_MockMethod else {
-            fatalError("no mock for `switchToAccount`")
-        }
-
-        try await mock(account)
-    }
-
-}
-
 public class MockAuthenticationContextProtocol: AuthenticationContextProtocol {
 
     // MARK: - Life cycle

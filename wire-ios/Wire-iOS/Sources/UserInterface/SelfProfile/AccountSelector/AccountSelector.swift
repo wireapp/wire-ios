@@ -16,15 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCommonComponents
-import WireDataModel
+import WireSyncEngine
 
-struct AccountSelectionViewControllerBuilder: ViewControllerBuilder {
+// sourcery: AutoMockable
+@MainActor
+public protocol AccountSelector {
 
-    var accountSwitcher: AccountSwitcher
+    var currentAccount: Account? { get }
 
-    func build() -> UIViewController {
-        AccountSelectionViewController(accountSwitcher: accountSwitcher)
+    func switchTo(account: Account)
+    func switchTo(account: Account, completion: @escaping (UserSession?) -> Void)
+}
+
+extension AccountSelector {
+
+    public func switchTo(account: Account) {
+        switchTo(account: account) { _ in }
     }
 }

@@ -283,7 +283,6 @@
 		5966D8322BD6AA8200305BBC /* UserPropertyNormalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8312BD6AA8200305BBC /* UserPropertyNormalizer.swift */; };
 		5966D8342BD6ADCA00305BBC /* UserPropertyNormalizerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8332BD6ADCA00305BBC /* UserPropertyNormalizerTests.swift */; };
 		5966D8362BD6AF1700305BBC /* UserPropertyNormalizationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8352BD6AF1700305BBC /* UserPropertyNormalizationResult.swift */; };
-		597949A62BEA40DF008BDB69 /* AccountSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597949A52BEA40DF008BDB69 /* AccountSwitcher.swift */; };
 		597A3BB42B6416CA0020E337 /* Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB32B6416CA0020E337 /* Availability.swift */; };
 		597A3BB72B6418170020E337 /* Availability+WireProtos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597A3BB62B6418170020E337 /* Availability+WireProtos.swift */; };
 		597B70C72B03C6A5006C2121 /* UpdateConversationProtocolAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C62B03C6A5006C2121 /* UpdateConversationProtocolAction.swift */; };
@@ -1203,7 +1202,6 @@
 		5966D8332BD6ADCA00305BBC /* UserPropertyNormalizerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertyNormalizerTests.swift; sourceTree = "<group>"; };
 		5966D8352BD6AF1700305BBC /* UserPropertyNormalizationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertyNormalizationResult.swift; sourceTree = "<group>"; };
 		5972D9792B480E790089D1D3 /* CoreCryptoProtocolExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreCryptoProtocolExt.swift; sourceTree = "<group>"; };
-		597949A52BEA40DF008BDB69 /* AccountSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountSwitcher.swift; sourceTree = "<group>"; };
 		597A3BB32B6416CA0020E337 /* Availability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Availability.swift; sourceTree = "<group>"; };
 		597A3BB62B6418170020E337 /* Availability+WireProtos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Availability+WireProtos.swift"; sourceTree = "<group>"; };
 		597B70C62B03C6A5006C2121 /* UpdateConversationProtocolAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateConversationProtocolAction.swift; sourceTree = "<group>"; };
@@ -2444,7 +2442,6 @@
 				161E05692667C4D000DADC3D /* AccountDeletedObserver.swift */,
 				BF491CE71F063EEB0055EE44 /* AccountManager.swift */,
 				BF491CE51F063EE50055EE44 /* AccountStore.swift */,
-				597949A52BEA40DF008BDB69 /* AccountSwitcher.swift */,
 				5E67168D2174B9AF00522E61 /* LoginCredentials.swift */,
 				BF8361D91F0A3C41009AE5AC /* NSSecureCoding+Swift.swift */,
 			);
@@ -4364,7 +4361,6 @@
 				163D01E02472DE6200984999 /* InvalidConnectionRemoval.swift in Sources */,
 				5966D8362BD6AF1700305BBC /* UserPropertyNormalizationResult.swift in Sources */,
 				547E66491F7503A5008CB1FA /* ZMConversation+Notifications.swift in Sources */,
-				597949A62BEA40DF008BDB69 /* AccountSwitcher.swift in Sources */,
 				EF18C7E61F9E4F8A0085A832 /* UserType+Filename.swift in Sources */,
 				1672A6282344F10700380537 /* FolderList.swift in Sources */,
 				54E3EE3F1F6169A800A261E3 /* ZMAssetClientMessage+FileMessageData.swift in Sources */,

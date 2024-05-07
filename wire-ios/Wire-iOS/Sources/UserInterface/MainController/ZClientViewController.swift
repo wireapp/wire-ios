@@ -61,14 +61,10 @@ final class ZClientViewController: UIViewController {
     ) {
         self.userSession = userSession
 
-        let accountSelectionViewControllerBuilder = AccountSelectionViewControllerBuilder(
-            accountSwitcher: SessionManager.shared!
-        )
         let selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
             selfUser: userSession.selfUser,
             userRightInterfaceType: UserRight.self,
-            userSession: userSession,
-            accountSelectionViewControllerBuilder: accountSelectionViewControllerBuilder
+            userSession: userSession
         )
         conversationListViewController = .init(
             account: account,
