@@ -146,12 +146,7 @@ extension ZMConversation {
                     return
                 }
 
-                let passwordProtected: Bool
-                if apiVersion.rawValue >= 4 {
-                    passwordProtected = payload["has_password"] as? Bool ?? false
-                } else {
-                    passwordProtected = false
-                }
+                let passwordProtected = payload["has_password"] as? Bool ?? false
 
                 let fetchResult = (conversationId, conversationName, passwordProtected)
                 completion(.success(fetchResult))
