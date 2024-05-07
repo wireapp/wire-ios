@@ -50,7 +50,7 @@ protocol ProfileViewControllerViewModeling {
     func sendConnectionRequest()
     func acceptConnectionRequest()
     func ignoreConnectionRequest()
-    // TODO: Make it async https://wearezeta.atlassian.net/browse/WPB-9028
+    // TODO: [WPB-9028]
     func cancelConnectionRequest(completion: @escaping Completion)
     func openOneToOneConversation()
     func startOneToOneConversation()
@@ -66,7 +66,7 @@ protocol ProfileViewControllerViewModeling {
 }
 
 final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewModeling {
-    
+
     // MARK: - Properties
 
     let user: UserType
