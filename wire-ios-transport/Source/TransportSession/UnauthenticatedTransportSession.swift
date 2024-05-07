@@ -162,7 +162,7 @@ public final class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
             if let response = response as? HTTPURLResponse {
                 self?.remoteMonitoring.log(response: response)
                 transportResponse = ZMTransportResponse(httpurlResponse: response, data: data, error: error, apiVersion: request.apiVersion)
-            } else if let error = error {
+            } else if let error {
                 transportResponse = ZMTransportResponse(transportSessionError: error, apiVersion: request.apiVersion)
             }
 

@@ -65,7 +65,7 @@ struct CheckOneOnOneConversationIsReadyUseCase: CheckOneOnOneConversationIsReady
             return user.oneOnOneConversation
         }
 
-        if let conversation = conversation {
+        if let conversation {
             let messageProtocol = await context.perform { conversation.messageProtocol }
 
             switch messageProtocol {

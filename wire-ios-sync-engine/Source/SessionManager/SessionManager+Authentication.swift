@@ -30,7 +30,7 @@ public extension SessionManager {
             return Date(timeIntervalSince1970: timeInterval)
         }
         set {
-            guard let newValue = newValue,
+            guard let newValue,
                 let data = "\(newValue.timeIntervalSince1970)".data(using: .utf8) else { return }
 
             ZMKeychain.setData(data, forAccount: previousSystemBootTimeContainer)

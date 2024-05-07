@@ -107,7 +107,7 @@ class ClientUpdateStatusTests: MessagingTest {
 
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
-        if let note = note {
+        if let note {
             let clientIDs = note.clientObjectIDs
             XCTAssertEqual(clientIDs.count, 1)
             XCTAssertEqual(note.type, ZMClientUpdateNotificationType.fetchCompleted)
@@ -136,7 +136,7 @@ class ClientUpdateStatusTests: MessagingTest {
 
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
-        if let note = note {
+        if let note {
             let clientIDs = note.clientObjectIDs
             XCTAssertEqual(clientIDs.count, 1)
             XCTAssertEqual(clientIDs.first, client.objectID)
@@ -157,7 +157,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssertEqual(self.sut.currentPhase, ClientUpdatePhase.fetchingClients) // if we go back online we want to try to verify the client
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
-        if let note = note {
+        if let note {
             let clients = note.clientObjectIDs
             XCTAssertEqual(clients, [])
             XCTAssertEqual(note.type, ZMClientUpdateNotificationType.fetchFailed)
@@ -192,7 +192,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
-        if let note = note {
+        if let note {
             XCTAssertNotNil(note.clientObjectIDs)
             XCTAssertEqual(note.clientObjectIDs.first, client.objectID)
             XCTAssertEqual(note.type, ZMClientUpdateNotificationType.deletionCompleted)
@@ -218,7 +218,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
-        if let note = note {
+        if let note {
             XCTAssertEqual(note.type, ZMClientUpdateNotificationType.fetchFailed)
             XCTAssertNotNil(note.error)
             XCTAssertEqual(note.error?.code, ClientUpdateError.selfClientIsInvalid.rawValue)
@@ -243,7 +243,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
-        if let note = note {
+        if let note {
             XCTAssertEqual(note.type, ZMClientUpdateNotificationType.fetchFailed)
             XCTAssertNotNil(note.error)
             XCTAssertEqual(note.error?.code, ClientUpdateError.selfClientIsInvalid.rawValue)
@@ -276,7 +276,7 @@ class ClientUpdateStatusTests: MessagingTest {
         XCTAssertEqual(self.sut.currentPhase, .waitingForPrekeys)
         XCTAssertEqual(self.receivedNotifications.count, 1)
         let note = self.receivedNotifications.first
-        if let note = note {
+        if let note {
             XCTAssertEqual(note.type, ZMClientUpdateNotificationType.deletionFailed)
             XCTAssertNotNil(note.error)
             XCTAssertEqual(note.error?.code, ClientUpdateError.invalidCredentials.rawValue)

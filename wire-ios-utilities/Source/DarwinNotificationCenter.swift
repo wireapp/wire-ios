@@ -38,7 +38,7 @@ public final class DarwinNotificationCenter {
         guard handlers[notification] == nil else { return }
 
         notification.observe { _, _, name, _, _ in
-            guard let name = name else { return }
+            guard let name else { return }
             DarwinNotificationCenter.shared.forward(notification: name.rawValue as String)
         }
     }

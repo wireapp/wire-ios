@@ -1573,7 +1573,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return epoch
         }
 
-        if let subgroup = subgroup {
+        if let subgroup {
             // mock fetching subgroup
             mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockValue = subgroup
             // mock finding parent of subgroup on subconversation repository
