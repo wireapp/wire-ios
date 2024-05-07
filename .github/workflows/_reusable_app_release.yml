@@ -64,6 +64,10 @@ on:
         required: true
       C3_APP_CENTER_APP_NAME_PRODUCTION:
         required: true
+      PLAYGROUND_TESTFLIGHT_LINK:
+        required: true
+      BETA_TESTFLIGHT_LINK:
+        required: true
       SUBMODULE_PAT:
         required: true
 
@@ -111,9 +115,12 @@ jobs:
       C3_APP_CENTER_APP_NAME_RESTRICTED: ${{ secrets.C3_APP_CENTER_APP_NAME_RESTRICTED }}
       C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
       C3_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C3_APP_CENTER_APP_NAME_PRODUCTION }}
+      BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
+      PLAYGROUND_TESTFLIGHT_LINK: ${{ secrets.PLAYGROUND_TESTFLIGHT_LINK }}
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
       SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
+      
       
     steps:
       - name: Add Masks
