@@ -5,7 +5,6 @@ opt_in_rules:
   - multiline_parameters
   - operator_usage_whitespace
   - reduce_into
-  #- self_binding
   - shorthand_optional_binding
   - sorted_imports
   - unneeded_parentheses_in_closure_argument
