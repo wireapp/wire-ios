@@ -64,7 +64,7 @@ extension UIAlertController {
         let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
         // Add actions
-        if let confirmationBlock = confirmationBlock {
+        if let confirmationBlock {
             controller.addAction(.cancel({
                 confirmationBlock(false)
             }))
