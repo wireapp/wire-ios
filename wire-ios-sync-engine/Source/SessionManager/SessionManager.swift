@@ -655,11 +655,12 @@ public final class SessionManager: NSObject, SessionManagerType {
     /// - tearDownCompletion: runs when the UI no longer holds any references to the previous user session.
     public func select(
         _ account: Account,
-        completion: @escaping (ZMUserSession?) -> Void = { _ in },
+        completion: ((ZMUserSession?) -> Void)? = nil,
         tearDownCompletion: @escaping () -> Void = {}
     ) {
         guard !isSelectingAccount else {
-            return completion(nil)
+            completion?(nil)
+            return
         }
 
         confirmSwitchingAccount { [weak self] in
@@ -668,7 +669,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             let selectedAccount = self?.accountManager.selectedAccount
 
             guard let delegate = self?.delegate else {
-                return completion(nil)
+                completion?(nil)
+                return
             }
             delegate.sessionManagerWillOpenAccount(
                 account,
@@ -677,16 +679,17 @@ public final class SessionManager: NSObject, SessionManagerType {
                     self?.activeUserSession = nil
                     tearDownCompletion()
                     guard let self else {
-                        return completion(nil)
+                        completion?(nil)
+                        return
                     }
                     loadSession(for: account) { [weak self] session in
                         self?.isSelectingAccount = false
 
                         if let session {
                             self?.accountManager.select(account)
-                            completion(session)
+                            completion?(session)
                         } else {
-                            completion(nil)
+                            completion?(nil)
                         }
                     }
                 }

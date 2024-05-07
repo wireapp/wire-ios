@@ -24,7 +24,7 @@ extension SessionManager: AccountSelector {
         accountManager.selectedAccount
     }
 
-    public func switchTo(account: Account, completion: @escaping ((any UserSession)?) -> Void) {
+    public func switchTo(account: Account, completion: (((any UserSession)?) -> Void)?) {
         select(account, completion: completion, tearDownCompletion: {})
     }
 }

@@ -54,13 +54,11 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
 
     // MARK: - Snapshot Tests
 
-    @MainActor
     func testForAUserWithNoTeam() {
         createSut(userName: "Tarja Turunen", teamMember: false)
         verify(matching: sut.view)
     }
 
-    @MainActor
     func testForAUserWithALongName() {
         createSut(userName: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", teamMember: true)
         verify(matching: sut.view)
@@ -68,13 +66,11 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
 
     // MARK: - Unit Tests
 
-    @MainActor
     func testItRequestsToRefreshTeamMetadataIfSelfUserIsTeamMember() {
         createSut(userName: "Tarja Turunen", teamMember: true)
         XCTAssertEqual(selfUser.refreshTeamDataCount, 1)
     }
 
-    @MainActor
     func testItDoesNotRequestToRefreshTeamMetadataIfSelfUserIsNotTeamMember() {
         createSut(userName: "Tarja Turunen", teamMember: false)
         XCTAssertEqual(selfUser.refreshTeamDataCount, 0)
@@ -145,7 +141,6 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
 
     // MARK: Helper Method
 
-    @MainActor
     private func createSut(userName: String, teamMember: Bool) {
         // prevent app crash when checking Analytics.shared.isOptout
         Analytics.shared = Analytics(optedOut: true)
@@ -153,10 +148,7 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
         sut = SelfProfileViewController(
             selfUser: selfUser,
             userRightInterfaceType: MockUserRight.self,
-            userSession: userSession,
-            accountSelectionViewControllerBuilder: AccountSelectionViewControllerBuilder(
-                accountSwitcher: MockAccountSwitcher()
-            )
+            userSession: userSession
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }

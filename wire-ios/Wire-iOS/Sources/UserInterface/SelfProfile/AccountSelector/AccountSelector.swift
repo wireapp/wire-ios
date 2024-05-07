@@ -25,12 +25,12 @@ public protocol AccountSelector {
     var currentAccount: Account? { get }
 
     func switchTo(account: Account)
-    func switchTo(account: Account, completion: @escaping (UserSession?) -> Void)
+    func switchTo(account: Account, completion: ((UserSession?) -> Void)?)
 }
 
 extension AccountSelector {
 
     public func switchTo(account: Account) {
-        switchTo(account: account) { _ in }
+        switchTo(account: account, completion: .none)
     }
 }
