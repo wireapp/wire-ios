@@ -1,5 +1,4 @@
 # potential rules to enable:
-# unhandled_throwing_task !
 # trailing_closure
 # self_in_property_initialization
 # prefer_self_in_static_references
