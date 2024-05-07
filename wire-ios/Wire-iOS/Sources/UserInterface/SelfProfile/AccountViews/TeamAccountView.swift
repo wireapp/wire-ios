@@ -21,10 +21,6 @@ import WireDataModel
 
 final class TeamAccountView: BaseAccountView, AccountView {
 
-    override var collapsed: Bool {
-        didSet { imageView.isHidden = collapsed }
-    }
-
     private let imageView: TeamImageView
     private var teamObserver: NSObjectProtocol!
     private var conversationListObserver: NSObjectProtocol!

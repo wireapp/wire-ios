@@ -34,10 +34,6 @@ final class PersonalAccountView: BaseAccountView, AccountView {
     private var conversationListObserver: NSObjectProtocol!
     private var connectionRequestObserver: NSObjectProtocol!
 
-    override var collapsed: Bool {
-        didSet { userImageView.isHidden = collapsed }
-    }
-
     override init?(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
         super.init(account: account, user: user, displayContext: displayContext)
 

@@ -45,7 +45,6 @@ final class AccountSelectorView: UIView {
                     self?.delegate?.accountSelectorDidSelect(account: account)
                 }
                 stackView.addArrangedSubview(accountView)
-                accountView.collapsed = false
             }
         }
     }

@@ -21,7 +21,6 @@ import WireDataModel
 
 protocol AccountView: BaseAccountView {
 
-    var collapsed: Bool { get set }
     var hasUnreadMessages: Bool { get }
     var account: Account { get }
     var onTap: (Account) -> Void { get set }

@@ -41,10 +41,6 @@ class BaseAccountView: UIView {
         didSet { updateAppearance() }
     }
 
-    var collapsed: Bool = false {
-        didSet { updateAppearance() }
-    }
-
     var hasUnreadMessages: Bool {
         switch unreadCountStyle {
         case .none:
@@ -57,7 +53,7 @@ class BaseAccountView: UIView {
     }
 
     func updateAppearance() {
-        selectionView.isHidden = !selected || collapsed
+        selectionView.isHidden = !selected
         dotView.hasUnreadMessages = hasUnreadMessages
         selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
         layoutSubviews()
