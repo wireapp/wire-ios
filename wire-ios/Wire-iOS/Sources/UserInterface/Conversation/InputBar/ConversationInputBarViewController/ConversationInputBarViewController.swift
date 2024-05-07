@@ -59,7 +59,7 @@ final class ConversationInputBarViewController: UIViewController,
                 inputBar.textView.reloadInputViews()
             }
 
-            guard let inputController = inputController else {
+            guard let inputController else {
                 inputBar.textView.inputView = nil
                 return
             }
@@ -272,7 +272,7 @@ final class ConversationInputBarViewController: UIViewController,
 
                     let newViewController: UIViewController
 
-                    if let viewController = viewController {
+                    if let viewController {
                         newViewController = viewController
                     } else {
                         newViewController = setupClosure()
@@ -445,7 +445,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator?) {
 
-        guard let coordinator = coordinator else { return }
+        guard let coordinator else { return }
 
         super.viewWillTransition(to: size, with: coordinator)
         self.inRotation = true
@@ -849,7 +849,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
         } else if mediaType == UTType.image.identifier {
             let image: UIImage? = (info[UIImagePickerController.InfoKey.editedImage] as? UIImage) ?? info[UIImagePickerController.InfoKey.originalImage] as? UIImage
 
-            if let image = image,
+            if let image,
                let jpegData = image.jpegData(compressionQuality: 0.9) {
                 if picker.sourceType == UIImagePickerController.SourceType.camera {
                     if mediaShareRestrictionManager.hasAccessToCameraRoll {
