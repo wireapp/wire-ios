@@ -147,7 +147,7 @@ extension ZMConversation {
                 }
 
                 var passwordProtected: Bool?
-                if apiVersion.rawValue >= 4 && apiVersion.rawValue <= 6 {
+                if apiVersion.rawValue >= 4 {
                     passwordProtected = payload["has_password"] as? Bool
                 }
 
