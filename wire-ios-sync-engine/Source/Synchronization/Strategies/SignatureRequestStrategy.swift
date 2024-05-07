@@ -54,7 +54,7 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
         case .initial:
             break
         case .waitingForConsentURL:
-            guard let requestSync = requestSync else {
+            guard let requestSync else {
                 return nil
             }
             requestSync.readyForNextRequestIfNotBusy()
@@ -62,7 +62,7 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
         case .waitingForCodeVerification:
             break
         case .waitingForSignature:
-            guard let retrieveSync = retrieveSync else {
+            guard let retrieveSync else {
                 return nil
             }
             retrieveSync.readyForNextRequestIfNotBusy()

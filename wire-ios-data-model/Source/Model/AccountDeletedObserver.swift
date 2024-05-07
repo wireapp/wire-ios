@@ -48,7 +48,7 @@ extension AccountDeletedNotification {
             guard
                 let note = note.userInfo[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification,
                 let context = note.context,
-                let observer = observer
+                let observer
             else {
                 return
             }

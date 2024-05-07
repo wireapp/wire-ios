@@ -84,7 +84,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         ) { [weak self] result in
             guard let weakSelf = self else { return }
 
-            if let result = result {
+            if let result {
                 switch result {
                 case .success(let conversation):
                     weakSelf.delegate?.startUI(weakSelf, didSelect: conversation)

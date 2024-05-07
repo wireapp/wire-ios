@@ -170,7 +170,7 @@ private extension UserClient {
             return true
         }
 
-        guard let lastActiveDate = lastActiveDate else {
+        guard let lastActiveDate else {
             return false
         }
 
