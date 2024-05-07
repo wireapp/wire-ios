@@ -72,6 +72,8 @@ final class UserSessionMock: UserSession {
     var selfUser: SelfUserType
     var mockConversationList: ZMConversationList?
 
+    var searchUsersCache: SearchUsersCache
+
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
         let mock = MockGetMLSFeatureUseCaseProtocol()
         mock.invoke_MockValue = .init(status: .disabled, config: .init())
@@ -88,6 +90,7 @@ final class UserSessionMock: UserSession {
 
     init(selfUser: SelfUserType) {
         self.selfUser = selfUser
+        searchUsersCache = .init()
     }
 
     var lock: SessionLock? = .screen
@@ -293,5 +296,32 @@ final class UserSessionMock: UserSession {
 
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
 
+    var mlsFeature: Feature.MLS = Feature.MLS(
+        status: .enabled,
+        config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
+    )
+
     func fetchAllClients() {}
+
+    var createTeamOneOnOneWithCompletion_Invocations: [(user: UserType, completion: (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void)] = []
+    var createTeamOneOnOneWithCompletion_MockMethod: ((UserType, @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void) -> Void)?
+
+    func createTeamOneOnOne(
+        with user: UserType,
+        completion: @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+    ) {
+        createTeamOneOnOneWithCompletion_Invocations.append((user: user, completion: completion))
+
+        guard let mock = createTeamOneOnOneWithCompletion_MockMethod else {
+            fatalError("no mock for `createTeamOneOnOneWithCompletion`")
+        }
+
+        mock(user, completion)
+    }
+
+    var mockCheckOneOnOneConversationIsReady: MockCheckOneOnOneConversationIsReadyUseCaseProtocol?
+    var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
+        mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
+    }
+
 }

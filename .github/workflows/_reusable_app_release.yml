@@ -10,6 +10,9 @@ on:
       datadog_enabled:
         type: boolean
         default: false
+      skip_security_tests:
+        type: boolean
+        default: true
     secrets:
       KEYCHAIN_PASSWORD:
         required: true
@@ -67,7 +70,7 @@ jobs:
       
   build_and_release:
     needs: changelog
-    runs-on: ghcr.io/cirruslabs/macos-sonoma-xcode:15.3
+    runs-on: ghcr.io/cirruslabs/macos-runner:sonoma
     env:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -97,7 +100,8 @@ jobs:
       C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
       C3_APP_CENTER_APP_NAME_PRODUCTION: ${{ secrets.C3_APP_CENTER_APP_NAME_PRODUCTION }}
       SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
-
+      SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
+      
     steps:
       - name: Add Masks
         run: |

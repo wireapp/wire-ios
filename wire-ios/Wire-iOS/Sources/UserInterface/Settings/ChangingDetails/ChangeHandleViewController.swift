@@ -128,7 +128,7 @@ final class ChangeHandleTableViewCell: UITableViewCell, UITextFieldDelegate {
     }
 
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-        guard let delegate = delegate else { return false }
+        guard let delegate else { return false }
         let current = (textField.text ?? "") as NSString
         let replacement = current.replacingCharacters(in: range, with: string)
         if delegate.tableViewCell(cell: self, shouldAllowEditingText: replacement) {

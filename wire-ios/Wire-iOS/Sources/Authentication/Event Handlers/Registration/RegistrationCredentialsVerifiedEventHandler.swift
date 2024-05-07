@@ -16,12 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-/**
- * Handles the success of credentials verification.
- */
-
+/// Handles the success of credentials verification.
 final class RegistrationCredentialsVerifiedEventHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
@@ -38,5 +33,4 @@ final class RegistrationCredentialsVerifiedEventHandler: AuthenticationEventHand
         // Move to the next linear step
         return [.hideLoadingView, .startIncrementalUserCreation(user)]
     }
-
 }

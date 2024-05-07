@@ -106,7 +106,7 @@ extension UIViewController {
             } else if let controller = current.parent {
                 candidate = controller
             }
-            if let candidate = candidate {
+            if let candidate {
                 current = candidate
             }
             return candidate
