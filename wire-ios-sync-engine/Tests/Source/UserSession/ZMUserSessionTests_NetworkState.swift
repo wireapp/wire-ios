@@ -58,7 +58,6 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
-            useCaseFactory: mockUseCaseFactory,
             userId: userId
         )
         let testSession = builder.build()

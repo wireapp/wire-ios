@@ -84,8 +84,6 @@ public final class ZMUserSession: NSObject {
     public internal(set) var appLockController: AppLockType
     private let contextStorage: LAContextStorable
 
-    let useCaseFactory: UseCaseFactoryProtocol
-
     public let e2eiActivationDateRepository: E2EIActivationDateRepositoryProtocol
 
     let lastEventIDRepository: LastEventIDRepositoryInterface
@@ -362,7 +360,6 @@ public final class ZMUserSession: NSObject {
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         proteusToMLSMigrationCoordinator: any ProteusToMLSMigrationCoordinating,
         sharedUserDefaults: UserDefaults,
-        useCaseFactory: any UseCaseFactoryProtocol,
         observeMLSGroupVerificationStatusUseCase: any ObserveMLSGroupVerificationStatusUseCaseProtocol,
         appLock: any AppLockType,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
@@ -401,7 +398,6 @@ public final class ZMUserSession: NSObject {
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
-        self.useCaseFactory = useCaseFactory
         self.updateMLSGroupVerificationStatus = updateMLSGroupVerificationStatusUseCase
         self.mlsConversationVerificationStatusUpdater = mlsConversationVerificationStatusUpdater
         self.observeMLSGroupVerificationStatus = observeMLSGroupVerificationStatusUseCase
@@ -519,7 +515,7 @@ public final class ZMUserSession: NSObject {
     }
 
     private func createStrategyDirectory(useLegacyPushNotifications: Bool) -> StrategyDirectoryProtocol {
-        return StrategyDirectory(
+        StrategyDirectory(
             contextProvider: coreDataStack,
             applicationStatusDirectory: applicationStatusDirectory,
             cookieStorage: transportSession.cookieStorage,
@@ -533,7 +529,6 @@ public final class ZMUserSession: NSObject {
             proteusProvider: self.proteusProvider,
             mlsService: mlsService,
             coreCryptoProvider: coreCryptoProvider,
-            usecaseFactory: useCaseFactory,
             searchUsersCache: dependencies.caches.searchUsers
         )
     }
@@ -861,8 +856,10 @@ extension ZMUserSession: ZMSyncStateDelegate {
         WaitingGroupTask(context: syncContext) { [self] in
             do {
                 var getFeatureConfigAction = GetFeatureConfigsAction()
+                let resolveOneOnOneUseCase = makeResolveOneOnOneConversationsUseCase(context: syncContext)
+
                 try await getFeatureConfigAction.perform(in: syncContext.notificationContext)
-                try await useCaseFactory.createResolveOneOnOneUseCase().invoke()
+                try await resolveOneOnOneUseCase.invoke()
             } catch {
                 WireLogger.mls.error("Failed to resolve one on one conversations: \(String(reflecting: error))")
             }
@@ -877,6 +874,17 @@ extension ZMUserSession: ZMSyncStateDelegate {
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.checkE2EICertificateExpiryStatus()
         }
+    }
+
+    private func makeResolveOneOnOneConversationsUseCase(context: NSManagedObjectContext) -> any ResolveOneOnOneConversationsUseCaseProtocol {
+        let supportedProtocolService = SupportedProtocolsService(context: context)
+        let resolver = OneOnOneResolver(migrator: OneOnOneMigrator(mlsService: mlsService))
+
+        return ResolveOneOnOneConversationsUseCase(
+            context: context,
+            supportedProtocolService: supportedProtocolService,
+            resolver: resolver
+        )
     }
 
     func processEvents() {
