@@ -424,6 +424,7 @@ extension ZMConversation {
         }
     }
 
+    /// Discards all unsent messages since conversation's privacy changed.
     @objc(discardPendingMessagesAfterPrivacyChanges)
     public func discardPendingMessagesAfterPrivacyChanges() {
         guard let syncMOC = managedObjectContext?.zm_sync else { return }
