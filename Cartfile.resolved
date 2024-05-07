@@ -5,7 +5,12 @@ github "wireapp/FLAnimatedImage" "1.0.17"
 github "wireapp/HTMLString" "6.0.1_xcframework"
 github "wireapp/Starscream" "4.0.4_min_tls_version"
 github "wireapp/ZipArchive" "v2.4.2"
+<<<<<<< HEAD
 github "wireapp/core-crypto" "v1.0.0-rc.59"
+=======
+github "wireapp/appcenter-sdk-apple" "5.0.2"
+github "wireapp/core-crypto" "v1.0.0-rc.56-hotfix.2"
+>>>>>>> 327e355843 (fix: uniffi issue by downgrading CC to rc.56-hotfix.2 (#1399))
 github "wireapp/countly-sdk-ios" "23.02.3"
 github "wireapp/cryptobox-ios" "v1.1.0_xcframework_arm64simulator"
 github "wireapp/dd-sdk-ios" "1.23.0_Xcode15.3"
