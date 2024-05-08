@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ extension ZMConversation {
             created.pointee = true
             let conversation = ZMConversation.insertNewObject(in: context)
             conversation.remoteIdentifier = remoteIdentifier
-            conversation.domain = domain?.selfOrNilIfEmpty
+            conversation.domain = if let domain, !domain.isEmpty { domain } else { .none }
             return conversation
         }
     }

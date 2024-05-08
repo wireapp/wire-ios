@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 
@@ -40,7 +39,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
         case name(isTeam: Bool)
         case password(isNew: Bool)
         case passcode(isNew: Bool)
-        case phoneNumber
         case username
         case unknown
     }
@@ -68,7 +66,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
 
     private var isEditingTextField: Bool = false {
         didSet {
-            guard let style = style else {
+            guard let style else {
                 return
             }
             layer.borderColor = isEditingTextField
@@ -230,10 +228,6 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
             autocapitalizationType = .none
             accessibilityIdentifier = "UsernameField"
             textContentType = .username
-        case .phoneNumber:
-            textContentType = .telephoneNumber
-            keyboardType = .numberPad
-            accessibilityIdentifier = "PhoneNumberField"
         case .unknown:
             keyboardType = .asciiCapable
             textContentType = nil
@@ -325,7 +319,7 @@ final class ValidatedTextField: AccessoryTextField, TextContainer, Themeable {
     }
 
     private func updateConfirmButton() {
-        if let boundTextField = boundTextField {
+        if let boundTextField {
             confirmButton.isEnabled = boundTextField.isInputValid && self.isInputValid
         } else {
             confirmButton.isEnabled = isInputValid

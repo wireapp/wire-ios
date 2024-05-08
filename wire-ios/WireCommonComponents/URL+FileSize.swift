@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +18,10 @@
 
 import Foundation
 
-public extension URL {
+extension URL {
 
     /// return nil if can not obtain the file size from URL
-    var fileSize: UInt64? {
+    public var fileSize: UInt64? {
         guard let attributes: [FileAttributeKey: Any] = try? FileManager.default.attributesOfItem(atPath: path) else { return nil }
 
         return attributes[FileAttributeKey.size] as? UInt64

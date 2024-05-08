@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import WireCoreCrypto
-import Combine
 import WireSystem
 
 // sourcery: AutoMockable
@@ -174,25 +174,25 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             switch error {
 
             // Received messages targeting a future epoch, we might have lost messages.
-            case .WrongEpoch: throw MLSMessageDecryptionError.wrongEpoch
+            case .wrongEpoch: throw MLSMessageDecryptionError.wrongEpoch
 
             // Message arrive in future epoch, it has been buffered and will be consumed later.
-            case .BufferedFutureMessage: return []
+            case .bufferedFutureMessage: return []
 
             // Received already sent or received message, can safely be ignored.
-            case .DuplicateMessage: return []
+            case .duplicateMessage: return []
 
             // Received self commit, any pending self commit has now been merged
-            case .SelfCommitIgnored: return []
+            case .selfCommitIgnored: return []
 
             // Received stale commit, this commit is targeting a past epoch and we have already consumed it
-            case .StaleCommit: return []
+            case .staleCommit: return []
 
             // Received stale proposal, this proposal is targeting a past epoch and we have already consumed it
-            case .StaleProposal: return []
+            case .staleProposal: return []
 
             // Message arrive in an unmerged group, it has been buffered and will be consumed later.
-            case .UnmergedPendingGroup: return []
+            case .unmergedPendingGroup: return []
 
             default:
                 throw MLSMessageDecryptionError.failedToDecryptMessage

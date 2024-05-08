@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import FLAnimatedImage
 import UIKit
 import WireSyncEngine
@@ -130,7 +130,7 @@ final class FullscreenImageViewController: UIViewController {
             }
         }
 
-        if let coordinator = coordinator {
+        if let coordinator {
             coordinator.animate(alongsideTransition: { _ in
                 animationBlock()
             })
@@ -275,7 +275,7 @@ final class FullscreenImageViewController: UIViewController {
 
     // MARK: - Utilities, custom UI
     func performSaveImageAnimation(from saveView: UIView) {
-        guard let imageView = imageView else { return }
+        guard let imageView else { return }
 
         let ghostImageView = UIImageView(image: imageView.image)
         ghostImageView.contentMode = .scaleAspectFit
@@ -306,7 +306,7 @@ final class FullscreenImageViewController: UIViewController {
             if imageIsAnimatedGIF == true,
                let gifImageData = imageData {
                 mediaAsset = FLAnimatedImage(animatedGIFData: gifImageData)
-            } else if let imageData = imageData, let image = UIImage(data: imageData) {
+            } else if let imageData, let image = UIImage(data: imageData) {
                 mediaAsset = image
             } else {
                 return
@@ -365,7 +365,7 @@ final class FullscreenImageViewController: UIViewController {
 
     // MARK: - Dynamic Image Dragging
     private func initiateImageDrag(fromLocation panGestureLocationInView: CGPoint, translationOffset: UIOffset) {
-        guard let imageView = imageView else { return }
+        guard let imageView else { return }
         setupSnapshotBackgroundView()
         isShowingChrome = false
 
@@ -394,7 +394,7 @@ final class FullscreenImageViewController: UIViewController {
             weakSelf.imageView?.center = CGPoint(x: weakSelf.imageView?.center.x ?? 0.0, y: proxy.center.y)
             weakSelf.imageView?.transform = proxy.transform.concatenating(weakSelf.imageViewStartingTransform)
         }
-        if let attachmentBehavior = attachmentBehavior {
+        if let attachmentBehavior {
             animator.addBehavior(attachmentBehavior)
         }
 
@@ -429,7 +429,7 @@ final class FullscreenImageViewController: UIViewController {
     }
 
     private func dismissImageFlicking(withVelocity velocity: CGPoint) {
-        guard let imageView = imageView else { return }
+        guard let imageView else { return }
         // Proxy object is used because the UIDynamics messing up the zoom level transform on imageView
         let proxy = DynamicsProxy()
         proxy.center = imageView.center
@@ -438,7 +438,7 @@ final class FullscreenImageViewController: UIViewController {
 
         let push = UIPushBehavior(items: [proxy], mode: .instantaneous)
         push.pushDirection = CGVector(dx: velocity.x * 0.1, dy: velocity.y * 0.1)
-        if let attachmentBehavior = attachmentBehavior {
+        if let attachmentBehavior {
             push.setTargetOffsetFromCenter(UIOffset(horizontal: attachmentBehavior.anchorPoint.x - initialImageViewCenter.x, vertical: attachmentBehavior.anchorPoint.y - initialImageViewCenter.y), for: imageView)
         }
 
@@ -460,7 +460,7 @@ final class FullscreenImageViewController: UIViewController {
                 })
             }
         }
-        if let attachmentBehavior = attachmentBehavior {
+        if let attachmentBehavior {
             animator.removeBehavior(attachmentBehavior)
         }
         animator.addBehavior(push)
@@ -468,7 +468,7 @@ final class FullscreenImageViewController: UIViewController {
 
     private var imageViewIsOffscreen: Bool {
         // tiny inset threshold for small zoom
-        return !view.bounds.insetBy(dx: -10, dy: -10).intersects(view.convert(imageView?.bounds ?? .zero, from: imageView))
+        !view.bounds.insetBy(dx: -10, dy: -10).intersects(view.convert(imageView?.bounds ?? .zero, from: imageView))
     }
 
     private func updateBackgroundColor(imageViewCenter: CGPoint) {
@@ -487,7 +487,7 @@ final class FullscreenImageViewController: UIViewController {
             newAlpha = max(newAlpha, 0.8)
         }
 
-        if let snapshotBackgroundView = snapshotBackgroundView {
+        if let snapshotBackgroundView {
             snapshotBackgroundView.alpha = 1 - newAlpha
         } else {
             view.backgroundColor = view.backgroundColor?.withAlphaComponent(newAlpha)
@@ -498,7 +498,7 @@ final class FullscreenImageViewController: UIViewController {
     private let fadeAnimationDuration: TimeInterval = 0.33
 
     private var isImageViewHightlighted: Bool {
-        if let highlightLayer = highlightLayer,
+        if let highlightLayer,
            imageView?.layer.sublayers?.contains(highlightLayer) == true {
             return true
         }
@@ -515,7 +515,7 @@ final class FullscreenImageViewController: UIViewController {
                 return
             }
 
-            if let highlightLayer = highlightLayer {
+            if let highlightLayer {
                 guard imageView?.layer.sublayers?.contains(highlightLayer) == false else {
                     return
                 }
@@ -582,7 +582,7 @@ final class FullscreenImageViewController: UIViewController {
 
         prepareShowingMenu()
 
-        if let imageView = imageView {
+        if let imageView {
             let frame = imageView.frame
             menuController.showMenu(from: imageView, rect: frame)
         }

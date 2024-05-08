@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,11 +70,11 @@ public class ProteusProvider: ProteusProviding {
         withKeyStore keyStoreBlock: KeyStorePerformBlock<T>
     ) rethrows -> T {
 
-        if let proteusService = proteusService, proteusViaCoreCrypto {
+        if let proteusService, proteusViaCoreCrypto {
 
           return try proteusServiceBlock(proteusService)
 
-        } else if let keyStore = keyStore, !proteusViaCoreCrypto {
+        } else if let keyStore, !proteusViaCoreCrypto {
 
             // remove comment once implementation of proteus via core crypto is done
             return try keyStoreBlock(keyStore)
@@ -90,11 +90,11 @@ public class ProteusProvider: ProteusProviding {
         withKeyStore keyStoreBlock: KeyStorePerformAsyncBlock<T>
     ) async rethrows -> T {
 
-        if let proteusService = proteusService, proteusViaCoreCrypto {
+        if let proteusService, proteusViaCoreCrypto {
 
             return try await proteusServiceBlock(proteusService)
 
-        } else if let keyStore = keyStore, !proteusViaCoreCrypto {
+        } else if let keyStore, !proteusViaCoreCrypto {
 
             // remove comment once implementation of proteus via core crypto is done
             return try await keyStoreBlock(keyStore)

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireDataModelSupport
 import WireTesting
 import XCTest
 
@@ -25,16 +25,21 @@ import XCTest
 
 final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
 
-    var mockRecurringActionService: MockRecurringActionServiceInterface!
+    // The mock in this place is a workaround, because somewhere down the line the test funcs call
+    // `func handle(...)` and this calls `sut.didFinishQuickSync()` and this calls `PushSupportedProtocolsAction`.
+    // A proper solution and mocking requires a further refactoring.
+    private var mockPushSupportedProtocolsActionHandler: MockActionHandler<PushSupportedProtocolsAction>!
 
     override func setUp() {
         super.setUp()
-
-        mockRecurringActionService = .init()
+        mockPushSupportedProtocolsActionHandler = .init(
+            result: .success(()),
+            context: syncMOC.notificationContext
+        )
     }
 
     override func tearDown() {
-        mockRecurringActionService = nil
+        mockPushSupportedProtocolsActionHandler = nil
 
         super.tearDown()
     }
@@ -42,7 +47,6 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
     func testThatItCallsPerformActionsAfterQuickSync() {
         // Given
         mockRecurringActionService.performActionsIfNeeded_MockMethod = {}
-        sut.recurringActionService = mockRecurringActionService
 
         // When
         XCTAssertTrue(mockRecurringActionService.performActionsIfNeeded_Invocations.isEmpty)
@@ -54,6 +58,7 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
 
         // Then
         XCTAssertFalse(mockRecurringActionService.performActionsIfNeeded_Invocations.isEmpty)
+        XCTAssertEqual(mockPushSupportedProtocolsActionHandler.performedActions.count, 1)
     }
 
     func testUpdatesUsersMissingMetadataAction() {

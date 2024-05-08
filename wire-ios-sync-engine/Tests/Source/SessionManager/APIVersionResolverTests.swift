@@ -66,7 +66,7 @@ class APIVersionResolverTests: ZMTBaseTest {
     ) {
         transportSession.supportedAPIVersions = productionVersions.map(NSNumber.init(value:))
 
-        if let developmentVersions = developmentVersions {
+        if let developmentVersions {
             transportSession.developmentAPIVersions = developmentVersions.map(NSNumber.init(value:))
         }
 

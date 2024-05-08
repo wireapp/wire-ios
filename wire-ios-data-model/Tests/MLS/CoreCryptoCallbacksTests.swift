@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,33 +17,38 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 class CoreCryptoCallbacksTests: XCTestCase {
 
-    func test_HardcodedValues() {
+    func test_HardcodedValues() async {
         // Given
         let sut = CoreCryptoCallbacksImpl()
 
-        // Then
-        XCTAssertTrue(sut.authorize(
+        // When
+        let authorizeResult = await sut.authorize(
             conversationId: .random(),
             clientId: .random()
-        ))
+        )
 
-        XCTAssertTrue(sut.userAuthorize(
+        let userAuthorizeResult = await sut.userAuthorize(
             conversationId: .random(),
             externalClientId: .random(),
             existingClients: [.random()]
-        ))
+        )
 
-        XCTAssertTrue(sut.clientIsExistingGroupUser(
+        let clientIsExistingGroupUserResult = await sut.clientIsExistingGroupUser(
             conversationId: .random(),
             clientId: .random(),
             existingClients: [.random()],
             parentConversationClients: [.random()]
-        ))
+        )
+
+        // Then
+        XCTAssertTrue(authorizeResult)
+        XCTAssertTrue(userAuthorizeResult)
+        XCTAssertTrue(clientIsExistingGroupUserResult)
     }
 
 }

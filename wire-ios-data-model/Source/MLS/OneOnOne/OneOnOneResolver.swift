@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -147,12 +147,37 @@ public final class OneOnOneResolver: OneOnOneResolverInterface {
             throw OneOnOneResolverError.migratorNotFound
         }
 
-        let mlsGroupID = try await migrator.migrateToMLS(
-            userID: userID,
-            in: context
-        )
+        do {
+            let mlsGroupID = try await migrator.migrateToMLS(
+                userID: userID,
+                in: context
+            )
+            await setReadOnly(to: false, forOneOnOneWithUser: userID, in: context)
+            return .migratedToMLSGroup(identifier: mlsGroupID)
+        } catch MigrateMLSOneOnOneConversationError.failedToEstablishGroup(let error) {
+            await setReadOnly(to: true, forOneOnOneWithUser: userID, in: context)
+            throw MigrateMLSOneOnOneConversationError.failedToEstablishGroup(error)
+        } catch {
+            throw error
+        }
+    }
 
-        return .migratedToMLSGroup(identifier: mlsGroupID)
+    private func setReadOnly(
+        to readOnly: Bool,
+        forOneOnOneWithUser userID: QualifiedID,
+        in context: NSManagedObjectContext
+    ) async {
+        await context.perform {
+            guard
+                let otherUser = ZMUser.fetch(with: userID, in: context),
+                let conversation = otherUser.oneOnOneConversation,
+                conversation.isForcedReadOnly != readOnly
+            else {
+                return
+            }
+
+            conversation.isForcedReadOnly = readOnly
+        }
     }
 
     // MARK: Resolve - Proteus

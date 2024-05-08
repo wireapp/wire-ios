@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,11 +58,11 @@ extension ZMBaseManagedObjectTest {
     @discardableResult func createMembership(in moc: NSManagedObjectContext, user: ZMUser, team: Team?, with permissions: Permissions? = nil) -> Member {
         let member = Member.insertNewObject(in: moc)
         member.user = user
-        if let team = team {
+        if let team {
             member.team = team
             member.user?.teamIdentifier = team.remoteIdentifier
         }
-        if let permissions = permissions {
+        if let permissions {
             member.permissions = permissions
         }
         return member

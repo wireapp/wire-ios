@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import WireDataModel
 public extension ZMLocalNotification {
 
     convenience init?(callState: LocalNotificationType.CallState, conversation: ZMConversation?, caller: ZMUser, moc: NSManagedObjectContext) {
-        guard let conversation = conversation,
+        guard let conversation,
               let builder = CallNotificationBuilder(callState: callState, caller: caller, conversation: conversation) else {
                   return nil
               }

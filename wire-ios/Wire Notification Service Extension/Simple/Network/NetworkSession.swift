@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ final class NetworkSession: NSObject, NetworkSessionProtocol, URLSessionTaskDele
 
         cookieProvider.setRequestHeaderFieldsOn(urlRequest)
 
-        if let accessToken = accessToken {
+        if let accessToken {
             urlRequest.addValue(accessToken.headerValue, forHTTPHeaderField: "Authorization")
         }
 

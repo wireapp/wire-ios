@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireUtilities
 import XCTest
 
 @testable import WireSyncEngine
@@ -180,7 +181,11 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     var oneToOneConversation: ZMConversation?
 
-    var accentColorValue: ZMAccentColor = ZMAccentColor.brightOrange
+    var accentColorValue: ZMAccentColorRawValue = AccentColor.amber.rawValue
+
+    var zmAccentColor: ZMAccentColor? {
+        .from(rawValue: accentColorValue)
+    }
 
     var imageMediumData: Data! = Data()
 
@@ -220,8 +225,12 @@ final class DummyServiceUser: NSObject, ServiceUser {
 
     }
 
-    func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (Data?) -> Void) {
+    func imageData(for size: ProfileImageSize) -> Data? {
+        nil
+    }
 
+    func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (Data?) -> Void) {
+        completion(nil)
     }
 
     func refreshData() {
@@ -258,7 +267,6 @@ final class DummyServiceUser: NSObject, ServiceUser {
         self.providerIdentifier = providerIdentifier
         super.init()
     }
-
 }
 
 final class ServiceUserTests: IntegrationTest {

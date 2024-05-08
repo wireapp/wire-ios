@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireSyncEngine
 @testable import Wire
+import WireSyncEngine
+import XCTest
 
 class AuthenticationEmailVerificationRequiredErrorHandlerTests: XCTestCase {
 
@@ -47,19 +47,6 @@ class AuthenticationEmailVerificationRequiredErrorHandlerTests: XCTestCase {
             XCTFail("Unexpected value")
             return
         }
-    }
-
-    func testThatItDoesntHandleTheEventWhenStepIsNotCorrect() {
-        // GIVEN
-        let credentials = ZMPhoneCredentials(phoneNumber: "+48 1337464556", verificationCode: "1234567")
-        let step = AuthenticationFlowStep.authenticatePhoneCredentials(credentials)
-        let error = NSError.userSessionErrorWith(.accountIsPendingVerification, userInfo: nil)
-
-        // WHEN
-        let result = sut.handleEvent(currentStep: step, context: error)
-
-        // THEN
-        XCTAssertNil(result)
     }
 
     func testThatItDoesntHandleTheEventWhenErrorIsNotCorrect() {

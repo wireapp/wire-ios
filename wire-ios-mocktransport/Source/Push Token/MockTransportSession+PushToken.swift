@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ extension MockTransportSession {
     }
 
     func processDeletePushToken(_ token: String?, apiVersion: APIVersion) -> ZMTransportResponse {
-        if let token = token {
+        if let token {
             if pushTokens[token] != nil {
                 removePushToken(token)
                 return ZMTransportResponse(payload: nil, httpStatus: 204, transportSessionError: nil, apiVersion: apiVersion.rawValue)

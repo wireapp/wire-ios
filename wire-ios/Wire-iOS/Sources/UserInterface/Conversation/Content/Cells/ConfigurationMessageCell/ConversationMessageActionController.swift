@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 
 final class ConversationMessageActionController {
 
@@ -149,7 +149,7 @@ final class ConversationMessageActionController {
     // MARK: - Single Tap Action
 
     func performSingleTapAction() {
-        guard let singleTapAction = singleTapAction else { return }
+        guard let singleTapAction else { return }
 
         perform(action: singleTapAction)
     }
@@ -172,7 +172,7 @@ final class ConversationMessageActionController {
     // MARK: - Double Tap Action
 
     func performDoubleTapAction() {
-        guard let doubleTapAction = doubleTapAction else { return }
+        guard let doubleTapAction else { return }
         perform(action: doubleTapAction)
     }
 

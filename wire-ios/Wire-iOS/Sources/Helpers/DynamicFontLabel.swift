@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ class DynamicFontLabel: UILabel, DynamicTypeCapable {
 
     init(
         text: String = "",
-        style: UIFont.FontStyle = .body,
+        style: WireTextStyle = .body1,
         color: UIColor
     ) {
         // Not needed when we use a font style.

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ extension ZMUpdateEvent {
 
     public func users(in context: NSManagedObjectContext, createIfNeeded: Bool) -> [ZMUser] {
 
-        if let qualifiedUserIDs = qualifiedUserIDs {
+        if let qualifiedUserIDs {
             if createIfNeeded {
                 return qualifiedUserIDs.map { ZMUser.fetchOrCreate(with: $0.uuid,
                                                                    domain: $0.domain,

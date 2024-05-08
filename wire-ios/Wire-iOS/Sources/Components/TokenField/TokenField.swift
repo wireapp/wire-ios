@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSystem
 import WireCommonComponents
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "TokenField")
 
@@ -442,7 +442,7 @@ final class TokenField: UIView {
         textView.textStorage.addAttributes(textAttributes, range: NSRange(location: 0, length: textView.textStorage.length))
         textView.textStorage.endEditing()
 
-        if let toLabelText = toLabelText {
+        if let toLabelText {
             toLabel.attributedText = NSMutableAttributedString(string: toLabelText, attributes: textAttributes)
         } else {
             toLabel.text = ""

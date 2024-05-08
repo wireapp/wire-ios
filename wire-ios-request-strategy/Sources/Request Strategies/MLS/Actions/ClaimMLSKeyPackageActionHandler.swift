@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
             return nil
         }
 
-        let path = "/mls/key-packages/claim/\(domain)/\(action.userId.transportString())"
+        let path = "/mls/key-packages/claim/\(domain)/\(action.userId.transportString())?ciphersuite=\(action.ciphersuite.rawValue)"
 
         var payload: ZMTransportData?
         if let skipOwn = action.excludedSelfClientId, !skipOwn.isEmpty {
@@ -70,7 +70,7 @@ class ClaimMLSKeyPackageActionHandler: ActionHandler<ClaimMLSKeyPackageAction> {
             }
             let selfUser = ZMUser.selfUser(in: context)
             let isSelfUserRequesting = selfUser.remoteIdentifier == action.userId && selfUser.domain == action.domain
-            guard isSelfUserRequesting || keyPackagesExcludingSelfClient.isNonEmpty else {
+            guard isSelfUserRequesting || !keyPackagesExcludingSelfClient.isEmpty else {
                 return action.fail(with: .emptyKeyPackages)
             }
 

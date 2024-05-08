@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import XCTest
 @testable import Wire
+import XCTest
 
 // MARK: - MockDestination
 
@@ -73,7 +73,7 @@ final class ShareDestinationCellTests: BaseSnapshotTestCase {
         // swiftlint:disable todo_requires_jira_link
         // TODO: check what would be the default value after test
         // swiftlint:enable todo_requires_jira_link
-        accentColor = .vividRed
+        accentColor = .red
         sut = ShareDestinationCell(style: .default, reuseIdentifier: "reuseIdentifier")
         sut.overrideUserInterfaceStyle = .dark
         sut.backgroundColor = .black

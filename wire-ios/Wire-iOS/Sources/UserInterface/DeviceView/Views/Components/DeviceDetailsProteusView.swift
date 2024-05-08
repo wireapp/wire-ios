@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,13 +38,13 @@ struct DeviceDetailsProteusView: View {
                 Divider()
 
                 Text(L10n.Localizable.Device.Details.Section.Proteus.activated)
-                    .foregroundColor(SemanticColors.Label.textSectionHeader.swiftUIColor)
+                    .foregroundColor(Color(uiColor: SemanticColors.Label.textSectionHeader))
                     .font(FontSpec.mediumSemiboldFont.swiftUIFont)
                     .padding([.leading, .top], ViewConstants.Padding.standard)
                     .padding(.bottom, ViewConstants.Padding.small)
 
                 Text(viewModel.addedDate)
-                    .foregroundColor(SemanticColors.Label.textDefault.swiftUIColor)
+                    .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
                     .padding([.leading, .trailing, .bottom], ViewConstants.Padding.standard)
                     .font(FontSpec.normalRegularFont.swiftUIFont)
             }

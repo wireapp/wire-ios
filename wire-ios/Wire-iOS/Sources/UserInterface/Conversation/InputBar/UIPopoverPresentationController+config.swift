@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 protocol PopoverPresenter: AnyObject {
@@ -33,8 +32,8 @@ protocol PopoverPresenter: AnyObject {
 
 extension PopoverPresenter where Self: UIViewController {
     func updatePopoverSourceRect() {
-        guard let presentedPopover = presentedPopover,
-              let popoverPointToView = popoverPointToView else { return }
+        guard let presentedPopover,
+              let popoverPointToView else { return }
 
         presentedPopover.sourceRect = popoverPointToView.popoverSourceRect(from: self)
     }

@@ -17,54 +17,61 @@
 //
 
 import Foundation
+@testable import WireDataModelSupport
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
-@testable import WireDataModelSupport
 import WireTesting
 
-class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
+final class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
 
-    private var snoozer: SnoozeCertificateEnrollmentUseCase!
-    private var mockRecurringActionService: MockRecurringActionServiceInterface!
     private var mockFeatureRepository: MockFeatureRepositoryInterface!
-    private var selfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
+    private var mockSelfClientCertificateProvider: MockSelfClientCertificateProviderProtocol!
 
     private var context: NSManagedObjectContext { syncMOC }
 
     override func setUp() {
         super.setUp()
 
-        mockRecurringActionService = .init()
         mockFeatureRepository = MockFeatureRepositoryInterface()
         mockFeatureRepository.fetchE2EI_MockValue = .init(status: .enabled)
-        selfClientCertificateProvider = MockSelfClientCertificateProviderProtocol()
-        let accountID = UUID.create()
-        snoozer = SnoozeCertificateEnrollmentUseCase(
-            featureRepository: mockFeatureRepository,
-            featureRepositoryContext: context,
-            recurringActionService: mockRecurringActionService,
-            accountId: accountID)
+        mockSelfClientCertificateProvider = MockSelfClientCertificateProviderProtocol()
     }
 
     override func tearDown() {
-        snoozer = nil
-        mockRecurringActionService = nil
-        selfClientCertificateProvider = nil
+        mockSelfClientCertificateProvider = nil
+        mockFeatureRepository = nil
 
         super.tearDown()
     }
 
     func testItAddsRecurringAction() async {
         // Given
-        selfClientCertificateProvider.underlyingHasCertificate = false
+        mockSelfClientCertificateProvider.underlyingHasCertificate = false
         mockRecurringActionService.registerAction_MockMethod = { _ in }
+
+        // We use a fresh mock here instead of the given one from the super class
+        // to be able to count invocations exactly without side effects.
+        let mockRecurringActionService = MockRecurringActionServiceInterface()
+        mockRecurringActionService.registerAction_MockMethod = { _ in }
+
+        let useCase = makeUseCase(recurringActionService: mockRecurringActionService)
 
         // When
         XCTAssertEqual(mockRecurringActionService.registerAction_Invocations.count, 0)
-        await snoozer.invoke(endOfPeriod: .now)
+        await useCase.invoke(endOfPeriod: .now)
 
         // Then
         XCTAssertEqual(mockRecurringActionService.registerAction_Invocations.count, 1)
     }
 
+    // MARK: Helpers
+
+    private func makeUseCase(recurringActionService: any RecurringActionServiceInterface) -> SnoozeCertificateEnrollmentUseCase {
+        SnoozeCertificateEnrollmentUseCase(
+            featureRepository: mockFeatureRepository,
+            featureRepositoryContext: context,
+            recurringActionService: recurringActionService,
+            accountId: UUID()
+        )
+    }
 }

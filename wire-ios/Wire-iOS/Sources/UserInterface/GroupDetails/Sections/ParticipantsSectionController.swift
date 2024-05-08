@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -167,7 +167,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     fileprivate weak var collectionView: UICollectionView? {
         didSet {
-            guard let collectionView = collectionView else { return }
+            guard let collectionView else { return }
             SectionFooter.register(collectionView: collectionView)
         }
     }

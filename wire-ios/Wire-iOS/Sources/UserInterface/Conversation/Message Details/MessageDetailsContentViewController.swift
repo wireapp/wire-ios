@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 import WireSyncEngine
 
 // MARK: - MessageDetailsSectionDescription
@@ -409,7 +409,7 @@ extension MessageDetailsContentViewController {
 
     /// Presents a profile view controller as a popover or a modal depending on the context.
     fileprivate func presentDetailsViewController(_ controller: ProfileViewController, above cell: UserCell) {
-        let presentedController = controller.wrapInNavigationController(setBackgroundColor: true)
+        let presentedController = controller.wrapInNavigationController()
         presentedController.modalPresentationStyle = .formSheet
 
         if let popover = presentedController.popoverPresentationController {

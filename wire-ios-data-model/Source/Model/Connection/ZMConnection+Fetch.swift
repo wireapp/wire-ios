@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ extension ZMConnection {
 
         let predicate: NSPredicate
         if searchingLocalDomain {
-            if let domain = domain {
+            if let domain {
                 predicate = NSPredicate(format: "to.remoteIdentifier_data == %@ AND (to.domain == %@ || to.domain == NULL)", userID.uuidData as NSData, domain)
             } else {
                 predicate = NSPredicate(format: "to.remoteIdentifier_data == %@", userID.uuidData as NSData)

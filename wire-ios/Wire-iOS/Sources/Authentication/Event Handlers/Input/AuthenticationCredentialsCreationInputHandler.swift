@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-/**
- * Handles the input of the phone number or email to register.
- */
-
+/// Handles the input of the phone number or email to register.
 final class AuthenticationCredentialsCreationInputHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
@@ -34,12 +29,9 @@ final class AuthenticationCredentialsCreationInputHandler: AuthenticationEventHa
 
         // Only handle known values.
         if let email = context as? String {
-            return [.startRegistrationFlow(.email(email))]
-        } else if let phoneNumber = context as? PhoneNumber {
-            return [.startRegistrationFlow(.phone(phoneNumber.fullNumber))]
+            return [.startRegistrationFlow(unverifiedEmail: email)]
         } else {
             return nil
         }
     }
-
 }

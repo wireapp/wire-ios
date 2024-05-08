@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
 @objc(StoredUpdateEvent)
 public final class StoredUpdateEvent: NSManagedObject {
@@ -99,7 +99,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         publicKeys: EARPublicKeys?
     ) {
         guard
-            let publicKeys = publicKeys,
+            let publicKeys,
             let unencryptedPayload = storedEvent.payload
         else {
             return
@@ -310,7 +310,7 @@ public final class StoredUpdateEvent: NSManagedObject {
         // background.
         let key = storedEvent.isCallEvent ? privateKeys?.secondary : privateKeys?.primary
 
-        guard let key = key else {
+        guard let key else {
             throw DecryptionFailure.privateKeyUnavailable
         }
 

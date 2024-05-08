@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@ protocol MLSActionsProviderProtocol {
     func claimKeyPackages(
         userID: UUID,
         domain: String?,
+        ciphersuite: MLSCipherSuite,
         excludedSelfClientID: String?,
         in context: NotificationContext
     ) async throws -> [KeyPackage]
@@ -132,12 +133,14 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
     func claimKeyPackages(
         userID: UUID,
         domain: String?,
+        ciphersuite: MLSCipherSuite,
         excludedSelfClientID: String?,
         in context: NotificationContext
     ) async throws -> [KeyPackage] {
         var action = ClaimMLSKeyPackageAction(
             domain: domain,
             userId: userID,
+            ciphersuite: ciphersuite,
             excludedSelfClientId: excludedSelfClientID
         )
 
@@ -166,7 +169,7 @@ final class MLSActionsProvider: MLSActionsProviderProtocol {
         subgroupType: SubgroupType?,
         context: NotificationContext
     ) async throws -> Data {
-        if let subgroupType = subgroupType {
+        if let subgroupType {
             var action = FetchMLSSubconversationGroupInfoAction(
                 conversationId: conversationId,
                 domain: domain,

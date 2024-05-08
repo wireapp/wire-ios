@@ -86,6 +86,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
 
         // AND WHEN
         self.sessionManager!.tearDownAllBackgroundSessions()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
         XCTAssertNil(self.sessionManager!.backgroundUserSessions[account.userIdentifier])
@@ -157,7 +158,7 @@ final class SessionManagerMultiUserSessionTests: IntegrationTest {
         let account = self.createAccount()
         sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = NSData.secureRandomData(ofLength: 16)
 
-        guard let application = application else { return XCTFail() }
+        guard let application else { return XCTFail() }
 
         let sessionManagerExpectation = self.customExpectation(description: "Session manager and session is loaded")
 

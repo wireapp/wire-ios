@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,17 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireSyncEngine
 import avs
+import UIKit
 import WireCommonComponents
+import WireSyncEngine
 
 // MARK: - AppRootRouter
-public final class AppRootRouter: NSObject {
+final class AppRootRouter: NSObject {
 
     // MARK: - Public Property
 
-    let screenCurtain = ScreenCurtain()
+    let screenCurtain = ScreenCurtainWindow()
 
     // MARK: - Private Property
 
@@ -98,18 +98,20 @@ public final class AppRootRouter: NSObject {
 
     // MARK: - Public implementation
 
-    public func start(launchOptions: LaunchOptions) {
+    func start(launchOptions: LaunchOptions) {
         self.lastLaunchOptions = launchOptions
         showInitial(launchOptions: launchOptions)
         sessionManager.resolveAPIVersion()
     }
 
-    public func openDeepLinkURL(_ deepLinkURL: URL) -> Bool {
+    func openDeepLinkURL(_ deepLinkURL: URL) -> Bool {
         return urlActionRouter.open(url: deepLinkURL)
     }
 
-    public func performQuickAction(for shortcutItem: UIApplicationShortcutItem,
-                                   completionHandler: ((Bool) -> Void)?) {
+    func performQuickAction(
+        for shortcutItem: UIApplicationShortcutItem,
+        completionHandler: ((Bool) -> Void)?
+    ) {
         quickActionsManager.performAction(for: shortcutItem, completionHandler: completionHandler)
     }
 
@@ -167,7 +169,7 @@ public final class AppRootRouter: NSObject {
         // Perform the wait on a background queue so we don't cause a
         // deadlock on the main queue.
         appStateTransitionQueue.async { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             self.appStateTransitionGroup.wait()
 
@@ -343,7 +345,7 @@ extension AppRootRouter {
             statusProvider: AuthenticationStatusProvider()
         )
 
-        guard let authenticationCoordinator = authenticationCoordinator else {
+        guard let authenticationCoordinator else {
             completion()
             return
         }
@@ -412,7 +414,7 @@ extension AppRootRouter {
 
     private func configureAuthenticatedAppearance() {
         rootViewController.view.window?.tintColor = .accent()
-        UIColor.setAccentOverride(.undefined)
+        UIColor.setAccentOverride(nil)
     }
 
     private func setupAnalyticsSharing() {
@@ -603,7 +605,7 @@ extension AppRootRouter: ApplicationStateObserving {
     }
 
     func updateOverlayWindowFrame(size: CGSize? = nil) {
-        if let size = size {
+        if let size {
             screenCurtain.frame.size = size
         } else {
             screenCurtain.frame = UIApplication.shared.firstKeyWindow?.frame ?? UIScreen.main.bounds
@@ -623,7 +625,7 @@ extension AppRootRouter: ContentSizeCategoryObserving {
         rootViewController.redrawAllFonts()
     }
 
-    public static func configureAppearance() {
+    static func configureAppearance() {
         let navigationBarTitleBaselineOffset: CGFloat = 2.5
 
         let attributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: 11, weight: .semibold), .baselineOffset: navigationBarTitleBaselineOffset]

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -110,7 +110,7 @@ extension CompositeMessageItemContent: ButtonMessageData {
             !hasSelectedButton else { return }
 
         moc.performGroupedBlock { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             let buttonState = self.buttonState ??
                 ButtonState.insert(with: buttonId, message: self.parentMessage, inContext: moc)
             self.parentMessage.buttonStates?.resetExpired()
@@ -139,7 +139,7 @@ extension CompositeMessageItemContent {
     }
 
     private var buttonState: ButtonState? {
-        guard let button = button else { return nil }
+        guard let button else { return nil }
 
         return parentMessage.buttonStates?.first(where: { buttonState in
             guard let remoteIdentifier = buttonState.remoteIdentifier else { return false }

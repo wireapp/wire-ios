@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,12 +25,12 @@ class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
 
     init() {}
 
-    func authorize(conversationId: ConversationId, clientId: ClientId) -> Bool {
+    func authorize(conversationId: ConversationId, clientId: ClientId) async -> Bool {
         // This check is performed by the backend.
         return true
     }
 
-    func userAuthorize(conversationId: ConversationId, externalClientId: ClientId, existingClients: [ClientId]) -> Bool {
+    func userAuthorize(conversationId: ConversationId, externalClientId: ClientId, existingClients: [ClientId]) async -> Bool {
         // This check is performed by the backend.
         return true
     }
@@ -40,7 +40,7 @@ class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
         clientId: ClientId,
         existingClients: [ClientId],
         parentConversationClients: [ClientId]?
-    ) -> Bool {
+    ) async -> Bool {
         // This check is performed by the backend.
         return true
     }

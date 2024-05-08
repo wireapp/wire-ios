@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ import Foundation
     }
 
     deinit {
-        guard let token = token else { return }
+        guard let token else { return }
         NotificationCenter.default.removeObserver(token)
     }
 

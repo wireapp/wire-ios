@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import CallKit
-import Intents
 import avs
+import CallKit
+import Foundation
+import Intents
 import WireRequestStrategy
 
 protocol CallKitManagerDelegate: AnyObject {
@@ -238,7 +238,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
           video = startCallIntent.callCapability == .videoCall
         }
 
-        if let contacts = contacts {
+        if let contacts {
             findConversationAssociated(with: contacts) { [weak self] conversation in
                 self?.requestStartCall(in: conversation, video: video)
             }
@@ -269,7 +269,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         )
 
         callController.request(CXTransaction(action: action)) { [weak self] error in
-            if let error = error {
+            if let error {
                 self?.logger.error("fail: reuqest mute call: \(error)")
                 self?.log("Cannot update call to muted = \(muted): \(error)")
             }
@@ -333,7 +333,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
             if let error = error as? CXErrorCodeRequestTransactionError, error.code == .callUUIDAlreadyExists {
                 self?.logger.info("request start call: call already exists, answering...")
                 self?.requestAnswerCall(in: conversation, video: video)
-            } else if let error = error {
+            } else if let error {
                 self?.logger.error("fail: request start call: \(error)")
                 self?.log("Cannot start call: \(error)")
             }
@@ -355,7 +355,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         log("request CXAnswerCallAction")
 
         callController.request(transaction) { [weak self] error in
-            if let error = error {
+            if let error {
                 self?.logger.error("fail: request answer call: \(error)")
                 self?.log("Cannot answer call: \(error)")
             }
@@ -379,7 +379,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         log("request CXEndCallAction")
 
         callController.request(transaction) { [weak self] error in
-            if let error = error {
+            if let error {
                 self?.logger.error("fail: request end call: \(error)")
                 self?.log("Cannot end call: \(error)")
                 conversation.voiceChannel?.leave()
@@ -418,7 +418,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
             with: call.id,
             update: update
         ) { [weak self] error in
-            if let error = error {
+            if let error {
                 self?.logger.error("fail: report incoming call preemptively: \(error)")
                 self?.log("Cannot preemptively report incoming call: \(error)")
                 self?.callRegister.unregisterCall(call)
@@ -494,7 +494,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
             with: call.id,
             update: update
         ) { [weak self] error in
-            if let error = error {
+            if let error {
                 self?.logger.error("fail: report incoming call: \(error)")
                 self?.log("Cannot report incoming call: \(error)")
                 self?.callRegister.unregisterCall(call)
@@ -567,7 +567,7 @@ extension CallKitManager: CXProviderDelegate {
             return
         }
 
-        guard let delegate = delegate else {
+        guard let delegate else {
             logger.warn("fail: perform start call action: delegate doesn't exist")
             log("fail CXStartCallAction because can't fetch conversation")
             action.fail()
@@ -575,7 +575,7 @@ extension CallKitManager: CXProviderDelegate {
         }
 
         delegate.lookupConversation(by: call.handle) { [weak self] result in
-            guard let `self` = self else {
+            guard let self else {
                 action.fail()
                 return
             }
@@ -626,7 +626,7 @@ extension CallKitManager: CXProviderDelegate {
             return
         }
 
-        guard let delegate = delegate else {
+        guard let delegate else {
             logger.warn("fail: perform answer call action: delegate doesn't exist")
             log("fail CXAnswerCallAction because can't fetch conversation")
             action.fail()
@@ -634,7 +634,7 @@ extension CallKitManager: CXProviderDelegate {
         }
 
         delegate.lookupConversationAndProcessPendingCallEvents(by: call.handle) { [weak self] result in
-            guard let `self` = self else {
+            guard let self else {
                 action.fail()
                 return
             }
@@ -695,7 +695,7 @@ extension CallKitManager: CXProviderDelegate {
             return
         }
 
-        guard let delegate = delegate else {
+        guard let delegate else {
             logger.warn("fail: perform end call action: delegate doesn't exist")
             log("fail CXEndCallAction because can't fetch conversation")
             action.fail()
@@ -704,7 +704,7 @@ extension CallKitManager: CXProviderDelegate {
         }
 
         delegate.lookupConversationAndProcessPendingCallEvents(by: call.handle) { [weak self] result in
-            guard let `self` = self else {
+            guard let self else {
                 action.fail()
                 return
             }
@@ -734,14 +734,14 @@ extension CallKitManager: CXProviderDelegate {
             return
         }
 
-        guard let delegate = delegate else {
+        guard let delegate else {
             log("fail CXSetHeldCallAction because can't fetch conversation")
             action.fail()
             return
         }
 
         delegate.lookupConversation(by: call.handle) { [weak self] result in
-            guard let `self` = self else {
+            guard let self else {
                 action.fail()
                 return
             }
@@ -767,14 +767,14 @@ extension CallKitManager: CXProviderDelegate {
             return
         }
 
-        guard let delegate = delegate else {
+        guard let delegate else {
             log("fail CXSetMutedCallAction because can't fetch conversation")
             action.fail()
             return
         }
 
         delegate.lookupConversation(by: call.handle) { [weak self] result in
-            guard let `self` = self else {
+            guard let self else {
                 action.fail()
                 return
             }

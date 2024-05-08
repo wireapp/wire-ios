@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireDataModel
+import WireSyncEngine
 
 protocol ColorPickerControllerDelegate: AnyObject {
     func colorPicker(_ colorPicker: ColorPickerController, didSelectColor color: AccentColor)
@@ -96,8 +96,8 @@ class ColorPickerController: UIViewController {
 
         var color: AccentColor? {
             didSet {
-                if let color = color {
-                    colorView.backgroundColor = UIColor(for: color)
+                if let color {
+                    colorView.backgroundColor = color.uiColor
                 }
             }
         }
@@ -187,13 +187,13 @@ final class AccentColorPickerController: ColorPickerController {
     fileprivate let allAccentColors: [AccentColor]
 
     init() {
-        allAccentColors = AccentColor.allSelectable()
+        allAccentColors = AccentColor.allCases
 
         super.init(colors: allAccentColors)
 
         setupControllerTitle()
 
-        if let selfUser = ZMUser.selfUser(), let accentColor = AccentColor(ZMAccentColor: selfUser.accentColorValue), let currentColorIndex = allAccentColors.firstIndex(of: accentColor) {
+        if let selfUser = ZMUser.selfUser(), let accentColor = selfUser.accentColor, let currentColorIndex = allAccentColors.firstIndex(of: accentColor) {
             selectedColor = colors[currentColorIndex]
         }
         delegate = self
@@ -215,13 +215,14 @@ final class AccentColorPickerController: ColorPickerController {
 }
 
 extension AccentColorPickerController: ColorPickerControllerDelegate {
+
     func colorPicker(_ colorPicker: ColorPickerController, didSelectColor color: AccentColor) {
         guard let colorIndex = colors.firstIndex(of: color) else {
             return
         }
 
         ZMUserSession.shared()?.perform {
-            ZMUser.selfUser()?.accentColorValue = self.allAccentColors[colorIndex].zmAccentColor
+            ZMUser.selfUser()?.accentColor = self.allAccentColors[colorIndex]
         }
     }
 

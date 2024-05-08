@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
-
-protocol ConversationListTabBarControllerDelegate: AnyObject {
-    func didChangeTab(with type: TabBarItemType)
-}
+import WireSyncEngine
 
 enum TabBarItemType: Int, CaseIterable {
 
@@ -132,7 +128,7 @@ final class ConversationListTabBar: UITabBar {
 
     var selectedTab: TabBarItemType? {
         didSet {
-            if let selectedTab = selectedTab {
+            if let selectedTab {
                 switch selectedTab {
                 case .archive, .startUI:
                     return

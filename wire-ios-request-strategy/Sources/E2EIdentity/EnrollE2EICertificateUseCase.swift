@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -216,9 +216,4 @@ public final class EnrollE2EICertificateUseCase: EnrollE2EICertificateUseCasePro
         NotificationCenter.default.post(name: .e2eiCertificateChanged, object: self)
     }
 
-}
-
-public extension Notification.Name {
-    // This notification is used to notify of end-to-end identity certificate changes
-    static let e2eiCertificateChanged = NSNotification.Name("E2EICertificateStatusChanged")
 }

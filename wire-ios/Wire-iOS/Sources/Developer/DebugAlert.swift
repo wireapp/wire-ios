@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import MessageUI
-import WireDataModel
 import UIKit
-import WireSystem
 import WireCommonComponents
+import WireDataModel
+import WireSystem
 
 /// Presents debug alerts
 final class DebugAlert {
@@ -80,7 +79,7 @@ final class DebugAlert {
             alert.addAction(alertAction)
         }
 
-        if let cancelText = cancelText {
+        if let cancelText {
             let cancelAction = UIAlertAction(title: cancelText, style: .cancel) { _ in
                 isShown = false
             }
@@ -170,9 +169,11 @@ final class DebugLogSender: NSObject, MFMailComposeViewControllerDelegate {
         }
     }
 
-    public func mailComposeController(_ controller: MFMailComposeViewController,
-                                      didFinishWith result: MFMailComposeResult,
-                                      error: Error?) {
+    func mailComposeController(
+        _ controller: MFMailComposeViewController,
+        didFinishWith result: MFMailComposeResult,
+        error: Error?
+    ) {
         self.mailViewController = nil
         controller.dismiss(animated: true)
         type(of: self).senderInstance = nil

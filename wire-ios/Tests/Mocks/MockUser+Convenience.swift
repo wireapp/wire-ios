@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,8 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-
-import XCTest
 
 /**
  * A class that facilitates writing snapshot tests with mock users.
@@ -44,7 +42,7 @@ extension MockUser {
         user.isTeamMember = teamID != nil
         user.teamIdentifier = teamID
         user.teamRole = teamID != nil ? .member : .none
-        user.accentColorValue = .vividRed
+        user.zmAccentColor = .red
         user.remoteIdentifier = UUID()
         return user
     }
@@ -66,10 +64,14 @@ extension MockUser {
         user.isTeamMember = teamID != nil
         user.teamIdentifier = teamID
         user.teamRole = teamID != nil ? .member : .none
-        user.accentColorValue = .brightOrange
+        user.zmAccentColor = .amber
         user.emailAddress = teamID != nil ? "test@email.com" : nil
         user.remoteIdentifier = UUID()
         return user
     }
 
+    var zmAccentColor: ZMAccentColor? {
+        get { .from(rawValue: accentColorValue) }
+        set { accentColorValue = newValue?.rawValue ?? 0 }
+    }
 }

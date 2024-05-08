@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ extension ZMUpdateEvent {
             let conversationID = conversationUUID,
             let conversation = ZMConversation.fetch(with: conversationID, in: managedObjectContext),
             conversation.conversationType == .oneOnOne,
-            let senderUUID = senderUUID,
+            let senderUUID,
             senderUUID != ZMUser.selfUser(in: managedObjectContext).remoteIdentifier,
             let serverTimestamp = timestamp,
             let daysElapsed = Calendar.current.dateComponents([.day], from: serverTimestamp, to: currentDate).day

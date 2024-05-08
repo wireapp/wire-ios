@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireShareEngine
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
+import WireShareEngine
 
 typealias DegradationStrategyChoice = (DegradationStrategy) -> Void
 typealias SendingStateCallback = (_ type: SendingState) -> Void
@@ -54,7 +54,7 @@ final class SendController {
     private var timeoutWorkItem: DispatchWorkItem?
     private var timedOut = false
 
-    public var sentAllSendables = false
+    var sentAllSendables = false
 
     init(text: String, attachments: [NSItemProvider], conversation: WireShareEngine.Conversation, sharingSession: SharingSession) {
 
@@ -124,7 +124,7 @@ final class SendController {
         if unsentSendables.contains(where: { $0.needsPreparation }) {
             progress(.preparing)
             prepare(unsentSendables: unsentSendables) { [weak self] in
-                guard let `self` = self else { return }
+                guard let self else { return }
                 guard !self.isCancelled else {
                     return progress(.done)
                 }
@@ -201,7 +201,7 @@ final class SendController {
 
         let appendToMessages: (Sendable?) -> Void = { sendable in
             defer { sendingGroup.leave() }
-            guard let sendable = sendable else { return }
+            guard let sendable else { return }
             messages.append(sendable)
         }
 
@@ -215,7 +215,7 @@ final class SendController {
         let error = unsentSendables.compactMap(\.error).first
 
         sendingGroup.notify(queue: .main) {
-            if let error = error {
+            if let error {
                 completion(.failure(error))
             } else {
                 completion(.success(messages))

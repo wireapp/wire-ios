@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireShareEngine
-import MobileCoreServices
 import AVFoundation
-import WireCommonComponents
 import ImageIO
+import MobileCoreServices
+import UIKit
+import WireCommonComponents
 import WireDataModel
+import WireShareEngine
 
 /// Error that can happen during the preparation or sending operation
 enum UnsentSendableError: Error {
@@ -106,7 +106,7 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             let fetchPreview = !ExtensionSettings.shared.disableLinkPreviews
             let message = self.conversation.appendTextMessage(self.text, fetchLinkPreview: fetchPreview)
             completion(message)
@@ -197,7 +197,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             completion(self.imageData.flatMap(self.conversation.appendImage))
         }
     }
@@ -248,7 +248,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             completion(self.metadata.flatMap(self.conversation.appendFile))
         }
     }
@@ -269,7 +269,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
             }
 
             let prepareColsure: SendingCompletion = { url, error in
-                guard let url = url, error == nil else {
+                guard let url, error == nil else {
                     error?.log(message: "Unable to prepare file attachment for sending")
                     return completion()
                 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
+import WireCommonComponents
 import WireDataModel
 import WireRequestStrategy
 import WireSyncEngine
 import WireTransport
-import UIKit
-import SwiftUI
-import WireCommonComponents
 
 final class DeveloperToolsViewModel: ObservableObject {
 
@@ -151,7 +149,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
         sections.append(backendInfoSection)
 
-        if let selfUser = selfUser {
+        if let selfUser {
             sections.append(Section(
                 header: "Self user",
                 items: [
@@ -164,7 +162,7 @@ final class DeveloperToolsViewModel: ObservableObject {
                         title: "Supported protocols",
                         value: selfUser.supportedProtocols.map(\.rawValue).joined(separator: ", "))
                     ),
-                    .text(TextItem(title: "MLS public key", value: selfClient?.mlsPublicKeys.ed25519?.uppercased() ?? "None"))
+                    .text(TextItem(title: "MLS public key", value: selfClient?.mlsPublicKeys.allKeys.first?.uppercased() ?? "None"))
                 ]
             ))
         }
@@ -246,7 +244,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func checkRegisteredTokens() {
         guard
-            let selfClient = selfClient,
+            let selfClient,
             let clientID = selfClient.remoteIdentifier,
             let context = selfClient.managedObjectContext?.notificationContext
         else {
@@ -325,7 +323,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func stopBellaFomaFederating() {
         guard
-            let selfClient = selfClient,
+            let selfClient,
             let context = selfClient.managedObjectContext
         else {
             return
@@ -337,7 +335,7 @@ final class DeveloperToolsViewModel: ObservableObject {
 
     private func stopFederatingDomain(domain: String) {
         guard
-            let selfClient = selfClient,
+            let selfClient,
             let context = selfClient.managedObjectContext
         else {
             return

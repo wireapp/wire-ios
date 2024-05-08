@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ final class MockVoiceChannel: NSObject, VoiceChannel {
     }
 
     var callStartDate: Date? {
-        if let mockCallDuration = mockCallDuration {
+        if let mockCallDuration {
             return Date(timeIntervalSinceNow: -mockCallDuration)
         } else {
             return nil

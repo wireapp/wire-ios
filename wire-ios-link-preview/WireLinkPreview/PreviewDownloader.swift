@@ -1,20 +1,20 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 
@@ -109,7 +109,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         }
 
         parseMetaHeader(container, url: url) { [weak self] result in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.completeAndCleanUp(completion, result: result, url: url, taskIdentifier: identifier)
         }
     }
@@ -153,7 +153,7 @@ extension PreviewDownloader {
         guard let url = dataTask.originalRequest?.url, let completion = completionByURL[url] else { return }
         let (headers, contentTypeKey) = (response.allHeaderFields, HeaderKey.contentType.rawValue)
         let contentType = headers[contentTypeKey] as? String ?? headers[contentTypeKey.lowercased()] as? String
-        if let contentType = contentType, !contentType.lowercased().contains("text/html") || !response.isSuccess {
+        if let contentType, !contentType.lowercased().contains("text/html") || !response.isSuccess {
             completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: dataTask.taskIdentifier)
             return completionHandler(.cancel)
         }

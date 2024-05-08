@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,13 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import MobileCoreServices
 import Down
+import MobileCoreServices
 import UIKit
-import WireSyncEngine
-import WireCommonComponents
 import UniformTypeIdentifiers
+import WireCommonComponents
+import WireSyncEngine
 
 extension Notification.Name {
     static let MarkdownTextViewDidChangeActiveMarkdown = Notification.Name("MarkdownTextViewDidChangeActiveMarkdown")
@@ -143,7 +142,7 @@ final class MarkdownTextView: NextResponderTextView {
     }
 
     override func cut(_ sender: Any?) {
-        guard let selectedTextRange = selectedTextRange else { return }
+        guard let selectedTextRange else { return }
 
         let copiedAttributedText = attributedText.attributedSubstring(from: selectedRange)
         let copiedAttributedTextPlainText = replaceMentionAttachmentsWithPlainText(in: copiedAttributedText)
@@ -160,7 +159,7 @@ final class MarkdownTextView: NextResponderTextView {
         UIPasteboard.general.setValue(copiedAttributedTextPlainText, forPasteboardType: UTType.plainText.identifier)
     }
 
-    public override var selectedTextRange: UITextRange? {
+    override var selectedTextRange: UITextRange? {
         didSet { activeMarkdown = self.markdownAtSelection() }
     }
 

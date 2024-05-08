@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 extension String {
@@ -154,7 +153,7 @@ extension NSAttributedString {
 
         let allRanges = (self.string as NSString).allRanges(of: query, options: [.caseInsensitive, .diacriticInsensitive])
 
-        if let totalMatches = totalMatches {
+        if let totalMatches {
             totalMatches.pointee = allRanges.map { $1.count }.reduce(0, +)
         }
 

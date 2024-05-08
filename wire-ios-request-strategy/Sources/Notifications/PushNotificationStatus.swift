@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -104,12 +104,12 @@ open class PushNotificationStatus: NSObject {
     public func didFetch(eventIds: [UUID], lastEventId: UUID?, finished: Bool) {
         let highestRankingEventId = eventIdRanking.firstObject as? UUID
 
-        highestRankingEventId.apply(eventIdRanking.remove)
+        highestRankingEventId.map(eventIdRanking.remove)
         eventIdRanking.minusSet(Set<UUID>(eventIds))
 
         WireLogger.updateEvent.info("finished fetching all available events, last event id: " + String(describing: lastEventId?.uuidString))
 
-        if let lastEventId = lastEventId {
+        if let lastEventId {
             lastEventIDRepository.storeLastEventID(lastEventId)
         }
 

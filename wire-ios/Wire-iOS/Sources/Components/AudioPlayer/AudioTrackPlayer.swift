@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
     var state: MediaPlayerState? {
         didSet {
             audioTrackPlayerDelegate?.stateDidChange(self, state: state)
-            if let state = state {
+            if let state {
                 mediaPlayerDelegate?.mediaPlayer(self, didChangeTo: state)
             }
         }
@@ -136,7 +136,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         loadAudioTrackCompletionHandler = completionHandler
 
         if let streamURL = track.streamURL {
-            if let avPlayer = avPlayer {
+            if let avPlayer {
                 avPlayer.replaceCurrentItem(with: AVPlayerItem(url: streamURL))
 
                 if avPlayer.status == .readyToPlay {
@@ -165,7 +165,7 @@ final class AudioTrackPlayer: NSObject, MediaPlayer {
         NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlay(toEndTime:)), name: .AVPlayerItemDidPlayToEndTime, object: avPlayer?.currentItem)
 
-        if let timeObserverToken = timeObserverToken {
+        if let timeObserverToken {
             avPlayer?.removeTimeObserver(timeObserverToken)
         }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
@@ -38,7 +37,7 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
 
     // MARK: - Init
 
-    public init(userId: UUID, profileViewControllerDelegate: ProfileViewControllerDelegate?, userSession: UserSession) {
+    init(userId: UUID, profileViewControllerDelegate: ProfileViewControllerDelegate?, userSession: UserSession) {
         self.userId = userId
         self.profileViewControllerDelegate = profileViewControllerDelegate
         self.userSession = userSession
@@ -102,7 +101,7 @@ final class SearchUserViewController: UIViewController, SpinnerCapable {
             profileUser = nil
         }
 
-        if let profileUser = profileUser {
+        if let profileUser {
             let profileViewController = ProfileViewController(
                 user: profileUser,
                 viewer: selfUser,

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import Foundation
 import WireSyncEngine
-import avs
 
 final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor {
 
@@ -78,7 +78,7 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
             viewController = alert
         } else {
             requestPasswordController = RequestPasswordController(context: .logout, callback: { [weak self] password in
-                guard let password = password else { return }
+                guard let password else { return }
 
                 self?.logout(password: password)
             })

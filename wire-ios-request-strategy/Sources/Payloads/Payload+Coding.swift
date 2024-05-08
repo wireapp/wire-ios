@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -114,7 +115,7 @@ extension Encodable {
     ///   - encoder: JSONEncoder to use
 
     func payloadData(apiVersion: APIVersion? = nil, encoder: JSONEncoder = .defaultEncoder) -> Data? {
-        if let apiVersion = apiVersion {
+        if let apiVersion {
             encoder.setAPIVersion(apiVersion)
         }
 

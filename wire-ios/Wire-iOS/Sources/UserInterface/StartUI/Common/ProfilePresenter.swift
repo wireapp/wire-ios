@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
@@ -43,7 +42,7 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
     @objc
     func deviceOrientationChanged(_ notification: Notification?) {
         guard
-            let controllerToPresentOn = controllerToPresentOn,
+            let controllerToPresentOn,
             controllerToPresentOn.isIPadRegular()
         else { return }
 
@@ -84,7 +83,7 @@ final class ProfilePresenter: NSObject, ViewControllerDismisser {
         profileViewController.delegate = self
         profileViewController.viewControllerDismisser = self
 
-        let navigationController = profileViewController.wrapInNavigationController(setBackgroundColor: true)
+        let navigationController = profileViewController.wrapInNavigationController()
         navigationController.modalPresentationStyle = .formSheet
 
         controllerToPresentOn?.present(navigationController, animated: true)

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireSyncEngine
+import XCTest
 
 final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
 
@@ -162,7 +162,7 @@ final class ZMLocalNotificationTests_Event: ZMLocalNotificationTests {
         var note: ZMLocalNotification?
 
         // when
-        if let event = event {
+        if let event {
             note = ZMLocalNotification(event: event, conversation: self.oneOnOneConversation, managedObjectContext: self.uiMOC)
         }
 

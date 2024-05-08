@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ final class AcmeAPITests: ZMTBaseTest {
         super.setUp()
 
         mockHttpClient = MockHttpClient()
-        if let mockHttpClient = mockHttpClient {
+        if let mockHttpClient {
             let path = "https://acme/defaultteams/directory"
             acmeApi = AcmeAPI(acmeDiscoveryPath: path, httpClient: mockHttpClient)
         }
@@ -293,7 +293,7 @@ class MockHttpClient: HttpClientCustom {
 
     func send(_ request: URLRequest) async throws -> (Data, URLResponse) {
         sentRequests.append(request)
-        guard let mockResponse = mockResponse else {
+        guard let mockResponse else {
             throw NetworkError.errorDecodingURLResponse(mockResponse!.1)
         }
         return mockResponse

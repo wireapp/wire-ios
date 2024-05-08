@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import WireCommonComponents
 
 class PopUpIconButtonView: UIView {
 
-    public var selectedIndex = 0
+    var selectedIndex = 0
 
     private let button: PopUpIconButton
 
@@ -295,7 +295,7 @@ class PopUpIconButtonView: UIView {
         return rect
     }
 
-    public func updateSelectionForPoint(_ point: CGPoint) {
+    func updateSelectionForPoint(_ point: CGPoint) {
 
         switch expandDirection {
         case .left:

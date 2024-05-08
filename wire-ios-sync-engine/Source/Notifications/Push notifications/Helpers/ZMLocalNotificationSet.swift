@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireTransport
 import UserNotifications
+import WireTransport
 
 @objc public protocol ZMSynchonizableKeyValueStore: KeyValueStore {
     func enqueueDelayedSave()

@@ -19,7 +19,7 @@
 import UIKit
 import WireCommonComponents
 
-public enum IconStringsBuilder {
+enum IconStringsBuilder {
 
     /// Creates an attributed string with the title and leading and/or trailing icons.
     /// - parameter interactive: A down-arrow image will be appended.
@@ -40,7 +40,7 @@ public enum IconStringsBuilder {
 
         // Adds the down arrow if the view is interactive
         if interactive {
-            if let titleFont = titleFont {
+            if let titleFont {
                 let iconImage: UIImage = StyleKitIcon.downArrow.makeImage(
                     size: .custom(15),
                     color: SemanticColors.Icon.foregroundPlainDownArrow).withRenderingMode(.alwaysTemplate)

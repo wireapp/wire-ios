@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireLinkPreview
+import XCTest
 
 class NSDataDetectorAttachmentTests: XCTestCase {
 
@@ -112,7 +112,7 @@ class NSDataDetectorAttachmentTests: XCTestCase {
     private func checkAttachments(in text: String, expectation: (url: String, type: LinkAttachmentType)?, file: StaticString = #file, line: UInt = #line) {
         let attachments = detector.detectLinkAttachments(in: text, excluding: [])
 
-        if let expectation = expectation {
+        if let expectation {
             guard let match = attachments[URL(string: expectation.url)!] else {
                 return XCTFail("Cannot find a match for \(expectation.url)", file: file, line: line)
             }

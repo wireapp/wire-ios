@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -235,7 +235,7 @@ final class ConversationSenderMessageDetailsCell: UIView, ConversationMessageCel
             color: textColor
         ).with(insets: UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0), backgroundColor: .clear)
 
-        guard let icon = icon else { return nil }
+        guard let icon else { return nil }
 
         let iconSize = icon.size
 
@@ -320,7 +320,7 @@ final class ConversationSenderMessageCellDescription: ConversationMessageCellDes
     // MARK: - Accessibility
 
     private func setupAccessibility(_ sender: UserType) {
-        guard let message = message, let senderName = sender.name else {
+        guard let message, let senderName = sender.name else {
             accessibilityLabel = nil
             return
         }

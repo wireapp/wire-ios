@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AVFoundation
+import avs
 import MobileCoreServices
 import Photos
 import UIKit
 import WireSyncEngine
-import avs
-import AVFoundation
 
 enum ConversationInputBarViewControllerMode {
     case textInput
@@ -58,7 +59,7 @@ final class ConversationInputBarViewController: UIViewController,
                 inputBar.textView.reloadInputViews()
             }
 
-            guard let inputController = inputController else {
+            guard let inputController else {
                 inputBar.textView.inputView = nil
                 return
             }
@@ -271,7 +272,7 @@ final class ConversationInputBarViewController: UIViewController,
 
                     let newViewController: UIViewController
 
-                    if let viewController = viewController {
+                    if let viewController {
                         newViewController = viewController
                     } else {
                         newViewController = setupClosure()
@@ -444,7 +445,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator?) {
 
-        guard let coordinator = coordinator else { return }
+        guard let coordinator else { return }
 
         super.viewWillTransition(to: size, with: coordinator)
         self.inRotation = true
@@ -848,7 +849,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
         } else if mediaType == UTType.image.identifier {
             let image: UIImage? = (info[UIImagePickerController.InfoKey.editedImage] as? UIImage) ?? info[UIImagePickerController.InfoKey.originalImage] as? UIImage
 
-            if let image = image,
+            if let image,
                let jpegData = image.jpegData(compressionQuality: 0.9) {
                 if picker.sourceType == UIImagePickerController.SourceType.camera {
                     if mediaShareRestrictionManager.hasAccessToCameraRoll {
@@ -900,7 +901,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
         viewController.delegate = self
         viewController.navigationItem.setupNavigationBarTitle(title: conversation.displayNameWithFallback)
 
-        parent?.present(viewController.wrapInNavigationController(setBackgroundColor: true), animated: true)
+        parent?.present(viewController.wrapInNavigationController(), animated: true)
     }
 }
 

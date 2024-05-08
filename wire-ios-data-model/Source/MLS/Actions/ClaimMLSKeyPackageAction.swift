@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,11 +61,13 @@ public class ClaimMLSKeyPackageAction: EntityAction {
     public let excludedSelfClientId: String?
     public let domain: String?
     public let userId: UUID
+    public let ciphersuite: MLSCipherSuite
     public var resultHandler: ResultHandler?
 
-    public init(domain: String?, userId: UUID, excludedSelfClientId: String? = nil, resultHandler: ResultHandler? = nil) {
+    public init(domain: String?, userId: UUID, ciphersuite: MLSCipherSuite, excludedSelfClientId: String? = nil, resultHandler: ResultHandler? = nil) {
         self.domain = domain
         self.userId = userId
+        self.ciphersuite = ciphersuite
         self.excludedSelfClientId = excludedSelfClientId
         self.resultHandler = resultHandler
     }

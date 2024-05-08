@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -157,7 +157,7 @@ final class ChangeEmailViewController: SettingsBaseTableViewController {
     }
 
     func updateSaveButtonState(enabled: Bool? = nil) {
-        if let enabled = enabled {
+        if let enabled {
             navigationItem.rightBarButtonItem?.isEnabled = enabled
         } else {
             navigationItem.rightBarButtonItem?.isEnabled = state.isValid

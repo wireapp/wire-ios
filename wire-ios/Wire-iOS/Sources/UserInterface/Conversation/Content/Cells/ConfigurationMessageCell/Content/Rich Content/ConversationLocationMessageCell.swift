@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import MapKit
+import UIKit
 import WireDataModel
 
 final class ConversationLocationMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
@@ -89,7 +89,7 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         addressContainerView.addSubview(addressLabel)
         obfuscationView.isHidden = true
 
-        guard let font = labelFont, let color = labelTextColor, let containerColor = containerColor else { return }
+        guard let font = labelFont, let color = labelTextColor, let containerColor else { return }
         addressLabel.font = font
         addressLabel.textColor = color
         addressContainerView.backgroundColor = containerColor

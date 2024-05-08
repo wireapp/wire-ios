@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
         self.filter = filter
         super.init(managedObjectContext: moc)
         self.timerCompletionBlock = { [weak self] message, _ in
-            if let message = message {
+            if let message {
                 self?.timerFired(for: message)
             }
         }

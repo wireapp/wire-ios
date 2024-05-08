@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ final class AccountSelectorView: UIView {
             accountViews.forEach { accountView in
                 accountView.unreadCountStyle = .current
                 accountView.onTap = { [weak self] account in
-                    guard let account = account else { return }
+                    guard let account else { return }
                     self?.delegate?.accountSelectorDidSelect(account: account)
                 }
             }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import UniformTypeIdentifiers
 import WireDataModel
 import WireSyncEngine
-import UniformTypeIdentifiers
 
 protocol BackupRestoreControllerDelegate: AnyObject {
     func backupResoreControllerDidFinishRestoring(_ controller: BackupRestoreController)
@@ -95,7 +95,7 @@ final class BackupRestoreController: NSObject {
         target.isLoadingViewVisible = true
 
         sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
-            guard let `self` = self else {
+            guard let self else {
                 BackgroundActivityFactory.shared.endBackgroundActivity(activity)
                 zmLog.safePublic("SessionManager.self is `nil` in performRestore", level: .error)
                 WireLogger.localStorage.error("SessionManager.self is `nil` in performRestore")
@@ -132,7 +132,7 @@ final class BackupRestoreController: NSObject {
 
     private func requestPassword(completion: @escaping (String) -> Void) {
         let controller = UIAlertController.requestRestorePassword { password in
-            password.apply(completion)
+            password.map(completion)
         }
 
         target.present(controller, animated: true, completion: nil)
@@ -156,7 +156,7 @@ final class BackupRestoreController: NSObject {
 }
 
 extension BackupRestoreController: UIDocumentPickerDelegate {
-    public func documentPicker(
+    func documentPicker(
         _ controller: UIDocumentPickerViewController,
         didPickDocumentAt url: URL) {
             WireLogger.localStorage.debug("opening file at: \(url.absoluteString)")

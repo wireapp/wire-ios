@@ -50,18 +50,23 @@ public class UnauthenticatedSession: NSObject {
     private let transportSession: UnauthenticatedTransportSessionProtocol
     fileprivate var urlActionProcessors: [URLActionProcessor] = []
     fileprivate var tornDown = false
+    let userPropertyValidator: UserPropertyValidating
 
     weak var delegate: UnauthenticatedSessionDelegate?
 
-    init(transportSession: UnauthenticatedTransportSessionProtocol,
-         reachability: ReachabilityProvider,
-         delegate: UnauthenticatedSessionDelegate?,
-         authenticationStatusDelegate: ZMAuthenticationStatusDelegate?) {
+    init(
+        transportSession: UnauthenticatedTransportSessionProtocol,
+        reachability: ReachabilityProvider,
+        delegate: UnauthenticatedSessionDelegate?,
+        authenticationStatusDelegate: ZMAuthenticationStatusDelegate?,
+        userPropertyValidator: UserPropertyValidating
+    ) {
         self.delegate = delegate
         self.groupQueue = DispatchGroupQueue(queue: .main)
         self.registrationStatus = RegistrationStatus()
         self.transportSession = transportSession
         self.reachability = reachability
+        self.userPropertyValidator = userPropertyValidator
         super.init()
 
         self.authenticationStatus = ZMAuthenticationStatus(delegate: authenticationStatusDelegate,
@@ -127,7 +132,7 @@ extension UnauthenticatedSession: UserInfoParser {
 
     public func accountExistsLocally(from info: UserInfo) -> Bool {
         let account = Account(userName: "", userIdentifier: info.identifier)
-        guard let delegate = delegate else { return false }
+        guard let delegate else { return false }
         return delegate.session(session: self, isExistingAccount: account)
     }
 

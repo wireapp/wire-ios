@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,18 +48,10 @@ public struct MLSUserID {
         )
     }
 
-    public init?(
-        userID: String,
-        domain: String
-    ) {
-        guard
-            userID.isNonEmpty,
-            domain.isNonEmpty
-        else {
+    public init?(userID: String, domain: String) {
+        if userID.isEmpty || domain.isEmpty {
             return nil
         }
-
         rawValue = "\(userID.lowercased())@\(domain.lowercased())"
     }
-
 }

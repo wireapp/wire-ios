@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 
@@ -62,7 +62,7 @@ final class SpinnerButton: ZMButton {
 
     /// multi line support of titleLabel
     private func configureTitleLabel() {
-        guard let titleLabel = titleLabel else { return }
+        guard let titleLabel else { return }
 
         // title is always align to left
         contentHorizontalAlignment = .left

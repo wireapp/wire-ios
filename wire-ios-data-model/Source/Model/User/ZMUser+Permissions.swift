@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -170,7 +170,8 @@ public extension ZMUser {
 
     func canAccessCompanyInformation(of user: UserType) -> Bool {
         guard
-            let otherUser = user as? ZMUser,
+            let context = managedObjectContext,
+            let otherUser = user.unbox(in: context),
             let otherUserTeamID = otherUser.team?.remoteIdentifier,
             let selfUserTeamID = self.team?.remoteIdentifier
         else {
@@ -196,7 +197,7 @@ public extension ZMUser {
                 return true
             }
 
-            if let team = team {
+            if let team {
                 // If the self user belongs to a team he/she's a guest in every non team conversation
                 return conversation.teamRemoteIdentifier != team.remoteIdentifier
             } else {

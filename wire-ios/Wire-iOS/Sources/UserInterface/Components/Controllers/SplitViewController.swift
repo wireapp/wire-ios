@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 extension Notification.Name {
@@ -396,13 +396,13 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
                             animated: Bool,
                             completion: Completion? = nil) -> Bool {
         // Return if transition is done or already in progress
-        if let toViewController = toViewController, children.contains(toViewController) {
+        if let toViewController, children.contains(toViewController) {
             return false
         }
 
         fromViewController?.willMove(toParent: nil)
 
-        if let toViewController = toViewController {
+        if let toViewController {
             toViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
             addChild(toViewController)
         } else {
@@ -497,7 +497,7 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
         guard layoutSize != .regularLandscape,
             delegate?.splitViewControllerShouldMoveLeftViewController(self) == true,
             isConversationViewVisible,
-            let gestureRecognizer = gestureRecognizer else {
+            let gestureRecognizer else {
                 return
         }
 
@@ -545,7 +545,7 @@ extension SplitViewController: UIGestureRecognizerDelegate {
             return false
         }
 
-        if let delegate = delegate, !delegate.splitViewControllerShouldMoveLeftViewController(self) {
+        if let delegate, !delegate.splitViewControllerShouldMoveLeftViewController(self) {
             return false
         }
 

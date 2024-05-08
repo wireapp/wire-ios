@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,13 +19,8 @@
 import Foundation
 import WireDataModel
 
-/**
- * An object holding the configuration of the login prefill.
- */
-
+/// An object holding the configuration of the login prefill.
 struct AuthenticationPrefilledCredentials: Equatable {
-    /// The primary type of credentials held in the value.
-    let primaryCredentialsType: AuthenticationCredentialsType
 
     /// The raw credentials value.
     let credentials: LoginCredentials
@@ -34,10 +29,7 @@ struct AuthenticationPrefilledCredentials: Equatable {
     let isExpired: Bool
 }
 
-/**
- * An authentication step to ask the user for login credentials.
- */
-
+/// An authentication step to ask the user for login credentials.
 final class LogInStepDescription: AuthenticationStepDescription {
 
     let backButton: BackButtonDescription?

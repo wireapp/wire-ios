@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSystem
 import WireDataModel
+import WireSystem
 
 private let log = ZMSLog(tag: "Authentication")
 
@@ -115,6 +115,10 @@ final class AuthenticationStateController {
      */
 
     func transition(to step: AuthenticationFlowStep, mode: StateChangeMode = .normal) {
+        guard step != currentStep else {
+            return
+        }
+
         currentStep = step
 
         switch mode {

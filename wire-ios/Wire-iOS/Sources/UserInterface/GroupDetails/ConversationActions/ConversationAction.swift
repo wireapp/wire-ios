@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ extension ZMConversation {
         var actions = [Action]()
         actions.append(contentsOf: availableStandardActions())
         actions.append(.clearContent)
-        if teamRemoteIdentifier == nil, let connectedUser = connectedUser {
+        if teamRemoteIdentifier == nil, let connectedUser {
             actions.append(.block(isBlocked: connectedUser.isBlocked))
         }
         return actions

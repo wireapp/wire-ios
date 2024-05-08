@@ -1,28 +1,27 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
-import Foundation
+import avs
 import MobileCoreServices
 import UIKit
-import WireSystem
-import avs
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -60,8 +59,8 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     var recordingDotViewHidden: [NSLayoutConstraint] = []
     let separatorBackgroundColor = SemanticColors.View.backgroundSeparatorCell
     let backgroundViewColor = SemanticColors.View.backgroundDefault
-    public let recorder: AudioRecorderType
-    weak public var delegate: AudioRecordViewControllerDelegate?
+    let recorder: AudioRecorderType
+    weak var delegate: AudioRecordViewControllerDelegate?
 
     var recordingState: AudioRecordState = .recording {
         didSet { updateRecordingState(recordingState) }
@@ -69,7 +68,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
     typealias ConversationInputBarAudio = L10n.Localizable.Conversation.InputBar.AudioMessage
 
-    required public init?(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
@@ -144,7 +143,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
     private func configureViews(userSession: UserSession) {
         accentColorChangeHandler = AccentColorChangeHandler.addObserver(self, userSession: userSession) { [unowned self] color, _ in
-            if let color = color {
+            if let color {
                 self.audioPreviewView.color = color
             }
         }
@@ -177,7 +176,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         cancelButton.accessibilityLabel = "audioRecorderCancel"
 
         buttonOverlay.buttonHandler = { [weak self] buttonType in
-            guard let `self` = self else {
+            guard let self else {
                 return
             }
             switch buttonType {

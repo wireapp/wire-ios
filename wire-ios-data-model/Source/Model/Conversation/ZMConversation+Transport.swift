@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ extension ZMConversation {
     }
 
     public func updateReceiptMode(_ receiptMode: Int?) {
-        if let receiptMode = receiptMode {
+        if let receiptMode {
             let enabled = receiptMode > 0
             let receiptModeChanged = !self.hasReadReceiptsEnabled && enabled
             self.hasReadReceiptsEnabled = enabled

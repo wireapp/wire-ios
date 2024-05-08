@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@ class ZMButton: LegacyButton {
 
     override var isHighlighted: Bool {
         didSet {
-            guard let style = style else { return }
+            guard let style else { return }
 
             applyStyle(style)
         }

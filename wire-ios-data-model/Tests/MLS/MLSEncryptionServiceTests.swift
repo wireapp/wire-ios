@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import XCTest
 import WireCoreCrypto
 @testable import WireDataModel
 @testable import WireDataModelSupport
+import XCTest
 
 final class MLSEncryptionServiceTests: XCTestCase {
 
@@ -85,7 +85,7 @@ final class MLSEncryptionServiceTests: XCTestCase {
 
         // Mock
         mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = { _, _ in
-            throw CryptoError.InvalidByteArrayError(message: "bad bytes!")
+            throw CryptoError.invalidByteArrayError
         }
 
         // Then

@@ -70,4 +70,10 @@ public class AggregatedLogger: LoggerProtocol {
             await logger.persist(fileDestination: fileDestination)
         }
     }
+
+    public func addTag(_ key: LogAttributesKey, value: String?) {
+        loggers.forEach {
+            $0.addTag(key, value: value)
+        }
+    }
 }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -191,7 +191,7 @@ extension ZMConversation {
 
         // If the user is already there, just change the role
         if let current = self.participantRoles.first(where: { $0.user == user }) {
-            if let role = role {
+            if let role {
                 current.role = role
             }
 
@@ -290,7 +290,7 @@ extension ZMConversation {
     }
 
     private func checkIfArchivedStatusChanged(removedSelfUser: Bool, initiatingUser: ZMUser?) {
-        if removedSelfUser, let initiatingUser = initiatingUser {
+        if removedSelfUser, let initiatingUser {
             self.isArchived = initiatingUser.isSelfUser
         }
     }
@@ -304,7 +304,7 @@ extension ZMConversation {
     /// List of roles for the conversation whether it's linked with a team or not
     @objc
     public func getRoles() -> Set<Role> {
-        if let team = team {
+        if let team {
             return team.roles
         }
         return nonTeamRoles
@@ -325,7 +325,7 @@ extension ZMConversation {
 
     // MARK: - Utils
     func has(participantWithId userId: Proteus_UserId?) -> Bool {
-        guard let userId = userId else { return false }
+        guard let userId else { return false }
         return localParticipants.contains { $0.userId == userId }
     }
 }

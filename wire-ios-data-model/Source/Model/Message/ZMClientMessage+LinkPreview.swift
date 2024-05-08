@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -232,7 +232,7 @@ extension ZMClientMessage: ZMImageOwner {
             original: original
         )
 
-        if let genericMessage = self.underlyingMessage, let textMessageData = textMessageData {
+        if let genericMessage = self.underlyingMessage, let textMessageData {
             let text = Text.with {
                 $0.content = textMessageData.messageText ?? ""
                 $0.mentions = textMessageData.mentions.compactMap { WireProtos.Mention.createMention($0) }
@@ -243,7 +243,7 @@ extension ZMClientMessage: ZMImageOwner {
 
             guard
                 let content = genericMessage.content,
-                let nonce = nonce
+                let nonce
             else {
                 return
             }

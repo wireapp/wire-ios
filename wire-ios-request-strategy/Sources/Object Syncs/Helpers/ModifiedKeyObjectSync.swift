@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ class ModifiedKeyObjectSync<Transcoder: ModifiedKeyObjectSyncTranscoder>: NSObje
     }
 
     func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        if let modifiedPredicate = modifiedPredicate {
+        if let modifiedPredicate {
             return Transcoder.Object.sortedFetchRequest(with: modifiedPredicate)
         } else {
             return Transcoder.Object.sortedFetchRequest()

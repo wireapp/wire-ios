@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +34,7 @@ extension ContextMenuDelegate {
     }
 
     private func actionController(view: UIView) -> ConversationMessageActionController? {
-        guard let message = message else {
+        guard let message else {
             return nil
         }
 
@@ -47,7 +48,7 @@ extension ContextMenuDelegate {
 
 extension ContextMenuDelegate where Self: LinkViewDelegate {
     func linkPreviewContextMenu(view: UIView) -> UIContextMenuConfiguration? {
-        guard let url = url else {
+        guard let url else {
             return nil
         }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ extension UIViewController {
     /// - Parameter pointToView: the view which the popover points to
     func configPopover(pointToView: UIView, popoverPresenter: PopoverPresenterViewController? = UIApplication.shared.firstKeyWindow?.rootViewController as? PopoverPresenterViewController) {
         guard let popover = popoverPresentationController,
-            let popoverPresenter = popoverPresenter else { return }
+            let popoverPresenter else { return }
 
         popover.config(from: popoverPresenter,
                        pointToView: pointToView,

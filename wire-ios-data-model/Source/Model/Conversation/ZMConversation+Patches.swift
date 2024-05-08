@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -88,7 +88,7 @@ extension ZMConversation {
         let participantRoleForUser = ParticipantRole.create(managedObjectContext: moc, user: user, conversation: conversation)
         let customRole = Role.fetchOrCreateRole(with: defaultAdminRoleName, teamOrConversation: team != nil ? .team(team!) : .conversation(conversation), in: moc)
 
-        if let adminRole = adminRole {
+        if let adminRole {
             participantRoleForUser.role = adminRole
         } else {
             participantRoleForUser.role = customRole

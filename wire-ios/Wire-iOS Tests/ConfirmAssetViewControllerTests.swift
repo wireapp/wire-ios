@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import FLAnimatedImage
 @testable import Wire
+import XCTest
 
 final class ConfirmAssetViewControllerTests: BaseSnapshotTestCase {
 
@@ -32,7 +32,7 @@ final class ConfirmAssetViewControllerTests: BaseSnapshotTestCase {
     func testThatItRendersTheAssetViewControllerWithLandscapeImage() {
         sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_matterhorn.jpg"))))
 
-        accentColor = .strongLimeGreen
+        accentColor = .green
         sut.previewTitle = "Matterhorn"
 
         verifyAllIPhoneSizes(matching: sut)
@@ -41,7 +41,7 @@ final class ConfirmAssetViewControllerTests: BaseSnapshotTestCase {
     func testThatItRendersTheAssetViewControllerWithPortraitImage() {
         sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_burger.jpg"))))
 
-        accentColor = .vividRed
+        accentColor = .red
         sut.previewTitle = "Burger & Beer"
 
         verifyAllIPhoneSizes(matching: sut)
@@ -50,7 +50,7 @@ final class ConfirmAssetViewControllerTests: BaseSnapshotTestCase {
     func testThatItRendersTheAssetViewControllerWithSmallImage() {
         sut = ConfirmAssetViewController(context: ConfirmAssetViewController.Context(asset: .image(mediaAsset: image(inTestBundleNamed: "unsplash_small.jpg").imageScaled(with: 0.5)!)))
 
-        accentColor = .vividRed
+        accentColor = .red
         sut.previewTitle = "Sea Food"
 
         verifyAllIPhoneSizes(matching: sut)
@@ -76,5 +76,4 @@ final class ConfirmAssetViewControllerTests: BaseSnapshotTestCase {
         // THEN
         XCTAssertFalse(sut.showEditingOptions)
     }
-
 }

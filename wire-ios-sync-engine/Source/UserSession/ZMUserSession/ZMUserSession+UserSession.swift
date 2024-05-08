@@ -17,10 +17,12 @@
 //
 
 import Foundation
-import WireDataModel
 import LocalAuthentication
+import WireDataModel
 
 extension ZMUserSession: UserSession {
+
+    // MARK: Properties
 
     public var lock: SessionLock? {
         if isDatabaseLocked {
@@ -78,6 +80,14 @@ extension ZMUserSession: UserSession {
         }
     }
 
+    // MARK: Dependency Injection
+
+    public var searchUsersCache: SearchUsersCache {
+        dependencies.caches.searchUsers
+    }
+
+    // MARK: Methods
+
     public func openAppLock() throws {
         try appLockController.open()
     }
@@ -110,12 +120,8 @@ extension ZMUserSession: UserSession {
         try appLockController.deletePasscode()
     }
 
-    public var selfUser: UserType {
-        return ZMUser.selfUser(inUserSession: self)
-    }
-
-    public var selfLegalHoldSubject: UserType & SelfLegalHoldSubject {
-        return ZMUser.selfUser(inUserSession: self)
+    public var selfUser: SelfUserType {
+        ZMUser.selfUser(inUserSession: self)
     }
 
     public func addUserObserver(
@@ -286,6 +292,13 @@ extension ZMUserSession: UserSession {
             featureRepository: FeatureRepository(context: syncContext),
             featureRepositoryContext: syncContext,
             isUserE2EICertifiedUseCase: isUserE2EICertifiedUseCase
+        )
+    }
+
+    public var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
+        CheckOneOnOneConversationIsReadyUseCase(
+            context: syncContext,
+            coreCryptoProvider: coreCryptoProvider
         )
     }
 

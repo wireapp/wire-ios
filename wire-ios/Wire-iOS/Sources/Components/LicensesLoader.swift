@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 /**
@@ -42,7 +41,7 @@ final class LicensesLoader {
     }
 
     deinit {
-        memoryWarningToken.apply(NotificationCenter.default.removeObserver)
+        memoryWarningToken.map(NotificationCenter.default.removeObserver)
     }
 
     // MARK: - Reading the list of Licences

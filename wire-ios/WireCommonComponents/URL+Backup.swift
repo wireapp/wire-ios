@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,15 +25,11 @@ public protocol BackupExcluder: AnyObject {
     static func exclude(filesToExclude: [FileInDirectory]) throws
 }
 
-public extension BackupExcluder {
-    static func exclude(filesToExclude: [FileInDirectory]) throws {
-        do {
-            try filesToExclude.forEach { directory, path in
-                let url = URL.directory(for: directory).appendingPathComponent(path)
-                try url.excludeFromBackupIfExists()
-            }
-        } catch {
-            throw error
+extension BackupExcluder {
+    public static func exclude(filesToExclude: [FileInDirectory]) throws {
+        try filesToExclude.forEach { directory, path in
+            let url = URL.directory(for: directory).appendingPathComponent(path)
+            try url.excludeFromBackupIfExists()
         }
     }
 

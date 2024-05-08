@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 //
 
 import UIKit
-import WireLinkPreview
 import WireCommonComponents
 import WireDataModel
+import WireLinkPreview
 
 final class ArticleView: UIView {
 
@@ -241,7 +241,7 @@ extension LinkMetadata {
         if let originalURL = URL(string: originalURLString),
            application.canOpenURL(originalURL) {
             return originalURL
-        } else if let permanentURL = permanentURL,
+        } else if let permanentURL,
                   application.canOpenURL(permanentURL) {
             return permanentURL
         }

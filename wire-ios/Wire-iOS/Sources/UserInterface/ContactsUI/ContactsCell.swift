@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 typealias ContactsCellActionButtonHandler = (UserType, ContactsCell.Action) -> Void
 
@@ -228,7 +228,7 @@ final class ContactsCell: UITableViewCell, SeparatorViewProtocol {
     }
 
     @objc func actionButtonPressed(sender: Any?) {
-        if let user = user, let action = action {
+        if let user, let action {
             actionButtonHandler?(user, action)
         }
     }

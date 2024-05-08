@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@ extension ZMConversation {
 
     func unarchive(userSession: ZMUserSessionInterface? = ZMUserSession.shared(),
                    completionHandler: Completion? = nil) {
-        guard let userSession = userSession else { return }
+        guard let userSession else { return }
 
         userSession.enqueueChanges({
             self.isArchived = false

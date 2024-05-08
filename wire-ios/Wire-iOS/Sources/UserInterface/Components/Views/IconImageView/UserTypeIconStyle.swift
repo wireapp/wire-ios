@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ extension UserTypeIconStyle {
             self = .federated
         } else if user.isExternalPartner {
             self = .external
-        } else if let conversation = conversation {
+        } else if let conversation {
             self = !user.isGuest(in: conversation) || user.isSelfUser ? .member : .guest
         } else {
             self = !selfUserHasTeam || user.isTeamMember || user.isServiceUser

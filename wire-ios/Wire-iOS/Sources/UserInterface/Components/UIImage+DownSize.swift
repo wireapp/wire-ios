@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 extension CGSize {
@@ -34,7 +33,7 @@ extension CGFloat {
     enum Image {
         /// Maximum image size that would show in a UIImageView.
         /// Tested on iPhone 5s and found that the image size limitation is ~5000px
-        static public let maxSupportedLength: CGFloat = 5000
+        static let maxSupportedLength: CGFloat = 5000
     }
 }
 

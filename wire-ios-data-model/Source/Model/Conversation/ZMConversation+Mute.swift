@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ public extension ZMConversation {
         }
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
-        if let senderID = senderID,
+        if let senderID,
            let sender = ZMUser.fetch(with: senderID, in: managedObjectContext), sender.isSelfUser {
             return true
         }

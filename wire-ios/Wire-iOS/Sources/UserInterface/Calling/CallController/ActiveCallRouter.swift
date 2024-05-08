@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 enum AlertChoice {
     case cancel, confirm, alreadyPresented, ok
@@ -147,7 +147,10 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     func minimizeCall(animated: Bool = true, completion: Completion? = nil) {
-        guard isActiveCallShown else { completion?(); return }
+        guard isActiveCallShown else {
+            completion?()
+            return
+        }
         dismissActiveCall(animated: animated, completion: completion)
     }
 
@@ -324,7 +327,7 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
 // MARK: - CallTopOverlayControllerDelegate
 extension ActiveCallRouter: CallTopOverlayControllerDelegate {
     func voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: VoiceChannel?) {
-        guard let voiceChannel = voiceChannel else { return }
+        guard let voiceChannel else { return }
         isActiveCallShown = false
         presentActiveCall(for: voiceChannel, animated: true)
     }

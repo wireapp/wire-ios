@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -155,8 +155,8 @@ class UserImageView: AvatarImageView, UserObserving {
     /// Updates the image for the user.
     fileprivate func updateUserImage() {
         guard
-            let user = user,
-            let userSession = userSession
+            let user,
+            let userSession
         else {
             return
         }
@@ -173,7 +173,7 @@ class UserImageView: AvatarImageView, UserObserving {
             isDesaturated: desaturate
         ) { [weak self] image, cacheHit in
             // Don't set image if nil or if user has changed during fetch
-            guard let image = image, user.isEqual(self?.user) else { return }
+            guard let image, user.isEqual(self?.user) else { return }
             self?.setAvatar(.image(image), user: user, animated: !cacheHit)
         }
     }

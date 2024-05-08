@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ final class CallController: NSObject {
 
     // MARK: - Public Implementation
     func updateActiveCallPresentationState() {
-        guard let priorityCallConversation = priorityCallConversation else {
+        guard let priorityCallConversation else {
             dismissCall()
             return
         }
@@ -245,7 +245,7 @@ extension CallController: WireCallCenterCallErrorObserver {
 
 extension CallController {
     // NOTA BENE: THIS MUST BE USED JUST FOR TESTING PURPOSE
-    public func testHelper_setMinimizedCall(_ conversation: ZMConversation?) {
+    func testHelper_setMinimizedCall(_ conversation: ZMConversation?) {
         minimizedCall = conversation
     }
 }

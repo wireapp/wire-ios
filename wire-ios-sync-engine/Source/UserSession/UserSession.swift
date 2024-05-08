@@ -17,13 +17,17 @@
 //
 
 import Foundation
-import WireDataModel
 import LocalAuthentication
+import WireDataModel
 
 /// An abstraction of the user session for use in the presentation
 /// layer.
-
 public protocol UserSession: AnyObject {
+
+    // MARK: - Mixed properties and methods
+
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: structure mixed methods and properties in sections
 
     /// The current session lock, if any.
 
@@ -112,9 +116,7 @@ public protocol UserSession: AnyObject {
     ///
     /// This can only be used on the main thread.
 
-    var selfUser: UserType { get }
-
-    var selfLegalHoldSubject: UserType & SelfLegalHoldSubject { get }
+    var selfUser: SelfUserType { get }
 
     func perform(_ changes: @escaping () -> Void)
 
@@ -136,7 +138,7 @@ public protocol UserSession: AnyObject {
 
     func addUserObserver(
         _ observer: UserObserving,
-        for: UserType
+        for user: UserType
     ) -> NSObjectProtocol?
 
     func addUserObserver(
@@ -212,7 +214,14 @@ public protocol UserSession: AnyObject {
 
     var e2eiFeature: Feature.E2EI { get }
 
+    var mlsFeature: Feature.MLS { get }
+
     func fetchAllClients()
+
+    func createTeamOneOnOne(
+        with user: UserType,
+        completion: @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+    )
 
     // MARK: Use Cases
 
@@ -230,6 +239,8 @@ public protocol UserSession: AnyObject {
 
     var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol { get }
 
+    var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol { get }
+
     var lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface? { get }
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol
@@ -237,4 +248,9 @@ public protocol UserSession: AnyObject {
     func fetchSelfConversationMLSGroupID() async -> MLSGroupID?
 
     func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol?
+
+    // MARK: - Dependency Injection
+
+    /// Cache for search users.
+    var searchUsersCache: SearchUsersCache { get }
 }

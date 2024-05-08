@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,24 +19,9 @@
 import Foundation
 import WireSyncEngine
 
-/**
- * The type of credentials to ask when the user is creating or
- * providing credentials.
- */
-
-enum AuthenticationCredentialsType {
-    /// Register by phone.
-    case phone
-
-    /// Register by email.
-    case email
-}
-
-/**
- * The context that caused the user to not have a complete history.
- */
-
+/// The context that caused the user to not have a complete history.
 enum NoHistoryContext {
+
     /// The user signed into this device for the first time.
     case newDevice
 
@@ -44,10 +29,7 @@ enum NoHistoryContext {
     case loggedOut
 }
 
-/**
- * Steps of the authentication flow.
- */
-
+/// Steps of the authentication flow.
 indirect enum AuthenticationFlowStep: Equatable {
 
     // Initial Steps
@@ -56,12 +38,9 @@ indirect enum AuthenticationFlowStep: Equatable {
     case reauthenticate(credentials: LoginCredentials?, numberOfAccounts: Int, isSignedOut: Bool)
 
     // Sign-In
-    case provideCredentials(AuthenticationCredentialsType, AuthenticationPrefilledCredentials?)
-    case requestPhoneVerificationCode(phoneNumber: String, isResend: Bool)
-    case enterPhoneVerificationCode(phoneNumber: String)
+    case provideCredentials(AuthenticationPrefilledCredentials?)
     case enterEmailVerificationCode(email: String, password: String, isResend: Bool)
     case authenticateEmailCredentials(ZMEmailCredentials)
-    case authenticatePhoneCredentials(ZMPhoneCredentials)
     case companyLogin
     case switchBackend(url: URL)
 
@@ -79,9 +58,9 @@ indirect enum AuthenticationFlowStep: Equatable {
 
     // Registration
     case createCredentials(UnregisteredUser)
-    case sendActivationCode(UnverifiedCredentials, user: UnregisteredUser, isResend: Bool)
-    case enterActivationCode(UnverifiedCredentials, user: UnregisteredUser)
-    case activateCredentials(UnverifiedCredentials, user: UnregisteredUser, code: String)
+    case sendActivationCode(unverifiedEmail: String, user: UnregisteredUser, isResend: Bool)
+    case enterActivationCode(unverifiedEmail: String, user: UnregisteredUser)
+    case activateCredentials(unverifiedEmail: String, user: UnregisteredUser, code: String)
     case incrementalUserCreation(UnregisteredUser, IntermediateRegistrationStep)
     case createUser(UnregisteredUser)
 
@@ -100,11 +79,8 @@ indirect enum AuthenticationFlowStep: Equatable {
 
         // Sign-In
         case .provideCredentials: return true
-        case .requestPhoneVerificationCode: return false
-        case .enterPhoneVerificationCode: return true
         case .enterEmailVerificationCode: return true
         case .authenticateEmailCredentials: return false
-        case .authenticatePhoneCredentials: return false
         case .registerEmailCredentials: return false
         case .companyLogin: return false
         case .switchBackend: return true
@@ -137,10 +113,7 @@ indirect enum AuthenticationFlowStep: Equatable {
 
 // MARK: - Intermediate Steps
 
-/**
- * Intermediate steps required for user registration.
- */
-
+/// Intermediate steps required for user registration.
 enum IntermediateRegistrationStep: Equatable {
     case start, provideMarketingConsent, setName, setPassword
 

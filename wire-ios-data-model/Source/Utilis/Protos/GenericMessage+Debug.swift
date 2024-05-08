@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireProtos
 import SwiftProtobuf
+import WireProtos
 
 private let redactedValue = "<redacted>"
 
@@ -66,7 +66,7 @@ extension GenericMessage: CustomStringConvertible {
 
     public var description: String {
         var message = self
-        guard let content = content else {
+        guard let content else {
             return ""
         }
         switch content {

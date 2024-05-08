@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +17,9 @@
 //
 
 import Foundation
-import WireShareEngine
 import MobileCoreServices
 import UniformTypeIdentifiers
+import WireShareEngine
 
 /// `UnsentSendable` implementation to send GIF image messages
 final class UnsentGifImageSendable: UnsentSendableBase, UnsentSendable {
@@ -55,7 +56,7 @@ final class UnsentGifImageSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             completion(self.gifImageData.flatMap(self.conversation.appendImage))
         }
     }

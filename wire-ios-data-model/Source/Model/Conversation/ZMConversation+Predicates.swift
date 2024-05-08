@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,7 +70,7 @@ extension ZMConversation {
 
     @objc(predicateForConversationsInTeam:)
     class func predicateForConversations(in team: Team?) -> NSPredicate {
-        if let team = team {
+        if let team {
             return .init(format: "%K == %@", #keyPath(ZMConversation.team), team)
         }
 

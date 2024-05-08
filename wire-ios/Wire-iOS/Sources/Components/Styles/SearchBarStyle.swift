@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 
 import UIKit
 
-public struct SearchBarStyle {
+struct SearchBarStyle {
 
     typealias SearchBarColors = SemanticColors.SearchBar
 
@@ -40,7 +40,7 @@ public struct SearchBarStyle {
 
 extension UITextView: Stylable {
 
-    public func applyStyle(_ style: SearchBarStyle) {
+    func applyStyle(_ style: SearchBarStyle) {
 
         textColor = style.textColor
         backgroundColor = style.backgroundColor

@@ -1,24 +1,24 @@
-// 
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 extension UIViewController {
 
@@ -42,8 +42,6 @@ extension UIViewController {
                 message = L10n.Localizable.Error.Input.tooShort
             case .emailAddressIsInvalid:
                 message = L10n.Localizable.Error.Email.invalid
-            case .phoneNumberContainsInvalidCharacters:
-                message = L10n.Localizable.Error.Phone.invalid
             default:
                 break
             }
@@ -64,18 +62,14 @@ extension UIViewController {
                 message = L10n.Localizable.Error.User.networkError
             case .emailIsAlreadyRegistered:
                 message = L10n.Localizable.Error.User.emailIsTaken
-            case .phoneNumberIsAlreadyRegistered:
-                message = L10n.Localizable.Error.User.phoneIsTaken
-            case .invalidPhoneNumberVerificationCode, .invalidEmailVerificationCode, .invalidActivationCode:
-                message = L10n.Localizable.Error.User.phoneCodeInvalid
+            case .invalidEmailVerificationCode, .invalidActivationCode:
+                message = L10n.Localizable.Error.User.verificationCodeInvalid
             case .registrationDidFailWithUnknownError:
                 message = L10n.Localizable.Error.User.registrationUnknownError
-            case .invalidPhoneNumber:
-                message = L10n.Localizable.Error.Phone.invalid
             case .invalidEmail:
                 message = L10n.Localizable.Error.Email.invalid
             case .codeRequestIsAlreadyPending:
-                message = L10n.Localizable.Error.User.phoneCodeTooMany
+                 message = L10n.Localizable.Error.User.verificationCodeTooMany
             case .clientDeletedRemotely:
                 message = L10n.Localizable.Error.User.deviceDeletedRemotely
             case .lastUserIdentityCantBeDeleted:

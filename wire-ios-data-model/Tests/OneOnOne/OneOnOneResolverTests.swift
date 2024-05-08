@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
+import XCTest
 
 final class OneOnOneResolverTests: XCTestCase {
 
@@ -122,7 +122,7 @@ final class OneOnOneResolverTests: XCTestCase {
         let resolver = makeResolver()
 
         await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
-        await mockMigrator.setMigrateToMLSUserIDMlsGroupIDIn_MockError(MockOneOnOneResolverError.failed)
+        await mockMigrator.setMigrateToMLSUserIDIn_MockError(MockOneOnOneResolverError.failed)
 
         await syncContext.perform { [self] in
             makeOneOnOneConversation(in: syncContext)
@@ -140,7 +140,7 @@ final class OneOnOneResolverTests: XCTestCase {
         XCTAssertEqual(migratorCount, 2)
     }
 
-    func test_resolveOneOnOneConversation_givenMLS() async throws {
+    func test_ResolveOneOnOneConversation_GivenMLS() async throws {
         // Given
         let userID: QualifiedID = .random()
         let resolver = makeResolver()
@@ -166,6 +166,57 @@ final class OneOnOneResolverTests: XCTestCase {
         let invocations = await mockMigrator.migrateToMLSUserIDIn_Invocations
         XCTAssertEqual(invocations.count, 1)
         XCTAssertEqual(invocations.first?.userID, userID)
+    }
+
+    func test_ResolveOneOnOneConversation_GivenMLS_SetsReadOnlyToFalse_WhenItSucceeds() async throws {
+        // Given
+        let userID: QualifiedID = .random()
+        let resolver = makeResolver()
+
+        // Mock
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
+        await mockMigrator.setMigrateToMLSUserIDIn_MockValue(.random())
+
+        let conversation = await syncContext.perform { [self] in
+            let conversation = makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
+            conversation.isForcedReadOnly = true
+            return conversation
+        }
+
+        // When
+        try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
+
+        // Then
+        let isReadOnly = await syncContext.perform { conversation.isForcedReadOnly }
+        XCTAssertFalse(isReadOnly)
+    }
+
+    func test_ResolveOneOnOneConversation_GivenMLS_SetsReadOnlyToTrue_WhenItFailsToEstablishGroup() async throws {
+        // Given
+        let userID: QualifiedID = .random()
+        let resolver = makeResolver()
+
+        // Mock
+        await mockProtocolSelector.setGetProtocolForUserWithIn_MockValue(.mls)
+        await mockMigrator.setMigrateToMLSUserIDIn_MockError(
+            MigrateMLSOneOnOneConversationError.failedToEstablishGroup(MockOneOnOneResolverError.failed)
+        )
+
+        let conversation = await syncContext.perform { [self] in
+            let conversation = makeOneOnOneConversation(qualifiedID: userID, in: syncContext)
+            return conversation
+        }
+
+        do {
+            // When
+            try await resolver.resolveOneOnOneConversation(with: userID, in: syncContext)
+        } catch MigrateMLSOneOnOneConversationError.failedToEstablishGroup {
+            // Then
+            let isReadOnly = await syncContext.perform { conversation.isReadOnly }
+            XCTAssertTrue(isReadOnly)
+        } catch {
+            XCTFail("unexpected error")
+        }
     }
 
     func test_ResolveOneOnOneConversation_ProteusSupported() async throws {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 final class ProfileHeaderViewController: UIViewController {
 
@@ -264,7 +264,7 @@ final class ProfileHeaderViewController: UIViewController {
     }
 
     private func updateGuestIndicator() {
-        if let conversation = conversation {
+        if let conversation {
             guestIndicatorStack.isHidden = !user.isGuest(in: conversation)
         } else {
             guestIndicatorStack.isHidden = !viewer.isTeamMember || viewer.canAccessCompanyInformation(of: user)

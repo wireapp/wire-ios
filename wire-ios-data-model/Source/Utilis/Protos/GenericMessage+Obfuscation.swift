@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@ extension LinkPreview {
             $0.urlOffset = urlOffset
             $0.title = obfTitle
             $0.summary = obfSummary
-            if let obfImage = obfImage {
+            if let obfImage {
                 $0.image = obfImage
             }
             $0.tweet = tweet.obfuscated()
@@ -113,7 +113,7 @@ extension LinkPreview {
                 $0.title = obfTitle
                 $0.summary = obfSummary
                 $0.permanentURL = permanentURL.obfuscated()
-                if let obfImage = obfImage {
+                if let obfImage {
                     $0.image = obfImage
                 }
             }

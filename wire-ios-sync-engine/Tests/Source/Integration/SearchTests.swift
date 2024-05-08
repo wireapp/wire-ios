@@ -278,48 +278,6 @@ final class SearchTests: IntegrationTest {
         token = nil
     }
 
-    func testThatItRefetchesTheSearchUserIfItGotEvictedFromTheCache() {
-        // given
-        var profileImageData: Data?
-        var userName: String?
-
-        mockTransportSession.performRemoteChanges { _ in
-            profileImageData = MockAsset.init(in: self.mockTransportSession.managedObjectContext, forID: self.user4.completeProfileAssetIdentifier!)?.data
-            userName = self.user4.name
-        }
-
-        XCTAssertTrue(login())
-
-        // first search
-        do {
-            guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
-            guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
-            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-            searchUser.requestCompleteProfileImage()
-            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-            // then
-            XCTAssertEqual(searchUser.completeImageData, profileImageData)
-        }
-
-        // clear the cache
-        userSession?.managedObjectContext.zm_searchUserCache?.removeAllObjects()
-
-        // second search
-        do {
-            guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
-            guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
-            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-            searchUser.requestCompleteProfileImage()
-            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-            // then
-            XCTAssertEqual(searchUser.completeImageData, profileImageData)
-        }
-    }
-
     func testThatItNotifiesWhenANewMediumImageIsAvailableForAnUnconnectedSearchUser() {
         // given
         var userName: String?
@@ -381,7 +339,7 @@ final class SearchTests: IntegrationTest {
         }
 
         XCTAssertTrue(login())
-        guard let userName = userName else { XCTFail("missing userName"); return }
+        guard let userName else { XCTFail("missing userName"); return }
         guard let searchQuery = userName.components(separatedBy: " ").last else { XCTFail("searchQuery"); return }
         guard let user = searchForConnectedUser(withName: userName, searchQuery: searchQuery) else { XCTFail("missing user"); return }
 
@@ -454,7 +412,7 @@ final class SearchTests: IntegrationTest {
         }
 
         XCTAssertTrue(login())
-        guard let userName = userName else { XCTFail("missing userName"); return }
+        guard let userName else { XCTFail("missing userName"); return }
         guard let searchQuery = userName.components(separatedBy: " ").last else { XCTFail("missing searchQuery"); return }
         guard let searchUser = searchForDirectoryUser(withName: userName, searchQuery: searchQuery) else { XCTFail("missing searchUser"); return }
         searchUser.requestPreviewProfileImage()

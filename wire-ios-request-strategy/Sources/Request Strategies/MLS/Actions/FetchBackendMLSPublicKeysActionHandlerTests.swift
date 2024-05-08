@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -61,7 +61,13 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBa
         // Given
         let removalKey = Data([1, 2, 3])
         let payload = ResponsePayload(
-            removal: .init(ed25519: removalKey.base64EncodedString())
+            removal: .init(
+                ed25519: removalKey.base64EncodedString(),
+                ed448: removalKey.base64EncodedString(),
+                p256: removalKey.base64EncodedString(),
+                p384: removalKey.base64EncodedString(),
+                p521: removalKey.base64EncodedString()
+            )
         )
 
         // When
@@ -71,7 +77,13 @@ class FetchBackendMLSPublicKeysActionHandlerTests: ActionHandlerTestBase<FetchBa
         )
 
         // Then
-        XCTAssertEqual(result, BackendMLSPublicKeys(removal: .init(ed25519: removalKey)))
+        XCTAssertEqual(result, BackendMLSPublicKeys(removal: .init(
+            ed25519: removalKey,
+            ed448: removalKey,
+            p256: removalKey,
+            p384: removalKey,
+            p521: removalKey
+        )))
     }
 
     func test_itHandlesResponse_MalformedResponse() throws {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,10 +18,10 @@
 
 import Foundation
 import LocalAuthentication
-import WireSyncEngine
-import WireSyncEngineSupport
 import WireDataModelSupport
 import WireRequestStrategySupport
+import WireSyncEngine
+import WireSyncEngineSupport
 
 @testable import Wire
 
@@ -69,9 +69,10 @@ final class UserSessionMock: UserSession {
 
     var networkState: ZMNetworkState = .offline
 
-    var selfUser: UserType
-    var selfLegalHoldSubject: SelfLegalHoldSubject & UserType
+    var selfUser: SelfUserType
     var mockConversationList: ZMConversationList?
+
+    var searchUsersCache: SearchUsersCache
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
         let mock = MockGetMLSFeatureUseCaseProtocol()
@@ -80,25 +81,16 @@ final class UserSessionMock: UserSession {
     }
 
     convenience init(mockUser: MockZMEditableUser) {
-        self.init(
-            selfUser: mockUser,
-            selfLegalHoldSubject: mockUser
-        )
+        self.init(selfUser: mockUser)
     }
 
     convenience init(mockUser: MockUserType = .createDefaultSelfUser()) {
-        self.init(
-            selfUser: mockUser,
-            selfLegalHoldSubject: mockUser
-        )
+        self.init(selfUser: mockUser)
     }
 
-    init(
-        selfUser: UserType,
-        selfLegalHoldSubject: SelfLegalHoldSubject & UserType
-    ) {
+    init(selfUser: SelfUserType) {
         self.selfUser = selfUser
-        self.selfLegalHoldSubject = selfLegalHoldSubject
+        searchUsersCache = .init()
     }
 
     var lock: SessionLock? = .screen
@@ -304,5 +296,32 @@ final class UserSessionMock: UserSession {
 
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
 
+    var mlsFeature: Feature.MLS = Feature.MLS(
+        status: .enabled,
+        config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
+    )
+
     func fetchAllClients() {}
+
+    var createTeamOneOnOneWithCompletion_Invocations: [(user: UserType, completion: (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void)] = []
+    var createTeamOneOnOneWithCompletion_MockMethod: ((UserType, @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void) -> Void)?
+
+    func createTeamOneOnOne(
+        with user: UserType,
+        completion: @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
+    ) {
+        createTeamOneOnOneWithCompletion_Invocations.append((user: user, completion: completion))
+
+        guard let mock = createTeamOneOnOneWithCompletion_MockMethod else {
+            fatalError("no mock for `createTeamOneOnOneWithCompletion`")
+        }
+
+        mock(user, completion)
+    }
+
+    var mockCheckOneOnOneConversationIsReady: MockCheckOneOnOneConversationIsReadyUseCaseProtocol?
+    var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol {
+        mockCheckOneOnOneConversationIsReady ?? MockCheckOneOnOneConversationIsReadyUseCaseProtocol()
+    }
+
 }
