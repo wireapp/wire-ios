@@ -38,37 +38,3 @@ public protocol TeamsAPI {
     func getTeamRoles(for teamID: Team.ID) async throws -> [ConversationRole]
 
 }
-
-extension TeamsAPI {
-    
-    /// Make a new `TeamsAPI` client.
-    ///
-    /// - Parameters:
-    ///   - version: The api version to use.
-    ///   - httpClient: A http client.
-    ///
-    /// - Returns: A versioned implementation of `TeamsAPI`.
-
-    public static func makeAPI(
-        for version: APIVersion,
-        httpClient: any HTTPClient
-    ) -> any TeamsAPI {
-        switch version {
-        case .v0:
-            TeamsAPIV0(httpClient: httpClient)
-        case .v1:
-            TeamsAPIV1(httpClient: httpClient)
-        case .v2:
-            TeamsAPIV2(httpClient: httpClient)
-        case .v3:
-            TeamsAPIV3(httpClient: httpClient)
-        case .v4:
-            TeamsAPIV4(httpClient: httpClient)
-        case .v5:
-            TeamsAPIV5(httpClient: httpClient)
-        case .v6:
-            TeamsAPIV6(httpClient: httpClient)
-        }
-    }
-
-}
