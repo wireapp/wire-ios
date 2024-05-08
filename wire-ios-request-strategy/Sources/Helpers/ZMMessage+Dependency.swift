@@ -30,7 +30,7 @@ extension ZMOTRMessage: OTREntity {
 
     /// Which object this message depends on when sending
     @objc public override var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
-        guard let conversation = conversation else { return nil }
+        guard let conversation else { return nil }
 
         let dependent = self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
         return dependent ?? super.dependentObjectNeedingUpdateBeforeProcessing

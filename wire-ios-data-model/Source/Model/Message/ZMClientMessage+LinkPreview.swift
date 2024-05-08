@@ -232,7 +232,7 @@ extension ZMClientMessage: ZMImageOwner {
             original: original
         )
 
-        if let genericMessage = self.underlyingMessage, let textMessageData = textMessageData {
+        if let genericMessage = self.underlyingMessage, let textMessageData {
             let text = Text.with {
                 $0.content = textMessageData.messageText ?? ""
                 $0.mentions = textMessageData.mentions.compactMap { WireProtos.Mention.createMention($0) }
@@ -243,7 +243,7 @@ extension ZMClientMessage: ZMImageOwner {
 
             guard
                 let content = genericMessage.content,
-                let nonce = nonce
+                let nonce
             else {
                 return
             }
