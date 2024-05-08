@@ -18,32 +18,16 @@
 
 import Foundation
 
-/// An object responsible for decoding the http response payload into
-/// an api model.
+/// Erros that can occur when decoding response payloads.
 
-struct ResponsePayloadDecoder {
+enum ResponsePayloadDecoderError: Error {
 
-    let decoder: JSONDecoder
+    /// The data to decode could not be found.
 
-    func decodePayload<T: Decodable>(
-        from response: HTTPResponse,
-        as type: T.Type
-    ) throws -> T {
-        guard let data = response.payload else {
-            throw ResponsePayloadDecoderError.missingResponseData
-        }
+    case missingResponseData
 
-        do {
-            return try decoder.decode(
-                T.self,
-                from: data
-            )
-        } catch {
-            throw ResponsePayloadDecoderError.failedToDecodePayload(
-                T.self,
-                error
-            )
-        }
-    }
+    /// The payload could not be decoded due to a decoding error.
+
+    case failedToDecodePayload(Decodable.Type, Error)
 
 }
