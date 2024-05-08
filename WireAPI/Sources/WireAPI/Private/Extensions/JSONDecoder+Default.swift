@@ -24,11 +24,12 @@ extension JSONDecoder {
 
     static var defaultDecoder: JSONDecoder {
         let decoder = JSONDecoder()
+
         decoder.dateDecodingStrategy = .custom { decoder in
             let container = try decoder.singleValueContainer()
             let rawDate = try container.decode(String.self)
 
-            guard let date = Date(transportString: rawDate) else {
+            guard let date = ISO8601DateFormatter.default.date(from: rawDate) else {
                 throw DecodingError.dataCorruptedError(
                     in: container,
                     debugDescription: "Expected date string to be ISO8601-formatted with fractional seconds"

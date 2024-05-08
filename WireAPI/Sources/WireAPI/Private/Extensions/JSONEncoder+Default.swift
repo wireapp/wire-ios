@@ -26,7 +26,8 @@ extension JSONEncoder {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .custom({ date, encoder in
             var container = encoder.singleValueContainer()
-            try container.encode(date.transportString())
+            let transportString = ISO8601DateFormatter.default.string(from: date)
+            try container.encode(transportString)
         })
 
         return encoder
