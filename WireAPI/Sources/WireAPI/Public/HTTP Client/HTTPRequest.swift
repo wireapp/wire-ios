@@ -34,28 +34,16 @@ public struct HTTPRequest: Equatable {
 
     public var body: Data?
 
-    /// The type of the body payload.
-
-    public var contentType: String?
-
-    /// The type of the response payload.
-
-    public var acceptType: String?
-
     /// Create a new request.
 
     public init(
         path: String,
         method: HTTPRequest.Method,
-        body: Data? = nil,
-        contentType: String? = nil,
-        acceptType: String? = nil
+        body: Data? = nil
     ) {
         self.path = path
         self.method = method
         self.body = body
-        self.contentType = contentType
-        self.acceptType = acceptType
     }
 
     /// A type of http request.
