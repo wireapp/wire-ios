@@ -115,7 +115,7 @@ import Foundation
         }
 
         applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] result in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             self.messageReplyObserver = nil
             self.syncManagedObjectContext.performGroupedBlock {
@@ -176,7 +176,7 @@ import Foundation
 
         self.syncManagedObjectContext.performGroupedBlock { [weak self] in
             guard
-                let `self` = self,
+                let self,
                 let conversationInSyncContext = userInfo.conversation(in: self.syncManagedObjectContext)
                 else { return }
 
@@ -195,7 +195,7 @@ import Foundation
         }
 
         applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] result in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             self.likeMesssageObserver = nil
             if result == .failed {

@@ -89,7 +89,7 @@ extension MockUser {
             return false
         }
 
-        guard let managedObjectContext = managedObjectContext else {
+        guard let managedObjectContext else {
             return false
         }
 

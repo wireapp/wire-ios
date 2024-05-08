@@ -109,7 +109,7 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         }
 
         parseMetaHeader(container, url: url) { [weak self] result in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.completeAndCleanUp(completion, result: result, url: url, taskIdentifier: identifier)
         }
     }
@@ -153,7 +153,7 @@ extension PreviewDownloader {
         guard let url = dataTask.originalRequest?.url, let completion = completionByURL[url] else { return }
         let (headers, contentTypeKey) = (response.allHeaderFields, HeaderKey.contentType.rawValue)
         let contentType = headers[contentTypeKey] as? String ?? headers[contentTypeKey.lowercased()] as? String
-        if let contentType = contentType, !contentType.lowercased().contains("text/html") || !response.isSuccess {
+        if let contentType, !contentType.lowercased().contains("text/html") || !response.isSuccess {
             completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: dataTask.taskIdentifier)
             return completionHandler(.cancel)
         }
