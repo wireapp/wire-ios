@@ -239,7 +239,10 @@ final class ProfileViewController: UIViewController {
         }
 
         tabsController = TabBarController(viewControllers: viewControllers)
-        if viewModel.context == .deviceList, tabsController?.viewControllers.count > 1 {
+
+        if viewModel.context == .deviceList,
+           let count = tabsController?.viewControllers.count,
+           count > 1 {
             tabsController?.selectIndex(ProfileViewControllerTabBarIndex.devices.rawValue, animated: false)
         }
         addToSelf(tabsController!)

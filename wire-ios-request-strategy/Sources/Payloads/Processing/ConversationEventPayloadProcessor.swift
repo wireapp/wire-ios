@@ -375,7 +375,7 @@ struct ConversationEventPayloadProcessor {
                 in: context
             ),
             let timestamp = payload.timestamp,
-            timestamp > conversation.lastServerTimeStamp // Discard event if it has already been applied
+            conversation.lastServerTimeStamp == nil || conversation.lastServerTimeStamp! < timestamp // Discard event if it has already been applied
         else {
             Logging.eventProcessing.error("Conversation receipt mode has already been updated, aborting...")
             return

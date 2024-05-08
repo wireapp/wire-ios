@@ -94,7 +94,13 @@ final class NavigationController: UINavigationController, SpinnerCapable {
     }
 
     private func updateGesture(for viewController: UIViewController) {
-        let translucentBackground = viewController.view.backgroundColor?.alpha < 1.0
+        let translucentBackground: Bool
+        if let alpha = viewController.view.backgroundColor?.alpha, alpha < 1.0 {
+            translucentBackground = true
+        } else {
+            translucentBackground = false
+        }
+
         useDefaultPopGesture = !translucentBackground
     }
 
