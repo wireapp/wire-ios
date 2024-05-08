@@ -28,16 +28,4 @@ extension ISO8601DateFormatter {
         return dateFormatter
     }()
 
-    /// ISO8601 date formatter with internet date time but no fractional seconds.
-    ///
-    /// Due to a bug in the backend timestamps without fractional seconds are received.
-    /// /// After the bug is fixed, this date formatter can be removed.
-    /// See [WPB-6529](https://wearezeta.atlassian.net/browse/WPB-6529).
-
-    static let withoutFractionalSeconds = {
-        let dateFormatter = ISO8601DateFormatter()
-        dateFormatter.formatOptions = [.withInternetDateTime]
-        return dateFormatter
-    }()
-
 }

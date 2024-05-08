@@ -18,13 +18,6 @@
 
 import Foundation
 
-enum ResponsePayloadDecoderError: Error {
-
-    case missingResponseData
-    case failedToDecodePayload(Decodable.Type, Error)
-
-}
-
 /// An object responsible for decoding the http response payload into
 /// an api model.
 

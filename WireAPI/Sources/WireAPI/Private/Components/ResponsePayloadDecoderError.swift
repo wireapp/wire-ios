@@ -18,24 +18,16 @@
 
 import Foundation
 
-extension Date {
+/// Erros that can occur when decoding response payloads.
 
-    /// Initialze the date from the given transport string.
+enum ResponsePayloadDecoderError: Error {
 
-    init?(transportString: String) {
-        if let date = ISO8601DateFormatter.default.date(from: transportString) {
-            self = date
-        } else if let date = ISO8601DateFormatter.withoutFractionalSeconds.date(from: transportString) {
-            self = date
-        } else {
-            return nil
-        }
-    }
+    /// The data to decode could not be found.
 
-    /// Compute the string for transport to the server.
+    case missingResponseData
 
-    func transportString() -> String {
-        ISO8601DateFormatter.default.string(from: self)
-    }
+    /// The payload could not be decoded due to a decoding error.
+
+    case failedToDecodePayload(Decodable.Type, Error)
 
 }
