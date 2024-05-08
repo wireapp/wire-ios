@@ -68,8 +68,11 @@ final class ConversationListViewController: UIViewController {
     }()
 
     var topBarViewController: ConversationListTopBarViewController!
+    var userStatusViewController: UserStatusViewController?
+    weak var titleViewLabel: UILabel?
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
+    let selfProfileViewControllerBuilder: any ViewControllerBuilder
 
     convenience init(
         account: Account,
@@ -93,6 +96,7 @@ final class ConversationListViewController: UIViewController {
         selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         self.viewModel = viewModel
+        self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(userSession: viewModel.userSession)
@@ -114,6 +118,10 @@ final class ConversationListViewController: UIViewController {
         setupNetworkStatusBar()
 
         createViewConstraints()
+
+        updateTitleView()
+        updateAccountView()
+        updateLegalHoldIndictor()
 
         viewModel.viewController = self
     }
@@ -169,7 +177,6 @@ final class ConversationListViewController: UIViewController {
             ZClientViewController.shared?.showDataUsagePermissionDialogIfNeeded()
             ZClientViewController.shared?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
-
     }
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {

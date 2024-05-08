@@ -44,6 +44,9 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
 
     @discardableResult
     func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool
+
+    func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ConversationListViewController.ViewModel)
+    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ConversationListViewController.ViewModel)
 }
 
 extension ConversationListViewController {
@@ -242,9 +245,15 @@ extension ConversationListViewController.ViewModel: UserObserving {
         if changeInfo.nameChanged {
             selfUserStatus.name = changeInfo.user.name ?? ""
         }
+        if changeInfo.nameChanged || changeInfo.teamsChanged {
+            viewController?.conversationListViewControllerViewModelRequiresUpdatingAccountView(self)
+        }
         if changeInfo.trustLevelChanged {
             selfUserStatus.isProteusVerified = changeInfo.user.isVerified
             updateE2EICertifiedStatus()
+        }
+        if changeInfo.legalHoldStatusChanged {
+            viewController?.conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(self)
         }
         if changeInfo.availabilityChanged {
             selfUserStatus.availability = changeInfo.user.availability
