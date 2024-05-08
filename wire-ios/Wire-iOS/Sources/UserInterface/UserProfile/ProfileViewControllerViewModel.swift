@@ -50,7 +50,7 @@ protocol ProfileViewControllerViewModeling {
     func sendConnectionRequest()
     func acceptConnectionRequest()
     func ignoreConnectionRequest()
-    // TODO [WPB-9028]: Make it async https://wearezeta.atlassian.net/browse/WPB-9028
+    // TODO: [WPB-9028]
     func cancelConnectionRequest(completion: @escaping Completion)
     func openOneToOneConversation()
     func startOneToOneConversation()

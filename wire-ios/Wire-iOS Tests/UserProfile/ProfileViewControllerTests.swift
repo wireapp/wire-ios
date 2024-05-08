@@ -17,10 +17,9 @@
 //
 
 import SnapshotTesting
-import XCTest
-
 @testable import Wire
 @testable import WireSyncEngineSupport
+import XCTest
 
 final class ProfileViewControllerTests: BaseSnapshotTestCase {
 
