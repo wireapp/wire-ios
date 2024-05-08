@@ -37,7 +37,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
 
     func testThatExpirationReasonCodeIsNotNil_DeliveryStateIsFailedToSend() {
         // given
-        guard let message = message else {
+        guard let message else {
             XCTFail("Failed to add message")
             return
         }
@@ -53,7 +53,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
 
     func testThatExpirationReasonCodeIsNil_DeliveryStateIsSent() {
         // given
-        guard let message = message else {
+        guard let message else {
             XCTFail("Failed to add message")
             return
         }
@@ -74,7 +74,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
 
     func testExpirationReasonsParsing() {
         // given
-        guard let message = message else {
+        guard let message else {
             XCTFail("Failed to add message")
             return
         }
@@ -90,7 +90,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
     // MARK: - Helper
 
     private func assert(reasonCode: NSNumber?, expectedReason: MessageSendFailure?) {
-        guard let message = message else {
+        guard let message else {
             XCTFail("Failed to add message")
             return
         }

@@ -1573,7 +1573,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             return epoch
         }
 
-        if let subgroup = subgroup {
+        if let subgroup {
             // mock fetching subgroup
             mockActionsProvider.fetchSubgroupConversationIDDomainTypeContext_MockValue = subgroup
             // mock finding parent of subgroup on subconversation repository
@@ -2690,7 +2690,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // WHEN
-        await sut.createSelfGroup(for: groupID)
+        _ = try await sut.createSelfGroup(for: groupID)
 
         // THEN
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -2723,7 +2723,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         let groupID = MLSGroupID.random()
 
         // WHEN
-        await sut.createSelfGroup(for: groupID)
+        _ = try await sut.createSelfGroup(for: groupID)
 
         // THEN
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 2.0))

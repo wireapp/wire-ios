@@ -160,7 +160,7 @@ final class ConversationViewController: UIViewController {
             for: userSession.conversationList()
         )
 
-        observationToken = E2EIPrivacyWarningChecker.addPresenter(self)
+        observationToken = PrivacyWarningChecker.addPresenter(self)
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
@@ -648,11 +648,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             collections.delegate = self
 
             collections.onDismiss = { [weak self] _ in
-                guard let weakSelf = self else {
-                    return
-                }
-
-                weakSelf.collectionController?.dismiss(animated: true)
+                guard let self else { return }
+                collectionController?.dismiss(animated: true)
             }
             collectionController = collections
         } else {

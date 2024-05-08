@@ -48,7 +48,7 @@ public struct OpenGraphData {
 extension OpenGraphData: CustomStringConvertible {
     public var description: String {
         var description = "<\(Swift.type(of: self))> \(String(describing: siteNameString)): \(url):\n\t\(title)"
-        if let content = content { description += "\n\(content)" }
+        if let content { description += "\n\(content)" }
         return description
     }
 }

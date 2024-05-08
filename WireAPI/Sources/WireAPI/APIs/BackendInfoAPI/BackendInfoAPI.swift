@@ -18,17 +18,28 @@
 
 import Foundation
 
-/// A type responsible for providing apis to consumers.
+public protocol BackendInfoAPI {
 
-public struct APIProvider {
+    /// Fetch the info of the local backend.
 
-    public let httpClient: HTTPClient
+    func getBackendInfo() async throws -> BackendInfo
 
-    public init(httpClient: HTTPClient) {
-        self.httpClient = httpClient
-    }
+}
 
-    public func backendInfoAPI(for version: APIVersion) -> any BackendInfoAPI {
+extension BackendInfoAPI {
+
+    /// Make a new `BackendInfoAPI` client.
+    ///
+    /// - Parameters:
+    ///   - version: The api version to use.
+    ///   - httpClient: A http client.
+    ///
+    /// - Returns: A versioned implementation of `BackendInfoAPI`.
+
+    public static func makeAPI(
+        for version: APIVersion,
+        httpClient: any HTTPClient
+    ) -> any BackendInfoAPI {
         switch version {
         case .v0:
             BackendInfoAPIV0(httpClient: httpClient)
@@ -44,25 +55,6 @@ public struct APIProvider {
             BackendInfoAPIV5(httpClient: httpClient)
         case .v6:
             BackendInfoAPIV6(httpClient: httpClient)
-        }
-    }
-
-    public func teamsAPI(for version: APIVersion) -> any TeamsAPI {
-        switch version {
-        case .v0:
-            TeamsAPIV0(httpClient: httpClient)
-        case .v1:
-            TeamsAPIV1(httpClient: httpClient)
-        case .v2:
-            TeamsAPIV2(httpClient: httpClient)
-        case .v3:
-            TeamsAPIV3(httpClient: httpClient)
-        case .v4:
-            TeamsAPIV4(httpClient: httpClient)
-        case .v5:
-            TeamsAPIV5(httpClient: httpClient)
-        case .v6:
-            TeamsAPIV6(httpClient: httpClient)
         }
     }
 

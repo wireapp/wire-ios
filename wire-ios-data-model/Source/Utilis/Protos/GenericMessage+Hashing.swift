@@ -24,7 +24,7 @@ protocol BigEndianDataConvertible {
 
 extension GenericMessage {
     func hashOfContent(with timestamp: Date) -> Data? {
-        guard let content = content else {
+        guard let content else {
             return nil
         }
         switch content {

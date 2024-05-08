@@ -74,7 +74,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
         self.userClientsObserverToken = NotificationInContext.addObserver(name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
                                                                           context: self.managedObjectContext.notificationContext,
                                                                           object: nil) { [weak self] note in
-            guard let `self` = self, let objectID = note.object as? NSManagedObjectID else { return }
+            guard let self, let objectID = note.object as? NSManagedObjectID else { return }
             self.managedObjectContext.performGroupedBlock {
                 guard
                     let apiVersion = BackendInfo.apiVersion,

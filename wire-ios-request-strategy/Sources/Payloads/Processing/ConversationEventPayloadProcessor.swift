@@ -618,7 +618,8 @@ struct ConversationEventPayloadProcessor {
         WireLogger.mls.debug("createOrJoinSelfConversation for \(groupID.safeForLoggingDescription); conv payload: \(String(describing: self))")
 
         if await context.perform({ conversation.epoch <= 0 }) {
-            await mlsService.createSelfGroup(for: groupID)
+            let ciphersuite = try await mlsService.createSelfGroup(for: groupID)
+            await context.perform { conversation.ciphersuite = ciphersuite }
         } else if await !mlsService.conversationExists(groupID: groupID) {
             try await mlsService.joinGroup(with: groupID)
         }
@@ -721,7 +722,7 @@ struct ConversationEventPayloadProcessor {
             conversation.mlsGroupID = mlsGroupID
         }
 
-        if let ciphersuite = payload.cipherSuite {
+        if let ciphersuite = payload.cipherSuite, payload.epoch > 0 {
             conversation.ciphersuite = MLSCipherSuite(rawValue: Int(ciphersuite))
         }
     }
@@ -919,7 +920,7 @@ struct ConversationEventPayloadProcessor {
         for conversation: ZMConversation?,
         from type: ZMConversationType
     ) -> ZMConversationType {
-        guard let conversation = conversation else {
+        guard let conversation else {
             return type
         }
 
