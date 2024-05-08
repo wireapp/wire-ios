@@ -248,8 +248,6 @@ extension SyncStatus {
             // If the push channel disconnected in between we'll fetch the stream again
             if let pushChannelEstablishedDate, let fetchBeganAt, pushChannelEstablishedDate > fetchBeganAt {
                 needsToRestartQuickSync = true
-            } else if fetchBeganAt == nil {
-                needsToRestartQuickSync = true
             }
 
             finishCurrentSyncPhase(phase: .fetchingMissedEvents)
