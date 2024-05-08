@@ -56,7 +56,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(conversation?.legalHoldStatus, .pendingApproval)
 
-        conversation?.acknowledgePrivacyWarning(withResendIntent: true)
+        conversation?.acknowledgePrivacyWarningAndResendMessages()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(conversation?.legalHoldStatus, .enabled)
 

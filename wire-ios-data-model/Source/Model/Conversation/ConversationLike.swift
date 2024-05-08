@@ -38,6 +38,7 @@ public protocol ConversationLike: AnyObject {
     var isUnderLegalHold: Bool { get }
 
     var isMLSConversationDegraded: Bool { get }
+    var isProteusConversationDegraded: Bool { get }
 
     func verifyLegalHoldSubjects()
 
@@ -92,5 +93,9 @@ extension ZMConversation: ConversationLike {
 
     public var isMLSConversationDegraded: Bool {
         mlsVerificationStatus == .degraded
+    }
+
+    public var isProteusConversationDegraded: Bool {
+        securityLevel == .secureWithIgnored
     }
 }

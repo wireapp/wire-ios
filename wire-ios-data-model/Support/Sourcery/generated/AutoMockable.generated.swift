@@ -406,6 +406,15 @@ public class MockConversationLike: ConversationLike {
 
     public var underlyingIsMLSConversationDegraded: Bool!
 
+    // MARK: - isProteusConversationDegraded
+
+    public var isProteusConversationDegraded: Bool {
+        get { return underlyingIsProteusConversationDegraded }
+        set(value) { underlyingIsProteusConversationDegraded = value }
+    }
+
+    public var underlyingIsProteusConversationDegraded: Bool!
+
     // MARK: - sortedActiveParticipantsUserTypes
 
     public var sortedActiveParticipantsUserTypes: [UserType] = []

@@ -68,9 +68,8 @@ final class PostContent {
                 let degradationStrategy: DegradationStrategyChoice = {
                     switch $0 {
                     case .sendAnyway:
-                        conversation.acknowledgePrivacyWarning(withResendIntent: true)
+                        conversation.acknowledgePrivacyWarningAndResendMessages()
                     case .cancelSending:
-                        conversation.acknowledgePrivacyWarning(withResendIntent: false)
                         stateCallback(.done)
                     }
                 }

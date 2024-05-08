@@ -160,7 +160,7 @@ final class ConversationViewController: UIViewController {
             for: userSession.conversationList()
         )
 
-        observationToken = E2EIPrivacyWarningChecker.addPresenter(self)
+        observationToken = PrivacyWarningChecker.addPresenter(self)
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
