@@ -21,7 +21,7 @@ import WireDataModel
 
 protocol ConversationMessageCellMenuPresenter: AnyObject {
     func showMenu()
-    func showSecuredMenu(for text: String)
+    func showSecuredMenu()
 }
 
 extension UITableViewCell {
@@ -181,8 +181,13 @@ class ConversationMessageCellTableViewAdapter<C: ConversationMessageCellDescript
         display(messageActionsController: controller)
     }
 
-    func showSecuredMenu(for text: String) {
-        let actions = [MessageAction.visitLink(text), MessageAction.reply, MessageAction.edit, MessageAction.openDetails, MessageAction.delete, MessageAction.cancel]
+    func showSecuredMenu() {
+        let actions = [MessageAction.visitLink,
+                       MessageAction.reply,
+                       MessageAction.edit,
+                       MessageAction.openDetails,
+                       MessageAction.delete,
+                       MessageAction.cancel]
         guard let controller = messageActionsMenuController(with: actions) else { return }
         display(messageActionsController: controller)
     }
