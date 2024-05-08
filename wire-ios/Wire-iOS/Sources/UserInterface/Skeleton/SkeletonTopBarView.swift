@@ -18,7 +18,7 @@
 
 import UIKit
 
-final class TopBar: UIView {
+final class SkeletonTopBarView: UIView {
 
     var leftView: UIView? = .none {
         didSet {

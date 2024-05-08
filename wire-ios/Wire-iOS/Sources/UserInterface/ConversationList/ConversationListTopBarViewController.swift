@@ -76,10 +76,6 @@ final class ConversationListTopBarViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func loadView() {
-        view = TopBar()
-    }
-
     override func viewDidLoad() {
         view.backgroundColor = SemanticColors.View.backgroundConversationList
         view.addBorder(for: .bottom)
