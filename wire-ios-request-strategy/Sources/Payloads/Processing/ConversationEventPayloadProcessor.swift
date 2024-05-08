@@ -722,7 +722,7 @@ struct ConversationEventPayloadProcessor {
             conversation.mlsGroupID = mlsGroupID
         }
 
-        if let ciphersuite = payload.cipherSuite, payload.epoch > 0 {
+        if let ciphersuite = payload.cipherSuite, let epoch = payload.epoch, epoch > 0 {
             conversation.ciphersuite = MLSCipherSuite(rawValue: Int(ciphersuite))
         }
     }
