@@ -113,7 +113,7 @@ private struct ParticipantsSectionViewModel {
         showSectionCount: Bool = true,
         userSession: UserSession
     ) {
-        participants = users.sorted { $0.name < $1.name }
+        participants = users.sorted { OptionalComparison.prependingNilAscending(lhs: $0.name, rhs: $1.name) }
         self.userStatuses = userStatuses
         self.conversationRole = conversationRole
         self.showSectionCount = showSectionCount

@@ -238,7 +238,9 @@ extension ZMMessage: ZMConversationMessage {
     @NSManaged public var replies: Set<ZMMessage>
 
     public var readReceipts: [ReadReceipt] {
-        return confirmations.filter({ $0.type == .read }).sorted(by: { a, b in  a.serverTimestamp < b.serverTimestamp })
+        confirmations
+            .filter { $0.type == .read }
+            .sorted { OptionalComparison.prependingNilAscending(lhs: $0.serverTimestamp, rhs: $1.serverTimestamp) }
     }
 
     public var objectIdentifier: String {

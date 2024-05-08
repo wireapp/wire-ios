@@ -78,16 +78,16 @@ extension ZMConversation: ConversationLike {
         return connectedUser
 	}
 
-	private static let userNameSorter: (UserType, UserType) -> Bool = {
-		$0.name < $1.name
-	}
-
 	public var sortedOtherParticipants: [UserType] {
-		return localParticipants.filter { !$0.isServiceUser }.sorted(by: ZMConversation.userNameSorter)
+        localParticipants
+            .filter { !$0.isServiceUser }
+            .sorted { OptionalComparison.prependingNilAscending(lhs: $0.name, rhs: $1.name) }
 	}
 
 	public var sortedServiceUsers: [UserType] {
-		return localParticipants.filter { $0.isServiceUser }.sorted(by: ZMConversation.userNameSorter)
+		localParticipants
+            .filter { $0.isServiceUser }
+            .sorted { OptionalComparison.prependingNilAscending(lhs: $0.name, rhs: $1.name) }
     }
 
     public var isMLSConversationDegraded: Bool {

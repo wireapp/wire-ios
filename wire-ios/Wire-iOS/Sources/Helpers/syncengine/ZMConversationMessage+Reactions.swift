@@ -85,11 +85,11 @@ extension ZMConversationMessage {
     }
 
     var sortedLikers: [UserType] {
-        return likers.sorted { $0.name < $1.name }
+        likers.sorted { OptionalComparison.prependingNilAscending(lhs: $0.name, rhs: $1.name) }
     }
 
     var sortedReadReceipts: [ReadReceipt] {
-        return readReceipts.sorted { $0.userType.name < $1.userType.name }
+        readReceipts.sorted { OptionalComparison.prependingNilAscending(lhs: $0.userType.name, rhs: $1.userType.name) }
     }
 
     func react(_ reaction: Emoji.ID) {

@@ -69,7 +69,9 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
     ) {
         internalParticipants = conversation.sortedOtherParticipants
         self.conversation = conversation
-        self.selectedParticipants = selectedParticipants.sorted { $0.name < $1.name }
+        self.selectedParticipants = selectedParticipants.sorted {
+            OptionalComparison.prependingNilAscending(lhs: $0.name, rhs: $1.name)
+        }
         self.userSession = userSession
         isUserE2EICertifiedUseCase = userSession.isUserE2EICertifiedUseCase
         super.init()
