@@ -18,17 +18,31 @@
 
 import Foundation
 
-public func < <T: Comparable>(lhs: T?, rhs: T?) -> Bool {
-    switch (lhs, rhs) {
-    case let (l?, r?): return l < r
-    case (nil, _?): return true
-    default: return false
-    }
-}
+public enum OptionalComparison {
+    /// Compares two optional values in ascending order.
+    ///
+    /// - Parameters:
+    ///   - lhs: An optional comparable value on the left hand side.
+    ///   - rhs: An optional comparable value on  the right hand side.
+    ///
+    /// - Returns:
+    ///  `true` if left hand side is smaller than right hand side.
+    /// `nil` is  considered as smaller than any value.
+    /// If both paratemeters are `nil`, the method returns `false`.
+    public static func prependingNilAscending<T: Comparable>(lhs: T?, rhs: T?) -> Bool {
 
-public func > <T: Comparable>(lhs: T?, rhs: T?) -> Bool {
-    switch (lhs, rhs) {
-    case let (l?, r?): return l > r
-    default: return rhs < lhs
+        if lhs == nil, rhs == nil {
+            return false
+        }
+
+        guard let lhs else {
+            return true
+        }
+
+        guard let rhs else {
+            return false
+        }
+
+        return lhs < rhs
     }
 }
