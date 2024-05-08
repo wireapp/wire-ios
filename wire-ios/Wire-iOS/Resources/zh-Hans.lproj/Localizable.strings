@@ -2146,7 +2146,7 @@
 "device.details.section.e2ei.status.expired" = "Expired";
 "device.details.section.e2ei.status.invalid" = "Invalid";
 "device.details.section.e2ei.serial_number" = "Serial Number";
-"device.details.section.mls.signature" = "MLS with Ed25519 Signature";
+"device.details.section.mls.signature" = "MLS with %@ Signature";
 "device.details.section.mls.title" = "MLS Thumbprint";
 "device.details.section.mls.thumbprint" = "MLS Thumbprint: %@";
 "device.details.certificate_details.title" = "Certificate Details";
