@@ -329,10 +329,6 @@ final class ConversationListViewController: UIViewController {
         })
     }
 
-    func scrollViewDidScroll(scrollView: UIScrollView!) {
-        topBarViewController.scrollViewDidScroll(scrollView: scrollView)
-    }
-
     /// Scroll to the current selection
     ///
     /// - Parameter animated: perform animation or not
