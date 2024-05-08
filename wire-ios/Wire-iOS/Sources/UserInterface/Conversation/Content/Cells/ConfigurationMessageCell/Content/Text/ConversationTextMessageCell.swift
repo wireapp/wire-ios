@@ -127,7 +127,7 @@ final class ConversationTextMessageCell: UIView,
     func textViewDidLongPress(_ textView: LinkInteractionTextView) {
         if !UIMenuController.shared.isMenuVisible {
             if !Settings.isClipboardEnabled {
-                menuPresenter?.showSecuredMenu(for: textView.text)
+                menuPresenter?.showSecuredMenu()
             } else {
                 menuPresenter?.showMenu()
             }
