@@ -25,3 +25,29 @@ public protocol BackendInfoAPI {
     func getBackendInfo() async throws -> BackendInfo
 
 }
+
+extension BackendInfoAPI {
+
+    public static func makeAPI(
+        for version: APIVersion,
+        httpClient: any HTTPClient
+    ) -> any BackendInfoAPI {
+        switch version {
+        case .v0:
+            BackendInfoAPIV0(httpClient: httpClient)
+        case .v1:
+            BackendInfoAPIV1(httpClient: httpClient)
+        case .v2:
+            BackendInfoAPIV2(httpClient: httpClient)
+        case .v3:
+            BackendInfoAPIV3(httpClient: httpClient)
+        case .v4:
+            BackendInfoAPIV4(httpClient: httpClient)
+        case .v5:
+            BackendInfoAPIV5(httpClient: httpClient)
+        case .v6:
+            BackendInfoAPIV6(httpClient: httpClient)
+        }
+    }
+
+}
