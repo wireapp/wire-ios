@@ -149,15 +149,18 @@ extension ZMConversation {
     fileprivate func updateLastUnreadKnock(_ timestamp: Date?) {
         guard let timestamp else { return lastUnreadKnockDate = nil }
 
-        if timestamp > lastUnreadKnockDate {
+        if lastUnreadKnockDate == nil || lastUnreadKnockDate! < timestamp {
             lastUnreadKnockDate = timestamp
         }
     }
 
     fileprivate func updateLastUnreadMissedCall(_ timestamp: Date?) {
-        guard let timestamp else { return lastUnreadMissedCallDate = nil }
+        guard let timestamp else {
+            lastUnreadMissedCallDate = nil
+            return
+        }
 
-        if timestamp > lastUnreadMissedCallDate {
+        if lastUnreadMissedCallDate == nil || lastUnreadMissedCallDate! < timestamp {
             lastUnreadMissedCallDate = timestamp
         }
     }
