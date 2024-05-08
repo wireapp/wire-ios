@@ -32,7 +32,7 @@ extension ConversationListViewController {
         case .conversationList:
             view.alpha = 1
 
-            if let presentedViewController {
+            if let presentedViewController = navigationController?.presentedViewController {
                 presentedViewController.dismiss(animated: true, completion: completion)
             } else {
                 completion?()
@@ -41,11 +41,13 @@ extension ConversationListViewController {
             let startUIViewController = createPeoplePickerController()
             let navigationWrapper = startUIViewController.wrapInNavigationController(navigationControllerClass: NavigationController.self)
 
+            fatalError("TODO: show doesn't use navigation controller")
             show(navigationWrapper, animated: true) {
                 startUIViewController.showKeyboardIfNeeded()
                 completion?()
             }
         case .archived:
+            fatalError("TODO: show doesn't use navigation controller")
             show(createArchivedListViewController(), animated: animated, completion: completion)
         }
     }
@@ -54,5 +56,4 @@ extension ConversationListViewController {
         setState(.conversationList, animated: false)
         listContentController.selectInboxAndFocus(onView: focus)
     }
-
 }

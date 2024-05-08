@@ -63,15 +63,12 @@ extension AccountSelectorController: AccountSelectorViewDelegate {
     func accountSelectorDidSelect(account: Account) {
         guard
             account != SessionManager.shared?.accountManager.selectedAccount,
-            ZClientViewController.shared?.conversationListViewController.presentedViewController != nil
-        else {
-            return
-        }
+            ZClientViewController.shared?.conversationListViewController.navigationController?.presentedViewController != nil
+        else { return }
 
-        ZClientViewController.shared?.conversationListViewController.dismiss(animated: true,
-                                                                             completion: {
+        ZClientViewController.shared?.conversationListViewController.navigationController?.dismiss(animated: true) {
             AppDelegate.shared.mediaPlaybackManager?.stop()
             SessionManager.shared?.select(account)
-        })
+        }
     }
 }
