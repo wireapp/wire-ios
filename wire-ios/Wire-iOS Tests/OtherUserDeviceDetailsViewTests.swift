@@ -109,7 +109,7 @@ final class OtherUserDeviceDetailsViewTests: BaseSnapshotTestCase {
     ) -> UINavigationController {
         sut = DeviceInfoViewController(rootView: OtherUserDeviceDetailsView(viewModel: viewModel))
         sut.overrideUserInterfaceStyle = mode
-        return sut.wrapInNavigationController()
+        return sut.wrapInNavigationController(setBackgroundColor: true, mode: mode)
     }
 
     func testWhenMLSViewIsDisabled() {
