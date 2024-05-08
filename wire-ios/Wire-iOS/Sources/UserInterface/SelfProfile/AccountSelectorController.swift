@@ -35,7 +35,14 @@ final class AccountSelectorController: UIViewController {
         accountsView.translatesAutoresizingMaskIntoConstraints = false
         accountsView.fitIn(view: view)
 
-        setShowAccounts(to: SessionManager.shared?.accountManager.accounts.count > 1)
+        let showAccounts: Bool
+        if let count = SessionManager.shared?.accountManager.accounts.count, count > 1 {
+            showAccounts = true
+        } else {
+            showAccounts = false
+        }
+
+        setShowAccounts(to: showAccounts)
     }
 
     @available(*, unavailable)
@@ -46,8 +53,14 @@ final class AccountSelectorController: UIViewController {
     private var showAccounts: Bool = false
 
     func updateShowAccountsIfNeeded() {
-        let showAccounts = SessionManager.shared?.accountManager.accounts.count > 1
-        guard showAccounts != showAccounts else { return }
+        let showAccounts: Bool
+        if let count = SessionManager.shared?.accountManager.accounts.count, count > 1 {
+            showAccounts = true
+        } else {
+            showAccounts = false
+        }
+
+        guard showAccounts != self.showAccounts else { return }
         setShowAccounts(to: showAccounts)
     }
 
