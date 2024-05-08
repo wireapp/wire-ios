@@ -42,6 +42,8 @@ final class ConversationListTopBarViewController: UIViewController {
     private weak var userStatusViewController: UserStatusViewController?
     private weak var titleViewLabel: UILabel?
 
+    var navigationItemToManage: () -> UINavigationItem? = { nil }
+
     /// init a ConversationListTopBarViewController
     ///
     /// - Parameters:

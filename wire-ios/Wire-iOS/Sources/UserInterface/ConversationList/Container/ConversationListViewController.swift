@@ -124,6 +124,9 @@ final class ConversationListViewController: UIViewController {
         createViewConstraints()
 
         viewModel.viewController = self
+        topBarViewController.navigationItemToManage = { [weak self] in
+            self?.navigationItem
+        }
     }
 
     @available(*, unavailable)
