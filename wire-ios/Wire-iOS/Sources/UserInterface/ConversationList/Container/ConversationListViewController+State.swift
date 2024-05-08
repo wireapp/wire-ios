@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 
 extension ConversationListViewController {
     func setState(_ state: ConversationListState,
@@ -41,13 +41,11 @@ extension ConversationListViewController {
             let startUIViewController = createPeoplePickerController()
             let navigationWrapper = startUIViewController.wrapInNavigationController(navigationControllerClass: NavigationController.self)
 
-            fatalError("TODO: show doesn't use navigation controller")
             show(navigationWrapper, animated: true) {
                 startUIViewController.showKeyboardIfNeeded()
                 completion?()
             }
         case .archived:
-            fatalError("TODO: show doesn't use navigation controller")
             show(createArchivedListViewController(), animated: animated, completion: completion)
         }
     }
@@ -55,5 +53,18 @@ extension ConversationListViewController {
     func selectInboxAndFocusOnView(focus: Bool) {
         setState(.conversationList, animated: false)
         listContentController.selectInboxAndFocus(onView: focus)
+    }
+}
+
+extension ConversationListViewController {
+    func show(
+        _ viewController: UIViewController,
+        animated: Bool,
+        completion: (() -> Void)?
+    ) {
+        viewController.transitioningDelegate = self
+        viewController.modalPresentationStyle = .currentContext
+
+        navigationController?.present(viewController, animated: animated, completion: completion)
     }
 }
