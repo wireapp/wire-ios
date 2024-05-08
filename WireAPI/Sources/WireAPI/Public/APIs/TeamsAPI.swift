@@ -18,6 +18,15 @@
 
 import Foundation
 
+/// An API access object for endpoints concerning teams.
+
 public protocol TeamsAPI {
+
+    /// Get the team metadata for a specific team.
+    ///
+    /// - Parameter teamID: The id of the desired team.
+    /// - Returns: The request team metadata.
+
+    func getTeam(for teamID: Team.ID) async throws -> Team
 
 }

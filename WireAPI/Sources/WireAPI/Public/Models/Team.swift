@@ -18,10 +18,32 @@
 
 import Foundation
 
-class TeamsAPIV6: TeamsAPIV5 {
+/// Represents a team to which members can belong to.
 
-    override var apiVersion: APIVersion {
-        .v6
-    }
+public struct Team: Identifiable, Equatable {
+
+    /// The unique id of the team.
+
+    public var id: UUID
+
+    /// The team name.
+
+    public let name: String
+
+    /// The user id of the team's creator.
+
+    public let creatorID: UUID
+
+    /// The asset id of the team logo.
+
+    public let logoID: String
+
+    /// The asset decryption key of the team logo.
+
+    public let logoKey: String?
+
+    /// The asset id of the team's splash screen.
+
+    public let splashScreenID: String?
 
 }

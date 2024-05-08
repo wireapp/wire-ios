@@ -36,6 +36,19 @@ final class HTTPClientMock: HTTPClient {
         }
     }
 
+    convenience init(code: Int, errorLabel: String) throws {
+        try self.init(
+            code: code,
+            jsonResponse: """
+            {
+                "code": \(code),
+                "label": "\(errorLabel)",
+                "message": ""
+            }
+            """
+        )
+    }
+
     convenience init(code: Int, jsonResponse: String) throws {
         guard let payload = jsonResponse.data(using: .utf8) else {
             throw HTTPClientMockError(message: "failed to create response payload data")

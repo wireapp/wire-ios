@@ -20,4 +20,48 @@ import Foundation
 
 class TeamsAPIV5: TeamsAPIV4 {
 
+    override var apiVersion: APIVersion {
+        .v5
+    }
+
+    // MARK: - Get team
+
+    override func getTeam(for teamID: Team.ID) async throws -> Team {
+        let request = HTTPRequest(
+            path: path(for: teamID),
+            method: .get
+        )
+
+        let response = try await httpClient.executeRequest(request)
+
+        switch response.code {
+        case 200:
+            let payload = try decoder.decodePayload(
+                from: response,
+                as: TeamResponseV2.self
+            )
+
+            return payload.toParent()
+
+        default:
+            let failure = try decoder.decodePayload(
+                from: response,
+                as: FailureResponse.self
+            )
+
+            switch (failure.code, failure.label) {
+            case (404, ""):
+                // New
+                throw TeamsAPIError.invalidTeamID
+
+            case (404, "no-team"):
+                throw TeamsAPIError.teamNotFound
+
+            default:
+                throw failure
+            }
+        }
+    }
+
+
 }

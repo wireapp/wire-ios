@@ -22,7 +22,7 @@ import Foundation
 
 /// A type representing all the versions of the Wire api.
 
-public enum APIVersion: UInt, CaseIterable {
+public enum APIVersion: UInt, CaseIterable, Comparable {
 
     case v0
     case v1
@@ -48,6 +48,22 @@ public enum APIVersion: UInt, CaseIterable {
     /// environments.
 
     public static let developmentVersions: Set<Self> = Set(allCases).subtracting(productionVersions)
+
+    /// Compare two api versions.
+    ///
+    /// - Parameters:
+    ///   - lhs: The left operand.
+    ///   - rhs: The right operand.
+    ///
+    /// - Returns: `True` if the numeric version of the left operand is less than the numeric
+    /// version of the right operand.
+
+    public static func < (
+        lhs: APIVersion,
+        rhs: APIVersion
+    ) -> Bool {
+        lhs.rawValue < rhs.rawValue
+    }
 
 }
 

@@ -18,12 +18,93 @@
 
 import Foundation
 
+public enum TeamsAPIError: Error {
+
+    case invalidTeamID
+    case teamNotFound
+
+}
+
 class TeamsAPIV0: TeamsAPI {
 
     let httpClient: HTTPClient
+    let decoder = ResponsePayloadDecoder(decoder: .defaultDecoder)
 
     init(httpClient: HTTPClient) {
         self.httpClient = httpClient
+    }
+
+    var apiVersion: APIVersion {
+        .v0
+    }
+
+    func path(for teamID: Team.ID) -> String {
+        switch apiVersion {
+        case .v0:
+            "/teams/\(teamID.transportString())"
+        default:
+            "/v\(apiVersion.rawValue)/teams/\(teamID.transportString())"
+        }
+    }
+
+    // MARK: - Get team
+
+    func getTeam(for teamID: Team.ID) async throws -> Team {
+        let request = HTTPRequest(
+            path: path(for: teamID),
+            method: .get
+        )
+
+        let response = try await httpClient.executeRequest(request)
+
+        switch response.code {
+        case 200:
+            let payload = try decoder.decodePayload(
+                from: response,
+                as: TeamResponseV0.self
+            )
+
+            return payload.toParent()
+
+        default:
+            let failure = try decoder.decodePayload(
+                from: response,
+                as: FailureResponse.self
+            ) 
+
+            switch (failure.code, failure.label) {
+            case (404, ""):
+                throw TeamsAPIError.invalidTeamID
+
+            case (404, "no-team"):
+                throw TeamsAPIError.teamNotFound
+
+            default:
+                throw failure
+            }
+        }
+    }
+
+}
+
+struct TeamResponseV0: Decodable {
+
+    let id: UUID
+    let name: String
+    let creator: UUID
+    let icon: String
+    let icon_key: String?
+    let binding: Bool?
+
+    func toParent() -> Team {
+        Team(
+            id: id,
+            name: name,
+            creatorID: creator,
+            logoID: icon,
+            logoKey: icon_key,
+            splashScreenID: nil
+        )
     }
 
 }

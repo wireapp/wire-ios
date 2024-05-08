@@ -18,10 +18,12 @@
 
 import Foundation
 
-class TeamsAPIV6: TeamsAPIV5 {
+extension UUID {
 
-    override var apiVersion: APIVersion {
-        .v6
+    /// Creates a string suitable for transport to the server.
+
+    func transportString() -> String {
+        uuidString.lowercased()
     }
 
 }
