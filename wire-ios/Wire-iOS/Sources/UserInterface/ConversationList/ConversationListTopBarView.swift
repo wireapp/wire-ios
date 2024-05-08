@@ -92,53 +92,18 @@ final class TopBar: UIView {
         }
     }
 
-    var splitSeparator: Bool = true {
-        didSet {
-            leftSeparatorInsetConstraint.isActive = splitSeparator
-            rightSeparatorInsetConstraint.isActive = splitSeparator
-            self.layoutIfNeeded()
-        }
-    }
-
-    let leftSeparatorLineView = OverflowSeparatorView()
-    let rightSeparatorLineView = OverflowSeparatorView()
-
-    private var leftSeparatorInsetConstraint: NSLayoutConstraint!
-    private var rightSeparatorInsetConstraint: NSLayoutConstraint!
-
     override init(frame: CGRect) {
         super.init(frame: frame)
 
         layoutMargins = UIEdgeInsets(top: 0, left: CGFloat.ConversationList.horizontalMargin, bottom: 0, right: CGFloat.ConversationList.horizontalMargin)
-        let spacing: CGFloat = 7
-        [leftSeparatorLineView, rightSeparatorLineView, middleViewContainer].forEach {
-            addSubview($0)
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
 
-        let leftTrailingConstraint = leftSeparatorLineView.trailingAnchor.constraint(equalTo: centerXAnchor)
-        leftTrailingConstraint.priority = .defaultHigh
+        middleViewContainer.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(middleViewContainer)
 
-        let rightLeadingConstraint = rightSeparatorLineView.leadingAnchor.constraint(equalTo: centerXAnchor)
-        rightLeadingConstraint.priority = .defaultHigh
-
-        leftSeparatorInsetConstraint = leftSeparatorLineView.trailingAnchor.constraint(equalTo: middleViewContainer.leadingAnchor, constant: -spacing)
-        rightSeparatorInsetConstraint = rightSeparatorLineView.leadingAnchor.constraint(equalTo: middleViewContainer.trailingAnchor, constant: spacing)
-
-        NSLayoutConstraint.activate([leftSeparatorLineView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                                     leftSeparatorLineView.bottomAnchor.constraint(equalTo: bottomAnchor),
-
-                                     rightSeparatorLineView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                                     rightSeparatorLineView.bottomAnchor.constraint(equalTo: bottomAnchor),
-
-                                     middleViewContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
-                                     middleViewContainer.centerYAnchor.constraint(equalTo: centerYAnchor),
-
-                                     leftTrailingConstraint,
-                                     rightLeadingConstraint,
-
-                                     leftSeparatorInsetConstraint,
-                                     rightSeparatorInsetConstraint])
+        NSLayoutConstraint.activate([
+            middleViewContainer.centerXAnchor.constraint(equalTo: centerXAnchor),
+            middleViewContainer.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
     }
 
     @available(*, unavailable)

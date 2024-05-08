@@ -32,8 +32,6 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
         didUpdate selfUserStatus: UserStatus
     )
 
-    func scrollViewDidScroll(scrollView: UIScrollView!)
-
     func setState(_ state: ConversationListState,
                   animated: Bool,
                   completion: Completion?)
