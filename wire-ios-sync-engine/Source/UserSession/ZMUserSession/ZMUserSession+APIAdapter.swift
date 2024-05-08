@@ -30,8 +30,8 @@ extension ZMUserSession {
             queue: syncContext
         )
 
-        let apiProvider = APIProvider(httpClient: httpClient)
-        return apiProvider.backendInfoAPI(for: .v0)
+        return BackendInfoAPIBuilder(httpClient: httpClient)
+            .makeAPI(for: .v0)
     }
 
 }
