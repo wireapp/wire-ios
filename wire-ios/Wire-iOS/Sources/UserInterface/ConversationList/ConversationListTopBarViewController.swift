@@ -35,14 +35,15 @@ final class ConversationListTopBarViewController: UIViewController {
     private let selfProfileViewControllerBuilder: any ViewControllerBuilder
     private var observerToken: NSObjectProtocol?
 
-    var topBar: TopBar? {
-        view as? TopBar
-    }
+//    @available(*, deprecated)
+//    var topBar: TopBar? {
+//        view as? TopBar
+//    }
 
-    private weak var userStatusViewController: UserStatusViewController?
+    private var userStatusViewController: UserStatusViewController?
     private weak var titleViewLabel: UILabel?
 
-    var navigationItemToManage: () -> UINavigationItem? = { nil }
+    let navigationItemToManage: () -> UINavigationItem?
 
     /// init a ConversationListTopBarViewController
     ///
@@ -54,12 +55,14 @@ final class ConversationListTopBarViewController: UIViewController {
         account: Account,
         selfUser: SelfUserType,
         userSession: UserSession,
-        selfProfileViewControllerBuilder: some ViewControllerBuilder
+        selfProfileViewControllerBuilder: some ViewControllerBuilder,
+        navigationItemToManage: @escaping () -> UINavigationItem?
     ) {
         self.account = account
         self.selfUser = selfUser
         self.userSession = userSession
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
+        self.navigationItemToManage = navigationItemToManage
 
         super.init(nibName: nil, bundle: nil)
 
@@ -94,9 +97,10 @@ final class ConversationListTopBarViewController: UIViewController {
             guard userStatusViewController == nil else { return }
 
             let userStatusViewController = UserStatusViewController(options: .header, settings: .shared)
-            addChild(userStatusViewController)
-            topBar?.middleView = userStatusViewController.view
-            userStatusViewController.didMove(toParent: self)
+            // addChild(userStatusViewController)
+            navigationItemToManage()?.titleView = userStatusViewController.view
+            // topBar?.middleView = userStatusViewController.view
+            // userStatusViewController.didMove(toParent: self)
             userStatusViewController.delegate = self
             self.userStatusViewController = userStatusViewController
 
@@ -118,7 +122,8 @@ final class ConversationListTopBarViewController: UIViewController {
             titleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
             titleLabel.setContentHuggingPriority(.required, for: .horizontal)
             titleLabel.setContentHuggingPriority(.required, for: .vertical)
-            topBar?.middleView = titleLabel
+            navigationItemToManage()?.titleView = titleLabel
+            // topBar?.middleView = titleLabel
             self.titleViewLabel = titleLabel
         }
     }
@@ -173,13 +178,12 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     func updateAccountView() {
-        topBar?.leftView = createAccountView()
+        // topBar?.leftView = createAccountView()
+        navigationItemToManage()?.leftBarButtonItem = .init(customView: createAccountView())
     }
 
     private func createAccountView() -> UIView {
-        guard let session = ZMUserSession.shared() else {
-            return UIView()
-        }
+        guard let session = ZMUserSession.shared() else { return .init() }
 
         let user = ZMUser.selfUser(inUserSession: session)
 
@@ -206,11 +210,14 @@ final class ConversationListTopBarViewController: UIViewController {
     func updateLegalHoldIndictor() {
         switch selfUser.legalHoldStatus {
         case .disabled:
-            topBar?.rightView = nil
+            navigationItemToManage()?.rightBarButtonItem = nil
+            // topBar?.rightView = nil
         case .pending:
-            topBar?.rightView = createPendingLegalHoldRequestView()
+            navigationItemToManage()?.rightBarButtonItem = .init(customView: createPendingLegalHoldRequestView())
+            // topBar?.rightView = createPendingLegalHoldRequestView()
         case .enabled:
-            topBar?.rightView = createLegalHoldView()
+            // topBar?.rightView = createLegalHoldView()
+            navigationItemToManage()?.rightBarButtonItem = .init(customView: createLegalHoldView())
         }
     }
 

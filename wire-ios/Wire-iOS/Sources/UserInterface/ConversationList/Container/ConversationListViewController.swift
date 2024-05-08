@@ -67,7 +67,7 @@ final class ConversationListViewController: UIViewController {
         return conversationListTabBar
     }()
 
-    let topBarViewController: ConversationListTopBarViewController
+    var topBarViewController: ConversationListTopBarViewController!
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
 
@@ -94,14 +94,6 @@ final class ConversationListViewController: UIViewController {
     ) {
         self.viewModel = viewModel
 
-        topBarViewController = ConversationListTopBarViewController(
-            account: viewModel.account,
-            selfUser: viewModel.selfUser,
-            userSession: viewModel.userSession,
-            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
-        )
-        topBarViewController.selfUserStatus = viewModel.selfUserStatus
-
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = ConversationListContentController(userSession: viewModel.userSession)
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
@@ -114,7 +106,7 @@ final class ConversationListViewController: UIViewController {
         view.addSubview(contentContainer)
         view.backgroundColor = SemanticColors.View.backgroundConversationList
 
-        setupTopBar()
+        setupTopBar(selfProfileViewControllerBuilder)
         setupListContentController()
         setupTabBar()
         setupNoConversationLabel()
@@ -124,9 +116,6 @@ final class ConversationListViewController: UIViewController {
         createViewConstraints()
 
         viewModel.viewController = self
-        topBarViewController.navigationItemToManage = { [weak self] in
-            self?.navigationItem
-        }
     }
 
     @available(*, unavailable)
@@ -216,8 +205,18 @@ final class ConversationListViewController: UIViewController {
         viewModel.setupObservers()
     }
 
-    private func setupTopBar() {
-        add(topBarViewController, to: contentContainer)
+    private func setupTopBar(_ selfProfileViewControllerBuilder: any ViewControllerBuilder) {
+
+        topBarViewController = ConversationListTopBarViewController(
+            account: viewModel.account,
+            selfUser: viewModel.selfUser,
+            userSession: viewModel.userSession,
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder,
+            navigationItemToManage: { [weak self] in self?.navigationItem }
+        )
+        topBarViewController.selfUserStatus = viewModel.selfUserStatus
+
+        // add(topBarViewController, to: contentContainer)
     }
 
     private func setupListContentController() {
@@ -255,7 +254,7 @@ final class ConversationListViewController: UIViewController {
 
         [
             contentContainer,
-            topBarView,
+            // topBarView,
             conversationList,
             tabBar,
             noConversationLabel,
@@ -275,11 +274,11 @@ final class ConversationListViewController: UIViewController {
             networkStatusViewController.view.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             networkStatusViewController.view.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
 
-            topBarView.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
-            topBarView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
-            topBarView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
+            // topBarView.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
+            // topBarView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
+            // topBarView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
 
-            conversationList.topAnchor.constraint(equalTo: topBarView.bottomAnchor),
+            conversationList.topAnchor.constraint(equalTo: contentContainer.topAnchor),
             conversationList.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
             conversationList.bottomAnchor.constraint(equalTo: tabBar.topAnchor),
