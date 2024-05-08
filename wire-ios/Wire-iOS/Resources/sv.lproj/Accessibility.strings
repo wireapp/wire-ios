@@ -185,7 +185,7 @@
 "profile.closeButton.description" = "Close profile";
 
 "accountPage.availabilityStatus.description" = "Status";
-"accountPage.availabilityStatus.hint" = "Double tap to change status";
+"accountPage.availabilityStatus.hint" = "Dubbeltryck för att ändra status";
 "accountPage.handle.description" = "Användarnanm";
 "accountPage.name.description" = "Profilnamn";
 "accountPage.teamName.description" = "Team name";

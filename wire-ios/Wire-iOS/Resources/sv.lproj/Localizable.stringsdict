@@ -328,9 +328,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>one character</string>
+        <string>ett tecken</string>
         <key>other</key>
-        <string>%d characters</string>
+        <string>%d tecken</string>
       </dict>
     </dict>
     <key>registration.password.rules.lowercase</key>
