@@ -23,50 +23,19 @@ final class SkeletonTopBarView: UIView {
     var leftView: UIView? = .none {
         didSet {
             oldValue?.removeFromSuperview()
-
-            guard let new = leftView else {
-                return
-            }
+            guard let new = leftView else { return }
 
             addSubview(new)
-
             new.translatesAutoresizingMaskIntoConstraints = false
-
             var constraints = [
                 new.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-                new.centerYAnchor.constraint(equalTo: centerYAnchor)]
-
+                new.centerYAnchor.constraint(equalTo: centerYAnchor)
+            ]
             if let middleView {
                 constraints.append(new.trailingAnchor.constraint(lessThanOrEqualTo: middleView.leadingAnchor))
             }
-
             NSLayoutConstraint.activate(constraints)
         }
-    }
-
-    var rightView: UIView? = .none {
-        didSet {
-            oldValue?.removeFromSuperview()
-
-            guard let new = rightView else {
-                return
-            }
-
-            addSubview(new)
-
-            new.translatesAutoresizingMaskIntoConstraints = false
-
-            var constraints = [
-                new.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-                new.centerYAnchor.constraint(equalTo: centerYAnchor)]
-
-            if let middleView {
-                constraints.append(new.leadingAnchor.constraint(greaterThanOrEqualTo: middleView.trailingAnchor))
-            }
-
-            NSLayoutConstraint.activate(constraints)
-        }
-
     }
 
     private let middleViewContainer = UIView()

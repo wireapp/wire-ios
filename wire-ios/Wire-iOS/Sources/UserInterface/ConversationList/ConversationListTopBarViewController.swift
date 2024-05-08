@@ -88,10 +88,7 @@ final class ConversationListTopBarViewController: UIViewController {
             guard userStatusViewController == nil else { return }
 
             let userStatusViewController = UserStatusViewController(options: .header, settings: .shared)
-            // addChild(userStatusViewController)
             navigationItemToManage()?.titleView = userStatusViewController.view
-            // topBar?.middleView = userStatusViewController.view
-            // userStatusViewController.didMove(toParent: self)
             userStatusViewController.delegate = self
             self.userStatusViewController = userStatusViewController
 
@@ -114,7 +111,6 @@ final class ConversationListTopBarViewController: UIViewController {
             titleLabel.setContentHuggingPriority(.required, for: .horizontal)
             titleLabel.setContentHuggingPriority(.required, for: .vertical)
             navigationItemToManage()?.titleView = titleLabel
-            // topBar?.middleView = titleLabel
             self.titleViewLabel = titleLabel
         }
     }
@@ -169,7 +165,6 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     func updateAccountView() {
-        // topBar?.leftView = createAccountView()
         navigationItemToManage()?.leftBarButtonItem = .init(customView: createAccountView())
     }
 
@@ -202,12 +197,9 @@ final class ConversationListTopBarViewController: UIViewController {
         switch selfUser.legalHoldStatus {
         case .disabled:
             navigationItemToManage()?.rightBarButtonItem = nil
-            // topBar?.rightView = nil
         case .pending:
             navigationItemToManage()?.rightBarButtonItem = .init(customView: createPendingLegalHoldRequestView())
-            // topBar?.rightView = createPendingLegalHoldRequestView()
         case .enabled:
-            // topBar?.rightView = createLegalHoldView()
             navigationItemToManage()?.rightBarButtonItem = .init(customView: createLegalHoldView())
         }
     }

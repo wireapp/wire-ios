@@ -254,7 +254,6 @@ final class ConversationListViewController: UIViewController {
 
         [
             contentContainer,
-            // topBarView,
             conversationList,
             tabBar,
             noConversationLabel,
@@ -273,10 +272,6 @@ final class ConversationListViewController: UIViewController {
             networkStatusViewController.view.topAnchor.constraint(equalTo: contentContainer.topAnchor),
             networkStatusViewController.view.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             networkStatusViewController.view.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-
-            // topBarView.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
-            // topBarView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
-            // topBarView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
 
             conversationList.topAnchor.constraint(equalTo: contentContainer.topAnchor),
             conversationList.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
