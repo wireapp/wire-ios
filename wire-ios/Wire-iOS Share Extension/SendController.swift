@@ -99,19 +99,17 @@ final class SendController {
         self.progress = progress
 
         let completion: SendableCompletion = { [weak self] sendableResult in
-            guard let weakSelf = self else {
-                return
-            }
+            guard let self else { return }
 
             switch sendableResult {
             case .success(let sendables):
-                weakSelf.observer = SendableBatchObserver(sendables: sendables)
-                weakSelf.observer?.progressHandler = { [weak self] in
+                observer = SendableBatchObserver(sendables: sendables)
+                observer?.progressHandler = { [weak self] in
                     progress(.sending($0))
                     self?.tryToTimeout()
                 }
 
-                weakSelf.observer?.sentHandler = { [weak self] in
+                observer?.sentHandler = { [weak self] in
                     self?.cancelTimeout()
                     self?.sentAllSendables = true
                     progress(.done)
