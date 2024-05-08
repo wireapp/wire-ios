@@ -78,7 +78,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         let message = Data.random().base64EncodedString()
 
         self.mockMLSActionExecutor.mockDecryptMessage = { _, _ in
-            throw CryptoError.conversationNotFound
+            throw CryptoError.ConversationNotFound(message: "conversation not found")
         }
 
         // Then

@@ -25,12 +25,12 @@ class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
 
     init() {}
 
-    func authorize(conversationId: ConversationId, clientId: ClientId) async -> Bool {
+    func authorize(conversationId: ConversationId, clientId: ClientId) -> Bool {
         // This check is performed by the backend.
         return true
     }
 
-    func userAuthorize(conversationId: ConversationId, externalClientId: ClientId, existingClients: [ClientId]) async -> Bool {
+    func userAuthorize(conversationId: ConversationId, externalClientId: ClientId, existingClients: [ClientId]) -> Bool {
         // This check is performed by the backend.
         return true
     }
@@ -40,7 +40,7 @@ class CoreCryptoCallbacksImpl: CoreCryptoCallbacks {
         clientId: ClientId,
         existingClients: [ClientId],
         parentConversationClients: [ClientId]?
-    ) async -> Bool {
+    ) -> Bool {
         // This check is performed by the backend.
         return true
     }
