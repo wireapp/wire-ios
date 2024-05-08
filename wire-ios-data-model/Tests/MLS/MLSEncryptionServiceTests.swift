@@ -84,13 +84,8 @@ final class MLSEncryptionServiceTests: XCTestCase {
         let unencryptedMessage = Data.random()
 
         // Mock
-<<<<<<< HEAD
         mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = { _, _ in
-            throw CryptoError.invalidByteArrayError
-=======
-        mockCoreCrypto.encryptMessageConversationIdMessage_MockMethod = { (_, _) in
             throw CryptoError.InvalidByteArrayError(message: "invalid byte array error")
->>>>>>> 327e355843 (fix: uniffi issue by downgrading CC to rc.56-hotfix.2 (#1399))
         }
 
         // Then
