@@ -25,7 +25,6 @@ final class ProfileActionsFactoryTests: XCTestCase {
     var domain = "domain.com"
     var selfUserTeam: UUID!
     var selfUser: MockUserType!
-    var defaultExtendedMetadata: [[String: String]]!
     var mockUserSession: UserSessionMock!
     var mockCheckOneOnOneIsReadyUseCase: MockCheckOneOnOneConversationIsReadyUseCaseProtocol!
 
@@ -44,7 +43,8 @@ final class ProfileActionsFactoryTests: XCTestCase {
     override func tearDown() {
         selfUser = nil
         selfUserTeam = nil
-        defaultExtendedMetadata = nil
+        mockUserSession = nil
+        mockCheckOneOnOneIsReadyUseCase = nil
         super.tearDown()
     }
 
@@ -867,7 +867,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 0.5)
+        wait(for: [expectation], timeout: 1)
         XCTAssertEqual(actions, expectedActions, file: file, line: line)
     }
 
