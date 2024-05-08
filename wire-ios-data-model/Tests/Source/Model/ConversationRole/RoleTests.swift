@@ -63,7 +63,7 @@ final class RoleTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(role.keysTrackedForLocalModifications(), expectedKeys)
     }
 
-    func testThatActionsAreCreatedFromPayload() throws {
+    func testThatActionsAreCreatedFromPayload() {
         // given & when
         let sut = Role.createOrUpdate(with: payload,
                                       teamOrConversation: .conversation(mockConversation),
