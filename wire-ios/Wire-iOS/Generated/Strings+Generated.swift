@@ -1263,6 +1263,14 @@ internal enum L10n {
             }
           }
         }
+        internal enum Incoming {
+          internal enum Alert {
+            internal enum Action {
+              /// Join anyway
+              internal static let `continue` = L10n.tr("Localizable", "call.degraded.incoming.alert.action.continue", fallback: "Join anyway")
+            }
+          }
+        }
       }
       internal enum Grid {
         /// Connecting

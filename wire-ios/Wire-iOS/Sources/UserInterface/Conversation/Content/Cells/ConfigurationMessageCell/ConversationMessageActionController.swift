@@ -240,7 +240,7 @@ final class ConversationMessageActionController {
         perform(action: .react(reaction))
     }
 
-    @objc func visitLink(path: String) {
-        perform(action: .visitLink(path))
+    @objc func visitLink() {
+        perform(action: .visitLink)
     }
 }

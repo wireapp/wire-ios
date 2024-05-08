@@ -763,6 +763,7 @@
 "call.degraded.alert.message.user" = "%@ started using a new device.";
 "call.degraded.alert.message.unknown" = "Someone started using a new device.";
 "call.degraded.alert.action.continue" = "Call anyway";
+"call.degraded.incoming.alert.action.continue" = "Join anyway";
 
 "call.degraded.ended.alert.title" = "Call ended";
 "call.degraded.ended.alert.message.self" = "The call was disconnected because you started using a new device.";
