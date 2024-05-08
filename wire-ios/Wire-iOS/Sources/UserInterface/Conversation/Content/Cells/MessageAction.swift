@@ -21,7 +21,7 @@ import WireDataModel
 import UIKit
 
 enum MessageAction: CaseIterable, Equatable {
-    static var allCases: [MessageAction] = [.visitLink("https://wire.com"),
+    static var allCases: [MessageAction] = [.visitLink,
                                             .digitallySign,
                                             .copy,
                                             .reply,
@@ -61,7 +61,7 @@ enum MessageAction: CaseIterable, Equatable {
     openQuote,
     resetSession,
     react(Emoji.ID),
-    visitLink(String)
+    visitLink
 
     var title: String? {
         typealias MessageActionLocale = L10n.Localizable.Content.Message
@@ -217,7 +217,7 @@ enum MessageAction: CaseIterable, Equatable {
         case .react:
             return #selector(ConversationMessageActionController.addReaction(reaction:) )
         case .visitLink:
-            return #selector(ConversationMessageActionController.visitLink(path:))
+            return #selector(ConversationMessageActionController.visitLink)
         case .present,
                 .sketchDraw,
                 .sketchEmoji,
