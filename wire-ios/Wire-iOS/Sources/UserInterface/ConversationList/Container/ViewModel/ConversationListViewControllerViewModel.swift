@@ -27,8 +27,6 @@ typealias ResultHandler = (_ succeeded: Bool) -> Void
 
 protocol ConversationListContainerViewModelDelegate: AnyObject {
 
-    func scrollViewDidScroll(scrollView: UIScrollView)
-
     func setState(
         _ state: ConversationListState,
         animated: Bool,
@@ -189,16 +187,14 @@ extension ConversationListViewController.ViewModel {
 
         guard Settings.shared.pushAlertHappenedMoreThan1DayBefore else { return false }
 
-        UNUserNotificationCenter.current().checkPushesDisabled({ [weak self] pushesDisabled in
+        UNUserNotificationCenter.current().checkPushesDisabled { [weak self] pushesDisabled in
             DispatchQueue.main.async {
-                if pushesDisabled,
-                    let weakSelf = self {
+                if pushesDisabled, let self {
                     Settings.shared[.lastPushAlertDate] = Date()
-
-                    weakSelf.viewController?.showPermissionDeniedViewController()
+                    self.viewController?.showPermissionDeniedViewController()
                 }
             }
-        })
+        }
 
         return true
     }

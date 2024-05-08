@@ -31,7 +31,7 @@ public final class ProxyCredentials: NSObject {
 
     @objc(initWithUsername:password:forProxy:)
     public convenience init?(username: String?, password: String?, proxy: ProxySettingsProvider) {
-        guard let username = username, let password = password else {
+        guard let username, let password else {
             return nil
         }
         self.init(proxy: proxy, username: username, password: password)

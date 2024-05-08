@@ -45,7 +45,7 @@ class UserClientKeysStoreTests: OtrBaseTest {
     func cleanOTRFolder() {
         let fm = FileManager.default
         var paths: [String] = []
-        if let accountID = accountID {
+        if let accountID {
             paths.append(OtrBaseTest.otrDirectoryURL(accountIdentifier: accountID).path)
         }
         paths.forEach { try? fm.removeItem(atPath: $0) }

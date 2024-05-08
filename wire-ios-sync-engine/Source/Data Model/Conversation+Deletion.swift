@@ -58,7 +58,7 @@ extension ZMConversation {
         }
 
         request.add(ZMCompletionHandler(on: contextProvider.syncContext) { [weak contextProvider] response in
-            guard let contextProvider = contextProvider else { return completion(.failure(ConversationDeletionError.unknown)) }
+            guard let contextProvider else { return completion(.failure(ConversationDeletionError.unknown)) }
 
             if response.httpStatus == 200 {
 

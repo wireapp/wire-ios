@@ -66,7 +66,6 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     override func viewDidLoad() {
-        topBar?.splitSeparator = false
         view.backgroundColor = SemanticColors.View.backgroundConversationList
         view.addBorder(for: .bottom)
 
@@ -261,11 +260,6 @@ final class ConversationListTopBarViewController: UIViewController {
         selfProfileViewControllerBuilder
             .build()
             .wrapInNavigationController(navigationControllerClass: NavigationController.self)
-    }
-
-    func scrollViewDidScroll(scrollView: UIScrollView) {
-        topBar?.leftSeparatorLineView.scrollViewDidScroll(scrollView: scrollView)
-        topBar?.rightSeparatorLineView.scrollViewDidScroll(scrollView: scrollView)
     }
 }
 

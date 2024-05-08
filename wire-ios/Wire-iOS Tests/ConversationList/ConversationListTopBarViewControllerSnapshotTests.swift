@@ -81,17 +81,4 @@ final class ConversationListTopBarViewControllerSnapshotTests: BaseSnapshotTestC
 
         verify(matching: sut)
     }
-
-    // MARK: - use cases
-
-    func testForOverflowSeperatorIsShownWhenScrollViewScrollsDown() {
-        setupSut()
-
-        let mockScrollView = UIScrollView()
-        mockScrollView.contentOffset.y = 100
-
-        sut.scrollViewDidScroll(scrollView: mockScrollView)
-
-        verify(matching: sut)
-    }
 }
