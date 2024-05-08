@@ -1813,7 +1813,6 @@
 		EFDAC64722DE2AD100D63025 /* TeamImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDAC64622DE2AD100D63025 /* TeamImageView.swift */; };
 		EFDACABB20FF84B900791207 /* ConversationInputBarViewController+FilesPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDACABA20FF84B900791207 /* ConversationInputBarViewController+FilesPopover.swift */; };
 		EFDB3135217F5E0300D2A7CE /* ConversationListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDB3133217F5E0300D2A7CE /* ConversationListCell.swift */; };
-		EFDBA23F229400F200874A15 /* ConversationListTopBarViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDBA23E229400F200874A15 /* ConversationListTopBarViewControllerSnapshotTests.swift */; };
 		EFDBA242229414E100874A15 /* Account+Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDBA241229414E100874A15 /* Account+Mock.swift */; };
 		EFDBA24522941FE800874A15 /* UIAccessibilityIdentification+LegalHold.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDBA24322941D1800874A15 /* UIAccessibilityIdentification+LegalHold.swift */; };
 		EFDBA24722942FBB00874A15 /* UIAlertViewController+CompanyLoginTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDBA24622942FBB00874A15 /* UIAlertViewController+CompanyLoginTests.swift */; };
@@ -3903,7 +3902,6 @@
 		EFDAC64622DE2AD100D63025 /* TeamImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamImageView.swift; sourceTree = "<group>"; };
 		EFDACABA20FF84B900791207 /* ConversationInputBarViewController+FilesPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+FilesPopover.swift"; sourceTree = "<group>"; };
 		EFDB3133217F5E0300D2A7CE /* ConversationListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListCell.swift; sourceTree = "<group>"; };
-		EFDBA23E229400F200874A15 /* ConversationListTopBarViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListTopBarViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		EFDBA241229414E100874A15 /* Account+Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Account+Mock.swift"; sourceTree = "<group>"; };
 		EFDBA24322941D1800874A15 /* UIAccessibilityIdentification+LegalHold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAccessibilityIdentification+LegalHold.swift"; sourceTree = "<group>"; };
 		EFDBA24622942FBB00874A15 /* UIAlertViewController+CompanyLoginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertViewController+CompanyLoginTests.swift"; sourceTree = "<group>"; };
@@ -8380,7 +8378,6 @@
 				EF6A33D02192F47200970698 /* ConversationListCell */,
 				EF24477A2343650900C747F5 /* ConnectRequestsCell */,
 				A94B778B232A4AA20005FE63 /* SkeletonViewControllerTests.swift */,
-				EFDBA23E229400F200874A15 /* ConversationListTopBarViewControllerSnapshotTests.swift */,
 			);
 			path = ConversationList;
 			sourceTree = "<group>";
@@ -10767,7 +10764,6 @@
 				D35EEDC228C2004000949F02 /* Logger.swift in Sources */,
 				D39210A62A1D5D3700FA616A /* CompleteReactionPickerViewControllerTests.swift in Sources */,
 				25A7E62C2B67FB55002451A4 /* ClientTableViewCellTests.swift in Sources */,
-				EFDBA23F229400F200874A15 /* ConversationListTopBarViewControllerSnapshotTests.swift in Sources */,
 				5E33F0D520ADA94B00414EA6 /* MockCallPermissions.swift in Sources */,
 				BFAF4CAF1CEB791B00780537 /* AudioRecordViewControllerTests.swift in Sources */,
 				160D40F92410EC41002924A0 /* LoggingTest.swift in Sources */,

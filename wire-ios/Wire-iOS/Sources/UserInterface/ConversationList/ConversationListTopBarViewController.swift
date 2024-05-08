@@ -35,11 +35,6 @@ final class ConversationListTopBarViewController: UIViewController {
     private let selfProfileViewControllerBuilder: any ViewControllerBuilder
     private var observerToken: NSObjectProtocol?
 
-//    @available(*, deprecated)
-//    var topBar: TopBar? {
-//        view as? TopBar
-//    }
-
     private var userStatusViewController: UserStatusViewController?
     private weak var titleViewLabel: UILabel?
 

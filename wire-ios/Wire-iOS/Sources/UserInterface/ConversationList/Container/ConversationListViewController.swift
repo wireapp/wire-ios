@@ -408,6 +408,7 @@ private extension UITabBarItem {
 private extension NSAttributedString {
 
     static var attributedTextForNoConversationLabel: NSAttributedString? {
+
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.setParagraphStyle(NSParagraphStyle.default)
 
@@ -423,20 +424,6 @@ private extension NSAttributedString {
         paragraphStyle.paragraphSpacing = 4
 
         let titleString = L10n.Localizable.ConversationList.Empty.AllArchived.message
-
-        let attributedString = NSAttributedString(string: titleString.uppercased(), attributes: titleAttributes)
-
-        return attributedString
-    }
-}
-
-extension UITabBar {
-    // Workaround for new UITabBar behavior where on iPad,
-    // the UITabBar shows the UITabBarItem icon next to the text
-    override open var traitCollection: UITraitCollection {
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            return UITraitCollection(traitsFrom: [super.traitCollection, UITraitCollection(horizontalSizeClass: .compact)])
-        }
-        return super.traitCollection
+        return NSAttributedString(string: titleString.uppercased(), attributes: titleAttributes)
     }
 }
