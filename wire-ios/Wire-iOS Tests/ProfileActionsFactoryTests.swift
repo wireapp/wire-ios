@@ -821,12 +821,32 @@ final class ProfileActionsFactoryTests: XCTestCase {
         ])
     }
 
+    // MARK: - Search
+
+    func test_Search_TeamToUnconnectedSearchUser_UserNotFound() {
+        // GIVEN
+        let searchUser = MockUserType.createUser(name: "John Doe")
+        searchUser.isConnected = false
+        searchUser.canBeConnected = true
+
+        mockCheckOneOnOneIsReadyUseCase.invokeUserID_MockError = CheckOneOnOneConversationIsReadyError.userNotFound
+
+        // THEN
+        verifyActions(
+            user: searchUser,
+            viewer: selfUser,
+            conversation: nil,
+            expectedActions: [.connect],
+            context: .search
+        )
+    }
+
     // MARK: - Helpers
 
     func verifyActions(
         user: UserType,
         viewer: UserType,
-        conversation: MockConversation,
+        conversation: MockConversation?,
         expectedActions: [ProfileAction],
         context: ProfileViewControllerContext = .oneToOneConversation,
         file: StaticString = #file,
@@ -835,7 +855,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         let factory = ProfileActionsFactory(
             user: user,
             viewer: viewer,
-            conversation: conversation.convertToRegularConversation(),
+            conversation: conversation?.convertToRegularConversation(),
             context: context,
             userSession: mockUserSession
         )
