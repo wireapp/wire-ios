@@ -18,23 +18,19 @@
 
 import Foundation
 
-/// An API access object for endpoints concerning teams.
+/// Represents the role a user can have in a conversation.
+///
+/// Each member of a conversation is assigned a role which allows them
+/// to perform a specific set of actions in that conversation.
 
-public protocol TeamsAPI {
+public struct ConversationRole: Equatable {
 
-    /// Get the team metadata for a specific team.
-    ///
-    /// - Parameter teamID: The id of the team.
-    /// - Returns: The request team metadata.
+    /// The name of the role.
 
-    func getTeam(for teamID: Team.ID) async throws -> Team
-    
-    
-    /// Get the conversation roles for a specific team.
-    ///
-    /// - Parameter teamID: The id of the team.
-    /// - Returns: The conversation roles defined in the team.
+    public let name: String
 
-    func getTeamRoles(for teamID: Team.ID) async throws -> [ConversationRole]
+    /// The actions that can be performed in the role.
+
+    public let actions: Set<ConversationAction>
 
 }

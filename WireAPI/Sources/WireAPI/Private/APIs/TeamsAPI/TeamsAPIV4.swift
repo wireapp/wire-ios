@@ -28,7 +28,7 @@ class TeamsAPIV4: TeamsAPIV3 {
 
     override func getTeam(for teamID: Team.ID) async throws -> Team {
         let request = HTTPRequest(
-            path: path(for: teamID),
+            path: basePath(for: teamID),
             method: .get
         )
 
@@ -63,5 +63,45 @@ class TeamsAPIV4: TeamsAPIV3 {
         }
     }
 
+    // MARK: - Get team roles
+
+    override func getTeamRoles(for teamID: Team.ID) async throws -> [ConversationRole] {
+        let request = HTTPRequest(
+            path: "\(basePath(for: teamID))/conversations/roles",
+            method: .get
+        )
+
+        let response = try await httpClient.executeRequest(request)
+
+        switch response.code {
+        case 200:
+            let payload = try decoder.decodePayload(
+                from: response,
+                as: ConversationRolesListResponseV0.self
+            )
+
+            return payload.conversation_roles.map {
+                $0.toParent()
+            }
+
+        default:
+            let failure = try decoder.decodePayload(
+                from: response,
+                as: FailureResponse.self
+            )
+
+            switch (failure.code, failure.label) {
+            case (400, ""):
+                // Changed: code was 404.
+                throw TeamsAPIError.teamNotFound
+
+            case (403, "no-team-member"):
+                throw TeamsAPIError.selfUserIsNotTeamMember
+
+            default:
+                throw failure
+            }
+        }
+    }
 
 }

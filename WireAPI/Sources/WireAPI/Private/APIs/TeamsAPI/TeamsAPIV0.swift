@@ -22,6 +22,7 @@ public enum TeamsAPIError: Error {
 
     case invalidTeamID
     case teamNotFound
+    case selfUserIsNotTeamMember
 
 }
 
@@ -38,7 +39,7 @@ class TeamsAPIV0: TeamsAPI {
         .v0
     }
 
-    func path(for teamID: Team.ID) -> String {
+    func basePath(for teamID: Team.ID) -> String {
         switch apiVersion {
         case .v0:
             "/teams/\(teamID.transportString())"
@@ -51,7 +52,7 @@ class TeamsAPIV0: TeamsAPI {
 
     func getTeam(for teamID: Team.ID) async throws -> Team {
         let request = HTTPRequest(
-            path: path(for: teamID),
+            path: basePath(for: teamID),
             method: .get
         )
 
@@ -85,6 +86,46 @@ class TeamsAPIV0: TeamsAPI {
         }
     }
 
+    // MARK: - Get team roles
+
+    func getTeamRoles(for teamID: Team.ID) async throws -> [ConversationRole] {
+        let request = HTTPRequest(
+            path: "\(basePath(for: teamID))/conversations/roles",
+            method: .get
+        )
+
+        let response = try await httpClient.executeRequest(request)
+
+        switch response.code {
+        case 200:
+            let payload = try decoder.decodePayload(
+                from: response,
+                as: ConversationRolesListResponseV0.self
+            )
+
+            return payload.conversation_roles.map {
+                $0.toParent()
+            }
+
+        default:
+            let failure = try decoder.decodePayload(
+                from: response,
+                as: FailureResponse.self
+            )
+
+            switch (failure.code, failure.label) {
+            case (403, "no-team-member"):
+                throw TeamsAPIError.selfUserIsNotTeamMember
+
+            case (404, ""):
+                throw TeamsAPIError.teamNotFound
+
+            default:
+                throw failure
+            }
+        }
+    }
+
 }
 
 struct TeamResponseV0: Decodable {
@@ -105,6 +146,65 @@ struct TeamResponseV0: Decodable {
             logoKey: icon_key,
             splashScreenID: nil
         )
+    }
+
+}
+
+struct ConversationRolesListResponseV0: Decodable {
+
+    let conversation_roles: [ConversationRoleResponseV0]
+
+}
+
+struct ConversationRoleResponseV0: Decodable {
+
+    let conversation_role: String?
+    let actions: [ConversationActionResponseV0]
+
+    func toParent() -> ConversationRole {
+        ConversationRole(
+            name: conversation_role ?? "unknown",
+            actions: Set(actions.map {
+                $0.toParent()
+            })
+        )
+    }
+
+}
+
+enum ConversationActionResponseV0: String, Decodable {
+
+    case add_conversation_member
+    case remove_conversation_member
+    case modify_conversation_name
+    case modify_conversation_message_timer
+    case modify_conversation_receipt_mode
+    case modify_conversation_access
+    case modify_other_conversation_member
+    case leave_conversation
+    case delete_conversation
+
+    func toParent() -> ConversationAction {
+        switch self {
+        case .add_conversation_member:
+            return .addConversationMember
+        case .remove_conversation_member:
+            return .removeConversationMember
+        case .modify_conversation_name:
+            return .modifyConversationName
+        case .modify_conversation_message_timer:
+            return .modifyConversationMessageTimer
+        case .modify_conversation_receipt_mode:
+            return .modifyConversationReceiptMode
+        case .modify_conversation_access:
+            return .modifyConversationAccess
+        case .modify_other_conversation_member:
+            return .modifyOtherConversationMember
+        case .leave_conversation:
+            return .leaveConversation
+        case .delete_conversation:
+            return .deleteConversation
+        }
     }
 
 }

@@ -28,7 +28,7 @@ class TeamsAPIV2: TeamsAPIV1 {
 
     override func getTeam(for teamID: Team.ID) async throws -> Team {
         let request = HTTPRequest(
-            path: path(for: teamID),
+            path: basePath(for: teamID),
             method: .get
         )
 

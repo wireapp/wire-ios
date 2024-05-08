@@ -102,6 +102,88 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
+    func testGetTeamRolesForID_Request_V0() async throws {
+        // Given
+        let teamID = Team.ID()
+        let httpClient = HTTPClientMock()
+        let sut = TeamsAPIV0(httpClient: httpClient)
+
+        // When
+        _ = try? await sut.getTeamRoles(for: teamID)
+
+        // Then
+        XCTAssertEqual(
+            httpClient.receivedRequest,
+            HTTPRequest(
+                path: "/teams/\(teamID.transportString())/conversations/roles",
+                method: .get
+            )
+        )
+    }
+
+    func testGetTeamRolesForID_SuccessResponse_200_V0() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(
+            code: 200,
+            jsonResponse: """
+            {
+                "conversation_roles": [
+                    {
+                        "conversation_role": "admin",
+                        "actions": [
+                            "add_conversation_member",
+                            "remove_conversation_member"
+                        ]
+                    }
+                ]
+            }
+            """
+        )
+
+        let sut = TeamsAPIV0(httpClient: httpClient)
+
+        // When
+        let result = try await sut.getTeamRoles(for: Team.ID())
+
+        // Then
+        XCTAssertEqual(
+            result,
+            [
+                ConversationRole(
+                    name: "admin",
+                    actions: [
+                        .addConversationMember,
+                        .removeConversationMember
+                    ]
+                )
+            ]
+        )
+    }
+
+    func testGetTeamRolesForID_FailureResponse_NoTeamMember_V0() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(code: 403, errorLabel: "no-team-member")
+        let sut = TeamsAPIV0(httpClient: httpClient)
+
+        // Then
+        await assertAPIError(TeamsAPIError.selfUserIsNotTeamMember) {
+            // When
+            _ = try await sut.getTeamRoles(for: Team.ID())
+        }
+    }
+
+    func testGetTeamRolesForID_FailureResponse_TeamNotFound_V0() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(code: 404, errorLabel: "")
+        let sut = TeamsAPIV0(httpClient: httpClient)
+
+        // Then
+        await assertAPIError(TeamsAPIError.teamNotFound) {
+            // When
+            _ = try await sut.getTeamRoles(for: Team.ID())
+        }
+    }
+
     // MARK: - V1
 
     func testGetTeamForID_Request_V1() async throws {
@@ -118,6 +200,25 @@ final class TeamsAPITests: XCTestCase {
             httpClient.receivedRequest,
             HTTPRequest(
                 path: "/v1/teams/\(teamID.transportString())",
+                method: .get
+            )
+        )
+    }
+
+    func testGetTeamRolesForID_Request_V1() async throws {
+        // Given
+        let teamID = Team.ID()
+        let httpClient = HTTPClientMock()
+        let sut = TeamsAPIV1(httpClient: httpClient)
+
+        // When
+        _ = try? await sut.getTeamRoles(for: teamID)
+
+        // Then
+        XCTAssertEqual(
+            httpClient.receivedRequest,
+            HTTPRequest(
+                path: "/v1/teams/\(teamID.transportString())/conversations/roles",
                 method: .get
             )
         )
@@ -181,6 +282,25 @@ final class TeamsAPITests: XCTestCase {
         )
     }
 
+    func testGetTeamRolesForID_Request_V2() async throws {
+        // Given
+        let teamID = Team.ID()
+        let httpClient = HTTPClientMock()
+        let sut = TeamsAPIV2(httpClient: httpClient)
+
+        // When
+        _ = try? await sut.getTeamRoles(for: teamID)
+
+        // Then
+        XCTAssertEqual(
+            httpClient.receivedRequest,
+            HTTPRequest(
+                path: "/v2/teams/\(teamID.transportString())/conversations/roles",
+                method: .get
+            )
+        )
+    }
+
     // MARK: - V3
 
     func testGetTeamForID_Request_V3() async throws {
@@ -197,6 +317,25 @@ final class TeamsAPITests: XCTestCase {
             httpClient.receivedRequest,
             HTTPRequest(
                 path: "/v3/teams/\(teamID.transportString())",
+                method: .get
+            )
+        )
+    }
+
+    func testGetTeamRolesForID_Request_V3() async throws {
+        // Given
+        let teamID = Team.ID()
+        let httpClient = HTTPClientMock()
+        let sut = TeamsAPIV3(httpClient: httpClient)
+
+        // When
+        _ = try? await sut.getTeamRoles(for: teamID)
+
+        // Then
+        XCTAssertEqual(
+            httpClient.receivedRequest,
+            HTTPRequest(
+                path: "/v3/teams/\(teamID.transportString())/conversations/roles",
                 method: .get
             )
         )
@@ -235,6 +374,37 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
+    func testGetTeamRolesForID_Request_V4() async throws {
+        // Given
+        let teamID = Team.ID()
+        let httpClient = HTTPClientMock()
+        let sut = TeamsAPIV4(httpClient: httpClient)
+
+        // When
+        _ = try? await sut.getTeamRoles(for: teamID)
+
+        // Then
+        XCTAssertEqual(
+            httpClient.receivedRequest,
+            HTTPRequest(
+                path: "/v4/teams/\(teamID.transportString())/conversations/roles",
+                method: .get
+            )
+        )
+    }
+
+    func testGetTeamRolesForID_FailureResponse_TeamNotFound_V4() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(code: 400, errorLabel: "")
+        let sut = TeamsAPIV4(httpClient: httpClient)
+
+        // Then
+        await assertAPIError(TeamsAPIError.teamNotFound) {
+            // When
+            _ = try await sut.getTeamRoles(for: Team.ID())
+        }
+    }
+
     // MARK: - V5
 
     func testGetTeamForID_Request_V5() async throws {
@@ -268,6 +438,25 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
+    func testGetTeamRolesForID_Request_V5() async throws {
+        // Given
+        let teamID = Team.ID()
+        let httpClient = HTTPClientMock()
+        let sut = TeamsAPIV5(httpClient: httpClient)
+
+        // When
+        _ = try? await sut.getTeamRoles(for: teamID)
+
+        // Then
+        XCTAssertEqual(
+            httpClient.receivedRequest,
+            HTTPRequest(
+                path: "/v5/teams/\(teamID.transportString())/conversations/roles",
+                method: .get
+            )
+        )
+    }
+
     // MARK: - V6
 
     func testGetTeamForID_Request_V6() async throws {
@@ -284,6 +473,25 @@ final class TeamsAPITests: XCTestCase {
             httpClient.receivedRequest,
             HTTPRequest(
                 path: "/v6/teams/\(teamID.transportString())",
+                method: .get
+            )
+        )
+    }
+
+    func testGetTeamRolesForID_Request_V6() async throws {
+        // Given
+        let teamID = Team.ID()
+        let httpClient = HTTPClientMock()
+        let sut = TeamsAPIV6(httpClient: httpClient)
+
+        // When
+        _ = try? await sut.getTeamRoles(for: teamID)
+
+        // Then
+        XCTAssertEqual(
+            httpClient.receivedRequest,
+            HTTPRequest(
+                path: "/v6/teams/\(teamID.transportString())/conversations/roles",
                 method: .get
             )
         )
