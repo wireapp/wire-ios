@@ -184,6 +184,118 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
+    func testGetMembers_Request_V0() async throws {
+        // Given
+        let teamID = Team.ID()
+        let httpClient = HTTPClientMock()
+        let sut = TeamsAPIV0(httpClient: httpClient)
+
+        // When
+        _ = try? await sut.getTeamMembers(
+            for: teamID,
+            maxResults: 2000
+        )
+
+        // Then
+        XCTAssertEqual(
+            httpClient.receivedRequest,
+            HTTPRequest(
+                path: "/teams/\(teamID.transportString())/members?maxResults=2000",
+                method: .get
+            )
+        )
+    }
+
+    func testGetMembers_SuccessResponse_200_V0() async throws {
+        // Given
+        let userID = UUID()
+        let creatorID = UUID()
+        let creationDate = Date()
+        let httpClient = try HTTPClientMock(
+            code: 200,
+            jsonResponse: """
+            {
+                "hasMore": true,
+                "members": [
+                    {
+                        "user": "\(userID.transportString())",
+                        "permissions": {
+                            "copy": 123,
+                            "self": 456
+                        },
+                        "created_by": "\(creatorID.transportString())",
+                        "created_at": "\(ISO8601DateFormatter.default.string(from: creationDate))",
+                        "legalhold_status": "pending"
+                    }
+                ]
+            }
+            """
+        )
+
+        let sut = TeamsAPIV0(httpClient: httpClient)
+
+        // When
+        let result = try await sut.getTeamMembers(
+            for: Team.ID(),
+            maxResults: 2000
+        )
+
+        // Then
+        XCTAssertEqual(result.count, 1)
+        let member = try XCTUnwrap(result.first)
+        XCTAssertEqual(member.userID, userID)
+        let actualCreationDate = try XCTUnwrap(member.creationDate)
+        XCTAssertEqual(actualCreationDate.timeIntervalSince1970, creationDate.timeIntervalSince1970, accuracy: 0.1)
+        XCTAssertEqual(member.legalholdStatus, .pending)
+        XCTAssertEqual(member.permissions?.copyPermissions, 123)
+        XCTAssertEqual(member.permissions?.selfPermissions, 456)
+    }
+
+    func testGetTeamMembers_FailureResponse_InvalidQueryParameter_V0() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(code: 400, errorLabel: "")
+        let sut = TeamsAPIV0(httpClient: httpClient)
+
+        // Then
+        await assertAPIError(TeamsAPIError.invalidQueryParmeter) {
+            // When
+            _ = try await sut.getTeamMembers(
+                for: Team.ID(),
+                maxResults: 2000
+            )
+        }
+    }
+
+    func testGetTeamMembers_FailureResponse_NoTeamMember_V0() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(code: 403, errorLabel: "no-team-member")
+        let sut = TeamsAPIV0(httpClient: httpClient)
+
+        // Then
+        await assertAPIError(TeamsAPIError.selfUserIsNotTeamMember) {
+            // When
+            _ = try await sut.getTeamMembers(
+                for: Team.ID(),
+                maxResults: 2000
+            )
+        }
+    }
+
+    func testGetTeamMembers_FailureResponse_TeamNotFound_V0() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(code: 404, errorLabel: "")
+        let sut = TeamsAPIV0(httpClient: httpClient)
+
+        // Then
+        await assertAPIError(TeamsAPIError.teamNotFound) {
+            // When
+            _ = try await sut.getTeamMembers(
+                for: Team.ID(),
+                maxResults: 2000
+            )
+        }
+    }
+
     // MARK: - V1
 
     func testGetTeamForID_Request_V1() async throws {
@@ -219,6 +331,28 @@ final class TeamsAPITests: XCTestCase {
             httpClient.receivedRequest,
             HTTPRequest(
                 path: "/v1/teams/\(teamID.transportString())/conversations/roles",
+                method: .get
+            )
+        )
+    }
+
+    func testGetMembers_Request_V1() async throws {
+        // Given
+        let teamID = Team.ID()
+        let httpClient = HTTPClientMock()
+        let sut = TeamsAPIV1(httpClient: httpClient)
+
+        // When
+        _ = try? await sut.getTeamMembers(
+            for: teamID,
+            maxResults: 2000
+        )
+
+        // Then
+        XCTAssertEqual(
+            httpClient.receivedRequest,
+            HTTPRequest(
+                path: "/v1/teams/\(teamID.transportString())/members?maxResults=2000",
                 method: .get
             )
         )
@@ -301,6 +435,28 @@ final class TeamsAPITests: XCTestCase {
         )
     }
 
+    func testGetMembers_Request_V2() async throws {
+        // Given
+        let teamID = Team.ID()
+        let httpClient = HTTPClientMock()
+        let sut = TeamsAPIV2(httpClient: httpClient)
+
+        // When
+        _ = try? await sut.getTeamMembers(
+            for: teamID,
+            maxResults: 2000
+        )
+
+        // Then
+        XCTAssertEqual(
+            httpClient.receivedRequest,
+            HTTPRequest(
+                path: "/v2/teams/\(teamID.transportString())/members?maxResults=2000",
+                method: .get
+            )
+        )
+    }
+
     // MARK: - V3
 
     func testGetTeamForID_Request_V3() async throws {
@@ -336,6 +492,28 @@ final class TeamsAPITests: XCTestCase {
             httpClient.receivedRequest,
             HTTPRequest(
                 path: "/v3/teams/\(teamID.transportString())/conversations/roles",
+                method: .get
+            )
+        )
+    }
+
+    func testGetMembers_Request_V3() async throws {
+        // Given
+        let teamID = Team.ID()
+        let httpClient = HTTPClientMock()
+        let sut = TeamsAPIV3(httpClient: httpClient)
+
+        // When
+        _ = try? await sut.getTeamMembers(
+            for: teamID,
+            maxResults: 2000
+        )
+
+        // Then
+        XCTAssertEqual(
+            httpClient.receivedRequest,
+            HTTPRequest(
+                path: "/v3/teams/\(teamID.transportString())/members?maxResults=2000",
                 method: .get
             )
         )
@@ -405,6 +583,43 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
+    func testGetMembers_Request_V4() async throws {
+        // Given
+        let teamID = Team.ID()
+        let httpClient = HTTPClientMock()
+        let sut = TeamsAPIV4(httpClient: httpClient)
+
+        // When
+        _ = try? await sut.getTeamMembers(
+            for: teamID,
+            maxResults: 2000
+        )
+
+        // Then
+        XCTAssertEqual(
+            httpClient.receivedRequest,
+            HTTPRequest(
+                path: "/v4/teams/\(teamID.transportString())/members?maxResults=2000",
+                method: .get
+            )
+        )
+    }
+
+    func testGetTeamMembers_FailureResponse_InvalidRequest_V4() async throws {
+        // Given
+        let httpClient = try HTTPClientMock(code: 400, errorLabel: "")
+        let sut = TeamsAPIV4(httpClient: httpClient)
+
+        // Then
+        await assertAPIError(TeamsAPIError.invalidRequest) {
+            // When
+            _ = try await sut.getTeamMembers(
+                for: Team.ID(),
+                maxResults: 2000
+            )
+        }
+    }
+
     // MARK: - V5
 
     func testGetTeamForID_Request_V5() async throws {
@@ -457,6 +672,28 @@ final class TeamsAPITests: XCTestCase {
         )
     }
 
+    func testGetMembers_Request_V5() async throws {
+        // Given
+        let teamID = Team.ID()
+        let httpClient = HTTPClientMock()
+        let sut = TeamsAPIV5(httpClient: httpClient)
+
+        // When
+        _ = try? await sut.getTeamMembers(
+            for: teamID,
+            maxResults: 2000
+        )
+
+        // Then
+        XCTAssertEqual(
+            httpClient.receivedRequest,
+            HTTPRequest(
+                path: "/v5/teams/\(teamID.transportString())/members?maxResults=2000",
+                method: .get
+            )
+        )
+    }
+
     // MARK: - V6
 
     func testGetTeamForID_Request_V6() async throws {
@@ -492,6 +729,28 @@ final class TeamsAPITests: XCTestCase {
             httpClient.receivedRequest,
             HTTPRequest(
                 path: "/v6/teams/\(teamID.transportString())/conversations/roles",
+                method: .get
+            )
+        )
+    }
+
+    func testGetMembers_Request_V6() async throws {
+        // Given
+        let teamID = Team.ID()
+        let httpClient = HTTPClientMock()
+        let sut = TeamsAPIV6(httpClient: httpClient)
+
+        // When
+        _ = try? await sut.getTeamMembers(
+            for: teamID,
+            maxResults: 2000
+        )
+
+        // Then
+        XCTAssertEqual(
+            httpClient.receivedRequest,
+            HTTPRequest(
+                path: "/v6/teams/\(teamID.transportString())/members?maxResults=2000",
                 method: .get
             )
         )

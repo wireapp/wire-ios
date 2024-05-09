@@ -18,14 +18,6 @@
 
 import Foundation
 
-public enum TeamsAPIError: Error {
-
-    case invalidTeamID
-    case teamNotFound
-    case selfUserIsNotTeamMember
-
-}
-
 class TeamsAPIV0: TeamsAPI {
 
     let httpClient: HTTPClient
@@ -126,6 +118,61 @@ class TeamsAPIV0: TeamsAPI {
         }
     }
 
+    // MARK: - Get team members
+
+    func getTeamMembers(
+        for teamID: Team.ID,
+        maxResults: UInt
+    ) async throws -> [TeamMember] {
+        var components = URLComponents(string: "\(basePath(for: teamID))/members")
+        components?.queryItems = [URLQueryItem(name: "maxResults", value: "2000")]
+        
+        guard let path = components?.url?.absoluteString else {
+            throw TeamsAPIError.failedToGenerateRequest
+        }
+
+        let request = HTTPRequest(
+            path: path,
+            method: .get
+        )
+
+        let response = try await httpClient.executeRequest(request)
+
+        switch response.code {
+        case 200:
+            let payload = try decoder.decodePayload(
+                from: response,
+                as: TeamMemberListResponseV0.self
+            )
+
+            // Although this is a paginated response, we intentionally only return
+            // the first page and ignore the rest. See WPB-6485.
+            return payload.members.map {
+                $0.toParent()
+            }
+
+        default:
+            let failure = try decoder.decodePayload(
+                from: response,
+                as: FailureResponse.self
+            )
+
+            switch (failure.code, failure.label) {
+            case (400, ""):
+                throw TeamsAPIError.invalidQueryParmeter
+
+            case (403, "no-team-member"):
+                throw TeamsAPIError.selfUserIsNotTeamMember
+
+            case (404, ""):
+                throw TeamsAPIError.teamNotFound
+
+            default:
+                throw failure
+            }
+        }
+    }
+
 }
 
 struct TeamResponseV0: Decodable {
@@ -204,6 +251,69 @@ enum ConversationActionResponseV0: String, Decodable {
             return .leaveConversation
         case .delete_conversation:
             return .deleteConversation
+        }
+    }
+
+}
+
+struct TeamMemberListResponseV0: Decodable {
+
+    let hasMore: Bool
+    let members: [TeamMemberResponseV0]
+
+}
+
+struct TeamMemberResponseV0: Decodable {
+
+    let user: UUID
+    let permissions: PermissionsResponseV0?
+    let created_by: UUID?
+    let created_at: Date?
+    let legalhold_status: LegalholdStatusResponseV0?
+
+    func toParent() -> TeamMember {
+        TeamMember(
+            userID: user,
+            creationDate: created_at,
+            creatorID: created_by,
+            legalholdStatus: legalhold_status?.toParent(),
+            permissions: permissions?.toParent()
+        )
+    }
+
+}
+
+struct PermissionsResponseV0: Decodable {
+
+    let copy: Int64
+    let `self`: Int64
+
+    func toParent() -> TeamMemberPermissions {
+        TeamMemberPermissions(
+            copyPermissions: copy,
+            selfPermissions: self.`self`
+        )
+    }
+
+}
+
+enum LegalholdStatusResponseV0: String, Decodable {
+
+    case enabled
+    case pending
+    case disabled
+    case no_consent
+
+    func toParent() -> LegalholdStatus {
+        switch self {
+        case .enabled:
+            return .enabled
+        case .pending:
+            return .pending
+        case .disabled:
+            return .disabled
+        case .no_consent:
+            return .noConsent
         }
     }
 

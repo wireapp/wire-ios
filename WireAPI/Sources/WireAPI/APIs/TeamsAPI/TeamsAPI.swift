@@ -36,5 +36,20 @@ public protocol TeamsAPI {
     /// - Returns: The conversation roles defined in the team.
 
     func getTeamRoles(for teamID: Team.ID) async throws -> [ConversationRole]
+    
+    /// Get members of a specific team.
+    ///
+    /// Note this may not return all members of the team.
+    ///
+    /// - Parameters:
+    ///   - teamID: The id of the team.
+    ///   - maxResults: The maximum number of members to retrieve.
+    ///
+    /// - Returns: A list of members.
+
+    func getTeamMembers(
+        for teamID: Team.ID,
+        maxResults: UInt
+    ) async throws -> [TeamMember]
 
 }

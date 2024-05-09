@@ -101,4 +101,54 @@ class TeamsAPIV5: TeamsAPIV4 {
         }
     }
 
+    // MARK: - Get team members
+
+    override func getTeamMembers(
+        for teamID: Team.ID,
+        maxResults: UInt
+    ) async throws -> [TeamMember] {
+        var components = URLComponents(string: "\(basePath(for: teamID))/members")
+        components?.queryItems = [URLQueryItem(name: "maxResults", value: "2000")]
+        
+        guard let path = components?.url?.absoluteString else {
+            throw TeamsAPIError.failedToGenerateRequest
+        }
+
+        let request = HTTPRequest(
+            path: path,
+            method: .get
+        )
+
+        let response = try await httpClient.executeRequest(request)
+
+        switch response.code {
+        case 200:
+            let payload = try decoder.decodePayload(
+                from: response,
+                as: TeamMemberListResponseV0.self
+            )
+
+            // Although this is a paginated response, we intentionally only return
+            // the first page and ignore the rest. See WPB-6485.
+            return payload.members.map {
+                $0.toParent()
+            }
+
+        default:
+            let failure = try decoder.decodePayload(
+                from: response,
+                as: FailureResponse.self
+            )
+
+            // Changed: 400 error was removed.
+            switch (failure.code, failure.label) {
+            case (403, "no-team-member"):
+                throw TeamsAPIError.selfUserIsNotTeamMember
+
+            default:
+                throw failure
+            }
+        }
+    }
+
 }
