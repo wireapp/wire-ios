@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireMockTransport
+import XCTest
 
 class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
@@ -74,7 +74,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         for response in [responseJSON, responsePROTO] {
             XCTAssertNotNil(response)
 
-            if let response = response {
+            if let response {
                 XCTAssertEqual(response.httpStatus, 412)
 
                 let expectedPayload = [
@@ -123,7 +123,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         for response in [responseJSON, responsePROTO] {
             XCTAssertNotNil(response)
 
-            if let response = response {
+            if let response {
                 XCTAssertEqual(response.httpStatus, 412)
 
                 let expectedPayload = [
@@ -173,7 +173,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         for response in [responseJSON, responsePROTO] {
             XCTAssertNotNil(response)
 
-            if let response = response {
+            if let response {
                 XCTAssertEqual(response.httpStatus, 201)
 
                 let expectedPayload = [
@@ -223,7 +223,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         for response in [responseJSON, responsePROTO] {
             XCTAssertNotNil(response)
 
-            if let response = response {
+            if let response {
                 XCTAssertEqual(response.httpStatus, 201)
 
                 let expectedPayload = [

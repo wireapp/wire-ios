@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 import Foundation
 import WireDataModel
 
-public extension AppLockController.LegacyConfig {
+extension AppLockController.LegacyConfig {
 
     private struct Container: Decodable {
 
@@ -27,7 +27,7 @@ public extension AppLockController.LegacyConfig {
 
     }
 
-    static func fromBundle() -> Self? {
+    public static func fromBundle() -> Self? {
         guard
             let url = Bundle.main.url(forResource: "session_manager", withExtension: "json"),
             let data = try? Data(contentsOf: url)

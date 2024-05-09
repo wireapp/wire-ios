@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ class VerticalColumnCollectionViewLayout: UICollectionViewLayout {
     }
 
     override func prepare() {
-        guard self.positioning == nil, let collectionView = collectionView, let delegate = self.delegate else {
+        guard self.positioning == nil, let collectionView, let delegate = self.delegate else {
             return
         }
 

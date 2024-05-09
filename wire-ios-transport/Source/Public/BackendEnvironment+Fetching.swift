@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,11 +25,11 @@ extension BackendEnvironment {
     }
 
     public static func fetchEnvironment(url: URL, onCompletion: @escaping (Result<BackendEnvironment, Error>) -> Void) {
-        URLSession.shared.dataTask(with: url) { (data, _, error) in
-            if let error = error {
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            if let error {
                 Logging.backendEnvironment.error("Error fetching configuration from \(url): \(error)")
                 onCompletion(.failure(error))
-            } else if let data = data {
+            } else if let data {
                 if let environment = BackendEnvironment(environmentType: .custom(url: url), data: data) {
                     Logging.backendEnvironment.info("Fetched custom configuration from \(url)")
                     onCompletion(.success(environment))

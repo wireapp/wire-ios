@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -102,7 +102,7 @@ import WireDataModel
     }
 
     private func setPersistedAttributes(_ attributes: [String: NSObject]?, for event: String) {
-        if let attributes = attributes {
+        if let attributes {
             eventAttributes[event] = attributes
         } else {
             eventAttributes.removeValue(forKey: event)

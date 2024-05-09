@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -70,13 +70,13 @@ final class ContactsDataSource: NSObject {
     // MARK: - Methods
 
     private func performSearch() {
-        guard let searchDirectory = searchDirectory else { return }
+        guard let searchDirectory else { return }
 
         let request = SearchRequest(query: searchQuery, searchOptions: [.contacts, .addressBook])
         let task = searchDirectory.perform(request)
 
-        task.addResultHandler { [weak self] (searchResult, _) in
-            guard let `self` = self else { return }
+        task.addResultHandler { [weak self] searchResult, _ in
+            guard let self else { return }
             self.ungroupedSearchResults = searchResult.addressBook
             self.delegate?.dataSource(self, didReceiveSearchResult: searchResult.addressBook)
         }
@@ -104,7 +104,7 @@ final class ContactsDataSource: NSObject {
         let numberOfSections = collation.sectionTitles.count
         let emptySections = Array(repeating: [UserType](), count: numberOfSections)
 
-        let unsortedSections = ungroupedSearchResults.reduce(into: emptySections) { (sections, user) in
+        let unsortedSections = ungroupedSearchResults.reduce(into: emptySections) { sections, user in
             let index = collation.section(for: user, collationStringSelector: nameSelector)
             sections[index].append(user)
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
-import WireSystem
 import WireCommonComponents
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "TextView")
 
@@ -45,7 +44,7 @@ class TextView: UITextView {
     var attributedPlaceholder: NSAttributedString? {
         didSet {
             let mutableCopy: NSMutableAttributedString
-            if let attributedPlaceholder = attributedPlaceholder {
+            if let attributedPlaceholder {
                 mutableCopy = NSMutableAttributedString(attributedString: attributedPlaceholder)
             } else {
                 mutableCopy = NSMutableAttributedString()

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 class KeychainManagerTests: XCTestCase {
 
@@ -38,16 +38,11 @@ class KeychainManagerTests: XCTestCase {
         // Given
         let numberOfBytes: UInt = 32
 
-        do {
-            // When I have generated a key
-            let key = try KeychainManager.generateKey(numberOfBytes: numberOfBytes)
+        // When I have generated a key
+        let key = try KeychainManager.generateKey(numberOfBytes: numberOfBytes)
 
-            // Then key should not be nil
-            XCTAssertNotNil(key, "Result must have some data bytes.")
-
-        } catch {
-            XCTFail("Failed to generate the key successfully.")
-        }
+        // Then key should not be nil
+        XCTAssertNotNil(key, "Result must have some data bytes.")
     }
 
     func testPublicPrivateKeyPairIsGeneratedSuccessfully() throws {
@@ -75,58 +70,45 @@ class KeychainManagerTests: XCTestCase {
     }
 
     func testKeychainItemsStoreSuccessfully() throws {
-        do {
-            // Given I have generated a key
-            let item = DatabaseEARKeyDescription(accountID: account.userIdentifier, label: "foo")
-            let key = try KeychainManager.generateKey()
-            XCTAssertNotNil(key, "Failed to generate the key.")
 
-            // When I store the key
-            try KeychainManager.storeItem(item, value: key)
+        // Given I have generated a key
+        let item = DatabaseEARKeyDescription(accountID: account.userIdentifier, label: "foo")
+        let key = try KeychainManager.generateKey()
+        XCTAssertNotNil(key, "Failed to generate the key.")
 
-            // Then when I fetch the key it's not nil
-            let fetchItem: Data = try KeychainManager.fetchItem(item)
-            XCTAssertNotNil(fetchItem, "Item should be fetch successfully.")
+        // When I store the key
+        try KeychainManager.storeItem(item, value: key)
 
-        } catch let error {
-            XCTFail("Failed to store item with error: \(error).")
-        }
+        // Then when I fetch the key it's not nil
+        let fetchItem: Data = try KeychainManager.fetchItem(item)
+        XCTAssertNotNil(fetchItem, "Item should be fetch successfully.")
     }
 
     func testKeychainItemsFetchedSuccessfully() throws {
-        do {
-            // Given I have generated a key and successfully stored it
-            let item = DatabaseEARKeyDescription(accountID: account.userIdentifier, label: "foo")
-            let key = try KeychainManager.generateKey()
-            try KeychainManager.storeItem(item, value: key)
 
-            // When I fetch the key
-            let fetchedItem: Data = try KeychainManager.fetchItem(item)
+        // Given I have generated a key and successfully stored it
+        let item = DatabaseEARKeyDescription(accountID: account.userIdentifier, label: "foo")
+        let key = try KeychainManager.generateKey()
+        try KeychainManager.storeItem(item, value: key)
 
-            // Then the key is not nil and equal to the one I stored.
-            XCTAssertNotNil(key, "Failed to generate the key.")
-            XCTAssertEqual(fetchedItem, key)
+        // When I fetch the key
+        let fetchedItem: Data = try KeychainManager.fetchItem(item)
 
-        } catch let error {
-            XCTFail("Failed to fetch the item with error: \(error).")
-        }
+        // Then the key is not nil and equal to the one I stored.
+        XCTAssertNotNil(key, "Failed to generate the key.")
+        XCTAssertEqual(fetchedItem, key)
     }
 
     func testKeychainItemsDeleteSuccessfully() throws {
         // Given I have generated a key and successfully stored it.
         let item = DatabaseEARKeyDescription(accountID: account.userIdentifier, label: "foo")
 
-        do {
-            let key = try KeychainManager.generateKey()
-            XCTAssertNotNil(key, "Failed to generate the key.")
-            try KeychainManager.storeItem(item, value: key)
+        let key = try KeychainManager.generateKey()
+        XCTAssertNotNil(key, "Failed to generate the key.")
+        try KeychainManager.storeItem(item, value: key)
 
-            // When I delete the key
-            try KeychainManager.deleteItem(item)
-
-        } catch let error {
-            XCTFail("Failed to Delete item with error: \(error).")
-        }
+        // When I delete the key
+        try KeychainManager.deleteItem(item)
 
         // Then fetching the key throws Error
         XCTAssertThrowsError(try KeychainManager.fetchItem(item) as Data, "Deleted item should not supposed to fetch again.")

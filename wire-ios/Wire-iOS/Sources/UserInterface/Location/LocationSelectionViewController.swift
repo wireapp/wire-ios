@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import MapKit
 import CoreLocation
+import MapKit
 import UIKit
+import WireDataModel
 
 protocol LocationSelectionViewControllerDelegate: AnyObject {
     func locationSelectionViewController(_ viewController: LocationSelectionViewController, didSelectLocationWithData locationData: LocationData)
@@ -42,6 +42,8 @@ final class LocationSelectionViewController: UIViewController {
     }()
 
     let locationButtonContainer = UIView()
+    var sendControllerHeightConstraint: NSLayoutConstraint?
+
     fileprivate var mapView = MKMapView()
     fileprivate let toolBar = ModalTopBar()
     fileprivate let locationManager = CLLocationManager()
@@ -105,6 +107,9 @@ final class LocationSelectionViewController: UIViewController {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
+        sendControllerHeightConstraint = sendController.heightAnchor.constraint(equalToConstant: 56 + view.safeAreaLayoutGuide.layoutFrame.size.height)
+        sendControllerHeightConstraint?.isActive = false
+
         NSLayoutConstraint.activate([
             mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -113,7 +118,6 @@ final class LocationSelectionViewController: UIViewController {
             sendController.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             sendController.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             sendController.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            sendController.heightAnchor.constraint(equalToConstant: 56 + UIScreen.safeArea.bottom),
             toolBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             toolBar.topAnchor.constraint(equalTo: view.topAnchor),
             toolBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -178,7 +182,7 @@ final class LocationSelectionViewController: UIViewController {
     fileprivate func formatAndUpdateAddress() {
         guard mapDidRender else { return }
         geocoder.reverseGeocodeLocation(mapView.centerCoordinate.location) { [weak self] placemarks, error in
-            guard nil == error, let placemark = placemarks?.first else { return }
+            guard error == nil, let placemark = placemarks?.first else { return }
             if let address = placemark.formattedAddress(false), !address.isEmpty {
                 self?.sendViewController.address = address
             } else {
@@ -189,6 +193,20 @@ final class LocationSelectionViewController: UIViewController {
 }
 
 extension LocationSelectionViewController: LocationSendViewControllerDelegate {
+
+    func locationSendViewController(_ viewController: LocationSendViewController, shouldChangeHeight isActive: Bool) {
+
+        sendControllerHeightConstraint?.isActive = isActive
+
+        if isActive {
+            sendControllerHeightConstraint?.constant = 56 + view.safeAreaLayoutGuide.layoutFrame.size.height
+        }
+
+        UIView.animate(withDuration: 0.3) {
+            self.view.layoutIfNeeded()
+        }
+    }
+
     func locationSendViewControllerSendButtonTapped(_ viewController: LocationSendViewController) {
         let locationData = mapView.locationData(name: viewController.address)
         delegate?.locationSelectionViewController(self, didSelectLocationWithData: locationData)

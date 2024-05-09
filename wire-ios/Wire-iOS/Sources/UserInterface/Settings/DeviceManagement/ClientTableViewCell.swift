@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,23 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import CoreLocation
 import Contacts
-import WireDataModel
+import CoreLocation
+import UIKit
 import WireCommonComponents
+import WireDataModel
 
 final class ClientTableViewCell: UITableViewCell {
 
     typealias LabelColors = SemanticColors.Label
 
     // MARK: - Properties
-    let nameLabel = DynamicFontLabel(style: .headline,
-                                     color: LabelColors.textDefault)
-    let mlsThumbprintLabel = DynamicFontLabel(style: .caption1,
-                                        color: LabelColors.textCellSubtitle)
-    let proteusIdLabel = DynamicFontLabel(style: .caption1,
-                                            color: LabelColors.textCellSubtitle)
+    let nameLabel = DynamicFontLabel(
+        style: .h3,
+        color: LabelColors.textDefault
+    )
+
+    let mlsThumbprintLabel = DynamicFontLabel(
+        style: .subline1,
+        color: LabelColors.textCellSubtitle
+    )
+
+    let proteusIdLabel = DynamicFontLabel(
+        style: .subline1,
+        color: LabelColors.textCellSubtitle
+    )
+
     let statusStackView = UIStackView()
 
     var viewModel: ClientTableViewCellModel? {
@@ -52,7 +61,7 @@ final class ClientTableViewCell: UITableViewCell {
 
     var wr_editable: Bool
 
-    private let verifiedImage = Asset.Images.verifiedShield.image.resizableImage(withCapInsets: .zero)
+    private let verifiedImage = UIImage(resource: .verifiedShield).resizableImage(withCapInsets: .zero)
     private var mlsInfoHeighConstraint: NSLayoutConstraint { mlsThumbprintLabel.heightAnchor.constraint(equalToConstant: 0)
     }
 

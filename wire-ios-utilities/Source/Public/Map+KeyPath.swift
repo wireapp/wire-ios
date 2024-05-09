@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,15 +41,5 @@ extension Sequence {
 
     public  func all(_ keyPath: KeyPath<Element, Bool>) -> Bool {
         return all { $0[keyPath: keyPath] }
-    }
-}
-
-extension Optional {
-    public func map<Value>(_ keyPath: KeyPath<Wrapped, Value>) -> Value? {
-        return map { $0[keyPath: keyPath] }
-    }
-
-    public func flatMap<Value>(_ keyPath: KeyPath<Wrapped, Value?>) -> Value? {
-        return flatMap { $0[keyPath: keyPath] }
     }
 }

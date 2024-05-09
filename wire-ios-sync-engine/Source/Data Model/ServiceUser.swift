@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -143,7 +143,7 @@ public extension ServiceUser {
 
         let request = serviceUserData.requestToFetchProvider(apiVersion: apiVersion)
 
-        request.add(ZMCompletionHandler(on: userSession.managedObjectContext, block: { (response) in
+        request.add(ZMCompletionHandler(on: userSession.managedObjectContext, block: { response in
 
             guard response.httpStatus == 200,
                   let responseDictionary = response.payload?.asDictionary(),
@@ -170,7 +170,7 @@ public extension ServiceUser {
 
         let request = serviceUserData.requestToFetchDetails(apiVersion: apiVersion)
 
-        request.add(ZMCompletionHandler(on: userSession.managedObjectContext, block: { (response) in
+        request.add(ZMCompletionHandler(on: userSession.managedObjectContext, block: { response in
 
             guard response.httpStatus == 200,
                   let responseDictionary = response.payload?.asDictionary(),
@@ -205,7 +205,7 @@ public extension ServiceUser {
             return
         }
 
-        guard let serviceUserData = serviceUserData else {
+        guard let serviceUserData else {
             completionHandler(.failure(AddBotError.general))
             return
         }
@@ -312,7 +312,7 @@ public extension ZMConversation {
 
         let request = serviceUserData.requestToAddService(to: self, apiVersion: apiVersion)
 
-        request.add(ZMCompletionHandler(on: contextProvider.viewContext, block: { (response) in
+        request.add(ZMCompletionHandler(on: contextProvider.viewContext, block: { response in
 
             guard response.httpStatus == 201,
                   let responseDictionary = response.payload?.asDictionary(),

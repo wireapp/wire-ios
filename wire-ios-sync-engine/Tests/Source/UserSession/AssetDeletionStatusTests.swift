@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,20 +17,21 @@
 //
 
 import WireDataModel
+
 @testable import WireSyncEngine
 
 // MARK: - Mocks
 
-@objc final class FakeGroupQueue: NSObject, ZMSGroupQueue {
+@objc
+final class FakeGroupQueue: NSObject, ZMSGroupQueue {
 
-    var dispatchGroup: ZMSDispatchGroup! {
-        return nil
+    var dispatchGroup: ZMSDispatchGroup? {
+        nil
     }
 
     func performGroupedBlock(_ block: @escaping () -> Void) {
         block()
     }
-
 }
 
 final class AssetDeletionStatusTests: MessagingTest {

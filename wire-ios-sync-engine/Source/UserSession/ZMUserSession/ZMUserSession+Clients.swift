@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -75,14 +75,14 @@ extension ZMUserSession {
                     let clients = clientObjectIDs.compactMap { self?.managedObjectContext.object(with: $0) as? UserClient }
                     observer?.finishedFetching(clients)
                 case .fetchFailed:
-                    if let error = error {
+                    if let error {
                         observer?.failedToFetchClients(error)
                     }
                 case .deletionCompleted:
                     let remainingClients = clientObjectIDs.compactMap { self?.managedObjectContext.object(with: $0) as? UserClient }
                     observer?.finishedDeleting(remainingClients)
                 case .deletionFailed:
-                    if let error = error {
+                    if let error {
                         observer?.failedToDeleteClients(error)
                     }
                 }

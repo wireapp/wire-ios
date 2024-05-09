@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -115,8 +115,8 @@ final class StarscreamPushChannel: NSObject, PushChannelType {
         guard
             keepOpen,
             webSocket == nil,
-            let accessToken = accessToken,
-            let websocketURL = websocketURL
+            let accessToken,
+            let websocketURL
         else {
             return
         }
@@ -237,7 +237,10 @@ extension StarscreamPushChannel: WebSocketDelegate {
             Logging.pushChannel.debug("Received data")
             guard
                 let transportData = try? JSONSerialization.jsonObject(with: data, options: []) as? ZMTransportData
-            else { break }
+            else {
+                Logging.pushChannel.safePublic("Received binary data via push channel cannot be deserialized", level: .error)
+                break
+            }
 
             consumerQueue?.performGroupedBlock { [weak self] in
                 self?.consumer?.pushChannelDidReceive(transportData)

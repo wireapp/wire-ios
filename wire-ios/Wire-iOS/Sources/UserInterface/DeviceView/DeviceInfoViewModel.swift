@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ final class DeviceInfoViewModel: ObservableObject {
     let proteusID: String
     let gracePeriod: TimeInterval
     let isFromConversation: Bool
+    let mlsCiphersuite: MLSCipherSuite?
 
     let title: String
     var isSelfClient: Bool
@@ -97,6 +98,7 @@ final class DeviceInfoViewModel: ObservableObject {
         userClient: UserClientType,
         isSelfClient: Bool,
         gracePeriod: TimeInterval,
+        mlsCiphersuite: MLSCipherSuite?,
         isFromConversation: Bool,
         actionsHandler: DeviceDetailsViewActions,
         conversationClientDetailsActions: ConversationUserClientDetailsActions,
@@ -110,6 +112,7 @@ final class DeviceInfoViewModel: ObservableObject {
         self.userClient = userClient
         self.isSelfClient = isSelfClient
         self.gracePeriod = gracePeriod
+        self.mlsCiphersuite = mlsCiphersuite
         self.isFromConversation = isFromConversation
         self.conversationClientDetailsActions = conversationClientDetailsActions
         self.debugMenuActionsHandler = debugMenuActionsHandler

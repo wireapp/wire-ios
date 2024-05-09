@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Contacts
 import Foundation
 import MapKit
-import Contacts
 import WireDataModel
 
 extension Message {
@@ -27,7 +27,7 @@ extension Message {
     }
 }
 
-public extension LocationMessageData {
+extension LocationMessageData {
 
     func openInMaps(with span: MKCoordinateSpan) {
         let launchOptions = [
@@ -49,7 +49,7 @@ public extension LocationMessageData {
 
     var mapItem: MKMapItem? {
         var addressDictionary: [String: AnyObject]?
-        if let name = name {
+        if let name {
             addressDictionary = [CNPostalAddressStreetKey: name as AnyObject]
         }
 

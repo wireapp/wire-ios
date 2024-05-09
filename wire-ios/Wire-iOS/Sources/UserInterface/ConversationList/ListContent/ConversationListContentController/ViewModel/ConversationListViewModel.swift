@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import DifferenceKit
-import WireSystem
+import Foundation
 import WireDataModel
-import WireSyncEngine
 import WireRequestStrategy
+import WireSyncEngine
+import WireSystem
 
 final class ConversationListViewModel: NSObject {
 
@@ -355,7 +356,7 @@ final class ConversationListViewModel: NSObject {
     // TODO: Question: we may have multiple items in folders now. return array of IndexPaths?
     // swiftlint:enable todo_requires_jira_link
     func indexPath(for item: ConversationListItem?) -> IndexPath? {
-        guard let item = item else { return nil }
+        guard let item else { return nil }
 
         for (sectionIndex, section) in sections.enumerated() {
             if let index = section.index(for: item) {
@@ -514,7 +515,7 @@ final class ConversationListViewModel: NSObject {
         guard let conversationDirectory = userSession?.conversationDirectory else { return }
 
         var newValue: [Section]
-        if let kind = kind,
+        if let kind,
             let sectionNumber = self.sectionNumber(for: kind) {
             newValue = sections
             let newList = ConversationListViewModel.newList(for: kind, conversationDirectory: conversationDirectory)
@@ -538,13 +539,13 @@ final class ConversationListViewModel: NSObject {
             delegate?.reload(using: changeset, interrupt: { _ in
                 return false
             }, setData: { data in
-                if let data = data {
+                if let data {
                     self.sections = data
                 }
             })
         }
 
-        if let kind = kind,
+        if let kind,
            let sectionNumber = sectionNumber(for: kind) {
             delegate?.listViewModel(self, didUpdateSection: sectionNumber)
         } else {
@@ -556,7 +557,7 @@ final class ConversationListViewModel: NSObject {
 
     @discardableResult
     func select(itemToSelect: ConversationListItem?) -> Bool {
-        guard let itemToSelect = itemToSelect else {
+        guard let itemToSelect else {
             internalSelect(itemToSelect: nil)
             return false
         }
@@ -579,7 +580,7 @@ final class ConversationListViewModel: NSObject {
     private func internalSelect(itemToSelect: ConversationListItem?) {
         selectedItem = itemToSelect
 
-        if let itemToSelect = itemToSelect {
+        if let itemToSelect {
             delegate?.listViewModel(self, didSelectItem: itemToSelect)
         }
     }
@@ -635,7 +636,7 @@ final class ConversationListViewModel: NSObject {
             delegate?.reload(using: changeset, interrupt: { _ in
                 return false
             }, setData: { data in
-                if let data = data {
+                if let data {
                     self.sections = data
                 }
             })
@@ -697,7 +698,7 @@ final class ConversationListViewModel: NSObject {
     }
 
     static var persistentURL: URL? {
-        guard let persistentDirectory = persistentDirectory else { return nil }
+        guard let persistentDirectory else { return nil }
 
         return URL.directoryURL(persistentDirectory)?.appendingPathComponent(ConversationListViewModel.persistentFilename)
     }

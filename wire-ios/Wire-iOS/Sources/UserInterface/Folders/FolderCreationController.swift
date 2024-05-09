@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireSyncEngine
 
@@ -50,7 +49,7 @@ final class FolderCreationController: UIViewController {
 
     weak var delegate: FolderCreationControllerDelegate?
 
-    public init(conversation: ZMConversation, directory: ConversationDirectoryType) {
+    init(conversation: ZMConversation, directory: ConversationDirectoryType) {
         self.conversation = conversation
         self.conversationDirectory = directory
         super.init(nibName: nil, bundle: nil)
@@ -61,7 +60,7 @@ final class FolderCreationController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = SemanticColors.View.backgroundDefault
@@ -75,7 +74,7 @@ final class FolderCreationController: UIViewController {
         }
     }
 
-    override public func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         nameSection.becomeFirstResponder()
     }

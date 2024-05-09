@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ import UserNotifications
         Logging.push.safePublic("Scheduling local notification with id=\(note.id)")
 
         notificationCenter.add(note.request, withCompletionHandler: { error in
-            if let error = error {
+            if let error {
                 Logging.push.safePublic("Error scheduling local notification")
                 Logging.push.error("Scheduling Error: \(error)")
             } else {
@@ -116,8 +116,8 @@ extension LocalNotificationDispatcher: ZMEventConsumer {
             let note = ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: self.syncMOC)
 
             note?.increaseEstimatedUnreadCount(on: conversation)
-            note.apply(eventNotifications.addObject)
-            note.apply(scheduleLocalNotification)
+            note.map(eventNotifications.addObject)
+            note.map(scheduleLocalNotification)
         }
     }
 }
@@ -133,7 +133,7 @@ extension LocalNotificationDispatcher {
         guard notify.contains(.notification) else { return }
 
         let note = ZMLocalNotification(availability: selfUser.availability, managedObjectContext: syncMOC)
-        note.apply(scheduleLocalNotification)
+        note.map(scheduleLocalNotification)
         notify.remove(.notification)
         selfUser.needsToNotifyAvailabilityBehaviourChange = notify
         syncMOC.enqueueDelayedSave()
@@ -151,15 +151,15 @@ extension LocalNotificationDispatcher: PushMessageHandler {
             return
         }
         let note = ZMLocalNotification(expiredMessage: message, moc: syncMOC)
-        note.apply(scheduleLocalNotification)
-        note.apply(failedMessageNotifications.addObject)
+        note.map(scheduleLocalNotification)
+        note.map(failedMessageNotifications.addObject)
     }
 
     /// Informs the user that a message in a conversation failed to send
     public func didFailToSendMessage(in conversation: ZMConversation) {
         let note = ZMLocalNotification(expiredMessageIn: conversation, moc: syncMOC)
-        note.apply(scheduleLocalNotification)
-        note.apply(failedMessageNotifications.addObject)
+        note.map(scheduleLocalNotification)
+        note.map(failedMessageNotifications.addObject)
     }
 }
 
@@ -196,7 +196,7 @@ extension LocalNotificationDispatcher {
             idToDelete = UUID(uuidString: hidden)
         }
 
-        if let idToDelete = idToDelete {
+        if let idToDelete {
             eventNotifications.cancelCurrentNotifications(messageNonce: idToDelete)
         }
     }

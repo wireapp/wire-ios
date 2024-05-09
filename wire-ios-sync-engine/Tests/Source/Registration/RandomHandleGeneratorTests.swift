@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import WireSyncEngine
+import XCTest
 
 final class RandomHandleGeneratorTests: XCTestCase {
 
@@ -121,7 +121,7 @@ extension NSRegularExpression {
 
     /// Check if the string has a match for this regex
     fileprivate func matches(_ string: String?) -> Bool {
-        guard let string = string else {
+        guard let string else {
             return false
         }
 

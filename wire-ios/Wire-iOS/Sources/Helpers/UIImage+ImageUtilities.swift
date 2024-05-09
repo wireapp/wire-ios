@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,22 +32,6 @@ extension UIImage {
         UIGraphicsEndImageContext()
 
         return scaledImage
-    }
-
-    func desaturatedImage(with context: CIContext, saturation: Double = 0) -> UIImage? {
-        guard let filter = CIFilter(name: "CIColorControls"),
-            let cg = cgImage
-            else { return nil }
-
-        let i: CIImage = CIImage(cgImage: cg)
-
-        filter.setValue(i, forKey: kCIInputImageKey)
-        filter.setValue(saturation, forKey: "InputSaturation")
-
-        guard let result = filter.outputImage,
-            let cgImage: CGImage = context.createCGImage(result, from: result.extent) else { return nil }
-
-        return UIImage(cgImage: cgImage, scale: scale, orientation: imageOrientation)
     }
 
     func with(insets: UIEdgeInsets, backgroundColor: UIColor? = nil) -> UIImage? {

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import FLAnimatedImage
 import Foundation
 import MobileCoreServices
-import FLAnimatedImage
 import UniformTypeIdentifiers
 
 extension UIPasteboard {
@@ -53,7 +53,7 @@ extension UIPasteboard {
     }
 
     func setMediaAsset(_ image: MediaAsset?) {
-        guard let image = image,
+        guard let image,
               let data = image.imageData else { return }
 
         UIPasteboard.general.setData(data, forPasteboardType: pasteboardType(forMediaAsset: image))

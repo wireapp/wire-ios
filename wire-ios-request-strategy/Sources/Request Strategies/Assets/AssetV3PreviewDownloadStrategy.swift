@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,9 +32,9 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
 
         let filter = NSPredicate { object, _ in
-            guard let message = object as? ZMAssetClientMessage, nil != message.fileMessageData else { return false }
+            guard let message = object as? ZMAssetClientMessage, message.fileMessageData != nil else { return false }
             guard message.version >= 3, message.visibleInConversation != nil else { return false }
-            guard nil != message.underlyingMessage?.previewAssetId else { return false }
+            guard message.underlyingMessage?.previewAssetId != nil else { return false }
             return !message.hasDownloadedPreview
         }
 
@@ -59,7 +59,7 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 
     func didRequestToDownloadImage(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             guard let object = try? self.managedObjectContext.existingObject(with: objectID) else { return }
             guard let message = object as? ZMAssetClientMessage else { return }
             self.downstreamSync.whiteListObject(message)

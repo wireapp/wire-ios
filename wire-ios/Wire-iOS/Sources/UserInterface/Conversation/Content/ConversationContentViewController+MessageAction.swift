@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
@@ -50,7 +49,7 @@ extension ConversationContentViewController {
         canvasViewController.navigationItem.setupNavigationBarTitle(title: message.conversationLike?.displayName ?? "")
         canvasViewController.select(editMode: editMode, animated: false)
 
-        present(canvasViewController.wrapInNavigationController(setBackgroundColor: true), animated: true)
+        present(canvasViewController.wrapInNavigationController(), animated: true)
     }
 
     func messageAction(actionId: MessageAction,
@@ -143,9 +142,11 @@ extension ConversationContentViewController {
             userSession.perform {
                 message.react(reaction)
             }
-        case .visitLink(let path):
-            if let url = URL(string: path),
-                UIApplication.shared.canOpenURL(url) {
+        case .visitLink:
+            if let textMessageData = message.textMessageData,
+               let path = textMessageData.linkPreview?.originalURLString ?? textMessageData.messageText,
+               let url = URL(string: path),
+               UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url)
             }
         }

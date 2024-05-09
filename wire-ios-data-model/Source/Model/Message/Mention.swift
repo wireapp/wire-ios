@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -56,8 +56,8 @@ public class Mention: NSObject {
 
 extension Mention {
     static func mentions(from protos: [WireProtos.Mention]?, messageText: String?, moc: NSManagedObjectContext?) -> [Mention] {
-        guard let protos = protos,
-            let messageText = messageText,
+        guard let protos,
+            let messageText,
             let managedObjectContext = moc else { return [] }
 
         let mentions = Array(protos.compactMap({ Mention($0, context: managedObjectContext) }).prefix(500))

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireSyncEngine
 
 /// A utility class to help trigger downloading team metadata for the self user.
 ///
@@ -33,17 +34,22 @@ final class TeamMetadataRefresher {
     // MARK: - Private Properties
 
     private var dateOfLastRefresh: Date?
+    private let selfUserProvider: SelfUserProvider?
 
     private var isTimeoutExpired: Bool {
-        guard let dateOfLastRefresh = dateOfLastRefresh else { return true }
+        guard let dateOfLastRefresh else { return true }
         let intervalSinceLastRefresh = -dateOfLastRefresh.timeIntervalSinceNow
         return intervalSinceLastRefresh > refreshInterval
     }
 
     // MARK: - Init
 
-    init(refreshInterval: TimeInterval = .oneDay) {
+    init(
+        refreshInterval: TimeInterval = .oneDay,
+        selfUserProvider: SelfUserProvider?
+    ) {
         self.refreshInterval = refreshInterval
+        self.selfUserProvider = selfUserProvider
     }
 
     // MARK: - Methods
@@ -52,7 +58,7 @@ final class TeamMetadataRefresher {
 
     func triggerRefreshIfNeeded() {
         guard
-            let selfUser = SelfUser.provider?.providedSelfUser,
+            let selfUser = selfUserProvider?.providedSelfUser,
             selfUser.isTeamMember,
             isTimeoutExpired
         else {

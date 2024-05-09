@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,13 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireShareEngine
-import MobileCoreServices
 import AVFoundation
-import WireCommonComponents
 import ImageIO
+import MobileCoreServices
+import UIKit
+import WireCommonComponents
 import WireDataModel
+import WireShareEngine
 
 /// Error that can happen during the preparation or sending operation
 enum UnsentSendableError: Error {
@@ -106,7 +106,7 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             let fetchPreview = !ExtensionSettings.shared.disableLinkPreviews
             let message = self.conversation.appendTextMessage(self.text, fetchLinkPreview: fetchPreview)
             completion(message)
@@ -119,7 +119,7 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
 
         if let attachment = self.attachment, attachment.hasURL {
 
-            self.attachment?.fetchURL(completion: { (_) in
+            self.attachment?.fetchURL(completion: { _ in
                 completion()
             })
         } else {
@@ -156,7 +156,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
         // for us ('free' of charge) by using the image URL & ImageIO library.
         //
 
-        attachment.loadItem(forTypeIdentifier: UTType.image.identifier, options: options) { [weak self] (url, error) in
+        attachment.loadItem(forTypeIdentifier: UTType.image.identifier, options: options) { [weak self] url, error in
             error?.log(message: "Unable to load image from attachment")
 
             // Tries to load the content from local URL...
@@ -179,7 +179,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
 
                 // if it fails, it will attach the content directly
 
-                self?.attachment.loadItem(forTypeIdentifier: UTType.image.identifier, options: options) { [weak self] (image, error) in
+                self?.attachment.loadItem(forTypeIdentifier: UTType.image.identifier, options: options) { [weak self] image, error in
 
                     error?.log(message: "Unable to load image from attachment")
 
@@ -197,7 +197,7 @@ final class UnsentImageSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             completion(self.imageData.flatMap(self.conversation.appendImage))
         }
     }
@@ -231,13 +231,13 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
         if typeURL {
             attachment.fetchURL { [weak self] url in
-                guard let weakSelf = self else { return }
-                if (url != nil && !url!.isFileURL) || !weakSelf.typeData {
-                    weakSelf.error = .unsupportedAttachment
+                guard let self else { return }
+                if (url != nil && !url!.isFileURL) || !typeData {
+                    error = .unsupportedAttachment
                     return completion()
                 }
 
-                weakSelf.prepareAsFileData(name: url?.lastPathComponent, completion: completion)
+                prepareAsFileData(name: url?.lastPathComponent, completion: completion)
             }
         } else if typePass {
             prepareAsWalletPass(name: nil, completion: completion)
@@ -248,7 +248,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
     func send(completion: @escaping (Sendable?) -> Void) {
         sharingSession.enqueue { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             completion(self.metadata.flatMap(self.conversation.appendFile))
         }
     }
@@ -262,14 +262,14 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
     }
 
     private func prepareAsFile(name: String?, typeIdentifier: String, completion: @escaping () -> Void) {
-        attachment.loadItem(forTypeIdentifier: typeIdentifier, options: [:]) { [weak self] (data, error) in
+        attachment.loadItem(forTypeIdentifier: typeIdentifier, options: [:]) { [weak self] data, error in
             guard let UTIString = self?.attachment.registeredTypeIdentifiers.first, error == nil else {
                 error?.log(message: "Unable to load file from attachment")
                 return completion()
             }
 
-            let prepareColsure: SendingCompletion = { (url, error) in
-                guard let url = url, error == nil else {
+            let prepareColsure: SendingCompletion = { url, error in
+                guard let url, error == nil else {
                     error?.log(message: "Unable to prepare file attachment for sending")
                     return completion()
                 }
@@ -322,7 +322,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
                                       fileURL: URL,
                                       completion: @escaping SendingCompletion) {
         if UTType(UTI)?.conforms(to: UTType.movie) ?? false {
-            AVURLAsset.convertVideoToUploadFormat(at: fileURL) { (url, _, error) in
+            AVURLAsset.convertVideoToUploadFormat(at: fileURL) { url, _, error in
                 completion(url, error)
             }
         } else {
@@ -349,7 +349,7 @@ class UnsentFileSendable: UnsentSendableBase, UnsentSendable {
 
             do {
                 try FileManager.default.removeTmpIfNeededAndCopy(fileURL: dataURL, tmpURL: tempFileURL)
-            } catch let error {
+            } catch {
                 error.log(message: "Cannot copy video from \(dataURL) to \(tempFileURL): \(error)")
                 return
             }

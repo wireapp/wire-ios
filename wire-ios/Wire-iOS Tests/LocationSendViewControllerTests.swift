@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class LocationSendViewControllerTests: BaseSnapshotTestCase {
 
@@ -54,7 +54,7 @@ final class LocationSendViewControllerTests: BaseSnapshotTestCase {
 
     func testThatItRendersSendControllerCorrectly_LongAddress() {
         sut.address = "Hackescher Markt, Rosenthaler Straße 41, 10178 Berlin"
-        verifyInAllPhoneWidths(matching: sut.prepareForSnapshot())
+        verifyInAllPhoneWidths(matching: sut.prepareForSnapshot(heightConstant: 86))
     }
 
 }
@@ -62,8 +62,8 @@ final class LocationSendViewControllerTests: BaseSnapshotTestCase {
 // MARK: - Helpers
 
 private extension UIViewController {
-    func prepareForSnapshot() -> UIView {
-        view.heightAnchor.constraint(equalToConstant: 56).isActive = true
+    func prepareForSnapshot(heightConstant: CGFloat = 56) -> UIView {
+        view.heightAnchor.constraint(equalToConstant: heightConstant).isActive = true
         return view
     }
 }

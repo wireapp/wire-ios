@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -114,8 +114,8 @@ import Foundation
             return
         }
 
-        applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] (result) in
-            guard let `self` = self else { return }
+        applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] result in
+            guard let self else { return }
 
             self.messageReplyObserver = nil
             self.syncManagedObjectContext.performGroupedBlock {
@@ -176,7 +176,7 @@ import Foundation
 
         self.syncManagedObjectContext.performGroupedBlock { [weak self] in
             guard
-                let `self` = self,
+                let self,
                 let conversationInSyncContext = userInfo.conversation(in: self.syncManagedObjectContext)
                 else { return }
 
@@ -194,8 +194,8 @@ import Foundation
             return
         }
 
-        applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] (result) in
-            guard let `self` = self else { return }
+        applicationStatusDirectory.operationStatus.startBackgroundTask { [weak self] result in
+            guard let self else { return }
 
             self.likeMesssageObserver = nil
             if result == .failed {

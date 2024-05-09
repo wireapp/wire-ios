@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ private let previouslyReceivedEventIDsKey = "zm_previouslyReceivedEventIDsKey"
     public typealias ConsumeBlock = (([ZMUpdateEvent]) -> Void)
 
     static var BatchSize: Int {
-        if let testingBatchSize = testingBatchSize {
+        if let testingBatchSize {
             return testingBatchSize
         }
         return 500
@@ -115,7 +115,7 @@ extension EventDecoder {
         var decryptedEvents: [ZMUpdateEvent] = []
 
         syncMOC.zm_cryptKeyStore.encryptionContext.perform { [weak self] sessionsDirectory in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             decryptedEvents = events.compactMap { event -> ZMUpdateEvent? in
                 if event.type == .conversationOtrMessageAdd || event.type == .conversationOtrAssetAdd {

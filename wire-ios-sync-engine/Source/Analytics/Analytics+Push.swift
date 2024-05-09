@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import Foundation
 extension AnalyticsType {
 
     public func tagActionOnPushNotification(conversation: ZMConversation?, action: ConversationMediaAction) {
-        guard let conversation = conversation else { return }
+        guard let conversation else { return }
         var attributes = conversation.ephemeralTrackingAttributes
         attributes["action"] = action.attributeValue
         attributes["conversation_type"] = conversation.conversationType.analyticsType

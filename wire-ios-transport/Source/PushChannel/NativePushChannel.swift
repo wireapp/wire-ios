@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -118,8 +118,8 @@ final class NativePushChannel: NSObject, PushChannelType {
         guard
             keepOpen,
             websocketTask == nil,
-            let accessToken = accessToken,
-            let websocketURL = websocketURL
+            let accessToken,
+            let websocketURL
         else {
             return
         }
@@ -155,7 +155,7 @@ final class NativePushChannel: NSObject, PushChannelType {
     }
 
     func listen() {
-        websocketTask?.receive(completionHandler: { [weak self] (result) in
+        websocketTask?.receive(completionHandler: { [weak self] result in
             switch result {
             case.failure(let error):
                 Logging.pushChannel.debug("Failed to receive message \(error)")
@@ -225,7 +225,7 @@ extension NativePushChannel: ZMTimerClient {
     func timerDidFire(_ timer: ZMTimer!) {
         Logging.pushChannel.debug("Sending ping")
         websocketTask?.sendPing(pongReceiveHandler: { error in
-            if let error = error {
+            if let error {
                 Logging.pushChannel.debug("Failed to send ping: \(error)")
             }
         })

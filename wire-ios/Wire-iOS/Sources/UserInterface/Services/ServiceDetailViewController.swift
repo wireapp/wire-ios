@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngine
 import UIKit
+import WireSyncEngine
 
 extension ConversationLike where Self: SwiftConversationLike {
     var botCanBeAdded: Bool {
@@ -200,7 +200,7 @@ final class ServiceDetailViewController: UIViewController {
                 if let existingConversation = ZMConversation.existingConversation(in: userSession.managedObjectContext, service: serviceUser, team: userSession.selfUser.membership?.team) {
                     completion?(.success(conversation: existingConversation))
                 } else {
-                    serviceUser.createConversation(in: userSession, completionHandler: { (result) in
+                    serviceUser.createConversation(in: userSession, completionHandler: { result in
                         if case let .success(conversation) = result {
                             Analytics.shared.tag(ServiceAddedEvent(service: serviceUser, conversation: conversation, context: .startUI))
                         }

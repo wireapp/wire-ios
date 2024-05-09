@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
-import WireUtilities
-import WireTesting
+import Foundation
 import WireCryptobox
-import WireMockTransport
 import WireDataModel
 import WireDataModelSupport
-import Foundation
+import WireMockTransport
+@testable import WireSyncEngine
+import WireTesting
+import WireUtilities
 
 final class UserClientRequestFactoryTests: MessagingTest {
 
@@ -139,7 +139,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
 
         XCTAssertEqual(payload.type, DeviceType.permanent.rawValue)
 
-        if let credentials = credentials {
+        if let credentials {
             XCTAssertEqual(payload.password, credentials.password)
         }
 
@@ -272,7 +272,7 @@ final class UserClientRequestFactoryTests: MessagingTest {
             // when
             do {
                 _ = try sut.updateClientPreKeysRequest(client, prekeys: prekeys, apiVersion: .v0)
-            } catch let error {
+            } catch {
                 XCTAssertNotNil(error, "Should not return request if client does not have remoteIdentifier")
             }
         }

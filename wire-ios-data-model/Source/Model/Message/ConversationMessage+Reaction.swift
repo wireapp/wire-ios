@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -117,7 +117,7 @@ extension ZMMessage {
                 $0.unicodeValue == reaction
             })
 
-            if let existingReaction = existingReaction {
+            if let existingReaction {
                 existingReaction.mutableSetValue(forKey: ZMReactionUsersValueKey).add(user)
             } else if Reaction.validate(unicode: reaction) {
                 let newReaction = Reaction.insertReaction(

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import UIKit
 final class CollectionViewContainerCell: UICollectionViewCell {
     var collectionView: UICollectionView? {
         didSet {
-            guard let collectionView = collectionView else { return }
+            guard let collectionView else { return }
 
             contentView.addSubview(collectionView)
 

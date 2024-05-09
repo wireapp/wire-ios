@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ import Foundation
     @NSManaged public var identifier: String
     @NSManaged public var name: String
     @NSManaged public var handle: String?
-    @NSManaged public var accentID: Int
+    @NSManaged public var accentID: Int32
     @NSManaged public var provider: String
     @NSManaged public var summary: String?
     @NSManaged public var serviceDescription: String?

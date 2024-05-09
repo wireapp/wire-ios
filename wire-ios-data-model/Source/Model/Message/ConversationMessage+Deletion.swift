@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -67,8 +67,8 @@ extension ZMMessage {
     }
 
     @discardableResult @objc func deleteForEveryone() -> ZMClientMessage? {
-        guard !isZombieObject, let sender = sender, sender.isSelfUser || isEphemeral else { return nil }
-        guard let conversation = conversation, let messageNonce = nonce else { return nil}
+        guard !isZombieObject, let sender, sender.isSelfUser || isEphemeral else { return nil }
+        guard let conversation, let messageNonce = nonce else { return nil}
 
         do {
             let genericMessage = GenericMessage(content: MessageDelete(messageId: messageNonce))
@@ -91,7 +91,7 @@ extension ZMClientMessage {
     override var isEditableMessage: Bool {
         guard
             let genericMessage = underlyingMessage,
-            let sender = sender, sender.isSelfUser,
+            let sender, sender.isSelfUser,
             let content = genericMessage.content else {
                 return false
         }

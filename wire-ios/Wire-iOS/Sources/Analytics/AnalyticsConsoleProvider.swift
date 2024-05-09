@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSystem
 import WireDataModel
+import WireSystem
 
 private let tag = "<ANALYTICS>:"
 final class AnalyticsConsoleProvider: NSObject {
@@ -74,9 +74,9 @@ extension AnalyticsConsoleProvider: AnalyticsProvider {
 
         if !printableAttributes.isEmpty {
             var localAttributes = [String: String]()
-            printableAttributes.map({ (key, value) -> (String, String) in
+            printableAttributes.map({ key, value -> (String, String) in
                 return (key, (value as AnyObject).description!)
-            }).forEach({ (key, value) in
+            }).forEach({ key, value in
                 localAttributes[key] = value
             })
             loggingDict["attributes"] = localAttributes

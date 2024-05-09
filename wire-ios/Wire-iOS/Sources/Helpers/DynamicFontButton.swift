@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ class DynamicFontButton: StylableButton, DynamicTypeCapable {
 
     private let onRedrawFont: () -> UIFont?
 
-    init(style: UIFont.FontStyle = .body) {
+    init(style: WireTextStyle = .body1) {
         // Not needed when we use a font style.
         onRedrawFont = { return nil }
         super.init(frame: .zero)

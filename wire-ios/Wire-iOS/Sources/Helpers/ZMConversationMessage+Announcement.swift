@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ extension ZMConversationMessage {
     private func announcementText() -> String? {
         if isKnock {
             return ConversationAnnouncement.Ping.description(senderName)
-        } else if isText, let textMessageData = textMessageData {
+        } else if isText, let textMessageData {
             let messageText = NSAttributedString.format(message: textMessageData, isObfuscated: isObfuscated)
             return "\(ConversationAnnouncement.Text.description(senderName)), \(messageText.string)"
         } else if isImage {

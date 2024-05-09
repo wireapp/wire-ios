@@ -1,5 +1,5 @@
 name: C1 C3 Production
-
+# This workflow can be deleted when we're 100% sure we won't need a 3.111.X version
 on: workflow_dispatch
 
 permissions: 
@@ -10,10 +10,14 @@ jobs:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_1_prod
+      is_cloud_build: false
+      skip_security_tests: false
     secrets: inherit
 
   column_3_production:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_3_prod
+      is_cloud_build: false
+      skip_security_tests: false
     secrets: inherit

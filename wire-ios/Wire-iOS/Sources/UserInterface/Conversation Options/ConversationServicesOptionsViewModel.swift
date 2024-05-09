@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ final class ConversationServicesOptionsViewModel {
             }
 
             configuration.setAllowServices(allowServices) { [weak self] result in
-                guard let self = self else { return }
+                guard let self else { return }
                 item.cancel()
                 self.state.isLoading = false
 
@@ -105,7 +105,7 @@ final class ConversationServicesOptionsViewModel {
         if !allowServices && configuration.areServicePresent {
             // Make "remove services" warning only appear if services are present
             return delegate?.viewModel(self, sourceView: view, confirmRemovingServices: { [weak self] remove in
-                guard let `self` = self else { return }
+                guard let self else { return }
                 guard remove else { return self.updateRows() }
                 _setAllowServices()
             })

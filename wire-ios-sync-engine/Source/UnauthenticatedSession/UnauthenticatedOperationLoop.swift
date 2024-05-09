@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTransport
 import WireRequestStrategy
+import WireTransport
 
 private let log = ZMSLog(tag: "Network")
 
@@ -69,7 +69,7 @@ extension UnauthenticatedOperationLoop: RequestAvailableObserver {
 
     private var generator: ZMTransportRequestGenerator {
         return { [weak self] in
-            guard let `self` = self else { return nil }
+            guard let self else { return nil }
             guard let apiVersion = BackendInfo.apiVersion else { return nil }
             let request = (self.requestStrategies as NSArray).nextRequest(for: apiVersion)
             guard let queue = self.operationQueue else { return nil }

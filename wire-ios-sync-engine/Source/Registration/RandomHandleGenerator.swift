@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ struct RandomHandleGenerator {
 
         var possibleHandles = [String]()
 
-        if let normalized = normalized {
+        if let normalized {
             possibleHandles.append(normalized)
             possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength - 1).appendAllDigits())
             possibleHandles.append(contentsOf: normalized.truncated(at: maximumUserHandleLength - 2).appendRandomDigits(numberOfDigits: 2, variations: 4))

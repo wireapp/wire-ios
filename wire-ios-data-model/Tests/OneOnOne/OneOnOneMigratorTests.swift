@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireDataModel
 @testable import WireDataModelSupport
+import XCTest
 
 final class OneOnOneMigratorTests: XCTestCase {
 
@@ -97,6 +97,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         let sut = OneOnOneMigrator(mlsService: mockMLSService)
         let userID = QualifiedID.random()
         let mlsGroupID = MLSGroupID.random()
+        let ciphersuite = MLSCipherSuite.MLS_256_DHKEMP521_AES256GCM_SHA512_P521
 
         let (connection, proteusConversation, mlsConversation) = await createConversations(
             userID: userID,
@@ -112,7 +113,9 @@ final class OneOnOneMigratorTests: XCTestCase {
         )
 
         mockMLSService.conversationExistsGroupID_MockValue = false
-        mockMLSService.establishGroupForWith_MockMethod = { _, _ in }
+        mockMLSService.establishGroupForWith_MockMethod = { _, _ in
+            return ciphersuite
+        }
 
         // When
         await syncContext.perform {
@@ -133,6 +136,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         await syncContext.perform {
             XCTAssertEqual(mlsConversation.oneOnOneUser, connection.to)
+            XCTAssertEqual(mlsConversation.ciphersuite, ciphersuite)
             XCTAssertNil(proteusConversation.oneOnOneUser)
         }
         withExtendedLifetime(handler) {}
@@ -201,7 +205,9 @@ final class OneOnOneMigratorTests: XCTestCase {
         )
 
         mockMLSService.conversationExistsGroupID_MockValue = false
-        mockMLSService.establishGroupForWith_MockMethod = { _, _ in }
+        mockMLSService.establishGroupForWith_MockMethod = { _, _ in
+            return .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+        }
 
         // required to add be able to add images
         let cacheLocation = try XCTUnwrap(

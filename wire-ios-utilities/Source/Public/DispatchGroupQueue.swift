@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,15 +26,15 @@ public final class DispatchGroupQueue: NSObject, ZMSGroupQueue {
 
     public init(queue: DispatchQueue) {
         self.queue = queue
-        self.dispatchGroupContext = DispatchGroupContext(groups: [])
+        dispatchGroupContext = DispatchGroupContext(groups: [])
     }
 
-    public  var dispatchGroup: ZMSDispatchGroup! {
-        return self.dispatchGroupContext.groups.first
+    public var dispatchGroup: ZMSDispatchGroup? {
+        dispatchGroupContext.groups.first
     }
 
     public func add(_ group: ZMSDispatchGroup) {
-        self.dispatchGroupContext.add(group)
+        dispatchGroupContext.add(group)
     }
 
     public func performGroupedBlock(_ block: @escaping () -> Void) {
@@ -44,5 +44,4 @@ public final class DispatchGroupQueue: NSObject, ZMSGroupQueue {
             self.dispatchGroupContext.leave(groups)
         }
     }
-
 }

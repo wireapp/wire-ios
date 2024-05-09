@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class MentionTests: ZMBaseManagedObjectTest {
             $0.length = Int32(length)
             $0.userID = userId
 
-            if let domain = domain {
+            if let domain {
                 $0.qualifiedUserID = WireProtos.QualifiedUserId.with {
                     $0.id = userId
                     $0.domain = domain

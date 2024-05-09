@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ public struct CallEventContent: Codable {
     public init?(from data: Data, with decoder: JSONDecoder = .init()) {
         do {
             self = try decoder.decode(Self.self, from: data)
-        } catch let error {
+        } catch {
             print(error.localizedDescription)
             return nil
         }
@@ -137,7 +137,7 @@ public struct CallEventContent: Codable {
     }
 
     public var isVideo: Bool {
-        guard let properties = properties else {
+        guard let properties else {
             return false
         }
 

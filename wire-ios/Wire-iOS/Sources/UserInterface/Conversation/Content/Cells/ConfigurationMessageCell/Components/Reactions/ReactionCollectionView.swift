@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -72,8 +72,8 @@ final class ReactionCollectionView: UIView, UICollectionViewDataSource, UICollec
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.fitIn(view: self)
 
-        contentSizeObservation = collectionView.observe(\.contentSize, options: .new, changeHandler: { [weak self] (cell, _) in
-            guard let self = self else { return }
+        contentSizeObservation = collectionView.observe(\.contentSize, options: .new, changeHandler: { [weak self] cell, _ in
+            guard let self else { return }
             self.collectionViewHeightConstraint.constant = cell.contentSize.height
             self.collectionViewHeightConstraint.isActive = true
         })

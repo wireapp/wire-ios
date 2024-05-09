@@ -1,20 +1,20 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
 import WireSystem
@@ -69,7 +69,7 @@ extension ZMUser: ObjectInSnapshot {
         var originalChanges = changes.originalChanges
         let clientChanges = originalChanges.removeValue(forKey: UserClientChangeInfoKey) as? [NSObject: [String: Any]]
 
-        if let clientChanges = clientChanges {
+        if let clientChanges {
             var userClientChangeInfos = [UserClientChangeInfo]()
             clientChanges.forEach {
                 let changeInfo = UserClientChangeInfo(object: $0)
@@ -198,7 +198,7 @@ extension UserChangeInfo {
     /// hold on to the token and use it to unregister.
     ///
     private static func add(searchUserObserver observer: UserObserving, for user: ZMSearchUser?, in managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .SearchUserChange, managedObjectContext: managedObjectContext, object: user) { [weak observer] (note) in
+        return ManagedObjectObserverToken(name: .SearchUserChange, managedObjectContext: managedObjectContext, object: user) { [weak observer] note in
             guard
                 let `observer` = observer,
                 let changeInfo = note.changeInfo as? UserChangeInfo
@@ -222,7 +222,7 @@ extension UserChangeInfo {
     /// the token and use it to unregister.
     ///
     private static func add(userObserver observer: UserObserving, for user: ZMUser?, in managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .UserChange, managedObjectContext: managedObjectContext, object: user) { [weak observer] (note) in
+        return ManagedObjectObserverToken(name: .UserChange, managedObjectContext: managedObjectContext, object: user) { [weak observer] note in
             guard
                 let `observer` = observer,
                 let changeInfo = note.changeInfo as? UserChangeInfo

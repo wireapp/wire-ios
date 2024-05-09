@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ extension ZMLocalNotification {
         }
 
         init?(conversation: ZMConversation?) {
-            guard let conversation = conversation, let managedObjectContext = conversation.managedObjectContext else { return nil }
+            guard let conversation, let managedObjectContext = conversation.managedObjectContext else { return nil }
 
             self.conversation = conversation
             self.managedObjectContext = managedObjectContext

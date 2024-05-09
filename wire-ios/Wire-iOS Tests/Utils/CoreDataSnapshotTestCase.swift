@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         selfUser = ZMUser.insertNewObject(in: uiMOC)
         selfUser.remoteIdentifier = UUID()
         selfUser.name = "selfUser"
-        selfUser.accentColorValue = .vividRed
+        selfUser.accentColor = .red
         selfUser.emailAddress = "test@email.com"
         selfUser.phoneNumber = "+123456789"
 
@@ -90,7 +90,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         otherUser.remoteIdentifier = UUID()
         otherUser.name = "Bruno"
         otherUser.handle = "bruno"
-        otherUser.accentColorValue = .brightOrange
+        otherUser.accentColor = .amber
 
         otherUserConversation = ZMConversation.createOtherUserConversation(moc: uiMOC, otherUser: otherUser)
 
@@ -164,7 +164,7 @@ class CoreDataSnapshotTestCase: ZMSnapshotTestCase {
         serviceUser.remoteIdentifier = UUID()
         serviceUser.name = "ServiceUser"
         serviceUser.handle = serviceUser.name!.lowercased()
-        serviceUser.accentColorValue = .brightOrange
+        serviceUser.accentColor = .amber
         serviceUser.serviceIdentifier = UUID.create().transportString()
         serviceUser.providerIdentifier = UUID.create().transportString()
         uiMOC.saveOrRollback()

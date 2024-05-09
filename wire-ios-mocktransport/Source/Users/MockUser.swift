@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -193,10 +193,10 @@ extension MockUser {
 
     var selfUserData: [String: Any?] {
         var regularData = data
-        if let email = email {
+        if let email {
             regularData["email"] = email
         }
-        if let phone = phone {
+        if let phone {
             regularData["phone"] = phone
         }
         return regularData
@@ -245,7 +245,7 @@ extension MockUser {
                 payload["team"] = team.identifier
             }
 
-            if let domain = domain {
+            if let domain {
                 payload["qualified_id"] = [
                     "id": identifier,
                     "domain": domain

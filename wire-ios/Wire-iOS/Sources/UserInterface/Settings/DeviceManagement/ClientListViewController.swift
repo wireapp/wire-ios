@@ -1,24 +1,24 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import SwiftUI
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -193,8 +193,8 @@ final class ClientListViewController: UIViewController,
     }
 
     func openDetailsOfClient(_ client: UserClient) {
-        guard let userSession = userSession,
-              let contextProvider = contextProvider,
+        guard let userSession,
+              let contextProvider,
               let navigationController = self.navigationController
         else {
             assertionFailure("Unable to display Devices screen.UserSession and/or navigation instances are nil")
@@ -249,6 +249,7 @@ final class ClientListViewController: UIViewController,
             userClient: client,
             isSelfClient: client.isSelfClient(),
             gracePeriod: TimeInterval(userSession.e2eiFeature.config.verificationExpiration),
+            mlsCiphersuite: MLSCipherSuite(rawValue: userSession.mlsFeature.config.defaultCipherSuite.rawValue),
             isFromConversation: false,
             actionsHandler: deviceActionsHandler,
             conversationClientDetailsActions: deviceActionsHandler,
@@ -273,7 +274,7 @@ final class ClientListViewController: UIViewController,
     }
 
     private func createConstraints() {
-        guard let clientsTableView = clientsTableView else {
+        guard let clientsTableView else {
             return
         }
 
@@ -421,7 +422,7 @@ final class ClientListViewController: UIViewController,
 
             switch self.convertSection((indexPath as NSIndexPath).section) {
             case 0:
-                if let selfClient = selfClient {
+                if let selfClient {
                     cell.viewModel = .init(userClient: selfClient, shouldSetType: false)
                     cell.wr_editable = false
                 }
@@ -532,7 +533,7 @@ final class ClientListViewController: UIViewController,
         let mlsClients: [UserClient: MLSClientID] = Dictionary(
             uniqueKeysWithValues:
                 userClients
-                .filter { $0.mlsPublicKeys.ed25519 != nil }
+                .filter { !$0.mlsPublicKeys.allKeys.isEmpty }
                 .compactMap {
                     if let mlsClientId = MLSClientID(userClient: $0) {
                         ($0, mlsClientId)

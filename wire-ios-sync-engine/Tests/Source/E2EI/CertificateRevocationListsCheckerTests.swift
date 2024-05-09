@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import XCTest
+@testable import WireDataModelSupport
+@testable import WireRequestStrategySupport
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
-@testable import WireRequestStrategySupport
-@testable import WireDataModelSupport
+import XCTest
 
 class CertificateRevocationListsCheckerTests: XCTestCase {
     private var coreDataHelper: CoreDataStackHelper!
@@ -257,7 +257,7 @@ class CertificateRevocationListsCheckerTests: XCTestCase {
         }
 
         // Mock storing the expiration date
-        mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_MockMethod = { (_, _) in }
+        mockCRLExpirationDatesRepository.storeCRLExpirationDateFor_MockMethod = { _, _ in }
 
         // Mock updating the conversation verification status
         mockConversationVerificationStatusUpdater.updateAllStatuses_MockMethod = {}

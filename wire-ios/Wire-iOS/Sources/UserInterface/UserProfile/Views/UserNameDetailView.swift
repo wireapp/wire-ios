@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 
 private let smallLightFont = FontSpec(.small, .light)
 private let smallBoldFont = FontSpec(.small, .medium)
@@ -68,14 +68,14 @@ final class UserNameDetailViewModel: NSObject {
     }
 
     var secondSubtitle: NSAttributedString? {
-        guard nil != handleText else { return nil }
+        guard handleText != nil else { return nil }
         return correlationText
     }
 
     var firstAccessibilityIdentifier: String? {
-        if nil != handleText {
+        if handleText != nil {
             return "username"
-        } else if nil != correlationText {
+        } else if correlationText != nil {
             return "correlation"
         }
 
@@ -83,7 +83,7 @@ final class UserNameDetailViewModel: NSObject {
     }
 
     var secondAccessibilityIdentifier: String? {
-        guard nil != handleText && nil != correlationText else { return nil }
+        guard handleText != nil && correlationText != nil else { return nil }
         return "correlation"
     }
 
@@ -104,12 +104,12 @@ final class UserNameDetailViewModel: NSObject {
     }
 
     static func attributedSubtitle(for user: UserType?) -> NSAttributedString? {
-        guard let user = user, let handle = user.handleDisplayString(withDomain: user.isFederated) else { return nil }
+        guard let user, let handle = user.handleDisplayString(withDomain: user.isFederated) else { return nil }
         return handle && smallBoldFont.font! && SemanticColors.Label.textDefault
     }
 
     static func attributedCorrelationText(for user: UserType?, addressBookName: String?) -> NSAttributedString? {
-        guard let user = user else { return nil }
+        guard let user else { return nil }
         return formatter.correlationText(for: user, addressBookName: addressBookName)
     }
 }
@@ -174,7 +174,7 @@ final class UserNameDetailView: UIView, DynamicTypeCapable {
     }
 
     func redrawFont() {
-        guard let model = model else { return }
+        guard let model else { return }
         subtitleLabel.attributedText = model.firstSubtitle
         correlationLabel.attributedText = model.secondSubtitle
     }

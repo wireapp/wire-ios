@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,11 +17,12 @@
 //
 
 import Foundation
+
 @testable import WireSyncEngine
 
-class RegistrationStrategyTests: MessagingTest {
+final class RegistrationStrategyTests: MessagingTest {
     var registrationStatus: TestRegistrationStatus!
-    var sut: WireSyncEngine.RegistrationStrategy!
+    var sut: RegistrationStrategy!
     var userInfoParser: MockUserInfoParser!
     var team: UnregisteredTeam!
     var user: UnregisteredUser!
@@ -30,14 +31,15 @@ class RegistrationStrategyTests: MessagingTest {
         super.setUp()
         registrationStatus = TestRegistrationStatus()
         userInfoParser = MockUserInfoParser()
-        sut = WireSyncEngine.RegistrationStrategy(groupQueue: self.syncMOC, status: registrationStatus, userInfoParser: userInfoParser)
-        team = UnregisteredTeam(teamName: "Dream Team", email: "some@email.com", emailCode: "23", fullName: "M. Jordan", password: "qwerty", accentColor: .brightOrange)
+        sut = RegistrationStrategy(groupQueue: self.syncMOC, status: registrationStatus, userInfoParser: userInfoParser)
+        team = UnregisteredTeam(teamName: "Dream Team", email: "some@email.com", emailCode: "23", fullName: "M. Jordan", password: "qwerty", accentColor: .amber)
 
         user = UnregisteredUser()
         user.name = "M. Jordan"
-        user.accentColorValue = .brightOrange
+        user.accentColor = .amber
         user.verificationCode = "23"
-        user.credentials = .phone("+4912345678900")
+        user.unverifiedEmail = "some@email.com"
+        user.password = "Aqa123456!"
         user.acceptedTermsOfService = true
         user.marketingConsent = true
     }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ class APIVersionResolverTests: ZMTBaseTest {
     ) {
         transportSession.supportedAPIVersions = productionVersions.map(NSNumber.init(value:))
 
-        if let developmentVersions = developmentVersions {
+        if let developmentVersions {
             transportSession.developmentAPIVersions = developmentVersions.map(NSNumber.init(value:))
         }
 

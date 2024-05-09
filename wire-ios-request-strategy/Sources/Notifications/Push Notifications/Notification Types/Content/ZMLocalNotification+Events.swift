@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ private class EventNotificationBuilder: NotificationBuilder {
         // if there is a sender, it's not the selfUser
         if let sender = self.sender, sender.isSelfUser { return false }
 
-        if let conversation = conversation {
+        if let conversation {
             if conversation.mutedMessageTypesIncludingAvailability != .none {
                 return false
             }
@@ -303,7 +303,7 @@ private class NewMessageNotificationBuilder: EventNotificationBuilder {
     }
 
     override func shouldCreateNotification() -> Bool {
-        if let conversation = conversation,
+        if let conversation,
             let senderUUID = event.senderUUID,
             conversation.isMessageSilenced(message, senderID: senderUUID) {
             Logging.push.safePublic("Not creating local notification for message with nonce = \(event.messageNonce) because conversation is silenced")

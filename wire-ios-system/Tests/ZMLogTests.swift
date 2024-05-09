@@ -1,23 +1,23 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
-import XCTest
 @testable import WireSystem
+import XCTest
 
 class ZMLogTests: XCTestCase {
 
@@ -212,7 +212,7 @@ extension ZMLogTests {
         let message = "PANIC!"
 
         let expectation = self.expectation(description: "Log received")
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -236,7 +236,7 @@ extension ZMLogTests {
         let level = ZMLogLevel_t.info
         let message = "PANIC!"
 
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -260,7 +260,7 @@ extension ZMLogTests {
         let message = "PANIC!"
 
         let expectation = self.expectation(description: "Log received")
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -284,7 +284,7 @@ extension ZMLogTests {
         let level = ZMLogLevel_t.debug
         let message = "PANIC!"
 
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -309,7 +309,7 @@ extension ZMLogTests {
         let message = "PANIC!"
 
         let expectation = self.expectation(description: "Log received")
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -333,7 +333,7 @@ extension ZMLogTests {
         let tag = "Network"
         let message = "PANIC!"
 
-        let token = ZMSLog.addEntryHook { (_, _, _, _) in
+        let token = ZMSLog.addEntryHook { _, _, _, _ in
             XCTFail()
         }
         ZMSLog.removeLogHook(token: token)
@@ -349,7 +349,7 @@ extension ZMLogTests {
         let tag = "Network"
         let message = "PANIC!"
 
-        _ = ZMSLog.addEntryHook { (_, _, _, _) in
+        _ = ZMSLog.addEntryHook { _, _, _, _ in
             XCTFail()
         }
         ZMSLog.removeAllLogHooks()
@@ -369,13 +369,13 @@ extension ZMLogTests {
         let expectation1 = self.expectation(description: "Log received")
         let expectation2 = self.expectation(description: "Log received")
 
-        let token1 = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token1 = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
             expectation1.fulfill()
         }
-        let token2 = ZMSLog.addEntryHook { (_level, _tag, entry, _) in
+        let token2 = ZMSLog.addEntryHook { _level, _tag, entry, _ in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -689,7 +689,7 @@ extension ZMLogTests {
         }
 
         var lines: [String] = []
-        logContent.enumerateLines { (str, _) in
+        logContent.enumerateLines { str, _ in
             lines.append(str)
         }
 

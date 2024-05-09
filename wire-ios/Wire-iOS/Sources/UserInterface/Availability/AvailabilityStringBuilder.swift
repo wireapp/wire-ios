@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 
 enum AvailabilityStringBuilder {
 
@@ -68,7 +68,7 @@ enum AvailabilityStringBuilder {
             title += youSuffix
         }
 
-        guard let textColor = color, let iconColor = iconColor else { return nil }
+        guard let textColor = color, let iconColor else { return nil }
         let icon = AvailabilityStringBuilder.icon(for: availability, with: iconColor, and: fontSize)
         var attributedText = IconStringsBuilder.iconString(
             leadingIcons: [icon].compactMap(\.self),

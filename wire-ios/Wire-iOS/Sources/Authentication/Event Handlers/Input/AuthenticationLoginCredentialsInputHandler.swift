@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,10 +36,6 @@ final class AuthenticationLoginCredentialsInputHandler: AuthenticationEventHandl
             let request = AuthenticationLoginRequest.email(address: emailPassword.email, password: emailPassword.password)
 
             return [.startLoginFlow(request, proxyCredentials)]
-        } else if let phoneNumber = context as? PhoneNumber {
-            let request = AuthenticationLoginRequest.phoneNumber(phoneNumber.fullNumber)
-            // here phone input is not available with proxy credentials form
-            return [.startLoginFlow(request, nil)]
         } else {
             return nil
         }

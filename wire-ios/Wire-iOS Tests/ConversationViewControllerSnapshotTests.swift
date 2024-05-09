@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import SnapshotTesting
-import XCTest
 @testable import Wire
+import XCTest
 
 final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDataFixtureTestHelper {
 
@@ -27,6 +27,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     var serviceUser: ZMUser!
     var userSession: UserSessionMock!
     var coreDataFixture: CoreDataFixture!
+    private var imageTransformerMock: MockImageTransformer!
 
     override func setupCoreDataStack() {
         coreDataFixture = CoreDataFixture()
@@ -37,6 +38,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     override func setUp() {
         super.setUp()
 
+        imageTransformerMock = .init()
         mockConversation = createTeamGroupConversation()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
         userSession.mockConversationList = ZMConversationList(
@@ -66,6 +68,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         sut = nil
         serviceUser = nil
         coreDataFixture = nil
+        imageTransformerMock = nil
 
         super.tearDown()
     }
@@ -111,7 +114,7 @@ extension ConversationViewControllerSnapshotTests {
         teamMember.user = otherUser
         teamMember.team = team
         otherUser.membership?.setTeamRole(.partner)
-        UIColor.setAccentOverride(.strongLimeGreen)
+        UIColor.setAccentOverride(.green)
 
         // when
         sut.updateGuestsBarVisibility()
@@ -125,7 +128,7 @@ extension ConversationViewControllerSnapshotTests {
         mockConversation.teamRemoteIdentifier = team?.remoteIdentifier
         mockConversation.addParticipantAndUpdateConversationState(user: serviceUser)
 
-        UIColor.setAccentOverride(.strongLimeGreen)
+        UIColor.setAccentOverride(.green)
 
         // when
         sut.updateGuestsBarVisibility()
@@ -144,7 +147,7 @@ extension ConversationViewControllerSnapshotTests {
         mockConversation.teamRemoteIdentifier = team?.remoteIdentifier
         mockConversation.addParticipantAndUpdateConversationState(user: serviceUser)
 
-        UIColor.setAccentOverride(.strongLimeGreen)
+        UIColor.setAccentOverride(.green)
 
         // when
         sut.updateGuestsBarVisibility()

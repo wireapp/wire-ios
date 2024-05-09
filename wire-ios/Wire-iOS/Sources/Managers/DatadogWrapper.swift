@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -133,6 +133,14 @@ public final class DatadogWrapper {
             attributes: attributes
         )
     }
+
+    public func addTag(_ key: LogAttributesKey, value: String?) {
+        if let value {
+            logger?.addAttribute(forKey: key.rawValue, value: value)
+        } else {
+            logger?.removeAttribute(forKey: key.rawValue)
+        }
+    }
 }
 
 extension DatadogWrapper: RemoteLogger {
@@ -199,6 +207,7 @@ public final class DatadogWrapper {
     ) {}
 
     public func startMonitoring() {}
+    public func addTag(_ key: LogAttributesKey, value: String?) {}
 
     public var datadogUserId: String = "NONE"
 }

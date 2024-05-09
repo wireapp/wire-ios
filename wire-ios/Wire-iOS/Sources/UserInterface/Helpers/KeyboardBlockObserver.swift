@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -74,15 +74,14 @@ final class KeyboardBlockObserver: NSObject {
     }
 
     @objc private func keyboardWillShow(_ note: Notification) {
-        ChangeInfo(note, kind: .show).apply(changeBlock)
+        ChangeInfo(note, kind: .show).map(changeBlock)
     }
 
     @objc private func keyboardWillHide(_ note: Notification) {
-        ChangeInfo(note, kind: .hide).apply(changeBlock)
+        ChangeInfo(note, kind: .hide).map(changeBlock)
     }
 
     @objc private func keyboardWillChangeFrame(_ note: Notification) {
-        ChangeInfo(note, kind: .change).apply(changeBlock)
+        ChangeInfo(note, kind: .change).map(changeBlock)
     }
-
 }

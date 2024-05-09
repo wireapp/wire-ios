@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ extension ZMConversation {
         }
 
         request.add(ZMCompletionHandler(on: contextProvider.syncContext) { [weak contextProvider] response in
-            guard let contextProvider = contextProvider else { return completion(.failure(ConversationDeletionError.unknown)) }
+            guard let contextProvider else { return completion(.failure(ConversationDeletionError.unknown)) }
 
             if response.httpStatus == 200 {
 

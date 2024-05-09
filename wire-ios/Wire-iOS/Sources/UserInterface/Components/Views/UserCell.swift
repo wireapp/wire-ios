@@ -182,7 +182,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         accessoryIconView.contentMode = .center
         accessoryIconView.accessibilityIdentifier = nil
         accessoryIconView.isHidden = true
-        accessoryIconView.image = Asset.Images.rightChevron.image.withRenderingMode(.alwaysTemplate)
+        accessoryIconView.image = .init(resource: .rightChevron).withRenderingMode(.alwaysTemplate)
         accessoryIconView.tintColor = IconColors.foregroundDefault
 
         // titleLabel
@@ -396,7 +396,7 @@ extension UserCell {
         )
         userTypeIconView.set(style: style)
 
-        if let subtitle = subtitle, !subtitle.string.isEmpty, !hidesSubtitle {
+        if let subtitle, !subtitle.string.isEmpty, !hidesSubtitle {
             subtitleLabel.isHidden = false
             subtitleLabel.attributedText = subtitle
         } else {

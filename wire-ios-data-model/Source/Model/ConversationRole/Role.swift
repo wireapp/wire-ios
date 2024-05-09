@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@ public enum TeamOrConversation {
     /// Creates a team or a conversation
     static func fromTeamOrConversation(team: Team?,
                                        conversation: ZMConversation?) -> TeamOrConversation {
-        if let team = team {
+        if let team {
             return .team(team)
 
-        } else if let conversation = conversation {
+        } else if let conversation {
             return .conversation(conversation)
         }
         fatal("No team and no conversation")

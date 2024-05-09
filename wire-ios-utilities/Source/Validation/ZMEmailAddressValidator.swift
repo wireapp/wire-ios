@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -38,7 +38,7 @@ import UIKit
             }
         }
 
-        if let normalizedAddress = normalizedAddress, normalizedAddress != emailAddress {
+        if let normalizedAddress, normalizedAddress != emailAddress {
             emailAddress = normalizedAddress
             return true
         }
@@ -92,7 +92,7 @@ import UIKit
         _ = emailScanner.scanString("@")
         let domain: String? = emailScanner.scanUpToString("@")
 
-        guard let local = local, let domain = domain, !local.isEmpty, !domain.isEmpty else {
+        guard let local, let domain, !local.isEmpty, !domain.isEmpty else {
             try setInvalid()
             return false
         }

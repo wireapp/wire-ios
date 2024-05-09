@@ -486,26 +486,28 @@ struct ConversationEventPayloadProcessor {
             return nil
         }
 
-        var created = false
+        var isInitialFetch = false
         let conversation = await context.perform {
 
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
-                in: context,
-                created: &created
+                in: context
             )
+
+            isInitialFetch = conversation.isPendingInitialFetch
 
             conversation.conversationType = .group
             conversation.remoteIdentifier = conversationID
             conversation.isPendingMetadataRefresh = false
+            conversation.isPendingInitialFetch = false
             self.updateAttributes(from: payload, for: conversation, context: context)
             self.updateMetadata(from: payload, for: conversation, context: context)
             self.updateMembers(from: payload, for: conversation, context: context)
             self.updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
             self.updateConversationStatus(from: payload, for: conversation)
 
-            if created {
+            if isInitialFetch {
                 self.assignMessageProtocol(from: payload, for: conversation, in: context)
             } else {
                 self.updateMessageProtocol(from: payload, for: conversation, in: context)
@@ -519,10 +521,10 @@ struct ConversationEventPayloadProcessor {
         await updateMLSStatus(from: payload, for: conversation, context: context, source: source)
         await context.perform {
 
-            if created {
+            if isInitialFetch {
                 // we just got a new conversation, we display new conversation header
                 conversation.appendNewConversationSystemMessage(
-                    at: serverTimestamp,
+                    at: .distantPast,
                     users: conversation.localParticipants
                 )
 
@@ -564,13 +566,11 @@ struct ConversationEventPayloadProcessor {
             return nil
         }
 
-        var created = false
         let (conversation, mlsGroupID) = await context.perform { [self] in
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
                 domain: payload.qualifiedID?.domain,
-                in: context,
-                created: &created
+                in: context
             )
 
             conversation.conversationType = .`self`
@@ -580,6 +580,9 @@ struct ConversationEventPayloadProcessor {
             updateMembers(from: payload, for: conversation, context: context)
             updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
             updateMessageProtocol(from: payload, for: conversation, in: context)
+
+            conversation.isPendingInitialFetch = false
+            conversation.needsToBeUpdatedFromBackend = false
 
             return (conversation, conversation.mlsGroupID)
         }
@@ -615,7 +618,8 @@ struct ConversationEventPayloadProcessor {
         WireLogger.mls.debug("createOrJoinSelfConversation for \(groupID.safeForLoggingDescription); conv payload: \(String(describing: self))")
 
         if await context.perform({ conversation.epoch <= 0 }) {
-            await mlsService.createSelfGroup(for: groupID)
+            let ciphersuite = try await mlsService.createSelfGroup(for: groupID)
+            await context.perform { conversation.ciphersuite = ciphersuite }
         } else if await !mlsService.conversationExists(groupID: groupID) {
             try await mlsService.joinGroup(with: groupID)
         }
@@ -647,7 +651,9 @@ struct ConversationEventPayloadProcessor {
             updateMembers(from: payload, for: conversation, context: context)
             updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
             updateConversationStatus(from: payload, for: conversation)
+
             conversation.needsToBeUpdatedFromBackend = false
+            conversation.isPendingInitialFetch = false
 
             return conversation
         }
@@ -685,6 +691,7 @@ struct ConversationEventPayloadProcessor {
             linkOneOnOneUserIfNeeded(for: conversation)
 
             conversation.needsToBeUpdatedFromBackend = false
+            conversation.isPendingInitialFetch = false
 
             if let otherUser = conversation.localParticipantsExcludingSelf.first {
                 conversation.isPendingMetadataRefresh = otherUser.isPendingMetadataRefresh
@@ -713,6 +720,10 @@ struct ConversationEventPayloadProcessor {
             let mlsGroupID = MLSGroupID(base64Encoded: base64String)
         {
             conversation.mlsGroupID = mlsGroupID
+        }
+
+        if let ciphersuite = payload.cipherSuite, payload.epoch > 0 {
+            conversation.ciphersuite = MLSCipherSuite(rawValue: Int(ciphersuite))
         }
     }
 
@@ -909,7 +920,7 @@ struct ConversationEventPayloadProcessor {
         for conversation: ZMConversation?,
         from type: ZMConversationType
     ) -> ZMConversationType {
-        guard let conversation = conversation else {
+        guard let conversation else {
             return type
         }
 

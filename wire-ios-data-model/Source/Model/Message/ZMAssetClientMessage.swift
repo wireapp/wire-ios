@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ import Foundation
     }
 
     public override var hashOfContent: Data? {
-        guard let serverTimestamp = serverTimestamp else {
+        guard let serverTimestamp else {
             return nil
         }
 
@@ -472,7 +472,7 @@ struct CacheAsset: AssetType {
                 genericMessage.updateAsset(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)
             }
         case .image:
-            if !needsPreprocessing, let original = original {
+            if !needsPreprocessing, let original {
                 // Even if we don't do any preprocessing on an image we still need to copy it to .medium
                 cache.storeMediumImage(data: original, for: owner)
             }

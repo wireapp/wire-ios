@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
 //
 
 @testable import WireSyncEngine
+import XCTest
 
-class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
+final class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
 
     private typealias Typing = WireSyncEngine.Typing
 
@@ -51,7 +52,7 @@ class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
 
     // MARK: - Tests
 
-    func testThatItSendsTypingNotifications() {
+    func testThatItSendsTypingNotifications() throws {
         // Given
         XCTAssertTrue(login())
 
@@ -73,10 +74,11 @@ class IsTypingTests: IntegrationTest, ZMTypingChangeObserver {
 
         // Then
         XCTAssertEqual(notifications.count, 1)
-        let notification = notifications.first
-        XCTAssertNotNil(notification)
-        XCTAssertEqual(notification!.conversation, conversation)
-        XCTAssertEqual(notification!.typingUsers.count, 0)
+
+        let notification = try XCTUnwrap(notifications.first)
+        XCTAssertEqual(notification.conversation, conversation)
+        XCTAssertEqual(notification.typingUsers.count, 0)
+
         XCTAssertEqual(conversation.typingUsers.count, 0)
     }
 

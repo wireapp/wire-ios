@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -333,7 +333,7 @@ private class DebugCommandVariables: DebugCommandMixin {
             }
             let key = arguments[1]
             let value = arguments.count == 3 ? arguments[2] : nil
-            if let value = value {
+            if let value {
                 newState[key] = value
             } else {
                 newState.removeValue(forKey: key)

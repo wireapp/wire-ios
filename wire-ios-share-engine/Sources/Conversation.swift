@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -39,6 +39,8 @@ public protocol Conversation: SharingTarget {
     func add(conversationVerificationDegradedObserver: @escaping (ConversationDegradationInfo) -> Void) -> TearDownCapable
 
     /// Accept the privacy warning, and resend the messages that caused them if wanted.
-    func acknowledgePrivacyWarning(withResendIntent shouldResendMessages: Bool)
+    func acknowledgePrivacyWarningAndResendMessages()
+
+    func discardPendingMessagesAfterPrivacyChanges()
 
 }

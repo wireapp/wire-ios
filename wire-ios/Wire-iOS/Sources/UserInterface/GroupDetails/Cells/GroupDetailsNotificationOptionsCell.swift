@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireDataModel
 import WireCommonComponents
+import WireDataModel
 
 final class GroupDetailsNotificationOptionsCell: GroupDetailsDisclosureOptionsCell {
 
@@ -28,7 +28,7 @@ final class GroupDetailsNotificationOptionsCell: GroupDetailsDisclosureOptionsCe
         title = L10n.Localizable.GroupDetails.NotificationOptionsCell.title
         accessibilityHint = L10n.Accessibility.ConversationDetails.OptionButton.hint
 
-        icon = Asset.Images.notifications.image.withRenderingMode(.alwaysTemplate)
+        icon = .init(resource: .notifications).withRenderingMode(.alwaysTemplate)
         iconColor = SemanticColors.Icon.foregroundDefault
     }
 

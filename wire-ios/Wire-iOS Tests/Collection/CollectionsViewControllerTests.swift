@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 //
 
 import SnapshotTesting
-import XCTest
-import WireDataModel
 @testable import Wire
+import WireDataModel
+import XCTest
 
 // MARK: - CollectionsViewControllerTests
 
@@ -50,7 +50,7 @@ final class CollectionsViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
 
         userSession = UserSessionMock()
 

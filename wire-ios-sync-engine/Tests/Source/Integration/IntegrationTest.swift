@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,19 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireTesting
-import WireDataModel
-import WireTransport.Testing
 import avs
-
+import Foundation
+import WireDataModel
+import WireDataModelSupport
 @testable import WireSyncEngine
+@testable import WireSyncEngineSupport
+import WireTesting
+import WireTransport.Testing
 
 final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 
     let transportSession: TransportSessionType
 
-    init(application: ZMApplication, mediaManager: MediaManagerType, flowManager: FlowManagerType, transportSession: TransportSessionType, environment: BackendEnvironmentProvider, reachability: ReachabilityProvider & TearDownCapable) {
+    init(
+        application: ZMApplication,
+        mediaManager: MediaManagerType,
+        flowManager: FlowManagerType,
+        transportSession: TransportSessionType,
+        environment: BackendEnvironmentProvider,
+        reachability: ReachabilityProvider & TearDownCapable
+    ) {
         self.transportSession = transportSession
         super.init(
             appVersion: "0.0.0",
@@ -47,22 +55,47 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
     override func session(
         for account: Account,
         coreDataStack: CoreDataStack,
-        configuration: ZMUserSession.Configuration = .init(),
+        configuration: ZMUserSession.Configuration,
         sharedUserDefaults: UserDefaults
     ) -> ZMUserSession? {
-        return ZMUserSession(
-            userId: account.userIdentifier,
-            transportSession: transportSession,
-            mediaManager: mediaManager,
-            flowManager: flowManager,
+        let mockContextStorage = MockLAContextStorable()
+        mockContextStorage.clear_MockMethod = { }
+
+        let mockRecurringActionService = MockRecurringActionServiceInterface()
+        mockRecurringActionService.registerAction_MockMethod = { _ in }
+        mockRecurringActionService.performActionsIfNeeded_MockMethod = { }
+
+        var builder = ZMUserSessionBuilder()
+        builder.withAllDependencies(
             analytics: analytics,
-            application: application,
             appVersion: appVersion,
+            application: application,
+            cryptoboxMigrationManager: CryptoboxMigrationManager(),
             coreDataStack: coreDataStack,
             configuration: configuration,
-            cryptoboxMigrationManager: CryptoboxMigrationManager(),
-            sharedUserDefaults: sharedUserDefaults
+            contextStorage: mockContextStorage,
+            earService: nil,
+            flowManager: flowManager,
+            mediaManager: mediaManager,
+            mlsService: nil,
+            observeMLSGroupVerificationStatus: nil,
+            proteusToMLSMigrationCoordinator: nil,
+            recurringActionService: mockRecurringActionService,
+            sharedUserDefaults: sharedUserDefaults,
+            transportSession: transportSession,
+            userId: account.userIdentifier
         )
+
+        let userSession = builder.build()
+        userSession.setup(
+            eventProcessor: nil,
+            strategyDirectory: nil,
+            syncStrategy: nil,
+            operationLoop: nil,
+            configuration: configuration
+        )
+
+        return userSession
     }
 
 }
@@ -80,10 +113,13 @@ final class MockUnauthenticatedSessionFactory: UnauthenticatedSessionFactory {
 
     override func session(delegate: UnauthenticatedSessionDelegate,
                           authenticationStatusDelegate: ZMAuthenticationStatusDelegate) -> UnauthenticatedSession {
-        return UnauthenticatedSession(transportSession: transportSession,
-                                      reachability: reachability,
-                                      delegate: delegate,
-                                      authenticationStatusDelegate: authenticationStatusDelegate)
+        .init(
+            transportSession: transportSession,
+            reachability: reachability,
+            delegate: delegate,
+            authenticationStatusDelegate: authenticationStatusDelegate,
+            userPropertyValidator: UserPropertyValidator()
+        )
     }
 }
 
@@ -144,6 +180,8 @@ extension IntegrationTest {
 
     @objc
     func _tearDown() {
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
         PrekeyGenerator._test_overrideNumberOfKeys = nil
         destroyTimers()
         sharedSearchDirectory?.tearDown()
@@ -174,7 +212,6 @@ extension IntegrationTest {
         groupConversationWithServiceUser = nil
         application = nil
         notificationCenter = nil
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         deleteSharedContainerContent()
         sharedContainerDirectory = nil
@@ -228,7 +265,7 @@ extension IntegrationTest {
     @objc
     func createSessionManager() {
         guard
-            let application = application,
+            let application,
             let transportSession = mockTransportSession
         else {
             return XCTFail()
@@ -279,7 +316,7 @@ extension IntegrationTest {
     @objc
     func createSharedSearchDirectory() {
         guard sharedSearchDirectory == nil else { return }
-        guard let userSession = userSession else { XCTFail("Could not create shared SearchDirectory");  return }
+        guard let userSession else { XCTFail("Could not create shared SearchDirectory");  return }
         sharedSearchDirectory = SearchDirectory(userSession: userSession)
     }
 
@@ -326,7 +363,7 @@ extension IntegrationTest {
             user1.email = "user1@example.com"
             user1.phone = "6543"
             user1.domain = "local@domain.com"
-            user1.accentID = 3
+            user1.accentID = 5
             session.addProfilePicture(to: user1)
             session.addV3ProfilePicture(to: user1)
             self.user1 = user1
@@ -583,8 +620,8 @@ extension IntegrationTest {
         changesAfterInterruption: ((_ session: MockTransportSessionObjectCreation) -> Void)? = nil) {
 
         closePushChannelAndWaitUntilClosed()
-        changesBeforeInterruption.apply(mockTransportSession.performRemoteChanges)
-        mockTransportSession.performRemoteChanges { (session) in
+        changesBeforeInterruption.map(mockTransportSession.performRemoteChanges)
+        mockTransportSession.performRemoteChanges { session in
             session.clearNotifications()
 
             if let changes = changesAfterInterruption {

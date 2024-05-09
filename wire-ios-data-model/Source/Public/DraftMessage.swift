@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -99,7 +99,7 @@ private struct StorableQuote: Codable {
     /// Converts the storable mention into a regular `Mention` object.
     /// The passed in `context` is needed to fetch the user object.
     func quote(in context: NSManagedObjectContext, for conversation: ZMConversation) -> ZMMessage? {
-        guard let nonce = nonce else { return nil }
+        guard let nonce else { return nil }
         return ZMMessage.fetch(withNonce: nonce, for: conversation, in: context)
     }
 

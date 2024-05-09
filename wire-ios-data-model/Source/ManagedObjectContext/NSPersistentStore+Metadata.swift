@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ extension NSManagedObjectContext {
     /// Set a value in the metadata for the store. The value won't be persisted until the metadata is persisted
     fileprivate func setPersistentStoreMetadata(data: Any?, key: String) {
         let metadata = self.nonCommittedMetadata
-        if let data = data {
+        if let data {
             self.removeFromNonCommittedDeteledMetadataKeys(key: key)
             metadata.setObject(data, forKey: key as NSCopying)
         } else {

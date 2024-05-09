@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTesting
 @testable import WireSyncEngine
+import WireTesting
 
 class TeamDownloadRequestStrategyTests: MessagingTest {
 
@@ -346,7 +346,7 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
             context.saveOrRollback()
 
             // then
-            let result = team.members.contains(where: { (member) -> Bool in
+            let result = team.members.contains(where: { member -> Bool in
                 return member.user?.remoteIdentifier == userId
             })
 

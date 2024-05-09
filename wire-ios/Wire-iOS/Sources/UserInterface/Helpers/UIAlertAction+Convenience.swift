@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ extension UIAlertAction {
 
         setValue(CATextLayerAlignmentMode.left, forKey: "titleTextAlignment")
 
-        if let icon = icon {
+        if let icon {
             let image = UIImage.imageForIcon(icon, size: 24, color: tintColor)
             setValue(image.withRenderingMode(.alwaysOriginal), forKey: "image")
         }

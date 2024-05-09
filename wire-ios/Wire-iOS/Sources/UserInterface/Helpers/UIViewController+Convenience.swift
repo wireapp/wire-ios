@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ extension UIViewController {
     ///   - viewController: the view controller to add
     ///   - view: the viewController parameter's view will be added to this view
     func add(_ viewController: UIViewController?, to view: UIView) {
-        guard let viewController = viewController else { return }
+        guard let viewController else { return }
         viewController.willMove(toParent: self)
         addChild(viewController)
         view.addSubview(viewController.view)

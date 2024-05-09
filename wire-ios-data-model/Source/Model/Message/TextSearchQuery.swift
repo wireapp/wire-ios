@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -199,7 +199,7 @@ public class TextSearchQuery: NSObject {
         }
 
         syncMOC.performGroupedBlock { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             // We store the count of indexed and non-indexed messages in the conversation.
             // This will be used to ensure we only call the delegate with `hasMore = false` once.
@@ -235,7 +235,7 @@ public class TextSearchQuery: NSObject {
         guard indexedMessageCount > 0 else { return completion() }
 
         syncMOC.performGroupedBlock { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             let request = ZMClientMessage.descendingFetchRequest(with: self.predicateForIndexedMessagesQueryMatch)
 
@@ -265,7 +265,7 @@ public class TextSearchQuery: NSObject {
         guard !cancelled && notIndexedMessageCount > 0 else { return }
 
         syncMOC.performGroupedBlock { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             let request = ZMClientMessage.descendingFetchRequest(with: self.predicateForNotIndexedMessages)
             request?.fetchLimit = self.fetchConfiguration.notIndexedBatchSize
@@ -295,7 +295,7 @@ public class TextSearchQuery: NSObject {
     private func notifyDelegate(with messages: [ZMMessage], hasMore: Bool) {
         let objectIDs = messages.map { $0.objectID }
         uiMOC.performGroupedBlock { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             let uiMessages = objectIDs.compactMap {
                 (try? self.uiMOC.existingObject(with: $0)) as? ZMMessage
             }

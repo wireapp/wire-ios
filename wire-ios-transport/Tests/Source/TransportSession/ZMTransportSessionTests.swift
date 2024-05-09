@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTransport
 import WireTesting
+import WireTransport
 
 @objcMembers
 public final class FakeReachability: NSObject, ReachabilityProvider, TearDownCapable {
@@ -106,7 +106,7 @@ final class ZMTransportSessionTests_Initialization: ZMTBaseTest {
     }
 
     func check(identifier: String?, contains items: [String], file: StaticString = #file, line: UInt = #line) {
-        guard let identifier = identifier else { XCTFail("identifier should not be nil", file: file, line: line); return }
+        guard let identifier else { XCTFail("identifier should not be nil", file: file, line: line); return }
         for item in items {
             XCTAssert(identifier.contains(item), "[\(identifier)] should contain [\(item)]", file: file, line: line)
         }

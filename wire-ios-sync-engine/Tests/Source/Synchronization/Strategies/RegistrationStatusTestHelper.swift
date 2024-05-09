@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 //
 
 import Foundation
+
 @testable import WireSyncEngine
 
 class TestRegistrationStatus: WireSyncEngine.RegistrationStatusProtocol {
@@ -32,7 +33,7 @@ class TestRegistrationStatus: WireSyncEngine.RegistrationStatusProtocol {
         successCalled += 1
     }
 
-    var phase: RegistrationPhase = .none
+    var phase: RegistrationPhase? = .none
 }
 
 protocol RegistrationStatusStrategyTestHelper {

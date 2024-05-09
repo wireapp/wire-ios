@@ -16,15 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireDataModelSupport
-import WireRequestStrategySupport
 @testable import WireRequestStrategy
+import WireRequestStrategySupport
+import XCTest
 
 final class SelfSupportedProtocolsRequestStrategyTests: XCTestCase {
 
     // the api version is just required to build and not influence the tests
-    private let defaultAPIVersion: APIVersion = .v4
+    private let defaultAPIVersion: APIVersion = .v5
 
     private var coreDataStackHelper: CoreDataStackHelper!
     private var mockCoreDataStack: CoreDataStack!

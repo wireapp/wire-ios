@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ public extension FileManager {
     @objc func cachesURLForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL) -> URL {
         let url = sharedContainerURL.appendingPathComponent("Library", isDirectory: true)
                                     .appendingPathComponent("Caches", isDirectory: true)
-        if let accountIdentifier = accountIdentifier {
+        if let accountIdentifier {
             return url.appendingPathComponent("\(type(of: self).cachesFolderPrefix)-\(accountIdentifier.uuidString)", isDirectory: true)
         }
         return url

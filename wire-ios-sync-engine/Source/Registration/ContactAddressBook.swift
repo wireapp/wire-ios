@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import Contacts
+import Foundation
 
 private let zmLog = ZMSLog(tag: "ContactAddressBook")
 
@@ -63,7 +63,7 @@ extension ContactAddressBook: AddressBookAccessor {
         let request = CNContactFetchRequest(keysToFetch: ContactAddressBook.keysToFetch)
         request.sortOrder = .userDefault
         do {
-            try store.enumerateContacts(with: request) { (contact, stop) in
+            try store.enumerateContacts(with: request) { contact, stop in
                 let shouldContinue = block(contact)
                 stop.initialize(to: ObjCBool(!shouldContinue))
             }

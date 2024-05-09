@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import WireRequestStrategy
 import WireDataModelSupport
+@testable import WireRequestStrategy
+import XCTest
 
 final class PushSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<PushSupportedProtocolsAction, PushSupportedProtocolsActionHandler> {
 
@@ -45,11 +45,20 @@ final class PushSupportedProtocolsActionHandlerTests: ActionHandlerTestBase<Push
     }
 
     func testPushSupportedProtocolsRequestGeneration_APIV4() throws {
+        // given
+        // when
+        let request = handler.request(for: action, apiVersion: .v4)
+
+        // then
+        XCTAssertNil(request)
+    }
+
+    func testPushSupportedProtocolsRequestGeneration_APIV5() throws {
         try test_itGeneratesARequest(
             for: action,
-            expectedPath: "/v4/self/supported-protocols",
+            expectedPath: "/v5/self/supported-protocols",
             expectedMethod: .put,
-            apiVersion: .v4
+            apiVersion: .v5
         )
     }
 

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@ extension ZMConversation {
     /// Returns true if this conversation was created within the same team as the self user
     public var isTeamConversation: Bool {
         guard
-            let teamRemoteIdentifier = teamRemoteIdentifier,
-            let managedObjectContext = managedObjectContext
+            let teamRemoteIdentifier,
+            let managedObjectContext
         else { return false }
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)

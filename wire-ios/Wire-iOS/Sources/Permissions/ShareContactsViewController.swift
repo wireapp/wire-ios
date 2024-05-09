@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 
@@ -188,14 +187,14 @@ final class ShareContactsViewController: UIViewController {
 
     @objc
     private func shareContacts(_ sender: Any?) {
-        AddressBookHelper.sharedHelper.requestPermissions({ [weak self] success in
-            guard let weakSelf = self else { return }
+        AddressBookHelper.sharedHelper.requestPermissions { [weak self] success in
+            guard let self else { return }
             if success {
-                weakSelf.delegate?.shareDidFinish(weakSelf)
+                delegate?.shareDidFinish(self)
             } else {
-                weakSelf.displayContactsAccessDeniedMessage(animated: true)
+                displayContactsAccessDeniedMessage(animated: true)
             }
-        })
+        }
     }
 
     @objc
@@ -224,7 +223,7 @@ final class ShareContactsViewController: UIViewController {
 
 // MARK: - ShareContactsViewController Extension
 extension ShareContactsViewController: PermissionDeniedViewControllerDelegate {
-    public func continueWithoutPermission(_ viewController: PermissionDeniedViewController) {
+    func continueWithoutPermission(_ viewController: PermissionDeniedViewController) {
         delegate?.shareDidSkip(self)
     }
 }

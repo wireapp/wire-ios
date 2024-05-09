@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ extension ZMUserSession: AccessTokenRenewing {
         WireLogger.authentication.error("access token renewal failed: response status: \(response.errorInfo)")
 
         managedObjectContext.performGroupedBlock { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
             let selfUser = ZMUser.selfUser(in: self.managedObjectContext)
             let error = NSError.userSessionErrorWith(.accessTokenExpired, userInfo: selfUser.loginCredentials.dictionaryRepresentation)
             self.notifyAuthenticationInvalidated(error)

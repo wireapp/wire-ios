@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,6 +28,29 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
     typealias ConversationAction = WireSyncEngine.ConversationNotificationAction
     typealias CallAction = WireSyncEngine.CallNotificationAction
 
+    // The mock in this place is a workaround, because the test funcs call
+    // `func handle(...)` and this calls `sut.didFinishQuickSync()` and this calls `PushSupportedProtocolsAction`.
+    // A proper solution and mocking requires a further refactoring.
+    private var mockPushSupportedProtocolsActionHandler: MockActionHandler<PushSupportedProtocolsAction>!
+
+    // MARK: Setup
+
+    override func setUp() {
+        super.setUp()
+        mockPushSupportedProtocolsActionHandler = .init(
+            result: .success(()),
+            context: syncMOC.notificationContext
+        )
+    }
+
+    override func tearDown() {
+        mockPushSupportedProtocolsActionHandler = nil
+
+        super.tearDown()
+    }
+
+    // MARK: Tests
+
     func testThatItCallsShowConversationList_ForPushNotificationCategoryConversationWithoutConversation() {
         // when
         handle(conversationAction: nil, category: .conversation, userInfo: NotificationUserInfo())
@@ -51,21 +74,22 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         XCTAssertFalse(sender.isConnected)
     }
 
-    // TODO jacob this can only be tested in an integration test or with better mocks
-//    func testThatItCallsShowConversationListAndConnects_ForPushNotificationCategoryConnectWithAcceptAction() {
-//        // given
-//        let sender = ZMUser.insertNewObject(in: uiMOC)
-//        sender.remoteIdentifier = UUID()
-//
-//        let userInfo = userInfoWithConnectionRequest(from: sender)
-//
-//        // when
-//        handle(conversationAction: .connect, category: .connect, userInfo: userInfo)
-//
-//        // then
-//        XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.0, sut)
-//        XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.1.remoteIdentifier, userInfo.conversationID!)
-//    }
+    // swiftlint:disable:next todo_requires_jira_link
+    // TODO: jacob this can only be tested in an integration test or with better mocks
+    func skip_testThatItCallsShowConversationListAndConnects_ForPushNotificationCategoryConnectWithAcceptAction() {
+        // given
+        let sender = ZMUser.insertNewObject(in: uiMOC)
+        sender.remoteIdentifier = UUID()
+
+        let userInfo = userInfoWithConnectionRequest(from: sender)
+
+        // when
+        handle(conversationAction: .connect, category: .connect, userInfo: userInfo)
+
+        // then
+        XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.0, sut)
+        XCTAssertEqual(mockSessionManager.lastRequestToShowConversation?.1.remoteIdentifier, userInfo.conversationID!)
+    }
 
     func testThatItMutesAndDoesNotShowConversation_ForPushNotificationCategoryConversationWithMuteAction() {
         // given
@@ -229,11 +253,7 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         try await uiMOC.perform {
             var genericMessage = try XCTUnwrap(originalMessage.underlyingMessage)
             genericMessage.setExpectsReadConfirmation(true)
-            do {
-                try originalMessage.setUnderlyingMessage(genericMessage)
-            } catch {
-                XCTFail("Error in adding data: \(error)")
-            }
+            try originalMessage.setUnderlyingMessage(genericMessage)
         }
 
         // when
@@ -260,11 +280,7 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = true
         var genericMessage = originalMessage.underlyingMessage!
         genericMessage.setExpectsReadConfirmation(true)
-        do {
-            try originalMessage.setUnderlyingMessage(genericMessage)
-        } catch {
-            XCTFail("Error in adding data: \(error)")
-        }
+        try originalMessage.setUnderlyingMessage(genericMessage)
 
         // when
         handle(conversationAction: .like, category: .conversation, userInfo: userInfo)

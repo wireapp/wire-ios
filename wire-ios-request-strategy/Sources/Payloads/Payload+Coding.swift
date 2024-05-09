@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,7 +50,7 @@ extension JSONEncoder {
 
     static var defaultEncoder: JSONEncoder {
         let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .custom({ (date, encoder) in
+        encoder.dateEncodingStrategy = .custom({ date, encoder in
             var container = encoder.singleValueContainer()
             try container.encode(date.transportString())
         })
@@ -73,7 +74,7 @@ extension Decodable {
     init?(_ payloadData: Data, decoder: JSONDecoder = .defaultDecoder) {
         do {
             self = try decoder.decode(Self.self, from: payloadData)
-        } catch let error {
+        } catch {
             Logging.network.warn("Failed to decode \(Self.self) from payload: \(error)")
             return nil
         }
@@ -114,13 +115,13 @@ extension Encodable {
     ///   - encoder: JSONEncoder to use
 
     func payloadData(apiVersion: APIVersion? = nil, encoder: JSONEncoder = .defaultEncoder) -> Data? {
-        if let apiVersion = apiVersion {
+        if let apiVersion {
             encoder.setAPIVersion(apiVersion)
         }
 
         do {
             return try encoder.encode(self)
-        } catch let error {
+        } catch {
             Logging.network.warn("Failed to encode payload: \(error)")
             return nil
         }

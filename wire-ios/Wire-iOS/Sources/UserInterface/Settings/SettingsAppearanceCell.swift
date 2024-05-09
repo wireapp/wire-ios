@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 //
 
 import UIKit
-import WireCommonComponents
+import WireUtilities
 
 final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigurable {
 
@@ -150,6 +150,6 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
 
 private extension AccentColor {
     static var current: AccentColor {
-        return AccentColor(ZMAccentColor: UIColor.indexedAccentColor()) ?? .blue
+        (UIColor.indexedAccentColor() ?? .default).accentColor
     }
 }

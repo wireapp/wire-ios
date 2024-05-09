@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ extension AccountDeletedNotification {
             guard
                 let note = note.userInfo[AccountDeletedNotification.userInfoKey] as? AccountDeletedNotification,
                 let context = note.context,
-                let observer = observer
+                let observer
             else {
                 return
             }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -139,7 +139,7 @@ final class TypingStrategyTests: MessagingTest {
         let expectedPath = "/conversations/\(conversation.remoteIdentifier!.transportString())/typing"
         let expectedPayload = ["status": isTyping ? "started" : "stopped"]
 
-        if let request = request, (request.path == expectedPath) && (request.method == .post) {
+        if let request, (request.path == expectedPath) && (request.method == .post) {
             if let payload = request.payload as? [String: String] {
                 XCTAssertEqual(payload, expectedPayload)
             } else {

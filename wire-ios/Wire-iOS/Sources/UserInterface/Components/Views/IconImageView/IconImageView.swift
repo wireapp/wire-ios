@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -99,7 +99,7 @@ class IconImageView: UIImageView {
     }
 
     private func set(size: StyleKitIcon.Size?, color: UIColor?) {
-        guard let size = size, let color = color else {
+        guard let size, let color else {
             return
         }
 

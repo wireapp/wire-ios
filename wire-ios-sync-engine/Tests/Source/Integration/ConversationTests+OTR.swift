@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         let conv = conversation(for: selfToUser1Conversation)
 
         mockTransportSession.responseGeneratorBlock = { [weak self] request -> ZMTransportResponse? in
-            guard let `self` = self,
+            guard let self,
                 let path = (request.path as NSString?),
                 path.pathComponents.contains("prekeys") else { return nil }
 
@@ -80,7 +80,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
         var message: ZMAssetClientMessage?
 
         mockTransportSession.responseGeneratorBlock = { [weak self] request -> ZMTransportResponse? in
-            guard let `self` = self,
+            guard let self,
                 let path = request.path as NSString?,
                 path.pathComponents.contains("prekeys") else { return nil }
             let payload: NSDictionary = [
@@ -715,7 +715,7 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
                 )
                 XCTAssertNotNil(cause)
 
-                if let cause = cause {
+                if let cause {
                     XCTAssertEqual(ProteusError(rawValue: cause), ProteusError.decodeError)
                 }
 

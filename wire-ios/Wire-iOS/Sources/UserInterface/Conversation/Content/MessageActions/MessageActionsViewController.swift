@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ final class MessageActionsViewController: UIAlertController {
 
     private func addAction(_ action: MessageAction) {
         guard let title = action.title,
-              let actionController = actionController,
+              let actionController,
               let selector = action.selector,
               actionController.canPerformAction(selector)
         else { return }

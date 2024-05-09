@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
         downstreamRequestSyncs[.preview] = whitelistUserImageSync(for: .preview)
         downstreamRequestSyncs[.complete] = whitelistUserImageSync(for: .complete)
-        downstreamRequestSyncs.forEach { (_, sync) in
+        downstreamRequestSyncs.forEach { _, sync in
             sync.whiteListObject(ZMUser.selfUser(in: managedObjectContext))
         }
 
@@ -172,19 +172,19 @@ public final class UserImageAssetUpdateStrategy: AbstractRequestStrategy, ZMCont
 
         let path: String
         switch apiVersion {
+
         case .v0:
             path = "/assets/v3/\(assetId)"
+
         case .v1:
-            guard let domain = user.domain.nonEmptyValue ?? BackendInfo.domain else {
-                return nil
-            }
+            let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+            guard let domain else { return nil }
 
             path = "/assets/v4/\(domain)/\(assetId)"
 
         case .v2, .v3, .v4, .v5, .v6:
-            guard let domain = user.domain.nonEmptyValue ?? BackendInfo.domain else {
-                return nil
-            }
+            let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+            guard let domain else { return nil }
 
             path = "/assets/\(domain)/\(assetId)"
         }

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ extension UserType {
         return [self].materialize(in: context).first
     }
 
-    fileprivate func unbox(in context: NSManagedObjectContext) -> ZMUser? {
+    func unbox(in context: NSManagedObjectContext) -> ZMUser? {
         if let user = self as? ZMUser {
             return user
         } else if let searchUser = self as? ZMSearchUser {

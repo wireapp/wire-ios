@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ extension ZMConversation {
         return NotificationInContext.addObserver(name: ZMConversation.typingNotificationName,
                                                  context: self.managedObjectContext!.notificationContext,
                                                  object: self) { [weak observer, weak self] note in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             let users = note.userInfo[typingNotificationUsersKey] as? Set<ZMUser> ?? Set()
             observer?.typingDidChange(conversation: self, typingUsers: Array(users))

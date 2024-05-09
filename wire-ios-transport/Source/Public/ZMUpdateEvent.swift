@@ -183,10 +183,10 @@ extension ZMUpdateEventType {
                 guard let stringValue = eventType.stringValue else { return nil }
                 return (eventType, stringValue)
             }
-            .filter { (_, stringValue) -> Bool in
+            .filter { _, stringValue -> Bool in
                 return stringValue == string
             }
-            .map { (eventType, _) -> ZMUpdateEventType in
+            .map { eventType, _ -> ZMUpdateEventType in
                 return eventType
             }
             .first
@@ -238,7 +238,7 @@ open class ZMUpdateEvent: NSObject {
     }
 
     public init?(uuid: UUID?, payload: [AnyHashable: Any]?, transient: Bool, decrypted: Bool, source: ZMUpdateEventSource) {
-        guard let payload = payload else { return nil }
+        guard let payload else { return nil }
         guard let payloadType = payload["type"] as? String else { return nil }
 
         self.uuid = uuid

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ extension MockTransportSession {
                               onlyForUserId: String?) -> [AnyHashable: Any]? {
         var missedClients: [AnyHashable: Any] = [:]
         for user in users {
-            if let onlyForUserId = onlyForUserId,
+            if let onlyForUserId,
                UUID(transportString: user.identifier) != UUID(transportString: onlyForUserId) {
                 continue
             }
@@ -99,7 +99,7 @@ extension MockTransportSession {
                 return nil
             })
 
-            if let recipientClients = recipientClients {
+            if let recipientClients {
                 userClients.subtract(recipientClients)
             }
 

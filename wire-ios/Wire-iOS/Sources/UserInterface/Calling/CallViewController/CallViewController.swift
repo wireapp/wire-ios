@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireSyncEngine
 import avs
+import UIKit
 import WireCommonComponents
+import WireSyncEngine
 
 protocol CallViewControllerDelegate: AnyObject {
     func callViewControllerDidDisappear(_ callController: CallViewController,
@@ -213,7 +213,7 @@ final class CallViewController: UIViewController {
     }
 
     override func accessibilityPerformEscape() -> Bool {
-        guard let delegate = delegate else { return false }
+        guard let delegate else { return false }
         delegate.callViewControllerDidDisappear(self, for: conversation)
         return true
     }
@@ -264,7 +264,7 @@ final class CallViewController: UIViewController {
                                        voiceChannel.addActiveSpeakersObserver(self)]
 
         guard
-            let conversation = conversation,
+            let conversation,
             conversation.managedObjectContext != nil
         else {
             return
@@ -333,8 +333,8 @@ final class CallViewController: UIViewController {
                                imageCache: UIImage.defaultUserImageCache,
                                sizeLimit: UserImageView.Size.normal.rawValue,
                                isDesaturated: false,
-                               completion: { [weak self] (image, _) in
-            guard let image = image else { return }
+                               completion: { [weak self] image, _ in
+            guard let image else { return }
             self?.establishingCallStatusView.setProfileImage(image: image)
         })
     }
@@ -545,7 +545,7 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
         case .acceptCall: acceptCallIfPossible()
         case .acceptDegradedCall: acceptDegradedCall()
         case .terminateCall: voiceChannel.leave(userSession: userSession, completion: nil)
-        case .terminateDegradedCall: userSession.enqueue { self.voiceChannel.leaveAndDecreaseConversationSecurity(userSession: userSession) }
+        case .terminateDegradedCall: userSession.enqueue { self.voiceChannel.leave(userSession: userSession, completion: nil) }
         case .toggleMuteState: voiceChannel.toggleMuteState(userSession: userSession)
         case .toggleSpeakerState: AVSMediaManager.sharedInstance().toggleSpeaker()
         case .minimizeOverlay: minimizeOverlay()
@@ -627,7 +627,14 @@ extension CallViewController {
 
     private func hideOverlayAfterCallEstablishedIfNeeded() {
         let isNotAnimating = callInfoRootViewController.view.layer.animationKeys()?.isEmpty ?? true
-        guard nil == overlayTimer, canHideOverlay, isOverlayVisible, isNotAnimating else { return }
+
+        guard
+            overlayTimer == nil,
+            canHideOverlay,
+            isOverlayVisible,
+            isNotAnimating
+        else { return }
+
         animateOverlay(show: false)
     }
 
@@ -654,7 +661,7 @@ extension CallViewController {
     }
 
     private func restartOverlayTimerIfNeeded() {
-        guard nil != overlayTimer, canHideOverlay else { return }
+        guard overlayTimer != nil, canHideOverlay else { return }
         startOverlayTimer()
     }
 

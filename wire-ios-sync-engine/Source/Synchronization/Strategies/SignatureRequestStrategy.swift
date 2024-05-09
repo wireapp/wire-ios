@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
         case .initial:
             break
         case .waitingForConsentURL:
-            guard let requestSync = requestSync else {
+            guard let requestSync else {
                 return nil
             }
             requestSync.readyForNextRequestIfNotBusy()
@@ -62,7 +62,7 @@ public final class SignatureRequestStrategy: AbstractRequestStrategy, ZMSingleRe
         case .waitingForCodeVerification:
             break
         case .waitingForSignature:
-            guard let retrieveSync = retrieveSync else {
+            guard let retrieveSync else {
                 return nil
             }
             retrieveSync.readyForNextRequestIfNotBusy()

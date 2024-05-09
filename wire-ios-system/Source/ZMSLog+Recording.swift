@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -57,11 +57,4 @@ extension ZMSLog {
         df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSS Z"
         return df
     }()
-
-    private static var isRunningSystemTests: Bool {
-        guard let path = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"]
-            else { return false }
-        return path.contains("WireSystem Tests")
-    }
-
 }

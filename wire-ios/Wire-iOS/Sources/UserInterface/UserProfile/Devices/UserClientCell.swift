@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -33,12 +33,20 @@ final class UserClientCell: SeparatorCollectionViewCell {
     typealias IconColors = SemanticColors.Icon
 
     // MARK: - Properties
-    let nameLabel = DynamicFontLabel(style: .headline,
-                                     color: LabelColors.textDefault)
-    let mlsThumbprintLabel = DynamicFontLabel(style: .caption1,
-                                        color: LabelColors.textCellSubtitle)
-    let proteusIdLabel = DynamicFontLabel(style: .caption1,
-                                            color: LabelColors.textCellSubtitle)
+    let nameLabel = DynamicFontLabel(
+        style: .h3,
+        color: LabelColors.textDefault
+    )
+
+    let mlsThumbprintLabel = DynamicFontLabel(
+        style: .subline1,
+        color: LabelColors.textCellSubtitle
+    )
+
+    let proteusIdLabel = DynamicFontLabel(
+        style: .subline1,
+        color: LabelColors.textCellSubtitle
+    )
 
     private let statusStackView = UIStackView()
     private let contentWrapView = UIView()
@@ -61,7 +69,7 @@ final class UserClientCell: SeparatorCollectionViewCell {
         }
     }
 
-    private let verifiedImage = Asset.Images.verifiedShield.image.resizableImage(withCapInsets: .zero)
+    private let verifiedImage = UIImage(resource: .verifiedShield).resizableImage(withCapInsets: .zero)
     private var mlsInfoHeighConstraint: NSLayoutConstraint { mlsThumbprintLabel.heightAnchor.constraint(equalToConstant: 0)
     }
 
@@ -88,7 +96,7 @@ final class UserClientCell: SeparatorCollectionViewCell {
         addBorder(for: .bottom)
         accessoryIconView.translatesAutoresizingMaskIntoConstraints = false
         accessoryIconView.contentMode = .center
-        accessoryIconView.image = Asset.Images.rightChevron.image.withRenderingMode(.alwaysTemplate)
+        accessoryIconView.image = .init(resource: .rightChevron).withRenderingMode(.alwaysTemplate)
         accessoryIconView.tintColor = IconColors.foregroundDefault
     }
 

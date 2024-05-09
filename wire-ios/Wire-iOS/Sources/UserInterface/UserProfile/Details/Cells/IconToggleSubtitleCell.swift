@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -155,7 +155,7 @@ final class IconToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurab
 
         let mainColor = SemanticColors.Label.textDefault
 
-        if let icon = icon {
+        if let icon {
             tintColor = SemanticColors.Label.textDefault
             iconImageView.setTemplateIcon(icon, size: .tiny)
             imageContainerWidthConstraint.constant = CGFloat.IconCell.IconWidth

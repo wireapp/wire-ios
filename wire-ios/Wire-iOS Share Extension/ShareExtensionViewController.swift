@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,16 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import Social
-import WireShareEngine
+import LocalAuthentication
 import MobileCoreServices
-import WireDataModel
+import Social
+import UIKit
+import UniformTypeIdentifiers
 import WireCommonComponents
 import WireCoreCrypto
+import WireDataModel
 import WireLinkPreview
-import LocalAuthentication
-import UniformTypeIdentifiers
+import WireShareEngine
 
 typealias Completion = () -> Void
 private let zmLog = ZMSLog(tag: "UI")
@@ -136,7 +136,6 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         WireLogger.shareExtension.info("share extension loaded")
         currentAccount = accountManager?.selectedAccount
         ExtensionBackupExcluder.exclude()
-        CrashReporter.setupAppCenterIfNeeded()
         updateAccount(currentAccount)
 
         if let sortedAttachments = extensionContext?.attachments.sorted {
@@ -164,7 +163,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     private var authenticatedAccounts: [Account] {
-        guard let accountManager = accountManager else { return [] }
+        guard let accountManager else { return [] }
         return accountManager.accounts.filter { BackendEnvironment.shared.isAuthenticated($0) }
     }
 
@@ -235,7 +234,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
         urlItems.first?.fetchURL { url in
             DispatchQueue.main.async {
-                guard let url = url, !url.isFileURL else { return }
+                guard let url, !url.isFileURL else { return }
                 let separator = self.textView.text.isEmpty ? "" : "\n"
                 self.textView.text += separator + url.absoluteString
                 self.textView.delegate?.textViewDidChange?(self.textView)
@@ -249,7 +248,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             return
         }
 
-        urlItems.first?.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil, completionHandler: { (url, error) in
+        urlItems.first?.loadItem(forTypeIdentifier: UTType.fileURL.identifier, options: nil, completionHandler: { url, error in
             error?.log(message: "Unable to fetch URL for type URL")
             guard let url = url as? URL, url.isFileURL else { return }
 
@@ -269,7 +268,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     private func appendPostTapped() {
         WireLogger.shareExtension.info("user wants to send content with \(postContent?.attachments.count ?? 0) attachments")
 
-        guard let sharingSession = sharingSession else {
+        guard let sharingSession else {
             WireLogger.shareExtension.error("failed to send attachments: no sharing session")
             return
         }
@@ -277,20 +276,20 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         navigationController?.navigationBar.items?.first?.rightBarButtonItem?.isEnabled = false
 
         postContent?.send(text: contentText, sharingSession: sharingSession) { [weak self] progress in
-            guard let `self` = self, let postContent = self.postContent else { return }
+            guard let self, let postContent = self.postContent else { return }
 
             switch progress {
             case .preparing:
                 WireLogger.shareExtension.info("progress event: preparing")
                 DispatchQueue.main.asyncAfter(deadline: .now() + progressDisplayDelay) {
-                    guard !postContent.sentAllSendables && nil == self.progressViewController else { return }
+                    guard !postContent.sentAllSendables && self.progressViewController == nil else { return }
                     self.presentSendingProgress(mode: .preparing)
                 }
 
             case .startingSending:
                 WireLogger.shareExtension.info("progress event: start sending")
                 DispatchQueue.main.asyncAfter(deadline: .now() + progressDisplayDelay) {
-                    guard postContent.sentAllSendables && nil == self.progressViewController else { return }
+                    guard postContent.sentAllSendables && self.progressViewController == nil else { return }
                     self.presentSendingProgress(mode: .sending)
                 }
 
@@ -353,7 +352,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     func updatePreview() {
         fetchMainAttachmentPreview { previewItem, displayMode in
             DispatchQueue.main.async {
-                guard let previewItem = previewItem else {
+                guard let previewItem else {
                     self.preview?.image = nil
                     self.preview?.isHidden = true
                     return
@@ -470,7 +469,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     private func presentChooseConversation() {
         requireLocalAuthenticationIfNeeded { [weak self] in
-            guard let `self` = self,
+            guard let self,
                   self.localAuthenticationStatus == .granted else { return }
 
             self.showChooseConversation()
@@ -479,7 +478,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     func showChooseConversation() {
 
-        guard let sharingSession = sharingSession else { return }
+        guard let sharingSession else { return }
 
         let allConversations = sharingSession.writeableNonArchivedConversations + sharingSession.writebleArchivedConversations
         let conversationSelectionViewController = ConversationSelectionViewController(conversations: allConversations)
@@ -495,7 +494,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
 
     func showChooseAccount() {
 
-        guard let accountManager = accountManager else { return }
+        guard let accountManager else { return }
         let accountSelectionViewController = AccountSelectionViewController(accounts: accountManager.accounts,
                                                                             current: currentAccount)
 
@@ -569,7 +568,7 @@ extension ShareExtensionViewController {
     /// @param completion; called when authentication evaluation is completed.
     private func requireLocalAuthenticationIfNeeded(with completion: @escaping Completion) {
         guard
-            let sharingSession = sharingSession,
+            let sharingSession,
             sharingSession.appLockController.isActive || sharingSession.encryptMessagesAtRest
         else {
             localAuthenticationStatus = .granted
@@ -595,12 +594,15 @@ extension ShareExtensionViewController {
             passcodePreference = .deviceThenCustom
         }
 
-        appLock.evaluateAuthentication(passcodePreference: passcodePreference, description: description) { [weak self] result, context in
-            guard let `self` = self else { return }
+        appLock.evaluateAuthentication(
+            passcodePreference: passcodePreference,
+            description: description
+        ) { [weak self] result in
+            guard let self else { return }
 
             DispatchQueue.main.async {
-                if case .granted = result, let context = context as? LAContext {
-                    try? self.sharingSession?.unlockDatabase(with: context)
+                if case .granted = result {
+                    try? self.sharingSession?.unlockDatabase()
                 }
 
                 self.authenticationEvaluated(with: result, completion: completion)
@@ -623,7 +625,7 @@ extension ShareExtensionViewController {
                 completion()
             } else {
                 requestCustomPasscode { [weak self] status in
-                    guard let `self` = self else { return }
+                    guard let self else { return }
 
                     self.localAuthenticationStatus = status
                     completion()
@@ -637,7 +639,7 @@ extension ShareExtensionViewController {
 
     private func requestCustomPasscode(with callback: @escaping (_ status: LocalAuthenticationStatus) -> Void) {
         presentUnlockScreen { [weak self] customPasscode in
-            guard let `self` = self else { return }
+            guard let self else { return }
 
             guard
                 let passcode = customPasscode,

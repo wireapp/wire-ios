@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import XCTest
 import Combine
+import Foundation
 import WireCoreCrypto
 import WireTesting
+import XCTest
 
 @testable import WireDataModel
 @testable import WireDataModelSupport
@@ -92,7 +92,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         }
     }
 
-    func test_Decrypt_ReturnsEmptyResult_WhenCoreCryptoReturnsNil() async {
+    func test_Decrypt_ReturnsEmptyResult_WhenCoreCryptoReturnsNil() async throws {
 
         // Given
         let groupID = MLSGroupID.random()
@@ -112,23 +112,17 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         }
 
         // When
-        var results: [MLSDecryptResult]
-        do {
-            results = try await sut.decrypt(
-                message: messageBytes.data.base64EncodedString(),
-                for: groupID,
-                subconversationType: nil
-            )
-        } catch {
-            XCTFail("Unexpected error: \(String(describing: error))")
-            return
-        }
+        let results = try await sut.decrypt(
+            message: messageBytes.data.base64EncodedString(),
+            for: groupID,
+            subconversationType: nil
+        )
 
         // Then
         XCTAssertTrue(results.isEmpty)
     }
 
-    func test_Decrypt_IsSuccessful() async {
+    func test_Decrypt_IsSuccessful() async throws {
         // Given
         let groupID = MLSGroupID.random()
         let messageData = Data.random()
@@ -159,24 +153,18 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         }
 
         // When
-        var results: [MLSDecryptResult]
-        do {
-            results = try await sut.decrypt(
-                message: messageData.base64EncodedString(),
-                for: groupID,
-                subconversationType: nil
-            )
-        } catch {
-            XCTFail("Unexpected error: \(String(describing: error))")
-            return
-        }
+        let results = try await sut.decrypt(
+            message: messageData.base64EncodedString(),
+            for: groupID,
+            subconversationType: nil
+        )
 
         // Then
         XCTAssertEqual(mockDecryptMessageCount, 1)
         XCTAssertEqual(results.first, MLSDecryptResult.message(messageData, sender.clientID))
     }
 
-    func test_Decrypt_ForSubconversation_IsSuccessful() async {
+    func test_Decrypt_ForSubconversation_IsSuccessful() async throws {
         // Given
         let parentGroupID = MLSGroupID.random()
         let subconversationGroupID = MLSGroupID.random()
@@ -206,17 +194,11 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         }
 
         // When
-        var results: [MLSDecryptResult]
-        do {
-            results = try await sut.decrypt(
-                message: messageData.base64EncodedString(),
-                for: parentGroupID,
-                subconversationType: .conference
-            )
-        } catch {
-            XCTFail("Unexpected error: \(String(describing: error))")
-            return
-        }
+        let results = try await sut.decrypt(
+            message: messageData.base64EncodedString(),
+            for: parentGroupID,
+            subconversationType: .conference
+        )
 
         // Then
         XCTAssertEqual(mockDecryptMessageCount, 1)
@@ -225,7 +207,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         XCTAssertEqual(mockSubconversationGroupIDRepository.fetchSubconversationGroupIDForTypeParentGroupID_Invocations.count, 1)
     }
 
-    func test_Decrypt_ReturnsBufferedMessages() async {
+    func test_Decrypt_ReturnsBufferedMessages() async throws {
         // Given
         let groupID = MLSGroupID.random()
         let messageData = Data.random()
@@ -265,24 +247,18 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         }
 
         // When
-        var results: [MLSDecryptResult]
-        do {
-            results = try await sut.decrypt(
-                message: messageData.base64EncodedString(),
-                for: groupID,
-                subconversationType: nil
-            )
-        } catch {
-            XCTFail("Unexpected error: \(String(describing: error))")
-            return
-        }
+        let results = try await sut.decrypt(
+            message: messageData.base64EncodedString(),
+            for: groupID,
+            subconversationType: nil
+        )
 
         // Then
         XCTAssertEqual(mockDecryptMessageCount, 1)
         XCTAssertEqual(results.first, MLSDecryptResult.message(messageData, sender.clientID))
     }
 
-    func test_Decrypt_PublishesEpochChanges() async {
+    func test_Decrypt_PublishesEpochChanges() async throws {
         // Given
         let groupID = MLSGroupID.random()
         let messageData = Data.random()
@@ -315,15 +291,11 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         }
 
         // When
-        do {
-            _ = try await sut.decrypt(
-                message: messageData.base64EncodedString(),
-                for: groupID,
-                subconversationType: nil
-            )
-        } catch {
-            XCTFail("Unexpected error: \(String(describing: error))")
-        }
+        _ = try await sut.decrypt(
+            message: messageData.base64EncodedString(),
+            for: groupID,
+            subconversationType: nil
+        )
 
         // Then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))

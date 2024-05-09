@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireSyncEngine
+import XCTest
 
 class ConversationTests_Join: ConversationTestsBase {
 
@@ -110,7 +110,7 @@ class ConversationTests_Join: ConversationTestsBase {
                                       code: "existing-conversation-code",
                                       transportSession: userSession!.transportSession,
                                       eventProcessor: userSession!.updateEventProcessor!,
-                                      contextProvider: userSession!.coreDataStack) { (result) in
+                                      contextProvider: userSession!.coreDataStack) { result in
             // THEN
             if case .success((let conversationID, let conversationName)) = result {
                 XCTAssertNotNil(conversationID)
@@ -135,7 +135,7 @@ class ConversationTests_Join: ConversationTestsBase {
                                       code: "test-code",
                                       transportSession: userSession!.transportSession,
                                       eventProcessor: userSession!.updateEventProcessor!,
-                                      contextProvider: userSession!.coreDataStack) { (result) in
+                                      contextProvider: userSession!.coreDataStack) { result in
             // THEN
             if case .success((let conversationID, let conversationName)) = result {
                 XCTAssertNotNil(conversationID)
@@ -160,7 +160,7 @@ class ConversationTests_Join: ConversationTestsBase {
                                       code: "wrong-code",
                                       transportSession: userSession!.transportSession,
                                       eventProcessor: userSession!.updateEventProcessor!,
-                                      contextProvider: userSession!.coreDataStack) { (result) in
+                                      contextProvider: userSession!.coreDataStack) { result in
             // THEN
             if case .failure(let error) = result {
                 XCTAssertEqual(error as! ConversationFetchError, ConversationFetchError.invalidCode)

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ extension IconButton {
 
         borderWidth = 0
 
-        if let width = width {
+        if let width {
             widthAnchor.constraint(equalToConstant: width).isActive = true
             heightAnchor.constraint(greaterThanOrEqualToConstant: width).isActive = true
         }

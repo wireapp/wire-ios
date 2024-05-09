@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireSystem
 import WireDataModel
+import WireSystem
 
 @objc(ZMClientRegistrationPhase)
 public enum ClientRegistrationPhase: UInt {
@@ -495,7 +495,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
             client.remoteIdentifier != selfClient.remoteIdentifier
         }
 
-        if otherClients.isNonEmpty {
+        if !otherClients.isEmpty {
             selfClient.missesClients(otherClients)
             selfClient.setLocallyModifiedKeys(Set(["missingClients"]))
         }
@@ -553,6 +553,7 @@ public class ZMClientRegistrationStatus: NSObject, ClientRegistrationDelegate {
 
         selfClient.remoteIdentifier = nil
         selfClient.resetLocallyModifiedKeys(selfClient.keysThatHaveLocalModifications)
+        selfClient.clearMLSPublicKeys()
         managedObjectContext.setPersistentStoreMetadata(nil as String?, key: ZMPersistedClientIdKey)
         managedObjectContext.saveOrRollback()
     }

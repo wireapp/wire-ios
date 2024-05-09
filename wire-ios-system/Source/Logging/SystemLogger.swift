@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -84,6 +84,10 @@ struct SystemLogger: LoggerProtocol {
 
     func critical(_ message: LogConvertible, attributes: LogAttributes?) {
         log(message, attributes: attributes, osLogType: .fault)
+    }
+
+    func addTag(_ key: LogAttributesKey, value: String?) {
+        log("🤖 add \(key.rawValue) = \(value) - NO EFFECT HERE", attributes: nil, osLogType: .info)
     }
 
     private func log(_ message: LogConvertible, attributes: LogAttributes?, osLogType: OSLogType) {

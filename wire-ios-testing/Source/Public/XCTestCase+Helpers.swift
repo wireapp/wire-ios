@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ extension XCTestCase {
         let timeoutDate = Date(timeIntervalSinceNow: timeout)
         var groupCounter = groups.count
 
-        groups.forEach { (group) in
+        groups.forEach { group in
             group.notify(queue: DispatchQueue.main, execute: {
                 groupCounter -= 1
             })

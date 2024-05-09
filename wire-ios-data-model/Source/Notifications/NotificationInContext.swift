@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ import WireUtilities
                 object: AnyObject? = nil,
                 userInfo: [String: Any]? = nil) {
         var userInfo = userInfo ?? [:]
-        if let object = object {
+        if let object {
             userInfo[NotificationInContext.objectInNotificationKey] = object
         }
         self.notification = Notification(name: name,

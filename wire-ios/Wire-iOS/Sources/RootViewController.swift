@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -60,14 +60,14 @@ final class RootViewController: UIViewController {
     func set(childViewController newViewController: UIViewController?,
              animated: Bool = false,
              completion: (() -> Void)? = nil) {
-        if let newViewController = newViewController,
+        if let newViewController,
            let previousViewController = childViewController {
             transition(
                 from: previousViewController,
                 to: newViewController,
                 animated: animated,
                 completion: completion)
-        } else if let newViewController = newViewController {
+        } else if let newViewController {
             contain(newViewController, completion: completion)
         } else {
             removeChildViewController(animated: animated, completion: completion)

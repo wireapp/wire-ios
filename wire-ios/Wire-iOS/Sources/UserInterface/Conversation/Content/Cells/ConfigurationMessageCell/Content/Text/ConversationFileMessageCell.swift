@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -100,7 +100,7 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
         ])
     }
 
-    override public var tintColor: UIColor! {
+    override var tintColor: UIColor! {
         didSet {
             self.fileTransferView.tintColor = self.tintColor
         }
@@ -118,7 +118,7 @@ final class ConversationFileMessageCell: RoundedView, ConversationMessageCell {
 
 extension ConversationFileMessageCell: TransferViewDelegate {
     func transferView(_ view: TransferView, didSelect action: MessageAction) {
-        guard let message = message else { return }
+        guard let message else { return }
 
         delegate?.perform(action: action, for: message, view: self)
     }

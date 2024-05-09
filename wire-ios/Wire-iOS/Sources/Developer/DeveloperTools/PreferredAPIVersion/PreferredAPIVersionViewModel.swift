@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2022 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireTransport
 import WireSyncEngine
+import WireTransport
 
 final class PreferredAPIVersionViewModel: ObservableObject {
 
@@ -46,7 +46,7 @@ final class PreferredAPIVersionViewModel: ObservableObject {
         case apiVersion(APIVersion)
 
         init(apiVersion: APIVersion?) {
-            if let apiVersion = apiVersion {
+            if let apiVersion {
                 self = .apiVersion(apiVersion)
             } else {
                 self = .noPreference

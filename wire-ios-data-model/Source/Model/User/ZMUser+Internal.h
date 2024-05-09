@@ -1,26 +1,25 @@
-// 
+//
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
+//
 
 @import WireImages;
 
 #import "ZMUser.h"
-#import "ZMEditableUser.h"
+#import "ZMEditableUserType.h"
 #import "ZMManagedObject+Internal.h"
 #import "ZMUser+OneOnOne.h"
 
@@ -57,8 +56,6 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 
 + (nonnull NSSet <ZMUser *> *)usersWithRemoteIDs:(nonnull NSSet <NSUUID *>*)UUIDs inContext:(nonnull NSManagedObjectContext *)moc;
 
-+ (ZMAccentColor)accentColorFromPayloadValue:(nullable NSNumber *)payloadValue;
-
 /// @method Updates the user with a name or handle received through a search
 /// Should be called when creating a @c ZMSearchUser to ensure it's underlying user is updated.
 - (void)updateWithSearchResultName:(nullable NSString *)name handle:(nullable NSString *)handle;
@@ -77,13 +74,13 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 
 
 
-@interface ZMUser (Editable) <ZMEditableUser>
+@interface ZMUser (Editable) <ZMEditableUserType>
 
 @property (nullable, nonatomic, copy) NSString *emailAddress;
 @property (nullable, nonatomic, copy) NSString *phoneNumber;
 @property (nullable, nonatomic, copy) NSString *name;
 @property (nullable, nonatomic, copy) NSString *handle;
-@property (nonatomic) ZMAccentColor accentColorValue;
+@property (nonatomic) ZMAccentColorRawValue accentColorValue;
 
 - (void)setHandle:(NSString * __nullable)handle;
 @property (nonatomic) BOOL needsPropertiesUpdate;

@@ -1,26 +1,28 @@
-// 
+//
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
-// 
+// Copyright (C) 2024 Wire Swiss GmbH
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import Foundation
+
 @testable import WireSyncEngine
 
 class RegistrationStatusTests: MessagingTest {
-    var sut: WireSyncEngine.RegistrationStatus!
+
+    var sut: RegistrationStatus!
     var delegate: MockRegistrationStatusDelegate!
     var email: String!
     var code: String!
@@ -30,18 +32,18 @@ class RegistrationStatusTests: MessagingTest {
     override func setUp() {
         super.setUp()
 
-        sut = WireSyncEngine.RegistrationStatus()
+        sut = RegistrationStatus()
         delegate = MockRegistrationStatusDelegate()
         sut.delegate = delegate
         email = "some@foo.bar"
         code = "123456"
-        team = UnregisteredTeam(teamName: "Dream Team", email: email, emailCode: "23", fullName: "M. Jordan", password: "qwerty", accentColor: .brightOrange)
+        team = UnregisteredTeam(teamName: "Dream Team", email: email, emailCode: "23", fullName: "M. Jordan", password: "qwerty", accentColor: .amber)
 
         user = UnregisteredUser()
-        user.credentials = UnverifiedCredentials.email(email)
+        user.unverifiedEmail = email
         user.name = "M. Jordan"
         user.password = "qwerty"
-        user.accentColorValue = .brightOrange
+        user.accentColor = .amber
         user.verificationCode = code
         user.acceptedTermsOfService = true
         user.marketingConsent = true
@@ -86,15 +88,15 @@ class RegistrationStatusTests: MessagingTest {
 
     func testThatItAdvancesToSendActivationCodeStateAfterTrigerringSendingStarts() {
         // when
-        sut.sendActivationCode(to: .email(email))
+        sut.sendActivationCode(to: email)
 
         // then
-        XCTAssertEqual(sut.phase, .sendActivationCode(credentials: .email(email)))
+        XCTAssertEqual(sut.phase, .sendActivationCode(unverifiedEmail: email))
     }
 
     func testThatItInformsTheDelegateAboutActivationCodeSendingSuccess() {
         // given
-        sut.sendActivationCode(to: .email(email))
+        sut.sendActivationCode(to: email)
         XCTAssertEqual(delegate.activationCodeSentCalled, 0)
         XCTAssertEqual(delegate.activationCodeSendingFailedCalled, 0)
 
@@ -109,7 +111,7 @@ class RegistrationStatusTests: MessagingTest {
     func testThatItInformsTheDelegateAboutActivationCodeSendingError() {
         // given
         let error = NSError(domain: "some", code: 2, userInfo: [:])
-        sut.sendActivationCode(to: .email(email))
+        sut.sendActivationCode(to: email)
         XCTAssertEqual(delegate.activationCodeSentCalled, 0)
         XCTAssertEqual(delegate.activationCodeSendingFailedCalled, 0)
 
@@ -125,15 +127,15 @@ class RegistrationStatusTests: MessagingTest {
     // MARK: - Check activation code tests
     func testThatItAdvancesToCheckActivationCodeStateAfterTriggeringCheck() {
         // when
-        sut.checkActivationCode(credentials: .email(email), code: code)
+        sut.checkActivationCode(unverifiedEmail: email, code: code)
 
         // then
-        XCTAssertEqual(sut.phase, .checkActivationCode(credentials: .email(email), code: code))
+        XCTAssertEqual(sut.phase, .checkActivationCode(unverifiedEmail: email, code: code))
     }
 
     func testThatItInformsTheDelegateAboutCheckActivationCodeSuccess() {
         // given
-        sut.checkActivationCode(credentials: .email(email), code: code)
+        sut.checkActivationCode(unverifiedEmail: email, code: code)
         XCTAssertEqual(delegate.activationCodeValidatedCalled, 0)
         XCTAssertEqual(delegate.activationCodeValidationFailedCalled, 0)
 
@@ -148,7 +150,7 @@ class RegistrationStatusTests: MessagingTest {
     func testThatItInformsTheDelegateAboutCheckActivationCodeError() {
         // given
         let error = NSError(domain: "some", code: 2, userInfo: [:])
-        sut.checkActivationCode(credentials: .email(email), code: code)
+        sut.checkActivationCode(unverifiedEmail: email, code: code)
         XCTAssertEqual(delegate.activationCodeValidatedCalled, 0)
         XCTAssertEqual(delegate.activationCodeValidationFailedCalled, 0)
 

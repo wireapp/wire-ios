@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2023 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
     var message: ZMOTRMessage?
@@ -37,7 +37,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
 
     func testThatExpirationReasonCodeIsNotNil_DeliveryStateIsFailedToSend() {
         // given
-        guard let message = message else {
+        guard let message else {
             XCTFail("Failed to add message")
             return
         }
@@ -53,7 +53,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
 
     func testThatExpirationReasonCodeIsNil_DeliveryStateIsSent() {
         // given
-        guard let message = message else {
+        guard let message else {
             XCTFail("Failed to add message")
             return
         }
@@ -74,7 +74,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
 
     func testExpirationReasonsParsing() {
         // given
-        guard let message = message else {
+        guard let message else {
             XCTFail("Failed to add message")
             return
         }
@@ -90,7 +90,7 @@ class ZMMessageTests_ExpirationReasonCode: BaseZMClientMessageTests {
     // MARK: - Helper
 
     private func assert(reasonCode: NSNumber?, expectedReason: MessageSendFailure?) {
-        guard let message = message else {
+        guard let message else {
             XCTFail("Failed to add message")
             return
         }

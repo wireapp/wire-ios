@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ extension RegistrationStrategy: ZMSingleRequestTranscoder {
 
     func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
         if response.result == .success {
-            response.extractUserInfo().apply {
+            response.extractUserInfo().map {
                 userInfoParser?.upgradeToAuthenticatedSession(with: $0)
             }
             registrationStatus.success()

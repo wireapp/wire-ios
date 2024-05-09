@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
 import Foundation
 
 extension FileManager {
-    static public func createTmpDirectory(fileName: String? = nil) throws -> URL {
+    public static func createTmpDirectory(fileName: String? = nil) throws -> URL {
         let fileManager = FileManager.default
         let tmp = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true).appendingPathComponent(fileName ?? UUID().uuidString) // temp subdir
         if !fileManager.fileExists(atPath: tmp.absoluteString) {

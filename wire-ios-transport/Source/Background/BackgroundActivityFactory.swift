@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
 import UIKit
 import WireUtilities
@@ -182,7 +182,7 @@ import WireUtilities
     private func startActivityIfPossible(_ name: String, _ expirationHandler: (() -> Void)?) -> BackgroundActivity? {
         return isolationQueue.sync {
             let activityName = ActivityName(name: name)
-            guard let activityManager = activityManager else {
+            guard let activityManager else {
                 WireLogger.backgroundActivity.info(
                     "Start activity <\(activityName)>: failed, activityManager is nil",
                     attributes: .safePublic
@@ -283,7 +283,7 @@ import WireUtilities
         // No need to keep any activities after finishing
         activities.removeAll()
         if let currentBackgroundTask = self.currentBackgroundTask {
-            if let activityManager = activityManager {
+            if let activityManager {
                 let value = SafeValueForLogging(currentBackgroundTask.rawValue)
                 WireLogger.backgroundActivity.info(
                     "Finishing background task: \(value)",

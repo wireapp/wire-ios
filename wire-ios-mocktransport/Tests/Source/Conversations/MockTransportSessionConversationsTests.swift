@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -273,7 +273,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
 
         var conversation: MockConversation?
 
-        self.sut.performRemoteChanges { (session) in
+        self.sut.performRemoteChanges { session in
             session.registerClient(for: self.selfUser!, label: "self user", type: "permanent", deviceClass: "phone")
 
             otherUser = session.insertUser(withName: "bar")
@@ -371,7 +371,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
             ]
         ]
 
-        if let response = response {
+        if let response {
             assertExpectedPayload(expectedResponsePayload, in: response)
         }
 
@@ -423,7 +423,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
             "redundant": [:]
         ]
 
-       if let response = response {
+       if let response {
             assertExpectedPayload(expectedResponsePayload, in: response)
         }
 

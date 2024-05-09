@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,32 +16,32 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
-@testable import Wire
 import UIKit
+@testable import Wire
+import XCTest
 
 // Precision of matching snapshots. Lower this value to fix issue with difference with Intel and Apple Silicon
 private let precision: Float = 0.90
 private let perceptualPrecision: Float = 0.98
 
 extension ViewImageConfig: Hashable {
+
     public static func == (lhs: ViewImageConfig, rhs: ViewImageConfig) -> Bool {
-        return lhs.size == rhs.size && lhs.traits == rhs.traits
+        lhs.size == rhs.size && lhs.traits == rhs.traits
     }
 
     public func hash(into hasher: inout Hasher) {
-        if let size = size {
-            hasher.combine(size.width)
-            hasher.combine(size.height)
-        }
-
+        hasher.combine(size?.width)
+        hasher.combine(size?.height)
         hasher.combine(traits)
     }
 }
 
 // MARK: - snapshoting all iPhone sizes
+
 extension XCTestCase {
+
     /// snapshot file name suffixs
     static func phoneConfigNames(orientation: ViewImageConfig.Orientation = .portrait) -> [ViewImageConfig: String] {
         return [
@@ -93,7 +93,7 @@ extension XCTestCase {
                                 testName: String = #function,
                                 line: UInt = #line) {
 
-        let allDevices = XCTestCase.phoneConfigNames().merging(XCTestCase.padConfigNames) { (current, _) in current }
+        let allDevices = XCTestCase.phoneConfigNames().merging(XCTestCase.padConfigNames) { current, _ in current }
 
         for(config, name) in allDevices {
             if let deviceMockable = value as? DeviceMockable {
@@ -142,7 +142,7 @@ extension XCTestCase {
                                        testName: String = #function,
                                        line: UInt = #line) {
         let nameWithProperty: String
-        if let name = name {
+        if let name {
             nameWithProperty = "\(name)-\(width)"
         } else {
             nameWithProperty = "\(width)"
@@ -360,7 +360,7 @@ extension XCTestCase {
                 line: UInt = #line) {
 
         var config: ViewImageConfig?
-        if let customSize = customSize {
+        if let customSize {
             config = ViewImageConfig(safeArea: UIEdgeInsets.zero,
                                      size: customSize,
                                      traits: UITraitCollection())
@@ -468,7 +468,7 @@ extension Snapshotting where Value == UIAlertController, Format == UIImage {
 
     /// A snapshot strategy for comparing UIAlertController views based on pixel equality.
     /// Compare UIAlertController.view to prevert the view is resized to fix the default UIViewController.view's size
-    public static var image: Snapshotting<UIAlertController, UIImage> {
+    static var image: Snapshotting<UIAlertController, UIImage> {
         return Snapshotting<UIView, UIImage>.image(precision: 1, size: nil).pullback { $0.view }
     }
 }

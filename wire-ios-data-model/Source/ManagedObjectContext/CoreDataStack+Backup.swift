@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -252,7 +252,7 @@ extension CoreDataStack {
                 DispatchQueue.main.async(group: dispatchGroup) {
                     completion(.success(accountDirectory))
                 }
-            } catch let error {
+            } catch {
                 fail(.failedToCopy(error))
             }
         }
@@ -285,7 +285,7 @@ extension CoreDataStack {
 
         try context.performGroupedAndWait { context in
             if context.encryptMessagesAtRest {
-                guard let databaseKey = databaseKey else { throw BackupError.missingEAREncryptionKey }
+                guard let databaseKey else { throw BackupError.missingEAREncryptionKey }
                 try context.migrateAwayFromEncryptionAtRest(databaseKey: databaseKey)
                 context.encryptMessagesAtRest = false
                 _ = context.makeMetadataPersistent()

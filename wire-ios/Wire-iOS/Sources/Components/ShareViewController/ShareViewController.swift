@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 
@@ -119,7 +118,7 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
 
     private var filterString: String? = .none {
         didSet {
-            if let filterString = filterString, !filterString.isEmpty {
+            if let filterString, !filterString.isEmpty {
                 self.filteredDestinations = self.destinations.filter {
                     let name = $0.displayNameWithFallback
                     return name.range(of: filterString, options: .caseInsensitive) != nil
@@ -212,12 +211,12 @@ final class ShareViewController<D: ShareDestination & NSObjectProtocol, S: Share
     private func keyboardFrameWillChange(notification: Notification) {
         let inputAccessoryHeight = UIResponder.currentFirst?.inputAccessoryView?.bounds.size.height ?? 0
 
-        UIView.animate(withKeyboardNotification: notification, in: self.view, animations: {[weak self] (keyboardFrameInView) in
-            guard let weakSelf = self else { return }
+        UIView.animate(withKeyboardNotification: notification, in: self.view, animations: {[weak self] keyboardFrameInView in
+            guard let self else { return }
 
             let keyboardHeight = keyboardFrameInView.size.height - inputAccessoryHeight
-            weakSelf.bottomConstraint?.constant = keyboardHeight == 0 ? -weakSelf.view.safeAreaInsetsOrFallback.bottom : CGFloat(0)
-            weakSelf.view.layoutIfNeeded()
+            bottomConstraint?.constant = keyboardHeight == 0 ? -view.safeAreaInsetsOrFallback.bottom : CGFloat(0)
+            view.layoutIfNeeded()
         })
     }
 

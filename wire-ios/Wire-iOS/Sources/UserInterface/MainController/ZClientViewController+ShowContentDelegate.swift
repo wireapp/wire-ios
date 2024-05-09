@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,14 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireDataModel
 import WireSyncEngine
 
 extension ZClientViewController {
     private func wrapInNavigationControllerAndPresent(viewController: UIViewController) {
-        let navWrapperController: UINavigationController = viewController.wrapInNavigationController(setBackgroundColor: true)
+        let navWrapperController: UINavigationController = viewController.wrapInNavigationController()
         navWrapperController.modalPresentationStyle = .formSheet
 
         dismissAllModalControllers(callback: { [weak self] in
@@ -31,13 +30,13 @@ extension ZClientViewController {
         })
     }
 
-    public func showConnectionRequest(userId: UUID) {
+    func showConnectionRequest(userId: UUID) {
         let searchUserViewConroller = SearchUserViewController(userId: userId, profileViewControllerDelegate: self, userSession: userSession)
 
         wrapInNavigationControllerAndPresent(viewController: searchUserViewConroller)
     }
 
-    public func showUserProfile(user: UserType) {
+    func showUserProfile(user: UserType) {
         guard let selfUser = ZMUser.selfUser() else {
             assertionFailure("ZMUser.selfUser() is nil")
             return
@@ -49,7 +48,7 @@ extension ZClientViewController {
         wrapInNavigationControllerAndPresent(viewController: profileViewController)
     }
 
-    public func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage?) {
+    func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage?) {
         switch conversation.conversationType {
         case .connection:
             selectIncomingContactRequestsAndFocus(onView: true)
@@ -64,7 +63,7 @@ extension ZClientViewController {
         }
     }
 
-    public func showConversationList() {
+    func showConversationList() {
         transitionToList(animated: true, completion: nil)
     }
 

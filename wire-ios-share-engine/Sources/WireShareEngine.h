@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,5 +25,4 @@ FOUNDATION_EXPORT double wire_ios_share_engineVersionNumber;
 FOUNDATION_EXPORT const unsigned char wire_ios_share_engineVersionString[];
 
 // In this header, you should import all the public headers of your framework using statements like #import <wire_ios_share_engine/PublicHeader.h>
-
 

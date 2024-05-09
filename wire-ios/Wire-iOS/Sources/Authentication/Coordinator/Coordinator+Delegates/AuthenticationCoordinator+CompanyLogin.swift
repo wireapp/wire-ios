@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,8 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
 import UIKit
+import WireTransport
 
 extension AuthenticationCoordinator: CompanyLoginControllerDelegate {
 
@@ -45,4 +46,19 @@ extension AuthenticationCoordinator: CompanyLoginControllerDelegate {
     func controllerDidCancelCompanyLoginFlow(_ controller: CompanyLoginController) {
         cancelCompanyLogin()
     }
+
+    func controller(
+        _ controller: CompanyLoginController,
+        didRequestUserConfirmationToSwitchToBackend environment: BackendEnvironment,
+        didConfirm: @escaping (Bool) -> Void
+    ) {
+        let viewModel = SwitchBackendConfirmationViewModel(
+            environment: environment,
+            didConfirm: didConfirm
+        )
+        let view = SwitchBackendConfirmationView(viewModel: viewModel)
+        let hostingController = UIHostingController(rootView: view)
+        presenter?.present(hostingController, animated: true)
+    }
+
 }

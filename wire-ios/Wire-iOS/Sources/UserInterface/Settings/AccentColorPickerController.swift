@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import SwiftUI
 import UIKit
 import WireCommonComponents
+import WireDataModel
 import WireSyncEngine
-import SwiftUI
 
 class AccentColorPickerHostingController: UIHostingController<ColorPickerView> {
 
@@ -39,7 +39,7 @@ class AccentColorPickerHostingController: UIHostingController<ColorPickerView> {
             // If no initial value, use the first available color as a default
             initialSelectedColor = firstColor
         }
-
+        
         super.init(rootView: ColorPickerView(selectedColor: initialSelectedColor, colors: allAccentColors, onColorSelect: { selectedColor in
             selectedAccentColor.wrappedValue = selectedColor
             if let colorIndex = allAccentColors.firstIndex(of: selectedColor) {
@@ -48,5 +48,6 @@ class AccentColorPickerHostingController: UIHostingController<ColorPickerView> {
                 }
             }
         }))
+
     }
 }

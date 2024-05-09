@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,21 +30,21 @@ extension UserType {
 
     private var handleAndDomainString: String? {
         guard
-            let handleString = handleString,
-            let domainString = domainString
+            let handleString,
+            let domainString
         else { return self.handleString }
 
         return handleString + domainString
     }
 
     private var handleString: String? {
-        guard let handle = handle else { return .none }
+        guard let handle else { return .none }
 
         return "@" + handle
     }
 
     var domainString: String? {
-        guard let domain = domain else { return .none }
+        guard let domain else { return .none }
 
         return "@" + domain
     }

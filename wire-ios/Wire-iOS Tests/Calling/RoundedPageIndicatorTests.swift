@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2021 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
 import SnapshotTesting
 @testable import Wire
+import XCTest
 
 class RoundedPageIndicatorTests: XCTestCase {
 
@@ -28,7 +28,7 @@ class RoundedPageIndicatorTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        accentColor = .strongBlue
+        accentColor = .blue
         sut = RoundedPageIndicator()
         sut.frame = frame
     }

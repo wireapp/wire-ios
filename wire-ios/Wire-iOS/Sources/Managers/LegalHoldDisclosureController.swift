@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireDataModel
+import WireSyncEngine
 
 /**
  * An object that coordinates disclosing the legal hold state to the user.
@@ -208,7 +208,7 @@ final class LegalHoldDisclosureController: UserObserving {
         }
 
         dismissAlertIfNeeded(presentedAlertController) {
-            if let alertController = alertController {
+            if let alertController {
                 self.presentedAlertController = alertController
                 self.presenter(alertController, true, nil)
             } else {

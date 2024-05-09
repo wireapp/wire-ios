@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
 
 import Combine
 import Foundation
-import WireRequestStrategy
 import WireDataModel
+import WireRequestStrategy
 
 @objcMembers
 public final class CallingRequestStrategy: AbstractRequestStrategy, ZMSingleRequestTranscoder, ZMContextChangeTracker, ZMContextChangeTrackerSource, ZMEventConsumer {
@@ -408,14 +408,14 @@ extension CallingRequestStrategy: WireCallCenterTransport {
         request.httpBody = data
 
         ephemeralURLSession.task(with: request) { data, response, error in
-            if let error = error {
+            if let error {
                 completionHandler(.failure(SFTResponseError.transport(error: error)))
                 return
             }
 
             guard
                 let response = response as? HTTPURLResponse,
-                let data = data
+                let data
             else {
                 completionHandler(.failure(SFTResponseError.missingData))
                 return

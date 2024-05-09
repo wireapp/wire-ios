@@ -1,5 +1,6 @@
+//
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,10 +17,10 @@
 //
 
 import UIKit
+import WireCommonComponents
 import WireDataModel
 import WireRequestStrategy
 import WireSyncEngine
-import WireCommonComponents
 
 private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 
@@ -47,7 +48,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     /// It appears when the user has scrolled up past a certain point in the conversation.
     lazy var scrollToBottomButton = {
         let button = ZMButton(style: .scrollToBottomButtonStyle, cornerRadius: scrollToBottomButtonHeight / 2)
-        let icon = Asset.Images.downArrow.image
+        let icon = UIImage(resource: .downArrow)
 
         button.setImage(icon, for: .normal)
         button.setImage(icon, for: .highlighted)
@@ -74,7 +75,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     let bottomContainer: UIView = UIView(frame: .zero)
     var searchQueries: [String]? {
         didSet {
-            guard let searchQueries = searchQueries,
+            guard let searchQueries,
                   !searchQueries.isEmpty else { return }
 
             dataSource.searchQueries = searchQueries
@@ -288,7 +289,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator?) {
 
-        guard let coordinator = coordinator else { return }
+        guard let coordinator else { return }
 
         super.viewWillTransition(to: size, with: coordinator)
 
@@ -423,7 +424,7 @@ final class ConversationContentViewController: UIViewController, PopoverPresente
     private func updateMediaBar() {
         let mediaPlayingMessage = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer?.sourceMessage
 
-        if let mediaPlayingMessage = mediaPlayingMessage,
+        if let mediaPlayingMessage,
            mediaPlayingMessage.conversationLike === conversation,
            !displaysMessage(mediaPlayingMessage),
            !mediaPlayingMessage.isVideo {

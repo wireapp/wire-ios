@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2024 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,14 +41,11 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 code: code,
                 transportSession: transportSession,
                 contextProvider: contextProvider
-            ) { [weak self] (response) in
+            ) { [weak self] response in
 
-                guard let strongSelf = self,
-                      let delegate = delegate else {
-                    return
-                }
+                guard let self, let delegate else { return }
 
-                let viewContext = strongSelf.contextProvider.viewContext
+                let viewContext = contextProvider.viewContext
 
                 switch response {
                 case .success((let conversationId, let conversationName)):
@@ -69,16 +66,16 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                             ZMConversation.join(
                                 key: key,
                                 code: code,
-                                transportSession: strongSelf.transportSession,
-                                eventProcessor: strongSelf.eventProcessor,
-                                contextProvider: strongSelf.contextProvider
-                            ) { [weak self] (response) in
+                                transportSession: self.transportSession,
+                                eventProcessor: self.eventProcessor,
+                                contextProvider: self.contextProvider
+                            ) { [weak self] response in
 
-                                guard let strongSelf = self else { return }
+                                guard let self else { return }
 
                                 switch response {
                                 case .success(let conversation):
-                                    strongSelf.synchronise(conversation) { result in
+                                    self.synchronise(conversation) { result in
                                         DispatchQueue.main.async {
                                             switch result {
                                             case .success(let syncConversation):
@@ -153,7 +150,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             }
 
             upToDateConversation.joinNewMLSGroup(id: groupId) { error in
-                if let error = error {
+                if let error {
                     WireLogger.mls.debug("failed to join MLS group: \(error)")
                     completion(.failure(error))
                 } else {
