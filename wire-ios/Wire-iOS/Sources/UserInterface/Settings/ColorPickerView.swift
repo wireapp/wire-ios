@@ -17,8 +17,8 @@
 //
 
 import SwiftUI
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 struct ColorPickerView: View {
 
@@ -36,7 +36,7 @@ struct ColorPickerView: View {
                 HStack {
                     // Color view
                     Circle()
-                        .fill(Color(uiColor: UIColor(for: color)))
+                        .fill(Color(uiColor: color.uiColor))
                         .frame(width: colorViewSize, height: colorViewSize)
                         .padding(.trailing, 10)
                     Text(color.name)
@@ -65,7 +65,7 @@ struct ColorPickerView: View {
             ToolbarItem(placement: .principal) {
                 VStack {
                     Text(L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized)
-                        .font(UIFont.swiftUIFont(for: .headline))
+                        .font(.textStyle(.h3))
                 }
             }
         }

@@ -29,7 +29,7 @@ class AccentColorPickerHostingController: UIHostingController<ColorPickerView> {
     }
 
     init(selectedAccentColor: Binding<AccentColor?>) {
-        let allAccentColors = AccentColor.allSelectable()
+        let allAccentColors = AccentColor.allCases
         var initialSelectedColor: AccentColor?
 
         if let bindingValue = selectedAccentColor.wrappedValue {
@@ -39,12 +39,12 @@ class AccentColorPickerHostingController: UIHostingController<ColorPickerView> {
             // If no initial value, use the first available color as a default
             initialSelectedColor = firstColor
         }
-        
+
         super.init(rootView: ColorPickerView(selectedColor: initialSelectedColor, colors: allAccentColors, onColorSelect: { selectedColor in
             selectedAccentColor.wrappedValue = selectedColor
             if let colorIndex = allAccentColors.firstIndex(of: selectedColor) {
                 ZMUserSession.shared()?.perform {
-                    ZMUser.selfUser()?.accentColorValue = allAccentColors[colorIndex].zmAccentColor
+                    ZMUser.selfUser()?.accentColorValue = allAccentColors[colorIndex].rawValue
                 }
             }
         }))

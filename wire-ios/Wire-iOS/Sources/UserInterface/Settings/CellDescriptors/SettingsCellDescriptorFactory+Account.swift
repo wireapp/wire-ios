@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-import SwiftUI
 
 extension ZMUser {
     var hasValidEmail: Bool {
@@ -286,18 +286,16 @@ extension SettingsCellDescriptorFactory {
             },
             presentationStyle: .navigation,
             presentationAction: {
-                guard let zmAccentColor = ZMUser.selfUser()?.accentColorValue else {
-                    return nil
-                }
+                 let zmAccentColor = ZMUser.selfUser()?.accentColorValue
 
                 let selectedAccentColorBinding = Binding<AccentColor?>(
                     get: {
-                        AccentColor(ZMAccentColor: zmAccentColor)
+                        AccentColor(rawValue: zmAccentColor ?? .min)
                     },
                     set: { newColor in
                         ZMUserSession.shared()?.perform {
-                            let defaultZMAccentColor = ZMAccentColor.strongBlue
-                            ZMUser.selfUser()?.accentColorValue = newColor?.zmAccentColor ?? defaultZMAccentColor
+                            let defaultZMAccentColor = ZMAccentColor.default
+                            ZMUser.selfUser()?.accentColorValue = newColor?.rawValue ?? .min
                         }
                     }
                 )
