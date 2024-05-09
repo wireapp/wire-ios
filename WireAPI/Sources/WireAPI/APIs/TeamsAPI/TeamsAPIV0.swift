@@ -173,6 +173,47 @@ class TeamsAPIV0: TeamsAPI {
         }
     }
 
+    // MARK: - Get legalhold status
+
+    func getLegalholdStatus(
+        for teamID: Team.ID,
+        userID: UUID
+    ) async throws -> LegalholdStatus {
+        let request = HTTPRequest(
+            path: "\(basePath(for: teamID))/legalhold/\(userID.transportString())",
+            method: .get
+        )
+
+        let response = try await httpClient.executeRequest(request)
+
+        switch response.code {
+        case 200:
+            let payload = try decoder.decodePayload(
+                from: response,
+                as: LegalholdStatusResponseV0.self
+            )
+
+            return payload.status.toParent()
+
+        default:
+            let failure = try decoder.decodePayload(
+                from: response,
+                as: FailureResponse.self
+            )
+
+            switch (failure.code, failure.label) {
+            case (404, ""):
+                throw TeamsAPIError.invalidRequest
+
+            case (404, "no-team-member"):
+                throw TeamsAPIError.teamMemberNotFound
+
+            default:
+                throw failure
+            }
+        }
+    }
+
 }
 
 struct TeamResponseV0: Decodable {
@@ -269,7 +310,7 @@ struct TeamMemberResponseV0: Decodable {
     let permissions: PermissionsResponseV0?
     let created_by: UUID?
     let created_at: Date?
-    let legalhold_status: LegalholdStatusResponseV0?
+    let legalhold_status: LegalholdStatusV0?
 
     func toParent() -> TeamMember {
         TeamMember(
@@ -297,7 +338,7 @@ struct PermissionsResponseV0: Decodable {
 
 }
 
-enum LegalholdStatusResponseV0: String, Decodable {
+enum LegalholdStatusV0: String, Decodable {
 
     case enabled
     case pending
@@ -316,5 +357,11 @@ enum LegalholdStatusResponseV0: String, Decodable {
             return .noConsent
         }
     }
+
+}
+
+struct LegalholdStatusResponseV0: Decodable {
+
+    let status: LegalholdStatusV0
 
 }

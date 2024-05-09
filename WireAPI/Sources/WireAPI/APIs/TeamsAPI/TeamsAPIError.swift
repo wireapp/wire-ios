@@ -26,13 +26,17 @@ public enum TeamsAPIError: Error {
 
     case invalidTeamID
 
-    /// The request team does not exist.
+    /// The requested team does not exist.
 
     case teamNotFound
 
     /// The self user is not part of a team.
 
     case selfUserIsNotTeamMember
+
+    /// A requested team member could not be found.
+
+    case teamMemberNotFound
 
     /// A request could not be generated.
 
