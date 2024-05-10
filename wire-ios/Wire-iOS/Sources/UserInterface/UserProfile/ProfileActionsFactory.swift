@@ -155,12 +155,26 @@ final class ProfileActionsFactory: ProfileActionsFactoryProtocol {
         }
 
         Task {
-            let isOneOnOneReady = try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
+            let isOneOnOneReady = await isOneOnOneReady(userID: userID)
 
             await MainActor.run {
                 let actionsList = makeActionsList(isOneOnOneReady: isOneOnOneReady)
                 completion(actionsList)
             }
+        }
+    }
+
+    private func isOneOnOneReady(userID: QualifiedID) async -> Bool {
+        do {
+            return try await userSession.checkOneOnOneConversationIsReady.invoke(userID: userID)
+        } catch {
+            // We assume the conversation is not ready and we log the error
+            //
+            // Note: It could be that the user wasn't found,
+            // which is to be expected if it's an unconnected search user
+
+            WireLogger.conversation.warn("failed to check 1:1 conversation readiness: \(error)")
+            return false
         }
     }
 

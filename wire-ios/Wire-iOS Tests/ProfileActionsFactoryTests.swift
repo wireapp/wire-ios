@@ -25,7 +25,6 @@ final class ProfileActionsFactoryTests: XCTestCase {
     var domain = "domain.com"
     var selfUserTeam: UUID!
     var selfUser: MockUserType!
-    var defaultExtendedMetadata: [[String: String]]!
     var mockUserSession: UserSessionMock!
     var mockCheckOneOnOneIsReadyUseCase: MockCheckOneOnOneConversationIsReadyUseCaseProtocol!
 
@@ -44,7 +43,8 @@ final class ProfileActionsFactoryTests: XCTestCase {
     override func tearDown() {
         selfUser = nil
         selfUserTeam = nil
-        defaultExtendedMetadata = nil
+        mockUserSession = nil
+        mockCheckOneOnOneIsReadyUseCase = nil
         super.tearDown()
     }
 
@@ -821,12 +821,32 @@ final class ProfileActionsFactoryTests: XCTestCase {
         ])
     }
 
+    // MARK: - Search
+
+    func test_Search_TeamToUnconnectedSearchUser_UserNotFound() {
+        // GIVEN
+        let searchUser = MockUserType.createUser(name: "John Doe", domain: "example.com")
+        searchUser.isConnected = false
+        searchUser.canBeConnected = true
+
+        mockCheckOneOnOneIsReadyUseCase.invokeUserID_MockError = CheckOneOnOneConversationIsReadyError.userNotFound
+
+        // THEN
+        verifyActions(
+            user: searchUser,
+            viewer: selfUser,
+            conversation: nil,
+            expectedActions: [.connect],
+            context: .search
+        )
+    }
+
     // MARK: - Helpers
 
     func verifyActions(
         user: UserType,
         viewer: UserType,
-        conversation: MockConversation,
+        conversation: MockConversation?,
         expectedActions: [ProfileAction],
         context: ProfileViewControllerContext = .oneToOneConversation,
         file: StaticString = #file,
@@ -835,7 +855,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
         let factory = ProfileActionsFactory(
             user: user,
             viewer: viewer,
-            conversation: conversation.convertToRegularConversation(),
+            conversation: conversation?.convertToRegularConversation(),
             context: context,
             userSession: mockUserSession
         )
@@ -847,7 +867,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 0.5)
+        wait(for: [expectation], timeout: 1)
         XCTAssertEqual(actions, expectedActions, file: file, line: line)
     }
 

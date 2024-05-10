@@ -118,7 +118,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
 
     func test_itThrowsUserNotFoundError() async {
         // When / Then
-        await assertItThrows(error: CheckOneOnOneConversationIsReadyUseCase.Error.userNotFound) {
+        await assertItThrows(error: CheckOneOnOneConversationIsReadyError.userNotFound) {
             _ = try await self.sut.invoke(userID: .random())
         }
     }
@@ -128,7 +128,7 @@ class CheckOneOnOneConversationIsReadyUseCaseTests: XCTestCase {
         await setupOneOnOne(messageProtocol: .mls, groupID: nil)
 
         // When / Then
-        await assertItThrows(error: CheckOneOnOneConversationIsReadyUseCase.Error.missingGroupID) {
+        await assertItThrows(error: CheckOneOnOneConversationIsReadyError.missingGroupID) {
             _ = try await self.sut.invoke(userID: userID)
         }
     }
