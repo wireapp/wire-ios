@@ -299,6 +299,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         } else {
             updateUserE2EICertificationStatuses()
         }
+
+        if changeInfo.mlsVerificationStatusChanged {
+            setupNavigatiomItem()
+        }
     }
 
     func footerView(_ view: GroupDetailsFooterView,
