@@ -74,7 +74,7 @@ public final class ZMUserSession: NSObject {
     private(set) var proteusProvider: ProteusProviding!
     let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
     let mlsConversationVerificationStatusUpdater: MLSConversationVerificationStatusUpdating
-    let observeMLSGroupVerificationStatus: ObserveMLSGroupVerificationStatusUseCaseProtocol
+
     public let updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol
 
     public lazy var featureRepository = FeatureRepository(context: syncContext)
@@ -332,6 +332,10 @@ public final class ZMUserSession: NSObject {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
 
+    // MARK: Use Cases
+
+    private var observeMLSGroupVerificationStatusUseCase: (any ObserveMLSGroupVerificationStatusUseCaseProtocol)?
+
     // MARK: Dependency Injection
 
     let dependencies: UserSessionDependencies
@@ -360,7 +364,6 @@ public final class ZMUserSession: NSObject {
         cryptoboxMigrationManager: any CryptoboxMigrationManagerInterface,
         proteusToMLSMigrationCoordinator: any ProteusToMLSMigrationCoordinating,
         sharedUserDefaults: UserDefaults,
-        observeMLSGroupVerificationStatusUseCase: any ObserveMLSGroupVerificationStatusUseCaseProtocol,
         appLock: any AppLockType,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
         lastEventIDRepository: any LastEventIDRepositoryInterface,
@@ -400,7 +403,6 @@ public final class ZMUserSession: NSObject {
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
         self.updateMLSGroupVerificationStatus = updateMLSGroupVerificationStatusUseCase
         self.mlsConversationVerificationStatusUpdater = mlsConversationVerificationStatusUpdater
-        self.observeMLSGroupVerificationStatus = observeMLSGroupVerificationStatusUseCase
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
         self.dependencies = dependencies
@@ -411,6 +413,7 @@ public final class ZMUserSession: NSObject {
         strategyDirectory: (any StrategyDirectoryProtocol)?,
         syncStrategy: ZMSyncStrategy?,
         operationLoop: ZMOperationLoop?,
+        observeMLSGroupVerificationStatusUseCase: (any ObserveMLSGroupVerificationStatusUseCaseProtocol)?,
         configuration: Configuration
     ) {
         coreDataStack.linkAnalytics(analytics)
@@ -423,6 +426,12 @@ public final class ZMUserSession: NSObject {
         appLockController.delegate = self
         applicationStatusDirectory.syncStatus.syncStateDelegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
+
+        self.observeMLSGroupVerificationStatusUseCase = observeMLSGroupVerificationStatusUseCase ?? ObserveMLSGroupVerificationStatusUseCase(
+            mlsService: mlsService,
+            updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatus,
+            syncContext: coreDataStack.syncContext
+        )
 
         syncManagedObjectContext.performGroupedBlockAndWait { [self] in
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
@@ -451,7 +460,7 @@ public final class ZMUserSession: NSObject {
             self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
 
-            self.observeMLSGroupVerificationStatus.invoke()
+            self.observeMLSGroupVerificationStatusUseCase?.invoke()
             self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
                 from: self.mlsService.onNewCRLsDistributionPoints()
             )

@@ -130,7 +130,6 @@ struct ZMUserSessionBuilder {
         flowManager: any FlowManagerType,
         mediaManager: any MediaManagerType,
         mlsService: (any MLSServiceInterface)?,
-        observeMLSGroupVerificationStatus: (any ObserveMLSGroupVerificationStatusUseCaseProtocol)?,
         proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?,
         recurringActionService: (any RecurringActionServiceInterface)?,
         sharedUserDefaults: UserDefaults,
@@ -206,11 +205,7 @@ struct ZMUserSessionBuilder {
             syncStatus: applicationStatusDirectory.syncStatus,
             userID: coreDataStack.account.userIdentifier
         )
-        let observeMLSGroupVerificationStatusUseCase = observeMLSGroupVerificationStatus ?? ObserveMLSGroupVerificationStatusUseCase(
-            mlsService: mlsService,
-            updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatus,
-            syncContext: coreDataStack.syncContext
-        )
+
         let proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator ?? ProteusToMLSMigrationCoordinator(
             context: coreDataStack.syncContext,
             userID: userId
@@ -237,7 +232,6 @@ struct ZMUserSessionBuilder {
         self.mediaManager = mediaManager
         self.mlsConversationVerificationStatusUpdater = mlsConversationVerificationStatusUpdater
         self.mlsService = mlsService
-        self.observeMLSGroupVerificationStatusUseCase = observeMLSGroupVerificationStatusUseCase
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
         self.recurringActionService = recurringActionService
         self.sharedUserDefaults = sharedUserDefaults
