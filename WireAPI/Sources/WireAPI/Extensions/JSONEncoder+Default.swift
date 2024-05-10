@@ -16,13 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+import Foundation
 
-enum AccountViewFactory {
+extension JSONEncoder {
 
-    static func viewFor(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) -> AccountView {
+    /// The default encoder to use when building http requests.
 
-        return TeamAccountView(account: account, user: user, displayContext: displayContext) ??
-               PersonalAccountView(account: account, user: user, displayContext: displayContext)!
+    static var defaultEncoder: JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .custom({ date, encoder in
+            var container = encoder.singleValueContainer()
+            let transportString = ISO8601DateFormatter.default.string(from: date)
+            try container.encode(transportString)
+        })
+
+        return encoder
     }
+
 }

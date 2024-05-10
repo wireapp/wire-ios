@@ -16,16 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireDataModel
+import Foundation
 
-protocol AccountView: BaseAccountView {
+/// Metadata about the local backend.
 
-    var collapsed: Bool { get set }
-    var hasUnreadMessages: Bool { get }
-    var account: Account { get }
-    var onTap: (Account?) -> Void { get set }
+public struct BackendInfo: Equatable {
 
-    func createDotConstraints() -> [NSLayoutConstraint]
-    func update()
+    /// The local domain.
+
+    public let domain: String
+
+    /// Whether federation is enabled on the local backend.
+
+    public let isFederationEnabled: Bool
+
+    /// All production ready api versions supported by the local backend.
+
+    public let supportedVersions: Set<APIVersion>
+
+    /// All api versions currently under development by the local backend.
+
+    public let developmentVersions: Set<APIVersion>
+
 }

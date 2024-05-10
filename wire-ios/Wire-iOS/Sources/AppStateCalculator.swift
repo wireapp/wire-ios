@@ -99,30 +99,29 @@ final class AppStateCalculator {
     private var hasEnteredForeground: Bool = false
 
     // MARK: - Private Implementation
-    private func transition(to appState: AppState,
-                            completion: (() -> Void)? = nil) {
+    private func transition(
+        to appState: AppState,
+        completion: @escaping () -> Void = {}
+    ) {
         guard hasEnteredForeground  else {
             pendingAppState = appState
-            completion?()
-            return
+            return completion()
         }
 
         guard self.appState != appState else {
-            completion?()
-            return
+            return completion()
         }
 
         if case .blacklisted = self.appState, BackendInfo.apiVersion == nil {
-            completion?()
-            return
+            return completion()
         }
 
         self.appState = appState
         self.pendingAppState = nil
         WireLogger.appState.debug("transitioning to app state: \(appState)")
-        delegate?.appStateCalculator(self, didCalculate: appState, completion: {
-            completion?()
-        })
+
+        guard let delegate else { return completion() }
+        delegate.appStateCalculator(self, didCalculate: appState, completion: completion)
     }
 }
 
@@ -161,11 +160,13 @@ extension AppStateCalculator: SessionManagerDelegate {
         }
     }
 
-    func sessionManagerWillLogout(error: Error?,
-                                  userSessionCanBeTornDown: (() -> Void)?) {
-        let appState: AppState = .unauthenticated(error: error as NSError?)
-        transition(to: appState,
-                   completion: userSessionCanBeTornDown)
+    func sessionManagerWillLogout(
+        error: Error?,
+        userSessionCanBeTornDown: (() -> Void)?
+    ) {
+        transition(to: .unauthenticated(error: error as NSError?)) {
+            userSessionCanBeTornDown?()
+        }
     }
 
     func sessionManagerDidFailToLogin(error: Error?) {
