@@ -124,6 +124,7 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
             await context.perform {
                 let conversation = ZMConversation.fetch(with: mlsGroupID, in: context)
                 conversation?.ciphersuite = ciphersuite
+                conversation?.mlsStatus = .ready
             }
         } catch {
             throw MigrateMLSOneOnOneConversationError.failedToEstablishGroup(error)
