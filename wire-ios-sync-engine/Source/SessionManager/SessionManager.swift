@@ -663,7 +663,12 @@ public final class SessionManager: NSObject, SessionManagerType {
             return
         }
 
-        confirmSwitchingAccount { [weak self] in
+        confirmSwitchingAccount { [weak self] isConfirmed in
+
+            guard isConfirmed else {
+                completion?(nil)
+                return
+            }
 
             self?.isSelectingAccount = true
             let selectedAccount = self?.accountManager.selectedAccount
@@ -698,7 +703,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     public func addAccount(userInfo: [String: Any]? = nil) {
-        confirmSwitchingAccount { [weak self] in
+        confirmSwitchingAccount { [weak self] isConfirmed in
+            guard isConfirmed else { return }
             let error = NSError(code: .addAccountRequested, userInfo: userInfo)
             self?.delegate?.sessionManagerWillLogout(error: error, userSessionCanBeTornDown: { [weak self] in
                 self?.activeUserSession = nil
@@ -1554,25 +1560,27 @@ extension SessionManager {
 
 extension SessionManager {
 
-    public func confirmSwitchingAccount(completion: @escaping () -> Void) {
+    public func confirmSwitchingAccount(completion: @escaping (_ isConfirmed: Bool) -> Void) {
         guard
             let switchingDelegate,
             let activeUserSession,
             activeUserSession.isCallOngoing
         else {
-            return completion()
+            // no confirmation to show if no call is ongoing
+            return completion(true)
         }
 
         switchingDelegate.confirmSwitchingAccount { confirmed in
             if confirmed {
                 activeUserSession.callCenter?.endAllCalls()
             }
-            completion()
+            completion(confirmed)
         }
     }
 }
 
 // MARK: - AVS Logging
+
 extension SessionManager {
 
     public static func startAVSLogging() {
