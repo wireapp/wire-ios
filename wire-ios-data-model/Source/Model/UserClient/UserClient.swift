@@ -426,9 +426,9 @@ public extension UserClient {
         let mlsPublicKeys = payloadAsDictionary.optionalDictionary(forKey: "mls_public_keys")
         let mlsEd25519 = mlsPublicKeys?.optionalString(forKey: "ed25519")
         let mlsEd448 = mlsPublicKeys?.optionalString(forKey: "ed448")
-        let mlsP256 = mlsPublicKeys?.optionalString(forKey: "p256")
-        let mlsP384 = mlsPublicKeys?.optionalString(forKey: "p384")
-        let mlsP521 = mlsPublicKeys?.optionalString(forKey: "p521")
+        let mlsP256 = mlsPublicKeys?.optionalString(forKey: "ecdsa_secp256r1_sha256")
+        let mlsP384 = mlsPublicKeys?.optionalString(forKey: "ecdsa_secp384r1_sha384")
+        let mlsP521 = mlsPublicKeys?.optionalString(forKey: "ecdsa_secp521r1_sha512")
 
         client.label = label
         client.type = DeviceType(rawValue: type)
