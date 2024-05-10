@@ -105,7 +105,7 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
-    func appearanceSection() -> SettingsSectionDescriptorType {
+    private func appearanceSection() -> SettingsSectionDescriptorType {
         return SettingsSectionDescriptor(
             cellDescriptors: [pictureElement(), colorElement()],
             header: L10n.Localizable.Self.Settings.AccountAppearanceGroup.title
@@ -256,7 +256,7 @@ extension SettingsCellDescriptorFactory {
         return SettingsCopyButtonCellDescriptor()
     }
 
-    func pictureElement() -> SettingsCellDescriptorType {
+    private func pictureElement() -> SettingsCellDescriptorType {
         let profileImagePicker = ProfileImagePickerManager()
         let previewGenerator: PreviewGeneratorType = { _ in
             guard let image = ZMUser.selfUser()?.imageSmallProfileData.flatMap(UIImage.init) else { return .none }
@@ -274,35 +274,39 @@ extension SettingsCellDescriptorFactory {
             presentationAction: presentationAction)
     }
 
-    func colorElement() -> SettingsCellDescriptorType {
+    private func colorElement() -> SettingsCellDescriptorType {
         return SettingsAppearanceCellDescriptor(
             text: L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized,
-            previewGenerator: { _ in
-                guard let selfUser = ZMUser.selfUser() else {
-                    assertionFailure("ZMUser.selfUser() is nil")
-                    return .none
-                }
-                return .color((selfUser.accentColor ?? .default).uiColor)
-            },
+            previewGenerator: colorElementPreviewGenerator,
             presentationStyle: .navigation,
-            presentationAction: {
-                 let zmAccentColor = ZMUser.selfUser()?.accentColorValue
+            presentationAction: colorElementPresentationAction
+        )
+    }
 
-                let selectedAccentColorBinding = Binding<AccentColor?>(
-                    get: {
-                        AccentColor(rawValue: zmAccentColor ?? .min)
-                    },
-                    set: { newColor in
-                        ZMUserSession.shared()?.perform {
-                            let defaultZMAccentColor = ZMAccentColor.default
-                            ZMUser.selfUser()?.accentColorValue = newColor?.rawValue ?? .min
-                        }
-                    }
-                )
+    private func colorElementPreviewGenerator(cellDescriptorType: any SettingsCellDescriptorType) -> SettingsCellPreview {
+        guard let selfUser = ZMUser.selfUser() else {
+            assertionFailure("ZMUser.selfUser() is nil")
+            return .none
+        }
+        return SettingsCellPreview.color((selfUser.accentColor ?? .default).uiColor)
+    }
 
-                return AccentColorPickerHostingController(selectedAccentColor: selectedAccentColorBinding)
+    private func colorElementPresentationAction() -> UIViewController {
+        let zmAccentColor = ZMUser.selfUser()?.accentColorValue
+
+        let selectedAccentColorBinding = Binding<AccentColor?>(
+            get: {
+                AccentColor(rawValue: zmAccentColor ?? .min)
+            },
+            set: { newColor in
+                ZMUserSession.shared()?.perform {
+                    let defaultZMAccentColor = ZMAccentColor.default
+                    ZMUser.selfUser()?.accentColorValue = newColor?.rawValue ?? .min
+                }
             }
         )
+
+        return AccentColorPickerHostingController(selectedAccentColor: selectedAccentColorBinding)
     }
 
     func readReceiptsEnabledElement() -> SettingsCellDescriptorType {
