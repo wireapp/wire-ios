@@ -168,13 +168,18 @@ private extension GridView {
 
         switch (participantAmount, splitType) {
         case (.moreThanTwo, .proportionalSplit):
-            return numberOfItemsInPage.evenlyCeiled / 2
+            let isEven = numberOfItemsInPage.isMultiple(of: 2)
+            let ceiledNumberOfItemsInPage = isEven ? numberOfItemsInPage : (numberOfItemsInPage + 1)
+            return ceiledNumberOfItemsInPage / 2
+
         case (.moreThanTwo, .middleSplit):
             let isOddLastRow = self.isOddLastRow(indexPath)
             let isLayoutDirectionVertical = layoutDirection == .vertical
             return isOddLastRow && isLayoutDirectionVertical ? 1 : 2
+
         case (.twoOrLess, .proportionalSplit):
             return numberOfItemsInPage
+
         case (.twoOrLess, .middleSplit):
             return 1
         }
@@ -185,8 +190,8 @@ private extension GridView {
             return false
         }
 
+        let isOdd = !numberOfItems.isMultiple(of: 2)
         let isLastRow = numberOfItems == indexPath.row + 1
-        let isOdd = !numberOfItems.isEven
         return isOdd && isLastRow
     }
 }
