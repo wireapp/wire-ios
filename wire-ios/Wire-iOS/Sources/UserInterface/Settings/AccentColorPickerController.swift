@@ -24,6 +24,7 @@ import WireSyncEngine
 
 class AccentColorPickerHostingController: UIHostingController<ColorPickerView> {
 
+    @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -40,14 +41,17 @@ class AccentColorPickerHostingController: UIHostingController<ColorPickerView> {
             initialSelectedColor = firstColor
         }
 
-        super.init(rootView: ColorPickerView(selectedColor: initialSelectedColor, colors: allAccentColors, onColorSelect: { selectedColor in
-            selectedAccentColor.wrappedValue = selectedColor
-            if let colorIndex = allAccentColors.firstIndex(of: selectedColor) {
-                ZMUserSession.shared()?.perform {
-                    ZMUser.selfUser()?.accentColorValue = allAccentColors[colorIndex].rawValue
+        super.init(rootView: ColorPickerView(
+            selectedColor: initialSelectedColor,
+            colors: allAccentColors,
+            onColorSelect: { selectedColor in
+                selectedAccentColor.wrappedValue = selectedColor
+                if let colorIndex = allAccentColors.firstIndex(of: selectedColor) {
+                    ZMUserSession.shared()?.perform {
+                        ZMUser.selfUser()?.accentColorValue = allAccentColors[colorIndex].rawValue
+                    }
                 }
             }
-        }))
-
+        ))
     }
 }
