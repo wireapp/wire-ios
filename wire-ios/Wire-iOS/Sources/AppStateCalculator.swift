@@ -63,9 +63,11 @@ enum AppState: Equatable {
 }
 
 protocol AppStateCalculatorDelegate: AnyObject {
-    func appStateCalculator(_: AppStateCalculator,
-                            didCalculate appState: AppState,
-                            completion: @escaping () -> Void)
+    func appStateCalculator(
+        _ appStateCalculator: AppStateCalculator,
+        didCalculate appState: AppState,
+        completion: @escaping () -> Void
+    )
 }
 
 final class AppStateCalculator {
@@ -101,27 +103,30 @@ final class AppStateCalculator {
     // MARK: - Private Implementation
     private func transition(
         to appState: AppState,
-        completion: @escaping () -> Void = {}
+        completion: (() -> Void)? = nil
     ) {
         guard hasEnteredForeground  else {
             pendingAppState = appState
-            return completion()
+            completion?()
+            return
         }
 
         guard self.appState != appState else {
-            return completion()
+            completion?()
+            return
         }
 
         if case .blacklisted = self.appState, BackendInfo.apiVersion == nil {
-            return completion()
+            completion?()
+            return
         }
 
         self.appState = appState
         self.pendingAppState = nil
         WireLogger.appState.debug("transitioning to app state: \(appState)")
-
-        guard let delegate else { return completion() }
-        delegate.appStateCalculator(self, didCalculate: appState, completion: completion)
+        delegate?.appStateCalculator(self, didCalculate: appState) {
+            completion?()
+        }
     }
 }
 
@@ -164,9 +169,10 @@ extension AppStateCalculator: SessionManagerDelegate {
         error: Error?,
         userSessionCanBeTornDown: (() -> Void)?
     ) {
-        transition(to: .unauthenticated(error: error as NSError?)) {
-            userSessionCanBeTornDown?()
-        }
+        transition(
+            to: .unauthenticated(error: error as NSError?),
+            completion: userSessionCanBeTornDown
+        )
     }
 
     func sessionManagerDidFailToLogin(error: Error?) {
