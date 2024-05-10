@@ -22,7 +22,7 @@ import WireSyncEngine
 
 struct ColorPickerView: View {
 
-    @State var selectedColor: AccentColor?
+    @State var selectedColor: AccentColor
 
     let colors: [AccentColor]
     let onColorSelect: ((AccentColor) -> Void)?
