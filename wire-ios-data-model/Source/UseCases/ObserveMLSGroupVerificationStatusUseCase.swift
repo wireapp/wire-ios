@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol ObserveMLSGroupVerificationStatusUseCaseProtocol {
 
-    func invoke()
+    func invoke() -> Task<Void, Error>
 
 }
 
@@ -30,16 +30,14 @@ public final class ObserveMLSGroupVerificationStatusUseCase: ObserveMLSGroupVeri
     // MARK: - Properties
 
     private let mlsService: MLSServiceInterface
-    private let updateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerificationStatusUseCaseProtocol
+    private let updateMLSGroupVerificationStatusUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol
     private let syncContext: NSManagedObjectContext
-
-    private var epochChangesListenerTask: Task<Void, Error>?
 
     // MARK: - Life cycle
 
     public init(
         mlsService: MLSServiceInterface,
-        updateMLSGroupVerificationStatusUseCase: UpdateMLSGroupVerificationStatusUseCaseProtocol,
+        updateMLSGroupVerificationStatusUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol,
         syncContext: NSManagedObjectContext
     ) {
         self.mlsService = mlsService
@@ -47,18 +45,10 @@ public final class ObserveMLSGroupVerificationStatusUseCase: ObserveMLSGroupVeri
         self.syncContext = syncContext
     }
 
-    deinit {
-        epochChangesListenerTask?.cancel()
-    }
-
     // MARK: - Methods
 
-    public func invoke() {
-        epochChangesListenerTask = listenForEpochChanges()
-    }
-
-    private func listenForEpochChanges() -> Task<Void, Error> {
-        return .detached { [mlsService, syncContext, updateMLSGroupVerificationStatusUseCase] in
+    public func invoke() -> Task<Void, Error> {
+        .detached { [mlsService, syncContext, updateMLSGroupVerificationStatusUseCase] in
             for try await groupID in mlsService.epochChanges() {
                 do {
                     guard let conversation = await syncContext.perform({

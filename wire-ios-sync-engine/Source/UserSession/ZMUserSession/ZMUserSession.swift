@@ -334,7 +334,7 @@ public final class ZMUserSession: NSObject {
 
     // MARK: Use Cases
 
-    private var observeMLSGroupVerificationStatusUseCase: (any ObserveMLSGroupVerificationStatusUseCaseProtocol)?
+    private var observeMLSGroupVerificationStatusTask: Task<Void, Error>?
 
     // MARK: Dependency Injection
 
@@ -427,7 +427,7 @@ public final class ZMUserSession: NSObject {
         applicationStatusDirectory.syncStatus.syncStateDelegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
 
-        self.observeMLSGroupVerificationStatusUseCase = observeMLSGroupVerificationStatusUseCase ?? ObserveMLSGroupVerificationStatusUseCase(
+        let observeMLSGroupVerificationStatusUseCase = observeMLSGroupVerificationStatusUseCase ?? ObserveMLSGroupVerificationStatusUseCase(
             mlsService: mlsService,
             updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatus,
             syncContext: coreDataStack.syncContext
@@ -460,7 +460,7 @@ public final class ZMUserSession: NSObject {
             self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
 
-            self.observeMLSGroupVerificationStatusUseCase?.invoke()
+            self.observeMLSGroupVerificationStatusTask = observeMLSGroupVerificationStatusUseCase.invoke()
             self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
                 from: self.mlsService.onNewCRLsDistributionPoints()
             )
@@ -490,6 +490,8 @@ public final class ZMUserSession: NSObject {
 
     public func tearDown() {
         guard !tornDown else { return }
+
+        observeMLSGroupVerificationStatusTask?.cancel()
 
         tokens.removeAll()
         application.unregisterObserverForStateChange(self)

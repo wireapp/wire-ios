@@ -43,7 +43,6 @@ struct ZMUserSessionBuilder {
     private var mediaManager: (any MediaManagerType)?
     private var mlsConversationVerificationStatusUpdater: (any MLSConversationVerificationStatusUpdating)?
     private var mlsService: (any MLSServiceInterface)?
-    private var observeMLSGroupVerificationStatusUseCase: (any ObserveMLSGroupVerificationStatusUseCaseProtocol)?
     private var proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?
     private var recurringActionService: (any RecurringActionServiceInterface)?
     private var sharedUserDefaults: UserDefaults?
@@ -76,7 +75,6 @@ struct ZMUserSessionBuilder {
             let mediaManager,
             let mlsConversationVerificationStatusUpdater,
             let mlsService,
-            let observeMLSGroupVerificationStatusUseCase,
             let proteusToMLSMigrationCoordinator,
             let recurringActionService,
             let sharedUserDefaults,
@@ -101,7 +99,6 @@ struct ZMUserSessionBuilder {
             cryptoboxMigrationManager: cryptoboxMigrationManager,
             proteusToMLSMigrationCoordinator: proteusToMLSMigrationCoordinator,
             sharedUserDefaults: sharedUserDefaults,
-            observeMLSGroupVerificationStatusUseCase: observeMLSGroupVerificationStatusUseCase,
             appLock: appLock,
             coreCryptoProvider: coreCryptoProvider,
             lastEventIDRepository: lastEventIDRepository,
