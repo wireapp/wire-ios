@@ -4701,16 +4701,19 @@ public class MockObserveMLSGroupVerificationStatusUseCaseProtocol: ObserveMLSGro
     // MARK: - invoke
 
     public var invoke_Invocations: [Void] = []
-    public var invoke_MockMethod: (() -> Void)?
+    public var invoke_MockMethod: (() -> Task<Void, Error>)?
+    public var invoke_MockValue: Task<Void, Error>?
 
-    public func invoke() {
+    public func invoke() -> Task<Void, Error> {
         invoke_Invocations.append(())
 
-        guard let mock = invoke_MockMethod else {
+        if let mock = invoke_MockMethod {
+            return mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
             fatalError("no mock for `invoke`")
         }
-
-        mock()
     }
 
 }

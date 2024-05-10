@@ -269,7 +269,6 @@ final class APIMigrationManagerTests: MessagingTest {
             flowManager: FlowManagerMock(),
             mediaManager: MockMediaManager(),
             mlsService: nil,
-            observeMLSGroupVerificationStatus: nil,
             proteusToMLSMigrationCoordinator: nil,
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
@@ -283,6 +282,7 @@ final class APIMigrationManagerTests: MessagingTest {
             strategyDirectory: mockStrategyDirectory,
             syncStrategy: nil,
             operationLoop: nil,
+            observeMLSGroupVerificationStatusUseCase: nil,
             configuration: configuration
         )
 

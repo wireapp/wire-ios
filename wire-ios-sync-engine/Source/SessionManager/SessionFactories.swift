@@ -88,7 +88,6 @@ open class AuthenticatedSessionFactory {
             flowManager: flowManager,
             mediaManager: mediaManager,
             mlsService: nil,
-            observeMLSGroupVerificationStatus: nil,
             proteusToMLSMigrationCoordinator: nil,
             recurringActionService: nil,
             sharedUserDefaults: sharedUserDefaults,
@@ -102,6 +101,7 @@ open class AuthenticatedSessionFactory {
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
+            observeMLSGroupVerificationStatusUseCase: nil,
             configuration: configuration
         )
         userSession.startRequestLoopTracker()

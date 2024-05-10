@@ -78,7 +78,6 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             flowManager: flowManager,
             mediaManager: mediaManager,
             mlsService: nil,
-            observeMLSGroupVerificationStatus: nil,
             proteusToMLSMigrationCoordinator: nil,
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
@@ -92,6 +91,7 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
+            observeMLSGroupVerificationStatusUseCase: nil,
             configuration: configuration
         )
 
