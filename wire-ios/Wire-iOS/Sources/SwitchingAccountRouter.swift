@@ -18,33 +18,40 @@
 
 import WireSyncEngine
 
-typealias SwitchingAccountRouterProtocol = SessionManagerSwitchingDelegate & SwitchingAccountAlertPresenter
-
 protocol SwitchingAccountAlertPresenter {
     func presentSwitchAccountAlert(completion: @escaping (Bool) -> Void)
 }
 
-class SwitchingAccountRouter: SwitchingAccountRouterProtocol {
+final class SwitchingAccountRouter: SessionManagerSwitchingDelegate, SwitchingAccountAlertPresenter {
+
     // MARK: - SessionManagerSwitchingDelegate
+
     func confirmSwitchingAccount(completion: @escaping (Bool) -> Void) {
         presentSwitchAccountAlert(completion: completion)
     }
 
     // MARK: - SwitchingAccountAlertPresenter
+
     @objc
-    internal func presentSwitchAccountAlert(completion: @escaping (Bool) -> Void) {
+    func presentSwitchAccountAlert(completion: @escaping (Bool) -> Void) {
+
         guard let topmostController = UIApplication.shared.topmostViewController() else {
             return completion(false)
         }
 
-        let alert = UIAlertController(title: L10n.Localizable.Call.Alert.Ongoing.alertTitle,
-                                      message: L10n.Localizable.Self.Settings.SwitchAccount.message,
-                                      preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: L10n.Localizable.Self.Settings.SwitchAccount.action,
-                                      style: .default,
-                                      handler: { _ in
-            completion(true)
-        }))
+        let alert = UIAlertController(
+            title: L10n.Localizable.Call.Alert.Ongoing.alertTitle,
+            message: L10n.Localizable.Self.Settings.SwitchAccount.message,
+            preferredStyle: .alert
+        )
+        alert.addAction(
+            UIAlertAction(
+                title: L10n.Localizable.Self.Settings.SwitchAccount.action,
+                style: .default
+            ) { _ in
+                completion(true)
+            }
+        )
         alert.addAction(.cancel {
             completion(false)
         })

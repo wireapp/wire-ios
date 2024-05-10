@@ -16,13 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+import WireSyncEngine
 
-enum AccountViewFactory {
+// sourcery: AutoMockable
+public protocol AccountSelector {
 
-    static func viewFor(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) -> AccountView {
+    var currentAccount: Account? { get }
 
-        return TeamAccountView(account: account, user: user, displayContext: displayContext) ??
-               PersonalAccountView(account: account, user: user, displayContext: displayContext)!
+    func switchTo(account: Account)
+    func switchTo(account: Account, completion: ((UserSession?) -> Void)?)
+}
+
+extension AccountSelector {
+
+    public func switchTo(account: Account) {
+        switchTo(account: account, completion: .none)
     }
 }

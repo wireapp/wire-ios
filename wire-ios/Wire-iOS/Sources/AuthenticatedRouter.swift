@@ -197,7 +197,6 @@ private extension UIViewController {
     func presentAlert(_ alert: UIAlertController) {
         present(alert, animated: true, completion: nil)
     }
-
 }
 
 protocol FeatureRepositoryProvider {

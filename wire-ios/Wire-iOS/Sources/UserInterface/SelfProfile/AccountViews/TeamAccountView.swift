@@ -19,17 +19,13 @@
 import UIKit
 import WireDataModel
 
-final class TeamAccountView: BaseAccountView, AccountView {
-
-    override var collapsed: Bool {
-        didSet { imageView.isHidden = collapsed }
-    }
+final class TeamAccountView: BaseAccountView {
 
     private let imageView: TeamImageView
     private var teamObserver: NSObjectProtocol!
     private var conversationListObserver: NSObjectProtocol!
 
-    override init?(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) {
+    required init?(user: ZMUser?, account: Account, displayContext: DisplayContext) {
 
         if let content = user?.team?.teamImageViewContent ?? account.teamImageViewContent {
             imageView = TeamImageView(content: content, style: .big)
@@ -94,7 +90,7 @@ final class TeamAccountView: BaseAccountView, AccountView {
         accessibilityIdentifier = "\(account.teamName ?? "") team"
     }
 
-    func createDotConstraints() -> [NSLayoutConstraint] {
+    override func createDotConstraints() -> [NSLayoutConstraint] {
         let dotSize: CGFloat = 9
         let dotInset: CGFloat = 2
 

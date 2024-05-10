@@ -16,16 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
 import WireDataModel
 
-protocol AccountView: BaseAccountView {
+struct AccountViewBuilder {
 
-    var collapsed: Bool { get set }
-    var hasUnreadMessages: Bool { get }
-    var account: Account { get }
-    var onTap: (Account?) -> Void { get set }
+    var account: Account
+    var user: ZMUser?
+    var displayContext: DisplayContext
 
-    func createDotConstraints() -> [NSLayoutConstraint]
-    func update()
+    func build() -> BaseAccountView {
+
+        if let accountView = TeamAccountView(user: user, account: account, displayContext: displayContext) {
+            accountView
+        } else {
+            PersonalAccountView(account: account, user: user, displayContext: displayContext)
+        }
+    }
 }

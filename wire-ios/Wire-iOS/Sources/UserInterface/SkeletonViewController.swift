@@ -190,7 +190,7 @@ final class ListSkeletonView: UIView {
     }()
 
     init(_ account: Account, randomizeDummyItem: Bool) {
-        let accountView = AccountViewFactory.viewFor(account: account, displayContext: .conversationListHeader) as BaseAccountView
+        let accountView = AccountViewBuilder(account: account, displayContext: .conversationListHeader).build()
         accountView.selected = false
 
         listContentView = ListSkeletonContentView(randomizeDummyItem: randomizeDummyItem)
