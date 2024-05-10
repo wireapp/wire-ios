@@ -26,7 +26,10 @@ struct AccountViewBuilder {
 
     func build() -> BaseAccountView {
 
-        return TeamAccountView(user: user, account: account, displayContext: displayContext) ??
-               PersonalAccountView(account: account, user: user, displayContext: displayContext)
+        if let accountView = TeamAccountView(user: user, account: account, displayContext: displayContext) {
+            accountView
+        } else {
+            PersonalAccountView(account: account, user: user, displayContext: displayContext)
+        }
     }
 }
