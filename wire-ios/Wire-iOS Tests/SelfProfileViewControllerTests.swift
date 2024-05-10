@@ -148,7 +148,8 @@ final class SelfProfileViewControllerTests: ZMSnapshotTestCase, CoreDataFixtureT
         sut = SelfProfileViewController(
             selfUser: selfUser,
             userRightInterfaceType: MockUserRight.self,
-            userSession: userSession
+            userSession: userSession,
+            accountSelector: MockAccountSelector()
         )
         sut.view.backgroundColor = SemanticColors.View.backgroundDefault
     }

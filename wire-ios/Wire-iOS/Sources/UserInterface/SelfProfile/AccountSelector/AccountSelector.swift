@@ -19,7 +19,6 @@
 import WireSyncEngine
 
 // sourcery: AutoMockable
-@MainActor
 public protocol AccountSelector {
 
     var currentAccount: Account? { get }

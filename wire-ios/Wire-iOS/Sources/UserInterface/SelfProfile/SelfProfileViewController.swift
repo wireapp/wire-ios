@@ -61,11 +61,12 @@ final class SelfProfileViewController: UIViewController {
     init(
         selfUser: SettingsSelfUser,
         userRightInterfaceType: UserRightInterface.Type,
-        userSession: UserSession
+        userSession: UserSession,
+        accountSelector: AccountSelector?
     ) {
 
         self.userSession = userSession
-        accountSelector = SessionManager.shared
+        self.accountSelector = accountSelector
 
         // Create the settings hierarchy
 
