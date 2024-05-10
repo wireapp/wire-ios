@@ -17,41 +17,30 @@
 //
 
 import SwiftUI
-import UIKit
-import WireCommonComponents
-import WireDataModel
-import WireSyncEngine
+import protocol WireDataModel.EditableUserType
+import enum WireUtilities.AccentColor
+import protocol WireSyncEngine.UserSession
 
-class AccentColorPickerHostingController: UIHostingController<ColorPickerView> {
+final class AccentColorPickerController: UIHostingController<ColorPickerView> {
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    init(selectedAccentColor: Binding<AccentColor?>) {
-        let allAccentColors = AccentColor.allCases
-        var initialSelectedColor: AccentColor?
+    init(selfUser: EditableUserType, userSession: UserSession) {
+        let accentColor = AccentColor(rawValue: selfUser.accentColorValue) ?? .default
 
-        if let bindingValue = selectedAccentColor.wrappedValue {
-            // If the binding has an initial value, use it
-            initialSelectedColor = bindingValue
-        } else if let firstColor = allAccentColors.first {
-            // If no initial value, use the first available color as a default
-            initialSelectedColor = firstColor
-        }
-
-        super.init(rootView: ColorPickerView(
-            selectedColor: initialSelectedColor,
-            colors: allAccentColors,
-            onColorSelect: { selectedColor in
-                selectedAccentColor.wrappedValue = selectedColor
-                if let colorIndex = allAccentColors.firstIndex(of: selectedColor) {
-                    ZMUserSession.shared()?.perform {
-                        ZMUser.selfUser()?.accentColorValue = allAccentColors[colorIndex].rawValue
-                    }
+        let colorPickerView = ColorPickerView(
+            selectedColor: accentColor,
+            colors: AccentColor.allCases,
+            onColorSelect: { accentColor in
+                userSession.perform {
+                    selfUser.accentColorValue = accentColor.rawValue
                 }
             }
-        ))
+        )
+
+        super.init(rootView: colorPickerView)
     }
 }

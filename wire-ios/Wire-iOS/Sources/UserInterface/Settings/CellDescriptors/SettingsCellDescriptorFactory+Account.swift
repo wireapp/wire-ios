@@ -275,7 +275,7 @@ extension SettingsCellDescriptorFactory {
     }
 
     private func colorElement() -> SettingsCellDescriptorType {
-        return SettingsAppearanceCellDescriptor(
+        SettingsAppearanceCellDescriptor(
             text: L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized,
             previewGenerator: colorElementPreviewGenerator,
             presentationStyle: .navigation,
@@ -292,21 +292,18 @@ extension SettingsCellDescriptorFactory {
     }
 
     private func colorElementPresentationAction() -> UIViewController {
-        let zmAccentColor = ZMUser.selfUser()?.accentColorValue
+        guard
+            let selfUser = ZMUser.selfUser(),
+            let userSession = ZMUserSession.shared()
+        else {
+            assertionFailure("misses prerequisites to present color elements!")
+            return UIViewController()
+        }
 
-        let selectedAccentColorBinding = Binding<AccentColor?>(
-            get: {
-                AccentColor(rawValue: zmAccentColor ?? .min)
-            },
-            set: { newColor in
-                ZMUserSession.shared()?.perform {
-                    let defaultZMAccentColor = ZMAccentColor.default
-                    ZMUser.selfUser()?.accentColorValue = newColor?.rawValue ?? .min
-                }
-            }
+        return AccentColorPickerController(
+            selfUser: selfUser,
+            userSession: userSession
         )
-
-        return AccentColorPickerHostingController(selectedAccentColor: selectedAccentColorBinding)
     }
 
     func readReceiptsEnabledElement() -> SettingsCellDescriptorType {
