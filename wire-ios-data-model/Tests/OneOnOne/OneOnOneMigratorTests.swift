@@ -137,6 +137,7 @@ final class OneOnOneMigratorTests: XCTestCase {
         await syncContext.perform {
             XCTAssertEqual(mlsConversation.oneOnOneUser, connection.to)
             XCTAssertEqual(mlsConversation.ciphersuite, ciphersuite)
+            XCTAssertEqual(mlsConversation.mlsStatus, .ready)
             XCTAssertNil(proteusConversation.oneOnOneUser)
         }
         withExtendedLifetime(handler) {}
