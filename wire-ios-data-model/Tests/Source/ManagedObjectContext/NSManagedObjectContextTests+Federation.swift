@@ -16,12 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-@testable import WireDataModel
 import XCTest
 
-class NSManagedObjectContextTests_Federation: ZMBaseManagedObjectTest {
+@testable import WireDataModel
+
+final class NSManagedObjectContextTests_Federation: ZMBaseManagedObjectTest {
 
     func testThatItMigratesUsersAndConversations() throws {
         // Given

@@ -300,7 +300,7 @@ enum DebugActions {
             if let number = NumberFormatter().number(from: $0) {
                 callback(number.intValue)
             } else {
-              alert("ERROR: not a number")
+                alert("ERROR: not a number")
             }
         }
     }

@@ -20,10 +20,11 @@ import Foundation
 import WireCryptobox
 import WireDataModel
 import WireProtos
-@testable import WireRequestStrategy
 import XCTest
 
-class EventDecoderDecryptionTests: MessagingTestBase {
+@testable import WireRequestStrategy
+
+final class EventDecoderDecryptionTests: MessagingTestBase {
 
     func testThatItCanDecryptOTRMessageAddEvent() async throws {
         // GIVEN

@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import WireSyncEngine
 import WireTesting
 
-class TeamDownloadRequestStrategyTests: MessagingTest {
+@testable import WireSyncEngine
+
+final class TeamDownloadRequestStrategyTests: MessagingTest {
 
     var sut: TeamDownloadRequestStrategy!
     var mockApplicationStatus: MockApplicationStatus!
@@ -50,9 +51,9 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
     }
 
     func sampleResponse(team: Team, creatorId: UUID, isBound: Bool = true) -> [String: Any] {
-        return sampleResponse(teamID: team.remoteIdentifier!,
-                              creatorId: creatorId,
-                              isBound: isBound)
+        sampleResponse(teamID: team.remoteIdentifier!,
+                       creatorId: creatorId,
+                       isBound: isBound)
     }
 
     func sampleResponse(teamID: UUID, creatorId: UUID, isBound: Bool = true) -> [String: Any] {
@@ -346,9 +347,9 @@ class TeamDownloadRequestStrategyTests: MessagingTest {
             context.saveOrRollback()
 
             // then
-            let result = team.members.contains(where: { member -> Bool in
-                return member.user?.remoteIdentifier == userId
-            })
+            let result = team.members.contains { member in
+                member.user?.remoteIdentifier == userId
+            }
 
             XCTAssertFalse(result)
         }

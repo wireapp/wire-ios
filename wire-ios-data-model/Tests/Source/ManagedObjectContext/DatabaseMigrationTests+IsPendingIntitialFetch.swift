@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireDataModel
 import WireDataModelSupport
 import XCTest
 
-class DatabaseMigrationTests_IsPendingInitialFetch: XCTestCase {
+@testable import WireDataModel
+
+final class DatabaseMigrationTests_IsPendingInitialFetch: XCTestCase {
 
     private let bundle = Bundle(for: ZMManagedObject.self)
     private let tmpStoreURL = URL(fileURLWithPath: "\(NSTemporaryDirectory())databasetest/")

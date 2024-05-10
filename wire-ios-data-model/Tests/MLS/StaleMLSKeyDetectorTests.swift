@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-@testable import WireDataModel
 import XCTest
+
+@testable import WireDataModel
 
 class StaleMLSKeyDetectorTests: ZMBaseManagedObjectTest {
 
@@ -61,7 +61,6 @@ class StaleMLSKeyDetectorTests: ZMBaseManagedObjectTest {
             XCTAssertTrue(result.contains(staleGroup2.id))
             XCTAssertFalse(result.contains(nonStaleGroup.id))
         }
-
     }
 
     func test_KeyingMaterialUpdated() throws {
@@ -94,5 +93,4 @@ class StaleMLSKeyDetectorTests: ZMBaseManagedObjectTest {
 
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
-
 }

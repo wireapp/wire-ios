@@ -16,12 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireDataModel
 import WireTesting
-import XCTest
 
-class DiskDatabaseTest: DatabaseTest {
+final class DiskDatabaseTest: DatabaseTest {
 
     override var useInMemoryDatabase: Bool {
         return false
@@ -35,5 +33,4 @@ class DiskDatabaseTest: DatabaseTest {
             selfUser.remoteIdentifier = self.accountId
         }
     }
-
 }

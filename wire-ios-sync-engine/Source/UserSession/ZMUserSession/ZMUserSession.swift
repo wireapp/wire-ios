@@ -418,8 +418,8 @@ public final class ZMUserSession: NSObject {
         coreDataStack.linkContexts()
 
         // As we move the flag value from CoreData to UserDefaults, we set an initial value
-        self.earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)
-        self.earService.delegate = self
+        earService.setInitialEARFlagValue(viewContext.encryptMessagesAtRest)
+        earService.delegate = self
         appLockController.delegate = self
         applicationStatusDirectory.syncStatus.syncStateDelegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self

@@ -438,7 +438,6 @@ public class CoreDataStack: NSObject, ContextProvider {
         syncContext.performGroupedBlockAndWait {
             self.syncContext.zm_userInterface = self.viewContext
         }
-
         viewContext.zm_sync = syncContext
     }
 

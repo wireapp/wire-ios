@@ -20,7 +20,7 @@ import XCTest
 
 @testable import WireDataModel
 
-class ZMMessageTests_GenericMessage: BaseZMClientMessageTests {
+final class ZMMessageTests_GenericMessage: BaseZMClientMessageTests {
 
    func testThatItDoesNotSetTheServerTimestampFromEventDataEvenIfMessageAlreadyExists() throws {
         try syncMOC.performGroupedAndWait { syncMOC in

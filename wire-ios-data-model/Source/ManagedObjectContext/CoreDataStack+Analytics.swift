@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 extension CoreDataStack {
+
     public func linkAnalytics(_ analytics: (any AnalyticsType)?) {
         syncContext.performGroupedBlockAndWait {
             self.syncContext.analytics = analytics
