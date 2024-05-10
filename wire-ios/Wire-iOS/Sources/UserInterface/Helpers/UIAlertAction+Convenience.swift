@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 
 extension UIAlertAction {
+
     static func cancel(_ completion: Completion? = nil) -> UIAlertAction {
         return UIAlertAction(
             title: L10n.Localizable.General.cancel,
