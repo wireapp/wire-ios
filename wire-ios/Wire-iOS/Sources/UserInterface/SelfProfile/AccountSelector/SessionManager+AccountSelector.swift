@@ -16,23 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireCommonComponents
 import WireSyncEngine
 
-struct SelfProfileViewControllerBuilder: ViewControllerBuilder {
+extension SessionManager: AccountSelector {
 
-    var selfUser: SettingsSelfUser
-    var userRightInterfaceType: UserRightInterface.Type
-    var userSession: UserSession
-    var accountSelector: AccountSelector?
+    public var currentAccount: Account? {
+        accountManager.selectedAccount
+    }
 
-    func build() -> SelfProfileViewController {
-        .init(
-            selfUser: selfUser,
-            userRightInterfaceType: userRightInterfaceType,
-            userSession: userSession,
-            accountSelector: accountSelector
-        )
+    public func switchTo(account: Account, completion: (((any UserSession)?) -> Void)?) {
+        select(account, completion: completion, tearDownCompletion: {})
     }
 }
