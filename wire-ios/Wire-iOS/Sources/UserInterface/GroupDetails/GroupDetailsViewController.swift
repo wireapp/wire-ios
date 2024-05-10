@@ -299,6 +299,7 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         } else {
             updateUserE2EICertificationStatuses()
         }
+
         if changeInfo.mlsVerificationStatusChanged {
             setupNavigatiomItem()
         }
