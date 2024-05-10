@@ -825,7 +825,7 @@ final class ProfileActionsFactoryTests: XCTestCase {
 
     func test_Search_TeamToUnconnectedSearchUser_UserNotFound() {
         // GIVEN
-        let searchUser = MockUserType.createUser(name: "John Doe")
+        let searchUser = MockUserType.createUser(name: "John Doe", domain: "example.com")
         searchUser.isConnected = false
         searchUser.canBeConnected = true
 
