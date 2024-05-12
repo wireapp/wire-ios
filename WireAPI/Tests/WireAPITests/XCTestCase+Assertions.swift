@@ -19,7 +19,7 @@
 import XCTest
 
 extension XCTestCase {
-    
+
     /// Assert that a error is thrown when a block is performed.
     /// - Parameters:
     ///   - expectedError: The expected error.
