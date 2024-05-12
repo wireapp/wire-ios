@@ -50,32 +50,11 @@ class TeamsAPIV0: TeamsAPI {
 
         let response = try await httpClient.executeRequest(request)
 
-        switch response.code {
-        case 200:
-            let payload = try decoder.decodePayload(
-                from: response,
-                as: TeamResponseV0.self
-            )
-
-            return payload.toParent()
-
-        default:
-            let failure = try decoder.decodePayload(
-                from: response,
-                as: FailureResponse.self
-            ) 
-
-            switch (failure.code, failure.label) {
-            case (404, ""):
-                throw TeamsAPIError.invalidTeamID
-
-            case (404, "no-team"):
-                throw TeamsAPIError.teamNotFound
-
-            default:
-                throw failure
-            }
-        }
+        return try ResponseParser()
+            .success(code: 200, type: TeamResponseV0.self)
+            .failure(code: 404, error: TeamsAPIError.invalidTeamID)
+            .failure(code: 404, label: "no-team", error: TeamsAPIError.teamNotFound)
+            .parse(response)
     }
 
     // MARK: - Get team roles
@@ -88,34 +67,11 @@ class TeamsAPIV0: TeamsAPI {
 
         let response = try await httpClient.executeRequest(request)
 
-        switch response.code {
-        case 200:
-            let payload = try decoder.decodePayload(
-                from: response,
-                as: ConversationRolesListResponseV0.self
-            )
-
-            return payload.conversation_roles.map {
-                $0.toParent()
-            }
-
-        default:
-            let failure = try decoder.decodePayload(
-                from: response,
-                as: FailureResponse.self
-            )
-
-            switch (failure.code, failure.label) {
-            case (403, "no-team-member"):
-                throw TeamsAPIError.selfUserIsNotTeamMember
-
-            case (404, ""):
-                throw TeamsAPIError.teamNotFound
-
-            default:
-                throw failure
-            }
-        }
+        return try ResponseParser()
+            .success(code: 200, type: ConversationRolesListResponseV0.self)
+            .failure(code: 403, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
+            .failure(code: 404, error: TeamsAPIError.teamNotFound)
+            .parse(response)
     }
 
     // MARK: - Get team members
@@ -138,39 +94,12 @@ class TeamsAPIV0: TeamsAPI {
 
         let response = try await httpClient.executeRequest(request)
 
-        switch response.code {
-        case 200:
-            let payload = try decoder.decodePayload(
-                from: response,
-                as: TeamMemberListResponseV0.self
-            )
-
-            // Although this is a paginated response, we intentionally only return
-            // the first page and ignore the rest. See WPB-6485.
-            return payload.members.map {
-                $0.toParent()
-            }
-
-        default:
-            let failure = try decoder.decodePayload(
-                from: response,
-                as: FailureResponse.self
-            )
-
-            switch (failure.code, failure.label) {
-            case (400, ""):
-                throw TeamsAPIError.invalidQueryParmeter
-
-            case (403, "no-team-member"):
-                throw TeamsAPIError.selfUserIsNotTeamMember
-
-            case (404, ""):
-                throw TeamsAPIError.teamNotFound
-
-            default:
-                throw failure
-            }
-        }
+        return try ResponseParser()
+            .success(code: 200, type: TeamMemberListResponseV0.self)
+            .failure(code: 400, error: TeamsAPIError.invalidQueryParmeter)
+            .failure(code: 403, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
+            .failure(code: 404, error: TeamsAPIError.teamNotFound)
+            .parse(response)
     }
 
     // MARK: - Get legalhold status
@@ -186,37 +115,16 @@ class TeamsAPIV0: TeamsAPI {
 
         let response = try await httpClient.executeRequest(request)
 
-        switch response.code {
-        case 200:
-            let payload = try decoder.decodePayload(
-                from: response,
-                as: LegalholdStatusResponseV0.self
-            )
-
-            return payload.status.toParent()
-
-        default:
-            let failure = try decoder.decodePayload(
-                from: response,
-                as: FailureResponse.self
-            )
-
-            switch (failure.code, failure.label) {
-            case (404, ""):
-                throw TeamsAPIError.invalidRequest
-
-            case (404, "no-team-member"):
-                throw TeamsAPIError.teamMemberNotFound
-
-            default:
-                throw failure
-            }
-        }
+        return try ResponseParser()
+            .success(code: 200, type: LegalholdStatusResponseV0.self)
+            .failure(code: 404, error: TeamsAPIError.invalidRequest)
+            .failure(code: 404, label: "no-team-member", error: TeamsAPIError.teamMemberNotFound)
+            .parse(response)
     }
 
 }
 
-struct TeamResponseV0: Decodable {
+struct TeamResponseV0: Decodable, ToParentConvertible {
 
     let id: UUID
     let name: String
@@ -238,9 +146,13 @@ struct TeamResponseV0: Decodable {
 
 }
 
-struct ConversationRolesListResponseV0: Decodable {
+struct ConversationRolesListResponseV0: Decodable, ToParentConvertible {
 
     let conversation_roles: [ConversationRoleResponseV0]
+
+    func toParent() -> [ConversationRole] {
+        conversation_roles.map { $0.toParent() }
+    }
 
 }
 
@@ -297,10 +209,16 @@ enum ConversationActionResponseV0: String, Decodable {
 
 }
 
-struct TeamMemberListResponseV0: Decodable {
+struct TeamMemberListResponseV0: Decodable, ToParentConvertible {
 
     let hasMore: Bool
     let members: [TeamMemberResponseV0]
+
+    func toParent() -> [TeamMember] {
+        return members.map {
+            $0.toParent()
+        }
+    }
 
 }
 
@@ -360,8 +278,12 @@ enum LegalholdStatusV0: String, Decodable {
 
 }
 
-struct LegalholdStatusResponseV0: Decodable {
+struct LegalholdStatusResponseV0: Decodable, ToParentConvertible {
 
     let status: LegalholdStatusV0
+
+    func toParent() -> LegalholdStatus {
+        return status.toParent()
+    }
 
 }

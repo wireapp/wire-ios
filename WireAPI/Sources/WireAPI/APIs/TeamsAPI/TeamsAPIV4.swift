@@ -34,33 +34,12 @@ class TeamsAPIV4: TeamsAPIV3 {
 
         let response = try await httpClient.executeRequest(request)
 
-        switch response.code {
-        case 200:
-            let payload = try decoder.decodePayload(
-                from: response,
-                as: TeamResponseV2.self
-            )
-
-            return payload.toParent()
-
-        default:
-            let failure = try decoder.decodePayload(
-                from: response,
-                as: FailureResponse.self
-            )
-
-            switch (failure.code, failure.label) {
-            case (400, ""):
-                // New
-                throw TeamsAPIError.invalidTeamID
-
-            case (404, "no-team"):
-                throw TeamsAPIError.teamNotFound
-
-            default:
-                throw failure
-            }
-        }
+        // New: 400
+        return try ResponseParser()
+            .success(code: 200, type: TeamResponseV2.self)
+            .failure(code: 400, error: TeamsAPIError.invalidTeamID)
+            .failure(code: 404, label: "no-team", error: TeamsAPIError.teamNotFound)
+            .parse(response)
     }
 
     // MARK: - Get team roles
@@ -73,35 +52,12 @@ class TeamsAPIV4: TeamsAPIV3 {
 
         let response = try await httpClient.executeRequest(request)
 
-        switch response.code {
-        case 200:
-            let payload = try decoder.decodePayload(
-                from: response,
-                as: ConversationRolesListResponseV0.self
-            )
-
-            return payload.conversation_roles.map {
-                $0.toParent()
-            }
-
-        default:
-            let failure = try decoder.decodePayload(
-                from: response,
-                as: FailureResponse.self
-            )
-
-            switch (failure.code, failure.label) {
-            case (400, ""):
-                // Changed: code was 404.
-                throw TeamsAPIError.teamNotFound
-
-            case (403, "no-team-member"):
-                throw TeamsAPIError.selfUserIsNotTeamMember
-
-            default:
-                throw failure
-            }
-        }
+        // New: 400
+        return try ResponseParser()
+            .success(code: 200, type: ConversationRolesListResponseV0.self)
+            .failure(code: 400, error: TeamsAPIError.teamNotFound)
+            .failure(code: 403, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
+            .parse(response)
     }
 
     // MARK: - Get team members
@@ -124,38 +80,13 @@ class TeamsAPIV4: TeamsAPIV3 {
 
         let response = try await httpClient.executeRequest(request)
 
-        switch response.code {
-        case 200:
-            let payload = try decoder.decodePayload(
-                from: response,
-                as: TeamMemberListResponseV0.self
-            )
-
-            // Although this is a paginated response, we intentionally only return
-            // the first page and ignore the rest. See WPB-6485.
-            return payload.members.map {
-                $0.toParent()
-            }
-
-        default:
-            let failure = try decoder.decodePayload(
-                from: response,
-                as: FailureResponse.self
-            )
-
-            // Changed: 404 error was removed.
-            switch (failure.code, failure.label) {
-            case (400, ""):
-                // New
-                throw TeamsAPIError.invalidRequest
-
-            case (403, "no-team-member"):
-                throw TeamsAPIError.selfUserIsNotTeamMember
-
-            default:
-                throw failure
-            }
-        }
+        // Changed: 404 error was removed.
+        // New: 400
+        return try ResponseParser()
+            .success(code: 200, type: TeamMemberListResponseV0.self)
+            .failure(code: 400, error: TeamsAPIError.invalidRequest)
+            .failure(code: 403, label: "no-team-memper", error: TeamsAPIError.selfUserIsNotTeamMember)
+            .parse(response)
     }
 
     // MARK: - Get legalhold status
@@ -171,33 +102,12 @@ class TeamsAPIV4: TeamsAPIV3 {
 
         let response = try await httpClient.executeRequest(request)
 
-        switch response.code {
-        case 200:
-            let payload = try decoder.decodePayload(
-                from: response,
-                as: LegalholdStatusResponseV0.self
-            )
-
-            return payload.status.toParent()
-
-        default:
-            let failure = try decoder.decodePayload(
-                from: response,
-                as: FailureResponse.self
-            )
-
-            switch (failure.code, failure.label) {
-            case (400, ""):
-                // New
-                throw TeamsAPIError.invalidRequest
-
-            case (404, "no-team-member"):
-                throw TeamsAPIError.teamMemberNotFound
-
-            default:
-                throw failure
-            }
-        }
+        // New: 400
+        return try ResponseParser()
+            .success(code: 200, type: LegalholdStatusResponseV0.self)
+            .failure(code: 400, error: TeamsAPIError.invalidRequest)
+            .failure(code: 404, label: "no-team-member", error: TeamsAPIError.teamMemberNotFound)
+            .parse(response)
     }
 
 }

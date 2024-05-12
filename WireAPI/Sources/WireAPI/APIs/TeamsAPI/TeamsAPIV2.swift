@@ -34,38 +34,17 @@ class TeamsAPIV2: TeamsAPIV1 {
 
         let response = try await httpClient.executeRequest(request)
 
-        switch response.code {
-        case 200:
+        return try ResponseParser()
             // New response payload.
-            let payload = try decoder.decodePayload(
-                from: response,
-                as: TeamResponseV2.self
-            )
-
-            return payload.toParent()
-
-        default:
-            let failure = try decoder.decodePayload(
-                from: response,
-                as: FailureResponse.self
-            )
-
-            switch (failure.code, failure.label) {
-            case (404, ""):
-                throw TeamsAPIError.invalidTeamID
-
-            case (404, "no-team"):
-                throw TeamsAPIError.teamNotFound
-
-            default:
-                throw failure
-            }
-        }
+            .success(code: 200, type: TeamResponseV2.self)
+            .failure(code: 404, error: TeamsAPIError.invalidTeamID)
+            .failure(code: 404, label: "no-team", error: TeamsAPIError.teamNotFound)
+            .parse(response)
     }
 
 }
 
-struct TeamResponseV2: Decodable {
+struct TeamResponseV2: Decodable, ToParentConvertible {
 
     let id: UUID
     let name: String
