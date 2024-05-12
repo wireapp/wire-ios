@@ -68,7 +68,7 @@ class TeamsAPIV4: TeamsAPIV3 {
     ) async throws -> [TeamMember] {
         var components = URLComponents(string: "\(basePath(for: teamID))/members")
         components?.queryItems = [URLQueryItem(name: "maxResults", value: "2000")]
-        
+
         guard let path = components?.url?.absoluteString else {
             throw TeamsAPIError.failedToGenerateRequest
         }

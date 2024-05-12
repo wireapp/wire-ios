@@ -28,15 +28,14 @@ public protocol TeamsAPI {
     /// - Returns: The request team metadata.
 
     func getTeam(for teamID: Team.ID) async throws -> Team
-    
-    
+
     /// Get the conversation roles for a specific team.
     ///
     /// - Parameter teamID: The id of the team.
     /// - Returns: The conversation roles defined in the team.
 
     func getTeamRoles(for teamID: Team.ID) async throws -> [ConversationRole]
-    
+
     /// Get members of a specific team.
     ///
     /// Note this may not return all members of the team.
@@ -51,7 +50,7 @@ public protocol TeamsAPI {
         for teamID: Team.ID,
         maxResults: UInt
     ) async throws -> [TeamMember]
-    
+
     /// Get the legalhold status of a team member.
     ///
     /// - Parameters:
