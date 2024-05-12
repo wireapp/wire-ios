@@ -176,14 +176,13 @@ final class ConversationListTopBarViewController: UIViewController {
     }
 
     private func createAccountView() -> UIView {
-        guard let session = ZMUserSession.shared() else {
-            return UIView()
-        }
+        guard let session = ZMUserSession.shared() else { return .init() }
 
-        let user = ZMUser.selfUser(inUserSession: session)
-
-        let accountView = AccountViewFactory.viewFor(account: account, user: user, displayContext: .conversationListHeader)
-
+        let accountView = AccountViewBuilder(
+            account: account,
+            user: .selfUser(inUserSession: session),
+            displayContext: .conversationListHeader
+        ).build()
         accountView.unreadCountStyle = .current
         accountView.autoUpdateSelection = false
 

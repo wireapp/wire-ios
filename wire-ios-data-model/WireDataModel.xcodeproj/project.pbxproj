@@ -2439,11 +2439,11 @@
 			children = (
 				BF491CE31F063EDB0055EE44 /* Account.swift */,
 				EE5F54CB259B22C400F11F3C /* Account+Keychain.swift */,
-				BF491CE51F063EE50055EE44 /* AccountStore.swift */,
-				BF491CE71F063EEB0055EE44 /* AccountManager.swift */,
 				161E05692667C4D000DADC3D /* AccountDeletedObserver.swift */,
-				BF8361D91F0A3C41009AE5AC /* NSSecureCoding+Swift.swift */,
+				BF491CE71F063EEB0055EE44 /* AccountManager.swift */,
+				BF491CE51F063EE50055EE44 /* AccountStore.swift */,
 				5E67168D2174B9AF00522E61 /* LoginCredentials.swift */,
+				BF8361D91F0A3C41009AE5AC /* NSSecureCoding+Swift.swift */,
 			);
 			name = Accounts;
 			sourceTree = "<group>";
