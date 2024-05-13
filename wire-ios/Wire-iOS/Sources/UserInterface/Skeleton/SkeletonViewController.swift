@@ -174,8 +174,8 @@ final class ListSkeletonContentView: UITableView, UITableViewDataSource {
 
 final class ListSkeletonView: UIView {
 
-    let topBar: TopBar = {
-        let bar = TopBar()
+    let topBar = {
+        let bar = SkeletonTopBarView()
         let titleItem = ListSkeletonCellNameItemView()
 
         NSLayoutConstraint.activate([titleItem.widthAnchor.constraint(equalToConstant: 140),

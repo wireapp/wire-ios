@@ -28,12 +28,6 @@ extension ConversationListViewController.ViewModel: ConversationListContentDeleg
         ZClientViewController.shared?.transitionToList(animated: true, completion: nil)
     }
 
-    func conversationListDidScroll(_ controller: ConversationListContentController?) {
-        guard let controller else { return }
-
-        viewController?.scrollViewDidScroll(scrollView: controller.collectionView)
-    }
-
     func conversationListContentController(_ controller: ConversationListContentController?, wantsActionMenuFor conversation: ZMConversation?, fromSourceView sourceView: UIView?) {
         showActionMenu(for: conversation, from: sourceView)
     }

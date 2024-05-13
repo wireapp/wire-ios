@@ -262,5 +262,4 @@ final class ProfileViewControllerTests: BaseSnapshotTestCase {
         // THEN
         XCTAssertEqual(mockUser.refreshMembershipCount, 0)
     }
-
 }
