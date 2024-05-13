@@ -256,8 +256,9 @@ final class ConversationListViewController: UIViewController {
         if state != .conversationList { return }
 
         let closure = {
-            self.noConversationLabel.alpha = 1
-            self.onboardingHint.alpha = 1
+            let hasArchivedConversations = self.viewModel.hasArchivedConversations
+            self.noConversationLabel.alpha = hasArchivedConversations ? 1.0 : 0.0
+            self.onboardingHint.alpha = hasArchivedConversations ? 0.0 : 1.0
         }
 
         if animated {

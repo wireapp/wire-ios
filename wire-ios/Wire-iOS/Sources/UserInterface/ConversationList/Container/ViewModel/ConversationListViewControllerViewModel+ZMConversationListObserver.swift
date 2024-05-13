@@ -41,4 +41,9 @@ extension ConversationListViewController.ViewModel {
             connectionRequestsObserverToken = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
         }
     }
+
+    var hasArchivedConversations: Bool {
+        guard let contextProvider = userSession as? ContextProvider else { return false }
+        return ZMConversationList.archivedConversations(inUserSession: contextProvider).count > 0
+    }
 }
