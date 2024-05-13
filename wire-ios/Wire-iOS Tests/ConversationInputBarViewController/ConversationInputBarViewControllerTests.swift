@@ -32,7 +32,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
     // MARK: - Properties
 
     private var mockConversation: MockInputBarConversationType!
-    private var mockClassificationProvider: MockClassificationProvider!
+    private var mockClassificationProvider: MockSecurityClassificationProviding!
     var mockUserSession: UserSessionMock!
 
     // MARK: - setUp
@@ -41,7 +41,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
         super.setUp()
         UIColor.setAccentOverride(.red)
         mockConversation = MockInputBarConversationType()
-        mockClassificationProvider = MockClassificationProvider()
+        mockClassificationProvider = MockSecurityClassificationProviding()
         mockUserSession = UserSessionMock()
     }
 
@@ -258,7 +258,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
 
     func testClassifiedNormalState() {
         verifyInAllPhoneWidths(createSut: {
-            self.mockClassificationProvider.returnClassification = .classified
+            self.mockClassificationProvider.classificationUsersConversationDomain_MockValue = .classified
 
             return self.makeViewController()
         } as () -> UIViewController)
@@ -266,7 +266,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
 
     func testNotClassifiedNormalState() {
         verifyInAllPhoneWidths(createSut: {
-            self.mockClassificationProvider.returnClassification = .notClassified
+            self.mockClassificationProvider.classificationUsersConversationDomain_MockValue = .notClassified
 
             return self.makeViewController()
         } as () -> UIViewController)
@@ -274,7 +274,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
 
     func testClassifiedWithTypingIndicator() {
         verifyInAllPhoneWidths(createSut: {
-            self.mockClassificationProvider.returnClassification = .classified
+            self.mockClassificationProvider.classificationUsersConversationDomain_MockValue = .classified
 
             let sut = self.makeViewController()
 
@@ -287,7 +287,7 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
 
     func testNoClassificationNormalState() {
         verifyInAllPhoneWidths(createSut: {
-            self.mockClassificationProvider.returnClassification = .none
+            self.mockClassificationProvider.classificationUsersConversationDomain_MockValue = .some(nil)
 
             return self.makeViewController()
         } as () -> UIViewController)
