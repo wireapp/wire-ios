@@ -35,6 +35,7 @@ final class ZClientViewController: UIViewController {
     let wireSplitViewController: SplitViewController = SplitViewController()
 
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
+    let tabbarController = UITabBarController()
     let conversationListViewController: ConversationListViewController
     var proximityMonitorManager: ProximityMonitorManager?
     var legalHoldDisclosureController: LegalHoldDisclosureController?
@@ -175,7 +176,15 @@ final class ZClientViewController: UIViewController {
         updateSplitViewTopConstraint()
 
         wireSplitViewController.view.backgroundColor = .clear
-        wireSplitViewController.leftViewController = UINavigationController(rootViewController: conversationListViewController)
+        wireSplitViewController.leftViewController = tabbarController
+        tabbarController.viewControllers = [
+            UINavigationController(rootViewController: conversationListViewController)
+        ]
+        tabbarController.viewControllers?[0].tabBarItem = .init(
+            title: L10n.Localizable.ConversationList.BottomBar.Conversations.title,
+            image: .init(resource: .TabBar.conversations),
+            selectedImage: .init(resource: .TabBar.conversationsFilled)
+        )
 
         if pendingInitialStateRestore {
             restoreStartupState()
