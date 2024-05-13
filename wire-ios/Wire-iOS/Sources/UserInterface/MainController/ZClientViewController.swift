@@ -178,12 +178,30 @@ final class ZClientViewController: UIViewController {
         wireSplitViewController.view.backgroundColor = .clear
         wireSplitViewController.leftViewController = tabbarController
         tabbarController.viewControllers = [
-            UINavigationController(rootViewController: conversationListViewController)
+            .init(),
+            UINavigationController(rootViewController: conversationListViewController),
+            .init(),
+            .init()
         ]
         tabbarController.viewControllers?[0].tabBarItem = .init(
+            title: L10n.Localizable.ConversationList.BottomBar.Contacts.title,
+            image: .init(resource: .contactsOutline),
+            selectedImage: .init(resource: .contactsFilled)
+        )
+        tabbarController.viewControllers?[1].tabBarItem = .init(
             title: L10n.Localizable.ConversationList.BottomBar.Conversations.title,
             image: .init(resource: .TabBar.conversations),
             selectedImage: .init(resource: .TabBar.conversationsFilled)
+        )
+        tabbarController.viewControllers?[2].tabBarItem = .init(
+            title: L10n.Localizable.ConversationList.BottomBar.Folders.title,
+            image: .init(resource: .foldersOutline),
+            selectedImage: .init(resource: .foldersFilled)
+        )
+        tabbarController.viewControllers?[3].tabBarItem = .init(
+            title: L10n.Localizable.ConversationList.BottomBar.Archived.title,
+            image: .init(resource: .archiveOutline),
+            selectedImage: .init(resource: .archiveFilled)
         )
 
         if pendingInitialStateRestore {
