@@ -273,7 +273,8 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         // Protocol details
         sections.append(MessageProtocolSectionController(
             messageProtocol: conversation.messageProtocol,
-            groupID: conversation.mlsGroupID
+            groupID: conversation.mlsGroupID,
+            ciphersuite: conversation.ciphersuite
         ))
 
         return sections
@@ -298,6 +299,10 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             navigationController?.popToRootViewController(animated: true)
         } else {
             updateUserE2EICertificationStatuses()
+        }
+
+        if changeInfo.mlsVerificationStatusChanged {
+            setupNavigatiomItem()
         }
     }
 

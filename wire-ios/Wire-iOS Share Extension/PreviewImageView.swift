@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 /**
@@ -39,23 +38,6 @@ enum PreviewDisplayMode {
         let scale = UIScreen.main.scale
         return CGSize(width: 70 * scale, height: 70 * scale)
     }
-}
-
-extension Optional where Wrapped == PreviewDisplayMode {
-
-    /// Combines the current display mode with the current one if they're compatible.
-    func combine(with otherMode: PreviewDisplayMode?) -> PreviewDisplayMode? {
-        guard let currentMode = self else {
-            return otherMode
-        }
-
-        guard case let .mixed(count, _) = currentMode else {
-            return currentMode
-        }
-
-        return .mixed(count, otherMode)
-    }
-
 }
 
 /**

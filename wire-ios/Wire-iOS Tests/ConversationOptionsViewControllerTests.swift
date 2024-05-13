@@ -16,13 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
 import SnapshotTesting
+import XCTest
+
+@testable import Wire
 
 final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModelConfiguration {
 
     typealias SetHandler = (Bool, (Result<Void, Error>) -> Void) -> Void
+
     var allowGuests: Bool
     var guestLinkFeatureStatus: GuestLinkFeatureStatus
     var setAllowGuests: SetHandler?
@@ -46,11 +48,11 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
     }
 
     func createConversationLink(completion: @escaping (Result<String, Error>) -> Void) {
-        createResult.apply(completion)
+        createResult.map(completion)
     }
 
     func fetchConversationLink(completion: @escaping (Result<String?, Error>) -> Void) {
-        linkResult.apply(completion)
+        linkResult.map(completion)
     }
 
     func deleteLink(completion: @escaping (Result<Void, Error>) -> Void) {

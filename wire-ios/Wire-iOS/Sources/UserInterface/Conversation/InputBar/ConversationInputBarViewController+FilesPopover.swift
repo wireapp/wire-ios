@@ -17,8 +17,8 @@
 //
 
 import MobileCoreServices
-import WireSyncEngine
 import UniformTypeIdentifiers
+import WireSyncEngine
 
 extension ConversationInputBarViewController: UIDocumentPickerDelegate {
 
@@ -125,7 +125,7 @@ extension ConversationInputBarViewController {
 
     @objc
     func docUploadPressed(_ sender: IconButton) {
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+        let checker = PrivacyWarningChecker(conversation: conversation) {
             self.showDocUploadActionSheet(from: sender)
         }
 
@@ -143,7 +143,7 @@ extension ConversationInputBarViewController {
 
     @objc
     func videoButtonPressed(_ sender: IconButton) {
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+        let checker = PrivacyWarningChecker(conversation: conversation) {
             self.recordVideo()
         }
         checker.performAction()

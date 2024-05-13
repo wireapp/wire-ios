@@ -17,8 +17,8 @@
 //
 
 import WireDataModelSupport
-import WireTesting
 @testable import WireRequestStrategy
+import WireTesting
 
 public enum EventConversation {
     static let add = "conversation.message-add"
@@ -706,7 +706,7 @@ extension EventDecoderTest {
 
     func eventStreamEvent(conversation: ZMConversation, genericMessage: GenericMessage, from user: ZMUser? = nil, uuid: UUID? = nil) -> ZMUpdateEvent {
         var payload: ZMTransportData
-        if let user = user {
+        if let user {
             payload = payloadForMessage(in: conversation, type: EventConversation.addOTRMessage, data: ["text": try? genericMessage.serializedData().base64EncodedString()], time: nil, from: user)!
         } else {
             payload = payloadForMessage(in: conversation, type: EventConversation.addOTRMessage, data: ["text": try? genericMessage.serializedData().base64EncodedString()])!

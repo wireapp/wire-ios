@@ -17,11 +17,11 @@
 //
 
 import Foundation
+import WireCryptobox
+import WireDataModel
 import WireSystem
 import WireTransport
 import WireUtilities
-import WireCryptobox
-import WireDataModel
 
 public let ZMNeedsToUpdateUserClientsNotificationUserObjectIDKey = "userObjectID"
 
@@ -74,7 +74,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
         self.userClientsObserverToken = NotificationInContext.addObserver(name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
                                                                           context: self.managedObjectContext.notificationContext,
                                                                           object: nil) { [weak self] note in
-            guard let `self` = self, let objectID = note.object as? NSManagedObjectID else { return }
+            guard let self, let objectID = note.object as? NSManagedObjectID else { return }
             self.managedObjectContext.performGroupedBlock {
                 guard
                     let apiVersion = BackendInfo.apiVersion,
@@ -99,7 +99,8 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
                     }
 
                 case .v2, .v3, .v4, .v5, .v6:
-                    if let domain = user.domain.nonEmptyValue ?? BackendInfo.domain {
+                    let domain = if let domain = user.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+                    if let domain {
                         let qualifiedID = QualifiedID(uuid: userID, domain: domain)
                         self.userClientsByQualifiedUserID.sync(identifiers: [qualifiedID])
                     }
@@ -202,14 +203,11 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     }
 
     private func qualifiedIDWithFallback(from userClient: UserClient) -> QualifiedID? {
-        guard
-            let userID = userClient.user?.remoteIdentifier,
-            let domain = userClient.user?.domain.nonEmptyValue ?? BackendInfo.domain
-        else { return nil }
+        let domain = if let domain = userClient.user?.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+        guard let userID = userClient.user?.remoteIdentifier, let domain else { return nil }
 
         return .init(uuid: userID, domain: domain)
     }
-
 }
 
 final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {

@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireDataModel
+import XCTest
 
 class ZMConversationTests_Legalhold: ZMConversationTestsBase {
 
@@ -537,7 +537,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
 
             self.performPretendingSyncMocIsUiMoc {
-                conversation.acknowledgePrivacyWarning(withResendIntent: true)
+                conversation.acknowledgePrivacyWarningAndResendMessages()
             }
 
             // THEN

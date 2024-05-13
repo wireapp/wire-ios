@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import avs
 import UIKit
 import WireDataModel
-import avs
 
 extension UIViewController {
 
@@ -37,7 +36,7 @@ extension UIViewController {
         ) {
 
         let controller = UIAlertController.remove(participant) { [weak self] remove in
-            guard let `self` = self, remove else { return }
+            guard let self, remove else { return }
 
             conversation.removeOrShowError(participant: participant) { result in
                 switch result {

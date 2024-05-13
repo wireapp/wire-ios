@@ -74,15 +74,14 @@ final class KeyboardBlockObserver: NSObject {
     }
 
     @objc private func keyboardWillShow(_ note: Notification) {
-        ChangeInfo(note, kind: .show).apply(changeBlock)
+        ChangeInfo(note, kind: .show).map(changeBlock)
     }
 
     @objc private func keyboardWillHide(_ note: Notification) {
-        ChangeInfo(note, kind: .hide).apply(changeBlock)
+        ChangeInfo(note, kind: .hide).map(changeBlock)
     }
 
     @objc private func keyboardWillChangeFrame(_ note: Notification) {
-        ChangeInfo(note, kind: .change).apply(changeBlock)
+        ChangeInfo(note, kind: .change).map(changeBlock)
     }
-
 }

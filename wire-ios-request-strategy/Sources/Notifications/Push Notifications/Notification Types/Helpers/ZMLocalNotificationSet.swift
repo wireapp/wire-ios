@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireTransport
 import UserNotifications
+import WireTransport
 
 @objc public class ZMLocalNotificationSet: NSObject {
 
@@ -151,11 +151,11 @@ public extension ZMConversation {
 
         switch conversationType {
         case .group:
-            if let conversationName = conversationName, let callerName = callerName {
+            if let conversationName, let callerName {
                 result = String.localizedStringWithFormat("callkit.call.started.group".pushFormatString, callerName, conversationName)
-            } else if let conversationName = conversationName {
+            } else if let conversationName {
                 result = String.localizedStringWithFormat("callkit.call.started.group.nousername".pushFormatString, conversationName)
-            } else if let callerName = callerName {
+            } else if let callerName {
                 result = String.localizedStringWithFormat("callkit.call.started.group.noconversationname".pushFormatString, callerName)
             }
         case .oneOnOne:

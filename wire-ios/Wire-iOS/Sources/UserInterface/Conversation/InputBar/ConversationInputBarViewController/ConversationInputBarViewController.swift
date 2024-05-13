@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AVFoundation
+import avs
 import MobileCoreServices
 import Photos
 import UIKit
 import WireSyncEngine
-import avs
-import AVFoundation
 
 enum ConversationInputBarViewControllerMode {
     case textInput
@@ -59,7 +59,7 @@ final class ConversationInputBarViewController: UIViewController,
                 inputBar.textView.reloadInputViews()
             }
 
-            guard let inputController = inputController else {
+            guard let inputController else {
                 inputBar.textView.inputView = nil
                 return
             }
@@ -272,7 +272,7 @@ final class ConversationInputBarViewController: UIViewController,
 
                     let newViewController: UIViewController
 
-                    if let viewController = viewController {
+                    if let viewController {
                         newViewController = viewController
                     } else {
                         newViewController = setupClosure()
@@ -445,7 +445,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator?) {
 
-        guard let coordinator = coordinator else { return }
+        guard let coordinator else { return }
 
         super.viewWillTransition(to: size, with: coordinator)
         self.inRotation = true
@@ -701,7 +701,7 @@ final class ConversationInputBarViewController: UIViewController,
     }
 
     private func presentMLSPrivacyWarningIfNeeded(execute: @escaping () -> Void) {
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+        let checker = PrivacyWarningChecker(conversation: conversation) {
             execute()
         }
 
@@ -753,13 +753,13 @@ final class ConversationInputBarViewController: UIViewController,
                                                object: nil,
                                                queue: .main) { [weak self] _ in
 
-            guard let weakSelf = self else { return }
+            guard let self else { return }
 
-            let inRotation = weakSelf.inRotation
-            let isRecording = weakSelf.audioRecordKeyboardViewController?.isRecording ?? false
+            let inRotation = inRotation
+            let isRecording = audioRecordKeyboardViewController?.isRecording ?? false
 
             if !inRotation && !isRecording {
-                weakSelf.mode = .textInput
+                mode = .textInput
             }
         }
 
@@ -832,7 +832,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
 
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+        let checker = PrivacyWarningChecker(conversation: conversation) {
             self.process(picker: picker, info: info)
         }
 
@@ -849,7 +849,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
         } else if mediaType == UTType.image.identifier {
             let image: UIImage? = (info[UIImagePickerController.InfoKey.editedImage] as? UIImage) ?? info[UIImagePickerController.InfoKey.originalImage] as? UIImage
 
-            if let image = image,
+            if let image,
                let jpegData = image.jpegData(compressionQuality: 0.9) {
                 if picker.sourceType == UIImagePickerController.SourceType.camera {
                     if mediaShareRestrictionManager.hasAccessToCameraRoll {
@@ -888,7 +888,7 @@ extension ConversationInputBarViewController: UIImagePickerControllerDelegate {
 
     @objc
     func sketchButtonPressed(_ sender: Any?) {
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
+        let checker = PrivacyWarningChecker(conversation: conversation, continueAction: { [self] in
             sketch()
         })
 

@@ -16,12 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireTesting
-import PushKit
 import LocalAuthentication
-import WireSyncEngineSupport
+import PushKit
 @testable import WireSyncEngine
+import WireSyncEngineSupport
+import WireTesting
+import XCTest
 
 final class SessionManagerTests: IntegrationTest {
 
@@ -125,7 +125,7 @@ final class SessionManagerTests: IntegrationTest {
         let account = self.createAccount()
         sessionManager!.environment.cookieStorage(for: account).authenticationCookieData = NSData.secureRandomData(ofLength: 16)
 
-        guard let application = application else { return XCTFail() }
+        guard let application else { return XCTFail() }
 
         let sessionManagerExpectation = self.customExpectation(description: "Session manager and session is loaded")
 
@@ -222,7 +222,7 @@ final class SessionManagerTests: IntegrationTest {
         let account2 = self.createAccount(with: UUID.create())
         sessionManager!.environment.cookieStorage(for: account2).authenticationCookieData = NSData.secureRandomData(ofLength: 16)
 
-        guard let application = application else { return XCTFail() }
+        guard let application else { return XCTFail() }
 
         let sessionManagerExpectation = self.customExpectation(description: "Session manager and sessions are loaded")
         let observer = MockSessionManagerObserver()
@@ -291,7 +291,7 @@ final class SessionManagerTests: IntegrationTest {
         // GIVEN
         mockDelegate.sessionManagerDidBlacklistJailbrokenDevice_MockMethod = { }
 
-        guard let application = application else { return XCTFail() }
+        guard let application else { return XCTFail() }
         let jailbreakDetector = MockJailbreakDetector(jailbroken: true)
         let configuration = SessionManagerConfiguration(blockOnJailbreakOrRoot: true)
 

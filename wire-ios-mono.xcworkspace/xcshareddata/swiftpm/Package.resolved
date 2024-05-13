@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/pinterest/PINCache",
         "state": {
           "branch": null,
-          "revision": "875c654984fb52b47ca65ae70d24852b0003ccd9",
-          "version": "3.0.3"
+          "revision": "f856226e8bee58d75cb6be1707ae0cb2f5801150",
+          "version": null
         }
       },
       {
@@ -35,6 +35,24 @@
           "branch": null,
           "revision": "40504c156a68b20f98f7ddc73a115cbb7893be25",
           "version": "1.2.2"
+        }
+      },
+      {
+        "package": "SwiftDocCPlugin",
+        "repositoryURL": "https://github.com/apple/swift-docc-plugin",
+        "state": {
+          "branch": null,
+          "revision": "26ac5758409154cc448d7ab82389c520fa8a8247",
+          "version": "1.3.0"
+        }
+      },
+      {
+        "package": "SymbolKit",
+        "repositoryURL": "https://github.com/apple/swift-docc-symbolkit",
+        "state": {
+          "branch": null,
+          "revision": "b45d1f2ed151d057b54504d653e0da5552844e34",
+          "version": "1.0.0"
         }
       },
       {

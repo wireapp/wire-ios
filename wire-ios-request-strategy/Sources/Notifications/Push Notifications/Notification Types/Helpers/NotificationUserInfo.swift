@@ -196,7 +196,7 @@ extension NotificationUserInfo {
      */
 
     func sender(in managedObjectContext: NSManagedObjectContext) -> ZMUser? {
-        guard let senderID = senderID else {
+        guard let senderID else {
             return nil
         }
 

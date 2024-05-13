@@ -16,11 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import Foundation
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-import avs
-import WireCommonComponents
 
 // MARK: Audio Button
 
@@ -39,7 +39,7 @@ extension ConversationInputBarViewController {
             return
         }
 
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+        let checker = PrivacyWarningChecker(conversation: conversation) {
             self.recordAudio()
         }
         checker.performAction()
@@ -214,7 +214,7 @@ extension ConversationInputBarViewController: AudioRecordViewControllerDelegate 
 
     func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType) {
 
-        let checker = E2EIPrivacyWarningChecker(conversation: self.conversation) { [weak self] in
+        let checker = PrivacyWarningChecker(conversation: self.conversation) { [weak self] in
             self?.uploadFile(at: recordingURL as URL)
 
             self?.hideAudioRecordViewController()

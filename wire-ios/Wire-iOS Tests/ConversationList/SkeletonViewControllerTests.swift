@@ -17,10 +17,11 @@
 //
 
 import XCTest
-import SnapshotTesting
+
 @testable import Wire
 
-final class SkeletonViewControllerTests: XCTestCase {
+final class SkeletonViewControllerTests: BaseSnapshotTestCase {
+
     var sut: SkeletonViewController!
     var mockAccount: Account!
 
@@ -28,7 +29,6 @@ final class SkeletonViewControllerTests: XCTestCase {
         super.setUp()
 
         mockAccount = Account.mockAccount(imageData: Data())
-
         sut = SkeletonViewController(from: mockAccount, to: mockAccount, randomizeDummyItem: false)
     }
 

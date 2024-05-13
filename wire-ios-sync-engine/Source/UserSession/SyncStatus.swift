@@ -130,7 +130,7 @@ extension Notification.Name {
 
     public func performQuickSync() async {
         return await withCheckedContinuation { [weak self] continuation in
-            guard let `self` = self else {
+            guard let self else {
                 continuation.resume()
                 return
             }
@@ -164,7 +164,6 @@ extension SyncStatus {
     public func finishCurrentSyncPhase(phase: SyncPhase) {
         precondition(phase == currentSyncPhase, "Finished syncPhase does not match currentPhase '\(currentSyncPhase)'!")
 
-        zmLog.debug("finished sync phase: \(phase)")
         log("finished sync phase")
 
         if phase.isLastSlowSyncPhase {
@@ -180,9 +179,9 @@ extension SyncStatus {
                 // We need to restart fetching the notification stream since we might be missing notifications
                 currentSyncPhase = .fetchingMissedEvents
                 needsToRestartQuickSync = false
-                zmLog.debug("restarting quick sync since push channel was closed")
+                WireLogger.sync.debug("restarting quick sync since push channel was closed or open after request to fetch notifiations")
             } else {
-                zmLog.debug("sync complete")
+                WireLogger.sync.debug("sync complete")
                 notifyQuickSyncDidFinish()
                 isForceQuickSync = false
             }
@@ -193,7 +192,7 @@ extension SyncStatus {
     public func failCurrentSyncPhase(phase: SyncPhase) {
         precondition(phase == currentSyncPhase, "Failed syncPhase does not match currentPhase")
 
-        zmLog.debug("failed sync phase: \(phase)")
+        WireLogger.sync.warn("failed sync phase: \(phase)")
 
         if currentSyncPhase == .fetchingMissedEvents {
             lastEventIDRepository.storeLastEventID(nil)
@@ -207,19 +206,19 @@ extension SyncStatus {
     }
 
     public func updateLastUpdateEventID(eventID: UUID) {
-        zmLog.debug("update last eventID: \(eventID)")
+        WireLogger.sync.debug("update last eventID: \(eventID)")
         lastUpdateEventID = eventID
     }
 
     public func persistLastUpdateEventID() {
-        guard let lastUpdateEventID = lastUpdateEventID else { return }
-        zmLog.debug("persist last eventID: \(lastUpdateEventID)")
+        guard let lastUpdateEventID else { return }
+        WireLogger.sync.debug("persist last eventID: \(lastUpdateEventID)")
         lastEventIDRepository.storeLastEventID(lastUpdateEventID)
     }
 
     public func removeLastUpdateEventID() {
         lastUpdateEventID = nil
-        zmLog.debug("remove last eventID")
+        WireLogger.sync.debug("remove last eventID")
         lastEventIDRepository.storeLastEventID(nil)
     }
 }
@@ -241,12 +240,16 @@ extension SyncStatus {
 
     @objc(completedFetchingNotificationStreamFetchBeganAt:)
     public func completedFetchingNotificationStream(fetchBeganAt: Date?) {
-        if currentSyncPhase == .fetchingMissedEvents &&
-            pushChannelEstablishedDate < fetchBeganAt {
+        WireLogger.sync.debug("completedFetchingNotificationStream began at: \(fetchBeganAt?.description ?? "<unknown>")")
+        if currentSyncPhase == .fetchingMissedEvents {
 
             // Only complete the .fetchingMissedEvents phase if the push channel was
             // established before we initiated the notification stream fetch.
             // If the push channel disconnected in between we'll fetch the stream again
+            if pushChannelEstablishedDate > fetchBeganAt {
+                needsToRestartQuickSync = true
+            }
+
             finishCurrentSyncPhase(phase: .fetchingMissedEvents)
         }
 

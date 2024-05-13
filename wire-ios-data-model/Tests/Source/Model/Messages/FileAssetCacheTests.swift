@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireDataModelSupport
 @testable import WireDataModel
+import WireDataModelSupport
+import XCTest
 
 class FileAssetCacheTests: XCTestCase {
 
@@ -438,7 +438,7 @@ class FileAssetCacheTests: XCTestCase {
 
         // then
         XCTAssertNotNil(assetURL)
-        if let assetURL = assetURL {
+        if let assetURL {
             let data = try? Data(contentsOf: assetURL)
             XCTAssertNil(data)
         }

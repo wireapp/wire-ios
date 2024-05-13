@@ -27,7 +27,7 @@ extension ModelObjectsTests {
         member.team = .insertNewObject(in: uiMOC)
         member.team?.remoteIdentifier = .create()
         member.user = user
-        if let permissions = permissions {
+        if let permissions {
             member.permissions = permissions
         }
         return (member.team!, member)

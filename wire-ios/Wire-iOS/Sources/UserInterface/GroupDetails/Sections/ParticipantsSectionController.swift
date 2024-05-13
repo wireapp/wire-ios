@@ -167,7 +167,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     fileprivate weak var collectionView: UICollectionView? {
         didSet {
-            guard let collectionView = collectionView else { return }
+            guard let collectionView else { return }
             SectionFooter.register(collectionView: collectionView)
         }
     }

@@ -16,14 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import avs
 import Foundation
-import WireTesting
 import WireDataModel
 import WireDataModelSupport
-import WireTransport.Testing
-import avs
-@testable import WireSyncEngineSupport
 @testable import WireSyncEngine
+@testable import WireSyncEngineSupport
+import WireTesting
+import WireTransport.Testing
 
 final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 
@@ -83,7 +83,6 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
-            useCaseFactory: nil,
             userId: account.userIdentifier
         )
 
@@ -266,7 +265,7 @@ extension IntegrationTest {
     @objc
     func createSessionManager() {
         guard
-            let application = application,
+            let application,
             let transportSession = mockTransportSession
         else {
             return XCTFail()
@@ -317,7 +316,7 @@ extension IntegrationTest {
     @objc
     func createSharedSearchDirectory() {
         guard sharedSearchDirectory == nil else { return }
-        guard let userSession = userSession else { XCTFail("Could not create shared SearchDirectory");  return }
+        guard let userSession else { XCTFail("Could not create shared SearchDirectory");  return }
         sharedSearchDirectory = SearchDirectory(userSession: userSession)
     }
 
@@ -621,7 +620,7 @@ extension IntegrationTest {
         changesAfterInterruption: ((_ session: MockTransportSessionObjectCreation) -> Void)? = nil) {
 
         closePushChannelAndWaitUntilClosed()
-        changesBeforeInterruption.apply(mockTransportSession.performRemoteChanges)
+        changesBeforeInterruption.map(mockTransportSession.performRemoteChanges)
         mockTransportSession.performRemoteChanges { session in
             session.clearNotifications()
 

@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import WireDataModel
 import WireCryptobox
+@testable import WireDataModel
+import XCTest
 
 class UserClientKeysStoreTests: OtrBaseTest {
 
@@ -45,7 +45,7 @@ class UserClientKeysStoreTests: OtrBaseTest {
     func cleanOTRFolder() {
         let fm = FileManager.default
         var paths: [String] = []
-        if let accountID = accountID {
+        if let accountID {
             paths.append(OtrBaseTest.otrDirectoryURL(accountIdentifier: accountID).path)
         }
         paths.forEach { try? fm.removeItem(atPath: $0) }

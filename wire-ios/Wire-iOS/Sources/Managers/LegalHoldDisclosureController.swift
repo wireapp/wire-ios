@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireDataModel
+import WireSyncEngine
 
 /**
  * An object that coordinates disclosing the legal hold state to the user.
@@ -208,7 +208,7 @@ final class LegalHoldDisclosureController: UserObserving {
         }
 
         dismissAlertIfNeeded(presentedAlertController) {
-            if let alertController = alertController {
+            if let alertController {
                 self.presentedAlertController = alertController
                 self.presenter(alertController, true, nil)
             } else {

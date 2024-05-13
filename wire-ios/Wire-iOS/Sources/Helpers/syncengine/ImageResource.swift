@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import FLAnimatedImage
+import UIKit
 import WireDataModel
 import WireLinkPreview
-import UIKit
 import WireSyncEngine
 
 extension ZMConversationMessage {
@@ -268,7 +267,7 @@ extension WireImageResource {
                 }
             }
 
-            guard let imageData = imageData else { return }
+            guard let imageData else { return }
 
             if isAnimatedGIF {
                 image = FLAnimatedImage(animatedGIFData: imageData)
@@ -285,7 +284,7 @@ extension WireImageResource {
                 }
             }
 
-            if let image = image {
+            if let image {
                 cache.cache.setObject(image, forKey: cacheKey)
             }
         }

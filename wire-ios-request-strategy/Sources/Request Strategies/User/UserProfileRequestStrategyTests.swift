@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import XCTest
-import WireRequestStrategySupport
 @testable import WireRequestStrategy
+import WireRequestStrategySupport
+import XCTest
 
 class UserProfileRequestStrategyTests: MessagingTestBase {
 
@@ -539,7 +539,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             payloadData = userProfiles.payloadData()
         }
 
-        guard let payloadData = payloadData,
+        guard let payloadData,
               let payloadString = String(bytes: payloadData, encoding: .utf8)
         else {
             return nil

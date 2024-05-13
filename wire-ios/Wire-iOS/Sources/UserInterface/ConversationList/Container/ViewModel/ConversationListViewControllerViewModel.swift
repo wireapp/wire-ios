@@ -18,9 +18,9 @@
 
 import UIKit
 import UserNotifications
+import WireCommonComponents
 import WireDataModel
 import WireSyncEngine
-import WireCommonComponents
 
 typealias Completion = () -> Void
 typealias ResultHandler = (_ succeeded: Bool) -> Void
@@ -31,8 +31,6 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
         _ viewModel: ConversationListViewController.ViewModel,
         didUpdate selfUserStatus: UserStatus
     )
-
-    func scrollViewDidScroll(scrollView: UIScrollView!)
 
     func setState(_ state: ConversationListState,
                   animated: Bool,
@@ -46,6 +44,9 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
 
     @discardableResult
     func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool
+
+    func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ConversationListViewController.ViewModel)
+    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ConversationListViewController.ViewModel)
 }
 
 extension ConversationListViewController {
@@ -74,8 +75,8 @@ extension ConversationListViewController {
 
         var selectedConversation: ZMConversation?
 
-        private var didBecomeActiveNotificationToken: Any?
-        private var e2eiCertificateChangedToken: Any?
+        private var didBecomeActiveNotificationToken: NSObjectProtocol?
+        private var e2eiCertificateChangedToken: NSObjectProtocol?
         private var initialSyncObserverToken: Any?
         private var userObservationToken: NSObjectProtocol?
         /// observer tokens which are assigned when viewDidLoad
@@ -133,9 +134,11 @@ extension ConversationListViewController.ViewModel {
             self?.updateE2EICertifiedStatus()
         }
 
-        e2eiCertificateChangedToken = notificationCenter.addObserver(forName: .e2eiCertificateChanged,
-                                                                     object: nil,
-                                                                     queue: .main) { [weak self] _ in
+        e2eiCertificateChangedToken = notificationCenter.addObserver(
+            forName: .e2eiCertificateChanged,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
             self?.updateE2EICertifiedStatus()
         }
     }
@@ -213,16 +216,14 @@ extension ConversationListViewController.ViewModel {
 
         guard Settings.shared.pushAlertHappenedMoreThan1DayBefore else { return false }
 
-        UNUserNotificationCenter.current().checkPushesDisabled({ [weak self] pushesDisabled in
+        UNUserNotificationCenter.current().checkPushesDisabled { [weak self] pushesDisabled in
             DispatchQueue.main.async {
-                if pushesDisabled,
-                    let weakSelf = self {
+                if pushesDisabled, let self {
                     Settings.shared[.lastPushAlertDate] = Date()
-
-                    weakSelf.viewController?.showPermissionDeniedViewController()
+                    self.viewController?.showPermissionDeniedViewController()
                 }
             }
-        })
+        }
 
         return true
     }
@@ -244,9 +245,15 @@ extension ConversationListViewController.ViewModel: UserObserving {
         if changeInfo.nameChanged {
             selfUserStatus.name = changeInfo.user.name ?? ""
         }
+        if changeInfo.nameChanged || changeInfo.teamsChanged {
+            viewController?.conversationListViewControllerViewModelRequiresUpdatingAccountView(self)
+        }
         if changeInfo.trustLevelChanged {
             selfUserStatus.isProteusVerified = changeInfo.user.isVerified
             updateE2EICertifiedStatus()
+        }
+        if changeInfo.legalHoldStatusChanged {
+            viewController?.conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(self)
         }
         if changeInfo.availabilityChanged {
             selfUserStatus.availability = changeInfo.user.availability

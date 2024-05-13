@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireCommonComponents
-import UIKit
 import avs
+import UIKit
+import WireCommonComponents
 import WireDataModel
 
 protocol AudioEffectsPickerDelegate: AnyObject {
@@ -63,7 +63,7 @@ final class AudioEffectsPickerViewController: UIViewController {
 
             setState(.playing, animated: true)
 
-            if let audioPlayerController = audioPlayerController, oldValue == selectedAudioEffect {
+            if let audioPlayerController, oldValue == selectedAudioEffect {
 
                 if audioPlayerController.state == .playing {
                     audioPlayerController.stop()

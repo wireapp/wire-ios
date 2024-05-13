@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import WireSyncEngine
+import XCTest
 
 class ConversationTests_LegalHold: ConversationTestsBase {
 
@@ -56,7 +56,7 @@ class ConversationTests_LegalHold: ConversationTestsBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(conversation?.legalHoldStatus, .pendingApproval)
 
-        conversation?.acknowledgePrivacyWarning(withResendIntent: true)
+        conversation?.acknowledgePrivacyWarningAndResendMessages()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(conversation?.legalHoldStatus, .enabled)
 

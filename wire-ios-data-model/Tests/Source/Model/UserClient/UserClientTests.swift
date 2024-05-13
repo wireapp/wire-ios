@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-import WireUtilities
 import WireCryptobox
+import WireUtilities
+import XCTest
 
 @testable import WireDataModel
 @testable import WireDataModelSupport
@@ -54,8 +54,8 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         let ignoredClient = userClientSetWithClientCount(ignoredClientCount)
         let missedClient = userClientSetWithClientCount(missedClientCount)
 
-        if let trustedClient = trustedClient { client.trustedClients = trustedClient }
-        if let ignoredClient = ignoredClient { client.ignoredClients = ignoredClient }
+        if let trustedClient { client.trustedClients = trustedClient }
+        if let ignoredClient { client.ignoredClients = ignoredClient }
         client.missingClients = missedClient
 
         return client

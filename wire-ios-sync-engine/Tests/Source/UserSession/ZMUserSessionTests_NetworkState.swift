@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import WireDataModelSupport
 @testable import WireSyncEngine
+import XCTest
 
 final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
 
@@ -58,7 +58,6 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
-            useCaseFactory: mockUseCaseFactory,
             userId: userId
         )
         let testSession = builder.build()

@@ -17,8 +17,8 @@
 //
 
 import UIKit
-import WireSyncEngine
 import WireCommonComponents
+import WireSyncEngine
 
 final class ConversationViewController: UIViewController {
     unowned let zClientViewController: ZClientViewController
@@ -160,7 +160,7 @@ final class ConversationViewController: UIViewController {
             for: userSession.conversationList()
         )
 
-        observationToken = E2EIPrivacyWarningChecker.addPresenter(self)
+        observationToken = PrivacyWarningChecker.addPresenter(self)
 
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardFrameWillChange(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
 
@@ -357,7 +357,7 @@ final class ConversationViewController: UIViewController {
     @objc
     private func titleViewTapped() {
         if let superview = titleView.superview,
-           let participantsController = participantsController {
+           let participantsController {
             presentParticipantsViewController(participantsController, from: superview)
         }
     }
@@ -589,7 +589,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                                                             mentions: [Mention]) {
         contentViewController.didFinishEditing(message)
         userSession.enqueue({
-            if let newText = newText,
+            if let newText,
                !newText.isEmpty {
                 let fetchLinkPreview = !Settings.disableLinkPreviews
                 message.textMessageData?.editText(newText, mentions: mentions, fetchLinkPreview: fetchLinkPreview)
@@ -648,11 +648,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             collections.delegate = self
 
             collections.onDismiss = { [weak self] _ in
-                guard let weakSelf = self else {
-                    return
-                }
-
-                weakSelf.collectionController?.dismiss(animated: true)
+                guard let self else { return }
+                collectionController?.dismiss(animated: true)
             }
             collectionController = collections
         } else {

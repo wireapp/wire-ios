@@ -17,8 +17,8 @@
 //
 
 import Foundation
-import WireCommonComponents
 @testable import Wire
+import WireCommonComponents
 
 extension MockConversation {
 

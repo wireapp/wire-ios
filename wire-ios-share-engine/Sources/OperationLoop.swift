@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import CoreData
-import WireTransport
+import Foundation
 import WireRequestStrategy
+import WireTransport
 
 let contextWasMergedNotification = Notification.Name("zm_contextWasSaved")
 
@@ -105,19 +105,18 @@ final class RequestGeneratorObserver {
     public func nextRequest() -> ZMTransportRequest? {
         guard let request = observedGenerator?() else { return nil }
 
-        request.add(ZMCompletionHandler(on: context, block: { [weak self] _ in
+        request.add(ZMCompletionHandler(on: context) { [weak self] _ in
             self?.context.saveOrRollback()
 
             RequestAvailableNotification.notifyNewRequestsAvailable(nil)
 
-            self?.context.dispatchGroup.notify(on: DispatchQueue.global(), block: {
+            self?.context.dispatchGroup?.notify(on: .global()) {
                 RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-            })
-        }))
+            }
+        })
 
         return request
     }
-
 }
 
 final class OperationLoop: NSObject, RequestAvailableObserver {

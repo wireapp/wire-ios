@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import Foundation
 import WireCoreCrypto
 import WireDataModel
-import Combine
 
 // sourcery: AutoMockable
 public protocol E2EIKeyPackageRotating {
@@ -98,8 +98,8 @@ public class E2EIKeyPackageRotator: E2EIKeyPackageRotating {
             )
         }
 
-        guard rotateBundle.commits.isNonEmpty else {
-            // TODO: [WPB-6281] [[jacob]] remove this guard when implementing
+        guard !rotateBundle.commits.isEmpty else {
+            // TODO: [WPB-6281] [jacob] remove this guard when implementing
             return
         }
 

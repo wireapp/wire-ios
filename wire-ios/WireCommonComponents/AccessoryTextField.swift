@@ -163,7 +163,7 @@ extension AccessoryTextField {
             return super.placeholder
         }
         set {
-            if let newValue = newValue {
+            if let newValue {
                 attributedPlaceholder = attributedPlaceholderString(placeholder: newValue)
             }
         }

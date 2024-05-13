@@ -16,12 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
-/**
- * Handles the input of the phone number or email to register.
- */
-
+/// Handles the input of the phone number or email to register.
 final class AuthenticationCredentialsCreationInputHandler: AuthenticationEventHandler {
 
     weak var statusProvider: AuthenticationStatusProvider?
@@ -34,12 +29,9 @@ final class AuthenticationCredentialsCreationInputHandler: AuthenticationEventHa
 
         // Only handle known values.
         if let email = context as? String {
-            return [.startRegistrationFlow(.email(email))]
-        } else if let phoneNumber = context as? PhoneNumber {
-            return [.startRegistrationFlow(.phone(phoneNumber.fullNumber))]
+            return [.startRegistrationFlow(unverifiedEmail: email)]
         } else {
             return nil
         }
     }
-
 }

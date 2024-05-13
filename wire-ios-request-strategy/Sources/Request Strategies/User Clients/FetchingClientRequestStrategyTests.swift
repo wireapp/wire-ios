@@ -17,9 +17,9 @@
 //
 
 import Foundation
-import WireTesting
-import WireDataModel
 import WireCryptobox
+import WireDataModel
+import WireTesting
 
 @testable import WireRequestStrategy
 
@@ -435,7 +435,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest(for: self.apiVersion)
 
             // THEN
-            if let request = request {
+            if let request {
                 let path = "/users/\(user.remoteIdentifier!.transportString())/clients"
                 XCTAssertEqual(request.path, path)
                 XCTAssertEqual(request.method, .get)
@@ -462,7 +462,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest(for: self.apiVersion)
 
             // THEN
-            if let request = request {
+            if let request {
                 let path = "/v1/users/list-clients/v2"
                 XCTAssertEqual(request.path, path)
                 XCTAssertEqual(request.method, .post)
@@ -489,7 +489,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest(for: self.apiVersion)
 
             // THEN
-            if let request = request {
+            if let request {
                 let path = "/v2/users/list-clients"
                 XCTAssertEqual(request.path, path)
                 XCTAssertEqual(request.method, .post)
@@ -660,7 +660,7 @@ final class FetchClientRequestStrategyTests: MessagingTestBase {
 
             // THEN
             let request = self.sut.nextRequest(for: self.apiVersion)
-            if let request = request {
+            if let request {
                 completion(request)
             } else {
                 XCTFail("Failed to create request")

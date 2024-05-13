@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 import WireCommonComponents
 
@@ -69,7 +68,7 @@ final class SpinnerButton: LegacyButton {
 
     /// multi line support of titleLabel
     private func configureTitleLabel() {
-        guard let titleLabel = titleLabel else { return }
+        guard let titleLabel else { return }
 
         // title is always align to left
         contentHorizontalAlignment = .left

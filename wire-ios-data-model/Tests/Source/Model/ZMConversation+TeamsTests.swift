@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTesting
 @testable import WireDataModel
+import WireTesting
 
 class ZMConversationTests_Teams: ZMConversationTestsBase {
 
@@ -74,7 +74,7 @@ class ZMConversationTests_Teams: ZMConversationTestsBase {
             ]
         ]
 
-        if let teamId = teamId {
+        if let teamId {
             payload["team"] = teamId.transportString()
         } else {
             payload["team"] = NSNull()

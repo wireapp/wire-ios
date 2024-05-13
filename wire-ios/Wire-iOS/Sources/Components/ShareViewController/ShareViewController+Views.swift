@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 extension ShareViewController {
@@ -34,7 +33,7 @@ extension ShareViewController {
         shareablePreviewWrapper.layer.shadowOffset = CGSize(width: 0, height: 8)
         shareablePreviewWrapper.layer.shadowColor = UIColor(white: 0, alpha: 0.4).cgColor
 
-        if let shareablePreviewView = shareablePreviewView {
+        if let shareablePreviewView {
             shareablePreviewWrapper.addSubview(shareablePreviewView)
         }
         self.shareablePreviewWrapper = shareablePreviewWrapper
@@ -114,8 +113,8 @@ extension ShareViewController {
 
     func createConstraints() {
 
-        guard let shareablePreviewWrapper = shareablePreviewWrapper,
-            let shareablePreviewView = shareablePreviewView else {
+        guard let shareablePreviewWrapper,
+            let shareablePreviewView else {
                 return
         }
 

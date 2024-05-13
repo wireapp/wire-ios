@@ -27,33 +27,6 @@ public protocol SafeCoreCryptoProtocol {
     func tearDown() throws
 }
 
-extension CiphersuiteName {
-    public var rawValue: UInt16 {
-        switch self {
-        case .mls128Dhkemx25519Aes128gcmSha256Ed25519:
-            return 1
-        case .mls128Dhkemp256Aes128gcmSha256P256:
-            return 2
-        case .mls128Dhkemx25519Chacha20poly1305Sha256Ed25519:
-            return 3
-        case .mls256Dhkemx448Aes256gcmSha512Ed448:
-            return 4
-        case .mls256Dhkemp521Aes256gcmSha512P521:
-            return 5
-        case .mls256Dhkemx448Chacha20poly1305Sha512Ed448:
-            return 6
-        case .mls256Dhkemp384Aes256gcmSha384P384:
-            return 7
-        case .mls128X25519kyber768draft00Aes128gcmSha256Ed25519:
-            return 8
-        @unknown default:
-            fatalError("unsupported value of 'CiphersuiteName'!")
-        }
-    }
-
-    static var `default` = CiphersuiteName.mls128Dhkemx25519Aes128gcmSha256Ed25519
-}
-
 public class SafeCoreCrypto: SafeCoreCryptoProtocol {
 
     public enum CoreCryptoSetupFailure: Error, Equatable {
@@ -65,11 +38,11 @@ public class SafeCoreCrypto: SafeCoreCryptoProtocol {
     private let databasePath: String
 
     public convenience init(path: String, key: String) async throws {
-        // NOTE: the ciphersuites argument is not used here and will eventually be removed.
         let coreCrypto = try await coreCryptoDeferredInit(
             path: path,
             key: key,
-            ciphersuites: [CiphersuiteName.default.rawValue], nbKeyPackage: nil
+            ciphersuites: [],
+            nbKeyPackage: nil
         )
 
         try await coreCrypto.setCallbacks(callbacks: CoreCryptoCallbacksImpl())

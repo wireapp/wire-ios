@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 @testable import Wire
+import XCTest
 
 final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtureTestHelper {
     var coreDataFixture: CoreDataFixture!
@@ -186,7 +186,7 @@ final class ConversationMessageActionControllerTests: XCTestCase, CoreDataFixtur
 
         // WHEN
         let actionController = ConversationMessageActionController(responder: nil, message: message, context: .content, view: UIView())
-        let supportsVisitLink = actionController.canPerformAction(#selector(ConversationMessageActionController.visitLink(path:)))
+        let supportsVisitLink = actionController.canPerformAction(#selector(ConversationMessageActionController.visitLink))
 
         // THEN
         XCTAssertTrue(supportsVisitLink)

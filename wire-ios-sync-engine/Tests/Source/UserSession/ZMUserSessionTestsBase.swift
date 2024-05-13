@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Combine
 import WireDataModelSupport
 import WireRequestStrategySupport
-import Combine
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 
@@ -36,8 +36,6 @@ class ZMUserSessionTestsBase: MessagingTest {
     var flowManagerMock: FlowManagerMock!
     var dataChangeNotificationsCount: UInt = 0
     var mockSyncStateDelegate: MockSyncStateDelegate!
-    var mockUseCaseFactory: MockUseCaseFactoryProtocol!
-    var mockResolveOneOnOneConversationUseCase: MockResolveOneOnOneConversationsUseCaseProtocol!
     var mockGetFeatureConfigsActionHandler: MockActionHandler<GetFeatureConfigsAction>!
     var mockRecurringActionService: MockRecurringActionServiceInterface!
 
@@ -75,14 +73,6 @@ class ZMUserSessionTestsBase: MessagingTest {
             continuation.finish()
         }
 
-        mockUseCaseFactory = MockUseCaseFactoryProtocol()
-        mockResolveOneOnOneConversationUseCase = MockResolveOneOnOneConversationsUseCaseProtocol()
-        mockResolveOneOnOneConversationUseCase.invoke_MockMethod = { }
-
-        mockUseCaseFactory.createResolveOneOnOneUseCase_MockMethod = {
-            return self.mockResolveOneOnOneConversationUseCase
-        }
-
         mockRecurringActionService = MockRecurringActionServiceInterface()
         mockRecurringActionService.registerAction_MockMethod = { _ in }
         mockRecurringActionService.performActionsIfNeeded_MockMethod = { }
@@ -108,8 +98,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         self.transportSession = nil
         self.mediaManager = nil
         self.flowManagerMock = nil
-        self.mockUseCaseFactory = nil
-        self.mockResolveOneOnOneConversationUseCase = nil
         self.mockRecurringActionService = nil
         self.mockEARService.delegate = nil
         self.mockEARService = nil
@@ -155,7 +143,6 @@ class ZMUserSessionTestsBase: MessagingTest {
             recurringActionService: mockRecurringActionService,
             sharedUserDefaults: sharedUserDefaults,
             transportSession: transportSession,
-            useCaseFactory: mockUseCaseFactory,
             userId: coreDataStack.account.userIdentifier
         )
 

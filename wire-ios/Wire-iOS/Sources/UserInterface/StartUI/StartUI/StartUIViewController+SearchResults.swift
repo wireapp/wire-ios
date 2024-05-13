@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSyncEngine
 import UIKit
+import WireSyncEngine
 import WireSystem
 
 final class StartUIView: UIView { }
@@ -28,7 +27,7 @@ extension StartUIViewController {
                                               at indexPath: IndexPath?) {
         _ = searchHeaderViewController.tokenField.resignFirstResponder()
 
-        guard let indexPath = indexPath,
+        guard let indexPath,
             let cell = searchResultsViewController.searchResultsView.collectionView.cellForItem(at: indexPath) else { return }
 
         profilePresenter.presentProfileViewController(for: bareUser, in: self, from: view.convert(cell.bounds, from: cell), userSession: userSession, onDismiss: {
@@ -83,17 +82,17 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
             actionType: .openConversation,
             userSession: userSession
         ) { [weak self] result in
-            guard let weakSelf = self else { return }
+            guard let self else { return }
 
-            if let result = result {
+            if let result {
                 switch result {
                 case .success(let conversation):
-                    weakSelf.delegate?.startUI(weakSelf, didSelect: conversation)
+                    delegate?.startUI(self, didSelect: conversation)
                 case .failure(let error):
-                    error.displayAddBotError(in: weakSelf)
+                    error.displayAddBotError(in: self)
                 }
             } else {
-                weakSelf.navigationController?.dismiss(animated: true, completion: nil)
+                navigationController?.dismiss(animated: true, completion: nil)
             }
         }
 
@@ -147,7 +146,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
         ) { [weak self] in
             switch $0 {
             case .success(let conversation):
-                guard let self = self else { return }
+                guard let self else { return }
                 self.delegate?.startUI(
                     self,
                     didSelect: conversation
@@ -168,7 +167,7 @@ extension StartUIViewController: ConversationCreationControllerDelegate {
         didCreateConversation conversation: ZMConversation
     ) {
         dismiss(controller: controller) { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
 
             delegate?.startUI(
                 self,

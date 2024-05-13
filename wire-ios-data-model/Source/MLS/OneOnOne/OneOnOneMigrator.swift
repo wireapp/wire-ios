@@ -62,9 +62,10 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         }
 
         if epoch == 0 {
-            try await establishLocalMLSConversationIfNeeded(
+            try await establishMLSGroupIfNeeded(
                 userID: userID,
-                mlsGroupID: mlsGroupID
+                mlsGroupID: mlsGroupID,
+                in: context
             )
         } else {
             try await mlsService.joinGroup(with: mlsGroupID)
@@ -111,14 +112,20 @@ public struct OneOnOneMigrator: OneOnOneMigratorInterface {
         }
     }
 
-    private func establishLocalMLSConversationIfNeeded(
+    private func establishMLSGroupIfNeeded(
         userID: QualifiedID,
-        mlsGroupID: MLSGroupID
+        mlsGroupID: MLSGroupID,
+        in context: NSManagedObjectContext
     ) async throws {
         let users = [MLSUser(userID)]
 
         do {
-            try await mlsService.establishGroup(for: mlsGroupID, with: users)
+            let ciphersuite = try await mlsService.establishGroup(for: mlsGroupID, with: users)
+            await context.perform {
+                let conversation = ZMConversation.fetch(with: mlsGroupID, in: context)
+                conversation?.ciphersuite = ciphersuite
+                conversation?.mlsStatus = .ready
+            }
         } catch {
             throw MigrateMLSOneOnOneConversationError.failedToEstablishGroup(error)
         }

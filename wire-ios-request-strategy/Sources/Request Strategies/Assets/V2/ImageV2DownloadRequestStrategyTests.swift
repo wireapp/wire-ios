@@ -17,9 +17,9 @@
 //
 
 import Foundation
+import WireDataModel
 @testable import WireRequestStrategy
 import XCTest
-import WireDataModel
 
 class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
 
@@ -99,7 +99,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedBlock {
             message = try? self.createV2ImageMessage(withAssetId: UUID()).0
 
-            guard let message = message else {
+            guard let message else {
                 XCTFail("no message")
                 return
             }
@@ -111,7 +111,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         syncMOC.performGroupedBlockAndWait {
-            guard let message = message else {
+            guard let message else {
                 XCTFail("failed to create message")
                 return
             }

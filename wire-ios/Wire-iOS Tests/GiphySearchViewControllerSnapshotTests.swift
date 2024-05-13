@@ -16,10 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
 import SnapshotTesting
-import Ziphy
 @testable import Wire
+import XCTest
+import Ziphy
 
 final class GiphySearchViewControllerSnapshotTests: BaseSnapshotTestCase {
     var sut: GiphySearchViewController!

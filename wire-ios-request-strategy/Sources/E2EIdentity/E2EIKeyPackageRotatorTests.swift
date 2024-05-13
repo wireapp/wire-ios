@@ -17,11 +17,11 @@
 //
 
 import Foundation
-import XCTest
 import WireCoreCrypto
+import XCTest
 
-@testable import WireRequestStrategy
 @testable import WireDataModelSupport
+@testable import WireRequestStrategy
 
 class E2EIKeyPackageRotatorTests: MessagingTestBase {
 

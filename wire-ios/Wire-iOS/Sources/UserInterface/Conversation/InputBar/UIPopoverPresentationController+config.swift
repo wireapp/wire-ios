@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import UIKit
 
 protocol PopoverPresenter: AnyObject {
@@ -33,8 +32,8 @@ protocol PopoverPresenter: AnyObject {
 
 extension PopoverPresenter where Self: UIViewController {
     func updatePopoverSourceRect() {
-        guard let presentedPopover = presentedPopover,
-              let popoverPointToView = popoverPointToView else { return }
+        guard let presentedPopover,
+              let popoverPointToView else { return }
 
         presentedPopover.sourceRect = popoverPointToView.popoverSourceRect(from: self)
     }
