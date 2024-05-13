@@ -64,7 +64,7 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
         userSession = UserSessionMock()
 
         let mockSecurityClassificationProviding = MockSecurityClassificationProviding()
-        mockSecurityClassificationProviding.classificationUsersConversationDomain_MockValue = .notClassified
+        mockSecurityClassificationProviding.classificationUsersConversationDomain_MockValue = .some(nil)
 
         sut = ConversationInputBarViewController(
             conversation: otherUserConversation,
