@@ -61,12 +61,6 @@ final class ConversationListViewController: UIViewController {
 
     let listContentController: ConversationListContentController
 
-    let tabBar: ConversationListTabBar = {
-        let conversationListTabBar = ConversationListTabBar()
-        conversationListTabBar.showArchived = true
-        return conversationListTabBar
-    }()
-
     var userStatusViewController: UserStatusViewController?
     weak var titleViewLabel: UILabel?
     let networkStatusViewController = NetworkStatusViewController()
@@ -87,7 +81,7 @@ final class ConversationListViewController: UIViewController {
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
         self.init(viewModel: viewModel, selfProfileViewControllerBuilder: selfProfileViewControllerBuilder)
-        onboardingHint.arrowPointToView = tabBar
+        onboardingHint.arrowPointToView = tabBarController?.tabBar
     }
 
     required init(
@@ -155,7 +149,6 @@ final class ConversationListViewController: UIViewController {
         }
 
         state = .conversationList
-        tabBar.selectedTab = listContentController.listViewModel.folderEnabled ? .folder : .list
 
         closePushPermissionDialogIfNotNeeded()
 
@@ -181,15 +174,6 @@ final class ConversationListViewController: UIViewController {
         })
 
         super.viewWillTransition(to: size, with: coordinator)
-    }
-
-    override func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        self.tabBar.subviews.forEach { barButton in
-            if let label = barButton.subviews[1] as? UILabel {
-                label.sizeToFit()
-            }
-        }
     }
 
     override var shouldAutorotate: Bool {
@@ -219,11 +203,10 @@ final class ConversationListViewController: UIViewController {
         contentContainer.addSubview(onboardingHint)
     }
 
+    #warning("TODO: is this still needed?")
     private func setupTabBar() {
-        tabBar.delegate = self
-        contentContainer.addSubview(tabBar)
-        listContentController.listViewModel.restorationDelegate = tabBar
-        tabBar.unselectedItemTintColor = SemanticColors.Label.textTabBar
+        tabBarController?.tabBar.delegate = self
+        tabBarController?.tabBar.unselectedItemTintColor = SemanticColors.Label.textTabBar
     }
 
     private func setupNetworkStatusBar() {
@@ -236,7 +219,6 @@ final class ConversationListViewController: UIViewController {
 
         contentContainer.translatesAutoresizingMaskIntoConstraints = false
         conversationList.translatesAutoresizingMaskIntoConstraints = false
-        tabBar.translatesAutoresizingMaskIntoConstraints = false
         noConversationLabel.translatesAutoresizingMaskIntoConstraints = false
         onboardingHint.translatesAutoresizingMaskIntoConstraints = false
         networkStatusViewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -254,15 +236,11 @@ final class ConversationListViewController: UIViewController {
             conversationList.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
             conversationList.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-            conversationList.bottomAnchor.constraint(equalTo: tabBar.topAnchor),
+            conversationList.bottomAnchor.constraint(equalTo: contentContainer.safeBottomAnchor),
 
-            onboardingHint.bottomAnchor.constraint(equalTo: tabBar.topAnchor),
+            onboardingHint.bottomAnchor.constraint(equalTo: conversationList.bottomAnchor),
             onboardingHint.leftAnchor.constraint(equalTo: contentContainer.leftAnchor),
             onboardingHint.rightAnchor.constraint(equalTo: contentContainer.rightAnchor),
-
-            tabBar.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
-            tabBar.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-            tabBar.bottomAnchor.constraint(equalTo: contentContainer.safeBottomAnchor),
 
             noConversationLabel.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
             noConversationLabel.centerYAnchor.constraint(equalTo: contentContainer.centerYAnchor),
@@ -280,9 +258,8 @@ final class ConversationListViewController: UIViewController {
         if state != .conversationList { return }
 
         let closure = {
-            let hasArchivedConversations = self.viewModel.hasArchivedConversations
-            self.noConversationLabel.alpha = hasArchivedConversations ? 1.0 : 0.0
-            self.onboardingHint.alpha = hasArchivedConversations ? 0.0 : 1.0
+            self.noConversationLabel.alpha = 1
+            self.onboardingHint.alpha = 0
         }
 
         if animated {
@@ -310,17 +287,6 @@ final class ConversationListViewController: UIViewController {
         let startUIViewController = StartUIViewController(userSession: viewModel.userSession)
         startUIViewController.delegate = viewModel
         return startUIViewController
-    }
-
-    func updateArchiveButtonVisibilityIfNeeded(showArchived: Bool) {
-        guard showArchived != tabBar.showArchived else {
-            return
-        }
-        tabBar.showArchived = showArchived
-    }
-
-    func hideArchivedConversations() {
-        setState(.conversationList, animated: true)
     }
 
     func presentPeoplePicker() {

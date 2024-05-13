@@ -1763,7 +1763,6 @@
 		EF80466520D17130001A1C53 /* MessageDestructionTimeoutValueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF80466320D1712B001A1C53 /* MessageDestructionTimeoutValueTests.swift */; };
 		EF82E1C020EE79EC001B5196 /* ZMConversationMessage+CountDown.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF82E1BF20EE79EC001B5196 /* ZMConversationMessage+CountDown.swift */; };
 		EF834B8422035AD400E92F13 /* ConversationContentViewController+MessageAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF834B8322035AD400E92F13 /* ConversationContentViewController+MessageAction.swift */; };
-		EF84DF4E2130565B00033702 /* ConversationListTabBarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF84DF4D2130565A00033702 /* ConversationListTabBarTests.swift */; };
 		EF864A0D236AEB400074DFF7 /* ZMConversation+Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF864A0C236AEB400074DFF7 /* ZMConversation+Additions.swift */; };
 		EF883F292151190900B440CC /* UserCellSubtitleProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF883F282151190900B440CC /* UserCellSubtitleProtocol.swift */; };
 		EF883F2B21511DD700B440CC /* people-15Sections.json in Resources */ = {isa = PBXBuildFile; fileRef = EF883F2A21511DD700B440CC /* people-15Sections.json */; };
@@ -3855,7 +3854,6 @@
 		EF80466320D1712B001A1C53 /* MessageDestructionTimeoutValueTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageDestructionTimeoutValueTests.swift; sourceTree = "<group>"; };
 		EF82E1BF20EE79EC001B5196 /* ZMConversationMessage+CountDown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationMessage+CountDown.swift"; sourceTree = "<group>"; };
 		EF834B8322035AD400E92F13 /* ConversationContentViewController+MessageAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationContentViewController+MessageAction.swift"; sourceTree = "<group>"; };
-		EF84DF4D2130565A00033702 /* ConversationListTabBarTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationListTabBarTests.swift; sourceTree = "<group>"; };
 		EF864A0C236AEB400074DFF7 /* ZMConversation+Additions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Additions.swift"; sourceTree = "<group>"; };
 		EF883F282151190900B440CC /* UserCellSubtitleProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCellSubtitleProtocol.swift; sourceTree = "<group>"; };
 		EF883F2A21511DD700B440CC /* people-15Sections.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = "people-15Sections.json"; path = "PeoplePickerControllerTests/people-15Sections.json"; sourceTree = "<group>"; };
@@ -7149,7 +7147,6 @@
 				EF883F892152476900B440CC /* ConversationCreationControllerSnapshotTests.swift */,
 				EE2FC1D71F56F89800A9A418 /* ConversationImagesViewControllerTests.swift */,
 				8742FB7F1E8BD18900D046BC /* ConversationListAccessoryViewTests.swift */,
-				EF84DF4D2130565A00033702 /* ConversationListTabBarTests.swift */,
 				5E7315362191FCC400255A78 /* ConversationMessageActionControllerTests.swift */,
 				E9B580CB27B3E71900A5814D /* ConversationOptionsServicesViewControllerTests.swift */,
 				D594343F203DCECA006AA0C0 /* ConversationOptionsViewControllerTests.swift */,
@@ -10749,7 +10746,6 @@
 				8732670E1D2D0C5C005A62C1 /* AudioRecordKeyboardViewControllerTests.swift in Sources */,
 				EF36168A21E753310041F0CC /* SettingsTableViewControllerSnapshotTests.swift in Sources */,
 				EFDBA242229414E100874A15 /* Account+Mock.swift in Sources */,
-				EF84DF4E2130565B00033702 /* ConversationListTabBarTests.swift in Sources */,
 				876041551F5451EA003CB161 /* AccountViewSnapshotTests.swift in Sources */,
 				EF3052452087388000613C45 /* ConfirmEmailViewControllerTests.swift in Sources */,
 				87656FD11FB5FF0300D5286C /* FilePreviewGeneratorTests.swift in Sources */,

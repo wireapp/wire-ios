@@ -298,21 +298,6 @@ final class ConversationListViewModelTests: XCTestCase {
         // THEN
         XCTAssertEqual(sut.jsonString, #"{"collapsed":["groups"],"folderEnabled":true}"#)
     }
-
-    func testForRestorationDelegateMethodCalledOnceAfterItIsSet() {
-        // GIVEN
-        sut.folderEnabled = true
-        fillDummyConversations(mockConversation: mockConversation)
-        sut.setCollapsed(sectionIndex: 1, collapsed: true)
-        XCTAssertFalse(mockBar.folderEnabled)
-
-        // WHEN
-        sut.restorationDelegate = mockBar
-
-        // THEN
-        XCTAssert(mockBar.folderEnabled)
-    }
-
 }
 
 final class MockBar: ConversationListViewModelRestorationDelegate {

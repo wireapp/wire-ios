@@ -22,12 +22,6 @@ import XCTest
 
 @testable import Wire
 
-// MARK: - MockConversationList
-
-final class MockConversationList: ConversationListHelperType {
-    static var hasArchivedConversations: Bool = false
-}
-
 // MARK: - ConversationListViewControllerTests
 
 final class ConversationListViewControllerTests: BaseSnapshotTestCase {
@@ -50,13 +44,11 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
 
-        MockConversationList.hasArchivedConversations = false
         let selfUser = MockUserType.createSelfUser(name: "Johannes Chrysostomus Wolfgangus Theophilus Mozart", inTeam: UUID())
         let account = Account.mockAccount(imageData: mockImageData)
         let viewModel = ConversationListViewController.ViewModel(
             account: account,
             selfUser: selfUser,
-            conversationListType: MockConversationList.self,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: mockIsSelfUserE2EICertifiedUseCase
         )
@@ -66,7 +58,7 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
             selfProfileViewControllerBuilder: .mock
         )
         viewModel.viewController = sut
-        sut.onboardingHint.arrowPointToView = sut.tabBar
+        sut.onboardingHint.arrowPointToView = sut.tabBarController?.tabBar
         sut.overrideUserInterfaceStyle = .dark
         sut.view.backgroundColor = .black
         navigationController = .init(rootViewController: sut)
@@ -90,7 +82,7 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
     }
 
     func testForEverythingArchived() {
-        MockConversationList.hasArchivedConversations = true
+        #warning("TODO: fix test/snapshot image")
         sut.showNoContactLabel(animated: false)
 
         verify(matching: navigationController)

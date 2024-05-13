@@ -203,6 +203,7 @@ final class ZClientViewController: UIViewController {
             image: .init(resource: .archiveOutline),
             selectedImage: .init(resource: .archiveFilled)
         )
+        tabbarController.selectedIndex = 1
 
         if pendingInitialStateRestore {
             restoreStartupState()
@@ -368,7 +369,6 @@ final class ZClientViewController: UIViewController {
         currentConversation = conversation
         conversationRootController?.conversationViewController?.isFocused = focus
 
-        conversationListViewController.hideArchivedConversations()
         pushContentViewController(conversationRootController, focusOnView: focus, animated: animated, completion: completion)
     }
 

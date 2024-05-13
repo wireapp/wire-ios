@@ -109,6 +109,7 @@ enum TabBarItemType: Int, CaseIterable {
 
 }
 
+#warning("TODO: delete")
 final class ConversationListTabBar: UITabBar {
 
     private let startTab = UITabBarItem(type: .startUI)
@@ -142,7 +143,7 @@ final class ConversationListTabBar: UITabBar {
     }
 
     // MARK: - Init
-    init() {
+    private init() {
         super.init(frame: .zero)
         setupViews()
     }
@@ -241,16 +242,4 @@ private extension UITabBar {
         }
     }
 
-}
-
-// TODO [WPB-6647]: remove this extension
-extension UITabBar {
-    // Workaround for new UITabBar behavior where on iPad,
-    // the UITabBar shows the UITabBarItem icon next to the text
-    override open var traitCollection: UITraitCollection {
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            return UITraitCollection(traitsFrom: [super.traitCollection, UITraitCollection(horizontalSizeClass: .compact)])
-        }
-        return super.traitCollection
-    }
 }

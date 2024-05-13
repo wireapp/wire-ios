@@ -39,7 +39,6 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
     func showNoContactLabel(animated: Bool)
     func hideNoContactLabel(animated: Bool)
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler)
-    func updateArchiveButtonVisibilityIfNeeded(showArchived: Bool)
     func showPermissionDeniedViewController()
 
     @discardableResult
@@ -56,7 +55,6 @@ extension ConversationListViewController {
                 guard viewController != nil else { return }
 
                 updateNoConversationVisibility(animated: false)
-                updateArchiveButtonVisibility()
                 showPushPermissionDeniedDialogIfNeeded()
             }
         }
@@ -68,7 +66,6 @@ extension ConversationListViewController {
         }
 
         let selfUser: SelfUserType
-        let conversationListType: ConversationListHelperType.Type
         let userSession: UserSession
         private let isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol
         private let notificationCenter: NotificationCenter
@@ -88,14 +85,12 @@ extension ConversationListViewController {
         init(
             account: Account,
             selfUser: SelfUserType,
-            conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
             userSession: UserSession,
             isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
             notificationCenter: NotificationCenter = .default
         ) {
             self.account = account
             self.selfUser = selfUser
-            self.conversationListType = conversationListType
             self.userSession = userSession
             self.isSelfUserE2EICertifiedUseCase = isSelfUserE2EICertifiedUseCase
             selfUserStatus = .init(user: selfUser, isE2EICertified: false)
@@ -144,9 +139,9 @@ extension ConversationListViewController.ViewModel {
     }
 
     func savePendingLastRead() {
-        userSession.enqueue({
+        userSession.enqueue {
             self.selectedConversation?.savePendingLastRead()
-        })
+        }
     }
 
     /// Select a conversation and move the focus to the conversation view.
@@ -178,7 +173,7 @@ extension ConversationListViewController.ViewModel {
                 return
             }
 
-            selfUser.fetchMarketingConsent(in: userSession, completion: {[weak self] result in
+            selfUser.fetchMarketingConsent(in: userSession) { [weak self] result in
                 switch result {
                 case .failure(let error):
                     switch error {
@@ -194,7 +189,7 @@ extension ConversationListViewController.ViewModel {
                     // The user already gave a marketing consent, no need to ask for it again.
                     return
                 }
-            })
+            }
         }
     }
 
