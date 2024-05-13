@@ -83,6 +83,7 @@ final class ZClientViewController: UIViewController {
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
+        conversationListWithFoldersViewController.listContentController.listViewModel.folderEnabled = true
 
         colorSchemeController = .init(userSession: userSession)
 
