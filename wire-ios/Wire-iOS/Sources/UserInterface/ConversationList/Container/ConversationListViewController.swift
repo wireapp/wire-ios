@@ -34,6 +34,8 @@ final class ConversationListViewController: UIViewController {
     /// internal View Model
     var state: ConversationListState = .conversationList
 
+    private var previouslySelectedTabIndex = 1
+
     /// private
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
@@ -104,7 +106,6 @@ final class ConversationListViewController: UIViewController {
         view.backgroundColor = SemanticColors.View.backgroundConversationList
 
         setupListContentController()
-        setupTabBar()
         setupNoConversationLabel()
         setupOnboardingHint()
         setupNetworkStatusBar()
@@ -161,6 +162,8 @@ final class ConversationListViewController: UIViewController {
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
 
+            tabBarController?.delegate = self
+
             ZClientViewController.shared?.showDataUsagePermissionDialogIfNeeded()
             ZClientViewController.shared?.showAvailabilityBehaviourChangeAlertIfNeeded()
         }
@@ -201,12 +204,6 @@ final class ConversationListViewController: UIViewController {
 
     private func setupOnboardingHint() {
         contentContainer.addSubview(onboardingHint)
-    }
-
-    #warning("TODO: is this still needed?")
-    private func setupTabBar() {
-        tabBarController?.tabBar.delegate = self
-        tabBarController?.tabBar.unselectedItemTintColor = SemanticColors.Label.textTabBar
     }
 
     private func setupNetworkStatusBar() {
@@ -289,8 +286,10 @@ final class ConversationListViewController: UIViewController {
         return startUIViewController
     }
 
-    func presentPeoplePicker() {
-        setState(.peoplePicker, animated: true)
+    func presentPeoplePicker(
+        completion: Completion? = nil
+    ) {
+        setState(.peoplePicker, animated: true, completion: completion)
     }
 
     func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool {
@@ -315,30 +314,26 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     }
 }
 
-// MARK: - UITabBarDelegate
+// MARK: - UITabBarControllerDelegate
 
-extension ConversationListViewController: UITabBarDelegate {
+extension ConversationListViewController: UITabBarControllerDelegate {
 
-    func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
-        guard let type = item.type else { return }
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
 
-        switch type {
-        case .archive:
-            setState(.archived, animated: true)
-        case .startUI:
-            presentPeoplePicker()
-        case .folder:
-            listContentController.listViewModel.folderEnabled = true
-        case .list:
-            listContentController.listViewModel.folderEnabled = false
+        switch tabBarController.selectedIndex {
+        case 0:
+            presentPeoplePicker { [self] in
+                tabBarController.selectedIndex = previouslySelectedTabIndex
+            }
+        case 1, 2:
+            previouslySelectedTabIndex = tabBarController.selectedIndex
+        case 3:
+            setState(.archived, animated: true) { [self] in
+                tabBarController.selectedIndex = previouslySelectedTabIndex
+            }
+        default:
+            fatalError("unexpected selected tab index")
         }
-    }
-}
-
-private extension UITabBarItem {
-
-    var type: TabBarItemType? {
-        .allCases.first { $0.rawValue == tag }
     }
 }
 

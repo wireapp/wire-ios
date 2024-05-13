@@ -70,6 +70,6 @@ extension ConversationListViewController {
         viewController.transitioningDelegate = self
         viewController.modalPresentationStyle = .currentContext
 
-        navigationController?.present(viewController, animated: animated, completion: completion)
+        tabBarController?.present(viewController, animated: animated, completion: completion)
     }
 }
