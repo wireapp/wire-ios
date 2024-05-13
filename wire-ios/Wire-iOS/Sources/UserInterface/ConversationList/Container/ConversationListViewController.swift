@@ -47,7 +47,7 @@ final class ConversationListViewController: UIViewController {
 
     var pushPermissionDeniedViewController: PermissionDeniedViewController?
 
-    private let noConversationLabel: UILabel = {
+    private let noConversationLabel = {
         let label = UILabel()
         label.attributedText = NSAttributedString.attributedTextForNoConversationLabel
         label.numberOfLines = 0
@@ -83,7 +83,6 @@ final class ConversationListViewController: UIViewController {
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
         self.init(viewModel: viewModel, selfProfileViewControllerBuilder: selfProfileViewControllerBuilder)
-        onboardingHint.arrowPointToView = tabBarController?.tabBar
     }
 
     required init(
@@ -158,6 +157,8 @@ final class ConversationListViewController: UIViewController {
         ZClientViewController.shared?.notifyUserOfDisabledAppLockIfNeeded()
 
         viewModel.updateE2EICertifiedStatus()
+
+        onboardingHint.arrowPointToView = tabBarController?.tabBar
 
         if !viewDidAppearCalled {
             viewDidAppearCalled = true
@@ -256,7 +257,7 @@ final class ConversationListViewController: UIViewController {
 
         let closure = {
             self.noConversationLabel.alpha = 1
-            self.onboardingHint.alpha = 0
+            self.onboardingHint.alpha = 1
         }
 
         if animated {
@@ -267,10 +268,10 @@ final class ConversationListViewController: UIViewController {
     }
 
     func hideNoContactLabel(animated: Bool) {
-        UIView.animate(withDuration: animated ? 0.20 : 0.0, animations: {
-            self.noConversationLabel.alpha = 0.0
-            self.onboardingHint.alpha = 0.0
-        })
+        UIView.animate(withDuration: animated ? 0.20 : 0.0) {
+            self.noConversationLabel.alpha = 0
+            self.onboardingHint.alpha = 0
+        }
     }
 
     /// Scroll to the current selection
@@ -348,8 +349,8 @@ private extension NSAttributedString {
         paragraphStyle.alignment = .center
 
         let titleAttributes: [NSAttributedString.Key: Any] = [
-            NSAttributedString.Key.foregroundColor: UIColor.white,
-            NSAttributedString.Key.font: UIFont.smallMediumFont,
+            NSAttributedString.Key.foregroundColor: SemanticColors.Label.textDefault,
+            NSAttributedString.Key.font: UIFont.font(for: .h3),
             NSAttributedString.Key.paragraphStyle: paragraphStyle
         ]
 
