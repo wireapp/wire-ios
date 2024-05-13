@@ -16,13 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
+import Foundation
 
-enum AccountViewFactory {
+/// Metadata about the local backend.
 
-    static func viewFor(account: Account, user: ZMUser? = nil, displayContext: DisplayContext) -> AccountView {
+public struct BackendInfo: Equatable {
 
-        return TeamAccountView(account: account, user: user, displayContext: displayContext) ??
-               PersonalAccountView(account: account, user: user, displayContext: displayContext)!
-    }
+    /// The local domain.
+
+    public let domain: String
+
+    /// Whether federation is enabled on the local backend.
+
+    public let isFederationEnabled: Bool
+
+    /// All production ready api versions supported by the local backend.
+
+    public let supportedVersions: Set<APIVersion>
+
+    /// All api versions currently under development by the local backend.
+
+    public let developmentVersions: Set<APIVersion>
+
 }
