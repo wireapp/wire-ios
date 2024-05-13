@@ -36,134 +36,129 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
         switch urlAction {
         case let .joinConversation(key: key, code: code):
-            ZMConversation.fetchIdAndName(
-                key: key,
-                code: code,
-                transportSession: transportSession,
-                contextProvider: contextProvider
-            ) { [weak self] response in
-
-                guard let strongSelf = self,
-                      let delegate = delegate else {
-                    return
-                }
-
-                let viewContext = strongSelf.contextProvider.viewContext
-
-                switch response {
-                case .success((let conversationId, let conversationName, let hasPassword)):
-                    // First of all, we should try to fetch the conversation with ID from the response.
-                    // If the conversation doesn't exist, we should initiate a request to join the conversation
-                    if let conversation = ZMConversation.fetch(with: conversationId, in: viewContext),
-                       conversation.isSelfAnActiveMember {
-                        delegate.showConversation(conversation, at: nil)
-                        delegate.completedURLAction(urlAction)
-                    } else if hasPassword {
-                        delegate.showPasswordPrompt(for: conversationName) { password in
-                            guard let password = password, !password.isEmpty else {
-                                // Handle empty or cancelled input
-                                return
-                            }
-
-                            ZMConversation.join(
-                                key: key,
-                                code: code,
-                                password: password,
-                                transportSession: strongSelf.transportSession,
-                                eventProcessor: strongSelf.eventProcessor,
-                                contextProvider: strongSelf.contextProvider
-                            ) { [weak self] response in
-
-                                guard let strongSelf = self else { return }
-
-                                switch response {
-                                case .success(let conversation):
-                                    strongSelf.synchronise(conversation) { result in
-                                        DispatchQueue.main.async {
-                                            switch result {
-                                            case .success(let syncConversation):
-                                                delegate.showConversation(syncConversation, at: nil)
-                                            case .failure(let error):
-                                                delegate.failedToPerformAction(urlAction, error: error)
-                                            }
-                                        }
-                                    }
-                                case .failure(let error):
-                                    delegate.failedToPerformAction(urlAction, error: error)
-                                }
-
-                                delegate.completedURLAction(urlAction)
-                            }
-                        }
-                    } else {
-                        delegate.shouldPerformActionWithMessage(conversationName, action: urlAction) { shouldJoin in
-
-                            guard shouldJoin else {
-                                delegate.completedURLAction(urlAction)
-                                return
-                            }
-
-                            ZMConversation.join(
-                                key: key,
-                                code: code,
-                                password: nil,
-                                transportSession: strongSelf.transportSession,
-                                eventProcessor: strongSelf.eventProcessor,
-                                contextProvider: strongSelf.contextProvider
-                            ) { [weak self] response in
-
-                                guard let strongSelf = self else { return }
-
-                                switch response {
-                                case .success(let conversation):
-                                    strongSelf.synchronise(conversation) { result in
-                                        DispatchQueue.main.async {
-                                            switch result {
-                                            case .success(let syncConversation):
-                                                delegate.showConversation(syncConversation, at: nil)
-                                            case .failure(let error):
-                                                delegate.failedToPerformAction(urlAction, error: error)
-                                            }
-                                        }
-                                    }
-                                case .failure(let error):
-                                    delegate.failedToPerformAction(urlAction, error: error)
-                                }
-
-                                delegate.completedURLAction(urlAction)
-                            }
-                        }
-                    }
-
-                case .failure(let error):
-                    delegate.failedToPerformAction(urlAction, error: error)
-                    delegate.completedURLAction(urlAction)
-                }
-            }
+            handleJoinConversation(key: key, code: code, urlAction: urlAction, delegate: delegate)
 
         case .openConversation(let id):
-            let viewContext = contextProvider.viewContext
-            guard let conversation = ZMConversation.fetch(with: id, domain: nil, in: viewContext) else {
-                delegate?.failedToPerformAction(urlAction, error: DeepLinkRequestError.invalidConversationLink)
-                return
-            }
-
-            delegate?.showConversation(conversation, at: nil)
-            delegate?.completedURLAction(urlAction)
+            handleOpenConversation(id: id, delegate: delegate)
 
         case .openUserProfile(let id):
-            let viewContext = contextProvider.viewContext
-            if let user = ZMUser.fetch(with: id, domain: nil, in: viewContext) {
-                delegate?.showUserProfile(user: user)
-            } else {
-                delegate?.showConnectionRequest(userId: id)
-            }
-
-            delegate?.completedURLAction(urlAction)
+            handleOpenUserProfile(id: id, delegate: delegate)
 
         default:
             delegate?.completedURLAction(urlAction)
         }
+    }
+
+    private func handleJoinConversation(key: String, code: String, urlAction: URLAction, delegate: PresentationDelegate?) {
+        ZMConversation.fetchIdAndName(
+            key: key,
+            code: code,
+            transportSession: transportSession,
+            contextProvider: contextProvider
+        ) { [weak self] response in
+            guard let strongSelf = self, let delegate = delegate else {
+                return
+            }
+
+            let viewContext = strongSelf.contextProvider.viewContext
+
+            switch response {
+            case .success((let conversationId, let conversationName, let hasPassword)):
+                if let conversation = ZMConversation.fetch(with: conversationId, in: viewContext),
+                   conversation.isSelfAnActiveMember {
+                    delegate.showConversation(conversation, at: nil)
+                    delegate.completedURLAction(urlAction)
+                } else if hasPassword {
+                    strongSelf.handlePasswordPrompt(for: conversationName, key: key, code: code, delegate: delegate)
+                } else {
+                    strongSelf.handleJoinWithoutPassword(for: conversationName, key: key, code: code, urlAction: urlAction, delegate: delegate)
+                }
+
+            case .failure(let error):
+                delegate.failedToPerformAction(urlAction, error: error)
+                delegate.completedURLAction(urlAction)
+            }
+        }
+    }
+
+    private func handlePasswordPrompt(for conversationName: String, key: String, code: String, delegate: PresentationDelegate) {
+        delegate.showPasswordPrompt(for: conversationName) { [weak self] password in
+            guard let strongSelf = self, let password = password, !password.isEmpty else {
+                return
+            }
+
+            strongSelf.joinConversation(key: key, code: code, password: password, delegate: delegate)
+        }
+    }
+
+    private func handleJoinWithoutPassword(for conversationName: String, key: String, code: String, urlAction: URLAction, delegate: PresentationDelegate) {
+        delegate.shouldPerformActionWithMessage(conversationName, action: .joinConversation(key: key, code: code)) { [weak self] shouldJoin in
+            guard let strongSelf = self, shouldJoin else {
+                delegate.completedURLAction(urlAction)
+                return
+            }
+
+            strongSelf.joinConversation(key: key, code: code, password: nil, delegate: delegate)
+        }
+    }
+
+    private func joinConversation(key: String, code: String, password: String?, delegate: PresentationDelegate) {
+        ZMConversation.join(
+            key: key,
+            code: code,
+            password: password,
+            transportSession: transportSession,
+            eventProcessor: eventProcessor,
+            contextProvider: contextProvider
+        ) { [weak self] response in
+            guard let strongSelf = self else { return }
+
+            switch response {
+            case .success(let conversation):
+                strongSelf.synchronise(conversation) { result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case .success(let syncConversation):
+                            delegate.showConversation(syncConversation, at: nil)
+                        case .failure(let error):
+                            delegate.failedToPerformAction(.joinConversation(key: key, code: code), error: error)
+                        }
+                    }
+                }
+            case .failure(let error):
+                delegate.failedToPerformAction(.joinConversation(key: key, code: code), error: error)
+            }
+
+            delegate.completedURLAction(.joinConversation(key: key, code: code))
+        }
+    }
+
+    private func handleOpenConversation(id: UUID, delegate: PresentationDelegate?) {
+
+        let viewContext = contextProvider.viewContext
+
+        guard let conversation = ZMConversation.fetch(with: id, domain: nil, in: viewContext) else {
+            delegate?.failedToPerformAction(.openConversation(id: id), error: DeepLinkRequestError.invalidConversationLink)
+            return
+        }
+
+        delegate?.showConversation(conversation, at: nil)
+        delegate?.completedURLAction(.openConversation(id: id))
+
+    }
+
+    private func handleOpenUserProfile(id: UUID, delegate: PresentationDelegate?) {
+
+        let viewContext = contextProvider.viewContext
+
+        if let user = ZMUser.fetch(with: id, domain: nil, in: viewContext) {
+            delegate?.showUserProfile(user: user)
+        } else {
+            delegate?.showConnectionRequest(userId: id)
+        }
+
+        delegate?.completedURLAction(.openUserProfile(id: id))
+
     }
 
     private func synchronise(_ conversation: ZMConversation, completion: @escaping (Result<ZMConversation, Error>) -> Void) {
