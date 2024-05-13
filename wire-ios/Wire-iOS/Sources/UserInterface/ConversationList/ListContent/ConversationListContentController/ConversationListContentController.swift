@@ -238,10 +238,6 @@ final class ConversationListContentController: UICollectionViewController, Popov
         return true
     }
 
-    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        contentDelegate?.conversationListDidScroll(self)
-    }
-
     override func collectionView(_ collectionView: UICollectionView,
                                  didSelectItemAt indexPath: IndexPath) {
         selectionFeedbackGenerator.selectionChanged()
