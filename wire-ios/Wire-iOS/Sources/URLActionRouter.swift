@@ -133,7 +133,7 @@ class URLActionRouter: URLActionRouterProtocol {
 // MARK: - PresentationDelegate
 extension URLActionRouter: PresentationDelegate {
 
-    func showPasswordPrompt(completion: @escaping (String?) -> Void) {
+    func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
         let alertController = UIAlertController(title: "Password Required", message: "Enter the password to join the conversation", preferredStyle: .alert)
 
         alertController.addTextField { textField in
@@ -146,11 +146,17 @@ extension URLActionRouter: PresentationDelegate {
             completion(password)
         }
 
+        let helpLinkURL = URL(string: "https://support.wire.com/hc/en-us/articles/360000574069-Create-guest-rooms")!
+        let learnMoreAction = UIAlertAction(title: "Learn more about guest links", style: .default) { _ in
+            UIApplication.shared.open(helpLinkURL, options: [:], completionHandler: nil)
+        }
+
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
             completion(nil) // No action needed, just close the alert.
         }
 
         alertController.addAction(joinAction)
+        alertController.addAction(learnMoreAction)
         alertController.addAction(cancelAction)
 
         // Use the rootViewController to present the alert

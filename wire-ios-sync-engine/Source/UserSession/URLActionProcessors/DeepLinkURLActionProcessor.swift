@@ -59,7 +59,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                         delegate.showConversation(conversation, at: nil)
                         delegate.completedURLAction(urlAction)
                     } else if hasPassword {
-                        delegate.showPasswordPrompt { password in
+                        delegate.showPasswordPrompt(for: conversationName) { password in
                             guard let password = password, !password.isEmpty else {
                                 // Handle empty or cancelled input
                                 return

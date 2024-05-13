@@ -63,5 +63,5 @@ public protocol PresentationDelegate: AnyObject {
     func completedURLAction(_ action: URLAction)
 
     // Called when showing the password prompt before joining a secure guest link
-    func showPasswordPrompt(completion: @escaping (String?) -> Void)
+    func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void)
 }
