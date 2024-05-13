@@ -18,29 +18,40 @@
 
 @testable import WireAPI
 import XCTest
+import SnapshotTesting
+
 
 final class TeamsAPITests: XCTestCase {
 
-    // MARK: - V0
+    // MARK: - Request generation
 
-    func testGetTeamForID_Request_V0() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV0(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeam(for: teamID)
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/teams/\(teamID.transportString())",
-                method: .get
-            )
-        )
+    func testGetTeamRequest() async throws {
+        try await RequestSnapshotHelper().verifyRequestForAllAPIVersions { sut in
+            _ = try await sut.getTeam(for: .mockID1)
+        }
     }
+
+    func testGetTeamRolesRequest() async throws {
+        try await RequestSnapshotHelper().verifyRequestForAllAPIVersions { sut in
+            _ = try await sut.getTeamRoles(for: .mockID1)
+        }
+    }
+
+    func testGetTeamMembersRequest() async throws {
+        try await RequestSnapshotHelper().verifyRequestForAllAPIVersions { sut in
+            _ = try await sut.getTeamMembers(for: .mockID1, maxResults: 2000)
+        }
+    }
+
+    func testGetLegalholdStatusRequest() async throws {
+        try await RequestSnapshotHelper().verifyRequestForAllAPIVersions { sut in
+            _ = try await sut.getLegalholdStatus(for: .mockID1, userID: .mockID2)
+        }
+    }
+
+    // MARK: - Response handling
+
+    // MARK: - V0
 
     func testGetTeamForID_SuccessResponse_200_V0() async throws {
         // Given
@@ -100,25 +111,6 @@ final class TeamsAPITests: XCTestCase {
             // When
             _ = try await sut.getTeam(for: Team.ID())
         }
-    }
-
-    func testGetTeamRolesForID_Request_V0() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV0(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeamRoles(for: teamID)
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/teams/\(teamID.transportString())/conversations/roles",
-                method: .get
-            )
-        )
     }
 
     func testGetTeamRolesForID_SuccessResponse_200_V0() async throws {
@@ -182,28 +174,6 @@ final class TeamsAPITests: XCTestCase {
             // When
             _ = try await sut.getTeamRoles(for: Team.ID())
         }
-    }
-
-    func testGetMembers_Request_V0() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV0(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeamMembers(
-            for: teamID,
-            maxResults: 2000
-        )
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/teams/\(teamID.transportString())/members?maxResults=2000",
-                method: .get
-            )
-        )
     }
 
     func testGetMembers_SuccessResponse_200_V0() async throws {
@@ -296,29 +266,6 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
-    func testGetLegalholdStatus_Request_V0() async throws {
-        // Given
-        let teamID = Team.ID()
-        let userID = UUID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV0(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getLegalholdStatus(
-            for: teamID,
-            userID: userID
-        )
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/teams/\(teamID.transportString())/legalhold/\(userID.transportString())",
-                method: .get
-            )
-        )
-    }
-
     func testGetLegalholdStatus_SuccessResponse_200_V0() async throws {
         // Given
         let httpClient = try HTTPClientMock(
@@ -372,111 +319,7 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
-    // MARK: - V1
-
-    func testGetTeamForID_Request_V1() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV1(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeam(for: teamID)
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v1/teams/\(teamID.transportString())",
-                method: .get
-            )
-        )
-    }
-
-    func testGetTeamRolesForID_Request_V1() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV1(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeamRoles(for: teamID)
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v1/teams/\(teamID.transportString())/conversations/roles",
-                method: .get
-            )
-        )
-    }
-
-    func testGetMembers_Request_V1() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV1(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeamMembers(
-            for: teamID,
-            maxResults: 2000
-        )
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v1/teams/\(teamID.transportString())/members?maxResults=2000",
-                method: .get
-            )
-        )
-    }
-
-    func testGetLegalholdStatus_Request_V1() async throws {
-        // Given
-        let teamID = Team.ID()
-        let userID = UUID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV1(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getLegalholdStatus(
-            for: teamID,
-            userID: userID
-        )
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v1/teams/\(teamID.transportString())/legalhold/\(userID.transportString())",
-                method: .get
-            )
-        )
-    }
-
     // MARK: - V2
-
-    func testGetTeamForID_Request_V2() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV2(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeam(for: teamID)
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v2/teams/\(teamID.transportString())",
-                method: .get
-            )
-        )
-    }
 
     func testGetTeamForID_SuccessResponse_200_V2() async throws {
         // Given
@@ -515,175 +358,7 @@ final class TeamsAPITests: XCTestCase {
         )
     }
 
-    func testGetTeamRolesForID_Request_V2() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV2(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeamRoles(for: teamID)
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v2/teams/\(teamID.transportString())/conversations/roles",
-                method: .get
-            )
-        )
-    }
-
-    func testGetMembers_Request_V2() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV2(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeamMembers(
-            for: teamID,
-            maxResults: 2000
-        )
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v2/teams/\(teamID.transportString())/members?maxResults=2000",
-                method: .get
-            )
-        )
-    }
-
-    func testGetLegalholdStatus_Request_V2() async throws {
-        // Given
-        let teamID = Team.ID()
-        let userID = UUID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV2(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getLegalholdStatus(
-            for: teamID,
-            userID: userID
-        )
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v2/teams/\(teamID.transportString())/legalhold/\(userID.transportString())",
-                method: .get
-            )
-        )
-    }
-
-    // MARK: - V3
-
-    func testGetTeamForID_Request_V3() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV3(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeam(for: teamID)
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v3/teams/\(teamID.transportString())",
-                method: .get
-            )
-        )
-    }
-
-    func testGetTeamRolesForID_Request_V3() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV3(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeamRoles(for: teamID)
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v3/teams/\(teamID.transportString())/conversations/roles",
-                method: .get
-            )
-        )
-    }
-
-    func testGetMembers_Request_V3() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV3(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeamMembers(
-            for: teamID,
-            maxResults: 2000
-        )
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v3/teams/\(teamID.transportString())/members?maxResults=2000",
-                method: .get
-            )
-        )
-    }
-
-    func testGetLegalholdStatus_Request_V3() async throws {
-        // Given
-        let teamID = Team.ID()
-        let userID = UUID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV3(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getLegalholdStatus(
-            for: teamID,
-            userID: userID
-        )
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v3/teams/\(teamID.transportString())/legalhold/\(userID.transportString())",
-                method: .get
-            )
-        )
-    }
-
     // MARK: - V4
-
-    func testGetTeamForID_Request_V4() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV4(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeam(for: teamID)
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v4/teams/\(teamID.transportString())",
-                method: .get
-            )
-        )
-    }
 
     func testGetTeamForID_FailureResponse_InvalidID_V4() async throws {
         // Given
@@ -697,25 +372,6 @@ final class TeamsAPITests: XCTestCase {
         }
     }
 
-    func testGetTeamRolesForID_Request_V4() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV4(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeamRoles(for: teamID)
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v4/teams/\(teamID.transportString())/conversations/roles",
-                method: .get
-            )
-        )
-    }
-
     func testGetTeamRolesForID_FailureResponse_TeamNotFound_V4() async throws {
         // Given
         let httpClient = try HTTPClientMock(code: 400, errorLabel: "")
@@ -726,28 +382,6 @@ final class TeamsAPITests: XCTestCase {
             // When
             _ = try await sut.getTeamRoles(for: Team.ID())
         }
-    }
-
-    func testGetMembers_Request_V4() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV4(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeamMembers(
-            for: teamID,
-            maxResults: 2000
-        )
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v4/teams/\(teamID.transportString())/members?maxResults=2000",
-                method: .get
-            )
-        )
     }
 
     func testGetTeamMembers_FailureResponse_InvalidRequest_V4() async throws {
@@ -763,29 +397,6 @@ final class TeamsAPITests: XCTestCase {
                 maxResults: 2000
             )
         }
-    }
-
-    func testGetLegalholdStatus_Request_V4() async throws {
-        // Given
-        let teamID = Team.ID()
-        let userID = UUID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV4(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getLegalholdStatus(
-            for: teamID,
-            userID: userID
-        )
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v4/teams/\(teamID.transportString())/legalhold/\(userID.transportString())",
-                method: .get
-            )
-        )
     }
 
     func testGetLegalholdStatus_FailureResponse_InvalidRequest_V4() async throws {
@@ -805,25 +416,6 @@ final class TeamsAPITests: XCTestCase {
 
     // MARK: - V5
 
-    func testGetTeamForID_Request_V5() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV5(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeam(for: teamID)
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v5/teams/\(teamID.transportString())",
-                method: .get
-            )
-        )
-    }
-
     func testGetTeamForID_FailureResponse_InvalidID_V5() async throws {
         // Given
         let httpClient = try HTTPClientMock(code: 404, errorLabel: "")
@@ -834,70 +426,6 @@ final class TeamsAPITests: XCTestCase {
             // When
             _ = try await sut.getTeam(for: Team.ID())
         }
-    }
-
-    func testGetTeamRolesForID_Request_V5() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV5(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeamRoles(for: teamID)
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v5/teams/\(teamID.transportString())/conversations/roles",
-                method: .get
-            )
-        )
-    }
-
-    func testGetMembers_Request_V5() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV5(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeamMembers(
-            for: teamID,
-            maxResults: 2000
-        )
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v5/teams/\(teamID.transportString())/members?maxResults=2000",
-                method: .get
-            )
-        )
-    }
-
-    func testGetLegalholdStatus_Request_V5() async throws {
-        // Given
-        let teamID = Team.ID()
-        let userID = UUID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV5(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getLegalholdStatus(
-            for: teamID,
-            userID: userID
-        )
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v5/teams/\(teamID.transportString())/legalhold/\(userID.transportString())",
-                method: .get
-            )
-        )
     }
 
     func testGetLegalholdStatus_FailureResponse_InvalidRequest_V5() async throws {
@@ -913,91 +441,6 @@ final class TeamsAPITests: XCTestCase {
                 userID: UUID()
             )
         }
-    }
-
-    // MARK: - V6
-
-    func testGetTeamForID_Request_V6() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV6(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeam(for: teamID)
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v6/teams/\(teamID.transportString())",
-                method: .get
-            )
-        )
-    }
-
-    func testGetTeamRolesForID_Request_V6() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV6(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeamRoles(for: teamID)
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v6/teams/\(teamID.transportString())/conversations/roles",
-                method: .get
-            )
-        )
-    }
-
-    func testGetMembers_Request_V6() async throws {
-        // Given
-        let teamID = Team.ID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV6(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getTeamMembers(
-            for: teamID,
-            maxResults: 2000
-        )
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v6/teams/\(teamID.transportString())/members?maxResults=2000",
-                method: .get
-            )
-        )
-    }
-
-    func testGetLegalholdStatus_Request_V6() async throws {
-        // Given
-        let teamID = Team.ID()
-        let userID = UUID()
-        let httpClient = HTTPClientMock()
-        let sut = TeamsAPIV6(httpClient: httpClient)
-
-        // When
-        _ = try? await sut.getLegalholdStatus(
-            for: teamID,
-            userID: userID
-        )
-
-        // Then
-        XCTAssertEqual(
-            httpClient.receivedRequest,
-            HTTPRequest(
-                path: "/v6/teams/\(teamID.transportString())/legalhold/\(userID.transportString())",
-                method: .get
-            )
-        )
     }
 
 }
