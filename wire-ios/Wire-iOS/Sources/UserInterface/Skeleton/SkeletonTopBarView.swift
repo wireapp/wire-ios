@@ -57,7 +57,8 @@ final class SkeletonTopBarView: UIView {
                 new.centerXAnchor.constraint(equalTo: middleViewContainer.centerXAnchor),
 
                 new.widthAnchor.constraint(equalTo: middleViewContainer.widthAnchor),
-                new.heightAnchor.constraint(equalTo: middleViewContainer.heightAnchor)])
+                new.heightAnchor.constraint(equalTo: middleViewContainer.heightAnchor)
+            ])
         }
     }
 

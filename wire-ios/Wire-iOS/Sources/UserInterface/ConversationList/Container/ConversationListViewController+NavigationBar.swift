@@ -28,7 +28,7 @@ extension ConversationListViewController {
     }
 
     func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ViewModel) {
-        fatalError()
+        updateLegalHoldIndictor()
     }
 
     // MARK: - Account View
