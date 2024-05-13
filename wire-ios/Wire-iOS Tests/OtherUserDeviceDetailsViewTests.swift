@@ -21,7 +21,7 @@ import XCTest
 import SwiftUI
 import WireRequestStrategySupport
 
-final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
+final class OtherUserDeviceDetailsViewTests: BaseSnapshotTestCase {
 
     private let mockProteusId: String = "abcdefghijklmnop"
         .uppercased()
@@ -32,7 +32,7 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
         .splitStringIntoLines(charactersPerLine: 16)
 
     private var coreDataFixture: CoreDataFixture!
-    private var sut: DeviceInfoViewController<ProfileDeviceDetailsView>!
+    private var sut: DeviceInfoViewController<OtherUserDeviceDetailsView>!
     private var client: UserClient!
     private var mockContextProvider: ContextProvider!
 
@@ -107,9 +107,9 @@ final class ProfileDeviceDetailsViewTests: BaseSnapshotTestCase {
         mode: UIUserInterfaceStyle = .light,
         viewModel: DeviceInfoViewModel
     ) -> UINavigationController {
-        sut = DeviceInfoViewController(rootView: ProfileDeviceDetailsView(viewModel: viewModel))
+        sut = DeviceInfoViewController(rootView: OtherUserDeviceDetailsView(viewModel: viewModel))
         sut.overrideUserInterfaceStyle = mode
-        return sut.wrapInNavigationController()
+        return sut.wrapInNavigationController(setBackgroundColor: true, mode: mode)
     }
 
     func testWhenMLSViewIsDisabled() {

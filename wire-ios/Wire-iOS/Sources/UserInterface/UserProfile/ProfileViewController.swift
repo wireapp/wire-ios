@@ -226,7 +226,7 @@ final class ProfileViewController: UIViewController {
         viewControllers.append(profileDetailsViewController)
 
         if viewModel.hasUserClientListTab {
-            let userClientListViewController = UserClientListViewController(
+            let userClientListViewController = OtherUserClientsListViewController(
                 user: viewModel.user,
                 userSession: viewModel.userSession,
                 contextProvider: viewModel.userSession as? ContextProvider,
