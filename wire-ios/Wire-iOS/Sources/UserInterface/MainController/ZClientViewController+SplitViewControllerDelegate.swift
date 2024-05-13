@@ -20,6 +20,19 @@ extension ZClientViewController: SplitViewControllerDelegate {
 
     func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
 
+        #warning("TODO")
+//        guard let zClientViewController = ZClientViewController.shared else {
+//            return assertionFailure("something is wrong")
+//        }
+//        switch zClientViewController.mainTabBarController.selectedIndex {
+//        case 1:
+//            zClientViewController.conversationListViewController.presentSettings()
+//        case 2:
+//            zClientViewController.conversationListWithFoldersViewController.presentSettings()
+//        default:
+//            break
+//        }
+
         return splitViewController.rightViewController != nil &&
         splitViewController.leftViewController == conversationListViewController.tabBarController &&
         conversationListViewController.state == .conversationList &&

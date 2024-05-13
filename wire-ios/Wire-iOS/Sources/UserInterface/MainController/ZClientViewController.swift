@@ -37,6 +37,7 @@ final class ZClientViewController: UIViewController {
     private(set) var mediaPlaybackManager: MediaPlaybackManager?
     let mainTabBarController = UITabBarController()
     let conversationListViewController: ConversationListViewController
+    let conversationListWithFoldersViewController: ConversationListViewController
     var proximityMonitorManager: ProximityMonitorManager?
     var legalHoldDisclosureController: LegalHoldDisclosureController?
 
@@ -69,6 +70,13 @@ final class ZClientViewController: UIViewController {
             accountSelector: SessionManager.shared
         )
         conversationListViewController = .init(
+            account: account,
+            selfUser: userSession.selfUser,
+            userSession: userSession,
+            isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+        )
+        conversationListWithFoldersViewController = .init(
             account: account,
             selfUser: userSession.selfUser,
             userSession: userSession,
@@ -180,7 +188,7 @@ final class ZClientViewController: UIViewController {
         mainTabBarController.viewControllers = [
             .init(),
             UINavigationController(rootViewController: conversationListViewController),
-            .init(),
+            UINavigationController(rootViewController: conversationListWithFoldersViewController),
             .init()
         ]
         mainTabBarController.viewControllers?[0].tabBarItem = .init(
@@ -268,6 +276,7 @@ final class ZClientViewController: UIViewController {
 
     @objc
     private func openStartUI(_ sender: Any?) {
+        #warning("TODO: conversationListWithFoldersViewController?")
         conversationListViewController.presentPeoplePicker()
     }
 
@@ -316,6 +325,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter focus: focus or not
     func selectIncomingContactRequestsAndFocus(onView focus: Bool) {
+#warning("TODO: conversationListWithFoldersViewController?")
         conversationListViewController.selectInboxAndFocusOnView(focus: focus)
     }
 
@@ -418,6 +428,7 @@ final class ZClientViewController: UIViewController {
     // MARK: - Animated conversation switch
     func dismissAllModalControllers(callback: Completion?) {
         let dismissAction = {
+#warning("TODO: conversationListWithFoldersViewController?")
             if let rightViewController = self.wireSplitViewController.rightViewController,
                rightViewController.presentedViewController != nil {
                 rightViewController.dismiss(animated: false, completion: callback)
@@ -736,11 +747,13 @@ final class ZClientViewController: UIViewController {
             else {
                 return
             }
+#warning("TODO: conversationListWithFoldersViewController?")
             self?.conversationListViewController.viewModel.select(conversation: conversation, scrollTo: message, focusOnView: focus, animated: animated, completion: completion)
         })
     }
 
     func select(conversation: ZMConversation) {
+#warning("TODO: conversationListWithFoldersViewController?")
         conversationListViewController.viewModel.select(conversation: conversation)
     }
 
@@ -749,6 +762,7 @@ final class ZClientViewController: UIViewController {
     }
 
     var isConversationListVisible: Bool {
+#warning("TODO: conversationListWithFoldersViewController?")
         return (wireSplitViewController.layoutSize == .regularLandscape) ||
         (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
     }

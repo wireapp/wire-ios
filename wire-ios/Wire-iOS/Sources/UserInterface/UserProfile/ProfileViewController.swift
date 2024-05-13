@@ -386,7 +386,17 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
         dismiss(animated: true) { [weak self] in
             self?.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {
-                ZClientViewController.shared?.conversationListViewController.presentSettings()
+                guard let zClientViewController = ZClientViewController.shared else {
+                    return assertionFailure("something is wrong")
+                }
+                switch zClientViewController.mainTabBarController.selectedIndex {
+                case 1:
+                    zClientViewController.conversationListViewController.presentSettings()
+                case 2:
+                    zClientViewController.conversationListWithFoldersViewController.presentSettings()
+                default:
+                    break
+                }
             }
         }
     }
