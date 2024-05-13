@@ -387,7 +387,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
         dismiss(animated: true) { [weak self] in
             self?.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {
                 guard let zClientViewController = ZClientViewController.shared else {
-                    return assertionFailure("something is wrong")
+                    return assertionFailure()
                 }
                 switch zClientViewController.mainTabBarController.selectedIndex {
                 case 1:

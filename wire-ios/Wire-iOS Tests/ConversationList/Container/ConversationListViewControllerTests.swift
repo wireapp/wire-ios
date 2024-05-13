@@ -29,7 +29,7 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
     // MARK: - Properties
 
     var sut: ConversationListViewController!
-    var navigationController: UINavigationController!
+    var tabBarController: UITabBarController!
     var userSession: UserSessionMock!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 
@@ -61,13 +61,23 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
         sut.onboardingHint.arrowPointToView = sut.tabBarController?.tabBar
         sut.overrideUserInterfaceStyle = .dark
         sut.view.backgroundColor = .black
-        navigationController = .init(rootViewController: sut)
+        let navigationController = UINavigationController(rootViewController: sut)
+        tabBarController = UITabBarController()
+        tabBarController.viewControllers = [.init(), navigationController, .init()]
+        for (index, viewController) in tabBarController.viewControllers!.enumerated() {
+            viewController.tabBarItem = .init(
+                title: ["Lorem", "Ipsum", "Dolor"][index],
+                image: .init(systemName: "pencil.slash"),
+                selectedImage: .init(systemName: "pencil.slash")
+            )
+        }
+        tabBarController.selectedIndex = 1
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
-        navigationController = nil
+        tabBarController = nil
         sut = nil
         mockIsSelfUserE2EICertifiedUseCase = nil
         userSession = nil
@@ -77,22 +87,25 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
 
     // MARK: - View controller
 
-    func testForNoConversations() {
-        verify(matching: navigationController)
+    func testForNoConversations() throws {
+        let tabBarController = try XCTUnwrap(sut.tabBarController)
+        verify(matching: tabBarController)
     }
 
-    func testForEverythingArchived() {
+    func testForEverythingArchived() throws {
+        let tabBarController = try XCTUnwrap(sut.tabBarController)
         #warning("TODO: fix test/snapshot image")
         sut.showNoContactLabel(animated: false)
 
-        verify(matching: navigationController)
+        verify(matching: tabBarController)
     }
 
     // MARK: - PermissionDeniedViewController
 
-    func testForPremissionDeniedViewController() {
+    func testForPremissionDeniedViewController() throws {
+        let tabBarController = try XCTUnwrap(sut.tabBarController)
         sut.showPermissionDeniedViewController()
 
-        verify(matching: navigationController)
+        verify(matching: tabBarController)
     }
 }

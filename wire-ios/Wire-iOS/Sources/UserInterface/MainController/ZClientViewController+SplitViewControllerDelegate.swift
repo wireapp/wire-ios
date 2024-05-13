@@ -22,7 +22,7 @@ extension ZClientViewController: SplitViewControllerDelegate {
 
         #warning("TODO")
 //        guard let zClientViewController = ZClientViewController.shared else {
-//            return assertionFailure("something is wrong")
+//            return assertionFailure()
 //        }
 //        switch zClientViewController.mainTabBarController.selectedIndex {
 //        case 1:
