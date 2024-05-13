@@ -51,13 +51,21 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 let viewContext = strongSelf.contextProvider.viewContext
 
                 switch response {
-                case .success((let conversationId, let conversationName, _)):
+                case .success((let conversationId, let conversationName, let hasPassword)):
                     // First of all, we should try to fetch the conversation with ID from the response.
                     // If the conversation doesn't exist, we should initiate a request to join the conversation
                     if let conversation = ZMConversation.fetch(with: conversationId, in: viewContext),
                        conversation.isSelfAnActiveMember {
                         delegate.showConversation(conversation, at: nil)
                         delegate.completedURLAction(urlAction)
+                    } else if hasPassword {
+                        delegate.showPasswordPrompt { password in
+                            guard let password = password, !password.isEmpty else {
+                                // Handle empty or cancelled input
+                                return
+                            }
+                            // Proceed with the operation using the password
+                        }
                     } else {
                         delegate.shouldPerformActionWithMessage(conversationName, action: urlAction) { shouldJoin in
 

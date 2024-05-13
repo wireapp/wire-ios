@@ -133,6 +133,34 @@ class URLActionRouter: URLActionRouterProtocol {
 // MARK: - PresentationDelegate
 extension URLActionRouter: PresentationDelegate {
 
+    func showPasswordPrompt(completion: @escaping (String?) -> Void) {
+        let alertController = UIAlertController(title: "Password Required", message: "Enter the password to join the conversation", preferredStyle: .alert)
+
+        alertController.addTextField { textField in
+            textField.placeholder = "Enter conversation password"
+            textField.isSecureTextEntry = true
+        }
+
+        let joinAction = UIAlertAction(title: "Join conversation", style: .default) { _ in
+            let password = alertController.textFields?.first?.text
+            completion(password)
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+            completion(nil) // No action needed, just close the alert.
+        }
+
+        alertController.addAction(joinAction)
+        alertController.addAction(cancelAction)
+
+        // Use the rootViewController to present the alert
+        if delegate?.urlActionRouterCanDisplayAlerts() ?? true {
+            rootViewController.present(alertController, animated: true)
+        } else {
+            pendingAlert = alertController // Store for later if now is not a good time
+        }
+    }
+
     // MARK: - Public Implementation
     func failedToPerformAction(_ action: URLAction, error: Error) {
         let localizedError = mapToLocalizedError(error)
