@@ -59,12 +59,13 @@ extension ZMConversation {
     ///   - completion: called on the main thread when the user joins the conversation or when it fails. If the completion is a success, it is run in the main thread
     public static func join(key: String,
                             code: String,
+                            password: String?,
                             transportSession: TransportSessionType,
                             eventProcessor: UpdateEventProcessor,
                             contextProvider: ContextProvider,
                             completion: @escaping (Result<ZMConversation, Error>) -> Void) {
 
-        guard let request = ConversationJoinRequestFactory.requestForJoinConversation(key: key, code: code) else {
+        guard let request = ConversationJoinRequestFactory.requestForJoinConversation(key: key, code: code, password: password) else {
             return completion(.failure(ConversationJoinError.unknown))
         }
 
@@ -161,14 +162,19 @@ struct ConversationJoinRequestFactory {
 
     static let joinConversationsPath = "/conversations/join"
 
-    static func requestForJoinConversation(key: String, code: String) -> ZMTransportRequest? {
+    static func requestForJoinConversation(key: String, code: String, password: String? = nil) -> ZMTransportRequest? {
         guard let apiVersion = BackendInfo.apiVersion else { return nil }
 
         let path = joinConversationsPath
-        let payload: [String: Any] = [
+
+        var payload: [String: Any] = [
             URLQueryItem.Key.conversationKey: key,
             URLQueryItem.Key.conversationCode: code
         ]
+
+        if apiVersion.rawValue >= 4, let password = password {
+            payload[URLQueryItem.Key.password] = password
+        }
 
         return ZMTransportRequest(path: path, method: .post, payload: payload as ZMTransportData, apiVersion: apiVersion.rawValue)
     }

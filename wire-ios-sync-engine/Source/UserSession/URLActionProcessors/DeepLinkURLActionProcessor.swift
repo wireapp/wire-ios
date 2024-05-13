@@ -64,7 +64,36 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                                 // Handle empty or cancelled input
                                 return
                             }
-                            // Proceed with the operation using the password
+
+                            ZMConversation.join(
+                                key: key,
+                                code: code,
+                                password: password,
+                                transportSession: strongSelf.transportSession,
+                                eventProcessor: strongSelf.eventProcessor,
+                                contextProvider: strongSelf.contextProvider
+                            ) { [weak self] response in
+
+                                guard let strongSelf = self else { return }
+
+                                switch response {
+                                case .success(let conversation):
+                                    strongSelf.synchronise(conversation) { result in
+                                        DispatchQueue.main.async {
+                                            switch result {
+                                            case .success(let syncConversation):
+                                                delegate.showConversation(syncConversation, at: nil)
+                                            case .failure(let error):
+                                                delegate.failedToPerformAction(urlAction, error: error)
+                                            }
+                                        }
+                                    }
+                                case .failure(let error):
+                                    delegate.failedToPerformAction(urlAction, error: error)
+                                }
+
+                                delegate.completedURLAction(urlAction)
+                            }
                         }
                     } else {
                         delegate.shouldPerformActionWithMessage(conversationName, action: urlAction) { shouldJoin in
@@ -77,6 +106,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                             ZMConversation.join(
                                 key: key,
                                 code: code,
+                                password: nil,
                                 transportSession: strongSelf.transportSession,
                                 eventProcessor: strongSelf.eventProcessor,
                                 contextProvider: strongSelf.contextProvider
