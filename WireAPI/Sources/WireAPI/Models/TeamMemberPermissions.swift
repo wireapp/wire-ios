@@ -19,10 +19,13 @@
 import Foundation
 
 /// The permissions of a team member.
+///
+/// From Swagger docs: This is just a complicated way of representing
+/// a team role. self and copy always have to contain the same integer,
+/// and only the following integers are allowed: 1025 (partner),
+/// 1587 (member), 5951 (admin), 8191 (owner).
 
 public struct TeamMemberPermissions {
-
-    // TODO: document
 
     public let copyPermissions: Int64
 
