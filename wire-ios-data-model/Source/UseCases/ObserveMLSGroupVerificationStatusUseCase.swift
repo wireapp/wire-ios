@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol ObserveMLSGroupVerificationStatusUseCaseProtocol {
 
-    func invoke() -> Task<Void, Error>
+    func invoke() -> Task<Void, Never>
 
 }
 
@@ -47,7 +47,7 @@ public final class ObserveMLSGroupVerificationStatusUseCase: ObserveMLSGroupVeri
 
     // MARK: - Methods
 
-    public func invoke() -> Task<Void, Error> {
+    public func invoke() -> Task<Void, Never> {
         .detached { [mlsService, syncContext, updateMLSGroupVerificationStatusUseCase] in
             for await groupID in mlsService.epochChanges() {
                 do {

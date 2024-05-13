@@ -334,7 +334,7 @@ public final class ZMUserSession: NSObject {
 
     // MARK: Use Cases
 
-    private var observeMLSGroupVerificationStatusTask: Task<Void, Error>?
+    private var observeMLSGroupVerificationStatusTask: Task<Void, Never>?
 
     // MARK: Dependency Injection
 
