@@ -4527,16 +4527,21 @@ public class MockMLSServiceInterface: MLSServiceInterface {
     // MARK: - repairOutOfSyncConversations
 
     public var repairOutOfSyncConversations_Invocations: [Void] = []
-    public var repairOutOfSyncConversations_MockMethod: (() async -> Void)?
+    public var repairOutOfSyncConversations_MockError: Error?
+    public var repairOutOfSyncConversations_MockMethod: (() async throws -> Void)?
 
-    public func repairOutOfSyncConversations() async {
+    public func repairOutOfSyncConversations() async throws {
         repairOutOfSyncConversations_Invocations.append(())
+
+        if let error = repairOutOfSyncConversations_MockError {
+            throw error
+        }
 
         guard let mock = repairOutOfSyncConversations_MockMethod else {
             fatalError("no mock for `repairOutOfSyncConversations`")
         }
 
-        await mock()
+        try await mock()
     }
 
     // MARK: - fetchAndRepairGroup

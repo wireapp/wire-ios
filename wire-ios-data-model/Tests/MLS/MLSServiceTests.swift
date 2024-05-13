@@ -1377,7 +1377,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     // MARK: - Handling out of sync conversations
 
-    func test_RepairOutOfSyncConversations_RejoinsOutOfSyncConversations() async {
+    func test_RepairOutOfSyncConversations_RejoinsOutOfSyncConversations() async throws {
         // GIVEN
         let conversationAndOutOfSyncTuples = await uiMOC.perform { [self] in
             [
@@ -1417,7 +1417,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         }
 
         // WHEN
-        await sut.repairOutOfSyncConversations()
+        try await sut.repairOutOfSyncConversations()
 
         // THEN
         await fulfillment(of: Array(expectations.values), timeout: 1.5)
