@@ -34,8 +34,15 @@ extension Notification.Name {
     public static let NetworkStatus = Notification.Name("NetworkStatusNotification")
 }
 
+/// Abstracts network status observation.
+public protocol NetworkStatusObservable {
+
+    /// Determines if the server is reachable.
+    var reachability: ServerReachability { get }
+}
+
 /// This class monitors the reachability of backend. It emits notifications to its observers if the status changes.
-public final class NetworkStatus {
+public final class NetworkStatus: NetworkStatusObservable {
 
     private let reachabilityRef: SCNetworkReachability
 
