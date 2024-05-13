@@ -64,16 +64,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                                 // Handle empty or cancelled input
                                 return
                             }
-
-                            attemptToJoinConversation(
-                                key: key,
-                                code: code,
-                                delegate: delegate,
-                                transportSession: strongSelf.transportSession,
-                                eventProcessor: strongSelf.eventProcessor,
-                                contextProvider: strongSelf.contextProvider,
-                                urlAction: urlAction
-                            )
+                            // Proceed with the operation using the password
                         }
                     } else {
                         delegate.shouldPerformActionWithMessage(conversationName, action: urlAction) { shouldJoin in
@@ -83,16 +74,34 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                                 return
                             }
 
-                            attemptToJoinConversation(
+                            ZMConversation.join(
                                 key: key,
                                 code: code,
-                                delegate: delegate,
                                 transportSession: strongSelf.transportSession,
                                 eventProcessor: strongSelf.eventProcessor,
-                                contextProvider: strongSelf.contextProvider,
-                                urlAction: urlAction
-                            )
+                                contextProvider: strongSelf.contextProvider
+                            ) { [weak self] response in
 
+                                guard let strongSelf = self else { return }
+
+                                switch response {
+                                case .success(let conversation):
+                                    strongSelf.synchronise(conversation) { result in
+                                        DispatchQueue.main.async {
+                                            switch result {
+                                            case .success(let syncConversation):
+                                                delegate.showConversation(syncConversation, at: nil)
+                                            case .failure(let error):
+                                                delegate.failedToPerformAction(urlAction, error: error)
+                                            }
+                                        }
+                                    }
+                                case .failure(let error):
+                                    delegate.failedToPerformAction(urlAction, error: error)
+                                }
+
+                                delegate.completedURLAction(urlAction)
+                            }
                         }
                     }
 
@@ -161,43 +170,4 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             }
         }
     }
-
-    private func attemptToJoinConversation(
-        key: String,
-        code: String,
-        delegate: PresentationDelegate?,
-        transportSession: TransportSessionType,
-        eventProcessor: EventProcessor,
-        contextProvider: ContextProvider,
-        urlAction: URLAction
-    ) {
-        ZMConversation.join(
-            key: key,
-            code: code,
-            transportSession: transportSession,
-            eventProcessor: eventProcessor,
-            contextProvider: contextProvider
-        ) { [weak self] response in
-            guard let strongSelf = self else { return }
-
-            switch response {
-            case .success(let conversation):
-                strongSelf.synchronise(conversation) { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let syncConversation):
-                            delegate?.showConversation(syncConversation, at: nil)
-                        case .failure(let error):
-                            delegate?.failedToPerformAction(urlAction, error: error)
-                        }
-                    }
-                }
-            case .failure(let error):
-                delegate?.failedToPerformAction(urlAction, error: error)
-            }
-
-            delegate?.completedURLAction(urlAction)
-        }
-    }
-
 }
