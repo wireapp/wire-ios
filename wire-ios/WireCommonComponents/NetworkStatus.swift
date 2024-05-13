@@ -34,6 +34,7 @@ extension Notification.Name {
     public static let NetworkStatus = Notification.Name("NetworkStatusNotification")
 }
 
+// sourcery: AutoMockable
 /// Abstracts network status observation.
 public protocol NetworkStatusObservable {
 
