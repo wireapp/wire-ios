@@ -22,6 +22,7 @@ import MobileCoreServices
 import Photos
 import UIKit
 import WireSyncEngine
+import class WireCommonComponents.NetworkStatus
 
 enum ConversationInputBarViewControllerMode {
     case textInput
@@ -692,8 +693,10 @@ final class ConversationInputBarViewController: UIViewController,
 
     @objc
     private func giphyButtonPressed(_ sender: Any?) {
-        guard !AppDelegate.isOffline,
-              let conversation = conversation as? ZMConversation else { return }
+        guard
+            case .ok = NetworkStatus.shared.reachability,
+            let conversation = conversation as? ZMConversation
+        else { return }
 
         presentMLSPrivacyWarningIfNeeded {
             self.showGiphy(for: conversation)

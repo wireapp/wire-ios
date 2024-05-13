@@ -246,7 +246,7 @@ extension CompanyLoginController {
     /// Attempt to login using the requester specified in `init`
     /// - returns: `true` when the application is offline and an alert was presented, `false` otherwise.
     private func presentOfflineAlertIfNeeded() -> Bool {
-        guard AppDelegate.isOffline else { return false }
+        guard case .unreachable = NetworkStatus.shared.reachability else { return false }
         delegate?.controller(self, presentAlert: .noInternetError())
         return true
     }
