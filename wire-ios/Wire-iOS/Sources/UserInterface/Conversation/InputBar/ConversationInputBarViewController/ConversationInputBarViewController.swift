@@ -21,8 +21,8 @@ import avs
 import MobileCoreServices
 import Photos
 import UIKit
+import WireCommonComponents
 import WireSyncEngine
-import class WireCommonComponents.NetworkStatus
 
 enum ConversationInputBarViewControllerMode {
     case textInput
@@ -46,7 +46,8 @@ final class ConversationInputBarViewController: UIViewController,
     let conversation: InputBarConversationType
     weak var delegate: ConversationInputBarViewControllerDelegate?
 
-    private let classificationProvider: SecurityClassificationProviding?
+    private let classificationProvider: (any SecurityClassificationProviding)?
+    private let networkStatusObservable: any NetworkStatusObservable
 
     private(set) var inputController: UIViewController? {
         willSet {
@@ -329,12 +330,13 @@ final class ConversationInputBarViewController: UIViewController,
     init(
         conversation: InputBarConversationType,
         userSession: UserSession,
-        classificationProvider: SecurityClassificationProviding? = ZMUserSession.shared()
+        classificationProvider: (any SecurityClassificationProviding)?,
+        networkStatusObservable: any NetworkStatusObservable
     ) {
         self.conversation = conversation
-        self.classificationProvider = classificationProvider
-
         self.userSession = userSession
+        self.classificationProvider = classificationProvider
+        self.networkStatusObservable = networkStatusObservable
 
         super.init(nibName: nil, bundle: nil)
 
@@ -694,7 +696,7 @@ final class ConversationInputBarViewController: UIViewController,
     @objc
     private func giphyButtonPressed(_ sender: Any?) {
         guard
-            case .ok = NetworkStatus.shared.reachability,
+            case .ok = networkStatusObservable.reachability,
             let conversation = conversation as? ZMConversation
         else { return }
 

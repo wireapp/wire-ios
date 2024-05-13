@@ -136,7 +136,6 @@
 		1633875B1F065A960015034C /* SessionManager+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1633875A1F065A960015034C /* SessionManager+Convenience.swift */; };
 		16345574200D01180009B5DB /* ConversationListOnboardHint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16345573200D01180009B5DB /* ConversationListOnboardHint.swift */; };
 		163495871F010F91004E80DB /* UnauthenticatedSession+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163495861F010F91004E80DB /* UnauthenticatedSession+Shared.swift */; };
-		163495891F015389004E80DB /* AppDelegate+Network.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163495881F015389004E80DB /* AppDelegate+Network.swift */; };
 		1639A80D225F604100868AB9 /* Settings+Availability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1639A80C225F604100868AB9 /* Settings+Availability.swift */; };
 		1639A80F225F863000868AB9 /* ProfileHeaderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1639A80E225F863000868AB9 /* ProfileHeaderViewController.swift */; };
 		1639A84922648BE400868AB9 /* ZClientViewController+AvailabilityBehaviourChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1639A84822648BE400868AB9 /* ZClientViewController+AvailabilityBehaviourChange.swift */; };
@@ -2175,7 +2174,6 @@
 		1633875A1F065A960015034C /* SessionManager+Convenience.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SessionManager+Convenience.swift"; sourceTree = "<group>"; };
 		16345573200D01180009B5DB /* ConversationListOnboardHint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationListOnboardHint.swift; sourceTree = "<group>"; };
 		163495861F010F91004E80DB /* UnauthenticatedSession+Shared.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UnauthenticatedSession+Shared.swift"; sourceTree = "<group>"; };
-		163495881F015389004E80DB /* AppDelegate+Network.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AppDelegate+Network.swift"; sourceTree = "<group>"; };
 		1639A80C225F604100868AB9 /* Settings+Availability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Settings+Availability.swift"; sourceTree = "<group>"; };
 		1639A80E225F863000868AB9 /* ProfileHeaderViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileHeaderViewController.swift; sourceTree = "<group>"; };
 		1639A84822648BE400868AB9 /* ZClientViewController+AvailabilityBehaviourChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZClientViewController+AvailabilityBehaviourChange.swift"; sourceTree = "<group>"; };
@@ -6396,7 +6394,6 @@
 				8FC8516F199245760008B66B /* UserInterface */,
 				87DCF4741D34E95B00BB420F /* Permissions */,
 				A9EB722423C3A47B00DA8240 /* AppDelegate.swift */,
-				163495881F015389004E80DB /* AppDelegate+Network.swift */,
 				F1141C961F5EB2DC005340B3 /* WireApplication.swift */,
 				543DF69E252F5A4B001F6EA6 /* Main.storyboard */,
 				5489E20D252C84BE0010461D /* AppStateCalculator.swift */,
@@ -9312,7 +9309,6 @@
 				167961A9203F26E600B72ACC /* SectionHeader.swift in Sources */,
 				638332EA250282D200D18F42 /* OrientationDelta.swift in Sources */,
 				16719A1D1D9ABB7C00AA6B63 /* GiphyConfirmationViewController.swift in Sources */,
-				163495891F015389004E80DB /* AppDelegate+Network.swift in Sources */,
 				F15650E321DD11D700210504 /* CABasicAnimation+Rotation.swift in Sources */,
 				E5CCE4E7287C31C000B36B52 /* SearchBarStyle.swift in Sources */,
 				BFAF4CB71CEDB9FC00780537 /* AudioButtonOverlayState.swift in Sources */,
