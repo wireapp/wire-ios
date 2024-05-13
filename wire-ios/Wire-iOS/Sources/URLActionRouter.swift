@@ -134,25 +134,29 @@ class URLActionRouter: URLActionRouterProtocol {
 extension URLActionRouter: PresentationDelegate {
 
     func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
-        let alertController = UIAlertController(title: "Password Required", message: "Enter the password to join the conversation", preferredStyle: .alert)
+        let alertController = UIAlertController(
+            title: L10n.Localizable.Join.Group.Conversation.Alert.title(conversationName),
+            message: L10n.Localizable.Join.Group.Conversation.Alert.message,
+            preferredStyle: .alert
+        )
 
         alertController.addTextField { textField in
-            textField.placeholder = "Enter conversation password"
+            textField.placeholder = L10n.Localizable.Join.Group.Conversation.Alert.Textfield.placeholder
             textField.isSecureTextEntry = true
         }
 
-        let joinAction = UIAlertAction(title: "Join conversation", style: .default) { _ in
+        let joinAction = UIAlertAction(title: L10n.Localizable.Join.Group.Conversation.Alert.JoinAction.title, style: .default) { _ in
             let password = alertController.textFields?.first?.text
             completion(password)
         }
 
         let helpLinkURL = URL(string: "https://support.wire.com/hc/en-us/articles/360000574069-Create-guest-rooms")!
-        let learnMoreAction = UIAlertAction(title: "Learn more about guest links", style: .default) { _ in
+        let learnMoreAction = UIAlertAction(title: L10n.Localizable.Join.Group.Conversation.Alert.LearnMoreAction.title, style: .default) { _ in
             UIApplication.shared.open(helpLinkURL, options: [:], completionHandler: nil)
         }
 
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
-            completion(nil) // No action needed, just close the alert.
+        let cancelAction = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel) { _ in
+            completion(nil)
         }
 
         alertController.addAction(joinAction)
@@ -163,7 +167,7 @@ extension URLActionRouter: PresentationDelegate {
         if delegate?.urlActionRouterCanDisplayAlerts() ?? true {
             rootViewController.present(alertController, animated: true)
         } else {
-            pendingAlert = alertController // Store for later if now is not a good time
+            pendingAlert = alertController
         }
     }
 
