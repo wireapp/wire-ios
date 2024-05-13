@@ -168,9 +168,7 @@ private extension GridView {
 
         switch (participantAmount, splitType) {
         case (.moreThanTwo, .proportionalSplit):
-            let isEven = numberOfItemsInPage.isMultiple(of: 2)
-            let ceiledNumberOfItemsInPage = isEven ? numberOfItemsInPage : (numberOfItemsInPage + 1)
-            return ceiledNumberOfItemsInPage / 2
+            return (numberOfItemsInPage + 1) / 2
 
         case (.moreThanTwo, .middleSplit):
             let isOddLastRow = self.isOddLastRow(indexPath)
