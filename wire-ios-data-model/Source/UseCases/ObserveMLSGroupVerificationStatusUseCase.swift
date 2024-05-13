@@ -49,7 +49,7 @@ public final class ObserveMLSGroupVerificationStatusUseCase: ObserveMLSGroupVeri
 
     public func invoke() -> Task<Void, Error> {
         .detached { [mlsService, syncContext, updateMLSGroupVerificationStatusUseCase] in
-            for try await groupID in mlsService.epochChanges() {
+            for await groupID in mlsService.epochChanges() {
                 do {
                     guard let conversation = await syncContext.perform({
                         ZMConversation.fetch(with: groupID, in: syncContext)
