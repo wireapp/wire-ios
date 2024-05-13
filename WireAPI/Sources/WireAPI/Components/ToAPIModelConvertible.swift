@@ -18,13 +18,12 @@
 
 import Foundation
 
-/// A type that can be converted to an assocated parent
-/// type.
+/// A type that can be converted to an associated api model.
 
-protocol ToParentConvertible {
+protocol ToAPIModelConvertible {
 
-    associatedtype Parent
+    associatedtype APIModel
 
-    func toParent() -> Parent
+    func toAPIModel() -> APIModel
 
 }

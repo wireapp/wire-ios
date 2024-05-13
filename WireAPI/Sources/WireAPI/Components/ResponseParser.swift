@@ -35,15 +35,15 @@ struct ResponseParser<Success> {
         self.parseBlocks = []
     }
 
-    func success<Payload: Decodable & ToParentConvertible>(
+    func success<Payload: Decodable & ToAPIModelConvertible>(
         code: Int,
         type: Payload.Type
-    ) -> ResponseParser<Success> where Payload.Parent == Success {
+    ) -> ResponseParser<Success> where Payload.APIModel == Success {
         var copy = self
         copy.parseBlocks.append { actualCode, data in
             guard actualCode == code else { return nil }
             let payload = try decoder.decode(Payload.self, from: data)
-            return payload.toParent()
+            return payload.toAPIModel()
         }
         return copy
     }

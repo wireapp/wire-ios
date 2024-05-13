@@ -44,7 +44,7 @@ class TeamsAPIV2: TeamsAPIV1 {
 
 }
 
-struct TeamResponseV2: Decodable, ToParentConvertible {
+struct TeamResponseV2: Decodable, ToAPIModelConvertible {
 
     let id: UUID
     let name: String
@@ -56,7 +56,7 @@ struct TeamResponseV2: Decodable, ToParentConvertible {
     // New
     let splash_screen: String?
 
-    func toParent() -> Team {
+    func toAPIModel() -> Team {
         Team(
             id: id,
             name: name,

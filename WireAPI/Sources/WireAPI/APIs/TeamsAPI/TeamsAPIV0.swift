@@ -124,7 +124,7 @@ class TeamsAPIV0: TeamsAPI {
 
 }
 
-struct TeamResponseV0: Decodable, ToParentConvertible {
+struct TeamResponseV0: Decodable, ToAPIModelConvertible {
 
     let id: UUID
     let name: String
@@ -133,7 +133,7 @@ struct TeamResponseV0: Decodable, ToParentConvertible {
     let icon_key: String?
     let binding: Bool?
 
-    func toParent() -> Team {
+    func toAPIModel() -> Team {
         Team(
             id: id,
             name: name,
@@ -146,12 +146,12 @@ struct TeamResponseV0: Decodable, ToParentConvertible {
 
 }
 
-struct ConversationRolesListResponseV0: Decodable, ToParentConvertible {
+struct ConversationRolesListResponseV0: Decodable, ToAPIModelConvertible {
 
     let conversation_roles: [ConversationRoleResponseV0]
 
-    func toParent() -> [ConversationRole] {
-        conversation_roles.map { $0.toParent() }
+    func toAPIModel() -> [ConversationRole] {
+        conversation_roles.map { $0.toAPIModel() }
     }
 
 }
@@ -161,11 +161,11 @@ struct ConversationRoleResponseV0: Decodable {
     let conversation_role: String?
     let actions: [ConversationActionResponseV0]
 
-    func toParent() -> ConversationRole {
+    func toAPIModel() -> ConversationRole {
         ConversationRole(
             name: conversation_role ?? "unknown",
             actions: Set(actions.map {
-                $0.toParent()
+                $0.toAPIModel()
             })
         )
     }
@@ -184,7 +184,7 @@ enum ConversationActionResponseV0: String, Decodable {
     case leave_conversation
     case delete_conversation
 
-    func toParent() -> ConversationAction {
+    func toAPIModel() -> ConversationAction {
         switch self {
         case .add_conversation_member:
             return .addConversationMember
@@ -209,14 +209,14 @@ enum ConversationActionResponseV0: String, Decodable {
 
 }
 
-struct TeamMemberListResponseV0: Decodable, ToParentConvertible {
+struct TeamMemberListResponseV0: Decodable, ToAPIModelConvertible {
 
     let hasMore: Bool
     let members: [TeamMemberResponseV0]
 
-    func toParent() -> [TeamMember] {
+    func toAPIModel() -> [TeamMember] {
         return members.map {
-            $0.toParent()
+            $0.toAPIModel()
         }
     }
 
@@ -230,13 +230,13 @@ struct TeamMemberResponseV0: Decodable {
     let created_at: Date?
     let legalhold_status: LegalholdStatusV0?
 
-    func toParent() -> TeamMember {
+    func toAPIModel() -> TeamMember {
         TeamMember(
             userID: user,
             creationDate: created_at,
             creatorID: created_by,
-            legalholdStatus: legalhold_status?.toParent(),
-            permissions: permissions?.toParent()
+            legalholdStatus: legalhold_status?.toAPIModel(),
+            permissions: permissions?.toAPIModel()
         )
     }
 
@@ -247,7 +247,7 @@ struct PermissionsResponseV0: Decodable {
     let copy: Int64
     let `self`: Int64
 
-    func toParent() -> TeamMemberPermissions {
+    func toAPIModel() -> TeamMemberPermissions {
         TeamMemberPermissions(
             copyPermissions: copy,
             selfPermissions: self.`self`
@@ -263,7 +263,7 @@ enum LegalholdStatusV0: String, Decodable {
     case disabled
     case no_consent
 
-    func toParent() -> LegalholdStatus {
+    func toAPIModel() -> LegalholdStatus {
         switch self {
         case .enabled:
             return .enabled
@@ -278,12 +278,12 @@ enum LegalholdStatusV0: String, Decodable {
 
 }
 
-struct LegalholdStatusResponseV0: Decodable, ToParentConvertible {
+struct LegalholdStatusResponseV0: Decodable, ToAPIModelConvertible {
 
     let status: LegalholdStatusV0
 
-    func toParent() -> LegalholdStatus {
-        return status.toParent()
+    func toAPIModel() -> LegalholdStatus {
+        return status.toAPIModel()
     }
 
 }
