@@ -240,6 +240,8 @@ final class SplitViewController: UIViewController, SplitLayoutObservable {
             return
         }
 
+        newLeftViewController.map { setOverrideTraitCollection(.init(horizontalSizeClass: .compact), forChild: $0) }
+
         let animator: UIViewControllerAnimatedTransitioning
 
         if leftViewController == nil || newLeftViewController == nil {
