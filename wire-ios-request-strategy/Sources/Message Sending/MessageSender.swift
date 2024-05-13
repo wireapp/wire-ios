@@ -210,7 +210,7 @@ public class MessageSender: MessageSenderInterface {
                 if await context.perform({ message.isExpired }) {
                     throw MessageSendError.messageExpired
                 } else {
-                    return Set() // FIXME: [WPB-5454] it's dangerous to retry indefinitely like this - [[jacob]]
+                    return Set() // FIXME: [WPB-5454] it's dangerous to retry indefinitely like this - [jacob]
                 }
             } else {
                 throw failure

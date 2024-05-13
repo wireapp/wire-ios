@@ -441,7 +441,7 @@ public final class ZMUserSession: NSObject {
                                                        contextProvider: self,
                                                        callNotificationStyleProvider: self)
 
-            // FIXME: [WPB-5827] inject instead of storing on context - [[jacob]]
+            // FIXME: [WPB-5827] inject instead of storing on context - [jacob]
             self.syncManagedObjectContext.proteusService = self.proteusService
             self.syncManagedObjectContext.mlsService = self.mlsService
 
@@ -771,7 +771,7 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 // MARK: - UpdateEventProcessor
 
 // swiftlint:disable todo_requires_jira_link
-// TODO: [[jacob]] find another way of providing the event processor to ZMissingEventTranscoder
+// TODO: [WPB-9089] find another way of providing the event processor to ZMissingEventTranscoder
 // swiftlint:enable todo_requires_jira_link
 extension ZMUserSession: UpdateEventProcessor {
     public func bufferEvents(_ events: [WireTransport.ZMUpdateEvent]) async {

@@ -52,7 +52,7 @@ extension ZMConversation {
                 let groups = userSession.syncContext.enterAllGroupsExceptSecondary()
                 Task {
                     // swiftlint:disable todo_requires_jira_link
-                    // FIXME: [[jacob]] replace with ConversationEventProcessor
+                    // FIXME: [WPB-9089] replace with ConversationEventProcessor
                     // swiftlint:enable todo_requires_jira_link
                     try? await userSession.updateEventProcessor?.processEvents([event])
                     userSession.managedObjectContext.performGroupedBlock {

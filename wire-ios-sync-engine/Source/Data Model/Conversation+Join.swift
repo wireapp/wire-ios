@@ -81,7 +81,7 @@ extension ZMConversation {
 
                 Task {
                     // swiftlint:disable todo_requires_jira_link
-                    // FIXME: [[jacob]] replace with ConversationEventProcessor
+                    // FIXME: [WPB-9089] replace with ConversationEventProcessor
                     try? await eventProcessor.processEvents([event])
                     viewContext.performGroupedBlock {
                         guard let conversationId = UUID(uuidString: conversationString),

@@ -129,7 +129,7 @@ extension ZMConversation {
                 if let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil) {
                     // Process `conversation.code-update` event
                     // swiftlint:disable todo_requires_jira_link
-                    // FIXME: [[jacob]] replace with ConversationEventProcessor
+                    // FIXME: [WPB-9089] replace with ConversationEventProcessor
                     // swiftlint:enable todo_requires_jira_link
                     userSession.processUpdateEvents([event])
                 }
