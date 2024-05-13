@@ -188,22 +188,37 @@ final class ZClientViewController: UIViewController {
             image: .init(resource: .contactsOutline),
             selectedImage: .init(resource: .contactsFilled)
         )
+        tabbarController.viewControllers?[0].tabBarItem.accessibilityIdentifier = "bottomBarPlusButton"
+        tabbarController.viewControllers?[0].tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Contacts.description
+        tabbarController.viewControllers?[0].tabBarItem.accessibilityHint = L10n.Accessibility.TabBar.Contacts.hint
+
         tabbarController.viewControllers?[1].tabBarItem = .init(
             title: L10n.Localizable.ConversationList.BottomBar.Conversations.title,
             image: .init(resource: .TabBar.conversations),
             selectedImage: .init(resource: .TabBar.conversationsFilled)
         )
+        tabbarController.viewControllers?[1].tabBarItem.accessibilityIdentifier = "bottomBarRecentListButton"
+        tabbarController.viewControllers?[1].tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Conversations.description
+
         tabbarController.viewControllers?[2].tabBarItem = .init(
             title: L10n.Localizable.ConversationList.BottomBar.Folders.title,
             image: .init(resource: .foldersOutline),
             selectedImage: .init(resource: .foldersFilled)
         )
+        tabbarController.viewControllers?[2].tabBarItem.accessibilityIdentifier = "bottomBarFolderListButton"
+        tabbarController.viewControllers?[2].tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Folders.description
+
         tabbarController.viewControllers?[3].tabBarItem = .init(
             title: L10n.Localizable.ConversationList.BottomBar.Archived.title,
             image: .init(resource: .archiveOutline),
             selectedImage: .init(resource: .archiveFilled)
         )
+        tabbarController.viewControllers?[3].tabBarItem.accessibilityIdentifier = "bottomBarArchivedButton"
+        tabbarController.viewControllers?[3].tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Archived.description
+        tabbarController.viewControllers?[3].tabBarItem.accessibilityHint = L10n.Accessibility.TabBar.Archived.hint
+
         tabbarController.selectedIndex = 1
+        tabbarController.tabBar.backgroundColor = SemanticColors.View.backgroundDefault
 
         if pendingInitialStateRestore {
             restoreStartupState()
