@@ -29,6 +29,21 @@
       location = "group:fastlane"
       name = "fastlane">
       <FileRef
+         location = "group:Preview.html">
+      </FileRef>
+      <Group
+         location = "group:screenshots"
+         name = "screenshots">
+         <Group
+            location = "group:de-DE"
+            name = "de-DE">
+         </Group>
+         <Group
+            location = "group:en-US"
+            name = "en-US">
+         </Group>
+      </Group>
+      <FileRef
          location = "group:Pluginfile">
       </FileRef>
       <FileRef
@@ -36,7 +51,17 @@
          assignedFileDataType = "public.ruby-script">
       </FileRef>
       <FileRef
+         location = "group:README.md">
+      </FileRef>
+      <FileRef
          location = "group:Matchfile">
+      </FileRef>
+      <Group
+         location = "group:metadata"
+         name = "metadata">
+      </Group>
+      <FileRef
+         location = "group:report.xml">
       </FileRef>
    </Group>
    <FileRef
@@ -108,8 +133,5 @@
    </FileRef>
    <FileRef
       location = "group:wire-ios-system/WireSystem.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:WireAPI">
    </FileRef>
 </Workspace>

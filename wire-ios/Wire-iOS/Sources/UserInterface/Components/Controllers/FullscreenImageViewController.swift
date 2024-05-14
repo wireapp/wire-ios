@@ -199,7 +199,7 @@ final class FullscreenImageViewController: UIViewController {
             minimumDismissMagnitude = 250
         }
 
-        view.backgroundColor = SemanticColors.View.backgroundDefaultWhite
+        view.backgroundColor = .from(scheme: .background)
     }
 
     private func setupSnapshotBackgroundView() {
