@@ -29,6 +29,7 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
     // MARK: - Properties
 
     var sut: ConversationListViewController!
+    var window: UIWindow!
     var tabBarController: UITabBarController!
     var userSession: UserSessionMock!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
@@ -58,26 +59,28 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
             isFolderStatePersistenceEnabled: false,
             selfProfileViewControllerBuilder: .mock
         )
-        viewModel.viewController = sut
-        sut.onboardingHint.arrowPointToView = sut.tabBarController?.tabBar
-        sut.overrideUserInterfaceStyle = .dark
-        sut.view.backgroundColor = .black
-        let navigationController = UINavigationController(rootViewController: sut)
-        tabBarController = UITabBarController()
-        tabBarController.viewControllers = [.init(), navigationController, .init()]
-        for (index, viewController) in tabBarController.viewControllers!.enumerated() {
-            viewController.tabBarItem = .init(
-                title: ["Lorem", "Ipsum", "Dolor"][index],
-                image: .init(systemName: "pencil.slash"),
-                selectedImage: .init(systemName: "pencil.slash")
-            )
-        }
-        tabBarController.selectedIndex = 1
+        tabBarController = MainTabBarController(
+            contacts: .init(),
+            conversations: UINavigationController(rootViewController: sut),
+            folders: .init(),
+            archive: .init()
+        )
+
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window.rootViewController = tabBarController
+        window.makeKeyAndVisible()
+        wait(for: [viewIfLoadedExpectation(for: sut)], timeout: 5)
+        tabBarController.overrideUserInterfaceStyle = .dark
+
+        UIView.setAnimationsEnabled(false)
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        window.isHidden = true
+        window.rootViewController = nil
+        window = nil
         tabBarController = nil
         sut = nil
         mockIsSelfUserE2EICertifiedUseCase = nil
@@ -88,25 +91,31 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
 
     // MARK: - View controller
 
-    func testForNoConversations() throws {
-        let tabBarController = try XCTUnwrap(sut.tabBarController)
+    func testForNoConversations() {
+        window.rootViewController = nil
         verify(matching: tabBarController)
     }
 
-    func testForEverythingArchived() throws {
-        let tabBarController = try XCTUnwrap(sut.tabBarController)
-        #warning("TODO: fix test/snapshot image")
+    func testForEverythingArchived() {
         sut.showNoContactLabel(animated: false)
-
+        window.rootViewController = nil
         verify(matching: tabBarController)
     }
 
     // MARK: - PermissionDeniedViewController
 
-    func testForPremissionDeniedViewController() throws {
-        let tabBarController = try XCTUnwrap(sut.tabBarController)
+    func testForPremissionDeniedViewController() {
         sut.showPermissionDeniedViewController()
-
+        window.rootViewController = nil
         verify(matching: tabBarController)
+    }
+
+    // MARK: - Helpers
+
+    private func viewIfLoadedExpectation(for viewController: UIViewController) -> XCTNSPredicateExpectation {
+        let predicate = NSPredicate { _, _ in
+            viewController.viewIfLoaded != nil
+        }
+        return XCTNSPredicateExpectation(predicate: predicate, object: nil)
     }
 }
