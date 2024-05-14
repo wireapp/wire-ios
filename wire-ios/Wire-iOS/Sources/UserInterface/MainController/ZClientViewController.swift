@@ -64,7 +64,8 @@ final class ZClientViewController: UIViewController {
         let selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
             selfUser: userSession.selfUser,
             userRightInterfaceType: UserRight.self,
-            userSession: userSession
+            userSession: userSession,
+            accountSelector: SessionManager.shared
         )
         conversationListViewController = .init(
             account: account,
@@ -174,7 +175,7 @@ final class ZClientViewController: UIViewController {
         updateSplitViewTopConstraint()
 
         wireSplitViewController.view.backgroundColor = .clear
-        wireSplitViewController.leftViewController = conversationListViewController
+        wireSplitViewController.leftViewController = UINavigationController(rootViewController: conversationListViewController)
 
         if pendingInitialStateRestore {
             restoreStartupState()
@@ -377,13 +378,13 @@ final class ZClientViewController: UIViewController {
             if let rightViewController = self.wireSplitViewController.rightViewController,
                rightViewController.presentedViewController != nil {
                 rightViewController.dismiss(animated: false, completion: callback)
-            } else if let presentedViewController = self.conversationListViewController.presentedViewController {
+            } else if let presentedViewController = self.conversationListViewController.navigationController?.presentedViewController {
                 // This is a workaround around the fact that the transitioningDelegate of the settings
                 // view controller is not called when the transition is not being performed animated.
                 // This sounds like a bug in UIKit (Radar incoming) as I would expect the custom animator
                 // being called with `transitionContext.isAnimated == false`. As this is not the case
                 // we have to restore the proper pre-presentation state here.
-                let conversationView = self.conversationListViewController.view
+                let conversationView = self.conversationListViewController.navigationController?.view
                 if let transform = conversationView?.layer.transform {
                     if !CATransform3DIsIdentity(transform) || conversationView?.alpha != 1 {
                         conversationView?.layer.transform = CATransform3DIdentity
@@ -706,7 +707,7 @@ final class ZClientViewController: UIViewController {
 
     var isConversationListVisible: Bool {
         return (wireSplitViewController.layoutSize == .regularLandscape) ||
-        (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
+        (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.navigationController?.presentedViewController == nil)
     }
 
     func minimizeCallOverlay(animated: Bool,
