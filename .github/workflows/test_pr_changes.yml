@@ -24,6 +24,7 @@ jobs:
       wire-ios-data-model: ${{ steps.filter.outputs.wire-ios-data-model }}
       wire-ios-system: ${{ steps.filter.outputs.wire-ios-system }}
       wire-ios-request-strategy: ${{ steps.filter.outputs.wire-ios-request-strategy }}
+      wire-api: ${{ steps.filter.outputs.wire-api }}
       wire-ios-transport: ${{ steps.filter.outputs.wire-ios-transport }}
       wire-ios-share-engine: ${{ steps.filter.outputs.wire-ios-share-engine }}
       wire-ios-cryptobox: ${{ steps.filter.outputs.wire-ios-cryptobox }}
@@ -51,6 +52,8 @@ jobs:
               - 'wire-ios-sync-engine/**'
             wire-ios-request-strategy:
               - 'wire-ios-request-strategy/**'
+            wire-api:
+              - 'WireAPI/**'
             wire-ios-data-model:
               - 'wire-ios-data-model/**'
             wire-ios-transport:
@@ -83,6 +86,7 @@ jobs:
       wire-ios-data-model: ${{ needs.detect-changes.outputs.wire-ios-data-model == 'true' }}
       wire-ios-system: ${{ needs.detect-changes.outputs.wire-ios-system == 'true' }}
       wire-ios-request-strategy: ${{ needs.detect-changes.outputs.wire-ios-request-strategy == 'true' }}
+      wire-api: ${{ needs.detect-changes.outputs.wire-api == 'true' }}
       wire-ios-transport: ${{ needs.detect-changes.outputs.wire-ios-transport == 'true' }}
       wire-ios-share-engine: ${{ needs.detect-changes.outputs.wire-ios-share-engine == 'true' }}
       wire-ios-cryptobox: ${{ needs.detect-changes.outputs.wire-ios-cryptobox == 'true' }}

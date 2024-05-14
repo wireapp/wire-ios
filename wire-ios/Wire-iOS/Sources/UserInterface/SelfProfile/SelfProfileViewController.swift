@@ -33,12 +33,13 @@ final class SelfProfileViewController: UIViewController {
     // MARK: - Views
 
     private let settingsController: SettingsTableViewController
-    private let accountSelectorController = AccountSelectorController()
+    private weak var accountSelectorView: AccountSelectorView?
     private let profileContainerView = UIView()
     private let profileHeaderViewController: ProfileHeaderViewController
     private let profileImagePicker = ProfileImagePickerManager()
 
     let userSession: UserSession
+    private let accountSelector: AccountSelector?
 
     // MARK: - AppLock
     private var callback: ResultHandler?
@@ -60,10 +61,12 @@ final class SelfProfileViewController: UIViewController {
     init(
         selfUser: SettingsSelfUser,
         userRightInterfaceType: UserRightInterface.Type,
-        userSession: UserSession
+        userSession: UserSession,
+        accountSelector: AccountSelector?
     ) {
 
         self.userSession = userSession
+        self.accountSelector = accountSelector
 
         // Create the settings hierarchy
 
@@ -148,8 +151,12 @@ final class SelfProfileViewController: UIViewController {
     }
 
     private func configureAccountTitle() {
-        if SessionManager.shared?.accountManager.accounts.count > 1 {
-            navigationItem.titleView = accountSelectorController.view
+        if let accounts = SessionManager.shared?.accountManager.accounts, accounts.count > 1 {
+            let accountSelectorView = AccountSelectorView()
+            accountSelectorView.delegate = self
+            accountSelectorView.accounts = accounts
+            navigationItem.titleView = accountSelectorView
+            self.accountSelectorView = accountSelectorView
         } else {
             navigationItem.setupNavigationBarTitle(title: L10n.Localizable.Self.account.capitalized)
         }
@@ -159,12 +166,8 @@ final class SelfProfileViewController: UIViewController {
         profileHeaderViewController.view.translatesAutoresizingMaskIntoConstraints = false
         profileContainerView.translatesAutoresizingMaskIntoConstraints = false
         settingsController.view.translatesAutoresizingMaskIntoConstraints = false
-        accountSelectorController.view.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            // accountSelectorController
-            accountSelectorController.view.heightAnchor.constraint(equalToConstant: 44),
-
             // profileContainerView
             profileContainerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             profileContainerView.topAnchor.constraint(equalTo: safeTopAnchor),
@@ -207,12 +210,26 @@ final class SelfProfileViewController: UIViewController {
         dismiss(animated: true)
         return true
     }
+}
 
+// MARK: - AccountSelectorViewDelegate
+
+extension SelfProfileViewController: AccountSelectorViewDelegate {
+
+    func accountSelectorView(_ view: AccountSelectorView, didSelect account: Account) {
+        guard SessionManager.shared?.accountManager.selectedAccount != account else { return }
+
+        presentingViewController?.dismiss(animated: true) {
+            AppDelegate.shared.mediaPlaybackManager?.stop() // there must be another more appropriate place for this line
+            self.accountSelector?.switchTo(account: account)
+        }
+    }
 }
 
 // MARK: - SettingsPropertyFactoryDelegate
 
 extension SelfProfileViewController: SettingsPropertyFactoryDelegate {
+
     private var topViewController: SpinnerCapableViewController? {
         navigationController?.topViewController as? SpinnerCapableViewController
     }
