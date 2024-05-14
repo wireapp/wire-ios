@@ -120,7 +120,7 @@ extension StartUIViewController: SearchResultsViewControllerDelegate {
             self.navigationController?.pushViewController(avoiding, animated: true) {
             }
         } else {
-            let embeddedNavigationController = controller.wrapInNavigationController(setBackgroundColor: true)
+            let embeddedNavigationController = controller.wrapInNavigationController()
             embeddedNavigationController.modalPresentationStyle = .formSheet
             self.present(embeddedNavigationController, animated: true)
         }
