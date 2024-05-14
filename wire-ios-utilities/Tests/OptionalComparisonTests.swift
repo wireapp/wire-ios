@@ -21,6 +21,8 @@ import XCTest
 
 final class OptionalComparisonTests: XCTestCase {
 
+    // MARK: OptionalComparison
+
     func testPrependingNilAscending_given0And1() {
         // given
         let lhs = 0
@@ -92,4 +94,56 @@ final class OptionalComparisonTests: XCTestCase {
         // then
         XCTAssertFalse(result)
     }
+
+    // MARK: Collection
+
+    func testSortedAscendingPrependingNilByKeyPath() {
+        // given
+        let values = [
+            MockBook(title: "B"),
+            MockBook(title: "A"),
+            MockBook(title: nil)
+        ]
+
+        // when
+        let result = values.sortedAscendingPrependingNil(by: \.title)
+
+        // then
+        XCTAssertEqual(
+            result,
+            [
+                MockBook(title: nil),
+                MockBook(title: "A"),
+                MockBook(title: "B")
+            ]
+        )
+    }
+
+    func testsortedAscendingPrependingNilByClosure() {
+        // given
+        let values = [
+            MockBook(title: "B"),
+            MockBook(title: "A"),
+            MockBook(title: nil)
+        ]
+
+        // when
+        let result = values.sortedAscendingPrependingNil { $0.title }
+
+        // then
+        XCTAssertEqual(
+            result,
+            [
+                MockBook(title: nil),
+                MockBook(title: "A"),
+                MockBook(title: "B")
+            ]
+        )
+    }
+}
+
+// MARK: - MockBook
+
+private struct MockBook: Equatable {
+    let title: String?
 }
