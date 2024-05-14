@@ -73,7 +73,7 @@ final class RoleTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(sut.actions.count, 9)
         XCTAssertEqual(sut.name, "wire_admin")
 
-        let actions = sut.actions.sorted { OptionalComparison.prependingNilAscending(lhs: $0.name, rhs: $1.name) }
+        let actions = sut.actions.sortedAscendingPrependingNil(by: \.name)
         XCTAssertEqual(actions.first?.name, "add_conversation_member")
     }
 

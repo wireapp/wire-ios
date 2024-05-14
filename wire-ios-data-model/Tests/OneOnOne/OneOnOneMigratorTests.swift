@@ -241,7 +241,7 @@ final class OneOnOneMigratorTests: XCTestCase {
 
         // Then
         await syncContext.perform {
-            let mlsMessages = mlsConversation.allMessages.sorted { OptionalComparison.prependingNilAscending(lhs: $0.serverTimestamp, rhs: $1.serverTimestamp) }
+            let mlsMessages = mlsConversation.allMessages.sortedAscendingPrependingNil(by: \.serverTimestamp)
             XCTAssertEqual(mlsMessages.count, 3)
             XCTAssertEqual(mlsMessages[0].textMessageData?.messageText, "Hello World!")
             XCTAssertTrue(mlsMessages[1].isKnock)

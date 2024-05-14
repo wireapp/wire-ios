@@ -148,7 +148,7 @@ final class MessageToolboxDataSource {
 
             let childrenTimestamps = childMessages
                 .compactMap { $0 as? ZMConversationMessage }
-                .sorted { OptionalComparison.prependingNilAscending(lhs: $0.serverTimestamp, rhs: $1.serverTimestamp) }
+                .sortedAscendingPrependingNil(by: \.serverTimestamp)
                 .compactMap(timestampString)
 
             let finalText = childrenTimestamps.reduce(timestamp) { text, current in

@@ -104,12 +104,7 @@ extension Team {
                 }
                 return !user.isSelfUser && searchPredicate.evaluate(with: user)
             }
-            .sorted {
-                OptionalComparison.prependingNilAscending(
-                    lhs: $0.user?.normalizedName,
-                    rhs: $1.user?.normalizedName
-                )
-            }
+            .sortedAscendingPrependingNil { $0.user?.normalizedName }
     }
 }
 

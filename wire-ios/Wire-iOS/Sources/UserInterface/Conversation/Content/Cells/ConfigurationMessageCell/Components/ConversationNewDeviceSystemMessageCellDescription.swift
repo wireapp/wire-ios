@@ -81,7 +81,7 @@ final class ConversationNewDeviceSystemMessageCellDescription: ConversationMessa
         let users = systemMessage.userTypes
             .lazy
             .compactMap { $0 as? UserType }
-            .sorted { OptionalComparison.prependingNilAscending(lhs: $0.name, rhs: $1.name) }
+            .sortedAscendingPrependingNil(by: \.name)
 
         if !systemMessage.addedUserTypes.isEmpty {
             return configureForAddedUsers(in: conversation, attributes: textAttributes)

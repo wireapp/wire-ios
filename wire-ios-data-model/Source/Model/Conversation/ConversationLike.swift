@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireUtilities
 
 public typealias Conversation = ConversationLike & SwiftConversationLike
 
@@ -82,13 +83,13 @@ extension ZMConversation: ConversationLike {
 	public var sortedOtherParticipants: [UserType] {
         localParticipants
             .filter { !$0.isServiceUser }
-            .sorted { OptionalComparison.prependingNilAscending(lhs: $0.name, rhs: $1.name) }
+            .sortedAscendingPrependingNil(by: \.name)
 	}
 
 	public var sortedServiceUsers: [UserType] {
 		localParticipants
             .filter { $0.isServiceUser }
-            .sorted { OptionalComparison.prependingNilAscending(lhs: $0.name, rhs: $1.name) }
+            .sortedAscendingPrependingNil(by: \.name)
     }
 
     public var isMLSConversationDegraded: Bool {
