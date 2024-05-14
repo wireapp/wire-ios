@@ -76,6 +76,7 @@ public final class ZMUserSession: NSObject {
     let mlsConversationVerificationStatusUpdater: MLSConversationVerificationStatusUpdating
 
     public let updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol
+    private var mlsGroupVerificationStatusProcessor: MLSGroupVerificationStatusProcessor?
 
     public lazy var featureRepository = FeatureRepository(context: syncContext)
 
@@ -332,10 +333,6 @@ public final class ZMUserSession: NSObject {
         ChangeUsernameUseCase(userProfile: applicationStatusDirectory.userProfileUpdateStatus)
     }()
 
-    // MARK: Use Cases
-
-    private var observeMLSGroupVerificationStatusTask: Task<Void, Never>?
-
     // MARK: Dependency Injection
 
     let dependencies: UserSessionDependencies
@@ -413,7 +410,6 @@ public final class ZMUserSession: NSObject {
         strategyDirectory: (any StrategyDirectoryProtocol)?,
         syncStrategy: ZMSyncStrategy?,
         operationLoop: ZMOperationLoop?,
-        observeMLSGroupVerificationStatusUseCase: (any ObserveMLSGroupVerificationStatusUseCaseProtocol)?,
         configuration: Configuration
     ) {
         coreDataStack.linkAnalytics(analytics)
@@ -426,12 +422,6 @@ public final class ZMUserSession: NSObject {
         appLockController.delegate = self
         applicationStatusDirectory.syncStatus.syncStateDelegate = self
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = self
-
-        let observeMLSGroupVerificationStatusUseCase = observeMLSGroupVerificationStatusUseCase ?? ObserveMLSGroupVerificationStatusUseCase(
-            mlsService: mlsService,
-            updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatus,
-            syncContext: coreDataStack.syncContext
-        )
 
         syncManagedObjectContext.performGroupedBlockAndWait { [self] in
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: coreDataStack.syncContext)
@@ -460,11 +450,17 @@ public final class ZMUserSession: NSObject {
             self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
 
-            self.observeMLSGroupVerificationStatusTask = observeMLSGroupVerificationStatusUseCase.invoke()
             self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
                 from: self.mlsService.onNewCRLsDistributionPoints()
             )
         }
+
+        mlsGroupVerificationStatusProcessor = MLSGroupVerificationStatusProcessor(
+            updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatus,
+            mlsService: mlsService,
+            syncContext: syncContext
+        )
+        mlsGroupVerificationStatusProcessor?.startObserving()
 
         registerForCalculateBadgeCountNotification()
         registerForRegisteringPushTokenNotification()
@@ -491,7 +487,7 @@ public final class ZMUserSession: NSObject {
     public func tearDown() {
         guard !tornDown else { return }
 
-        observeMLSGroupVerificationStatusTask?.cancel()
+        mlsGroupVerificationStatusProcessor = nil
 
         tokens.removeAll()
         application.unregisterObserverForStateChange(self)

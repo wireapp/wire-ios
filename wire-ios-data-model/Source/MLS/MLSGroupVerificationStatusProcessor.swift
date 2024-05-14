@@ -18,50 +18,51 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-public protocol ObserveMLSGroupVerificationStatusUseCaseProtocol {
-
-    func invoke() -> Task<Void, Never>
-
-}
-
-public final class ObserveMLSGroupVerificationStatusUseCase: ObserveMLSGroupVerificationStatusUseCaseProtocol {
+public final class MLSGroupVerificationStatusProcessor {
 
     // MARK: - Properties
 
-    private let mlsService: MLSServiceInterface
     private let updateMLSGroupVerificationStatusUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol
+    private let mlsService: MLSServiceInterface
     private let syncContext: NSManagedObjectContext
+
+    private var observingTask: Task<Void, Never>?
 
     // MARK: - Life cycle
 
     public init(
-        mlsService: MLSServiceInterface,
         updateMLSGroupVerificationStatusUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol,
+        mlsService: MLSServiceInterface,
         syncContext: NSManagedObjectContext
     ) {
-        self.mlsService = mlsService
         self.updateMLSGroupVerificationStatusUseCase = updateMLSGroupVerificationStatusUseCase
+        self.mlsService = mlsService
         self.syncContext = syncContext
     }
 
-    // MARK: - Methods
+    deinit {
+        observingTask?.cancel()
+    }
 
-    public func invoke() -> Task<Void, Never> {
-        .detached { [mlsService, syncContext, updateMLSGroupVerificationStatusUseCase] in
+    public func startObserving() {
+        observingTask = .detached { [mlsService, weak self] in
             for await groupID in mlsService.epochChanges() {
-                do {
-                    guard let conversation = await syncContext.perform({
-                        ZMConversation.fetch(with: groupID, in: syncContext)
-                    }) else {
-                        return WireLogger.e2ei.warn("failed to fetch the conversation by mlsGroupID \(groupID)")
-                    }
-
-                    try await updateMLSGroupVerificationStatusUseCase.invoke(for: conversation, groupID: groupID)
-                } catch {
-                    WireLogger.e2ei.warn("failed to update MLS group: \(groupID) verification status: \(error)")
-                }
+                await self?.processConversation(with: groupID)
             }
+        }
+    }
+
+    private func processConversation(with groupID: MLSGroupID) async {
+        guard let conversation = await syncContext.perform({
+            ZMConversation.fetch(with: groupID, in: self.syncContext)
+        }) else {
+            return WireLogger.e2ei.warn("failed to fetch the conversation by mlsGroupID \(groupID)")
+        }
+
+        do {
+            try await updateMLSGroupVerificationStatusUseCase.invoke(for: conversation, groupID: groupID)
+        } catch {
+            WireLogger.e2ei.warn("failed to update MLS group: \(groupID) verification status: \(error)")
         }
     }
 }
