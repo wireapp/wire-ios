@@ -519,10 +519,10 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
             selfUser.name = "MYSELF"
             conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
 
-            let mainTeam = Team.fetchOrCreate(with: UUID.create(),
-                                              create: true,
-                                              in: self.syncMOC,
-                                              created: nil)!
+            let mainTeam = Team.fetchOrCreate(
+                with: UUID.create(),
+                in: self.syncMOC
+            )
 
             _ = Member.getOrUpdateMember(for: selfUser, in: mainTeam, context: self.syncMOC)
 
@@ -543,10 +543,10 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
 
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
 
-            let mainTeam = Team.fetchOrCreate(with: UUID.create(),
-                                              create: true,
-                                              in: self.syncMOC,
-                                              created: nil)!
+            let mainTeam = Team.fetchOrCreate(
+                with: UUID.create(),
+                in: self.syncMOC
+            )
 
             _ = Member.getOrUpdateMember(for: selfUser, in: mainTeam, context: self.syncMOC)
 
