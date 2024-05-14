@@ -23,6 +23,7 @@ import WireSyncEngine
 /// The first page of the user settings.
 final class SelfProfileViewController: UIViewController {
 
+    let userSession: UserSession
     private let userRightInterfaceType: UserRightInterface.Type
     private let settingsCellDescriptorFactory: SettingsCellDescriptorFactory
     let rootGroup: SettingsControllerGeneratorType & SettingsInternalGroupCellDescriptorType
@@ -35,7 +36,6 @@ final class SelfProfileViewController: UIViewController {
     private let profileHeaderViewController: ProfileHeaderViewController
     private let profileImagePicker = ProfileImagePickerManager()
 
-    let userSession: UserSession
     private let accountSelector: AccountSelector?
 
     // MARK: - AppLock
@@ -55,7 +55,7 @@ final class SelfProfileViewController: UIViewController {
         userSession: UserSession,
         accountSelector: AccountSelector?
     ) {
-        self.userSession = userSession
+
         self.accountSelector = accountSelector
 
         // Create the settings hierarchy
@@ -85,6 +85,7 @@ final class SelfProfileViewController: UIViewController {
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase
         )
 
+        self.userSession = userSession
         self.userRightInterfaceType = userRightInterfaceType
         self.settingsCellDescriptorFactory = settingsCellDescriptorFactory
         self.rootGroup = rootGroup

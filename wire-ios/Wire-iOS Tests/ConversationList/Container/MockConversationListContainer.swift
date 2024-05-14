@@ -86,4 +86,12 @@ final class MockConversationListContainer: UIViewController, ConversationListCon
     func conversationListViewControllerViewModel(_ viewModel: ConversationListViewController.ViewModel, didUpdate selfUserStatus: UserStatus) {
         // no-op
     }
+
+    func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: Wire.ConversationListViewController.ViewModel) {
+        // no-op
+    }
+
+    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: Wire.ConversationListViewController.ViewModel) {
+        // no-op
+    }
 }
