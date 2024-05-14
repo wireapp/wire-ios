@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+ruby '3.3.1'
+
 gem 'fastlane'
 gem 'git'
 gem 'httparty'
