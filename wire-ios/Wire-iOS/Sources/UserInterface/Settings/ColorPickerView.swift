@@ -22,10 +22,10 @@ import WireSyncEngine
 
 struct ColorPickerView: View {
 
-    @State var selectedColor: AccentColor?
+    @State var selectedColor: AccentColor
 
     let colors: [AccentColor]
-    var onColorSelect: ((AccentColor) -> Void)?
+    let onColorSelect: ((AccentColor) -> Void)?
 
     private let colorViewSize: CGFloat = 28
     private let colorViewCornerRadius: CGFloat = 14
