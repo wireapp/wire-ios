@@ -5132,8 +5132,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/pinterest/PINCache";
 			requirement = {
-				kind = revision;
-				revision = f856226e8bee58d75cb6be1707ae0cb2f5801150;
+				kind = exactVersion;
+				version = 3.0.4;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

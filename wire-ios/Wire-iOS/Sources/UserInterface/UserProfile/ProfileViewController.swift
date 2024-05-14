@@ -229,7 +229,7 @@ final class ProfileViewController: UIViewController {
         viewControllers.append(profileDetailsViewController)
 
         if viewModel.hasUserClientListTab {
-            let userClientListViewController = UserClientListViewController(
+            let userClientListViewController = OtherUserClientsListViewController(
                 user: viewModel.user,
                 userSession: viewModel.userSession,
                 contextProvider: viewModel.userSession as? ContextProvider,
@@ -389,7 +389,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
         dismiss(animated: true) { [weak self] in
             self?.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {
-                ZClientViewController.shared?.conversationListViewController.topBarViewController.presentSettings()
+                ZClientViewController.shared?.conversationListViewController.presentSettings()
             }
         }
     }

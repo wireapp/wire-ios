@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import WireDataModelSupport
 import WireSyncEngineSupport
 import XCTest
@@ -36,6 +35,7 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
     // MARK: - Properties
 
     var sut: ConversationListViewController!
+    var navigationController: UINavigationController!
     var userSession: UserSessionMock!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 
@@ -69,11 +69,13 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
         sut.onboardingHint.arrowPointToView = sut.tabBar
         sut.overrideUserInterfaceStyle = .dark
         sut.view.backgroundColor = .black
+        navigationController = .init(rootViewController: sut)
     }
 
     // MARK: - tearDown
 
     override func tearDown() {
+        navigationController = nil
         sut = nil
         mockIsSelfUserE2EICertifiedUseCase = nil
         userSession = nil
@@ -84,14 +86,14 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
     // MARK: - View controller
 
     func testForNoConversations() {
-        verify(matching: sut)
+        verify(matching: navigationController)
     }
 
     func testForEverythingArchived() {
         MockConversationList.hasArchivedConversations = true
         sut.showNoContactLabel(animated: false)
 
-        verify(matching: sut)
+        verify(matching: navigationController)
     }
 
     // MARK: - PermissionDeniedViewController
@@ -99,6 +101,6 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
     func testForPremissionDeniedViewController() {
         sut.showPermissionDeniedViewController()
 
-        verify(matching: sut)
+        verify(matching: navigationController)
     }
 }
