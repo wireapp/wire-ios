@@ -74,6 +74,7 @@ final class ConversationListViewController: UIViewController {
         selfUser: SelfUserType,
         userSession: UserSession,
         isSelfUserE2EICertifiedUseCase: IsSelfUserE2EICertifiedUseCaseProtocol,
+        isFolderStatePersistenceEnabled: Bool,
         selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         let viewModel = ConversationListViewController.ViewModel(
@@ -82,18 +83,26 @@ final class ConversationListViewController: UIViewController {
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: isSelfUserE2EICertifiedUseCase
         )
-        self.init(viewModel: viewModel, selfProfileViewControllerBuilder: selfProfileViewControllerBuilder)
+        self.init(
+            viewModel: viewModel,
+            isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled,
+            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
+        )
     }
 
     required init(
         viewModel: ViewModel,
+        isFolderStatePersistenceEnabled: Bool,
         selfProfileViewControllerBuilder: some ViewControllerBuilder
     ) {
         self.viewModel = viewModel
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
 
         let bottomInset = ConversationListViewController.contentControllerBottomInset
-        listContentController = ConversationListContentController(userSession: viewModel.userSession)
+        listContentController = ConversationListContentController(
+            userSession: viewModel.userSession,
+            isFolderStatePersistenceEnabled: isFolderStatePersistenceEnabled
+        )
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
 
         super.init(nibName: nil, bundle: nil)

@@ -55,6 +55,7 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
 
         sut = ConversationListViewController(
             viewModel: viewModel,
+            isFolderStatePersistenceEnabled: false,
             selfProfileViewControllerBuilder: .mock
         )
         viewModel.viewController = sut

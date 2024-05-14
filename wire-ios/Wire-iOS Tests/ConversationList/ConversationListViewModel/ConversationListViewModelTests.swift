@@ -72,7 +72,7 @@ final class ConversationListViewModelTests: XCTestCase {
         removeViewModelState()
         mockBar = MockBar()
         mockUserSession = UserSessionMock()
-        sut = ConversationListViewModel(userSession: mockUserSession)
+        sut = ConversationListViewModel(userSession: mockUserSession, isFolderStatePersistenceEnabled: false)
 
         mockConversationListViewModelDelegate = MockConversationListViewModelDelegate()
         sut.delegate = mockConversationListViewModelDelegate

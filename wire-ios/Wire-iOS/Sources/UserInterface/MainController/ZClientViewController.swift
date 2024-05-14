@@ -74,6 +74,7 @@ final class ZClientViewController: UIViewController {
             selfUser: userSession.selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isFolderStatePersistenceEnabled: false,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
         // TODO [WPB-6647]: Remove this temporary instance within the navigation overhaul epic. (folder support is removed completeley)
@@ -82,6 +83,7 @@ final class ZClientViewController: UIViewController {
             selfUser: userSession.selfUser,
             userSession: userSession,
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
+            isFolderStatePersistenceEnabled: true,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
         conversationListWithFoldersViewController.listContentController.listViewModel.folderEnabled = true
