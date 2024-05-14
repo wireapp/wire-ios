@@ -17,6 +17,10 @@ let package = Package(
         .package(
             url: "https://github.com/apple/swift-docc-plugin",
             from: "1.1.0"
+        ),
+        .package(
+            url: "https://github.com/pointfreeco/swift-snapshot-testing",
+            from: "1.16.0"
         )
     ],
     targets: [
@@ -25,7 +29,13 @@ let package = Package(
         ),
         .testTarget(
             name: "WireAPITests",
-            dependencies: ["WireAPI"]
+            dependencies: [
+                "WireAPI",
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
+            ],
+            resources: [
+                .process("Resources")
+            ]
         )
     ]
 )
