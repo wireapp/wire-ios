@@ -76,6 +76,7 @@ final class ZClientViewController: UIViewController {
             isSelfUserE2EICertifiedUseCase: userSession.isSelfUserE2EICertifiedUseCase,
             selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
         )
+        // TODO [WPB-6647]: Remove this temporary instance within the navigation overhaul epic. (folder support is removed completeley)
         conversationListWithFoldersViewController = .init(
             account: account,
             selfUser: userSession.selfUser,
