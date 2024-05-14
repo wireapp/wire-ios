@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SnapshotTesting
 @testable import WireAPI
 import XCTest
-import SnapshotTesting
-
 
 final class TeamsAPITests: XCTestCase {
 
