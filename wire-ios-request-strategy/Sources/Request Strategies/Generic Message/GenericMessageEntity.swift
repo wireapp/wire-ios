@@ -50,6 +50,10 @@ import Foundation
         return self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
     }
 
+    public var shouldIgnoreTheSecurityLevelCheck: Bool {
+        false
+    }
+
     public func missesRecipients(_ recipients: Set<UserClient>!) {
         // no-op
     }
