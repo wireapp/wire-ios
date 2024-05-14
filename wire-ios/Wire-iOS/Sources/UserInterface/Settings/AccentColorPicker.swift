@@ -33,29 +33,14 @@ struct AccentColorPicker: View {
     var body: some View {
         NavigationView {
             List(colors, id: \.self) { color in
-                HStack {
-                    // Color view
-                    Circle()
-                        .fill(Color(uiColor: color.uiColor))
-                        .frame(width: colorViewSize, height: colorViewSize)
-                        .padding(.trailing, 10)
-                    Text(color.name)
-
-                    Spacer()
-
-                    // Checkmark view
-                    if selectedColor == color {
-                        Image(systemName: "checkmark")
-                            .foregroundColor(Color(SemanticColors.Icon.foregroundDefaultBlack))
+                cell(for: color)
+                    .listRowBackground(Color(SemanticColors.View.backgroundUserCell))
+                    .onTapGesture {
+                        withAnimation {
+                            self.selectedColor = color
+                            onColorSelect?(color)
+                        }
                     }
-                }
-                .listRowBackground(Color(SemanticColors.View.backgroundUserCell))
-                .onTapGesture {
-                    withAnimation {
-                        self.selectedColor = color
-                        onColorSelect?(color)
-                    }
-                }
             }
             .listStyle(.plain)
             .modifier(ListBackgroundStyleModifier())
@@ -67,6 +52,26 @@ struct AccentColorPicker: View {
                     Text(L10n.Localizable.Self.Settings.AccountPictureGroup.color.capitalized)
                         .font(.textStyle(.h3))
                 }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func cell(for color: AccentColor) -> some View {
+        HStack {
+            // Color view
+            Circle()
+                .fill(Color(uiColor: color.uiColor))
+                .frame(width: colorViewSize, height: colorViewSize)
+                .padding(.trailing, 10)
+            Text(color.name)
+
+            Spacer()
+
+            // Checkmark view
+            if selectedColor == color {
+                Image(systemName: "checkmark")
+                    .foregroundColor(Color(SemanticColors.Icon.foregroundDefaultBlack))
             }
         }
     }
