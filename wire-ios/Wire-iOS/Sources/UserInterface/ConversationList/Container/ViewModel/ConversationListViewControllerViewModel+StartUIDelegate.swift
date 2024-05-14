@@ -73,7 +73,7 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
         )
         profileViewController.delegate = self
 
-        let navigationController = profileViewController.wrapInNavigationController(setBackgroundColor: true)
+        let navigationController = profileViewController.wrapInNavigationController()
         navigationController.modalPresentationStyle = .formSheet
 
         ZClientViewController.shared?.present(navigationController, animated: true)
