@@ -40,7 +40,7 @@ extension DeviceDetailsViewActionsHandler: ConversationUserClientDetailsDebugAct
             await client.deleteClientAndEndSession()
             _ = await sync.perform { sync.saveOrRollback() }
         } catch {
-            logger.error(error.localizedDescription, attributes: nil)
+            logger.error(error.localizedDescription)
         }
     }
 
