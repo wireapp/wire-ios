@@ -17,9 +17,9 @@
 //
 
 import SwiftUI
-import protocol WireDataModel.EditableUserType
-import protocol WireSyncEngine.UserSession
-import enum WireUtilities.AccentColor
+import WireDataModel
+import WireSyncEngine
+import WireUtilities
 
 final class AccentColorPickerController: UIHostingController<ColorPickerView> {
 
