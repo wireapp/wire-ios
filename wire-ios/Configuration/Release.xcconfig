@@ -31,3 +31,4 @@ PROVISIONING_PROFILE_SPECIFIER_NOTIFICATION_EXT = Wire Public iOS NSE
 
 // App icon from asset bundle
 APPICON_NAME = AppIcon
+
