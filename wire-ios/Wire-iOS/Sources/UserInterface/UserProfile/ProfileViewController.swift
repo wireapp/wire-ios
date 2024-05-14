@@ -389,6 +389,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
                 guard let zClientViewController = ZClientViewController.shared else {
                     return assertionFailure()
                 }
+                // TODO [WPB-6647]: Remove this temporary workaround within the navigation overhaul epic. (folder support is removed)
                 switch zClientViewController.mainTabBarController.selectedIndex {
                 case 1:
                     zClientViewController.conversationListViewController.presentSettings()
