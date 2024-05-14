@@ -475,32 +475,6 @@ final class AuthenticationCredentialsViewController: AuthenticationStepControlle
         loginActiveField = editing ? textField : nil
     }
 
-<<<<<<< HEAD
-=======
-    // MARK: - Phone Number Input
-
-    func phoneNumberInputViewDidRequestCountryPicker(_ phoneNumberInput: PhoneNumberInputView) {
-        let countryCodePicker = CountryCodeTableViewController()
-        countryCodePicker.delegate = self
-        countryCodePicker.modalPresentationStyle = .formSheet
-
-        let navigationController = countryCodePicker.wrapInNavigationController(navigationBarClass: DefaultNavigationBar.self)
-        present(navigationController, animated: true)
-    }
-
-    func phoneNumberInputView(_ inputView: PhoneNumberInputView, didPickPhoneNumber phoneNumber: PhoneNumber) {
-        valueSubmitted(phoneNumber)
-    }
-
-    func phoneNumberInputView(_ inputView: PhoneNumberInputView, didValidatePhoneNumber phoneNumber: PhoneNumber, withResult validationError: TextFieldValidator.ValidationError?) {
-        phoneInputView.loginButton.isEnabled = validationError == nil
-    }
-
-    func countryCodeTableViewController(_ viewController: UIViewController, didSelect country: Country) {
-        phoneInputView.selectCountry(country)
-        viewController.dismiss(animated: true)
-    }
->>>>>>> 767495bc99 (fix: Issue where dark mode is not respected - WPB-9083 (#1433))
 }
 
 extension AuthenticationCredentialsViewController: ValidatedTextFieldDelegate {

@@ -26,11 +26,7 @@ extension ConversationActionController {
         guard let directory = ZMUserSession.shared()?.conversationDirectory else { return }
         let folderPicker = FolderPickerViewController(conversation: conversation, directory: directory)
         folderPicker.delegate = self
-<<<<<<< HEAD
-        self.present(folderPicker.wrapInNavigationController(navigationBarClass: DefaultNavigationBar.self))
-=======
         self.present(folderPicker.wrapInNavigationController())
->>>>>>> 767495bc99 (fix: Issue where dark mode is not respected - WPB-9083 (#1433))
     }
 }
 
