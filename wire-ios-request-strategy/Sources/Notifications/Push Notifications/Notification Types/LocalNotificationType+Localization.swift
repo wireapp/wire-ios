@@ -149,7 +149,7 @@ extension LocalNotificationType {
     }
 
     fileprivate func senderKey(_ sender: ZMUser?, _ conversation: ZMConversation?) -> String? {
-        guard let sender = sender else { return NoUserNameKey }
+        guard let sender else { return NoUserNameKey }
 
         if case .failedMessage = self {
             return nil
@@ -173,7 +173,7 @@ extension LocalNotificationType {
         let localizationKey = [baseKey, senderKey].compactMap { $0 }.joined(separator: ".")
         var arguments: [CVarArg] = []
 
-        if let senderName = senderName {
+        if let senderName {
             arguments.append(senderName)
         }
 
@@ -196,11 +196,11 @@ extension LocalNotificationType {
         let teamName = selfUser.team?.name
         let conversationName = conversation?.displayName
 
-        if let conversationName = conversationName, let teamName = teamName {
+        if let conversationName, let teamName {
             return .localizedStringWithFormat(ZMPushStringTitle.pushFormatString, arguments: [conversationName, teamName])
-        } else if let conversationName = conversationName {
+        } else if let conversationName {
             return conversationName
-        } else if let teamName = teamName {
+        } else if let teamName {
             return teamName
         }
 

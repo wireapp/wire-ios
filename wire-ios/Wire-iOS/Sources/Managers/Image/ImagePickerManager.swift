@@ -78,7 +78,7 @@ class ImagePickerManager: NSObject {
 
     private func getImage(fromSourceType sourceType: UIImagePickerController.SourceType) {
         guard UIImagePickerController.isSourceTypeAvailable(sourceType),
-              let viewController = viewController else {
+              let viewController else {
                   return
               }
 

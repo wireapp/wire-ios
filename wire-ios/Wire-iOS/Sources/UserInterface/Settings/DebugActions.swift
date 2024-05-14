@@ -28,7 +28,7 @@ enum DebugActions {
         textToCopy: String? = nil) {
         guard let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) else { return }
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        if let textToCopy = textToCopy {
+        if let textToCopy {
             alert.addAction(UIAlertAction(title: "Copy", style: .default) { _ in
                 UIPasteboard.general.string = textToCopy
             })
@@ -181,9 +181,9 @@ enum DebugActions {
         }
 
         let message = """
-        Max supported version: \((APIVersion.allCases.max()?.rawValue).description(else: "None"))
-        Currently selected version: \((BackendInfo.apiVersion?.rawValue).description(else: "None"))
-        Local domain: \(BackendInfo.domain.description(else: "None"))
+        Max supported version: \(APIVersion.allCases.max().map { "\($0.rawValue)" } ?? "None")
+        Currently selected version: \(BackendInfo.apiVersion.map { "\($0.rawValue)" } ?? "None")
+        Local domain: \(BackendInfo.domain ?? "None")
         Is federation enabled: \(BackendInfo.isFederationEnabled)
         """
 
@@ -285,7 +285,7 @@ enum DebugActions {
             conversations = try? userSession.syncManagedObjectContext.fetch(NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName()))
             conversations?.forEach({ _ = $0.estimatedUnreadCount })
         }
-        userSession.syncManagedObjectContext.dispatchGroup.wait(forInterval: 5)
+        userSession.syncManagedObjectContext.dispatchGroup?.wait(forInterval: 5)
         userSession.syncManagedObjectContext.performGroupedBlockAndWait {
             conversations = nil
             userSession.syncManagedObjectContext.saveOrRollback()
@@ -353,13 +353,4 @@ enum DebugActions {
         }
         while (currentCount > 0)
     }
-}
-
-private extension Optional {
-
-    func description(else defaultDescription: String) -> String {
-        guard let value = self else { return defaultDescription }
-        return String(describing: value)
-    }
-
 }

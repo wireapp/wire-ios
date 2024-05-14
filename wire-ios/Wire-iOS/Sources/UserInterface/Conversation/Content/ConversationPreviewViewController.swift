@@ -79,7 +79,7 @@ final class ConversationPreviewViewController: TintColorCorrectedViewController 
     @available(iOS, introduced: 9.0, deprecated: 13.0, message: "UIViewControllerPreviewing is deprecated. Please use UIContextMenuInteraction.")
     private func makePreviewAction(for action: ZMConversation.Action) -> UIPreviewAction {
         return action.previewAction { [weak self] in
-            guard let `self` = self else { return }
+            guard let self else { return }
             self.actionController.handleAction(action)
         }
     }

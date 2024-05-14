@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireTransport
 
 private let log = ZMSLog(tag: "Accounts")
 
@@ -24,14 +25,13 @@ public let AccountManagerDidUpdateAccountsNotificationName = Notification.Name("
 
 fileprivate extension UserDefaults {
 
-    static let selectedAccountKey = "AccountManagerSelectedAccountKey"
+    private var selectedAccountKey: String { "AccountManagerSelectedAccountKey" }
 
     /// The identifier of the currently selected `Account` or `nil` if there is none.
     var selectedAccountIdentifier: UUID? {
-        get { return string(forKey: UserDefaults.selectedAccountKey).flatMap(UUID.init(transportString:)) }
-        set { set(newValue?.uuidString, forKey: UserDefaults.selectedAccountKey) }
+        get { string(forKey: selectedAccountKey).flatMap(UUID.init(transportString:)) }
+        set { set(newValue?.uuidString, forKey: selectedAccountKey) }
     }
-
 }
 
 /// Class used to safely access and change stored accounts and the current selected account.

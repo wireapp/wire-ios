@@ -271,14 +271,13 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         let response = try createResponse(cookie: cookie, userId: userId, userIdKey: userIdKey, line: line)
 
         // when
-        response.extractUserInfo().apply(sut.upgradeToAuthenticatedSession)
+        response.extractUserInfo().map(sut.upgradeToAuthenticatedSession)
 
         // then
         XCTAssertLessThanOrEqual(mockDelegate.createdAccounts.count, 1, line: line)
         if mockDelegate.createdAccounts.isEmpty { throw NSError(domain: "No account", code: 1) }
         return mockDelegate.createdAccounts.first!
     }
-
 }
 
 fileprivate extension ZMTransportResponse {
@@ -288,5 +287,4 @@ fileprivate extension ZMTransportResponse {
         let data = try JSONSerialization.data(withJSONObject: payload, options: [])
         self.init(httpurlResponse: httpResponse, data: data, error: nil, apiVersion: APIVersion.v0.rawValue)
     }
-
 }

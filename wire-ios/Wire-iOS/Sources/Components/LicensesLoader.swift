@@ -41,7 +41,7 @@ final class LicensesLoader {
     }
 
     deinit {
-        memoryWarningToken.apply(NotificationCenter.default.removeObserver)
+        memoryWarningToken.map(NotificationCenter.default.removeObserver)
     }
 
     // MARK: - Reading the list of Licences

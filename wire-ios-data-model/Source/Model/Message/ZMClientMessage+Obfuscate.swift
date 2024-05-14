@@ -24,7 +24,7 @@ extension ZMClientMessage {
         super.obfuscate()
 
         guard
-            let underlyingMessage = underlyingMessage,
+            let underlyingMessage,
             !underlyingMessage.hasKnock,
             let obfuscatedMessage = underlyingMessage.obfuscatedMessage()
         else {

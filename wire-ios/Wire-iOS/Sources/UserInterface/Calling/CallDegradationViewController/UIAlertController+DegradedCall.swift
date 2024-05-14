@@ -23,7 +23,7 @@ extension UIAlertController {
 
     typealias DegradedCallLocale = L10n.Localizable.Call.Degraded
 
-    static func makeDegradedProteusCall(
+    static func makeOutgoingDegradedProteusCall(
         degradedUser: UserType?,
         callEnded: Bool = false,
         confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil
@@ -37,7 +37,7 @@ extension UIAlertController {
 
         let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
-        if let confirmationBlock = confirmationBlock {
+        if let confirmationBlock {
             controller.addAction(UIAlertAction(title: GeneralLocale.cancel, style: .cancel) { _ in
                 confirmationBlock(false)
             })
@@ -47,6 +47,33 @@ extension UIAlertController {
             })
         } else {
             controller.addAction(UIAlertAction(title: GeneralLocale.ok, style: .default))
+        }
+
+        return controller
+    }
+
+    static func makeIncomingDegradedProteusCall(
+        degradedUser: UserType?,
+        callEnded: Bool = false,
+        confirmationBlock: ((_ continueDegradedCall: Bool) -> Void)? = nil
+    ) -> UIAlertController {
+
+        let title = degradedCallTitle(forCallEnded: callEnded)
+        let message = degradedCallMessage(forUser: degradedUser, callEnded: callEnded)
+
+        let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
+
+        // Add actions
+        if let confirmationBlock {
+            controller.addAction(.cancel({
+                confirmationBlock(false)
+            }))
+
+            controller.addAction(UIAlertAction(title: DegradedCallLocale.Incoming.Alert.Action.continue, style: .default) { _ in
+                confirmationBlock(true)
+            })
+        } else {
+            controller.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default))
         }
 
         return controller
@@ -63,7 +90,7 @@ extension UIAlertController {
             let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
             // Add actions
-            if let confirmationBlock = confirmationBlock {
+            if let confirmationBlock {
                 controller.addAction(UIAlertAction(title: DegradedCall.Action.continue, style: .default) { _ in
                     confirmationBlock(true)
                 })
@@ -90,7 +117,7 @@ extension UIAlertController {
             let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
 
             // Add actions
-            if let confirmationBlock = confirmationBlock {
+            if let confirmationBlock {
                 controller.addAction(UIAlertAction(title: DegradedCall.Action.continue, style: .default) { _ in
                     confirmationBlock(true)
                 })

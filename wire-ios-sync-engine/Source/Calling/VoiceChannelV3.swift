@@ -53,7 +53,7 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
 
     public func participants(ofKind kind: CallParticipantsListKind, activeSpeakersLimit limit: Int?) -> [CallParticipant] {
         guard
-            let callCenter = callCenter,
+            let callCenter,
             let conversationId = conversation?.avsIdentifier
         else { return [] }
 
@@ -63,7 +63,7 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
     public var state: CallState {
         guard
             let conversationId = conversation?.avsIdentifier,
-            let callCenter = callCenter
+            let callCenter
         else { return .none }
 
         return callCenter.callState(conversationId: conversationId)
@@ -72,7 +72,7 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
     public var isVideoCall: Bool {
         guard
             let conversationId = conversation?.avsIdentifier,
-            let callCenter = callCenter
+            let callCenter
         else { return false }
 
         return callCenter.isVideoCall(conversationId: conversationId)
@@ -81,7 +81,7 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
     public var isConstantBitRateAudioActive: Bool {
         guard
             let conversationId = conversation?.avsIdentifier,
-            let callCenter = callCenter
+            let callCenter
         else { return false }
 
         return callCenter.isContantBitRate(conversationId: conversationId)
@@ -110,7 +110,7 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
         get {
             guard
                 let conversationId = conversation?.avsIdentifier,
-                let callCenter = callCenter
+                let callCenter
             else { return .stopped }
 
             return callCenter.videoState(conversationId: conversationId)
@@ -161,7 +161,7 @@ public class VoiceChannelV3: NSObject, VoiceChannel {
         get {
             guard
                 let conversationId = conversation?.avsIdentifier,
-                let callCenter = callCenter
+                let callCenter
             else {
                 return .allVideoStreams
             }
@@ -185,14 +185,8 @@ extension VoiceChannelV3: CallActions {
     }
 
     public func continueByDecreasingConversationSecurity(userSession: ZMUserSession) {
-        guard let conversation = conversation else { return }
-        conversation.acknowledgePrivacyWarning(withResendIntent: true)
-    }
-
-    public func leaveAndDecreaseConversationSecurity(userSession: ZMUserSession) {
-        guard let conversation = conversation else { return }
-        conversation.acknowledgePrivacyWarning(withResendIntent: false)
-        leave(userSession: userSession, completion: nil)
+        guard let conversation else { return }
+        conversation.acknowledgePrivacyWarningAndResendMessages()
     }
 
     public func join(video: Bool, userSession: ZMUserSession) -> Bool {
@@ -224,8 +218,8 @@ extension VoiceChannelV3: CallActionsInternal {
 
     public func join(video: Bool) -> Bool {
         guard
-            let conversation = conversation,
-            let callCenter = callCenter
+            let conversation,
+            let callCenter
         else {
             return false
         }

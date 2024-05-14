@@ -42,7 +42,7 @@ extension UIViewController {
     /// - Parameter pointToView: the view which the popover points to
     func configPopover(pointToView: UIView, popoverPresenter: PopoverPresenterViewController? = UIApplication.shared.firstKeyWindow?.rootViewController as? PopoverPresenterViewController) {
         guard let popover = popoverPresentationController,
-            let popoverPresenter = popoverPresenter else { return }
+            let popoverPresenter else { return }
 
         popover.config(from: popoverPresenter,
                        pointToView: pointToView,

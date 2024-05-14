@@ -30,10 +30,10 @@ public enum TeamOrConversation {
     /// Creates a team or a conversation
     static func fromTeamOrConversation(team: Team?,
                                        conversation: ZMConversation?) -> TeamOrConversation {
-        if let team = team {
+        if let team {
             return .team(team)
 
-        } else if let conversation = conversation {
+        } else if let conversation {
             return .conversation(conversation)
         }
         fatal("No team and no conversation")
