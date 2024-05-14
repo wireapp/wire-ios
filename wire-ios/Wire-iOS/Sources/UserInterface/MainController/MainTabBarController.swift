@@ -74,38 +74,21 @@ struct MainTabBarController_Previews: PreviewProvider {
 
     static var previews: some View {
         MainTabBarControllerWrapper()
+            .ignoresSafeArea(edges: .all)
     }
 }
 
 private struct MainTabBarControllerWrapper: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> UITabBarController {
-        MainTabBarController(
-            contacts: TabItemViewController(placeholder: "Contacts"),
-            conversations: TabItemViewController(placeholder: "Conversations"),
-            folders: TabItemViewController(placeholder: "Folders"),
-            archive: TabItemViewController(placeholder: "Archive")
+        let tabItem: (String) -> UIHostingController = { .init(rootView: Text($0)) }
+        return MainTabBarController(
+            contacts: tabItem("Contacts"),
+            conversations: tabItem("Conversations"),
+            folders: tabItem("Folders"),
+            archive: tabItem("Archive")
         )
     }
 
     func updateUIViewController(_ tabBarController: UITabBarController, context: Context) {}
-}
-
-private final class TabItemViewController: UIViewController {
-
-    init(placeholder text: String) {
-        super.init(nibName: nil, bundle: nil)
-
-        let label = UILabel()
-        label.text = text
-        label.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(label)
-        label.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
-        label.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) is not supported")
-    }
 }
