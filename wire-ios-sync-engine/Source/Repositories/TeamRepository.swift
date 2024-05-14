@@ -17,3 +17,78 @@
 //
 
 import Foundation
+import WireAPI
+import WireDataModel
+
+enum TeamRepositoryError: Error {
+
+    case failedToFetchRemotely(Error)
+
+}
+
+protocol TeamRepositoryProtocol {
+
+    func fetchSelfTeam() async throws
+
+}
+
+// TODO: document
+final class TeamRepository: TeamRepositoryProtocol {
+
+    private let selfTeamID: UUID
+    private let teamsAPI: any TeamsAPI
+    private let context: NSManagedObjectContext
+
+    init(
+        selfTeamID: UUID,
+        teamsAPI: any TeamsAPI,
+        context: NSManagedObjectContext
+    ) {
+        self.selfTeamID = selfTeamID
+        self.teamsAPI = teamsAPI
+        self.context = context
+    }
+
+    // MARK: - Fetch self team
+
+    func fetchSelfTeam() async throws {
+        let team = try await fetchSelfTeamRemotely()
+        await storeTeamLocally(team)
+    }
+
+    private func fetchSelfTeamRemotely () async throws -> WireAPI.Team {
+        do {
+            return try await teamsAPI.getTeam(for: selfTeamID)
+        } catch {
+            throw TeamRepositoryError.failedToFetchRemotely(error)
+        }
+    }
+
+    private func storeTeamLocally(_ teamAPIModel: WireAPI.Team) async {
+        await context.perform { [context] in
+            let team = WireDataModel.Team.fetchOrCreate(
+                with: teamAPIModel.id,
+                in: context
+            )
+
+            let selfUser = ZMUser.selfUser(in: context)
+
+            _ = WireDataModel.Member.getOrUpdateMember(
+                for: selfUser,
+                in: team,
+                context: context
+            )
+
+            team.name = teamAPIModel.name
+            team.creator = ZMUser.fetchOrCreate(
+                with: teamAPIModel.creatorID,
+                domain: nil,
+                in: context
+            )
+            team.pictureAssetId = teamAPIModel.logoID
+            team.pictureAssetKey = teamAPIModel.logoKey
+            team.needsToBeUpdatedFromBackend = false
+        }
+    }
+
+}
