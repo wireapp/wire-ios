@@ -44,7 +44,7 @@ class BackendInfoAPIV0: BackendInfoAPI {
                 as: BackendInfoResponseV0.self
             )
 
-            return payload.toParent()
+            return payload.toAPIModel()
 
         default:
             let failure = try decoder.decodePayload(
@@ -64,7 +64,7 @@ private struct BackendInfoResponseV0: Decodable {
     var federation: Bool
     var supported: [UInt]
 
-    func toParent() -> BackendInfo {
+    func toAPIModel() -> BackendInfo {
         .init(
             domain: domain,
             isFederationEnabled: federation,
