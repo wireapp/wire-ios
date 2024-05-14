@@ -23,12 +23,12 @@ public enum OptionalComparison {
     ///
     /// - Parameters:
     ///   - lhs: An optional comparable value on the left hand side.
-    ///   - rhs: An optional comparable value on  the right hand side.
+    ///   - rhs: An optional comparable value on the right hand side.
     ///
     /// - Returns:
     ///  `true` if left hand side is smaller than right hand side.
     /// `nil` is  considered as smaller than any value.
-    /// If both paratemeters are `nil`, the method returns `false`.
+    /// If both parameters are `nil`, the method returns `false`.
     public static func prependingNilAscending<T: Comparable>(lhs: T?, rhs: T?) -> Bool {
 
         if lhs == nil, rhs == nil {
@@ -62,7 +62,7 @@ extension Collection {
         }
     }
 
-    /// Returns the elements of the sequence, sorted ascending using the given keyPath as the comparison between elements.
+    /// Returns the elements of the sequence, sorted ascending using the given closure as the comparison between elements.
     /// - Parameter keyPath: The keypath to compare, the value can be optional.
     /// - Returns: An ascending sorted array of the sequence’s elements with prepending `nil` values.
     public func sortedAscendingPrependingNil<Value: Comparable>(
