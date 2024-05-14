@@ -1329,6 +1329,7 @@
 		E90553CB27D612370006EB47 /* AuthenticationEmailVerificationRequiredErrorHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90553CA27D612370006EB47 /* AuthenticationEmailVerificationRequiredErrorHandler.swift */; };
 		E90A2F0D28EEC674005AF571 /* TextFieldStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90A2F0C28EEC674005AF571 /* TextFieldStyle.swift */; };
 		E90B7DB628117DED001831FB /* DynamicFontLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90B7DB528117DED001831FB /* DynamicFontLabel.swift */; };
+		E90BE8EE2BF3A33C00002506 /* ListBackgroundStyleModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = E90BE8ED2BF3A33C00002506 /* ListBackgroundStyleModifier.swift */; };
 		E916CE8C2B6C346500982555 /* AudioRecordKeyboardViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E916CE8B2B6C346500982555 /* AudioRecordKeyboardViewControllerSnapshotTests.swift */; };
 		E91DCC34278DAEDA00B66DD7 /* GroupDetailsServicesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91DCC33278DAEDA00B66DD7 /* GroupDetailsServicesCell.swift */; };
 		E91DCC36278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E91DCC35278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift */; };
@@ -3423,6 +3424,7 @@
 		E90553CA27D612370006EB47 /* AuthenticationEmailVerificationRequiredErrorHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationEmailVerificationRequiredErrorHandler.swift; sourceTree = "<group>"; };
 		E90A2F0C28EEC674005AF571 /* TextFieldStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldStyle.swift; sourceTree = "<group>"; };
 		E90B7DB528117DED001831FB /* DynamicFontLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicFontLabel.swift; sourceTree = "<group>"; };
+		E90BE8ED2BF3A33C00002506 /* ListBackgroundStyleModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListBackgroundStyleModifier.swift; sourceTree = "<group>"; };
 		E916CE8B2B6C346500982555 /* AudioRecordKeyboardViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecordKeyboardViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		E91DCC33278DAEDA00B66DD7 /* GroupDetailsServicesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupDetailsServicesCell.swift; sourceTree = "<group>"; };
 		E91DCC35278DE2AE00B66DD7 /* ConversationCreateServicesCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateServicesCell.swift; sourceTree = "<group>"; };
@@ -7857,6 +7859,7 @@
 				EEF37ED52BDFD2600055C9E1 /* Button styles */,
 				E902B3B329ED3A240090DE32 /* SwiftUIButton+HapticFeedback.swift */,
 				EEF37ED12BDFC8C10055C9E1 /* Color+Named.swift */,
+				E90BE8ED2BF3A33C00002506 /* ListBackgroundStyleModifier.swift */,
 			);
 			path = "SwiftUI Helpers";
 			sourceTree = "<group>";
@@ -9306,6 +9309,7 @@
 				16325E651EE03CC4000E72EB /* SearchResultsView.swift in Sources */,
 				E5443393286192CF00F2E0ED /* SwitchStyle.swift in Sources */,
 				5EFD914421C918E400080599 /* AuthenticationCodeVerificationInputHandler.swift in Sources */,
+				E90BE8EE2BF3A33C00002506 /* ListBackgroundStyleModifier.swift in Sources */,
 				EF883F292151190900B440CC /* UserCellSubtitleProtocol.swift in Sources */,
 				EFDC36DB2257A8F300F916F3 /* CollectionViewContainerCell.swift in Sources */,
 				A98CF97425A47295008818D8 /* ConversationProtocol.swift in Sources */,
