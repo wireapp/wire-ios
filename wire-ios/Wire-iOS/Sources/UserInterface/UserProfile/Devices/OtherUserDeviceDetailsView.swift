@@ -19,7 +19,7 @@
 import SwiftUI
 import WireCommonComponents
 
-struct ProfileDeviceDetailsView: View {
+struct OtherUserDeviceDetailsView: View {
 
     @Environment(\.dismiss) private var dismiss
 
@@ -193,4 +193,4 @@ struct ProfileDeviceDetailsView: View {
 
 // MARK: - DeviceInfoView conformance
 
-extension ProfileDeviceDetailsView: DeviceInfoView {}
+extension OtherUserDeviceDetailsView: DeviceInfoView {}
