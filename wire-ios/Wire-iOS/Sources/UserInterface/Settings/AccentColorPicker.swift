@@ -20,7 +20,7 @@ import SwiftUI
 import WireCommonComponents
 import WireSyncEngine
 
-struct ColorPickerView: View {
+struct AccentColorPicker: View {
 
     @State var selectedColor: AccentColor
 

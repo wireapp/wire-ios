@@ -21,7 +21,7 @@ import WireDataModel
 import WireSyncEngine
 import WireUtilities
 
-final class AccentColorPickerController: UIHostingController<ColorPickerView> {
+final class AccentColorPickerController: UIHostingController<AccentColorPicker> {
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
@@ -31,7 +31,7 @@ final class AccentColorPickerController: UIHostingController<ColorPickerView> {
     init(selfUser: EditableUserType, userSession: UserSession) {
         let accentColor = AccentColor(rawValue: selfUser.accentColorValue) ?? .default
 
-        let colorPickerView = ColorPickerView(
+        let colorPickerView = AccentColorPicker(
             selectedColor: accentColor,
             colors: AccentColor.allCases,
             onColorSelect: { accentColor in
