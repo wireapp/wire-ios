@@ -25,7 +25,7 @@ import Foundation
 /// and only the following integers are allowed: 1025 (partner),
 /// 1587 (member), 5951 (admin), 8191 (owner).
 
-public struct TeamMemberPermissions {
+public struct TeamMemberPermissions: Equatable {
 
     public let copyPermissions: Int64
 

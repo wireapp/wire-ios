@@ -55,22 +55,13 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamForID_SuccessResponse_200_V0() async throws {
         // Given
-        let teamID = Team.ID()
-        let creatorID = UUID()
         let httpClient = try HTTPClientMock(
             code: 200,
-            jsonResponse: """
-            {
-                "id": "\(teamID.transportString())",
-                "name": "teamName",
-                "creator": "\(creatorID.transportString())",
-                "icon": "iconID",
-                "icon_key": "iconKey"
-            }
-            """
+            payloadResourceName: "GetTeamSuccessResponseV0"
         )
 
         let sut = TeamsAPIV0(httpClient: httpClient)
+        let teamID = try XCTUnwrap(Team.ID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506"))
 
         // When
         let result = try await sut.getTeam(for: teamID)
@@ -81,7 +72,7 @@ final class TeamsAPITests: XCTestCase {
             Team(
                 id: teamID,
                 name: "teamName",
-                creatorID: creatorID,
+                creatorID: UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")!,
                 logoID: "iconID",
                 logoKey: "iconKey",
                 splashScreenID: nil
@@ -117,19 +108,7 @@ final class TeamsAPITests: XCTestCase {
         // Given
         let httpClient = try HTTPClientMock(
             code: 200,
-            jsonResponse: """
-            {
-                "conversation_roles": [
-                    {
-                        "conversation_role": "admin",
-                        "actions": [
-                            "add_conversation_member",
-                            "remove_conversation_member"
-                        ]
-                    }
-                ]
-            }
-            """
+            payloadResourceName: "GetTeamRolesSuccessResponseV0"
         )
 
         let sut = TeamsAPIV0(httpClient: httpClient)
@@ -178,28 +157,9 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetMembers_SuccessResponse_200_V0() async throws {
         // Given
-        let userID = UUID()
-        let creatorID = UUID()
-        let creationDate = Date()
         let httpClient = try HTTPClientMock(
             code: 200,
-            jsonResponse: """
-            {
-                "hasMore": true,
-                "members": [
-                    {
-                        "user": "\(userID.transportString())",
-                        "permissions": {
-                            "copy": 123,
-                            "self": 456
-                        },
-                        "created_by": "\(creatorID.transportString())",
-                        "created_at": "\(ISO8601DateFormatter.default.string(from: creationDate))",
-                        "legalhold_status": "pending"
-                    }
-                ]
-            }
-            """
+            payloadResourceName: "GetTeamMembersSuccessResponseV0"
         )
 
         let sut = TeamsAPIV0(httpClient: httpClient)
@@ -211,14 +171,21 @@ final class TeamsAPITests: XCTestCase {
         )
 
         // Then
-        XCTAssertEqual(result.count, 1)
-        let member = try XCTUnwrap(result.first)
-        XCTAssertEqual(member.userID, userID)
-        let actualCreationDate = try XCTUnwrap(member.creationDate)
-        XCTAssertEqual(actualCreationDate.timeIntervalSince1970, creationDate.timeIntervalSince1970, accuracy: 0.1)
-        XCTAssertEqual(member.legalholdStatus, .pending)
-        XCTAssertEqual(member.permissions?.copyPermissions, 123)
-        XCTAssertEqual(member.permissions?.selfPermissions, 456)
+        XCTAssertEqual(
+            result,
+            [
+                TeamMember(
+                    userID: try XCTUnwrap(UUID(uuidString: "849f56b9-5c9f-4682-ad76-c580b5724464")),
+                    creationDate: try XCTUnwrap(ISO8601DateFormatter.default.date(from: "2024-05-14T08:55:04.779Z")),
+                    creatorID: try XCTUnwrap(UUID(uuidString: "c57d68c8-1ed4-41c7-b0a8-33026b7381fc")),
+                    legalholdStatus: .pending,
+                    permissions: TeamMemberPermissions(
+                        copyPermissions: 123,
+                        selfPermissions: 456
+                    )
+                )
+            ]
+        )
     }
 
     func testGetTeamMembers_FailureResponse_InvalidQueryParameter_V0() async throws {
@@ -323,23 +290,13 @@ final class TeamsAPITests: XCTestCase {
 
     func testGetTeamForID_SuccessResponse_200_V2() async throws {
         // Given
-        let teamID = Team.ID()
-        let creatorID = UUID()
         let httpClient = try HTTPClientMock(
             code: 200,
-            jsonResponse: """
-            {
-                "id": "\(teamID.transportString())",
-                "name": "teamName",
-                "creator": "\(creatorID.transportString())",
-                "icon": "iconID",
-                "icon_key": "iconKey",
-                "splash_screen": "splashScreen"
-            }
-            """
+            payloadResourceName: "GetTeamSuccessResponseV2"
         )
 
         let sut = TeamsAPIV2(httpClient: httpClient)
+        let teamID = try XCTUnwrap(Team.ID(uuidString: "213248a1-5499-418f-8173-5010d1c1e506"))
 
         // When
         let result = try await sut.getTeam(for: teamID)
@@ -350,7 +307,7 @@ final class TeamsAPITests: XCTestCase {
             Team(
                 id: teamID,
                 name: "teamName",
-                creatorID: creatorID,
+                creatorID: try XCTUnwrap(UUID(uuidString: "302c59b0-037c-4b0f-a3ed-ccdbfb4cfe2c")),
                 logoID: "iconID",
                 logoKey: "iconKey",
                 splashScreenID: "splashScreen"

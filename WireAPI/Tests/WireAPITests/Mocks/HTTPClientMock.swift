@@ -36,7 +36,34 @@ final class HTTPClientMock: HTTPClient {
         }
     }
 
-    convenience init(code: Int, errorLabel: String) throws {
+    convenience init(
+        code: Int,
+        payloadResourceName: String
+    ) throws {
+        guard let url = Bundle.module.url(
+            forResource: payloadResourceName,
+            withExtension: "json"
+        ) else {
+            throw HTTPClientMockError(message: "payload resource \(payloadResourceName).json not found")
+        }
+
+        let payload: Data
+        do {
+            payload = try Data(contentsOf: url)
+        } catch {
+            throw HTTPClientMockError(message: "unable to load data from resource: \(error)")
+        }
+
+        self.init(
+            code: code,
+            payload: payload
+        )
+    }
+
+    convenience init(
+        code: Int,
+        errorLabel: String
+    ) throws {
         try self.init(
             code: code,
             jsonResponse: """
@@ -49,11 +76,24 @@ final class HTTPClientMock: HTTPClient {
         )
     }
 
-    convenience init(code: Int, jsonResponse: String) throws {
+    convenience init(
+        code: Int,
+        jsonResponse: String
+    ) throws {
         guard let payload = jsonResponse.data(using: .utf8) else {
             throw HTTPClientMockError(message: "failed to create response payload data")
         }
 
+        self.init(
+            code: code,
+            payload: payload
+        )
+    }
+
+    convenience init(
+        code: Int,
+        payload: Data
+    ) {
         self.init { _ in
             HTTPResponse(
                 code: code,
