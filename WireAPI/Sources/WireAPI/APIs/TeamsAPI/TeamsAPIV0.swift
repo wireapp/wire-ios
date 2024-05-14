@@ -27,17 +27,8 @@ class TeamsAPIV0: TeamsAPI {
         self.httpClient = httpClient
     }
 
-    var apiVersion: APIVersion {
-        .v0
-    }
-
     func basePath(for teamID: Team.ID) -> String {
-        switch apiVersion {
-        case .v0:
-            "/teams/\(teamID.transportString())"
-        default:
-            "/v\(apiVersion.rawValue)/teams/\(teamID.transportString())"
-        }
+        "/teams/\(teamID.transportString())"
     }
 
     // MARK: - Get team
