@@ -19,11 +19,12 @@
 import Foundation
 
 public enum ConversationJoinError: Error {
-    case unknown, tooManyMembers, invalidCode, noConversation, guestLinksDisabled
+    case unknown, tooManyMembers, invalidCode, noConversation, guestLinksDisabled, invalidConversationPassword
 
     init(response: ZMTransportResponse) {
         switch (response.httpStatus, response.payloadLabel()) {
         case (403, "too-many-members"?): self = .tooManyMembers
+        case (403, "invalid-conversation-password"?): self = .invalidConversationPassword
         case (404, "no-conversation-code"?): self = .invalidCode
         case (404, "no-conversation"?): self = .noConversation
         case (409, "guest-links-disabled"?): self = .guestLinksDisabled
@@ -104,6 +105,12 @@ extension ZMConversation {
                 Logging.network.debug("Local conversations should be re-synced with remote ones")
                 return completion(.failure(ConversationJoinError.unknown))
 
+            case 403:
+                if let payload = response.payload as? [String: Any],
+                   let label = payload["label"] as? String,
+                   label == "invalid-conversation-password" {
+                    completion(.failure(ConversationJoinError.invalidConversationPassword))
+                }
             default:
                 let error = ConversationJoinError(response: response)
                 Logging.network.debug("Error joining conversation using a reusable code: \(error)")

@@ -1909,6 +1909,8 @@ Enter your identity provider’s credentials in the next step to update the cert
 "url_action.join_conversation.error.alert.link_is_invalid.message" = "The conversation link is invalid.";
 "url_action.join_conversation.error.alert.learn_more.action" = "Learn more about guest links";
 
+"url_action.join_conversation.error.alert.invalid_password.message" = "Password is incorrect, please try again.";
+
 // Deep Link
 "url_action.invalid_user.title" = "Wire can't find this person.";
 "url_action.invalid_user.message" = "You may not have permission with this account or it no longer exists.";

@@ -5999,6 +5999,10 @@ internal enum L10n {
               /// The conversation is full.
               internal static let message = L10n.tr("Localizable", "url_action.join_conversation.error.alert.converation_is_full.message", fallback: "The conversation is full.")
             }
+            internal enum InvalidPassword {
+              /// Password is incorrect, please try again.
+              internal static let message = L10n.tr("Localizable", "url_action.join_conversation.error.alert.invalid_password.message", fallback: "Password is incorrect, please try again.")
+            }
             internal enum LearnMore {
               /// Learn more about guest links
               internal static let action = L10n.tr("Localizable", "url_action.join_conversation.error.alert.learn_more.action", fallback: "Learn more about guest links")

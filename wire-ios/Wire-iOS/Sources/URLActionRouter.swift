@@ -295,6 +295,10 @@ private extension URLActionRouter {
 
         case conversationLinkIsDisabled
 
+        // The password for the secure guest link is wrong
+
+        case invalidConversationPassword
+
         /// A generic error case.
 
         case unknown
@@ -309,6 +313,9 @@ private extension URLActionRouter {
 
             case ConversationJoinError.guestLinksDisabled, ConversationFetchError.guestLinksDisabled:
                 self = .conversationLinkIsDisabled
+
+            case ConversationJoinError.invalidConversationPassword:
+                self = .invalidConversationPassword
 
             default:
                 self = .unknown
@@ -326,6 +333,9 @@ private extension URLActionRouter {
 
             case .conversationLinkIsInvalid, .conversationLinkIsDisabled:
                 return AlertStrings.LinkIsInvalid.message
+
+            case .invalidConversationPassword:
+                return AlertStrings.InvalidPassword.message
 
             case .unknown:
                 return L10n.Localizable.Error.User.unkownError
