@@ -35,6 +35,7 @@
           "branch": null,
           "revision": "a74f978733bdaf982758bfa23d70a189f4b4c1b6",
           "version": "1.2.3"
+<<<<<<< HEAD
         }
       },
       {
@@ -53,6 +54,8 @@
           "branch": null,
           "revision": "b45d1f2ed151d057b54504d653e0da5552844e34",
           "version": "1.0.0"
+=======
+>>>>>>> 811c06a12d (chore: update PINCache 3.0.4 [cherry-pick][WPB-8882] (#1438))
         }
       },
       {
