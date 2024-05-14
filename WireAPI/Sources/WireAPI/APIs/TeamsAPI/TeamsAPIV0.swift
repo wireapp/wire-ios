@@ -130,8 +130,19 @@ struct TeamResponseV0: Decodable, ToAPIModelConvertible {
     let name: String
     let creator: UUID
     let icon: String
-    let icon_key: String?
+    let iconKey: String?
     let binding: Bool?
+
+    enum CodingKeys: String, CodingKey {
+
+        case id
+        case name
+        case creator
+        case icon
+        case iconKey = "icon_key"
+        case binding
+
+    }
 
     func toAPIModel() -> Team {
         Team(
@@ -139,7 +150,7 @@ struct TeamResponseV0: Decodable, ToAPIModelConvertible {
             name: name,
             creatorID: creator,
             logoID: icon,
-            logoKey: icon_key,
+            logoKey: iconKey,
             splashScreenID: nil
         )
     }
@@ -148,22 +159,33 @@ struct TeamResponseV0: Decodable, ToAPIModelConvertible {
 
 struct ConversationRolesListResponseV0: Decodable, ToAPIModelConvertible {
 
-    let conversation_roles: [ConversationRoleResponseV0]
+    let conversationRoles: [ConversationRoleResponseV0]
+
+    enum CodingKeys: String, CodingKey {
+        case conversationRoles = "conversation_roles"
+    }
 
     func toAPIModel() -> [ConversationRole] {
-        conversation_roles.map { $0.toAPIModel() }
+        conversationRoles.map { $0.toAPIModel() }
     }
 
 }
 
 struct ConversationRoleResponseV0: Decodable {
 
-    let conversation_role: String?
+    let conversationRole: String?
     let actions: [ConversationActionResponseV0]
+
+    enum CodingKeys: String, CodingKey {
+
+        case conversationRole = "conversation_role"
+        case actions
+
+    }
 
     func toAPIModel() -> ConversationRole {
         ConversationRole(
-            name: conversation_role ?? "unknown",
+            name: conversationRole ?? "unknown",
             actions: Set(actions.map {
                 $0.toAPIModel()
             })
@@ -174,35 +196,35 @@ struct ConversationRoleResponseV0: Decodable {
 
 enum ConversationActionResponseV0: String, Decodable {
 
-    case add_conversation_member
-    case remove_conversation_member
-    case modify_conversation_name
-    case modify_conversation_message_timer
-    case modify_conversation_receipt_mode
-    case modify_conversation_access
-    case modify_other_conversation_member
-    case leave_conversation
-    case delete_conversation
+    case addConversationMember = "add_conversation_member"
+    case removeConversationMember = "remove_conversation_member"
+    case modifyConversationName = "modify_conversation_name"
+    case modifyConversationMessageTimer = "modify_conversation_message_timer"
+    case modifyConversationReceiptMode = "modify_conversation_receipt_mode"
+    case modifyConversationAccess = "modify_conversation_access"
+    case modifyOtherConversationMember = "modify_other_conversation_member"
+    case leaveConversation = "leave_conversation"
+    case deleteConversation = "delete_conversation"
 
     func toAPIModel() -> ConversationAction {
         switch self {
-        case .add_conversation_member:
+        case .addConversationMember:
             return .addConversationMember
-        case .remove_conversation_member:
+        case .removeConversationMember:
             return .removeConversationMember
-        case .modify_conversation_name:
+        case .modifyConversationName:
             return .modifyConversationName
-        case .modify_conversation_message_timer:
+        case .modifyConversationMessageTimer:
             return .modifyConversationMessageTimer
-        case .modify_conversation_receipt_mode:
+        case .modifyConversationReceiptMode:
             return .modifyConversationReceiptMode
-        case .modify_conversation_access:
+        case .modifyConversationAccess:
             return .modifyConversationAccess
-        case .modify_other_conversation_member:
+        case .modifyOtherConversationMember:
             return .modifyOtherConversationMember
-        case .leave_conversation:
+        case .leaveConversation:
             return .leaveConversation
-        case .delete_conversation:
+        case .deleteConversation:
             return .deleteConversation
         }
     }
@@ -226,16 +248,26 @@ struct TeamMemberResponseV0: Decodable {
 
     let user: UUID
     let permissions: PermissionsResponseV0?
-    let created_by: UUID?
-    let created_at: Date?
-    let legalhold_status: LegalholdStatusV0?
+    let createdBy: UUID?
+    let createdAt: Date?
+    let legalholdStatus: LegalholdStatusV0?
+
+    enum CodingKeys: String, CodingKey {
+
+        case user
+        case permissions
+        case createdBy = "created_by"
+        case createdAt = "created_at"
+        case legalholdStatus = "legalhold_status"
+
+    }
 
     func toAPIModel() -> TeamMember {
         TeamMember(
             userID: user,
-            creationDate: created_at,
-            creatorID: created_by,
-            legalholdStatus: legalhold_status?.toAPIModel(),
+            creationDate: createdAt,
+            creatorID: createdBy,
+            legalholdStatus: legalholdStatus?.toAPIModel(),
             permissions: permissions?.toAPIModel()
         )
     }
@@ -261,7 +293,7 @@ enum LegalholdStatusV0: String, Decodable {
     case enabled
     case pending
     case disabled
-    case no_consent
+    case noConsent = "no_consent"
 
     func toAPIModel() -> LegalholdStatus {
         switch self {
@@ -271,7 +303,7 @@ enum LegalholdStatusV0: String, Decodable {
             return .pending
         case .disabled:
             return .disabled
-        case .no_consent:
+        case .noConsent:
             return .noConsent
         }
     }

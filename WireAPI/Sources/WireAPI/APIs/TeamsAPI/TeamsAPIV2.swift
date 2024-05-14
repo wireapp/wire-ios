@@ -50,11 +50,23 @@ struct TeamResponseV2: Decodable, ToAPIModelConvertible {
     let name: String
     let creator: UUID
     let icon: String
-    let icon_key: String?
+    let iconKey: String?
     let binding: Bool?
 
     // New
-    let splash_screen: String?
+    let splashScreen: String?
+
+    enum CodingKeys: String, CodingKey {
+
+        case id
+        case name
+        case creator
+        case icon
+        case iconKey = "icon_key"
+        case binding
+        case splashScreen = "splash_screen"
+
+    }
 
     func toAPIModel() -> Team {
         Team(
@@ -62,8 +74,8 @@ struct TeamResponseV2: Decodable, ToAPIModelConvertible {
             name: name,
             creatorID: creator,
             logoID: icon,
-            logoKey: icon_key,
-            splashScreenID: splash_screen
+            logoKey: iconKey,
+            splashScreenID: splashScreen
         )
     }
 
