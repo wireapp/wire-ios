@@ -61,16 +61,11 @@ class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
 extension UIViewController {
     func wrapInNavigationController(
         navigationControllerClass: UINavigationController.Type = RotationAwareNavigationController.self,
-        navigationBarClass: AnyClass? = DefaultNavigationBar.self,
-        setBackgroundColor: Bool = false,
-        mode: UIUserInterfaceStyle = .light
+        navigationBarClass: AnyClass? = DefaultNavigationBar.self
     ) -> UINavigationController {
         let navigationController = navigationControllerClass.init(navigationBarClass: navigationBarClass, toolbarClass: nil)
         navigationController.setViewControllers([self], animated: false)
-        navigationController.overrideUserInterfaceStyle = mode
-        if setBackgroundColor {
-            navigationController.view.backgroundColor = SemanticColors.View.backgroundDefault
-        }
+        navigationController.view.backgroundColor = SemanticColors.View.backgroundDefault
 
         return navigationController
     }
