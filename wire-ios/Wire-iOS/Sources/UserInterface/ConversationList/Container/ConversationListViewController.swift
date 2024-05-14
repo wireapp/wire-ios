@@ -409,17 +409,6 @@ private extension NSAttributedString {
     }
 }
 
-extension UITabBar {
-    // Workaround for new UITabBar behavior where on iPad,
-    // the UITabBar shows the UITabBarItem icon next to the text
-    override open var traitCollection: UITraitCollection {
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            return UITraitCollection(traitsFrom: [super.traitCollection, UITraitCollection(horizontalSizeClass: .compact)])
-        }
-        return super.traitCollection
-    }
-}
-
 // MARK: - ConversationListTopBarViewControllerDelegate
 
 extension ConversationListViewController: ConversationListTopBarViewControllerDelegate {
