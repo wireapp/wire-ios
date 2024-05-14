@@ -50,7 +50,7 @@ extension ConversationContentViewController {
         canvasViewController.navigationItem.setupNavigationBarTitle(title: message.conversationLike?.displayName ?? "")
         canvasViewController.select(editMode: editMode, animated: false)
 
-        present(canvasViewController.wrapInNavigationController(setBackgroundColor: true), animated: true)
+        present(canvasViewController.wrapInNavigationController(), animated: true)
     }
 
     func messageAction(actionId: MessageAction,
