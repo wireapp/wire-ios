@@ -386,18 +386,7 @@ extension ProfileViewController: ProfileFooterViewDelegate, IncomingRequestFoote
 
         dismiss(animated: true) { [weak self] in
             self?.viewModel.transitionToListAndEnqueue(leftViewControllerRevealed: leftViewControllerRevealed) {
-                guard let zClientViewController = ZClientViewController.shared else {
-                    return assertionFailure()
-                }
-                // TODO [WPB-6647]: Remove this temporary workaround within the navigation overhaul epic. (folder support is removed)
-                switch zClientViewController.mainTabBarController.selectedIndex {
-                case 1:
-                    zClientViewController.conversationListViewController.presentSettings()
-                case 2:
-                    zClientViewController.conversationListWithFoldersViewController.presentSettings()
-                default:
-                    break
-                }
+                ZClientViewController.shared?.conversationListViewController.presentSettings()
             }
         }
     }

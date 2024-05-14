@@ -16,22 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-
 extension ZClientViewController: SplitViewControllerDelegate {
 
     func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
-
-        guard let zClientViewController = ZClientViewController.shared else {
-            assertionFailure()
-            return false
-        }
-        // TODO [WPB-6647]: Remove this temporary workaround within the navigation overhaul epic. (folder support is removed)
-        let conversationListViewController = if zClientViewController.mainTabBarController.selectedIndex == 2 {
-            zClientViewController.conversationListWithFoldersViewController
-        } else {
-            zClientViewController.conversationListViewController
-        }
 
         return splitViewController.rightViewController != nil &&
         splitViewController.leftViewController == conversationListViewController.tabBarController &&
