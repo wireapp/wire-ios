@@ -29,9 +29,6 @@ where DateProvider: CurrentDateProviding {
 
     func invoke() async -> Bool {
 
-        // TODO: clean up
-        return true
-
         let lastPresentationDate = userDefaults.value(for: .lastTimeNotificationPermissionHintWasShown)
         if let lastPresentationDate, lastPresentationDate < currentDateProvider.now.addingTimeInterval(-24 * 3600) {
             // hint has already been shown within the last 24 hours

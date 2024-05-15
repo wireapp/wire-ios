@@ -130,7 +130,6 @@ final class ShareContactsViewController: UIViewController {
 
         shareContactsContainerView.addSubview(shareContactsButton)
 
-        // TODO: present properly
         addToSelf(addressBookAccessDeniedViewController)
         addressBookAccessDeniedViewController.delegate = self
         addressBookAccessDeniedViewController.view.isHidden = true
