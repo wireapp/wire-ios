@@ -55,6 +55,10 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
         self.syncContext = syncContext
     }
 
+    deinit {
+        observingTask?.cancel()
+    }
+
     // MARK: Observing
 
     public func startObserving() {
