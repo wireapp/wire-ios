@@ -31,6 +31,9 @@ struct AccentColorPicker: View {
     private let colorViewCornerRadius: CGFloat = 14
 
     var body: some View {
+        // The NavigationView is needed here to properly set the font size for the navigation bar title.
+        // Currently, there's no other way to set the font size of the navigation bar title to the desired value.
+        // Without the NavigationView, the title would be too small.
         NavigationView {
             List(colors, id: \.self) { color in
                 cell(for: color)
