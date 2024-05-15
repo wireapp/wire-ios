@@ -73,10 +73,6 @@ public final class ZMUserSession: NSObject {
     private(set) var mlsService: MLSServiceInterface
     private(set) var proteusProvider: ProteusProviding!
     let proteusToMLSMigrationCoordinator: ProteusToMLSMigrationCoordinating
-    let mlsConversationVerificationStatusUpdater: MLSConversationVerificationStatusUpdating
-
-    public let updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol
-    private var mlsGroupVerificationStatusProcessor: MLSGroupVerificationStatusProcessor?
 
     public lazy var featureRepository = FeatureRepository(context: syncContext)
 
@@ -93,6 +89,8 @@ public final class ZMUserSession: NSObject {
     public var hasCompletedInitialSync: Bool = false
 
     public var topConversationsDirectory: TopConversationsDirectory
+
+    public private(set) var mlsGroupVerification: MLSGroupVerification?
 
     // MARK: Computed Properties
 
@@ -169,10 +167,12 @@ public final class ZMUserSession: NSObject {
     }()
 
     lazy var cRLsChecker: CertificateRevocationListsChecker = {
+        // TODO: remove force cast
+
         return CertificateRevocationListsChecker(
             userID: userId,
             crlAPI: CertificateRevocationListAPI(),
-            mlsConversationsVerificationUpdater: mlsConversationVerificationStatusUpdater,
+            mlsConversationsVerificationUpdater: mlsGroupVerification!.statusUpdater,
             selfClientCertificateProvider: selfClientCertificateProvider,
             coreCryptoProvider: coreCryptoProvider,
             context: coreDataStack.syncContext
@@ -367,8 +367,6 @@ public final class ZMUserSession: NSObject {
         lastE2EIUpdateDateRepository: any LastE2EIdentityUpdateDateRepositoryInterface,
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol,
         applicationStatusDirectory: ApplicationStatusDirectory,
-        updateMLSGroupVerificationStatusUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol,
-        mlsConversationVerificationStatusUpdater: any MLSConversationVerificationStatusUpdating,
         contextStorage: LAContextStorable,
         recurringActionService: any RecurringActionServiceInterface,
         dependencies: UserSessionDependencies
@@ -398,8 +396,6 @@ public final class ZMUserSession: NSObject {
         self.cryptoboxMigrationManager = cryptoboxMigrationManager
         self.conversationEventProcessor = ConversationEventProcessor(context: coreDataStack.syncContext)
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
-        self.updateMLSGroupVerificationStatus = updateMLSGroupVerificationStatusUseCase
-        self.mlsConversationVerificationStatusUpdater = mlsConversationVerificationStatusUpdater
         self.contextStorage = contextStorage
         self.recurringActionService = recurringActionService
         self.dependencies = dependencies
@@ -410,6 +406,7 @@ public final class ZMUserSession: NSObject {
         strategyDirectory: (any StrategyDirectoryProtocol)?,
         syncStrategy: ZMSyncStrategy?,
         operationLoop: ZMOperationLoop?,
+        mlsGroupVerification: MLSGroupVerification?,
         configuration: Configuration
     ) {
         coreDataStack.linkAnalytics(analytics)
@@ -455,12 +452,14 @@ public final class ZMUserSession: NSObject {
             )
         }
 
-        mlsGroupVerificationStatusProcessor = MLSGroupVerificationStatusProcessor(
-            updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatus,
+        let e2eiVerificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
+        self.mlsGroupVerification = MLSGroupVerification(
+            e2eiVerificationStatusService: e2eiVerificationStatusService,
+            featureRepository: featureRepository,
             mlsService: mlsService,
-            syncContext: syncContext
+            syncContext: coreDataStack.syncContext
         )
-        mlsGroupVerificationStatusProcessor?.startObserving()
+        mlsGroupVerification?.startObserving()
 
         registerForCalculateBadgeCountNotification()
         registerForRegisteringPushTokenNotification()
@@ -487,7 +486,7 @@ public final class ZMUserSession: NSObject {
     public func tearDown() {
         guard !tornDown else { return }
 
-        mlsGroupVerificationStatusProcessor = nil
+        mlsGroupVerification = nil
 
         tokens.removeAll()
         application.unregisterObserverForStateChange(self)

@@ -457,7 +457,7 @@ final class ConversationViewController: UIViewController {
 
         Task {
             do {
-                try await userSession.updateMLSGroupVerificationStatus.invoke(
+                try await userSession.mlsGroupVerification?.updateUseCase.invoke(
                     for: conversation,
                     groupID: mlsGroupID)
                 setupNavigatiomItem()

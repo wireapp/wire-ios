@@ -41,13 +41,12 @@ struct ZMUserSessionBuilder {
     private var lastE2EIUpdateDateRepository: (any LastE2EIdentityUpdateDateRepositoryInterface)?
     private var lastEventIDRepository: (any LastEventIDRepositoryInterface)?
     private var mediaManager: (any MediaManagerType)?
-    private var mlsConversationVerificationStatusUpdater: (any MLSConversationVerificationStatusUpdating)?
+    private var mlsGroupVerification: MLSGroupVerification?
     private var mlsService: (any MLSServiceInterface)?
     private var proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?
     private var recurringActionService: (any RecurringActionServiceInterface)?
     private var sharedUserDefaults: UserDefaults?
     private var transportSession: (any TransportSessionType)?
-    private var updateMLSGroupVerificationStatusUseCase: (any UpdateMLSGroupVerificationStatusUseCaseProtocol)?
     private var userId: UUID?
 
     // MARK: - Initialize
@@ -73,13 +72,11 @@ struct ZMUserSessionBuilder {
             let lastE2EIUpdateDateRepository,
             let lastEventIDRepository,
             let mediaManager,
-            let mlsConversationVerificationStatusUpdater,
             let mlsService,
             let proteusToMLSMigrationCoordinator,
             let recurringActionService,
             let sharedUserDefaults,
             let transportSession,
-            let updateMLSGroupVerificationStatusUseCase,
             let userId
         else {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
@@ -105,8 +102,6 @@ struct ZMUserSessionBuilder {
             lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository,
             e2eiActivationDateRepository: e2eiActivationDateRepository,
             applicationStatusDirectory: applicationStatusDirectory,
-            updateMLSGroupVerificationStatusUseCase: updateMLSGroupVerificationStatusUseCase,
-            mlsConversationVerificationStatusUpdater: mlsConversationVerificationStatusUpdater,
             contextStorage: contextStorage,
             recurringActionService: recurringActionService,
             dependencies: dependencies
@@ -142,15 +137,9 @@ struct ZMUserSessionBuilder {
             syncContext: coreDataStack.syncContext,
             cryptoboxMigrationManager: cryptoboxMigrationManager
         )
-        let e2eiVerificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
         let lastEventIDRepository = LastEventIDRepository(
             userID: userId,
             sharedUserDefaults: sharedUserDefaults
-        )
-        let updateMLSGroupVerificationStatus = UpdateMLSGroupVerificationStatusUseCase(
-            e2eIVerificationStatusService: e2eiVerificationStatusService,
-            syncContext: coreDataStack.syncContext,
-            featureRepository: FeatureRepository(context: coreDataStack.syncContext)
         )
 
         // other dependencies
@@ -189,10 +178,6 @@ struct ZMUserSessionBuilder {
             userID: userId,
             sharedUserDefaults: UserDefaults.standard
         )
-        let mlsConversationVerificationStatusUpdater = MLSConversationVerificationStatusUpdater(
-            updateMLSGroupVerificationStatus: updateMLSGroupVerificationStatus,
-            syncContext: coreDataStack.syncContext
-        )
         let mlsService = mlsService ?? MLSService(
             context: coreDataStack.syncContext,
             coreCryptoProvider: coreCryptoProvider,
@@ -227,13 +212,11 @@ struct ZMUserSessionBuilder {
         self.lastE2EIUpdateDateRepository = lastE2EIdentityUpdateDateRepository
         self.lastEventIDRepository = lastEventIDRepository
         self.mediaManager = mediaManager
-        self.mlsConversationVerificationStatusUpdater = mlsConversationVerificationStatusUpdater
         self.mlsService = mlsService
         self.proteusToMLSMigrationCoordinator = proteusToMLSMigrationCoordinator
         self.recurringActionService = recurringActionService
         self.sharedUserDefaults = sharedUserDefaults
         self.transportSession = transportSession
-        self.updateMLSGroupVerificationStatusUseCase = updateMLSGroupVerificationStatus
         self.userId = userId
     }
 

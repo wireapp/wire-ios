@@ -223,6 +223,10 @@ public protocol UserSession: AnyObject {
         completion: @escaping (Swift.Result<ZMConversation, CreateTeamOneOnOneConversationError>) -> Void
     )
 
+    // MARK: MLS
+
+    var mlsGroupVerification: MLSGroupVerification? { get }
+
     // MARK: Use Cases
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
@@ -236,8 +240,6 @@ public protocol UserSession: AnyObject {
     var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol { get }
 
     var enrollE2EICertificate: EnrollE2EICertificateUseCaseProtocol { get }
-
-    var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol { get }
 
     var checkOneOnOneConversationIsReady: CheckOneOnOneConversationIsReadyUseCaseProtocol { get }
 

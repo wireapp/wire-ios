@@ -19,11 +19,13 @@
 import Foundation
 
 public struct MLSGroupVerification {
-    let statusUpdater: any MLSConversationVerificationStatusUpdating
-    let updateUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol
+
+    public let statusUpdater: any MLSConversationVerificationStatusUpdating
+    public let updateUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol
+
     let processor: MLSGroupVerificationStatusProcessor
 
-    init(
+    public init(
         e2eiVerificationStatusService: any E2EIVerificationStatusServiceInterface,
         featureRepository: any FeatureRepositoryInterface,
         mlsService: any MLSServiceInterface,
@@ -45,5 +47,9 @@ public struct MLSGroupVerification {
             mlsService: mlsService,
             syncContext: syncContext
         )
+    }
+
+    public func startObserving() {
+        processor.startObserving()
     }
 }
