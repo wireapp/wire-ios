@@ -21,7 +21,6 @@ import Foundation
 class UsersAPIV0: UsersAPI {
 
     let httpClient: HTTPClient
-    let decoder = ResponsePayloadDecoder(decoder: .defaultDecoder)
 
     init(httpClient: HTTPClient) {
         self.httpClient = httpClient
