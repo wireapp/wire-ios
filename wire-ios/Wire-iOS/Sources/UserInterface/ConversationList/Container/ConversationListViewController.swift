@@ -201,11 +201,7 @@ final class ConversationListViewController: UIViewController, ConversationListCo
 
     private func setupListContentController() {
         listContentController.contentDelegate = viewModel
-        let navigationController = UINavigationController(rootViewController: listContentController)
-        // navigationController.navigationBar.isTranslucent = false
-        // navigationController.navigationBar.barTintColor = SemanticColors.View.backgroundConversationList
-        // navigationController.navigationBar.backgroundColor = SemanticColors.View.backgroundConversationList
-        add(navigationController, to: contentContainer)
+        add(listContentController, to: contentContainer)
     }
 
     private func setupNoConversationLabel() {
@@ -228,7 +224,7 @@ final class ConversationListViewController: UIViewController, ConversationListCo
     }
 
     private func createViewConstraints() {
-        guard let conversationList = listContentController.navigationController!.view else { return }
+        guard let conversationList = listContentController.view else { return }
 
         contentContainer.translatesAutoresizingMaskIntoConstraints = false
         conversationList.translatesAutoresizingMaskIntoConstraints = false
