@@ -56,7 +56,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             transportSession: transportSession,
             contextProvider: contextProvider
         ) { [weak self] response in
-            guard let strongSelf = self, let delegate = delegate else {
+            guard let self, let delegate else {
                 return
             }
 

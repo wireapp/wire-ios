@@ -179,7 +179,7 @@ struct ConversationJoinRequestFactory {
             URLQueryItem.Key.conversationCode: code
         ]
 
-        if apiVersion.rawValue >= 4, let password = password {
+        if apiVersion >= .v4, let password = password {
             payload[URLQueryItem.Key.password] = password
         }
 
