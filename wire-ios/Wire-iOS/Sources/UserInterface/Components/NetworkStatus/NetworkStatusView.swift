@@ -257,10 +257,10 @@ private extension DatadogWrapper {
             let data = try JSONEncoder().encode(LogInfo(status: String(describing: networkStatus)))
             let jsonString = String(data: data, encoding: .utf8)
             let message = "NETWORK_STATUS_VIEW_STATE: \(jsonString ?? "")"
-            self.debug(message)
+            self.debug(message, attributes: nil)
         } catch {
             let message = "NETWORK_STATUS_VIEW_STATE: failure: \(error.localizedDescription)"
-            self.error(message)
+            self.error(message, attributes: nil)
         }
     }
 }

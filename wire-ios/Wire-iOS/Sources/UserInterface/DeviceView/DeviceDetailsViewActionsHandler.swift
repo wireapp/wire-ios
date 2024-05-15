@@ -61,7 +61,7 @@ final class DeviceDetailsViewActionsHandler: DeviceDetailsViewActions, Observabl
         do {
             return try await startE2EIdentityEnrollment()
         } catch {
-            logger.error(error.localizedDescription)
+            logger.error(error.localizedDescription, attributes: nil)
             throw error
         }
     }

@@ -17,7 +17,16 @@
 //
 
 import Foundation
-import WireSystem
+
+public protocol RemoteLogger {
+    func log(message: String, error: Error?, attributes: [String: Encodable]?, level: RemoteMonitoring.Level)
+}
+
+extension RemoteLogger {
+    func log(message: String, error: Error? = nil, attributes: [String: Encodable]? = nil, level: RemoteMonitoring.Level = .debug) {
+        RemoteMonitoring.remoteLogger?.log(message: message, error: error, attributes: attributes, level: level)
+    }
+}
 
 public final class RemoteMonitoring: NSObject {
     @objc public enum Level: Int {
@@ -35,10 +44,10 @@ public final class RemoteMonitoring: NSObject {
         self.level = level
     }
 
-    public static var remoteLogger: WireLogger?
+    public static var remoteLogger: RemoteLogger?
 
     @objc func log(_ message: String, error: Error? = nil) {
-        Self.remoteLogger?.
+        Self.remoteLogger?.log(message: message, error: nil, attributes: nil, level: level)
     }
 
     @objc func log(request: NSURLRequest) {

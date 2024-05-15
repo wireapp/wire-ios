@@ -121,17 +121,16 @@ public final class DatadogWrapper {
         level: LogLevel,
         message: String,
         error: Error? = nil,
-        attributes: [LogAttributes] = []
+        attributes: [String: Encodable]? = nil
     ) {
-        let mergedAttributes = self.flattenArray(attributes)
-        var plainAttributes = mergedAttributes.mapKeys({ key  in key.rawValue })
-        plainAttributes["build_number"] = bundleVersion
+        var attributes = attributes ?? .init()
+        attributes["build_number"] = bundleVersion
 
         logger?.log(
             level: level,
             message: message,
             error: error,
-            attributes: plainAttributes
+            attributes: attributes
         )
     }
 
@@ -204,7 +203,7 @@ public final class DatadogWrapper {
         level: LogLevel,
         message: String,
         error: Error? = nil,
-        attributes: [LogAttributes] = []
+        attributes: [String: Encodable]? = nil
     ) {}
 
     public func startMonitoring() {}
@@ -242,27 +241,27 @@ extension RemoteMonitoring.Level {
 }
 
 extension DatadogWrapper: WireSystem.LoggerProtocol {
-    public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func debug(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .debug, message: message.logDescription, attributes: attributes)
     }
 
-    public func info(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func info(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .info, message: message.logDescription, attributes: attributes)
     }
 
-    public func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func notice(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .notice, message: message.logDescription, attributes: attributes)
     }
 
-    public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func warn(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .warn, message: message.logDescription, attributes: attributes)
     }
 
-    public func error(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func error(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .error, message: message.logDescription, attributes: attributes)
     }
 
-    public func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
+    public func critical(_ message: LogConvertible, attributes: LogAttributes?) {
         log(level: .critical, message: message.logDescription, attributes: attributes)
     }
 }
