@@ -117,10 +117,13 @@ final class ConversationListViewController: UIViewController {
 
         createViewConstraints()
 
+<<<<<<< HEAD
         updateTitleView()
         updateAccountView()
         updateLegalHoldIndictor()
 
+=======
+>>>>>>> d84707478c (fix: showing onboarding hint (#1426))
         viewModel.viewController = self
     }
 
