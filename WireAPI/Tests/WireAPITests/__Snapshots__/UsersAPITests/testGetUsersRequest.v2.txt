@@ -1,0 +1,5 @@
+▿ HTTPRequest
+  ▿ body: Optional<Data>
+    - some: 226 bytes
+  - method: Method.post
+  - path: "/v2/list-users"
