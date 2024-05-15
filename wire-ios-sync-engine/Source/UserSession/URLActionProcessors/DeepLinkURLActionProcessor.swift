@@ -56,11 +56,11 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             transportSession: transportSession,
             contextProvider: contextProvider
         ) { [weak self] response in
-            guard let strongSelf = self, let delegate = delegate else {
+            guard let self, let delegate = delegate else {
                 return
             }
 
-            let viewContext = strongSelf.contextProvider.viewContext
+            let viewContext = self.contextProvider.viewContext
 
             switch response {
             case .success((let conversationId, let conversationName, let hasPassword)):
@@ -69,9 +69,9 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                     delegate.showConversation(conversation, at: nil)
                     delegate.completedURLAction(urlAction)
                 } else if hasPassword {
-                    strongSelf.handlePasswordPrompt(for: conversationName, key: key, code: code, delegate: delegate)
+                    self.handlePasswordPrompt(for: conversationName, key: key, code: code, delegate: delegate)
                 } else {
-                    strongSelf.handleJoinWithoutPassword(for: conversationName, key: key, code: code, urlAction: urlAction, delegate: delegate)
+                    self.handleJoinWithoutPassword(for: conversationName, key: key, code: code, urlAction: urlAction, delegate: delegate)
                 }
 
             case .failure(let error):
@@ -83,22 +83,22 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
 
     private func handlePasswordPrompt(for conversationName: String, key: String, code: String, delegate: PresentationDelegate) {
         delegate.showPasswordPrompt(for: conversationName) { [weak self] password in
-            guard let strongSelf = self, let password = password, !password.isEmpty else {
+            guard let self, let password = password, !password.isEmpty else {
                 return
             }
 
-            strongSelf.joinConversation(key: key, code: code, password: password, delegate: delegate)
+            self.joinConversation(key: key, code: code, password: password, delegate: delegate)
         }
     }
 
     private func handleJoinWithoutPassword(for conversationName: String, key: String, code: String, urlAction: URLAction, delegate: PresentationDelegate) {
         delegate.shouldPerformActionWithMessage(conversationName, action: .joinConversation(key: key, code: code)) { [weak self] shouldJoin in
-            guard let strongSelf = self, shouldJoin else {
+            guard let self, shouldJoin else {
                 delegate.completedURLAction(urlAction)
                 return
             }
 
-            strongSelf.joinConversation(key: key, code: code, password: nil, delegate: delegate)
+            self.joinConversation(key: key, code: code, password: nil, delegate: delegate)
         }
     }
 
@@ -111,11 +111,11 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             eventProcessor: eventProcessor,
             contextProvider: contextProvider
         ) { [weak self] response in
-            guard let strongSelf = self else { return }
+            guard let self else { return }
 
             switch response {
             case .success(let conversation):
-                strongSelf.synchronise(conversation) { result in
+                self.synchronise(conversation) { result in
                     DispatchQueue.main.async {
                         switch result {
                         case .success(let syncConversation):
