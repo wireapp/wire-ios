@@ -32,8 +32,6 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
         didUpdate selfUserStatus: UserStatus
     )
 
-    func scrollViewDidScroll(scrollView: UIScrollView!)
-
     func setState(_ state: ConversationListState,
                   animated: Bool,
                   completion: Completion?)
@@ -46,6 +44,9 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
 
     @discardableResult
     func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool
+
+    func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ConversationListViewController.ViewModel)
+    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ConversationListViewController.ViewModel)
 }
 
 extension ConversationListViewController {
@@ -215,16 +216,14 @@ extension ConversationListViewController.ViewModel {
 
         guard Settings.shared.pushAlertHappenedMoreThan1DayBefore else { return false }
 
-        UNUserNotificationCenter.current().checkPushesDisabled({ [weak self] pushesDisabled in
+        UNUserNotificationCenter.current().checkPushesDisabled { [weak self] pushesDisabled in
             DispatchQueue.main.async {
-                if pushesDisabled,
-                    let weakSelf = self {
+                if pushesDisabled, let self {
                     Settings.shared[.lastPushAlertDate] = Date()
-
-                    weakSelf.viewController?.showPermissionDeniedViewController()
+                    self.viewController?.showPermissionDeniedViewController()
                 }
             }
-        })
+        }
 
         return true
     }
@@ -246,9 +245,15 @@ extension ConversationListViewController.ViewModel: UserObserving {
         if changeInfo.nameChanged {
             selfUserStatus.name = changeInfo.user.name ?? ""
         }
+        if changeInfo.nameChanged || changeInfo.teamsChanged {
+            viewController?.conversationListViewControllerViewModelRequiresUpdatingAccountView(self)
+        }
         if changeInfo.trustLevelChanged {
             selfUserStatus.isProteusVerified = changeInfo.user.isVerified
             updateE2EICertifiedStatus()
+        }
+        if changeInfo.legalHoldStatusChanged {
+            viewController?.conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(self)
         }
         if changeInfo.availabilityChanged {
             selfUserStatus.availability = changeInfo.user.availability

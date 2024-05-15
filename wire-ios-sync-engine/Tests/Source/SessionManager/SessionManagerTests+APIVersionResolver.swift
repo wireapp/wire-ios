@@ -123,7 +123,7 @@ private class MockSessionManagerExpectationDelegate: SessionManagerDelegate {
     }
 
     func sessionManagerWillOpenAccount(_ account: Account, from selectedAccount: Account?, userSessionCanBeTornDown: @escaping () -> Void) {
-        // no op
+        userSessionCanBeTornDown()
     }
 
     func sessionManagerDidFailToLoadDatabase(error: Error) {
