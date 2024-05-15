@@ -42,8 +42,8 @@ final class MLSGroupVerificationTests: XCTestCase {
     }
 
     override func tearDown() async throws {
-        mockMLService = nil
         mockUpdateUseCase = nil
+        mockMLService = nil
         mockCoreDataStack = nil
 
         try coreDataStackHelper.cleanupDirectory()
@@ -55,16 +55,19 @@ final class MLSGroupVerificationTests: XCTestCase {
 
     func testStartObserving_givenEpochChange_thenInvokeUseCase() async {
         // given
-        var streamContinuation: AsyncStream<MLSGroupID>.Continuation!
-        mockMLService.epochChanges_MockValue = AsyncStream { continuation in
-            streamContinuation = continuation
-        }
-        mockUpdateUseCase.invokeForGroupID_MockMethod = { _, _ in }
+        let expectation = self.expectation(description: "")
 
         let mlsGroupID: MLSGroupID = .random()
-        await syncContext.perform {
-            let conversation = ZMConversation.insertGroupConversation(moc: self.syncContext, participants: [])
-            conversation?.mlsGroupID = mlsGroupID
+        await syncContext.perform { [self] in
+            _ = modelHelper.createMLSConversation(mlsGroupID: mlsGroupID, in: syncContext)
+        }
+
+        var streamContinuation: AsyncStream<MLSGroupID>.Continuation!
+        mockMLService.epochChanges_MockValue = AsyncStream {
+            streamContinuation = $0
+        }
+        mockUpdateUseCase.invokeForGroupID_MockMethod = { _, _ in
+            expectation.fulfill()
         }
 
         let mlsGroupVerification = makeMLSGroupVerification()
@@ -73,32 +76,68 @@ final class MLSGroupVerificationTests: XCTestCase {
         mlsGroupVerification.startObserving()
         streamContinuation.yield(mlsGroupID)
 
+        await fulfillment(of: [expectation], timeout: 0.5)
+
         // then
-        XCTAssertEqual(mockUpdateUseCase.invokeForGroupID_Invocations.count, 1)
+        let groupIDs = mockUpdateUseCase.invokeForGroupID_Invocations.map(\.groupID)
+        XCTAssertEqual(groupIDs, [mlsGroupID])
     }
 
-    func testStartObserving_givenDeinit_thenNotInvokeUseCase() async {
+    func testUpdateConversationByGroupID_givenMLSGroupID() async {
         // given
-        var streamContinuation: AsyncStream<MLSGroupID>.Continuation!
-        mockMLService.epochChanges_MockValue = AsyncStream { continuation in
-            streamContinuation = continuation
-        }
+        mockUpdateUseCase.invokeForGroupID_MockMethod = { _, _ in }
 
         let mlsGroupID: MLSGroupID = .random()
-        await syncContext.perform {
-            let conversation = ZMConversation.insertGroupConversation(moc: self.syncContext, participants: [])
-            conversation?.mlsGroupID = mlsGroupID
+        await syncContext.perform { [self] in
+            _ = modelHelper.createMLSConversation(mlsGroupID: mlsGroupID, in: syncContext)
         }
 
-        var mlsGroupVerification: MLSGroupVerification? = makeMLSGroupVerification()
+        let mlsGroupVerification = makeMLSGroupVerification()
 
         // when
-        mlsGroupVerification?.startObserving()
-        mlsGroupVerification = nil
-        streamContinuation.yield(mlsGroupID)
+        await mlsGroupVerification.updateConversation(by: mlsGroupID)
 
         // then
-        XCTAssert(mockUpdateUseCase.invokeForGroupID_Invocations.isEmpty)
+        let mlsGroupIDs = mockUpdateUseCase.invokeForGroupID_Invocations.map(\.groupID)
+        XCTAssertEqual(mlsGroupIDs, [mlsGroupID])
+    }
+
+    func testUpdateConversation_givenMLSGroupID() async {
+        // given
+        mockUpdateUseCase.invokeForGroupID_MockMethod = { _, _ in }
+
+        let mlsGroupID: MLSGroupID = .random()
+        let conversation = await syncContext.perform { [self] in
+            modelHelper.createMLSConversation(mlsGroupID: mlsGroupID, in: syncContext)
+        }
+
+        let mlsGroupVerification = makeMLSGroupVerification()
+
+        // when
+        await mlsGroupVerification.updateConversation(conversation, with: mlsGroupID)
+
+        // then
+        let mlsGroupIDs = mockUpdateUseCase.invokeForGroupID_Invocations.map(\.groupID)
+        XCTAssertEqual(mlsGroupIDs, [mlsGroupID])
+    }
+
+    func testUpdateAllConversations_givenMLSGroupID() async throws {
+        // given
+        mockUpdateUseCase.invokeForGroupID_MockMethod = { _, _ in }
+
+        let mlsGroupID: MLSGroupID = .random()
+        await syncContext.perform { [self] in
+            _ = modelHelper.createMLSConversation(mlsGroupID: mlsGroupID, in: syncContext)
+        }
+
+        let mlsGroupVerification = makeMLSGroupVerification()
+
+        // when
+        await mlsGroupVerification.updateAllConversations()
+
+        // then
+        let mlsGroupIDs = mockUpdateUseCase.invokeForGroupID_Invocations.map(\.groupID)
+        XCTAssertEqual(mlsGroupIDs, [mlsGroupID])
     }
 
     // MARK: Helpers
