@@ -18,8 +18,6 @@
 
 import UserNotifications
 
-// TODO: add sourcery support to WireUtilities, then delete redundant copy of this file in WireRequestStrategy
-
 // sourcery: AutoMockable
 /// An abstraction of the `UNUserNotificationCenter` object to facilitate mocking for unit tests.
 public protocol UserNotificationCenterAbstraction {
