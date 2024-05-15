@@ -67,6 +67,8 @@
 		54D06C5C1BC81AFF005F0FBB /* android_image.encrypted in Resources */ = {isa = PBXBuildFile; fileRef = 54D06C581BC81976005F0FBB /* android_image.encrypted */; };
 		54D06C5D1BC81B03005F0FBB /* android_image.decrypted in Resources */ = {isa = PBXBuildFile; fileRef = 54D06C5A1BC81983005F0FBB /* android_image.decrypted */; };
 		54FA8E821BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */; };
+		5915B9502BF4ACDC00215817 /* NativelySupportedUserDefaultsKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B94F2BF4ACDC00215817 /* NativelySupportedUserDefaultsKey.swift */; };
+		5915B9522BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9512BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift */; };
 		5966D83C2BD6BFCF00305BBC /* AccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D83B2BD6BFCF00305BBC /* AccentColor.swift */; };
 		5966D83E2BD6C20700305BBC /* AccentColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D83D2BD6C20700305BBC /* AccentColorTests.swift */; };
 		5966D8432BD7DF3100305BBC /* ZMAccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8422BD7DF3100305BBC /* ZMAccentColor.swift */; };
@@ -280,6 +282,8 @@
 		54D06C581BC81976005F0FBB /* android_image.encrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = android_image.encrypted; sourceTree = "<group>"; };
 		54D06C5A1BC81983005F0FBB /* android_image.decrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = android_image.decrypted; sourceTree = "<group>"; };
 		54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSData+ZMSCryptoTests.swift"; path = "Source/NSData+ZMSCryptoTests.swift"; sourceTree = "<group>"; };
+		5915B94F2BF4ACDC00215817 /* NativelySupportedUserDefaultsKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativelySupportedUserDefaultsKey.swift; sourceTree = "<group>"; };
+		5915B9512BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+NativelySupportedKey.swift"; sourceTree = "<group>"; };
 		5966D83B2BD6BFCF00305BBC /* AccentColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColor.swift; sourceTree = "<group>"; };
 		5966D83D2BD6C20700305BBC /* AccentColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColorTests.swift; sourceTree = "<group>"; };
 		5966D8422BD7DF3100305BBC /* ZMAccentColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccentColor.swift; sourceTree = "<group>"; };
@@ -489,6 +493,7 @@
 		3E88BD3A1B1F3EA300232589 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				5915B94E2BF4ACCC00215817 /* UserDefaults */,
 				A9A3B1EE24D9811B001AF38E /* Keychain */,
 				871939C421D4D93600738968 /* ZMMobileProvisionParser.m */,
 				54CA31141B74F2C400B820C0 /* Public */,
@@ -636,6 +641,15 @@
 				2577CB642B18D596007D3443 /* String+Clipping.swift */,
 			);
 			path = Public;
+			sourceTree = "<group>";
+		};
+		5915B94E2BF4ACCC00215817 /* UserDefaults */ = {
+			isa = PBXGroup;
+			children = (
+				5915B94F2BF4ACDC00215817 /* NativelySupportedUserDefaultsKey.swift */,
+				5915B9512BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift */,
+			);
+			path = UserDefaults;
 			sourceTree = "<group>";
 		};
 		5966D8412BD7DF2500305BBC /* AccentColor */ = {
@@ -971,6 +985,7 @@
 			files = (
 				877F501D1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift in Sources */,
 				E67995EA2B6D403A0024BD81 /* NSSet+IsEmpty.swift in Sources */,
+				5915B9502BF4ACDC00215817 /* NativelySupportedUserDefaultsKey.swift in Sources */,
 				3E88BE411B1F478200232589 /* ZMFunctional.m in Sources */,
 				16030DC021AEA0FE00F8032E /* Array+PartitionByKeyPath.swift in Sources */,
 				54CA31551B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.m in Sources */,
@@ -991,6 +1006,7 @@
 				5E4BC1BC2189E6A400A8682E /* AnyProperty.swift in Sources */,
 				7C8BFFE722FD612900B3C8A5 /* ZMPhoneNumberValidator.swift in Sources */,
 				63DFEAD129A3845600FCA830 /* DeveloperFlag.swift in Sources */,
+				5915B9522BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift in Sources */,
 				D5D65A13207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift in Sources */,
 				A9CDCDC4237D9A14008A9BC6 /* UIColor+Mixing.swift in Sources */,
 				87ECBDD51E78457C00596836 /* ExtremeCombiningCharactersValidator.swift in Sources */,

@@ -315,6 +315,12 @@
 		551CD27822BA288B00EE9AE5 /* LegalHoldDisclosureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551CD27722BA288B00EE9AE5 /* LegalHoldDisclosureController.swift */; };
 		55A42A701FC872600056752F /* CallQualityController+Budget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A42A6F1FC872600056752F /* CallQualityController+Budget.swift */; };
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
+		5915B94B2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B94A2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift */; };
+		5915B94D2BF4A76C00215817 /* ShouldPresentNotificationPermissionHintUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B94C2BF4A76C00215817 /* ShouldPresentNotificationPermissionHintUseCase.swift */; };
+		5915B9562BF4B8AC00215817 /* ShouldPresentNotificationPermissionHintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9552BF4B8AC00215817 /* ShouldPresentNotificationPermissionHintUseCaseTests.swift */; };
+		5915B9582BF4BA9700215817 /* DidPresentNotificationPermissionHintUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9572BF4BA9700215817 /* DidPresentNotificationPermissionHintUseCaseProtocol.swift */; };
+		5915B95A2BF4BAFF00215817 /* DidPresentNotificationPermissionHintUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9592BF4BAFE00215817 /* DidPresentNotificationPermissionHintUseCase.swift */; };
+		5915B95C2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B95B2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift */; };
 		5922D6D72BB56FA100A60408 /* Bundle+SecurityFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */; };
 		5922E92E2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */; };
 		5934DBEC2B7CE045001B83A7 /* UserStatus+initWithUserType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */; };
@@ -1406,7 +1412,6 @@
 		EE0CAEB42AB048BB00BD2DB7 /* Emoji.strings in Resources */ = {isa = PBXBuildFile; fileRef = EE0CAEB22AB048BB00BD2DB7 /* Emoji.strings */; };
 		EE0DE1CD21B172BF00CF3C4E /* ConversationCreateGuestsSectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE0DE1CC21B172BF00CF3C4E /* ConversationCreateGuestsSectionController.swift */; };
 		EE118C012031D1C300BC68D6 /* MarkdownTextViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE118BFF2031D17000BC68D6 /* MarkdownTextViewTests.swift */; };
-		EE1AFBFE2124330B003D1AE1 /* UNUserNotificationCenter+Permission.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1AFBFD2124330B003D1AE1 /* UNUserNotificationCenter+Permission.swift */; };
 		EE2538852166151C00932606 /* ConversationActionController+Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2538842166151C00932606 /* ConversationActionController+Notifications.swift */; };
 		EE2BCA0B2BD7C95B000C2ED3 /* SwitchBackendConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2BCA0A2BD7C95B000C2ED3 /* SwitchBackendConfirmationView.swift */; };
 		EE2BCA0D2BD7C987000C2ED3 /* SwitchBackendConfirmationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2BCA0C2BD7C987000C2ED3 /* SwitchBackendConfirmationViewModel.swift */; };
@@ -2363,6 +2368,12 @@
 		551CD27722BA288B00EE9AE5 /* LegalHoldDisclosureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalHoldDisclosureController.swift; sourceTree = "<group>"; };
 		55A42A6F1FC872600056752F /* CallQualityController+Budget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CallQualityController+Budget.swift"; sourceTree = "<group>"; };
 		55DD5C331FA236F60082170C /* CallQualityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityViewController.swift; sourceTree = "<group>"; };
+		5915B94A2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShouldPresentNotificationPermissionHintUseCaseProtocol.swift; sourceTree = "<group>"; };
+		5915B94C2BF4A76C00215817 /* ShouldPresentNotificationPermissionHintUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShouldPresentNotificationPermissionHintUseCase.swift; sourceTree = "<group>"; };
+		5915B9552BF4B8AC00215817 /* ShouldPresentNotificationPermissionHintUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShouldPresentNotificationPermissionHintUseCaseTests.swift; sourceTree = "<group>"; };
+		5915B9572BF4BA9700215817 /* DidPresentNotificationPermissionHintUseCaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidPresentNotificationPermissionHintUseCaseProtocol.swift; sourceTree = "<group>"; };
+		5915B9592BF4BAFE00215817 /* DidPresentNotificationPermissionHintUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DidPresentNotificationPermissionHintUseCase.swift; sourceTree = "<group>"; };
+		5915B95B2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift"; sourceTree = "<group>"; };
 		5922D6D62BB56FA100A60408 /* Bundle+SecurityFlags.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Bundle+SecurityFlags.swift"; sourceTree = "<group>"; };
 		5922E92D2BA0689E001A7B01 /* SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuccessfulCertificateEnrollmentViewControllerSnapshotTests.swift; sourceTree = "<group>"; };
 		5934DBEB2B7CE045001B83A7 /* UserStatus+initWithUserType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserStatus+initWithUserType.swift"; sourceTree = "<group>"; };
@@ -3495,7 +3506,6 @@
 		EE0CAEB32AB048BB00BD2DB7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Emoji.strings; sourceTree = "<group>"; };
 		EE0DE1CC21B172BF00CF3C4E /* ConversationCreateGuestsSectionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationCreateGuestsSectionController.swift; sourceTree = "<group>"; };
 		EE118BFF2031D17000BC68D6 /* MarkdownTextViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownTextViewTests.swift; sourceTree = "<group>"; };
-		EE1AFBFD2124330B003D1AE1 /* UNUserNotificationCenter+Permission.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UNUserNotificationCenter+Permission.swift"; sourceTree = "<group>"; };
 		EE2538842166151C00932606 /* ConversationActionController+Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationActionController+Notifications.swift"; sourceTree = "<group>"; };
 		EE2BCA0A2BD7C95B000C2ED3 /* SwitchBackendConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchBackendConfirmationView.swift; sourceTree = "<group>"; };
 		EE2BCA0C2BD7C987000C2ED3 /* SwitchBackendConfirmationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchBackendConfirmationViewModel.swift; sourceTree = "<group>"; };
@@ -4624,6 +4634,34 @@
 				5EB45760204EA75300BA217A /* CallQualityDismissalTransition.swift */,
 			);
 			path = CallQualityController;
+			sourceTree = "<group>";
+		};
+		5915B9492BF4A62100215817 /* IsNotificationAuthorizationStatusDeniedUseCase */ = {
+			isa = PBXGroup;
+			children = (
+				5915B9592BF4BAFE00215817 /* DidPresentNotificationPermissionHintUseCase.swift */,
+				5915B9572BF4BA9700215817 /* DidPresentNotificationPermissionHintUseCaseProtocol.swift */,
+				5915B95B2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift */,
+				5915B94C2BF4A76C00215817 /* ShouldPresentNotificationPermissionHintUseCase.swift */,
+				5915B94A2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift */,
+			);
+			path = IsNotificationAuthorizationStatusDeniedUseCase;
+			sourceTree = "<group>";
+		};
+		5915B9532BF4B88300215817 /* PermissionDeniedHint */ = {
+			isa = PBXGroup;
+			children = (
+				5915B9542BF4B89500215817 /* IsNotificationAuthorizationStatusDeniedUseCase */,
+			);
+			path = PermissionDeniedHint;
+			sourceTree = "<group>";
+		};
+		5915B9542BF4B89500215817 /* IsNotificationAuthorizationStatusDeniedUseCase */ = {
+			isa = PBXGroup;
+			children = (
+				5915B9552BF4B8AC00215817 /* ShouldPresentNotificationPermissionHintUseCaseTests.swift */,
+			);
+			path = IsNotificationAuthorizationStatusDeniedUseCase;
 			sourceTree = "<group>";
 		};
 		5922E92C2BA06889001A7B01 /* E2EIdentity */ = {
@@ -6102,9 +6140,9 @@
 		87DCF4741D34E95B00BB420F /* PermissionDeniedHint */ = {
 			isa = PBXGroup;
 			children = (
+				5915B9492BF4A62100215817 /* IsNotificationAuthorizationStatusDeniedUseCase */,
 				EF3BD69B225CC53B00ABB9B6 /* PermissionDeniedViewController.swift */,
 				EF3BD69E225CD4FE00ABB9B6 /* ShareContactsViewController.swift */,
-				EE1AFBFD2124330B003D1AE1 /* UNUserNotificationCenter+Permission.swift */,
 			);
 			path = PermissionDeniedHint;
 			sourceTree = "<group>";
@@ -7815,6 +7853,7 @@
 		E6F442FE2B16018D00D2B08A /* UserInterface */ = {
 			isa = PBXGroup;
 			children = (
+				5915B9532BF4B88300215817 /* PermissionDeniedHint */,
 				E6F442FF2B16019500D2B08A /* Conversation */,
 			);
 			path = UserInterface;
@@ -9466,6 +9505,7 @@
 				F1CB5D27215A3011001CCF5D /* NSAttributedString+Space.swift in Sources */,
 				16626500217DAC4F00300F45 /* ConversationMessageCell.swift in Sources */,
 				163E8C7921E363FE0030BD8D /* ConversationGuestsAllowedCell.swift in Sources */,
+				5915B95A2BF4BAFF00215817 /* DidPresentNotificationPermissionHintUseCase.swift in Sources */,
 				549D55AC1DBE03990035EB66 /* Settings+Logging.swift in Sources */,
 				EE2BCA0D2BD7C987000C2ED3 /* SwitchBackendConfirmationViewModel.swift in Sources */,
 				EEC7E82A2178B55100E32835 /* ConversationNotificationOptionsViewController.swift in Sources */,
@@ -9552,6 +9592,7 @@
 				06E097982A20BEE000B38C4A /* ZMConversation+IncompleteMetadata.swift in Sources */,
 				7C4918A11F8BB1A20038AF4B /* UIScreen+SafeArea.swift in Sources */,
 				8775BF1C2007C6B900A8AD93 /* SearchGroupSelector.swift in Sources */,
+				5915B9582BF4BA9700215817 /* DidPresentNotificationPermissionHintUseCaseProtocol.swift in Sources */,
 				872C8242214BFA8700236A76 /* UITextView+Range.swift in Sources */,
 				E666EDDC2B73EA3500C03E2B /* BackupActionCell.swift in Sources */,
 				E66258892B4D39D900C23E79 /* DeveloperDebugActionsViewModel.swift in Sources */,
@@ -9945,7 +9986,6 @@
 				EEDEA26823ED609C000EF7E3 /* ContactsViewController+Invite.swift in Sources */,
 				EE34D6D924336A6600F5BD1C /* TeamMetadataRefresher.swift in Sources */,
 				A923F1C924290325003F361F /* SplitViewControllerTransitionContext.swift in Sources */,
-				EE1AFBFE2124330B003D1AE1 /* UNUserNotificationCenter+Permission.swift in Sources */,
 				A949418723E08AF6001B0373 /* Settings.swift in Sources */,
 				7C25D755214911AC002E22BF /* UserSearchResultsViewController.swift in Sources */,
 				5E769C5421AD89A900785EB7 /* UIViewController+Dismiss.swift in Sources */,
@@ -10338,6 +10378,7 @@
 				F15650EC21DD1B4100210504 /* ImageCache.swift in Sources */,
 				D550F57020444924009E09DD /* ConversationActionController+ClearContent.swift in Sources */,
 				1682AEB920483CC5003A052A /* RenameGroupSectionController.swift in Sources */,
+				5915B94B2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift in Sources */,
 				EF23740E230D37EE006F53F3 /* NetworkInfo.swift in Sources */,
 				5E8FFC3121F098E00052DF03 /* ConfirmationCodeCell.swift in Sources */,
 				873C5FE81C10426A00D5132A /* ClientTableViewCell.swift in Sources */,
@@ -10363,12 +10404,14 @@
 				8775BF232008E0A400A8AD93 /* ServiceDetailViewController.swift in Sources */,
 				BF79B0FC20A98B60001BF4FE /* SelfCallParticipantView.swift in Sources */,
 				5E8C38B8212FDD68002AE12B /* ObservableSessionManager.swift in Sources */,
+				5915B94D2BF4A76C00215817 /* ShouldPresentNotificationPermissionHintUseCase.swift in Sources */,
 				1689FD4B2195C8B800A656E2 /* EphemeralCountdownView.swift in Sources */,
 				162917CE1F8CD327000F3E92 /* NetworkStatusViewController.swift in Sources */,
 				5E62802C222551CF0039A8AB /* IncomingRequestFooterView.swift in Sources */,
 				EF2F161E225748F100C44B88 /* ConnectRequestsCell.swift in Sources */,
 				0658F5AC25D16EA700DD6859 /* ColorScheme.swift in Sources */,
 				A918330F2419272E00CBD0B7 /* TokenSeparatorAttachment.swift in Sources */,
+				5915B95C2BF4BB5300215817 /* NativelySupportedUserDefaultsKey+lastTimeNotificationPermissionHintWasShown.swift in Sources */,
 				163495871F010F91004E80DB /* UnauthenticatedSession+Shared.swift in Sources */,
 				F1199D401FC849450070FAC3 /* ButtonDescription.swift in Sources */,
 				16616752223AAA5F00779AE3 /* SoundPreviewPlayer.swift in Sources */,
@@ -10845,6 +10888,7 @@
 				E6579E4B2AFFA00A004E7FD8 /* MockServiceUserType.swift in Sources */,
 				E9B439322B0783BD0069DA63 /* SelfProvider.swift in Sources */,
 				E6579E5F2AFFA024004E7FD8 /* MockMessage+Creation.swift in Sources */,
+				5915B9562BF4B8AC00215817 /* ShouldPresentNotificationPermissionHintUseCaseTests.swift in Sources */,
 				E6579E412AFF9CEE004E7FD8 /* TemporaryFileServiceTests.swift in Sources */,
 				E6579E6E2AFFA029004E7FD8 /* MockLoader.m in Sources */,
 				E6C25FF42B03550A00406A1C /* AppLockModuleInteractorTests.swift in Sources */,

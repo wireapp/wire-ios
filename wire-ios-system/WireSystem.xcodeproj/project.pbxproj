@@ -35,7 +35,7 @@
 		54FF9F121C48F67300B29ACE /* ZMSTimePoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */; };
 		54FF9F141C4906C700B29ACE /* ZMTimePointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9F131C4906C700B29ACE /* ZMTimePointTests.m */; };
 		59059B9B2B4DBA1D0087D1F1 /* SystemDateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */; };
-		59059B9C2B4DBA1D0087D1F1 /* DateProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B9A2B4DBA1D0087D1F1 /* DateProviding.swift */; };
+		59059B9C2B4DBA1D0087D1F1 /* CurrentDateProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59059B9A2B4DBA1D0087D1F1 /* CurrentDateProviding.swift */; };
 		59D985ED2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D985EC2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift */; };
 		8701221620F64171001E6342 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221520F64171001E6342 /* Cache.swift */; };
 		8701221920F641BE001E6342 /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221720F641A4001E6342 /* CacheTests.swift */; };
@@ -99,7 +99,7 @@
 		54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSTimePoint.m; sourceTree = "<group>"; };
 		54FF9F131C4906C700B29ACE /* ZMTimePointTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTimePointTests.m; sourceTree = "<group>"; };
 		59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemDateProvider.swift; sourceTree = "<group>"; };
-		59059B9A2B4DBA1D0087D1F1 /* DateProviding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateProviding.swift; sourceTree = "<group>"; };
+		59059B9A2B4DBA1D0087D1F1 /* CurrentDateProviding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentDateProviding.swift; sourceTree = "<group>"; };
 		59D985EC2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSAttributedStringExtensions.swift; sourceTree = "<group>"; };
 		8701221520F64171001E6342 /* Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		8701221720F641A4001E6342 /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
@@ -253,7 +253,7 @@
 			isa = PBXGroup;
 			children = (
 				59059B992B4DBA1D0087D1F1 /* SystemDateProvider.swift */,
-				59059B9A2B4DBA1D0087D1F1 /* DateProviding.swift */,
+				59059B9A2B4DBA1D0087D1F1 /* CurrentDateProviding.swift */,
 			);
 			path = DateProviding;
 			sourceTree = "<group>";
@@ -451,7 +451,7 @@
 				096A3A211B67CEF700565001 /* ZMSLogging.m in Sources */,
 				54DB81651DBFACE800AF495D /* CircularArray.swift in Sources */,
 				EE9AEC842BD1585500F7853F /* WireSystem.docc in Sources */,
-				59059B9C2B4DBA1D0087D1F1 /* DateProviding.swift in Sources */,
+				59059B9C2B4DBA1D0087D1F1 /* CurrentDateProviding.swift in Sources */,
 				F1670FAE22A7C5F500BC6811 /* SanitizedString.swift in Sources */,
 				F19E554522AA8748005C792D /* SafeForLoggingStringConvertible.swift in Sources */,
 				54DB81631DBF66CF00AF495D /* ZMSLog+Levels.swift in Sources */,

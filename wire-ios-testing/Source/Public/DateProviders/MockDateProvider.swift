@@ -19,12 +19,11 @@
 import Foundation
 import WireSystem
 
-public final class MockDateProvider: DateProviding {
+public final class MockDateProvider: CurrentDateProviding {
 
     public var now: Date
 
     public init(now: Date) {
         self.now = now
     }
-
 }

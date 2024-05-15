@@ -19,10 +19,13 @@
 import Foundation
 import WireSystem
 
-extension DateProviding where Self == MockStaticDateProvider {
-    public static func mock(_ now: Date) -> Self { .init(now: now) }
+extension CurrentDateProviding where Self == MockStaticDateProvider {
+
+    public static func mock(_ now: Date) -> Self {
+        .init(now: now)
+    }
 }
 
-public struct MockStaticDateProvider: DateProviding {
+public struct MockStaticDateProvider: CurrentDateProviding {
     public var now = Date.now
 }

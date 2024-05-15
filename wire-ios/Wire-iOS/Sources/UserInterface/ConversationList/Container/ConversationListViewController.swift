@@ -159,8 +159,6 @@ final class ConversationListViewController: UIViewController {
 
         state = .conversationList
 
-        closePushPermissionDialogIfNotNeeded()
-
         shouldAnimateNetworkStatusView = true
 
         ZClientViewController.shared?.notifyUserOfDisabledAppLockIfNeeded()

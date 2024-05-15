@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+// sourcery: AutoMockable
+/// Determines if the user should be presented a hint, that notifications cannot be shown.
+protocol ShouldPresentNotificationPermissionHintUseCaseProtocol {
 
-/// Abstracts accessing specific date/time values like `.now` in order to be mockable in unit tests.
-public protocol DateProviding {
-    var now: Date { get }
+    /// Determines if the user should be presented a hint to grant notification permissions.
+    /// - Returns: `true` if the user should be presented a screen for granting notification permissions. `false` will be returned if the permission is already granted or the hint has been presented already within 24 hours.
+    func invoke() async -> Bool
 }

@@ -22,7 +22,8 @@ import WireCommonComponents
 // MARK: - PermissionDeniedViewControllerDelegate
 
 protocol PermissionDeniedViewControllerDelegate: AnyObject {
-    func continueWithoutPermission(_ viewController: PermissionDeniedViewController)
+    func permissionDeniedViewControllerDidSkip(_ viewController: PermissionDeniedViewController)
+    func permissionDeniedViewControllerDidOpenNotificationSettings(_ viewController: PermissionDeniedViewController)
 }
 
 // MARK: - PermissionDeniedViewController
@@ -136,11 +137,12 @@ final class PermissionDeniedViewController: UIViewController {
         if let url = URL(string: UIApplication.openSettingsURLString) {
             UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
+        delegate?.permissionDeniedViewControllerDidOpenNotificationSettings(self)
     }
 
     @objc
     private func continueWithoutAccess(_ sender: Any?) {
-        delegate?.continueWithoutPermission(self)
+        delegate?.permissionDeniedViewControllerDidSkip(self)
     }
 
     // MARK: - Constraints
@@ -172,6 +174,5 @@ final class PermissionDeniedViewController: UIViewController {
                         laterButton.heightAnchor.constraint(equalToConstant: 56)]
 
         NSLayoutConstraint.activate(constraints)
-
     }
 }

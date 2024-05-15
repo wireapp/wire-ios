@@ -16,18 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import WireUtilities
 
-extension CurrentDateProviding where Self == SystemDateProvider {
-
-    /// Returns a new instance of `SystemDateProvider`.
-    public static var system: Self { .init() }
-}
-
-/// Provides date values based on the system clock.
-public struct SystemDateProvider: CurrentDateProviding {
-
-    public var now: Date { .now }
-
-    public init() {}
+extension NativelySupportedUserDefaultsKey where Self == UserDefaultsDateValueKey {
+    static var lastTimeNotificationPermissionHintWasShown: Self { .init("LastPushAlertDate") }
 }

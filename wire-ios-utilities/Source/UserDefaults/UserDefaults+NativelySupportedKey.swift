@@ -18,16 +18,13 @@
 
 import Foundation
 
-extension CurrentDateProviding where Self == SystemDateProvider {
+extension UserDefaults {
 
-    /// Returns a new instance of `SystemDateProvider`.
-    public static var system: Self { .init() }
-}
+    public func value<KeyType: NativelySupportedUserDefaultsKey>(for key: KeyType) -> KeyType.ValueType? {
+        value(forKey: key.rawValue) as? KeyType.ValueType
+    }
 
-/// Provides date values based on the system clock.
-public struct SystemDateProvider: CurrentDateProviding {
-
-    public var now: Date { .now }
-
-    public init() {}
+    public func setValue<KeyType: NativelySupportedUserDefaultsKey>(_ value: KeyType.ValueType, for key: KeyType) {
+        setValue(value, forKey: key.rawValue)
+    }
 }

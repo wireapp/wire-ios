@@ -20,23 +20,17 @@ import UIKit
 import UserNotifications
 
 extension ConversationListViewController: PermissionDeniedViewControllerDelegate {
-    func continueWithoutPermission(_ viewController: PermissionDeniedViewController) {
+
+    func permissionDeniedViewControllerDidSkip(_ viewController: PermissionDeniedViewController) {
         closePushPermissionDeniedDialog()
+    }
+
+    func permissionDeniedViewControllerDidOpenNotificationSettings(_ viewController: PermissionDeniedViewController) {
+        // no-op
     }
 }
 
 extension ConversationListViewController {
-
-    func closePushPermissionDialogIfNotNeeded() {
-        UNUserNotificationCenter.current().checkPushesDisabled({ pushesDisabled in
-            if !pushesDisabled,
-                self.pushPermissionDeniedViewController != nil {
-                DispatchQueue.main.async {
-                    self.closePushPermissionDeniedDialog()
-                }
-            }
-        })
-    }
 
     func closePushPermissionDeniedDialog() {
         pushPermissionDeniedViewController?.willMove(toParent: nil)
@@ -48,34 +42,15 @@ extension ConversationListViewController {
     }
 
     func showPermissionDeniedViewController() {
-        observeApplicationDidBecomeActive()
 
         let permissions = PermissionDeniedViewController.pushDeniedViewController()
-
         permissions.delegate = self
-
         addToSelf(permissions)
 
         permissions.view.translatesAutoresizingMaskIntoConstraints = false
         permissions.view.fitIn(view: view)
         pushPermissionDeniedViewController = permissions
 
-        concealContentContainer()
-    }
-
-    @objc func applicationDidBecomeActive(_ notif: Notification) {
-        closePushPermissionDialogIfNotNeeded()
-    }
-
-    private func observeApplicationDidBecomeActive() {
-        NotificationCenter.default.addObserver(self,
-                                               selector: #selector(applicationDidBecomeActive(_:)),
-                                               name: UIApplication.didBecomeActiveNotification,
-                                               object: nil)
-
-    }
-
-    private func concealContentContainer() {
         contentContainer.alpha = 0
     }
 }
