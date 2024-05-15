@@ -12,7 +12,7 @@
       },
       {
         "package": "DifferenceKit",
-        "repositoryURL": "https://github.com/wireapp/DifferenceKit",
+        "repositoryURL": "https://github.com/wireapp/DifferenceKit/",
         "state": {
           "branch": null,
           "revision": "eaf29c583df322d1d7c4c72c46a59eeb33bb54bf",
@@ -35,6 +35,15 @@
           "branch": null,
           "revision": "a74f978733bdaf982758bfa23d70a189f4b4c1b6",
           "version": "1.2.3"
+        }
+      },
+      {
+        "package": "Starscream",
+        "repositoryURL": "https://github.com/daltoniam/Starscream",
+        "state": {
+          "branch": null,
+          "revision": "c6bfd1af48efcc9a9ad203665db12375ba6b145a",
+          "version": "4.0.8"
         }
       },
       {
