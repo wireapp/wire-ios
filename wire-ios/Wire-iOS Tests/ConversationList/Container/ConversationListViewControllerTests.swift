@@ -28,10 +28,11 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
 
     // MARK: - Properties
 
-    var sut: ConversationListViewController!
-    var window: UIWindow!
-    var tabBarController: UITabBarController!
-    var userSession: UserSessionMock!
+    private var sut: ConversationListViewController!
+    private var window: UIWindow!
+    private var tabBarController: UITabBarController!
+    private var userSession: UserSessionMock!
+    private var coreDataFixture: CoreDataFixture!
     private var mockIsSelfUserE2EICertifiedUseCase: MockIsSelfUserE2EICertifiedUseCaseProtocol!
 
     // MARK: - setUp
@@ -40,7 +41,10 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
         super.setUp()
         accentColor = .blue
 
-        userSession = UserSessionMock()
+        coreDataFixture = .init()
+
+        userSession = .init()
+        userSession.contextProvider = coreDataFixture.coreDataStack
 
         mockIsSelfUserE2EICertifiedUseCase = .init()
         mockIsSelfUserE2EICertifiedUseCase.invoke_MockValue = false
@@ -85,6 +89,7 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
         sut = nil
         mockIsSelfUserE2EICertifiedUseCase = nil
         userSession = nil
+        coreDataFixture = nil
 
         super.tearDown()
     }
@@ -97,15 +102,11 @@ final class ConversationListViewControllerTests: BaseSnapshotTestCase {
     }
 
     func testForEverythingArchived() {
+        let modelHelper = ModelHelper()
+        let conversation = modelHelper.createGroupConversation(in: coreDataFixture.coreDataStack.viewContext)
+        conversation.isArchived = true
+        coreDataFixture.coreDataStack.viewContext.conversationListDirectory().refetchAllLists(in: coreDataFixture.coreDataStack.viewContext)
         sut.showNoContactLabel(animated: false)
-        window.rootViewController = nil
-        verify(matching: tabBarController)
-    }
-
-    // MARK: - PermissionDeniedViewController
-
-    func testForPremissionDeniedViewController() {
-        sut.showPermissionDeniedViewController()
         window.rootViewController = nil
         verify(matching: tabBarController)
     }

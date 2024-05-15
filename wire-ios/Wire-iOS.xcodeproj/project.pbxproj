@@ -11563,11 +11563,6 @@
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
-					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -11647,11 +11642,6 @@
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/Carthage/Build/OCMock.xcframework/ios-arm64_i386_x86_64-simulator\"",
-					"\"$(SRCROOT)/Carthage/Build/WireTesting.xcframework/ios-arm64_x86_64-simulator\"",
-				);
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

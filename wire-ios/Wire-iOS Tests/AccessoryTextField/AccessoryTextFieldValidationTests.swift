@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
 import XCTest
 
-final class AccessoryTextFieldValidateionTests: XCTestCase {
+@testable import Wire
+@testable import WireCommonComponents
+
+final class AccessoryTextFieldValidationTests: XCTestCase {
     var sut: ValidatedTextField!
     var mockViewController: MockViewController!
 
@@ -43,6 +45,8 @@ final class AccessoryTextFieldValidateionTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+
+        FontScheme.configure(with: .large)
 
         sut = ValidatedTextField(style: .default)
         mockViewController = MockViewController()
