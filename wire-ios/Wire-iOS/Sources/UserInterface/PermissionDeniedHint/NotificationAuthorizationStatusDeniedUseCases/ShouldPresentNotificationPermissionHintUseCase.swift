@@ -34,7 +34,7 @@ where DateProvider: CurrentDateProviding {
         guard notificationSettings.authorizationStatus == .denied else { return false }
 
         let lastPresentationDate = userDefaults.value(for: .lastTimeNotificationPermissionHintWasShown)
-        if let lastPresentationDate, lastPresentationDate > currentDateProvider.now.addingTimeInterval(-24 * 3600) {
+        if let lastPresentationDate, lastPresentationDate > currentDateProvider.now.addingTimeInterval(-.oneDay) {
             // hint has already been shown within the last 24 hours
             return false
         } else {

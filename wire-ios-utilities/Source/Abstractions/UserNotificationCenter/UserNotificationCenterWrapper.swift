@@ -22,7 +22,10 @@ public struct UserNotificationCenterWrapper: UserNotificationCenterAbstraction {
 
     private var userNotificationCenter: UNUserNotificationCenter
 
-    public var delegate: (any UNUserNotificationCenterDelegate)?
+    public var delegate: UNUserNotificationCenterDelegate? {
+        get { userNotificationCenter.delegate }
+        set { userNotificationCenter.delegate = newValue }
+    }
 
     public init(userNotificationCenter: UNUserNotificationCenter) {
         self.userNotificationCenter = userNotificationCenter

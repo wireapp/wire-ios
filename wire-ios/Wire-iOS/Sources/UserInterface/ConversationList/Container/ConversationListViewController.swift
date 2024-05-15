@@ -34,7 +34,7 @@ final class ConversationListViewController: UIViewController {
     /// internal View Model
     var state: ConversationListState = .conversationList
 
-    private var previouslySelectedTabIndex = 1
+    private var previouslySelectedTabIndex = MainTabBarControllerTab.conversations
 
     /// private
     private var viewDidAppearCalled = false
@@ -329,17 +329,19 @@ extension ConversationListViewController: UITabBarControllerDelegate {
 
     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
 
-        switch tabBarController.selectedIndex {
-        case 0:
+        switch MainTabBarControllerTab(rawValue: tabBarController.selectedIndex) {
+        case .contacts:
             presentPeoplePicker { [self] in
-                tabBarController.selectedIndex = previouslySelectedTabIndex
+                tabBarController.selectedIndex = previouslySelectedTabIndex.rawValue
             }
-        case 1, 2:
-            previouslySelectedTabIndex = tabBarController.selectedIndex
-        case 3:
+        case .conversations, .folders:
+            previouslySelectedTabIndex = .init(rawValue: tabBarController.selectedIndex) ?? .conversations
+        case .archive:
             setState(.archived, animated: true) { [self] in
-                tabBarController.selectedIndex = previouslySelectedTabIndex
+                tabBarController.selectedIndex = previouslySelectedTabIndex.rawValue
             }
+        case .none:
+            fallthrough
         default:
             fatalError("unexpected selected tab index")
         }

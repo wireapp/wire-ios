@@ -18,6 +18,10 @@
 
 import SwiftUI
 
+enum MainTabBarControllerTab: Int {
+    case contacts, conversations, folders, archive
+}
+
 func MainTabBarController(
     contacts: UIViewController,
     conversations: UIViewController,
@@ -27,45 +31,55 @@ func MainTabBarController(
 
     let mainTabBarController = UITabBarController()
     mainTabBarController.viewControllers = [contacts, conversations, folders, archive]
-    mainTabBarController.viewControllers?[0].tabBarItem = .init(
+    mainTabBarController.viewControllers?[tab: .contacts].tabBarItem = .init(
         title: L10n.Localizable.ConversationList.BottomBar.Contacts.title,
         image: .init(resource: .contactsOutline),
         selectedImage: .init(resource: .contactsFilled)
     )
-    mainTabBarController.viewControllers?[0].tabBarItem.accessibilityIdentifier = "bottomBarPlusButton"
-    mainTabBarController.viewControllers?[0].tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Contacts.description
-    mainTabBarController.viewControllers?[0].tabBarItem.accessibilityHint = L10n.Accessibility.TabBar.Contacts.hint
+    mainTabBarController.viewControllers?[tab: .contacts].tabBarItem.accessibilityIdentifier = "bottomBarPlusButton"
+    mainTabBarController.viewControllers?[tab: .contacts].tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Contacts.description
+    mainTabBarController.viewControllers?[tab: .contacts].tabBarItem.accessibilityHint = L10n.Accessibility.TabBar.Contacts.hint
 
-    mainTabBarController.viewControllers?[1].tabBarItem = .init(
+    mainTabBarController.viewControllers?[tab: .conversations].tabBarItem = .init(
         title: L10n.Localizable.ConversationList.BottomBar.Conversations.title,
         image: .init(resource: .TabBar.conversations),
         selectedImage: .init(resource: .TabBar.conversationsFilled)
     )
-    mainTabBarController.viewControllers?[1].tabBarItem.accessibilityIdentifier = "bottomBarRecentListButton"
-    mainTabBarController.viewControllers?[1].tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Conversations.description
+    mainTabBarController.viewControllers?[tab: .conversations].tabBarItem.accessibilityIdentifier = "bottomBarRecentListButton"
+    mainTabBarController.viewControllers?[tab: .conversations].tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Conversations.description
 
-    mainTabBarController.viewControllers?[2].tabBarItem = .init(
+    mainTabBarController.viewControllers?[tab: .folders].tabBarItem = .init(
         title: L10n.Localizable.ConversationList.BottomBar.Folders.title,
         image: .init(resource: .foldersOutline),
         selectedImage: .init(resource: .foldersFilled)
     )
-    mainTabBarController.viewControllers?[2].tabBarItem.accessibilityIdentifier = "bottomBarFolderListButton"
-    mainTabBarController.viewControllers?[2].tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Folders.description
+    mainTabBarController.viewControllers?[tab: .folders].tabBarItem.accessibilityIdentifier = "bottomBarFolderListButton"
+    mainTabBarController.viewControllers?[tab: .folders].tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Folders.description
 
-    mainTabBarController.viewControllers?[3].tabBarItem = .init(
+    mainTabBarController.viewControllers?[tab: .archive].tabBarItem = .init(
         title: L10n.Localizable.ConversationList.BottomBar.Archived.title,
         image: .init(resource: .archiveOutline),
         selectedImage: .init(resource: .archiveFilled)
     )
-    mainTabBarController.viewControllers?[3].tabBarItem.accessibilityIdentifier = "bottomBarArchivedButton"
-    mainTabBarController.viewControllers?[3].tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Archived.description
-    mainTabBarController.viewControllers?[3].tabBarItem.accessibilityHint = L10n.Accessibility.TabBar.Archived.hint
+    mainTabBarController.viewControllers?[tab: .archive].tabBarItem.accessibilityIdentifier = "bottomBarArchivedButton"
+    mainTabBarController.viewControllers?[tab: .archive].tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Archived.description
+    mainTabBarController.viewControllers?[tab: .archive].tabBarItem.accessibilityHint = L10n.Accessibility.TabBar.Archived.hint
 
-    mainTabBarController.selectedIndex = 1
+    mainTabBarController.selectedIndex = MainTabBarControllerTab.conversations.rawValue
     mainTabBarController.tabBar.backgroundColor = SemanticColors.View.backgroundDefault
     mainTabBarController.tabBar.unselectedItemTintColor = SemanticColors.Label.textTabBar
 
     return mainTabBarController
+}
+
+// MARK: -
+
+extension Array where Element == UIViewController {
+
+    fileprivate subscript(tab tab: MainTabBarControllerTab) -> Element {
+        get { self[tab.rawValue] }
+        set { self[tab.rawValue] = newValue }
+    }
 }
 
 // MARK: - Previews
@@ -81,12 +95,13 @@ struct MainTabBarController_Previews: PreviewProvider {
 private struct MainTabBarControllerWrapper: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> UITabBarController {
+        typealias BottomBar = L10n.Localizable.ConversationList.BottomBar
         let tabItem: (String) -> UIHostingController = { .init(rootView: Text($0)) }
         return MainTabBarController(
-            contacts: tabItem("Contacts"),
-            conversations: tabItem("Conversations"),
-            folders: tabItem("Folders"),
-            archive: tabItem("Archive")
+            contacts: tabItem(BottomBar.Contacts.title),
+            conversations: tabItem(BottomBar.Conversations.title),
+            folders: tabItem(BottomBar.Folders.title),
+            archive: tabItem(BottomBar.Archived.title)
         )
     }
 
