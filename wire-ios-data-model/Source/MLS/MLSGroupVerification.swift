@@ -21,6 +21,9 @@ import Foundation
 // sourcery: AutoMockable
 public protocol MLSGroupVerificationProtocol {
 
+    func startObserving()
+    func updateConversation(with groupID: MLSGroupID) async
+    func updateConversation(_ conversation: ZMConversation, with groupID: MLSGroupID) async
     func updateAllConversations() async
 
 }
@@ -29,7 +32,7 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
 
     // MARK: - Properties
 
-    public let updateUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol
+    private let updateUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol
 
     private let mlsService: MLSServiceInterface
     private let syncContext: NSManagedObjectContext
@@ -71,17 +74,21 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
 
     // MARK: Update Conversation
 
-    private func updateConversation(with groupID: MLSGroupID) async {
+    public func updateConversation(with groupID: MLSGroupID) async {
         guard let conversation = await syncContext.perform({
             ZMConversation.fetch(with: groupID, in: self.syncContext)
         }) else {
             return WireLogger.e2ei.warn("failed to fetch the conversation by mlsGroupID \(groupID)")
         }
 
+        await updateConversation(conversation, with: groupID)
+    }
+
+    public func updateConversation(_ conversation: ZMConversation, with groupID: MLSGroupID) async {
         do {
             try await updateUseCase.invoke(for: conversation, groupID: groupID)
         } catch {
-            WireLogger.e2ei.warn("failed to update MLS group: \(groupID) verification status: \(error)")
+            WireLogger.e2ei.warn("failed to update MLS group: \(groupID.safeForLoggingDescription) verification status: \(String(describing: error))")
         }
     }
 
@@ -99,11 +106,7 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
         }
 
         for (groupID, conversation) in groupIDConversationTuples {
-            do {
-                try await updateUseCase.invoke(for: conversation, groupID: groupID)
-            } catch {
-                WireLogger.e2ei.warn("failed to update verification status for (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
-            }
+            await updateConversation(conversation, with: groupID)
         }
     }
 }
