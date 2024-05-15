@@ -19,7 +19,8 @@
 import Foundation
 import UserNotifications
 
-@objc // TODO: delete in favor of the sourcery-generated mock
+@available(*, deprecated, message: "Use WireUtilities.MockUserNotificationCenterAbstraction")
+@objc(ZMUserNotificationCenterMock)
 public class UserNotificationCenterMock: NSObject, UserNotificationCenterAbstraction {
 
     weak public var delegate: UNUserNotificationCenterDelegate?
