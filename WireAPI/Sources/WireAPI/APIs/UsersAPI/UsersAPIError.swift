@@ -24,6 +24,6 @@ public enum UsersAPIError: Error {
 
     /// User was not found.
 
-    case notFound
+    case userNotFound
 
 }

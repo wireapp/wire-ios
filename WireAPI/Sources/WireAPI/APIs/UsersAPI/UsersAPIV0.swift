@@ -51,7 +51,7 @@ class UsersAPIV0: UsersAPI {
 
         return try ResponseParser()
             .success(code: 200, type: UserResponseV0.self)
-            .failure(code: 404, label: "not-found", error: UsersAPIError.notFound)
+            .failure(code: 404, label: "not-found", error: UsersAPIError.userNotFound)
             .parse(response)
     }
 
