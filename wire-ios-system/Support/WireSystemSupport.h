@@ -16,9 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+#import <Foundation/Foundation.h>
 
-/// Abstracts accessing specific date/time values like `.now` in order to be mockable in unit tests.
-public protocol DateProviding {
-    var now: Date { get }
-}
+//! Project version number for Support.
+FOUNDATION_EXPORT double SupportVersionNumber;
+
+//! Project version string for Support.
+FOUNDATION_EXPORT const unsigned char SupportVersionString[];
+
+// In this header, you should import all the public headers of your framework using statements like #import <Support/PublicHeader.h>

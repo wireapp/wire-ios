@@ -36,6 +36,7 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
     func showNoContactLabel(animated: Bool)
     func hideNoContactLabel(animated: Bool)
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler)
+    @MainActor
     func showPermissionDeniedViewController()
 
     @discardableResult
@@ -64,7 +65,6 @@ extension ConversationListViewController {
 
         let account: Account
         let selfUser: SelfUserType
-        let conversationListType: ConversationListHelperType.Type
         let userSession: UserSession
         private let notificationCenter: NotificationCenter
 
@@ -79,17 +79,20 @@ extension ConversationListViewController {
 
         var actionsController: ConversationActionController?
 
+        let shouldPresentNotificationPermissionHintUseCase: ShouldPresentNotificationPermissionHintUseCaseProtocol
+        let didPresentNotificationPermissionHintUseCase: DidPresentNotificationPermissionHintUseCaseProtocol
+
         init(
             account: Account,
             selfUser: SelfUserType,
-            conversationListType: ConversationListHelperType.Type = ZMConversationList.self,
             userSession: UserSession,
             notificationCenter: NotificationCenter = .default
         ) {
             self.account = account
             self.selfUser = selfUser
-            self.conversationListType = conversationListType
             self.userSession = userSession
+            shouldPresentNotificationPermissionHintUseCase = ShouldPresentNotificationPermissionHintUseCase()
+            didPresentNotificationPermissionHintUseCase = DidPresentNotificationPermissionHintUseCase()
             self.notificationCenter = notificationCenter
             super.init()
         }
@@ -152,7 +155,7 @@ extension ConversationListViewController.ViewModel {
                 return
             }
 
-            selfUser.fetchMarketingConsent(in: userSession, completion: {[weak self] result in
+            selfUser.fetchMarketingConsent(in: userSession) { [weak self] result in
                 switch result {
                 case .failure(let error):
                     switch error {
@@ -168,7 +171,7 @@ extension ConversationListViewController.ViewModel {
                     // The user already gave a marketing consent, no need to ask for it again.
                     return
                 }
-            })
+            }
         }
     }
 
@@ -179,27 +182,22 @@ extension ConversationListViewController.ViewModel {
     /// show PushPermissionDeniedDialog when necessary
     ///
     /// - Returns: true if PushPermissionDeniedDialog is shown
-
-    @discardableResult
-    func showPushPermissionDeniedDialogIfNeeded() -> Bool {
+    func showPushPermissionDeniedDialogIfNeeded() {
         // We only want to present the notification takeover when the user already has a handle
         // and is not coming from the registration flow (where we alreday ask for permissions).
-        guard selfUser.handle != nil else { return false }
-        guard !isComingFromRegistration else { return false }
-        guard !AutomationHelper.sharedHelper.skipFirstLoginAlerts else { return false }
+        guard
+            selfUser.handle != nil,
+            !isComingFromRegistration,
+            !AutomationHelper.sharedHelper.skipFirstLoginAlerts
+        else { return }
 
-        guard Settings.shared.pushAlertHappenedMoreThan1DayBefore else { return false }
-
-        UNUserNotificationCenter.current().checkPushesDisabled { [weak self] pushesDisabled in
-            DispatchQueue.main.async {
-                if pushesDisabled, let self {
-                    Settings.shared[.lastPushAlertDate] = Date()
-                    self.viewController?.showPermissionDeniedViewController()
-                }
+        Task {
+            let shouldPresent = await shouldPresentNotificationPermissionHintUseCase.invoke()
+            if shouldPresent {
+                await viewController?.showPermissionDeniedViewController()
+                didPresentNotificationPermissionHintUseCase.invoke()
             }
         }
-
-        return true
     }
 }
 
@@ -207,15 +205,5 @@ extension ConversationListViewController.ViewModel: ZMInitialSyncCompletionObser
 
     func initialSyncCompleted() {
         requestMarketingConsentIfNeeded()
-    }
-}
-
-extension Settings {
-    var pushAlertHappenedMoreThan1DayBefore: Bool {
-        guard let date: Date = self[.lastPushAlertDate] else {
-            return true
-        }
-
-        return date.timeIntervalSinceNow < -86400
     }
 }

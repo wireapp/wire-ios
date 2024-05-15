@@ -19,8 +19,10 @@
 import Foundation
 import UserNotifications
 
-@objc
-public class UserNotificationCenterMock: NSObject, UserNotificationCenter {
+// cannot un-comment this line since a few projects treat warnings as errors
+// @available(*, deprecated, message: "Use WireUtilities.MockUserNotificationCenterAbstraction")
+@objc(ZMUserNotificationCenterMock)
+public class UserNotificationCenterMock: NSObject, UserNotificationCenterAbstraction {
 
     weak public var delegate: UNUserNotificationCenterDelegate?
 
@@ -36,16 +38,20 @@ public class UserNotificationCenterMock: NSObject, UserNotificationCenter {
     /// The requested authorization options for the app.
     @objc public var requestedAuthorizationOptions: UNAuthorizationOptions = []
 
+    public func notificationSettings() async -> UNNotificationSettings {
+        fatalError("not implemented yet")
+    }
+
     public func setNotificationCategories(_ categories: Set<UNNotificationCategory>) {
         registeredNotificationCategories.formUnion(categories)
     }
 
-    public func requestAuthorization(options: UNAuthorizationOptions,
-                                     completionHandler: @escaping (Bool, Error?) -> Void) {
+    public func requestAuthorization(options: UNAuthorizationOptions) async throws -> Bool {
         requestedAuthorizationOptions.insert(options)
+        return true
     }
 
-    public func add(_ request: UNNotificationRequest, withCompletionHandler: ((Error?) -> Void)?) {
+    public func add(_ request: UNNotificationRequest) async throws {
         scheduledRequests.append(request)
     }
 
@@ -55,10 +61,5 @@ public class UserNotificationCenterMock: NSObject, UserNotificationCenter {
 
     public func removeDeliveredNotifications(withIdentifiers identifiers: [String]) {
         removedNotifications.formUnion(identifiers)
-    }
-
-    public func removeAllNotifications(withIdentifiers identifiers: [String]) {
-        removePendingNotificationRequests(withIdentifiers: identifiers)
-        removeDeliveredNotifications(withIdentifiers: identifiers)
     }
 }

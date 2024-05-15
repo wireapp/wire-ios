@@ -48,7 +48,7 @@ final class ConversationListContentController: UICollectionViewController, Popov
         flowLayout.minimumLineSpacing = 0
         flowLayout.minimumInteritemSpacing = 0
         flowLayout.sectionInset = .zero
-        self.listViewModel = ConversationListViewModel(userSession: userSession)
+        listViewModel = .init(userSession: userSession)
         super.init(collectionViewLayout: flowLayout)
 
         registerSectionHeader()

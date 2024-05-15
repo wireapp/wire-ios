@@ -16,13 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireSystem
-
-extension DateProviding where Self == MockStaticDateProvider {
-    public static func mock(_ now: Date) -> Self { .init(now: now) }
-}
-
-public struct MockStaticDateProvider: DateProviding {
-    public var now = Date.now
+protocol PermissionDeniedViewControllerDelegate: AnyObject {
+    func permissionDeniedViewControllerDidSkip(_ viewController: PermissionDeniedViewController)
+    func permissionDeniedViewControllerDidOpenNotificationSettings(_ viewController: PermissionDeniedViewController)
 }

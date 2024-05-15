@@ -231,6 +231,8 @@ final class ConversationListViewModel: NSObject {
 
     /// for folder enabled and collapse presistent
     private lazy var _state: State = {
+        guard isFolderStatePersistenceEnabled else { return .init() }
+
         guard let persistentPath = ConversationListViewModel.persistentURL,
             let jsonData = try? Data(contentsOf: persistentPath) else { return State()
         }
@@ -644,6 +646,10 @@ final class ConversationListViewModel: NSObject {
 
     // MARK: - state presistent
 
+    // TODO: delete folder support
+    let isFolderStatePersistenceEnabled = false
+
+    // TODO [WPB-6647]: Remove this, it's not needed anymore with the navigation overhaul epic. (folder support is removed)
     private struct State: Codable, Equatable {
         var collapsed: Set<SectionIdentifier>
         // TODO [WPB-7307]: remove everything regarding folders
@@ -670,7 +676,8 @@ final class ConversationListViewModel: NSObject {
 
     private func saveState(state: State) {
 
-        guard let jsonString = state.jsonString,
+        guard isFolderStatePersistenceEnabled,
+              let jsonString = state.jsonString,
               let persistentDirectory = ConversationListViewModel.persistentDirectory,
               let directoryURL = URL.directoryURL(persistentDirectory) else { return }
 

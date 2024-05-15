@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 import WireSyncEngine
 
 #warning("TODO: create placeholder for empty archive")
@@ -46,6 +45,7 @@ extension ConversationListViewController.ViewModel {
     }
 
     var hasArchivedConversations: Bool {
-        return conversationListType.hasArchivedConversations
+        guard let contextProvider = userSession as? ContextProvider else { return false }
+        return ZMConversationList.archivedConversations(inUserSession: contextProvider).count > 0
     }
 }
