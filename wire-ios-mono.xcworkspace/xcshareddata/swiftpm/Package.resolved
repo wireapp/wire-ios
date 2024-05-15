@@ -39,11 +39,11 @@
       },
       {
         "package": "Starscream",
-        "repositoryURL": "https://github.com/daltoniam/Starscream",
+        "repositoryURL": "https://github.com/wireapp/starscream",
         "state": {
-          "branch": null,
-          "revision": "c6bfd1af48efcc9a9ad203665db12375ba6b145a",
-          "version": "4.0.8"
+          "branch": "chore/4.0.8-wire-additions",
+          "revision": "6674e7abb1d751632969e1eed1a058ab9287540d",
+          "version": null
         }
       },
       {

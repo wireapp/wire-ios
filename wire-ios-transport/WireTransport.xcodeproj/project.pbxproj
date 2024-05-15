@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		01BBCFD52BF55536001D9397 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 01BBCFD42BF55536001D9397 /* Starscream */; };
+		01BBCFD82BF559AA001D9397 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 01BBCFD72BF559AA001D9397 /* Starscream */; };
 		01C83762292CC75F009BB0BF /* ProxyCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C83761292CC75F009BB0BF /* ProxyCredentials.swift */; };
 		01C83764292CC8DA009BB0BF /* ProxyCredentialsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01C83763292CC8DA009BB0BF /* ProxyCredentialsTests.swift */; };
 		01D97AE5294CA6B9001A04BD /* RequestLogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01D97AE4294CA6B9001A04BD /* RequestLogTests.swift */; };
@@ -418,7 +418,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EE67F6F1296F079E001D7C88 /* WireUtilities.framework in Frameworks */,
-				01BBCFD52BF55536001D9397 /* Starscream in Frameworks */,
+				01BBCFD82BF559AA001D9397 /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -955,7 +955,7 @@
 			);
 			name = "WireTransport-ios";
 			packageProductDependencies = (
-				01BBCFD42BF55536001D9397 /* Starscream */,
+				01BBCFD72BF559AA001D9397 /* Starscream */,
 			);
 			productName = Transport;
 			productReference = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */;
@@ -1015,7 +1015,7 @@
 			);
 			mainGroup = 3E88BC9D1B1F35DF00232589;
 			packageReferences = (
-				01BBCFD32BF55536001D9397 /* XCRemoteSwiftPackageReference "Starscream" */,
+				01BBCFD62BF559AA001D9397 /* XCRemoteSwiftPackageReference "starscream" */,
 			);
 			productRefGroup = 3E88BCA81B1F35DF00232589 /* Products */;
 			projectDirPath = "";
@@ -1398,20 +1398,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		01BBCFD32BF55536001D9397 /* XCRemoteSwiftPackageReference "Starscream" */ = {
+		01BBCFD62BF559AA001D9397 /* XCRemoteSwiftPackageReference "starscream" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/daltoniam/Starscream";
+			repositoryURL = "https://github.com/wireapp/starscream";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 4.0.8;
+				branch = "chore/4.0.8-wire-additions";
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		01BBCFD42BF55536001D9397 /* Starscream */ = {
+		01BBCFD72BF559AA001D9397 /* Starscream */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 01BBCFD32BF55536001D9397 /* XCRemoteSwiftPackageReference "Starscream" */;
+			package = 01BBCFD62BF559AA001D9397 /* XCRemoteSwiftPackageReference "starscream" */;
 			productName = Starscream;
 		};
 /* End XCSwiftPackageProductDependency section */
