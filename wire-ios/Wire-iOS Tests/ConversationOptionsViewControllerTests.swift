@@ -17,14 +17,16 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import WireSyncEngine
 import WireSyncEngineSupport
 import XCTest
 
+@testable import Wire
+
 final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModelConfiguration {
 
     typealias SetHandler = (Bool, (Result<Void, Error>) -> Void) -> Void
+
     var allowGuests: Bool
     var guestLinkFeatureStatus: GuestLinkFeatureStatus
     var setAllowGuests: SetHandler?

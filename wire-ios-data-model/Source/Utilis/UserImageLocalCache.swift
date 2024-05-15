@@ -25,7 +25,7 @@ private let MEGABYTE = UInt(1 * 1000 * 1000)
 // MARK: ZMUser
 extension ZMUser {
     private func cacheIdentifier(suffix: String?) -> String? {
-        guard let userRemoteId = remoteIdentifier?.transportString(), let suffix = suffix else { return nil }
+        guard let userRemoteId = remoteIdentifier?.transportString(), let suffix else { return nil }
         return (userRemoteId + "-" + suffix)
     }
 
@@ -156,7 +156,7 @@ extension NSManagedObjectContext {
         case .complete:
             data = largeUserImageCache.object(forKey: cacheKey) as? Data
         }
-        if let data = data {
+        if let data {
             log.info("Getting [\(String(describing: user.name))] \(size == .preview ? "preview" : "complete") image [\(data)] cache key: [\(cacheKey)]")
         }
 

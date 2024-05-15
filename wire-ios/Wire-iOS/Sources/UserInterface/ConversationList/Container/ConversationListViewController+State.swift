@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 
 extension ConversationListViewController {
     func setState(_ state: ConversationListState,
@@ -32,7 +32,7 @@ extension ConversationListViewController {
         case .conversationList:
             view.alpha = 1
 
-            if let presentedViewController = presentedViewController {
+            if let presentedViewController = navigationController?.presentedViewController {
                 presentedViewController.dismiss(animated: true, completion: completion)
             } else {
                 completion?()
@@ -54,5 +54,17 @@ extension ConversationListViewController {
         setState(.conversationList, animated: false)
         listContentController.selectInboxAndFocus(onView: focus)
     }
+}
 
+extension ConversationListViewController {
+    func show(
+        _ viewController: UIViewController,
+        animated: Bool,
+        completion: (() -> Void)?
+    ) {
+        viewController.transitioningDelegate = self
+        viewController.modalPresentationStyle = .currentContext
+
+        navigationController?.present(viewController, animated: animated, completion: completion)
+    }
 }

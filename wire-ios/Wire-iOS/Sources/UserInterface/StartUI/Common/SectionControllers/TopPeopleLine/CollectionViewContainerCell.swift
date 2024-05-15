@@ -21,7 +21,7 @@ import UIKit
 final class CollectionViewContainerCell: UICollectionViewCell {
     var collectionView: UICollectionView? {
         didSet {
-            guard let collectionView = collectionView else { return }
+            guard let collectionView else { return }
 
             contentView.addSubview(collectionView)
 

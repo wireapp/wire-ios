@@ -128,7 +128,7 @@ final class ConversationListTabBar: UITabBar {
 
     var selectedTab: TabBarItemType? {
         didSet {
-            if let selectedTab = selectedTab {
+            if let selectedTab {
                 switch selectedTab {
                 case .archive, .startUI:
                     return
@@ -241,4 +241,16 @@ private extension UITabBar {
         }
     }
 
+}
+
+// TODO [WPB-6647]: remove this extension
+extension UITabBar {
+    // Workaround for new UITabBar behavior where on iPad,
+    // the UITabBar shows the UITabBarItem icon next to the text
+    override open var traitCollection: UITraitCollection {
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            return UITraitCollection(traitsFrom: [super.traitCollection, UITraitCollection(horizontalSizeClass: .compact)])
+        }
+        return super.traitCollection
+    }
 }

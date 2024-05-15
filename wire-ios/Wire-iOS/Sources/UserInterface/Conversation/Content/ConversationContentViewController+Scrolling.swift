@@ -22,7 +22,7 @@ import WireDataModel
 extension ConversationContentViewController {
 
     func scroll(to message: ZMConversationMessage?, completion: ((UIView) -> Void)? = .none) {
-        if let message = message {
+        if let message {
 
             if message.hasBeenDeleted {
                 presentAlertWithOKButton(message: L10n.Localizable.Conversation.Alert.messageDeleted)

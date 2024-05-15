@@ -209,7 +209,7 @@ final class UnlockViewController: UIViewController {
     private func unlock() -> Bool {
         guard
             let passcode = validatedTextField.text,
-            let userSession = userSession,
+            let userSession,
             userSession.evaluateAuthentication(customPasscode: passcode) == .granted
         else {
             return false

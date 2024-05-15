@@ -118,7 +118,7 @@ extension ZMConversation {
     }
 
     public func updateReceiptMode(_ receiptMode: Int?) {
-        if let receiptMode = receiptMode {
+        if let receiptMode {
             let enabled = receiptMode > 0
             let receiptModeChanged = !self.hasReadReceiptsEnabled && enabled
             self.hasReadReceiptsEnabled = enabled

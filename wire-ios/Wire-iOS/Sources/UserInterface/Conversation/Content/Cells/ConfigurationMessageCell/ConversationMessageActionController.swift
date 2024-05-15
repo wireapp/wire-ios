@@ -149,7 +149,7 @@ final class ConversationMessageActionController {
     // MARK: - Single Tap Action
 
     func performSingleTapAction() {
-        guard let singleTapAction = singleTapAction else { return }
+        guard let singleTapAction else { return }
 
         perform(action: singleTapAction)
     }
@@ -172,7 +172,7 @@ final class ConversationMessageActionController {
     // MARK: - Double Tap Action
 
     func performDoubleTapAction() {
-        guard let doubleTapAction = doubleTapAction else { return }
+        guard let doubleTapAction else { return }
         perform(action: doubleTapAction)
     }
 
@@ -240,7 +240,7 @@ final class ConversationMessageActionController {
         perform(action: .react(reaction))
     }
 
-    @objc func visitLink(path: String) {
-        perform(action: .visitLink(path))
+    @objc func visitLink() {
+        perform(action: .visitLink)
     }
 }

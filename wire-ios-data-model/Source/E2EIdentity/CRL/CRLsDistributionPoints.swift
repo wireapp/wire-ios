@@ -25,7 +25,7 @@ public struct CRLsDistributionPoints: Equatable {
     public init?(from stringArray: [String]?) {
         let urls = stringArray?.compactMap { URL(string: $0) }
 
-        guard let urls = urls, !urls.isEmpty else {
+        guard let urls, !urls.isEmpty else {
             return nil
         }
 
