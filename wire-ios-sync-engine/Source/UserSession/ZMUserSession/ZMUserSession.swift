@@ -166,24 +166,8 @@ public final class ZMUserSession: NSObject {
             accountId: account.userIdentifier)
     }()
 
-    lazy var cRLsChecker: CertificateRevocationListsChecker = {
-        // TODO: remove force cast
-
-        return CertificateRevocationListsChecker(
-            userID: userId,
-            crlAPI: CertificateRevocationListAPI(),
-            mlsGroupVerification: mlsGroupVerification!,
-            selfClientCertificateProvider: selfClientCertificateProvider,
-            coreCryptoProvider: coreCryptoProvider,
-            context: coreDataStack.syncContext
-        )
-    }()
-
-    lazy var cRLsDistributionPointsObserver: CRLsDistributionPointsObserver = {
-        return CRLsDistributionPointsObserver(
-            cRLsChecker: self.cRLsChecker
-        )
-    }()
+    var cRLsChecker: CertificateRevocationListsChecker?
+    var cRLsDistributionPointsObserver: CRLsDistributionPointsObserver?
 
     public var managedObjectContext: NSManagedObjectContext { // TODO jacob we don't want this to be public
         return coreDataStack.viewContext
@@ -275,7 +259,8 @@ public final class ZMUserSession: NSObject {
             onNewCRLsDistributionPointsSubject: onNewCRLsDistributionPointsSubject
         )
 
-        cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
+        // TODO: why is this observer started two times? first time is 'setupCertificateRevocationLists'!
+        cRLsDistributionPointsObserver?.startObservingNewCRLsDistributionPoints(
             from: onNewCRLsDistributionPointsSubject.eraseToAnyPublisher()
         )
 
@@ -446,13 +431,10 @@ public final class ZMUserSession: NSObject {
             self.applicationStatusDirectory.clientUpdateStatus.determineInitialClientStatus()
             self.applicationStatusDirectory.clientRegistrationStatus.determineInitialRegistrationStatus()
             self.hasCompletedInitialSync = self.applicationStatusDirectory.syncStatus.isSlowSyncing == false
-
-            self.cRLsDistributionPointsObserver.startObservingNewCRLsDistributionPoints(
-                from: self.mlsService.onNewCRLsDistributionPoints()
-            )
         }
 
         setupMLSGroupVerification()
+        setupCertificateRevocationLists()
 
         registerForCalculateBadgeCountNotification()
         registerForRegisteringPushTokenNotification()
@@ -867,9 +849,7 @@ extension ZMUserSession: ZMSyncStateDelegate {
 
         recurringActionService.performActionsIfNeeded()
 
-        Task {
-            await self.cRLsChecker.checkExpiredCRLs()
-        }
+        checkExpiredCertificateRevocationLists()
 
         managedObjectContext.performGroupedBlock { [weak self] in
             self?.checkE2EICertificateExpiryStatus()

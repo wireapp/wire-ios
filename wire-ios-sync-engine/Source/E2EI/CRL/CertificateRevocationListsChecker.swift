@@ -108,7 +108,6 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
     // MARK: - Private methods
 
     private func checkCertificateRevocationLists(from distributionPoints: Set<URL>) async {
-
         var shouldNotifyAboutRevokedCertificate = false
         for distributionPoint in distributionPoints {
             do {

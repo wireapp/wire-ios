@@ -537,6 +537,7 @@
 		E6425FE32BD0021B003EC8CF /* SessionManager+UserSessionSelfUserClientDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6425FE22BD0021B003EC8CF /* SessionManager+UserSessionSelfUserClientDelegate.swift */; };
 		E6425FE52BD005C0003EC8CF /* SessionManager+UserSessionLogoutDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6425FE42BD005C0003EC8CF /* SessionManager+UserSessionLogoutDelegate.swift */; };
 		E662328D2BF4BBED002B680A /* ZMUserSession+MLS.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662328C2BF4BBED002B680A /* ZMUserSession+MLS.swift */; };
+		E662328F2BF4BDB0002B680A /* ZMUserSession+CertificateRevocationLists.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662328E2BF4BDB0002B680A /* ZMUserSession+CertificateRevocationLists.swift */; };
 		E666EDDF2B74CEE600C03E2B /* SessionManagerBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDDD2B74CEE000C03E2B /* SessionManagerBuilder.swift */; };
 		E666EDE22B74E78C00C03E2B /* SessionManagerTests+AccountDeletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDE02B74E75A00C03E2B /* SessionManagerTests+AccountDeletion.swift */; };
 		E666EDE42B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = E666EDE32B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift */; };
@@ -1330,6 +1331,7 @@
 		E6425FE22BD0021B003EC8CF /* SessionManager+UserSessionSelfUserClientDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+UserSessionSelfUserClientDelegate.swift"; sourceTree = "<group>"; };
 		E6425FE42BD005C0003EC8CF /* SessionManager+UserSessionLogoutDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManager+UserSessionLogoutDelegate.swift"; sourceTree = "<group>"; };
 		E662328C2BF4BBED002B680A /* ZMUserSession+MLS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+MLS.swift"; sourceTree = "<group>"; };
+		E662328E2BF4BDB0002B680A /* ZMUserSession+CertificateRevocationLists.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+CertificateRevocationLists.swift"; sourceTree = "<group>"; };
 		E666EDDD2B74CEE000C03E2B /* SessionManagerBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerBuilder.swift; sourceTree = "<group>"; };
 		E666EDE02B74E75A00C03E2B /* SessionManagerTests+AccountDeletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+AccountDeletion.swift"; sourceTree = "<group>"; };
 		E666EDE32B74E7BD00C03E2B /* SessionManagerTests+AuthenticationFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SessionManagerTests+AuthenticationFailure.swift"; sourceTree = "<group>"; };
@@ -2751,6 +2753,7 @@
 				EEE186B3259CC92D008707CA /* ZMUserSession+AppLock.swift */,
 				16E0FB86232F8933000E3235 /* ZMUserSession+Authentication.swift */,
 				162DEE101F87B9800034C8F9 /* ZMUserSession+Calling.swift */,
+				E662328E2BF4BDB0002B680A /* ZMUserSession+CertificateRevocationLists.swift */,
 				16ED865E23E3145C00CB1766 /* ZMUserSession+Clients.swift */,
 				EE5FEF0421E8948F00E24F7F /* ZMUserSession+DarwinNotificationCenter.swift */,
 				A93B528A250101AC0061255E /* ZMUserSession+Debugging.swift */,
@@ -3817,6 +3820,7 @@
 				E62F31C52B71165A0095777A /* EvaluateOneOnOneConversationsStrategy.swift in Sources */,
 				8754B84A1F73C25400EC02AD /* ConversationListChangeInfo+UserSession.swift in Sources */,
 				8737D554209217BD00E5A4AF /* URLActions.swift in Sources */,
+				E662328F2BF4BDB0002B680A /* ZMUserSession+CertificateRevocationLists.swift in Sources */,
 				547E5B581DDB4B800038D936 /* UserProfileUpdateStatus.swift in Sources */,
 				EEEA75FC1F8A6142006D1070 /* ZMLocalNotification+Calling.swift in Sources */,
 				EE2DE5EC29263C5100F42F4C /* Logger.swift in Sources */,
