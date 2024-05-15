@@ -41,7 +41,6 @@ struct ZMUserSessionBuilder {
     private var lastE2EIUpdateDateRepository: (any LastE2EIdentityUpdateDateRepositoryInterface)?
     private var lastEventIDRepository: (any LastEventIDRepositoryInterface)?
     private var mediaManager: (any MediaManagerType)?
-    private var mlsGroupVerification: MLSGroupVerification?
     private var mlsService: (any MLSServiceInterface)?
     private var proteusToMLSMigrationCoordinator: (any ProteusToMLSMigrationCoordinating)?
     private var recurringActionService: (any RecurringActionServiceInterface)?

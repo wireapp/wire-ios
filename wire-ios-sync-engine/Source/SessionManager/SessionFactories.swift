@@ -101,7 +101,6 @@ open class AuthenticatedSessionFactory {
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
-            mlsGroupVerification: nil,
             configuration: configuration
         )
         userSession.startRequestLoopTracker()

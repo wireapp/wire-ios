@@ -391,7 +391,6 @@ public final class ZMUserSession: NSObject {
         strategyDirectory: (any StrategyDirectoryProtocol)?,
         syncStrategy: ZMSyncStrategy?,
         operationLoop: ZMOperationLoop?,
-        mlsGroupVerification: (any MLSGroupVerificationProtocol)?,
         configuration: Configuration
     ) {
         coreDataStack.linkAnalytics(analytics)

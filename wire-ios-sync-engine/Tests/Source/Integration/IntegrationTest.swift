@@ -91,7 +91,6 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
-            mlsGroupVerification: nil,
             configuration: configuration
         )
 

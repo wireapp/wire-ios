@@ -65,7 +65,6 @@ final class ZMUserSessionTests_NetworkState: ZMUserSessionTestsBase {
             strategyDirectory: nil,
             syncStrategy: nil,
             operationLoop: nil,
-            mlsGroupVerification: nil,
             configuration: configuration
         )
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
