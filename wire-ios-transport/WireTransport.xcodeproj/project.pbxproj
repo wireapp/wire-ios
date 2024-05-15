@@ -372,7 +372,6 @@
 		E91D2221287429EE0030B481 /* MD5DigestHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MD5DigestHelper.swift; sourceTree = "<group>"; };
 		EE0FBF1B290FCBB1005B93BC /* BackendInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendInfo.swift; sourceTree = "<group>"; };
 		EE50CA132AB19746007A07BF /* ZMAccessTokenHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccessTokenHandler.swift; sourceTree = "<group>"; };
-		EE67F6B4296F0591001D7C88 /* Starscream.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Starscream.xcframework; path = ../Carthage/Build/Starscream.xcframework; sourceTree = "<group>"; };
 		EE67F6ED296F074C001D7C88 /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE67F6F0296F079E001D7C88 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EE7F3DEA29548F88000D247D /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -509,7 +508,6 @@
 			children = (
 				EE67F6F0296F079E001D7C88 /* WireUtilities.framework */,
 				EE67F6ED296F074C001D7C88 /* WireTesting.framework */,
-				EE67F6B4296F0591001D7C88 /* Starscream.xcframework */,
 				EE7F3DEA29548F88000D247D /* WireUtilities.framework */,
 			);
 			name = Frameworks;
