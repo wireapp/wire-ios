@@ -35,7 +35,7 @@ extension ConversationListViewController {
         case .conversationList:
             view.alpha = 1
 
-            if let presentedViewController {
+            if let presentedViewController = navigationController?.presentedViewController {
                 presentedViewController.dismiss(animated: true, completion: completion)
             } else {
                 completion?()
@@ -58,5 +58,18 @@ extension ConversationListViewController {
     func selectInboxAndFocusOnView(focus: Bool) {
         setState(.conversationList, animated: false)
         listContentController.selectInboxAndFocus(onView: focus)
+    }
+}
+
+extension ConversationListViewController {
+    func show(
+        _ viewController: UIViewController,
+        animated: Bool,
+        completion: (() -> Void)?
+    ) {
+        viewController.transitioningDelegate = self
+        viewController.modalPresentationStyle = .currentContext
+
+        navigationController?.present(viewController, animated: animated, completion: completion)
     }
 }

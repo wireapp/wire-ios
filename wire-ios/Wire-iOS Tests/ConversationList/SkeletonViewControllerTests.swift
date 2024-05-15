@@ -16,11 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
-@testable import Wire
 import XCTest
 
-final class SkeletonViewControllerTests: XCTestCase {
+@testable import Wire
+
+final class SkeletonViewControllerTests: BaseSnapshotTestCase {
+
     var sut: SkeletonViewController!
     var mockAccount: Account!
 
@@ -28,7 +29,6 @@ final class SkeletonViewControllerTests: XCTestCase {
         super.setUp()
 
         mockAccount = Account.mockAccount(imageData: Data())
-
         sut = SkeletonViewController(from: mockAccount, to: mockAccount, randomizeDummyItem: false)
     }
 

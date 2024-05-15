@@ -46,6 +46,9 @@ protocol ConversationListContainerViewModelDelegate: AnyObject {
         animated: Bool,
         completion: (() -> Void)?
     ) -> Bool
+
+    func conversationListViewControllerViewModelRequiresUpdatingAccountView(_ viewModel: ConversationListViewController.ViewModel)
+    func conversationListViewControllerViewModelRequiresUpdatingLegalHoldIndictor(_ viewModel: ConversationListViewController.ViewModel)
 }
 
 extension ConversationListViewController {

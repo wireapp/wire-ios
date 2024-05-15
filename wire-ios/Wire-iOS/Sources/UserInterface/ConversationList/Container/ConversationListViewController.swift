@@ -37,7 +37,6 @@ final class ConversationListViewController: UIViewController, ConversationListCo
     /// private
     private var viewDidAppearCalled = false
     private static let contentControllerBottomInset: CGFloat = 16
-    private let selfProfileViewControllerBuilder: ViewControllerBuilder
 
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
@@ -62,9 +61,11 @@ final class ConversationListViewController: UIViewController, ConversationListCo
 
     let listContentController: ConversationListContentController
     let tabBar = ConversationListTabBar()
-    let topBarViewController: ConversationListTopBarViewController
+    var userStatusViewController: UserStatusViewController?
+    weak var titleViewLabel: UILabel?
     let networkStatusViewController = NetworkStatusViewController()
     let onboardingHint = ConversationListOnboardingHint()
+    let selfProfileViewControllerBuilder: ViewControllerBuilder
 
     convenience init(
         account: Account,
@@ -91,13 +92,6 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         self.viewModel = viewModel
         self.selfProfileViewControllerBuilder = selfProfileViewControllerBuilder
 
-        topBarViewController = ConversationListTopBarViewController(
-            account: viewModel.account,
-            selfUser: viewModel.selfUser,
-            userSession: viewModel.userSession,
-            selfProfileViewControllerBuilder: selfProfileViewControllerBuilder
-        )
-
         let bottomInset = ConversationListViewController.contentControllerBottomInset
         listContentController = .init(userSession: viewModel.userSession)
         listContentController.collectionView.contentInset = .init(top: 0, left: 0, bottom: bottomInset, right: 0)
@@ -110,7 +104,6 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         view.addSubview(contentContainer)
         view.backgroundColor = SemanticColors.View.backgroundConversationList
 
-        setupTopBar()
         setupListContentController()
         setupTabBar()
         setupNoConversationLabel()
@@ -119,17 +112,17 @@ final class ConversationListViewController: UIViewController, ConversationListCo
 
         createViewConstraints()
 
+        setupTitleView()
+        updateAccountView()
+        updateLegalHoldIndictor()
+        setupRightNavigationBarButtons()
+
         viewModel.viewController = self
-        topBarViewController.delegate = self
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override func loadView() {
-        view = PassthroughTouchesView(frame: UIScreen.main.bounds)
     }
 
     override func viewDidLoad() {
@@ -206,10 +199,6 @@ final class ConversationListViewController: UIViewController, ConversationListCo
         viewModel.setupObservers()
     }
 
-    private func setupTopBar() {
-        add(topBarViewController, to: contentContainer)
-    }
-
     private func setupListContentController() {
         listContentController.contentDelegate = viewModel
         let navigationController = UINavigationController(rootViewController: listContentController)
@@ -239,24 +228,16 @@ final class ConversationListViewController: UIViewController, ConversationListCo
     }
 
     private func createViewConstraints() {
-        guard
-            let topBarView = topBarViewController.view,
-            let conversationList = listContentController.navigationController!.view
-        else { return }
+        guard let conversationList = listContentController.navigationController!.view else { return }
 
-        [
-            contentContainer,
-            topBarView,
-            conversationList,
-            tabBar,
-            noConversationLabel,
-            onboardingHint,
-            networkStatusViewController.view
-        ].forEach {
-            $0?.translatesAutoresizingMaskIntoConstraints = false
-        }
+        contentContainer.translatesAutoresizingMaskIntoConstraints = false
+        conversationList.translatesAutoresizingMaskIntoConstraints = false
+        tabBar.translatesAutoresizingMaskIntoConstraints = false
+        noConversationLabel.translatesAutoresizingMaskIntoConstraints = false
+        onboardingHint.translatesAutoresizingMaskIntoConstraints = false
+        networkStatusViewController.view.translatesAutoresizingMaskIntoConstraints = false
 
-        let constraints: [NSLayoutConstraint] = [
+        NSLayoutConstraint.activate([
             contentContainer.topAnchor.constraint(equalTo: safeTopAnchor),
             contentContainer.leadingAnchor.constraint(equalTo: view.safeLeadingAnchor),
             contentContainer.trailingAnchor.constraint(equalTo: view.safeTrailingAnchor),
@@ -266,11 +247,7 @@ final class ConversationListViewController: UIViewController, ConversationListCo
             networkStatusViewController.view.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             networkStatusViewController.view.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
 
-            topBarView.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
-            topBarView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
-            topBarView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-
-            conversationList.topAnchor.constraint(equalTo: topBarView.bottomAnchor),
+            conversationList.topAnchor.constraint(equalTo: networkStatusViewController.view.bottomAnchor),
             conversationList.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
             conversationList.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
             conversationList.bottomAnchor.constraint(equalTo: tabBar.topAnchor),
@@ -286,9 +263,7 @@ final class ConversationListViewController: UIViewController, ConversationListCo
             noConversationLabel.centerXAnchor.constraint(equalTo: contentContainer.centerXAnchor),
             noConversationLabel.centerYAnchor.constraint(equalTo: contentContainer.centerYAnchor),
             noConversationLabel.widthAnchor.constraint(equalToConstant: 240)
-        ]
-
-        NSLayoutConstraint.activate(constraints)
+        ])
     }
 
     func createArchivedListViewController() -> ArchivedListViewController {
@@ -387,6 +362,7 @@ extension UITabBarItem {
 private extension NSAttributedString {
 
     static var attributedTextForNoConversationLabel: NSAttributedString? {
+
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.setParagraphStyle(NSParagraphStyle.default)
 
@@ -402,29 +378,6 @@ private extension NSAttributedString {
         paragraphStyle.paragraphSpacing = 4
 
         let titleString = L10n.Localizable.ConversationList.Empty.AllArchived.message
-
-        let attributedString = NSAttributedString(string: titleString.uppercased(), attributes: titleAttributes)
-
-        return attributedString
-    }
-}
-
-extension UITabBar {
-    // Workaround for new UITabBar behavior where on iPad,
-    // the UITabBar shows the UITabBarItem icon next to the text
-    override open var traitCollection: UITraitCollection {
-        if UIDevice.current.userInterfaceIdiom == .pad {
-            return UITraitCollection(traitsFrom: [super.traitCollection, UITraitCollection(horizontalSizeClass: .compact)])
-        }
-        return super.traitCollection
-    }
-}
-
-// MARK: - ConversationListTopBarViewControllerDelegate
-
-extension ConversationListViewController: ConversationListTopBarViewControllerDelegate {
-
-    func conversationListTopBarViewControllerDidSelectNewConversation(_ viewController: ConversationListTopBarViewController) {
-        setState(.peoplePicker, animated: true)
+        return NSAttributedString(string: titleString.uppercased(), attributes: titleAttributes)
     }
 }
