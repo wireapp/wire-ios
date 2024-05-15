@@ -90,7 +90,7 @@ public final class ZMUserSession: NSObject {
 
     public var topConversationsDirectory: TopConversationsDirectory
 
-    public private(set) var mlsGroupVerification: MLSGroupVerification?
+    public private(set) var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
     // MARK: Computed Properties
 
@@ -406,7 +406,7 @@ public final class ZMUserSession: NSObject {
         strategyDirectory: (any StrategyDirectoryProtocol)?,
         syncStrategy: ZMSyncStrategy?,
         operationLoop: ZMOperationLoop?,
-        mlsGroupVerification: MLSGroupVerification?,
+        mlsGroupVerification: (any MLSGroupVerificationProtocol)?,
         configuration: Configuration
     ) {
         coreDataStack.linkAnalytics(analytics)

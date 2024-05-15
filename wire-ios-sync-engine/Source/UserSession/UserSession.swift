@@ -225,7 +225,7 @@ public protocol UserSession: AnyObject {
 
     // MARK: MLS
 
-    var mlsGroupVerification: MLSGroupVerification? { get }
+    var mlsGroupVerification: (any MLSGroupVerificationProtocol)? { get }
 
     // MARK: Use Cases
 

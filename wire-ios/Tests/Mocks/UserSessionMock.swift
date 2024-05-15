@@ -74,7 +74,7 @@ final class UserSessionMock: UserSession {
 
     var searchUsersCache: SearchUsersCache
 
-    var mlsGroupVerification: WireDataModel.MLSGroupVerification?
+    var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
         let mock = MockGetMLSFeatureUseCaseProtocol()
