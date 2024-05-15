@@ -25,7 +25,7 @@ where DateProvider: CurrentDateProviding {
 
     var currentDateProvider: DateProvider
     var userDefaults: UserDefaults
-    var userNotificationCenter: UNUserNotificationCenter
+    var userNotificationCenter: UserNotificationCenterAbstraction
 
     func invoke() async -> Bool {
 
@@ -48,7 +48,7 @@ extension ShouldPresentNotificationPermissionHintUseCase where DateProvider == S
     init(
         currentDateProvider: SystemDateProvider = .init(),
         userDefaults: UserDefaults = .standard,
-        userNotificationCenter: UNUserNotificationCenter = .current()
+        userNotificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
     ) {
         self.currentDateProvider = currentDateProvider
         self.userDefaults = userDefaults

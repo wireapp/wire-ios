@@ -19,8 +19,8 @@
 import Foundation
 import UserNotifications
 
-@objc
-public class UserNotificationCenterMock: NSObject, UserNotificationCenter {
+@objc // TODO: use sourcery mock
+public class UserNotificationCenterMock: NSObject, UserNotificationCenterAbstraction {
 
     weak public var delegate: UNUserNotificationCenterDelegate?
 
@@ -35,6 +35,10 @@ public class UserNotificationCenterMock: NSObject, UserNotificationCenter {
 
     /// The requested authorization options for the app.
     @objc public var requestedAuthorizationOptions: UNAuthorizationOptions = []
+
+    public func notificationSettings() async -> UNNotificationSettings {
+        fatalError("not implemented yet")
+    }
 
     public func setNotificationCategories(_ categories: Set<UNNotificationCategory>) {
         registeredNotificationCategories.formUnion(categories)

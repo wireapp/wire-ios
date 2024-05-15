@@ -69,6 +69,8 @@
 		54FA8E821BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */; };
 		5915B9502BF4ACDC00215817 /* NativelySupportedUserDefaultsKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B94F2BF4ACDC00215817 /* NativelySupportedUserDefaultsKey.swift */; };
 		5915B9522BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9512BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift */; };
+		5915B95F2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B95E2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift */; };
+		5915B9622BF4C1AD00215817 /* UserNotificationCenterWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9612BF4C1AD00215817 /* UserNotificationCenterWrapper.swift */; };
 		5966D83C2BD6BFCF00305BBC /* AccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D83B2BD6BFCF00305BBC /* AccentColor.swift */; };
 		5966D83E2BD6C20700305BBC /* AccentColorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D83D2BD6C20700305BBC /* AccentColorTests.swift */; };
 		5966D8432BD7DF3100305BBC /* ZMAccentColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5966D8422BD7DF3100305BBC /* ZMAccentColor.swift */; };
@@ -284,6 +286,8 @@
 		54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSData+ZMSCryptoTests.swift"; path = "Source/NSData+ZMSCryptoTests.swift"; sourceTree = "<group>"; };
 		5915B94F2BF4ACDC00215817 /* NativelySupportedUserDefaultsKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativelySupportedUserDefaultsKey.swift; sourceTree = "<group>"; };
 		5915B9512BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+NativelySupportedKey.swift"; sourceTree = "<group>"; };
+		5915B95E2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationCenterAbstraction.swift; sourceTree = "<group>"; };
+		5915B9612BF4C1AD00215817 /* UserNotificationCenterWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserNotificationCenterWrapper.swift; sourceTree = "<group>"; };
 		5966D83B2BD6BFCF00305BBC /* AccentColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColor.swift; sourceTree = "<group>"; };
 		5966D83D2BD6C20700305BBC /* AccentColorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccentColorTests.swift; sourceTree = "<group>"; };
 		5966D8422BD7DF3100305BBC /* ZMAccentColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMAccentColor.swift; sourceTree = "<group>"; };
@@ -493,6 +497,7 @@
 		3E88BD3A1B1F3EA300232589 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				5915B95D2BF4C09700215817 /* Abstractions */,
 				5915B94E2BF4ACCC00215817 /* UserDefaults */,
 				A9A3B1EE24D9811B001AF38E /* Keychain */,
 				871939C421D4D93600738968 /* ZMMobileProvisionParser.m */,
@@ -650,6 +655,23 @@
 				5915B9512BF4AF2000215817 /* UserDefaults+NativelySupportedKey.swift */,
 			);
 			path = UserDefaults;
+			sourceTree = "<group>";
+		};
+		5915B95D2BF4C09700215817 /* Abstractions */ = {
+			isa = PBXGroup;
+			children = (
+				5915B9602BF4C19A00215817 /* UserNotificationCenter */,
+			);
+			path = Abstractions;
+			sourceTree = "<group>";
+		};
+		5915B9602BF4C19A00215817 /* UserNotificationCenter */ = {
+			isa = PBXGroup;
+			children = (
+				5915B95E2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift */,
+				5915B9612BF4C1AD00215817 /* UserNotificationCenterWrapper.swift */,
+			);
+			path = UserNotificationCenter;
 			sourceTree = "<group>";
 		};
 		5966D8412BD7DF2500305BBC /* AccentColor */ = {
@@ -1018,10 +1040,12 @@
 				7C8BFFE522FD611700B3C8A5 /* ZMEmailAddressValidator.swift in Sources */,
 				2577CB652B18D596007D3443 /* String+Clipping.swift in Sources */,
 				A9C6EDE426B32E9D007F61C5 /* UTIHelper.swift in Sources */,
+				5915B95F2BF4C0B400215817 /* UserNotificationCenterAbstraction.swift in Sources */,
 				097E36C31B7B62150039CC4C /* NSLocale+Internal.m in Sources */,
 				F19E55A822B3AAF3005C792D /* Data+ReadableHash.swift in Sources */,
 				BF3A7A601D8AA9B30034FF40 /* OptionalComparison.swift in Sources */,
 				BFBAE9DB1E01A8F2003FCE49 /* String+Emoji.swift in Sources */,
+				5915B9622BF4C1AD00215817 /* UserNotificationCenterWrapper.swift in Sources */,
 				F19E554D22AFDC8D005C792D /* String+ReadableHash.swift in Sources */,
 				F9C9A7941CAEA7200039E10C /* ZMEncodedNSUUIDWithTimestamp.m in Sources */,
 				EE5316442A13B61200A9E0B1 /* PrivateUserDefaults.swift in Sources */,

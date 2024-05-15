@@ -25,6 +25,7 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
 
     private var mockDateProvider: MockDateProvider!
     private var userDefaults: UserDefaults!
+    private var userNotificationCenterMock: MockUserNot
     private var sut: ShouldPresentNotificationPermissionHintUseCase<MockDateProvider>!
 
     override func setUp() {
@@ -33,7 +34,7 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         sut = .init(
             currentDateProvider: mockDateProvider,
             userDefaults: userDefaults,
-            userNotificationCenter: .current() // TODO: mock/abstraction?
+            userNotificationCenter: .current()
         )
     }
 

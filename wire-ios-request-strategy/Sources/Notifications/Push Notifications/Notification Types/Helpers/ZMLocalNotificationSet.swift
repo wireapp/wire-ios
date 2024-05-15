@@ -19,12 +19,13 @@
 import UIKit
 import UserNotifications
 import WireTransport
+import WireUtilities
 
 @objc public class ZMLocalNotificationSet: NSObject {
 
     let archivingKey: String
     let keyValueStore: ZMSynchonizableKeyValueStore
-    public var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
+    public var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
 
     public var notifications = Set<ZMLocalNotification>() {
         didSet { try? updateArchive() }
