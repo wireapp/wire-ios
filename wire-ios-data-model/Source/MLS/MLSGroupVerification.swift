@@ -42,17 +42,10 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
     // MARK: - Initialize
 
     public init(
-        e2eiVerificationStatusService: any E2EIVerificationStatusServiceInterface,
-        featureRepository: any FeatureRepositoryInterface,
+        updateUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol,
         mlsService: any MLSServiceInterface,
         syncContext: NSManagedObjectContext
     ) {
-        let updateUseCase = UpdateMLSGroupVerificationStatusUseCase(
-            e2eIVerificationStatusService: e2eiVerificationStatusService,
-            syncContext: syncContext,
-            featureRepository: featureRepository
-        )
-
         self.updateUseCase = updateUseCase
         self.mlsService = mlsService
         self.syncContext = syncContext

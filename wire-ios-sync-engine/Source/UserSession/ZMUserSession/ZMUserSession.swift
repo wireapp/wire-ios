@@ -90,7 +90,7 @@ public final class ZMUserSession: NSObject {
 
     public var topConversationsDirectory: TopConversationsDirectory
 
-    public private(set) var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
+    public internal(set) var mlsGroupVerification: (any MLSGroupVerificationProtocol)?
 
     // MARK: Computed Properties
 
@@ -452,18 +452,12 @@ public final class ZMUserSession: NSObject {
             )
         }
 
-        let e2eiVerificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
-        self.mlsGroupVerification = MLSGroupVerification(
-            e2eiVerificationStatusService: e2eiVerificationStatusService,
-            featureRepository: featureRepository,
-            mlsService: mlsService,
-            syncContext: coreDataStack.syncContext
-        )
-        mlsGroupVerification?.startObserving()
+        setupMLSGroupVerification()
 
         registerForCalculateBadgeCountNotification()
         registerForRegisteringPushTokenNotification()
         registerForBackgroundNotifications()
+
         enableBackgroundFetch()
         observeChangesOnShareExtension()
         startEphemeralTimers()
@@ -486,7 +480,7 @@ public final class ZMUserSession: NSObject {
     public func tearDown() {
         guard !tornDown else { return }
 
-        mlsGroupVerification = nil
+        tearDownMLSGroupVerification()
 
         tokens.removeAll()
         application.unregisterObserverForStateChange(self)
