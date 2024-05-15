@@ -22,7 +22,7 @@ import Foundation
 public protocol MLSGroupVerificationProtocol {
 
     func startObserving()
-    func updateConversation(with groupID: MLSGroupID) async
+    func updateConversation(by groupID: MLSGroupID) async
     func updateConversation(_ conversation: ZMConversation, with groupID: MLSGroupID) async
     func updateAllConversations() async
 
@@ -60,14 +60,14 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
     public func startObserving() {
         observingTask = .detached { [mlsService, weak self] in
             for await groupID in mlsService.epochChanges() {
-                await self?.updateConversation(with: groupID)
+                await self?.updateConversation(by: groupID)
             }
         }
     }
 
     // MARK: Update Conversation
 
-    public func updateConversation(with groupID: MLSGroupID) async {
+    public func updateConversation(by groupID: MLSGroupID) async {
         guard let conversation = await syncContext.perform({
             ZMConversation.fetch(with: groupID, in: self.syncContext)
         }) else {
