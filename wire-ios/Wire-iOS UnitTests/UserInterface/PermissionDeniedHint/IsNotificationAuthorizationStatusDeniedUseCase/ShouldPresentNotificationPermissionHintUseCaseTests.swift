@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireRequestStrategySupport // TODO: should be WireUtilitiesSupport
 import WireTesting
 import XCTest
 
@@ -25,16 +26,17 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
 
     private var mockDateProvider: MockDateProvider!
     private var userDefaults: UserDefaults!
-    private var userNotificationCenterMock: MockUserNot
+    private var userNotificationCenterMock: MockUserNotificationCenterAbstraction!
     private var sut: ShouldPresentNotificationPermissionHintUseCase<MockDateProvider>!
 
     override func setUp() {
         mockDateProvider = .init(now: .now)
         userDefaults = .temporary()
+        userNotificationCenterMock = .init()
         sut = .init(
             currentDateProvider: mockDateProvider,
             userDefaults: userDefaults,
-            userNotificationCenter: .current()
+            userNotificationCenter: userNotificationCenterMock
         )
     }
 

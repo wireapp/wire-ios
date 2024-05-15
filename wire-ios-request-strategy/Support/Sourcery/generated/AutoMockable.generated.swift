@@ -1220,21 +1220,6 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
         mock(identifiers)
     }
 
-    // MARK: - removeAllNotifications
-
-    public var removeAllNotificationsWithIdentifiers_Invocations: [[String]] = []
-    public var removeAllNotificationsWithIdentifiers_MockMethod: (([String]) -> Void)?
-
-    public func removeAllNotifications(withIdentifiers identifiers: [String]) {
-        removeAllNotificationsWithIdentifiers_Invocations.append(identifiers)
-
-        guard let mock = removeAllNotificationsWithIdentifiers_MockMethod else {
-            fatalError("no mock for `removeAllNotificationsWithIdentifiers`")
-        }
-
-        mock(identifiers)
-    }
-
 }
 class MockUserProfilePayloadProcessing: UserProfilePayloadProcessing {
 

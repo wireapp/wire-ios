@@ -88,7 +88,8 @@ import WireUtilities
     /// Cancels all notifications
     public func cancelAllNotifications() {
         let ids = allNotifications.compactMap { $0.requestID?.uuidString }
-        notificationCenter.removeAllNotifications(withIdentifiers: ids)
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: ids)
+        notificationCenter.removeDeliveredNotifications(withIdentifiers: ids)
         notifications = Set()
         oldNotifications = []
     }
@@ -103,7 +104,9 @@ import WireUtilities
     func cancelCurrentNotifications(_ conversation: ZMConversation) {
         guard notifications.count > 0 else { return }
         let toRemove = notifications.filter { $0.conversationID == conversation.remoteIdentifier }
-        notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map { $0.id.uuidString })
+        let ids = toRemove.map { $0.id.uuidString }
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: ids)
+        notificationCenter.removeDeliveredNotifications(withIdentifiers: ids)
         notifications.subtract(toRemove)
     }
 
@@ -117,7 +120,8 @@ import WireUtilities
                 let requestID = userInfo.requestID?.uuidString
                 else { return true }
 
-            notificationCenter.removeAllNotifications(withIdentifiers: [requestID])
+            notificationCenter.removePendingNotificationRequests(withIdentifiers: [requestID])
+            notificationCenter.removeDeliveredNotifications(withIdentifiers: [requestID])
             return false
         }
     }
@@ -126,7 +130,9 @@ import WireUtilities
     public func cancelCurrentNotifications(messageNonce: UUID) {
         guard notifications.count > 0 else { return }
         let toRemove = notifications.filter { $0.messageNonce == messageNonce }
-        notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map { $0.id.uuidString })
+        let ids = toRemove.map { $0.id.uuidString }
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: ids)
+        notificationCenter.removeDeliveredNotifications(withIdentifiers: ids)
         notifications.subtract(toRemove)
     }
 }
@@ -138,7 +144,9 @@ extension ZMLocalNotificationSet {
         let toRemove = notifications.filter {
             $0.conversationID == conversation.remoteIdentifier && $0.isCallingNotification
         }
-        notificationCenter.removeAllNotifications(withIdentifiers: toRemove.map { $0.id.uuidString })
+        let ids = toRemove.map { $0.id.uuidString }
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: ids)
+        notificationCenter.removeDeliveredNotifications(withIdentifiers: ids)
         notifications.subtract(toRemove)
     }
 }

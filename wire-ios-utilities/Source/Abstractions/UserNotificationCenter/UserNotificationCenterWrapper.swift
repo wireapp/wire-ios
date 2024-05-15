@@ -63,11 +63,6 @@ public struct UserNotificationCenterWrapper: UserNotificationCenterAbstraction {
     public func removeDeliveredNotifications(withIdentifiers identifiers: [String]) {
         userNotificationCenter.removeDeliveredNotifications(withIdentifiers: identifiers)
     }
-
-    public func removeAllNotifications(withIdentifiers identifiers: [String]) {
-        userNotificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
-        userNotificationCenter.removeDeliveredNotifications(withIdentifiers: identifiers)
-    }
 }
 
 // MARK: - UserNotificationCenterAbstraction + wrapper(_:)

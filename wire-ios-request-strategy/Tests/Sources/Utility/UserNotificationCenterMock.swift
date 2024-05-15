@@ -19,7 +19,7 @@
 import Foundation
 import UserNotifications
 
-@objc // TODO: use sourcery mock
+@objc // TODO: delete in favor of the sourcery-generated mock
 public class UserNotificationCenterMock: NSObject, UserNotificationCenterAbstraction {
 
     weak public var delegate: UNUserNotificationCenterDelegate?
@@ -59,10 +59,5 @@ public class UserNotificationCenterMock: NSObject, UserNotificationCenterAbstrac
 
     public func removeDeliveredNotifications(withIdentifiers identifiers: [String]) {
         removedNotifications.formUnion(identifiers)
-    }
-
-    public func removeAllNotifications(withIdentifiers identifiers: [String]) {
-        removePendingNotificationRequests(withIdentifiers: identifiers)
-        removeDeliveredNotifications(withIdentifiers: identifiers)
     }
 }

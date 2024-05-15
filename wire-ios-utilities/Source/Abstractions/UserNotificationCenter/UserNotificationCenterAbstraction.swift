@@ -47,7 +47,4 @@ public protocol UserNotificationCenterAbstraction {
 
     /// Removes the specified notification requests from Notification Center
     func removeDeliveredNotifications(withIdentifiers identifiers: [String])
-
-    /// Removes all pending requests and delivered notifications with the given identifiers.
-    func removeAllNotifications(withIdentifiers identifiers: [String])
 }
