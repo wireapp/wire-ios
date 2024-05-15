@@ -83,6 +83,37 @@ final class MLSGroupVerificationTests: XCTestCase {
         XCTAssertEqual(groupIDs, [mlsGroupID])
     }
 
+    func testStartObserving_givenDealloc_thenDoNotInvokeUseCase() async {
+        // given
+        let expectation = self.expectation(description: "")
+        expectation.isInverted = true
+
+        let mlsGroupID: MLSGroupID = .random()
+        await syncContext.perform { [self] in
+            _ = modelHelper.createMLSConversation(mlsGroupID: mlsGroupID, in: syncContext)
+        }
+
+        var streamContinuation: AsyncStream<MLSGroupID>.Continuation!
+        mockMLService.epochChanges_MockValue = AsyncStream {
+            streamContinuation = $0
+        }
+        mockUpdateUseCase.invokeForGroupID_MockMethod = { _, _ in
+            expectation.fulfill()
+        }
+
+        var mlsGroupVerification: MLSGroupVerification? = makeMLSGroupVerification()
+
+        // when
+        mlsGroupVerification?.startObserving()
+        mlsGroupVerification = nil
+        streamContinuation.yield(mlsGroupID)
+
+        await fulfillment(of: [expectation], timeout: 0.5)
+
+        // then
+        XCTAssert(mockUpdateUseCase.invokeForGroupID_Invocations.isEmpty)
+    }
+
     func testUpdateConversationByGroupID_givenMLSGroupID() async {
         // given
         mockUpdateUseCase.invokeForGroupID_MockMethod = { _, _ in }
