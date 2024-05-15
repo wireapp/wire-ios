@@ -32,5 +32,19 @@ public struct ConversationRole: Equatable {
     /// The actions that can be performed in the role.
 
     public let actions: Set<ConversationAction>
+    
+    /// Create a new `ConversationRole`.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the role.
+    ///   - actions: The actions that can be performed in the role.
+
+    public init(
+        name: String,
+        actions: Set<ConversationAction>
+    ) {
+        self.name = name
+        self.actions = actions
+    }
 
 }

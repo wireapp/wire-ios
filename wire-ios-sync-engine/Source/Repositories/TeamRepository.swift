@@ -23,7 +23,7 @@ import WireDataModel
 enum TeamRepositoryError: Error {
 
     case failedToFetchRemotely(Error)
-    case failedToFetchTeamLocally
+    case teamNotFoundLocally
 
 }
 
@@ -115,7 +115,7 @@ final class TeamRepository: TeamRepositoryProtocol {
                 with: selfTeamID,
                 in: context
             ) else {
-                throw TeamRepositoryError.failedToFetchTeamLocally
+                throw TeamRepositoryError.teamNotFoundLocally
             }
 
             let existingRoles = team.roles

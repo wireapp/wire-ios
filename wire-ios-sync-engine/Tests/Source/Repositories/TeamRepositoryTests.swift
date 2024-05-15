@@ -61,6 +61,7 @@ final class TeamRepositoryTests: XCTestCase {
     func testFetchSelfTeam() async throws {
         // Given
         await context.perform { [context] in
+            // There is no team in the database.
             XCTAssertNil(Team.fetch(with: Scaffolding.selfTeamID, in: context))
         }
 
@@ -85,12 +86,84 @@ final class TeamRepositoryTests: XCTestCase {
 
         // Then
         try await context.perform { [context] in
+            // There is a team in the database.
             let team = try XCTUnwrap(Team.fetch(with: Scaffolding.selfTeamID, in: context))
             XCTAssertEqual(team.remoteIdentifier, Scaffolding.selfTeamID)
             XCTAssertEqual(team.name, Scaffolding.teamName)
             XCTAssertEqual(team.creator?.remoteIdentifier, Scaffolding.teamCreatorID)
             XCTAssertEqual(team.pictureAssetId, Scaffolding.logoID)
             XCTAssertEqual(team.pictureAssetKey, Scaffolding.logoKey)
+        }
+    }
+
+    func testFetchSelfTeamRoles() async throws {
+        // Given
+        try await context.perform { [context, modelHelper] in
+            // Make sure we have no roles to begin with.
+            let request = Role.fetchRequest()
+            let roles = try context.fetch(request)
+            XCTAssertTrue(roles.isEmpty)
+
+            // A team is needed to store new roles.
+            modelHelper.createTeam(
+                id: Scaffolding.selfTeamID,
+                in: context
+            )
+        }
+
+        let sut = TeamRepository(
+            selfTeamID: Scaffolding.selfTeamID,
+            teamsAPI: teamsAPI,
+            context: context
+        )
+
+        // Mock
+        teamsAPI.getTeamRolesFor_MockValue = [
+            ConversationRole(
+                name: "admin",
+                actions: [
+                    .addConversationMember,
+                    .deleteConversation
+                ]
+            ),
+            ConversationRole(
+                name: "member",
+                actions: [
+                    .addConversationMember
+                ]
+            )
+        ]
+
+        // When
+        try await sut.fetchSelfTeamRoles()
+
+        // Then
+        try await context.perform { [context] in
+            // There are two roles.
+            let request = NSFetchRequest<Role>(entityName: Role.entityName())
+            request.sortDescriptors = [NSSortDescriptor(key: Role.nameKey, ascending: true)]
+            let roles = try context.fetch(request)
+            XCTAssertEqual(roles.count, 2)
+
+            // One is for the admin.
+            let firstRole = try XCTUnwrap(roles.element(atIndex: 0))
+            XCTAssertEqual(firstRole.name, "admin")
+            XCTAssertEqual(firstRole.team?.remoteIdentifier, Scaffolding.selfTeamID)
+            XCTAssertNil(firstRole.conversation)
+            XCTAssertEqual(
+                Set(firstRole.actions.map(\.name)),
+                [
+                    "add_conversation_member",
+                    "delete_conversation"
+                ]
+            )
+
+            // One is for the member.
+            let secondRole = try XCTUnwrap(roles.element(atIndex: 1))
+            XCTAssertEqual(secondRole.name, "member")
+            XCTAssertEqual(secondRole.team?.remoteIdentifier, Scaffolding.selfTeamID)
+            XCTAssertNil(secondRole.conversation)
+            XCTAssertEqual(Set(secondRole.actions.map(\.name)), ["add_conversation_member"])
         }
     }
 
