@@ -18,15 +18,41 @@
 
 import Foundation
 
-/// Response when retrieving a list users.
+/// Describes the size of the user asset.
 
-public struct ListUsersResponse: Equatable {
+public enum UserAssetSize: String, Codable, Equatable {
 
-    /// List of users which were found and succesfully retrieved.
+    /// Smaller version of the asset optimised for size
 
-    public let found: [User]
+    case preview
 
-    /// List of user IDs for which a user couldn't be retrieved.
+    /// Complete version of the asset
 
-    public let failed: [UserID]
+    case complete
+}
+
+/// Describes the purpose of the user asset.
+
+public enum UserAssetType: String, Codable, Equatable {
+
+    /// User profile image
+
+    case image
+}
+
+/// An asset associated with a user, typically a profile picture.
+
+public struct UserAsset: Codable, Equatable {
+
+    /// Unique key for this asset, if the asset is updated it will be assigned new key.
+
+    let key: String
+
+    /// Asset size
+
+    let size: UserAssetSize
+
+    /// Asset type
+
+    let type: UserAssetType
 }

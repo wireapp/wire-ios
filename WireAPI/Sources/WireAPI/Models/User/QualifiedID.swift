@@ -18,15 +18,14 @@
 
 import Foundation
 
-/// Response when retrieving a list users.
+/// Fully qualified identifier in a federated environment
 
-public struct ListUsersResponse: Equatable {
+public struct QualifiedID: Codable, Equatable {
+    let uuid: UUID
+    let domain: String
 
-    /// List of users which were found and succesfully retrieved.
-
-    public let found: [User]
-
-    /// List of user IDs for which a user couldn't be retrieved.
-
-    public let failed: [UserID]
+    enum CodingKeys: String, CodingKey {
+        case uuid = "id"
+        case domain
+    }
 }

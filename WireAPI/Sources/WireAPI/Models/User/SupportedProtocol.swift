@@ -18,15 +18,9 @@
 
 import Foundation
 
-/// Response when retrieving a list users.
+/// The protocols which a user can support
 
-public struct ListUsersResponse: Equatable {
-
-    /// List of users which were found and succesfully retrieved.
-
-    public let found: [User]
-
-    /// List of user IDs for which a user couldn't be retrieved.
-
-    public let failed: [UserID]
+public enum SupportedProtocol: String, Equatable, Codable {
+    case proteus
+    case mls
 }

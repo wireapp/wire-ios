@@ -18,15 +18,9 @@
 
 import Foundation
 
-/// Response when retrieving a list users.
+/// Service Information for a bot
 
-public struct ListUsersResponse: Equatable {
-
-    /// List of users which were found and succesfully retrieved.
-
-    public let found: [User]
-
-    /// List of user IDs for which a user couldn't be retrieved.
-
-    public let failed: [UserID]
+public struct Service: Equatable {
+    let id: String
+    let provider: String
 }

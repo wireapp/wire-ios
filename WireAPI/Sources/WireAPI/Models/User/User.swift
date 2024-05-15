@@ -18,54 +18,61 @@
 
 import Foundation
 
-public enum UserAssetSize: String, Codable, Equatable {
-    case preview
-    case complete
-}
-
-public enum UserAssetType: String, Codable, Equatable {
-    case image
-}
-
-public struct UserAsset: Codable, Equatable {
-    let key: String
-    let size: UserAssetSize
-    let type: UserAssetType
-}
-
-public struct Service: Equatable {
-    let id: String
-    let provider: String
-}
-
-public enum SupportedProtocol: String, Equatable, Codable {
-    case proteus
-    case mls
-}
-
-public struct QualifiedID: Codable, Equatable {
-    let uuid: UUID
-    let domain: String
-
-    enum CodingKeys: String, CodingKey {
-        case uuid = "id"
-        case domain
-    }
-}
+/// Fully quallified user identifier
 
 public typealias UserID = QualifiedID
 
+/// User profile for a user
+
 public struct User: Equatable {
+
+    /// The unique id of the user
+
     let id: UserID
+
+    /// The user's full name
+
     let name: String
+
+    /// The users's unique handle
+
     let handle: String?
+
+    /// Team ID if the user belongs to a team
+
     let teamID: UUID
+
+    /// Color accent of the user
+
     let accentID: Int
+
+    /// The user's profile image assets
+
     let assets: [UserAsset]
+
+    /// Deleted is `True` if the user has been deleted
+
     let deleted: Bool?
+
+    /// The email associated with this user
+
     let email: String?
+
+    /// The date when user will expire
+    ///
+    /// Only set of guest (ephemeral) users
+
     let expiresAt: String?
+
+    /// Service information associated with this user
+
     let service: Service?
+
+    /// Messaging protocols which this user supports
+
     let supportedProtocols: Set<SupportedProtocol>?
+
+    /// The user's legalhold status
+
     let legalholdStatus: LegalholdStatus
 }
