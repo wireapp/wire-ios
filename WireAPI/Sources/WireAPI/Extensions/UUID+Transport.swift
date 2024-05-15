@@ -16,27 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
-import WireDataModel
-import WireSyncEngine
+import Foundation
 
-extension ConversationActionController {
+extension UUID {
 
-    func openMoveToFolder(for conversation: ZMConversation) {
-        guard let directory = ZMUserSession.shared()?.conversationDirectory else { return }
-        let folderPicker = FolderPickerViewController(conversation: conversation, directory: directory)
-        folderPicker.delegate = self
-        self.present(folderPicker.wrapInNavigationController())
-    }
-}
+    /// Creates a string suitable for transport to the server.
 
-extension ConversationActionController: FolderPickerViewControllerDelegate {
-
-    func didPickFolder(_ folder: LabelType, for conversation: ZMConversation) {
-
-        userSession.enqueue {
-            conversation.moveToFolder(folder)
-        }
+    func transportString() -> String {
+        uuidString.lowercased()
     }
 
 }
