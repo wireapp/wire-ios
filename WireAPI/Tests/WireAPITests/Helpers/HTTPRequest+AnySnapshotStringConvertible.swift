@@ -17,21 +17,22 @@
 //
 
 import Foundation
+import SnapshotTesting
+@testable import WireAPI
 
-extension JSONEncoder {
+extension HTTPRequest: AnySnapshotStringConvertible {
 
-    /// The default encoder to use when building http requests.
+    public var snapshotDescription: String {
+        let bodyAsString = body.map {
+            String.init(bytes: $0, encoding: .utf8) ?? $0.base64EncodedString()
+        }
 
-    static var defaultEncoder: JSONEncoder {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .sortedKeys
-        encoder.dateEncodingStrategy = .custom({ date, encoder in
-            var container = encoder.singleValueContainer()
-            let transportString = ISO8601DateFormatter.default.string(from: date)
-            try container.encode(transportString)
-        })
-
-        return encoder
+        return """
+        HTTPRequest
+          - path: "\(path)"
+          - method: \(method)
+          - body: \(bodyAsString ?? "none")
+        """
     }
 
 }
