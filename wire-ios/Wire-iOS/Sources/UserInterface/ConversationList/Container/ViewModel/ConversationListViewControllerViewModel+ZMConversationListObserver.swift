@@ -19,6 +19,8 @@
 import Foundation
 import WireSyncEngine
 
+#warning("TODO: create placeholder for empty archive")
+
 extension ConversationListViewController.ViewModel: ZMConversationListObserver {
 
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
