@@ -149,7 +149,7 @@ struct ZMUserSessionBuilder {
         )
         let updateMLSGroupVerificationStatus = UpdateMLSGroupVerificationStatusUseCase(
             e2eIVerificationStatusService: e2eiVerificationStatusService,
-            context: coreDataStack.syncContext,
+            syncContext: coreDataStack.syncContext,
             featureRepository: FeatureRepository(context: coreDataStack.syncContext)
         )
 
