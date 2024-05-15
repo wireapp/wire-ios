@@ -508,6 +508,7 @@
 		E6425FE12BCFAD16003EC8CF /* CoreDataStack+Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6425FE02BCFAD16003EC8CF /* CoreDataStack+Analytics.swift */; };
 		E66029D22BDA43E10033C524 /* SearchUsersCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66029D12BDA43E10033C524 /* SearchUsersCache.swift */; };
 		E662328B2BF4911E002B680A /* MLSGroupVerification.swift in Sources */ = {isa = PBXBuildFile; fileRef = E662328A2BF4911E002B680A /* MLSGroupVerification.swift */; };
+		E66232912BF4C75D002B680A /* MLSGroupVerificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66232902BF4C75D002B680A /* MLSGroupVerificationTests.swift */; };
 		E6707E902BBD683F00469D57 /* PINCache in Frameworks */ = {isa = PBXBuildFile; productRef = E6707E8F2BBD683F00469D57 /* PINCache */; };
 		E68D9FF12B0F595100EFE04F /* store2-108-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E68D9FF02B0F594600EFE04F /* store2-108-0.wiredatabase */; };
 		E68D9FF32B0F5B4600EFE04F /* store2-105-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = E68D9FF22B0F5B4600EFE04F /* store2-105-0.wiredatabase */; };
@@ -1423,6 +1424,7 @@
 		E6425FE02BCFAD16003EC8CF /* CoreDataStack+Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CoreDataStack+Analytics.swift"; sourceTree = "<group>"; };
 		E66029D12BDA43E10033C524 /* SearchUsersCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchUsersCache.swift; sourceTree = "<group>"; };
 		E662328A2BF4911E002B680A /* MLSGroupVerification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSGroupVerification.swift; sourceTree = "<group>"; };
+		E66232902BF4C75D002B680A /* MLSGroupVerificationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MLSGroupVerificationTests.swift; sourceTree = "<group>"; };
 		E68D9FF02B0F594600EFE04F /* store2-108-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-108-0.wiredatabase"; sourceTree = "<group>"; };
 		E68D9FF22B0F5B4600EFE04F /* store2-105-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-105-0.wiredatabase"; sourceTree = "<group>"; };
 		E6A2398F2B7F6F50004E48C2 /* MockActorOneOnOneMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockActorOneOnOneMigrator.swift; sourceTree = "<group>"; };
@@ -2595,24 +2597,25 @@
 		EE98879028882C6D002340D2 /* MLS */ = {
 			isa = PBXGroup;
 			children = (
-				EE98878D28882BFF002340D2 /* MLSServiceTests.swift */,
-				EEC794F92A38963F008E1A3B /* MLSEncryptionServiceTests.swift */,
-				EEC794F72A385359008E1A3B /* MLSDecryptionServiceTests.swift */,
-				EE84226F28EC353900B80FE5 /* MLSActionExecutorTests.swift */,
-				0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */,
-				EEDE7DB628EC1618007DC6A3 /* MockMLSActionExecutor.swift */,
-				EEF6E3C928D89251001C1799 /* StaleMLSKeyDetectorTests.swift */,
+				639971C02B28C5FA009DD5CF /* CommitSenderTests.swift */,
 				EEFAAC3328DDE27F009940E7 /* CoreCryptoCallbacksTests.swift */,
-				EEF0BC3028EEC02400ED16CA /* MockSyncStatus.swift */,
 				63C07014291144F70075D598 /* CoreCryptoConfigProviderTests.swift */,
 				6374562129C3323D001D1A33 /* CoreCryptoKeyProviderTests.swift */,
-				63FACD55291BC598003AB25D /* MLSClientIDTests.swift */,
-				EED6C7152A31AD1200CB8B60 /* MLSUserIDTests.swift */,
-				EE74E4DF2A37B3BF00B63E6E /* SubconversationGroupIDRepositoryTests.swift */,
-				6326E4712AEBB2E4006EEA28 /* ProteusToMLSMigrationCoordinatorTests.swift */,
 				59AAB6482AFCF541005B39E6 /* MessageProtocolTests.swift */,
-				639971C02B28C5FA009DD5CF /* CommitSenderTests.swift */,
+				EE84226F28EC353900B80FE5 /* MLSActionExecutorTests.swift */,
+				63FACD55291BC598003AB25D /* MLSClientIDTests.swift */,
+				EEC794F72A385359008E1A3B /* MLSDecryptionServiceTests.swift */,
+				EEC794F92A38963F008E1A3B /* MLSEncryptionServiceTests.swift */,
+				E66232902BF4C75D002B680A /* MLSGroupVerificationTests.swift */,
+				EE98878D28882BFF002340D2 /* MLSServiceTests.swift */,
+				EED6C7152A31AD1200CB8B60 /* MLSUserIDTests.swift */,
 				591362E52B70F45C000B210C /* MLSVerificationStatusTests.swift */,
+				EEDE7DB628EC1618007DC6A3 /* MockMLSActionExecutor.swift */,
+				EEF0BC3028EEC02400ED16CA /* MockSyncStatus.swift */,
+				6326E4712AEBB2E4006EEA28 /* ProteusToMLSMigrationCoordinatorTests.swift */,
+				0189815429A66B0800B52510 /* SafeCoreCryptoTests.swift */,
+				EEF6E3C928D89251001C1799 /* StaleMLSKeyDetectorTests.swift */,
+				EE74E4DF2A37B3BF00B63E6E /* SubconversationGroupIDRepositoryTests.swift */,
 			);
 			path = MLS;
 			sourceTree = "<group>";
@@ -4630,6 +4633,7 @@
 				F9DBA5271E28EEBD00BE23C0 /* UserChangeInfoObservationTests.swift in Sources */,
 				63FCE54828C78D1F00126D9D /* ZMConversationTests+Predicates.swift in Sources */,
 				1611CF59203AE6A0004D807B /* FileAssetCacheTests.swift in Sources */,
+				E66232912BF4C75D002B680A /* MLSGroupVerificationTests.swift in Sources */,
 				6354BDF62747BF9200880D50 /* ZMConversationTests+Federation.swift in Sources */,
 				5EFE9C0D2126CB7D007932A6 /* UnregisteredUserTests.swift in Sources */,
 				A9536FD323ACD23100CFD528 /* ConversationTests+gapsAndWindows.swift in Sources */,
