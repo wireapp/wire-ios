@@ -23,108 +23,108 @@ public struct WireLogger: LoggerProtocol {
         Self.provider?.addTag(key, value: value)
     }
 
-  public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger()])
+    public static var provider: LoggerProtocol? = AggregatedLogger(loggers: [SystemLogger()])
 
-  public let tag: String
+    public let tag: String
 
-  public init(tag: String = "") {
-    self.tag = tag
-  }
-
-  public func debug(
-    _ message: LogConvertible,
-    attributes: LogAttributes? = nil
-  ) {
-    guard shouldLogMessage(message) else { return }
-    log(level: .debug, message: message, attributes: attributes)
-  }
-
-  public func info(
-    _ message: LogConvertible,
-    attributes: LogAttributes? = nil
-  ) {
-    guard shouldLogMessage(message) else { return }
-    log(level: .info, message: message, attributes: attributes)
-  }
-
-  public func notice(
-    _ message: LogConvertible,
-    attributes: LogAttributes? = nil
-  ) {
-    guard shouldLogMessage(message) else { return }
-    log(level: .notice, message: message, attributes: attributes)
-  }
-
-  public func warn(
-    _ message: LogConvertible,
-    attributes: LogAttributes? = nil
-  ) {
-    guard shouldLogMessage(message) else { return }
-    log(level: .warn, message: message, attributes: attributes)
-  }
-
-  public func error(
-    _ message: LogConvertible,
-    attributes: LogAttributes? = nil
-  ) {
-    guard shouldLogMessage(message) else { return }
-    log(level: .error, message: message, attributes: attributes)
-  }
-
-  public func critical(
-    _ message: LogConvertible,
-    attributes: LogAttributes? = nil
-  ) {
-    guard shouldLogMessage(message) else { return }
-    log(level: .critical, message: message, attributes: attributes)
-  }
-
-  private func shouldLogMessage(_ message: LogConvertible) -> Bool {
-    return Self.provider != nil && !message.logDescription.isEmpty
-  }
-
-  private func log(
-    level: LogLevel,
-    message: LogConvertible,
-    attributes: LogAttributes? = nil
-  ) {
-    var attributes = attributes ?? .init()
-
-    if !tag.isEmpty {
-      attributes["tag"] = tag
+    public init(tag: String = "") {
+        self.tag = tag
     }
 
-    switch level {
-    case .debug:
-      Self.provider?.debug(message, attributes: attributes)
-
-    case .info:
-      Self.provider?.info(message, attributes: attributes)
-
-    case .notice:
-      Self.provider?.notice(message, attributes: attributes)
-
-    case .warn:
-      Self.provider?.warn(message, attributes: attributes)
-
-    case .error:
-      Self.provider?.error(message, attributes: attributes)
-
-    case .critical:
-      Self.provider?.critical(message, attributes: attributes)
+    public func debug(
+        _ message: LogConvertible,
+        attributes: LogAttributes? = nil
+    ) {
+        guard shouldLogMessage(message) else { return }
+        log(level: .debug, message: message, attributes: attributes)
     }
-  }
 
-  private enum LogLevel {
+    public func info(
+        _ message: LogConvertible,
+        attributes: LogAttributes? = nil
+    ) {
+        guard shouldLogMessage(message) else { return }
+        log(level: .info, message: message, attributes: attributes)
+    }
 
-    case debug
-    case info
-    case notice
-    case warn
-    case error
-    case critical
+    public func notice(
+        _ message: LogConvertible,
+        attributes: LogAttributes? = nil
+    ) {
+        guard shouldLogMessage(message) else { return }
+        log(level: .notice, message: message, attributes: attributes)
+    }
 
-  }
+    public func warn(
+        _ message: LogConvertible,
+        attributes: LogAttributes? = nil
+    ) {
+        guard shouldLogMessage(message) else { return }
+        log(level: .warn, message: message, attributes: attributes)
+    }
+
+    public func error(
+        _ message: LogConvertible,
+        attributes: LogAttributes? = nil
+    ) {
+        guard shouldLogMessage(message) else { return }
+        log(level: .error, message: message, attributes: attributes)
+    }
+
+    public func critical(
+        _ message: LogConvertible,
+        attributes: LogAttributes? = nil
+    ) {
+        guard shouldLogMessage(message) else { return }
+        log(level: .critical, message: message, attributes: attributes)
+    }
+
+    private func shouldLogMessage(_ message: LogConvertible) -> Bool {
+        return Self.provider != nil && !message.logDescription.isEmpty
+    }
+
+    private func log(
+        level: LogLevel,
+        message: LogConvertible,
+        attributes: LogAttributes? = nil
+    ) {
+        var attributes = attributes ?? .init()
+
+        if !tag.isEmpty {
+            attributes["tag"] = tag
+        }
+
+        switch level {
+        case .debug:
+            Self.provider?.debug(message, attributes: attributes)
+
+        case .info:
+            Self.provider?.info(message, attributes: attributes)
+
+        case .notice:
+            Self.provider?.notice(message, attributes: attributes)
+
+        case .warn:
+            Self.provider?.warn(message, attributes: attributes)
+
+        case .error:
+            Self.provider?.error(message, attributes: attributes)
+
+        case .critical:
+            Self.provider?.critical(message, attributes: attributes)
+        }
+    }
+
+    private enum LogLevel {
+
+        case debug
+        case info
+        case notice
+        case warn
+        case error
+        case critical
+
+    }
 
 }
 
@@ -142,16 +142,17 @@ public extension LogAttributes {
 
 public protocol LoggerProtocol {
 
-  func debug(_ message: LogConvertible, attributes: LogAttributes?)
-  func info(_ message: LogConvertible, attributes: LogAttributes?)
-  func notice(_ message: LogConvertible, attributes: LogAttributes?)
-  func warn(_ message: LogConvertible, attributes: LogAttributes?)
-  func error(_ message: LogConvertible, attributes: LogAttributes?)
-  func critical(_ message: LogConvertible, attributes: LogAttributes?)
+    func debug(_ message: LogConvertible, attributes: LogAttributes?)
+    func info(_ message: LogConvertible, attributes: LogAttributes?)
+    func notice(_ message: LogConvertible, attributes: LogAttributes?)
+    func warn(_ message: LogConvertible, attributes: LogAttributes?)
+    func error(_ message: LogConvertible, attributes: LogAttributes?)
+    func critical(_ message: LogConvertible, attributes: LogAttributes?)
 
-  func persist(fileDestination: FileLoggerDestination) async
+    func persist(fileDestination: FileLoggerDestination) async
 
-  func addTag(_ key: LogAttributesKey, value: String?)
+    /// Add an attribute, value to each logs - DataDog only
+    func addTag(_ key: LogAttributesKey, value: String?)
 }
 
 extension LoggerProtocol {
@@ -161,15 +162,15 @@ extension LoggerProtocol {
 
 public protocol LogConvertible {
 
-  var logDescription: String { get }
+    var logDescription: String { get }
 
 }
 
 extension String: LogConvertible {
 
-  public var logDescription: String {
-    return self
-  }
+    public var logDescription: String {
+        return self
+    }
 
 }
 
