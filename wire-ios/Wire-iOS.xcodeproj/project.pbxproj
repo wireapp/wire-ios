@@ -6099,14 +6099,14 @@
 			path = Collections;
 			sourceTree = "<group>";
 		};
-		87DCF4741D34E95B00BB420F /* Permissions */ = {
+		87DCF4741D34E95B00BB420F /* PermissionDeniedHint */ = {
 			isa = PBXGroup;
 			children = (
 				EF3BD69B225CC53B00ABB9B6 /* PermissionDeniedViewController.swift */,
 				EF3BD69E225CD4FE00ABB9B6 /* ShareContactsViewController.swift */,
 				EE1AFBFD2124330B003D1AE1 /* UNUserNotificationCenter+Permission.swift */,
 			);
-			path = Permissions;
+			path = PermissionDeniedHint;
 			sourceTree = "<group>";
 		};
 		87DCF47B1D34E9BA00BB420F /* ContactsUI */ = {
@@ -6392,7 +6392,6 @@
 				8FC85146199245760008B66B /* Managers */,
 				EF2126B41FB9DFE300625A9B /* Authentication */,
 				8FC8516F199245760008B66B /* UserInterface */,
-				87DCF4741D34E95B00BB420F /* Permissions */,
 				A9EB722423C3A47B00DA8240 /* AppDelegate.swift */,
 				163495881F015389004E80DB /* AppDelegate+Network.swift */,
 				F1141C961F5EB2DC005340B3 /* WireApplication.swift */,
@@ -6561,6 +6560,7 @@
 		8FC8516F199245760008B66B /* UserInterface */ = {
 			isa = PBXGroup;
 			children = (
+				87DCF4741D34E95B00BB420F /* PermissionDeniedHint */,
 				EEF37ECE2BDFC74C0055C9E1 /* SwitchBackend */,
 				061F34142B1A4F190099CBAB /* E2EIdentity */,
 				EE01D07F25ADA3AD001DB205 /* App Lock */,

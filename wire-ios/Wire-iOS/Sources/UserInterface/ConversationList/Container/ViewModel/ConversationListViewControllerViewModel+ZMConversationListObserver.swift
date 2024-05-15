@@ -23,7 +23,7 @@ extension ConversationListViewController.ViewModel: ZMConversationListObserver {
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         updateNoConversationVisibility()
 #warning("TODO: create placeholder for empty archive")
-#warning("TODO: some modals have a transparent navigation bar")
+#warning("TODO: push permission presentation")
     }
 }
 

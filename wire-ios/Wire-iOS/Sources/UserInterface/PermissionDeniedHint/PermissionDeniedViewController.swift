@@ -20,11 +20,13 @@ import UIKit
 import WireCommonComponents
 
 // MARK: - PermissionDeniedViewControllerDelegate
+
 protocol PermissionDeniedViewControllerDelegate: AnyObject {
     func continueWithoutPermission(_ viewController: PermissionDeniedViewController)
 }
 
 // MARK: - PermissionDeniedViewController
+
 final class PermissionDeniedViewController: UIViewController {
 
     // MARK: - Properties

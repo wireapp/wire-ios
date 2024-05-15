@@ -264,6 +264,7 @@ extension ConversationListViewController.ViewModel: ZMInitialSyncCompletionObser
 }
 
 extension Settings {
+    // TODO
     var pushAlertHappenedMoreThan1DayBefore: Bool {
         guard let date: Date = self[.lastPushAlertDate] else {
             return true
