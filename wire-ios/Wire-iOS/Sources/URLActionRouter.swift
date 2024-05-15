@@ -134,24 +134,26 @@ class URLActionRouter: URLActionRouterProtocol {
 extension URLActionRouter: PresentationDelegate {
 
     func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
+        typealias ConversationAlert = L10n.Localizable.Join.Group.Conversation.Alert
+
         let alertController = UIAlertController(
-            title: L10n.Localizable.Join.Group.Conversation.Alert.title(conversationName),
-            message: L10n.Localizable.Join.Group.Conversation.Alert.message,
+            title: ConversationAlert.title(conversationName),
+            message: ConversationAlert.message,
             preferredStyle: .alert
         )
 
         alertController.addTextField { textField in
-            textField.placeholder = L10n.Localizable.Join.Group.Conversation.Alert.Textfield.placeholder
+            textField.placeholder = ConversationAlert.Textfield.placeholder
             textField.isSecureTextEntry = true
         }
 
-        let joinAction = UIAlertAction(title: L10n.Localizable.Join.Group.Conversation.Alert.JoinAction.title, style: .default) { _ in
+        let joinAction = UIAlertAction(title: ConversationAlert.JoinAction.title, style: .default) { _ in
             let password = alertController.textFields?.first?.text
             completion(password)
         }
 
         let helpLinkURL = URL(string: "https://support.wire.com/hc/en-us/articles/360000574069-Create-guest-rooms")!
-        let learnMoreAction = UIAlertAction(title: L10n.Localizable.Join.Group.Conversation.Alert.LearnMoreAction.title, style: .default) { _ in
+        let learnMoreAction = UIAlertAction(title: ConversationAlert.LearnMoreAction.title, style: .default) { _ in
             UIApplication.shared.open(helpLinkURL, options: [:], completionHandler: nil)
         }
 
