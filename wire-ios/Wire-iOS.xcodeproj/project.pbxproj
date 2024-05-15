@@ -315,6 +315,9 @@
 		551CD27822BA288B00EE9AE5 /* LegalHoldDisclosureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551CD27722BA288B00EE9AE5 /* LegalHoldDisclosureController.swift */; };
 		55A42A701FC872600056752F /* CallQualityController+Budget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55A42A6F1FC872600056752F /* CallQualityController+Budget.swift */; };
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
+		590A5F072BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F062BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift */; };
+		590A5F092BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */; };
+		590A5F0B2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */; };
 		5915B94B2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B94A2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift */; };
 		5915B94D2BF4A76C00215817 /* ShouldPresentNotificationPermissionHintUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B94C2BF4A76C00215817 /* ShouldPresentNotificationPermissionHintUseCase.swift */; };
 		5915B9562BF4B8AC00215817 /* ShouldPresentNotificationPermissionHintUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5915B9552BF4B8AC00215817 /* ShouldPresentNotificationPermissionHintUseCaseTests.swift */; };
@@ -2368,6 +2371,9 @@
 		551CD27722BA288B00EE9AE5 /* LegalHoldDisclosureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalHoldDisclosureController.swift; sourceTree = "<group>"; };
 		55A42A6F1FC872600056752F /* CallQualityController+Budget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CallQualityController+Budget.swift"; sourceTree = "<group>"; };
 		55DD5C331FA236F60082170C /* CallQualityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityViewController.swift; sourceTree = "<group>"; };
+		590A5F062BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PermissionDeniedViewController+addressBook.swift"; sourceTree = "<group>"; };
+		590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "PermissionDeniedViewController+notifications.swift"; sourceTree = "<group>"; };
+		590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionDeniedViewControllerDelegate.swift; sourceTree = "<group>"; };
 		5915B94A2BF4A70900215817 /* ShouldPresentNotificationPermissionHintUseCaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShouldPresentNotificationPermissionHintUseCaseProtocol.swift; sourceTree = "<group>"; };
 		5915B94C2BF4A76C00215817 /* ShouldPresentNotificationPermissionHintUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShouldPresentNotificationPermissionHintUseCase.swift; sourceTree = "<group>"; };
 		5915B9552BF4B8AC00215817 /* ShouldPresentNotificationPermissionHintUseCaseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShouldPresentNotificationPermissionHintUseCaseTests.swift; sourceTree = "<group>"; };
@@ -4636,6 +4642,14 @@
 			path = CallQualityController;
 			sourceTree = "<group>";
 		};
+		590A5F052BF4CB06008E87D8 /* ShareContacts */ = {
+			isa = PBXGroup;
+			children = (
+				EF3BD69E225CD4FE00ABB9B6 /* ShareContactsViewController.swift */,
+			);
+			path = ShareContacts;
+			sourceTree = "<group>";
+		};
 		5915B9492BF4A62100215817 /* IsNotificationAuthorizationStatusDeniedUseCase */ = {
 			isa = PBXGroup;
 			children = (
@@ -6140,9 +6154,11 @@
 		87DCF4741D34E95B00BB420F /* PermissionDeniedHint */ = {
 			isa = PBXGroup;
 			children = (
-				5915B9492BF4A62100215817 /* IsNotificationAuthorizationStatusDeniedUseCase */,
 				EF3BD69B225CC53B00ABB9B6 /* PermissionDeniedViewController.swift */,
-				EF3BD69E225CD4FE00ABB9B6 /* ShareContactsViewController.swift */,
+				590A5F062BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift */,
+				590A5F082BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift */,
+				590A5F0A2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift */,
+				5915B9492BF4A62100215817 /* IsNotificationAuthorizationStatusDeniedUseCase */,
 			);
 			path = PermissionDeniedHint;
 			sourceTree = "<group>";
@@ -6598,6 +6614,7 @@
 		8FC8516F199245760008B66B /* UserInterface */ = {
 			isa = PBXGroup;
 			children = (
+				590A5F052BF4CB06008E87D8 /* ShareContacts */,
 				87DCF4741D34E95B00BB420F /* PermissionDeniedHint */,
 				EEF37ECE2BDFC74C0055C9E1 /* SwitchBackend */,
 				061F34142B1A4F190099CBAB /* E2EIdentity */,
@@ -9702,9 +9719,11 @@
 				EFA145F4231EA4980073BA5E /* ConversationListViewController.swift in Sources */,
 				D5173573201764DD00B473CE /* UIAlertAction+Convenience.swift in Sources */,
 				EFC6F8A0213FCDE200B92D51 /* MenuConfigurationProperties.swift in Sources */,
+				590A5F0B2BF4CBCE008E87D8 /* PermissionDeniedViewControllerDelegate.swift in Sources */,
 				54B27986258113FD0043ED25 /* AuthenticatedRouter.swift in Sources */,
 				EF1A461821AD5A270009B6B9 /* GroupDetailsReceiptOptionsCell.swift in Sources */,
 				87EB6B871E2FCE080019B3C5 /* ZMConversationMessage+File.swift in Sources */,
+				590A5F072BF4CB1B008E87D8 /* PermissionDeniedViewController+addressBook.swift in Sources */,
 				87F18BBA1E01551600C69D9B /* VideoMessageView.swift in Sources */,
 				5EE73BEB212307D10032986D /* RegistrationActivationExistingAccountPolicyHandler.swift in Sources */,
 				63421E4B2614C25700ADA723 /* NotificationLabel.swift in Sources */,
@@ -10283,6 +10302,7 @@
 				061275DE26F304CB006E8D4C /* DragInteractionRestrictionTextView.swift in Sources */,
 				5EBBE97121878D09008BC1B7 /* ConversationMessageToolboxCell.swift in Sources */,
 				EE08ADED29C8862800B6C14D /* SwitchBackendView.swift in Sources */,
+				590A5F092BF4CB6B008E87D8 /* PermissionDeniedViewController+notifications.swift in Sources */,
 				8775BF1E2007CFB200A8AD93 /* UIControlBlockAPI.swift in Sources */,
 				EF1A461E21ADACF50009B6B9 /* RightIconDetailsCell.swift in Sources */,
 				5EE73BF3212323C70032986D /* RegistrationCredentialsVerifiedEventHandler.swift in Sources */,
