@@ -36,7 +36,7 @@ final class TextFieldValidator {
         text: String?,
         kind: ValidatedTextField.Kind
     ) -> TextFieldValidator.ValidationError? {
-        guard let text = text else {
+        guard let text else {
             return nil
         }
 
