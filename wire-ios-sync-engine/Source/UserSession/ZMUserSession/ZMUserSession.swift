@@ -172,7 +172,7 @@ public final class ZMUserSession: NSObject {
         return CertificateRevocationListsChecker(
             userID: userId,
             crlAPI: CertificateRevocationListAPI(),
-            mlsConversationsVerificationUpdater: mlsGroupVerification!.statusUpdater,
+            mlsGroupVerification: mlsGroupVerification!,
             selfClientCertificateProvider: selfClientCertificateProvider,
             coreCryptoProvider: coreCryptoProvider,
             context: coreDataStack.syncContext

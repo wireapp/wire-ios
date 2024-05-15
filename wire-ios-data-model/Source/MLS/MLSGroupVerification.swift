@@ -18,11 +18,17 @@
 
 import Foundation
 
-public final class MLSGroupVerification {
+// sourcery: AutoMockable
+public protocol MLSGroupVerificationProtocol {
+
+    func updateAllConversations() async
+
+}
+
+public final class MLSGroupVerification: MLSGroupVerificationProtocol {
 
     // MARK: - Properties
 
-    public let statusUpdater: any MLSConversationVerificationStatusUpdating
     public let updateUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol
 
     private let mlsService: MLSServiceInterface
@@ -45,10 +51,6 @@ public final class MLSGroupVerification {
         )
 
         self.updateUseCase = updateUseCase
-        self.statusUpdater = MLSConversationVerificationStatusUpdater(
-            updateMLSGroupVerificationStatus: updateUseCase,
-            syncContext: syncContext
-        )
         self.mlsService = mlsService
         self.syncContext = syncContext
     }
@@ -76,6 +78,28 @@ public final class MLSGroupVerification {
             try await updateUseCase.invoke(for: conversation, groupID: groupID)
         } catch {
             WireLogger.e2ei.warn("failed to update MLS group: \(groupID) verification status: \(error)")
+        }
+    }
+
+    public func updateAllConversations() async {
+        WireLogger.e2ei.info("updating all MLS conversations verification status")
+
+        let groupIDConversationTuples: [(MLSGroupID, ZMConversation)] = await syncContext.perform { [self] in
+            let conversations = ZMConversation.fetchMLSConversations(in: syncContext)
+            return conversations.compactMap {
+                guard let groupID = $0.mlsGroupID else {
+                    return nil
+                }
+                return (groupID, $0)
+            }
+        }
+
+        for (groupID, conversation) in groupIDConversationTuples {
+            do {
+                try await updateUseCase.invoke(for: conversation, groupID: groupID)
+            } catch {
+                WireLogger.e2ei.warn("failed to update verification status for (\(groupID.safeForLoggingDescription)): \(String(describing: error))")
+            }
         }
     }
 }
