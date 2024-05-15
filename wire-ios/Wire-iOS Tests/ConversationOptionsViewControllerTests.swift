@@ -54,7 +54,7 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
     }
 
     func fetchConversationLink(completion: @escaping (Result<(uri: String?, secured: Bool), Error>) -> Void) {
-        linkResult.apply(completion)
+        linkResult.map(completion)
     }
 
     func deleteLink(completion: @escaping (Result<Void, Error>) -> Void) {
