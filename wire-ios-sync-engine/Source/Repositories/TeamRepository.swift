@@ -23,12 +23,15 @@ import WireDataModel
 enum TeamRepositoryError: Error {
 
     case failedToFetchRemotely(Error)
+    case failedToFetchTeamLocally
 
 }
 
 protocol TeamRepositoryProtocol {
 
     func fetchSelfTeam() async throws
+
+    func fetchSelfTeamRoles() async throws
 
 }
 
@@ -88,6 +91,89 @@ final class TeamRepository: TeamRepositoryProtocol {
             team.pictureAssetId = teamAPIModel.logoID
             team.pictureAssetKey = teamAPIModel.logoKey
             team.needsToBeUpdatedFromBackend = false
+        }
+    }
+
+    // MARK: - Fetch self team roles
+
+    func fetchSelfTeamRoles() async throws {
+        let teamRoles = try await fetchSelfTeamRolesRemotely()
+        try await storeTeamRolesLocally(teamRoles)
+    }
+
+    private func fetchSelfTeamRolesRemotely() async throws -> [WireAPI.ConversationRole] {
+        do {
+            return try await teamsAPI.getTeamRoles(for: selfTeamID)
+        } catch {
+            throw TeamRepositoryError.failedToFetchRemotely(error)
+        }
+    }
+
+    private func storeTeamRolesLocally(_ roles: [WireAPI.ConversationRole]) async throws {
+        try await context.perform { [context, selfTeamID] in
+            guard let team = WireDataModel.Team.fetch(
+                with: selfTeamID,
+                in: context
+            ) else {
+                throw TeamRepositoryError.failedToFetchTeamLocally
+            }
+
+            let existingRoles = team.roles
+
+            let localRoles = roles.map { role in
+                let localRole = Role.fetchOrCreate(
+                    name: role.name,
+                    teamOrConversation: .team(team),
+                    context: context
+                )
+
+                localRole.name = role.name
+                localRole.team = team
+
+                for action in role.actions {
+                    let action = Action.fetchOrCreate(
+                        name: action.name,
+                        in: context
+                    )
+
+                    localRole.actions.insert(action)
+                }
+
+                return localRole
+            }
+
+            for roleToDelete in existingRoles.subtracting(localRoles) {
+                context.delete(roleToDelete)
+            }
+
+            team.needsToDownloadRoles = false
+        }
+    }
+
+}
+
+private extension ConversationAction {
+
+    var name: String {
+        switch self {
+        case .addConversationMember:
+            "add_conversation_member"
+        case .removeConversationMember:
+            "remove_conversation_member"
+        case .modifyConversationName:
+            "modify_conversation_name"
+        case .modifyConversationMessageTimer:
+            "modify_conversation_message_timer"
+        case .modifyConversationReceiptMode:
+            "modify_conversation_receipt_mode"
+        case .modifyConversationAccess:
+            "modify_conversation_access"
+        case .modifyOtherConversationMember:
+            "modify_other_conversation_member"
+        case .leaveConversation:
+            "leave_conversation"
+        case .deleteConversation:
+            "delete_conversation"
         }
     }
 
