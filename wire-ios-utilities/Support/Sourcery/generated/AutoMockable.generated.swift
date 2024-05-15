@@ -100,32 +100,68 @@ public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstra
 
     // MARK: - requestAuthorization
 
-    public var requestAuthorizationOptionsCompletionHandler_Invocations: [(options: UNAuthorizationOptions, completionHandler: (Bool, Error?) -> Void)] = []
-    public var requestAuthorizationOptionsCompletionHandler_MockMethod: ((UNAuthorizationOptions, @escaping (Bool, Error?) -> Void) -> Void)?
+    public var requestAuthorizationOptions_Invocations: [UNAuthorizationOptions] = []
+    public var requestAuthorizationOptions_MockError: Error?
+    public var requestAuthorizationOptions_MockMethod: ((UNAuthorizationOptions) async throws -> Bool)?
+    public var requestAuthorizationOptions_MockValue: Bool?
 
-    public func requestAuthorization(options: UNAuthorizationOptions, completionHandler: @escaping (Bool, Error?) -> Void) {
-        requestAuthorizationOptionsCompletionHandler_Invocations.append((options: options, completionHandler: completionHandler))
+    public func requestAuthorization(options: UNAuthorizationOptions) async throws -> Bool {
+        requestAuthorizationOptions_Invocations.append(options)
 
-        guard let mock = requestAuthorizationOptionsCompletionHandler_MockMethod else {
-            fatalError("no mock for `requestAuthorizationOptionsCompletionHandler`")
+        if let error = requestAuthorizationOptions_MockError {
+            throw error
         }
 
-        mock(options, completionHandler)
+        if let mock = requestAuthorizationOptions_MockMethod {
+            return try await mock(options)
+        } else if let mock = requestAuthorizationOptions_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `requestAuthorizationOptions`")
+        }
+    }
+
+    // MARK: - requestAuthorization
+
+    public var requestAuthorization_Invocations: [Void] = []
+    public var requestAuthorization_MockError: Error?
+    public var requestAuthorization_MockMethod: (() async throws -> Bool)?
+    public var requestAuthorization_MockValue: Bool?
+
+    public func requestAuthorization() async throws -> Bool {
+        requestAuthorization_Invocations.append(())
+
+        if let error = requestAuthorization_MockError {
+            throw error
+        }
+
+        if let mock = requestAuthorization_MockMethod {
+            return try await mock()
+        } else if let mock = requestAuthorization_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `requestAuthorization`")
+        }
     }
 
     // MARK: - add
 
-    public var addWithCompletionHandler_Invocations: [(request: UNNotificationRequest, withCompletionHandler: ((Error?) -> Void)?)] = []
-    public var addWithCompletionHandler_MockMethod: ((UNNotificationRequest, ((Error?) -> Void)?) -> Void)?
+    public var add_Invocations: [UNNotificationRequest] = []
+    public var add_MockError: Error?
+    public var add_MockMethod: ((UNNotificationRequest) async throws -> Void)?
 
-    public func add(_ request: UNNotificationRequest, withCompletionHandler: ((Error?) -> Void)?) {
-        addWithCompletionHandler_Invocations.append((request: request, withCompletionHandler: withCompletionHandler))
+    public func add(_ request: UNNotificationRequest) async throws {
+        add_Invocations.append(request)
 
-        guard let mock = addWithCompletionHandler_MockMethod else {
-            fatalError("no mock for `addWithCompletionHandler`")
+        if let error = add_MockError {
+            throw error
         }
 
-        mock(request, withCompletionHandler)
+        guard let mock = add_MockMethod else {
+            fatalError("no mock for `add`")
+        }
+
+        try await mock(request)
     }
 
     // MARK: - removePendingNotificationRequests

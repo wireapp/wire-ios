@@ -36,24 +36,12 @@ public struct UserNotificationCenterWrapper: UserNotificationCenterAbstraction {
         userNotificationCenter.setNotificationCategories(categories)
     }
 
-    public func requestAuthorization(
-        options: UNAuthorizationOptions,
-        completionHandler: @escaping (Bool, (any Error)?) -> Void
-    ) {
-        userNotificationCenter.requestAuthorization(
-            options: options,
-            completionHandler: completionHandler
-        )
+    public func requestAuthorization(options: UNAuthorizationOptions) async throws -> Bool {
+        try await userNotificationCenter.requestAuthorization(options: options)
     }
 
-    public func add(
-        _ request: UNNotificationRequest,
-        withCompletionHandler completionHandler: (((any Error)?) -> Void)?
-    ) {
-        userNotificationCenter.add(
-            request,
-            withCompletionHandler: completionHandler
-        )
+    public func add(_ request: UNNotificationRequest) async throws {
+        try await userNotificationCenter.add(request)
     }
 
     public func removePendingNotificationRequests(withIdentifiers identifiers: [String]) {

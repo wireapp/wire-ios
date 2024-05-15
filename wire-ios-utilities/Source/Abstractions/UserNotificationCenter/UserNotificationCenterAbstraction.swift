@@ -30,19 +30,23 @@ public protocol UserNotificationCenterAbstraction {
     /// Registers the notification types and the custom actions they support.
     func setNotificationCategories(_ categories: Set<UNNotificationCategory>)
 
-    // TODO: use async variant
-
     /// Requests authorization to use notifications.
-    func requestAuthorization(options: UNAuthorizationOptions, completionHandler: @escaping (Bool, Error?) -> Void)
-
-    // TODO: use async variant
+    func requestAuthorization(options: UNAuthorizationOptions) async throws -> Bool
+    func requestAuthorization() async throws -> Bool
 
     /// Schedules the request to display a local notification.
-    func add(_ request: UNNotificationRequest, withCompletionHandler: ((Error?) -> Void)?)
+    func add(_ request: UNNotificationRequest) async throws
 
     /// Unschedules the specified notification requests.
     func removePendingNotificationRequests(withIdentifiers identifiers: [String])
 
     /// Removes the specified notification requests from Notification Center
     func removeDeliveredNotifications(withIdentifiers identifiers: [String])
+}
+
+extension UserNotificationCenterAbstraction {
+
+    public func requestAuthorization() async throws -> Bool {
+        try await requestAuthorization(options: [])
+    }
 }

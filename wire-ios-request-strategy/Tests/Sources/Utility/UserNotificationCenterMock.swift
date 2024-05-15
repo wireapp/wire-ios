@@ -19,7 +19,8 @@
 import Foundation
 import UserNotifications
 
-@available(*, deprecated, message: "Use WireUtilities.MockUserNotificationCenterAbstraction")
+// cannot un-comment this line since a few projects treat warnings as errors
+// @available(*, deprecated, message: "Use WireUtilities.MockUserNotificationCenterAbstraction")
 @objc(ZMUserNotificationCenterMock)
 public class UserNotificationCenterMock: NSObject, UserNotificationCenterAbstraction {
 
@@ -45,12 +46,12 @@ public class UserNotificationCenterMock: NSObject, UserNotificationCenterAbstrac
         registeredNotificationCategories.formUnion(categories)
     }
 
-    public func requestAuthorization(options: UNAuthorizationOptions,
-                                     completionHandler: @escaping (Bool, Error?) -> Void) {
+    public func requestAuthorization(options: UNAuthorizationOptions) async throws -> Bool {
         requestedAuthorizationOptions.insert(options)
+        return true
     }
 
-    public func add(_ request: UNNotificationRequest, withCompletionHandler: ((Error?) -> Void)?) {
+    public func add(_ request: UNNotificationRequest) async throws {
         scheduledRequests.append(request)
     }
 
