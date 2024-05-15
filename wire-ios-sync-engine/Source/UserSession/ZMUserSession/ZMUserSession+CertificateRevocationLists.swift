@@ -47,7 +47,6 @@ extension ZMUserSession {
     func checkExpiredCertificateRevocationLists() {
         guard let cRLsChecker else {
             WireLogger.e2ei.error("requires 'cRLsChecker' to check expired CRLs!", attributes: .safePublic)
-            assertionFailure("requires 'cRLsChecker' to check expired CRLs!")
             return
         }
 
