@@ -36,7 +36,6 @@ final class AccentColorPickerController: UIHostingController<AccentColorPicker> 
         // This will simplify state management and improve code clarity. At that point, we can replace the closure with a binding to directly manage the selected color state.
         let colorPickerView = AccentColorPicker(
             selectedColor: accentColor,
-            colors: AccentColor.allCases,
             onColorSelect: { accentColor in
                 userSession.perform {
                     selfUser.accentColorValue = accentColor.rawValue

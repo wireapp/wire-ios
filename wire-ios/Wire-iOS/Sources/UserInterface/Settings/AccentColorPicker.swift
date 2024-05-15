@@ -22,20 +22,19 @@ import WireSyncEngine
 
 struct AccentColorPicker: View {
 
-    @State var selectedColor: AccentColor
-
-    let colors: [AccentColor]
-    let onColorSelect: ((AccentColor) -> Void)?
-
+    @State
+    var selectedColor: AccentColor
     private let colorViewSize: CGFloat = 28
     private let colorViewCornerRadius: CGFloat = 14
+
+    let onColorSelect: ((AccentColor) -> Void)?
 
     var body: some View {
         // The NavigationView is needed here to properly set the font size for the navigation bar title.
         // Currently, there's no other way to set the font size of the navigation bar title to the desired value.
         // Without the NavigationView, the title would be too small.
         NavigationView {
-            List(colors, id: \.self) { color in
+            List(AccentColor.allCases, id: \.self) { color in
                 cell(for: color)
                     .listRowBackground(Color(SemanticColors.View.backgroundUserCell))
                     .onTapGesture {
