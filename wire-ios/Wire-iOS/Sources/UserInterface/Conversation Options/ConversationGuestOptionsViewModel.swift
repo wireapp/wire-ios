@@ -160,7 +160,7 @@ final class ConversationGuestOptionsViewModel {
                     rows.append(copyInProgress ? .copiedLink : .copyLink { [weak self] _ in self?.copyLink() })
                     rows.append(.shareLink { [weak self] view in self?.shareLink(view: view) })
                     rows.append(.revokeLink { [weak self] _ in self?.revokeLink() })
-                } else if let securedLink = securedLink {
+                } else if let securedLink {
                     rows.append(.text(securedLink))
                     rows.append(copyInProgress ? .copiedLink : .copyLink { [weak self] _ in self?.copyLink() })
                     rows.append(.shareLink { [weak self] view in self?.shareLink(view: view) })
@@ -294,7 +294,7 @@ final class ConversationGuestOptionsViewModel {
             delegate?.viewModel(self,
                                 sourceView: view,
                                 presentGuestLinkTypeSelection: { [weak self] guestLinkType in
-                guard let `self` = self else { return }
+                guard let self else { return }
                 switch guestLinkType {
                 case .secure:
                     let viewController = CreateSecureGuestLinkViewController(

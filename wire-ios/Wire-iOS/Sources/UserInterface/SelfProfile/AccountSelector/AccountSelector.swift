@@ -25,7 +25,7 @@ public protocol AccountSelector {
 
     func switchTo(account: Account)
     func switchTo(account: Account, completion: ((UserSession?) -> Void)?)
-    
+
 }
 
 extension AccountSelector {
