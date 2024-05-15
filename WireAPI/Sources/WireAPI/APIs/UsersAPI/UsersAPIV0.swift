@@ -103,18 +103,19 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
     }
 
     func toAPIModel() -> User {
-        User(id: id,
-             name: name,
-             handle: handle,
-             teamID: teamID,
-             accentID: accentID,
-             assets: assets,
-             deleted: deleted,
-             email: email,
-             expiresAt: expiresAt,
-             service: service?.toAPIModel(),
-             supportedProtocols: [.proteus],
-             legalholdStatus: legalholdStatus.toAPIModel()
+        User(
+            id: id,
+            name: name,
+            handle: handle,
+            teamID: teamID,
+            accentID: accentID,
+            assets: assets,
+            deleted: deleted,
+            email: email,
+            expiresAt: expiresAt,
+            service: service?.toAPIModel(),
+            supportedProtocols: [.proteus],
+            legalholdStatus: legalholdStatus.toAPIModel()
         )
     }
 }
