@@ -39,17 +39,6 @@ extension String {
     }
 }
 
-// MARK: - UILabel Extension
-extension UILabel {
-    static func createHeroLabel() -> UILabel {
-        let heroLabel = UILabel()
-        heroLabel.textColor = SemanticColors.Label.textDefault
-        heroLabel.numberOfLines = 0
-
-        return heroLabel
-    }
-}
-
 // MARK: - ShareContactsViewController
 final class ShareContactsViewController: UIViewController {
 
@@ -75,7 +64,9 @@ final class ShareContactsViewController: UIViewController {
     }()
 
     private let heroLabel: UILabel = {
-        let heroLabel = UILabel.createHeroLabel()
+        let heroLabel = UILabel()
+        heroLabel.textColor = SemanticColors.Label.textDefault
+        heroLabel.numberOfLines = 0
         heroLabel.font = FontSpec.largeSemiboldFont.font!
         heroLabel.attributedText = ShareContactsViewController.attributedHeroText
 
@@ -94,11 +85,7 @@ final class ShareContactsViewController: UIViewController {
     }()
 
     private let shareContactsContainerView: UIView = UIView()
-    private let addressBookAccessDeniedViewController: PermissionDeniedViewController = {
-        let addressBookAccessDeniedViewController = PermissionDeniedViewController.addressBookAccessDeniedViewController()
-
-        return addressBookAccessDeniedViewController
-    }()
+    private let addressBookAccessDeniedViewController = PermissionDeniedViewController.addressBookAccessDeniedViewController()
 
     private static var attributedHeroText: NSAttributedString {
         let title = RegistrationShareContacts.Hero.title
@@ -143,6 +130,7 @@ final class ShareContactsViewController: UIViewController {
 
         shareContactsContainerView.addSubview(shareContactsButton)
 
+        // TODO: present properly
         addToSelf(addressBookAccessDeniedViewController)
         addressBookAccessDeniedViewController.delegate = self
         addressBookAccessDeniedViewController.view.isHidden = true

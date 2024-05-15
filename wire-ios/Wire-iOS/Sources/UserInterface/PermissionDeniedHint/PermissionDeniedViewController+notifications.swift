@@ -22,8 +22,9 @@ import WireCommonComponents
 extension PermissionDeniedViewController {
 
     class func pushDeniedViewController() -> PermissionDeniedViewController {
-        // MARK: - Properties
+
         typealias RegistrationPushAccessDenied = L10n.Localizable.Registration.PushAccessDenied
+
         let vc = PermissionDeniedViewController()
         let title = RegistrationPushAccessDenied.Hero.title
         let paragraph1 = RegistrationPushAccessDenied.Hero.paragraph1
@@ -41,8 +42,9 @@ extension PermissionDeniedViewController {
         vc.heroLabel.attributedText = attributedText
 
         vc.settingsButton.setTitle(RegistrationPushAccessDenied.SettingsButton.title.capitalized, for: .normal)
-
         vc.laterButton.setTitle(RegistrationPushAccessDenied.MaybeLaterButton.title.capitalized, for: .normal)
+
+        vc.view.backgroundColor = SemanticColors.View.backgroundDefault
 
         return vc
     }

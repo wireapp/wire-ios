@@ -26,7 +26,7 @@ final class PermissionDeniedViewController: UIViewController {
     weak var delegate: PermissionDeniedViewControllerDelegate?
 
     private var initialConstraintsCreated = false
-    let heroLabel: UILabel = UILabel.createHeroLabel()
+    let heroLabel = UILabel()
     private(set) var settingsButton: LegacyButton!
     private(set) var laterButton: UIButton!
 
@@ -35,19 +35,24 @@ final class PermissionDeniedViewController: UIViewController {
     required init() {
         super.init(nibName: nil, bundle: nil)
 
-        view.addSubview(heroLabel)
+        setupHeroLabel()
         createSettingsButton()
         createLaterButton()
-
         updateViewConstraints()
     }
 
     @available(*, unavailable)
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        fatalError("init(coder:) is not supported")
     }
 
     // MARK: - Setup Buttons
+
+    private func setupHeroLabel() {
+        heroLabel.textColor = SemanticColors.Label.textDefault
+        heroLabel.numberOfLines = 0
+        view.addSubview(heroLabel)
+    }
 
     private func createSettingsButton() {
         settingsButton = ZMButton(
@@ -109,8 +114,7 @@ final class PermissionDeniedViewController: UIViewController {
                         settingsButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28)]
 
         constraints += [laterButton.topAnchor.constraint(equalTo: settingsButton.bottomAnchor, constant: 28),
-                        laterButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -28),
-                        laterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+                        laterButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -28),
                         laterButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -28),
                         laterButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 28),
                         laterButton.heightAnchor.constraint(equalToConstant: 56)]

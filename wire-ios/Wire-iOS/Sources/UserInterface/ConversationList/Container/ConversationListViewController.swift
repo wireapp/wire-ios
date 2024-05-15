@@ -45,7 +45,7 @@ final class ConversationListViewController: UIViewController {
 
     var startCallToken: Any?
 
-    var pushPermissionDeniedViewController: PermissionDeniedViewController?
+    weak var pushPermissionDeniedViewController: PermissionDeniedViewController?
 
     private let noConversationLabel = {
         let label = UILabel()

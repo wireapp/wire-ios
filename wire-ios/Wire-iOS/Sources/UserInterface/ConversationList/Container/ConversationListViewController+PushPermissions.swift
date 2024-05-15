@@ -26,31 +26,26 @@ extension ConversationListViewController: PermissionDeniedViewControllerDelegate
     }
 
     func permissionDeniedViewControllerDidOpenNotificationSettings(_ viewController: PermissionDeniedViewController) {
-        // no-op
+        closePushPermissionDeniedDialog()
     }
 }
 
 extension ConversationListViewController {
 
-    func closePushPermissionDeniedDialog() {
-        pushPermissionDeniedViewController?.willMove(toParent: nil)
-        pushPermissionDeniedViewController?.view.removeFromSuperview()
-        pushPermissionDeniedViewController?.removeFromParent()
-        pushPermissionDeniedViewController = nil
+    private func closePushPermissionDeniedDialog() {
+        guard pushPermissionDeniedViewController === presentedViewController else {
+            return assertionFailure()
+        }
 
-        contentContainer.alpha = 1.0
+        dismiss(animated: true)
     }
 
     func showPermissionDeniedViewController() {
 
-        let permissions = PermissionDeniedViewController.pushDeniedViewController()
-        permissions.delegate = self
-        addToSelf(permissions)
-
-        permissions.view.translatesAutoresizingMaskIntoConstraints = false
-        permissions.view.fitIn(view: view)
-        pushPermissionDeniedViewController = permissions
-
-        contentContainer.alpha = 0
+        let viewController = PermissionDeniedViewController.pushDeniedViewController()
+        viewController.delegate = self
+        viewController.modalPresentationStyle = .fullScreen
+        present(viewController, animated: true)
+        pushPermissionDeniedViewController = viewController
     }
 }
