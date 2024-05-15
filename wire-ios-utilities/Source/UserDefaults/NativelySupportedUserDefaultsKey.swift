@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-/// A protocol which defines
+/// With this protocol and the extension to `UserDefaults` we can have "typed" user defaults values.
+/// Based on the `ValueType` associated type the implementation in the extension prevents storing other types then the designated one and casts values on reading.
 public protocol NativelySupportedUserDefaultsKey {
     associatedtype ValueType // a constraint could be added to only allow supported types
     /*
@@ -28,6 +29,7 @@ public protocol NativelySupportedUserDefaultsKey {
 
 // MARK: - UserDefaultsDateValueKey
 
+/// Used to store `Date` values in `UserDefaults`.
 public struct UserDefaultsDateValueKey: NativelySupportedUserDefaultsKey {
     public typealias ValueType = Date
 
