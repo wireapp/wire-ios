@@ -704,7 +704,6 @@
 		16E5F71726EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRequestStrategyTests.swift; sourceTree = "<group>"; };
 		16E70F5A270DCCB900718E5D /* UpdateConnectionActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateConnectionActionHandlerTests.swift; sourceTree = "<group>"; };
 		547E664C1F7512FE008CB1FA /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
-		5915B9642BF4C5CA00215817 /* UserNotificationCenterAbstraction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserNotificationCenterAbstraction.swift; sourceTree = "<group>"; };
 		59271BEC2B90D2140019B726 /* ClientRegistrationDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientRegistrationDelegate.swift; sourceTree = "<group>"; };
 		59271BEE2B90D24A0019B726 /* MockOTREntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockOTREntity.swift; sourceTree = "<group>"; };
 		597B70C82B03CC76006C2121 /* UpdateConversationProtocolActionHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UpdateConversationProtocolActionHandler.swift; sourceTree = "<group>"; };
@@ -1306,7 +1305,6 @@
 		1669016C1D707509000FE4AF /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				5915B9632BF4C5AE00215817 /* Temporary */,
 				067197632AE9502C00D96598 /* E2EIdentity */,
 				1623F8D62AE7FB5F004F0319 /* APIs */,
 				168D7CA326FB0CCF00789960 /* Entity Actions */,
@@ -1449,14 +1447,6 @@
 				63DA339D286DF6DA00818C3C /* Helpers */,
 			);
 			path = Processing;
-			sourceTree = "<group>";
-		};
-		5915B9632BF4C5AE00215817 /* Temporary */ = {
-			isa = PBXGroup;
-			children = (
-				5915B9642BF4C5CA00215817 /* UserNotificationCenterAbstraction.swift */,
-			);
-			path = Temporary;
 			sourceTree = "<group>";
 		};
 		59AF8F492B19CD34000A09BF /* Sourcery */ = {
