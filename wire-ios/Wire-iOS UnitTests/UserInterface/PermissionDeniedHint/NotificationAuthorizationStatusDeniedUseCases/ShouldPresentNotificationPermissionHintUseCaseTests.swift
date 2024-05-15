@@ -46,7 +46,97 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         sut = nil
     }
 
-    func testExample() {
-        fatalError()
+    func testReturningTrueForDeniedAndNoDate() throws {
+        // Given
+        let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .denied)
+        userNotificationCenterMock.notificationSettings_MockValue = notificationSettings
+
+        XCTFail("TODO: finish implementation")
+    }
+
+    func testReturningTrueForDeniedAndDistantPastDate() {
+        // Given
+        XCTFail("TODO: finish implementation")
+    }
+
+    func testDecoding() throws {
+        XCTAssertEqual(try UNNotificationSettings.with(authorizationStatus: .authorized).authorizationStatus, .authorized)
+        XCTAssertEqual(try UNNotificationSettings.with(authorizationStatus: .denied).authorizationStatus, .denied)
+        XCTAssertEqual(try UNNotificationSettings.with(authorizationStatus: .notDetermined).authorizationStatus, .notDetermined)
+    }
+}
+
+// MARK: -
+
+/// base64 encoded data which can be restored to an instance of `UNNotificationSettings`.
+///
+/// created:
+/// ```
+/// let data = try NSKeyedArchiver
+///     .archivedData(
+///         withRootObject: notificationSettings,
+///         requiringSecureCoding: true
+///     )
+///     .base64EncodedString()
+/// ```
+extension UNNotificationSettings {
+
+    fileprivate static func with(authorizationStatus: UNAuthorizationStatus) throws -> Self {
+
+        let encoded = switch authorizationStatus {
+
+        case .authorized:
+            "YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q" +
+            "D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGjCwwjVSRudWxs3xARDQ4PEBESExQVFhcYGRobHB0e" +
+            "Hx8fHx4eHh4eICEfIiEhH18QFWRpcmVjdE1lc3NhZ2VzU2V0dGluZ1xiYWRnZVNldHRpbmdfEBNh" +
+            "dXRob3JpemF0aW9uU3RhdHVzXHNvdW5kU2V0dGluZ18QGW5vdGlmaWNhdGlvbkNlbnRlclNldHRp" +
+            "bmdfEBRjcml0aWNhbEFsZXJ0U2V0dGluZ18QE3Nob3dQcmV2aWV3c1NldHRpbmdeY2FyUGxheVNl" +
+            "dHRpbmdfEA9ncm91cGluZ1NldHRpbmdfEBR0aW1lU2Vuc2l0aXZlU2V0dGluZ18QH3Byb3ZpZGVz" +
+            "QXBwTm90aWZpY2F0aW9uU2V0dGluZ3NfEBhzY2hlZHVsZWREZWxpdmVyeVNldHRpbmdfEBFsb2Nr" +
+            "U2NyZWVuU2V0dGluZ1YkY2xhc3NaYWxlcnRTdHlsZV8QE2Fubm91bmNlbWVudFNldHRpbmdcYWxl" +
+            "cnRTZXR0aW5nEAAQAggQAYAC0iQlJidaJGNsYXNzbmFtZVgkY2xhc3Nlc18QFlVOTm90aWZpY2F0" +
+            "aW9uU2V0dGluZ3OiKClfEBZVTk5vdGlmaWNhdGlvblNldHRpbmdzWE5TT2JqZWN0AAgAEQAaACQA" +
+            "KQAyADcASQBMAFEAUwBXAF0AggCaAKcAvQDKAOYA/QETASIBNAFLAW0BiAGcAaMBrgHEAdEB0wHV" +
+            "AdYB2AHaAd8B6gHzAgwCDwIoAAAAAAAAAgEAAAAAAAAAKgAAAAAAAAAAAAAAAAAAAjE="
+
+        case .denied:
+            "YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q" +
+            "D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGjCwwiVSRudWxs3xARDQ4PEBESExQVFhcYGRobHB0e" +
+            "Hx8fHx4eHh4eIB8fIR4fH18QFWRpcmVjdE1lc3NhZ2VzU2V0dGluZ1xiYWRnZVNldHRpbmdfEBNh" +
+            "dXRob3JpemF0aW9uU3RhdHVzXHNvdW5kU2V0dGluZ18QGW5vdGlmaWNhdGlvbkNlbnRlclNldHRp" +
+            "bmdfEBRjcml0aWNhbEFsZXJ0U2V0dGluZ18QE3Nob3dQcmV2aWV3c1NldHRpbmdeY2FyUGxheVNl" +
+            "dHRpbmdfEA9ncm91cGluZ1NldHRpbmdfEBR0aW1lU2Vuc2l0aXZlU2V0dGluZ18QH3Byb3ZpZGVz" +
+            "QXBwTm90aWZpY2F0aW9uU2V0dGluZ3NfEBhzY2hlZHVsZWREZWxpdmVyeVNldHRpbmdfEBFsb2Nr" +
+            "U2NyZWVuU2V0dGluZ1YkY2xhc3NaYWxlcnRTdHlsZV8QE2Fubm91bmNlbWVudFNldHRpbmdcYWxl" +
+            "cnRTZXR0aW5nEAAQAQiAAtIjJCUmWiRjbGFzc25hbWVYJGNsYXNzZXNfEBZVTk5vdGlmaWNhdGlv" +
+            "blNldHRpbmdzoicoXxAWVU5Ob3RpZmljYXRpb25TZXR0aW5nc1hOU09iamVjdAAIABEAGgAkACkA" +
+            "MgA3AEkATABRAFMAVwBdAIIAmgCnAL0AygDmAP0BEwEiATQBSwFtAYgBnAGjAa4BxAHRAdMB1QHW" +
+            "AdgB3QHoAfECCgINAiYAAAAAAAACAQAAAAAAAAApAAAAAAAAAAAAAAAAAAACLw=="
+
+        case .notDetermined:
+            "YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9iamVjdHMSAAGGoF8Q" +
+            "D05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGjCwwhVSRudWxs3xARDQ4PEBESExQVFhcYGRobHB0e" +
+            "Hh4eHh4eHh4eHx4eIB4eHl8QFWRpcmVjdE1lc3NhZ2VzU2V0dGluZ1xiYWRnZVNldHRpbmdfEBNh" +
+            "dXRob3JpemF0aW9uU3RhdHVzXHNvdW5kU2V0dGluZ18QGW5vdGlmaWNhdGlvbkNlbnRlclNldHRp" +
+            "bmdfEBRjcml0aWNhbEFsZXJ0U2V0dGluZ18QE3Nob3dQcmV2aWV3c1NldHRpbmdeY2FyUGxheVNl" +
+            "dHRpbmdfEA9ncm91cGluZ1NldHRpbmdfEBR0aW1lU2Vuc2l0aXZlU2V0dGluZ18QH3Byb3ZpZGVz" +
+            "QXBwTm90aWZpY2F0aW9uU2V0dGluZ3NfEBhzY2hlZHVsZWREZWxpdmVyeVNldHRpbmdfEBFsb2Nr" +
+            "U2NyZWVuU2V0dGluZ1YkY2xhc3NaYWxlcnRTdHlsZV8QE2Fubm91bmNlbWVudFNldHRpbmdcYWxl" +
+            "cnRTZXR0aW5nEAAIgALSIiMkJVokY2xhc3NuYW1lWCRjbGFzc2VzXxAWVU5Ob3RpZmljYXRpb25T" +
+            "ZXR0aW5nc6ImJ18QFlVOTm90aWZpY2F0aW9uU2V0dGluZ3NYTlNPYmplY3QACAARABoAJAApADIA" +
+            "NwBJAEwAUQBTAFcAXQCCAJoApwC9AMoA5gD9ARMBIgE0AUsBbQGIAZwBowGuAcQB0QHTAdQB1gHb" +
+            "AeYB7wIIAgsCJAAAAAAAAAIBAAAAAAAAACgAAAAAAAAAAAAAAAAAAAIt"
+
+        default:
+            fatalError("not implemented")
+        }
+
+        return try decoded(encoded)
+    }
+
+    private static func decoded(_ base64Encoded: String) throws -> Self {
+        let data = try XCTUnwrap(Data(base64Encoded: base64Encoded))
+        let decoded = try NSKeyedUnarchiver.unarchivedObject(ofClass: Self.self, from: data)
+        return try XCTUnwrap(decoded)
     }
 }

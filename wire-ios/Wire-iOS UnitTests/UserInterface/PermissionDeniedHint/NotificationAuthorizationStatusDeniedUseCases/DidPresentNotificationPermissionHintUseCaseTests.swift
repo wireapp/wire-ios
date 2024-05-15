@@ -31,7 +31,7 @@ final class DidPresentNotificationPermissionHintUseCaseTests: XCTestCase {
 
     override func setUp() {
         mockDateProvider = .init()
-        mockDateProvider.now = .now
+        mockDateProvider.now = .now.addingTimeInterval(-.random(in: 1...10))
         userDefaults = .temporary()
         sut = .init(
             currentDateProvider: mockDateProvider,
@@ -43,7 +43,13 @@ final class DidPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         sut = nil
     }
 
-    func testExample() {
-        fatalError()
+    func testDateIsStored() throws {
+
+        // When
+        sut.invoke()
+
+        // Then
+        let date = try XCTUnwrap(userDefaults.value(for: .lastTimeNotificationPermissionHintWasShown))
+        XCTAssertEqual(date, mockDateProvider.now)
     }
 }
