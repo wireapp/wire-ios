@@ -35,25 +35,8 @@ struct RequestSnapshotHelper {
     ///   - function: The method invoking the test.
     ///   - line: The line invoking the test.
 
-    func verifyRequestForAllAPIVersions(
-        when block: (any TeamsAPI) async throws -> Void,
-        file: StaticString = #file,
-        function: String = #function,
-        line: UInt = #line
-    ) async throws {
-        for apiVersion in APIVersion.allCases {
-            try await verifyRequest(
-                apiVersion: apiVersion,
-                when: block,
-                file: file,
-                function: function,
-                line: line
-            )
-        }
-    }
-
-    func verifyRequestForAllAPIVersions(
-        when block: (any UsersAPI) async throws -> Void,
+    func verifyRequestForAllAPIVersions<Builder: APIBuilder>(
+        when block: (Builder.API, Builder) async throws -> Void,
         file: StaticString = #file,
         function: String = #function,
         line: UInt = #line
@@ -84,45 +67,17 @@ struct RequestSnapshotHelper {
     ///   - line: The line invoking the test.
 
     @MainActor
-    func verifyRequest(
+    func verifyRequest<Builder: APIBuilder>(
         apiVersion: APIVersion,
-        when block: (any TeamsAPI) async throws -> Void,
+        when block: (Builder.API, Builder) async throws -> Void,
         file: StaticString = #file,
         function: String = #function,
         line: UInt = #line
     ) async throws {
         let httpClient = HTTPClientMock()
-        let builder = TeamsAPIBuilder(httpClient: httpClient)
+        let builder = Builder(httpClient: httpClient)
         let sut = builder.makeAPI(for: apiVersion)
-        try? await block(sut)
-        let request = try XCTUnwrap(httpClient.receivedRequest, "no request was generated")
-
-        let errorMessage = verifySnapshot(
-            of: request,
-            as: .dump,
-            named: "v\(apiVersion.rawValue)",
-            file: file,
-            testName: function,
-            line: line
-        )
-
-        if let errorMessage {
-            XCTFail(errorMessage, file: file, line: line)
-        }
-    }
-
-    @MainActor
-    func verifyRequest(
-        apiVersion: APIVersion,
-        when block: (any UsersAPI) async throws -> Void,
-        file: StaticString = #file,
-        function: String = #function,
-        line: UInt = #line
-    ) async throws {
-        let httpClient = HTTPClientMock()
-        let builder = UsersAPIBuilder(httpClient: httpClient)
-        let sut = builder.makeAPI(for: apiVersion)
-        try? await block(sut)
+        try? await block(sut, builder)
         let request = try XCTUnwrap(httpClient.receivedRequest, "no request was generated")
 
         let errorMessage = verifySnapshot(

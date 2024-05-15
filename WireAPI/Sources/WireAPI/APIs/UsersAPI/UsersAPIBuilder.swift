@@ -20,7 +20,7 @@ import Foundation
 
 /// A builder of `UsersAPI`.
 
-public struct UsersAPIBuilder {
+public struct UsersAPIBuilder: APIBuilder {
 
     let httpClient: any HTTPClient
 
