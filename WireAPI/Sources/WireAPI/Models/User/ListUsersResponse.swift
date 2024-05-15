@@ -24,9 +24,9 @@ public struct ListUsersResponse: Equatable {
 
     /// List of users which were found and succesfully retrieved.
 
-    let found: [User]
+    public let found: [User]
 
     /// List of user IDs for which a user couldn't be retrieved.
-    ///
-    let failed: [UserID]
+
+    public let failed: [UserID]
 }
