@@ -74,6 +74,8 @@ final class UserSessionMock: UserSession {
 
     var searchUsersCache: SearchUsersCache
 
+    var mlsGroupVerification: WireDataModel.MLSGroupVerification?
+
     func makeGetMLSFeatureUseCase() -> GetMLSFeatureUseCaseProtocol {
         let mock = MockGetMLSFeatureUseCaseProtocol()
         mock.invoke_MockValue = .init(status: .disabled, config: .init())
@@ -288,10 +290,6 @@ final class UserSessionMock: UserSession {
 
     var getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol {
         MockGetE2eIdentityCertificatesUseCaseProtocol()
-    }
-
-    var updateMLSGroupVerificationStatus: UpdateMLSGroupVerificationStatusUseCaseProtocol {
-        MockUpdateMLSGroupVerificationStatusUseCaseProtocol()
     }
 
     var e2eiFeature: Feature.E2EI = Feature.E2EI(status: .enabled)
