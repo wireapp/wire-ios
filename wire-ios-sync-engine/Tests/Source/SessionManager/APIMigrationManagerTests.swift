@@ -282,7 +282,7 @@ final class APIMigrationManagerTests: MessagingTest {
             strategyDirectory: mockStrategyDirectory,
             syncStrategy: nil,
             operationLoop: nil,
-            observeMLSGroupVerificationStatusUseCase: nil,
+            mlsGroupVerification: nil,
             configuration: configuration
         )
 

@@ -142,10 +142,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             userId: coreDataStack.account.userIdentifier
         )
 
-        let mockObserveMLSGroupVerificationStatusUseCase = MockObserveMLSGroupVerificationStatusUseCaseProtocol()
-        mockObserveMLSGroupVerificationStatusUseCase.invoke_MockMethod = {
-            Task { }
-        }
+        let mockMLSGroupVerification = MockMLSGroupVerificationProtocol()
+        mockMLSGroupVerification.startObserving_MockMethod = { }
 
         let userSession = builder.build()
         userSession.setup(
@@ -153,7 +151,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             strategyDirectory: MockStrategyDirectory(),
             syncStrategy: nil,
             operationLoop: nil,
-            observeMLSGroupVerificationStatusUseCase: mockObserveMLSGroupVerificationStatusUseCase,
+            mlsGroupVerification: mockMLSGroupVerification,
             configuration: configuration
         )
 
