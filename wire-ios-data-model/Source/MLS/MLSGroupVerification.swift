@@ -18,12 +18,19 @@
 
 import Foundation
 
-public struct MLSGroupVerification {
+public final class MLSGroupVerification {
+
+    // MARK: - Properties
 
     public let statusUpdater: any MLSConversationVerificationStatusUpdating
     public let updateUseCase: any UpdateMLSGroupVerificationStatusUseCaseProtocol
 
-    let processor: MLSGroupVerificationStatusProcessor
+    private let mlsService: MLSServiceInterface
+    private let syncContext: NSManagedObjectContext
+
+    private var observingTask: Task<Void, Never>?
+
+    // MARK: - Initialize
 
     public init(
         e2eiVerificationStatusService: any E2EIVerificationStatusServiceInterface,
@@ -42,14 +49,33 @@ public struct MLSGroupVerification {
             updateMLSGroupVerificationStatus: updateUseCase,
             syncContext: syncContext
         )
-        self.processor = MLSGroupVerificationStatusProcessor(
-            updateMLSGroupVerificationStatusUseCase: updateUseCase,
-            mlsService: mlsService,
-            syncContext: syncContext
-        )
+        self.mlsService = mlsService
+        self.syncContext = syncContext
     }
 
+    // MARK: Observing
+
     public func startObserving() {
-        processor.startObserving()
+        observingTask = .detached { [mlsService, weak self] in
+            for await groupID in mlsService.epochChanges() {
+                await self?.updateConversation(with: groupID)
+            }
+        }
+    }
+
+    // MARK: Update Conversation
+
+    private func updateConversation(with groupID: MLSGroupID) async {
+        guard let conversation = await syncContext.perform({
+            ZMConversation.fetch(with: groupID, in: self.syncContext)
+        }) else {
+            return WireLogger.e2ei.warn("failed to fetch the conversation by mlsGroupID \(groupID)")
+        }
+
+        do {
+            try await updateUseCase.invoke(for: conversation, groupID: groupID)
+        } catch {
+            WireLogger.e2ei.warn("failed to update MLS group: \(groupID) verification status: \(error)")
+        }
     }
 }
