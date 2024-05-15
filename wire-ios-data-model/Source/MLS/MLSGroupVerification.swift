@@ -60,6 +60,7 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
     public func startObserving() {
         observingTask = .detached { [mlsService, weak self] in
             for await groupID in mlsService.epochChanges() {
+                if Task.isCancelled { return }
                 await self?.updateConversation(by: groupID)
             }
         }
