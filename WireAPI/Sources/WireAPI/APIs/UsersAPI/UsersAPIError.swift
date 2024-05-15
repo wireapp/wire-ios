@@ -22,7 +22,7 @@ import Foundation
 
 public enum UsersAPIError: Error {
 
-    /// User was not found
+    /// User was not found.
 
     case notFound
 

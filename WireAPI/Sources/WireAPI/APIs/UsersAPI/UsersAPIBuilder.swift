@@ -32,7 +32,7 @@ public struct UsersAPIBuilder {
         self.httpClient = httpClient
     }
 
-    /// Make a versioned`UsersAPI`.
+    /// Make a versioned `UsersAPI`.
     ///
     /// - Parameter version: An api version.
     /// - Returns: A versioned `UsersAPI`.
