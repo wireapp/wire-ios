@@ -46,17 +46,66 @@ final class ShouldPresentNotificationPermissionHintUseCaseTests: XCTestCase {
         sut = nil
     }
 
-    func testReturningTrueForDeniedAndNoDate() throws {
+    func testReturningTrueForDeniedAndNoDate() async throws {
         // Given
         let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .denied)
         userNotificationCenterMock.notificationSettings_MockValue = notificationSettings
 
-        XCTFail("TODO: finish implementation")
+        // When
+        let shouldPresentHint = await sut.invoke()
+
+        // Then
+        XCTAssertTrue(shouldPresentHint)
     }
 
-    func testReturningTrueForDeniedAndDistantPastDate() {
+    func testReturningTrueForDeniedAndDistantPastDate() async throws {
         // Given
-        XCTFail("TODO: finish implementation")
+        let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .denied)
+        userNotificationCenterMock.notificationSettings_MockValue = notificationSettings
+        userDefaults.setValue(Date.distantPast, for: .lastTimeNotificationPermissionHintWasShown)
+
+        // When
+        let shouldPresentHint = await sut.invoke()
+
+        // Then
+        XCTAssertTrue(shouldPresentHint)
+    }
+
+    func testReturningFalseForDeniedAndRecentPastDate() async throws {
+        // Given
+        let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .denied)
+        userNotificationCenterMock.notificationSettings_MockValue = notificationSettings
+        userDefaults.setValue(mockDateProvider.now.addingTimeInterval(-3600), for: .lastTimeNotificationPermissionHintWasShown)
+
+        // When
+        let shouldPresentHint = await sut.invoke()
+
+        // Then
+        XCTAssertFalse(shouldPresentHint)
+    }
+
+    func testReturningFalseForAuthorized() async throws {
+        // Given
+        let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .authorized)
+        userNotificationCenterMock.notificationSettings_MockValue = notificationSettings
+
+        // When
+        let shouldPresentHint = await sut.invoke()
+
+        // Then
+        XCTAssertFalse(shouldPresentHint)
+    }
+
+    func testReturningFalseForNotDetermined() async throws {
+        // Given
+        let notificationSettings = try UNNotificationSettings.with(authorizationStatus: .notDetermined)
+        userNotificationCenterMock.notificationSettings_MockValue = notificationSettings
+
+        // When
+        let shouldPresentHint = await sut.invoke()
+
+        // Then
+        XCTAssertFalse(shouldPresentHint)
     }
 
     func testDecoding() throws {

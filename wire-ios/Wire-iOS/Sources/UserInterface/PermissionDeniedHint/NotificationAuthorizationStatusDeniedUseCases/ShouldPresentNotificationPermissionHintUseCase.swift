@@ -29,15 +29,17 @@ where DateProvider: CurrentDateProviding {
 
     func invoke() async -> Bool {
 
+        // show hint only if `authorizationStatus` is `.denied`
+        let notificationSettings = await userNotificationCenter.notificationSettings()
+        guard notificationSettings.authorizationStatus == .denied else { return false }
+
         let lastPresentationDate = userDefaults.value(for: .lastTimeNotificationPermissionHintWasShown)
-        if let lastPresentationDate, lastPresentationDate < currentDateProvider.now.addingTimeInterval(-24 * 3600) {
+        if let lastPresentationDate, lastPresentationDate > currentDateProvider.now.addingTimeInterval(-24 * 3600) {
             // hint has already been shown within the last 24 hours
             return false
+        } else {
+            return true
         }
-
-        // show hint if `authorizationStatus` is `.denied`.
-        let notificationSettings = await userNotificationCenter.notificationSettings()
-        return notificationSettings.authorizationStatus == .denied
     }
 }
 
