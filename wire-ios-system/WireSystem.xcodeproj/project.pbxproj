@@ -39,6 +39,7 @@
 		598E86DB2BF4DB3700FC5438 /* WireSystemSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 598E86DA2BF4DB3700FC5438 /* WireSystemSupport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		598E86E02BF4DB9B00FC5438 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ECC35191AD436750089FD4B /* WireSystem.framework */; };
 		598E86EA2BF4DBC900FC5438 /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 598E86E52BF4DBC900FC5438 /* AutoMockable.generated.swift */; };
+		598E86ED2BF4DD3100FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86D82BF4DB3700FC5438 /* WireSystemSupport.framework */; };
 		59D985ED2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59D985EC2B5FCE14009B99F0 /* NSAttributedStringExtensions.swift */; };
 		8701221620F64171001E6342 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221520F64171001E6342 /* Cache.swift */; };
 		8701221920F641BE001E6342 /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221720F641A4001E6342 /* CacheTests.swift */; };
@@ -66,6 +67,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 3ECC350F1AD436750089FD4B;
 			remoteInfo = WireSystem;
+		};
+		598E86EF2BF4DD3100FC5438 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3ECC34C41AD430BB0089FD4B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 598E86D72BF4DB3700FC5438;
+			remoteInfo = WireSystemSupport;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -141,6 +149,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				598E86ED2BF4DD3100FC5438 /* WireSystemSupport.framework in Frameworks */,
 				54A327321B99A3190004EB95 /* WireSystem.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -394,6 +403,7 @@
 			);
 			dependencies = (
 				54A327341B99A3190004EB95 /* PBXTargetDependency */,
+				598E86F02BF4DD3100FC5438 /* PBXTargetDependency */,
 			);
 			name = "WireSystem Tests";
 			productName = "ZMCSystem-ios Tests";
@@ -609,6 +619,11 @@
 			isa = PBXTargetDependency;
 			target = 3ECC350F1AD436750089FD4B /* WireSystem */;
 			targetProxy = 598E86E22BF4DB9B00FC5438 /* PBXContainerItemProxy */;
+		};
+		598E86F02BF4DD3100FC5438 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 598E86D72BF4DB3700FC5438 /* WireSystemSupport */;
+			targetProxy = 598E86EF2BF4DD3100FC5438 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

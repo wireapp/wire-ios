@@ -32,7 +32,7 @@ import AppKit
 #endif
 
 
-@testable import WireUtilities
+@testable import WireSystem
 
 
 
@@ -54,109 +54,21 @@ import AppKit
 
 
 
-public class MockUserNotificationCenterAbstraction: UserNotificationCenterAbstraction {
+public class MockCurrentDateProviding: CurrentDateProviding {
 
     // MARK: - Life cycle
 
     public init() {}
 
-    // MARK: - delegate
+    // MARK: - now
 
-    public var delegate: UNUserNotificationCenterDelegate?
-
-
-    // MARK: - notificationSettings
-
-    public var notificationSettings_Invocations: [Void] = []
-    public var notificationSettings_MockMethod: (() async -> UNNotificationSettings)?
-    public var notificationSettings_MockValue: UNNotificationSettings?
-
-    public func notificationSettings() async -> UNNotificationSettings {
-        notificationSettings_Invocations.append(())
-
-        if let mock = notificationSettings_MockMethod {
-            return await mock()
-        } else if let mock = notificationSettings_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `notificationSettings`")
-        }
+    public var now: Date {
+        get { return underlyingNow }
+        set(value) { underlyingNow = value }
     }
 
-    // MARK: - setNotificationCategories
+    public var underlyingNow: Date!
 
-    public var setNotificationCategories_Invocations: [Set<UNNotificationCategory>] = []
-    public var setNotificationCategories_MockMethod: ((Set<UNNotificationCategory>) -> Void)?
-
-    public func setNotificationCategories(_ categories: Set<UNNotificationCategory>) {
-        setNotificationCategories_Invocations.append(categories)
-
-        guard let mock = setNotificationCategories_MockMethod else {
-            fatalError("no mock for `setNotificationCategories`")
-        }
-
-        mock(categories)
-    }
-
-    // MARK: - requestAuthorization
-
-    public var requestAuthorizationOptionsCompletionHandler_Invocations: [(options: UNAuthorizationOptions, completionHandler: (Bool, Error?) -> Void)] = []
-    public var requestAuthorizationOptionsCompletionHandler_MockMethod: ((UNAuthorizationOptions, @escaping (Bool, Error?) -> Void) -> Void)?
-
-    public func requestAuthorization(options: UNAuthorizationOptions, completionHandler: @escaping (Bool, Error?) -> Void) {
-        requestAuthorizationOptionsCompletionHandler_Invocations.append((options: options, completionHandler: completionHandler))
-
-        guard let mock = requestAuthorizationOptionsCompletionHandler_MockMethod else {
-            fatalError("no mock for `requestAuthorizationOptionsCompletionHandler`")
-        }
-
-        mock(options, completionHandler)
-    }
-
-    // MARK: - add
-
-    public var addWithCompletionHandler_Invocations: [(request: UNNotificationRequest, withCompletionHandler: ((Error?) -> Void)?)] = []
-    public var addWithCompletionHandler_MockMethod: ((UNNotificationRequest, ((Error?) -> Void)?) -> Void)?
-
-    public func add(_ request: UNNotificationRequest, withCompletionHandler: ((Error?) -> Void)?) {
-        addWithCompletionHandler_Invocations.append((request: request, withCompletionHandler: withCompletionHandler))
-
-        guard let mock = addWithCompletionHandler_MockMethod else {
-            fatalError("no mock for `addWithCompletionHandler`")
-        }
-
-        mock(request, withCompletionHandler)
-    }
-
-    // MARK: - removePendingNotificationRequests
-
-    public var removePendingNotificationRequestsWithIdentifiers_Invocations: [[String]] = []
-    public var removePendingNotificationRequestsWithIdentifiers_MockMethod: (([String]) -> Void)?
-
-    public func removePendingNotificationRequests(withIdentifiers identifiers: [String]) {
-        removePendingNotificationRequestsWithIdentifiers_Invocations.append(identifiers)
-
-        guard let mock = removePendingNotificationRequestsWithIdentifiers_MockMethod else {
-            fatalError("no mock for `removePendingNotificationRequestsWithIdentifiers`")
-        }
-
-        mock(identifiers)
-    }
-
-    // MARK: - removeDeliveredNotifications
-
-    public var removeDeliveredNotificationsWithIdentifiers_Invocations: [[String]] = []
-    public var removeDeliveredNotificationsWithIdentifiers_MockMethod: (([String]) -> Void)?
-
-    public func removeDeliveredNotifications(withIdentifiers identifiers: [String]) {
-        removeDeliveredNotificationsWithIdentifiers_Invocations.append(identifiers)
-
-        guard let mock = removeDeliveredNotificationsWithIdentifiers_MockMethod else {
-            fatalError("no mock for `removeDeliveredNotificationsWithIdentifiers`")
-        }
-
-        mock(identifiers)
-    }
 
 }
 
