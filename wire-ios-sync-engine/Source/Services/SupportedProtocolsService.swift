@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireRequestStrategy
 
 // sourcery: AutoMockable
 public protocol SupportedProtocolsServiceInterface {

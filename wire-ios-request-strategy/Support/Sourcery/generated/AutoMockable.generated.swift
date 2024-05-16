@@ -1015,32 +1015,6 @@ public class MockSessionEstablisherInterface: SessionEstablisherInterface {
     }
 
 }
-public class MockSupportedProtocolsServiceInterface: SupportedProtocolsServiceInterface {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - calculateSupportedProtocols
-
-    public var calculateSupportedProtocols_Invocations: [Void] = []
-    public var calculateSupportedProtocols_MockMethod: (() -> Set<MessageProtocol>)?
-    public var calculateSupportedProtocols_MockValue: Set<MessageProtocol>?
-
-    public func calculateSupportedProtocols() -> Set<MessageProtocol> {
-        calculateSupportedProtocols_Invocations.append(())
-
-        if let mock = calculateSupportedProtocols_MockMethod {
-            return mock()
-        } else if let mock = calculateSupportedProtocols_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `calculateSupportedProtocols`")
-        }
-    }
-
-}
 public class MockSyncProgress: SyncProgress {
 
     // MARK: - Life cycle
