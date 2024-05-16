@@ -33,6 +33,17 @@ final class TeamRepositoryTests: XCTestCase {
         static let logoKey = UUID().uuidString
         static let splashScreenID = UUID().uuidString
 
+        static let member1ID = UUID()
+        static let member1CreationDate = Date()
+        static let member1CreatorID = UUID()
+        static let member1legalholdStatus = LegalholdStatus.enabled
+        static let member1Permissions = Permissions.admin.rawValue
+
+        static let member2ID = UUID()
+        static let member2CreationDate = Date()
+        static let member2CreatorID = UUID()
+        static let member2legalholdStatus = LegalholdStatus.pending
+        static let member2Permissions = Permissions.member.rawValue
     }
 
     var teamsAPI: MockTeamsAPI!
@@ -93,19 +104,20 @@ final class TeamRepositoryTests: XCTestCase {
             XCTAssertEqual(team.creator?.remoteIdentifier, Scaffolding.teamCreatorID)
             XCTAssertEqual(team.pictureAssetId, Scaffolding.logoID)
             XCTAssertEqual(team.pictureAssetKey, Scaffolding.logoKey)
+            XCTAssertFalse(team.needsToBeUpdatedFromBackend)
         }
     }
 
     func testFetchSelfTeamRoles() async throws {
         // Given
-        try await context.perform { [context, modelHelper] in
+        let team = try await context.perform { [context, modelHelper] in
             // Make sure we have no roles to begin with.
             let request = Role.fetchRequest()
             let roles = try context.fetch(request)
             XCTAssertTrue(roles.isEmpty)
 
             // A team is needed to store new roles.
-            modelHelper.createTeam(
+            return modelHelper.createTeam(
                 id: Scaffolding.selfTeamID,
                 in: context
             )
@@ -139,6 +151,8 @@ final class TeamRepositoryTests: XCTestCase {
 
         // Then
         try await context.perform { [context] in
+            XCTAssertFalse(team.needsToDownloadRoles)
+
             // There are two roles.
             let request = NSFetchRequest<Role>(entityName: Role.entityName())
             request.sortDescriptors = [NSSortDescriptor(key: Role.nameKey, ascending: true)]
@@ -164,6 +178,75 @@ final class TeamRepositoryTests: XCTestCase {
             XCTAssertEqual(secondRole.team?.remoteIdentifier, Scaffolding.selfTeamID)
             XCTAssertNil(secondRole.conversation)
             XCTAssertEqual(Set(secondRole.actions.map(\.name)), ["add_conversation_member"])
+        }
+    }
+
+    func testFetchSelfTeamMembers() async throws {
+        // Given
+        let team = await context.perform { [context, modelHelper] in
+            let team = modelHelper.createTeam(
+                id: Scaffolding.selfTeamID,
+                in: context
+            )
+
+            XCTAssertTrue(team.members.isEmpty)
+            return team
+        }
+
+        let sut = TeamRepository(
+            selfTeamID: Scaffolding.selfTeamID,
+            teamsAPI: teamsAPI,
+            context: context
+        )
+
+        // Mock
+        teamsAPI.getTeamMembersForMaxResults_MockValue = [
+            TeamMember(
+                userID: Scaffolding.member1ID,
+                creationDate: Scaffolding.member1CreationDate,
+                creatorID: Scaffolding.member1CreatorID,
+                legalholdStatus: Scaffolding.member1legalholdStatus,
+                permissions: TeamMemberPermissions(
+                    copyPermissions: Scaffolding.member1Permissions,
+                    selfPermissions: Scaffolding.member1Permissions
+                )
+            ),
+            TeamMember(
+                userID: Scaffolding.member2ID,
+                creationDate: Scaffolding.member2CreationDate,
+                creatorID: Scaffolding.member2CreatorID,
+                legalholdStatus: Scaffolding.member2legalholdStatus,
+                permissions: TeamMemberPermissions(
+                    copyPermissions: Scaffolding.member2Permissions,
+                    selfPermissions: Scaffolding.member2Permissions
+                )
+            )
+        ]
+
+        // When
+        try await sut.fetchSelfTeamMembers()
+
+        // Then
+        try await context.perform {
+            XCTAssertEqual(team.members.count, 2)
+
+            let member1 = try XCTUnwrap(team.members.first(where: {
+                $0.remoteIdentifier == Scaffolding.member1ID
+            }))
+
+            XCTAssertEqual(member1.createdAt, Scaffolding.member1CreationDate)
+            XCTAssertEqual(member1.createdBy?.remoteIdentifier, Scaffolding.member1CreatorID)
+            XCTAssertEqual(member1.permissions.rawValue, Scaffolding.member1Permissions)
+            XCTAssertFalse(member1.needsToBeUpdatedFromBackend)
+
+            let member2 = try XCTUnwrap(team.members.first(where: {
+                $0.remoteIdentifier == Scaffolding.member2ID
+            }))
+
+            XCTAssertEqual(member2.createdAt, Scaffolding.member2CreationDate)
+            XCTAssertEqual(member2.createdBy?.remoteIdentifier, Scaffolding.member2CreatorID)
+            XCTAssertEqual(member2.permissions.rawValue, Scaffolding.member2Permissions)
+            XCTAssertFalse(member2.needsToBeUpdatedFromBackend)
         }
     }
 

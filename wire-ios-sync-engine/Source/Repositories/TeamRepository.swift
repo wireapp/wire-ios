@@ -150,6 +150,64 @@ final class TeamRepository: TeamRepositoryProtocol {
         }
     }
 
+    // MARK: - Fetch self team members
+
+    func fetchSelfTeamMembers() async throws {
+        let teamMembers = try await fetchSelfTeamMembersRemotely()
+        try await storeTeamMembersLocally(teamMembers)
+    }
+
+    private func fetchSelfTeamMembersRemotely() async throws -> [WireAPI.TeamMember] {
+        do {
+            return try await teamsAPI.getTeamMembers(
+                for: selfTeamID,
+                maxResults: 2000
+            )
+        } catch {
+            throw TeamRepositoryError.failedToFetchRemotely(error)
+        }
+    }
+
+    private func storeTeamMembersLocally(_ teamMembers: [WireAPI.TeamMember]) async throws {
+        try await context.perform { [context, selfTeamID] in
+            guard let team = WireDataModel.Team.fetch(
+                with: selfTeamID,
+                in: context
+            ) else {
+                throw TeamRepositoryError.teamNotFoundLocally
+            }
+
+            for member in teamMembers {
+                let user = ZMUser.fetchOrCreate(
+                    with: member.userID,
+                    domain: nil,
+                    in: context
+                )
+
+                let membership = Member.getOrUpdateMember(
+                    for: user,
+                    in: team,
+                    context: context
+                )
+
+                if let permissions = member.permissions {
+                    membership.permissions = Permissions(rawValue: permissions.selfPermissions)
+                }
+
+                if let creatorID = member.creatorID {
+                    membership.createdBy = ZMUser.fetchOrCreate(
+                        with: creatorID,
+                        domain: nil,
+                        in: context
+                    )
+                }
+
+                membership.createdAt = member.creationDate
+                membership.needsToBeUpdatedFromBackend = false
+            }
+        }
+    }
+
 }
 
 private extension ConversationAction {
