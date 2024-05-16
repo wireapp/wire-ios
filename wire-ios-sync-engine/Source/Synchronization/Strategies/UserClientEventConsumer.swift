@@ -69,7 +69,7 @@ public class UserClientEventConsumer: NSObject, ZMEventAsyncConsumer {
 
     private func processClientListUpdateEvent(_ event: ZMUpdateEvent) async throws {
         guard let clientInfo = event.payload["client"] as? [String: AnyObject] else {
-            WireLogger.updateEvent.error("Client info has unexpected payload")
+            WireLogger.updateEvent.error("Client info has unexpected payload", attributes: .safePublic)
             return
         }
 
