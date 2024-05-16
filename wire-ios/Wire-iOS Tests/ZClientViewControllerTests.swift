@@ -16,12 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import XCTest
 
 @testable import Wire
+@testable import WireCommonComponents
 
 final class ZClientViewControllerTests: XCTestCase {
 
+    private var coreDataFixture: CoreDataFixture!
     private var imageTransformer: MockImageTransformer!
     private var sut: ZClientViewController!
     private var userSession: UserSessionMock!
@@ -29,8 +32,12 @@ final class ZClientViewControllerTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
+        FontScheme.configure(with: .large)
+
+        coreDataFixture = .init()
         imageTransformer = .init()
         userSession = UserSessionMock(mockUser: .createSelfUser(name: "Bob"))
+        userSession.contextProvider = coreDataFixture.coreDataStack
         sut = ZClientViewController(
             account: Account.mockAccount(imageData: mockImageData),
             userSession: userSession
@@ -40,6 +47,7 @@ final class ZClientViewControllerTests: XCTestCase {
     override func tearDown() {
         sut = nil
         userSession = nil
+        coreDataFixture = nil
 
         super.tearDown()
     }
