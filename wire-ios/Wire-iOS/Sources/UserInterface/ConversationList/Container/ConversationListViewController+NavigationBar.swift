@@ -52,19 +52,19 @@ extension ConversationListViewController {
 
     func setupRightNavigationBarButtons() {
 
-        let filerImage = UIImage(resource: .ConversationList.Header.filterConversations)
-        let filterConversationsAction = UIAction(image: filerImage) { _ in
-            assertionFailure("TODO [WPB-7298]: implement filtering")
-        }
-        navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: filterConversationsAction))]
-
-        // TODO: the items should have a larger width, they appear too close together
-
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
             self?.setState(.peoplePicker, animated: true)
         }
-        navigationItem.rightBarButtonItems?.append(.init(customView: UIButton(primaryAction: newConversationAction)))
+        navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: newConversationAction))]
+
+        // TODO: the items should have a larger width, they appear too close together
+
+        let filerImage = UIImage(resource: .ConversationList.Header.filterConversations)
+        let filterConversationsAction = UIAction(image: filerImage) { _ in
+            assertionFailure("TODO [WPB-7298]: implement filtering")
+        }
+        navigationItem.rightBarButtonItems?.append(.init(customView: UIButton(primaryAction: filterConversationsAction)))
     }
 
     // MARK: - Account View
