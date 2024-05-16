@@ -41,15 +41,21 @@ func MainTabBarController(
 
     mainTabBarController.viewControllers?[tab: .archive].tabBarItem = .init(
         title: L10n.Localizable.ConversationList.BottomBar.Archived.title,
-        image: .init(resource: .archiveOutline),
-        selectedImage: .init(resource: .archiveFilled)
+        image: .init(resource: .TabBar.archive),
+        selectedImage: .init(resource: .TabBar.archiveFilled)
     )
     mainTabBarController.viewControllers?[tab: .archive].tabBarItem.accessibilityIdentifier = "bottomBarArchivedButton"
     mainTabBarController.viewControllers?[tab: .archive].tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Archived.description
     mainTabBarController.viewControllers?[tab: .archive].tabBarItem.accessibilityHint = L10n.Accessibility.TabBar.Archived.hint
 
-    // TODO: finish implementation
-    mainTabBarController.viewControllers?[tab: .settings]
+    mainTabBarController.viewControllers?[tab: .settings].tabBarItem = .init(
+        title: L10n.Localizable.ConversationList.BottomBar.Settings.title,
+        image: .init(resource: .TabBar.settings),
+        selectedImage: .init(resource: .TabBar.settingsFilled)
+    )
+    mainTabBarController.viewControllers?[tab: .settings].tabBarItem.accessibilityIdentifier = "TODO" // TODO: accessibilityIdentifier?
+    mainTabBarController.viewControllers?[tab: .settings].tabBarItem.accessibilityLabel = L10n.Accessibility.TabBar.Settings.description
+    mainTabBarController.viewControllers?[tab: .settings].tabBarItem.accessibilityHint = L10n.Accessibility.TabBar.Settings.hint
 
     mainTabBarController.selectedIndex = MainTabBarControllerTab.conversations.rawValue
     mainTabBarController.tabBar.backgroundColor = SemanticColors.View.backgroundDefault

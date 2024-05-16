@@ -58,6 +58,8 @@ extension ConversationListViewController {
         }
         navigationItem.rightBarButtonItems = [.init(customView: UIButton(primaryAction: filterConversationsAction))]
 
+        // TODO: the items should have a larger width, they appear too close together
+
         let newConversationImage = UIImage(resource: .ConversationList.Header.newConversation)
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in
             self?.setState(.peoplePicker, animated: true)
