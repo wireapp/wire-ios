@@ -254,8 +254,10 @@ final class ConversationGuestOptionsViewModel {
             case .success(let linkData):
                 if linkData.secured {
                     self.securedLink = linkData.uri
+                    self.link = nil
                 } else {
                     self.link = linkData.uri
+                    self.securedLink = nil
                 }
 
             case .failure(let error):
