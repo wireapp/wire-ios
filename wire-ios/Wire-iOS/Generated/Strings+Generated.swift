@@ -3633,6 +3633,33 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "jailbrokendevice.alert.title", fallback: "Jailbreak detected")
       }
     }
+    internal enum Join {
+      internal enum Group {
+        internal enum Conversation {
+          internal enum Alert {
+            /// This conversation is password protected
+            internal static let message = L10n.tr("Localizable", "join.group.conversation.alert.message", fallback: "This conversation is password protected")
+            /// %@ 
+            ///  Enter Password
+            internal static func title(_ p1: Any) -> String {
+              return L10n.tr("Localizable", "join.group.conversation.alert.title", String(describing: p1), fallback: "%@ \n Enter Password")
+            }
+            internal enum JoinAction {
+              /// Join conversation
+              internal static let title = L10n.tr("Localizable", "join.group.conversation.alert.joinAction.title", fallback: "Join conversation")
+            }
+            internal enum LearnMoreAction {
+              /// Learn more about guest links
+              internal static let title = L10n.tr("Localizable", "join.group.conversation.alert.learnMoreAction.title", fallback: "Learn more about guest links")
+            }
+            internal enum Textfield {
+              /// Enter conversation password
+              internal static let placeholder = L10n.tr("Localizable", "join.group.conversation.alert.textfield.placeholder", fallback: "Enter conversation password")
+            }
+          }
+        }
+      }
+    }
     internal enum KeyboardPhotosAccess {
       internal enum Denied {
         internal enum Keyboard {
@@ -5979,6 +6006,10 @@ internal enum L10n {
             internal enum ConverationIsFull {
               /// The conversation is full.
               internal static let message = L10n.tr("Localizable", "url_action.join_conversation.error.alert.converation_is_full.message", fallback: "The conversation is full.")
+            }
+            internal enum InvalidPassword {
+              /// Password is incorrect, please try again.
+              internal static let message = L10n.tr("Localizable", "url_action.join_conversation.error.alert.invalid_password.message", fallback: "Password is incorrect, please try again.")
             }
             internal enum LearnMore {
               /// Learn more about guest links

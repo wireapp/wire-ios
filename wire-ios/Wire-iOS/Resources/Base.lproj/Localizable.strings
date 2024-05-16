@@ -1447,6 +1447,13 @@
 "guest_room.expiration.hours_left" = "%@h left";
 "guest_room.expiration.less_than_minutes_left" = "Less than %@m left";
 
+// Join Conversation Alert
+"join.group.conversation.alert.title" = "%@ \n Enter Password";
+"join.group.conversation.alert.message" = "This conversation is password protected";
+"join.group.conversation.alert.textfield.placeholder" = "Enter conversation password";
+"join.group.conversation.alert.joinAction.title" = "Join conversation";
+"join.group.conversation.alert.learnMoreAction.title" = "Learn more about guest links";
+
 // Services Options
 
 "services_options.allow_services.title" = "Allow services";
@@ -1910,6 +1917,8 @@ Enter your identity provider’s credentials in the next step to update the cert
 "url_action.join_conversation.error.alert.converation_is_full.message" = "The conversation is full.";
 "url_action.join_conversation.error.alert.link_is_invalid.message" = "The conversation link is invalid.";
 "url_action.join_conversation.error.alert.learn_more.action" = "Learn more about guest links";
+
+"url_action.join_conversation.error.alert.invalid_password.message" = "Password is incorrect, please try again.";
 
 // Deep Link
 "url_action.invalid_user.title" = "Wire can't find this person.";
