@@ -208,6 +208,19 @@ final class TeamRepository: TeamRepositoryProtocol {
         }
     }
 
+    // MARK: - Fetch self legalhold status
+
+    func fetchSelfLegalholdStatus() async throws -> LegalholdStatus {
+        let selfUserID: UUID = await context.perform { [context] in
+            ZMUser.selfUser(in: context).remoteIdentifier
+        }
+
+        return try await teamsAPI.getLegalholdStatus(
+            for: selfTeamID,
+            userID: selfUserID
+        )
+    }
+
 }
 
 private extension ConversationAction {

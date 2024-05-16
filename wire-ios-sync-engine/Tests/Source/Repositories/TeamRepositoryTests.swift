@@ -26,6 +26,8 @@ final class TeamRepositoryTests: XCTestCase {
 
     enum Scaffolding {
 
+        static let selfUserID = UUID()
+
         static let selfTeamID = UUID()
         static let teamCreatorID = UUID()
         static let teamName = "Team Foo"
@@ -248,6 +250,31 @@ final class TeamRepositoryTests: XCTestCase {
             XCTAssertEqual(member2.permissions.rawValue, Scaffolding.member2Permissions)
             XCTAssertFalse(member2.needsToBeUpdatedFromBackend)
         }
+    }
+
+    func testFetchSelfLegalholdStatus() async throws {
+        // Given
+        _ = await context.perform { [context, modelHelper] in
+            modelHelper.createSelfUser(
+                id: Scaffolding.selfUserID,
+                in: context
+            )
+        }
+
+        let sut = TeamRepository(
+            selfTeamID: Scaffolding.selfTeamID,
+            teamsAPI: teamsAPI,
+            context: context
+        )
+
+        // Mock
+        teamsAPI.getLegalholdStatusForUserID_MockValue = .pending
+
+        // When
+        let result = try await sut.fetchSelfLegalholdStatus()
+
+        // Then
+        XCTAssertEqual(result, .pending)
     }
 
 }
