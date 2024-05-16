@@ -41,6 +41,7 @@ final class WireApplication: UIApplication {
                         } else {
                             completion()
                         }
+                        self?.displayedDeveloperTools = false
                     }
                 ))
             }
