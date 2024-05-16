@@ -167,7 +167,11 @@ struct ConversationJoinRequestFactory {
 
     static let joinConversationsPath = "/conversations/join"
 
-    static func requestForJoinConversation(key: String, code: String, password: String? = nil) -> ZMTransportRequest? {
+    static func requestForJoinConversation(
+        key: String,
+        code: String,
+        password: String? = nil
+    ) -> ZMTransportRequest? {
         guard let apiVersion = BackendInfo.apiVersion else { return nil }
 
         let path = joinConversationsPath
