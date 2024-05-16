@@ -42,7 +42,7 @@ extension Collection where Iterator.Element: UserType {
             let matches = usersToSearch
                 .filter { rule($0) }
                 .filter { !foundUsers.contains(HashBox(value: $0)) }
-                .sorted { $0.name < $1.name }
+                .sortedAscendingPrependingNil(by: \.name)
 
             foundUsers = foundUsers.union(matches.map(HashBox.init))
             results += matches

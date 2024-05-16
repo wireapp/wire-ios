@@ -731,7 +731,7 @@ public final class MLSService: MLSServiceInterface {
     private var hasMoreThan24HoursPassedSinceLastCheck: Bool {
         guard let storedDate = userDefaults.date(forKey: .keyPackageQueriedTime) else { return true }
 
-        if Calendar.current.dateComponents([.hour], from: storedDate, to: Date()).hour > 24 {
+        if let hour = Calendar.current.dateComponents([.hour], from: storedDate, to: Date()).hour, hour > 24 {
             return true
         } else {
             return false

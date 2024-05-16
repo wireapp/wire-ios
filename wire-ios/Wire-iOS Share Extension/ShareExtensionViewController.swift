@@ -187,7 +187,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
     }
 
     override func configurationItems() -> [Any]! {
-        if accountManager?.accounts.count > 1 {
+        if let count = accountManager?.accounts.count, count > 1 {
             return [accountItem, conversationItem]
         } else {
             return [conversationItem]

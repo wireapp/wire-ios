@@ -22,13 +22,19 @@ import WireSyncEngine
 extension Array where Element == CallParticipant {
 
     var hasMoreThanTwoConnectedParticipants: Bool {
-        return filter(\.state.isConnected).count > 2
+        filter(\.state.isConnected).count > 2
     }
 
     mutating func sortByName(selfStreamId: AVSClient?) {
-        self = self.sorted {
-            $0.streamId == selfStreamId ||
-                $0.user.name?.lowercased() < $1.user.name?.lowercased()
+        sort {
+            if $0.streamId == selfStreamId {
+                return true
+            }
+
+            return OptionalComparison.prependingNilAscending(
+                lhs: $0.user.name?.lowercased(),
+                rhs: $1.user.name?.lowercased()
+            )
         }
     }
 }

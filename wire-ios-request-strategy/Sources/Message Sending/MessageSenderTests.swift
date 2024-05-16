@@ -608,7 +608,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         func withBroadcastProteusMessageFailing(with error: NetworkError) -> Arrangement {
             messageApi.broadcastProteusMessageMessage_MockMethod = { [weak messageApi] _ in
-                if messageApi?.broadcastProteusMessageMessage_Invocations.count > 1 {
+                if let count = messageApi?.broadcastProteusMessageMessage_Invocations.count, count > 1 {
                     return (Scaffolding.messageSendingStatusSuccess, Scaffolding.responseSuccess)
                 } else {
                     throw error
@@ -619,7 +619,7 @@ final class MessageSenderTests: MessagingTestBase {
 
         func withSendProteusMessageFailing(with error: NetworkError) -> Arrangement {
             messageApi.sendProteusMessageMessageConversationID_MockMethod = { [weak messageApi] _, _ in
-                if messageApi?.sendProteusMessageMessageConversationID_Invocations.count > 1 {
+                if let count = messageApi?.sendProteusMessageMessageConversationID_Invocations.count, count > 1 {
                     return (Scaffolding.messageSendingStatusSuccess, Scaffolding.responseSuccess)
                 } else {
                     throw error

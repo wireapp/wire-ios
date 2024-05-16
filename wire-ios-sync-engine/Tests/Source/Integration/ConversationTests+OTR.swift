@@ -161,12 +161,16 @@ class ConversationTestsOTR_Swift: ConversationTestsBase {
                 // THEN
                 // check that we successfully decrypted messages
 
-                XCTAssert(conversation?.allMessages.count > 0)
+                guard let conversation else {
+                    XCTFail("expected 'conversation' available!")
+                    return
+                }
+                XCTAssert(conversation.allMessages.count > 0)
 
-                if conversation?.allMessages.count < 2 {
+                if conversation.allMessages.count < 2 {
                     XCTFail("message count is too low")
                 } else {
-                    let lastMessages = conversation?.lastMessages(limit: 2) as? [ZMClientMessage]
+                    let lastMessages = conversation.lastMessages(limit: 2) as? [ZMClientMessage]
 
                     let message1 = lastMessages?[1]
                     XCTAssertEqual(message1?.nonce, nonce1)

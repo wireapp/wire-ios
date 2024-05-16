@@ -65,10 +65,14 @@ struct SettingsCellDescriptorFactory {
 
     func addAccountOrTeamCell() -> SettingsCellDescriptorType {
 
-        let presentationAction: () -> UIViewController? = {
+        let sessionManager = SessionManager.shared
 
-            if SessionManager.shared?.accountManager.accounts.count < SessionManager.shared?.maxNumberAccounts {
-                SessionManager.shared?.addAccount()
+        let presentationAction: () -> UIViewController? = {
+            if
+                let count = sessionManager?.accountManager.accounts.count,
+                let maxNumberAccounts = sessionManager?.maxNumberAccounts,
+                count < maxNumberAccounts {
+                sessionManager?.addAccount()
             } else {
                 if let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) {
                     let alert = UIAlertController(

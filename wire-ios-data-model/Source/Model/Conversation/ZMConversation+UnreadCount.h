@@ -43,20 +43,21 @@
 @property (nonatomic, readonly) BOOL hasUnreadMessagesInOtherConversations;
 
 @property (nonatomic, readonly) ZMConversationListIndicator unreadListIndicator;
-+ (NSSet *)keyPathsForValuesAffectingUnreadListIndicator;
+
++ (NSSet * _Nonnull)keyPathsForValuesAffectingUnreadListIndicator;
 
 /// Predicate for conversations that will be considered unread for the purpose of the badge count
-+ (NSPredicate *)predicateForConversationConsideredUnread;
++ (NSPredicate * _Nonnull)predicateForConversationConsideredUnread;
 
 /// Predicate for conversations that will be considered unread for the purpose of the back arrow dot
-+ (NSPredicate *)predicateForConversationConsideredUnreadExcludingSilenced;
++ (NSPredicate * _Nonnull)predicateForConversationConsideredUnreadExcludingSilenced;
 
 /// Count of unread conversations (exluding silenced converations)
-+ (NSUInteger)unreadConversationCountInContext:(NSManagedObjectContext *)moc;
++ (NSUInteger)unreadConversationCountInContext:(NSManagedObjectContext * _Nonnull)moc;
 
 /// Count of unread conversations (excluding silenced conversations)
-+ (NSUInteger)unreadConversationCountExcludingSilencedInContext:(NSManagedObjectContext *)moc
-                                                      excluding:(ZMConversation *)conversation;
++ (NSUInteger)unreadConversationCountExcludingSilencedInContext:(NSManagedObjectContext * _Nonnull)moc
+                                                      excluding:(ZMConversation * _Nullable)conversation;
 
 @end
 
@@ -66,10 +67,10 @@
 
 /// lastUnreadKnockDate can only be set from the syncMOC
 /// if this is nil, there is no unread knockMessage
-@property (nonatomic) NSDate *lastUnreadKnockDate;
+@property (nonatomic, nullable) NSDate *lastUnreadKnockDate;
 /// lastUnreadMissedCallDate can only be set from the syncMOC
 /// if this is nil, there is no unread missed call
-@property (nonatomic) NSDate *lastUnreadMissedCallDate;
+@property (nonatomic, nullable) NSDate *lastUnreadMissedCallDate;
 
 
 @property (nonatomic, readonly) BOOL hasUnreadKnock;
