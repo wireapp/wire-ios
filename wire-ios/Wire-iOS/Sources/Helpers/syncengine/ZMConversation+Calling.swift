@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireSyncEngine
+import class WireCommonComponents.NetworkStatus
 
 extension ZMConversation {
 
@@ -121,7 +122,7 @@ extension ZMConversation {
 
     func warnAboutNoInternetConnection() -> Bool {
         typealias VoiceNetworkErrorLocale = L10n.Localizable.Voice.NetworkError
-        guard AppDelegate.isOffline else {
+        guard case .unreachable = NetworkStatus.shared.reachability else {
             return false
         }
 

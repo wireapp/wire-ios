@@ -446,6 +446,33 @@ public class MockResolveOneOnOneConversationsUseCaseProtocol: ResolveOneOnOneCon
 
 }
 
+public class MockSecurityClassificationProviding: SecurityClassificationProviding {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - classification
+
+    public var classificationUsersConversationDomain_Invocations: [(users: [UserType], conversationDomain: String?)] = []
+    public var classificationUsersConversationDomain_MockMethod: (([UserType], String?) -> SecurityClassification?)?
+    public var classificationUsersConversationDomain_MockValue: SecurityClassification??
+
+    public func classification(users: [UserType], conversationDomain: String?) -> SecurityClassification? {
+        classificationUsersConversationDomain_Invocations.append((users: users, conversationDomain: conversationDomain))
+
+        if let mock = classificationUsersConversationDomain_MockMethod {
+            return mock(users, conversationDomain)
+        } else if let mock = classificationUsersConversationDomain_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `classificationUsersConversationDomain`")
+        }
+    }
+
+}
+
 public class MockSelfClientCertificateProviderProtocol: SelfClientCertificateProviderProtocol {
 
     // MARK: - Life cycle

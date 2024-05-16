@@ -73,6 +73,7 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
     private let detector: CompanyLoginRequestDetector
     private let requester: CompanyLoginRequester
     private let flowHandler: CompanyLoginFlowHandler
+    private let networkStatusObservable: any NetworkStatusObservable
 
     private weak var ssoAlert: UIAlertController?
 
@@ -80,13 +81,20 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
 
     /// Create a new `CompanyLoginController` instance using the standard detector and requester.
     convenience init?(withDefaultEnvironment: ()) {
-        guard CompanyLoginController.isCompanyLoginEnabled,
-            let callbackScheme = Bundle.ssoURLScheme else { return nil } // Disable on public builds
+        guard
+            CompanyLoginController.isCompanyLoginEnabled,
+            let callbackScheme = Bundle.ssoURLScheme
+        else { return nil } // Disable on public builds
 
         requireInternal(nil != Bundle.ssoURLScheme, "no valid callback scheme")
 
         let requester = CompanyLoginController.createRequester(with: callbackScheme)
-        self.init(detector: .shared, requester: requester)
+
+        self.init(
+            detector: .shared,
+            requester: requester,
+            networkStatusObservable: NetworkStatus.shared
+        )
     }
 
     static private func createRequester(with scheme: String?) -> CompanyLoginRequester {
@@ -96,11 +104,18 @@ final class CompanyLoginController: NSObject, CompanyLoginRequesterDelegate {
     }
 
     /// Create a new `CompanyLoginController` instance using the specified requester.
-    required init(detector: CompanyLoginRequestDetector, requester: CompanyLoginRequester) {
+    required init(
+        detector: CompanyLoginRequestDetector,
+        requester: CompanyLoginRequester,
+        networkStatusObservable: any NetworkStatusObservable
+    ) {
         self.detector = detector
         self.requester = requester
         self.flowHandler = CompanyLoginFlowHandler(callbackScheme: requester.callbackScheme)
+        self.networkStatusObservable = networkStatusObservable
+
         super.init()
+
         setupObservers()
         flowHandler.enableInAppBrowser = true
         flowHandler.delegate = self
@@ -246,7 +261,7 @@ extension CompanyLoginController {
     /// Attempt to login using the requester specified in `init`
     /// - returns: `true` when the application is offline and an alert was presented, `false` otherwise.
     private func presentOfflineAlertIfNeeded() -> Bool {
-        guard AppDelegate.isOffline else { return false }
+        guard case .unreachable = networkStatusObservable.reachability else { return false }
         delegate?.controller(self, presentAlert: .noInternetError())
         return true
     }

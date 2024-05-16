@@ -16,8 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@testable import Wire
+import WireSyncEngineSupport
 import XCTest
+
+@testable import Wire
 
 // MARK: - MockLongPressGestureRecognizer
 
@@ -58,8 +60,18 @@ final class ConversationInputBarViewControllerAudioRecorderSnapshotTests: CoreDa
 
     override func setUp() {
         super.setUp()
+
         userSession = UserSessionMock()
-        sut = ConversationInputBarViewController(conversation: otherUserConversation, userSession: userSession)
+
+        let mockSecurityClassificationProviding = MockSecurityClassificationProviding()
+        mockSecurityClassificationProviding.classificationUsersConversationDomain_MockValue = .some(nil)
+
+        sut = ConversationInputBarViewController(
+            conversation: otherUserConversation,
+            userSession: userSession,
+            classificationProvider: mockSecurityClassificationProviding,
+            networkStatusObservable: MockNetworkStatusObservable()
+        )
         sut.overrideUserInterfaceStyle = .light
         sut.loadViewIfNeeded()
 
