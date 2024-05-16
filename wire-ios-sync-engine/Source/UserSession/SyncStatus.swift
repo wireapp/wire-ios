@@ -246,7 +246,7 @@ extension SyncStatus {
             // Only complete the .fetchingMissedEvents phase if the push channel was
             // established before we initiated the notification stream fetch.
             // If the push channel disconnected in between we'll fetch the stream again
-            if pushChannelEstablishedDate > fetchBeganAt {
+            if let pushChannelEstablishedDate, let fetchBeganAt, pushChannelEstablishedDate > fetchBeganAt {
                 needsToRestartQuickSync = true
             }
 

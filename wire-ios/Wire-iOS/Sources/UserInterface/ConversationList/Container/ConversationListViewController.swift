@@ -269,14 +269,14 @@ final class ConversationListViewController: UIViewController {
         }
 
         if animated {
-            UIView.animate(withDuration: 0.20, animations: closure)
+            UIView.animate(withDuration: 0.2, animations: closure)
         } else {
             closure()
         }
     }
 
     func hideNoContactLabel(animated: Bool) {
-        UIView.animate(withDuration: animated ? 0.20 : 0.0) {
+        UIView.animate(withDuration: animated ? 0.2 : 0) {
             self.noConversationLabel.alpha = 0
             self.onboardingHint.alpha = 0
         }
@@ -302,11 +302,13 @@ final class ConversationListViewController: UIViewController {
     }
 
     func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool {
-        return listContentController.select(conversation,
-                                     scrollTo: message,
-                                     focusOnView: focus,
-                                     animated: animated,
-                                     completion: completion)
+        listContentController.select(
+            conversation,
+            scrollTo: message,
+            focusOnView: focus,
+            animated: animated,
+            completion: completion
+        )
     }
 
     func showNewsletterSubscriptionDialogIfNeeded(completionHandler: @escaping ResultHandler) {
