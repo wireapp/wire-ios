@@ -32,7 +32,7 @@ public struct ConversationRole: Equatable {
     /// The actions that can be performed in the role.
 
     public let actions: Set<ConversationAction>
-    
+
     /// Create a new `ConversationRole`.
     ///
     /// - Parameters:

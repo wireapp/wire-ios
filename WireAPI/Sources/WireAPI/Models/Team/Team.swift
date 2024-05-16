@@ -45,7 +45,7 @@ public struct Team: Identifiable, Equatable {
     /// The asset id of the team's splash screen.
 
     public let splashScreenID: String?
-    
+
     /// Create a new `Team`.
     ///
     /// - Parameters:

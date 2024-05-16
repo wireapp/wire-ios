@@ -27,11 +27,11 @@ import WireDataModel
 /// as well as the possible source(s) of the models.
 
 protocol TeamRepositoryProtocol {
-    
+
     /// Pull self team metadata frmo the server and store locally.
 
     func pullSelfTeam() async throws
-    
+
     /// Pull team roles for the self team from the server and store locally.
 
     func pullSelfTeamRoles() async throws
@@ -40,7 +40,7 @@ protocol TeamRepositoryProtocol {
 
     func pullSelfTeamMembers() async throws
 
-    ///Fetch the legalhold status for the self user from the server.
+    /// Fetch the legalhold status for the self user from the server.
 
     func fetchSelfLegalholdStatus() async throws -> LegalholdStatus
 

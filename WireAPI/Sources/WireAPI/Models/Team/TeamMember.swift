@@ -41,7 +41,7 @@ public struct TeamMember: Equatable {
     /// The member's permissions.
 
     public let permissions: TeamMemberPermissions?
-    
+
     /// Create a new `TeamMember`.
     ///
     /// - Parameters:
