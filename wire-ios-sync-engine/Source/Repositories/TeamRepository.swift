@@ -33,6 +33,10 @@ protocol TeamRepositoryProtocol {
 
     func fetchSelfTeamRoles() async throws
 
+    func fetchSelfTeamMembers() async throws
+
+    func fetchSelfLegalholdStatus() async throws -> LegalholdStatus
+
 }
 
 // TODO: document
