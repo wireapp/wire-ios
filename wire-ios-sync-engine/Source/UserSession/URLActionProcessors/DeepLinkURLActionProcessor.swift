@@ -80,10 +80,18 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 }
 
             case .failure(let error):
-                delegate.failedToPerformAction(urlAction, error: error)
-                delegate.completedURLAction(urlAction)
+                self.handleJoinConversationFailure(error: error, urlAction: urlAction, delegate: delegate)
             }
         }
+    }
+
+    private func handleJoinConversationFailure(
+        error: Error,
+        urlAction: URLAction,
+        delegate: PresentationDelegate
+    ) {
+        delegate.failedToPerformAction(urlAction, error: error)
+        delegate.completedURLAction(urlAction)
     }
 
     private func handlePasswordPrompt(for conversationName: String, key: String, code: String, delegate: PresentationDelegate) {
