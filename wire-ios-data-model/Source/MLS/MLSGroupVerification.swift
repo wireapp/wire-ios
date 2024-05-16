@@ -37,7 +37,7 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
     private let mlsService: MLSServiceInterface
     private let syncContext: NSManagedObjectContext
 
-    private var observingTask: Task<Void, Never>?
+    private var observationTask: Task<Void, Never>?
 
     // MARK: - Initialize
 
@@ -52,13 +52,13 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
     }
 
     deinit {
-        observingTask?.cancel()
+        observationTask?.cancel()
     }
 
     // MARK: Observing
 
     public func startObserving() {
-        observingTask = .detached { [mlsService, weak self] in
+        observationTask = .detached { [mlsService, weak self] in
             for await groupID in mlsService.epochChanges() {
                 if Task.isCancelled { return }
                 await self?.updateConversation(by: groupID)
