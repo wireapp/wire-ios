@@ -37,7 +37,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         switch urlAction {
         case let .joinConversation(key: key, code: code):
             handleJoinConversation(key: key, code: code, urlAction: urlAction, delegate: delegate)
-            
+
         case .openConversation(let id):
             handleOpenConversation(id: id, delegate: delegate)
 
@@ -49,7 +49,12 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         }
     }
 
-    private func handleJoinConversation(key: String, code: String, urlAction: URLAction, delegate: PresentationDelegate?) {
+    private func handleJoinConversation(
+        key: String,
+        code: String,
+        urlAction: URLAction,
+        delegate: PresentationDelegate?
+    ) {
         ZMConversation.fetchIdAndName(
             key: key,
             code: code,
@@ -83,7 +88,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
 
     private func handlePasswordPrompt(for conversationName: String, key: String, code: String, delegate: PresentationDelegate) {
         delegate.showPasswordPrompt(for: conversationName) { [weak self] password in
-            guard let self, let password = password, !password.isEmpty else {
+            guard let self, let password, !password.isEmpty else {
                 return
             }
 
