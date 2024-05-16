@@ -92,7 +92,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
         XCTAssertEqual(performedAction.messageProtocol, .proteus)
         XCTAssertEqual(performedAction.creatorClientID, selfUser.selfClient()?.remoteIdentifier)
-        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap(\.self))
+        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap { $0 })
         XCTAssertEqual(performedAction.unqualifiedUserIDs, [])
         XCTAssertEqual(performedAction.name, "Foo Bar")
         XCTAssertEqual(performedAction.accessMode, .allowGuests)
@@ -146,7 +146,7 @@ final class ConversationServiceTests: MessagingTestBase {
 
         XCTAssertEqual(performedAction.messageProtocol, .proteus)
         XCTAssertEqual(performedAction.creatorClientID, selfUser.selfClient()?.remoteIdentifier)
-        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap(\.self))
+        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap { $0 })
         XCTAssertEqual(performedAction.unqualifiedUserIDs, [])
         XCTAssertEqual(performedAction.name, "Foo Bar")
         XCTAssertEqual(performedAction.accessMode, ConversationAccessMode())
@@ -199,7 +199,7 @@ final class ConversationServiceTests: MessagingTestBase {
         let performedAction = try XCTUnwrap(mockActionHandler.performedActions.first)
 
         XCTAssertEqual(performedAction.messageProtocol, .proteus)
-        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap(\.self))
+        XCTAssertEqual(performedAction.qualifiedUserIDs, [user1.qualifiedID].compactMap { $0 })
         XCTAssertEqual(performedAction.unqualifiedUserIDs, [])
         XCTAssertEqual(performedAction.name, nil)
         XCTAssertEqual(performedAction.teamID, team.remoteIdentifier)

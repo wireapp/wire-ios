@@ -64,7 +64,7 @@ final class ConversationCreationController: UIViewController {
         servicesSection,
         receiptsSection,
         shouldIncludeEncryptionProtocolSection ? encryptionProtocolSection : nil
-    ].compactMap(\.self)
+    ].compactMap { $0 }
 
     private var shouldIncludeEncryptionProtocolSection: Bool {
         if DeveloperFlag.showCreateMLSGroupToggle.isOn {

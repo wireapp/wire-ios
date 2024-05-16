@@ -31,8 +31,8 @@ import Foundation
         let conversationId = conversation.objectID
         require(!conversationId.isTemporaryID)
 
-        let userIds = typingUsers.lazy.map(\.objectID)
-        require(userIds.allSatisfy({ !$0.isTemporaryID }))
+        let userIds = typingUsers.map(\.objectID)
+        require(userIds.allSatisfy { !$0.isTemporaryID })
 
         guard !userIds.isEmpty else {
             conversationIdToUserIds.removeValue(forKey: conversationId)
