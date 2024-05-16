@@ -35,6 +35,7 @@ import WireDataModel
 import WireSyncEngine
 
 @testable import Wire
+@testable import WireCommonComponents
 
 
 
@@ -540,6 +541,24 @@ class MockImageTransformer: ImageTransformer {
             fatalError("no mock for `adjustInputSaturationValueImage`")
         }
     }
+
+}
+
+public class MockNetworkStatusObservable: NetworkStatusObservable {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - reachability
+
+    public var reachability: ServerReachability {
+        get { return underlyingReachability }
+        set(value) { underlyingReachability = value }
+    }
+
+    public var underlyingReachability: ServerReachability!
+
 
 }
 
