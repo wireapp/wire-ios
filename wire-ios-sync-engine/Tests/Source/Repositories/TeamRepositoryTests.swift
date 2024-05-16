@@ -48,6 +48,7 @@ final class TeamRepositoryTests: XCTestCase {
         static let member2Permissions = Permissions.member.rawValue
     }
 
+    var sut: TeamRepository!
     var teamsAPI: MockTeamsAPI!
 
     var stack: CoreDataStack!
@@ -62,11 +63,17 @@ final class TeamRepositoryTests: XCTestCase {
         try await super.setUp()
         stack = try await coreDataStackHelper.createStack()
         teamsAPI = MockTeamsAPI()
+        sut = TeamRepository(
+            selfTeamID: Scaffolding.selfTeamID,
+            teamsAPI: teamsAPI,
+            context: context
+        )
     }
 
     override func tearDown() async throws {
         stack = nil
         teamsAPI = nil
+        sut = nil
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
     }
@@ -77,12 +84,6 @@ final class TeamRepositoryTests: XCTestCase {
             // There is no team in the database.
             XCTAssertNil(Team.fetch(with: Scaffolding.selfTeamID, in: context))
         }
-
-        let sut = TeamRepository(
-            selfTeamID: Scaffolding.selfTeamID,
-            teamsAPI: teamsAPI,
-            context: context
-        )
 
         // Mock
         teamsAPI.getTeamFor_MockValue = WireAPI.Team(
@@ -124,12 +125,6 @@ final class TeamRepositoryTests: XCTestCase {
                 in: context
             )
         }
-
-        let sut = TeamRepository(
-            selfTeamID: Scaffolding.selfTeamID,
-            teamsAPI: teamsAPI,
-            context: context
-        )
 
         // Mock
         teamsAPI.getTeamRolesFor_MockValue = [
@@ -195,12 +190,6 @@ final class TeamRepositoryTests: XCTestCase {
             return team
         }
 
-        let sut = TeamRepository(
-            selfTeamID: Scaffolding.selfTeamID,
-            teamsAPI: teamsAPI,
-            context: context
-        )
-
         // Mock
         teamsAPI.getTeamMembersForMaxResults_MockValue = [
             TeamMember(
@@ -260,12 +249,6 @@ final class TeamRepositoryTests: XCTestCase {
                 in: context
             )
         }
-
-        let sut = TeamRepository(
-            selfTeamID: Scaffolding.selfTeamID,
-            teamsAPI: teamsAPI,
-            context: context
-        )
 
         // Mock
         teamsAPI.getLegalholdStatusForUserID_MockValue = .pending
