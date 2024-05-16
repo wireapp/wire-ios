@@ -56,7 +56,7 @@ final class TeamRepositoryTests: XCTestCase {
 
     // MARK: - Tests
 
-    func testFetchSelfTeam() async throws {
+    func testPullSelfTeam() async throws {
         // Given
         await context.perform { [context] in
             // There is no team in the database.
@@ -74,7 +74,7 @@ final class TeamRepositoryTests: XCTestCase {
         )
 
         // When
-        try await sut.fetchSelfTeam()
+        try await sut.pullSelfTeam()
 
         // Then
         try await context.perform { [context] in
@@ -89,7 +89,7 @@ final class TeamRepositoryTests: XCTestCase {
         }
     }
 
-    func testFetchSelfTeamRoles() async throws {
+    func testPullSelfTeamRoles() async throws {
         // Given
         let team = try await context.perform { [context, modelHelper] in
             // Make sure we have no roles to begin with.
@@ -122,7 +122,7 @@ final class TeamRepositoryTests: XCTestCase {
         ]
 
         // When
-        try await sut.fetchSelfTeamRoles()
+        try await sut.pullSelfTeamRoles()
 
         // Then
         try await context.perform { [context] in
@@ -156,7 +156,7 @@ final class TeamRepositoryTests: XCTestCase {
         }
     }
 
-    func testFetchSelfTeamMembers() async throws {
+    func testPullSelfTeamMembers() async throws {
         // Given
         let team = await context.perform { [context, modelHelper] in
             let team = modelHelper.createTeam(
@@ -193,7 +193,7 @@ final class TeamRepositoryTests: XCTestCase {
         ]
 
         // When
-        try await sut.fetchSelfTeamMembers()
+        try await sut.pullSelfTeamMembers()
 
         // Then
         try await context.perform {

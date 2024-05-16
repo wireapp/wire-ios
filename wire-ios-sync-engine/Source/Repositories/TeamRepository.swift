@@ -29,11 +29,11 @@ enum TeamRepositoryError: Error {
 
 protocol TeamRepositoryProtocol {
 
-    func fetchSelfTeam() async throws
+    func pullSelfTeam() async throws
 
-    func fetchSelfTeamRoles() async throws
+    func pullSelfTeamRoles() async throws
 
-    func fetchSelfTeamMembers() async throws
+    func pullSelfTeamMembers() async throws
 
     func fetchSelfLegalholdStatus() async throws -> LegalholdStatus
 
@@ -56,9 +56,9 @@ final class TeamRepository: TeamRepositoryProtocol {
         self.context = context
     }
 
-    // MARK: - Fetch self team
+    // MARK: - Pull self team
 
-    func fetchSelfTeam() async throws {
+    func pullSelfTeam() async throws {
         let team = try await fetchSelfTeamRemotely()
         await storeTeamLocally(team)
     }
@@ -98,9 +98,9 @@ final class TeamRepository: TeamRepositoryProtocol {
         }
     }
 
-    // MARK: - Fetch self team roles
+    // MARK: - Pull self team roles
 
-    func fetchSelfTeamRoles() async throws {
+    func pullSelfTeamRoles() async throws {
         let teamRoles = try await fetchSelfTeamRolesRemotely()
         try await storeTeamRolesLocally(teamRoles)
     }
@@ -154,9 +154,9 @@ final class TeamRepository: TeamRepositoryProtocol {
         }
     }
 
-    // MARK: - Fetch self team members
+    // MARK: - Pull self team members
 
-    func fetchSelfTeamMembers() async throws {
+    func pullSelfTeamMembers() async throws {
         let teamMembers = try await fetchSelfTeamMembersRemotely()
         try await storeTeamMembersLocally(teamMembers)
     }
