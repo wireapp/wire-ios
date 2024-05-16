@@ -106,9 +106,7 @@ extension ZMConversation {
                 return completion(.failure(ConversationJoinError.unknown))
 
             case 403:
-                if let payload = response.payload as? [String: Any],
-                   let label = payload["label"] as? String,
-                   label == "invalid-conversation-password" {
+                 if response.payloadLabel() == "invalid-conversation-password" {
                     completion(.failure(ConversationJoinError.invalidConversationPassword))
                 }
             default:
@@ -179,7 +177,7 @@ struct ConversationJoinRequestFactory {
             URLQueryItem.Key.conversationCode: code
         ]
 
-        if apiVersion >= .v4, let password = password {
+        if apiVersion >= .v4, let password {
             payload[URLQueryItem.Key.password] = password
         }
 
