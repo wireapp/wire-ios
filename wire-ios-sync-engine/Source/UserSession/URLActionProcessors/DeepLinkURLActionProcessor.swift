@@ -115,7 +115,13 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         }
     }
 
-    private func joinConversation(key: String, code: String, password: String?, delegate: PresentationDelegate) {
+    private func joinConversation(
+        key: String,
+        code: String,
+        password: String?,
+        delegate: PresentationDelegate
+    ) {
+
         ZMConversation.join(
             key: key,
             code: code,
@@ -128,21 +134,30 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
 
             switch response {
             case .success(let conversation):
-                self.synchronise(conversation) { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success(let syncConversation):
-                            delegate.showConversation(syncConversation, at: nil)
-                        case .failure(let error):
-                            delegate.failedToPerformAction(.joinConversation(key: key, code: code), error: error)
-                        }
-                    }
-                }
+                self.handleConversationSynchronization(conversation: conversation, key: key, code: code, delegate: delegate)
             case .failure(let error):
                 delegate.failedToPerformAction(.joinConversation(key: key, code: code), error: error)
             }
 
             delegate.completedURLAction(.joinConversation(key: key, code: code))
+        }
+    }
+
+    private func handleConversationSynchronization(
+        conversation: ZMConversation,
+        key: String,
+        code: String,
+        delegate: PresentationDelegate
+    ) {
+        self.synchronise(conversation) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let syncConversation):
+                    delegate.showConversation(syncConversation, at: nil)
+                case .failure(let error):
+                    delegate.failedToPerformAction(.joinConversation(key: key, code: code), error: error)
+                }
+            }
         }
     }
 
