@@ -1472,8 +1472,6 @@
 		EE7F467025B1D031001B3EE4 /* AppLockModule.MockInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F466F25B1D031001B3EE4 /* AppLockModule.MockInteractor.swift */; };
 		EE7F467225B1D058001B3EE4 /* AppLockModule.MockPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F467125B1D058001B3EE4 /* AppLockModule.MockPresenter.swift */; };
 		EE7F467425B1D0BA001B3EE4 /* AppLockModule.MockView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE7F467325B1D0BA001B3EE4 /* AppLockModule.MockView.swift */; };
-		EE82971029719F9A00F12CAA /* Starscream.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE82970F29719F9A00F12CAA /* Starscream.xcframework */; };
-		EE82971129719F9A00F12CAA /* Starscream.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE82970F29719F9A00F12CAA /* Starscream.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE8297192971A0CA00F12CAA /* WireSyncEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE67F739296F0E28001D7C88 /* WireSyncEngine.framework */; };
 		EE8297232971A44300F12CAA /* Datadog.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = EE82971229719FC400F12CAA /* Datadog.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EE876CAE23F2FCB100040D75 /* SwiftMockLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE876CAC23F2FCA900040D75 /* SwiftMockLoader.swift */; };
@@ -2003,7 +2001,6 @@
 				EE33C48B296485F400C058D1 /* WireSyncEngine.framework in Embed Frameworks */,
 				EEE25B4E29719D0B0008B894 /* ZipArchive.xcframework in Embed Frameworks */,
 				EE67F6D6296F06A3001D7C88 /* Down.xcframework in Embed Frameworks */,
-				EE82971129719F9A00F12CAA /* Starscream.xcframework in Embed Frameworks */,
 				EEE25B3629719BD30008B894 /* WireCryptobox.framework in Embed Frameworks */,
 				EE33C48E296485FA00C058D1 /* WireShareEngine.framework in Embed Frameworks */,
 				EEE25B5129719D2F0008B894 /* avs.xcframework in Embed Frameworks */,
@@ -4028,7 +4025,6 @@
 				EEE25B4A29719CDC0008B894 /* WireUtilities.framework in Frameworks */,
 				EE67F73E296F0E7D001D7C88 /* Ziphy.framework in Frameworks */,
 				872C99121DB0EA54006A3BDE /* Intents.framework in Frameworks */,
-				EE82971029719F9A00F12CAA /* Starscream.xcframework in Frameworks */,
 				EEE25B3829719C170008B894 /* WireDataModel.framework in Frameworks */,
 				EE33C48D296485FA00C058D1 /* WireShareEngine.framework in Frameworks */,
 				874D0EB11D3E575E003DF418 /* Photos.framework in Frameworks */,

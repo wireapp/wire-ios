@@ -56,6 +56,15 @@
         }
       },
       {
+        "package": "Starscream",
+        "repositoryURL": "https://github.com/wireapp/starscream",
+        "state": {
+          "branch": null,
+          "revision": "bf73a16e7409a83c38872726e45e4f432512315e",
+          "version": "4.0.8"
+        }
+      },
+      {
         "package": "swift-snapshot-testing",
         "repositoryURL": "https://github.com/pointfreeco/swift-snapshot-testing",
         "state": {

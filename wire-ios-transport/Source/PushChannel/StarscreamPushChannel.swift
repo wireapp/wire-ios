@@ -257,6 +257,8 @@ extension StarscreamPushChannel: WebSocketDelegate {
             break
         case .cancelled:
             onClose()
+        case .peerClosed:
+            onClose()
         }
     }
 
