@@ -19,18 +19,6 @@
 import Foundation
 
 extension Sequence {
-    public func map<Value>(_ keyPath: KeyPath<Element, Value>) -> [Value] {
-        return map { $0[keyPath: keyPath] }
-    }
-
-    public func flatMap<Value>(_ keyPath: KeyPath<Element, [Value]>) -> [Value] {
-        return flatMap { $0[keyPath: keyPath] }
-    }
-
-    public func compactMap<Value>(_ keyPath: KeyPath<Element, Value?>) -> [Value] {
-        return compactMap { $0[keyPath: keyPath] }
-    }
-
     public func filter(_ keyPath: KeyPath<Element, Bool>) -> [Element] {
         return filter { $0[keyPath: keyPath] }
     }
