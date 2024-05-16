@@ -27,7 +27,7 @@ import XCTest
 // The first and last button for the input bar look like they have 4 rounded corners
 // instead of 2. That's because snapshot tests don't work well with maskedCorners and CI.
 // More on the issue can be found here: https://github.com/pointfreeco/swift-snapshot-testing/issues/358#issuecomment-939854566
-final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
+final class ConversationInputBarViewControllerTests: XCTestCase {
 
     // MARK: - Properties
 
@@ -39,9 +39,15 @@ final class ConversationInputBarViewControllerTests: BaseSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
+
+        FontScheme.configure(with: .large)
         UIColor.setAccentOverride(.red)
+
         mockConversation = MockInputBarConversationType()
+
         mockClassificationProvider = MockSecurityClassificationProviding()
+        mockClassificationProvider.classificationUsersConversationDomain_MockValue = .some(nil)
+
         mockUserSession = UserSessionMock()
     }
 
