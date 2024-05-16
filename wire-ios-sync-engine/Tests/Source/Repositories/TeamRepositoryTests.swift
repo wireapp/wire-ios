@@ -24,30 +24,6 @@ import XCTest
 
 final class TeamRepositoryTests: XCTestCase {
 
-    enum Scaffolding {
-
-        static let selfUserID = UUID()
-
-        static let selfTeamID = UUID()
-        static let teamCreatorID = UUID()
-        static let teamName = "Team Foo"
-        static let logoID = UUID().uuidString
-        static let logoKey = UUID().uuidString
-        static let splashScreenID = UUID().uuidString
-
-        static let member1ID = UUID()
-        static let member1CreationDate = Date()
-        static let member1CreatorID = UUID()
-        static let member1legalholdStatus = LegalholdStatus.enabled
-        static let member1Permissions = Permissions.admin.rawValue
-
-        static let member2ID = UUID()
-        static let member2CreationDate = Date()
-        static let member2CreatorID = UUID()
-        static let member2legalholdStatus = LegalholdStatus.pending
-        static let member2Permissions = Permissions.member.rawValue
-    }
-
     var sut: TeamRepository!
     var teamsAPI: MockTeamsAPI!
 
@@ -77,6 +53,8 @@ final class TeamRepositoryTests: XCTestCase {
         try coreDataStackHelper.cleanupDirectory()
         try await super.tearDown()
     }
+
+    // MARK: - Tests
 
     func testFetchSelfTeam() async throws {
         // Given
@@ -260,4 +238,28 @@ final class TeamRepositoryTests: XCTestCase {
         XCTAssertEqual(result, .pending)
     }
 
+}
+
+private enum Scaffolding {
+
+    static let selfUserID = UUID()
+
+    static let selfTeamID = UUID()
+    static let teamCreatorID = UUID()
+    static let teamName = "Team Foo"
+    static let logoID = UUID().uuidString
+    static let logoKey = UUID().uuidString
+    static let splashScreenID = UUID().uuidString
+
+    static let member1ID = UUID()
+    static let member1CreationDate = Date()
+    static let member1CreatorID = UUID()
+    static let member1legalholdStatus = LegalholdStatus.enabled
+    static let member1Permissions = Permissions.admin.rawValue
+
+    static let member2ID = UUID()
+    static let member2CreationDate = Date()
+    static let member2CreatorID = UUID()
+    static let member2legalholdStatus = LegalholdStatus.pending
+    static let member2Permissions = Permissions.member.rawValue
 }
