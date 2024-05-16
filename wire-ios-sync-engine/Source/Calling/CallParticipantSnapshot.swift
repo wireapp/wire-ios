@@ -32,7 +32,7 @@ final class CallParticipantsSnapshot {
 
             participants = members
                 .map { CallParticipant(member: $0, context: moc) }
-                .compactMap(\.self)
+                .compactMap { $0 }
         }
     }
 

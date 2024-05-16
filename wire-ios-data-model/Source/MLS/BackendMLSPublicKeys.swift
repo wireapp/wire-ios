@@ -41,7 +41,7 @@ public struct BackendMLSPublicKeys: Equatable {
         }
 
         return [externalSender]
-            .compactMap(\.self)
+            .compactMap { $0 }
     }
 
     public struct MLSPublicKeys: Equatable {
