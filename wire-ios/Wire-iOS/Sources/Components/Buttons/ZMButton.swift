@@ -49,6 +49,11 @@ class ZMButton: LegacyButton {
         applyStyle(style)
     }
 
+    required convenience init(style: ButtonStyle, title: String) {
+        self.init(style: style, cornerRadius: 16, fontSpec: .normalSemiboldFont)
+        self.setTitle(title, for: .normal)
+    }
+
     override var isHighlighted: Bool {
         didSet {
             guard let style else { return }
