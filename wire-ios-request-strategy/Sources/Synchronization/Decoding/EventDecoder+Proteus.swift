@@ -32,7 +32,7 @@ extension EventDecoder {
         in context: NSManagedObjectContext,
         using decryptFunction: ProteusDecryptionFunction
     ) async -> ZMUpdateEvent? {
-        let eventAttributes = [LogAttributesKey.eventId.rawValue: event.uuid?.safeForLoggingDescription ?? "<not filled>"]
+        let eventAttributes: LogAttributes = [LogAttributesKey.eventId.rawValue: event.uuid?.safeForLoggingDescription ?? "<not filled>"].merging(LogAttributes.safePublic, uniquingKeysWith: { _, new in new })
         WireLogger.updateEvent.info("decrypting proteus event...", attributes: eventAttributes)
 
         guard !event.wasDecrypted else {
@@ -55,11 +55,10 @@ extension EventDecoder {
                 let recipientID = event.recipientID,
                 selfClient?.remoteIdentifier == recipientID
             else {
-                let additionalInfo = [
+                let additionalInfo: LogAttributes = [
                     LogAttributesKey.selfClientId.rawValue: selfClient?.safeRemoteIdentifier.safeForLoggingDescription ?? "<nil>",
-                    LogAttributesKey.selfUserId.rawValue: selfUser?.remoteIdentifier.safeForLoggingDescription ?? "<nil>",
-                    LogAttributesKey.eventId.rawValue: eventAttributes[LogAttributesKey.eventId.rawValue]
-                ]
+                    LogAttributesKey.selfUserId.rawValue: selfUser?.remoteIdentifier.safeForLoggingDescription ?? "<nil>"
+                ].merging(eventAttributes, uniquingKeysWith: { _, new in new })
                 WireLogger.updateEvent.info("decrypting proteus event... failed: is not for self client, dropping...)", attributes: additionalInfo)
                 return (UserClient?.none, ProteusSessionID?.none)
             }

@@ -136,7 +136,7 @@ extension FeatureConfigRequestStrategy: ZMEventConsumer {
             let processor = FeatureConfigsPayloadProcessor()
             try processor.processEventPayload(data: payloadData, featureName: featureName, repository: repository)
 
-            WireLogger.featureConfigs.error("Finished processing update event \(name)")
+            WireLogger.featureConfigs.info("Finished processing update event \(name)")
         } catch {
             WireLogger.featureConfigs.error("Failed processing update event \(name): \(error.localizedDescription)")
         }
