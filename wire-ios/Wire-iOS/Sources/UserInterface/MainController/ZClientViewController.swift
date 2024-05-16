@@ -64,7 +64,8 @@ final class ZClientViewController: UIViewController {
         let selfProfileViewControllerBuilder = SelfProfileViewControllerBuilder(
             selfUser: userSession.selfUser,
             userRightInterfaceType: UserRight.self,
-            userSession: userSession
+            userSession: userSession,
+            accountSelector: SessionManager.shared
         )
         conversationListViewController = .init(
             account: account,
@@ -174,7 +175,7 @@ final class ZClientViewController: UIViewController {
         updateSplitViewTopConstraint()
 
         wireSplitViewController.view.backgroundColor = .clear
-        wireSplitViewController.leftViewController = conversationListViewController
+        wireSplitViewController.leftViewController = UINavigationController(rootViewController: conversationListViewController)
 
         if pendingInitialStateRestore {
             restoreStartupState()
@@ -251,7 +252,7 @@ final class ZClientViewController: UIViewController {
 
         // if changing from compact width to regular width, make sure current conversation is loaded
         if previousTraitCollection?.horizontalSizeClass == .compact && traitCollection.horizontalSizeClass == .regular {
-            if let currentConversation = currentConversation {
+            if let currentConversation {
                 select(conversation: currentConversation)
             } else {
                 attemptToLoadLastViewedConversation(withFocus: false, animated: false)
@@ -330,7 +331,7 @@ final class ZClientViewController: UIViewController {
         var conversationRootController: ConversationRootViewController?
         if conversation === currentConversation,
            conversationRootController != nil {
-            if let message = message {
+            if let message {
                 conversationRootController?.scroll(to: message)
             }
         } else {
@@ -377,13 +378,13 @@ final class ZClientViewController: UIViewController {
             if let rightViewController = self.wireSplitViewController.rightViewController,
                rightViewController.presentedViewController != nil {
                 rightViewController.dismiss(animated: false, completion: callback)
-            } else if let presentedViewController = self.conversationListViewController.presentedViewController {
+            } else if let presentedViewController = self.conversationListViewController.navigationController?.presentedViewController {
                 // This is a workaround around the fact that the transitioningDelegate of the settings
                 // view controller is not called when the transition is not being performed animated.
                 // This sounds like a bug in UIKit (Radar incoming) as I would expect the custom animator
                 // being called with `transitionContext.isAnimated == false`. As this is not the case
                 // we have to restore the proper pre-presentation state here.
-                let conversationView = self.conversationListViewController.view
+                let conversationView = self.conversationListViewController.navigationController?.view
                 if let transform = conversationView?.layer.transform {
                     if !CATransform3DIsIdentity(transform) || conversationView?.alpha != 1 {
                         conversationView?.layer.transform = CATransform3DIdentity
@@ -410,7 +411,7 @@ final class ZClientViewController: UIViewController {
 
     // MARK: - ColorSchemeControllerDidApplyChangesNotification
     private func reloadCurrentConversation() {
-        guard let currentConversation = currentConversation else { return }
+        guard let currentConversation else { return }
 
         let currentConversationViewController = ConversationRootViewController(conversation: currentConversation, message: nil, clientViewController: self, userSession: userSession)
 
@@ -515,7 +516,7 @@ final class ZClientViewController: UIViewController {
     func setTopOverlay(to viewController: UIViewController?, animated: Bool = true) {
         topOverlayViewController?.willMove(toParent: nil)
 
-        if let previousViewController = topOverlayViewController, let viewController = viewController {
+        if let previousViewController = topOverlayViewController, let viewController {
             addChild(viewController)
             viewController.view.frame = topOverlayContainer.bounds
             viewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -562,7 +563,7 @@ final class ZClientViewController: UIViewController {
                 self.topOverlayViewController = nil
                 self.updateSplitViewTopConstraint()
             }
-        } else if let viewController = viewController {
+        } else if let viewController {
             addChild(viewController)
             viewController.view.frame = topOverlayContainer.bounds
             viewController.view.translatesAutoresizingMaskIntoConstraints = false
@@ -706,7 +707,7 @@ final class ZClientViewController: UIViewController {
 
     var isConversationListVisible: Bool {
         return (wireSplitViewController.layoutSize == .regularLandscape) ||
-        (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
+        (wireSplitViewController.isLeftViewControllerRevealed && conversationListViewController.navigationController?.presentedViewController == nil)
     }
 
     func minimizeCallOverlay(animated: Bool,

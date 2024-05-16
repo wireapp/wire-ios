@@ -182,7 +182,7 @@ import WireUtilities
     private func startActivityIfPossible(_ name: String, _ expirationHandler: (() -> Void)?) -> BackgroundActivity? {
         return isolationQueue.sync {
             let activityName = ActivityName(name: name)
-            guard let activityManager = activityManager else {
+            guard let activityManager else {
                 WireLogger.backgroundActivity.info(
                     "Start activity <\(activityName)>: failed, activityManager is nil",
                     attributes: .safePublic
@@ -283,7 +283,7 @@ import WireUtilities
         // No need to keep any activities after finishing
         activities.removeAll()
         if let currentBackgroundTask = self.currentBackgroundTask {
-            if let activityManager = activityManager {
+            if let activityManager {
                 let value = SafeValueForLogging(currentBackgroundTask.rawValue)
                 WireLogger.backgroundActivity.info(
                     "Finishing background task: \(value)",

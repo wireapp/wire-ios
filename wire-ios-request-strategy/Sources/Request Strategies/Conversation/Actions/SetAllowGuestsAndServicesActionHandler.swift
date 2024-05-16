@@ -61,7 +61,8 @@ final class SetAllowGuestsAndServicesActionHandler: ActionHandler<SetAllowGuests
         let path: String
         switch apiVersion {
         case .v3, .v4, .v5, .v6:
-            guard let domain = conversation.domain.nonEmptyValue ?? BackendInfo.domain else {
+            let domain = if let domain = conversation.domain, !domain.isEmpty { domain } else { BackendInfo.domain }
+            guard let domain else {
                 action.fail(with: .domainUnavailable)
                 return nil
             }

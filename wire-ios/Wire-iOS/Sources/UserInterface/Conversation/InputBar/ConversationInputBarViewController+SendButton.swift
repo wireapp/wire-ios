@@ -22,7 +22,7 @@ import WireCommonComponents
 extension ConversationInputBarViewController {
     func sendText() {
 
-        let checker = E2EIPrivacyWarningChecker(conversation: conversation) {
+        let checker = PrivacyWarningChecker(conversation: conversation) {
             self._sendText()
         }
 

@@ -147,7 +147,10 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     func minimizeCall(animated: Bool = true, completion: Completion? = nil) {
-        guard isActiveCallShown else { completion?(); return }
+        guard isActiveCallShown else {
+            completion?()
+            return
+        }
         dismissActiveCall(animated: animated, completion: completion)
     }
 
@@ -169,7 +172,6 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     func presentEndingSecurityDegradedAlert(for reason: CallDegradationReason,
                                             completion: @escaping (AlertChoice) -> Void) {
-
         guard self.presentedDegradedAlert == nil else {
             completion(.alreadyPresented)
             return
@@ -179,11 +181,12 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
             let alert: UIAlertController
             switch reason {
             case .degradedUser(user: let user):
-                alert = UIAlertController.makeDegradedProteusCall(degradedUser: user?.value,
-                                                                  callEnded: true,
-                                                                  confirmationBlock: { continueDegradedCall in
-                    completion(continueDegradedCall ? .confirm : .cancel)
-                    postCallActionCompletion()
+                alert = UIAlertController.makeOutgoingDegradedProteusCall(
+                    degradedUser: user?.value,
+                    callEnded: true,
+                    confirmationBlock: { continueDegradedCall in
+                        completion(continueDegradedCall ? .confirm : .cancel)
+                        postCallActionCompletion()
                 })
             case .invalidCertificate:
                 alert = UIAlertController.makeEndingDegradedMLSCall(cancelBlock: {
@@ -209,12 +212,13 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
             let alert: UIAlertController
             switch reason {
             case .degradedUser(user: let user):
-                alert = UIAlertController.makeDegradedProteusCall(degradedUser: user?.value,
-                                                                  callEnded: false,
-                                                                  confirmationBlock: { continueDegradedCall in
-                    completion(continueDegradedCall ? .confirm : .cancel)
-                    postCallActionCompletion()
-                })
+                alert = UIAlertController.makeIncomingDegradedProteusCall(
+                    degradedUser: user?.value,
+                    callEnded: false,
+                    confirmationBlock: { continueDegradedCall in
+                        completion(continueDegradedCall ? .confirm : .cancel)
+                        postCallActionCompletion()
+                    })
             case .invalidCertificate:
                 alert = UIAlertController.makeIncomingDegradedMLSCall(confirmationBlock: { answerDegradedCall in
                     completion(answerDegradedCall ? .confirm : .cancel)
@@ -324,7 +328,7 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
 // MARK: - CallTopOverlayControllerDelegate
 extension ActiveCallRouter: CallTopOverlayControllerDelegate {
     func voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: VoiceChannel?) {
-        guard let voiceChannel = voiceChannel else { return }
+        guard let voiceChannel else { return }
         isActiveCallShown = false
         presentActiveCall(for: voiceChannel, animated: true)
     }

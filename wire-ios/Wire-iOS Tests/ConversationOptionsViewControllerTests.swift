@@ -17,14 +17,16 @@
 //
 
 import SnapshotTesting
-@testable import Wire
 import WireSyncEngine
 import WireSyncEngineSupport
 import XCTest
 
+@testable import Wire
+
 final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModelConfiguration {
 
     typealias SetHandler = (Bool, (Result<Void, Error>) -> Void) -> Void
+
     var allowGuests: Bool
     var guestLinkFeatureStatus: GuestLinkFeatureStatus
     var setAllowGuests: SetHandler?
@@ -52,7 +54,7 @@ final class MockOptionsViewModelConfiguration: ConversationGuestOptionsViewModel
     }
 
     func fetchConversationLink(completion: @escaping (Result<(uri: String?, secured: Bool), Error>) -> Void) {
-        linkResult.apply(completion)
+        linkResult.map(completion)
     }
 
     func deleteLink(completion: @escaping (Result<Void, Error>) -> Void) {

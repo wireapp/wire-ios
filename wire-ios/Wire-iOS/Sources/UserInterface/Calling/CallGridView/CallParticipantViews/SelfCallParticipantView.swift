@@ -22,17 +22,15 @@ import WireSyncEngine
 
 final class SelfCallParticipantView: BaseCallParticipantView {
 
-    var previewView = AVSVideoPreview()
+    weak var previewView: AVSVideoPreview?
+
+    private weak var videoContainerView: AVSVideoContainerView?
 
     override var stream: Stream {
         didSet {
             guard stream.callParticipantState.videoState != self.videoState else { return }
             updateCaptureState(with: stream.callParticipantState.videoState)
         }
-    }
-
-    override var videoView: AVSVideoViewProtocol? {
-        previewView
     }
 
     private var videoState: VideoState?
@@ -43,11 +41,14 @@ final class SelfCallParticipantView: BaseCallParticipantView {
 
     override func setupViews() {
         super.setupViews()
-        previewView.backgroundColor = .clear
-        previewView.translatesAutoresizingMaskIntoConstraints = false
+
+        let videoContainerView = AVSVideoContainerView()
+        videoContainerView.translatesAutoresizingMaskIntoConstraints = false
+        videoContainerView.backgroundColor = .clear
+        self.videoContainerView = videoContainerView
 
         let scalableView = ScalableView(isScalingEnabled: shouldEnableScaling)
-        scalableView.addSubview(previewView)
+        scalableView.addSubview(videoContainerView)
         insertSubview(scalableView, belowSubview: userDetailsView)
         self.scalableView = scalableView
     }
@@ -55,7 +56,10 @@ final class SelfCallParticipantView: BaseCallParticipantView {
     override func createConstraints() {
         super.createConstraints()
 
-        [previewView, scalableView].forEach {
+        [
+            videoContainerView,
+            scalableView
+        ].forEach {
             $0?.translatesAutoresizingMaskIntoConstraints = false
             $0?.fitIn(view: self)
         }
@@ -92,11 +96,33 @@ final class SelfCallParticipantView: BaseCallParticipantView {
     }
 
     func startCapture() {
-        previewView.startVideoCapture()
+        previewView?.startVideoCapture()
     }
 
     func stopCapture() {
-        previewView.stopVideoCapture()
+        previewView?.stopVideoCapture()
     }
 
+    // MARK: Override Base
+
+    override func updateVideoShouldFill(_ shouldFill: Bool) {
+        if shouldFill, previewView == nil {
+            // [WPB-8954] Setup video only when the video really starts to avoid
+            // calls crashing on the iOS 17 simulator.
+            let previewView = makeVideoPreviewView()
+            self.previewView = previewView
+
+            videoContainerView?.setupVideoView(previewView)
+        }
+
+        previewView?.shouldFill = shouldFill
+    }
+
+    func makeVideoPreviewView() -> AVSVideoPreview {
+        let previewView = AVSVideoPreview()
+        previewView.backgroundColor = .clear
+        previewView.shouldFill = shouldFill
+
+        return previewView
+    }
 }

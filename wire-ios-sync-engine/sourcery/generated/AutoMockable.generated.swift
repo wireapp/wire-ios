@@ -873,68 +873,6 @@ public class MockStopCertificateEnrollmentSnoozerUseCaseProtocol: StopCertificat
 
 }
 
-class MockUseCaseFactoryProtocol: UseCaseFactoryProtocol {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - createResolveOneOnOneUseCase
-
-    var createResolveOneOnOneUseCase_Invocations: [Void] = []
-    var createResolveOneOnOneUseCase_MockMethod: (() -> ResolveOneOnOneConversationsUseCaseProtocol)?
-    var createResolveOneOnOneUseCase_MockValue: ResolveOneOnOneConversationsUseCaseProtocol?
-
-    func createResolveOneOnOneUseCase() -> ResolveOneOnOneConversationsUseCaseProtocol {
-        createResolveOneOnOneUseCase_Invocations.append(())
-
-        if let mock = createResolveOneOnOneUseCase_MockMethod {
-            return mock()
-        } else if let mock = createResolveOneOnOneUseCase_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `createResolveOneOnOneUseCase`")
-        }
-    }
-
-    // MARK: - createConversationGuestLinkUseCase
-
-    var createConversationGuestLinkUseCase_Invocations: [Void] = []
-    var createConversationGuestLinkUseCase_MockMethod: (() -> CreateConversationGuestLinkUseCaseProtocol)?
-    var createConversationGuestLinkUseCase_MockValue: CreateConversationGuestLinkUseCaseProtocol?
-
-    func createConversationGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
-        createConversationGuestLinkUseCase_Invocations.append(())
-
-        if let mock = createConversationGuestLinkUseCase_MockMethod {
-            return mock()
-        } else if let mock = createConversationGuestLinkUseCase_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `createConversationGuestLinkUseCase`")
-        }
-    }
-
-    // MARK: - createSetGuestsAndServicesUseCase
-
-    var createSetGuestsAndServicesUseCase_Invocations: [Void] = []
-    var createSetGuestsAndServicesUseCase_MockMethod: (() -> SetAllowGuestAndServicesUseCaseProtocol)?
-    var createSetGuestsAndServicesUseCase_MockValue: SetAllowGuestAndServicesUseCaseProtocol?
-
-    func createSetGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
-        createSetGuestsAndServicesUseCase_Invocations.append(())
-
-        if let mock = createSetGuestsAndServicesUseCase_MockMethod {
-            return mock()
-        } else if let mock = createSetGuestsAndServicesUseCase_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `createSetGuestsAndServicesUseCase`")
-        }
-    }
-
-}
-
 public class MockUserProfile: UserProfile {
 
     // MARK: - Life cycle

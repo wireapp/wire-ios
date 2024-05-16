@@ -21,7 +21,7 @@ import UIKit
 import WireCommonComponents
 import WireSyncEngine
 
-class BaseCallParticipantView: OrientableView, AVSIdentifierProvider {
+class BaseCallParticipantView: OrientableView {
 
     // MARK: - Public Properties
 
@@ -65,7 +65,7 @@ class BaseCallParticipantView: OrientableView, AVSIdentifierProvider {
     var scalableView: ScalableView?
     var avatarView = UserImageView(size: .normal)
     var userSession = ZMUserSession.shared()
-    private(set) var videoView: AVSVideoViewProtocol?
+
     private var borderLayer = CALayer()
 
     // MARK: - Private Properties
@@ -224,7 +224,11 @@ class BaseCallParticipantView: OrientableView, AVSIdentifierProvider {
     private func updateFillMode() {
         // Reset scale if the view was zoomed in
         scalableView?.resetScale()
-        videoView?.shouldFill = shouldFill
+        updateVideoShouldFill(shouldFill)
+    }
+
+    func updateVideoShouldFill(_ shouldFill: Bool) {
+        // overide in subclasses
     }
 
     // MARK: - Border Style
@@ -247,7 +251,7 @@ class BaseCallParticipantView: OrientableView, AVSIdentifierProvider {
 
     func layout(forInterfaceOrientation interfaceOrientation: UIInterfaceOrientation,
                 deviceOrientation: UIDeviceOrientation) {
-        guard let superview = superview else { return }
+        guard let superview else { return }
 
         delta = .equal
 

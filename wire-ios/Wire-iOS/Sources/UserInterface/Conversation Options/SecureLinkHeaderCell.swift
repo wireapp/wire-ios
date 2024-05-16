@@ -49,11 +49,11 @@ final class SecureLinkHeaderCell: UITableViewCell, CellConfigurationConfigurable
         iconImageView.image = UIImage(resource: .secureGuestLinkShield)
         iconImageView.tintColor = SemanticColors.Icon.foregroundDefaultBlack
 
-        titleLabel.font = UIFont.font(for: .footnoteSemibold)
+        titleLabel.font = UIFont.font(for: .h5)
         titleLabel.text = L10n.Localizable.GuestRoom.SecureLink.Header.title
 
         subtitleLabel.numberOfLines = 0
-        subtitleLabel.font = UIFont.font(for: .caption1)
+        subtitleLabel.font = UIFont.font(for: .subline1)
         subtitleLabel.text = L10n.Localizable.GuestRoom.SecureLink.Header.subtitle
     }
 

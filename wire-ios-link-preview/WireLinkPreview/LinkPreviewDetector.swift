@@ -67,7 +67,7 @@ public final class LinkPreviewDetector: NSObject, LinkPreviewDetectorType {
     public func downloadLinkPreviews(inText text: String, excluding: [NSRange] = [], completion: @escaping DetectCompletion) {
         guard let (url, range) = linkDetector?.detectLinksAndRanges(in: text, excluding: excluding).first, !PreviewBlacklist.isBlacklisted(url) else { return completion([]) }
         previewDownloader.requestOpenGraphData(fromURL: url) { [weak self] openGraphData in
-            guard let `self` = self, let substringRange = Range<String.Index>(range, in: text) else { return }
+            guard let self, let substringRange = Range<String.Index>(range, in: text) else { return }
             let originalURLString = String(text[substringRange])
             guard let data = openGraphData else { return completion([]) }
 

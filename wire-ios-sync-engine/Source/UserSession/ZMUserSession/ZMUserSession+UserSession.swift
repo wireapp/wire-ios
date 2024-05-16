@@ -308,11 +308,11 @@ extension ZMUserSession: UserSession {
     }
 
     public func makeConversationSecureGuestLinkUseCase() -> CreateConversationGuestLinkUseCaseProtocol {
-        return useCaseFactory.createConversationGuestLinkUseCase()
+        return CreateConversationGuestLinkUseCase(setGuestsAndServicesUseCase: makeSetConversationGuestsAndServicesUseCase())
     }
 
     public func makeSetConversationGuestsAndServicesUseCase() -> SetAllowGuestAndServicesUseCaseProtocol {
-        return useCaseFactory.createSetGuestsAndServicesUseCase()
+        return SetAllowGuestAndServicesUseCase()
     }
 
     @MainActor

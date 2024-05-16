@@ -164,7 +164,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var isFederated: Bool {
-        guard let contextProvider = contextProvider else {
+        guard let contextProvider else {
             return false
         }
 
@@ -172,7 +172,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var isSelfUser: Bool {
-        guard let user = user else { return false }
+        guard let user else { return false }
 
         return user.isSelfUser
     }
@@ -186,7 +186,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var isTeamMember: Bool {
-        if let user = user {
+        if let user {
             return user.isTeamMember
         } else {
             return internalIsTeamMember
@@ -194,7 +194,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var isPendingMetadataRefresh: Bool {
-        guard let user = user else { return false }
+        guard let user else { return false }
 
         return user.isPendingMetadataRefresh
     }
@@ -204,7 +204,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var teamRole: TeamRole {
-        guard let user = user else {
+        guard let user else {
             return (internalTeamPermissions?.rawValue).flatMap(TeamRole.init(rawPermissions:)) ?? .none
         }
 
@@ -240,7 +240,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var isPendingApprovalByOtherUser: Bool {
-        if let user = user {
+        if let user {
             return user.isPendingApprovalByOtherUser
         } else {
             return internalPendingApprovalByOtherUser
@@ -249,7 +249,7 @@ public class ZMSearchUser: NSObject, UserType {
 
     public var isConnected: Bool {
         get {
-            if let user = user {
+            if let user {
                 return user.isConnected
             } else {
                 return internalIsConnected
@@ -291,7 +291,7 @@ public class ZMSearchUser: NSObject, UserType {
     public var isAccountDeleted: Bool {
         if let isDeleted = internalIsAccountDeleted {
             return isDeleted
-        } else if let user = user {
+        } else if let user {
             return user.isAccountDeleted
         }
 
@@ -303,7 +303,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var accentColorValue: ZMAccentColorRawValue {
-        if let user = user {
+        if let user {
             user.accentColorValue
         } else {
             internalAccentColorValue
@@ -586,9 +586,9 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var smallProfileImageCacheKey: String? {
-        if let user = user {
+        if let user {
             return user.smallProfileImageCacheKey
-        } else if let remoteIdentifier = remoteIdentifier {
+        } else if let remoteIdentifier {
             return "\(remoteIdentifier.transportString())_preview"
         }
 
@@ -596,9 +596,9 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public var mediumProfileImageCacheKey: String? {
-        if let user = user {
+        if let user {
             return user.mediumProfileImageCacheKey
-        } else if let remoteIdentifier = remoteIdentifier {
+        } else if let remoteIdentifier {
             return "\(remoteIdentifier.transportString())_complete"
         }
 
@@ -671,7 +671,7 @@ public class ZMSearchUser: NSObject, UserType {
     public var canBeConnected: Bool {
         guard !isServiceUser else { return false }
 
-        if let user = user {
+        if let user {
             return user.canBeConnected
         } else {
             return !internalIsConnected && remoteIdentifier != nil
@@ -699,7 +699,7 @@ public class ZMSearchUser: NSObject, UserType {
     }
 
     public func isGuest(in conversation: ConversationLike) -> Bool {
-        guard let user = user else { return false }
+        guard let user else { return false }
 
         return user.isGuest(in: conversation)
     }
