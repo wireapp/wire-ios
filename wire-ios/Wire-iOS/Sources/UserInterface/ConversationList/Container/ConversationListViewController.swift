@@ -114,8 +114,6 @@ final class ConversationListViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        viewModel.viewController = self
-
         definesPresentationContext = true
 
         /// setup UI
@@ -130,6 +128,8 @@ final class ConversationListViewController: UIViewController {
         setupNetworkStatusBar()
 
         createViewConstraints()
+
+        viewModel.viewController = self
     }
 
     @available(*, unavailable)

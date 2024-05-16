@@ -133,7 +133,7 @@ final class ProfileViewController: UIViewController {
         )
         controller.delegate = self
 
-        let wrappedController = controller.wrapInNavigationController(setBackgroundColor: true)
+        let wrappedController = controller.wrapInNavigationController()
         wrappedController.modalPresentationStyle = .formSheet
         present(wrappedController, animated: true)
     }
