@@ -41,9 +41,9 @@
         "package": "Starscream",
         "repositoryURL": "https://github.com/wireapp/starscream",
         "state": {
-          "branch": "chore/4.0.8-wire-additions",
-          "revision": "6674e7abb1d751632969e1eed1a058ab9287540d",
-          "version": null
+          "branch": null,
+          "revision": "95a266a2d52afde9239c736efe233c26af6d6dda",
+          "version": "4.0.8"
         }
       },
       {

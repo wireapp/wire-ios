@@ -1400,8 +1400,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/wireapp/starscream";
 			requirement = {
-				branch = "chore/4.0.8-wire-additions";
-				kind = branch;
+				kind = exactVersion;
+				version = 4.0.8;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
