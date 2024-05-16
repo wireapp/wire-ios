@@ -240,9 +240,7 @@ fileprivate extension VoiceChannel {
     }
 
     func sortedParticipants() -> [CallParticipant] {
-        return participants.sorted { lhs, rhs in
-            lhs.user.name?.lowercased() < rhs.user.name?.lowercased()
-        }
+        participants.sortedAscendingPrependingNil { $0.user.name?.lowercased() }
     }
 
     private var isIncomingVideoCall: Bool {
