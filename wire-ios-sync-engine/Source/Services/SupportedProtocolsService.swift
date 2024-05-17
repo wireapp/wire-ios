@@ -149,7 +149,7 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
     }
 
     private func allSelfUserClientsAreActiveMLSClients() -> Bool {
-        return userRepository.selfUser().clients.all(\.isActiveMLSClient)
+        return userRepository.fetchSelfUser().clients.all(\.isActiveMLSClient)
     }
 
 }

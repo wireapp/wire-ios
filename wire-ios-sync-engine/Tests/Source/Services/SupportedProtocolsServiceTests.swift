@@ -66,7 +66,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
 
     private func mock(allActiveMLSClients: Bool) throws {
         let selfUser = createSelfUser(in: syncContext)
-        mockUserRepository.selfUser_MockValue = selfUser
+        mockUserRepository.fetchSelfUser_MockValue = selfUser
 
         let selfClient = createSelfClient(in: syncContext)
         selfClient.lastActiveDate = Date(timeIntervalSinceNow: -.oneDay)

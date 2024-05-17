@@ -21,7 +21,7 @@ import Foundation
 // sourcery: AutoMockable
 public protocol UserRepositoryProtocol {
 
-    func selfUser() -> ZMUser
+    func fetchSelfUser() -> ZMUser
 
 }
 
@@ -39,7 +39,7 @@ public final class UserRepository: UserRepositoryProtocol {
 
     // MARK: - Methods
 
-    public func selfUser() -> ZMUser {
+    public func fetchSelfUser() -> ZMUser {
         return ZMUser.selfUser(in: context)
     }
 

@@ -117,7 +117,7 @@ public final class SelfSupportedProtocolsRequestStrategy: AbstractRequestStrateg
 
         switch response.result {
         case .success:
-            let selfUser = userRepository.selfUser()
+            let selfUser = userRepository.fetchSelfUser()
             selfUser.supportedProtocols = service.calculateSupportedProtocols()
             finishSlowSync()
         default:
