@@ -387,9 +387,12 @@
 		59271BE82B908DAC0019B726 /* SecurityClassificationProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BE72B908DAC0019B726 /* SecurityClassificationProviding.swift */; };
 		59271BEA2B908E150019B726 /* SecurityClassification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59271BE92B908E150019B726 /* SecurityClassification.swift */; };
 		597B70C32B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */; };
+		598E86FE2BF4DE8F00FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E86FD2BF4DE8F00FC5438 /* WireSystemSupport.framework */; };
+		598E87022BF4DE9600FC5438 /* WireSystemSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E87012BF4DE9600FC5438 /* WireSystemSupport.framework */; };
+		598E87052BF4E01300FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E87042BF4E01300FC5438 /* WireUtilitiesSupport.framework */; };
+		598E87092BF4E01800FC5438 /* WireUtilitiesSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 598E87082BF4E01800FC5438 /* WireUtilitiesSupport.framework */; };
 		59D1C3102B1DEE6E0016F6B2 /* WireDataModelSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */; };
 		59DA04A32BD25486003F9195 /* WireSyncEngineSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */; };
-		59DA04A42BD25486003F9195 /* WireSyncEngineSupport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0145AE812B1154010097E3B8 /* WireSyncEngineSupport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		59E6A9142B4EE5CF00DBCC6B /* RecurringAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9132B4EE5CF00DBCC6B /* RecurringAction.swift */; };
 		59E6A9162B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9152B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift */; };
 		59E6A91A2B4EE62100DBCC6B /* RecurringAction+dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59E6A9192B4EE62100DBCC6B /* RecurringAction+dummy.swift */; };
@@ -760,17 +763,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		59DA04A72BD25486003F9195 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				59DA04A42BD25486003F9195 /* WireSyncEngineSupport.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		EE668BBC2954AA9300D939E7 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1127,6 +1119,11 @@
 		59271BE72B908DAC0019B726 /* SecurityClassificationProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityClassificationProviding.swift; sourceTree = "<group>"; };
 		59271BE92B908E150019B726 /* SecurityClassification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecurityClassification.swift; sourceTree = "<group>"; };
 		597B70C22B03984C006C2121 /* ZMUserSession+DeveloperMenu.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMUserSession+DeveloperMenu.swift"; sourceTree = "<group>"; };
+		598E86F22BF4DD5000FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		598E86FD2BF4DE8F00FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		598E87012BF4DE9600FC5438 /* WireSystemSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireSystemSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		598E87042BF4E01300FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		598E87082BF4E01800FC5438 /* WireUtilitiesSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireUtilitiesSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D1C30F2B1DEE6E0016F6B2 /* WireDataModelSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireDataModelSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		59E6A9132B4EE5CF00DBCC6B /* RecurringAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecurringAction.swift; sourceTree = "<group>"; };
 		59E6A9152B4EE5D500DBCC6B /* RecurringActionServiceInterface.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecurringActionServiceInterface.swift; sourceTree = "<group>"; };
@@ -1560,9 +1557,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				598E87022BF4DE9600FC5438 /* WireSystemSupport.framework in Frameworks */,
 				169BA1D725ECDBA300374343 /* WireSyncEngine.framework in Frameworks */,
 				0140A0C72B30F941004D8B40 /* WireDataModelSupport.framework in Frameworks */,
 				59DA04A32BD25486003F9195 /* WireSyncEngineSupport.framework in Frameworks */,
+				598E87052BF4E01300FC5438 /* WireUtilitiesSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1580,6 +1579,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				0145AE902B1155760097E3B8 /* WireSyncEngineSupport.framework in Frameworks */,
+				598E86FE2BF4DE8F00FC5438 /* WireSystemSupport.framework in Frameworks */,
+				598E87092BF4E01800FC5438 /* WireUtilitiesSupport.framework in Frameworks */,
 				54F4DC5A1A4438B300FDB6EA /* WireSyncEngine.framework in Frameworks */,
 				59D1C3102B1DEE6E0016F6B2 /* WireDataModelSupport.framework in Frameworks */,
 				EE4E6A262B714490007C476D /* WireRequestStrategySupport.framework in Frameworks */,
@@ -1990,6 +1991,11 @@
 		540029B61918CA8500578793 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				598E87082BF4E01800FC5438 /* WireUtilitiesSupport.framework */,
+				598E87042BF4E01300FC5438 /* WireUtilitiesSupport.framework */,
+				598E87012BF4DE9600FC5438 /* WireSystemSupport.framework */,
+				598E86FD2BF4DE8F00FC5438 /* WireSystemSupport.framework */,
+				598E86F22BF4DD5000FC5438 /* WireSystemSupport.framework */,
 				25A9B7B92B5EA36D00FD43FB /* Security.framework */,
 				EE4E6A252B714490007C476D /* WireRequestStrategySupport.framework */,
 				0140A0C62B30F941004D8B40 /* WireDataModelSupport.framework */,
@@ -3046,7 +3052,6 @@
 				169BA1CE25ECDBA300374343 /* Sources */,
 				169BA1CF25ECDBA300374343 /* Frameworks */,
 				169BA1D025ECDBA300374343 /* Resources */,
-				59DA04A72BD25486003F9195 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

@@ -275,7 +275,6 @@
 		591F8A022B8CB4DE00D562A6 /* IsSelfUserE2EICertifiedUseCaseProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A012B8CB4DE00D562A6 /* IsSelfUserE2EICertifiedUseCaseProtocol.swift */; };
 		591F8A042B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A032B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift */; };
 		591F8A072B8CB82400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591F8A052B8CB81400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */; };
-		5941DB052BF7739F00DDFE75 /* DateProvidingTypealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5941DB042BF7739F00DDFE75 /* DateProvidingTypealias.swift */; };
 		594EB3062B1E3B340022A5CD /* AutoMockable.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 594EB3002B1E31D30022A5CD /* AutoMockable.generated.swift */; };
 		5952B89B2BA3179100C48B01 /* MLSClientID+random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952B89A2BA3179100C48B01 /* MLSClientID+random.swift */; };
 		5952B89D2BA3189F00C48B01 /* MLSConferenceInfo+random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5952B89C2BA3189F00C48B01 /* MLSConferenceInfo+random.swift */; };
@@ -865,6 +864,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		598E86BF2BF4D70500FC5438 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F9C9A4F31CAD5DF10039E10C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F9C9A4FB1CAD5DF10039E10C;
+			remoteInfo = WireDataModel;
+		};
 		59D1C3042B1DE6FF0016F6B2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F9C9A4F31CAD5DF10039E10C /* Project object */;
@@ -1193,7 +1199,6 @@
 		591F8A012B8CB4DE00D562A6 /* IsSelfUserE2EICertifiedUseCaseProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserE2EICertifiedUseCaseProtocol.swift; sourceTree = "<group>"; };
 		591F8A032B8CB4EF00D562A6 /* IsSelfUserE2EICertifiedUseCase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserE2EICertifiedUseCase.swift; sourceTree = "<group>"; };
 		591F8A052B8CB81400D562A6 /* IsSelfUserE2EICertifiedUseCaseTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IsSelfUserE2EICertifiedUseCaseTests.swift; sourceTree = "<group>"; };
-		5941DB042BF7739F00DDFE75 /* DateProvidingTypealias.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateProvidingTypealias.swift; sourceTree = "<group>"; };
 		594EB3002B1E31D30022A5CD /* AutoMockable.generated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AutoMockable.generated.swift; sourceTree = "<group>"; };
 		5952B89A2BA3179100C48B01 /* MLSClientID+random.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MLSClientID+random.swift"; sourceTree = "<group>"; };
 		5952B89C2BA3189F00C48B01 /* MLSConferenceInfo+random.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MLSConferenceInfo+random.swift"; sourceTree = "<group>"; };
@@ -3112,7 +3117,6 @@
 				E6A5BBAD2B0E564200ACC236 /* WireDataModelBundle.swift */,
 				5972D9792B480E790089D1D3 /* CoreCryptoProtocolExt.swift */,
 				E66029D12BDA43E10033C524 /* SearchUsersCache.swift */,
-				5941DB042BF7739F00DDFE75 /* DateProvidingTypealias.swift */,
 			);
 			path = Utilis;
 			sourceTree = "<group>";
@@ -3748,6 +3752,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				598E86C02BF4D70500FC5438 /* PBXTargetDependency */,
 			);
 			name = WireDataModelSupport;
 			productName = WireDataModelSupport;
@@ -4403,7 +4408,6 @@
 				F9FD75781E2F9A0600B4558B /* SearchUserObserverCenter.swift in Sources */,
 				168D7C9626F9ED1E00789960 /* QualifiedID.swift in Sources */,
 				54F6CEAB1CE2972200A1276D /* ZMAssetClientMessage+Download.swift in Sources */,
-				5941DB052BF7739F00DDFE75 /* DateProvidingTypealias.swift in Sources */,
 				F9B71F221CB264EF001DB03F /* ZMConversation.m in Sources */,
 				EEAAD760252C713E00E6A44E /* ClassIdentifier.swift in Sources */,
 				8767E85B216391DF00390F75 /* ZMConversation+Mute.swift in Sources */,
@@ -4777,6 +4781,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		598E86C02BF4D70500FC5438 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F9C9A4FB1CAD5DF10039E10C /* WireDataModel */;
+			targetProxy = 598E86BF2BF4D70500FC5438 /* PBXContainerItemProxy */;
+		};
 		59D1C3052B1DE6FF0016F6B2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 59D1C2FF2B1DE6FF0016F6B2 /* WireDataModelSupport */;
@@ -4865,7 +4874,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Wire Swiss GmbH. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Wire Swiss GmbH. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4946,7 +4955,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2023 Wire Swiss GmbH. All rights reserved.";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 Wire Swiss GmbH. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
