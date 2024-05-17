@@ -32,11 +32,10 @@ enum IconStringsBuilder {
         titleFont: UIFont? = nil
     ) -> NSAttributedString {
 
-        var components: [NSAttributedString] = [
-            leadingIcons.map { .init(attachment: $0) },
-            [.init(string: title)],
-            trailingIcons.map { .init(attachment: $0) }
-        ].flatMap(\.self)
+        var components: [NSAttributedString] = []
+        components += leadingIcons.map { .init(attachment: $0) }
+        components += [.init(string: title)]
+        components += trailingIcons.map { .init(attachment: $0) }
 
         // Adds the down arrow if the view is interactive
         if interactive {

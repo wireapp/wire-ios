@@ -93,7 +93,7 @@ final class ConversationTableViewDataSource: NSObject {
         // the initial fetch, which results in unwanted table view updates. This is normally what
         // we want when new message arrive but not when fetchOffset > 0.
 
-        if fetchController?.fetchRequest.fetchOffset > 0 {
+        if let fetchOffset = fetchController?.fetchRequest.fetchOffset, fetchOffset > 0 {
             return Array(fetchController?.fetchedObjects?.suffix(lastFetchedObjectCount) ?? [])
         } else {
             return fetchController?.fetchedObjects ?? []
