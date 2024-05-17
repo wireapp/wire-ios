@@ -92,15 +92,15 @@ NSString *const ZMConversationLastReadLocalTimestampKey = @"lastReadLocalTimesta
 @dynamic hasUnreadUnsentMessage;
 @dynamic needsToCalculateUnreadMessages;
 
-+ (NSUInteger)unreadConversationCountInContext:(NSManagedObjectContext *)moc;
-{    
++ (NSUInteger)unreadConversationCountInContext:(NSManagedObjectContext * _Nonnull)moc;
+{
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:[ZMConversation entityName]];
     request.predicate = [self predicateForConversationConsideredUnread];
     
     return [moc countForFetchRequest:request error:nil];
 }
 
-+ (NSUInteger)unreadConversationCountExcludingSilencedInContext:(NSManagedObjectContext *)moc excluding:(ZMConversation *)conversation
++ (NSUInteger)unreadConversationCountExcludingSilencedInContext:(NSManagedObjectContext * _Nonnull)moc excluding:(ZMConversation * _Nullable)conversation
 {
     NSPredicate *excludedConversationPredicate = [NSPredicate predicateWithFormat:@"SELF != %@", conversation];
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:[ZMConversation entityName]];

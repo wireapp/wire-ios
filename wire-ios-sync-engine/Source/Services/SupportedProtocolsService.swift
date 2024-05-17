@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireRequestStrategy
 
 // sourcery: AutoMockable
 public protocol SupportedProtocolsServiceInterface {
@@ -30,7 +31,7 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
     // MARK: - Properties
 
     private let featureRepository: FeatureRepositoryInterface
-    private let userRepository: UserRepositoryInterface
+    private let userRepository: UserRepositoryProtocol
     private let logger = WireLogger(tag: "supported-protocols")
 
     // MARK: - Life cycle
@@ -44,7 +45,7 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
 
     init(
         featureRepository: FeatureRepositoryInterface,
-        userRepository: UserRepositoryInterface
+        userRepository: UserRepositoryProtocol
     ) {
         self.featureRepository = featureRepository
         self.userRepository = userRepository
@@ -148,7 +149,7 @@ public final class SupportedProtocolsService: SupportedProtocolsServiceInterface
     }
 
     private func allSelfUserClientsAreActiveMLSClients() -> Bool {
-        return userRepository.selfUser().clients.all(\.isActiveMLSClient)
+        return userRepository.fetchSelfUser().clients.all(\.isActiveMLSClient)
     }
 
 }

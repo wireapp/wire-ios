@@ -18,29 +18,13 @@
 
 import Foundation
 
-// sourcery: AutoMockable
-public protocol UserRepositoryInterface {
+extension UserDefaults {
 
-    func selfUser() -> ZMUser
-
-}
-
-public final class UserRepository: UserRepositoryInterface {
-
-    // MARK: - Properties
-
-    private let context: NSManagedObjectContext
-
-    // MARK: - Life cycle
-
-    public init(context: NSManagedObjectContext) {
-        self.context = context
+    public func value<KeyType: NativelySupportedUserDefaultsKey>(for key: KeyType) -> KeyType.ValueType? {
+        value(forKey: key.rawValue) as? KeyType.ValueType
     }
 
-    // MARK: - Methods
-
-    public func selfUser() -> ZMUser {
-        return ZMUser.selfUser(in: context)
+    public func setValue<KeyType: NativelySupportedUserDefaultsKey>(_ value: KeyType.ValueType, for key: KeyType) {
+        setValue(value, forKey: key.rawValue)
     }
-
 }

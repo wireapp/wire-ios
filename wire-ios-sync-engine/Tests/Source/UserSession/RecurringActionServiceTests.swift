@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireSystemSupport
 import WireTesting
 import XCTest
 
@@ -25,14 +26,15 @@ import XCTest
 final class RecurringActionServiceTests: XCTestCase {
 
     var userDefaults: UserDefaults!
-    var dateProvider: MockDateProvider!
+    var dateProvider: MockCurrentDateProviding!
     var sut: RecurringActionService!
 
     override func setUp() {
         super.setUp()
 
         userDefaults = .temporary()
-        dateProvider = .init(now: .now.addingTimeInterval(-.oneDay))
+        dateProvider = .init()
+        dateProvider.now = .now.addingTimeInterval(-.oneDay)
         sut = RecurringActionService(
             storage: userDefaults,
             dateProvider: dateProvider

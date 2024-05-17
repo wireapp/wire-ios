@@ -17,7 +17,8 @@
 //
 
 import WireDataModelSupport
-@testable import WireRequestStrategy
+@testable import WireSyncEngine
+import WireSyncEngineSupport
 import XCTest
 
 final class SupportedProtocolsServiceTests: XCTestCase {
@@ -26,7 +27,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
     private var mockCoreDataStack: CoreDataStack!
 
     private var mockFeatureRepository: MockFeatureRepositoryInterface!
-    private var mockUserRepository: MockUserRepositoryInterface!
+    private var mockUserRepository: MockUserRepositoryProtocol!
 
     private var sut: SupportedProtocolsService!
 
@@ -41,7 +42,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
         mockCoreDataStack = try await coreDataStackHelper.createStack()
 
         mockFeatureRepository = MockFeatureRepositoryInterface()
-        mockUserRepository = MockUserRepositoryInterface()
+        mockUserRepository = MockUserRepositoryProtocol()
 
         sut = SupportedProtocolsService(
             featureRepository: mockFeatureRepository,
@@ -65,7 +66,7 @@ final class SupportedProtocolsServiceTests: XCTestCase {
 
     private func mock(allActiveMLSClients: Bool) throws {
         let selfUser = createSelfUser(in: syncContext)
-        mockUserRepository.selfUser_MockValue = selfUser
+        mockUserRepository.fetchSelfUser_MockValue = selfUser
 
         let selfClient = createSelfClient(in: syncContext)
         selfClient.lastActiveDate = Date(timeIntervalSinceNow: -.oneDay)

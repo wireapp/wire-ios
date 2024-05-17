@@ -16,14 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireSyncEngine
+#import <Foundation/Foundation.h>
 
-@testable import Wire
+//! Project version number for Support.
+FOUNDATION_EXPORT double SupportVersionNumber;
 
-final class MockClassificationProvider: SecurityClassificationProviding {
-    var returnClassification: SecurityClassification? = .none
+//! Project version string for Support.
+FOUNDATION_EXPORT const unsigned char SupportVersionString[];
 
-    func classification(users: [UserType], conversationDomain: String?) -> SecurityClassification? {
-        returnClassification
-    }
-}
+// In this header, you should import all the public headers of your framework using statements like #import <Support/PublicHeader.h>

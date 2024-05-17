@@ -17,14 +17,9 @@
 //
 
 import Foundation
-import WireSystem
 
-public final class MockDateProvider: DateProviding {
-
-    public var now: Date
-
-    public init(now: Date) {
-        self.now = now
-    }
-
+// sourcery: AutoMockable
+/// Abstracts accessing the current system date in order to be mockable in unit tests.
+public protocol CurrentDateProviding {
+    var now: Date { get }
 }
