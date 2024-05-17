@@ -92,9 +92,15 @@ final class DotView: UIView {
     }
 
     func updateIndicator() {
-        showIndicator = hasUnreadMessages ||
-                        user?.clientsRequiringUserAttention.count > 0 ||
-                        user?.readReceiptsEnabledChangedRemotely == true
+        if hasUnreadMessages || user?.readReceiptsEnabledChangedRemotely == true {
+            showIndicator = true
+            return
+        }
+
+        if let count = user?.clientsRequiringUserAttention.count, count > 0 {
+            showIndicator = true
+            return
+        }
     }
 }
 
